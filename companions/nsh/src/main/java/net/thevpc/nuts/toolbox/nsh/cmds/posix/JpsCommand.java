@@ -118,7 +118,7 @@ public class JpsCommand extends NShellBuiltinDefault {
         NExecCommand e = NExecCommand.of(context.getSession())
                 .setExecutionType(NExecutionType.SYSTEM)
                 .addCommand(resolveJpsCommand(context.getSession()), "-l", "-v", "-m")
-                .setRedirectErrorStream(true)
+                .redirectErrorStream()
                 .grabOutputString()
                 .setFailFast(true).run();
         String resultString = e.getOutputString();

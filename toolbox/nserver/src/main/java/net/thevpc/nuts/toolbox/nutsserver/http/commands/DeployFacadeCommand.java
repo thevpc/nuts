@@ -54,11 +54,11 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
                     }
                     break;
                 case "content":
-                    contentFile = NPaths.of(session)
-                            .createTempFile(
+                    contentFile = NPath
+                            .ofTempFile(
                                     NLocations.of(session).getDefaultIdFilename(
                                             descriptor.getId().builder().setFaceDescriptor().build()
-                                    )).toString();
+                                    ),session).toString();
                     NCp.of(session)
                             .setSession(session)
                             .setSource(info.getContent())

@@ -165,8 +165,8 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                     throw new NNotFoundException(session, id);
                 }
             } else {
-                String tempFile = NPaths.of(session)
-                        .createRepositoryTempFile(p.getName(),getUuid()).toString();
+                String tempFile = NPath
+                        .ofTempRepositoryFile(p.getName(),getUuid(),session).toString();
                 try {
                     NCp.of(session)
                             .from(getStream(id, "artifact binaries", "retrieve", session)).to(NPath.of(tempFile,session)).setValidator(new NCpValidator() {

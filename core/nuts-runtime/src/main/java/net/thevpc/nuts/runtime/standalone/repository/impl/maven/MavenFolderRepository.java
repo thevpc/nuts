@@ -140,8 +140,8 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
                 if (localPath == null) {
                     return content.setUserCache(true).setUserTemporary(false);
                 } else {
-                    String tempFile = NPaths.of(session)
-                            .createRepositoryTempFile(content.getName(),getUuid()).toString();
+                    String tempFile = NPath
+                            .ofTempRepositoryFile(content.getName(),getUuid(),session).toString();
                     NCp.of(session)
                             .from(content).to(NPath.of(tempFile,session)).addOptions(NPathOption.SAFE).run();
                     return NPath.of(tempFile, session).setUserCache(true).setUserTemporary(false);

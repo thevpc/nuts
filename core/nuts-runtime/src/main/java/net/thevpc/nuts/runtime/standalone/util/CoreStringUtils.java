@@ -44,12 +44,11 @@ public final class CoreStringUtils {
     private static final Pattern PATTERN_ALL = Pattern.compile(".*");
 
 
-
     public static String generateIndexedName(String name, Predicate<String> exists) {
-        int x=1;
-        while(true){
-            String a=name+(x==1?"":(" "+x));
-            if(!exists.test(a)){
+        int x = 1;
+        while (true) {
+            String a = name + (x == 1 ? "" : (" " + x));
+            if (!exists.test(a)) {
                 return a;
             }
             x++;
@@ -269,7 +268,7 @@ public final class CoreStringUtils {
     /**
      * copied from StringUtils (in order to remove dependency)
      *
-     * @param x x
+     * @param x     x
      * @param width width
      * @return string filled
      */
@@ -351,48 +350,49 @@ public final class CoreStringUtils {
         return sb.toString();
     }
 
-    public static List<String> parseAndTrimToDistinctReadOnlyList(String s){
+    public static List<String> parseAndTrimToDistinctReadOnlyList(String s) {
         return Collections.unmodifiableList(parseAndTrimToDistinctList(s));
     }
 
-    public static List<String> parseAndTrimToDistinctList(String s){
+    public static List<String> parseAndTrimToDistinctList(String s) {
         return Arrays.asList(parseAndTrimToDistinctArray(s));
     }
 
-    public static String[] parseAndTrimToDistinctArray(String s){
-        if(s==null){
-            return  new String[0];
+    public static String[] parseAndTrimToDistinctArray(String s) {
+        if (s == null) {
+            return new String[0];
         }
         return StringTokenizerUtils.splitDefault(s).stream().map(String::trim)
-                .filter(x->x.length()>0)
+                .filter(x -> x.length() > 0)
                 .distinct().toArray(String[]::new);
     }
 
-    public static String joinAndTrimToNull(List<String> args){
+    public static String joinAndTrimToNull(List<String> args) {
         return NStringUtils.trimToNull(
-                String.join(",",args)
+                String.join(",", args)
         );
     }
 
-    public static String prefixLinesPortableNL(String str,String prefix) {
-        return prefixLines(str,prefix,"\n");
-    }
-    public static String prefixLinesOsNL(String str,String prefix) {
-        return prefixLines(str,prefix,System.getProperty("line.separator"));
+    public static String prefixLinesPortableNL(String str, String prefix) {
+        return prefixLines(str, prefix, "\n");
     }
 
-    public static String prefixLines(String str,String prefix,String nl) {
-        BufferedReader br=new BufferedReader(new StringReader(str==null?"":str));
-        StringBuilder sb=new StringBuilder();
+    public static String prefixLinesOsNL(String str, String prefix) {
+        return prefixLines(str, prefix, System.getProperty("line.separator"));
+    }
+
+    public static String prefixLines(String str, String prefix, String nl) {
+        BufferedReader br = new BufferedReader(new StringReader(str == null ? "" : str));
+        StringBuilder sb = new StringBuilder();
         String line;
-        boolean first=true;
-        if(nl==null) {
+        boolean first = true;
+        if (nl == null) {
             nl = System.getProperty("line.separator");
-            if(nl==null) {
+            if (nl == null) {
                 nl = "\n";
             }
         }
-        while(true){
+        while (true) {
             try {
                 if ((line = br.readLine()) == null) {
                     break;
@@ -400,9 +400,9 @@ public final class CoreStringUtils {
             } catch (IOException e) {
                 break;
             }
-            if(first){
-                first=false;
-            }else{
+            if (first) {
+                first = false;
+            } else {
                 sb.append(nl);
             }
             sb.append(prefix);
@@ -412,7 +412,7 @@ public final class CoreStringUtils {
     }
 
     public static String coalesce(String a, String b) {
-        return a==null?b:a;
+        return a == null ? b : a;
     }
 
 
@@ -497,5 +497,45 @@ public final class CoreStringUtils {
     }
 
 
+    public static String trueOrEqOrIn(String name, List<String> values) {
+        if (values.isEmpty()) {
+            return name + "true";
+        }
+        if (values.size() == 1) {
+            return name + " = " + values.get(0);
+        }
+        return name + " in (" + String.join(", ", values) + ")";
+    }
 
+    public static String trueOrOr(List<String> values) {
+        if (values.isEmpty()) {
+            return "true";
+        }
+        if (values.size() == 1) {
+            return values.get(0);
+        }
+        return values.stream().map(x -> String.valueOf(x)).collect(Collectors.joining(" | "));
+    }
+
+    public static String trueOrAnd(List<String> values) {
+        if (values.isEmpty()) {
+            return "true";
+        }
+        if (values.size() == 1) {
+            return values.get(0);
+        }
+        return values.stream().map(x -> String.valueOf(x)).collect(Collectors.joining(" & "));
+    }
+
+    public static String trueOrNone(List<String> values) {
+        if (values.isEmpty()) {
+            return "true";
+        }
+        if (values.size() == 1) {
+            return "!"+values.get(0);
+        }
+        return "!("
+                + values.stream().map(x -> String.valueOf(x)).collect(Collectors.joining(" & "))
+                + ")";
+    }
 }

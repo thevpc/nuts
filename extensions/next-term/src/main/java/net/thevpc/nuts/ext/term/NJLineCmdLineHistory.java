@@ -5,34 +5,12 @@
  */
 package net.thevpc.nuts.ext.term;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
-import java.time.Instant;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Objects;
-import java.util.function.Consumer;
-
-import net.thevpc.nuts.*;
-
-import static net.thevpc.nuts.ext.term.NJLineHistory.DEFAULT_HISTORY_FILE_SIZE;
-import static net.thevpc.nuts.ext.term.NJLineHistory.DEFAULT_HISTORY_SIZE;
-
+import net.thevpc.nuts.NExecutionException;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.cmdline.NCmdLineHistoryEntry;
+import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NSystemTerminal;
@@ -41,12 +19,21 @@ import net.thevpc.nuts.spi.NSystemTerminalBase;
 import org.jline.reader.History;
 import org.jline.reader.History.Entry;
 import org.jline.reader.LineReader;
-import static org.jline.reader.LineReader.HISTORY_IGNORE;
-import static org.jline.reader.impl.ReaderUtils.getBoolean;
-import static org.jline.reader.impl.ReaderUtils.getInt;
-import static org.jline.reader.impl.ReaderUtils.getString;
-import static org.jline.reader.impl.ReaderUtils.isSet;
 import org.jline.utils.Log;
+
+import java.io.*;
+import java.nio.file.*;
+import java.time.Instant;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Objects;
+import java.util.function.Consumer;
+
+import static net.thevpc.nuts.ext.term.NJLineHistory.DEFAULT_HISTORY_FILE_SIZE;
+import static net.thevpc.nuts.ext.term.NJLineHistory.DEFAULT_HISTORY_SIZE;
+import static org.jline.reader.LineReader.HISTORY_IGNORE;
+import static org.jline.reader.impl.ReaderUtils.*;
 
 /**
  *
@@ -109,7 +96,7 @@ public class NJLineCmdLineHistory implements NCmdLineHistory {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        NSystemTerminal st = NConfigs.of(context.getSession()).getSystemTerminal();
+        NSystemTerminal st = NIO.of(context.getSession()).getSystemTerminal();
         boolean jline=false;
         NSystemTerminalBase b = st.getBase();
         if(b!=null){

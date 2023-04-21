@@ -92,7 +92,6 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCommandFactory
             String[] ec = replaceParam(execCommand, name);
             NExecCommand exec = NExecCommand.of(session).addCommand(fc).setSession(session)
                     //                        .setExecutorOptions("--show-command")
-                    .setRedirectErrorStream(true)
                     .grabOutputString()
                     .run();
             int r = exec.getResult();
@@ -112,7 +111,7 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCommandFactory
         List<NCommandConfig> c = new ArrayList<>();
         if (listCommand.length > 0) {
             NExecCommand b = NExecCommand.of(session).addCommand(listCommand).setSession(session)
-                    .setRedirectErrorStream(true)
+                    .redirectErrorStream()
                     .grabOutputString();
             int r = b.getResult();
             if (r == 0) {

@@ -7,6 +7,7 @@ import java.util.EnumSet;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
 public class NDependencyScopeFilter extends AbstractDependencyFilter {
 
@@ -44,7 +45,9 @@ public class NDependencyScopeFilter extends AbstractDependencyFilter {
 
     @Override
     public String toString() {
-        return scope.isEmpty()?"true": "scope in (" + scope.stream().map(CoreEnumUtils::getEnumString).collect(Collectors.joining(", ")) + ')';
+        return CoreStringUtils.trueOrEqOrIn("scope",
+                        scope.stream().map(x-> x.id()).collect(Collectors.toList())
+                );
     }
 
     @Override

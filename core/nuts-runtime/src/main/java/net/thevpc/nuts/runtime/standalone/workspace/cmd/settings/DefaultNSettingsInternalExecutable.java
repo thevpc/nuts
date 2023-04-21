@@ -21,8 +21,8 @@ import java.util.List;
  */
 public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNSettingsInternalExecutable(String[] args, NSession session) {
-        super("fetch", args, session);
+    public DefaultNSettingsInternalExecutable(String[] args, NExecCommand execCommand) {
+        super("fetch", args, execCommand);
     }
 
     private List<NSettingsSubCommand> subCommands;

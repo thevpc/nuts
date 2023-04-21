@@ -230,10 +230,11 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             NSystemTerminalBase termb = defaultSession().extensions()
                     .createComponent(NSystemTerminalBase.class).get();
             NConfigs config = NConfigs.of(defaultSession());
-            config
+            NIO terminals = NIO.of(defaultSession());
+            terminals
                     .setSystemTerminal(termb)
-                    .setDefaultTerminal(NSessionTerminal.of(defaultSession())
-                    );
+                    .setDefaultTerminal(NSessionTerminal.of(defaultSession()))
+                    ;
             wsModel.bootModel.bootSession().setTerminal(NSessionTerminal.of(wsModel.bootModel.bootSession()));
             ((DefaultNLog) LOG).resumeTerminal(defaultSession());
 
@@ -253,7 +254,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             if (LOG.isLoggable(Level.CONFIG)) {
                 //just log known implementations
                 NCmdLines.of(defaultSession());
-                NTerminals.of(defaultSession());
                 NIO.of(defaultSession());
                 NVersionFormat.of(defaultSession());
                 NIdFormat.of(defaultSession());
@@ -611,7 +611,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             if (bootOptions.getUserName().orElse("").trim().length() > 0) {
                 char[] password = bootOptions.getCredentials().orNull();
                 if (password == null || NBlankable.isBlank(new String(password))) {
-                    password = config.getDefaultTerminal().readPassword(NMsg.ofPlain("Password : "));
+                    password = terminals.getDefaultTerminal().readPassword(NMsg.ofPlain("Password : "));
                 }
                 NWorkspaceSecurityManager.of(defaultSession()).login(bootOptions.getUserName().get(), password);
             }
@@ -688,7 +688,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         for (NId parent : parents) {
             parentDescriptors.add(
                     _applyParentDescriptors(
-                            NFetchCommand.of(session).setId(parent).setSession(session).getResultDescriptor(),
+                            NFetchCommand.of(parent,session).getResultDescriptor(),
                             session
                     )
             );
@@ -760,7 +760,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         LinkedHashSet<NDependency> effStandardDeps = new LinkedHashSet<>();
         for (NDependency standardDependency : effectiveDescriptor.getStandardDependencies()) {
             if ("import".equals(standardDependency.getScope())) {
-                NDescriptor dd = NFetchCommand.of(session).setId(standardDependency.toId()).setEffective(true).setSession(session).getResultDescriptor();
+                NDescriptor dd = NFetchCommand.of(standardDependency.toId(),session).setEffective(true).getResultDescriptor();
                 for (NDependency dependency : dd.getStandardDependencies()) {
                     if (CoreFilterUtils.acceptDependency(dependency, session)) {
                         effStandardDeps.add(dependency);
@@ -808,7 +808,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
             if ("import".equals(d.getScope())) {
                 someChange = true;
-                newDeps.addAll(NFetchCommand.of(session).setId(d.toId()).setEffective(true).setSession(session).getResultDescriptor().getDependencies());
+                newDeps.addAll(NFetchCommand.of(d.toId(),session).setEffective(true).getResultDescriptor().getDependencies());
             } else {
                 newDeps.add(d);
             }
@@ -871,7 +871,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         if (NId.ofApi("").get().equalsShortId(id)) {
             return id;
         }
-        for (NDependency dependency : NFetchCommand.of(session).setId(id).getResultDescriptor().getDependencies()) {
+        for (NDependency dependency : NFetchCommand.of(id,session).getResultDescriptor().getDependencies()) {
             NId q = resolveApiId(dependency.toId(), visited, session);
             if (q != null) {
                 return q;
@@ -908,9 +908,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             if (def.getEffectiveDescriptor().isNotPresent()
                     || (!NDescriptorUtils.isNoContent(def.getDescriptor()) && def.getContent().isNotPresent())) {
                 // reload def
-                NFetchCommand fetch2 = NFetchCommand.of(session)
-                        .setSession(session)
-                        .setId(def.getId())
+                NFetchCommand fetch2 = NFetchCommand.of(def.getId(),session)
                         .setContent(true)
                         .setRepositoryFilter(NRepositories.of(session).filter().installedRepo())
                         .setFailFast(true);
@@ -962,7 +960,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             if (reinstall) {
                 uninstallImpl(def, new String[0], resolveInstaller, true, false, false, session);
                 //must re-fetch def!
-                NDefinition d2 = NFetchCommand.of(session).setId(def.getId())
+                NDefinition d2 = NFetchCommand.of(def.getId(),session)
                         .setContent(true)
                         .setEffective(true)
                         .setDependencies(true)
@@ -990,13 +988,17 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             if (strategy0 == InstallStrategy0.UPDATE) {
                 switch (def.getDescriptor().getIdType()) {
                     case API: {
-                        oldDef = NFetchCommand.of(session).setSession(
-                                session.copy().setFetchStrategy(NFetchStrategy.ONLINE)
-                        ).setId(NId.ofApi(Nuts.getVersion()).get()).setFailFast(false).getResultDefinition();
+                        oldDef = NFetchCommand.of(
+                                        NId.ofApi(Nuts.getVersion()).get(),
+                                session.copy().setFetchStrategy(NFetchStrategy.ONLINE))
+                                .setFailFast(false).getResultDefinition();
                         break;
                     }
                     case RUNTIME: {
-                        oldDef = NFetchCommand.of(session).setSession(session.copy().setFetchStrategy(NFetchStrategy.ONLINE)).setId(getRuntimeId())
+                        oldDef = NFetchCommand.of(
+                                        getRuntimeId(),
+                                        session.copy().setFetchStrategy(NFetchStrategy.ONLINE)
+                                )
                                 .setFailFast(false).getResultDefinition();
                         break;
                     }
@@ -1075,7 +1077,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 //should change def to reflect install location!
                 NExecutionContextBuilder cc = createExecutionContext()
                         .setSession(session.copy())
-                        .setExecSession(session.copy())
                         .setDefinition(def).setArguments(args).setFailFast(true).setTemporary(false)
                         .setExecutionType(NBootManager.of(session).getBootOptions().getExecutionType().orNull())
                         .setRunAs(NRunAs.currentUser())// install or update always uses current user
@@ -1083,7 +1084,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 NArtifactCall installer = def.getDescriptor().getInstaller();
                 if (installer != null) {
                     cc.addExecutorOptions(installer.getArguments());
-                    cc.addExecutorProperties(installer.getProperties());
                 }
                 cc.setWorkspace(cc.getSession().getWorkspace());
                 NExecutionContext executionContext = cc.build();
@@ -1100,9 +1100,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 }
 
                 //now should reload definition
-                NFetchCommand fetch2 = NFetchCommand.of(session)
-                        .setSession(session)
-                        .setId(executionContext.getDefinition().getId())
+                NFetchCommand fetch2 = NFetchCommand.of(executionContext.getDefinition().getId(),session)
                         .setContent(true)
                         .setRepositoryFilter(NRepositories.of(session).filter().installedRepo())
                         .setFailFast(true);
@@ -1208,8 +1206,14 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                         session.getWorkspace().getApiId(),
                         wcfg.getModel().getStoredConfigBoot().getExtensions())
                         .save();
-                h.add(def.getId(), def.getDependencies().get(session).transitiveWithSource()
-                        .toArray(NDependency[]::new));
+                NDependencies nDependencies = null;
+                if (!def.getDependencies().isPresent()) {
+                    nDependencies = NFetchCommand.of(def.getId(), session).setDependencies(true)
+                            .getResultDefinition().getDependencies().get(session);
+                } else {
+                    nDependencies = def.getDependencies().get(session);
+                }
+                h.add(def.getId(), nDependencies.transitiveWithSource().toList());
                 wcfg.getModel().getStoredConfigBoot().setExtensions(h.getConfs());
                 wcfg.getModel().fireConfigurationChanged("extensions", session, ConfigEventType.BOOT);
             }
@@ -1380,15 +1384,11 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 }
                 NSession sessionCopy = session.copy();
                 wsModel.extensionModel.wireExtension(extensionId,
-                        NFetchCommand.of(session).setSession(sessionCopy
+                        NFetchCommand.of(sessionCopy
                                 .copy()
                                 .setFetchStrategy(NFetchStrategy.ONLINE)
-                                .setTransitive(true)
-                        )
+                                .setTransitive(true))
                 );
-                if (sessionCopy.getTerminal() != session.getTerminal()) {
-                    session.setTerminal(sessionCopy.getTerminal());
-                }
             }
             NUserConfig adminSecurity = NConfigsExt.of(NConfigs.of(session))
                     .getModel()
@@ -1491,7 +1491,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         if ((NBlankable.isBlank(g)) || (NBlankable.isBlank(v))) {
             List<NId> parents = descriptor.getParents();
             for (NId parent : parents) {
-                NId p = NFetchCommand.of(session).setId(parent).setEffective(true).getResultId();
+                NId p = NFetchCommand.of(parent,session).setEffective(true).getResultId();
                 if (NBlankable.isBlank(g)) {
                     g = p.getGroupId();
                 }
@@ -1520,7 +1520,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             all.addAll(parents);
             while (!all.isEmpty()) {
                 NId parent = all.pop();
-                NDescriptor dd = NFetchCommand.of(session).setId(parent).setEffective(true).getResultDescriptor();
+                NDescriptor dd = NFetchCommand.of(parent,session).setEffective(true).getResultDescriptor();
                 bestId = NDescriptorUtils.applyProperties(bestId.builder(), new MapToFunction(NDescriptorUtils.getPropertiesMap(dd.getProperties(), session))).build();
                 if (CoreNUtils.isEffectiveId(bestId)) {
                     return bestId;
@@ -1622,7 +1622,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 NExecutionContext executionContext = createExecutionContext()
                         .setDefinition(def)
                         .setArguments(args)
-                        .setExecSession(session)
                         .setSession(session)
                         .setWorkspace(session.getWorkspace())
                         .setFailFast(true)
@@ -1777,7 +1776,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     @Override
     public void deployBoot(NSession session, NId id, boolean withDependencies) {
         Map<NId, NDefinition> defs = new HashMap<>();
-        NDefinition m = NFetchCommand.of(session).setId(id).setContent(true).setDependencies(true).setFailFast(false).getResultDefinition();
+        NDefinition m = NFetchCommand.of(id,session).setContent(true).setDependencies(true).setFailFast(false).getResultDefinition();
         Map<String, String> a = new LinkedHashMap<>();
         a.put("configVersion", Nuts.getVersion().toString());
         a.put("id", id.getLongName());
@@ -1787,7 +1786,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         if (withDependencies) {
             for (NDependency dependency : m.getDependencies().get(session)) {
                 if (!defs.containsKey(dependency.toId().getLongId())) {
-                    m = NFetchCommand.of(session).setId(id).setContent(true).setDependencies(true).setFailFast(false).getResultDefinition();
+                    m = NFetchCommand.of(id,session).setContent(true).setDependencies(true).setFailFast(false).getResultDefinition();
                     defs.put(m.getId().getLongId(), m);
                 }
             }
@@ -1799,7 +1798,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     .to(bootstrapFolder.resolve(NLocations.of(session).getDefaultIdBasedir(id2))
                             .resolve(NLocations.of(session).getDefaultIdFilename(id2.builder().setFaceContent().setPackaging("jar").build()))
                     ).run();
-            NFetchCommand.of(session).setId(id2).getResultDescriptor().formatter(session).setNtf(false)
+            NFetchCommand.of(id2,session).getResultDescriptor().formatter(session).setNtf(false)
                     .print(bootstrapFolder.resolve(NLocations.of(session).getDefaultIdBasedir(id2))
                             .resolve(NLocations.of(session).getDefaultIdFilename(id2.builder().setFaceDescriptor().build())));
 

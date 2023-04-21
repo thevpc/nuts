@@ -22,7 +22,9 @@ public class NReservedBootRepositoryDB implements NRepositoryDB {
                                 NConstants.Names.DEFAULT_WORKSPACE_NAME) + "/" + NConstants.Folders.ID
                 )
         );
-        reg("maven", "maven", "central", "maven", "mvn",".m2", "m2");
+        reg("maven", "maven");
+        reg("maven-central", "maven@https://repo.maven.apache.org/maven2");
+
         reg("jcenter", "maven@https://jcenter.bintray.com");
         reg("jboss", "maven@https://repository.jboss.org/nexus/content/repositories/releases");
         reg("clojars", "maven@https://repo.clojars.org");

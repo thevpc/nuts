@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.filter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.dependency.util.NComplexExpressionString;
+import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 
 import java.util.ArrayList;
@@ -8,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class NDescriptorFilterAnd extends AbstractDescriptorFilter{
+public class NDescriptorFilterAnd extends AbstractDescriptorFilter implements NComplexExpressionString {
 
     private NDescriptorFilter[] all;
 
@@ -71,7 +73,7 @@ public class NDescriptorFilterAnd extends AbstractDescriptorFilter{
 
     @Override
     public String toString() {
-        return String.join(" and ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
+        return CoreStringUtils.trueOrAnd(Arrays.stream(all).map(NComplexExpressionString::toString).collect(Collectors.toList()));
     }
 
     public List<NFilter> getSubFilters() {

@@ -18,8 +18,8 @@ import net.thevpc.nuts.text.NText;
  */
 public class DefaultNLicenseInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNLicenseInternalExecutable(String[] args, NSession session) {
-        super("license", args, session);
+    public DefaultNLicenseInternalExecutable(String[] args, NExecCommand execCommand) {
+        super("license", args, execCommand);
     }
 
     @Override

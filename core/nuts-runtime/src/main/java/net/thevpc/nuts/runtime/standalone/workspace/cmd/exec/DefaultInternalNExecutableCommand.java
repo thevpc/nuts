@@ -20,16 +20,9 @@ import net.thevpc.nuts.text.NTexts;
 public abstract class DefaultInternalNExecutableCommand extends AbstractNExecutableCommand {
 
     protected String[] args;
-    private NSession session;
-
-    public DefaultInternalNExecutableCommand(String name, String[] args, NSession session) {
-        super(name, name, NExecutableType.INTERNAL);
+    public DefaultInternalNExecutableCommand(String name, String[] args,NExecCommand execCommand) {
+        super(name, name, NExecutableType.INTERNAL,execCommand);
         this.args = args;
-        this.session = session;
-    }
-
-    public NSession getSession() {
-        return session;
     }
 
     @Override
@@ -38,14 +31,14 @@ public abstract class DefaultInternalNExecutableCommand extends AbstractNExecuta
     }
 
     protected void showDefaultHelp() {
-        session.out().println(getHelpText());
+        getSession().out().println(getHelpText());
     }
 
 
     @Override
     public NText getHelpText() {
         NTexts txt = NTexts.of(getSession());
-        NPath path = NPath.of("classpath://net/thevpc/nuts/runtime/command/" + name + ".ntf", getClass().getClassLoader(), session);
+        NPath path = NPath.of("classpath://net/thevpc/nuts/runtime/command/" + name + ".ntf", getClass().getClassLoader(), getSession());
         NText n = txt.parser().parse(path);
         if (n == null) {
             return super.getHelpText();

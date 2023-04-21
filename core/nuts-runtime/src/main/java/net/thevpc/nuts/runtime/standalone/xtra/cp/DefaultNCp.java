@@ -759,7 +759,7 @@ public class DefaultNCp implements NCp {
             if(_target!=null) {
                 _localFile = _target.toFile();
             }
-            _target_isLocalPath=true;
+            _target_isLocalPath=_localFile!=null;
         }catch (Exception e){
             // ignore
         }
@@ -806,8 +806,7 @@ public class DefaultNCp implements NCp {
                     NPath.of(to, session).mkParentDirs();
                     temp = to.resolveSibling(to.getFileName() + "~");
                 } else {
-                    temp = NPaths.of(getSession())
-                            .createTempFile("temp~").toFile();
+                    temp = NPath.ofTempFile("temp~",getSession()).toFile();
                 }
                 try {
                     if (_source0 != null) {

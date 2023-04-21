@@ -129,7 +129,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
                     .setCommand(cmdList)
                     .addCommand()
                     .setExecutionType(NExecutionType.SYSTEM)
-                    .setRedirectErrorStream(true).grabOutputString()
+                    .redirectErrorStream().grabOutputString()
                     .run()
                     .getOutputString().trim();
             if (session.isPlainTrace() && !outStr.isEmpty()) {

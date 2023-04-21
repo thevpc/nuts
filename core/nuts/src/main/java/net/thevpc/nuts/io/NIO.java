@@ -40,13 +40,6 @@ public interface NIO extends NComponent {
        return NExtensions.of(session).createComponent(NIO.class).get();
     }
 
-    static InputStream ofNullInputStream(NSession session) {
-        return of(session).ofNullInputStream();
-    }
-    static NPrintStream ofNullPrintStream(NSession session) {
-        return of(session).ofNullPrintStream();
-    }
-
     InputStream ofNullInputStream();
 
     boolean isStdin(InputStream in);
@@ -96,4 +89,89 @@ public interface NIO extends NComponent {
     NOutputTarget ofOutputTarget(OutputStream inputStream);
 
     NOutputTarget ofOutputTarget(OutputStream inputStream, NOutputTargetMetadata metadata);
+
+    /**
+     * Checks for the current system terminal and does best effort
+     * to enable a rich terminal. Rich terminals add somme features
+     * including 'auto-complete'. This Method may replace the system
+     * terminal and may even load a nuts extension to enable such features.
+     *
+     * @return {@code this} instance
+     */
+    NIO enableRichTerm();
+
+    /**
+     * return new terminal bound to the given session
+     *
+     * @return new terminal
+     */
+    NSessionTerminal createTerminal();
+
+    /**
+     * return new terminal
+     *
+     * @param in  in
+     * @param out out
+     * @param err err
+     * @return new terminal
+     */
+    NSessionTerminal createTerminal(InputStream in, NPrintStream out, NPrintStream err);
+
+    /**
+     * return new terminal bound to the given parent terminal and session.
+     *
+     * @param terminal parent terminal (or null)
+     * @return new terminal bound to the given parent terminal and session.
+     */
+    NSessionTerminal createTerminal(NSessionTerminal terminal);
+
+    /**
+     * return a new terminal with empty input and byte-array output/error.
+     * Using such terminals help capturing all output/error stream upon execution.
+     * This method is equivalent to createMemTerminal(false,session)
+     *
+     * @return a new terminal with empty input and byte-array output/error.
+     */
+    NSessionTerminal createMemTerminal();
+
+    /**
+     * return a new terminal with empty input and byte-array output/error.
+     * Using such terminals help capturing all output/error stream upon execution.
+     *
+     * @param mergeErr when true out and err are merged into a single stream
+     * @return a new terminal with empty input and byte-array output/error.
+     */
+    NSessionTerminal createMemTerminal(boolean mergeErr);
+
+
+    /**
+     * return workspace system terminal.
+     *
+     * @return workspace system terminal
+     */
+    NSystemTerminal getSystemTerminal();
+
+    /**
+     * update workspace wide system terminal
+     *
+     * @param terminal system terminal
+     * @return {@code this} instance
+     */
+    NIO setSystemTerminal(NSystemTerminalBase terminal);
+
+    /**
+     * return workspace default terminal
+     *
+     * @return workspace default terminal
+     */
+    NSessionTerminal getDefaultTerminal();
+
+    /**
+     * update workspace wide terminal
+     *
+     * @param terminal terminal
+     * @return {@code this} instance
+     */
+    NIO setDefaultTerminal(NSessionTerminal terminal);
+
 }

@@ -1,9 +1,6 @@
 package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 
-import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.NDefinition;
-import net.thevpc.nuts.NFetchCommand;
-import net.thevpc.nuts.NSearchCommand;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nutsserver.AbstractFacadeCommand;
 import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;
 
@@ -39,7 +36,8 @@ public class GetBootFacadeCommand extends AbstractFacadeCommand {
                 context.sendError(404, "File Note Found");
             }
         } else {
-            NDefinition def = NFetchCommand.of(context.getSession()).setId(NConstants.Ids.NUTS_API + "#" + version).setContent(true).getResultDefinition();
+            NDefinition def = NFetchCommand.of(NId.of(NConstants.Ids.NUTS_API).get().builder().setVersion(version).build(),context.getSession())
+                    .setContent(true).getResultDefinition();
             if (def != null && def.getContent().isPresent()) {
                 context.addResponseHeader("content-disposition", "attachment; filename=\"nuts-" + def.getId().getVersion().toString() + ".jar\"");
                 context.sendResponseFile(200, def.getContent().orNull());

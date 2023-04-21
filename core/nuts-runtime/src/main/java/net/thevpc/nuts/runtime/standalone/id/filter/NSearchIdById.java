@@ -47,7 +47,7 @@ public class NSearchIdById implements NSearchId {
 
     @Override
     public NDescriptor getDescriptor(NSession session) {
-        return NFetchCommand.of(session).setId(id).getResultDescriptor();
+        return NFetchCommand.of(id,session).getResultDescriptor();
     }
 
 }

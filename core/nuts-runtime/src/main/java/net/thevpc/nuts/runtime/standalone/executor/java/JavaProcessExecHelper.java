@@ -55,10 +55,14 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
             }
             String directory = NBlankable.isBlank(joptions.getDir()) ? null : joptions.getDir().toAbsolute().toString();
             ProcessExecHelper.ofDefinition(def,
-                    args.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), joptions.isShowCommand(), true, executionContext.getSleepMillis(), executionContext.isInheritSystemIO(), false,
-                    executionContext.getRedirectOutputFile(),
-                    executionContext.getRedirectInputFile(),
-                    executionContext.getRunAs(), executionContext.getSession(),
+                    args.toArray(new String[0]), osEnv, directory,
+                    joptions.isShowCommand(), true,
+                    executionContext.getSleepMillis(),
+                    executionContext.getIn(),
+                    executionContext.getOut(),
+                    executionContext.getErr(),
+                    executionContext.getRunAs(),
+                    executionContext.getSession(),
                     execSession
             ).exec();
             return 0;
@@ -78,10 +82,15 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
         String directory = NBlankable.isBlank(joptions.getDir()) ? null : joptions.getDir().toAbsolute().toString();
         NWorkspaceExt.of(getSession()).getModel().recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(), ""), NRecommendationPhase.EXEC, false, getSession());
         return ProcessExecHelper.ofDefinition(def,
-                args.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), joptions.isShowCommand(), true, executionContext.getSleepMillis(), executionContext.isInheritSystemIO(), false,
-                executionContext.getRedirectOutputFile(),
-                executionContext.getRedirectInputFile(),
-                executionContext.getRunAs(), executionContext.getSession(),
+                args.toArray(new String[0]), osEnv, directory,
+                joptions.isShowCommand(),
+                true,
+                executionContext.getSleepMillis(),
+                executionContext.getIn(),
+                executionContext.getOut(),
+                executionContext.getErr(),
+                executionContext.getRunAs(),
+                executionContext.getSession(),
                 execSession
         );
     }

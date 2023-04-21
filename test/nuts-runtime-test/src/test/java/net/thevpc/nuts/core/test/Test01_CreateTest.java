@@ -20,7 +20,6 @@ import net.thevpc.nuts.format.NTreeFormat;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.spi.NPaths;
-import net.thevpc.nuts.spi.NTerminals;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.*;
@@ -223,10 +222,6 @@ public class Test01_CreateTest {
         }
         {
             NLocks c = NLocks.of(s);
-            Assertions.assertNotNull(c);
-        }
-        {
-            NTerminals c = NTerminals.of(s);
             Assertions.assertNotNull(c);
         }
         {

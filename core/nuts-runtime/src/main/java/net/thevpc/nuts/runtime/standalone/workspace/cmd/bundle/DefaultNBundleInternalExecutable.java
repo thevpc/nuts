@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
  */
 public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNBundleInternalExecutable(String[] args, NSession session) {
-        super("bundle", args, session);
+    public DefaultNBundleInternalExecutable(String[] args, NExecCommand execCommand) {
+        super("bundle", args, execCommand);
     }
 
     @Override
@@ -182,7 +182,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         switch (format) {
             case "jar":
             case "zip": {
-                rootFolder = NPaths.of(session).createTempFolder("bundle");
+                rootFolder = NPath.ofTempFolder("bundle", session);
                 includeConfigFiles = true;
                 bundleFolder = rootFolder.resolve("META-INF/bundle");
                 break;

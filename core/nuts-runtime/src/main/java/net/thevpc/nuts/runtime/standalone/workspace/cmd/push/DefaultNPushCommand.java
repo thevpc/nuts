@@ -60,7 +60,7 @@ public class DefaultNPushCommand extends AbstractDefaultNPushCommand {
             if (NStringUtils.trim(id.getVersion().getValue()).endsWith(CoreNConstants.Versions.CHECKED_OUT_EXTENSION)) {
                 throw new NIllegalArgumentException(getSession(), NMsg.ofC("invalid version %s", id.getVersion()));
             }
-            NDefinition file = NFetchCommand.of(session).setId(id).setSession(session.copy().setTransitive(false)).setContent(true).getResultDefinition();
+            NDefinition file = NFetchCommand.of(id,session.copy().setTransitive(false)).setContent(true).getResultDefinition();
             NAssert.requireNonNull(file, "content to push", session);
             toProcess.put(id, file);
         }

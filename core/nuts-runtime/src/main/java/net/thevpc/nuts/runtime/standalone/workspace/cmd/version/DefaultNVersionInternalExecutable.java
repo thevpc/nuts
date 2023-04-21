@@ -17,11 +17,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCommand
  */
 public class DefaultNVersionInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    private final DefaultNExecCommand execCommand;
-
-    public DefaultNVersionInternalExecutable(String[] args, NSession session, final DefaultNExecCommand execCommand) {
-        super("version", args, session);
-        this.execCommand = execCommand;
+    public DefaultNVersionInternalExecutable(String[] args, final DefaultNExecCommand execCommand) {
+        super("version", args, execCommand);
     }
 
     @Override

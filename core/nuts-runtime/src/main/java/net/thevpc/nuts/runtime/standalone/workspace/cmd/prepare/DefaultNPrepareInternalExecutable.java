@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.prepare;
 
+import net.thevpc.nuts.NExecCommand;
 import net.thevpc.nuts.NPrepareCommand;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
@@ -15,8 +16,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExe
  */
 public class DefaultNPrepareInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNPrepareInternalExecutable(String[] args, NSession session) {
-        super("prepare", args, session);
+    public DefaultNPrepareInternalExecutable(String[] args, NExecCommand execCommand) {
+        super("prepare", args, execCommand);
     }
 
     @Override

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import net.thevpc.nuts.NSession;
 
-public class NCommandLineUtils {
+public class NCmdLineUtils {
     public static class OptionsAndArgs {
         private String[] options;
         private String[] args;

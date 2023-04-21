@@ -26,8 +26,6 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableCommand {
     Map<String, String> env;
     NPath dir;
     boolean failFast;
-    NSession session;
-    NSession execSession;
     NExecutionType executionType;
     NRunAs runAs;
     DefaultNExecCommand execCommand;
@@ -35,16 +33,14 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableCommand {
 
     public DefaultNArtifactExecutable(NDefinition def, String commandName, String[] appArgs, List<String> executorOptions,
                                       List<String> workspaceOptions, Map<String, String> env, NPath dir, boolean failFast,
-                                      NSession session,
-                                      NSession execSession,
                                       NExecutionType executionType, NRunAs runAs, DefaultNExecCommand execCommand) {
-        super(commandName, def.getId().getLongName(), NExecutableType.ARTIFACT);
+        super(commandName, def.getId().getLongName(), NExecutableType.ARTIFACT, execCommand);
         this.def = def;
         this.runAs = runAs;
-        //all these information areavailable, an exception would be thrown if not!
-        def.getContent().get(session);
-        def.getDependencies().get(session);
-        def.getEffectiveDescriptor().get(session);
+        //all these information are available, an exception would be thrown if not!
+        def.getContent().get(getSession());
+        def.getDependencies().get(getSession());
+        def.getEffectiveDescriptor().get(getSession());
 //        def.getInstallInformation();
 
         this.commandName = commandName;
@@ -52,8 +48,6 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableCommand {
         this.env = env;
         this.dir = dir;
         this.failFast = failFast;
-        this.session = session;
-        this.execSession = execSession;
         this.executionType = executionType;
         this.execCommand = execCommand;
 
@@ -66,7 +60,7 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableCommand {
             NArg a = NArg.of(option);
             if (a.key().equals("--nuts-auto-install")) {
                 if (a.isKeyValue()) {
-                    autoInstall = a.isNegated() != a.getBooleanValue().get(session);
+                    autoInstall = a.isNegated() != a.getBooleanValue().get(getSession());
                 } else {
                     autoInstall = true;
                 }
@@ -85,25 +79,27 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableCommand {
 
     @Override
     public void execute() {
-        if (execSession.isDry()) {
+        NSession session = getSession();
+        if (session.isDry()) {
             if (autoInstall && !def.getInstallInformation().get(session).getInstallStatus().isInstalled()) {
-                NWorkspaceSecurityManager.of(execSession).checkAllowed(NConstants.Permissions.AUTO_INSTALL, commandName);
-                NPrintStream out = execSession.out();
+                NWorkspaceSecurityManager.of(session).checkAllowed(NConstants.Permissions.AUTO_INSTALL, commandName);
+                NPrintStream out = session.out();
                 out.println(NMsg.ofC("[dry] ==install== %s", def.getId().getLongName()));
             }
-            execCommand.ws_execId(def, commandName, appArgs, executorOptions, workspaceOptions, env, dir, failFast, false, session, execSession.copy().setDry(true), executionType, runAs);
+            execCommand.ws_execId(def, commandName, appArgs, executorOptions, workspaceOptions, env, dir, failFast,
+                    false, session, execCommand.getIn(), execCommand.getOut(), execCommand.getErr(), executionType, runAs);
             return;
         }
         NInstallStatus installStatus = def.getInstallInformation().get(session).getInstallStatus();
         if (!installStatus.isInstalled()) {
             if (autoInstall) {
                 NInstallCommand.of(session).addId(def.getId()).run();
-                NInstallStatus st = NFetchCommand.of(session).setId(def.getId()).getResultDefinition().getInstallInformation().get(session).getInstallStatus();
+                NInstallStatus st = NFetchCommand.of(def.getId(), session).getResultDefinition().getInstallInformation().get(session).getInstallStatus();
                 if (!st.isInstalled()) {
-                    throw new NUnexpectedException(execSession, NMsg.ofC("auto installation of %s failed", def.getId()));
+                    throw new NUnexpectedException(session, NMsg.ofC("auto installation of %s failed", def.getId()));
                 }
             } else {
-                throw new NUnexpectedException(execSession, NMsg.ofC("you must install %s to be able to run it", def.getId()));
+                throw new NUnexpectedException(session, NMsg.ofC("you must install %s to be able to run it", def.getId()));
             }
         } else if (installStatus.isObsolete()) {
             if (autoInstall) {
@@ -140,7 +136,11 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableCommand {
 //                }
 //            }
 //        }
-        execCommand.ws_execId(def, commandName, appArgs, executorOptions, workspaceOptions, env, dir, failFast, false, session, execSession.copy().setDry(false), executionType, runAs);
+        execCommand.ws_execId(def, commandName, appArgs, executorOptions, workspaceOptions, env, dir, failFast, false, session
+                , execCommand.getIn()
+                , execCommand.getOut()
+                , execCommand.getErr()
+                , executionType, runAs);
     }
 
     @Override
@@ -148,8 +148,4 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableCommand {
         return "nuts " + getId().toString() + " " + NCmdLine.of(appArgs).toString();
     }
 
-    @Override
-    public NSession getSession() {
-        return session;
-    }
 }

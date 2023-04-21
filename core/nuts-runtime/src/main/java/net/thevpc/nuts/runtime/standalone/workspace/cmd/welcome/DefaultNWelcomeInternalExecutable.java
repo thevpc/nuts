@@ -23,8 +23,8 @@ import java.util.Map;
  */
 public class DefaultNWelcomeInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNWelcomeInternalExecutable(String[] args, NSession session) {
-        super("welcome", args, session);
+    public DefaultNWelcomeInternalExecutable(String[] args, NExecCommand execCommand) {
+        super("welcome", args, execCommand);
     }
 
     @Override

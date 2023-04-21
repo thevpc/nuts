@@ -26,11 +26,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NSessionTerminal;
-import net.thevpc.nuts.io.NSystemTerminal;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NIndexStoreFactory;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
 
 import java.util.List;
 import java.util.Map;
@@ -63,8 +60,6 @@ public interface NConfigs extends NComponent,NSessionProvider {
 
     NWorkspaceBootConfig loadBootConfig(String path, boolean global, boolean followLinks);
 
-    boolean isExcludedExtension(String extensionId, NWorkspaceOptions options);
-
     boolean isSupportedRepositoryType(String repositoryType);
 
     List<NAddRepositoryOptions> getDefaultRepositories();
@@ -79,40 +74,9 @@ public interface NConfigs extends NComponent,NSessionProvider {
 
     String getJavaOptions();
 
-    boolean isGlobal();
+    boolean isSystemWorkspace();
 
     NConfigs setSession(NSession session);
-
-
-    /**
-     * return workspace system terminal.
-     *
-     * @return workspace system terminal
-     */
-    NSystemTerminal getSystemTerminal();
-
-    /**
-     * update workspace wide system terminal
-     *
-     * @param terminal system terminal
-     * @return {@code this} instance
-     */
-    NConfigs setSystemTerminal(NSystemTerminalBase terminal);
-
-    /**
-     * return workspace default terminal
-     *
-     * @return workspace default terminal
-     */
-    NSessionTerminal getDefaultTerminal();
-
-    /**
-     * update workspace wide terminal
-     *
-     * @param terminal terminal
-     * @return {@code this} instance
-     */
-    NConfigs setDefaultTerminal(NSessionTerminal terminal);
 
     Map<String, String> getConfigMap();
 

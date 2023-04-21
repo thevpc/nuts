@@ -75,7 +75,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                                         )
                         );
                 NExecCommand cmd = NExecCommand.of(session)
-                        .setSession(executionContext.getExecSession())
+                        .setSession(executionContext.getSession())
                         .setCommand(def2)
                         .addCommand("--nuts-exec-mode=" + mode);
                 if (mode.equals("install")) {
@@ -104,10 +104,10 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                     eargs.add(evalString(a, mode, executionContext));
                 }
                 eargs.addAll(executionContext.getArguments());
-                NExecCommand.of(executionContext.getExecSession())
+                NExecCommand.of(executionContext.getSession())
                         .setCommand(def2)
                         .addCommand(eargs)
-                        .setExecutionType(NBootManager.of(executionContext.getExecSession()).getBootOptions().getExecutionType().orNull())
+                        .setExecutionType(NBootManager.of(executionContext.getSession()).getBootOptions().getExecutionType().orNull())
                         .setExecutionType(
                                 "nsh".equals(def2.getId().getArtifactId()) ?
                                         NExecutionType.EMBEDDED : NExecutionType.SPAWN

@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -18,9 +19,7 @@ import net.thevpc.nuts.util.NLog;
 import net.thevpc.nuts.util.NLogVerb;
 import net.thevpc.nuts.util.NStringUtils;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -31,85 +30,38 @@ import java.util.logging.Level;
 
 public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
 
-    NDefinition definition;
-    ProcessBuilder2 pb;
-    NPrintStream out;
+    private NDefinition definition;
+    private ProcessBuilder2 pb;
+    private NPrintStream trace;
+    private NExecInput in;
+    private NExecOutput out;
+    private NExecOutput err;
 
-    public ProcessExecHelper(NDefinition definition, ProcessBuilder2 pb, NSession session, NPrintStream out) {
+    public ProcessExecHelper(NDefinition definition, ProcessBuilder2 pb, NSession session, NPrintStream trace, NExecInput in, NExecOutput out, NExecOutput err) {
         super(session);
         this.pb = pb;
-        this.out = out;
+        this.trace = trace;
         this.definition = definition;
+        this.in = in;
+        this.out = out;
+        this.err = err;
     }
 
-    public static ProcessExecHelper ofArgs(NDefinition definition, String[] args, Map<String, String> env, Path directory, NSessionTerminal prepareTerminal,
-                                           NSessionTerminal execTerminal, boolean showCommand, boolean failFast, long sleep,
-                                           boolean inheritSystemIO, boolean redirectErr, NPath inputFile, NPath outputFile,
+    public static ProcessExecHelper ofArgs(NDefinition definition, String[] args, Map<String, String> env, Path directory,
+                                           boolean showCommand, boolean failFast, long sleep,
+                                           NExecInput in, NExecOutput out, NExecOutput err,
                                            NRunAs runAs,
                                            NSession session) {
         List<String> newCommands = buildEffectiveCommand(args, runAs, session);
-        NPrintStream out = null;
-        NPrintStream err = null;
-        InputStream in = null;
         ProcessBuilder2 pb = new ProcessBuilder2(session);
         pb.setCommand(newCommands)
                 .setEnv(env)
                 .setDirectory(directory == null ? null : directory.toFile())
                 .setSleepMillis(sleep)
                 .setFailFast(failFast);
-        if (!inheritSystemIO) {
-            if (inputFile == null) {
-                in = execTerminal.in();
-                if (NIO.of(session).isStdin(in)) {
-                    in = null;
-                }
-            }
-            if (outputFile == null) {
-                out = execTerminal.out();
-                if (NIO.of(session).isStdout(out)) {
-                    out = null;
-                }
-            }
-            err = execTerminal.err();
-            if (NIO.of(session).isStderr(err)) {
-                err = null;
-            }
-            if (out != null) {
-                out.run(NTerminalCommand.MOVE_LINE_START, session);
-            }
-        }
-        File inputFile2=null;
-        File outputFile2=null;
-        if (out == null && err == null && in == null && inputFile == null && outputFile == null) {
-            pb.inheritIO();
-            if (redirectErr) {
-                pb.setRedirectErrorStream();
-            }
-        } else {
-            if (inputFile == null) {
-                pb.setIn(in);
-            } else {
-                if(inputFile.isLocal()) {
-                    pb.setRedirectFileInput(inputFile.toFile().toFile());
-                }else{
-                    throw new NUnsupportedArgumentException(session, NMsg.ofPlain("not supported special redirect file"));
-                }
-            }
-            if (outputFile == null) {
-                pb.setOutput(out == null ? null : out.asPrintStream());
-            } else {
-                if(outputFile.isLocal()) {
-                    pb.setRedirectFileOutput(outputFile.toFile().toFile());
-                }else{
-                    throw new NUnsupportedArgumentException(session, NMsg.ofPlain("not supported special redirect file"));
-                }
-            }
-            if (redirectErr) {
-                pb.setRedirectErrorStream();
-            } else {
-                pb.setErr(err == null ? null : err.asPrintStream());
-            }
-        }
+        in= CoreIOUtils.validateIn(in,session);
+        out= CoreIOUtils.validateOut(out,session);
+        err= CoreIOUtils.validateErr(err,session);
 
         NLog _LL = NLog.of(NWorkspaceUtils.class, session);
         if (_LL.isLoggable(Level.FINEST)) {
@@ -120,19 +72,20 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                             )));
         }
         if (showCommand || CoreNUtils.isShowCommand(session)) {
-            if (prepareTerminal.out().getTerminalMode() == NTerminalMode.FORMATTED) {
-                prepareTerminal.out().print(NMsg.ofC("%s ", NTexts.of(session).ofStyled("[exec]", NTextStyle.primary4())));
-                prepareTerminal.out().println(NTexts.of(session).ofCode("system", pb.getCommandString()));
+            if (session.out().getTerminalMode() == NTerminalMode.FORMATTED) {
+                session.out().print(NMsg.ofC("%s ", NTexts.of(session).ofStyled("[exec]", NTextStyle.primary4())));
+                session.out().println(NTexts.of(session).ofCode("system", pb.getCommandString()));
             } else {
-                prepareTerminal.out().print("exec ");
-                prepareTerminal.out().println(NMsg.ofPlain(pb.getCommandString()));
+                session.out().print("exec ");
+                session.out().println(NMsg.ofPlain(pb.getCommandString()));
             }
         }
-        return new ProcessExecHelper(definition,pb, session, out == null ? execTerminal.out() : out);
+        return new ProcessExecHelper(definition, pb, session, session.out(), in, out, err);
     }
 
     public static ProcessExecHelper ofDefinition(NDefinition nutMainFile,
-                                                 String[] args, Map<String, String> env, String directory, Map<String, String> execProperties, boolean showCommand, boolean failFast, long sleep, boolean inheritSystemIO, boolean redirectErr, NPath outputFile, NPath inputFile,
+                                                 String[] args, Map<String, String> env, String directory, boolean showCommand, boolean failFast, long sleep,
+                                                 NExecInput in, NExecOutput out, NExecOutput err,
                                                  NRunAs runAs,
                                                  NSession session,
                                                  NSession execSession
@@ -142,13 +95,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         NPath storeFolder = nutMainFile.getInstallInformation().get(session).getInstallFolder();
         HashMap<String, String> map = new HashMap<>();
         HashMap<String, String> envmap = new HashMap<>();
-//        for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
-//            map.put((String) entry.getKey(), (String) entry.getValue());
-//        }
-        for (Map.Entry<String, String> entry : execProperties.entrySet()) {
-            map.put(entry.getKey(), entry.getValue());
-        }
-        Path nutsJarFile = NFetchCommand.of(session).setNutsApi().setSession(session).getResultPath();
+        Path nutsJarFile = NFetchCommand.ofNutsApi(session).getResultPath();
         if (nutsJarFile != null) {
             map.put("nuts.jar", nutsJarFile.toAbsolutePath().normalize().toString());
         }
@@ -199,8 +146,8 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                     return s;
                 } else if (skey.equals("nuts")) {
                     NDefinition nDefinition;
-                    nDefinition = NFetchCommand.of(session).setId(NConstants.Ids.NUTS_API)
-                            .setSession(session).getResultDefinition();
+                    nDefinition = NFetchCommand.ofNutsApi(session)
+                            .getResultDefinition();
                     if (nDefinition.getContent().isPresent()) {
                         return ("<::expand::> " + apply("java") + " -jar " + nDefinition.getContent());
                     }
@@ -240,9 +187,10 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         } else {
             pdirectory = wsLocation.resolve(directory);
         }
-        return ofArgs(nutMainFile,args, envmap, pdirectory, session.getTerminal(), execSession.getTerminal(), showCommand, failFast,
+        return ofArgs(nutMainFile, args, envmap, pdirectory, showCommand, failFast,
                 sleep,
-                inheritSystemIO, redirectErr, inputFile, outputFile, runAs,
+                in, out, err,
+                runAs,
                 session);
     }
 
@@ -461,19 +409,19 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
     }
 
     public int exec() {
-        if(getSession().isDry()){
-            if (out.getTerminalMode() == NTerminalMode.FORMATTED) {
-                out.print("[dry] ==[exec]== ");
-                out.println(pb.getFormattedCommandString(getSession()));
+        if (getSession().isDry()) {
+            if (trace.getTerminalMode() == NTerminalMode.FORMATTED) {
+                trace.print("[dry] ==[exec]== ");
+                trace.println(pb.getFormattedCommandString(getSession()));
             } else {
-                out.print("[dry] exec ");
-                out.println(NMsg.ofPlain(pb.getCommandString()));
+                trace.print("[dry] exec ");
+                trace.println(NMsg.ofPlain(pb.getCommandString()));
             }
             return 0;
-        }else {
+        } else {
             try {
-                if (out != null) {
-                    out.resetLine();//.run(NutsTerminalCommand.MOVE_LINE_START);
+                if (trace != null) {
+                    trace.resetLine();//.run(NutsTerminalCommand.MOVE_LINE_START);
                 }
                 ProcessBuilder2 p = pb.start();
                 return waitResult(p);
@@ -485,8 +433,8 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
 
     public Future<Integer> execAsync() {
         try {
-            if (out != null) {
-                out.run(NTerminalCommand.MOVE_LINE_START, getSession());
+            if (trace != null) {
+                trace.run(NTerminalCommand.MOVE_LINE_START, getSession());
             }
             ProcessBuilder2 p = pb.start();
             return new FutureTask<Integer>(() -> waitResult(p));

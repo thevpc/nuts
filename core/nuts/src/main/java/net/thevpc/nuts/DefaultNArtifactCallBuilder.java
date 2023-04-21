@@ -42,7 +42,6 @@ public class DefaultNArtifactCallBuilder implements NArtifactCallBuilder, Serial
 
     private NId id;
     private List<String> arguments = new ArrayList<>();
-    private final Map<String,String> properties = new LinkedHashMap<>();
     private NSession session;
 
     public DefaultNArtifactCallBuilder() {
@@ -56,7 +55,6 @@ public class DefaultNArtifactCallBuilder implements NArtifactCallBuilder, Serial
         this.session=session;
         setId(value.getId());
         setArguments(value.getArguments());
-        setProperties(value.getProperties());
     }
 
     public NId getId() {
@@ -65,10 +63,6 @@ public class DefaultNArtifactCallBuilder implements NArtifactCallBuilder, Serial
 
     public List<String> getArguments() {
         return arguments;
-    }
-
-    public Map<String,String> getProperties() {
-        return properties;
     }
 
     @Override
@@ -80,21 +74,6 @@ public class DefaultNArtifactCallBuilder implements NArtifactCallBuilder, Serial
     @Override
     public NArtifactCallBuilder setArguments(List<String> value) {
         this.arguments = NReservedCollectionUtils.unmodifiableList(value);
-        return this;
-    }
-
-    @Override
-    public DefaultNArtifactCallBuilder setProperties(Map<String,String> properties) {
-        this.properties.clear();
-        if(properties!=null) {
-            for (Map.Entry<String, String> stringStringEntry : properties.entrySet()) {
-                if (stringStringEntry.getValue() != null) {
-                    this.properties.put(stringStringEntry.getKey(), stringStringEntry.getValue());
-                } else {
-                    this.properties.remove(stringStringEntry.getKey());
-                }
-            }
-        }
         return this;
     }
 
@@ -114,7 +93,6 @@ public class DefaultNArtifactCallBuilder implements NArtifactCallBuilder, Serial
         if(value!=null){
             setId(value.getId());
             setArguments(value.getArguments());
-            setProperties(value.getProperties());
         }else{
             clear();
         }
@@ -125,7 +103,6 @@ public class DefaultNArtifactCallBuilder implements NArtifactCallBuilder, Serial
     public NArtifactCallBuilder clear() {
         setId(null);
         setArguments();
-        setProperties(null);
         return this;
     }
 
@@ -136,20 +113,20 @@ public class DefaultNArtifactCallBuilder implements NArtifactCallBuilder, Serial
         if (o == null || getClass() != o.getClass()) return false;
         DefaultNArtifactCallBuilder that = (DefaultNArtifactCallBuilder) o;
         return Objects.equals(id, that.id) &&
-                Objects.equals(arguments, that.arguments) &&
-                Objects.equals(properties, that.properties);
+                Objects.equals(arguments, that.arguments)
+                ;
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, properties);
+        int result = Objects.hash(id);
         result = 31 * result + Objects.hashCode(arguments);
         return result;
     }
 
     @Override
     public NArtifactCall build() {
-        return new DefaultNArtifactCall(id, arguments, properties);
+        return new DefaultNArtifactCall(id, arguments);
     }
 
     @Override

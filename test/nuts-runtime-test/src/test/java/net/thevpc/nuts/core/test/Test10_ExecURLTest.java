@@ -61,7 +61,7 @@ public class Test10_ExecURLTest {
                         "https://search.maven.org/remotecontent?filepath=net/thevpc/hl/hl/0.1.0/hl-0.1.0.jar",
 //                "https://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar",
                         "--version"
-                ).setRedirectErrorStream(true).grabOutputString().setFailFast(true).getOutputString();
+                ).redirectErrorStream().grabOutputString().setFailFast(true).getOutputString();
         TestUtils.println("Result:");
         TestUtils.println(result);
         Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
@@ -88,7 +88,7 @@ public class Test10_ExecURLTest {
                         "https://search.maven.org/remotecontent?filepath=net/java/sezpoz/demo/app/1.6/app-1.6.jar"
 //                "https://search.maven.org/remotecontent?filepath=net/thevpc/hl/hl/0.1.0/hl-0.1.0.jar",
 //                "--version"
-        ).setRedirectErrorStream(true).grabOutputString().setFailFast(true).getOutputString();
+        ).redirectErrorStream().grabOutputString().setFailFast(true).getOutputString();
         TestUtils.println("Result:");
         TestUtils.println(result);
         Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");

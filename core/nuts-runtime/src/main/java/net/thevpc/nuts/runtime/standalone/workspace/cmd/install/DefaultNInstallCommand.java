@@ -25,19 +25,18 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.install;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NMemoryPrintStream;
-import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NDependencyUtils;
-import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.stream.NListStream;
+import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NConnexionString;
 import net.thevpc.nuts.util.NLogVerb;
 import net.thevpc.nuts.util.NStream;
 
@@ -85,7 +84,7 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
             }
         }
         try {
-            def.definition = NFetchCommand.of(session).setId(id)
+            def.definition = NFetchCommand.of(id,session)
                     .setContent(true)
                     .setEffective(true)
                     .setDependencies(includeDeps)
@@ -109,8 +108,10 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
                 _loadIdContent(parent, id, session, false, loaded, NInstallStrategy.REQUIRE);
             }
             if (includeDeps) {
+                NDependencies nDependencies = def.definition.getDependencies().get();
                 for (NDependency dependency : def.definition.getDependencies().get(session)) {
-                    _loadIdContent(dependency.toId(), id, session, false, loaded, NInstallStrategy.REQUIRE);
+                    NId did = dependency.toId();
+                    _loadIdContent(did, id, session, false, loaded, NInstallStrategy.REQUIRE);
                 }
             }
         } else {
@@ -412,7 +413,7 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
             } else {
                 mout.println("should we proceed installation?");
             }
-            if (!NConfigs.of(getSession()).getDefaultTerminal().ask()
+            if (!NIO.of(getSession()).getDefaultTerminal().ask()
                     .resetLine()
                     .setSession(session)
                     .forBoolean(NMsg.ofNtf(mout.toString()))
@@ -429,7 +430,7 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
                 printList(mout, "installed", "re-reinstalled", installed_ignored);
             }
             mout.println("should we proceed?");
-            if (!NConfigs.of(getSession()).getDefaultTerminal().ask()
+            if (!NIO.of(getSession()).getDefaultTerminal().ask()
                     .resetLine()
                     .setSession(session)
                     .forBoolean(NMsg.ofNtf(mout.toString()))
@@ -471,7 +472,7 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
                                 .log(NMsg.ofJ("failed to install {0}", info.id));
                         failedList.add(info.id);
                         if (session.isPlainTrace()) {
-                            if (!NConfigs.of(getSession()).getDefaultTerminal().ask()
+                            if (!NIO.of(getSession()).getDefaultTerminal().ask()
                                     .resetLine()
                                     .setSession(session)
                                     .forBoolean(NMsg.ofC("%s %s and its dependencies... Continue installation?",

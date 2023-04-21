@@ -322,7 +322,7 @@ public class NJavaSdkUtils {
                         .setSession(session)
                         .setExecutionType(NExecutionType.SYSTEM)
                         .addCommand(javaExePath.toString(), "-version")
-                        .setRedirectErrorStream(true)
+                        .redirectErrorStream()
                         .grabOutputString().setFailFast(true).run();
                 cmdRresult = cmd.getResult();
                 cmdOutputString = cmd.getOutputString();

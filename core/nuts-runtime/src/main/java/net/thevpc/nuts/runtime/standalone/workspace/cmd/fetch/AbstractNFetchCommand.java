@@ -24,18 +24,8 @@ public abstract class AbstractNFetchCommand extends DefaultNQueryBaseOptions<NFe
     @Override
     public NFetchCommand setId(String id) {
         checkSession();
-        this.id = NId.of(id).get(session);
-        return this;
-    }
-
-    @Override
-    public NFetchCommand setNutsApi() {
-        return setId(ws.getApiId());
-    }
-
-    @Override
-    public NFetchCommand setNutsRuntime() {
-        return setId(ws.getRuntimeId());
+        NId nid = NId.of(id).get(session);
+        return setId(nid);
     }
 
     @Override
@@ -43,6 +33,13 @@ public abstract class AbstractNFetchCommand extends DefaultNQueryBaseOptions<NFe
         if (id == null) {
             checkSession();
             throw new NParseException(session, NMsg.ofNtf("invalid Id format : null"));
+        }
+        if (
+                id.getVersion().isBlank()
+                        || !id.getVersion().isSingleValue()
+        ) {
+            checkSession();
+            throw new NParseException(session, NMsg.ofC("invalid Id format : %s", id));
         }
         this.id = id;
         return this;
@@ -63,38 +60,6 @@ public abstract class AbstractNFetchCommand extends DefaultNQueryBaseOptions<NFe
         }
         return this;
     }
-//
-//    @Override
-//    public NutsFetchCommand addRepositories(Collection<String> value) {
-//        if (value != null) {
-//            addRepositories(value.toArray(new String[0]));
-//        }
-//        return this;
-//    }
-
-//    @Override
-//    public NutsFetchCommand installed() {
-//        return setInstalled(true);
-//    }
-//
-//    @Override
-//    public Boolean getInstalled() {
-//        return installedOrNot;
-//    }
-//
-//    public NutsFetchCommand setInstalled(Boolean enable) {
-//        installedOrNot = enable;
-//        return this;
-//    }
-//
-//    public NutsFetchCommand installed(Boolean enable) {
-//        return setInstalled(enable);
-//    }
-//
-//    @Override
-//    public NutsFetchCommand notInstalled() {
-//        return setInstalled(false);
-//    }
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {

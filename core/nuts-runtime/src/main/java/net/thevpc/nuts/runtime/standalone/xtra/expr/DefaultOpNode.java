@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.expr;
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NOptional;
 import net.thevpc.nuts.expr.*;
+import net.thevpc.nuts.runtime.standalone.dependency.util.NComplexExpressionString;
 
 import java.util.Collections;
 import java.util.List;
@@ -120,7 +121,7 @@ public class DefaultOpNode implements NExprOpNode {
             }
         }
         return name + "(" +
-                args.stream().map(Object::toString).collect(Collectors.joining(",")) +
+                args.stream().map(NComplexExpressionString::toString).collect(Collectors.joining(",")) +
                 ')';
     }
 

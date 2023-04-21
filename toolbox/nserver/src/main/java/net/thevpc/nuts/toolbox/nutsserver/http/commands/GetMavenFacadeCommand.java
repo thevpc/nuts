@@ -32,7 +32,7 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
                 NId id = NIdBuilder.of().setArtifactId(split.get(split.size() - 3))
                         .setGroupId(String.join(".", split.subList(0, split.size() - 3)))
                         .setVersion(split.get(split.size() - 2)).build();
-                NDefinition fetch = NFetchCommand.of(session).setId(id).setSession(session)
+                NDefinition fetch = NFetchCommand.of(id,session)
                         .getResultDefinition();
                 NDescriptor d = fetch.getDescriptor();
                 if(context.isHeadMethod()){
@@ -110,7 +110,7 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
                 NId id = NIdBuilder.of().setArtifactId(split.get(split.size() - 3))
                         .setGroupId(String.join(".", split.subList(0, split.size() - 3)))
                         .setVersion(split.get(split.size() - 2)).build();
-                NDefinition fetch = NFetchCommand.of(session).setId(id).setSession(session)
+                NDefinition fetch = NFetchCommand.of(id,session)
                         .getResultDefinition();
                 if(fetch.getContent().isPresent()) {
                     if (context.isHeadMethod()) {

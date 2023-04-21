@@ -23,28 +23,21 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableCommand {
 
     String[] cmd;
     List<String> executorOptions;
-    NSession session;
-    NSession execSession;
-    NExecCommand execCommand;
     private boolean showCommand = false;
-    private final boolean inheritSystemIO;
     private NExecCommandExtension commExec;
 
     public DefaultNSystemExecutableRemote(NExecCommandExtension commExec, String[] cmd,
-                                          List<String> executorOptions, NSession session, NSession execSession, NExecCommand execCommand) {
+                                          List<String> executorOptions,
+                                          NExecCommand execCommand) {
         super(cmd[0],
                 NCmdLine.of(cmd).toString(),
-                NExecutableType.SYSTEM);
-        this.inheritSystemIO = execCommand.isInheritSystemIO();
+                NExecutableType.SYSTEM, execCommand);
         this.cmd = cmd;
-        this.execCommand = execCommand;
         this.executorOptions = CoreCollectionUtils.nonNullList(executorOptions);
-        this.session = session;
-        this.execSession = execSession;
         this.commExec = commExec;
         NCmdLine cmdLine = NCmdLine.of(this.executorOptions);
         while (cmdLine.hasNext()) {
-            NArg aa = cmdLine.peek().get(session);
+            NArg aa = cmdLine.peek().get(getSession());
             switch (aa.key()) {
                 case "--show-command": {
                     cmdLine.withNextFlag((v, a, s) -> this.showCommand = (v));
@@ -81,12 +74,16 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableCommand {
 //                session);
 
 
-        return new AbstractSyncIProcessExecHelper(session) {
+        return new AbstractSyncIProcessExecHelper(getSession()) {
             @Override
             public int exec() {
                 return commExec.exec(new DefaultNExecCommandExtensionContext(
-                        execCommand.getTarget(),
-                        cmd, execSession
+                        getExecCommand().getTarget(),
+                        cmd,
+                        getExecCommand().getSession(),
+                        getExecCommand().getIn(),
+                        getExecCommand().getOut(),
+                        getExecCommand().getErr()
                 ));
             }
         };
@@ -101,16 +98,16 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableCommand {
 
     @Override
     public NText getHelpText() {
-        switch (NEnvs.of(execSession).getOsFamily()) {
+        switch (NEnvs.of(getSession()).getOsFamily()) {
             case WINDOWS: {
-                return NTexts.of(session).ofStyled(
+                return NTexts.of(getSession()).ofStyled(
                         "No help available. Try " + getName() + " /help",
                         NTextStyle.error()
                 );
             }
             default: {
                 return
-                        NTexts.of(session).ofStyled(
+                        NTexts.of(getSession()).ofStyled(
                                 "No help available. Try 'man " + getName() + "' or '" + getName() + " --help'",
                                 NTextStyle.error()
                         );
@@ -120,11 +117,7 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableCommand {
 
     @Override
     public String toString() {
-        return execCommand.getRunAs() + " " + NCmdLine.of(cmd).toString();
+        return getExecCommand().getRunAs() + " " + NCmdLine.of(cmd).toString();
     }
 
-    @Override
-    public NSession getSession() {
-        return session;
-    }
 }

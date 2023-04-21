@@ -38,9 +38,7 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
     private Map<String, String> env;
     private List<String> executorOptions = new ArrayList<>();
     private List<String> workspaceOptions = new ArrayList<>();
-    private Map<String, String> executorProperties = new LinkedHashMap<>();
     private List<String> arguments;
-    private NSession execSession;
     private NSession session;
     private NWorkspace workspace;
     private NArtifactCall executorDescriptor;
@@ -49,55 +47,32 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
     private boolean failFast;
     private boolean temporary;
     private long sleepMillis = 1000;
-    private boolean inheritSystemIO;
-    private NPath redirectOutputFile;
-    private NPath redirectInputFile;
-
     private NExecutionType executionType;
     private NRunAs runAs = NRunAs.currentUser();
+    private NExecInput in;
+    private NExecOutput out;
+    private NExecOutput err;
 
-    //    public NutsExecutionContextImpl(NutsDefinition nutsDefinition, NutsSession session, NutsWorkspace workspace,String cwd) {
-//        this.nutsDefinition = nutsDefinition;
-//        this.session = session;
-//        if (nutsDefinition != null && nutsDefinition.getDescriptor() != null && nutsDefinition.getDescriptor().getInstaller() != null) {
-//            NutsExecutorDescriptor ii = nutsDefinition.getDescriptor().getInstaller();
-//            executorOptions = ii.getArguments();
-//            executorProperties = ii.getProperties();
-//        }
-//        this.workspace = workspace;
-//        if (args == null) {
-//            args = new String[0];
-//        }
-//        if (executorOptions == null) {
-//            executorOptions = new String[0];
-//        }
-//        if (executorProperties == null) {
-//            executorProperties = new Properties();
-//        }
-//        this.cwd = cwd;
-//    }
     public DefaultNExecutionContextBuilder() {
     }
 
     public DefaultNExecutionContextBuilder(NDefinition definition,
-                                           List<String> arguments, List<String> executorArgs, Map<String, String> env, Map<String, String> executorProperties,
-                                           NPath cwd, NSession session, NSession execSession, NWorkspace workspace, boolean failFast,
+                                           List<String> arguments, List<String> executorArgs, Map<String, String> env,
+                                           NPath cwd, NSession session, NWorkspace workspace, boolean failFast,
                                            boolean temporary,
                                            NExecutionType executionType,
                                            String commandName,
-                                           long sleepMillis
+                                           long sleepMillis,
+                                           NExecInput in,
+                                           NExecOutput out,
+                                           NExecOutput err
     ) {
-        if (executorProperties == null) {
-            executorProperties = new LinkedHashMap<>();
-        }
         this.commandName = commandName;
         this.definition = definition;
         this.arguments = CoreCollectionUtils.nonNullList(arguments);
-        this.execSession = execSession;
         this.session = session;
         this.workspace = workspace;
         this.executorOptions = CoreCollectionUtils.nonNullList(executorArgs);
-        this.executorProperties = CoreCollectionUtils.unmodifiableMap(executorProperties);
         this.sleepMillis = sleepMillis;
         this.cwd = cwd;
         if (env == null) {
@@ -108,17 +83,18 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
         this.temporary = temporary;
         this.executionType = executionType;
         this.executorDescriptor = definition.getDescriptor().getExecutor();
+        this.in = in;
+        this.out = out;
+        this.err = err;
     }
 
     public DefaultNExecutionContextBuilder(NExecutionContext other) {
         this.commandName = other.getCommandName();
         this.definition = other.getDefinition();
         this.arguments = CoreCollectionUtils.nonNullList(other.getArguments());
-        this.execSession = other.getExecSession();
         this.session = other.getSession();
         this.workspace = other.getWorkspace();
         this.executorOptions.addAll(CoreCollectionUtils.nonNullList(other.getExecutorOptions()));
-        this.executorProperties.putAll(CoreCollectionUtils.nonNullMap(other.getExecutorProperties()));
         this.cwd = other.getDirectory();
         this.env = other.getEnv();
         this.failFast = other.isFailFast();
@@ -126,6 +102,9 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
         this.executionType = other.getExecutionType();
         this.executorDescriptor = other.getExecutorDescriptor();
         this.sleepMillis = other.getSleepMillis();
+        this.in = other.getIn();
+        this.out = other.getOut();
+        this.err = other.getErr();
     }
 
     @Override
@@ -140,11 +119,6 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
     @Override
     public String[] getExecutorOptions() {
         return executorOptions.toArray(new String[0]);
-    }
-
-    @Override
-    public Map<String, String> getExecutorProperties() {
-        return executorProperties;
     }
 
     @Override
@@ -165,11 +139,6 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
     @Override
     public NArtifactCall getExecutorDescriptor() {
         return executorDescriptor;
-    }
-
-    @Override
-    public NSession getExecSession() {
-        return execSession;
     }
 
     @Override
@@ -267,31 +236,8 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
     }
 
     @Override
-    public NExecutionContextBuilder addExecutorProperties(Map<String, String> executorProperties) {
-        if (executorProperties != null) {
-            this.executorProperties.putAll(executorProperties);
-        }
-        return this;
-    }
-
-    @Override
-    public NExecutionContextBuilder setExecutorProperties(Map<String, String> executorProperties) {
-        this.executorProperties.clear();
-        if (executorProperties != null) {
-            this.executorProperties.putAll(executorProperties);
-        }
-        return this;
-    }
-
-    @Override
     public NExecutionContextBuilder setArguments(String[] arguments) {
         this.arguments = CoreCollectionUtils.nonNullList(Arrays.asList(arguments));
-        return this;
-    }
-
-    @Override
-    public NExecutionContextBuilder setExecSession(NSession execSession) {
-        this.execSession = execSession;
         return this;
     }
 
@@ -349,39 +295,12 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
         return this;
     }
 
-    public boolean isInheritSystemIO() {
-        return inheritSystemIO;
-    }
-
-    public NPath getRedirectOutputFile() {
-        return redirectOutputFile;
-    }
-
-    public NPath getRedirectInputFile() {
-        return redirectInputFile;
-    }
-
-    public NExecutionContextBuilder setInheritSystemIO(boolean inheritSystemIO) {
-        this.inheritSystemIO = inheritSystemIO;
-        return this;
-    }
-
-    public NExecutionContextBuilder setRedirectOutputFile(NPath redirectOutputFile) {
-        this.redirectOutputFile = redirectOutputFile;
-        return this;
-    }
-
-    public NExecutionContextBuilder setRedirectInputFile(NPath redirectInputFile) {
-        this.redirectInputFile = redirectInputFile;
-        return this;
-    }
-
     @Override
     public NExecutionContext build() {
         return new DefaultNExecutionContext(
-                definition, arguments, executorOptions, workspaceOptions, env, executorProperties, cwd, session, execSession,
+                definition, arguments, executorOptions, workspaceOptions, env, cwd, session,
                 workspace, failFast, temporary, executionType,
-                commandName, sleepMillis, inheritSystemIO, redirectOutputFile, redirectInputFile
+                commandName, sleepMillis, in, out, err
         );
     }
 
@@ -389,14 +308,12 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
         this.commandName = other.getCommandName();
         this.definition = other.getDefinition();
         this.arguments = other.getArguments();
-        this.execSession = other.getExecSession();
         this.session = other.getSession();
         this.workspace = other.getWorkspace();
         this.executorOptions.clear();
         this.executorOptions.addAll(other.getExecutorOptions());
         this.workspaceOptions.clear();
         this.workspaceOptions.addAll(other.getWorkspaceOptions());
-        this.executorProperties = other.getExecutorProperties();
         this.cwd = other.getDirectory();
         this.env = other.getEnv();
         this.failFast = other.isFailFast();
@@ -404,9 +321,39 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
         this.executionType = other.getExecutionType();
         this.executorDescriptor = other.getExecutorDescriptor();
         this.sleepMillis = other.getSleepMillis();
-        this.inheritSystemIO = other.isInheritSystemIO();
-        this.redirectOutputFile = other.getRedirectOutputFile();
-        this.redirectInputFile = other.getRedirectInputFile();
+        this.in = other.getIn();
+        this.out = other.getOut();
+        this.err = other.getErr();
+        return this;
+    }
+
+    public NExecInput getIn() {
+        return in;
+    }
+
+    @Override
+    public NExecutionContextBuilder setIn(NExecInput in) {
+        this.in = in;
+        return this;
+    }
+
+    public NExecOutput getOut() {
+        return out;
+    }
+
+    @Override
+    public NExecutionContextBuilder setOut(NExecOutput out) {
+        this.out = out;
+        return this;
+    }
+
+    public NExecOutput getErr() {
+        return err;
+    }
+
+    @Override
+    public NExecutionContextBuilder setErr(NExecOutput err) {
+        this.err = err;
         return this;
     }
 }

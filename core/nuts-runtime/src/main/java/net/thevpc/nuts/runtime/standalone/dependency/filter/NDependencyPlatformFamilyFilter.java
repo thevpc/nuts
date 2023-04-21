@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
 import java.util.Collection;
 import java.util.EnumSet;
@@ -57,7 +58,9 @@ public class NDependencyPlatformFamilyFilter extends AbstractDependencyFilter  {
 
     @Override
     public String toString() {
-        return accepted.isEmpty() ? "true" : "os in (" + accepted.stream().map(NPlatformFamily::id).collect(Collectors.joining(", ")) + ')';
+        return CoreStringUtils.trueOrEqOrIn("platform",
+                        accepted.stream().map(x -> x.id()).collect(Collectors.toList())
+                );
     }
 
     @Override

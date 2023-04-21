@@ -63,7 +63,7 @@ public class NDescriptorIdFilter extends AbstractIdFilter implements NIdFilter, 
                     loaded = true;
                     try {
 //                descriptor = repository.fetchDescriptor().setId(id).setSession(session).getResult();
-                        descriptor = NFetchCommand.of(session).setId(id).setSession(session).getResultDescriptor();
+                        descriptor = NFetchCommand.of(id,session).getResultDescriptor();
                         if (!CoreNUtils.isEffectiveId(descriptor.getId())) {
                             NDescriptor nutsDescriptor = null;
                             try {

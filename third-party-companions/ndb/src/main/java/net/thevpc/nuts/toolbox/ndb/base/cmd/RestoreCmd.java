@@ -196,7 +196,7 @@ public class RestoreCmd<C extends NdbConfig> extends NdbCmd<C> {
         CmdRedirect restoreCommand = getSupport().createRestoreCommand(sqlFile, options, session);
         NExecCommand nExecCommand = sysCmd(session).addCommand(restoreCommand.getCmd().toStringArray());
         if (restoreCommand.getPath() != null) {
-            nExecCommand.setRedirectInputFile(restoreCommand.getPath());
+            nExecCommand.setIn(NExecInput.ofPath(restoreCommand.getPath()));
         }
         run(nExecCommand);
     }

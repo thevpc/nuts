@@ -50,6 +50,7 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -184,7 +185,7 @@ public final class NReservedMavenUtils {
             }
         }
         for (NRepositoryLocation r : repositories) {
-            bLog.with().level(Level.FINE).verb(NLogVerb.CACHE).log(NMsg.ofJ("checking {0} from {1}", nutsId, r));
+            bLog.with().level(Level.FINE).verb(NLogVerb.CACHE).log(NMsg.ofC("checking %s from %s", nutsId, r));
 //                File file = toFile(r);
             if (includeDesc) {
                 String path = resolveMavenFullPath(r, nutsId, "pom");
@@ -193,26 +194,27 @@ public final class NReservedMavenUtils {
                     NReservedIOUtils.copy(new URL(path), cachedPomFile, bLog);
                 } catch (Exception ex) {
                     errors.add(new NReservedErrorInfo(nutsId, r.toString(), path, "unable to load descriptor", ex));
-                    bLog.with().level(Level.SEVERE).verb(NLogVerb.FAIL).log(NMsg.ofJ("unable to load descriptor {0} from {1}.\n", nutsId, r));
+                    bLog.with().level(Level.SEVERE).verb(NLogVerb.FAIL).log(NMsg.ofC("unable to load descriptor %s from %s.", nutsId, r));
                     continue;
                 }
             }
             String path = resolveMavenFullPath(r, nutsId, "jar");
             try {
                 NReservedIOUtils.copy(new URL(path), cachedJarFile, bLog);
-                bLog.with().level(Level.CONFIG).verb(NLogVerb.CACHE).log(NMsg.ofJ("cache jar file {0}", cachedJarFile.getPath()));
+                bLog.with().level(Level.CONFIG).verb(NLogVerb.CACHE).log(NMsg.ofC("cache jar file %s", cachedJarFile.getPath()));
                 errors.removeErrorsFor(nutsId);
                 return cachedJarFile;
             } catch (Exception ex) {
                 errors.add(new NReservedErrorInfo(nutsId, r.toString(), path, "unable to load binaries", ex));
-                bLog.with().level(Level.SEVERE).verb(NLogVerb.FAIL).log(NMsg.ofJ("unable to load binaries {0} from {1}.\n", nutsId, r));
+                bLog.with().level(Level.SEVERE).verb(NLogVerb.FAIL).log(NMsg.ofC("unable to load binaries %s from %s.", nutsId, r));
             }
         }
         return null;
     }
 
     public static Set<NId> loadDependenciesFromId(NId rid, NLog bLog, Collection<NRepositoryLocation> repos, NBootCache cache) {
-        String urlPath = NIdUtils.resolveFilePath(rid, "pom");
+        String pomPath = NIdUtils.resolveFilePath(rid, "pom");
+        String nutsPath = NIdUtils.resolveFilePath(rid, "nuts");
         Set<NId> deps = null;
         for (NRepositoryLocation baseUrl : repos) {
             String loc = baseUrl.getPath();
@@ -220,7 +222,7 @@ public final class NReservedMavenUtils {
                 if (isMavenSettingsRepo(baseUrl)) {
                     Set<String> urls = loadMavenSettingsUrls(bLog, cache);
                     for (String url : urls) {
-                        deps = loadDependenciesFromPomUrl(url + "/" + urlPath, bLog);
+                        deps = loadDependenciesFromPomUrl(url + "/" + pomPath, bLog);
                         if (deps != null) {
                             return deps;
                         }
@@ -230,7 +232,11 @@ public final class NReservedMavenUtils {
                 if (loc.startsWith("htmlfs:")) {
                     loc = loc.substring("htmlfs:".length());
                 }
-                deps = loadDependenciesFromPomUrl(loc + "/" + urlPath, bLog);
+                deps = loadDependenciesFromPomUrl(loc + "/" + pomPath, bLog);
+                if (deps != null) {
+                    break;
+                }
+                deps = loadDependenciesFromNutsUrl(loc + "/" + nutsPath, bLog);
                 if (deps != null) {
                     break;
                 }
@@ -240,151 +246,147 @@ public final class NReservedMavenUtils {
     }
 
 
+    public static Set<NId> loadDependenciesFromNutsUrl(String url, NLog bLog) {
+        InputStream inputStream = NReservedIOUtils.resolveInputStream(url, bLog);
+        Map<String, Object> descNuts = null;
+        if (inputStream != null) {
+            try {
+                NReservedJsonParser parser = null;
+                parser = new NReservedJsonParser(new InputStreamReader(inputStream));
+                descNuts = parser.parseObject();
+                List<String> dependencies = (List<String>) descNuts.get("dependencies");
+                if (dependencies == null) {
+                    return new LinkedHashSet<>();
+                }
+                return dependencies.stream().map(x -> NId.of(x).get()).collect(Collectors.toSet());
+            } finally {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    //throw new RuntimeException(e);
+                }
+            }
+        }
+        return null;
+    }
+
+
     private static Set<NId> loadDependenciesFromPomUrl(String url, NLog bLog) {
         LinkedHashSet<NId> depsSet = new LinkedHashSet<>();
-        InputStream xml = null;
-        try {
-            if (url.startsWith("http://") || url.startsWith("https://")) {
-                URL url1 = new URL(url);
-                try {
-                    xml = NReservedIOUtils.openStream(url1, bLog);
-                } catch (Exception ex) {
-                    //do not need to log error
-                    return null;
-                }
-            } else if (url.startsWith("file:")) {
-                URL url1 = new URL(url);
-                File file = NReservedIOUtils.toFile(url1);
-                if (file == null) {
-                    // was not able to resolve to File
-                    try {
-                        xml = NReservedIOUtils.openStream(url1, bLog);
-                    } catch (Exception ex) {
-                        //do not need to log error
-                        return null;
-                    }
-                } else if (file.isFile()) {
-                    xml = Files.newInputStream(file.toPath());
-                } else {
-                    return null;
-                }
-            } else {
-                File file = new File(url);
-                if (file.isFile()) {
-                    xml = Files.newInputStream(file.toPath());
-                } else {
-                    return null;
-                }
-            }
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-
-            Document doc = null;
+        InputStream xml = NReservedIOUtils.resolveInputStream(url, bLog);
+        if (xml != null) {
             try {
-                doc = builder.parse(xml);
-            } catch (SAXParseException ex) {
-                throw ex;
-            }
-            Element c = doc.getDocumentElement();
-            Map<String, String> osMap = new HashMap<>();
-            Map<String, String> archMap = new HashMap<>();
-            for (int i = 0; i < c.getChildNodes().getLength(); i++) {
-                if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("dependencies")) {
-                    Element c2 = (Element) c.getChildNodes().item(i);
-                    for (int j = 0; j < c2.getChildNodes().getLength(); j++) {
-                        if (c2.getChildNodes().item(j) instanceof Element && c2.getChildNodes().item(j).getNodeName().equals("dependency")) {
-                            Element c3 = (Element) c2.getChildNodes().item(j);
-                            String groupId = null;
-                            String artifactId = null;
-                            String version = null;
-                            String scope = null;
-                            String optional = null;
-                            for (int k = 0; k < c3.getChildNodes().getLength(); k++) {
-                                if (c3.getChildNodes().item(k) instanceof Element) {
-                                    Element c4 = (Element) c3.getChildNodes().item(k);
-                                    switch (c4.getNodeName()) {
-                                        case "groupId": {
-                                            groupId = c4.getTextContent().trim();
-                                            break;
-                                        }
-                                        case "artifactId": {
-                                            artifactId = c4.getTextContent().trim();
-                                            break;
-                                        }
-                                        case "version": {
-                                            version = c4.getTextContent().trim();
-                                            break;
-                                        }
-                                        case "scope": {
-                                            scope = c4.getTextContent().trim();
-                                            break;
-                                        }
-                                        case "optional": {
-                                            optional = c4.getTextContent().trim();
-                                            break;
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder builder = factory.newDocumentBuilder();
+
+                Document doc = null;
+                try {
+                    doc = builder.parse(xml);
+                } catch (SAXParseException ex) {
+                    throw ex;
+                }
+                Element c = doc.getDocumentElement();
+                Map<String, String> osMap = new HashMap<>();
+                Map<String, String> archMap = new HashMap<>();
+                for (int i = 0; i < c.getChildNodes().getLength(); i++) {
+                    if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("dependencies")) {
+                        Element c2 = (Element) c.getChildNodes().item(i);
+                        for (int j = 0; j < c2.getChildNodes().getLength(); j++) {
+                            if (c2.getChildNodes().item(j) instanceof Element && c2.getChildNodes().item(j).getNodeName().equals("dependency")) {
+                                Element c3 = (Element) c2.getChildNodes().item(j);
+                                String groupId = null;
+                                String artifactId = null;
+                                String version = null;
+                                String scope = null;
+                                String optional = null;
+                                for (int k = 0; k < c3.getChildNodes().getLength(); k++) {
+                                    if (c3.getChildNodes().item(k) instanceof Element) {
+                                        Element c4 = (Element) c3.getChildNodes().item(k);
+                                        switch (c4.getNodeName()) {
+                                            case "groupId": {
+                                                groupId = c4.getTextContent().trim();
+                                                break;
+                                            }
+                                            case "artifactId": {
+                                                artifactId = c4.getTextContent().trim();
+                                                break;
+                                            }
+                                            case "version": {
+                                                version = c4.getTextContent().trim();
+                                                break;
+                                            }
+                                            case "scope": {
+                                                scope = c4.getTextContent().trim();
+                                                break;
+                                            }
+                                            case "optional": {
+                                                optional = c4.getTextContent().trim();
+                                                break;
+                                            }
                                         }
                                     }
                                 }
-                            }
-                            if (NBlankable.isBlank(groupId)) {
-                                throw new NBootException(NMsg.ofPlain("unexpected empty groupId"));
-                            } else if (groupId.contains("$")) {
-                                throw new NBootException(NMsg.ofC("unexpected maven variable in groupId=%s", groupId));
-                            }
-                            if (NBlankable.isBlank(artifactId)) {
-                                throw new NBootException(NMsg.ofPlain("unexpected empty artifactId"));
-                            } else if (artifactId.contains("$")) {
-                                throw new NBootException(NMsg.ofC("unexpected maven variable in artifactId=%s", artifactId));
-                            }
-                            if (NBlankable.isBlank(version)) {
-                                throw new NBootException(NMsg.ofPlain("unexpected empty artifactId"));
-                            } else if (version.contains("$")) {
-                                throw new NBootException(NMsg.ofC("unexpected maven variable in artifactId=%s", version));
-                            }
-                            //this is maven dependency, using "compile"
-                            if (NBlankable.isBlank(scope) || scope.equals("compile")) {
-                                depsSet.add(
-                                        NId.of(
-                                                        groupId,
-                                                        artifactId,
-                                                        NVersion.of(version).get()).get()
-                                                .builder()
-                                                .setProperty(NConstants.IdProperties.OPTIONAL, "" +
-                                                        NLiteral.of(optional).asBoolean().orElse(false))
-                                                .setCondition(
-                                                        new DefaultNEnvConditionBuilder()
-                                                                .setOs(Arrays.asList(osMap.get(groupId + ":" + artifactId)))
-                                                                .setArch(Arrays.asList(archMap.get(groupId + ":" + artifactId))))
-                                                .build()
-                                );
-                            } else if (version.contains("$")) {
-                                throw new NBootException(NMsg.ofC("unexpected maven variable in artifactId=%s", version));
+                                if (NBlankable.isBlank(groupId)) {
+                                    throw new NBootException(NMsg.ofPlain("unexpected empty groupId"));
+                                } else if (groupId.contains("$")) {
+                                    throw new NBootException(NMsg.ofC("unexpected maven variable in groupId=%s", groupId));
+                                }
+                                if (NBlankable.isBlank(artifactId)) {
+                                    throw new NBootException(NMsg.ofPlain("unexpected empty artifactId"));
+                                } else if (artifactId.contains("$")) {
+                                    throw new NBootException(NMsg.ofC("unexpected maven variable in artifactId=%s", artifactId));
+                                }
+                                if (NBlankable.isBlank(version)) {
+                                    throw new NBootException(NMsg.ofPlain("unexpected empty artifactId"));
+                                } else if (version.contains("$")) {
+                                    throw new NBootException(NMsg.ofC("unexpected maven variable in artifactId=%s", version));
+                                }
+                                //this is maven dependency, using "compile"
+                                if (NBlankable.isBlank(scope) || scope.equals("compile")) {
+                                    boolean optionalBool = NLiteral.of(optional).asBoolean().orElse(false);
+                                    depsSet.add(
+                                            NId.of(
+                                                            groupId,
+                                                            artifactId,
+                                                            NVersion.of(version).get()).get()
+                                                    .builder()
+                                                    .setProperty(NConstants.IdProperties.OPTIONAL,
+                                                            optionalBool ? Boolean.TRUE.toString() : null)
+                                                    .setCondition(
+                                                            new DefaultNEnvConditionBuilder()
+                                                                    .setOs(Arrays.asList(osMap.get(groupId + ":" + artifactId)))
+                                                                    .setArch(Arrays.asList(archMap.get(groupId + ":" + artifactId))))
+                                                    .build()
+                                    );
+                                } else if (version.contains("$")) {
+                                    throw new NBootException(NMsg.ofC("unexpected maven variable in artifactId=%s", version));
+                                }
                             }
                         }
-                    }
-                } else if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("properties")) {
-                    Element c2 = (Element) c.getChildNodes().item(i);
-                    for (int j = 0; j < c2.getChildNodes().getLength(); j++) {
-                        if (c2.getChildNodes().item(j) instanceof Element) {
-                            Element c3 = (Element) c2.getChildNodes().item(j);
-                            String nodeName = c3.getNodeName();
-                            switch (nodeName) {
-                                default: {
-                                    Matcher m = NUTS_OS_ARCH_DEPS_PATTERN.matcher(nodeName);
-                                    if (m.find()) {
-                                        String os = m.group("os");
-                                        String arch = m.group("arch");
-                                        String txt = c3.getTextContent().trim();
-                                        for (String a : txt.trim().split("[;,\n\t]")) {
-                                            a = a.trim();
-                                            if (a.startsWith("#")) {
-                                                //ignore!
-                                            } else {
-                                                if (!NBlankable.isBlank(os)) {
-                                                    osMap.put(a, os);
-                                                }
-                                                if (!NBlankable.isBlank(arch)) {
-                                                    archMap.put(a, arch);
+                    } else if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("properties")) {
+                        Element c2 = (Element) c.getChildNodes().item(i);
+                        for (int j = 0; j < c2.getChildNodes().getLength(); j++) {
+                            if (c2.getChildNodes().item(j) instanceof Element) {
+                                Element c3 = (Element) c2.getChildNodes().item(j);
+                                String nodeName = c3.getNodeName();
+                                switch (nodeName) {
+                                    default: {
+                                        Matcher m = NUTS_OS_ARCH_DEPS_PATTERN.matcher(nodeName);
+                                        if (m.find()) {
+                                            String os = m.group("os");
+                                            String arch = m.group("arch");
+                                            String txt = c3.getTextContent().trim();
+                                            for (String a : txt.trim().split("[;,\n\t]")) {
+                                                a = a.trim();
+                                                if (a.startsWith("#")) {
+                                                    //ignore!
+                                                } else {
+                                                    if (!NBlankable.isBlank(os)) {
+                                                        osMap.put(a, os);
+                                                    }
+                                                    if (!NBlankable.isBlank(arch)) {
+                                                        archMap.put(a, arch);
+                                                    }
                                                 }
                                             }
                                         }
@@ -394,43 +396,41 @@ public final class NReservedMavenUtils {
                         }
                     }
                 }
-            }
-            List<NId> ok = new ArrayList<>();
-            for (NId idep : depsSet) {
-                NDependency dep = idep.toDependency();
+                List<NId> ok = new ArrayList<>();
+                for (NId idep : depsSet) {
+                    NDependency dep = idep.toDependency();
 
-                String arch = archMap.get(idep.getShortName());
-                String os = osMap.get(idep.getShortName());
-                boolean replace = false;
-                if (arch != null || os != null) {
-                    if ((dep.getCondition().getOs().isEmpty() && os != null)
-                            || (dep.getCondition().getArch().isEmpty() && arch != null)) {
-                        replace = true;
+                    String arch = archMap.get(idep.getShortName());
+                    String os = osMap.get(idep.getShortName());
+                    boolean replace = false;
+                    if (arch != null || os != null) {
+                        if ((dep.getCondition().getOs().isEmpty() && os != null)
+                                || (dep.getCondition().getArch().isEmpty() && arch != null)) {
+                            replace = true;
+                        }
+                    }
+                    if (replace) {
+                        ok.add(
+                                dep.builder()
+                                        .setCondition(
+                                                dep.getCondition().builder()
+                                                        .setArch(
+                                                                arch != null ? Arrays.asList(arch) : dep.getCondition().getArch())
+                                                        .setOs(
+                                                                arch != null ? Arrays.asList(arch) : dep.getCondition().getArch())
+                                                        .build()
+                                        ).toId()
+                        );
+                    } else {
+                        ok.add(idep);
                     }
                 }
-                if (replace) {
-                    ok.add(
-                            dep.builder()
-                                    .setCondition(
-                                            dep.getCondition().builder()
-                                                    .setArch(
-                                                            arch != null ? Arrays.asList(arch) : dep.getCondition().getArch())
-                                                    .setOs(
-                                                            arch != null ? Arrays.asList(arch) : dep.getCondition().getArch())
-                                                    .build()
-                                    ).toId()
-                    );
-                } else {
-                    ok.add(idep);
-                }
-            }
-            depsSet.clear();
-            depsSet.addAll(ok);
+                depsSet.clear();
+                depsSet.addAll(ok);
 
-        } catch (Exception ex) {
-            bLog.with().level(Level.FINE).verb(NLogVerb.FAIL).error(ex).log(NMsg.ofJ("unable to loadDependenciesAndRepositoriesFromPomUrl {0}", url));
-        } finally {
-            if (xml != null) {
+            } catch (Exception ex) {
+                bLog.with().level(Level.FINE).verb(NLogVerb.FAIL).error(ex).log(NMsg.ofC("unable to loadDependenciesAndRepositoriesFromPomUrl %s", url));
+            } finally {
                 try {
                     xml.close();
                 } catch (IOException ex) {
@@ -438,7 +438,6 @@ public final class NReservedMavenUtils {
                 }
             }
         }
-
         return depsSet;
     }
 
@@ -457,7 +456,7 @@ public final class NReservedMavenUtils {
                 //ignore
             }
             if (is != null) {
-                bLog.with().level(Level.FINEST).verb(NLogVerb.SUCCESS).log(NMsg.ofJ("parsing {0}", mavenMetadata));
+                bLog.with().level(Level.FINEST).verb(NLogVerb.SUCCESS).log(NMsg.ofC("parsing %s", mavenMetadata));
                 Document doc = builder.parse(is);
                 Element c = doc.getDocumentElement();
                 for (int i = 0; i < c.getChildNodes().getLength(); i++) {
@@ -483,7 +482,7 @@ public final class NReservedMavenUtils {
                 }
             }
         } catch (Exception ex) {
-            bLog.with().level(Level.FINE).verb(NLogVerb.FAIL).error(ex).log(NMsg.ofJ("unable to parse {0}", mavenMetadata));
+            bLog.with().level(Level.FINE).verb(NLogVerb.FAIL).error(ex).log(NMsg.ofC("unable to parse %s", mavenMetadata));
             // ignore any error
         }
         return all;
@@ -527,7 +526,7 @@ public final class NReservedMavenUtils {
                                                 bestVersion = p;
                                                 bestPath = "local location : " + jarPath;
                                                 if (bLog != null) {
-                                                    bLog.with().level(Level.FINEST).verb(NLogVerb.SUCCESS).log(NMsg.ofJ("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
+                                                    bLog.with().level(Level.FINEST).verb(NLogVerb.SUCCESS).log(NMsg.ofC("%s#%s found in %s as %s", zId, bestVersion, repoUrl2, bestPath));
                                                 }
                                                 if (stopFirst) {
                                                     break;
@@ -565,7 +564,7 @@ public final class NReservedMavenUtils {
                                 bestVersion = p;
                                 bestPath = "remote file " + basePath;
                                 if (bLog != null) {
-                                    bLog.with().level(Level.FINEST).verb(NLogVerb.SUCCESS).log(NMsg.ofJ("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
+                                    bLog.with().level(Level.FINEST).verb(NLogVerb.SUCCESS).log(NMsg.ofC("%s#%s found in %s as %s", zId, bestVersion, repoUrl2, bestPath));
                                 }
                                 if (stopFirst) {
                                     break;
@@ -582,7 +581,7 @@ public final class NReservedMavenUtils {
                                 bestVersion = p;
                                 bestPath = "remote file " + mavenMetadata;
                                 if (bLog != null) {
-                                    bLog.with().level(Level.FINEST).verb(NLogVerb.SUCCESS).log(NMsg.ofJ("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
+                                    bLog.with().level(Level.FINEST).verb(NLogVerb.SUCCESS).log(NMsg.ofC("%s#%s found in %s as %s", zId, bestVersion, repoUrl2, bestPath));
                                 }
                                 if (stopFirst) {
                                     break;
@@ -606,14 +605,20 @@ public final class NReservedMavenUtils {
     public static NId resolveLatestMavenId(NId zId, Predicate<NVersion> filter,
                                            NLog bLog, Collection<NRepositoryLocation> bootRepositories, NBootOptionsBuilder options) {
         if (bLog.isLoggable(Level.FINEST)) {
-            if (bootRepositories.isEmpty()) {
-                bLog.with().level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofJ("search for {0} nuts there are no repositories to look into.", zId));
-            } else if (bootRepositories.size() == 1) {
-                bLog.with().level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofJ("search for {0} in: {1}", zId, bootRepositories.toArray()[0]));
-            } else {
-                bLog.with().level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofJ("search for {0} in: ", zId));
-                for (NRepositoryLocation repoUrl : bootRepositories) {
-                    bLog.with().level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofJ("    {0}", repoUrl));
+            switch (bootRepositories.size()) {
+                case 0: {
+                    bLog.with().level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofC("search for %s nuts there are no repositories to look into.", zId));
+                    break;
+                }
+                case 1: {
+                    bLog.with().level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofC("search for %s in: %s", zId, bootRepositories.toArray()[0]));
+                    break;
+                }
+                default: {
+                    bLog.with().level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofC("search for %s in: ", zId));
+                    for (NRepositoryLocation repoUrl : bootRepositories) {
+                        bLog.with().level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofC("    %s", repoUrl));
+                    }
                 }
             }
         }
@@ -637,7 +642,7 @@ public final class NReservedMavenUtils {
             return null;
         }
         NId iid = NId.of(zId.getGroupId(), zId.getArtifactId(), bestVersion).get();
-        bLog.with().level(Level.FINEST).verb(NLogVerb.SUCCESS).log(NMsg.ofJ("resolve {0} from {1}", iid, bestPath));
+        bLog.with().level(Level.FINEST).verb(NLogVerb.SUCCESS).log(NMsg.ofC("resolve %s from %s", iid, bestPath));
         return iid;
     }
 
@@ -731,7 +736,7 @@ public final class NReservedMavenUtils {
                 try {
                     repositoryFolder = NReservedIOUtils.toFile(new URL(repository));
                 } catch (Exception ex) {
-                    bLog.with().level(Level.FINE).verb(NLogVerb.FAIL).error(ex).log(NMsg.ofJ("unable to convert url to file : {0}", repository));
+                    bLog.with().level(Level.FINE).verb(NLogVerb.FAIL).error(ex).log(NMsg.ofC("unable to convert url to file : %s", repository));
                     //ignore
                 }
             } else {
@@ -768,11 +773,11 @@ public final class NReservedMavenUtils {
                 if (file.isFile()) {
                     ff = file;
                 } else {
-                    bLog.with().level(Level.CONFIG).verb(NLogVerb.FAIL).log(NMsg.ofJ("locate {0}", file));
+                    bLog.with().level(Level.CONFIG).verb(NLogVerb.FAIL).log(NMsg.ofC("locate %s", file));
                 }
             } else {
                 File file = new File(repoFolder, path.replace('/', File.separatorChar));
-                bLog.with().level(Level.CONFIG).verb(NLogVerb.FAIL).log(NMsg.ofJ("locate {0} ; repository is not a valid folder : {1}", file, repoFolder));
+                bLog.with().level(Level.CONFIG).verb(NLogVerb.FAIL).log(NMsg.ofC("locate %s ; repository is not a valid folder : %s", file, repoFolder));
             }
 
             if (ff != null) {
@@ -793,15 +798,15 @@ public final class NReservedMavenUtils {
                         }
                         if (to.isFile()) {
                             NReservedIOUtils.copy(ff, to, bLog);
-                            bLog.with().level(Level.CONFIG).verb(NLogVerb.CACHE).log(NMsg.ofJ("recover cached {0} file {0} to {1}", ext, ff, to));
+                            bLog.with().level(Level.CONFIG).verb(NLogVerb.CACHE).log(NMsg.ofC("recover cached %s file %s to %s", ext, ff, to));
                         } else {
                             NReservedIOUtils.copy(ff, to, bLog);
-                            bLog.with().level(Level.CONFIG).verb(NLogVerb.CACHE).log(NMsg.ofJ("cache {0} file {0} to {1}", ext, ff, to));
+                            bLog.with().level(Level.CONFIG).verb(NLogVerb.CACHE).log(NMsg.ofC("cache %s file %s to %s", ext, ff, to));
                         }
                         return to;
                     } catch (IOException ex) {
                         errorList.add(new NReservedErrorInfo(nutsId, repository, ff.getPath(), "unable to cache", ex));
-                        bLog.with().level(Level.CONFIG).verb(NLogVerb.FAIL).log(NMsg.ofJ("error caching file {0} to {1} : {2}", ff, to, ex.toString()));
+                        bLog.with().level(Level.CONFIG).verb(NLogVerb.FAIL).log(NMsg.ofC("error caching file %s to %s : %s", ff, to, ex.toString()));
                         //not found
                     }
                     return ff;

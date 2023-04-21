@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.update;
 
+import net.thevpc.nuts.NExecCommand;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NUpdateCommand;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
@@ -16,8 +17,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExe
  */
 public class DefaultNUpdateInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNUpdateInternalExecutable(String[] args, NSession session) {
-        super("update", args, session);
+    public DefaultNUpdateInternalExecutable(String[] args, NExecCommand execCommand) {
+        super("update", args, execCommand);
     }
 
     @Override

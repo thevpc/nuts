@@ -32,13 +32,12 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.io.NTerminalMode;
-import net.thevpc.nuts.runtime.standalone.app.cmdline.NCommandLineUtils;
+import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineUtils;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNArrayElementBuilder;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions;
 import net.thevpc.nuts.runtime.standalone.io.progress.ProgressOptions;
 import net.thevpc.nuts.runtime.standalone.io.terminal.AbstractNSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.NConfigurableHelper;
 import net.thevpc.nuts.runtime.standalone.util.collections.NPropertiesHolder;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -138,21 +137,7 @@ public class DefaultNSession implements Cloneable, NSession {
     public final NSession configure(boolean skipUnsupported, String... args) {
         NId appId = getAppId();
         String appName = appId == null ? "app" : appId.getArtifactId();
-        return NConfigurableHelper.configure(this, this, skipUnsupported, args, appName);
-    }
-
-
-    /**
-     * configure the current command with the given arguments.
-     *
-     * @param skipUnsupported when true, all unsupported options are skipped
-     *                        silently
-     * @param cmdLine         arguments to configure with
-     * @return {@code this} instance
-     */
-    @Override
-    public final boolean configure(boolean skipUnsupported, NCmdLine cmdLine) {
-        return NConfigurableHelper.configure(this, this, skipUnsupported, cmdLine);
+        return NCmdLineConfigurable.configure(this, skipUnsupported, args,appName,this);
     }
 
     @Override
@@ -1575,13 +1560,6 @@ public class DefaultNSession implements Cloneable, NSession {
         }
     }
 
-    @Override
-    public void configureLast(NCmdLine cmdLine) {
-        if (!configureFirst(cmdLine)) {
-            cmdLine.throwUnexpectedArgument();
-        }
-    }
-
     public <T> T getOrComputeWorkspaceProperty(String name, Function<NSession, T> supplier) {
         Object v = getWorkspaceProperty(name);
         if (v != null) {
@@ -2013,9 +1991,9 @@ public class DefaultNSession implements Cloneable, NSession {
             }
             String d = value.getDisplay();
             if (Objects.equals(v, d) || d == null) {
-                out0.println(NMsg.ofC("%s", AUTO_COMPLETE_CANDIDATE_PREFIX + NCommandLineUtils.escapeArgument(v)));
+                out0.println(NMsg.ofC("%s", AUTO_COMPLETE_CANDIDATE_PREFIX + NCmdLineUtils.escapeArgument(v)));
             } else {
-                out0.println(NMsg.ofC("%s", AUTO_COMPLETE_CANDIDATE_PREFIX + NCommandLineUtils.escapeArgument(v) + " " + NCommandLineUtils.escapeArgument(d)));
+                out0.println(NMsg.ofC("%s", AUTO_COMPLETE_CANDIDATE_PREFIX + NCmdLineUtils.escapeArgument(v) + " " + NCmdLineUtils.escapeArgument(d)));
             }
             return c;
         }

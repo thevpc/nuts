@@ -298,8 +298,7 @@ public class NWorkspaceUtils {
                     .log(NMsg.ofJ("unable to resolve default JRE/JDK locations : {0}", ex));
             if (session.isPlainTrace()) {
                 NPrintStream out = session.out();
-                out.resetLine();
-                out.println(NMsg.ofC("Ms :  %s", NMsg.ofStyled("unable to resolve default JRE/JDK locations", NTextStyle.error()), ex));
+                out.resetLine().println(NMsg.ofC("Ms :  %s", NMsg.ofStyled("unable to resolve default JRE/JDK locations", NTextStyle.error()), ex));
             }
         }
     }
@@ -322,8 +321,7 @@ public class NWorkspaceUtils {
                     .log(NMsg.ofJ("unable to install desktop launchers : {0}", ex));
             if (session.isPlainTrace()) {
                 NPrintStream out = session.out();
-                out.resetLine();
-                out.println(NMsg.ofC("%s :  %s",
+                out.resetLine().println(NMsg.ofC("%s :  %s",
                         NMsg.ofStyled("unable to install desktop launchers", NTextStyle.error()),
                         ex));
             }
@@ -338,8 +336,7 @@ public class NWorkspaceUtils {
         }
         if (session.isPlainTrace()) {
             NPrintStream out = session.out();
-            out.resetLine();
-            out.println(NMsg.ofC("looking for recommended companion tools to install... detected : %s",
+            out.resetLine().println(NMsg.ofC("looking for recommended companion tools to install... detected : %s",
                     text.ofBuilder().appendJoined(text.ofPlain(","),
                             companionIds
                     ))
@@ -353,8 +350,7 @@ public class NWorkspaceUtils {
                     .log(NMsg.ofJ("unable to install companions : {0}", ex));
             if (session.isPlainTrace()) {
                 NPrintStream out = session.out();
-                out.resetLine();
-                out.println(NMsg.ofC("%s :  %s "
+                out.resetLine().println(NMsg.ofC("%s :  %s "
                                 + "this happens when none of the following repositories are able to locate them : %s\n",
                         NMsg.ofStyled("unable to install companion tools", NTextStyle.error()),
                         ex,

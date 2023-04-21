@@ -15,11 +15,8 @@ import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
  */
 public class DefaultNExecInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    private final NExecCommand execCommand;
-
-    public DefaultNExecInternalExecutable(String[] args, NSession session, NExecCommand execCommand) {
-        super("exec", args, session);
-        this.execCommand = execCommand;
+    public DefaultNExecInternalExecutable(String[] args, NExecCommand execCommand) {
+        super("exec", args, execCommand);
     }
 
     @Override
@@ -32,7 +29,7 @@ public class DefaultNExecInternalExecutable extends DefaultInternalNExecutableCo
             showDefaultHelp();
             return;
         }
-        execCommand.copy().setSession(getSession()).clearCommand().configure(false, args).setFailFast(true).run();
+        getExecCommand().copy().setSession(getSession()).clearCommand().configure(false, args).setFailFast(true).run();
     }
 
     @Override
@@ -41,6 +38,10 @@ public class DefaultNExecInternalExecutable extends DefaultInternalNExecutableCo
             getSession().out().println("[dry] ==show-help==");
             return;
         }
-        execCommand.copy().setSession(getSession().copy().setDry(true)).clearCommand().configure(false, args).setFailFast(true).run();
+        getExecCommand()
+                .copy()
+                .setSession(getSession().copy().setDry(true)).clearCommand().configure(false, args).setFailFast(true)
+                .run()
+        ;
     }
 }

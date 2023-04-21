@@ -2,8 +2,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NSessionTerminal;
-import net.thevpc.nuts.runtime.standalone.app.cmdline.NCommandLineUtils;
+import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineUtils;
 import net.thevpc.nuts.runtime.standalone.executor.NExecutionContextUtils;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
@@ -63,7 +62,6 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
         checkSession();
 
         NSession traceSession = getSession();
-        NSession execSession = traceSession.copy();
         String target = getTarget();
         if (!NBlankable.isBlank(target)) {
             NConnexionString connexionString = NConnexionString.of(target).get();
@@ -75,24 +73,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
             return whichOnTarget(ee, connexionString);
         }
 
-        NSessionTerminal terminal = NSessionTerminal.of(traceSession.getTerminal(), execSession);
-        if (this.in != null) {
-            terminal.setIn(this.in);
-        }
-        if (this.out != null) {
-            terminal.setOut(this.out);
-        }
-        if (isRedirectErrorStream()) {
-            if (this.out != null) {
-                terminal.setErr(this.out);
-            } else {
-                terminal.setErr(traceSession.getTerminal().out());
-            }
-        }
-        terminal.out().flush();
-        terminal.err().flush();
         NExecutableInformationExt exec = null;
-        execSession.setTerminal(terminal);
         NExecutionType executionType = this.getExecutionType();
         NRunAs runAs = this.getRunAs();
         if (executionType == null) {
@@ -106,7 +87,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                 NAssert.requireNonNull(commandDefinition, "artifact definition", session);
                 NAssert.requireNonBlank(command, "command", session);
                 String[] ts = command.toArray(new String[0]);
-                exec = new DefaultNOpenExecutable(ts, getExecutorOptions().toArray(new String[0]), traceSession, execSession, this);
+                exec = new DefaultNOpenExecutable(ts, getExecutorOptions().toArray(new String[0]), this);
                 break;
             }
             case SYSTEM: {
@@ -123,8 +104,6 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                 }
                 exec = new DefaultNSystemExecutable(tsl.toArray(new String[0]),
                         getExecutorOptions(),
-                        traceSession,
-                        execSession,
                         this
                 );
                 break;
@@ -134,11 +113,11 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                 if (commandDefinition != null) {
                     String[] ts = command == null ? new String[0] : command.toArray(new String[0]);
                     return ws_execDef(commandDefinition, commandDefinition.getId().getLongName(), ts, getExecutorOptions(), workspaceOptions, env, directory, failFast,
-                            executionType, runAs, traceSession, execSession);
+                            executionType, runAs);
                 } else {
                     NAssert.requireNonBlank(command, "command", session);
                     String[] ts = command.toArray(new String[0]);
-                    exec = execEmbeddedOrExternal(ts, getExecutorOptions(), getWorkspaceOptions(), traceSession, execSession);
+                    exec = execEmbeddedOrExternal(ts, getExecutorOptions(), getWorkspaceOptions(), traceSession);
                 }
                 break;
             }
@@ -151,26 +130,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
 
     public NExecutableInformation whichOnTarget(NExecCommandExtension commExec, NConnexionString connexionString) {
         checkSession();
-        NSession traceSession = getSession();
-        NSession execSession = traceSession.copy();
-        NSessionTerminal terminal = NSessionTerminal.of(traceSession.getTerminal(), execSession);
-        if (this.in != null) {
-            terminal.setIn(this.in);
-        }
-        if (this.out != null) {
-            terminal.setOut(this.out);
-        }
-        if (isRedirectErrorStream()) {
-            if (this.out != null) {
-                terminal.setErr(this.out);
-            } else {
-                terminal.setErr(traceSession.getTerminal().out());
-            }
-        }
-        terminal.out().flush();
-        terminal.err().flush();
         NExecutableInformationExt exec = null;
-        execSession.setTerminal(terminal);
         NExecutionType executionType = this.getExecutionType();
         if (executionType == null) {
             executionType = session.getExecutionType();
@@ -190,19 +150,17 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                 return new DefaultNSystemExecutableRemote(
                         commExec, ts,
                         getExecutorOptions(),
-                        traceSession,
-                        execSession,
                         this
                 );
             }
             case SPAWN: {
                 if (commandDefinition != null) {
                     String[] ts = command == null ? new String[0] : command.toArray(new String[0]);
-                    return new DefaultSpawnExecutableRemote(commExec, commandDefinition, ts, getExecutorOptions(), traceSession, execSession, this);
+                    return new DefaultSpawnExecutableRemote(commExec, commandDefinition, ts, getExecutorOptions(), this);
                 } else {
                     NAssert.requireNonBlank(command, "command", session);
                     String[] ts = command.toArray(new String[0]);
-                    return new DefaultSpawnExecutableRemote(commExec, null, ts, getExecutorOptions(), traceSession, execSession, this);
+                    return new DefaultSpawnExecutableRemote(commExec, null, ts, getExecutorOptions(), this);
                 }
             }
             case EMBEDDED: {
@@ -252,7 +210,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
         return this;
     }
 
-    private NExecutableInformationExt execEmbeddedOrExternal(String[] cmd, List<String> executorOptions, List<String> workspaceOptions, NSession prepareSession, NSession execSession) {
+    private NExecutableInformationExt execEmbeddedOrExternal(String[] cmd, List<String> executorOptions, List<String> workspaceOptions, NSession prepareSession) {
         NAssert.requireNonBlank(cmd, "command", session);
         String[] args = new String[cmd.length - 1];
         System.arraycopy(cmd, 1, args, 0, args.length);
@@ -303,12 +261,12 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
         }
         switch (cmdKind) {
             case PATH: {
-                return new DefaultNArtifactPathExecutable(cmdName, args, executorOptions, workspaceOptions, executionType, runAs, prepareSession, execSession, this, isInheritSystemIO());
+                return new DefaultNArtifactPathExecutable(cmdName, args, executorOptions, workspaceOptions, executionType, runAs,  this);
             }
             case ID: {
                 NId idToExec = findExecId(goodId, prepareSession, forceInstalled, true);
                 if (idToExec != null) {
-                    return ws_execId(idToExec, cmdName, args, executorOptions, workspaceOptions, executionType, runAs, prepareSession, execSession);
+                    return ws_execId(idToExec, cmdName, args, executorOptions, workspaceOptions, executionType, runAs);
                 } else {
                     throw new NNotFoundException(getSession(), goodId);
                 }
@@ -316,64 +274,64 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
             case KEYWORD: {
                 switch (goodKw) {
                     case "update": {
-                        return new DefaultNUpdateInternalExecutable(args, execSession);
+                        return new DefaultNUpdateInternalExecutable(args, this);
                     }
                     case "check-updates": {
-                        return new DefaultNCheckUpdatesInternalExecutable(args, execSession);
+                        return new DefaultNCheckUpdatesInternalExecutable(args, this);
                     }
                     case "install": {
-                        return new DefaultNInstallInternalExecutable(args, execSession);
+                        return new DefaultNInstallInternalExecutable(args, this);
                     }
                     case "reinstall": {
-                        return new DefaultNReinstallInternalExecutable(args, execSession);
+                        return new DefaultNReinstallInternalExecutable(args, this);
                     }
                     case "uninstall": {
-                        return new DefaultNUninstallInternalExecutable(args, execSession);
+                        return new DefaultNUninstallInternalExecutable(args, this);
                     }
                     case "deploy": {
-                        return new DefaultNDeployInternalExecutable(args, execSession);
+                        return new DefaultNDeployInternalExecutable(args, this);
                     }
                     case "undeploy": {
-                        return new DefaultNUndeployInternalExecutable(args, execSession);
+                        return new DefaultNUndeployInternalExecutable(args, this);
                     }
                     case "push": {
-                        return new DefaultNPushInternalExecutable(args, execSession);
+                        return new DefaultNPushInternalExecutable(args, this);
                     }
                     case "fetch": {
-                        return new DefaultNFetchInternalExecutable(args, execSession);
+                        return new DefaultNFetchInternalExecutable(args, this);
                     }
                     case "search": {
-                        return new DefaultNSearchInternalExecutable(args, execSession);
+                        return new DefaultNSearchInternalExecutable(args, this);
                     }
                     case "version": {
-                        return new DefaultNVersionInternalExecutable(args, execSession, this);
+                        return new DefaultNVersionInternalExecutable(args,  this);
                     }
                     case "prepare": {
-                        return new DefaultNPrepareInternalExecutable(args, execSession);
+                        return new DefaultNPrepareInternalExecutable(args, this);
                     }
                     case "license": {
-                        return new DefaultNLicenseInternalExecutable(args, execSession);
+                        return new DefaultNLicenseInternalExecutable(args, this);
                     }
                     case "bundle": {
-                        return new DefaultNBundleInternalExecutable(args, execSession);
+                        return new DefaultNBundleInternalExecutable(args, this);
                     }
                     case "help": {
-                        return new DefaultNHelpInternalExecutable(args, execSession);
+                        return new DefaultNHelpInternalExecutable(args, this);
                     }
                     case "welcome": {
-                        return new DefaultNWelcomeInternalExecutable(args, execSession);
+                        return new DefaultNWelcomeInternalExecutable(args, this);
                     }
                     case "info": {
-                        return new DefaultNInfoInternalExecutable(args, execSession);
+                        return new DefaultNInfoInternalExecutable(args, this);
                     }
                     case "which": {
-                        return new DefaultNWhichInternalExecutable(args, execSession, this);
+                        return new DefaultNWhichInternalExecutable(args,  this);
                     }
                     case "exec": {
-                        return new DefaultNExecInternalExecutable(args, execSession, this);
+                        return new DefaultNExecInternalExecutable(args,  this);
                     }
                     case "settings": {
-                        return new DefaultNSettingsInternalExecutable(args, execSession);
+                        return new DefaultNSettingsInternalExecutable(args, this);
                     }
                 }
                 NCustomCommand command = null;
@@ -381,7 +339,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                 if (command != null) {
                     NCommandExecOptions o = new NCommandExecOptions().setExecutorOptions(executorOptions).setDirectory(directory).setFailFast(failFast)
                             .setExecutionType(executionType).setEnv(env);
-                    return new DefaultNAliasExecutable(command, o, execSession, args);
+                    return new DefaultNAliasExecutable(command, o,args,this);
                 } else {
                     NId idToExec = null;
                     if (goodId != null) {
@@ -393,14 +351,14 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                             List<String> cmdArr = new ArrayList<>();
                             cmdArr.add(sw.toString());
                             cmdArr.addAll(Arrays.asList(args));
-                            return new DefaultNSystemExecutable(cmdArr.toArray(new String[0]), executorOptions, prepareSession, execSession, this);
+                            return new DefaultNSystemExecutable(cmdArr.toArray(new String[0]), executorOptions,  this);
                         }
                         List<String> cmdArr = new ArrayList<>();
                         cmdArr.add(cmdName);
                         cmdArr.addAll(Arrays.asList(args));
-                        return new DefaultUnknownExecutable(cmdArr.toArray(new String[0]), execSession);
+                        return new DefaultUnknownExecutable(cmdArr.toArray(new String[0]), this);
                     }
-                    return ws_execId(idToExec, cmdName, args, executorOptions, workspaceOptions, executionType, runAs, prepareSession, execSession);
+                    return ws_execId(idToExec, cmdName, args, executorOptions, workspaceOptions, executionType, runAs);
                 }
             }
         }
@@ -481,9 +439,8 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
     }
 
     protected NExecutableInformationExt ws_execId(NId goodId, String commandName, String[] appArgs, List<String> executorOptions,
-                                                  List<String> workspaceOptions, NExecutionType executionType, NRunAs runAs,
-                                                  NSession session, NSession execSession) {
-        NDefinition def = NFetchCommand.of(session).setId(goodId)
+                                                  List<String> workspaceOptions, NExecutionType executionType, NRunAs runAs) {
+        NDefinition def = NFetchCommand.of(goodId, session)
                 .setDependencies(true)
                 .setFailFast(true)
                 .setEffective(true)
@@ -494,28 +451,28 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                 .setDependencyFilter(NDependencyFilters.of(session).byRunnable())
                 //
                 .getResultDefinition();
-        return ws_execDef(def, commandName, appArgs, executorOptions, this.workspaceOptions, env, directory, failFast, executionType, runAs, session, execSession);
+        return ws_execDef(def, commandName, appArgs, executorOptions, this.workspaceOptions, env, directory, failFast, executionType, runAs);
     }
 
-    protected NExecutableInformationExt ws_execDef(NDefinition def, String commandName, String[] appArgs, List<String> executorOptions, List<String> workspaceOptions, Map<String, String> env, NPath dir, boolean failFast, NExecutionType executionType, NRunAs runAs, NSession traceSession, NSession execSession) {
-        return new DefaultNArtifactExecutable(def, commandName, appArgs, executorOptions, workspaceOptions, env, dir, failFast, traceSession, execSession, executionType, runAs, this);
+    protected NExecutableInformationExt ws_execDef(NDefinition def, String commandName, String[] appArgs, List<String> executorOptions, List<String> workspaceOptions, Map<String, String> env, NPath dir, boolean failFast, NExecutionType executionType, NRunAs runAs) {
+        return new DefaultNArtifactExecutable(def, commandName, appArgs, executorOptions, workspaceOptions, env, dir, failFast, executionType, runAs, this);
     }
 
     public void ws_execId(NDefinition def, String commandName, String[] appArgs,
                           List<String> executorOptions,
                           List<String> workspaceOptions, Map<String, String> env, NPath dir, boolean failFast, boolean temporary,
                           NSession session,
-                          NSession execSession,
+                          NExecInput in,
+                          NExecOutput out,
+                          NExecOutput err,
                           NExecutionType executionType,
                           NRunAs runAs
     ) {
         //TODO ! one of the sessions needs to be removed!
-        NSessionUtils.checkSession(ws, this.session);
+        NSessionUtils.checkSession(ws, session);
         checkSession();
         NWorkspace ws = getSession().getWorkspace();
-        NWorkspaceSecurityManager.of(this.session).checkAllowed(NConstants.Permissions.EXEC, commandName);
-        NSessionUtils.checkSession(ws, execSession);
-        NSessionUtils.checkSession(ws, session);
+        NWorkspaceSecurityManager.of(session).checkAllowed(NConstants.Permissions.EXEC, commandName);
         if (def != null && def.getContent().isPresent()) {
             NDescriptor descriptor = def.getDescriptor();
             if (!descriptor.isExecutable()) {
@@ -526,7 +483,6 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
             NExecutorComponent execComponent = null;
 
             List<String> executorArgs = new ArrayList<>();
-            Map<String, String> execProps = null;
 
             if (executorCall != null) {
                 NId eid = executorCall.getId();
@@ -565,9 +521,8 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                             def, session, NExecutionContextUtils.DEFINITION_PLACEHOLDER
                     ));
                 }
-                execProps = executorCall.getProperties();
             }
-            NCommandLineUtils.OptionsAndArgs optionsAndArgs = NCommandLineUtils.parseOptionsFirst(executorArgs.toArray(new String[0]));
+            NCmdLineUtils.OptionsAndArgs optionsAndArgs = NCmdLineUtils.parseOptionsFirst(executorArgs.toArray(new String[0]));
 
             executorArgs.clear();
             executorArgs.addAll(Arrays.asList(optionsAndArgs.getOptions()));
@@ -581,24 +536,21 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                     .setExecutorOptions(executorArgs.toArray(new String[0]))
                     .setWorkspaceOptions(workspaceOptions)
                     .setEnv(env)
-                    .setExecutorProperties(execProps)
                     .setDirectory(dir)
                     .setWorkspace(session.getWorkspace())
                     .setSession(session)
-                    .setExecSession(execSession)
                     .setFailFast(failFast)
                     .setTemporary(temporary)
                     .setExecutionType(executionType)
                     .setRunAs(runAs)
                     .setCommandName(commandName)
                     .setSleepMillis(getSleepMillis())
-                    .setInheritSystemIO(isInheritSystemIO())
-                    .setRedirectOutputFile(getRedirectOutputFile())
-                    .setRedirectInputFile(getRedirectInputFile())
+                    .setIn(in)
+                    .setOut(out)
+                    .setErr(err)
                     .build();
             execComponent.exec(executionContext);
             return;
-
         }
         throw new NNotFoundException(getSession(), def == null ? null : def.getId());
     }

@@ -46,7 +46,6 @@ public class DefaultNDefinition implements NDefinition {
     private transient NSession session;
 
     public DefaultNDefinition() {
-//        System.out.println("");
     }
 
     public DefaultNDefinition(String repoUuid, String repoName, NId id, NDescriptor descriptor, NPath content, NInstallInformation install, NId apiId, NSession session) {
@@ -121,22 +120,26 @@ public class DefaultNDefinition implements NDefinition {
 
     @Override
     public NOptional<NPath> getContent() {
-        return NOptional.of(content, s-> NMsg.ofC("content not found for id %s",getId()));
+        return NOptional.of(content, s-> NMsg.ofC("content not found for id %s",getId()))
+                .setSession(session);
     }
 
     @Override
     public NOptional<NDescriptor> getEffectiveDescriptor() {
-        return NOptional.of(effectiveDescriptor, s-> NMsg.ofC("unable to get effectiveDescriptor for id %s. You need to call search.setEffective(...) first.",getId()));
+        return NOptional.of(effectiveDescriptor, s-> NMsg.ofC("unable to get effectiveDescriptor for id %s. You need to call search.setEffective(...) first.",getId()))
+                .setSession(session);
     }
 
     @Override
     public NOptional<NInstallInformation> getInstallInformation() {
-        return NOptional.of(installInformation, s-> NMsg.ofC("unable to get install information for id %s.",getId()));
+        return NOptional.of(installInformation, s-> NMsg.ofC("unable to get install information for id %s.",getId()))
+                .setSession(session);
     }
 
     @Override
     public NOptional<NDependencies> getDependencies() {
-        return NOptional.of(dependencies, s-> NMsg.ofC("unable to get dependencies for id %s. You need to call search.setDependencies(...) first.",getId()));
+        return NOptional.of(dependencies, s-> NMsg.ofC("unable to get dependencies for id %s. You need to call search.setDependencies(...) first.",getId()))
+                .setSession(session);
     }
 
     public DefaultNDefinition setContent(NPath content) {

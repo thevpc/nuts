@@ -28,40 +28,48 @@ import net.thevpc.nuts.cmdline.DefaultNArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineFormatStrategy;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineShellOptions;
-import net.thevpc.nuts.runtime.standalone.io.util.MultiPipeThread;
 import net.thevpc.nuts.runtime.standalone.io.util.NonBlockingInputStreamAdapter;
 import net.thevpc.nuts.runtime.standalone.shell.NShellHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NQuoteType;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class ProcessBuilder2 {
 
     private List<String> command = new ArrayList<>();
     private Map<String, String> env;
     private File directory;
-    private ProcessBuilder base = new ProcessBuilder();
-    private InputStream in;
-    private PrintStream out;
-    private PrintStream err;
-    private int result;
-    private boolean baseIO;
     private boolean failFast;
-    private Process proc;
-    private long pid;
     private long sleepMillis = 1000;
     private NSession session;
+
+    private NExecInput2 in = new NExecInput2(NExecInput.ofInherit());
+    private NExecOutput2 out = new NExecOutput2(NExecOutput.ofInherit());
+    private NExecOutput2 err = new NExecOutput2(NExecOutput.ofInherit());
+
+
+    ////////////////////// EXEC VARS
+
+    private ProcessBuilder base = new ProcessBuilder();
+    private List<PipeRunnable> pipesList = new ArrayList<>();
+    private ExecutorService pipes = null;
+    private int result;
+    private Process proc;
+    private long pid;
 
     public ProcessBuilder2(NSession session) {
         this.session = session;
@@ -191,89 +199,207 @@ public class ProcessBuilder2 {
 
     public ProcessBuilder2 setDirectory(File directory) {
         this.directory = directory;
-        base.directory(directory);
         return this;
     }
 
-    public ProcessBuilder2 setRedirectFileOutput(File file) {
-        base.redirectOutput(file);
+    ////////////////// OUT
+
+    public NExecInput getIn() {
+        return in.base;
+    }
+
+    public ProcessBuilder2 setIn(NExecInput in) {
+        this.in.base = in == null ? NExecInput.ofInherit() : in;
         return this;
     }
 
-    public ProcessBuilder2 setRedirectFileInput(File file) {
-        base.redirectInput(file);
+    public NExecOutput getOut() {
+        return out.base;
+    }
+
+    public ProcessBuilder2 setOut(NExecOutput out) {
+        this.out.base = out == null ? NExecOutput.ofInherit() : out;
         return this;
     }
 
-    public InputStream getIn() {
-        return in;
+    public NExecOutput getErr() {
+        return err.base;
     }
 
-    public ProcessBuilder2 setIn(InputStream in) {
-        if (baseIO) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("already used base IO redirection"));
+    public ProcessBuilder2 setErr(NExecOutput err) {
+        this.err.base = err == null ? NExecOutput.ofInherit() : err;
+        return this;
+    }
+
+
+    ////////////////// RESULTS
+
+    public byte[] getOutputBytes() {
+        switch (out.base.getType()) {
+            case GRAB_FILE: {
+                NPath file = out.base.getPath();
+                return file.readBytes();
+            }
+            case GRAB_STREAM: {
+                return ((ByteArrayOutputStream) out.base.getStream()).toByteArray();
+            }
         }
-        this.in = in;
-        return this;
+        throw new NIllegalArgumentException(session, NMsg.ofPlain("no buffer was configured; should call setGrabOutString"));
     }
 
-    public PrintStream getOut() {
-        return out;
-    }
-
-    public ProcessBuilder2 grabOutputString() {
-        setOutput(new SPrintStream());
-        return this;
-    }
-
-    public ProcessBuilder2 grabErrorString() {
-        setOutput(new SPrintStream());
-        return this;
+    public byte[] getErrorBytes() {
+        switch (err.base.getType()) {
+            case REDIRECT: {
+                return getOutputBytes();
+            }
+            case GRAB_FILE: {
+                NPath file = err.base.getPath();
+                return file.readBytes();
+            }
+            case GRAB_STREAM: {
+                return ((ByteArrayOutputStream) err.base.getStream()).toByteArray();
+            }
+        }
+        throw new NIllegalArgumentException(session, NMsg.ofPlain("no buffer was configured; should call setGrabErrorString"));
     }
 
     public String getOutputString() {
-        PrintStream o = getOut();
-        if (o instanceof SPrintStream) {
-            return ((SPrintStream) o).getStringBuffer();
-        }
-        throw new NIllegalArgumentException(session, NMsg.ofPlain("no buffer was configured; should call setOutString"));
+        return new String(getOutputBytes());
     }
 
     public String getErrorString() {
-        if (base.redirectErrorStream()) {
-            return getOutputString();
-        }
-        PrintStream o = getErr();
-        if (o instanceof SPrintStream) {
-            return ((SPrintStream) o).getStringBuffer();
-        }
-        throw new NIllegalArgumentException(session, NMsg.ofPlain("no buffer was configured; should call setErrString"));
-    }
-
-    public ProcessBuilder2 setOutput(PrintStream out) {
-        if (baseIO) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("already used base IO redirection"));
-        }
-        this.out = out;
-        return this;
-    }
-
-    public PrintStream getErr() {
-        return err;
-    }
-
-    public ProcessBuilder2 setErr(PrintStream err) {
-        if (baseIO) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("already used base IO redirection"));
-        }
-        this.err = err;
-        return this;
+        return new String(getErrorBytes());
     }
 
     public ProcessBuilder2 start() throws IOException {
         if (proc != null) {
-            throw new IOException("Already started");
+            throw new NIllegalStateException(session, NMsg.ofPlain("already started"));
         }
+        switch (in.base.getType()) {
+            case PIPE: {
+                base.redirectInput(ProcessBuilder.Redirect.PIPE);
+                break;
+            }
+            case PATH: {
+                NPath path = in.base.getPath();
+                Path file = path.toFile();
+                if (file == null) {
+                    in.tempPath = NPath.ofTempFile(session);
+                    in.file = in.tempPath.toFile().toFile();
+                    path.copyTo(in.tempPath);
+                } else {
+                    in.file = file.toFile();
+                }
+                base.redirectInput(ProcessBuilder.Redirect.from(in.file));
+            }
+            case INHERIT: {
+                base.redirectInput(ProcessBuilder.Redirect.INHERIT);
+                break;
+            }
+            case STREAM: {
+                base.redirectInput(ProcessBuilder.Redirect.PIPE);
+                break;
+            }
+            case GRAB_STREAM:
+            case GRAB_FILE:
+            case REDIRECT:{
+                throw new NIllegalArgumentException(session, NMsg.ofC("unsupported in mode : %s", in.base.getType()));
+            }
+        }
+
+        switch (out.base.getType()) {
+            case PIPE: {
+                base.redirectOutput(ProcessBuilder.Redirect.PIPE);
+                break;
+            }
+            case INHERIT: {
+                base.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+                break;
+            }
+            case GRAB_STREAM:
+            case STREAM: {
+                base.redirectOutput(ProcessBuilder.Redirect.PIPE);
+                break;
+            }
+            case GRAB_FILE: {
+                out.tempPath = NPath.ofTempFile(session);
+                out.file = out.tempPath.toFile().toFile();
+                base.redirectOutput(ProcessBuilder.Redirect.to(out.file));
+            }
+            case PATH: {
+                NPath path = out.base.getPath();
+                Path file = path.toFile();
+                Set<NPathOption> options = Arrays.stream(out.base.getOptions()).filter(Objects::nonNull).collect(Collectors.toSet());
+                if (file == null) {
+                    base.redirectOutput(ProcessBuilder.Redirect.PIPE);
+                    out.tempStream = out.base.getPath().getOutputStream(options.toArray(new NPathOption[0]));
+                } else {
+                    if (options.isEmpty()) {
+                        in.file = file.toFile();
+                        base.redirectOutput(ProcessBuilder.Redirect.to(out.file));
+                    } else if (options.size() == 1 && options.contains(NPathOption.APPEND)) {
+                        in.file = file.toFile();
+                        base.redirectOutput(ProcessBuilder.Redirect.appendTo(out.file));
+                    } else {
+                        base.redirectOutput(ProcessBuilder.Redirect.PIPE);
+                        out.tempStream = out.base.getPath().getOutputStream(options.toArray(new NPathOption[0]));
+                    }
+                }
+                break;
+            }
+            case REDIRECT:
+            {
+                throw new NIllegalArgumentException(session, NMsg.ofC("unsupported in mode : %s", out.base.getType()));
+            }
+        }
+
+        switch (err.base.getType()) {
+            case PIPE: {
+                base.redirectError(ProcessBuilder.Redirect.PIPE);
+                break;
+            }
+            case INHERIT: {
+                base.redirectError(ProcessBuilder.Redirect.INHERIT);
+                break;
+            }
+            case GRAB_STREAM:
+            case STREAM: {
+                base.redirectError(ProcessBuilder.Redirect.PIPE);
+                break;
+            }
+            case GRAB_FILE: {
+                err.tempPath = NPath.ofTempFile(session);
+                err.file = err.tempPath.toFile().toFile();
+                base.redirectError(ProcessBuilder.Redirect.to(err.file));
+            }
+            case PATH: {
+                NPath path = err.base.getPath();
+                Path file = path.toFile();
+                Set<NPathOption> options = Arrays.stream(err.base.getOptions()).filter(Objects::nonNull).collect(Collectors.toSet());
+                if (file == null) {
+                    base.redirectError(ProcessBuilder.Redirect.PIPE);
+                    err.tempStream = err.base.getPath().getOutputStream(options.toArray(new NPathOption[0]));
+                } else {
+                    if (options.isEmpty()) {
+                        in.file = file.toFile();
+                        base.redirectError(ProcessBuilder.Redirect.to(err.file));
+                    } else if (options.size() == 1 && options.contains(NPathOption.APPEND)) {
+                        in.file = file.toFile();
+                        base.redirectError(ProcessBuilder.Redirect.appendTo(err.file));
+                    } else {
+                        base.redirectError(ProcessBuilder.Redirect.PIPE);
+                        err.tempStream = err.base.getPath().getOutputStream(options.toArray(new NPathOption[0]));
+                    }
+                }
+                break;
+            }
+            case REDIRECT: {
+                base.redirectErrorStream(true);
+                break;
+            }
+        }
+
+        base.directory(directory);
         base.command(command);
         if (env != null) {
             Map<String, String> environment = base.environment();
@@ -300,43 +426,81 @@ public class ProcessBuilder2 {
         if (proc == null) {
             throw new IOException("Not started");
         }
-        if (!baseIO) {
-            NonBlockingInputStreamAdapter procInput;
-            NonBlockingInputStreamAdapter procError;
-            NonBlockingInputStreamAdapter termIn = null;
-            List<PipeRunnable> pipesList = new ArrayList<>();
-            ExecutorService pipes = Executors.newCachedThreadPool();
-            String procString = NPath.of(command.get(0), session).getName()
-                    + "-" + (pid < 0 ? ("unknown-pid" + String.valueOf(-pid)) : String.valueOf(pid));
-            String cmdStr = String.join(" ", command);
-            if (out != null) {
-                procInput = new NonBlockingInputStreamAdapter("pipe-out-proc-" + procString, proc.getInputStream());
-                PipeRunnable t = NSysExecUtils.pipe("pipe-out-proc-" + procString, cmdStr, "out", procInput, this.out, session);
+        String procString = NPath.of(command.get(0), session).getName()
+                + "-" + (pid < 0 ? ("unknown-pid" + String.valueOf(-pid)) : String.valueOf(pid));
+        String cmdStr = String.join(" ", command);
+        switch (in.base.getType()) {
+            case STREAM: {
+                in.termIn = new NonBlockingInputStreamAdapter("pipe-in-proc-" + procString, in.base.getStream());
+                PipeRunnable t = NSysExecUtils.pipe("pipe-in-proc-" + procString, cmdStr, "in", in.termIn, proc.getOutputStream(), session);
+                if (pipes == null) {
+                    pipes = Executors.newCachedThreadPool();
+                }
                 pipes.submit(t);
                 pipesList.add(t);
+                break;
             }
-            if (err != null) {
-                procError = new NonBlockingInputStreamAdapter("pipe-err-proc-" + procString, proc.getErrorStream());
-                if (base.redirectErrorStream()) {
-                    PipeRunnable t = NSysExecUtils.pipe("pipe-err-proc-" + procString, cmdStr, "err", procError, out, session);
-                    pipes.submit(t);
-                    pipesList.add(t);
-                } else {
-                    PipeRunnable t = NSysExecUtils.pipe("pipe-err-proc-" + procString, cmdStr, "err", procError, this.err, session);
+        }
+        switch (out.base.getType()) {
+            case STREAM:
+            case GRAB_STREAM: {
+                NonBlockingInputStreamAdapter procInput;
+                procInput = new NonBlockingInputStreamAdapter("pipe-out-proc-" + procString, proc.getInputStream());
+                PipeRunnable t = NSysExecUtils.pipe("pipe-out-proc-" + procString, cmdStr, "out", procInput, out.base.getStream(), session);
+                if (pipes == null) {
+                    pipes = Executors.newCachedThreadPool();
+                }
+                pipes.submit(t);
+                pipesList.add(t);
+                break;
+            }
+            case PATH: {
+                if (out.tempStream != null) {
+                    NonBlockingInputStreamAdapter procInput;
+                    procInput = new NonBlockingInputStreamAdapter("pipe-out-proc-" + procString, proc.getInputStream());
+                    PipeRunnable t = NSysExecUtils.pipe("pipe-out-proc-" + procString, cmdStr, "out", procInput, out.tempStream, session);
+                    if (pipes == null) {
+                        pipes = Executors.newCachedThreadPool();
+                    }
                     pipes.submit(t);
                     pipesList.add(t);
                 }
+                break;
             }
-            if (in != null) {
-                termIn = new NonBlockingInputStreamAdapter("pipe-in-proc-" + procString, in);
-                PipeRunnable t = NSysExecUtils.pipe("pipe-in-proc-" + procString, cmdStr, "in", termIn, proc.getOutputStream(), session);
+        }
+        switch (err.base.getType()) {
+            case STREAM:
+            case GRAB_STREAM: {
+                NonBlockingInputStreamAdapter procInput;
+                procInput = new NonBlockingInputStreamAdapter("pipe-err-proc-" + procString, proc.getErrorStream());
+                PipeRunnable t = NSysExecUtils.pipe("pipe-err-proc-" + procString, cmdStr, "err", procInput, err.base.getStream(), session);
+                if (pipes == null) {
+                    pipes = Executors.newCachedThreadPool();
+                }
                 pipes.submit(t);
                 pipesList.add(t);
+                break;
             }
+            case PATH: {
+                if (err.tempStream != null) {
+                    NonBlockingInputStreamAdapter procInput;
+                    procInput = new NonBlockingInputStreamAdapter("pipe-err-proc-" + procString, proc.getErrorStream());
+                    PipeRunnable t = NSysExecUtils.pipe("pipe-err-proc-" + procString, cmdStr, "err", procInput, err.tempStream, session);
+                    if (pipes == null) {
+                        pipes = Executors.newCachedThreadPool();
+                    }
+                    pipes.submit(t);
+                    pipesList.add(t);
+                }
+                break;
+            }
+        }
+        if (in.termIn != null || pipesList.isEmpty()) {
             while (proc.isAlive()) {
-                if (termIn != null) {
-                    if (!termIn.hasMoreBytes() && termIn.available() == 0) {
-                        termIn.close();
+                if (in.termIn != null) {
+                    if (!in.termIn.hasMoreBytes() && in.termIn.available() == 0) {
+                        in.termIn.close();
+                        in.termIn = null;
                     }
                 }
                 boolean allFinished = true;
@@ -350,18 +514,23 @@ public class ProcessBuilder2 {
                 if (allFinished) {
                     break;
                 }
-                try {
-                    Thread.sleep(sleepMillis);
-                } catch (InterruptedException e) {
-                    throw new IOException(CoreStringUtils.exceptionToString(e));
+                if (sleepMillis > 0) {
+                    try {
+                        Thread.sleep(sleepMillis);
+                    } catch (InterruptedException e) {
+                        throw new IOException(CoreStringUtils.exceptionToString(e));
+                    }
                 }
             }
+        }
 
-            proc.getInputStream().close();
-            proc.getErrorStream().close();
-            proc.getOutputStream().close();
+        try {
+            result = proc.waitFor();
+        } catch (InterruptedException e) {
+            throw new IOException(CoreStringUtils.exceptionToString(e));
+        }
 
-            waitFor0();
+        if (pipes != null) {
             for (PipeRunnable pipe : pipesList) {
                 pipe.requestStop();
             }
@@ -371,35 +540,61 @@ public class ProcessBuilder2 {
             } catch (InterruptedException e) {
                 throw new NUnexpectedException(session, NMsg.ofPlain("unable to await termination"));
             }
-        } else {
-            waitFor0();
         }
-        return this;
-    }
-
-    private void waitFor0() throws IOException {
-        try {
-            result = proc.waitFor();
-        } catch (InterruptedException e) {
-            throw new IOException(CoreStringUtils.exceptionToString(e));
+        proc.getInputStream().close();
+        proc.getErrorStream().close();
+        proc.getOutputStream().close();
+        switch (out.base.getType()) {
+            case PATH: {
+                if (out.tempStream != null) {
+                    out.tempStream.close();
+                }
+                break;
+            }
+            case GRAB_FILE: {
+                if (out.tempPath != null) {
+                    out.tempStream.close();
+                    out.base.getStream().write(
+                            Files.readAllBytes(out.tempPath.toFile())
+                    );
+                }
+                break;
+            }
+        }
+        switch (err.base.getType()) {
+            case PATH: {
+                if (err.tempStream != null) {
+                    err.tempStream.close();
+                }
+                break;
+            }
+            case GRAB_FILE: {
+                if (err.tempPath != null) {
+                    err.tempStream.close();
+                    err.base.getStream().write(
+                            Files.readAllBytes(err.tempPath.toFile())
+                    );
+                }
+                break;
+            }
         }
         if (result != 0) {
             if (isFailFast()) {
                 if (base.redirectErrorStream()) {
-                    if (isGrabOutputString()) {
+                    if (out.base.getType() == NExecRedirectType.GRAB_FILE || out.base.getType() == NExecRedirectType.GRAB_STREAM) {
                         throw new NExecutionException(session,
                                 NMsg.ofC("execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
                                         NCmdLine.of(getCommand())),
                                 result);
                     }
                 } else {
-                    if (isGrabErrorString()) {
+                    if (err.base.getType() == NExecRedirectType.GRAB_FILE || err.base.getType() == NExecRedirectType.GRAB_STREAM) {
                         throw new NExecutionException(session,
                                 NMsg.ofC("execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
                                         NCmdLine.of(getCommand())),
                                 result);
                     }
-                    if (isGrabOutputString()) {
+                    if (out.base.getType() == NExecRedirectType.GRAB_FILE || out.base.getType() == NExecRedirectType.GRAB_STREAM) {
                         throw new NExecutionException(session, NMsg.ofC(
                                 "execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
                                 NCmdLine.of(getCommand())
@@ -411,66 +606,6 @@ public class ProcessBuilder2 {
                 ), result);
             }
         }
-    }
-
-    public boolean isGrabOutputString() {
-        return !baseIO && (out instanceof SPrintStream);
-    }
-
-    public boolean isGrabErrorString() {
-        return !baseIO && (err instanceof SPrintStream);
-    }
-
-    private ProcessBuilder2 waitFor2() throws IOException {
-        if (proc == null) {
-            start();
-        }
-        if (proc == null) {
-            throw new IOException("Not started");
-        }
-        NonBlockingInputStreamAdapter procInput = null;
-        NonBlockingInputStreamAdapter procError = null;
-        NonBlockingInputStreamAdapter termIn = null;
-        MultiPipeThread mp = new MultiPipeThread("pipe-out-proc-" + proc.toString());
-        if (out != null) {
-            procInput = new NonBlockingInputStreamAdapter("pipe-out-proc-" + proc.toString(), proc.getInputStream());
-            mp.add("pipe-out-proc-" + proc.toString(), procInput, out);
-        }
-        if (!base.redirectErrorStream()) {
-            if (err != null) {
-                procError = new NonBlockingInputStreamAdapter("pipe-err-proc-" + proc.toString(), proc.getErrorStream());
-                mp.add("pipe-err-proc-" + proc.toString(), procError, err);
-            }
-        }
-        if (in != null) {
-            termIn = new NonBlockingInputStreamAdapter("pipe-in-proc-" + proc.toString(), in);
-            mp.add("pipe-in-proc-" + proc.toString(), termIn, proc.getOutputStream());
-        }
-        mp.start();
-        while (proc.isAlive()) {
-            if (termIn != null) {
-                if (!termIn.hasMoreBytes() && termIn.available() == 0) {
-                    termIn.close();
-                }
-            }
-            if (mp.isEmpty()) {
-                break;
-            }
-            try {
-                Thread.sleep(sleepMillis);
-            } catch (InterruptedException e) {
-                throw new IOException(e);
-            }
-        }
-        proc.getInputStream().close();
-        proc.getErrorStream().close();
-        proc.getOutputStream().close();
-        try {
-            result = proc.waitFor();
-        } catch (InterruptedException e) {
-            throw new IOException(e);
-        }
-        mp.requestStop();
         return this;
     }
 
@@ -480,67 +615,6 @@ public class ProcessBuilder2 {
 
     public Process getProcess() {
         return proc;
-    }
-
-    public ProcessBuilder2 inheritIO() {
-        this.baseIO = true;
-        base.inheritIO();
-        return this;
-    }
-
-    public ProcessBuilder2 redirectInput(ProcessBuilder.Redirect source) {
-        base.redirectInput(source);
-        baseIO = true;
-        return this;
-    }
-
-    public ProcessBuilder2 redirectOutput(ProcessBuilder.Redirect source) {
-        base.redirectOutput(source);
-        baseIO = true;
-        return this;
-    }
-
-    public ProcessBuilder2 redirectInput(File source) {
-        base.redirectInput(source);
-        baseIO = true;
-        return this;
-    }
-
-    public ProcessBuilder2 redirectOutput(File source) {
-        base.redirectOutput(source);
-        baseIO = true;
-        return this;
-    }
-
-    public ProcessBuilder2 redirectError(File source) {
-        base.redirectError(source);
-        baseIO = true;
-        return this;
-    }
-
-    public ProcessBuilder.Redirect getRedirectInput() {
-        return base.redirectInput();
-    }
-
-    public ProcessBuilder.Redirect getRedirectOutput() {
-        return base.redirectOutput();
-    }
-
-    public ProcessBuilder.Redirect getRedirectError() {
-        return base.redirectError();
-    }
-
-    public boolean isRedirectErrorStream() {
-        return base.redirectErrorStream();
-    }
-
-    public ProcessBuilder2 setRedirectErrorStream(boolean redirectErrorStream) {
-        base.redirectErrorStream(redirectErrorStream);
-        return this;
-    }
-
-    public ProcessBuilder2 setRedirectErrorStream() {
-        return setRedirectErrorStream(true);
     }
 
     public String getCommandString() {
@@ -608,110 +682,37 @@ public class ProcessBuilder2 {
                                                 .setFormatStrategy(NCmdLineFormatStrategy.SUPPORT_QUOTES)
                                 )
                 );
-        if (baseIO) {
-            ProcessBuilder.Redirect r;
-            if (f == null || f.acceptRedirectOutput()) {
-                r = base.redirectOutput();
-                if (null == r.type()) {
-                    sb.append(" > ").append("{?}");
+
+        switch (out.base.getType()) {
+            case PATH: {
+                if (Arrays.stream(out.base.getOptions()).anyMatch(x -> x == NPathOption.APPEND)) {
+                    sb.append(" >> ");
                 } else {
-                    switch (r.type()) {
-                        //sb.append(" > ").append("{inherited}");
-                        case INHERIT:
-                            break;
-                        case PIPE:
-                            break;
-                        case WRITE:
-                            sb.append(" > ").append(NStringUtils.formatStringLiteral(r.file().getPath()));
-                            break;
-                        case APPEND:
-                            sb.append(" >> ").append(NStringUtils.formatStringLiteral(r.file().getPath()));
-                            break;
-                        default:
-                            sb.append(" > ").append("{?}");
-                            break;
-                    }
+                    sb.append(" > ");
                 }
+                sb.append(NStringUtils.formatStringLiteral(out.base.getPath().toString()));
+                break;
             }
-            if (f == null || f.acceptRedirectError()) {
-                if (base.redirectErrorStream()) {
-                    sb.append(" 2>&1");
+        }
+
+        switch (out.base.getType()) {
+            case REDIRECT:
+                sb.append(" 2>&1");
+                break;
+            case PATH:
+                if (Arrays.stream(err.base.getOptions()).anyMatch(x -> x == NPathOption.APPEND)) {
+                    sb.append(" 2>> ");
                 } else {
-                    if (f == null || f.acceptRedirectError()) {
-                        r = base.redirectError();
-                        if (null == r.type()) {
-                            sb.append(" 2> ").append("{?}");
-                        } else {
-                            switch (r.type()) {
-                                //sb.append(" 2> ").append("{inherited}");
-                                case INHERIT:
-                                    break;
-                                case PIPE:
-                                    break;
-                                case WRITE:
-                                    sb.append(" 2> ").append(r.file().getPath());
-                                    break;
-                                case APPEND:
-                                    sb.append(" 2>> ").append(NStringUtils.formatStringLiteral(r.file().getPath(), NQuoteType.DOUBLE));
-                                    break;
-                                default:
-                                    sb.append(" 2> ").append("{?}");
-                                    break;
-                            }
-                        }
-                    }
+                    sb.append(" 2> ");
                 }
-            }
-            if (f == null || f.acceptRedirectInput()) {
-                r = base.redirectInput();
-                if (null == r.type()) {
-                    sb.append(" < ").append("{?}");
-                } else {
-                    switch (r.type()) {
-                        //sb.append(" < ").append("{inherited}");
-                        case INHERIT:
-                            break;
-                        case PIPE:
-                            break;
-                        case READ:
-                            sb.append(" < ").append(NStringUtils.formatStringLiteral(r.file().getPath(), NQuoteType.DOUBLE));
-                            break;
-                        default:
-                            sb.append(" < ").append("{?}");
-                            break;
-                    }
-                }
-            }
-        } else if (base.redirectErrorStream()) {
-            if (out != null) {
-                if (f == null || f.acceptRedirectOutput()) {
-                    sb.append(" > ").append("{stream}");
-                }
-                if (f == null || f.acceptRedirectError()) {
-                    sb.append(" 2>&1");
-                }
-            }
-            if (in != null) {
-                if (f == null || f.acceptRedirectInput()) {
-                    sb.append(" < ").append("{stream}");
-                }
-            }
-        } else {
-            if (out != null) {
-                if (f == null || f.acceptRedirectOutput()) {
-                    sb.append(" > ").append("{stream}");
-                }
-            }
-            if (err != null) {
-                if (f == null || f.acceptRedirectError()) {
-                    sb.append(" 2> ").append("{stream}");
-                }
-            }
-            if (in != null) {
-                if (f == null || f.acceptRedirectInput()) {
-                    sb.append(" < ").append("{stream}");
-                }
-            }
+                sb.append(NStringUtils.formatStringLiteral(err.base.getPath().toString()));
+                break;
+        }
+
+        switch (out.base.getType()) {
+            case PATH:
+                sb.append(" < ").append(NStringUtils.formatStringLiteral(out.base.getPath().toString()));
+                break;
         }
         return sb.toString();
     }
@@ -789,120 +790,50 @@ public class ProcessBuilder2 {
                                                 .setExpectEnv(true)
                                 )
                 ));
-        if (baseIO) {
-            ProcessBuilder.Redirect r;
-            if (f == null || f.acceptRedirectOutput()) {
-                r = base.redirectOutput();
-                if (null == r.type()) {
+        switch (out.base.getType()) {
+            case PATH: {
+                sb.append(" ");
+                if (Arrays.stream(out.base.getOptions()).anyMatch(x -> x == NPathOption.APPEND)) {
+                    sb.append(">>", NTextStyle.separator());
+                } else {
                     sb.append(">", NTextStyle.separator());
-                    sb.append(" ");
-                    sb.append("{?}", NTextStyle.pale());
-                } else {
-                    switch (r.type()) {
-                        //sb.append(" > ").append("{inherited}");
-                        case INHERIT:
-                            break;
-                        case PIPE:
-                            break;
-                        case WRITE:
-                            sb.append(">", NTextStyle.separator());
-                            sb.append(" ");
-                            sb.append(NStringUtils.formatStringLiteral(r.file().getPath()), NTextStyle.path());
-                            break;
-                        case APPEND:
-                            sb.append(txt.ofStyled(">>", NTextStyle.separator()));
-                            sb.append(" ");
-                            sb.append(NStringUtils.formatStringLiteral(r.file().getPath()), NTextStyle.path());
-                            break;
-                        default:
-                            sb.append(">", NTextStyle.separator());
-                            sb.append(" ");
-                            sb.append(NStringUtils.formatStringLiteral("{?}"), NTextStyle.pale());
-                            break;
-                    }
                 }
-            }
-            if (f == null || f.acceptRedirectError()) {
-                if (base.redirectErrorStream()) {
-                    sb.append(" ").append("2>&1", NTextStyle.separator());
-                } else {
-                    if (f == null || f.acceptRedirectError()) {
-                        r = base.redirectError();
-                        if (null == r.type()) {
-                            sb.append(" ").append("2>", NTextStyle.separator())
-                                    .append("{?", NTextStyle.pale());
-                        } else {
-                            switch (r.type()) {
-                                //sb.append(" 2> ").append("{inherited}");
-                                case INHERIT:
-                                    break;
-                                case PIPE:
-                                    break;
-                                case WRITE:
-                                    sb.append(" ").append("2>", NTextStyle.separator()).append(" ").append(NStringUtils.formatStringLiteral(r.file().getPath()), NTextStyle.path());
-                                    break;
-                                case APPEND:
-                                    sb.append(" ").append("2>>", NTextStyle.separator()).append(" ").append(NStringUtils.formatStringLiteral(r.file().getPath()), NTextStyle.path());
-                                    break;
-                                default:
-                                    sb.append(" ").append("2>", NTextStyle.separator()).append(" ").append("{?}", NTextStyle.pale());
-                                    break;
-                            }
-                        }
-                    }
-                }
-            }
-            if (f == null || f.acceptRedirectInput()) {
-                r = base.redirectInput();
-                if (null == r.type()) {
-                    sb.append(" ##:separator:").append(escape(session, "<")).append("## ").append("##:pale:{?}##");
-                } else {
-                    switch (r.type()) {
-                        //sb.append(" < ").append("{inherited}");
-                        case INHERIT:
-                            break;
-                        case PIPE:
-                            break;
-                        case READ:
-                            sb.append(" ##:separator:").append(escape(session, "<")).append("## ").append(NStringUtils.formatStringLiteral(r.file().getPath()));
-                            break;
-                        default:
-                            sb.append(" ##:separator:").append(escape(session, "<")).append("## ").append("##:pale:{?}##");
-                            break;
-                    }
-                }
-            }
-        } else if (base.redirectErrorStream()) {
-            if (out != null) {
-                if (f == null || f.acceptRedirectOutput()) {
-                    sb.append(" ##:separator:").append(escape(session, "> ")).append("## ").append("##:pale:{stream}##");
-                }
-                if (f == null || f.acceptRedirectError()) {
-                    sb.append(" ##:separator:").append(escape(session, "2>&1")).append("##");
-                }
-            }
-            if (in != null) {
-                if (f == null || f.acceptRedirectInput()) {
-                    sb.append(" ##:separator:").append(escape(session, "<")).append("## ").append("##:pale:{stream}##");
-                }
-            }
-        } else {
-            if (out != null) {
-                if (f == null || f.acceptRedirectOutput()) {
-                    sb.append(" ##:separator:").append(escape(session, ">")).append("## ").append("##:pale:{stream}##");
-                }
-            }
-            if (err != null) {
-                if (f == null || f.acceptRedirectError()) {
-                    sb.append(" ##:separator:").append(escape(session, "2>")).append("## ").append("##:pale:{stream}##");
-                }
-            }
-            if (in != null) {
-                if (f == null || f.acceptRedirectInput()) {
-                    sb.append(" ##:separator:").append(escape(session, "<")).append("## ").append("##:pale:{stream}##");
-                }
+                sb.append(" ");
+                sb.append(out.base.getPath());
+                break;
             }
         }
+
+        switch (err.base.getType()) {
+            case PATH: {
+                sb.append(" ");
+                if (Arrays.stream(out.base.getOptions()).anyMatch(x -> x == NPathOption.APPEND)) {
+                    sb.append(">>", NTextStyle.separator());
+                } else {
+                    sb.append(">", NTextStyle.separator());
+                }
+                sb.append(" ");
+                sb.append(err.base.getPath(), NTextStyle.path());
+                break;
+            }
+            case REDIRECT: {
+                sb.append(" ");
+                sb.append("2", NTextStyle.number());
+                sb.append(">", NTextStyle.separator());
+                sb.append("&1", NTextStyle.number());
+                break;
+            }
+        }
+        switch (in.base.getType()) {
+            case PATH: {
+                sb.append(" ");
+                sb.append("<", NTextStyle.separator());
+                sb.append(" ");
+                sb.append(in.base.getPath(), NTextStyle.path());
+                break;
+            }
+        }
+
         return sb.toString();
     }
 
@@ -919,9 +850,22 @@ public class ProcessBuilder2 {
         return setFailFast(true);
     }
 
+
     @Override
     public String toString() {
-        return "ProcessBuilder2{" + "command=" + command + ", env=" + env + ", directory=" + directory + ", base=" + base + ", in=" + in + ", out=" + out + ", err=" + err + ", result=" + result + ", baseIO=" + baseIO + ", failFast=" + failFast + ", proc=" + proc + ", sleepMillis=" + sleepMillis + ", session=" + session + '}';
+        return "ProcessBuilder2{" +
+                "command=" + command +
+                ", env=" + env +
+                ", directory=" + directory +
+                ", failFast=" + failFast +
+                ", sleepMillis=" + sleepMillis +
+                ", session=" + session +
+                ", in=" + in +
+                ", out=" + out +
+                ", err=" + err +
+                ", result=" + result +
+                ", pid=" + pid +
+                '}';
     }
 
     public interface CommandStringFormat {
@@ -956,25 +900,6 @@ public class ProcessBuilder2 {
 
         default String replaceEnvValue(String envName, String envValue) {
             return null;
-        }
-    }
-
-    private static class SPrintStream extends PrintStream {
-
-        private ByteArrayOutputStream out;
-
-        public SPrintStream() {
-            this(new ByteArrayOutputStream());
-        }
-
-        public SPrintStream(ByteArrayOutputStream out1) {
-            super(out1);
-            this.out = out1;
-        }
-
-        public String getStringBuffer() {
-            flush();
-            return new String(out.toByteArray());
         }
     }
 

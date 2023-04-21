@@ -89,7 +89,7 @@ public class LocalMysqlDatabaseConfigService {
                     .setEnv("CMD_PWD", password)
                     .setEnv("CMD_DB", getDatabaseName())
                     .grabOutputString()
-                    .setRedirectErrorStream(true);
+                    .redirectErrorStream();
             int result = cmd
                     .getResult();
             if (result == 0) {
@@ -120,7 +120,7 @@ public class LocalMysqlDatabaseConfigService {
                     .setEnv("CMD_DB", getDatabaseName())
                     //                    .inheritIO()
                     .grabOutputString()
-                    .setRedirectErrorStream(true);
+                    .redirectErrorStream();
             if (session.isPlainTrace()) {
                 session.out().println(NMsg.ofC("%s    [exec] %s", getBracketsPrefix(getDatabaseName()),
                         cmd.formatter().setEnvReplacer(envEntry -> {

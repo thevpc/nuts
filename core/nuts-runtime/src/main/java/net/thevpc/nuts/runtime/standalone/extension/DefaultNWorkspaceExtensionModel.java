@@ -13,7 +13,6 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NServiceLoader;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NClassLoaderUtils;
-import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NFormattedPrintStream;
 import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNSessionTerminalFromSystem;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
@@ -235,7 +234,7 @@ public class DefaultNWorkspaceExtensionModel {
 //        }
 //    }
     public Set<Class> discoverTypes(NId id, ClassLoader classLoader, NSession session) {
-        URL url = NFetchCommand.of(session).setId(id).setSession(session).setContent(true).getResultContent().asURL();
+        URL url = NFetchCommand.of(id, session).setContent(true).getResultContent().asURL();
         return objectFactory.discoverTypes(id, url, classLoader, session);
     }
 
@@ -455,6 +454,7 @@ public class DefaultNWorkspaceExtensionModel {
                 .addScope(NDependencyScopePattern.RUN)
                 .setDependencyFilter(NDependencyFilters.of(session).byRunnable())
                 //
+                .setContent(true)
                 .setDependencies(true)
                 .setLatest(true)
                 .getResultDefinitions().required();
@@ -463,7 +463,7 @@ public class DefaultNWorkspaceExtensionModel {
         }
         DefaultNWorkspaceExtension workspaceExtension = new DefaultNWorkspaceExtension(id, nDefinitions.getId(), this.workspaceExtensionsClassLoader);
         //now will iterate over Extension classes to wire them ...
-        objectFactory.discoverTypes(nDefinitions.getId(), nDefinitions.getContent().map(NPath::asURL).orNull(), workspaceExtension.getClassLoader(), session);
+        Set<Class> discoveredTypes = objectFactory.discoverTypes(nDefinitions.getId(), nDefinitions.getContent().map(NPath::asURL).orNull(), workspaceExtension.getClassLoader(), session);
 //        for (Class extensionImpl : getExtensionTypes(NutsComponent.class, session)) {
 //            for (Class extensionPointType : resolveComponentTypes(extensionImpl)) {
 //                if (registerType(extensionPointType, extensionImpl, session)) {
@@ -482,6 +482,16 @@ public class DefaultNWorkspaceExtensionModel {
             _LOGOP(session).level(Level.FINE).verb(NLogVerb.UPDATE)
                     .log(NMsg.ofJ("extension {0} changed Terminal configuration. Reloading Session Terminal", id));
             session.setTerminal(newTerminal);
+        }
+        for (Class discoveredType : discoveredTypes) {
+            if (NExtensionLifeCycle.class.isAssignableFrom(discoveredType)) {
+                workspaceExtension.getEvents().add(
+                        (NExtensionLifeCycle) objectFactory.createComponent(discoveredType, null, session).get()
+                );
+            }
+        }
+        for (NExtensionLifeCycle event : workspaceExtension.getEvents()) {
+            event.onInitExtension(workspaceExtension, session);
         }
         return workspaceExtension;
     }

@@ -3,6 +3,7 @@ package net.thevpc.nuts.toolbox.mvn;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NPaths;
 
 import java.io.IOException;
@@ -158,8 +159,7 @@ public class NMvnMain implements NApplication {
     }
 
     private static Path createTempPom(NSession session) {
-        Path d = NPaths.of(session)
-                .createTempFolder().toFile();
+        Path d = NPath.ofTempFolder(session).toFile();
         try (Writer out = Files.newBufferedWriter(d.resolve("pom.xml"))) {
             out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                     + "<project xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://maven.apache.org/POM/4.0.0\"\n"

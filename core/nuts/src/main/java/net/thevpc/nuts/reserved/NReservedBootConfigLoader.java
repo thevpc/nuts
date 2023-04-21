@@ -50,17 +50,17 @@ public final class NReservedBootConfigLoader {
         File bootFile = new File(workspaceLocation, NConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
         try {
             if (bootFile.isFile()) {
-                bLog.with().level(Level.CONFIG).verb(NLogVerb.READ).log( NMsg.ofJ("load boot file : {0}", bootFile.getPath()));
+                bLog.with().level(Level.CONFIG).verb(NLogVerb.READ).log(NMsg.ofC("load boot file : %s", bootFile.getPath()));
                 String json = NReservedIOUtils.readStringFromFile(bootFile).trim();
                 if (json.length() > 0) {
                     return loadBootConfigJSON(json, bLog);
                 }
             }
             if (bLog.isLoggable(Level.FINEST)) {
-                bLog.with().level(Level.CONFIG).verb(NLogVerb.FAIL).log(NMsg.ofJ("previous Workspace config not found at {0}", bootFile.getPath()));
+                bLog.with().level(Level.CONFIG).verb(NLogVerb.FAIL).log(NMsg.ofC("previous Workspace config not found at %s", bootFile.getPath()));
             }
         } catch (Exception ex) {
-            bLog.with().level(Level.CONFIG).verb(NLogVerb.FAIL).error(ex).log(NMsg.ofJ("unable to load nuts version file {0}.\n", bootFile));
+            bLog.with().level(Level.CONFIG).verb(NLogVerb.FAIL).error(ex).log(NMsg.ofC("unable to load nuts version file %s", bootFile));
         }
         return null;
     }
@@ -70,27 +70,27 @@ public final class NReservedBootConfigLoader {
         Map<String, Object> jsonObject = parser.parseObject();
         NBootOptionsBuilder c = new DefaultNBootOptionsBuilder();
         NVersion configVersion = NVersion.of((String) jsonObject.get("configVersion")).ifBlankEmpty()
-                .orElseUse(()-> NVersion.of((String) jsonObject.get("createApiVersion")))
+                .orElseUse(() -> NVersion.of((String) jsonObject.get("createApiVersion")))
                 .orElse(NVersion.BLANK);
 
         if (configVersion.isBlank()) {
             configVersion = Nuts.getVersion();
-            bLog.with().level(Level.FINEST).verb(NLogVerb.FAIL).log(NMsg.ofJ("unable to detect config version. Fallback to {0}", configVersion));
+            bLog.with().level(Level.FINEST).verb(NLogVerb.FAIL).log(NMsg.ofC("unable to detect config version. Fallback to %s", configVersion));
         }
         if (configVersion == null) {
         }
         int buildNumber = getApiVersionOrdinalNumber(configVersion);
         if (buildNumber <= 501) {
             //load nothing!
-            bLog.with().level(Level.CONFIG).verb(NLogVerb.READ).log( NMsg.ofJ("detect config version {0} ( considered as 0.5.1, very old config, ignored)", configVersion));
+            bLog.with().level(Level.CONFIG).verb(NLogVerb.READ).log(NMsg.ofC("detect config version %s ( considered as 0.5.1, very old config, ignored)", configVersion));
         } else if (buildNumber <= 505) {
-            bLog.with().level(Level.CONFIG).verb(NLogVerb.READ).log(NMsg.ofJ("detect config version {0} ( compatible with 0.5.2 config file )", configVersion));
+            bLog.with().level(Level.CONFIG).verb(NLogVerb.READ).log(NMsg.ofC("detect config version %s ( compatible with 0.5.2 config file )", configVersion));
             NReservedBootConfigLoaderOld.loadConfigVersion502(c, jsonObject, bLog);
         } else if (buildNumber <= 506) {
-            bLog.with().level(Level.CONFIG).verb(NLogVerb.READ).log(NMsg.ofJ("detect config version {0} ( compatible with 0.5.6 config file )", configVersion));
+            bLog.with().level(Level.CONFIG).verb(NLogVerb.READ).log(NMsg.ofC("detect config version %s ( compatible with 0.5.6 config file )", configVersion));
             NReservedBootConfigLoaderOld.loadConfigVersion506(c, jsonObject, bLog);
         } else {
-            bLog.with().level(Level.CONFIG).verb(NLogVerb.READ).log(NMsg.ofJ("detect config version {0} ( compatible with 0.5.7 config file )", configVersion));
+            bLog.with().level(Level.CONFIG).verb(NLogVerb.READ).log(NMsg.ofC("detect config version %s ( compatible with 0.5.7 config file )", configVersion));
             NReservedBootConfigLoaderOld.loadConfigVersion507(c, jsonObject, bLog);
         }
         return c;
@@ -108,7 +108,7 @@ public final class NReservedBootConfigLoader {
         }
     }
 
-    public static Map<NHomeLocation, String> asNutsHomeLocationMap(Map<Object,String> m) {
+    public static Map<NHomeLocation, String> asNutsHomeLocationMap(Map<Object, String> m) {
         Map<NHomeLocation, String> a = new LinkedHashMap<>();
         if (m != null) {
             for (Map.Entry<Object, String> e : m.entrySet()) {
@@ -127,7 +127,7 @@ public final class NReservedBootConfigLoader {
         return a;
     }
 
-    public static Map<NStoreType, String> asNutsStoreLocationMap(Map<Object,String> m) {
+    public static Map<NStoreType, String> asNutsStoreLocationMap(Map<Object, String> m) {
         Map<NStoreType, String> a = new LinkedHashMap<>();
         if (m != null) {
             for (Map.Entry<Object, String> e : m.entrySet()) {

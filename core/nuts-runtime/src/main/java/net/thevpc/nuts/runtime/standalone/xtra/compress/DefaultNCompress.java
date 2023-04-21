@@ -92,8 +92,7 @@ public class DefaultNCompress implements NCompress {
             if (this.target instanceof NPath) {
                 Path tempPath = null;
                 if (isSafe()) {
-                    tempPath = NPaths.of(session)
-                            .createTempFile("zip").toFile();
+                    tempPath = NPath.ofTempFile("zip",session).toFile();
                 }
                 if (this.target instanceof NPath) {
                     ((NPath) this.target).mkParentDirs();

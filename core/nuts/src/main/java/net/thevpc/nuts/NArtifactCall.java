@@ -50,11 +50,4 @@ public interface NArtifactCall extends Serializable, NBlankable {
      * @return execution arguments
      */
     List<String> getArguments();
-
-    /**
-     * execution properties
-     *
-     * @return execution properties
-     */
-    Map<String, String> getProperties();
 }

@@ -115,7 +115,7 @@ public class SshCommand extends NShellBuiltinDefault {
                 } else {
                     String userHome = null;
                     sshSession.setFailFast(true)
-                            .setRedirectErrorStream(true)
+                            .redirectErrorStream()
                             .grabOutputString().exec("echo", "$HOME");
                     userHome = sshSession.getOutputString().trim();
                     if (NBlankable.isBlank(workspace)) {
@@ -124,7 +124,7 @@ public class SshCommand extends NShellBuiltinDefault {
                     boolean nutsCommandFound = false;
                     int r = sshSession.setFailFast(false).
                             grabOutputString()
-                            .setRedirectErrorStream(true).exec("ls", workspace + "/nuts");
+                            .redirectErrorStream().exec("ls", workspace + "/nuts");
                     if (0 == r) {
                         //found
                         nutsCommandFound = true;

@@ -14,24 +14,17 @@ import net.thevpc.nuts.cmdline.NCmdLine;
  */
 public class DefaultUnknownExecutable extends AbstractNExecutableCommand {
 
-    NSession execSession;
 
-    public DefaultUnknownExecutable(String[] cmd, NSession execSession) {
-        super(cmd[0], NCmdLine.of(cmd).toString(), NExecutableType.UNKNOWN);
-        this.execSession = execSession;
-    }
-
-    @Override
-    protected NSession getSession() {
-        return execSession;
+    public DefaultUnknownExecutable(String[] cmd, NExecCommand execCommand) {
+        super(cmd[0], NCmdLine.of(cmd).toString(), NExecutableType.UNKNOWN,execCommand);
     }
 
     @Override
     public void execute() {
-        if(execSession.isDry()){
-            throw new NExecutionException(execSession, NMsg.ofC("cannot execute an unknown command : %s", name), 1);
+        if(getSession().isDry()){
+            throw new NExecutionException(getSession(), NMsg.ofC("cannot execute an unknown command : %s", name), 1);
         }else {
-            throw new NExecutionException(execSession, NMsg.ofC("cannot execute an unknown command : %s", name), 1);
+            throw new NExecutionException(getSession(), NMsg.ofC("cannot execute an unknown command : %s", name), 1);
         }
     }
 

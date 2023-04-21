@@ -66,7 +66,7 @@ public class SShConnection implements AutoCloseable {
         return redirectErrorStream;
     }
 
-    public SShConnection setRedirectErrorStream() {
+    public SShConnection redirectErrorStream() {
         redirectErrorStream = true;
         return this;
     }

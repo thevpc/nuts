@@ -218,6 +218,11 @@ public class DefaultNWorkspaceLocationModel {
             case "zip":
             case "nbm-application":
                 return ".zip";
+            case "gz":
+                return ".gz";
+            case "targz":
+            case "tar.gz":
+                return ".tar.gz";
         }
         return "." + packaging;
     }

@@ -64,13 +64,6 @@ public interface NExecutionContext extends NSessionProvider {
     List<String> getWorkspaceOptions();
 
     /**
-     * executor properties
-     *
-     * @return executor properties
-     */
-    Map<String, String> getExecutorProperties();
-
-    /**
      * command definition if any
      *
      * @return command definition if any
@@ -97,13 +90,6 @@ public interface NExecutionContext extends NSessionProvider {
      * @return executor descriptor
      */
     NArtifactCall getExecutorDescriptor();
-
-    /**
-     * current session
-     *
-     * @return current session
-     */
-    NSession getExecSession();
 
     /**
      * execution environment
@@ -144,9 +130,16 @@ public interface NExecutionContext extends NSessionProvider {
 
     NRunAs getRunAs();
 
-    boolean isInheritSystemIO();
 
-    NPath getRedirectOutputFile();
+    NExecInput getIn() ;
 
-    NPath getRedirectInputFile();
+    NExecutionContext setIn(NExecInput in) ;
+
+    NExecOutput getOut() ;
+
+    NExecutionContext setOut(NExecOutput out) ;
+
+    NExecOutput getErr();
+
+    NExecutionContext setErr(NExecOutput err) ;
 }

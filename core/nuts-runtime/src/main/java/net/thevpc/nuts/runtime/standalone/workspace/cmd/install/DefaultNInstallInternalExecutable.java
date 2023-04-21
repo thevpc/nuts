@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.install;
 
+import net.thevpc.nuts.NExecCommand;
 import net.thevpc.nuts.NInstallCommand;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
@@ -16,8 +17,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExe
  */
 public class DefaultNInstallInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNInstallInternalExecutable(String[] args, NSession session) {
-        super("install", args, session);
+    public DefaultNInstallInternalExecutable(String[] args, NExecCommand execCommand) {
+        super("install", args, execCommand);
     }
 
     @Override

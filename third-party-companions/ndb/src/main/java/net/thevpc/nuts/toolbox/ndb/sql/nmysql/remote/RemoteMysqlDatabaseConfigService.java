@@ -139,7 +139,7 @@ public class RemoteMysqlDatabaseConfigService {
                             "-c",
                             "cp",
                             remoteFullFilePath.toString(), localPath)
-                    .setRedirectErrorStream(true)
+                    .redirectErrorStream()
                     .grabOutputString()
                     .setFailFast(true)
                     .run()
@@ -214,7 +214,7 @@ public class RemoteMysqlDatabaseConfigService {
                         localPath,
                         remoteFullFilePath.getLocation()
                 ).setSession(session)
-                .setRedirectErrorStream(true)
+                .redirectErrorStream()
                 .grabOutputString()
                 .setFailFast(true)
                 .run();
@@ -280,7 +280,7 @@ public class RemoteMysqlDatabaseConfigService {
                     .format();
             session.out().println(NMsg.ofC("[exec] %s", ff));
         }
-        b.setRedirectErrorStream(true)
+        b.redirectErrorStream()
                 .grabOutputString()
                 .setFailFast(true);
         return b.run().getOutputString();

@@ -43,21 +43,17 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableCommand {
     List<String> workspaceOptions;
     NExecutionType executionType;
     NRunAs runAs;
-    NSession session;
-    NSession execSession;
     DefaultNExecCommand execCommand;
 
-    public DefaultNArtifactPathExecutable(String cmdName, String[] args, List<String> executorOptions, List<String> workspaceOptions, NExecutionType executionType, NRunAs runAs, NSession session, NSession execSession, DefaultNExecCommand execCommand, boolean inheritSystemIO) {
+    public DefaultNArtifactPathExecutable(String cmdName, String[] args, List<String> executorOptions, List<String> workspaceOptions, NExecutionType executionType, NRunAs runAs, DefaultNExecCommand execCommand) {
         super(cmdName,
                 NCmdLine.of(args).toString(),
-                NExecutableType.ARTIFACT);
-        LOG = NLog.of(DefaultNArtifactPathExecutable.class, session);
+                NExecutableType.ARTIFACT,execCommand);
+        LOG = NLog.of(DefaultNArtifactPathExecutable.class, getSession());
         this.runAs = runAs;
         this.cmdName = cmdName;
         this.args = args;
         this.executionType = executionType;
-        this.session = session;
-        this.execSession = execSession;
         this.execCommand = execCommand;
         this.executorOptions = executorOptions;
         this.workspaceOptions = workspaceOptions;
@@ -65,7 +61,7 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableCommand {
 
     @Override
     public NId getId() {
-        try (final CharacterizedExecFile c = characterizeForExec(NPath.of(cmdName, session), session, executorOptions)) {
+        try (final CharacterizedExecFile c = characterizeForExec(NPath.of(cmdName, getSession()), getSession(), executorOptions)) {
             return c.getDescriptor() == null ? null : c.getDescriptor().getId();
         }
     }
@@ -76,19 +72,19 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableCommand {
     }
 
     public void executeHelper() {
+        NSession session = getSession();
         try (final CharacterizedExecFile c = characterizeForExec(NPath.of(cmdName, session), session, executorOptions)) {
             if (c.getDescriptor() == null) {
-                throw new NNotFoundException(execSession, null, NMsg.ofC("unable to resolve a valid descriptor for %s", cmdName), null);
+                throw new NNotFoundException(session, null, NMsg.ofC("unable to resolve a valid descriptor for %s", cmdName), null);
             }
-            String tempFolder = NPaths.of(session)
-                    .createTempFolder("exec-path-").toString();
+            String tempFolder = NPath.ofTempFolder("exec-path-",session).toString();
             NId _id = c.getDescriptor().getId();
             DefaultNDefinition nutToRun = new DefaultNDefinition(
                     null,
                     null,
                     _id.getLongId(),
                     c.getDescriptor(),
-                    NPath.of(c.getContentFile(), execSession).setUserCache(false).setUserTemporary(c.getTemps().size() > 0)
+                    NPath.of(c.getContentFile(), session).setUserCache(false).setUserTemporary(c.getTemps().size() > 0)
                     ,
                     DefaultNInstallInfo.notInstalled(_id),
                     null, session
@@ -108,7 +104,11 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableCommand {
 //            System.out.println(String.join(" ",args));
             try {
                 execCommand.ws_execId(nutToRun, cmdName, args, executorOptions, workspaceOptions, execCommand.getEnv(),
-                        execCommand.getDirectory(), execCommand.isFailFast(), true, session, execSession, executionType, runAs);
+                        execCommand.getDirectory(), execCommand.isFailFast(), true, session,
+                        execCommand.getIn(),
+                        execCommand.getOut(),
+                        execCommand.getErr(),
+                        executionType, runAs);
             } finally {
                 try {
                     CoreIOUtils.delete(session, Paths.get(tempFolder));
@@ -224,8 +224,4 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableCommand {
         return "nuts " + cmdName + " " + NCmdLine.of(args).toString();
     }
 
-    @Override
-    public NSession getSession() {
-        return session;
-    }
 }

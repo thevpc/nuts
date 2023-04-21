@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.push;
 
+import net.thevpc.nuts.NExecCommand;
 import net.thevpc.nuts.NPushCommand;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
@@ -16,8 +17,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExe
  */
 public class DefaultNPushInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNPushInternalExecutable(String[] args, NSession session) {
-        super("push", args, session);
+    public DefaultNPushInternalExecutable(String[] args, NExecCommand execCommand) {
+        super("push", args, execCommand);
     }
 
     @Override

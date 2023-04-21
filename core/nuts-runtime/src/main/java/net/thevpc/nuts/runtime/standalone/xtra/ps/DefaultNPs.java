@@ -174,7 +174,7 @@ public class DefaultNPs implements NPs {
                     .setExecutionType(NExecutionType.SYSTEM)
                     .addCommand(cmd)
                     .addCommand("-l" + (mainArgs ? "m" : "") + (vmArgs ? "v" : ""))
-                    .setRedirectErrorStream(true)
+                    .redirectErrorStream()
                     .grabOutputString()
                     .setFailFast(isFailFast());
             b.getResult();

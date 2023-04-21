@@ -98,8 +98,12 @@ public class ProcessExecutorComponent implements NExecutorComponent {
         String directory = NBlankable.isBlank(dir) ? null :
                 NPath.of(dir,executionContext.getSession()).toAbsolute().toString();
         return ProcessExecHelper.ofDefinition(nutMainFile,
-                app.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), showCommand, true, executionContext.getSleepMillis(), false, false, null, null, executionContext.getRunAs(), executionContext.getSession(),
-                executionContext.getExecSession()
+                app.toArray(new String[0]), osEnv, directory,
+                showCommand, true,
+                executionContext.getSleepMillis(),
+                executionContext.getIn(), executionContext.getOut(), executionContext.getErr(),
+                executionContext.getRunAs(), executionContext.getSession(),
+                executionContext.getSession()
         );
     }
 }

@@ -53,7 +53,7 @@ public class NReservedClassLoaderUtils {
             if (!node.isIncludedInClasspath()) {
                 urls.add(node.getURL());
             } else {
-                bLog.with().level(Level.WARNING).verb(NLogVerb.CACHE).log( NMsg.ofJ("url will not be loaded (already in classloader) : {0}", node.getURL()));
+                bLog.with().level(Level.WARNING).verb(NLogVerb.CACHE).log( NMsg.ofC("url will not be loaded (already in classloader) : %s", node.getURL()));
             }
             for (NClassLoaderNode dependency : node.getDependencies()) {
                 fillBootDependencyNodes(dependency, urls, visitedIds, bLog);
@@ -163,11 +163,11 @@ public class NReservedClassLoaderUtils {
                             URL incp = contextClassLoader.getResource(zname);
                             String clz = zname.substring(0, zname.length() - 6).replace('/', '.');
                             if (incp != null) {
-                                bLog.with().level(Level.FINEST).verb(NLogVerb.SUCCESS).log( NMsg.ofJ("url {0} is already in classpath. checked class {1} successfully",
+                                bLog.with().level(Level.FINEST).verb(NLogVerb.SUCCESS).log( NMsg.ofC("url %s is already in classpath. checked class %s successfully",
                                         url, clz));
                                 return true;
                             } else {
-                                bLog.with().level(Level.FINEST).verb(NLogVerb.INFO).log( NMsg.ofJ("url {0} is not in classpath. failed to check class {1}",
+                                bLog.with().level(Level.FINEST).verb(NLogVerb.INFO).log( NMsg.ofC("url %s is not in classpath. failed to check class %s",
                                         url, clz));
                                 return false;
                             }
@@ -187,7 +187,7 @@ public class NReservedClassLoaderUtils {
         } catch (IOException e) {
             //
         }
-        bLog.with().level(Level.FINEST).verb(NLogVerb.FAIL).log( NMsg.ofJ("url {0} is not in classpath. no class found to check", url));
+        bLog.with().level(Level.FINEST).verb(NLogVerb.FAIL).log( NMsg.ofC("url %s is not in classpath. no class found to check", url));
         return false;
     }
 }

@@ -30,38 +30,37 @@ package net.thevpc.nuts.toolbox.nsh.nshell;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
-import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.io.NSessionTerminal;
-import net.thevpc.nuts.io.NSystemTerminal;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NDefaultSupportLevelContext;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.toolbox.nsh.autocomplete.NshAutoCompleter;
 import net.thevpc.nuts.toolbox.nsh.cmdresolver.DefaultNShellCommandTypeResolver;
-import net.thevpc.nuts.toolbox.nsh.cmdresolver.NShellCommandTypeResolver;
 import net.thevpc.nuts.toolbox.nsh.cmdresolver.NCommandTypeResolver;
+import net.thevpc.nuts.toolbox.nsh.cmdresolver.NShellCommandTypeResolver;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinCore;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.err.*;
 import net.thevpc.nuts.toolbox.nsh.eval.*;
 import net.thevpc.nuts.toolbox.nsh.history.DefaultNShellHistory;
-import net.thevpc.nuts.toolbox.nsh.nodes.*;
-import net.thevpc.nuts.toolbox.nsh.sys.NShellExternalExecutor;
 import net.thevpc.nuts.toolbox.nsh.history.NShellHistory;
+import net.thevpc.nuts.toolbox.nsh.nodes.*;
 import net.thevpc.nuts.toolbox.nsh.options.DefaultNShellOptionsParser;
 import net.thevpc.nuts.toolbox.nsh.options.NShellOptionsParser;
 import net.thevpc.nuts.toolbox.nsh.parser.NShellParser;
+import net.thevpc.nuts.toolbox.nsh.sys.NExternalExecutor;
+import net.thevpc.nuts.toolbox.nsh.sys.NShellExternalExecutor;
 import net.thevpc.nuts.toolbox.nsh.sys.NShellNoExternalExecutor;
 import net.thevpc.nuts.toolbox.nsh.util.ByteArrayPrintStream;
-import net.thevpc.nuts.toolbox.nsh.sys.NExternalExecutor;
 import net.thevpc.nuts.toolbox.nsh.util.MemResult;
 import net.thevpc.nuts.util.NClock;
 import net.thevpc.nuts.util.NLog;
 import net.thevpc.nuts.util.NStringUtils;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -583,7 +582,7 @@ public class NShell {
             NDescriptor resultDescriptor = null;
             if (appId != null) {
                 try {
-                    resultDescriptor = NFetchCommand.of(session).setId(appId).setEffective(true).getResultDescriptor();
+                    resultDescriptor = NFetchCommand.of(appId,session).setEffective(true).getResultDescriptor();
                 } catch (Exception ex) {
                     //just ignore
                 }
@@ -642,7 +641,7 @@ public class NShell {
 
     protected void executeInteractive(NShellContext context) {
         NSystemTerminal.enableRichTerm(session);
-        NConfigs.of(session).getSystemTerminal()
+        NIO.of(session).getSystemTerminal()
                 .setCommandAutoCompleteResolver(new NshAutoCompleter())
                 .setCommandHistory(
                         NCmdLineHistory.of(session)

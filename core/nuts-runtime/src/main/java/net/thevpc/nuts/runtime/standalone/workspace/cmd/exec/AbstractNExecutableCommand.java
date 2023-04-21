@@ -5,9 +5,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NExecutableInformationExt;
-import net.thevpc.nuts.NExecutableType;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -20,16 +19,26 @@ public abstract class AbstractNExecutableCommand implements NExecutableInformati
     protected NExecutableType type;
     protected String name;
     protected String value;
-
-    public AbstractNExecutableCommand(String name, NExecutableType type) {
+    private final NExecCommand execCommand;
+    public AbstractNExecutableCommand(String name, NExecutableType type, NExecCommand execCommand) {
         this.type = type;
         this.name = name;
+        this.execCommand = execCommand;
     }
 
-    public AbstractNExecutableCommand(String name, String value, NExecutableType type) {
+    public AbstractNExecutableCommand(String name, String value, NExecutableType type, NExecCommand execCommand) {
         this.type = type;
         this.name = name;
         this.value = value;
+        this.execCommand = execCommand;
+    }
+
+    public NSession getSession() {
+        return getExecCommand().getSession();
+    }
+
+    public NExecCommand getExecCommand() {
+        return execCommand;
     }
 
     @Override
@@ -59,7 +68,5 @@ public abstract class AbstractNExecutableCommand implements NExecutableInformati
                 NTextStyle.error()
         );
     }
-
-    protected abstract NSession getSession();
 
 }

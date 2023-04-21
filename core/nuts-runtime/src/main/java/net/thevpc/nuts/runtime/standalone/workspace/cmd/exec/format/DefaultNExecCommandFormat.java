@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.format;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.runtime.standalone.executor.system.NExecOutput2;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
@@ -121,9 +122,9 @@ public class DefaultNExecCommandFormat extends DefaultFormatBase<NExecCommandFor
     public void print(NPrintStream out) {
         StringBuilder sb = new StringBuilder();
         NExecCommand ec = getValue();
-        NPrintStream _out = ec.getOut();
-        NPrintStream err = ec.getErr();
-        InputStream in = ec.getIn();
+        NExecOutput _out = ec.getOut();
+        NExecOutput err = ec.getErr();
+        NExecInput in = ec.getIn();
         Map<String, String> env = ec.getEnv();
         List<String> command = ec.getCommand();
         if (env != null) {
@@ -170,7 +171,7 @@ public class DefaultNExecCommandFormat extends DefaultFormatBase<NExecCommandFor
         }
         if (isRedirectError()) {
 
-            if (_out != null) {
+            if (_out != null ){
                 if (isRedirectOutput()) {
                     sb.append(" > ").append("{stream}");
                 }

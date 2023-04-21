@@ -6,11 +6,9 @@
 package net.thevpc.nuts.runtime.standalone.format;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
-import net.thevpc.nuts.runtime.standalone.util.NConfigurableHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 
 /**
@@ -91,20 +89,7 @@ public abstract class DefaultFormatBase0<T> implements NCmdLineConfigurable {
      */
     @Override
     public T configure(boolean skipUnsupported, String... args) {
-        return NConfigurableHelper.configure(this, getSession(), skipUnsupported, args, getName());
-    }
-
-    /**
-     * configure the current command with the given arguments.
-     *
-     * @param skipUnsupported when true, all unsupported options are skipped
-     * silently
-     * @param cmdLine arguments to configure with
-     * @return {@code this} instance
-     */
-    @Override
-    public final boolean configure(boolean skipUnsupported, NCmdLine cmdLine) {
-        return NConfigurableHelper.configure(this, getSession(), skipUnsupported, cmdLine);
+        return NCmdLineConfigurable.configure(this, skipUnsupported, args,getName(),getSession());
     }
 
     public boolean isNtf() {
@@ -116,10 +101,4 @@ public abstract class DefaultFormatBase0<T> implements NCmdLineConfigurable {
         return (T)this;
     }
 
-    @Override
-    public void configureLast(NCmdLine cmdLine) {
-        if (!configureFirst(cmdLine)) {
-            cmdLine.throwUnexpectedArgument();
-        }
-    }
 }

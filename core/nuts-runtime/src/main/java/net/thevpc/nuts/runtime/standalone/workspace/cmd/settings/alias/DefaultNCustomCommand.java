@@ -117,7 +117,7 @@ public class DefaultNCustomCommand implements NCustomCommand {
                         NExecCommand.of(session)
                                 .addCommand(helpCommand)
                                 .setFailFast(false)
-                                .setRedirectErrorStream(true)
+                                .redirectErrorStream()
                                 .grabOutputString()
                                 .run()
                                 .getOutputString()

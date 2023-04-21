@@ -40,14 +40,14 @@ public interface NPaths extends NComponent {
      * @param name file name
      * @return newly created file path
      */
-    NPath createTempFile(String name);
+    NPath ofTempFile(String name);
 
     /**
      * create temp file in the repositoryId's temp folder
      *
      * @return newly created file path
      */
-    NPath createTempFile();
+    NPath ofTempFile();
 
     /**
      * create temp folder in the workspace's temp folder
@@ -55,14 +55,14 @@ public interface NPaths extends NComponent {
      * @param name folder name
      * @return newly created temp folder
      */
-    NPath createTempFolder(String name);
+    NPath ofTempFolder(String name);
 
     /**
      * create temp folder in the workspace's temp folder
      *
      * @return newly created temp folder
      */
-    NPath createTempFolder();
+    NPath ofTempFolder();
 
     /**
      * create temp file in the repositoryId's temp folder
@@ -70,14 +70,14 @@ public interface NPaths extends NComponent {
      * @param name file name
      * @return newly created file path
      */
-    NPath createRepositoryTempFile(String name, String repository);
+    NPath ofTempRepositoryFile(String name, String repository);
 
     /**
      * create temp file in the repositoryId's temp folder
      *
      * @return newly created file path
      */
-    NPath createRepositoryTempFile(String repository);
+    NPath ofTempRepositoryFile(String repository);
 
     /**
      * create temp folder in the repository's temp folder
@@ -85,12 +85,12 @@ public interface NPaths extends NComponent {
      * @param name folder name
      * @return newly created temp folder
      */
-    NPath createRepositoryTempFolder(String name, String repository);
+    NPath ofTempRepositoryFolder(String name, String repository);
 
     /**
      * create temp folder in the repository's temp folder
      *
      * @return newly created temp folder
      */
-    NPath createRepositoryTempFolder(String repository);
+    NPath ofTempRepositoryFolder(String repository);
 }

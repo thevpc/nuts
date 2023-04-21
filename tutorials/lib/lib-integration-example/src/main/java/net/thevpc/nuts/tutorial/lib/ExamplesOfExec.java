@@ -23,7 +23,7 @@ public class ExamplesOfExec {
                 .addCommand("ls", "-l")
                 .setExecutionType(NExecutionType.SYSTEM)
                 .grabOutputString()
-                .setRedirectErrorStream(true)
+                .redirectErrorStream()
                 .run()
                 .getOutputString();
         session.out().println(NMsg.ofC("result was %s", result));

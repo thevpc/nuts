@@ -94,9 +94,11 @@ public class ZipExecutorComponent implements NExecutorComponent {
             throw new NIOException(session, NMsg.ofC("unsupported executor %s for %s", executor.getId(), def.getId()));
         }
         String directory = null;
-        return NExecHelper.ofDefinition(def,
-                args.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), true, true, executionContext.getSleepMillis(), false, false, null, null, executionContext.getRunAs(), executionContext.getSession(),
-                executionContext.getExecSession()
+        return NExecHelper.ofDefinition(
+                def,
+                args.toArray(new String[0]), osEnv, directory, true,
+                true, executionContext.getSleepMillis(),
+                executionContext.getIn(), executionContext.getOut(), executionContext.getErr(), executionContext.getRunAs(), executionContext.getSession()
         );
     }
 }

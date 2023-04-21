@@ -35,7 +35,7 @@ public class Test07_DescriptorTest {
     @Test
     public void testSearchDescriptor2() {
 
-        NDefinition u = NFetchCommand.of(session).setId("org.openjfx:javafx-controls#17.0.0.1")
+        NDefinition u = NFetchCommand.of("org.openjfx:javafx-controls#17.0.0.1",session)
                 .setEffective(true).setDependencies(true).getResultDefinition();
         for (NDependency dependency : u.getDescriptor().getDependencies()) {
             System.out.println(dependency.toString());
@@ -50,7 +50,7 @@ public class Test07_DescriptorTest {
 
     @Test
     public void testSearchDescriptor3() {
-        NDefinition u = NFetchCommand.of(session).setId("ch.qos.logback:logback-classic#1.2.11")
+        NDefinition u = NFetchCommand.of("ch.qos.logback:logback-classic#1.2.11",session)
                 .setEffective(true).setDependencies(true).getResultDefinition();
         for (NDependency dependency : u.getDescriptor().getDependencies()) {
             System.out.println(dependency.toString());

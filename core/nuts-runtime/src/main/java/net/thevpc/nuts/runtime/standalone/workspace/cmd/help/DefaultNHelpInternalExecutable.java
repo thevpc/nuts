@@ -29,9 +29,9 @@ import java.util.logging.Level;
 public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCommand {
     private final NLog LOG;
 
-    public DefaultNHelpInternalExecutable(String[] args, NSession session) {
-        super("help", args, session);
-        LOG = NLog.of(DefaultNHelpInternalExecutable.class, session);
+    public DefaultNHelpInternalExecutable(String[] args, NExecCommand execCommand) {
+        super("help", args, execCommand);
+        LOG = NLog.of(DefaultNHelpInternalExecutable.class, execCommand.getSession());
     }
 
     @Override

@@ -72,8 +72,8 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
                         }
                         return ref.resolve(x);
                     }), session);
-        } catch (IOException e) {
-            throw new NIOException(session, e);
+        } catch (IOException|NIOException e) {
+            return NStream.ofEmpty(getSession());
         }
     }
 
@@ -96,10 +96,10 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
             return ref.resolve(path);
         }
         String a = PREFIX + ref.resolve(path);
-        if(!a.endsWith("/")){
-            a+="/";
+        if (!a.endsWith("/")) {
+            a += "/";
         }
-        return NPath.of(new HtmlfsPath(a,session), session);
+        return NPath.of(new HtmlfsPath(a, session), session);
     }
 
     @Override
@@ -122,10 +122,10 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
             return ref.resolve(path);
         }
         String a = PREFIX + ref.resolveSibling(path);
-        if(!a.endsWith("/")){
-            a+="/";
+        if (!a.endsWith("/")) {
+            a += "/";
         }
-        return NPath.of(new HtmlfsPath(a,session), session);
+        return NPath.of(new HtmlfsPath(a, session), session);
     }
 
     @Override
@@ -280,7 +280,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
 
         @Override
         public int getSupportLevel(NSupportLevelContext context) {
-            String path= context.getConstraints();
+            String path = context.getConstraints();
             try {
                 if (path.startsWith(PREFIX)) {
                     return DEFAULT_SUPPORT;
@@ -299,6 +299,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         public MyPathFormat(HtmlfsPath p) {
             this.p = p;
         }
+
         @Override
         public String getName() {
             return "path";

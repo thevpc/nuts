@@ -19,16 +19,14 @@ public class DefaultNAliasExecutable extends AbstractNExecutableCommand {
 
     NCustomCommand command;
     NCommandExecOptions o;
-    NSession session;
-    String[] args;
+   String[] args;
 
-    public DefaultNAliasExecutable(NCustomCommand command, NCommandExecOptions o, NSession session, String[] args) {
+    public DefaultNAliasExecutable(NCustomCommand command, NCommandExecOptions o, String[] args,NExecCommand execCommand) {
         super(command.getName(),
                 NCmdLine.of(command.getCommand()).toString(),
-                NExecutableType.ALIAS);
+                NExecutableType.ALIAS,execCommand);
         this.command = command;
         this.o = o;
-        this.session = session;
         this.args = args;
     }
 
@@ -39,17 +37,17 @@ public class DefaultNAliasExecutable extends AbstractNExecutableCommand {
 
     @Override
     public void execute() {
-        command.exec(args, o, session);
+        command.exec(args, o, getSession());
     }
 
 
     @Override
     public NText getHelpText() {
-        NText t = command.getHelpText(session);
+        NText t = command.getHelpText(getSession());
         if (t != null) {
             return t;
         }
-        return NTexts.of(session).ofStyled("No help available. Try '" + getName() + " --help'", NTextStyle.error());
+        return NTexts.of(getSession()).ofStyled("No help available. Try '" + getName() + " --help'", NTextStyle.error());
     }
 
     @Override
@@ -57,8 +55,4 @@ public class DefaultNAliasExecutable extends AbstractNExecutableCommand {
         return "alias " + command.getName() + " @ " + command.getOwner();
     }
 
-    @Override
-    public NSession getSession() {
-        return session;
-    }
 }

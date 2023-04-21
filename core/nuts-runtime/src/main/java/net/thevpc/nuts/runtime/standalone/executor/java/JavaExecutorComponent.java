@@ -106,26 +106,25 @@ public class JavaExecutorComponent implements NExecutorComponent {
 
     public static NWorkspaceOptionsBuilder createChildOptions(NExecutionContext executionContext) {
         NSession session = executionContext.getSession();
-        NSession execSession = executionContext.getExecSession();
         NWorkspaceOptionsBuilder options = NBootManager.of(session).getBootOptions().builder();
 
         //copy session parameters to the newly created workspace
-        options.setDry(execSession.isDry());
-        options.setGui(execSession.isGui());
-        options.setOutLinePrefix(execSession.getOutLinePrefix());
-        options.setErrLinePrefix(execSession.getErrLinePrefix());
-        options.setDebug(execSession.getDebug());
-        options.setTrace(execSession.isTrace());
-        options.setBot(execSession.isBot());
-        options.setCached(execSession.isCached());
-        options.setIndexed(execSession.isIndexed());
-        options.setConfirm(execSession.getConfirm());
-        options.setTransitive(execSession.isTransitive());
-        options.setOutputFormat(execSession.getOutputFormat());
+        options.setDry(session.isDry());
+        options.setGui(session.isGui());
+        options.setOutLinePrefix(session.getOutLinePrefix());
+        options.setErrLinePrefix(session.getErrLinePrefix());
+        options.setDebug(session.getDebug());
+        options.setTrace(session.isTrace());
+        options.setBot(session.isBot());
+        options.setCached(session.isCached());
+        options.setIndexed(session.isIndexed());
+        options.setConfirm(session.getConfirm());
+        options.setTransitive(session.isTransitive());
+        options.setOutputFormat(session.getOutputFormat());
         switch (options.getTerminalMode().orElse(NTerminalMode.DEFAULT)) {
             //retain filtered
             case DEFAULT:
-                options.setTerminalMode(execSession.getTerminal().out().getTerminalMode());
+                options.setTerminalMode(session.getTerminal().out().getTerminalMode());
                 //retain filtered
             case FILTERED:
                 break;
@@ -133,15 +132,15 @@ public class JavaExecutorComponent implements NExecutorComponent {
             case INHERITED:
                 break;
             default:
-                options.setTerminalMode(execSession.getTerminal().out().getTerminalMode());
+                options.setTerminalMode(session.getTerminal().out().getTerminalMode());
                 break;
         }
-        options.setExpireTime(execSession.getExpireTime());
+        options.setExpireTime(session.getExpireTime());
 
-        Filter logFileFilter = execSession.getLogFileFilter();
-        Filter logTermFilter = execSession.getLogTermFilter();
-        Level logTermLevel = execSession.getLogTermLevel();
-        Level logFileLevel = execSession.getLogFileLevel();
+        Filter logFileFilter = session.getLogFileFilter();
+        Filter logTermFilter = session.getLogTermFilter();
+        Level logTermLevel = session.getLogTermLevel();
+        Level logFileLevel = session.getLogFileLevel();
         if (logFileFilter != null || logTermFilter != null || logTermLevel != null || logFileLevel != null) {
             NLogConfig lc = options.getLogConfig().orNull();
             if (lc == null) {
@@ -198,21 +197,12 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 NPath.ofUserDirectory(session)
                         : executionContext.getDirectory(),
                 session);
-        final NSession execSession = executionContext.getExecSession();
         switch (executionContext.getExecutionType()) {
             case EMBEDDED: {
-                return new EmbeddedProcessExecHelper(def, execSession, joptions, execSession.out(), executionContext);
+                return new EmbeddedProcessExecHelper(def, session, joptions, session.out(), executionContext);
             }
             case SPAWN:
             default: {
-                StringKeyValueList runnerProps = new StringKeyValueList();
-                if (executionContext.getExecutorDescriptor() != null) {
-                    runnerProps.add(executionContext.getExecutorDescriptor().getProperties());
-                }
-
-                if (executionContext.getEnv() != null) {
-                    runnerProps.add(executionContext.getEnv());
-                }
 
                 HashMap<String, String> osEnv = new HashMap<>();
 
@@ -367,7 +357,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                                 .collect(Collectors.toList())
                 );
                 args.addAll(joptions.getAppArgs());
-                return new JavaProcessExecHelper(execSession, execSession, xargs, joptions, session, executionContext, def, args, osEnv);
+                return new JavaProcessExecHelper(session, session, xargs, joptions, session, executionContext, def, args, osEnv);
 
             }
 

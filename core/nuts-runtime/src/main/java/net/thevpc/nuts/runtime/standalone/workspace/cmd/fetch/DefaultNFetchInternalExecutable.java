@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.fetch;
 
+import net.thevpc.nuts.NExecCommand;
 import net.thevpc.nuts.NFetchCommand;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
@@ -16,8 +17,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExe
  */
 public class DefaultNFetchInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNFetchInternalExecutable(String[] args, NSession session) {
-        super("fetch", args, session);
+    public DefaultNFetchInternalExecutable(String[] args, NExecCommand execCommand) {
+        super("fetch", args, execCommand);
     }
 
     @Override

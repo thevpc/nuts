@@ -29,7 +29,6 @@ package net.thevpc.nuts.io;
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
-import net.thevpc.nuts.spi.NTerminals;
 
 import java.io.InputStream;
 
@@ -40,7 +39,7 @@ import java.io.InputStream;
  */
 public interface NSystemTerminal extends NSystemTerminalBase {
     static void enableRichTerm(NSession session) {
-        NTerminals.of(session).enableRichTerm();
+        NIO.of(session).enableRichTerm();
     }
 
     /**

@@ -1,7 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.version.filter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.dependency.util.NComplexExpressionString;
 import net.thevpc.nuts.runtime.standalone.id.filter.NExprIdFilter;
+import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 
 import java.util.ArrayList;
@@ -9,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class NVersionFilterAnd extends AbstractVersionFilter implements NExprIdFilter {
+public class NVersionFilterAnd extends AbstractVersionFilter implements NExprIdFilter, NComplexExpressionString {
 
     private NVersionFilter[] all;
 
@@ -101,7 +103,7 @@ public class NVersionFilterAnd extends AbstractVersionFilter implements NExprIdF
 
     @Override
     public String toString() {
-        return String.join(" and ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
+        return CoreStringUtils.trueOrAnd(Arrays.stream(all).map(NComplexExpressionString::toString).collect(Collectors.toList()));
     }
 
     public List<NFilter> getSubFilters() {

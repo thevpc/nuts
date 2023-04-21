@@ -40,7 +40,6 @@ public class DefaultNArtifactCall implements NArtifactCall, Serializable {
 
     private NId id;
     private List<String> arguments;
-    private Map<String, String> properties;
 
     /**
      * constructor used by serializers and deserializers
@@ -52,7 +51,6 @@ public class DefaultNArtifactCall implements NArtifactCall, Serializable {
     public DefaultNArtifactCall(NArtifactCall other) {
         this.id = other.getId();
         this.arguments = NReservedCollectionUtils.nonNullList(other.getArguments());
-        this.properties = NReservedCollectionUtils.nonNullMap(other.getProperties());
     }
 
     @Override
@@ -63,16 +61,6 @@ public class DefaultNArtifactCall implements NArtifactCall, Serializable {
         if(arguments!=null) {
             for (String d : arguments) {
                 if (!NBlankable.isBlank(d)) {
-                    return false;
-                }
-            }
-        }
-        if(properties!=null) {
-            for (Map.Entry<String,String> d : properties.entrySet()) {
-                if (!NBlankable.isBlank(d.getKey())) {
-                    return false;
-                }
-                if (!NBlankable.isBlank(d.getValue())) {
                     return false;
                 }
             }
@@ -91,7 +79,6 @@ public class DefaultNArtifactCall implements NArtifactCall, Serializable {
     public DefaultNArtifactCall(NId id, List<String> options, Map<String, String> properties) {
         this.id = id;
         this.arguments = NReservedCollectionUtils.nonNullList(options);
-        this.properties = NReservedCollectionUtils.nonNullMap(properties);
     }
 
     public NId getId() {
@@ -100,10 +87,6 @@ public class DefaultNArtifactCall implements NArtifactCall, Serializable {
 
     public List<String> getArguments() {
         return NReservedCollectionUtils.unmodifiableList(arguments);
-    }
-
-    public Map<String, String> getProperties() {
-        return NReservedCollectionUtils.unmodifiableMap(properties);
     }
 
     @Override
@@ -117,12 +100,12 @@ public class DefaultNArtifactCall implements NArtifactCall, Serializable {
         DefaultNArtifactCall that = (DefaultNArtifactCall) o;
         return Objects.equals(id, that.id)
                 && Objects.equals(arguments, that.arguments)
-                && Objects.equals(properties, that.properties);
+                ;
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, properties,arguments);
+        int result = Objects.hash(id, arguments);
         return result;
     }
 
@@ -131,7 +114,6 @@ public class DefaultNArtifactCall implements NArtifactCall, Serializable {
         return "NArtifactCall{" +
                 "id=" + id +
                 ", arguments=" + arguments +
-                ", properties=" + properties +
                 '}';
     }
 }

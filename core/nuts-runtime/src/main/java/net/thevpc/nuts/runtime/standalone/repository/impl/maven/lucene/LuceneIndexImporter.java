@@ -25,11 +25,11 @@ public class LuceneIndexImporter {
 
     public long importGzURL(URL url, String repository, NSession session) {
 //        NutsWorkspace ws = session.getWorkspace();
-        String tempGzFile = NPaths.of(session).createTempFile("lucene-repository.gz").toString();
+        String tempGzFile = NPath.ofTempFile("lucene-repository.gz",session).toString();
         NCp.of(session)
                 .setSession(session)
                 .from(url).to(NPath.of(tempGzFile,session)).run();
-        String tempFolder = NPaths.of(session).createTempFolder("lucene-repository").toString();
+        String tempFolder = NPath.ofTempFolder("lucene-repository",session).toString();
         NUncompress.of(session).from(NPath.of(tempGzFile,session)).to(
                 NPath.of(tempFolder,session)
         ).setFormat("gz").run();

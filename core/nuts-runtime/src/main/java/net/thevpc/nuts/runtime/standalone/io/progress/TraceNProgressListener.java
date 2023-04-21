@@ -76,14 +76,6 @@ public class TraceNProgressListener implements NProgressListener/*, NutsOutputSt
         double partialSeconds = event.getPartialDuration().getTimeAsDoubleSeconds();
         if (event.getCurrentCount() == 0 || partialSeconds > 0.5 || event.getCurrentCount() == event.getMaxValue()) {
             NTexts text = NTexts.of(event.getSession());
-            Level armedLogLevel = options.getArmedLogLevel();
-            if (options.isArmedNewline()) {
-                out.print("\n");
-            }else if (armedLogLevel!=null) {
-                //
-            }else{
-                out.resetLine();
-            }
             double globalSeconds = event.getDuration().getTimeAsDoubleSeconds();
             long globalSpeed = globalSeconds == 0 ? 0 : (long) (event.getCurrentCount() / globalSeconds);
             long partialSpeed = partialSeconds == 0 ? 0 : (long) (event.getPartialCount() / partialSeconds);
@@ -97,7 +89,11 @@ public class TraceNProgressListener implements NProgressListener/*, NutsOutputSt
             formattedLine.append(p);
             BytesSizeFormat mf = new BytesSizeFormat("BTD1F", event.getSession());
 
-            formattedLine.append(" ").append(text.ofStyled(String.format("%6s", df.format(percent)), NTextStyle.config())).append("% ");
+            if(Double.isNaN(percent)){
+                formattedLine.append(" ").append(text.ofStyled(String.format("%6s", ""), NTextStyle.config())).append("  ");
+            }else {
+                formattedLine.append(" ").append(text.ofStyled(String.format("%6s", df.format(percent)), NTextStyle.config())).append("% ");
+            }
             formattedLine.append(" ").append(text.ofStyled(String.format("%6s", mf.format(partialSpeed)), NTextStyle.config())).append("/s");
             if (event.getMaxValue() < 0) {
                 if (globalSpeed == 0) {
@@ -119,14 +115,7 @@ public class TraceNProgressListener implements NProgressListener/*, NutsOutputSt
             } else {
                 minLength = length;
             }
-            if (armedLogLevel!=null && logger!=null) {
-                this.logger.with().level(armedLogLevel)
-                        .verb(NLogVerb.PROGRESS)
-                        .log(NMsg.ofNtf(formattedLine.toString()));
-            }else {
-                out.print(ff);
-                out.flush();
-            }
+            bar.printProgress2(formattedLine.toText(),out);
             return true;
         }
         return false;

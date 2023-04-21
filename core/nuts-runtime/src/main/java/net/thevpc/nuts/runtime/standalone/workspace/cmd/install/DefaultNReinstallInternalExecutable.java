@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.install;
 
+import net.thevpc.nuts.NExecCommand;
 import net.thevpc.nuts.NInstallCommand;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
@@ -16,8 +17,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExe
  */
 public class DefaultNReinstallInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNReinstallInternalExecutable(String[] args, NSession session) {
-        super("reinstall", args, session);
+    public DefaultNReinstallInternalExecutable(String[] args, NExecCommand execCommand) {
+        super("reinstall", args, execCommand);
     }
 
     @Override

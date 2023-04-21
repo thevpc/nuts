@@ -137,12 +137,12 @@ public class DerbyService {
         Path targetFile = folder.resolve(iid.getArtifactId() + ".jar");
         if (!Files.exists(targetFile)) {
             if (optional) {
-                Path r = NFetchCommand.of(session).setLocation(targetFile).setId(id).setFailFast(false).getResultPath();
+                Path r = NFetchCommand.of(id,session).setLocation(targetFile).setFailFast(false).getResultPath();
                 if (r != null) {
                     LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.READ).log(NMsg.ofJ("downloading {0} to {1}", id, targetFile));
                 }
             } else {
-                NFetchCommand.of(session).setLocation(targetFile).setId(id).setFailFast(true).getResultPath();
+                NFetchCommand.of(id,session).setLocation(targetFile).setFailFast(true).getResultPath();
                 LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.READ).log(NMsg.ofJ("downloading {0} to {1}", id, targetFile));
             }
         } else {

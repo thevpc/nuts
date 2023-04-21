@@ -219,11 +219,4 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
         return format().toString();
     }
 
-    @Override
-    public void configureLast(NCmdLine cmdLine) {
-        if (!configureFirst(cmdLine)) {
-            cmdLine.throwUnexpectedArgument();
-        }
-    }
-
 }

@@ -4,8 +4,9 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.concurrent.NScheduler;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.runtime.standalone.app.cmdline.NCommandLineUtils;
+import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineUtils;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.text.NTerminalCommand;
 import net.thevpc.nuts.text.NTextStyle;
@@ -13,8 +14,6 @@ import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NLog;
 import net.thevpc.nuts.util.NLogVerb;
 
-import java.io.File;
-import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.Future;
@@ -31,66 +30,25 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
         this.out = out;
     }
 
-    public static NExecHelper ofArgs(String[] args, Map<String, String> env, Path directory, NSessionTerminal prepareTerminal,
-                                     NSessionTerminal execTerminal, boolean showCommand, boolean failFast, long sleep,
-                                     boolean inheritSystemIO, boolean redirectErr, File outputFile, File inputFile,
+    public static NExecHelper ofArgs(String[] args, Map<String, String> env, Path directory,
+                                     boolean showCommand, boolean failFast, long sleep,
+                                     NExecInput in,
+                                     NExecOutput out,
+                                     NExecOutput err,
                                      NRunAs runAs,
                                      NSession session) {
-        NPrintStream out = null;
-        NPrintStream err = null;
-        InputStream in = null;
         NExecCommand pb = NExecCommand.of(session);
-        NCommandLineUtils.OptionsAndArgs optionsAndArgs = NCommandLineUtils.parseOptionsFirst(args);
+        NCmdLineUtils.OptionsAndArgs optionsAndArgs = NCmdLineUtils.parseOptionsFirst(args);
         pb.setCommand(optionsAndArgs.getArgs())
                 .addExecutorOptions(optionsAndArgs.getOptions())
                 .setRunAs(runAs)
                 .setEnv(env)
-                .setDirectory(directory == null ? null : NPath.of(directory,session))
+                .setDirectory(directory == null ? null : NPath.of(directory, session))
                 .setSleepMillis((int) sleep)
                 .setFailFast(failFast);
-        if (!inheritSystemIO) {
-            if (inputFile == null) {
-                in = execTerminal.in();
-                if (NIO.of(session).isStdin(in)) {
-                    in = null;
-                }
-            }
-            if (outputFile == null) {
-                out = execTerminal.out();
-                if (NIO.of(session).isStdout(out)) {
-                    out = null;
-                }
-            }
-            err = execTerminal.err();
-            if (NIO.of(session).isStderr(err)) {
-                err = null;
-            }
-            if (out != null) {
-                out.run(NTerminalCommand.MOVE_LINE_START, session);
-            }
-        }
-//        if (out == null && err == null && in == null && inputFile == null && outputFile == null) {
-//            pb.inheritIO();
-//            if (redirectErr) {
-//                pb.setRedirectErrorStream();
-//            }
-//        } else {
-//            if (inputFile == null) {
-//                pb.setIn(in);
-//            } else {
-//                pb.setRedirectFileInput(inputFile);
-//            }
-//            if (outputFile == null) {
-//                pb.setOutput(out == null ? null : out.asPrintStream());
-//            } else {
-//                pb.setRedirectFileOutput(outputFile);
-//            }
-//            if (redirectErr) {
-//                pb.setRedirectErrorStream();
-//            } else {
-//                pb.setErr(err == null ? null : err.asPrintStream());
-//            }
-//        }
+        pb.setIn(CoreIOUtils.validateIn(in, session));
+        pb.setOut(CoreIOUtils.validateOut(out, session));
+        pb.setErr(CoreIOUtils.validateErr(err, session));
 
         NLog _LL = NLog.of(NWorkspaceUtils.class, session);
         NCmdLine commandOut = NCmdLine.of(pb.getCommand());
@@ -103,22 +61,22 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
         if (showCommand || NBootManager.of(session).getCustomBootOption("---show-command")
                 .flatMap(NLiteral::asBoolean)
                 .orElse(false)) {
-            if (prepareTerminal.out().getTerminalMode() == NTerminalMode.FORMATTED) {
-                prepareTerminal.out().print(NMsg.ofC("%s ", NTexts.of(session).ofStyled("[exec]", NTextStyle.primary4())));
-                prepareTerminal.out().println(NTexts.of(session).ofText(commandOut));
+            if (session.out().getTerminalMode() == NTerminalMode.FORMATTED) {
+                session.out().print(NMsg.ofC("%s ", NTexts.of(session).ofStyled("[exec]", NTextStyle.primary4())));
+                session.out().println(NTexts.of(session).ofText(commandOut));
             } else {
-                prepareTerminal.out().print("exec ");
-                prepareTerminal.out().println(commandOut);
+                session.out().print("exec ");
+                session.out().println(commandOut);
             }
         }
-        return new NExecHelper(pb, session, out == null ? execTerminal.out() : out);
+        return new NExecHelper(pb, session, session.out());
     }
 
     public static NExecHelper ofDefinition(NDefinition nutMainFile,
-                                           String[] args, Map<String, String> env, String directory, Map<String, String> execProperties, boolean showCommand, boolean failFast, long sleep, boolean inheritSystemIO, boolean redirectErr, File outputFile, File inputFile,
+                                           String[] args, Map<String, String> env, String directory, boolean showCommand, boolean failFast, long sleep,
+                                           NExecInput in, NExecOutput out, NExecOutput err,
                                            NRunAs runAs,
-                                           NSession session,
-                                           NSession execSession
+                                           NSession session
     ) throws NExecutionException {
         Path wsLocation = NLocations.of(session).getWorkspaceLocation().toFile();
         Path pdirectory = null;
@@ -127,9 +85,9 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
         } else {
             pdirectory = wsLocation.resolve(directory);
         }
-        return ofArgs(args, env, pdirectory, session.getTerminal(), execSession.getTerminal(), showCommand, failFast,
+        return ofArgs(args, env, pdirectory, showCommand, failFast,
                 sleep,
-                inheritSystemIO, redirectErr, inputFile, outputFile, runAs,
+                in, out, err, runAs,
                 session);
     }
 

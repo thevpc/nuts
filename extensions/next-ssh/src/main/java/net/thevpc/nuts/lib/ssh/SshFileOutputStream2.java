@@ -1,17 +1,12 @@
 package net.thevpc.nuts.lib.ssh;
 
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.JSchException;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NPaths;
 import net.thevpc.nuts.util.NConnexionString;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UncheckedIOException;
 
 public class SshFileOutputStream2 extends OutputStream {
     private NSession session;
@@ -25,7 +20,7 @@ public class SshFileOutputStream2 extends OutputStream {
         this.session = nSession;
         this.path = path;
         this.mkdirs = mkdirs;
-        this.temp = NPaths.of(session).createTempFile();
+        this.temp = NPath.ofTempFile(session);
         this.tempOS = this.temp.getOutputStream();
     }
 

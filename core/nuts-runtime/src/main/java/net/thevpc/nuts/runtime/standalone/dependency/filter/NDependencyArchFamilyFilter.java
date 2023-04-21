@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 
 import java.util.Collection;
@@ -58,7 +59,10 @@ public class NDependencyArchFamilyFilter extends AbstractDependencyFilter {
 
     @Override
     public String toString() {
-        return archs.isEmpty() ? "true" : "arch in (" + archs.stream().map(x -> x.id()).collect(Collectors.joining(", ")) + ')';
+        return
+                CoreStringUtils.trueOrEqOrIn("arch",
+                        archs.stream().map(x -> x.id()).collect(Collectors.toList())
+                );
     }
 
     @Override

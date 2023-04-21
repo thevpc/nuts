@@ -197,8 +197,8 @@ public class NHttpSrvRepository extends NCachedRepository {
         if (localPath == null) {
             temp = true;
             String p = getIdFilename(id, session);
-            localPath = NPaths.of(session)
-                    .createRepositoryTempFile(new File(p).getName(), getUuid()).toString();
+            localPath = NPath
+                    .ofTempRepositoryFile(new File(p).getName(), getUuid(),session).toString();
         }
 
         try {

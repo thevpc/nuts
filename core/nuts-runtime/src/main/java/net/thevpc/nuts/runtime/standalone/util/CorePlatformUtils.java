@@ -168,7 +168,7 @@ public class CorePlatformUtils {
                 osVersion.append(
                         NExecCommand.of(session).setExecutionType(NExecutionType.SYSTEM)
                                 .setCommand("uname", "-r")
-                                .setRedirectErrorStream(true)
+                                .redirectErrorStream()
                                 .grabOutputString()
                                 .setSleepMillis(50)
                                 .getOutputString()

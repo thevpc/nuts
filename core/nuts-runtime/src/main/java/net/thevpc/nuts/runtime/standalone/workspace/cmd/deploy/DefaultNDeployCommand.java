@@ -108,9 +108,9 @@ public class DefaultNDeployCommand extends AbstractNDeployCommand {
             runDeployFile();
         }
         if (ids.size() > 0) {
-            for (NId nutsId : NSearchCommand.of(session).setSession(getSession())
+            for (NId nutsId : NSearchCommand.of(session)
                     .addIds(ids.toArray(new NId[0])).setLatest(true).setRepositoryFilter(fromRepository).getResultIds()) {
-                NDefinition fetched = NFetchCommand.of(session).setContent(true).setId(nutsId).setSession(getSession()).getResultDefinition();
+                NDefinition fetched = NFetchCommand.of(nutsId,session).setContent(true).setSession(getSession()).getResultDefinition();
                 if (fetched.getContent().isPresent()) {
                     runDeployFile(fetched.getContent().get(session), fetched.getDescriptor(), null);
                 }
@@ -121,7 +121,7 @@ public class DefaultNDeployCommand extends AbstractNDeployCommand {
             switch (getSession().getOutputFormat()) {
                 case PLAIN: {
                     for (Result nid : result) {
-                        getSession().getTerminal().out().resetLine().println(NMsg.ofC(
+                        getSession().out().resetLine().println(NMsg.ofC(
                                 "%s deployed successfully as %s to %s",
                                 nid.source,
                                 nid.id,
@@ -157,15 +157,13 @@ public class DefaultNDeployCommand extends AbstractNDeployCommand {
         Path contentFile2 = null;
         try {
             if (descriptor == null) {
-                NFetchCommand p = NFetchCommand.of(this.session)
-                        .setSession(session.copy().setTransitive(true));
+                NFetchCommand p = NFetchCommand.of(session.copy().setTransitive(true));
                 characterizedFile = characterizeForDeploy(contentSource, p, getParseOptions(), session);
                 NAssert.requireNonBlank(characterizedFile.getDescriptor(), "descriptor", session);
                 descriptor = characterizedFile.getDescriptor();
             }
             String name = NLocations.of(this.session).getDefaultIdFilename(descriptor.getId().builder().setFaceDescriptor().build());
-            tempFile = NPaths.of(session)
-                    .createTempFile(name).toFile();
+            tempFile = NPath.ofTempFile(name,session).toFile();
             NCp.of(this.session).setSession(session).from(contentSource.getInputStream()).to(tempFile).addOptions(NPathOption.SAFE).run();
             contentFile2 = tempFile;
 

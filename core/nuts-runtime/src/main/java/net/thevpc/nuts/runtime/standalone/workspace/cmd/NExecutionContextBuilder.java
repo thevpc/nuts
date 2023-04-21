@@ -57,13 +57,6 @@ public interface NExecutionContextBuilder extends NSessionProvider{
     String[] getExecutorOptions();
 
     /**
-     * executor properties
-     *
-     * @return executor properties
-     */
-    Map<String, String> getExecutorProperties();
-
-    /**
      * command definition if any
      *
      * @return command definition if any
@@ -90,13 +83,6 @@ public interface NExecutionContextBuilder extends NSessionProvider{
      * @return executor descriptor
      */
     NArtifactCall getExecutorDescriptor();
-
-    /**
-     * current session
-     *
-     * @return current session
-     */
-    NSession getExecSession();
 
 
     /**
@@ -152,13 +138,7 @@ public interface NExecutionContextBuilder extends NSessionProvider{
     NExecutionContextBuilder addExecutorOptions(String[] executorOptions);
     NExecutionContextBuilder addExecutorOptions(List<String> executorOptions);
 
-    NExecutionContextBuilder addExecutorProperties(Map<String, String> executorProperties);
-
-    NExecutionContextBuilder setExecutorProperties(Map<String, String> executorProperties);
-
     NExecutionContextBuilder setArguments(String[] arguments);
-
-    NExecutionContextBuilder setExecSession(NSession execSession);
 
     NExecutionContextBuilder setSession(NSession session);
 
@@ -178,19 +158,13 @@ public interface NExecutionContextBuilder extends NSessionProvider{
 
     NExecutionContextBuilder setRunAs(NRunAs runAs);
 
-    boolean isInheritSystemIO();
-
-    NPath getRedirectOutputFile();
-
-    NPath getRedirectInputFile();
-
-    NExecutionContextBuilder setInheritSystemIO(boolean value);
-
-    NExecutionContextBuilder setRedirectOutputFile(NPath value);
-
-    NExecutionContextBuilder setRedirectInputFile(NPath value);
-
     NExecutionContext build();
 
     NExecutionContextBuilder setAll(NExecutionContext other);
+
+    NExecutionContextBuilder setIn(NExecInput in);
+
+    NExecutionContextBuilder setOut(NExecOutput out);
+
+    NExecutionContextBuilder setErr(NExecOutput err);
 }

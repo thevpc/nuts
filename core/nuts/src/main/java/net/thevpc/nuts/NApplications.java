@@ -195,9 +195,11 @@ public final class NApplications {
         boolean inherited = NBootManager.of(session).getBootOptions().getInherited().orElse(false);
         NLog.of(NApplications.class, session).with().level(Level.FINE).verb(NLogVerb.START)
                 .log(
-                        NMsg.ofJ(
-                                "running application {0}: {1} {2}", inherited ? "(inherited)" : "",
-                                applicationInstance.getClass().getName(), session.getAppCommandLine()
+                        NMsg.ofC(
+                                "running application %s: %s %s",
+                                inherited ? "(inherited)" : "",
+                                applicationInstance.getClass().getName(),
+                                session.getAppCommandLine()
                         )
                 );
         try {

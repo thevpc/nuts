@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.search;
 
+import net.thevpc.nuts.NExecCommand;
 import net.thevpc.nuts.NSearchCommand;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
@@ -16,8 +17,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExe
  */
 public class DefaultNSearchInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNSearchInternalExecutable(String[] args, NSession session) {
-        super("search", args, session);
+    public DefaultNSearchInternalExecutable(String[] args, NExecCommand execCommand) {
+        super("search", args, execCommand);
     }
 
     @Override

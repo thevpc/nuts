@@ -26,11 +26,9 @@
 package net.thevpc.nuts.runtime.standalone.format;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.format.NIterableFormat;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.runtime.standalone.util.NConfigurableHelper;
 
 /**
  *
@@ -63,19 +61,6 @@ public abstract class DefaultSearchFormatBase implements NIterableFormat {
     }
 
     /**
-     * configure the current command with the given arguments.
-     *
-     * @param skipUnsupported when true, all unsupported options are skipped
-     * silently
-     * @param cmdLine arguments to configure with
-     * @return {@code this} instance
-     */
-    @Override
-    public boolean configure(boolean skipUnsupported, NCmdLine cmdLine) {
-        return NConfigurableHelper.configure(this, getSession(), skipUnsupported, cmdLine);
-    }
-
-    /**
      * configure the current command with the given arguments. This is an
      * override of the {@link NCmdLineConfigurable#configure(boolean, java.lang.String...) }
      * to help return a more specific return type;
@@ -85,7 +70,7 @@ public abstract class DefaultSearchFormatBase implements NIterableFormat {
      */
     @Override
     public NIterableFormat configure(boolean skipUnsupported, String... args) {
-        return NConfigurableHelper.configure(this, getSession(), skipUnsupported, args, "search-" + getOutputFormat().id());
+        return NCmdLineConfigurable.configure(this, skipUnsupported, args,"search-" + getOutputFormat().id(),getSession());
     }
 
     public NWorkspace getWorkspace() {
@@ -100,10 +85,4 @@ public abstract class DefaultSearchFormatBase implements NIterableFormat {
         return writer;
     }
 
-    @Override
-    public void configureLast(NCmdLine cmdLine) {
-        if (!configureFirst(cmdLine)) {
-            cmdLine.throwUnexpectedArgument();
-        }
-    }
 }

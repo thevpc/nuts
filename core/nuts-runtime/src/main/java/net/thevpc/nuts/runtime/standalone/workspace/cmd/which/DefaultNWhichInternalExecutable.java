@@ -25,11 +25,8 @@ import java.util.List;
  */
 public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    private final NExecCommand execCommand;
-
-    public DefaultNWhichInternalExecutable(String[] args, NSession session, NExecCommand execCommand) {
-        super("which", args, session);
-        this.execCommand = execCommand;
+    public DefaultNWhichInternalExecutable(String[] args, NExecCommand execCommand) {
+        super("which", args, execCommand);
     }
 
     @Override
@@ -63,7 +60,7 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
             NPrintStream out = session.out();
             NElements elem = NElements.of(session);
             try {
-                NExecutableInformation p = execCommand.copy().setSession(session).clearCommand().configure(false, arg).which();
+                NExecutableInformation p = getExecCommand().copy().setSession(session).clearCommand().configure(false, arg).which();
                 //                boolean showDesc = false;
                 switch (p.getType()) {
                     case SYSTEM: {
@@ -172,9 +169,8 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                 if (session.isPlainOut()) {
                     out.println(NMsg.ofC("%s : %s", factory.ofStyled(arg, NTextStyle.primary4()), factory.ofStyled("not found", NTextStyle.error())));
                 } else {
-                    NElements e = elem;
                     session.eout().add(
-                            e.ofObject()
+                            elem.ofObject()
                                     .set("name", arg)
                                     .set("type", "not-found")
                                     .build()

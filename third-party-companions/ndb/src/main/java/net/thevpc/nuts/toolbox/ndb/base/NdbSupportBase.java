@@ -162,18 +162,30 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
         } else if ((a = cmdLine.nextEntry("--db").orNull()) != null) {
             String db = a.getStringValue().get(session);
             DbUrlString dbUrlString = DbUrlString.parse(db).get();
-
-            options.setRemoteUser(dbUrlString.getSsh().getUser());
-            options.setRemotePassword(dbUrlString.getSsh().getPassword());
-            options.setRemoteServer(dbUrlString.getSsh().getHost());
-            options.setRemotePort(NLiteral.of(dbUrlString.getSsh().getPort()).asInt().orNull());
-
-            options.setUser(dbUrlString.getDb().getUser());
-            options.setPassword(dbUrlString.getDb().getPassword());
-            options.setHost(dbUrlString.getDb().getHost());
-            options.setPort(NLiteral.of(dbUrlString.getDb().getPort()).asInt().orNull());
-            options.setDatabaseName(dbUrlString.getDb().getPath());
-
+            if(dbUrlString.getSsh()!=null) {
+                options.setRemoteUser(dbUrlString.getSsh().getUser());
+                options.setRemotePassword(dbUrlString.getSsh().getPassword());
+                options.setRemoteServer(dbUrlString.getSsh().getHost());
+                options.setRemotePort(NLiteral.of(dbUrlString.getSsh().getPort()).asInt().orNull());
+            }else{
+                options.setRemoteUser(null);
+                options.setRemotePassword(null);
+                options.setRemoteServer(null);
+                options.setRemotePort(null);
+            }
+            if(dbUrlString.getDb()!=null) {
+                options.setUser(dbUrlString.getDb().getUser());
+                options.setPassword(dbUrlString.getDb().getPassword());
+                options.setHost(dbUrlString.getDb().getHost());
+                options.setPort(NLiteral.of(dbUrlString.getDb().getPort()).asInt().orNull());
+                options.setDatabaseName(dbUrlString.getDb().getPath());
+            }else{
+                options.setUser(null);
+                options.setPassword(null);
+                options.setHost(null);
+                options.setPort(null);
+                options.setDatabaseName(null);
+            }
             return true;
         } else if ((a = cmdLine.nextEntry("--remote-server").orNull()) != null) {
             options.setRemoteServer(a.getStringValue().get(session));

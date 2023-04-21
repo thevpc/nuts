@@ -163,7 +163,7 @@ public class NMavenSettingsLoader {
                     }
                 }
             } catch (Exception ex) {
-                log.with().level(Level.FINE).verb(NLogVerb.FAIL).error(ex).log(NMsg.ofJ("unable to load maven settings.xml {0}", settingsFilePath));
+                log.with().level(Level.FINE).verb(NLogVerb.FAIL).error(ex).log(NMsg.ofC("unable to load maven settings.xml %s", settingsFilePath));
             }
         }
         if (NBlankable.isBlank(settings.getLocalRepository())) {

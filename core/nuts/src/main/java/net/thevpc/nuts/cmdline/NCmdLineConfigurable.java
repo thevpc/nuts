@@ -25,6 +25,12 @@
  */
 package net.thevpc.nuts.cmdline;
 
+import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NSession;
+
+import java.util.Arrays;
+
 /**
  * Configurable interface define a extensible way to configure nuts commands
  * and objects using simple argument line options.
@@ -37,6 +43,11 @@ public interface NCmdLineConfigurable {
 
     /**
      * configure the current command with the given arguments.
+     * <p>
+     * Sample implementation would be
+     * <pre>
+     *         return NCmdLineConfigurable.configure(this, getSession(), skipUnsupported, args, getCommandName(),getSession());
+     * </pre>
      *
      * @param skipUnsupported when true, all unsupported options are skipped
      *                        silently
@@ -47,13 +58,56 @@ public interface NCmdLineConfigurable {
 
     /**
      * configure the current command with the given arguments.
-     *
      * @param skipUnsupported when true, all unsupported options are skipped
      *                        silently
-     * @param cmdLine     arguments to configure with
+     * @param cmdLine         arguments to configure with
      * @return true when the at least one argument was processed
      */
-    boolean configure(boolean skipUnsupported, NCmdLine cmdLine);
+    default boolean configure(boolean skipUnsupported, NCmdLine cmdLine) {
+        boolean conf = false;
+        int maxLoops = 1000;
+        boolean robustMode = false;
+        NSession session = cmdLine.getSession();
+        while (cmdLine.hasNext()) {
+            if (robustMode) {
+                String[] before = cmdLine.toStringArray();
+                if (!configureFirst(cmdLine)) {
+                    if (skipUnsupported) {
+                        cmdLine.skip();
+                    } else {
+                        cmdLine.throwUnexpectedArgument();
+                    }
+                } else {
+                    conf = true;
+                }
+                String[] after = cmdLine.toStringArray();
+                if (Arrays.equals(before, after)) {
+                    throw new NIllegalArgumentException(session,
+                            NMsg.ofC(
+                                    "bad implementation of configureFirst in class %s."
+                                            + " cmdLine is not consumed; perhaps missing skip() class."
+                                            + " args = %s", getClass().getName(), Arrays.toString(after)
+                            )
+                    );
+                }
+            } else {
+                if (!configureFirst(cmdLine)) {
+                    if (skipUnsupported) {
+                        cmdLine.skip();
+                    } else {
+                        cmdLine.throwUnexpectedArgument();
+                    }
+                } else {
+                    conf = true;
+                }
+            }
+            maxLoops--;
+            if (maxLoops < 0) {
+                robustMode = true;
+            }
+        }
+        return conf;
+    }
 
     /**
      * ask {@code this} instance to configure with the very first argument of
@@ -67,6 +121,26 @@ public interface NCmdLineConfigurable {
      */
     boolean configureFirst(NCmdLine cmdLine);
 
-    void configureLast(NCmdLine cmdLine);
+    default void configureLast(NCmdLine cmdLine) {
+        if (!configureFirst(cmdLine)) {
+            cmdLine.throwUnexpectedArgument();
+        }
+    }
 
+    /**
+     * configure the current command with the given arguments. This is an
+     * override of the {@link NCmdLineConfigurable#configure(boolean, java.lang.String...) }
+     * to help return a more specific return type;
+     *
+     * @param <T>             {@code this} Type
+     * @param c               argument configurable
+     * @param skipUnsupported skipUnsupported
+     * @param args            argument to configure with
+     * @param commandName     commandName
+     * @return {@code this} instance
+     */
+    static <T> T configure(NCmdLineConfigurable c, boolean skipUnsupported, String[] args, String commandName, NSession session) {
+        c.configure(skipUnsupported, NCmdLine.of(args).setSession(session).setCommandName(commandName));
+        return (T) c;
+    }
 }

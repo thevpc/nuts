@@ -10,6 +10,7 @@ import net.thevpc.nuts.io.NServiceLoader;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NIdUtils;
@@ -24,12 +25,14 @@ public class DefaultNExtensions implements NExtensions {
 
     private DefaultNWorkspaceExtensionModel model;
     private NSession session;
+    private final DefaultNWorkspaceConfigModel cmodel;
 
     public DefaultNExtensions(NSession session) {
         this.session = session;
         NWorkspace w = this.session.getWorkspace();
         NWorkspaceExt e = (NWorkspaceExt) w;
         this.model = e.getModel().extensionModel;
+        this.cmodel = e.getModel().configModel;
     }
 
     @Override
@@ -246,4 +249,9 @@ public class DefaultNExtensions implements NExtensions {
         NSessionUtils.checkSession(model.getWorkspace(), session);
     }
 
+    @Override
+    public boolean isExcludedExtension(String extensionId, NWorkspaceOptions options) {
+        checkSession();
+        return cmodel.isExcludedExtension(extensionId, options, session);
+    }
 }

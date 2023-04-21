@@ -285,7 +285,7 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
             CmdRedirect dumpCommand = getSupport().createDumpCommand(plainFolderPath, options, session);
             NExecCommand nExecCommand = sysCmd(session).addCommand(dumpCommand.getCmd().toStringArray());
             if (dumpCommand.getPath() != null) {
-                nExecCommand.setRedirectOutputFile(dumpCommand.getPath());
+                nExecCommand.setIn(NExecInput.ofPath(dumpCommand.getPath()));
             }
             run(nExecCommand);
             if (zip) {

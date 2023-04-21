@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.uninstall;
 
+import net.thevpc.nuts.NExecCommand;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NUninstallCommand;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
@@ -16,8 +17,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExe
  */
 public class DefaultNUninstallInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNUninstallInternalExecutable(String[] args, NSession session) {
-        super("uninstall", args, session);
+    public DefaultNUninstallInternalExecutable(String[] args, NExecCommand execCommand) {
+        super("uninstall", args, execCommand);
     }
 
     @Override

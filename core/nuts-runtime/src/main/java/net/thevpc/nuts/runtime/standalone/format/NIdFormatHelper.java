@@ -597,9 +597,7 @@ public class NIdFormatHelper {
 
             try {
                 if (this.installStatus.isNonDeployed() || def == null) {
-                    this.defFetched = NFetchCommand.of(session).setId(id).setSession(
-                            session.copy().setFetchStrategy(NFetchStrategy.OFFLINE)
-                    )
+                    this.defFetched = NFetchCommand.of(id,session.copy().setFetchStrategy(NFetchStrategy.OFFLINE))
                             .setContent(true)
                             .setOptional(false)
                             .setDependencies(this.checkDependencies)

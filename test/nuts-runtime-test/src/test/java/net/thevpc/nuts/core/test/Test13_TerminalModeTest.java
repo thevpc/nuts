@@ -5,16 +5,16 @@
  */
 package net.thevpc.nuts.core.test;
 
+import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.io.NSessionTerminal;
-import net.thevpc.nuts.io.NSystemTerminal;
-import net.thevpc.nuts.io.NTerminalMode;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -65,7 +65,7 @@ public class Test13_TerminalModeTest {
                 Assertions.assertThrows(NIllegalArgumentException.class,()->
 
                         {
-                            NSystemTerminal systemTerminal = NConfigs.of(session).getSystemTerminal();
+                            NSystemTerminal systemTerminal = NIO.of(session).getSystemTerminal();
                             NPrintStream sysInitMode = systemTerminal.out();
                             TestUtils.println(
                                     "sys-init="+(sysInitMode.getTerminalMode()==null?"default": sysInitMode.getTerminalMode().id())
@@ -95,7 +95,7 @@ public class Test13_TerminalModeTest {
                 );
                 return;
             }else{
-                NSystemTerminal systemTerminal = NConfigs.of(session).getSystemTerminal();
+                NSystemTerminal systemTerminal = NIO.of(session).getSystemTerminal();
                 NPrintStream sysInitMode = systemTerminal.out();
                 NSessionTerminal terminal = NSessionTerminal.of(session);
                 NPrintStream out = terminal.out().setTerminalMode(systemMode);

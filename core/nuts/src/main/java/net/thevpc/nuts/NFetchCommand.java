@@ -46,23 +46,25 @@ public interface NFetchCommand extends NWorkspaceCommand {
         return NExtensions.of(session).createComponent(NFetchCommand.class).get();
     }
 
+    static NFetchCommand of(NId id, NSession session) {
+        return of(session).setId(id);
+    }
+
+    static NFetchCommand of(String id, NSession session) {
+        return of(session).setId(id);
+    }
+
+    static NFetchCommand ofNutsApi(NSession session) {
+        return of(session).setId(session.getWorkspace().getApiId());
+    }
+
+    static NFetchCommand ofNutsRuntime(NSession session) {
+        return of(session).setId(session.getWorkspace().getRuntimeId());
+    }
+
     ////////////////////////////////////////////////////////
     // Setters
     ////////////////////////////////////////////////////////
-
-    /**
-     * set id to fetch to nuts-api (api artifact)
-     *
-     * @return {@code this} instance
-     */
-    NFetchCommand setNutsApi();
-
-    /**
-     * set id to fetch to nuts-runtime (runtime artifact)
-     *
-     * @return {@code this} instance
-     */
-    NFetchCommand setNutsRuntime();
 
     /**
      * unset location to store to fetched id and fall back to default location.

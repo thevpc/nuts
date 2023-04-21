@@ -34,7 +34,7 @@ public class NReservedMonitoredURLInputStream extends FilterInputStream {
 
     public static NReservedMonitoredURLInputStream of(URL url, NLog log) {
         if (log != null) {
-            log.with().level(Level.FINE).verb(NLogVerb.START).log(NMsg.ofJ("download {0}", url));
+            log.with().level(Level.FINE).verb(NLogVerb.START).log(NMsg.ofC("download %s", url));
         }
         NChronometer chronometer = NChronometer.startNow();
         URLConnection c = null;
@@ -42,7 +42,7 @@ public class NReservedMonitoredURLInputStream extends FilterInputStream {
             c = url.openConnection();
         } catch (IOException ex) {
             if (log != null) {
-                log.with().level(Level.FINE).verb(NLogVerb.FAIL).log(NMsg.ofJ("failed to download {0}", url));
+                log.with().level(Level.FINE).verb(NLogVerb.FAIL).log(NMsg.ofC("failed to download %s", url));
             }
             throw new UncheckedIOException("url not accessible " + url, ex);
         }
@@ -51,7 +51,7 @@ public class NReservedMonitoredURLInputStream extends FilterInputStream {
             return new NReservedMonitoredURLInputStream(c.getInputStream(), url, chronometer, contentLength, log);
         } catch (IOException ex) {
             if (log != null) {
-                log.with().level(Level.FINE).verb(NLogVerb.FAIL).log(NMsg.ofJ("failed to download {0}", url));
+                log.with().level(Level.FINE).verb(NLogVerb.FAIL).log(NMsg.ofC("failed to download %s", url));
             }
             throw new UncheckedIOException("url not accessible " + url, ex);
         }
@@ -105,12 +105,12 @@ public class NReservedMonitoredURLInputStream extends FilterInputStream {
             doLog(true);
             if (contentLength >= 0) {
                 if (readCount != contentLength) {
-                    log.with().level(Level.FINE).verb(NLogVerb.FAIL).log(NMsg.ofJ("failed to downloaded {0}. stream closed unexpectedly", url));
-                    throw new NBootException(NMsg.ofJ("failed to downloaded {0}. stream closed unexpectedly", url));
+                    log.with().level(Level.FINE).verb(NLogVerb.FAIL).log(NMsg.ofC("failed to downloaded %s. stream closed unexpectedly", url));
+                    throw new NBootException(NMsg.ofC("failed to downloaded %s. stream closed unexpectedly", url));
                 }
             }
             if (log != null) {
-                log.with().level(Level.FINE).verb(NLogVerb.SUCCESS).log(NMsg.ofJ("successfully downloaded {0}", url));
+                log.with().level(Level.FINE).verb(NLogVerb.SUCCESS).log(NMsg.ofC("successfully downloaded %s", url));
             }
         }
     }

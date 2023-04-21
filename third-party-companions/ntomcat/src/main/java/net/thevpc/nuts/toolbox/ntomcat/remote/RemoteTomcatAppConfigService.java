@@ -76,7 +76,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
             cmd.add(config.getPath());
         }
         NExecCommand s = NExecCommand.of(session)
-                .setRedirectErrorStream(true)
+                .redirectErrorStream()
                 .grabOutputString()
                 .addCommand(cmd).run();
         if (s.getResult() == 0) {

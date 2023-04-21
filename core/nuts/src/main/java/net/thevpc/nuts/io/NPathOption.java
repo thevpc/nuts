@@ -44,6 +44,7 @@ public enum NPathOption implements NEnum {
      * follow links
      */
     FOLLOW_LINKS,
+    NOFOLLOW_LINKS,
 
     /**
      * replace existing file
@@ -165,7 +166,10 @@ public enum NPathOption implements NEnum {
      *
      * @see <a href="package-summary.html#integrity">Synchronized I/O file integrity</a>
      */
-    DSYNC
+    DSYNC,
+    NOSHARE_READ,
+    NOSHARE_WRITE,
+    NOSHARE_DELETE,
     ;
 
     /**

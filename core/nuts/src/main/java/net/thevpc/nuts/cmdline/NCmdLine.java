@@ -92,14 +92,22 @@ import java.util.List;
  * @app.category Command Line
  * @since 0.5.5
  */
-public interface NCmdLine extends Iterable<NArg>, NFormattable, NBlankable,NSessionProvider {
+public interface NCmdLine extends Iterable<NArg>, NFormattable, NBlankable, NSessionProvider {
 
     static NCmdLine of(String[] args) {
         return new DefaultNCmdLine(args);
     }
 
+    static NCmdLine of(String[] args, NSession session) {
+        return new DefaultNCmdLine(args).setSession(session);
+    }
+
     static NCmdLine of(List<String> args) {
         return new DefaultNCmdLine(args);
+    }
+
+    static NCmdLine of(List<String> args, NSession session) {
+        return new DefaultNCmdLine(args).setSession(session);
     }
 
     /**

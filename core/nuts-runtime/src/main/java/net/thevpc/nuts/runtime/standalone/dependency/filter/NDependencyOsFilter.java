@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 
 import java.util.Collection;
@@ -58,7 +59,9 @@ public class NDependencyOsFilter extends AbstractDependencyFilter  {
 
     @Override
     public String toString() {
-        return os.isEmpty() ? "true" : "os in (" + os.stream().map(NOsFamily::id).collect(Collectors.joining(", ")) + ')';
+        return CoreStringUtils.trueOrEqOrIn("os",
+                        os.stream().map(x -> x.id()).collect(Collectors.toList())
+                );
     }
 
     @Override

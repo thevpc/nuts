@@ -4,6 +4,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
 import net.thevpc.nuts.runtime.standalone.io.printstream.*;
+import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNSessionTerminalFromSession;
+import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNSessionTerminalFromSystem;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.InputStreamExt;
 import net.thevpc.nuts.runtime.standalone.io.util.NullInputStream;
@@ -21,9 +23,13 @@ import java.io.*;
 
 public class DefaultNIO implements NIO {
     private final NSession session;
+    public DefaultNWorkspaceConfigModel cmodel;
+    public DefaultNBootModel bootModel;
 
     public DefaultNIO(NSession session) {
         this.session = session;
+        this.cmodel = ((DefaultNConfigs) NConfigs.of(session)).getModel();
+        bootModel = NWorkspaceExt.of(session.getWorkspace()).getModel().bootModel;
     }
 
     @Override
@@ -65,7 +71,7 @@ public class DefaultNIO implements NIO {
     @Override
     public NMemoryPrintStream ofInMemoryPrintStream(NTerminalMode mode) {
         checkSession();
-        return new NByteArrayPrintStream(mode,getSession());
+        return new NByteArrayPrintStream(mode, getSession());
     }
 
     @Override
@@ -215,7 +221,7 @@ public class DefaultNIO implements NIO {
         if (source.isMultiRead()) {
             return source;
         }
-        NPath tf = NPaths.of(session).createTempFile();
+        NPath tf = NPath.ofTempFile(session);
         try (InputStream in = source.getInputStream()) {
             try (OutputStream out = tf.getOutputStream()) {
                 CoreIOUtils.copy(in, out, 4096, session);
@@ -260,5 +266,73 @@ public class DefaultNIO implements NIO {
             metadata = new DefaultNOutputTargetMetadata(NMsg.ofNtf(str), str.filteredText());
         }
         return new OutputStreamExt(output, metadata);
+    }
+
+    @Override
+    public NIO enableRichTerm() {
+        bootModel.enableRichTerm(session);
+        return this;
+    }
+
+
+    @Override
+    public NSessionTerminal createTerminal() {
+        return cmodel.createTerminal(session);
+    }
+
+    @Override
+    public NSessionTerminal createTerminal(InputStream in, NPrintStream out, NPrintStream err) {
+        return cmodel.createTerminal(in, out, err, session);
+    }
+
+    @Override
+    public NSessionTerminal createTerminal(NSessionTerminal terminal) {
+        if (terminal == null) {
+            return createTerminal();
+        }
+        if (terminal instanceof DefaultNSessionTerminalFromSystem) {
+            DefaultNSessionTerminalFromSystem t = (DefaultNSessionTerminalFromSystem) terminal;
+            return new DefaultNSessionTerminalFromSystem(session, t);
+        }
+        if (terminal instanceof DefaultNSessionTerminalFromSession) {
+            DefaultNSessionTerminalFromSession t = (DefaultNSessionTerminalFromSession) terminal;
+            return new DefaultNSessionTerminalFromSession(session, t);
+        }
+        return new DefaultNSessionTerminalFromSession(session, terminal);
+    }
+
+    @Override
+    public NSessionTerminal createMemTerminal() {
+        return createMemTerminal(false);
+    }
+
+    @Override
+    public NSessionTerminal createMemTerminal(boolean mergeErr) {
+        ByteArrayInputStream in = new ByteArrayInputStream(new byte[0]);
+        NMemoryPrintStream out = NMemoryPrintStream.of(session);
+        NMemoryPrintStream err = mergeErr ? out : NMemoryPrintStream.of(session);
+        return createTerminal(in, out, err);
+    }
+
+    @Override
+    public NSystemTerminal getSystemTerminal() {
+        return NWorkspaceExt.of(session).getModel().bootModel.getSystemTerminal();
+    }
+
+    @Override
+    public NIO setSystemTerminal(NSystemTerminalBase terminal) {
+        NWorkspaceExt.of(session).getModel().bootModel.setSystemTerminal(terminal, session);
+        return this;
+    }
+
+    @Override
+    public NSessionTerminal getDefaultTerminal() {
+        return cmodel.getTerminal();
+    }
+
+    @Override
+    public NIO setDefaultTerminal(NSessionTerminal terminal) {
+        cmodel.setTerminal(terminal, session);
+        return this;
     }
 }

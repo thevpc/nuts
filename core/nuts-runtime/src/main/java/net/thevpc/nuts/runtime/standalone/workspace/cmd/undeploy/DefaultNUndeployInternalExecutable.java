@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.undeploy;
 
+import net.thevpc.nuts.NExecCommand;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NUndeployCommand;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
@@ -16,8 +17,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExe
  */
 public class DefaultNUndeployInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNUndeployInternalExecutable(String[] args, NSession session) {
-        super("undeploy", args, session);
+    public DefaultNUndeployInternalExecutable(String[] args, NExecCommand execCommand) {
+        super("undeploy", args, execCommand);
     }
 
     @Override

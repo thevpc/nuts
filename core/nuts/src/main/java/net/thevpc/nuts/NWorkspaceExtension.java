@@ -40,12 +40,20 @@ public interface NWorkspaceExtension {
      *
      * @return extension id pattern (configured)
      */
-    NId getId();
+    NId getConfigId();
+
 
     /**
      * extension id resolved and wired
      *
      * @return extension id resolved and wired
      */
-    NId getWiredId();
+    NId getId();
+
+    /**
+     * true if the extension is enabled
+     *
+     * @return true if the extension is enabled
+     */
+    boolean isEnabled();
 }

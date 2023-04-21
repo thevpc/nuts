@@ -116,5 +116,6 @@ public interface NExtensions extends NComponent ,NSessionProvider{
 
     NExtensions setSession(NSession session);
 
+    boolean isExcludedExtension(String extensionId, NWorkspaceOptions options);
 
 }

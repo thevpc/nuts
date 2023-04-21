@@ -252,8 +252,8 @@ public class NoApiUtils {
             if (keep) {
                 temp = NoApiUtils.addExtension(target, "adoc", session).toString();
             } else {
-                temp = NPaths.of(session)
-                        .createTempFile("temp.adoc").toString();
+                temp = NPath
+                        .ofTempFile("temp.adoc",session).toString();
             }
             adocFile = temp;
         }

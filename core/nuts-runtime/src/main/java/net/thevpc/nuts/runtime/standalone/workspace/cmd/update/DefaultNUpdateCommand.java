@@ -12,14 +12,15 @@ import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NPositionType;
+import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNUpdateResult;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
-import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NComparator;
@@ -539,7 +540,6 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
 
     private NFetchCommand fetch0() {
         checkSession();
-        NWorkspace ws = getSession().getWorkspace();
         return NFetchCommand.of(session).setContent(true).setEffective(true);
     }
 
@@ -578,7 +578,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
         boolean requireSave = false;
         NSession validWorkspaceSession = getSession();
         final NPrintStream out = validWorkspaceSession.out();
-        boolean accept = NConfigs.of(getSession()).getDefaultTerminal().ask()
+        boolean accept = NIO.of(getSession()).getDefaultTerminal().ask()
                 .resetLine()
                 .forBoolean(NMsg.ofPlain("would you like to apply updates?")).setDefaultValue(true)
                 .setSession(validWorkspaceSession).getValue();
@@ -625,7 +625,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
                         configModel.setExtraBootExtensionId(
                                 newApi,
                                 extension.getAvailable().getId(),
-                                extension.getAvailable().getDependencies().get(session).transitive().toArray(NDependency[]::new),
+                                extension.getAvailable().getDependencies().get(session).transitive().toList(),
                                 session);
                     }
                     ((DefaultNUpdateResult) extension).setUpdateApplied(true);

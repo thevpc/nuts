@@ -174,6 +174,7 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
             try {
                 NWorkspaceTerminalOptions bootStdFd = NBootManager.of(session).getBootTerminal();
                 bootStdFd.getOut().write(s.getBytes());
+                bootStdFd.getOut().flush();
             } catch (IOException e) {
                 throw new NIOException(session, e);
             }

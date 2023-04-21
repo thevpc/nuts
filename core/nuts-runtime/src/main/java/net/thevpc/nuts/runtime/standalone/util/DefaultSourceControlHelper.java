@@ -40,7 +40,7 @@ public class DefaultSourceControlHelper {
 
     protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLog.of(DefaultSourceControlHelper.class,session);
+            LOG = NLog.of(DefaultSourceControlHelper.class, session);
         }
         return LOG;
     }
@@ -61,7 +61,7 @@ public class DefaultSourceControlHelper {
             String newVersion = NVersion.of(oldVersion).get(session).inc().getValue();
             NDefinition newVersionFound = null;
             try {
-                newVersionFound = NFetchCommand.of(session).setId(d.getId().builder().setVersion(newVersion).build()).setSession(session).getResultDefinition();
+                newVersionFound = NFetchCommand.of(d.getId().builder().setVersion(newVersion).build(), session).getResultDefinition();
             } catch (NNotFoundException ex) {
                 _LOGOP(session).level(Level.FINE).error(ex)
                         .log(NMsg.ofJ("failed to fetch {0}", d.getId().builder().setVersion(newVersion).build()));
@@ -90,11 +90,11 @@ public class DefaultSourceControlHelper {
     public NDefinition checkout(NId id, Path folder, NSession session) {
         NSessionUtils.checkSession(ws, session);
         NWorkspaceSecurityManager.of(session).checkAllowed(NConstants.Permissions.INSTALL, "checkout");
-        NDefinition nutToInstall = NFetchCommand.of(session).setId(id).setSession(session).setOptional(false).setDependencies(true).getResultDefinition();
+        NDefinition nutToInstall = NFetchCommand.of(id, session).setOptional(false).setDependencies(true).getResultDefinition();
         if ("zip".equals(nutToInstall.getDescriptor().getPackaging())) {
 
             try {
-                ZipUtils.unzip(session, nutToInstall.getContent().map(Object::toString).get(session), NPath.of(folder,session)
+                ZipUtils.unzip(session, nutToInstall.getContent().map(Object::toString).get(session), NPath.of(folder, session)
                         .toAbsolute().toString(), new UnzipOptions().setSkipRoot(false));
             } catch (IOException ex) {
                 throw new NIOException(session, ex);
@@ -112,7 +112,7 @@ public class DefaultSourceControlHelper {
                     nutToInstall.getRepositoryUuid(),
                     nutToInstall.getRepositoryName(),
                     newId.getLongId(),
-                    d, NPath.of(folder,session).setUserCache(false).setUserTemporary(false),
+                    d, NPath.of(folder, session).setUserCache(false).setUserTemporary(false),
                     null, null, session
             );
         } else {

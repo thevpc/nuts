@@ -1,15 +1,19 @@
 package net.thevpc.nuts.runtime.standalone.xtra.throwables;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.boot.NBootOptionsBuilder;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NApiUtils;
+import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NLogConfig;
+import net.thevpc.nuts.util.NLogOp;
 
 import java.io.PrintStream;
 import java.util.logging.Level;
@@ -49,7 +53,7 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
 
         NPrintStream fout = null;
         try {
-            fout = NConfigs.of(session).getSystemTerminal().getErr();
+            fout = NIO.of(session).getSystemTerminal().getErr();
             if (fm != null) {
                 fm = NMsg.ofStyled(fm, NTextStyle.error());
             } else {

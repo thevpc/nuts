@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.info;
 
+import net.thevpc.nuts.NExecCommand;
 import net.thevpc.nuts.NInfoCommand;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.NSession;
@@ -17,8 +18,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExe
  */
 public class DefaultNInfoInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNInfoInternalExecutable(String[] args, NSession session) {
-        super("info", args, session);
+    public DefaultNInfoInternalExecutable(String[] args, NExecCommand execCommand) {
+        super("info", args, execCommand);
     }
 
     @Override

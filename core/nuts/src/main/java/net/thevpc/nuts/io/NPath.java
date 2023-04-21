@@ -97,6 +97,82 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
     }
 
     /**
+     * create temp file in the repositoryId's temp folder
+     *
+     * @param name file name
+     * @return newly created file path
+     */
+    static NPath ofTempFile(String name, NSession session){
+        return NPaths.of(session).ofTempFile(name);
+    }
+
+    /**
+     * create temp file in the repositoryId's temp folder
+     *
+     * @return newly created file path
+     */
+    static NPath ofTempFile(NSession session){
+        return NPaths.of(session).ofTempFile();
+    }
+
+    /**
+     * create temp folder in the workspace's temp folder
+     *
+     * @param name folder name
+     * @return newly created temp folder
+     */
+    static NPath ofTempFolder(String name, NSession session){
+        return NPaths.of(session).ofTempFolder(name);
+    }
+
+    /**
+     * create temp folder in the workspace's temp folder
+     *
+     * @return newly created temp folder
+     */
+    static NPath ofTempFolder(NSession session){
+        return NPaths.of(session).ofTempFolder();
+    }
+
+    /**
+     * create temp file in the repositoryId's temp folder
+     *
+     * @param name file name
+     * @return newly created file path
+     */
+    static NPath ofTempRepositoryFile(String name, String repository, NSession session){
+        return NPaths.of(session).ofTempRepositoryFile(name,repository);
+    }
+
+    /**
+     * create temp file in the repositoryId's temp folder
+     *
+     * @return newly created file path
+     */
+    static NPath ofTempRepositoryFile(String repository, NSession session){
+        return NPaths.of(session).ofTempRepositoryFile(repository);
+    }
+
+    /**
+     * create temp folder in the repository's temp folder
+     *
+     * @param name folder name
+     * @return newly created temp folder
+     */
+    static NPath ofTempRepositoryFolder(String name, String repository, NSession session){
+        return NPaths.of(session).ofTempRepositoryFolder(name,repository);
+    }
+
+    /**
+     * create temp folder in the repository's temp folder
+     *
+     * @return newly created temp folder
+     */
+    static NPath ofTempRepositoryFolder(String repository, NSession session){
+        return NPaths.of(session).ofTempRepositoryFolder(repository);
+    }
+
+    /**
      * content encoding if explicitly defined (from HTTP headers for instance).
      * return null when unknown.
      *

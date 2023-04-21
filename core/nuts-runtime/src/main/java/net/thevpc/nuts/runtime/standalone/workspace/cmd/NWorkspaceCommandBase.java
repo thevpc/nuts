@@ -10,7 +10,6 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
-import net.thevpc.nuts.runtime.standalone.util.NConfigurableHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NLog;
@@ -134,29 +133,9 @@ public abstract class NWorkspaceCommandBase<T extends NWorkspaceCommand> impleme
     @Override
     public T configure(boolean skipUnsupported, String... args) {
         checkSession();
-        return NConfigurableHelper.configure(this, getSession(), skipUnsupported, args, getCommandName());
+        configure(skipUnsupported, NCmdLine.of(args).setSession(getSession()).setCommandName(getCommandName()));
+        return (T) this;
     }
 
-    /**
-     * configure the current command with the given arguments.
-     *
-     * @param skipUnsupported when true, all unsupported options are skipped
-     *                        silently
-     * @param cmdLine     arguments to configure with
-     * @return {@code this} instance
-     */
-    @Override
-    public boolean configure(boolean skipUnsupported, NCmdLine cmdLine) {
-        checkSession();
-        return NConfigurableHelper.configure(this, getSession(), skipUnsupported, cmdLine);
-    }
-
-
-    @Override
-    public void configureLast(NCmdLine cmdLine) {
-        if (!configureFirst(cmdLine)) {
-            cmdLine.throwUnexpectedArgument();
-        }
-    }
 
 }

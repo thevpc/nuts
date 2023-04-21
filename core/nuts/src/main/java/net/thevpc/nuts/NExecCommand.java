@@ -25,9 +25,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NPrintStream;
 
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -160,6 +158,8 @@ public interface NExecCommand extends NWorkspaceCommand {
      * @param executorOptions executor options
      * @return {@code this} instance
      */
+    NExecCommand setExecutorOptions(Collection<String> executorOptions);
+
     NExecCommand addExecutorOptions(Collection<String> executorOptions);
 
     /**
@@ -236,7 +236,7 @@ public interface NExecCommand extends NWorkspaceCommand {
      *
      * @return new command input stream (standard input source)
      */
-    InputStream getIn();
+    NExecInput getIn();
 
     /**
      * set new command input stream (standard input source)
@@ -244,14 +244,14 @@ public interface NExecCommand extends NWorkspaceCommand {
      * @param in standard input source
      * @return {@code this} instance
      */
-    NExecCommand setIn(InputStream in);
+    NExecCommand setIn(NExecInput in);
 
     /**
      * return new command output stream (standard output destination)
      *
      * @return new command output stream (standard output destination)
      */
-    NPrintStream getOut();
+    NExecOutput getOut();
 
     /**
      * set new command output stream (standard output destination)
@@ -259,20 +259,11 @@ public interface NExecCommand extends NWorkspaceCommand {
      * @param out standard output destination
      * @return {@code this} instance
      */
-    NExecCommand setOut(NPrintStream out);
+    NExecCommand setOut(NExecOutput out);
 
-    /**
-     * grab to memory standard output
-     *
-     * @return {@code this} instance
-     */
+
     NExecCommand grabOutputString();
 
-    /**
-     * grab to memory standard error
-     *
-     * @return {@code this} instance
-     */
     NExecCommand grabErrorString();
 
     /**
@@ -294,7 +285,7 @@ public interface NExecCommand extends NWorkspaceCommand {
      *
      * @return new command error stream (standard error destination)
      */
-    NPrintStream getErr();
+    NExecOutput getErr();
 
     /**
      * set new command error stream (standard error destination)
@@ -302,7 +293,7 @@ public interface NExecCommand extends NWorkspaceCommand {
      * @param err standard error destination
      * @return {@code this} instance
      */
-    NExecCommand setErr(NPrintStream err);
+    NExecCommand setErr(NExecOutput err);
 
     /**
      * return execution type
@@ -318,21 +309,6 @@ public interface NExecCommand extends NWorkspaceCommand {
      * @return {@code this} instance
      */
     NExecCommand setExecutionType(NExecutionType executionType);
-
-    /**
-     * return true if standard error is redirected to standard output
-     *
-     * @return true if standard error is redirected to standard output
-     */
-    boolean isRedirectErrorStream();
-
-    /**
-     * if true redirect standard error is redirected to standard output
-     *
-     * @param redirectErrorStream new value
-     * @return {@code this} instance
-     */
-    NExecCommand setRedirectErrorStream(boolean redirectErrorStream);
 
     NRunAs getRunAs();
 
@@ -423,18 +399,6 @@ public interface NExecCommand extends NWorkspaceCommand {
 
     NExecCommand setSleepMillis(long sleepMillis);
 
-    boolean isInheritSystemIO();
-
-    NExecCommand setInheritSystemIO(boolean inheritSystemIO);
-
-    NPath getRedirectOutputFile();
-
-    NExecCommand setRedirectOutputFile(NPath redirectOutputFile);
-
-    NPath getRedirectInputFile();
-
-    NExecCommand setRedirectInputFile(NPath redirectInputFile);
-
 
     /**
      * return host connexion string.
@@ -451,4 +415,7 @@ public interface NExecCommand extends NWorkspaceCommand {
      * @return {@code this} instance
      */
     NExecCommand setTarget(String host);
+
+
+    NExecCommand redirectErrorStream();
 }

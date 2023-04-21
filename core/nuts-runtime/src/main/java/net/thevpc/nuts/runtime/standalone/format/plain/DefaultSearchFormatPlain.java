@@ -13,13 +13,12 @@ import net.thevpc.nuts.runtime.standalone.format.NIdFormatHelper;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
 
 /**
- *
  * @author thevpc
  */
 public class DefaultSearchFormatPlain extends DefaultSearchFormatBase {
 
     public DefaultSearchFormatPlain(NSession session, NPrintStream writer, NFetchDisplayOptions options) {
-        super(session, writer, NContentType.PLAIN,options);
+        super(session, writer, NContentType.PLAIN, options);
     }
 
     @Override
@@ -45,19 +44,19 @@ public class DefaultSearchFormatPlain extends DefaultSearchFormatBase {
         if (fid != null) {
             formatElement(fid, index);
         } else {
-            getWriter().resetLine();
-            getWriter().print(object);
-            getWriter().println();
-            getWriter().flush();
+            getWriter()
+                    .resetLine()
+                    .println(object)
+                    .flush();
         }
     }
 
     private void formatElement(NIdFormatHelper id, long index) {
         NString s = id.getSingleColumnRow(getDisplayOptions());
-        getWriter().resetLine();
-        getWriter().print(s);
-        getWriter().println();
-        getWriter().flush();
+        getWriter()
+                .resetLine()
+                .println(s)
+                .flush();
     }
 
 }

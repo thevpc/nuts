@@ -28,7 +28,6 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.spi.NTerminals;
 import net.thevpc.nuts.util.NQuestion;
 
 import java.io.InputStream;
@@ -41,23 +40,23 @@ import java.io.InputStream;
  */
 public interface NSessionTerminal {
     static NSessionTerminal of(NSession session) {
-        return NTerminals.of(session).createTerminal();
+        return NIO.of(session).createTerminal();
     }
 
     static NSessionTerminal of(NSessionTerminal parent, NSession session) {
-        return NTerminals.of(session).createTerminal(parent);
+        return NIO.of(session).createTerminal(parent);
     }
 
     static NSessionTerminal of(InputStream in, NPrintStream out, NPrintStream err, NSession session) {
-        return NTerminals.of(session).createTerminal(in, out, err);
+        return NIO.of(session).createTerminal(in, out, err);
     }
 
     static NSessionTerminal ofMem(NSession session) {
-        return NTerminals.of(session).createMemTerminal();
+        return NIO.of(session).createMemTerminal();
     }
 
     static NSessionTerminal ofMem(boolean mergeError, NSession session) {
-        return NTerminals.of(session).createMemTerminal(mergeError);
+        return NIO.of(session).createMemTerminal(mergeError);
     }
 
     String readLine(NPrintStream out, NMsg message);

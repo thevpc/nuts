@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.id.filter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.dependency.util.NComplexExpressionString;
+import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 
@@ -80,7 +82,7 @@ public class NIdFilterNone extends AbstractIdFilter implements NIdFilter, Simpli
 
     @Override
     public String toString() {
-        return "Not("+String.join(" Or ", Arrays.asList(children).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()))+")";
+        return CoreStringUtils.trueOrNone(Arrays.stream(children).map(NComplexExpressionString::toString).collect(Collectors.toList()));
     }
 
     @Override

@@ -471,11 +471,6 @@ public final class NReservedWorkspaceCmdLineParser {
                                 }
                                 options.setProgressOptions(s);
                             } else {
-                                if (NBlankable.isBlank(s)) {
-                                    s = "true";
-                                } else {
-                                    s = "true," + s;
-                                }
                                 options.setProgressOptions(s);
                             }
                         }

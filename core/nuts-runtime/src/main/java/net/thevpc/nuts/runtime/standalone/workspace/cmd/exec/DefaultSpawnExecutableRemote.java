@@ -10,6 +10,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
@@ -32,12 +33,8 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
     NDefinition def;
     String[] cmd;
     List<String> executorOptions;
-    NSession session;
-    NSession execSession;
-    NExecCommand execCommand;
     NConnexionString connexionString;
     private boolean showCommand = false;
-    private final boolean inheritSystemIO;
     private NExecCommandExtension commExec;
 
     private static class RemoteConnexionStringInfo {
@@ -66,8 +63,8 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
                 osType = echoes[2];
             }
             if (NBlankable.isBlank(nutsJar)) {
-                NSession session = r.session;
-                NConnexionString targetConnexion = NConnexionString.of(r.execCommand.getTarget()).get().copy()
+                NSession session = r.getSession();
+                NConnexionString targetConnexion = NConnexionString.of(r.getExecCommand().getTarget()).get().copy()
                         .setQueryString(null)
                         .setPath(null);
                 NElement workspaceJson = null;
@@ -90,17 +87,16 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
                     storeLocationLib = pHome.getWorkspaceStore(NStoreType.LIB, workspaceName);
                 }
 
-                String sharedNutsApiJar = storeLocationLib + "/" + NIdUtils.resolveJarPath(r.session.getWorkspace().getApiId());
-                String sharedNutsApiDesc = storeLocationLib + "/" + NIdUtils.resolveDescPath(r.session.getWorkspace().getApiId());
-                String sharedNutsRuntimeJar = storeLocationLib + "/" + NIdUtils.resolveJarPath(r.session.getWorkspace().getRuntimeId());
-                String sharedNutsRuntimeDesc = storeLocationLib + "/" + NIdUtils.resolveDescPath(r.session.getWorkspace().getRuntimeId());
+                String sharedNutsApiJar = storeLocationLib + "/" + NIdUtils.resolveJarPath(session.getWorkspace().getApiId());
+                String sharedNutsApiDesc = storeLocationLib + "/" + NIdUtils.resolveDescPath(session.getWorkspace().getApiId());
+                String sharedNutsRuntimeJar = storeLocationLib + "/" + NIdUtils.resolveJarPath(session.getWorkspace().getRuntimeId());
+                String sharedNutsRuntimeDesc = storeLocationLib + "/" + NIdUtils.resolveDescPath(session.getWorkspace().getRuntimeId());
 
                 if (NBlankable.isBlank(nutsJar)) {
                     if (!NPath.of(targetConnexion.copy()
                             .setPath(sharedNutsApiJar)
                             .toString(), session).exists()) {
-                        NDefinition e = NFetchCommand.of(session)
-                                .setId(session.getWorkspace().getApiId())
+                        NDefinition e = NFetchCommand.ofNutsApi(session)
                                 .setContent(true)
                                 .getResultDefinition();
                         e.getContent().get().copyTo(
@@ -119,8 +115,7 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
                     if (!NPath.of(targetConnexion.copy()
                             .setPath(sharedNutsRuntimeJar)
                             .toString(), session).exists()) {
-                        NDefinition e = NFetchCommand.of(session)
-                                .setId(session.getWorkspace().getRuntimeId())
+                        NDefinition e = NFetchCommand.ofNutsRuntime(session)
                                 .setContent(true)
                                 .getResultDefinition();
                         e.getContent().get().copyTo(
@@ -148,21 +143,17 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
 
 
     public DefaultSpawnExecutableRemote(NExecCommandExtension commExec, NDefinition def, String[] cmd,
-                                        List<String> executorOptions, NSession session, NSession execSession, NExecCommand execCommand) {
+                                        List<String> executorOptions, NExecCommand execCommand) {
         super(cmd[0],
                 NCmdLine.of(cmd).toString(),
-                NExecutableType.SYSTEM);
-        this.inheritSystemIO = execCommand.isInheritSystemIO();
+                NExecutableType.SYSTEM,execCommand);
         this.cmd = cmd;
         this.def = def;
-        this.execCommand = execCommand;
         this.executorOptions = CoreCollectionUtils.nonNullList(executorOptions);
-        this.session = session;
-        this.execSession = execSession;
         this.commExec = commExec;
         NCmdLine cmdLine = NCmdLine.of(this.executorOptions);
         while (cmdLine.hasNext()) {
-            NArg aa = cmdLine.peek().get(session);
+            NArg aa = cmdLine.peek().get(getSession());
             switch (aa.key()) {
                 case "--show-command": {
                     cmdLine.withNextFlag((v, a, s) -> this.showCommand = (v));
@@ -181,7 +172,7 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
     }
 
     private AbstractSyncIProcessExecHelper resolveExecHelper() {
-        return new AbstractSyncIProcessExecHelper(session) {
+        return new AbstractSyncIProcessExecHelper(getSession()) {
             @Override
             public int exec() {
                 String[] nec = resolveNutsExecutableCommand();
@@ -202,10 +193,10 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
     }
 
     private String[] resolveNutsExecutableCommand() {
-        Map<String, RemoteConnexionStringInfo> m = execSession.getOrComputeWorkspaceProperty(RemoteConnexionStringInfo.class.getName() + "Map",
+        Map<String, RemoteConnexionStringInfo> m = getSession().getOrComputeWorkspaceProperty(RemoteConnexionStringInfo.class.getName() + "Map",
                 s -> new HashMap<>()
         );
-        RemoteConnexionStringInfo k = m.computeIfAbsent(execCommand.getTarget(), v -> new RemoteConnexionStringInfo());
+        RemoteConnexionStringInfo k = m.computeIfAbsent(getExecCommand().getTarget(), v -> new RemoteConnexionStringInfo());
         k.tryUpdate(this);
         ArrayList<String> cmd = new ArrayList<>();
         cmd.add(k.javaCommand);
@@ -217,24 +208,31 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
     }
 
     private String runOnceGrab(String... cmd) {
-        NSession sc = execSession.copy();
-        sc.setTerminal(NSessionTerminal.ofMem(sc));
+        NExecOutput out = NExecOutput.ofGrabMem();
+        NExecOutput err = NExecOutput.ofGrabMem();
         int e = commExec.exec(new DefaultNExecCommandExtensionContext(
-                execCommand.getTarget(),
-                cmd, sc
+                getExecCommand().getTarget(),
+                cmd, getSession(),
+                NExecInput.ofStream(NIO.of(getSession()).ofNullInputStream()),
+                out,
+                err
         ));
+        String outString = out.getResultString();
         if (e != 0) {
-            execSession.err().println(sc.out().toString());
-            execSession.err().println(sc.err().toString());
-            throw new NExecutionException(session, NMsg.ofC("command exit with code :%s", e), e);
+            getSession().err().println(outString);
+            getSession().err().println(err.getStream().toString());
+            throw new NExecutionException(getSession(), NMsg.ofC("command exit with code :%s", e), e);
         }
-        return sc.out().toString();
+        return outString;
     }
 
     private int runOnce(String[] cmd) {
         return commExec.exec(new DefaultNExecCommandExtensionContext(
-                execCommand.getTarget(),
-                cmd, execSession
+                getExecCommand().getTarget(),
+                cmd, getSession(),
+                getExecCommand().getIn(),
+                getExecCommand().getOut(),
+                getExecCommand().getErr()
         ));
     }
 
@@ -247,16 +245,16 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
 
     @Override
     public NText getHelpText() {
-        switch (NEnvs.of(execSession).getOsFamily()) {
+        switch (NEnvs.of(getSession()).getOsFamily()) {
             case WINDOWS: {
-                return NTexts.of(session).ofStyled(
+                return NTexts.of(getSession()).ofStyled(
                         "No help available. Try " + getName() + " /help",
                         NTextStyle.error()
                 );
             }
             default: {
                 return
-                        NTexts.of(session).ofStyled(
+                        NTexts.of(getSession()).ofStyled(
                                 "No help available. Try 'man " + getName() + "' or '" + getName() + " --help'",
                                 NTextStyle.error()
                         );
@@ -266,11 +264,7 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
 
     @Override
     public String toString() {
-        return execCommand.getRunAs() + " " + NCmdLine.of(cmd).toString();
+        return getExecCommand().getRunAs() + " " + NCmdLine.of(cmd).toString();
     }
 
-    @Override
-    public NSession getSession() {
-        return session;
-    }
 }

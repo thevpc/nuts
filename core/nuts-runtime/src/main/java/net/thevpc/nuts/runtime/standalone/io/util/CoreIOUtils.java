@@ -149,8 +149,8 @@ public class CoreIOUtils {
                 if (goodName.length() < 3) {
                     goodName = goodName + "-repo";
                 }
-                loc = NPaths.of(session)
-                        .createTempFolder(goodName + "-").toString();
+                loc = NPath
+                        .ofTempFolder(goodName + "-", session).toString();
             } else {
                 if (NBlankable.isBlank(loc)) {
                     if (NBlankable.isBlank(goodName)) {
@@ -845,14 +845,12 @@ public class CoreIOUtils {
         boolean isPath = is instanceof NPath;
         if (isPath) {
             Path sf = ((NPath) is).asFile();
-            if(sf!=null) {
+            if (sf != null) {
                 return sf;
             }
         }
-        NPaths tmps = NPaths.of(session);
         String name = is.getInputMetaData().getName().orElse("no-name");
-        Path temp = tmps
-                .createTempFile(name).toFile();
+        Path temp = NPath.ofTempFile(name, session).toFile();
         NCp a = NCp.of(session).removeOptions(NPathOption.SAFE);
         if (isPath) {
             a.from(((NPath) is));
@@ -870,7 +868,7 @@ public class CoreIOUtils {
                 if (ct != null) {
                     List<String> e = ctt.findExtensionsByContentType(ct);
                     if (!e.isEmpty()) {
-                        NPath newFile = tmps.createTempFile(name + "." + e.get(0));
+                        NPath newFile = NPath.ofTempFile(name + "." + e.get(0), session);
                         Path newFilePath = newFile.toFile();
                         try {
                             Files.move(temp, newFilePath, StandardCopyOption.REPLACE_EXISTING);
@@ -1302,6 +1300,25 @@ public class CoreIOUtils {
         return new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)));
     }
 
+    public static NExecOutput validateErr(NExecOutput err, NSession session) {
+        if (err == null) {
+            err = NExecOutput.ofStream(session.err());
+        }
+        if (err.getType() == NExecRedirectType.INHERIT) {
+            if (NIO.of(session).isStderr(session.err())) {
+                err = NExecOutput.ofInherit();
+            } else {
+                err = NExecOutput.ofStream(session.err());
+            }
+        } else if (err.getType() == NExecRedirectType.STREAM) {
+            if (NIO.of(session).isStderr(session.err())) {
+                err = NExecOutput.ofStream(session.err());
+            }
+        }
+        return err;
+    }
+
+
     public static class CachedURL {
 
         String url;
@@ -1327,4 +1344,39 @@ public class CoreIOUtils {
         return new DefaultNOutputTargetMetadata();
     }
 
+    public static NExecInput validateIn(NExecInput in,NSession session){
+        if (in == null) {
+            in = NExecInput.ofStream(session.in());
+        }
+        if (in.getType() == NExecRedirectType.INHERIT) {
+            if (NIO.of(session).isStdin(session.in())) {
+                in = NExecInput.ofInherit();
+            } else {
+                in = NExecInput.ofStream(session.in());
+            }
+        } else if (in.getType() == NExecRedirectType.STREAM) {
+            if (NIO.of(session).isStdin(in.getStream())) {
+                in = NExecInput.ofInherit();
+            }
+        }
+        return in;
+    }
+
+    public static NExecOutput validateOut(NExecOutput out, NSession session) {
+        if (out == null) {
+            out = NExecOutput.ofStream(session.out());
+        }
+        if (out.getType() == NExecRedirectType.INHERIT) {
+            if (NIO.of(session).isStdout(session.out())) {
+                out = NExecOutput.ofInherit();
+            } else {
+                out = NExecOutput.ofStream(session.out());
+            }
+        } else if (out.getType() == NExecRedirectType.STREAM) {
+            if (NIO.of(session).isStdout(session.out())) {
+                out = NExecOutput.ofStream(session.out());
+            }
+        }
+        return out;
+    }
 }

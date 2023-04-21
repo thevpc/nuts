@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.util.NStream;
 
@@ -43,7 +44,11 @@ public class NDependencyOsDistIdFilter extends AbstractDependencyFilter  {
 
     @Override
     public String toString() {
-        return accepted.isEmpty() ? "true" : "os in (" + accepted.stream().map(Object::toString).collect(Collectors.joining(", ")) + ')';
+        return
+                CoreStringUtils.trueOrEqOrIn("os",
+                        accepted.stream().map(x -> x.toString()).collect(Collectors.toList())
+                )
+                ;
     }
 
     @Override

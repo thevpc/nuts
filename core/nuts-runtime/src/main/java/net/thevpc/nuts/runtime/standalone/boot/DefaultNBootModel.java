@@ -26,7 +26,6 @@ package net.thevpc.nuts.runtime.standalone.boot;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.cmdline.DefaultNArg;
-import net.thevpc.nuts.elem.NElementNotFoundException;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSystemTerminal;
 import net.thevpc.nuts.runtime.optional.jansi.OptionalJansi;
@@ -65,7 +64,7 @@ public class DefaultNBootModel implements NBootModel {
     private Map<String, NLiteral> customBootOptions;
     private NWorkspaceTerminalOptions bootTerminal;
     private NLog LOG;
-    private NSystemTerminal systemTerminal;
+    private NSystemTerminalRef systemTerminal;
 
     public DefaultNBootModel(NWorkspace workspace) {
         this.workspace = workspace;
@@ -80,8 +79,7 @@ public class DefaultNBootModel implements NBootModel {
         _model.uuid = bOptions.getUuid().orNull();
         _model.name = Paths.get(bOptions.getWorkspace().get()).getFileName().toString();
         DefaultSystemTerminal sys = new DefaultSystemTerminal(new DefaultNSystemTerminalBaseBoot(this));
-
-        this.systemTerminal = NutsSystemTerminal_of_NutsSystemTerminalBase(sys, bootSession);
+        this.systemTerminal = new NSystemTerminalRef(NutsSystemTerminal_of_NutsSystemTerminalBase(sys, bootSession));
         this.bootSession.setTerminal(new DefaultNSessionTerminalFromSystem(bootSession, this.systemTerminal));
         this.nullOut = new NPrintStreamNull(bootSession);
     }
@@ -177,24 +175,7 @@ public class DefaultNBootModel implements NBootModel {
     }
 
     public void setSystemTerminal(NSystemTerminalBase terminal, NSession session) {
-        if (terminal == null) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("missing terminal"));
-        }
-        NSystemTerminal syst = NutsSystemTerminal_of_NutsSystemTerminalBase(terminal, session);
-        NSystemTerminal old = this.systemTerminal;
-        this.systemTerminal = syst;
-
-        if (old != this.systemTerminal) {
-            NWorkspaceEvent event = null;
-            if (session != null) {
-                for (NWorkspaceListener workspaceListener : NEvents.of(session).getWorkspaceListeners()) {
-                    if (event == null) {
-                        event = new DefaultNWorkspaceEvent(session, null, "systemTerminal", old, this.systemTerminal);
-                    }
-                    workspaceListener.onUpdateProperty(event);
-                }
-            }
-        }
+        this.systemTerminal.setBase(terminal,session);
     }
 
     public NSystemTerminal createSystemTerminal(NTerminalSpec spec, NSession session) {
@@ -221,7 +202,7 @@ public class DefaultNBootModel implements NBootModel {
             //that's ok
         } else {
             NId extId = NId.of("net.thevpc.nuts.ext:next-term#" + session.getWorkspace().getApiVersion()).get(session);
-            if (!NConfigs.of(session).isExcludedExtension(extId.toString(), NBootManager.of(session).getBootOptions())) {
+            if (!NExtensions.of(session).isExcludedExtension(extId.toString(), NBootManager.of(session).getBootOptions())) {
                 NExtensions extensions = session.extensions();
                 extensions.setSession(session).loadExtension(extId);
                 NSystemTerminal systemTerminal = createSystemTerminal(
@@ -254,14 +235,14 @@ public class DefaultNBootModel implements NBootModel {
         } else {
             try {
                 syst = new DefaultSystemTerminal(terminal);
-                NSessionUtils.setSession(syst, session);
+                //NSessionUtils.setSession(syst, session);
             } catch (Exception ex) {
                 _LOGOP(session).level(Level.FINEST).verb(NLogVerb.WARNING)
                         .log(NMsg.ofJ("unable to create system terminal : {0}", ex));
                 DefaultNSystemTerminalBase b = new DefaultNSystemTerminalBase();
                 NSessionUtils.setSession(b, session);
                 syst = new DefaultSystemTerminal(b);
-                NSessionUtils.setSession(syst, session);
+                //NSessionUtils.setSession(syst, session);
             }
         }
         return syst;

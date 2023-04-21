@@ -68,7 +68,7 @@ public class SqlRestoreCmd<C extends NdbConfig> extends RestoreCmd<C> {
                 CmdRedirect restoreCommand = getSupport().createRestoreCommand(sqlFile, options, session);
                 NExecCommand nExecCommand = sysCmd(session).addCommand(restoreCommand.getCmd().toStringArray());
                 if (restoreCommand.getPath() != null) {
-                    nExecCommand.setRedirectInputFile(restoreCommand.getPath());
+                    nExecCommand.setIn(NExecInput.ofPath(restoreCommand.getPath()));
                 }
                 run(nExecCommand);
             } else if (file.get().getName().toLowerCase().endsWith(".zip")) {
@@ -95,7 +95,7 @@ public class SqlRestoreCmd<C extends NdbConfig> extends RestoreCmd<C> {
                                 CmdRedirect restoreCommand = getSupport().createRestoreCommand(newFile, options, session);
                                 NExecCommand nExecCommand = sysCmd(session).addCommand(restoreCommand.getCmd().toStringArray());
                                 if (restoreCommand.getPath() != null) {
-                                    nExecCommand.setRedirectInputFile(restoreCommand.getPath());
+                                    nExecCommand.setIn(NExecInput.ofPath(restoreCommand.getPath()));
                                 }
                                 run(nExecCommand);
                                 newFile.delete();

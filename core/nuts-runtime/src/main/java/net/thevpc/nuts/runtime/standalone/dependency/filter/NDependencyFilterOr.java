@@ -1,13 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.dependency.util.NComplexExpressionString;
+import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class NDependencyFilterOr extends AbstractDependencyFilter{
+public class NDependencyFilterOr extends AbstractDependencyFilter implements NComplexExpressionString {
 
     private final NDependencyFilter[] all;
 
@@ -37,7 +39,7 @@ public class NDependencyFilterOr extends AbstractDependencyFilter{
 
     @Override
     public String toString() {
-        return String.join(" Or ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
+        return CoreStringUtils.trueOrOr(Arrays.stream(all).map(NComplexExpressionString::toString).collect(Collectors.toList()));
     }
 
     @Override

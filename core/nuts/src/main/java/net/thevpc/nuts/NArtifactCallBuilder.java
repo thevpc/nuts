@@ -77,21 +77,6 @@ public interface NArtifactCallBuilder extends Serializable, NComponent {
     NArtifactCallBuilder setArguments(List<String> value);
 
     /**
-     * return call properties map
-     *
-     * @return call properties map
-     */
-    Map<String, String> getProperties();
-
-    /**
-     * update call properties map (replace all existing properties)
-     *
-     * @param value new value
-     * @return {@code this} instance
-     */
-    NArtifactCallBuilder setProperties(Map<String, String> value);
-
-    /**
      * initialize this instance from the given value
      *
      * @param value copy from value

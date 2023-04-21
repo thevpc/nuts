@@ -251,9 +251,9 @@ public final class NBootWorkspace {
         int result;
         try {
             if (nLog != null) {
-                nLog.with().session(nLogSession).level(Level.FINE).verb(NLogVerb.START).log(NMsg.ofJ("start new process : {0}", NCmdLine.of(processCommandLine)));
+                nLog.with().session(nLogSession).level(Level.FINE).verb(NLogVerb.START).log(NMsg.ofC("start new process : %s", NCmdLine.of(processCommandLine)));
             } else {
-                bLog.log(Level.FINE, NLogVerb.START, NMsg.ofJ("start new process : {0}", NCmdLine.of(processCommandLine)));
+                bLog.log(Level.FINE, NLogVerb.START, NMsg.ofC("start new process : %s", NCmdLine.of(processCommandLine)));
             }
             result = new ProcessBuilder(processCommandLine).inheritIO().start().waitFor();
         } catch (IOException | InterruptedException ex) {
@@ -276,12 +276,12 @@ public final class NBootWorkspace {
             if (parsedBootRuntimeDependenciesRepositories != null) {
                 return parsedBootRuntimeDependenciesRepositories;
             }
-            bLog.log(Level.FINE, NLogVerb.START, NMsg.ofJ("resolve boot repositories to load nuts-runtime dependencies from options : {0} and config: {1}", computedOptions.getRepositories().orElseGet(Collections::emptyList).toString(), computedOptions.getBootRepositories().ifBlankEmpty().orElse("[]")));
+            bLog.log(Level.FINE, NLogVerb.START, NMsg.ofC("resolve boot repositories to load nuts-runtime dependencies from options : %s and config: %s", computedOptions.getRepositories().orElseGet(Collections::emptyList).toString(), computedOptions.getBootRepositories().ifBlankEmpty().orElse("[]")));
         } else {
             if (parsedBootRuntimeRepositories != null) {
                 return parsedBootRuntimeRepositories;
             }
-            bLog.log(Level.FINE, NLogVerb.START, NMsg.ofJ("resolve boot repositories to load nuts-runtime from options : {0} and config: {1}", computedOptions.getRepositories().orElseGet(Collections::emptyList).toString(), computedOptions.getBootRepositories().ifBlankEmpty().orElse("[]")));
+            bLog.log(Level.FINE, NLogVerb.START, NMsg.ofC("resolve boot repositories to load nuts-runtime from options : %s and config: %s", computedOptions.getRepositories().orElseGet(Collections::emptyList).toString(), computedOptions.getBootRepositories().ifBlankEmpty().orElse("[]")));
         }
         NRepositorySelectorList bootRepositories = NRepositorySelectorList.ofAll(computedOptions.getRepositories().orNull(), repositoryDB, null);
         NRepositorySelector[] old = NRepositorySelectorList.ofAll(Arrays.asList(computedOptions.getBootRepositories().orNull()), repositoryDB, null).toArray();
@@ -351,7 +351,7 @@ public final class NBootWorkspace {
 
     public String[] createProcessCommandLine() {
         prepareWorkspace();
-        bLog.log(Level.FINE, NLogVerb.START, NMsg.ofJ("running version {0}.  {1}", computedOptions.getApiVersion().orNull(), getRequirementsHelpString(true)));
+        bLog.log(Level.FINE, NLogVerb.START, NMsg.ofC("running version %s.  %s", computedOptions.getApiVersion().orNull(), getRequirementsHelpString(true)));
         String defaultWorkspaceLibFolder = computedOptions.getStoreType(NStoreType.LIB).orNull();
         List<NRepositoryLocation> repos = new ArrayList<>();
         repos.add(NRepositoryLocation.of("nuts@" + defaultWorkspaceLibFolder));
@@ -396,7 +396,7 @@ public final class NBootWorkspace {
                 }
                 sb.append(s);
             }
-            bLog.log(Level.FINE, NLogVerb.START, NMsg.ofJ("[exec] {0}", sb));
+            bLog.log(Level.FINE, NLogVerb.START, NMsg.ofC("[exec] %s", sb));
         }
         return cmd.toArray(new String[0]);
     }
@@ -406,7 +406,7 @@ public final class NBootWorkspace {
     }
 
 
-    private NIdCache getFallbackRuntime(NId baseId, boolean lastWorkspace, boolean copyTemp) {
+    private NIdCache getFallbackCache(NId baseId, boolean lastWorkspace, boolean copyTemp) {
         return cache.fallbackIdMap.computeIfAbsent(baseId,
                 bid -> {
                     NIdCache fid = new NIdCache();
@@ -445,44 +445,27 @@ public final class NBootWorkspace {
                     }
                     if (bestVersion != null) {
                         Path descNutsPath = bestPath.resolveSibling(NIdUtils.resolveFileName(bestId, "nuts"));
-                        Map<String, Object> descNuts = null;
-                        if (Files.isRegularFile(descNutsPath)) {
-                            NReservedJsonParser parser = null;
-                            try {
-                                parser = new NReservedJsonParser(
-                                        new InputStreamReader(
-                                                new ByteArrayInputStream(
-                                                        Files.readAllBytes(descNutsPath)
-                                                )));
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                            descNuts = parser.parseObject();
-                            List<String> dependencies = (List<String>) descNuts.get("dependencies");
-                            if (dependencies != null) {
-                                fid.deps = dependencies.stream().map(x -> NId.of(x).get())
-                                        .filter(x -> NReservedUtils.isAcceptDependency(x.toDependency(), computedOptions))
-                                        .collect(Collectors.toSet());
-                                fid.depsData = fid.deps.stream()
-                                        .map(x -> {
-                                            try {
-                                                return getFallbackRuntime(x, lastWorkspace, copyTemp);
-                                            } catch (RuntimeException e) {
-                                                if (!x.toDependency().isOptional()) {
-                                                    throw e;
-                                                }
-                                                //
+                        Set<NId> dependencies = NReservedMavenUtils.loadDependenciesFromNutsUrl(descNutsPath.toString(), bLog);
+                        if (dependencies != null) {
+                            fid.deps = dependencies.stream()
+                                    .filter(x -> NReservedUtils.isAcceptDependency(x.toDependency(), computedOptions))
+                                    .collect(Collectors.toSet());
+                            fid.depsData = fid.deps.stream()
+                                    .map(x -> {
+                                        try {
+                                            return getFallbackCache(x, lastWorkspace, copyTemp);
+                                        } catch (RuntimeException e) {
+                                            if (!x.toDependency().isOptional()) {
+                                                throw e;
                                             }
-                                            return null;
-                                        })
-                                        .filter(Objects::nonNull)
-                                        .collect(Collectors.toList());
-                            }
-                        } else {
-                            //
+                                            //
+                                        }
+                                        return null;
+                                    })
+                                    .filter(Objects::nonNull)
+                                    .collect(Collectors.toList());
                         }
                         fid.id = bestId;
-
                         if (copyTemp) {
                             Path temp = null;
                             try {
@@ -512,35 +495,35 @@ public final class NBootWorkspace {
             preparedWorkspace = true;
             NIsolationLevel isolationMode = computedOptions.getIsolationLevel().orElse(NIsolationLevel.SYSTEM);
             if (bLog.isLoggable(Level.CONFIG)) {
-                bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofJ("bootstrap Nuts version {0}{1}- digest {1}...", Nuts.getVersion(), isolationMode == NIsolationLevel.SYSTEM ? "" : isolationMode == NIsolationLevel.USER ? " (user mode)" : isolationMode == NIsolationLevel.CONFINED ? " (confined mode)" : isolationMode == NIsolationLevel.SANDBOX ? " (sandbox mode)" : " (unsupported mode)", getApiDigest()));
+                bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofC("bootstrap Nuts version %s%s- digest %s...", Nuts.getVersion(), isolationMode == NIsolationLevel.SYSTEM ? "" : isolationMode == NIsolationLevel.USER ? " (user mode)" : isolationMode == NIsolationLevel.CONFINED ? " (confined mode)" : isolationMode == NIsolationLevel.SANDBOX ? " (sandbox mode)" : " (unsupported mode)", getApiDigest()));
                 bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofPlain("boot-class-path:"));
                 for (String s : NStringUtils.split(System.getProperty("java.class.path"), File.pathSeparator, true, true)) {
-                    bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofJ("                  {0}", s));
+                    bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofC("                  %s", s));
                 }
                 ClassLoader thisClassClassLoader = getClass().getClassLoader();
-                bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofJ("class-loader: {0}", thisClassClassLoader));
+                bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofC("class-loader: %s", thisClassClassLoader));
                 for (URL url : NReservedClassLoaderUtils.resolveClasspathURLs(thisClassClassLoader, false)) {
-                    bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofJ("                 {0}", url));
+                    bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofC("                 %s", url));
                 }
                 ClassLoader tctxloader = Thread.currentThread().getContextClassLoader();
                 if (tctxloader != thisClassClassLoader) {
-                    bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofJ("thread-class-loader: {0}", tctxloader));
+                    bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofC("thread-class-loader: %s", tctxloader));
                     for (URL url : NReservedClassLoaderUtils.resolveClasspathURLs(tctxloader, false)) {
-                        bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofJ("                 {0}", url));
+                        bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofC("                 %s", url));
                     }
                 }
                 ClassLoader contextClassLoader = getContextClassLoader();
-                bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofJ("ctx-class-loader: {0}", contextClassLoader));
+                bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofC("ctx-class-loader: %s", contextClassLoader));
                 if (contextClassLoader != null) {
                     for (URL url : NReservedClassLoaderUtils.resolveClasspathURLs(contextClassLoader, false)) {
-                        bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofJ("                 {0}", url));
+                        bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofC("                 %s", url));
                     }
                 }
-                bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofJ("system-properties:", contextClassLoader));
+                bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofPlain("system-properties:"));
                 Map<String, String> m = (Map) System.getProperties();
                 int max = m.keySet().stream().mapToInt(String::length).max().getAsInt();
                 for (String k : new TreeSet<String>(m.keySet())) {
-                    bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofJ("    {0} = {1}", NStringUtils.formatAlign(k, max, NPositionType.FIRST), NStringUtils.formatStringLiteral(m.get(k), NQuoteType.DOUBLE)));
+                    bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofC("    %s = %s", NStringUtils.formatAlign(k, max, NPositionType.FIRST), NStringUtils.formatStringLiteral(m.get(k), NQuoteType.DOUBLE)));
                 }
             }
             String workspaceName = null;
@@ -648,7 +631,7 @@ public final class NBootWorkspace {
                         bLog.log(Level.INFO, NLogVerb.DEBUG, NMsg.ofPlain("[dry] [reset] delete ALL workspace folders and configurations"));
                     } else {
                         bLog.log(Level.CONFIG, NLogVerb.WARNING, NMsg.ofPlain("reset workspace"));
-                        getFallbackRuntime(NId.RUNTIME_ID, true, true);
+                        getFallbackCache(NId.RUNTIME_ID, true, true);
                         countDeleted = NReservedUtils.deleteStoreLocations(lastWorkspaceOptions, getOptions(), true, bLog, NStoreType.values(), () -> scanner.nextLine());
                         NReservedUtils.ndiUndo(bLog);
                     }
@@ -657,7 +640,7 @@ public final class NBootWorkspace {
                         bLog.log(Level.INFO, NLogVerb.DEBUG, NMsg.ofPlain("[dry] [reset] delete ALL workspace folders and configurations"));
                     } else {
                         bLog.log(Level.CONFIG, NLogVerb.WARNING, NMsg.ofPlain("reset workspace"));
-                        getFallbackRuntime(NId.RUNTIME_ID, false, true);
+                        getFallbackCache(NId.RUNTIME_ID, false, true);
                         countDeleted = NReservedUtils.deleteStoreLocations(computedOptions, getOptions(), true, bLog, NStoreType.values(), () -> scanner.nextLine());
                         NReservedUtils.ndiUndo(bLog);
                     }
@@ -706,9 +689,9 @@ public final class NBootWorkspace {
             if (computedOptions.getApplicationArguments().get().size() == 0 && computedOptions.getSkipBoot().orElse(false) && (computedOptions.getRecover().orElse(false) || resetFlag)) {
                 if (isPlainTrace()) {
                     if (countDeleted > 0) {
-                        bLog.log(Level.WARNING, NLogVerb.WARNING, NMsg.ofJ("workspace erased : {0}", computedOptions.getWorkspace()));
+                        bLog.log(Level.WARNING, NLogVerb.WARNING, NMsg.ofC("workspace erased : %s", computedOptions.getWorkspace()));
                     } else {
-                        bLog.log(Level.WARNING, NLogVerb.WARNING, NMsg.ofJ("workspace is not erased because it does not exist : {0}", computedOptions.getWorkspace()));
+                        bLog.log(Level.WARNING, NLogVerb.WARNING, NMsg.ofC("workspace is not erased because it does not exist : %s", computedOptions.getWorkspace()));
                     }
                 }
                 throw new NBootException(NMsg.ofPlain(""), 0);
@@ -740,12 +723,12 @@ public final class NBootWorkspace {
                 try {
                     Map<String, Object> obj = NReservedJsonParser.parse(nutsApiConfigBootPath);
                     if (!obj.isEmpty()) {
-                        bLog.log(Level.CONFIG, NLogVerb.READ, NMsg.ofJ("loaded {0} file : {1}", nutsApiConfigBootPath.getFileName(), nutsApiConfigBootPath.toString()));
+                        bLog.log(Level.CONFIG, NLogVerb.READ, NMsg.ofC("loaded %s file : %s", nutsApiConfigBootPath.getFileName(), nutsApiConfigBootPath.toString()));
                         loadedApiConfig = true;
                         if (computedOptions.getRuntimeId().isNotPresent()) {
                             String runtimeId = (String) obj.get("runtimeId");
                             if (NBlankable.isBlank(runtimeId)) {
-                                bLog.log(Level.CONFIG, NLogVerb.FAIL, NMsg.ofJ("{0} does not contain runtime-id", nutsApiConfigBootPath));
+                                bLog.log(Level.CONFIG, NLogVerb.FAIL, NMsg.ofC("%s does not contain runtime-id", nutsApiConfigBootPath));
                             }
                             computedOptions.setRuntimeId(NId.of(runtimeId).get());
                         }
@@ -757,7 +740,7 @@ public final class NBootWorkspace {
                         }
                     }
                 } catch (UncheckedIOException | NIOException e) {
-                    bLog.log(Level.CONFIG, NLogVerb.READ, NMsg.ofJ("unable to read {0}", nutsApiConfigBootPath));
+                    bLog.log(Level.CONFIG, NLogVerb.READ, NMsg.ofC("unable to read %s", nutsApiConfigBootPath));
                 }
             }
             if (!loadedApiConfig || computedOptions.getRuntimeId().isNotPresent() || computedOptions.getRuntimeBootDescriptor().isNotPresent() || computedOptions.getExtensionBootDescriptors().isNotPresent() || computedOptions.getBootRepositories().isNotPresent()) {
@@ -774,7 +757,7 @@ public final class NBootWorkspace {
                         runtimeId = NReservedMavenUtils.resolveLatestMavenId(NId.of(NConstants.Ids.NUTS_RUNTIME).get(), (rtVersion) -> rtVersion.getValue().startsWith(apiVersion + "."), bLog, resolveBootRuntimeRepositories(true), computedOptions);
                     }
                     if (runtimeId == null) {
-                        runtimeId = getFallbackRuntime(NId.RUNTIME_ID, false, false).id;
+                        runtimeId = getFallbackCache(NId.RUNTIME_ID, false, false).id;
                     }
                     if (runtimeId == null) {
                         bLog.log(Level.FINEST, NLogVerb.FAIL, NMsg.ofPlain("unable to resolve latest runtime-id version (is connection ok?)"));
@@ -784,7 +767,7 @@ public final class NBootWorkspace {
                 }
                 if (computedOptions.getRuntimeId().isNotPresent()) {
                     computedOptions.setRuntimeId((resolveDefaultRuntimeId(computedOptions.getApiVersion().orNull())));
-                    bLog.log(Level.CONFIG, NLogVerb.READ, NMsg.ofJ("consider default runtime-id : {0}", computedOptions.getRuntimeId().orNull()));
+                    bLog.log(Level.CONFIG, NLogVerb.READ, NMsg.ofC("consider default runtime-id : %s", computedOptions.getRuntimeId().orNull()));
                 }
                 NId runtimeIdObject = computedOptions.getRuntimeId().get();
                 if (runtimeIdObject.getVersion().isBlank()) {
@@ -801,10 +784,10 @@ public final class NBootWorkspace {
                         if (!computedOptions.getRecover().orElse(false) && !resetFlag && NReservedIOUtils.isFileAccessible(nutsRuntimeCacheConfigPath, computedOptions.getExpireTime().orNull(), bLog)) {
                             try {
                                 Map<String, Object> obj = NReservedJsonParser.parse(nutsRuntimeCacheConfigPath);
-                                bLog.log(Level.CONFIG, NLogVerb.READ, NMsg.ofJ("loaded {0} file : {1}", nutsRuntimeCacheConfigPath.getFileName(), nutsRuntimeCacheConfigPath.toString()));
+                                bLog.log(Level.CONFIG, NLogVerb.READ, NMsg.ofC("loaded %s file : %s", nutsRuntimeCacheConfigPath.getFileName(), nutsRuntimeCacheConfigPath.toString()));
                                 loadedDeps = NId.ofSet((String) obj.get("dependencies")).orElse(new LinkedHashSet<>());
                             } catch (Exception ex) {
-                                bLog.log(Level.FINEST, NLogVerb.FAIL, NMsg.ofJ("unable to load {0} file : {1} : {2}", nutsRuntimeCacheConfigPath.getFileName(), nutsRuntimeCacheConfigPath.toString(), ex.toString()));
+                                bLog.log(Level.FINEST, NLogVerb.FAIL, NMsg.ofC("unable to load %s file : %s : %s", nutsRuntimeCacheConfigPath.getFileName(), nutsRuntimeCacheConfigPath.toString(), ex.toString()));
                                 //ignore...
                             }
                             cacheLoaded = true;
@@ -812,14 +795,14 @@ public final class NBootWorkspace {
 
                         if (!cacheLoaded || loadedDeps == null) {
                             loadedDeps = NReservedMavenUtils.loadDependenciesFromId(computedOptions.getRuntimeId().get(), bLog, resolveBootRuntimeRepositories(false), cache);
-                            bLog.log(Level.CONFIG, NLogVerb.SUCCESS, NMsg.ofJ("detect runtime dependencies : {0}", loadedDeps));
+                            bLog.log(Level.CONFIG, NLogVerb.SUCCESS, NMsg.ofC("detect runtime dependencies : %s", loadedDeps));
                         }
                     } catch (Exception ex) {
-                        bLog.log(Level.FINEST, NLogVerb.FAIL, NMsg.ofJ("unable to load {0} file : {1}", nutsRuntimeCacheConfigPath.getFileName(), ex.toString()));
+                        bLog.log(Level.FINEST, NLogVerb.FAIL, NMsg.ofC("unable to load %s file : %s", nutsRuntimeCacheConfigPath.getFileName(), ex.toString()));
                         //
                     }
                     if (loadedDeps == null) {
-                        NIdCache r = getFallbackRuntime(NId.RUNTIME_ID, false, false);
+                        NIdCache r = getFallbackCache(NId.RUNTIME_ID, false, false);
                         loadedDeps = r.deps;
                     }
                     if (loadedDeps == null) {
@@ -831,11 +814,11 @@ public final class NBootWorkspace {
                         if (bootRepositories.size() == 0) {
                             bLog.log(Level.CONFIG, NLogVerb.FAIL, NMsg.ofPlain("workspace bootRepositories could not be resolved"));
                         } else if (bootRepositories.size() == 1) {
-                            bLog.log(Level.CONFIG, NLogVerb.INFO, NMsg.ofJ("workspace bootRepositories resolved to : {0}", bootRepositories.toArray()[0]));
+                            bLog.log(Level.CONFIG, NLogVerb.INFO, NMsg.ofC("workspace bootRepositories resolved to : %s", bootRepositories.toArray()[0]));
                         } else {
                             bLog.log(Level.CONFIG, NLogVerb.INFO, NMsg.ofPlain("workspace bootRepositories resolved to : "));
                             for (NRepositoryLocation repository : bootRepositories) {
-                                bLog.log(Level.CONFIG, NLogVerb.INFO, NMsg.ofJ("    {0}", repository));
+                                bLog.log(Level.CONFIG, NLogVerb.INFO, NMsg.ofC("    %s", repository));
                             }
                         }
                     }
@@ -862,10 +845,10 @@ public final class NBootWorkspace {
                                 if (isLoadFromCache() && NReservedIOUtils.isFileAccessible(extensionFile, computedOptions.getExpireTime().orNull(), bLog)) {
                                     try {
                                         Properties obj = NReservedIOUtils.loadURLProperties(extensionFile, bLog);
-                                        bLog.log(Level.CONFIG, NLogVerb.READ, NMsg.ofJ("loaded {0} file : {1}", extensionFile.getFileName(), extensionFile.toString()));
+                                        bLog.log(Level.CONFIG, NLogVerb.READ, NMsg.ofC("loaded %s file : %s", extensionFile.getFileName(), extensionFile.toString()));
                                         loadedDeps = new LinkedHashSet<>(NId.ofList((String) obj.get("dependencies")).orElse(new ArrayList<>()));
                                     } catch (Exception ex) {
-                                        bLog.log(Level.CONFIG, NLogVerb.FAIL, NMsg.ofJ("unable to load {0} file : {1} : {2}", extensionFile.getFileName(), extensionFile.toString(), ex.toString()));
+                                        bLog.log(Level.CONFIG, NLogVerb.FAIL, NMsg.ofC("unable to load %s file : %s : %s", extensionFile.getFileName(), extensionFile.toString(), ex.toString()));
                                         //ignore
                                     }
                                 }
@@ -911,7 +894,7 @@ public final class NBootWorkspace {
         //as long as there are no applications to run, will exit before creating workspace
         if (computedOptions.getApplicationArguments().get().size() == 0 && computedOptions.getSkipBoot().orElse(false) && (computedOptions.getRecover().orElse(false) || computedOptions.getReset().orElse(false))) {
             if (isPlainTrace()) {
-                bLog.log(Level.WARNING, NLogVerb.WARNING, NMsg.ofJ("workspace erased : {0}", computedOptions.getWorkspace()));
+                bLog.log(Level.WARNING, NLogVerb.WARNING, NMsg.ofC("workspace erased : %s", computedOptions.getWorkspace()));
             }
             throw new NBootException(null, 0);
         }
@@ -958,11 +941,11 @@ public final class NBootWorkspace {
                 if (bootClassWorldURLs.length == 0) {
                     bLog.log(Level.CONFIG, NLogVerb.SUCCESS, NMsg.ofPlain("empty nuts class world. All dependencies are already loaded in classpath, most likely"));
                 } else if (bootClassWorldURLs.length == 1) {
-                    bLog.log(Level.CONFIG, NLogVerb.SUCCESS, NMsg.ofJ("resolve nuts class world to : {0} {1}", NReservedIOUtils.getURLDigest(bootClassWorldURLs[0], bLog), bootClassWorldURLs[0]));
+                    bLog.log(Level.CONFIG, NLogVerb.SUCCESS, NMsg.ofC("resolve nuts class world to : %s %s", NReservedIOUtils.getURLDigest(bootClassWorldURLs[0], bLog), bootClassWorldURLs[0]));
                 } else {
                     bLog.log(Level.CONFIG, NLogVerb.SUCCESS, NMsg.ofPlain("resolve nuts class world is to : "));
                     for (URL u : bootClassWorldURLs) {
-                        bLog.log(Level.CONFIG, NLogVerb.SUCCESS, NMsg.ofJ("    {0} : {1}", NReservedIOUtils.getURLDigest(u, bLog), u));
+                        bLog.log(Level.CONFIG, NLogVerb.SUCCESS, NMsg.ofC("    %s : %s", NReservedIOUtils.getURLDigest(u, bLog), u));
                     }
                 }
             }
@@ -975,14 +958,20 @@ public final class NBootWorkspace {
             }
             factories.sort(new NReservedBootWorkspaceFactoryComparator(computedOptions));
             if (bLog.isLoggable(Level.CONFIG)) {
-                if (factories.isEmpty()) {
-                    bLog.log(Level.CONFIG, NLogVerb.SUCCESS, NMsg.ofPlain("unable to detect NutsBootWorkspaceFactory service implementations"));
-                } else if (factories.size() == 1) {
-                    bLog.log(Level.CONFIG, NLogVerb.SUCCESS, NMsg.ofJ("detect NutsBootWorkspaceFactory service implementation : {0}", factories.get(0).getClass().getName()));
-                } else {
-                    bLog.log(Level.CONFIG, NLogVerb.SUCCESS, NMsg.ofPlain("detect NutsBootWorkspaceFactory service implementations are :"));
-                    for (NBootWorkspaceFactory u : factories) {
-                        bLog.log(Level.CONFIG, NLogVerb.SUCCESS, NMsg.ofJ("    {0}", u.getClass().getName()));
+                switch (factories.size()){
+                    case 0:{
+                        bLog.log(Level.CONFIG, NLogVerb.SUCCESS, NMsg.ofPlain("unable to detect NutsBootWorkspaceFactory service implementations"));
+                        break;
+                    }
+                    case 1:{
+                        bLog.log(Level.CONFIG, NLogVerb.SUCCESS, NMsg.ofC("detect NutsBootWorkspaceFactory service implementation : %s", factories.get(0).getClass().getName()));
+                        break;
+                    }
+                    default:{
+                        bLog.log(Level.CONFIG, NLogVerb.SUCCESS, NMsg.ofPlain("detect NutsBootWorkspaceFactory service implementations are :"));
+                        for (NBootWorkspaceFactory u : factories) {
+                            bLog.log(Level.CONFIG, NLogVerb.SUCCESS, NMsg.ofC("    %s", u.getClass().getName()));
+                        }
                     }
                 }
             }
@@ -992,13 +981,13 @@ public final class NBootWorkspace {
                 factoryInstance = a;
                 try {
                     if (bLog.isLoggable(Level.CONFIG)) {
-                        bLog.log(Level.CONFIG, NLogVerb.INFO, NMsg.ofJ("create workspace using {0}", factoryInstance.getClass().getName()));
+                        bLog.log(Level.CONFIG, NLogVerb.INFO, NMsg.ofC("create workspace using %s", factoryInstance.getClass().getName()));
                     }
                     computedOptions.setBootWorkspaceFactory(factoryInstance);
                     nWorkspace = a.createWorkspace(computedOptions);
                 } catch (UnsatisfiedLinkError | Exception ex) {
                     exceptions.add(ex);
-                    bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("unable to create workspace using factory {0}", a), ex);
+                    bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("unable to create workspace using factory %s", a), ex);
                     // if the creation generates an error
                     // just stop
                     break;
@@ -1009,14 +998,14 @@ public final class NBootWorkspace {
             }
             if (nWorkspace == null) {
                 //should never happen
-                bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("unable to load Workspace \"{0}\" from ClassPath :", computedOptions.getName().orNull()));
+                bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("unable to load Workspace \"%s\" from ClassPath :", computedOptions.getName().orNull()));
                 for (URL url : bootClassWorldURLs) {
-                    bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("\t {0}", NReservedUtils.formatURL(url)));
+                    bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("\t %s", NReservedUtils.formatURL(url)));
                 }
                 for (Throwable exception : exceptions) {
-                    bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("{0}", exception), exception);
+                    bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("%s", exception), exception);
                 }
-                bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("unable to load Workspace Component from ClassPath : {0}", Arrays.asList(bootClassWorldURLs)));
+                bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("unable to load Workspace Component from ClassPath : %s", Arrays.asList(bootClassWorldURLs)));
                 throw new NInvalidWorkspaceException(this.computedOptions.getWorkspace().orNull(), NMsg.ofC("unable to load Workspace Component from ClassPath : %s%n  caused by:%n\t%s", Arrays.asList(bootClassWorldURLs), exceptions.stream().map(Throwable::toString).collect(Collectors.joining("\n\t"))));
             }
             return nWorkspace.createSession();
@@ -1231,7 +1220,7 @@ public final class NBootWorkspace {
             nLogSession = session;
         }
         NLogOp logOp = nLog.with().session(session).level(Level.CONFIG);
-        logOp.verb(NLogVerb.SUCCESS).log(NMsg.ofJ("running workspace in {0} mode", getRunModeString()));
+        logOp.verb(NLogVerb.SUCCESS).log(NMsg.ofC("running workspace in %s mode", getRunModeString()));
         if (workspace == null && o.getApplicationArguments().get().size() > 0) {
             switch (o.getApplicationArguments().get().get(0)) {
                 case "version": {
@@ -1272,62 +1261,62 @@ public final class NBootWorkspace {
     private void logError(URL[] bootClassWorldURLs, NReservedErrorInfoList ths) {
         String workspace = computedOptions.getWorkspace().orNull();
         Map<NStoreType, String> rbc_locations = computedOptions.getStoreLocations().orElse(Collections.emptyMap());
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("unable to bootstrap nuts (digest {0}):", getApiDigest()));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("unable to bootstrap nuts (digest %s):", getApiDigest()));
         if (!ths.list().isEmpty()) {
-            bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("{0}", ths.list().get(0)));
+            bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("%s", ths.list().get(0)));
         }
         bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofPlain("here after current environment info:"));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-boot-api-version            : {0}", computedOptions.getApiVersion().map(Object::toString).orElse("<?> Not Found!")));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-boot-runtime                : {0}", computedOptions.getRuntimeId().map(Object::toString).orElse("<?> Not Found!")));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-boot-repositories           : {0}", computedOptions.getBootRepositories().map(Object::toString).orElse("<?> Not Found!")));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  workspace-location               : {0}", NOptional.of(workspace).orElse("<default-location>")));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-bin                   : {0}", rbc_locations.get(NStoreType.BIN)));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-conf                  : {0}", rbc_locations.get(NStoreType.CONF)));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-var                   : {0}", rbc_locations.get(NStoreType.VAR)));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-log                   : {0}", rbc_locations.get(NStoreType.LOG)));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-temp                  : {0}", rbc_locations.get(NStoreType.TEMP)));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-cache                 : {0}", rbc_locations.get(NStoreType.CACHE)));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-run                   : {0}", rbc_locations.get(NStoreType.RUN)));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-lib                   : {0}", rbc_locations.get(NStoreType.LIB)));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-strategy              : {0}", NReservedUtils.desc(computedOptions.getStoreStrategy().orNull())));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-layout                : {0}", NReservedUtils.desc(computedOptions.getStoreLayout().orNull())));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-boot-args                   : {0}", this.computedOptions.toCommandLine()));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-app-args                    : {0}", this.computedOptions.getApplicationArguments().get()));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  option-read-only                 : {0}", this.computedOptions.getReadOnly().orElse(false)));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  option-trace                     : {0}", this.computedOptions.getTrace().orElse(false)));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  option-progress                  : {0}", NReservedUtils.desc(this.computedOptions.getProgressOptions().orNull())));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  option-open-mode                 : {0}", NReservedUtils.desc(this.computedOptions.getOpenMode().orElse(NOpenMode.OPEN_OR_CREATE))));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  nuts-boot-api-version            : %s", computedOptions.getApiVersion().map(Object::toString).orElse("<?> Not Found!")));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  nuts-boot-runtime                : %s", computedOptions.getRuntimeId().map(Object::toString).orElse("<?> Not Found!")));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  nuts-boot-repositories           : %s", computedOptions.getBootRepositories().map(Object::toString).orElse("<?> Not Found!")));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  workspace-location               : %s", NOptional.of(workspace).orElse("<default-location>")));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  nuts-store-bin                   : %s", rbc_locations.get(NStoreType.BIN)));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  nuts-store-conf                  : %s", rbc_locations.get(NStoreType.CONF)));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  nuts-store-var                   : %s", rbc_locations.get(NStoreType.VAR)));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  nuts-store-log                   : %s", rbc_locations.get(NStoreType.LOG)));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  nuts-store-temp                  : %s", rbc_locations.get(NStoreType.TEMP)));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  nuts-store-cache                 : %s", rbc_locations.get(NStoreType.CACHE)));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  nuts-store-run                   : %s", rbc_locations.get(NStoreType.RUN)));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  nuts-store-lib                   : %s", rbc_locations.get(NStoreType.LIB)));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  nuts-store-strategy              : %s", NReservedUtils.desc(computedOptions.getStoreStrategy().orNull())));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  nuts-store-layout                : %s", NReservedUtils.desc(computedOptions.getStoreLayout().orNull())));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  nuts-boot-args                   : %s", this.computedOptions.toCommandLine()));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  nuts-app-args                    : %s", this.computedOptions.getApplicationArguments().get()));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  option-read-only                 : %s", this.computedOptions.getReadOnly().orElse(false)));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  option-trace                     : %s", this.computedOptions.getTrace().orElse(false)));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  option-progress                  : %s", NReservedUtils.desc(this.computedOptions.getProgressOptions().orNull())));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  option-open-mode                 : %s", NReservedUtils.desc(this.computedOptions.getOpenMode().orElse(NOpenMode.OPEN_OR_CREATE))));
 
         NClassLoaderNode rtn = this.computedOptions.getRuntimeBootDependencyNode().orNull();
         String rtHash = "";
         if (rtn != null) {
             rtHash = NReservedIOUtils.getURLDigest(rtn.getURL(), bLog);
         }
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-runtime-digest                : {0}", rtHash));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  nuts-runtime-digest                : %s", rtHash));
 
         if (bootClassWorldURLs == null || bootClassWorldURLs.length == 0) {
-            bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-runtime-classpath           : {0}", "<none>"));
+            bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  nuts-runtime-classpath           : %s", "<none>"));
         } else {
-            bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-runtime-hash                : {0}", "<none>"));
+            bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  nuts-runtime-hash                : %s", "<none>"));
             for (int i = 0; i < bootClassWorldURLs.length; i++) {
                 URL bootClassWorldURL = bootClassWorldURLs[i];
                 if (i == 0) {
-                    bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-runtime-classpath           : {0}", NReservedUtils.formatURL(bootClassWorldURL)));
+                    bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  nuts-runtime-classpath           : %s", NReservedUtils.formatURL(bootClassWorldURL)));
                 } else {
-                    bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("                                     {0}", NReservedUtils.formatURL(bootClassWorldURL)));
+                    bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("                                     %s", NReservedUtils.formatURL(bootClassWorldURL)));
                 }
             }
         }
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  java-version                     : {0}", System.getProperty("java.version")));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  java-executable                  : {0}", NReservedUtils.resolveJavaCommand(null)));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  java-class-path                  : {0}", System.getProperty("java.class.path")));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  java-library-path                : {0}", System.getProperty("java.library.path")));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  os-name                          : {0}", System.getProperty("os.name")));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  os-arch                          : {0}", System.getProperty("os.arch")));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  os-version                       : {0}", System.getProperty("os.version")));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  user-name                        : {0}", System.getProperty("user.name")));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  user-home                        : {0}", System.getProperty("user.home")));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  user-dir                         : {0}", System.getProperty("user.dir")));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  java-version                     : %s", System.getProperty("java.version")));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  java-executable                  : %s", NReservedUtils.resolveJavaCommand(null)));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  java-class-path                  : %s", System.getProperty("java.class.path")));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  java-library-path                : %s", System.getProperty("java.library.path")));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  os-name                          : %s", System.getProperty("os.name")));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  os-arch                          : %s", System.getProperty("os.arch")));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  os-version                       : %s", System.getProperty("os.version")));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  user-name                        : %s", System.getProperty("user.name")));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  user-home                        : %s", System.getProperty("user.home")));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  user-dir                         : %s", System.getProperty("user.dir")));
         bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofPlain(""));
         if (this.computedOptions.getLogConfig().get().getLogTermLevel() == null || this.computedOptions.getLogConfig().get().getLogFileLevel().intValue() > Level.FINEST.intValue()) {
             bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofPlain("If the problem persists you may want to get more debug info by adding '--verbose' arguments."));
@@ -1347,33 +1336,27 @@ public final class NBootWorkspace {
             for (NReservedErrorInfo th : ths.list()) {
                 StringBuilder msg = new StringBuilder();
                 List<Object> msgParams = new ArrayList<>();
-                int index = 0;
                 msg.append("[error]");
                 if (th.getNutsId() != null) {
-                    msg.append(" <id>={").append(index).append("}");
-                    index++;
+                    msg.append(" <id>=%s");
                     msgParams.add(th.getNutsId());
                 }
                 if (th.getRepository() != null) {
-                    msg.append(" <repo>={").append(index).append("}");
-                    index++;
+                    msg.append(" <repo>=%s");
                     msgParams.add(th.getRepository());
                 }
                 if (th.getUrl() != null) {
-                    msg.append(" <url>={").append(index).append("}");
-                    index++;
+                    msg.append(" <url>=%s");
                     msgParams.add(th.getUrl());
                 }
                 if (th.getThrowable() != null) {
-                    msg.append(" <error>={").append(index).append("}");
-                    index++;
+                    msg.append(" <error>=%s");
                     msgParams.add(th.getThrowable().toString());
                 } else {
-                    msg.append(" <error>={").append(index).append("}");
-                    index++;
+                    msg.append(" <error>=%s");
                     msgParams.add("unexpected error");
                 }
-                bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ(msg.toString(), msgParams.toArray()));
+                bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC(msg.toString(), msgParams.toArray()));
                 bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofPlain(th.toString()), th.getThrowable());
             }
         } else {
@@ -1453,7 +1436,7 @@ public final class NBootWorkspace {
                     rtHash = "";
                 }
             }
-            bLog.log(Level.CONFIG, NLogVerb.INFO, NMsg.ofJ("detect {0} version {1} - digest {2} from {3}", name, id.toString(), rtHash, file));
+            bLog.log(Level.CONFIG, NLogVerb.INFO, NMsg.ofC("detect %s version %s - digest %s from %s", name, id.toString(), rtHash, file));
         }
 
         for (NDependency s : deps) {

@@ -37,7 +37,7 @@ public class MvnClient {
                             .setOptional(false)
                             .setInlineDependencies(true).setLatest(true).getResultDefinitions().required();
                     for (NId nutsId : NSearchCommand.of(this.session).addId(ff.getId()).setInlineDependencies(true).getResultIds()) {
-                        NFetchCommand.of(this.session).setId(nutsId).setSession(session.copy().setFetchStrategy(NFetchStrategy.ONLINE))
+                        NFetchCommand.of(nutsId,session.copy().setFetchStrategy(NFetchStrategy.ONLINE))
                                 .setOptional(false)
                                 .setDependencies(true).getResultDefinition();
                     }

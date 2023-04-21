@@ -44,7 +44,7 @@ public class TestExportVar {
     @Test
     public void testVars1() {
         NSession session = TestUtils.openNewTestWorkspace("--verbose");
-        NPath tempFolder = NPaths.of(session).createTempFolder();
+        NPath tempFolder = NPath.ofTempFolder(session);
         NPath a = tempFolder.resolve("a.nsh");
         NPath b = tempFolder.resolve("b.nsh");
         System.out.println("----------------------------------------------");

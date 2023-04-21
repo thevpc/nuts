@@ -26,26 +26,18 @@ public class DefaultNSystemExecutable extends AbstractNExecutableCommand {
 
     String[] cmd;
     List<String> executorOptions;
-    NSession session;
-    NSession execSession;
-    NExecCommand execCommand;
     private boolean showCommand = false;
-    private final boolean inheritSystemIO;
-
     public DefaultNSystemExecutable(String[] cmd,
-                                    List<String> executorOptions, NSession session, NSession execSession, NExecCommand execCommand) {
+                                    List<String> executorOptions,
+                                    NExecCommand execCommand) {
         super(cmd[0],
                 NCmdLine.of(cmd).toString(),
-                NExecutableType.SYSTEM);
-        this.inheritSystemIO = execCommand.isInheritSystemIO();
+                NExecutableType.SYSTEM,execCommand);
         this.cmd = cmd;
-        this.execCommand = execCommand;
         this.executorOptions = CoreCollectionUtils.nonNullList(executorOptions);
-        this.session = session;
-        this.execSession = execSession;
         NCmdLine cmdLine = NCmdLine.of(this.executorOptions);
         while (cmdLine.hasNext()) {
-            NArg aa = cmdLine.peek().get(session);
+            NArg aa = cmdLine.peek().get(getSession());
             switch (aa.key()) {
                 case "--show-command": {
                     cmdLine.withNextFlag((v, a, s) -> this.showCommand = (v));
@@ -65,6 +57,7 @@ public class DefaultNSystemExecutable extends AbstractNExecutableCommand {
 
     private ProcessExecHelper resolveExecHelper() {
         Map<String, String> e2 = null;
+        NExecCommand execCommand = getExecCommand();
         Map<String, String> env1 = execCommand.getEnv();
         if (env1 != null) {
             e2 = new HashMap<>((Map) env1);
@@ -72,14 +65,14 @@ public class DefaultNSystemExecutable extends AbstractNExecutableCommand {
         return ProcessExecHelper.ofArgs(null,
                 execCommand.getCommand().toArray(new String[0]), e2,
                 execCommand.getDirectory() == null ? null : execCommand.getDirectory().toFile(),
-                session.getTerminal(),
-                execSession.getTerminal(), showCommand, true, execCommand.getSleepMillis(),
-                inheritSystemIO,
-                /*redirectErr*/ false,
-                /*fileIn*/ execCommand.getRedirectInputFile(),
-                /*fileOut*/ execCommand.getRedirectOutputFile(),
+                showCommand, true,
+                execCommand.getSleepMillis(),
+                execCommand.getIn(),
+                execCommand.getOut(),
+                execCommand.getErr(),
                 execCommand.getRunAs(),
-                session);
+                execCommand.getSession()
+        );
     }
 
 
@@ -91,16 +84,16 @@ public class DefaultNSystemExecutable extends AbstractNExecutableCommand {
 
     @Override
     public NText getHelpText() {
-        switch (NEnvs.of(execSession).getOsFamily()) {
+        switch (NEnvs.of(getSession()).getOsFamily()) {
             case WINDOWS: {
-                return NTexts.of(session).ofStyled(
+                return NTexts.of(getSession()).ofStyled(
                         "No help available. Try " + getName() + " /help",
                         NTextStyle.error()
                 );
             }
             default: {
                 return
-                        NTexts.of(session).ofStyled(
+                        NTexts.of(getSession()).ofStyled(
                                 "No help available. Try 'man " + getName() + "' or '" + getName() + " --help'",
                                 NTextStyle.error()
                         );
@@ -110,11 +103,7 @@ public class DefaultNSystemExecutable extends AbstractNExecutableCommand {
 
     @Override
     public String toString() {
-        return execCommand.getRunAs() + " " + NCmdLine.of(cmd).toString();
+        return getExecCommand().getRunAs() + " " + NCmdLine.of(cmd).toString();
     }
 
-    @Override
-    public NSession getSession() {
-        return session;
-    }
 }

@@ -38,10 +38,8 @@ public class Test12_CopyTest {
 
     @Test
     public void copy01() throws Exception {
-        NPath from = NPaths.of(session)
-                .createTempFolder("source");
-        NPath to = NPaths.of(session)
-                .createTempFolder("target");
+        NPath from = NPath.ofTempFolder("source",session);
+        NPath to = NPath.ofTempFolder("target",session);
         TestUtils.println("from="+from);
         TestUtils.println("to="+to);
         long collect = from.stream().count();

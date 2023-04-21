@@ -28,10 +28,7 @@ import net.thevpc.nuts.boot.NClassLoaderNode;
 import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.io.NSessionTerminal;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinition;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNInstallInfo;
@@ -522,19 +519,6 @@ public class DefaultNWorkspaceConfigModel {
         wsModel.configModel.prepareBootClassPathConf(NIdType.RUNTIME, iruntimeId, ws.getApiId(), null, false, true, session);
         NBootDef nBootNutsRuntime = wsModel.configModel.prepareBootClassPathJar(iruntimeId, ws.getApiId(), null, true, session);
 
-//        NPath sharedFolder = NPath.of(NPlatformHome.USER.getStore(NStoreType.LIB), session)
-//                .resolve("boot");
-
-//        NPath sharedNutsApi = sharedFolder.resolve(NIdUtils.resolveJarPath(nBootNutsApi.id));
-//        NPath sharedNutsRuntime = sharedFolder.resolve(NIdUtils.resolveJarPath(nBootNutsRuntime.id));
-//        boolean devMode = true;
-//        if (devMode || !sharedNutsApi.isRegularFile()) {
-//            nBootNutsApi.content.copyTo(sharedNutsApi.mkParentDirs());
-//        }
-//        if (devMode || !sharedNutsRuntime.isRegularFile()) {
-//            nBootNutsRuntime.content.copyTo(sharedNutsRuntime.mkParentDirs());
-//        }
-
         List<NWorkspaceConfigBoot.ExtensionConfig> extensions = getStoredConfigBoot().getExtensions();
         if (extensions != null) {
             for (NWorkspaceConfigBoot.ExtensionConfig extension : extensions) {
@@ -708,8 +692,8 @@ public class DefaultNWorkspaceConfigModel {
         }
     }
 
-    public void setExtraBootExtensionId(NId apiId, NId extensionId, NDependency[] deps, NSession session) {
-        String newDeps = Arrays.stream(deps).map(Object::toString).collect(Collectors.joining(";"));
+    public void setExtraBootExtensionId(NId apiId, NId extensionId, List<NDependency> deps, NSession session) {
+        String newDeps = deps.stream().map(Object::toString).collect(Collectors.joining(";"));
         NWorkspaceConfigBoot.ExtensionConfig cc = new NWorkspaceConfigBoot.ExtensionConfig();
         cc.setId(apiId);
         cc.setDependencies(newDeps);
@@ -1105,7 +1089,7 @@ public class DefaultNWorkspaceConfigModel {
     }
 
     public NBootDef fetchBootDef(NId id, boolean content, NSession session) {
-        NDefinition nd = NFetchCommand.of(session).setId(id)
+        NDefinition nd = NFetchCommand.of(id,session)
                 .setDependencies(true).setContent(content)
                 .setDependencyFilter(NDependencyFilters.of(session).byRunnable())
                 .setFailFast(false).getResultDefinition();
@@ -1176,7 +1160,7 @@ public class DefaultNWorkspaceConfigModel {
             case EXTENSION: {
                 NBootDef d = fetchBootDef(id, false, session);
                 for (NId apiId : CoreNUtils.resolveNutsApiIdsFromDependencyList(d.deps, session)) {
-                    setExtraBootRuntimeId(apiId, d.id, d.deps, session);
+                    setExtraBootExtensionId(apiId, d.id, d.deps, session);
                 }
             }
         }
@@ -1586,7 +1570,7 @@ public class DefaultNWorkspaceConfigModel {
         }
 
         public NSystemTerminalBase getBase() {
-            return NConfigs.of(NSessionUtils.defaultSession(workspace))
+            return NIO.of(NSessionUtils.defaultSession(workspace))
                     .getSystemTerminal();
         }
     }

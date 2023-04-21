@@ -58,7 +58,7 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
 
     @Override
     public void exec(NExecutionContext executionContext) {
-        if(executionContext.getExecSession().isDry()){
+        if(executionContext.getSession().isDry()){
             NDefinition nutMainFile = executionContext.getDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
             Path javaFile = nutMainFile.getContent().map(NPath::toFile).orNull();
             String folder = "__temp_folder";
@@ -100,8 +100,8 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
             Path javaFile = nutMainFile.getContent().map(NPath::toFile).orNull();
             JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
             NSession session = executionContext.getSession();
-            Path folder = NPaths.of(session)
-                    .createTempFolder("jj").toFile();
+            Path folder = NPath
+                    .ofTempFolder("jj",session).toFile();
             int res = compiler.run(null, null, null, "-d", folder.toString(), javaFile.toString());
             if (res != 0) {
                 throw new NExecutionException(session, NMsg.ofPlain("compilation failed"), res);

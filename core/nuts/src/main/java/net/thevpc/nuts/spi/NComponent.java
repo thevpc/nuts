@@ -61,5 +61,7 @@ public interface NComponent {
      * @param context evaluation context
      * @return support level value
      */
-    int getSupportLevel(NSupportLevelContext context);
+    default int getSupportLevel(NSupportLevelContext context) {
+        return CUSTOM_SUPPORT;
+    }
 }

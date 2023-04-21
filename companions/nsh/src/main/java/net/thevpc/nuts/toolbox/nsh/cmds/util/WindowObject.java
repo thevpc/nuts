@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WindowObject<T> {
-    private List<T> items = new ArrayList<>();
+    private List<T> items;
     private int pivotIndex;
 
     public WindowObject(List<T> items, int pivotIndex) {

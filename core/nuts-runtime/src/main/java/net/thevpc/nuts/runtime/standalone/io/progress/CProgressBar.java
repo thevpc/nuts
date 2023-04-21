@@ -600,7 +600,24 @@ public class CProgressBar {
             synchronized (CProgressBar.class) {
                 out.resetLine();
                 out.print(p);
-                int c=4;
+            }
+        }
+    }
+    public void printProgress2(NText p, NPrintStream out) {
+        if (p == null || p.isEmpty()) {
+            return;
+        }
+        Level armedLogLevel = options.getArmedLogLevel();
+        if (options.isArmedNewline()) {
+            out.print("\n");
+        }else if (armedLogLevel!=null) {
+            logger.with().verb(NLogVerb.PROGRESS)
+                    .level(armedLogLevel)
+                    .log(NMsg.ofNtf(p));
+        }else{
+            synchronized (CProgressBar.class) {
+                out.resetLine();
+                out.print(p);
             }
         }
     }

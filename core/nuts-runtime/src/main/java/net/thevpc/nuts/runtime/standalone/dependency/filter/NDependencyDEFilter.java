@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 
 import java.util.Collection;
@@ -58,7 +59,9 @@ public class NDependencyDEFilter extends AbstractDependencyFilter  {
 
     @Override
     public String toString() {
-        return accepted.isEmpty() ? "true" : "desktopEnvironment in (" + accepted.stream().map(NDesktopEnvironmentFamily::id).collect(Collectors.joining(", ")) + ')';
+        return CoreStringUtils.trueOrEqOrIn("desktopEnvironment",
+                        accepted.stream().map(NDesktopEnvironmentFamily::id).collect(Collectors.toList())
+                        );
     }
 
     @Override

@@ -26,6 +26,7 @@ package net.thevpc.nuts.reserved;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.DefaultNBootOptionsBuilder;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.util.NApiUtils;
 import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.boot.NBootOptionsBuilder;
@@ -240,7 +241,9 @@ public final class NReservedUtils {
                             + "You need to provide default response (-y|-n) for resetting/recovering workspace. "
                             + "You was asked to confirm deleting folders as part as recover/reset option."), 243);
         }
-        bLog.with().level(Level.FINEST).verb(NLogVerb.WARNING).log(NMsg.ofJ("delete workspace location(s) at : {0}", lastBootOptions.getWorkspace()));
+        bLog.with().level(Level.FINEST).verb(NLogVerb.WARNING).log(NMsg.ofC("delete workspace location(s) at : %s",
+                lastBootOptions.getWorkspace().orNull()
+        ));
         boolean force = false;
         switch (confirm) {
             case ASK: {
@@ -305,7 +308,7 @@ public final class NReservedUtils {
                                     if (session != null) {
                                         session.err().println(header);
                                     } else {
-                                        bLog.with().level(Level.WARNING).verb(NLogVerb.WARNING).log(NMsg.ofJ("{0}", header));
+                                        bLog.with().level(Level.WARNING).verb(NLogVerb.WARNING).log(NMsg.ofC("%s", header));
                                     }
                                 }
                             }
@@ -359,7 +362,7 @@ public final class NReservedUtils {
                                 }
                                 case ASK: {
                                     // Level.OFF is to force logging in all cases
-                                    bLog.with().level(Level.OFF).verb(NLogVerb.WARNING).log(NMsg.ofJ("do you confirm deleting {0} [y/n/c/a] (default 'n') ? : ", directory));
+                                    bLog.with().level(Level.OFF).verb(NLogVerb.WARNING).log(NMsg.ofC("do you confirm deleting %s [y/n/c/a] (default 'n') ? : ", directory));
                                     line = readline.get();
                                 }
                             }
@@ -382,7 +385,6 @@ public final class NReservedUtils {
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                         Files.delete(file);
                         count[0]++;
-//                        LOG.log(Level.FINEST, NutsLogVerb.WARNING, "delete file   : {0}", file);
                         return FileVisitResult.CONTINUE;
                     }
 
@@ -415,7 +417,7 @@ public final class NReservedUtils {
                     }
                 });
                 count[0]++;
-                bLog.with().level(Level.FINEST).verb(NLogVerb.WARNING).log(NMsg.ofJ("delete folder : {0} ({1} files/folders deleted)", directory, count[0]));
+                bLog.with().level(Level.FINEST).verb(NLogVerb.WARNING).log(NMsg.ofC("delete folder : %s (%s files/folders deleted)", directory, count[0]));
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -773,7 +775,7 @@ public final class NReservedUtils {
                 }
             } catch (Exception e) {
                 //ignore
-                bLog.with().level(Level.FINEST).verb(NLogVerb.FAIL).log(NMsg.ofJ("unable to undo NDI : {0}", e.toString()));
+                bLog.with().level(Level.FINEST).verb(NLogVerb.FAIL).log(NMsg.ofC("unable to undo NDI : %s", e.toString()));
             }
         }
     }
@@ -957,7 +959,7 @@ public final class NReservedUtils {
         if (out == null) {
             if (session != null) {
                 try {
-                    fout = NConfigs.of(session).getSystemTerminal().getErr();
+                    fout = NIO.of(session).getSystemTerminal().getErr();
                     if (fm != null) {
                         fm = NMsg.ofNtf(NTexts.of(session).ofBuilder().append(fm, NTextStyle.error()).build());
                     } else {

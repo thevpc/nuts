@@ -3,6 +3,7 @@ package net.thevpc.nuts.toolbox.njob;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
+import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NSystemTerminal;
 import net.thevpc.nuts.text.NTextBuilder;
@@ -303,7 +304,7 @@ public class JobServiceCmd {
 
     public void runInteractive(NCmdLine cmdLine) {
         NSystemTerminal.enableRichTerm(session);
-        NConfigs.of(session).getSystemTerminal()
+        NIO.of(session).getSystemTerminal()
                 .setCommandAutoCompleteResolver(new JobAutoCompleter())
                 .setCommandHistory(
                         NCmdLineHistory.of(session)

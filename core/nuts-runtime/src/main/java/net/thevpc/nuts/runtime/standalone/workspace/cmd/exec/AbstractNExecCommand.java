@@ -4,9 +4,9 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessBuilder2;
-import net.thevpc.nuts.runtime.standalone.io.printstream.NByteArrayPrintStream;
 import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCommandBase;
 import net.thevpc.nuts.spi.NFormatSPI;
@@ -14,7 +14,6 @@ import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -32,16 +31,12 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
     protected NExecutionException result;
     protected boolean executed;
     protected NPath directory;
-    protected NPrintStream out;
-    protected NPrintStream err;
-    protected InputStream in;
+    protected NExecOutput out = NExecOutput.ofInherit();
+    protected NExecOutput err = NExecOutput.ofInherit();
+    protected NExecInput in = NExecInput.ofInherit();
     protected NExecutionType executionType = NExecutionType.SPAWN;
     protected NRunAs runAs = NRunAs.CURRENT_USER;
-    protected boolean redirectErrorStream;
     protected boolean failFast;
-    private boolean inheritSystemIO;
-    private NPath redirectOutputFile;
-    private NPath redirectInputFile;
     private long sleepMillis = 1000;
     private String target;
 
@@ -167,6 +162,17 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
     }
 
     @Override
+    public NExecCommand setExecutorOptions(Collection<String> executorOptions) {
+        this.executorOptions = new ArrayList<>();
+        if (executorOptions != null) {
+            for (String executorOption : executorOptions) {
+                addExecutorOption(executorOption);
+            }
+        }
+        return this;
+    }
+
+    @Override
     public NExecCommand addExecutorOptions(Collection<String> executorOptions) {
         if (executorOptions != null) {
             for (String executorOption : executorOptions) {
@@ -267,7 +273,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
     }
 
     @Override
-    public InputStream getIn() {
+    public NExecInput getIn() {
         return in;
     }
 
@@ -281,46 +287,35 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
 //        return setIn(in);
 //    }
     @Override
-    public NExecCommand setIn(InputStream in) {
-        this.in = in;
+    public NExecCommand setIn(NExecInput in) {
+        this.in = in == null ? NExecInput.ofInherit() : in;
         return this;
     }
 
     @Override
-    public NPrintStream getOut() {
+    public NExecOutput getOut() {
         return out;
     }
 
-    //    @Override
-//    public NutsExecCommand out(PrintStream out) {
-//        return setOut(out);
-//    }
     @Override
-    public NExecCommand setOut(NPrintStream out) {
+    public NExecCommand setOut(NExecOutput out) {
         checkSession();
-        NWorkspace ws = getSession().getWorkspace();
-        this.out = out;
+        this.out = out == null ? NExecOutput.ofInherit() : out;
         return this;
     }
-//
-//    @Override
-//    public PrintStream out() {
-//        return getOut();
-//    }
 
     @Override
     public NExecCommand grabOutputString() {
         checkSession();
         // DO NOT CALL setOut :: setOut(new SPrintStream());
-        this.out = new SPrintStream(getSession());
+        this.out = NExecOutput.ofGrabMem();
         return this;
     }
 
     @Override
     public NExecCommand grabErrorString() {
         checkSession();
-        // DO NOT CALL setErr :: setErr(new SPrintStream());
-        this.err = new SPrintStream(getSession());
+        setErr(NExecOutput.ofGrabMem());
         return this;
     }
 
@@ -330,9 +325,15 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
         if (!executed) {
             run();
         }
-        NPrintStream o = getOut();
-        if (o instanceof SPrintStream) {
-            return o.toString();
+        NExecOutput o = getOut();
+        switch (o.getType()) {
+            case GRAB_FILE:
+            case GRAB_STREAM: {
+                if (o.getStream() instanceof ByteArrayOutputStream) {
+                    return o.getStream().toString();
+                }
+                break;
+            }
         }
         throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("no buffer was configured; should call grabOutputString"));
     }
@@ -343,18 +344,24 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
         if (!executed) {
             run();
         }
-        if (isRedirectErrorStream()) {
+        if (getErr().getType() == NExecRedirectType.REDIRECT) {
             return getOutputString();
         }
-        NPrintStream o = getErr();
-        if (o instanceof SPrintStream) {
-            return o.toString();
+        NExecOutput o = getErr();
+        switch (o.getType()) {
+            case GRAB_FILE:
+            case GRAB_STREAM: {
+                if (o.getStream() instanceof ByteArrayOutputStream) {
+                    return o.getStream().toString();
+                }
+                break;
+            }
         }
         throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("no buffer was configured; should call grabErrorString"));
     }
 
     @Override
-    public NPrintStream getErr() {
+    public NExecOutput getErr() {
         return err;
     }
 
@@ -363,9 +370,8 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
 //        return setErr(err);
 //    }
     @Override
-    public NExecCommand setErr(NPrintStream err) {
+    public NExecCommand setErr(NExecOutput err) {
         checkSession();
-        NWorkspace ws = getSession().getWorkspace();
         this.err = err;
         return this;
     }
@@ -378,22 +384,6 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
     @Override
     public NExecCommand setExecutionType(NExecutionType executionType) {
         this.executionType = executionType;
-        return this;
-    }
-//
-//    @Override
-//    public PrintStream err() {
-//        return getErr();
-//    }
-
-    @Override
-    public boolean isRedirectErrorStream() {
-        return redirectErrorStream;
-    }
-
-    @Override
-    public NExecCommand setRedirectErrorStream(boolean redirectErrorStream) {
-        this.redirectErrorStream = redirectErrorStream;
         return this;
     }
 
@@ -418,7 +408,6 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
         setIn(other.getIn());
         setOut(other.getOut());
         setErr(other.getErr());
-        setRedirectErrorStream(other.isRedirectErrorStream());
         setSession(other.getSession());
         setFailFast(other.isFailFast());
         setExecutionType(other.getExecutionType());
@@ -469,54 +458,25 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
         return this;
     }
 
-    @Override
-    public boolean isInheritSystemIO() {
-        return inheritSystemIO;
-    }
-
-    @Override
-    public NExecCommand setInheritSystemIO(boolean inheritSystemIO) {
-        this.inheritSystemIO = inheritSystemIO;
-        return this;
-    }
-
-    public NPath getRedirectOutputFile() {
-        return redirectOutputFile;
-    }
-
-    public NExecCommand setRedirectOutputFile(NPath redirectOutputFile) {
-        this.redirectOutputFile = redirectOutputFile;
-        return this;
-    }
-
-    public NPath getRedirectInputFile() {
-        return redirectInputFile;
-    }
-
-    public NExecCommand setRedirectInputFile(NPath redirectInputFile) {
-        this.redirectInputFile = redirectInputFile;
-        return this;
-    }
-
-    public String getOutputString0() {
-        checkSession();
-        NPrintStream o = getOut();
-        if (o instanceof SPrintStream) {
-            return o.toString();
-        }
-        throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("no buffer was configured; should call grabOutputString"));
-    }
-
     protected String getExtraErrorMessage() {
-        if (isRedirectErrorStream()) {
-            if (isGrabOutputString()) {
+        if (getErr().getType() == NExecRedirectType.REDIRECT) {
+            if (
+                    getOut().getType() == NExecRedirectType.GRAB_FILE
+                            || getOut().getType() == NExecRedirectType.GRAB_STREAM
+            ) {
                 return getOutputString();
             }
         } else {
-            if (isGrabErrorString()) {
+            if (
+                    getErr().getType() == NExecRedirectType.GRAB_FILE
+                            || getErr().getType() == NExecRedirectType.GRAB_STREAM
+            ) {
                 return getErrorString();
             }
-            if (isGrabOutputString()) {
+            if (
+                    getOut().getType() == NExecRedirectType.GRAB_FILE
+                            || getOut().getType() == NExecRedirectType.GRAB_STREAM
+            ) {
                 return getOutputString();
             }
         }
@@ -599,13 +559,6 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
                 }
                 return true;
             }
-            case "--inherit-system-io": {
-                NArg val = cmdLine.nextFlag().get(session);
-                if (enabled) {
-                    setInheritSystemIO(val.getBooleanValue().get(session));
-                }
-                return true;
-            }
             case "-dry":
             case "-d": {
                 boolean val = cmdLine.nextFlag().get(session).getBooleanValue().get(session);
@@ -633,14 +586,6 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
                 return true;
             }
         }
-    }
-
-    public boolean isGrabOutputString() {
-        return out instanceof SPrintStream;
-    }
-
-    public boolean isGrabErrorString() {
-        return err instanceof SPrintStream;
     }
 
     public String getCommandString() {
@@ -694,35 +639,37 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
             }
             sb.append(NStringUtils.formatStringLiteral(s));
         }
-        if (isRedirectErrorStream()) {
-            if (out != null) {
-                if (f == null || f.acceptRedirectOutput()) {
-                    sb.append(" > ").append("{stream}");
+        switch (getOut().getType()){
+            case PATH:{
+                if(Arrays.stream(getOut().getOptions()).anyMatch(x->x== NPathOption.APPEND)){
+                    sb.append(" >> ");
+                }else{
+                    sb.append(" > ");
                 }
-                if (f == null || f.acceptRedirectError()) {
-                    sb.append(" 2>&1");
-                }
+                sb.append(getOut().getPath());
+                break;
             }
-            if (in != null) {
-                if (f == null || f.acceptRedirectInput()) {
-                    sb.append(" < ").append("{stream}");
+        }
+        switch (getErr().getType()){
+            case PATH:{
+                if(Arrays.stream(getOut().getOptions()).anyMatch(x->x== NPathOption.APPEND)){
+                    sb.append(" 2>> ");
+                }else{
+                    sb.append(" 2> ");
                 }
+                sb.append(getOut().getPath());
+                break;
             }
-        } else {
-            if (out != null) {
-                if (f == null || f.acceptRedirectOutput()) {
-                    sb.append(" > ").append("{stream}");
-                }
+            case REDIRECT:{
+                sb.append(" 2>&1 ");
+                break;
             }
-            if (err != null) {
-                if (f == null || f.acceptRedirectError()) {
-                    sb.append(" 2> ").append("{stream}");
-                }
-            }
-            if (in != null) {
-                if (f == null || f.acceptRedirectInput()) {
-                    sb.append(" < ").append("{stream}");
-                }
+        }
+        switch (getIn().getType()){
+            case PATH:{
+                sb.append(" < ");
+                sb.append(getOut().getPath());
+                break;
             }
         }
         return sb.toString();
@@ -732,24 +679,6 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
         return getCommandString();
     }
 
-    protected static class SPrintStream extends NByteArrayPrintStream {
-
-        public SPrintStream(NSession session) {
-            super(null, session);
-        }
-
-        protected SPrintStream(ByteArrayOutputStream bos, NSession session) {
-            super(null, bos, session);
-        }
-
-        @Override
-        public NPrintStream setSession(NSession session) {
-            if (session == null || session == this.session) {
-                return this;
-            }
-            return new SPrintStream((ByteArrayOutputStream) out, session);
-        }
-    }
 
     @Override
     public NFormat formatter(NSession session) {
@@ -779,5 +708,10 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
     public NExecCommand setTarget(String host) {
         this.target = host;
         return this;
+    }
+
+    @Override
+    public NExecCommand redirectErrorStream() {
+        return setErr(NExecOutput.ofRedirect());
     }
 }

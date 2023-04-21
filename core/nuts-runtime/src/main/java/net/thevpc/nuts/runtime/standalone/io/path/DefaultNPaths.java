@@ -108,42 +108,42 @@ public class DefaultNPaths implements NPaths {
     }
 
 
-    public NPath createTempFile(String name) {
+    public NPath ofTempFile(String name) {
         return createAnyTempFile(name, false, null);
     }
 
     @Override
-    public NPath createTempFolder(String name) {
+    public NPath ofTempFolder(String name) {
         return createAnyTempFile(name, true, null);
     }
 
     @Override
-    public NPath createTempFile() {
+    public NPath ofTempFile() {
         return createAnyTempFile(null, false, null);
     }
 
     @Override
-    public NPath createTempFolder() {
+    public NPath ofTempFolder() {
         return createAnyTempFile(null, true, null);
     }
 
 
-    public NPath createRepositoryTempFile(String name, String repository) {
+    public NPath ofTempRepositoryFile(String name, String repository) {
         return createAnyTempFile(name, false, repository);
     }
 
     @Override
-    public NPath createRepositoryTempFolder(String name, String repository) {
+    public NPath ofTempRepositoryFolder(String name, String repository) {
         return createAnyTempFile(name, true, repository);
     }
 
     @Override
-    public NPath createRepositoryTempFile(String repository) {
+    public NPath ofTempRepositoryFile(String repository) {
         return createAnyTempFile(null, false, repository);
     }
 
     @Override
-    public NPath createRepositoryTempFolder(String repository) {
+    public NPath ofTempRepositoryFolder(String repository) {
         return createAnyTempFile(null, true, repository);
     }
 

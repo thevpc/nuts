@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy;
 
 import net.thevpc.nuts.NDeployCommand;
+import net.thevpc.nuts.NExecCommand;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExecutableCommand;
@@ -15,8 +16,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExe
  */
 public class DefaultNDeployInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNDeployInternalExecutable(String[] args, NSession session) {
-        super("deploy", args, session);
+    public DefaultNDeployInternalExecutable(String[] args, NExecCommand execCommand) {
+        super("deploy", args, execCommand);
     }
 
     @Override

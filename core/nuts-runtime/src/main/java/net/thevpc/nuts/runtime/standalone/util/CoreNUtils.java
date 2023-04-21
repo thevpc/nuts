@@ -529,7 +529,7 @@ public class CoreNUtils {
     }
 
     public static List<NId> resolveNutsApiIdsFromId(NId id, NSession session) {
-        List<NDependency> deps = NFetchCommand.of(session).setId(id).setDependencies(true).getResultDefinition()
+        List<NDependency> deps = NFetchCommand.of(id,session).setDependencies(true).getResultDefinition()
                 .getDependencies().get(session).transitive().toList();
         return resolveNutsApiIdsFromDependencyList(deps, session);
     }

@@ -79,8 +79,8 @@ public class NExtensionListHelper {
         return this;
     }
 
-    public boolean add(NId id, NDependency[] dependencies) {
-        String dependenciesString= Arrays.stream(dependencies)
+    public boolean add(NId id, List<NDependency> dependencies) {
+        String dependenciesString= dependencies.stream()
                 .map(Object::toString).collect(Collectors.joining(";"));
         for (int i = 0; i < list.size(); i++) {
             NWorkspaceConfigBoot.ExtensionConfig a = list.get(i);

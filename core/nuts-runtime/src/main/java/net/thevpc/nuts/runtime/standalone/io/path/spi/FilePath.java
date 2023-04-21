@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
+import com.sun.nio.file.ExtendedOpenOption;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NTreeVisitResult;
@@ -206,7 +207,7 @@ public class FilePath implements NPathSPI {
 
     public InputStream getInputStream(NPath basePath, NPathOption... options) {
         try {
-            return Files.newInputStream(value);
+            return Files.newInputStream(value, toOpenOptions(options));
         } catch (IOException e) {
             throw new NIOException(session, e);
         }
@@ -214,10 +215,79 @@ public class FilePath implements NPathSPI {
 
     public OutputStream getOutputStream(NPath basePath, NPathOption... options) {
         try {
-            return Files.newOutputStream(value);
+            return Files.newOutputStream(value, toOpenOptions(options));
         } catch (IOException e) {
             throw new NIOException(session, e);
         }
+    }
+
+    private static OpenOption[] toOpenOptions(NPathOption[] options) {
+        List<OpenOption> oo = new ArrayList<>();
+        if (options != null) {
+            for (NPathOption o : options) {
+                if (o != null) {
+                    switch (o) {
+                        case NOFOLLOW_LINKS: {
+                            oo.add(LinkOption.NOFOLLOW_LINKS);
+                            break;
+                        }
+                        case READ: {
+                            oo.add(StandardOpenOption.READ);
+                            break;
+                        }
+                        case WRITE: {
+                            oo.add(StandardOpenOption.WRITE);
+                            break;
+                        }
+                        case APPEND: {
+                            oo.add(StandardOpenOption.APPEND);
+                            break;
+                        }
+                        case TRUNCATE_EXISTING: {
+                            oo.add(StandardOpenOption.TRUNCATE_EXISTING);
+                            break;
+                        }
+                        case CREATE: {
+                            oo.add(StandardOpenOption.CREATE);
+                            break;
+                        }
+                        case CREATE_NEW: {
+                            oo.add(StandardOpenOption.CREATE_NEW);
+                            break;
+                        }
+                        case DELETE_ON_CLOSE: {
+                            oo.add(StandardOpenOption.DELETE_ON_CLOSE);
+                            break;
+                        }
+                        case SPARSE: {
+                            oo.add(StandardOpenOption.SPARSE);
+                            break;
+                        }
+                        case SYNC: {
+                            oo.add(StandardOpenOption.SYNC);
+                            break;
+                        }
+                        case DSYNC: {
+                            oo.add(StandardOpenOption.DSYNC);
+                            break;
+                        }
+                        case NOSHARE_READ: {
+                            oo.add(ExtendedOpenOption.NOSHARE_READ);
+                            break;
+                        }
+                        case NOSHARE_DELETE: {
+                            oo.add(ExtendedOpenOption.NOSHARE_DELETE);
+                            break;
+                        }
+                        case NOSHARE_WRITE: {
+                            oo.add(ExtendedOpenOption.NOSHARE_WRITE);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return oo.toArray(new OpenOption[0]);
     }
 
     @Override
@@ -775,7 +845,7 @@ public class FilePath implements NPathSPI {
 
         @Override
         public int getSupportLevel(NSupportLevelContext context) {
-            String path= context.getConstraints();
+            String path = context.getConstraints();
             try {
                 if (URLPath.MOSTLY_URL_PATTERN.matcher(path).matches()) {
                     return NO_SUPPORT;

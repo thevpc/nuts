@@ -53,6 +53,11 @@ public class DbUrlString {
         NOptional<NConnexionString> db = NConnexionString.of(dbStr);
         if (db.isPresent()) {
             v.db = db.get();
+            String path = v.db.getPath();
+            if(path!=null && path.startsWith("/")){
+                path=path.substring(1);
+                v.db.setPath(path);
+            }
             return NOptional.of(v);
         } else {
             v.db = new NConnexionString().setPath(dbStr);

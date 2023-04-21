@@ -4,14 +4,13 @@ import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.toolbox.nsh.cmds.posix.grep.GrepFilter;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SimpleGrepFilter implements GrepFilter {
+public class PatternGrepFilter implements GrepFilter {
     public Pattern p;
-    public SimpleGrepFilter(String expression,boolean word,boolean lineRegexp,boolean ignoreCase) {
+    public PatternGrepFilter(String expression, boolean word, boolean lineRegexp, boolean ignoreCase) {
         String baseExpr = simpexpToRegexp(expression, true);
         if (word) {
             baseExpr = "\\b" + baseExpr + "\\b";

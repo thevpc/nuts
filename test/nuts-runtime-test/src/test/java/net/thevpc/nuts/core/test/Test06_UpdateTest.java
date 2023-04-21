@@ -86,8 +86,8 @@ public class Test06_UpdateTest {
         TestUtils.println(updateRepo1.config().getStoreStrategy());
         NInfoCommand.of(uws).configure(false, "--repos").println();
 
-        data.apiDef = NFetchCommand.of(uws).setContent(true).setNutsApi().getResultDefinition();
-        data.rtDef = NFetchCommand.of(uws).setContent(true).setNutsRuntime().getResultDefinition();
+        data.apiDef = NFetchCommand.ofNutsApi(uws).setContent(true).getResultDefinition();
+        data.rtDef = NFetchCommand.ofNutsRuntime(uws).setContent(true).getResultDefinition();
         data.apiVersion1 = data.apiDef.getId().getVersion();
         data.rtVersion1 = data.rtDef.getId().getVersion();
         data.apiId1 = data.apiDef.getId().builder().setVersion(data.apiVersion1).build();
@@ -242,8 +242,7 @@ public class Test06_UpdateTest {
 
     private Path replaceAPIJar(Path p, FromTo api, NSession session) {
         try {
-            Path zipFilePath = NPaths.of(session)
-                    .createTempFile(".zip").toFile();
+            Path zipFilePath = NPath.ofTempFile(".zip",session).toFile();
             Files.copy(p, zipFilePath, StandardCopyOption.REPLACE_EXISTING);
             try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader) null)) {
 
@@ -281,8 +280,7 @@ public class Test06_UpdateTest {
 
     private Path replaceRuntimeJar(Path p, FromTo api, FromTo impl, NSession session) {
         try {
-            Path zipFilePath = NPaths.of(session)
-                    .createTempFile(".zip").toFile();
+            Path zipFilePath = NPath.ofTempFile(".zip",session).toFile();
             Files.copy(p, zipFilePath, StandardCopyOption.REPLACE_EXISTING);
             try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader) null)) {
 

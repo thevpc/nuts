@@ -25,26 +25,20 @@ public class DefaultNOpenExecutable extends AbstractNExecutableCommand {
 
     String[] cmd;
     String[] executorOptions;
-    NSession session;
-    NSession execSession;
-    NExecCommand execCommand;
     private boolean showCommand = false;
     private String[] effectiveOpenExecutable;
 
     public DefaultNOpenExecutable(String[] cmd,
-                                  String[] executorOptions, NSession session, NSession execSession, NExecCommand execCommand
+                                  String[] executorOptions, NExecCommand execCommand
     ) {
         super(cmd[0],
                 NCmdLine.of(cmd).toString(),
-                NExecutableType.SYSTEM);
+                NExecutableType.SYSTEM, execCommand);
         this.cmd = cmd;
-        this.execCommand = execCommand;
         this.executorOptions = executorOptions == null ? new String[0] : executorOptions;
-        this.session = session;
-        this.execSession = execSession;
         NCmdLine cmdLine = NCmdLine.of(this.executorOptions);
         while (cmdLine.hasNext()) {
-            NArg aa = cmdLine.peek().get(session);
+            NArg aa = cmdLine.peek().get(getSession());
             switch (aa.key()) {
                 case "--show-command": {
                     cmdLine.withNextFlag((v, a, s) -> this.showCommand = (v));
@@ -55,7 +49,7 @@ public class DefaultNOpenExecutable extends AbstractNExecutableCommand {
                 }
             }
         }
-        switch (NEnvs.of(session).getOsFamily()) {
+        switch (NEnvs.of(getSession()).getOsFamily()) {
             case LINUX: {
                 Path execPath = NSysExecUtils.sysWhich("xdg-open");
                 if (execPath != null) {
@@ -95,9 +89,9 @@ public class DefaultNOpenExecutable extends AbstractNExecutableCommand {
 
     private NExecCommand resolveExecHelper() {
         if (effectiveOpenExecutable == null) {
-            throw new NIllegalArgumentException(session, NMsg.ofC("unable to resolve viewer for %s", cmd[0]));
+            throw new NIllegalArgumentException(getExecCommand().getSession(), NMsg.ofC("unable to resolve viewer for %s", cmd[0]));
         }
-        NExecCommand cc = execCommand.copy();
+        NExecCommand cc = getExecCommand().copy();
         cc.setExecutionType(NExecutionType.SYSTEM);
         List<String> ss = new ArrayList<>(Arrays.asList(effectiveOpenExecutable));
         ss.addAll(Arrays.asList(cmd));
@@ -112,12 +106,12 @@ public class DefaultNOpenExecutable extends AbstractNExecutableCommand {
 
     @Override
     public NText getHelpText() {
-        switch (NEnvs.of(execSession).getOsFamily()) {
+        switch (NEnvs.of(getSession()).getOsFamily()) {
             case WINDOWS: {
-                return NTexts.of(session).ofStyled("No help available. Try " + getName() + " /help", NTextStyle.error());
+                return NTexts.of(getSession()).ofStyled("No help available. Try " + getName() + " /help", NTextStyle.error());
             }
             default: {
-                return NTexts.of(session).ofStyled("No help available. Try 'man " + getName() + "' or '" + getName() + " --help'", NTextStyle.error());
+                return NTexts.of(getSession()).ofStyled("No help available. Try 'man " + getName() + "' or '" + getName() + " --help'", NTextStyle.error());
             }
         }
     }
@@ -130,8 +124,4 @@ public class DefaultNOpenExecutable extends AbstractNExecutableCommand {
         return "open --with " + effectiveOpenExecutable[0] + " " + NCmdLine.of(cmd);
     }
 
-    @Override
-    public NSession getSession() {
-        return session;
-    }
 }

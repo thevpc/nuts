@@ -9,7 +9,6 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.app.gui.CoreNUtilGui;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
-import net.thevpc.nuts.runtime.standalone.util.NConfigurableHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -486,27 +485,13 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
     @Override
     public final NQuestion<T> configure(boolean skipUnsupported, String... args) {
         checkSession();
-        return NConfigurableHelper.configure(this, getSession(), skipUnsupported, args, "question");
+        return NCmdLineConfigurable.configure(this, skipUnsupported, args,"question",getSession());
     }
 
     @Override
     public NQuestion<T> setCancelMessage(NMsg message) {
         this.cancelMessage = message;
         return this;
-    }
-
-    /**
-     * configure the current forCommand with the given arguments.
-     *
-     * @param skipUnsupported when true, all unsupported options are skipped
-     *                        silently
-     * @param cmdLine     arguments to configure with
-     * @return {@code this} instance
-     */
-    @Override
-    public final boolean configure(boolean skipUnsupported, NCmdLine cmdLine) {
-        checkSession();
-        return NConfigurableHelper.configure(this, getSession(), skipUnsupported, cmdLine);
     }
 
     @Override
@@ -528,10 +513,4 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
         NSessionUtils.checkSession(ws, session);
     }
 
-    @Override
-    public void configureLast(NCmdLine cmdLine) {
-        if (!configureFirst(cmdLine)) {
-            cmdLine.throwUnexpectedArgument();
-        }
-    }
 }

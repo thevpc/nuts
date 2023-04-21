@@ -6,6 +6,7 @@ import net.thevpc.nuts.expr.NExprDeclarations;
 import net.thevpc.nuts.expr.NExprFunctionNode;
 import net.thevpc.nuts.expr.NExprNode;
 import net.thevpc.nuts.expr.NExprNodeType;
+import net.thevpc.nuts.runtime.standalone.dependency.util.NComplexExpressionString;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -49,7 +50,7 @@ public class DefaultFunctionNode implements NExprFunctionNode {
     @Override
     public String toString() {
         return name + "(" +
-                Arrays.stream(args).map(Object::toString).collect(Collectors.joining(",")) +
+                Arrays.stream(args).map(NComplexExpressionString::toString).collect(Collectors.joining(",")) +
                 ')';
     }
 

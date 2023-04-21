@@ -29,6 +29,10 @@ package net.thevpc.nuts.runtime.standalone.extension;
 import net.thevpc.nuts.NId;
 import net.thevpc.nuts.NWorkspaceExtension;
 import net.thevpc.nuts.runtime.standalone.util.collections.ListMap;
+import net.thevpc.nuts.spi.NExtensionLifeCycle;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by vpc on 1/15/17.
@@ -37,16 +41,33 @@ public class DefaultNWorkspaceExtension implements NWorkspaceExtension {
 
     private NId id;
     private NId wiredId;
+    private boolean enabled;
     private ClassLoader classLoader;
     private ListMap<String, String> wiredComponents = new ListMap<>();
+    private List<NExtensionLifeCycle> events = new ArrayList<>();
 
     public DefaultNWorkspaceExtension(NId id, NId wiredId, ClassLoader classLoader) {
         this.id = id;
         this.wiredId = wiredId;
         this.classLoader = classLoader;
+        this.enabled = true;
     }
 
-    public NId getWiredId() {
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public NWorkspaceExtension setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        return this;
+    }
+
+    public List<NExtensionLifeCycle> getEvents() {
+        return events;
+    }
+
+    public NId getId() {
         return wiredId;
     }
 
@@ -54,7 +75,7 @@ public class DefaultNWorkspaceExtension implements NWorkspaceExtension {
         return classLoader;
     }
 
-    public NId getId() {
+    public NId getConfigId() {
         return id;
     }
 
