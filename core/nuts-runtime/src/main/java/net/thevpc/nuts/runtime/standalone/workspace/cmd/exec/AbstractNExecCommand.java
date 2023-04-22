@@ -639,36 +639,48 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
             }
             sb.append(NStringUtils.formatStringLiteral(s));
         }
-        switch (getOut().getType()){
-            case PATH:{
-                if(Arrays.stream(getOut().getOptions()).anyMatch(x->x== NPathOption.APPEND)){
+        switch (getOut().getType()) {
+            case PATH: {
+                if (Arrays.stream(getOut().getOptions()).anyMatch(x -> x == NPathOption.APPEND)) {
                     sb.append(" >> ");
-                }else{
+                } else {
                     sb.append(" > ");
                 }
                 sb.append(getOut().getPath());
                 break;
             }
+            case NULL: {
+                sb.append(" > /dev/null ");
+                break;
+            }
         }
-        switch (getErr().getType()){
-            case PATH:{
-                if(Arrays.stream(getOut().getOptions()).anyMatch(x->x== NPathOption.APPEND)){
+        switch (getErr().getType()) {
+            case PATH: {
+                if (Arrays.stream(getOut().getOptions()).anyMatch(x -> x == NPathOption.APPEND)) {
                     sb.append(" 2>> ");
-                }else{
+                } else {
                     sb.append(" 2> ");
                 }
                 sb.append(getOut().getPath());
                 break;
             }
-            case REDIRECT:{
+            case REDIRECT: {
                 sb.append(" 2>&1 ");
                 break;
             }
+            case NULL: {
+                sb.append(" 2> /dev/null ");
+                break;
+            }
         }
-        switch (getIn().getType()){
-            case PATH:{
+        switch (getIn().getType()) {
+            case PATH: {
                 sb.append(" < ");
                 sb.append(getOut().getPath());
+                break;
+            }
+            case NULL: {
+                sb.append(" < /dev/null");
                 break;
             }
         }

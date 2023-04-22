@@ -276,10 +276,13 @@ public class ProcessBuilder2 {
             throw new NIllegalStateException(session, NMsg.ofPlain("already started"));
         }
         switch (in.base.getType()) {
-            case PIPE: {
+            case PIPE:
+            case STREAM:
+            case NULL: {
                 base.redirectInput(ProcessBuilder.Redirect.PIPE);
                 break;
             }
+
             case PATH: {
                 NPath path = in.base.getPath();
                 Path file = path.toFile();
@@ -296,29 +299,23 @@ public class ProcessBuilder2 {
                 base.redirectInput(ProcessBuilder.Redirect.INHERIT);
                 break;
             }
-            case STREAM: {
-                base.redirectInput(ProcessBuilder.Redirect.PIPE);
-                break;
-            }
             case GRAB_STREAM:
             case GRAB_FILE:
-            case REDIRECT:{
+            case REDIRECT: {
                 throw new NIllegalArgumentException(session, NMsg.ofC("unsupported in mode : %s", in.base.getType()));
             }
         }
 
         switch (out.base.getType()) {
-            case PIPE: {
+            case PIPE:
+            case GRAB_STREAM:
+            case STREAM:
+            case NULL: {
                 base.redirectOutput(ProcessBuilder.Redirect.PIPE);
                 break;
             }
             case INHERIT: {
                 base.redirectOutput(ProcessBuilder.Redirect.INHERIT);
-                break;
-            }
-            case GRAB_STREAM:
-            case STREAM: {
-                base.redirectOutput(ProcessBuilder.Redirect.PIPE);
                 break;
             }
             case GRAB_FILE: {
@@ -347,24 +344,21 @@ public class ProcessBuilder2 {
                 }
                 break;
             }
-            case REDIRECT:
-            {
+            case REDIRECT: {
                 throw new NIllegalArgumentException(session, NMsg.ofC("unsupported in mode : %s", out.base.getType()));
             }
         }
 
         switch (err.base.getType()) {
-            case PIPE: {
+            case PIPE:
+            case GRAB_STREAM:
+            case STREAM:
+            case NULL: {
                 base.redirectError(ProcessBuilder.Redirect.PIPE);
                 break;
             }
             case INHERIT: {
                 base.redirectError(ProcessBuilder.Redirect.INHERIT);
-                break;
-            }
-            case GRAB_STREAM:
-            case STREAM: {
-                base.redirectError(ProcessBuilder.Redirect.PIPE);
                 break;
             }
             case GRAB_FILE: {
