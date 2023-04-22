@@ -368,7 +368,7 @@ public class NRepositoryFolderHelper {
             }
         } else {
             inputSource = NIO.of(session).ofMultiRead(deployment.getContent());
-            inputSource.getInputMetaData().setKind("package content");
+            inputSource.getMetaData().setKind("package content");
             if (descriptor == null) {
                 try (final CharacterizedExecFile c = DefaultNArtifactPathExecutable.characterizeForExec(inputSource, session, null)) {
 //                    NutsUtils.requireNonNull(c.getDescriptor(),session,s->NMsg.ofC("invalid deployment; missing descriptor for %s", deployment.getContent()));
@@ -439,9 +439,9 @@ public class NRepositoryFolderHelper {
             NCp.of(session)
                     .from(NIO.of(session).ofInputSource(
                                     new ByteArrayInputStream(bytes)
-                                    , new DefaultNInputSourceMetadata(
+                                    , new DefaultNContentMetadata(
                                             NMsg.ofC("sha1://%s", desc.getId()),
-                                            bytes.length,
+                                            (long) bytes.length,
                                             CoreIOUtils.MIME_TYPE_SHA1,
                                             "descriptor hash"
                                     )

@@ -29,7 +29,6 @@ import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.folder.NFolderRepositoryBase;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -100,7 +99,7 @@ public class NFolderRepository extends NFolderRepositoryBase {
                 try {
                     stream = getStream(idDesc, "artifact descriptor", "retrieve", session);
                     bytes = CoreIOUtils.loadByteArray(stream, true, session);
-                    name = NIO.of(session).ofInputSource(stream).getInputMetaData().getName().orElse("no-name");
+                    name = NIO.of(session).ofInputSource(stream).getMetaData().getName().orElse("no-name");
                     nutsDescriptor = NDescriptorParser.of(session)
                             .setDescriptorStyle(NDescriptorStyle.NUTS)
                             .parse(CoreIOUtils.createBytesStream(bytes, NMsg.ofNtf(name), "application/json", "nuts.json", session)).get();
@@ -145,7 +144,7 @@ public class NFolderRepository extends NFolderRepositoryBase {
             try {
                 stream = openStream(id, pomURL, id, "artifact descriptor", "retrieve", session);
                 bytes = CoreIOUtils.loadByteArray(stream, true, session);
-                name = NIO.of(session).ofInputSource(stream).getInputMetaData().getName().orElse("no-name");
+                name = NIO.of(session).ofInputSource(stream).getMetaData().getName().orElse("no-name");
                 nutsDescriptor = NDescriptorParser.of(session)
                         .setDescriptorStyle(NDescriptorStyle.NUTS)
                         .parse(CoreIOUtils.createBytesStream(bytes, NMsg.ofNtf(name), "text/xml", "pom.xml", session)).get();

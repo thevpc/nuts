@@ -2,10 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NObjectFormat;
-import net.thevpc.nuts.io.DefaultNOutputTargetMetadata;
-import net.thevpc.nuts.io.NOutputTargetMetadata;
-import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.io.NTerminalMode;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NAssert;
@@ -26,7 +23,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
     protected boolean autoFlash;
     private NTerminalMode mode;
     private NSystemTerminalBase term;
-    private DefaultNOutputTargetMetadata md = new DefaultNOutputTargetMetadata();
+    private DefaultNContentMetadata md = new DefaultNContentMetadata();
 
     public NPrintStreamBase(boolean autoFlash, NTerminalMode mode, NSession session, Bindings bindings, NSystemTerminalBase term) {
         NAssert.requireNonNull(mode, "mode", session);
@@ -37,7 +34,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
         this.term = term;
     }
 
-    public NOutputTargetMetadata getOutputMetaData() {
+    public NContentMetadata getMetaData() {
         return md;
     }
 
@@ -506,5 +503,10 @@ public abstract class NPrintStreamBase implements NPrintStream {
     @Override
     public NPrintStream print(char[] buf, int off, int len) {
         return write(buf, off, len);
+    }
+
+    @Override
+    public NFormat formatter(NSession session) {
+        return NFormat.of(session, new NContentMetadataProviderFormatSPI(this, null, "print-stream"));
     }
 }

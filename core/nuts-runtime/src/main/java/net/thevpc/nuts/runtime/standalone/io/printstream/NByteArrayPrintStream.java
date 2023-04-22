@@ -13,14 +13,14 @@ import java.io.OutputStream;
 public class NByteArrayPrintStream extends NPrintStreamRaw implements NMemoryPrintStream {
     public NByteArrayPrintStream(NTerminalMode mode, NSession session) {
         super(new ByteArrayOutputStream(), mode, null, null, session, new Bindings(), null);
-        getOutputMetaData().setMessage(
+        getMetaData().setMessage(
                 NMsg.ofNtf(NTexts.of(session).ofStyled("<memory-buffer>", NTextStyle.path()))
         );
     }
 
     protected NByteArrayPrintStream(NTerminalMode mode, ByteArrayOutputStream bos, NSession session) {
         super(bos, mode, null, null, session, new Bindings(), null);
-        getOutputMetaData().setMessage(
+        getMetaData().setMessage(
                 NMsg.ofNtf(NTexts.of(session).ofStyled("<memory-buffer>", NTextStyle.path()))
         );
     }

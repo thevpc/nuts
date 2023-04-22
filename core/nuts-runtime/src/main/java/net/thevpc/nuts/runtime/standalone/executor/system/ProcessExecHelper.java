@@ -59,10 +59,9 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 .setDirectory(directory == null ? null : directory.toFile())
                 .setSleepMillis(sleep)
                 .setFailFast(failFast);
-        in= CoreIOUtils.validateIn(in,session);
-        out= CoreIOUtils.validateOut(out,session);
-        err= CoreIOUtils.validateErr(err,session);
-
+        pb.setIn(CoreIOUtils.validateIn(in,session));
+        pb.setOut(CoreIOUtils.validateOut(out,session));
+        pb.setErr(CoreIOUtils.validateErr(err,session));
         NLog _LL = NLog.of(NWorkspaceUtils.class, session);
         if (_LL.isLoggable(Level.FINEST)) {
             _LL.with().level(Level.FINE).verb(NLogVerb.START).log(

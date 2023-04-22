@@ -127,7 +127,7 @@ public class DefaultNInputStreamMonitor implements NInputStreamMonitor {
             sourceName = NMsg.ofNtf(NTexts.of(session).ofText(source));
         }
         if (sourceName == null) {
-            sourceName = NMsg.ofNtf(NTexts.of(session).ofText(source.getInputMetaData().getName()));
+            sourceName = NMsg.ofNtf(NTexts.of(session).ofText(source.getMetaData().getName()));
         }
         NProgressListener monitor = NProgressUtils.createProgressMonitor(NProgressUtils.MonitorType.STREAM, source, sourceOrigin, session
                 , isLogProgress()
@@ -140,7 +140,7 @@ public class DefaultNInputStreamMonitor implements NInputStreamMonitor {
             if (verboseMode && monitor != null) {
                 monitor.onProgress(NProgressEvent.ofStart(source, sourceName, size, session));
             }
-            size = source.getInputMetaData().getContentLength().orElse(-1L);
+            size = source.getMetaData().getContentLength().orElse(-1L);
         } catch (UncheckedIOException | NIOException e) {
             if (verboseMode && monitor != null) {
                 monitor.onProgress(NProgressEvent.ofComplete(source, sourceName, 0, 0,
@@ -160,13 +160,17 @@ public class DefaultNInputStreamMonitor implements NInputStreamMonitor {
         }
         String sourceTypeName = getSourceTypeName();
         if (sourceTypeName == null) {
-            sourceTypeName = source.getInputMetaData().getKind().orElse("nuts-Path");
+            sourceTypeName = source.getMetaData().getKind().orElse("nuts-Path");
         }
-        return (InputStream) NIO.of(session).ofInputSource(
-                NProgressUtils.monitor(openedStream, source, sourceName, size, new SilentStartNProgressListenerAdapter(monitor, sourceName), session),
-                new DefaultNInputSourceMetadata(source.getInputMetaData())
-                        .setKind(sourceTypeName)
-        );
+
+        InputStream z = NIO.of(session).ofMonitored(openedStream, source, new SilentStartNProgressListenerAdapter(monitor, sourceName));
+        ((NContentMetadataProvider)z).getMetaData().setKind(sourceTypeName);
+        return z;
+//        return (InputStream) NIO.of(session).ofInputSource(
+//                NProgressUtils.ofMonitored(openedStream, source, sourceName, size, new SilentStartNProgressListenerAdapter(monitor, sourceName), session),
+//                new DefaultNContentMetadata(source.getMetaData())
+//                        .setKind(sourceTypeName)
+//        );
     }
 
     @Override

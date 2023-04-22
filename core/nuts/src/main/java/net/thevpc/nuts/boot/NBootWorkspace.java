@@ -495,7 +495,7 @@ public final class NBootWorkspace {
             preparedWorkspace = true;
             NIsolationLevel isolationMode = computedOptions.getIsolationLevel().orElse(NIsolationLevel.SYSTEM);
             if (bLog.isLoggable(Level.CONFIG)) {
-                bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofC("bootstrap Nuts version %s%s- digest %s...", Nuts.getVersion(), isolationMode == NIsolationLevel.SYSTEM ? "" : isolationMode == NIsolationLevel.USER ? " (user mode)" : isolationMode == NIsolationLevel.CONFINED ? " (confined mode)" : isolationMode == NIsolationLevel.SANDBOX ? " (sandbox mode)" : " (unsupported mode)", getApiDigest()));
+                bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofC("bootstrap Nuts version %s %s digest %s...", Nuts.getVersion(), isolationMode == NIsolationLevel.SYSTEM ? "" : isolationMode == NIsolationLevel.USER ? " (user mode)" : isolationMode == NIsolationLevel.CONFINED ? " (confined mode)" : isolationMode == NIsolationLevel.SANDBOX ? " (sandbox mode)" : " (unsupported mode)", getApiDigest()));
                 bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofPlain("boot-class-path:"));
                 for (String s : NStringUtils.split(System.getProperty("java.class.path"), File.pathSeparator, true, true)) {
                     bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofC("                  %s", s));
@@ -1430,7 +1430,7 @@ public final class NBootWorkspace {
 
         if (bLog.isLoggable(Level.CONFIG)) {
             String rtHash = "";
-            if (computedOptions.getRuntimeId().isNotPresent()) {
+            if (computedOptions.getRuntimeId().isPresent()) {
                 rtHash = NReservedIOUtils.getFileOrDirectoryDigest(file.toPath());
                 if (rtHash == null) {
                     rtHash = "";

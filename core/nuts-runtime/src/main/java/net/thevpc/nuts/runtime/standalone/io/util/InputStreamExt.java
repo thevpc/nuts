@@ -5,14 +5,11 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.util;
 
-import net.thevpc.nuts.NFormat;
-import net.thevpc.nuts.NMsg;
-import net.thevpc.nuts.NOptional;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.util.NProgressEvent;
+import net.thevpc.nuts.util.NProgressListener;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,136 +17,272 @@ import java.io.InputStream;
 /**
  * @author thevpc
  */
-public class InputStreamExt extends InputStream implements NInputSource, Interruptible {
+public class InputStreamExt extends InputStream implements NInterruptible, NFormattable, NContentMetadataProvider {
 
     private InputStream base;
-    private Runnable onClose;
-    private boolean interrupted;
-    private DefaultNInputSourceMetadata md;
+    private NContentMetadata md;
+    private NSession session;
 
-    public InputStreamExt(InputStream base, NInputSourceMetadata md0, Runnable onClose) {
+    //
+    private Runnable onClose;
+
+    //
+    private Long length;
+    private final NProgressListener monitor;
+    private final Object source;
+    private NMsg sourceName;
+    private long count;
+    private long lastCount;
+    private long startTime;
+    private long lastTime;
+    private boolean completed = false;
+
+    //
+    private boolean interrupted;
+
+    public InputStreamExt(InputStream base,
+                                     NContentMetadata md0,
+                                     Runnable onClose,
+                                     NProgressListener monitor,
+                                     Object source,
+                                     NMsg sourceName,
+                                     Long length,
+                                     NSession session) {
         this.base = base;
+        this.session = session;
         this.onClose = onClose;
-        if (md0 == null) {
-            if (base instanceof NInputSource) {
-                md = new DefaultNInputSourceMetadata(((NInputSource) base).getInputMetaData());
-            } else {
-                md = new DefaultNInputSourceMetadata();
-            }
-        } else {
-            md = new DefaultNInputSourceMetadata(md0);
-            if (base instanceof NInputSource) {
-                NInputSourceMetadata md2 = ((NInputSource) base).getInputMetaData();
-                if (md.getContentLength().isNotPresent()) {
-                    md.setContentLength(md2.getContentLength().orNull());
-                }
-                if (md.getContentType().isNotPresent()) {
-                    md.setContentType(md2.getContentType().orNull());
-                }
-                if (md.getMessage().isNotPresent()) {
-                    md.setMessage(md2.getMessage().orNull());
-                }
-                if (md.getName().isNotPresent()) {
-                    md.setName(md2.getName().orNull());
-                }
-                if (md.getKind().isNotPresent()) {
-                    md.setKind(md2.getKind().orNull());
+        this.md = CoreIOUtils.createContentMetadata(md0, base);
+        this.monitor = monitor;
+        this.source = source;
+
+        if (length == null || length < 0) {
+            Long len = this.md.getContentLength().orElse(null);
+            if (len != null) {
+                long l = len;
+                if (l >= 0) {
+                    length = l;
                 }
             }
         }
+        this.length = length;
+        if (sourceName == null) {
+            NMsg m2 = this.md.getMessage().orElse(null);
+            if (m2 != null) {
+                sourceName = m2;
+            }
+        }
+        if (sourceName == null) {
+            String m2 = this.md.getName().orElse(null);
+            if (m2 != null) {
+                sourceName = NMsg.ofPlain(m2);
+            }
+        }
+        this.sourceName = sourceName;
     }
 
     @Override
-    public void interrupt() throws InterruptException {
+    public void interrupt() throws NInterruptException {
         this.interrupted = true;
+        if (base instanceof NInterruptible) {
+            ((NInterruptible) base).interrupt();
+        }
     }
 
     @Override
     public int read() throws IOException {
-        if (interrupted) {
-            throw new IOException(new InterruptException("Interrupted"));
+        checkInterrupted();
+        if (monitor != null) {
+            try {
+                onBeforeRead();
+                int r = this.base.read();
+                if (r != -1) {
+                    onAfterRead(1);
+                } else {
+                    onComplete(null);
+                }
+                return r;
+            } catch (IOException ex) {
+                onComplete(ex);
+                throw ex;
+            }
+        } else {
+            return base.read();
         }
-        return base.read();
     }
 
     @Override
-    public void close() throws IOException {
-        if (interrupted) {
-            throw new IOException(new InterruptException("Interrupted"));
+    public int read(byte[] b) throws IOException {
+        checkInterrupted();
+        if (monitor != null) {
+            try {
+                onBeforeRead();
+                int r = base.read(b);
+                onAfterRead(r);
+                return r;
+            } catch (IOException ex) {
+                onComplete(ex);
+                throw ex;
+            }
+        } else {
+            return base.read(b);
         }
-        base.close();
+    }
+
+    @Override
+    public int read(byte[] b, int off, int len) throws IOException {
+        checkInterrupted();
+        if (monitor != null) {
+            try {
+                onBeforeRead();
+                int r = base.read(b, off, len);
+                onAfterRead(r);
+                return r;
+            } catch (IOException ex) {
+                onComplete(ex);
+                throw ex;
+            }
+        } else {
+            return base.read(b, off, len);
+        }
+    }
+
+    @Override
+    public long skip(long n) throws IOException {
+        checkInterrupted();
+        if (monitor != null) {
+            try {
+                onBeforeRead();
+                long r = base.skip(n);
+                onAfterRead(r);
+                return r;
+            } catch (IOException ex) {
+                onComplete(ex);
+                throw ex;
+            }
+        }else{
+            return base.skip(n);
+        }
+    }
+
+    @Override
+    public int available() throws IOException {
+        checkInterrupted();
+        if(monitor!=null) {
+            try {
+                return base.available();
+            } catch (IOException ex) {
+                onComplete(ex);
+                throw ex;
+            }
+        }else{
+            return base.available();
+        }
+    }
+
+    @Override
+    public void close() {
+        if(monitor!=null) {
+            onComplete(null);
+        }
+        try {
+            base.close();
+        } catch (IOException e) {
+            throw new NIOException(session, NMsg.ofPlain("error closing base stream"), e);
+        }
         if (onClose != null) {
             onClose.run();
         }
     }
 
     @Override
-    public int available() throws IOException {
-        if (interrupted) {
-            throw new IOException(new InterruptException("Interrupted"));
-        }
-        return base.available();
+    public synchronized void mark(int readlimit) {
+        base.mark(readlimit);
     }
 
     @Override
-    public int read(byte[] b, int off, int len) throws IOException {
-        if (interrupted) {
-            throw new IOException(new InterruptException("Interrupted"));
+    public synchronized void reset() throws IOException {
+        try {
+            base.reset();
+        } catch (IOException ex) {
+            if(monitor!=null) {
+                onComplete(ex);
+            }
+            throw ex;
         }
-        return base.read(b, off, len);
     }
 
+    @Override
+    public boolean markSupported() {
+        return base.markSupported();
+    }
+
+    private void onBeforeRead() {
+        if (!completed) {
+            if (startTime == 0) {
+                long now = System.nanoTime();
+                this.startTime = now;
+                this.lastTime = now;
+                this.lastCount = 0;
+                this.count = 0;
+                monitor.onProgress(NProgressEvent.ofStart(source, sourceName,
+                        length==null?-1:length
+                        , session));
+            }
+        }
+    }
+
+    private void onAfterRead(long count) {
+        if (!completed) {
+            long now = System.nanoTime();
+            this.count += count;
+            if (monitor.onProgress(NProgressEvent.ofProgress(source, sourceName,
+                    this.count, now - startTime, null,
+                    this.count - lastCount, now - lastTime,
+                    length==null?-1:length,
+                    null, session))) {
+                this.lastCount = this.count;
+                this.lastTime = now;
+            }
+        }
+    }
+
+    private void onComplete(IOException ex) {
+        if (!completed) {
+            completed = true;
+            long now = System.nanoTime();
+            monitor.onProgress(NProgressEvent.ofComplete(source, sourceName,
+                    this.count, now - startTime, null,
+                    this.count - lastCount, now - lastTime,
+                    length==null?-1:length,
+                    ex, session));
+        }
+    }
+
+    private void checkInterrupted() {
+        if (interrupted) {
+            throw new NIOException(session, NMsg.ofPlain("stream is interrupted"));
+        }
+    }
 
     @Override
-    public NInputSourceMetadata getInputMetaData() {
+    public NContentMetadata getMetaData() {
         return md;
     }
 
-    @Override
-    public InputStream getInputStream() {
-        return this;
-    }
-
-    @Override
-    public boolean isMultiRead() {
-        return false;
-    }
-
-    @Override
-    public void disposeMultiRead() {
-    }
 
     @Override
     public NFormat formatter(NSession session) {
-        return NFormat.of(session, new NFormatSPI() {
-            @Override
-            public String getName() {
-                return "input-stream";
-            }
-
-            @Override
-            public void print(NPrintStream out) {
-                NOptional<NMsg> m = getInputMetaData().getMessage();
-                if(m.isPresent()){
-                    out.print(m.get());
-                }else {
-                    out.print(getClass().getSimpleName(), NTextStyle.path());
-                }
-            }
-
-            @Override
-            public boolean configureFirst(NCmdLine cmdLine) {
-                return false;
-            }
-        });
+        return NFormat.of(session, new NContentMetadataProviderFormatSPI(this, sourceName,"input-stream"));
     }
 
     @Override
     public String toString() {
         NPlainPrintStream out = new NPlainPrintStream();
-        NOptional<NMsg> m = getInputMetaData().getMessage();
+        NOptional<NMsg> m = getMetaData().getMessage();
         if (m.isPresent()) {
             out.print(m.get());
+        } else if (sourceName != null) {
+            out.print(sourceName, NTextStyle.path());
         } else {
             out.print(getClass().getSimpleName(), NTextStyle.path());
         }

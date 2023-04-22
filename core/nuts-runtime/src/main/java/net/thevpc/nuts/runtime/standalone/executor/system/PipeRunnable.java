@@ -27,7 +27,7 @@ import net.thevpc.nuts.util.NLogVerb;
 import net.thevpc.nuts.util.NLogOp;
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.runtime.standalone.io.util.NonBlockingInputStream;
+import net.thevpc.nuts.io.NNonBlockingInputStream;
 import net.thevpc.nuts.runtime.standalone.io.util.StopMonitor;
 
 import java.io.OutputStream;
@@ -36,7 +36,7 @@ import java.util.logging.Level;
 public class PipeRunnable implements Runnable, StopMonitor {
 
 //    private static final Set<PipeRunnable> running = new LinkedHashSet<>();
-    private final NonBlockingInputStream in;
+    private final NNonBlockingInputStream in;
     private final OutputStream out;
     private final Object lock = new Object();
     private long pipedBytesCount = 0;
@@ -49,7 +49,7 @@ public class PipeRunnable implements Runnable, StopMonitor {
     private final boolean renameThread;
     private byte[] bytesBuffer = new byte[10240];
 
-    public PipeRunnable(String name, String cmd, String desc, NonBlockingInputStream in, OutputStream out, boolean renameThread, NSession session) {
+    public PipeRunnable(String name, String cmd, String desc, NNonBlockingInputStream in, OutputStream out, boolean renameThread, NSession session) {
         this.name = name;
         this.renameThread = renameThread;
         this.in = in;
@@ -158,7 +158,7 @@ public class PipeRunnable implements Runnable, StopMonitor {
         return stopped;
     }
 
-    public NonBlockingInputStream getIn() {
+    public NNonBlockingInputStream getIn() {
         return in;
     }
 

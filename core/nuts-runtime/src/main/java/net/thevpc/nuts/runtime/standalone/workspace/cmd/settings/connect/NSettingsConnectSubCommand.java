@@ -10,8 +10,10 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.concurrent.NScheduler;
+import net.thevpc.nuts.io.DefaultNContentMetadata;
+import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
-import net.thevpc.nuts.runtime.standalone.io.util.NonBlockingInputStreamAdapter;
+import net.thevpc.nuts.runtime.standalone.io.util.NNonBlockingInputStreamAdapter;
 import net.thevpc.nuts.runtime.standalone.executor.system.PipeRunnable;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.util.NAssert;
@@ -68,7 +70,9 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
                     socket = new Socket(InetAddress.getByName(server), validPort);
                     PipeRunnable rr = NSysExecUtils.pipe("pipe-out-socket-" + server + ":" + validPort,
                             cmd0, "connect-socket",
-                            new NonBlockingInputStreamAdapter("pipe-out-socket-" + server + ":" + validPort, socket.getInputStream()), session.out().asPrintStream(), session);
+                            NIO.of(session).ofNonBlocking(
+                                    socket.getInputStream(),new DefaultNContentMetadata().setMessage(NMsg.ofC("pipe-out-socket-%s:%s",server,validPort))
+                            ), session.out().asPrintStream(), session);
                     NScheduler.of(session).executorService().submit(rr);
                     PrintStream out = new PrintStream(socket.getOutputStream());
                     if (!NBlankable.isBlank(login)) {

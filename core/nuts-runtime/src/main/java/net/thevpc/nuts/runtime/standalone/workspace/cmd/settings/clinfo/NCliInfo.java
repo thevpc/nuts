@@ -5,7 +5,6 @@ import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.util.NPlatformHome;
 import net.thevpc.nuts.util.NStringUtils;
-import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -90,7 +89,6 @@ public class NCliInfo {
         return saveVar("user", value, session);
     }
 
-    @NotNull
     private static Path getConfigFile() {
         return Paths.get(NPlatformHome.USER.getHome()).resolve(".nuts-user-config");
     }

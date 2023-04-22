@@ -27,9 +27,12 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.NExtensions;
+import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NString;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.util.NProgressListener;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -78,17 +81,45 @@ public interface NIO extends NComponent {
 
     NPrintStream stderr();
 
+    InputStream ofTee(InputStream from, OutputStream via);
+
+    InputStream ofTee(InputStream from, OutputStream via,NContentMetadata metadata);
+
+    InputStream ofMonitored(InputStream from, Object source,
+                            NString sourceName, Long length, NProgressListener monitor);
+
+    InputStream ofMonitored(InputStream from, Object source,
+                            NMsg sourceName, Long length, NProgressListener monitor);
+
+    InputStream ofMonitored(InputStream from, Object source, NProgressListener monitor);
+    NNonBlockingInputStream ofNonBlocking(InputStream from);
+
+    NNonBlockingInputStream ofNonBlocking(InputStream from,NContentMetadata metadata);
+
     NInputSource ofMultiRead(NInputSource source);
 
+    InputStream ofInterruptible(InputStream inputStream);
+
+    InputStream ofInterruptible(InputStream inputStream, NContentMetadata metadata);
+
+    InputStream ofInputStream(InputStream inputStream);
+
+    InputStream ofInputStream(InputStream inputStream, NContentMetadata metadata);
+
+    InputStream ofCloseable(InputStream inputStream, Runnable onClose);
+
+    InputStream ofCloseable(InputStream inputStream, Runnable onClose, NContentMetadata metadata);
+
     NInputSource ofInputSource(InputStream inputStream);
-    NInputSource ofInputSource(InputStream inputStream, NInputSourceMetadata metadata);
+    NInputSource ofInputSource(InputStream inputStream, NContentMetadata metadata);
     NInputSource ofInputSource(byte[] inputStream);
 
-    NInputSource ofInputSource(byte[] inputStream, NInputSourceMetadata metadata);
+    NInputSource ofInputSource(byte[] inputStream, NContentMetadata metadata);
 
     NOutputTarget ofOutputTarget(OutputStream inputStream);
 
-    NOutputTarget ofOutputTarget(OutputStream inputStream, NOutputTargetMetadata metadata);
+    NOutputTarget ofOutputTarget(OutputStream outputStream, NContentMetadata metadata);
+    OutputStream ofOutputStream(OutputStream outputStream, NContentMetadata metadata);
 
     /**
      * Checks for the current system terminal and does best effort

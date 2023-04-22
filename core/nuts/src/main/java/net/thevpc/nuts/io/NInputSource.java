@@ -27,7 +27,12 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.NFormattable;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.Reader;
+import java.nio.charset.Charset;
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * I/O input stream base.
@@ -36,13 +41,43 @@ import java.io.InputStream;
  * @app.category Input Output
  * @since 0.5.5
  */
-public interface NInputSource extends NFormattable {
+public interface NInputSource extends NFormattable, NContentMetadataProvider {
     InputStream getInputStream();
 
-    NInputSourceMetadata getInputMetaData();
+    byte[] readBytes();
+
+    default String readString() {
+        return new String(readBytes());
+    }
+
+    default String readString(Charset cs) {
+        return cs == null ? new String(readBytes()) : new String(readBytes(), cs);
+    }
 
     boolean isMultiRead();
 
-    default void disposeMultiRead() {
+    Stream<String> getLines(Charset cs);
+
+    Stream<String> getLines();
+
+    Reader getReader();
+
+    Reader getReader(Charset cs);
+
+
+    BufferedReader getBufferedReader();
+
+    BufferedReader getBufferedReader(Charset cs);
+
+    List<String> head(int count, Charset cs);
+
+    List<String> head(int count);
+
+    List<String> tail(int count, Charset cs);
+
+    List<String> tail(int count);
+
+
+    default void dispose() {
     }
 }

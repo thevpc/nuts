@@ -44,7 +44,7 @@ public class DefaultNTexts implements NTexts {
         register(NFormattable.class, (o, t, s) -> (((NFormattable) o).formatter(session).setSession(getSession()).setNtf(true).format()).toText());
         register(NMsg.class, (o, t, s) -> _NMsg_toString((NMsg) o));
         register(NString.class, (o, t, s) -> ((NString) o).toText());
-        register(InputStream.class, (o, t, s) -> t.ofStyled(NIO.of(s).ofInputSource((InputStream) o).getInputMetaData().getName().orElse(o.toString()), NTextStyle.path()));
+        register(InputStream.class, (o, t, s) -> t.ofStyled(NIO.of(s).ofInputSource((InputStream) o).getMetaData().getName().orElse(o.toString()), NTextStyle.path()));
         register(OutputStream.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
         register(NPrintStream.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
         register(Writer.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));

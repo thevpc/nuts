@@ -1,5 +1,6 @@
 package net.thevpc.nuts.io;
 
+import net.thevpc.nuts.NFormat;
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NString;
@@ -18,7 +19,7 @@ import java.util.Date;
 public class NPlainPrintStream implements NPrintStream {
     private StringBuilder sb = new StringBuilder();
     private NSession session;
-    private DefaultNOutputTargetMetadata md = new DefaultNOutputTargetMetadata();
+    private DefaultNContentMetadata md = new DefaultNContentMetadata();
 
     @Override
     public OutputStream getOutputStream() {
@@ -31,7 +32,7 @@ public class NPlainPrintStream implements NPrintStream {
     }
 
     @Override
-    public NOutputTargetMetadata getOutputMetaData() {
+    public NContentMetadata getMetaData() {
         return md;
     }
 
@@ -404,5 +405,10 @@ public class NPlainPrintStream implements NPrintStream {
             return printNull();
         }
         return print(String.valueOf(b));
+    }
+
+    @Override
+    public NFormat formatter(NSession session) {
+        return NFormat.of(session, new NContentMetadataProviderFormatSPI(this, null, "print-stream"));
     }
 }

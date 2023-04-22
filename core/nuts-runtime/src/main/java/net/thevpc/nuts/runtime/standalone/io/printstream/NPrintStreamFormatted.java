@@ -16,7 +16,7 @@ public class NPrintStreamFormatted extends NPrintStreamRendered {
         if (bindings.formatted != null) {
             throw new NIllegalArgumentException(session, NMsg.ofPlain("formatted already bound"));
         }
-        getOutputMetaData().setMessage(
+        getMetaData().setMessage(
                 NMsg.ofStyled(
                         "<formatted-stream>", NTextStyle.path())
         );

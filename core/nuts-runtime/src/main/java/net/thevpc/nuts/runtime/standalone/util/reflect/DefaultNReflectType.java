@@ -27,8 +27,6 @@ import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NOptional;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.*;
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.Function;
@@ -425,7 +423,6 @@ public class DefaultNReflectType implements NReflectType {
         }
     }
 
-    @NotNull
     private static Field[] _getFields(Type clazz) {
         Field[] declaredFields = new Field[0];
         if (clazz instanceof Class) {
@@ -442,7 +439,6 @@ public class DefaultNReflectType implements NReflectType {
         return declaredFields;
     }
 
-    @NotNull
     private static Method[] _getMethods(Type clazz) {
         Method[] declaredMethods = new Method[0];
         if (clazz instanceof Class) {
@@ -459,7 +455,6 @@ public class DefaultNReflectType implements NReflectType {
         return declaredMethods;
     }
 
-    @NotNull
     private static Map<TypeVariable<?>, Type> getActualClassArguments0(Type type) {
         Map<TypeVariable<?>, Type> m = new HashMap<>();
         if (type instanceof ParameterizedType) {

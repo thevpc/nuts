@@ -24,12 +24,12 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts.runtime.standalone.io.util;
+package net.thevpc.nuts.io;
 
 import java.io.Closeable;
 import java.io.IOException;
 
-public interface NonBlockingInputStream extends Closeable {
+public interface NNonBlockingInputStream extends Closeable {
 
     /**
      * Reads the next byte of data from the input stream. The value byte is

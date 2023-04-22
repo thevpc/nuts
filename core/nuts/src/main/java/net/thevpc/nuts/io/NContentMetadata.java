@@ -5,13 +5,14 @@
  */
 package net.thevpc.nuts.io;
 
+import net.thevpc.nuts.NBlankable;
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NOptional;
 
 /**
  * @author thevpc
  */
-public interface NInputSourceMetadata {
+public interface NContentMetadata extends NBlankable {
     NOptional<Long> getContentLength();
 
     NOptional<NMsg> getMessage();
@@ -23,11 +24,14 @@ public interface NInputSourceMetadata {
 
     NOptional<String> getKind();
 
-    NInputSourceMetadata setKind(String userKind);
+    NContentMetadata setKind(String userKind);
 
-    NInputSourceMetadata setName(String name);
+    NContentMetadata setName(String name);
 
-    NInputSourceMetadata setContentType(String contentType);
+    NContentMetadata setMessage(NMsg message);
 
-    NInputSourceMetadata setContentLength(Long contentLength);
+
+    NContentMetadata setContentType(String contentType);
+
+    NContentMetadata setContentLength(Long contentLength);
 }

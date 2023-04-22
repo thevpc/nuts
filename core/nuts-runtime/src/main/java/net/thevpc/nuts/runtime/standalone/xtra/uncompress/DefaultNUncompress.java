@@ -472,7 +472,7 @@ public class DefaultNUncompress implements NUncompress {
             Path folder = _target.toFile();
             NPath.of(folder, session).mkdirs();
 
-            String baseName = source.getInputMetaData().getName().orElse("no-name");
+            String baseName = source.getMetaData().getName().orElse("no-name");
             byte[] buffer = new byte[1024];
 
             //get the zip file content
@@ -515,7 +515,7 @@ public class DefaultNUncompress implements NUncompress {
 
     private void visitUngzip(NInputSource source,NUncompressVisitor visitor) {
         try {
-            String baseName = source.getInputMetaData().getName().orElse("no-name");
+            String baseName = source.getMetaData().getName().orElse("no-name");
             //get the zip file content
             InputStream _in = source.getInputStream();
             try {

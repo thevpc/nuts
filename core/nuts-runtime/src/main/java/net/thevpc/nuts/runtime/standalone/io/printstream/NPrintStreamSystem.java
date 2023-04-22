@@ -23,7 +23,7 @@ public class NPrintStreamSystem extends NPrintStreamBase {
                                  NTerminalMode mode, NSession session, Bindings bindings, NSystemTerminalBase term) {
         super(autoFlush == null || autoFlush.booleanValue(), mode/*resolveMode(out,ansi, session)*/, session, bindings, term);
         //Do not use NutsTexts, not yet initialized!
-        getOutputMetaData().setMessage(NMsg.ofStyled("<system-stream>", NTextStyle.path()));
+        getMetaData().setMessage(NMsg.ofStyled("<system-stream>", NTextStyle.path()));
         this.out = out;
         this.base = base;
     }
@@ -35,7 +35,7 @@ public class NPrintStreamSystem extends NPrintStreamBase {
     public NPrintStreamSystem(OutputStream out, Boolean autoFlush, String encoding, Boolean ansi, NSession session, Bindings bindings, NSystemTerminalBase term) {
         super(true, resolveMode(out, ansi, session), session, bindings, term);
         //Do not use NutsTexts, not yet initialized!
-        getOutputMetaData().setMessage(NMsg.ofStyled("<system-stream>", NTextStyle.path()));
+        getMetaData().setMessage(NMsg.ofStyled("<system-stream>", NTextStyle.path()));
         this.out = out;
         if (out instanceof PrintStream) {
             PrintStream ps = (PrintStream) out;

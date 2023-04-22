@@ -26,6 +26,8 @@
 */
 package net.thevpc.nuts.runtime.standalone.io.util;
 
+import net.thevpc.nuts.io.NNonBlockingInputStream;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
@@ -36,11 +38,11 @@ public class MultiPipeThread extends Thread implements StopMonitor {
 
         private final String id;
         private final String name;
-        private final NonBlockingInputStream in;
+        private final NNonBlockingInputStream in;
         private final OutputStream out;
         private long pipedBytesCount = 0;
 
-        public PipeInfo(String id, String name, NonBlockingInputStream in, OutputStream out) {
+        public PipeInfo(String id, String name, NNonBlockingInputStream in, OutputStream out) {
             this.id = id;
             this.name = name;
             this.in = in;
@@ -57,7 +59,7 @@ public class MultiPipeThread extends Thread implements StopMonitor {
         super(name);
     }
 
-    public String add(String name, NonBlockingInputStream in, OutputStream out) {
+    public String add(String name, NNonBlockingInputStream in, OutputStream out) {
         String id = UUID.randomUUID().toString();
         list.put(id, new PipeInfo(id, name, in, out));
         return id;

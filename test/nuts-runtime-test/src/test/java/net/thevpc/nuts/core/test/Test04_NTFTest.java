@@ -30,7 +30,6 @@ import net.thevpc.nuts.core.test.utils.*;
 import net.thevpc.nuts.runtime.standalone.text.parser.v2.NTFParser2;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.text.*;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -955,7 +954,6 @@ public class Test04_NTFTest {
         Assertions.assertEquals("Hello World", r.toString());
     }
 
-    @NotNull
     private NTFParser2 createParser() {
         return new NTFParser2(session);
     }

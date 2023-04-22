@@ -11,7 +11,6 @@ import net.thevpc.nuts.runtime.standalone.io.progress.SingletonNInputStreamProgr
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.spi.NPaths;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.*;
 
@@ -546,7 +545,7 @@ public class DefaultNCompress implements NCompress {
         }
 
         public String getName() {
-            return inSource.getInputMetaData().getName().orElse(inSource.toString());
+            return inSource.getMetaData().getName().orElse(inSource.toString());
         }
     }
 

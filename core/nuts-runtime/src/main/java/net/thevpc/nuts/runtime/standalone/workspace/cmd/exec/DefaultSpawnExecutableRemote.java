@@ -217,13 +217,12 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
                 out,
                 err
         ));
-        String outString = out.getResultString();
         if (e != 0) {
-            getSession().err().println(outString);
-            getSession().err().println(err.getStream().toString());
+            getSession().err().println(out.getResultString());
+            getSession().err().println(err.getResultString());
             throw new NExecutionException(getSession(), NMsg.ofC("command exit with code :%s", e), e);
         }
-        return outString;
+        return out.getResultString();
     }
 
     private int runOnce(String[] cmd) {

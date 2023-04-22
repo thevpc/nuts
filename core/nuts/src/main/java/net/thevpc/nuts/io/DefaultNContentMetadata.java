@@ -12,7 +12,7 @@ import net.thevpc.nuts.NOptional;
 /**
  * @author thevpc
  */
-public class DefaultNInputSourceMetadata implements NInputSourceMetadata {
+public class DefaultNContentMetadata implements NContentMetadata {
 
     private Long contentLength;
     private NMsg message;
@@ -20,7 +20,7 @@ public class DefaultNInputSourceMetadata implements NInputSourceMetadata {
     private String name;
     private String kind;
 
-    public DefaultNInputSourceMetadata(NInputSourceMetadata other) {
+    public DefaultNContentMetadata(NContentMetadata other) {
         if (other != null) {
             this.contentLength = other.getContentLength().orNull();
             this.name = other.getName().orNull();
@@ -36,27 +36,48 @@ public class DefaultNInputSourceMetadata implements NInputSourceMetadata {
         }
     }
 
-    public DefaultNInputSourceMetadata() {
+    public DefaultNContentMetadata() {
     }
 
-//    public DefaultNInputSourceMetadata(NMsg message, long contentLength, String contentType, String kind) {
+    @Override
+    public boolean isBlank() {
+        if (contentLength != null && contentLength >= 0) {
+            return false;
+        }
+        if (message != null) {
+            return false;
+        }
+        if (contentType != null) {
+            return false;
+        }
+        if (name != null) {
+            return false;
+        }
+        if (kind != null) {
+            return false;
+        }
+        return true;
+    }
+
+    //    public DefaultNContentMetadata(NMsg message, long contentLength, String contentType, String kind) {
 //        this(message == null ? null : message.toString(),
 //                session -> message == null ? null : message.toNutsString(session), contentLength, contentType, kind);
 //    }
 //
-//    public DefaultNInputSourceMetadata(NutsString message, long contentLength, String contentType, String kind) {
+//    public DefaultNContentMetadata(NutsString message, long contentLength, String contentType, String kind) {
 //        this(message == null ? null : message.toString(), s -> message, contentLength, contentType, kind);
 //    }
 //
 //
-    public DefaultNInputSourceMetadata(NMsg message, long contentLength, String contentType, String kind) {
+    public DefaultNContentMetadata(NMsg message, Long contentLength, String contentType, String kind) {
         this.contentLength = contentLength;
-        this.name = message ==null?null: message.toString();
+        this.name = message == null ? null : message.toString();
         this.message = message;
         this.kind = kind;
         this.contentType = contentType;
     }
-    public DefaultNInputSourceMetadata(String name, NMsg message, long contentLength, String contentType, String kind) {
+
+    public DefaultNContentMetadata(String name, NMsg message, Long contentLength, String contentType, String kind) {
         this.contentLength = contentLength;
         this.name = name;
         this.message = message;
@@ -87,27 +108,27 @@ public class DefaultNInputSourceMetadata implements NInputSourceMetadata {
         return NOptional.ofNamed(message, "message");
     }
 
-    public NInputSourceMetadata setKind(String kind) {
+    public NContentMetadata setKind(String kind) {
         this.kind = kind;
         return this;
     }
 
-    public NInputSourceMetadata setContentLength(Long contentLength) {
+    public NContentMetadata setContentLength(Long contentLength) {
         this.contentLength = contentLength;
         return this;
     }
 
-    public NInputSourceMetadata setMessage(NMsg message) {
+    public NContentMetadata setMessage(NMsg message) {
         this.message = message;
         return this;
     }
 
-    public DefaultNInputSourceMetadata setContentType(String contentType) {
+    public DefaultNContentMetadata setContentType(String contentType) {
         this.contentType = contentType;
         return this;
     }
 
-    public DefaultNInputSourceMetadata setName(String name) {
+    public DefaultNContentMetadata setName(String name) {
         this.name = name;
         return this;
     }

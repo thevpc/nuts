@@ -20,7 +20,7 @@ public class NPrintStreamNull extends NPrintStreamBase {
 
     public NPrintStreamNull(NSession session) {
         super(false, NTerminalMode.INHERITED, session, new Bindings(), null);
-        getOutputMetaData().setMessage(
+        getMetaData().setMessage(
                 NMsg.ofStyled("<null-stream>", NTextStyle.path()));
     }
 

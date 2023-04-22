@@ -28,6 +28,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.digest;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.runtime.standalone.io.util.AbstractMultiReadNInputSource;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NFormatSPI;
@@ -105,8 +106,7 @@ public class DefaultNDigest implements NDigest {
     @Override
     public NDigest setSource(NDescriptor source) {
         checkSession();
-        this.source = source == null ? null : new NDescriptorInputSource(source);
-        ;
+        this.source = source == null ? null : new NDescriptorInputSource(source, session);
         return this;
     }
 
@@ -201,10 +201,11 @@ public class DefaultNDigest implements NDigest {
         return DEFAULT_SUPPORT;
     }
 
-    private class NDescriptorInputSource implements NInputSource {
+    private class NDescriptorInputSource extends AbstractMultiReadNInputSource {
         private final NDescriptor source;
 
-        public NDescriptorInputSource(NDescriptor source) {
+        public NDescriptorInputSource(NDescriptor source, NSession session) {
+            super(session);
             this.source = source;
         }
 
@@ -217,7 +218,7 @@ public class DefaultNDigest implements NDigest {
         }
 
         @Override
-        public NInputSourceMetadata getInputMetaData() {
+        public NContentMetadata getMetaData() {
             NId id = source.getId();
             NString str;
             if (id != null) {
@@ -225,7 +226,7 @@ public class DefaultNDigest implements NDigest {
             } else {
                 str = NTexts.of(session).ofStyled("<empty-descriptor>", NTextStyle.path());
             }
-            return new DefaultNInputSourceMetadata(NMsg.ofNtf(str), -1, null, null);
+            return new DefaultNContentMetadata(NMsg.ofNtf(str), null, null, null);
         }
 
         @Override
@@ -243,7 +244,7 @@ public class DefaultNDigest implements NDigest {
 
                 @Override
                 public void print(NPrintStream out) {
-                    NOptional<NMsg> m = getInputMetaData().getMessage();
+                    NOptional<NMsg> m = getMetaData().getMessage();
                     if (m.isPresent()) {
                         out.print(m.get());
                     } else {
@@ -261,7 +262,7 @@ public class DefaultNDigest implements NDigest {
         @Override
         public String toString() {
             NPlainPrintStream out = new NPlainPrintStream();
-            NOptional<NMsg> m = getInputMetaData().getMessage();
+            NOptional<NMsg> m = getMetaData().getMessage();
             if (m.isPresent()) {
                 out.print(m.get());
             } else {

@@ -719,26 +719,30 @@ public class CoreIOUtils {
         urlContent.mkdirs();
         OutputStream p = outPath.getOutputStream();
         long finalLastModified = lastModified;
-        InputStreamTee ist = new InputStreamTee(header.getInputStream(), p, () -> {
-            if (outPath.exists()) {
-                CachedURL ccu = new CachedURL();
-                ccu.url = path;
-                ccu.path = s;
-                ccu.sha1 = NDigestUtils.evalSHA1Hex(outPath, session);
-                long newSize = outPath.getContentLength();
-                ccu.size = newSize;
-                ccu.lastModified = finalLastModified;
-                NPath newLocalPath = urlContent.resolve(s);
-                try {
-                    Files.move(outPath.toFile(), newLocalPath.toFile(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-                } catch (IOException ex) {
-                    throw new NIOException(session, ex);
+        NIO io = NIO.of(session);
+        InputStream ist =io.ofCloseable(
+                io.ofTee(header.getInputStream(), p),
+                () -> {
+                    if (outPath.exists()) {
+                        CachedURL ccu = new CachedURL();
+                        ccu.url = path;
+                        ccu.path = s;
+                        ccu.sha1 = NDigestUtils.evalSHA1Hex(outPath, session);
+                        long newSize = outPath.getContentLength();
+                        ccu.size = newSize;
+                        ccu.lastModified = finalLastModified;
+                        NPath newLocalPath = urlContent.resolve(s);
+                        try {
+                            Files.move(outPath.toFile(), newLocalPath.toFile(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+                        } catch (IOException ex) {
+                            throw new NIOException(session, ex);
+                        }
+                        cacheTable.add(ccu, session);
+                        cacheTable.flush(session);
+                    }
                 }
-                cacheTable.add(ccu, session);
-                cacheTable.flush(session);
-            }
-        });
-        return (InputStream) NIO.of(session).ofInputSource(ist, new DefaultNInputSourceMetadata(
+        );
+        return io.ofInputStream(ist, new DefaultNContentMetadata(
                         path,
                         NMsg.ofNtf(NTexts.of(session).ofStyled(path, NTextStyle.path())),
                         size, NPath.of(path, session).getContentType(), sourceTypeName
@@ -849,7 +853,7 @@ public class CoreIOUtils {
                 return sf;
             }
         }
-        String name = is.getInputMetaData().getName().orElse("no-name");
+        String name = is.getMetaData().getName().orElse("no-name");
         Path temp = NPath.ofTempFile(name, session).toFile();
         NCp a = NCp.of(session).removeOptions(NPathOption.SAFE);
         if (isPath) {
@@ -917,16 +921,6 @@ public class CoreIOUtils {
         } catch (Exception e) {
             throw new RuntimeException(CoreStringUtils.exceptionToString(e), e);
         }
-    }
-
-    public static java.io.InputStream toInterruptible(java.io.InputStream in) {
-        if (in == null) {
-            return null;
-        }
-        if (in instanceof Interruptible) {
-            return in;
-        }
-        return new InputStreamExt(in, null, null);
     }
 
     public static boolean isObsoletePath(NSession session, Path path) {
@@ -1057,11 +1051,11 @@ public class CoreIOUtils {
     }
 
     public static InputStream createBytesStream(byte[] bytes, NMsg message, String contentType, String kind, NSession session) {
-        return (InputStream) NIO.of(session).ofInputSource(
+        return NIO.of(session).ofInputStream(
                 new ByteArrayInputStream(bytes),
-                new DefaultNInputSourceMetadata(
+                new DefaultNContentMetadata(
                         message,
-                        bytes.length,
+                        (long)bytes.length,
                         contentType,
                         kind
                 )
@@ -1328,23 +1322,15 @@ public class CoreIOUtils {
         long size;
     }
 
-    public static DefaultNInputSourceMetadata defaultNutsInputSourceMetadata(InputStream is) {
+    public static DefaultNContentMetadata defaultNutsInputSourceMetadata(InputStream is) {
         Objects.requireNonNull(is);
         if (is instanceof NInputSource) {
-            return new DefaultNInputSourceMetadata(((NInputSource) is).getInputMetaData());
+            return new DefaultNContentMetadata(((NInputSource) is).getMetaData());
         }
-        return new DefaultNInputSourceMetadata();
+        return new DefaultNContentMetadata();
     }
 
-    public static DefaultNOutputTargetMetadata defaultNutsOutputTargetMetadata(OutputStream is) {
-        Objects.requireNonNull(is);
-        if (is instanceof NOutputTarget) {
-            return new DefaultNOutputTargetMetadata(((NOutputTarget) is).getOutputMetaData());
-        }
-        return new DefaultNOutputTargetMetadata();
-    }
-
-    public static NExecInput validateIn(NExecInput in,NSession session){
+    public static NExecInput validateIn(NExecInput in, NSession session) {
         if (in == null) {
             in = NExecInput.ofStream(session.in());
         }
@@ -1378,5 +1364,68 @@ public class CoreIOUtils {
             }
         }
         return out;
+    }
+
+    public static String metadataToString(NContentMetadata md, Object caller) {
+        NOptional<NMsg> m = md.getMessage();
+        if (m.isPresent()) {
+            NPlainPrintStream out = new NPlainPrintStream();
+            out.print(m.get());
+            String s = out.toString();
+            if (!NBlankable.isBlank(s)) {
+                return s;
+            }
+        }
+
+        NOptional<String> m2 = md.getName();
+        if (m2.isPresent()) {
+            String s = m2.get();
+            if (!NBlankable.isBlank(s)) {
+                return s;
+            }
+        }
+        if (caller != null) {
+            return caller.getClass().getSimpleName();
+        }
+        return "no-name";
+    }
+
+    public static NContentMetadata createContentMetadata(Object... any) {
+        DefaultNContentMetadata md = null;
+        if (any != null) {
+            for (Object o : any) {
+                NContentMetadata md2 = null;
+                if (o instanceof NContentMetadata) {
+                    md2 = (NContentMetadata) o;
+                } else if (o instanceof NContentMetadataProvider) {
+                    md2 = ((NContentMetadataProvider) o).getMetaData();
+                }
+                if (md2 != null) {
+                    if (md == null) {
+                        md = new DefaultNContentMetadata(md2);
+                    } else {
+                        if (md.getContentLength().isNotPresent()) {
+                            md.setContentLength(md2.getContentLength().orNull());
+                        }
+                        if (md.getContentType().isNotPresent()) {
+                            md.setContentType(md2.getContentType().orNull());
+                        }
+                        if (md.getMessage().isNotPresent()) {
+                            md.setMessage(md2.getMessage().orNull());
+                        }
+                        if (md.getName().isNotPresent()) {
+                            md.setName(md2.getName().orNull());
+                        }
+                        if (md.getKind().isNotPresent()) {
+                            md.setKind(md2.getKind().orNull());
+                        }
+                    }
+                }
+            }
+        }
+        if (md == null) {
+            md = new DefaultNContentMetadata();
+        }
+        return md;
     }
 }

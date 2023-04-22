@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts.io;
 
+import net.thevpc.nuts.NFormattable;
+
 import java.io.OutputStream;
 
 /**
@@ -34,8 +36,7 @@ import java.io.OutputStream;
  * @app.category Input Output
  * @since 0.5.5
  */
-public interface NOutputTarget {
+public interface NOutputTarget extends NFormattable, NContentMetadataProvider{
     OutputStream getOutputStream();
 
-    NOutputTargetMetadata getOutputMetaData();
 }

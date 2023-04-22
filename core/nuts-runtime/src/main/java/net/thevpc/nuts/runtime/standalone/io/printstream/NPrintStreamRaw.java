@@ -21,7 +21,7 @@ public class NPrintStreamRaw extends NPrintStreamBase {
 
     protected NPrintStreamRaw(OutputStream out, PrintStream base, Boolean autoFlush, NTerminalMode mode, NSession session, Bindings bindings, NSystemTerminalBase term) {
         super(autoFlush == null || autoFlush, mode, session, bindings, term);
-        getOutputMetaData().setMessage(NMsg.ofNtf(NTexts.of(session).ofStyled("<raw-stream>", NTextStyle.path())));
+        getMetaData().setMessage(NMsg.ofNtf(NTexts.of(session).ofStyled("<raw-stream>", NTextStyle.path())));
         this.out = out;
         this.base = base;
     }
@@ -32,7 +32,7 @@ public class NPrintStreamRaw extends NPrintStreamBase {
 
     public NPrintStreamRaw(OutputStream out, NTerminalMode mode, Boolean autoFlush, String encoding, NSession session, Bindings bindings, NSystemTerminalBase term) {
         super(true, mode == null ? NTerminalMode.INHERITED : mode, session, bindings, term);
-        getOutputMetaData().setMessage(NMsg.ofNtf(NTexts.of(session).ofStyled("<raw-stream>", NTextStyle.path())));
+        getMetaData().setMessage(NMsg.ofNtf(NTexts.of(session).ofStyled("<raw-stream>", NTextStyle.path())));
         this.out = out;
         if (out instanceof PrintStream) {
             PrintStream ps = (PrintStream) out;

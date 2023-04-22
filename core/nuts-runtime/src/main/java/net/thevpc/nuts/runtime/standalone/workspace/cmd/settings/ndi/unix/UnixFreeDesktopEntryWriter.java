@@ -119,7 +119,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         return all.toArray(new PathInfo[0]);
     }
 
-    private void callMeMaye(String... command) {
+    private void callMeMayBe(String... command) {
         List<String> cmdList = new ArrayList<>(Arrays.asList(command));
         String sysCmd = cmdList.remove(0);
         Path a = NSysExecUtils.sysWhich(sysCmd);
@@ -140,11 +140,11 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
 
     private void updateDesktopMenus() {
         //    KDE  : 'kbuildsycoca5'
-        callMeMaye("kbuildsycoca5");
+        callMeMayBe("kbuildsycoca5");
         //    GNOME: update-desktop-database ~/.local/share/applications
-        callMeMaye("update-desktop-database", System.getProperty("user.home") + "/.local/share/applications");
+        callMeMayBe("update-desktop-database", System.getProperty("user.home") + "/.local/share/applications");
         // more generic : xdg-desktop-menu forceupdate
-        callMeMaye("xdg-desktop-menu", "forceupdate");
+        callMeMayBe("xdg-desktop-menu", "forceupdate");
     }
 
     private String getDesktopEnvironment() {

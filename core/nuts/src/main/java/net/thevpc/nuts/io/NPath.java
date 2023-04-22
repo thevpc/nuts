@@ -313,9 +313,6 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
 
     Reader getReader(Charset cs, NPathOption... options);
 
-    Stream<String> getLines(Charset cs);
-
-    Stream<String> getLines();
 
     Writer getWriter();
 
@@ -371,14 +368,6 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
     Instant getLastAccessInstant();
 
     Instant getCreationInstant();
-
-    List<String> head(int count, Charset cs);
-
-    List<String> head(int count);
-
-    List<String> tail(int count, Charset cs);
-
-    List<String> tail(int count);
 
     NPath getParent();
 
@@ -502,4 +491,9 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
     boolean isHttp();
 
     NPath copy();
+
+    void setDeleteOnDispose(boolean deleteOnDispose);
+
+    boolean isDeleteOnDispose();
+
 }

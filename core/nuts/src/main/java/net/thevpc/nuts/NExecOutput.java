@@ -1,29 +1,30 @@
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.io.NPrintStream;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.Objects;
 
 public class NExecOutput {
     private NExecRedirectType type;
     private OutputStream stream;
     private NPath path;
     private NPathOption[] options;
+    private NInputSource result;
 
     public static NExecOutput ofNull() {
         return new NExecOutput(NExecRedirectType.NULL, null, null, null);
     }
+
     public static NExecOutput ofGrabMem() {
-        return new NExecOutput(NExecRedirectType.GRAB_STREAM, new ByteArrayOutputStream(), null, null);
+        return new NExecOutput(NExecRedirectType.GRAB_STREAM, null, null, null);
     }
 
     public static NExecOutput ofGrabFile() {
-        return new NExecOutput(NExecRedirectType.GRAB_FILE, new ByteArrayOutputStream(), null, null);
+        return new NExecOutput(NExecRedirectType.GRAB_FILE, null, null, null);
     }
 
     public static NExecOutput ofInherit() {
@@ -69,16 +70,31 @@ public class NExecOutput {
         return type;
     }
 
-    public byte[] getResultBytes() {
-        switch (getType()){
+    public NOptional<NInputSource> getResultSource() {
+        switch (getType()) {
             case GRAB_STREAM:
-            case GRAB_FILE:
-            {
-                return ((ByteArrayOutputStream)getStream()).toByteArray();
+            case GRAB_FILE: {
+                if (result != null) {
+                    return NOptional.of(result);
+                }
+                return NOptional.ofEmpty(s -> NMsg.ofPlain("grabbed result is not available"));
             }
         }
-        throw new IllegalStateException("");
+        return NOptional.ofEmpty(s -> NMsg.ofPlain("no buffer was configured; should call setGrabOutString"));
     }
+
+    public byte[] getResultBytes() {
+        NInputSource s = null;
+        try {
+            s = getResultSource().get();
+            return s.readBytes();
+        } finally {
+            if (s != null) {
+                s.dispose();
+            }
+        }
+    }
+
     public String getResultString() {
         return new String(getResultBytes());
     }
@@ -95,28 +111,32 @@ public class NExecOutput {
         return options;
     }
 
-    @Override
-    public String toString() {
-        return "NExecOutput{" +
-                "mode=" + type +
-                ", stream=" + stream +
-                ", path=" + path +
-                ", options=" + Arrays.toString(options) +
-                '}';
+    public NExecOutput setType(NExecRedirectType type) {
+        this.type = type;
+        return this;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        NExecOutput that = (NExecOutput) o;
-        return type == that.type && Objects.equals(stream, that.stream) && Objects.equals(path, that.path) && Arrays.equals(options, that.options);
+    public NExecOutput setStream(OutputStream stream) {
+        this.stream = stream;
+        return this;
     }
 
-    @Override
-    public int hashCode() {
-        int result = Objects.hash(type, stream, path);
-        result = 31 * result + Arrays.hashCode(options);
+    public NExecOutput setPath(NPath path) {
+        this.path = path;
+        return this;
+    }
+
+    public NExecOutput setOptions(NPathOption[] options) {
+        this.options = options;
+        return this;
+    }
+
+    public NInputSource getResult() {
         return result;
+    }
+
+    public NExecOutput setResult(NInputSource result) {
+        this.result = result;
+        return this;
     }
 }

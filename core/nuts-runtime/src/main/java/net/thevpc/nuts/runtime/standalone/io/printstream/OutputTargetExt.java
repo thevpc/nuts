@@ -1,55 +1,37 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.NFormat;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.io.NContentMetadataProviderFormatSPI;
 import net.thevpc.nuts.text.NTextStyle;
 
-import java.io.IOException;
 import java.io.OutputStream;
 
-public class OutputStreamExt extends OutputStream implements NFormattable, NContentMetadataProvider {
+public class OutputTargetExt implements NOutputTarget {
 
     private OutputStream base;
     private NMsg sourceName;
     private NContentMetadata md;
     private NSession session;
 
-    public OutputStreamExt(OutputStream base, NContentMetadata md0,NSession session) {
+    public OutputTargetExt(OutputStream base, NContentMetadata md0,NSession session) {
         this.base = base;
-        this.session = session;
         this.md = CoreIOUtils.createContentMetadata(md0,base);
+        this.session = session;
+    }
+
+    @Override
+    public OutputStream getOutputStream() {
+        return base;
     }
 
     @Override
     public NContentMetadata getMetaData() {
         return md;
-    }
-
-    @Override
-    public void write(int b) throws IOException {
-        base.write(b);
-    }
-
-    @Override
-    public void write(byte[] b) throws IOException {
-        base.write(b);
-    }
-
-    @Override
-    public void write(byte[] b, int off, int len) throws IOException {
-        base.write(b, off, len);
-    }
-
-    @Override
-    public void flush() throws IOException {
-        base.flush();
-    }
-
-    @Override
-    public void close() throws IOException {
-        base.close();
     }
 
     @Override

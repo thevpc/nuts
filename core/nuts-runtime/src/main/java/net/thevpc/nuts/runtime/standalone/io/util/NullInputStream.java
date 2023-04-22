@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.util;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -44,4 +45,20 @@ public final class NullInputStream extends InputStream {
     public int available() {
         return 0;
     }
+
+    @Override
+    public int read(byte[] b) throws IOException {
+        return 0;
+    }
+
+    @Override
+    public int read(byte[] b, int off, int len) throws IOException {
+        return 0;
+    }
+
+    @Override
+    public long skip(long n) throws IOException {
+        return 0;
+    }
+
 }

@@ -11,7 +11,6 @@ import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.spi.NPaths;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -314,7 +313,7 @@ public class DefaultNDeployCommand extends AbstractNDeployCommand {
                         throw new NIOException(session, ex);
                     }
                 } finally {
-                    d.disposeMultiRead();
+                    d.dispose();
                 }
             } else {
                 throw new NException(getSession(), NMsg.ofC("unexpected type %s", descriptor.getClass().getName()));

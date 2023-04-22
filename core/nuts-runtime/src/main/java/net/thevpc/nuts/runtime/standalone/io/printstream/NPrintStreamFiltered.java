@@ -12,7 +12,7 @@ public class NPrintStreamFiltered extends NPrintStreamRendered {
     public NPrintStreamFiltered(NPrintStreamBase base, NSession session, Bindings bindings) {
         super(base, session, NTerminalMode.FILTERED,
                 bindings);
-        getOutputMetaData().setMessage(
+        getMetaData().setMessage(
                 NMsg.ofStyled( "<filtered-stream>", NTextStyle.path())
                 );
         if (bindings.filtered != null) {

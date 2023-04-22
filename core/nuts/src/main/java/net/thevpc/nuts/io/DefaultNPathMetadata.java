@@ -21,19 +21,13 @@ public class DefaultNPathMetadata {
     private boolean userCache;
     private boolean userTemporary;
 
-    private PathOutputMetadata out = new PathOutputMetadata(this);
-    private PathInputMetadata in = new PathInputMetadata(this);
-
+    private PathMetadata md = new PathMetadata(this);
     public DefaultNPathMetadata(NPath path) {
         this.path = path;
     }
 
-    public NOutputTargetMetadata asOutput() {
-        return out;
-    }
-
-    public NInputSourceMetadata asInput() {
-        return in;
+    public NContentMetadata getMetaData() {
+        return md;
     }
 
     public boolean isUserCache() {
@@ -111,13 +105,7 @@ public class DefaultNPathMetadata {
         this.contentType = contentType;
     }
 
-    public void setAll(NOutputTargetMetadata omd) {
-        this.message = omd.getMessage().orNull();
-        this.kind = omd.getKind().orNull();
-        this.name = omd.getName().orNull();
-    }
-
-    public void setAll(NInputSourceMetadata omd) {
+    public void setAll(NContentMetadata omd) {
         this.message = omd.getMessage().orNull();
         this.kind = omd.getKind().orNull();
         this.contentLength = omd.getContentLength().orNull();
@@ -141,72 +129,10 @@ public class DefaultNPathMetadata {
     }
 
 
-    private static class PathInputMetadata implements NInputSourceMetadata {
+    private class PathMetadata implements NContentMetadata {
         private DefaultNPathMetadata outer;
 
-        public PathInputMetadata(DefaultNPathMetadata outer) {
-            this.outer = outer;
-        }
-
-        @Override
-        public NOptional<Long> getContentLength() {
-            return outer.getContentLength();
-        }
-
-        @Override
-        public NOptional<NMsg> getMessage() {
-            return outer.getMessage();
-        }
-
-        @Override
-        public NOptional<String> getContentType() {
-            return outer.getContentType();
-        }
-
-        @Override
-        public NOptional<String> getName() {
-            return outer.getName();
-        }
-
-        @Override
-        public NOptional<String> getKind() {
-            return outer.getKind();
-        }
-
-        @Override
-        public NInputSourceMetadata setKind(String userKind) {
-            outer.setKind(userKind);
-            return this;
-        }
-
-        @Override
-        public NInputSourceMetadata setName(String name) {
-            outer.setName(name);
-            return this;
-        }
-
-        @Override
-        public NInputSourceMetadata setContentType(String contentType) {
-            outer.setContentType(contentType);
-            return this;
-        }
-
-        @Override
-        public NInputSourceMetadata setContentLength(Long contentLength) {
-            outer.setContentLength(contentLength);
-            return this;
-        }
-
-        @Override
-        public String toString() {
-            return outer.toString();
-        }
-    }
-
-    private class PathOutputMetadata implements NOutputTargetMetadata {
-        private DefaultNPathMetadata outer;
-
-        public PathOutputMetadata(DefaultNPathMetadata outer) {
+        public PathMetadata(DefaultNPathMetadata outer) {
             this.outer = outer;
         }
 
@@ -216,7 +142,7 @@ public class DefaultNPathMetadata {
         }
 
         @Override
-        public NOutputTargetMetadata setName(String name) {
+        public NContentMetadata setName(String name) {
             outer.setName(name);
             return this;
         }
@@ -227,13 +153,13 @@ public class DefaultNPathMetadata {
         }
 
         @Override
-        public NOutputTargetMetadata setKind(String userKind) {
+        public NContentMetadata setKind(String userKind) {
             outer.setKind(userKind);
             return this;
         }
 
         @Override
-        public NOutputTargetMetadata setMessage(NMsg message) {
+        public NContentMetadata setMessage(NMsg message) {
             outer.setMessage(message);
             return this;
         }
@@ -246,6 +172,48 @@ public class DefaultNPathMetadata {
         @Override
         public String toString() {
             return outer.toString();
+        }
+
+        @Override
+        public NOptional<Long> getContentLength() {
+            return outer.getContentLength();
+        }
+
+        @Override
+        public NOptional<String> getContentType() {
+            return outer.getContentType();
+        }
+
+        @Override
+        public NContentMetadata setContentType(String contentType) {
+            outer.setContentType(contentType);
+            return this;
+        }
+
+        @Override
+        public NContentMetadata setContentLength(Long contentLength) {
+            outer.setContentLength(contentLength);
+            return this;
+        }
+
+        @Override
+        public boolean isBlank() {
+            if (outer.contentLength != null && outer.contentLength >= 0) {
+                return false;
+            }
+            if (outer.message != null) {
+                return false;
+            }
+            if (outer.contentType != null) {
+                return false;
+            }
+            if (outer.name != null) {
+                return false;
+            }
+            if (kind != null) {
+                return false;
+            }
+            return true;
         }
     }
 }

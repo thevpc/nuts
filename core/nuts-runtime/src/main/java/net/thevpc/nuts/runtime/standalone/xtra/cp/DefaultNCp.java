@@ -13,7 +13,6 @@ import net.thevpc.nuts.runtime.standalone.io.progress.SingletonNInputStreamProgr
 import net.thevpc.nuts.runtime.standalone.io.util.*;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.spi.NPaths;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
@@ -45,7 +44,7 @@ public class DefaultNCp implements NCp {
     private boolean interrupted;
     private boolean recursive;
     private boolean mkdirs;
-    private Interruptible interruptibleInstance;
+    private NInterruptible interruptibleInstance;
     private Object sourceOrigin;
     private String sourceTypeName;
 
@@ -468,7 +467,7 @@ public class DefaultNCp implements NCp {
 
     private void checkInterrupted() {
         if (interrupted) {
-            throw new NIOException(session, new InterruptException());
+            throw new NInterruptException(session);
         }
     }
 
@@ -573,8 +572,8 @@ public class DefaultNCp implements NCp {
                     return null;
                 }
             }
-            try (InputStream in = CoreIOUtils.toInterruptible(Files.newInputStream(source))) {
-                interruptibleInstance = (Interruptible) in;
+            try (InputStream in = NIO.of(session).ofInterruptible(Files.newInputStream(source))) {
+                interruptibleInstance = (NInterruptible) in;
                 try (OutputStream out = Files.newOutputStream(target)) {
                     transferTo(in, out);
                 }
@@ -587,8 +586,8 @@ public class DefaultNCp implements NCp {
     public long copy(InputStream in, Path target, Set<NPathOption> options)
             throws IOException {
         if (options.contains(NPathOption.INTERRUPTIBLE)) {
-            in = CoreIOUtils.toInterruptible(in);
-            interruptibleInstance = (Interruptible) in;
+            in = NIO.of(session).ofInterruptible(in);
+            interruptibleInstance = (NInterruptible) in;
             try (OutputStream out = Files.newOutputStream(target)) {
                 return transferTo(in, out);
             }
@@ -599,8 +598,8 @@ public class DefaultNCp implements NCp {
     public long copy(InputStream in, OutputStream out, Set<NPathOption> options)
             throws IOException {
         if (options.contains(NPathOption.INTERRUPTIBLE)) {
-            in = CoreIOUtils.toInterruptible(in);
-            interruptibleInstance = (Interruptible) in;
+            in = NIO.of(session).ofInterruptible(in);
+            interruptibleInstance = (NInterruptible) in;
             return transferTo(in, out);
         }
         return CoreIOUtils.copy(in, out, session);
@@ -608,8 +607,8 @@ public class DefaultNCp implements NCp {
 
     public long copy(Path source, OutputStream out) throws IOException {
         if (options.contains(NPathOption.INTERRUPTIBLE)) {
-            try (InputStream in = CoreIOUtils.toInterruptible(Files.newInputStream(source))) {
-                interruptibleInstance = (Interruptible) in;
+            try (InputStream in = NIO.of(session).ofInterruptible(Files.newInputStream(source))) {
+                interruptibleInstance = (NInterruptible) in;
                 try {
                     return transferTo(in, out);
                 } catch (IOException ex) {
@@ -767,8 +766,8 @@ public class DefaultNCp implements NCp {
         if (checker != null && !_target_isLocalPath && !safe) {
             throw new NIllegalArgumentException(getSession(), NMsg.ofNtf("unsupported validation if neither safeCopy is armed nor path is defined"));
         }
-        NMsg loggedSrc = _source.getInputMetaData().getMessage().orElse(NMsg.ofPlain("unknown-source"));
-        NMsg loggedTarget = target.getOutputMetaData().getMessage().orElse(NMsg.ofPlain("unknown-target"));
+        NMsg loggedSrc = _source.getMetaData().getMessage().orElse(NMsg.ofPlain("unknown-source"));
+        NMsg loggedTarget = target.getMetaData().getMessage().orElse(NMsg.ofPlain("unknown-target"));
         NMsg m = getActionMessage();
         if (m == null) {
             m = NMsg.ofPlain("copy");

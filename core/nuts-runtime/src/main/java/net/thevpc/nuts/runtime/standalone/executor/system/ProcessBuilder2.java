@@ -27,10 +27,9 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.DefaultNArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineFormatStrategy;
-import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NPathOption;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineShellOptions;
-import net.thevpc.nuts.runtime.standalone.io.util.NonBlockingInputStreamAdapter;
+import net.thevpc.nuts.runtime.standalone.io.util.NNonBlockingInputStreamAdapter;
 import net.thevpc.nuts.runtime.standalone.shell.NShellHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.text.NTextBuilder;
@@ -235,16 +234,7 @@ public class ProcessBuilder2 {
     ////////////////// RESULTS
 
     public byte[] getOutputBytes() {
-        switch (out.base.getType()) {
-            case GRAB_FILE: {
-                NPath file = out.base.getPath();
-                return file.readBytes();
-            }
-            case GRAB_STREAM: {
-                return ((ByteArrayOutputStream) out.base.getStream()).toByteArray();
-            }
-        }
-        throw new NIllegalArgumentException(session, NMsg.ofPlain("no buffer was configured; should call setGrabOutString"));
+        return out.base.getResultBytes();
     }
 
     public byte[] getErrorBytes() {
@@ -252,15 +242,8 @@ public class ProcessBuilder2 {
             case REDIRECT: {
                 return getOutputBytes();
             }
-            case GRAB_FILE: {
-                NPath file = err.base.getPath();
-                return file.readBytes();
-            }
-            case GRAB_STREAM: {
-                return ((ByteArrayOutputStream) err.base.getStream()).toByteArray();
-            }
         }
-        throw new NIllegalArgumentException(session, NMsg.ofPlain("no buffer was configured; should call setGrabErrorString"));
+        return err.base.getResultBytes();
     }
 
     public String getOutputString() {
@@ -308,7 +291,6 @@ public class ProcessBuilder2 {
 
         switch (out.base.getType()) {
             case PIPE:
-            case GRAB_STREAM:
             case STREAM:
             case NULL: {
                 base.redirectOutput(ProcessBuilder.Redirect.PIPE);
@@ -316,6 +298,11 @@ public class ProcessBuilder2 {
             }
             case INHERIT: {
                 base.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+                break;
+            }
+            case GRAB_STREAM: {
+                base.redirectOutput(ProcessBuilder.Redirect.PIPE);
+                out.tempStream = new ByteArrayOutputStream();
                 break;
             }
             case GRAB_FILE: {
@@ -351,7 +338,6 @@ public class ProcessBuilder2 {
 
         switch (err.base.getType()) {
             case PIPE:
-            case GRAB_STREAM:
             case STREAM:
             case NULL: {
                 base.redirectError(ProcessBuilder.Redirect.PIPE);
@@ -359,6 +345,11 @@ public class ProcessBuilder2 {
             }
             case INHERIT: {
                 base.redirectError(ProcessBuilder.Redirect.INHERIT);
+                break;
+            }
+            case GRAB_STREAM: {
+                base.redirectError(ProcessBuilder.Redirect.PIPE);
+                err.tempStream = new ByteArrayOutputStream();
                 break;
             }
             case GRAB_FILE: {
@@ -425,8 +416,9 @@ public class ProcessBuilder2 {
         String cmdStr = String.join(" ", command);
         switch (in.base.getType()) {
             case STREAM: {
-                in.termIn = new NonBlockingInputStreamAdapter("pipe-in-proc-" + procString, in.base.getStream());
-                PipeRunnable t = NSysExecUtils.pipe("pipe-in-proc-" + procString, cmdStr, "in", in.termIn, proc.getOutputStream(), session);
+                String pname = "pipe-in-proc-" + procString;
+                in.termIn = NIO.of(session).ofNonBlocking(in.base.getStream(), new DefaultNContentMetadata().setMessage(NMsg.ofPlain(pname)));
+                PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "in", in.termIn, proc.getOutputStream(), session);
                 if (pipes == null) {
                     pipes = Executors.newCachedThreadPool();
                 }
@@ -436,11 +428,21 @@ public class ProcessBuilder2 {
             }
         }
         switch (out.base.getType()) {
-            case STREAM:
+            case STREAM: {
+                String pname = "pipe-out-proc-" + procString;
+                NNonBlockingInputStream procInput = NIO.of(session).ofNonBlocking(proc.getInputStream(), new DefaultNContentMetadata().setMessage(NMsg.ofPlain(pname)));
+                PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "out", procInput, out.base.getStream(), session);
+                if (pipes == null) {
+                    pipes = Executors.newCachedThreadPool();
+                }
+                pipes.submit(t);
+                pipesList.add(t);
+                break;
+            }
             case GRAB_STREAM: {
-                NonBlockingInputStreamAdapter procInput;
-                procInput = new NonBlockingInputStreamAdapter("pipe-out-proc-" + procString, proc.getInputStream());
-                PipeRunnable t = NSysExecUtils.pipe("pipe-out-proc-" + procString, cmdStr, "out", procInput, out.base.getStream(), session);
+                String pname = "pipe-out-proc-" + procString;
+                NNonBlockingInputStream procInput = NIO.of(session).ofNonBlocking(proc.getInputStream(), new DefaultNContentMetadata().setMessage(NMsg.ofPlain(pname)));
+                PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "out", procInput, out.tempStream, session);
                 if (pipes == null) {
                     pipes = Executors.newCachedThreadPool();
                 }
@@ -450,9 +452,10 @@ public class ProcessBuilder2 {
             }
             case PATH: {
                 if (out.tempStream != null) {
-                    NonBlockingInputStreamAdapter procInput;
-                    procInput = new NonBlockingInputStreamAdapter("pipe-out-proc-" + procString, proc.getInputStream());
-                    PipeRunnable t = NSysExecUtils.pipe("pipe-out-proc-" + procString, cmdStr, "out", procInput, out.tempStream, session);
+                    //this happens when the path is not local
+                    String pname = "pipe-out-proc-" + procString;
+                    NNonBlockingInputStream procInput = NIO.of(session).ofNonBlocking(proc.getInputStream(), new DefaultNContentMetadata().setMessage(NMsg.ofPlain(pname)));
+                    PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "out", procInput, out.tempStream, session);
                     if (pipes == null) {
                         pipes = Executors.newCachedThreadPool();
                     }
@@ -463,11 +466,21 @@ public class ProcessBuilder2 {
             }
         }
         switch (err.base.getType()) {
-            case STREAM:
+            case STREAM: {
+                String pname = "pipe-err-proc-" + procString;
+                NNonBlockingInputStream procInput = NIO.of(session).ofNonBlocking(proc.getErrorStream(), new DefaultNContentMetadata().setMessage(NMsg.ofPlain(pname)));
+                PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "err", procInput, err.base.getStream(), session);
+                if (pipes == null) {
+                    pipes = Executors.newCachedThreadPool();
+                }
+                pipes.submit(t);
+                pipesList.add(t);
+                break;
+            }
             case GRAB_STREAM: {
-                NonBlockingInputStreamAdapter procInput;
-                procInput = new NonBlockingInputStreamAdapter("pipe-err-proc-" + procString, proc.getErrorStream());
-                PipeRunnable t = NSysExecUtils.pipe("pipe-err-proc-" + procString, cmdStr, "err", procInput, err.base.getStream(), session);
+                String pname = "pipe-err-proc-" + procString;
+                NNonBlockingInputStream procInput = NIO.of(session).ofNonBlocking(proc.getErrorStream(), new DefaultNContentMetadata().setMessage(NMsg.ofPlain(pname)));
+                PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "err", procInput, err.tempStream, session);
                 if (pipes == null) {
                     pipes = Executors.newCachedThreadPool();
                 }
@@ -477,9 +490,10 @@ public class ProcessBuilder2 {
             }
             case PATH: {
                 if (err.tempStream != null) {
-                    NonBlockingInputStreamAdapter procInput;
-                    procInput = new NonBlockingInputStreamAdapter("pipe-err-proc-" + procString, proc.getErrorStream());
-                    PipeRunnable t = NSysExecUtils.pipe("pipe-err-proc-" + procString, cmdStr, "err", procInput, err.tempStream, session);
+                    //this happens when the path is not local
+                    String pname = "pipe-err-proc-" + procString;
+                    NNonBlockingInputStream procInput = NIO.of(session).ofNonBlocking(proc.getErrorStream(), new DefaultNContentMetadata().setMessage(NMsg.ofPlain(pname)));
+                    PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "err", procInput, err.tempStream, session);
                     if (pipes == null) {
                         pipes = Executors.newCachedThreadPool();
                     }
@@ -545,12 +559,17 @@ public class ProcessBuilder2 {
                 }
                 break;
             }
+            case GRAB_STREAM: {
+                out.tempStream.close();
+                out.base.setResult(NIO.of(session).ofInputSource(((ByteArrayOutputStream)out.tempStream).toByteArray()));
+                break;
+            }
             case GRAB_FILE: {
                 if (out.tempPath != null) {
                     out.tempStream.close();
-                    out.base.getStream().write(
-                            Files.readAllBytes(out.tempPath.toFile())
-                    );
+                    out.tempPath.setUserTemporary(true);
+                    out.tempPath.setDeleteOnDispose(true);
+                    out.base.setResult(out.tempPath);
                 }
                 break;
             }
@@ -562,12 +581,17 @@ public class ProcessBuilder2 {
                 }
                 break;
             }
+            case GRAB_STREAM: {
+                err.tempStream.close();
+                err.base.setResult(NIO.of(session).ofInputSource(((ByteArrayOutputStream)err.tempStream).toByteArray()));
+                break;
+            }
             case GRAB_FILE: {
                 if (err.tempPath != null) {
                     err.tempStream.close();
-                    err.base.getStream().write(
-                            Files.readAllBytes(err.tempPath.toFile())
-                    );
+                    err.tempPath.setUserTemporary(true);
+                    err.tempPath.setDeleteOnDispose(true);
+                    err.base.setResult(err.tempPath);
                 }
                 break;
             }

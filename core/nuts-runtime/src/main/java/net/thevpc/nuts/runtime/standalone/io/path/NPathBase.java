@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
+import net.thevpc.nuts.runtime.standalone.io.util.AbstractMultiReadNInputSource;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -13,24 +14,17 @@ import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public abstract class NPathBase implements NPath {
+public abstract class NPathBase extends AbstractMultiReadNInputSource implements NPath {
     public static final int BUFFER_SIZE = 8192;
-    private final NSession session;
     private DefaultNPathMetadata omd = new DefaultNPathMetadata(this);
+    private boolean deleteOnDispose;
 
     public NPathBase(NSession session) {
-        if (session == null) {
-            throw new IllegalArgumentException("invalid session");
-        }
-        //session will be used later
-        this.session = session;
+        super(session);
     }
 
     @Override
@@ -44,11 +38,12 @@ public abstract class NPathBase implements NPath {
     }
 
     protected NPath copyExtraFrom(NPath other) {
+        this.deleteOnDispose = other.isDeleteOnDispose();
         if (other instanceof NPathBase) {
-            omd.setAll(omd);
+            omd.setAll(((NPathBase) other).omd);
         } else {
-            omd.setAll(other.getInputMetaData());
-            omd.setAll(other.getOutputMetaData());
+            omd.setAll(other.getMetaData());
+            omd.setAll(other.getMetaData());
         }
         return this;
     }
@@ -62,7 +57,7 @@ public abstract class NPathBase implements NPath {
         try {
             return new PrintStream(out, false, nonNullCharset(cs).name());
         } catch (UnsupportedEncodingException e) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("unsupported encoding"), e);
+            throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("unsupported encoding"), e);
         }
     }
 
@@ -113,7 +108,7 @@ public abstract class NPathBase implements NPath {
                 other.print(Arrays.copyOf(buffer, count));
             }
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(getSession(), ex);
         }
     }
 
@@ -126,7 +121,7 @@ public abstract class NPathBase implements NPath {
                 other.write(buffer, 0, count);
             }
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(getSession(), ex);
         }
     }
 
@@ -144,7 +139,7 @@ public abstract class NPathBase implements NPath {
                 other.write(buffer, 0, count);
             }
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(getSession(), ex);
         }
     }
 
@@ -310,52 +305,14 @@ public abstract class NPathBase implements NPath {
         }
     }
 
-    public NSession getSession() {
-        return session;
-    }
-
     @Override
     public NPath delete() {
         return delete(false);
     }
 
-    @Override
-    public List<String> head(int count) {
-        return head(count, null);
-    }
-
-    @Override
-    public List<String> head(int count, Charset cs) {
-        return getLines(cs).limit(count).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<String> tail(int count) {
-        return tail(count, null);
-    }
-
-    @Override
-    public List<String> tail(int count, Charset cs) {
-        LinkedList<String> lines = new LinkedList<>();
-        BufferedReader br = getBufferedReader(cs);
-        String line;
-        try {
-            int count0 = 0;
-            while ((line = br.readLine()) != null) {
-                lines.add(line);
-                count0++;
-                if (count0 > count) {
-                    lines.remove();
-                }
-            }
-        } catch (IOException e) {
-            throw new NIOException(session, e);
-        }
-        return lines;
-    }
 
     public NString toNutsString() {
-        return NTexts.of(session).ofPlain(toString());
+        return NTexts.of(getSession()).ofPlain(toString());
     }
 
     @Override
@@ -383,13 +340,13 @@ public abstract class NPathBase implements NPath {
         private final NPathBase p;
 
         public PathFormat(NPathBase p) {
-            super(p.session, "path");
+            super(p.getSession(), "path");
             this.p = p;
         }
 
         @Override
         public void print(NPrintStream out) {
-            out.print(NTexts.of(p.session).ofStyled(p.toNutsString(), NTextStyle.path()));
+            out.print(NTexts.of(p.getSession()).ofStyled(p.toNutsString(), NTextStyle.path()));
         }
 
         @Override
@@ -468,34 +425,6 @@ public abstract class NPathBase implements NPath {
         return new BufferedReader(reader);
     }
 
-    @Override
-    public Stream<String> getLines(Charset cs) {
-        BufferedReader br = getBufferedReader(cs);
-        try {
-            return br.lines().onClose(() -> {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
-            });
-        } catch (Error | RuntimeException e) {
-            try {
-                br.close();
-            } catch (IOException ex) {
-                try {
-                    e.addSuppressed(ex);
-                } catch (Throwable ignore) {
-                }
-            }
-            throw e;
-        }
-    }
-
-    @Override
-    public Stream<String> getLines() {
-        return getLines(null);
-    }
 
     @Override
     public boolean isHttp() {
@@ -508,13 +437,8 @@ public abstract class NPathBase implements NPath {
 
 
     @Override
-    public NInputSourceMetadata getInputMetaData() {
-        return omd.asInput();
-    }
-
-    @Override
-    public NOutputTargetMetadata getOutputMetaData() {
-        return omd.asOutput();
+    public NContentMetadata getMetaData() {
+        return omd.getMetaData();
     }
 
     @Override
@@ -523,8 +447,10 @@ public abstract class NPathBase implements NPath {
     }
 
     @Override
-    public void disposeMultiRead() {
-        //do nothing
+    public void dispose() {
+        if (isDeleteOnDispose()) {
+            this.deleteTree();
+        }
     }
 
     @Override
@@ -561,15 +487,19 @@ public abstract class NPathBase implements NPath {
         return sb.toString();
     }
 
-    protected Charset nonNullCharset(Charset c) {
-        if (c == null) {
-            return StandardCharsets.UTF_8;
-        }
-        return c;
-    }
 
     @Override
     public List<NPath> list() {
         return stream().toList();
+    }
+
+    @Override
+    public void setDeleteOnDispose(boolean deleteOnDispose) {
+        this.deleteOnDispose = deleteOnDispose;
+    }
+
+    @Override
+    public boolean isDeleteOnDispose() {
+        return deleteOnDispose;
     }
 }

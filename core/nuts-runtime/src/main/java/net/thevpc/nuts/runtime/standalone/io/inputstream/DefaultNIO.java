@@ -6,18 +6,16 @@ import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
 import net.thevpc.nuts.runtime.standalone.io.printstream.*;
 import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNSessionTerminalFromSession;
 import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNSessionTerminalFromSystem;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.io.util.InputStreamExt;
-import net.thevpc.nuts.runtime.standalone.io.util.NullInputStream;
+import net.thevpc.nuts.runtime.standalone.io.util.*;
 import net.thevpc.nuts.runtime.standalone.text.SimpleWriterOutputStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
-import net.thevpc.nuts.spi.NPaths;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NProgressListener;
 
 import java.io.*;
 
@@ -186,12 +184,64 @@ public class DefaultNIO implements NIO {
     }
 
     @Override
+    public InputStream ofInterruptible(InputStream inputStream) {
+        return ofInterruptible(inputStream, null);
+    }
+
+    @Override
+    public InputStream ofInterruptible(InputStream inputStream, NContentMetadata metadata) {
+        if (inputStream == null) {
+            return null;
+        }
+        if (inputStream instanceof NInterruptible) {
+            if (metadata == null) {
+                return inputStream;
+            }
+        }
+        return new InputStreamExt(inputStream, metadata, null, null, null, null, null, session);
+    }
+
+    @Override
+    public InputStream ofInputStream(InputStream inputStream) {
+        return ofInputStream(inputStream, null);
+    }
+
+    @Override
+    public InputStream ofInputStream(InputStream inputStream, NContentMetadata metadata) {
+        if (inputStream == null) {
+            return null;
+        }
+        if (inputStream instanceof NContentMetadataProvider) {
+            if (metadata == null) {
+                return inputStream;
+            }
+        }
+        return new InputStreamExt(inputStream, metadata, null, null, null, null, null, session);
+    }
+
+    @Override
+    public InputStream ofCloseable(InputStream inputStream, Runnable onClose) {
+        return ofCloseable(inputStream, onClose, null);
+    }
+
+    @Override
+    public InputStream ofCloseable(InputStream inputStream, Runnable onClose, NContentMetadata metadata) {
+        if (inputStream == null) {
+            return null;
+        }
+        if (onClose != null) {
+            return new InputStreamExt(inputStream, metadata, onClose, null, null, null, null, session);
+        }
+        return inputStream;
+    }
+
+    @Override
     public NInputSource ofInputSource(InputStream inputStream) {
         return ofInputSource(inputStream, null);
     }
 
     @Override
-    public NInputSource ofInputSource(InputStream inputStream, NInputSourceMetadata metadata) {
+    public NInputSource ofInputSource(InputStream inputStream, NContentMetadata metadata) {
         if (inputStream == null) {
             return null;
         }
@@ -200,20 +250,50 @@ public class DefaultNIO implements NIO {
         }
         if (metadata == null) {
             NString str = null;
-            int contentLength = -1;
+            Long contentLength = null;
             try {
-                contentLength = inputStream.available();
+                contentLength = (long)inputStream.available();
             } catch (IOException e) {
-                throw new UncheckedIOException(e);
+                //just ignore error
+                //throw new UncheckedIOException(e);
             }
             if (inputStream instanceof ByteArrayInputStream) {
                 str = NTexts.of(session).ofStyled("<memory-buffer>", NTextStyle.path());
             } else {
                 str = NTexts.of(session).ofStyled(inputStream.toString(), NTextStyle.path());
             }
-            metadata = new DefaultNInputSourceMetadata(NMsg.ofNtf(str), contentLength, null, null);
+            metadata = new DefaultNContentMetadata(NMsg.ofNtf(str), contentLength, null, null);
         }
-        return new InputStreamExt(inputStream, metadata, null);
+        InputStreamExt inputStreamExt = new InputStreamExt(inputStream, metadata, null, null, null, null, null, session);
+        return new NInputStreamSource(inputStreamExt, null, session);
+    }
+
+
+    @Override
+    public java.io.InputStream ofMonitored(java.io.InputStream from, Object source,
+                                           NString sourceName, Long length, NProgressListener monitor) {
+        return new InputStreamExt(from, null, null, monitor, source, sourceName == null ? null : NMsg.ofNtf(sourceName), length, session);
+    }
+
+    @Override
+    public java.io.InputStream ofMonitored(java.io.InputStream from, Object source,
+                                           NMsg sourceName, Long length, NProgressListener monitor) {
+        return new InputStreamExt(from, null, null, monitor, source, sourceName, length, session);
+    }
+
+    @Override
+    public java.io.InputStream ofMonitored(java.io.InputStream from, Object source, NProgressListener monitor) {
+        return new InputStreamExt(from, null, null, monitor, source, null, null, session);
+    }
+
+    @Override
+    public NNonBlockingInputStream ofNonBlocking(InputStream from) {
+        return ofNonBlocking(from, null);
+    }
+
+    @Override
+    public NNonBlockingInputStream ofNonBlocking(InputStream from, NContentMetadata metadata) {
+        return new NNonBlockingInputStreamAdapter(from, metadata, null, session);
     }
 
     @Override
@@ -239,7 +319,7 @@ public class DefaultNIO implements NIO {
 
 
     @Override
-    public NInputSource ofInputSource(byte[] inputStream, NInputSourceMetadata metadata) {
+    public NInputSource ofInputSource(byte[] inputStream, NContentMetadata metadata) {
         return ofInputSource(new ByteArrayInputStream(inputStream), metadata);
     }
 
@@ -249,23 +329,19 @@ public class DefaultNIO implements NIO {
     }
 
     @Override
-    public NOutputTarget ofOutputTarget(OutputStream output, NOutputTargetMetadata metadata) {
-        if (output == null) {
+    public NOutputTarget ofOutputTarget(OutputStream outputStream, NContentMetadata metadata) {
+        return new OutputTargetExt(ofOutputStream(outputStream, metadata), null, session);
+    }
+
+    @Override
+    public OutputStream ofOutputStream(OutputStream outputStream, NContentMetadata metadata) {
+        if (outputStream == null) {
             return null;
         }
-        if (output instanceof NOutputTarget) {
-            return (NOutputTarget) output;
+        if (NBlankable.isBlank(metadata) && outputStream instanceof NContentMetadataProvider) {
+            return outputStream;
         }
-        if (metadata == null) {
-            NString str = null;
-            if (output instanceof ByteArrayOutputStream) {
-                str = NTexts.of(session).ofStyled("<memory-buffer>", NTextStyle.path());
-            } else {
-                str = NTexts.of(session).ofStyled(output.toString(), NTextStyle.path());
-            }
-            metadata = new DefaultNOutputTargetMetadata(NMsg.ofNtf(str), str.filteredText());
-        }
-        return new OutputStreamExt(output, metadata);
+        return new OutputStreamExt(outputStream, metadata, session);
     }
 
     @Override
@@ -334,5 +410,15 @@ public class DefaultNIO implements NIO {
     public NIO setDefaultTerminal(NSessionTerminal terminal) {
         cmodel.setTerminal(terminal, session);
         return this;
+    }
+
+    @Override
+    public InputStream ofTee(InputStream from, OutputStream via) {
+        return ofTee(from, via, null);
+    }
+
+    @Override
+    public InputStream ofTee(InputStream from, OutputStream via, NContentMetadata metadata) {
+        return new InputStreamTee(from, via, null, metadata, session);
     }
 }

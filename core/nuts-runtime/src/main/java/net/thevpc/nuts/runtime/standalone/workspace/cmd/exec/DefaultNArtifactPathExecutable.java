@@ -17,7 +17,6 @@ import net.thevpc.nuts.runtime.standalone.io.util.*;
 import net.thevpc.nuts.runtime.standalone.security.util.CoreDigestHelper;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.spi.NDependencySolver;
-import net.thevpc.nuts.spi.NPaths;
 import net.thevpc.nuts.util.NLog;
 import net.thevpc.nuts.util.NLogVerb;
 
@@ -206,7 +205,7 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableCommand {
                         String artifactId = d.getDigest();
                         c.setDescriptor(new DefaultNDescriptorBuilder()
                                 .setId("temp:" + artifactId + "#1.0")
-                                .setPackaging(CoreIOUtils.getFileExtension(contentFile.getInputMetaData().getName().orElse("")))
+                                .setPackaging(CoreIOUtils.getFileExtension(contentFile.getMetaData().getName().orElse("")))
                                 .build());
                     }
                 }

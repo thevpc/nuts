@@ -325,17 +325,10 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
         if (!executed) {
             run();
         }
-        NExecOutput o = getOut();
-        switch (o.getType()) {
-            case GRAB_FILE:
-            case GRAB_STREAM: {
-                if (o.getStream() instanceof ByteArrayOutputStream) {
-                    return o.getStream().toString();
-                }
-                break;
-            }
+        if (getOut() == null) {
+            throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("no buffer was configured; should call grabOutputString"));
         }
-        throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("no buffer was configured; should call grabOutputString"));
+        return getOut().getResultString();
     }
 
     @Override
@@ -344,20 +337,13 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
         if (!executed) {
             run();
         }
+        if (getErr() == null) {
+            throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("no buffer was configured; should call grabErrorString"));
+        }
         if (getErr().getType() == NExecRedirectType.REDIRECT) {
             return getOutputString();
         }
-        NExecOutput o = getErr();
-        switch (o.getType()) {
-            case GRAB_FILE:
-            case GRAB_STREAM: {
-                if (o.getStream() instanceof ByteArrayOutputStream) {
-                    return o.getStream().toString();
-                }
-                break;
-            }
-        }
-        throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("no buffer was configured; should call grabErrorString"));
+        return getErr().getResultString();
     }
 
     @Override

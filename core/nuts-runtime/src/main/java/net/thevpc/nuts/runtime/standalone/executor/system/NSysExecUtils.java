@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.executor.system;
 
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.runtime.standalone.io.util.NonBlockingInputStream;
+import net.thevpc.nuts.io.NNonBlockingInputStream;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -45,7 +45,7 @@ public class NSysExecUtils {
         return all.toArray(new Path[0]);
     }
 
-    public static PipeRunnable pipe(String name, String cmd, String desc, final NonBlockingInputStream in, final OutputStream out, NSession session) {
+    public static PipeRunnable pipe(String name, String cmd, String desc, final NNonBlockingInputStream in, final OutputStream out, NSession session) {
         return new PipeRunnable(name, cmd, desc, in, out, true, session);
     }
 }
