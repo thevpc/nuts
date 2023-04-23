@@ -91,12 +91,12 @@ public class UpdateCmd<C extends NdbConfig> extends NdbCmd<C> {
             }
         }
         if (NBlankable.isBlank(eq.getTable())) {
-            cmdLine.throwMissingArgumentByName("--table");
+            cmdLine.throwMissingArgument("--table");
         }
         C options = loadFromName(name, otherOptions);
         revalidateOptions(options);
         if (NBlankable.isBlank(otherOptions.getDatabaseName())) {
-            cmdLine.throwMissingArgumentByName("--dbname");
+            cmdLine.throwMissingArgument("--dbname");
         }
         runUpdate(eq, options, session);
     }

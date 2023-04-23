@@ -522,16 +522,16 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                     .setLatest(true);
             NDefinition r = searchLatestCommand
                     .setInstallStatus(NInstallStatusFilters.of(session).byDeployed(true))
-                    .getResultDefinitions().first();
+                    .getResultDefinitions().findFirst().orNull();
             if (r == null) {
                 r = searchLatestCommand.setInstallStatus(NInstallStatusFilters.of(session).byInstalled(false))
                         .setSession(searchLatestCommand.getSession().copy().setFetchStrategy(NFetchStrategy.OFFLINE))
-                        .getResultDefinitions().first();
+                        .getResultDefinitions().findFirst().orNull();
             }
             if (r == null) {
                 r = searchLatestCommand
                         .setSession(searchLatestCommand.getSession().copy().setFetchStrategy(NFetchStrategy.ONLINE))
-                        .setInstallStatus(NInstallStatusFilters.of(session).byInstalled(false)).getResultDefinitions().required();
+                        .setInstallStatus(NInstallStatusFilters.of(session).byInstalled(false)).getResultDefinitions().findFirst().get();
             }
             if (r.getInstallInformation().get(session).isInstalledOrRequired()) {
                 return r;
@@ -548,10 +548,10 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                                     ));
                                 }
                             }
-                        })).getResult().required();
+                        })).getResult().findFirst().get();
                 //this is a workaround. Def returned by install does not include all information!
                 catalinaNDefinition = searchLatestCommand.setInstallStatus(NInstallStatusFilters.of(session).byInstalled(true))
-                        .getResultDefinitions().first();
+                        .getResultDefinitions().findFirst().orNull();
             }
         }
         return catalinaNDefinition;
@@ -608,7 +608,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     public boolean restart(String[] deployApps, boolean deleteLog) {
         stop();
         if (getRunningTomcat() != null) {
-            throw new NExecutionException(getSession(), NMsg.ofC("server %s is running. it cannot be stopped!", getName()), 2);
+            throw new NExecutionException(getSession(), NMsg.ofC("server %s is running. it cannot be stopped!", getName()), NExecutionException.ERROR_2);
         }
         start(deployApps, deleteLog);
         return true;
@@ -659,7 +659,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                     );
                 }
             }
-            throw new NExecutionException(session, NMsg.ofPlain("unable to start tomcat"), 2);
+            throw new NExecutionException(session, NMsg.ofPlain("unable to start tomcat"), NExecutionException.ERROR_2);
         }
         for (int i = 0; i < timeout; i++) {
             try {
@@ -701,7 +701,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             }
             return y;
         }
-        throw new NExecutionException(session, NMsg.ofPlain("unable to start tomcat"), 2);
+        throw new NExecutionException(session, NMsg.ofPlain("unable to start tomcat"), NExecutionException.ERROR_2);
     }
 
     public boolean waitForStoppedStatus(int timeout, boolean kill) {
@@ -921,7 +921,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             switch (mode) {
                 case OPEN_OR_ERROR: {
                     if (a == null) {
-                        throw new NExecutionException(getSession(), NMsg.ofC("app not found : %s", appName), 2);
+                        throw new NExecutionException(getSession(), NMsg.ofC("app not found : %s", appName), NExecutionException.ERROR_2);
                     }
                     break;
                 }
@@ -930,7 +930,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                         a = new LocalTomcatAppConfig();
                         getConfig().getApps().put(appName, a);
                     } else {
-                        throw new NExecutionException(getSession(), NMsg.ofC("app already found : %s", appName), 2);
+                        throw new NExecutionException(getSession(), NMsg.ofC("app already found : %s", appName), NExecutionException.ERROR_2);
                     }
                     break;
                 }
@@ -957,7 +957,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             switch (mode) {
                 case OPEN_OR_ERROR: {
                     if (a == null) {
-                        throw new NExecutionException(getSession(), NMsg.ofC("domain not found : %s", domainName), 2);
+                        throw new NExecutionException(getSession(), NMsg.ofC("domain not found : %s", domainName), NExecutionException.ERROR_2);
                     }
                     break;
                 }
@@ -966,7 +966,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                         a = new LocalTomcatDomainConfig();
                         getConfig().getDomains().put(domainName, a);
                     } else {
-                        throw new NExecutionException(getSession(), NMsg.ofC("domain already found : %s", domainName), 2);
+                        throw new NExecutionException(getSession(), NMsg.ofC("domain already found : %s", domainName), NExecutionException.ERROR_2);
                     }
                     break;
                 }
@@ -1112,7 +1112,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
             NPath serverXml = getCatalinaBase().resolve("conf").resolve("server.xml");
             if (serverXml.exists()) {
-                Document doc = docBuilder.parse(serverXml.toFile().toFile());
+                Document doc = docBuilder.parse(serverXml.toFile().get());
                 Element root = doc.getDocumentElement();
                 String port = root.getAttribute("port");
                 return port == null ? null : Integer.parseInt(port);
@@ -1135,7 +1135,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
             NPath serverXml = getCatalinaBase().resolve("conf").resolve("server.xml");
             if (serverXml.exists()) {
-                Document doc = docBuilder.parse(serverXml.toFile().toFile());
+                Document doc = docBuilder.parse(serverXml.toFile().get());
                 Element root = doc.getDocumentElement();
                 String p = root.getAttribute("port");
                 if (String.valueOf(port).equals(p)) {
@@ -1145,7 +1145,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 TransformerFactory transformerFactory = TransformerFactory.newInstance();
                 Transformer transformer = transformerFactory.newTransformer();
                 DOMSource domSource = new DOMSource(doc);
-                StreamResult streamResult = new StreamResult(serverXml.toFile().toFile());
+                StreamResult streamResult = new StreamResult(serverXml.toFile().get());
                 transformer.transform(domSource, streamResult);
             }
         } catch (SAXException | IOException | ParserConfigurationException | TransformerException ex) {
@@ -1190,7 +1190,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
             NPath serverXml = getCatalinaBase().resolve("conf").resolve("server.xml");
             if (serverXml.exists()) {
-                Document doc = docBuilder.parse(serverXml.toFile().toFile());
+                Document doc = docBuilder.parse(serverXml.toFile().get());
                 Element root = doc.getDocumentElement();
                 String port = XmlUtils.streamElements(root.getChildNodes())
                         .filter(x -> "Service".equalsIgnoreCase(x.getTagName()))
@@ -1234,7 +1234,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
             NPath serverXml = getCatalinaBase().resolve("conf").resolve("server.xml");
             if (serverXml.exists()) {
-                Document doc = docBuilder.parse(serverXml.toFile().toFile());
+                Document doc = docBuilder.parse(serverXml.toFile().get());
                 Element root = doc.getDocumentElement();
                 Element elem = XmlUtils.streamElements(root.getChildNodes())
                         .filter(x -> "Service".equalsIgnoreCase(x.getTagName()))
@@ -1250,7 +1250,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                     TransformerFactory transformerFactory = TransformerFactory.newInstance();
                     Transformer transformer = transformerFactory.newTransformer();
                     DOMSource domSource = new DOMSource(doc);
-                    StreamResult streamResult = new StreamResult(serverXml.toFile().toFile());
+                    StreamResult streamResult = new StreamResult(serverXml.toFile().get());
                     transformer.transform(domSource, streamResult);
                     return;
                 }

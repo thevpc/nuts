@@ -86,12 +86,14 @@ public class CoreNIdUtils {
         NId foundRT = NSearchCommand.of(session).addId(NId.ofRuntime("").get())
                 .setLatest(true)
                 .setTargetApiVersion(NVersion.of(apiVersion).get(session))
-                .setSession(session.copy().setFetchStrategy(NFetchStrategy.OFFLINE)).getResultIds().first();
+                .setSession(session.copy().setFetchStrategy(NFetchStrategy.OFFLINE)).getResultIds().
+                findFirst().orNull();
         if (foundRT == null && session.getFetchStrategy() != NFetchStrategy.OFFLINE) {
             foundRT = NSearchCommand.of(session).addId(NId.ofRuntime("").get())
                     .setLatest(true)
                     .setTargetApiVersion(NVersion.of(apiVersion).get(session))
-                    .setSession(session).getResultIds().first();
+                    .setSession(session).getResultIds().
+                    findFirst().orNull();
         }
         return foundRT;
     }

@@ -93,16 +93,18 @@ public class Test03_CreateLayoutTest {
             NId nshId = null;
             try {
                 nshId = NSearchCommand.of(session).setInstallStatus(NInstallStatusFilters.of(session).byInstalled(true)).addId("nsh")
-                        .setDistinct(true).getResultIds().singleton();
+                        .setDistinct(true).getResultIds()
+                        .findSingleton().get();
             } catch (Exception ex) {
                 nshId = NSearchCommand.of(session).setInstallStatus(NInstallStatusFilters.of(session).byInstalled(true)).addId("nsh")
-                        .setDistinct(true).getResultIds().singleton();
+                        .setDistinct(true).getResultIds()
+                        .findSingleton().get();
             }
             Assertions.assertTrue(nshId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
         }
         NPath c = NLocations.of(session).getStoreLocation(NStoreType.CONF);
         TestUtils.println(c);
-        File base = session.getWorkspace().getLocation().toFile().toFile();
+        File base = session.getWorkspace().getLocation().toFile().get();
         TestUtils.println(new File(base, "config").getPath());
         for (NStoreType value : NStoreType.values()) {
             session.out().println(NMsg.ofC("%s %s", value, NLocations.of(session).getStoreLocation(value)));

@@ -129,7 +129,7 @@ public class DefaultNPs implements NPs {
                 + "All the followings are invalid : \n%s",
                 String.join("\n", detectedJavaHomes)
                 ),
-                 10);
+                NExecutionException.ERROR_2);
     }
 
     private static String getJpsJavaHome(String base) {

@@ -1,2 +1,2 @@
-net.thevpc.nuts.lib.ssh.SshNExecCommandExtension
-net.thevpc.nuts.lib.ssh.SshPathFactory
+net.thevpc.nuts.ext.ssh.SshNExecCommandExtension
+net.thevpc.nuts.ext.ssh.SshPathFactory

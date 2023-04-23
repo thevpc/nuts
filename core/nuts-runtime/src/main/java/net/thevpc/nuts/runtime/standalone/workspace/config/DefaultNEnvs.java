@@ -68,6 +68,11 @@ public class DefaultNEnvs implements NEnvs {
     }
 
     @Override
+    public String getHostName() {
+        return model.getHostName();
+    }
+
+    @Override
     public Set<NShellFamily> getShellFamilies() {
         return model.getShellFamilies();
     }

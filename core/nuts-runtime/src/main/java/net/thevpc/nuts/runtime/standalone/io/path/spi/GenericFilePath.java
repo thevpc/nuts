@@ -109,23 +109,23 @@ public class GenericFilePath implements NPathSPI {
     }
 
     @Override
-    public URL toURL(NPath basePath) {
+    public NOptional<URL> toURL(NPath basePath) {
         try {
             if (URLPath.MOSTLY_URL_PATTERN.matcher(value).matches()) {
-                return new URL(value);
+                return NOptional.of(new URL(value));
             }
-            return new URL("file:" + value);
+            return NOptional.of(new URL("file:" + value));
         } catch (MalformedURLException e) {
-            throw new NIOException(session, e);
+            return NOptional.ofNamedError(NMsg.ofC("not an url %s", value));
         }
     }
 
     @Override
-    public Path toFile(NPath basePath) {
+    public NOptional<Path> toPath(NPath basePath) {
         try {
-            return Paths.get(value);
+            return NOptional.of(Paths.get(value));
         } catch (Exception ex) {
-            throw new NIOException(session, ex);
+            return NOptional.ofNamedError(NMsg.ofC("not a path %s", value));
         }
     }
 
@@ -373,7 +373,7 @@ public class GenericFilePath implements NPathSPI {
     }
 
     @Override
-    public int getPathCount(NPath basePath) {
+    public int getLocationItemsCount(NPath basePath) {
         if (parts.isEmpty()) {
             return 1;
         }
@@ -409,7 +409,7 @@ public class GenericFilePath implements NPathSPI {
     }
 
     @Override
-    public List<String> getItems(NPath basePath) {
+    public List<String> getLocationItems(NPath basePath) {
         NPathPartList parts = this.parts;
         if (parts.isEmpty()) {
             return Collections.emptyList();
@@ -544,7 +544,7 @@ public class GenericFilePath implements NPathSPI {
 
         @Override
         public int getSupportLevel(NSupportLevelContext context) {
-            String path= context.getConstraints();
+            String path = context.getConstraints();
             try {
                 if (path != null) {
                     if (path.trim().length() > 0) {
@@ -562,5 +562,10 @@ public class GenericFilePath implements NPathSPI {
             return NO_SUPPORT;
         }
 
+    }
+
+    @Override
+    public byte[] getDigest(NPath basePath, String algo) {
+        return null;
     }
 }

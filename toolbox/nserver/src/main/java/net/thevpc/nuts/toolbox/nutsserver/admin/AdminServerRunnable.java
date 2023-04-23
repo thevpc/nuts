@@ -197,7 +197,7 @@ public class AdminServerRunnable implements NServer, Runnable {
             try {
                 socket.close();
             } catch (IOException ex) {
-                throw new NExecutionException(context.getSession(), NMsg.ofC("%s", ex), ex, 100);
+                throw new NExecutionException(context.getSession(), NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_2);
             }
         }
     }

@@ -6,4 +6,9 @@ public abstract class AbstractMultiReadNInputSource extends AbstractNInputSource
     public AbstractMultiReadNInputSource(NSession session) {
         super(session);
     }
+
+    @Override
+    public boolean isMultiRead() {
+        return true;
+    }
 }

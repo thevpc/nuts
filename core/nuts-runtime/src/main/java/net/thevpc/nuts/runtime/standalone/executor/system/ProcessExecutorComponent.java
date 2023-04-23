@@ -26,6 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.executor.system;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorComponent;
 import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
@@ -58,8 +59,8 @@ public class ProcessExecutorComponent implements NExecutorComponent {
     }
 
     @Override
-    public void exec(NExecutionContext executionContext) {
-        execHelper(executionContext).exec();
+    public int exec(NExecutionContext executionContext) {
+        return execHelper(executionContext).exec();
     }
 
     public IProcessExecHelper execHelper(NExecutionContext executionContext) {

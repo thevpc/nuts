@@ -43,7 +43,7 @@ public interface NCustomCommand {
 
     String getName();
 
-    void exec(String[] args, NCommandExecOptions options, NSession session) throws NExecutionException;
+    int exec(String[] args, NCommandExecOptions options, NSession session) throws NExecutionException;
 
     NText getHelpText(NSession session) throws NExecutionException;
 

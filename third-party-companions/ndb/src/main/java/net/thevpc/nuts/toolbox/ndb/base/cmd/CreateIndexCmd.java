@@ -64,16 +64,16 @@ public class CreateIndexCmd<C extends NdbConfig> extends NdbCmd<C> {
             }
         }
         if (NBlankable.isBlank(eq.getTable())) {
-            cmdLine.throwMissingArgumentByName("--table");
+            cmdLine.throwMissingArgument("--table");
         }
 
         C options = loadFromName(name, otherOptions);
         revalidateOptions(options);
         if (NBlankable.isBlank(otherOptions.getDatabaseName())) {
-            cmdLine.throwMissingArgumentByName("--dbname");
+            cmdLine.throwMissingArgument("--dbname");
         }
         if (NBlankable.isBlank(otherOptions.getDatabaseName())) {
-            cmdLine.throwMissingArgumentByName("--dbname");
+            cmdLine.throwMissingArgument("--dbname");
         }
         runCreateIndex(eq, options, session);
     }

@@ -27,7 +27,7 @@ public class NPomIdResolver {
 
     public NPomId[] resolvePomId(NPath baseUrl, String referenceResourcePath, NSession session) {
         List<NPomId> all = new ArrayList<NPomId>();
-        final URLParts aa = new URLParts(baseUrl.toURL());
+        final URLParts aa = new URLParts(baseUrl.toURL().get());
         String basePath = aa.getLastPart().getPath().substring(0, aa.getLastPart().getPath().length() - referenceResourcePath.length());
         if (!basePath.endsWith("/") && !basePath.endsWith("\\")) {
             basePath += "/";
@@ -63,7 +63,7 @@ public class NPomIdResolver {
                 String s2 = basePath.substring(0, basePath.length() - "/target/classes".length()) + "pom.xml";
                 //this is most likely to be a maven project
                 try {
-                    all.add(new NPomXmlParser(session).parse(NPath.of(s2,session).asURL(), session).getPomId());
+                    all.add(new NPomXmlParser(session).parse(NPath.of(s2,session).toURL().get(), session).getPomId());
                 } catch (Exception ex) {
                     NLogOp.of(NPomXmlParser.class,session)
                             .verb(NLogVerb.WARNING)

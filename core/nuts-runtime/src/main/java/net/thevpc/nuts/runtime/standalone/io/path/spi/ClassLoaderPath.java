@@ -14,7 +14,7 @@ public class ClassLoaderPath extends URLPath {
     private final String path;
     private final String effectivePath;
     private final ClassLoader loader;
-    private final static String fileOf(String path,boolean check, NSession session){
+    private static String fileOf(String path,boolean check, NSession session){
         if(path!=null){
             if(path.startsWith("classpath:")){
                 String p=path;

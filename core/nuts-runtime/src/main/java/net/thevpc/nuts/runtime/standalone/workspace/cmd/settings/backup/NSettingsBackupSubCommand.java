@@ -46,7 +46,7 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
             }
             if (cmdLine.isExecMode()) {
                 List<String> all = new ArrayList<>();
-                all.add(NLocations.of(session).getWorkspaceLocation().toFile()
+                all.add(NLocations.of(session).getWorkspaceLocation().toPath().get()
                         .resolve("nuts-workspace.json").toString()
                 );
                 for (NStoreType value : NStoreType.values()) {

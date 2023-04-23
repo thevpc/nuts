@@ -196,7 +196,7 @@ public class DefaultNWorkspaceConfigModel {
         NElements elem = NElements.of(session);
         if (force || storeModelBootChanged) {
 
-            Path file = NLocations.of(session).getWorkspaceLocation().toFile().resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
+            Path file = NLocations.of(session).getWorkspaceLocation().toPath().get().resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
             storeModelBoot.setConfigVersion(DefaultNWorkspace.VERSION_WS_CONFIG_BOOT);
             if (storeModelBoot.getExtensions() != null) {
                 for (NWorkspaceConfigBoot.ExtensionConfig extension : storeModelBoot.getExtensions()) {
@@ -944,7 +944,7 @@ public class DefaultNWorkspaceConfigModel {
     }
 
     public boolean isValidWorkspaceFolder(NSession session) {
-        Path file = NLocations.of(session).getWorkspaceLocation().toFile().resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
+        Path file = NLocations.of(session).getWorkspaceLocation().toPath().get().resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
         return Files.isRegularFile(file);
     }
 
@@ -1168,7 +1168,7 @@ public class DefaultNWorkspaceConfigModel {
 
     public NBootDef prepareBootClassPathJar(NId id, NId forId, NId forceRuntimeId, boolean processDependencies, NSession session) {
         NBootDef d = fetchBootDef(id, true, session);
-        if (deployToInstalledRepository(d.content.toFile(), session)) {
+        if (deployToInstalledRepository(d.content.toPath().get(), session)) {
             if (processDependencies) {
                 for (NDependency dep : d.deps) {
                     prepareBootClassPathJar(dep.toId(), id, forceRuntimeId, true, session);
@@ -1259,7 +1259,7 @@ public class DefaultNWorkspaceConfigModel {
 
     private void onLoadWorkspaceError(Throwable ex, NSession session) {
         DefaultNWorkspaceConfigModel wconfig = this;
-        Path file = NLocations.of(session).getWorkspaceLocation().toFile().resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
+        Path file = NLocations.of(session).getWorkspaceLocation().toPath().get().resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
         if (wconfig.isReadOnly()) {
             throw new NIOException(session, NMsg.ofC("unable to load config file %s", file), ex);
         }
@@ -1280,7 +1280,7 @@ public class DefaultNWorkspaceConfigModel {
         _LOGOP(session).level(Level.SEVERE).verb(NLogVerb.FAIL)
                 .log(NMsg.ofJ("erroneous workspace config file will be replaced by a fresh one. Old config is copied to {0}\n error logged to  {1}", newfile.toString(), logFile));
         try {
-            Files.move(file, newfile.toFile());
+            Files.move(file, newfile.toPath().get());
         } catch (IOException e) {
             throw new NIOException(session, NMsg.ofC("unable to load and re-create config file %s : %s", file, e), ex);
         }
@@ -1317,7 +1317,7 @@ public class DefaultNWorkspaceConfigModel {
     }
 
     private NWorkspaceConfigBoot parseBootConfig(NPath path, NSession session) {
-        Path file = path.toFile().resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
+        Path file = path.toPath().get().resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(file, session);
         if (bytes == null) {
             return null;

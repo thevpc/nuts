@@ -22,18 +22,19 @@ public class DefaultNVersionInternalExecutable extends DefaultInternalNExecutabl
     }
 
     @Override
-    public void execute() {
+    public int execute() {
         if(getSession().isDry()){
             dryExecute();
-            return;
+            return NExecutionException.SUCCESS;
         }
         if (NAppUtils.processHelpOptions(args, getSession())) {
             showDefaultHelp();
-            return;
+            return NExecutionException.SUCCESS;
         }
         NWorkspace ws = getSession().getWorkspace();
         NPrintStream out = getSession().out();
         NVersionFormat.of(getSession()).configure(false, args).println(out);
+        return NExecutionException.SUCCESS;
     }
 
 }

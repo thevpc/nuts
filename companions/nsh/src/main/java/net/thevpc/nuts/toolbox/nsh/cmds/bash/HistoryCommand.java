@@ -133,7 +133,7 @@ public class HistoryCommand extends NShellBuiltinDefault {
                         shistory.save(NPath.of(options.sval, session).toAbsolute(NLocations.of(session).getWorkspaceLocation()));
                     }
                 } catch (IOException ex) {
-                    throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, 100);
+                    throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_2);
                 }
                 return;
             }
@@ -146,7 +146,7 @@ public class HistoryCommand extends NShellBuiltinDefault {
                         shistory.load(NPath.of(options.sval, session).toAbsolute(NLocations.of(session).getWorkspaceLocation()));
                     }
                 } catch (IOException ex) {
-                    throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, 100);
+                    throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_2);
                 }
                 return;
             }

@@ -13,7 +13,7 @@ public class CacheDB {
                                         session.getWorkspace().getApiId().builder().setVersion("SHARED").build()
                                 ,
                                 NStoreType.CACHE
-                        ).resolve("cachedb").toFile().toFile()
+                        ).resolve("cachedb").toFile().get()
                 );
                 o.getSerializers().setSerializer(NId.class,()->new NanoDBNIdSerializer(session));
                 NEnvs.of(session).getProperties().put(CacheDB.class.getName(), o);

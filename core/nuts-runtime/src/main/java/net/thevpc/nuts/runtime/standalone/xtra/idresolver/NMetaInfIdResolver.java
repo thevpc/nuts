@@ -29,7 +29,7 @@ public class NMetaInfIdResolver {
 
     public NId[] resolvePomId(NPath baseUrl, String referenceResourcePath, NSession session) {
         List<NId> all = new ArrayList<>();
-        final URLParts aa = new URLParts(baseUrl.toURL());
+        final URLParts aa = new URLParts(baseUrl.toURL().get());
         String basePath = aa.getLastPart().getPath().substring(0, aa.getLastPart().getPath().length() - referenceResourcePath.length());
         if (!basePath.endsWith("/")) {
             basePath += "/";

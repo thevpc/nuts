@@ -78,7 +78,7 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableCommand {
     }
 
     @Override
-    public void execute() {
+    public int execute() {
         NSession session = getSession();
         if (session.isDry()) {
             if (autoInstall && !def.getInstallInformation().get(session).getInstallStatus().isInstalled()) {
@@ -88,7 +88,7 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableCommand {
             }
             execCommand.ws_execId(def, commandName, appArgs, executorOptions, workspaceOptions, env, dir, failFast,
                     false, session, execCommand.getIn(), execCommand.getOut(), execCommand.getErr(), executionType, runAs);
-            return;
+            return NExecutionException.SUCCESS;
         }
         NInstallStatus installStatus = def.getInstallInformation().get(session).getInstallStatus();
         if (!installStatus.isInstalled()) {
@@ -136,7 +136,7 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableCommand {
 //                }
 //            }
 //        }
-        execCommand.ws_execId(def, commandName, appArgs, executorOptions, workspaceOptions, env, dir, failFast, false, session
+        return execCommand.ws_execId(def, commandName, appArgs, executorOptions, workspaceOptions, env, dir, failFast, false, session
                 , execCommand.getIn()
                 , execCommand.getOut()
                 , execCommand.getErr()

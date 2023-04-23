@@ -50,20 +50,20 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
     private Map<String, Set<String>> extensionsToContentType;
 
     public DefaultNContentTypeResolver() {
-        contentTypesToExtensions=new HashMap<>();
-        extensionsToContentType=new HashMap<>();
-        Properties p=new Properties();
-        try(InputStream is=getClass().getResource("/net/thevpc/nuts/runtime/content-types.properties").openStream()){
+        contentTypesToExtensions = new HashMap<>();
+        extensionsToContentType = new HashMap<>();
+        Properties p = new Properties();
+        try (InputStream is = getClass().getResource("/net/thevpc/nuts/runtime/content-types.properties").openStream()) {
             p.load(is);
-        }catch (IOException ex){
+        } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
         for (Map.Entry<Object, Object> e : p.entrySet()) {
-            String extension=(String)e.getKey();
+            String extension = (String) e.getKey();
             for (String contentType : NStringUtils.split((String) e.getValue(), ",; ")) {
-                contentTypesToExtensions.computeIfAbsent(contentType,x->new LinkedHashSet<>())
+                contentTypesToExtensions.computeIfAbsent(contentType, x -> new LinkedHashSet<>())
                         .add(extension);
-                extensionsToContentType.computeIfAbsent(extension,x->new LinkedHashSet<>())
+                extensionsToContentType.computeIfAbsent(extension, x -> new LinkedHashSet<>())
                         .add(contentType);
             }
         }
@@ -72,23 +72,25 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
     public NSupported<String> probeContentType(NPath path, NSession session) {
         String contentType = null;
         if (path != null) {
-            if (path.isFile()) {
-                Path file = path.asFile();
+            if (path.isRegularFile()) {
+                Path file = path.toPath().orNull();
                 if (file != null) {
-                    contentType = probeFile(file,session);
+                    contentType = probeFile(file, session);
                 }
             }
             if (contentType == null) {
-                URL url = path.asURL();
+                URL url = path.toURL().orNull();
                 try {
-                    contentType = url.openConnection().getContentType();
+                    if (url != null) {
+                        contentType = url.openConnection().getContentType();
+                    }
                 } catch (IOException e) {
                     //
                 }
             }
 
             if (contentType == null) {
-                String name=path.getName();
+                String name = path.getName();
                 try {
                     contentType = URLConnection.guessContentTypeFromName(name);
                 } catch (Exception e) {
@@ -115,41 +117,41 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
         return NSupported.invalid();
     }
 
-    private String probeFile(Path file, NSession session){
-        String contentType=null;
+    private String probeFile(Path file, NSession session) {
+        String contentType = null;
         try {
             contentType = Files.probeContentType(file);
         } catch (IOException e) {
             //ignore
         }
-        if(contentType!=null){
-            switch (contentType){
-                case "application/zip":{
-                    NRef<Boolean> isJar= NRef.of(false);
-                    NRef<Boolean> isWar= NRef.of(false);
-                    ZipUtils.visitZipStream(file,(path, inputStream) -> {
-                        switch (path){
-                            case "META-INF/MANIFEST.MF":{
+        if (contentType != null) {
+            switch (contentType) {
+                case "application/zip": {
+                    NRef<Boolean> isJar = NRef.of(false);
+                    NRef<Boolean> isWar = NRef.of(false);
+                    ZipUtils.visitZipStream(file, (path, inputStream) -> {
+                        switch (path) {
+                            case "META-INF/MANIFEST.MF": {
                                 isJar.set(true);
-                                if(isJar.orElse(false) && isWar.orElse(false)){
+                                if (isJar.orElse(false) && isWar.orElse(false)) {
                                     return false;
                                 }
                                 break;
                             }
-                            case "WEB-INF/web.xml":{
+                            case "WEB-INF/web.xml": {
                                 isWar.set(true);
-                                if(isJar.orElse(false) && isWar.orElse(false)){
+                                if (isJar.orElse(false) && isWar.orElse(false)) {
                                     return false;
                                 }
                                 break;
                             }
                         }
                         return true;
-                    },session);
-                    if(isWar.get()){
+                    }, session);
+                    if (isWar.get()) {
                         return "application/x-webarchive";
                     }
-                    if(isJar.get()){
+                    if (isJar.get()) {
                         return "application/java-archive";
                     }
                 }
@@ -178,13 +180,13 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
     @Override
     public List<String> findExtensionsByContentType(String contentType, NSession session) {
         Set<String> v = contentTypesToExtensions.get(contentType);
-        return v==null?Collections.emptyList():new ArrayList<>(v);
+        return v == null ? Collections.emptyList() : new ArrayList<>(v);
     }
 
     @Override
     public List<String> findContentTypesByExtension(String extension, NSession session) {
         Set<String> v = extensionsToContentType.get(extension);
-        return v==null?Collections.emptyList():new ArrayList<>(v);
+        return v == null ? Collections.emptyList() : new ArrayList<>(v);
     }
 
     @Override

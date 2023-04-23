@@ -97,7 +97,7 @@ public class FilePath implements NPathSPI {
         if (path.toString().isEmpty()) {
             return fastPath(value, getSession());
         }
-        Path f = path.asFile();
+        Path f = path.toPath().orNull();
         if (f != null) {
             return fastPath(value.resolve(f), getSession());
         }
@@ -137,17 +137,17 @@ public class FilePath implements NPathSPI {
     }
 
     @Override
-    public URL toURL(NPath basePath) {
+    public NOptional<URL> toURL(NPath basePath) {
         try {
-            return value.toUri().toURL();
+            return NOptional.of(value.toUri().toURL());
         } catch (MalformedURLException e) {
-            throw new NIOException(session, e);
+            return NOptional.ofNamedError(NMsg.ofC("not an url %s", value));
         }
     }
 
     @Override
-    public Path toFile(NPath basePath) {
-        return value;
+    public NOptional<Path> toPath(NPath basePath) {
+        return NOptional.ofNamed(value, "path");
     }
 
     @Override
@@ -512,7 +512,7 @@ public class FilePath implements NPathSPI {
     }
 
     @Override
-    public int getPathCount(NPath basePath) {
+    public int getLocationItemsCount(NPath basePath) {
         return value.getNameCount();
     }
 
@@ -563,7 +563,7 @@ public class FilePath implements NPathSPI {
     }
 
     @Override
-    public List<String> getItems(NPath basePath) {
+    public List<String> getLocationItems(NPath basePath) {
         int nameCount = value.getNameCount();
         String[] names = new String[nameCount];
         for (int i = 0; i < nameCount; i++) {
@@ -574,7 +574,7 @@ public class FilePath implements NPathSPI {
 
     @Override
     public void moveTo(NPath basePath, NPath other, NPathOption... options) {
-        Path f = other.asFile();
+        Path f = other.toPath().orNull();
         if (f != null) {
             try {
                 Files.move(value, f, StandardCopyOption.REPLACE_EXISTING);
@@ -874,4 +874,8 @@ public class FilePath implements NPathSPI {
         return null;
     }
 
+    @Override
+    public byte[] getDigest(NPath basePath, String algo) {
+        return null;
+    }
 }

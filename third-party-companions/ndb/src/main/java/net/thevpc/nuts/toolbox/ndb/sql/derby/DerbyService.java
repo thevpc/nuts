@@ -179,7 +179,7 @@ public class DerbyService {
                             (java.getVersion().compareTo("1.9") < 0) ? NVersionFilters.of(session).byValue("[,10.15.1.3[").get().to(NIdFilter.class) :
                                     null)
                     .setSession(session.copy())
-                    .getResultIds().singleton();
+                    .getResultIds().findSingleton().get();
             currentDerbyVersion = best.getVersion().toString();
         }
 
@@ -195,7 +195,7 @@ public class DerbyService {
         }
         NPath derbyDataHomeRoot = derbyDataHome.getParent();
         derbyDataHome.mkdirs();
-        Path derbyBinHome = NLocations.of(session).getStoreLocation(session.getAppId(), NStoreType.BIN).resolve(currentDerbyVersion).toFile();
+        Path derbyBinHome = NLocations.of(session).getStoreLocation(session.getAppId(), NStoreType.BIN).resolve(currentDerbyVersion).toPath().get();
         Path derbyLibHome = derbyBinHome.resolve("lib");
         Path derby = download("org.apache.derby:derby#" + currentDerbyVersion, derbyLibHome, false);
         Path derbynet = download("org.apache.derby:derbynet#" + currentDerbyVersion, derbyLibHome, false);
@@ -209,7 +209,7 @@ public class DerbyService {
                         .replace("${{DB_PATH}}", derbyDataHomeRoot.toString());
                 Files.write(policy, permissions.getBytes());
             } catch (IOException ex) {
-                throw new NExecutionException(session, NMsg.ofC("unable to create %s",policy), 1);
+                throw new NExecutionException(session, NMsg.ofC("unable to create %s",policy), NExecutionException.ERROR_1);
             }
         }
         //use named jar because derby does test upon jar names at runtime (what a shame !!!)

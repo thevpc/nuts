@@ -17,8 +17,8 @@ public class NPlatformHome {
     private final boolean system;
     private final Function<String, String> env;
     private final Function<String, String> props;
-    private final String wsPrefix="ws";
-    private final String sysPrefix="system";
+    private final String wsPrefix = "ws";
+    private final String sysPrefix = "system";
 
 
     public static NPlatformHome ofSystem(NOsFamily platformOsFamily, Function<String, String> env, Function<String, String> props) {
@@ -51,21 +51,39 @@ public class NPlatformHome {
 
     public static NPlatformHome ofPortable(NOsFamily platformOsFamily, boolean system, String userName) {
         NAssert.requireNonBlank(userName, "userName");
-        return new NPlatformHome(platformOsFamily, system, p -> null, p -> portableProp(p, platformOsFamily, userName));
+        return new NPlatformHome(platformOsFamily, system, p -> null, p -> portableProp(p, platformOsFamily, null, x -> {
+            switch (x) {
+                case "user.name":
+                    return userName;
+            }
+            return null;
+        }));
+    }
+
+    public static NPlatformHome ofPortable(NOsFamily platformOsFamily, boolean system, Function<String, String> env, Function<String, String> props) {
+        return new NPlatformHome(platformOsFamily, system, p -> null, p -> portableProp(p, platformOsFamily, env, props));
     }
 
 
-    private static String portableProp(String p, NOsFamily platformOsFamily, String userName) {
+    private static String portableProp(String p, NOsFamily platformOsFamily, Function<String, String> env, Function<String, String> props) {
         NOsFamily osFamily = platformOsFamily == null ? NOsFamily.UNIX : platformOsFamily;
         switch (p) {
-            case "user.name":
+            case "user.name": {
+                String userName = NAssert.requireNonBlank(props == null ? null : props.apply("user.name"), "user.name");
                 return userName;
+            }
             case "user.home": {
+                String home=props == null ? null : props.apply("user.home");
+                if(!NBlankable.isBlank(home)){
+                    return home;
+                }
                 switch (osFamily) {
                     case WINDOWS: {
+                        String userName = NAssert.requireNonBlank(props == null ? null : props.apply("user.name"), "user.name");
                         return "C:\\Users\\" + userName;
                     }
                     default: {
+                        String userName = NAssert.requireNonBlank(props == null ? null : props.apply("user.name"), "user.name");
                         switch (userName) {
                             case "root":
                                 return "/root";
@@ -77,8 +95,13 @@ public class NPlatformHome {
                 //break;
             }
             case "java.io.tmpdir": {
+                String temp=props == null ? null : props.apply("java.io.tmpdir");
+                if(!NBlankable.isBlank(temp)){
+                    return temp;
+                }
                 switch (osFamily) {
                     case WINDOWS: {
+                        String userName = NAssert.requireNonBlank(props == null ? null : props.apply("user.name"), "user.name");
                         return "C:\\Users\\" + userName + "\\AppData\\Local\\Temp";
                     }
                     default: {
@@ -240,37 +263,37 @@ public class NPlatformHome {
                 case BIN: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return getWindowsProgramFiles() + "\\nuts\\"+locationName;
+                            return getWindowsProgramFiles() + "\\nuts\\" + locationName;
                         }
                         default: {
-                            return "/opt/nuts/"+locationName;
+                            return "/opt/nuts/" + locationName;
                         }
                     }
                 }
                 case LIB: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return getWindowsProgramFiles() + "\\nuts\\"+locationName;
+                            return getWindowsProgramFiles() + "\\nuts\\" + locationName;
                         }
                         default: {
-                            return "/opt/nuts/"+locationName;
+                            return "/opt/nuts/" + locationName;
                         }
                     }
                 }
                 case CONF: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return getWindowsProgramFiles() + "\\nuts\\"+locationName;
+                            return getWindowsProgramFiles() + "\\nuts\\" + locationName;
                         }
                         default: {
-                            return "/etc/opt/nuts/"+locationName;
+                            return "/etc/opt/nuts/" + locationName;
                         }
                     }
                 }
                 case LOG: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return getWindowsProgramFiles() + "\\nuts\\"+locationName;
+                            return getWindowsProgramFiles() + "\\nuts\\" + locationName;
                         }
                         default: {
                             return "/var/log/nuts";
@@ -280,7 +303,7 @@ public class NPlatformHome {
                 case CACHE: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return getWindowsProgramFiles() + "\\nuts\\"+locationName;
+                            return getWindowsProgramFiles() + "\\nuts\\" + locationName;
                         }
                         default: {
                             return "/var/cache/nuts";
@@ -290,7 +313,7 @@ public class NPlatformHome {
                 case VAR: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return getWindowsProgramFiles() + "\\nuts\\"+locationName;
+                            return getWindowsProgramFiles() + "\\nuts\\" + locationName;
                         }
                         default: {
                             return "/var/opt/nuts";
@@ -307,7 +330,7 @@ public class NPlatformHome {
                             return pf + "\\nuts";
                         }
                         default: {
-                            return "/tmp/nuts/"+sysPrefix;
+                            return "/tmp/nuts/" + sysPrefix;
                         }
                     }
                 }
@@ -321,7 +344,7 @@ public class NPlatformHome {
                             return pf + "\\nuts\\run";
                         }
                         default: {
-                            return "/tmp/run/nuts/"+sysPrefix;
+                            return "/tmp/run/nuts/" + sysPrefix;
                         }
                     }
                 }
@@ -377,7 +400,7 @@ public class NPlatformHome {
                 case CONF: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return userHome + getNativePath("/AppData/Roaming/nuts/"+locationName);
+                            return userHome + getNativePath("/AppData/Roaming/nuts/" + locationName);
                         }
                         default: {
                             String val = NStringUtils.trim(env.apply("XDG_CONFIG_HOME"));
@@ -405,7 +428,7 @@ public class NPlatformHome {
                 case TEMP: {
                     switch (platformOsFamily) {
                         case WINDOWS:
-                            return userHome + getNativePath("/AppData/Local/nuts/"+locationName);
+                            return userHome + getNativePath("/AppData/Local/nuts/" + locationName);
                         default:
                             //on macos/unix/linux temp folder is shared. will add user folder as discriminator
                             return props.apply("java.io.tmpdir") + getNativePath("/" + userName + "/nuts");
@@ -475,18 +498,19 @@ public class NPlatformHome {
     }
 
     private String getNativePath(String s) {
-        switch (platformOsFamily){
-            case WINDOWS:return s.replace('/', '\\');
+        switch (platformOsFamily) {
+            case WINDOWS:
+                return s.replace('/', '\\');
         }
         return s.replace('\\', '/');
     }
 
     /**
-     * @param storeStrategy storeStrategy or null
-     * @param baseLocations         baseLocations or null
-     * @param homeLocations         homeLocations or null
-     * @param workspaceLocation     workspaceName or null
-     * @param session               session or null
+     * @param storeStrategy     storeStrategy or null
+     * @param baseLocations     baseLocations or null
+     * @param homeLocations     homeLocations or null
+     * @param workspaceLocation workspaceName or null
+     * @param session           session or null
      * @return locations map
      */
     public Map<NStoreType, String> buildLocations(

@@ -171,7 +171,7 @@ public class MavenRepositoryFolderHelper {
 
     private void reindexFolder(NPath path, boolean applyRawNavigation, NSession session) {
         try {
-            Files.walkFileTree(path.toFile(), new FileVisitor<Path>() {
+            Files.walkFileTree(path.toPath().get(), new FileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                     return FileVisitResult.CONTINUE;

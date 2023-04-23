@@ -95,12 +95,12 @@ public class FindCmd<C extends NdbConfig> extends NdbCmd<C> {
             }
         }
         if (NBlankable.isBlank(eq.getTable())) {
-            cmdLine.throwMissingArgumentByName("--table");
+            cmdLine.throwMissingArgument("--table");
         }
         C options = loadFromName(name, otherOptions);
         support.revalidateOptions(options);
         if (NBlankable.isBlank(otherOptions.getDatabaseName())) {
-            cmdLine.throwMissingArgumentByName("--dbname");
+            cmdLine.throwMissingArgument("--dbname");
         }
         run(eq, options, session);
     }

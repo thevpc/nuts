@@ -28,14 +28,14 @@ public class DefaultNWelcomeInternalExecutable extends DefaultInternalNExecutabl
     }
 
     @Override
-    public void execute() {
+    public int execute() {
         if(getSession().isDry()){
             dryExecute();
-            return;
+            return NExecutionException.SUCCESS;
         }
         if (NAppUtils.processHelpOptions(args, getSession())) {
             showDefaultHelp();
-            return;
+            return NExecutionException.SUCCESS;
         }
         NSession session = getSession();
         NCmdLine cmdLine = NCmdLine.of(args);
@@ -73,6 +73,7 @@ public class DefaultNWelcomeInternalExecutable extends DefaultInternalNExecutabl
             }
             session.out().resetLine().println(welcome);
         }
+        return NExecutionException.SUCCESS;
     }
 
 }

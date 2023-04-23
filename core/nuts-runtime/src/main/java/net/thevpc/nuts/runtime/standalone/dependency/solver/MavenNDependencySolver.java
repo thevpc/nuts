@@ -101,7 +101,7 @@ public class MavenNDependencySolver implements NDependencySolver {
                                         .addId(dependency.toId())
                                         .setSession(session).setEffective(true)
                                         .setContent(shouldIncludeContent)
-                                        .setLatest(true).getResultDefinitions().required();
+                                        .setLatest(true).getResultDefinitions().findFirst().get();
                             } catch (NNotFoundException ex) {
                                 //
                             }
@@ -148,7 +148,7 @@ public class MavenNDependencySolver implements NDependencySolver {
                                         .addId(dependency.toId())
                                         .setSession(session).setEffective(true)
                                         .setContent(shouldIncludeContent)
-                                        .setLatest(true).getResultDefinitions().required();
+                                        .setLatest(true).getResultDefinitions().findFirst().get();
                             } catch (NNotFoundException ex) {
                                 //
                             }
@@ -216,7 +216,7 @@ public class MavenNDependencySolver implements NDependencySolver {
                     ).setEffective(true)
                     .setContent(shouldIncludeContent)
                     .setEffective(true)
-                    .setLatest(true).getResultDefinitions().required();
+                    .setLatest(true).getResultDefinitions().findFirst().get();
         }
         if (def.getEffectiveDescriptor().isNotPresent()) {
             throw new NIllegalArgumentException(session, NMsg.ofC("expected an effective definition for %s", def.getId()));

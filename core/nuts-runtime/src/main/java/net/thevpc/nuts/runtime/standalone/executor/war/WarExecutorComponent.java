@@ -26,6 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.executor.war;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
@@ -65,8 +66,8 @@ public class WarExecutorComponent implements NExecutorComponent {
     }
 
     @Override
-    public void exec(NExecutionContext executionContext) {
-        execHelper(executionContext).exec();
+    public int exec(NExecutionContext executionContext) {
+        return execHelper(executionContext).exec();
     }
 
     public IProcessExecHelper execHelper(NExecutionContext executionContext) {

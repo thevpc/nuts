@@ -32,7 +32,7 @@ public class ExamplesOfZip {
     public void executeUncompress(NSession session) {
         session.out().println("Example of ## Uncompress ##");
         NPath example = NPath.ofUserDirectory(session).resolve("example.zip");
-        if (example.isFile()) {
+        if (example.isRegularFile()) {
             session.out().println(NMsg.ofC("Listing %s", example));
             NUncompress.of(session)
                     .setSource(example)

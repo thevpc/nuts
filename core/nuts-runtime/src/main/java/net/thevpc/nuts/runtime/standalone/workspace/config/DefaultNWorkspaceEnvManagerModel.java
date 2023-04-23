@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.DefaultObservableMap;
@@ -54,6 +55,7 @@ public class DefaultNWorkspaceEnvManagerModel {
     private final NId platform;
     private final NId os;
     private NOsFamily osFamily;
+    private String hostName;
     private NShellFamily shellFamily;
     private Set<NId> desktopEnvironments;
     private Set<NDesktopEnvironmentFamily> osDesktopEnvironmentFamilies;
@@ -82,6 +84,64 @@ public class DefaultNWorkspaceEnvManagerModel {
 
     public NArchFamily getArchFamily() {
         return archFamily;
+    }
+
+    public String getHostName() {
+        if (hostName == null) {
+            switch (getOsFamily()) {
+                case WINDOWS: {
+                    String computername = System.getenv("COMPUTERNAME");
+                    if (computername != null) {
+                        hostName = computername;
+                    } else {
+                        try {
+                            String hostname = NExecCommand.of(
+                                            NSessionUtils.defaultSession(workspace)
+                                    ).addCommand("hostname")
+                                    .grabOutputString()
+                                    .failFast()
+                                    .setErr(NExecOutput.ofNull())
+                                    .getOutputString();
+                            hostName = NStringUtils.trim(hostname);
+                        } catch (Exception any) {
+                            //
+                        }
+                    }
+                    if (hostName == null) {
+                        hostName = "";
+                    }
+                    break;
+                }
+                case UNIX:
+                case LINUX:
+                case MACOS: {
+                    try {
+                        this.hostName = NStringUtils.trim(NPath.of("/etc/hostname", NSessionUtils.defaultSession(workspace))
+                                .readString());
+                    } catch (Exception e) {
+                        //ignore
+                    }
+                    if (hostName == null) {
+                        hostName = "";
+                    }
+                    break;
+                }
+                default: {
+                    //try unix anyways!!
+                    try {
+                        this.hostName = NStringUtils.trim(NPath.of("/etc/hostname", NSessionUtils.defaultSession(workspace))
+                                .readString());
+                    } catch (Exception e) {
+                        //ignore
+                    }
+                    if (hostName == null) {
+                        hostName = "";
+                    }
+                    break;
+                }
+            }
+        }
+        return hostName;
     }
 
     public NOsFamily getOsFamily() {

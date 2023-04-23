@@ -54,7 +54,7 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
 //                }
             }
             String directory = NBlankable.isBlank(joptions.getDir()) ? null : joptions.getDir().toAbsolute().toString();
-            ProcessExecHelper.ofDefinition(def,
+            return ProcessExecHelper.ofDefinition(def,
                     args.toArray(new String[0]), osEnv, directory,
                     joptions.isShowCommand(), true,
                     executionContext.getSleepMillis(),
@@ -65,7 +65,6 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
                     executionContext.getSession(),
                     execSession
             ).exec();
-            return 0;
         }
         return preExec().exec();
     }

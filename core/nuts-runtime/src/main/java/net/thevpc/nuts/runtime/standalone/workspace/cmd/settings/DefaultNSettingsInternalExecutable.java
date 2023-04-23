@@ -27,15 +27,15 @@ public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutab
 
     private List<NSettingsSubCommand> subCommands;
     @Override
-    public void execute() {
+    public int execute() {
         if(getSession().isDry()){
             dryExecute();
-            return;
+            return NExecutionException.SUCCESS;
         }
         NSession session = getSession();
         if (NAppUtils.processHelpOptions(args, session)) {
             showDefaultHelp();
-            return;
+            return NExecutionException.SUCCESS;
         }
 //        getSession().getWorkspace().extensions().discoverTypes(
 //                getSession().getAppId(),
@@ -64,7 +64,7 @@ public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutab
                             showDefaultHelp();
                         }
                         cmd.skipAll();
-                        throw new NExecutionException(session, NMsg.ofPlain("help"), 0);
+                        throw new NExecutionException(session, NMsg.ofPlain("help"), NExecutionException.SUCCESS);
                     }
                     break;
                 } else{
@@ -80,13 +80,13 @@ public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutab
                         session.configureLast(cmd);
                     }else{
                         if (!cmd.isExecMode()) {
-                            return;
+                            return NExecutionException.SUCCESS;
                         }
                         if (cmd.hasNext()) {
                             NPrintStream out = session.err();
                             out.println(NMsg.ofC("unexpected %s", cmd.peek()));
                             out.println("type for more help : nuts settings -h");
-                            throw new NExecutionException(session, NMsg.ofC("unexpected %s", cmd.peek()), 1);
+                            throw new NExecutionException(session, NMsg.ofC("unexpected %s", cmd.peek()), NExecutionException.ERROR_1);
                         }
                         break;
                     }
@@ -96,8 +96,9 @@ public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutab
             NPrintStream out = session.err();
             out.println("missing settings command");
             out.println("type for more help : nuts settings -h");
-            throw new NExecutionException(session, NMsg.ofPlain("missing settings command"), 1);
+            throw new NExecutionException(session, NMsg.ofPlain("missing settings command"), NExecutionException.ERROR_1);
         }
+        return NExecutionException.SUCCESS;
     }
 
     public List<NSettingsSubCommand> getSubCommands() {

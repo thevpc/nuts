@@ -54,7 +54,7 @@ public class DefaultNPrepareCommand extends AbstractNPrepareCommand {
     }
 
     private void pushId(NId pid, NVersion apiIdVersion) {
-        NDefinition def = NSearchCommand.of(session).addId(pid).setOptional(false).setLatest(true).setContent(true).setTargetApiVersion(apiIdVersion).getResultDefinitions().required();
+        NDefinition def = NSearchCommand.of(session).addId(pid).setOptional(false).setLatest(true).setContent(true).setTargetApiVersion(apiIdVersion).getResultDefinitions().findFirst().get();
         NPath apiJar = def.getContent().get();
         if (!runRemoteAsStringNoFail("ls " + remoteIdMavenJar(def.getApiId()))) {
             if (!isLocalhost()) {

@@ -24,7 +24,7 @@ public class Test07_DescriptorTest {
     @Test
     public void testSearchDescriptor() {
         NDefinition u = NSearchCommand.of(session).addId("org.springframework.boot:spring-boot-cli#2.4.1")
-                .getResultDefinitions().required();
+                .getResultDefinitions().findFirst().get();
         TestUtils.println(u.getDescriptor());
         TestUtils.println(u.getId()+":"+(u.getDescriptor().isExecutable() ? "executable" : "non-executable"));
         TestUtils.println(u.getId()+":"+(u.getDescriptor().isApplication() ? "app" : "non-app"));

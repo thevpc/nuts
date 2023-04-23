@@ -234,7 +234,7 @@ public class DefaultNWorkspaceExtensionModel {
 //        }
 //    }
     public Set<Class> discoverTypes(NId id, ClassLoader classLoader, NSession session) {
-        URL url = NFetchCommand.of(id, session).setContent(true).getResultContent().asURL();
+        URL url = NFetchCommand.of(id, session).setContent(true).getResultContent().toURL().get();
         return objectFactory.discoverTypes(id, url, classLoader, session);
     }
 
@@ -370,7 +370,7 @@ public class DefaultNWorkspaceExtensionModel {
                             .setDependencies(true)
                             .setDependencyFilter(NDependencyFilters.of(session).byRunnable())
                             .setLatest(true)
-                            .getResultDefinitions().required();
+                            .getResultDefinitions().findFirst().get();
                     if (def == null || def.getContent().isNotPresent()) {
                         throw new NIllegalArgumentException(session, NMsg.ofC("extension not found: %s", extension));
                     }
@@ -379,7 +379,7 @@ public class DefaultNWorkspaceExtensionModel {
                     }
 //                    ws.install().setSession(session).id(def.getId());
                     workspaceExtensionsClassLoader.add(NClassLoaderUtils.definitionToClassLoaderNode(def, session));
-                    Set<Class> classes = objectFactory.discoverTypes(def.getId(), def.getContent().map(NPath::asURL).orNull(), workspaceExtensionsClassLoader, session);
+                    Set<Class> classes = objectFactory.discoverTypes(def.getId(), def.getContent().flatMap(NPath::toURL).orNull(), workspaceExtensionsClassLoader, session);
                     for (Class aClass : classes) {
                         ((NWorkspaceExt) ws).getModel().configModel.onNewComponent(aClass, session);
                     }
@@ -408,7 +408,7 @@ public class DefaultNWorkspaceExtensionModel {
                 .setDependencyFilter(NDependencyFilters.of(session).byRunnable())
                 .setLatest(true)
                 .getResultDefinitions().toList()) {
-            loadedExtensionURLs.add(def.getContent().map(NPath::asURL).orNull());
+            loadedExtensionURLs.add(def.getContent().flatMap(NPath::toURL).orNull());
         }
     }
 
@@ -457,13 +457,13 @@ public class DefaultNWorkspaceExtensionModel {
                 .setContent(true)
                 .setDependencies(true)
                 .setLatest(true)
-                .getResultDefinitions().required();
+                .getResultDefinitions().findFirst().get();
         if (!isLoadedClassPath(nDefinitions, session)) {
             this.workspaceExtensionsClassLoader.add(NClassLoaderUtils.definitionToClassLoaderNode(nDefinitions, session));
         }
         DefaultNWorkspaceExtension workspaceExtension = new DefaultNWorkspaceExtension(id, nDefinitions.getId(), this.workspaceExtensionsClassLoader);
         //now will iterate over Extension classes to wire them ...
-        Set<Class> discoveredTypes = objectFactory.discoverTypes(nDefinitions.getId(), nDefinitions.getContent().map(NPath::asURL).orNull(), workspaceExtension.getClassLoader(), session);
+        Set<Class> discoveredTypes = objectFactory.discoverTypes(nDefinitions.getId(), nDefinitions.getContent().flatMap(NPath::toURL).orNull(), workspaceExtension.getClassLoader(), session);
 //        for (Class extensionImpl : getExtensionTypes(NutsComponent.class, session)) {
 //            for (Class extensionPointType : resolveComponentTypes(extensionImpl)) {
 //                if (registerType(extensionPointType, extensionImpl, session)) {
@@ -506,7 +506,7 @@ public class DefaultNWorkspaceExtensionModel {
             if (file.getContent().isPresent()) {
                 ZipFile zipFile = null;
                 try {
-                    zipFile = new ZipFile(file.getContent().map(NPath::toFile).map(Path::toFile).get(session));
+                    zipFile = new ZipFile(file.getContent().flatMap(NPath::toPath).map(Path::toFile).get(session));
                     Enumeration<? extends ZipEntry> entries = zipFile.entries();
                     while (entries.hasMoreElements()) {
                         ZipEntry zipEntry = entries.nextElement();
@@ -614,7 +614,7 @@ public class DefaultNWorkspaceExtensionModel {
     protected URL expandURL(String url, NSession session) {
         return NPath.of(url, session)
                 .toAbsolute(NLocations.of(session).getWorkspaceLocation())
-                .toURL();
+                .toURL().get();
     }
 
     private NConfigsExt configExt() {

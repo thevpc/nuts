@@ -293,7 +293,8 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
             public FixAction apply(NInstallInformation nInstallInformation) {
                 NId id = NSearchCommand.of(getSession()).setInstallStatus(
                         NInstallStatusFilters.of(session).byInstalled(true)
-                ).addId(nInstallInformation.getId()).getResultIds().first();
+                ).addId(nInstallInformation.getId()).getResultIds()
+                        .findFirst().orNull();
                 if (id == null) {
                     return new FixAction(nInstallInformation.getId(), "MissingInstallation") {
                         @Override
@@ -475,7 +476,8 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
                 .setInstallStatus(NInstallStatusFilters.of(session).byDeployed(true))
                 .setOptional(false).setFailFast(false)//.setDefaultVersions(true)
                 .sort(DEFAULT_THEN_LATEST_VERSION_FIRST)
-                .getResultDefinitions().first();
+                .getResultDefinitions()
+                .findFirst().orNull();
         if (d0 == null) {
             //should not throw exception here, this is a check and not update method
             return r;
@@ -513,7 +515,8 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
         } else {
             sc.addScopes(scopes.toArray(new NDependencyScope[0]));
         }
-        NDefinition d1 = sc.getResultDefinitions().first();
+        NDefinition d1 = sc.getResultDefinitions()
+                .findFirst().orNull();
         r.setInstalled(d0);
         r.setAvailable(d1);
         if (d1 == null) {
@@ -724,7 +727,8 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
                 }
                 try {
                     newId = NSearchCommand.of(getSession()).setSession(session.copy().setFetchStrategy(NFetchStrategy.ANYWHERE))
-                            .addId(NConstants.Ids.NUTS_API + "#" + v).setLatest(true).getResultIds().first();
+                            .addId(NConstants.Ids.NUTS_API + "#" + v).setLatest(true).getResultIds()
+                            .findFirst().orNull();
                     newFile = newId == null ? null : latestOnlineDependencies(fetch0()).setFailFast(false).setSession(session).setId(newId).getResultDefinition();
                 } catch (NNotFoundException ex) {
                     _LOGOP(session).level(Level.SEVERE).error(ex).log(NMsg.ofJ("error : {0}", ex));
@@ -755,7 +759,8 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
                             .setLatest(true)
                             .setSession(session.copy().setFetchStrategy(NFetchStrategy.ANYWHERE))
                             .sort(LATEST_VERSION_FIRST);
-                    newId = se.getResultIds().first();
+                    newId = se.getResultIds()
+                            .findFirst().orNull();
                     newFile = newId == null ? null : latestOnlineDependencies(fetch0().setId(newId))
                             .setSession(session)
                             .setFailFast(false)

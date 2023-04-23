@@ -61,9 +61,9 @@ public interface NPathSPI extends NSessionProvider {
 
     NPath toCompressedForm(NPath basePath);
 
-    URL toURL(NPath basePath);
+    NOptional<URL> toURL(NPath basePath);
 
-    Path toFile(NPath basePath);
+    NOptional<Path> toPath(NPath basePath);
 
     boolean isSymbolicLink(NPath basePath);
 
@@ -137,7 +137,7 @@ public interface NPathSPI extends NSessionProvider {
      * @param basePath basePath
      * @return path items count
      */
-    int getPathCount(NPath basePath);
+    int getLocationItemsCount(NPath basePath);
 
     /**
      * true if this is the root of the path file system. good examples are: '/'
@@ -172,7 +172,7 @@ public interface NPathSPI extends NSessionProvider {
 
     NPath subpath(NPath basePath, int beginIndex, int endIndex);
 
-    List<String> getItems(NPath basePath);
+    List<String> getLocationItems(NPath basePath);
 
     void moveTo(NPath basePath, NPath other, NPathOption... options);
 
@@ -181,4 +181,6 @@ public interface NPathSPI extends NSessionProvider {
     void walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options);
 
     NPath toRelativePath(NPath basePath, NPath parentPath);
+
+    byte[] getDigest(NPath basePath, String algo);
 }

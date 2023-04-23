@@ -105,11 +105,11 @@ public class LocalTomcat {
                         ps(cmdLine);
                         return;
                     default:
-                        throw new NExecutionException(session, NMsg.ofC("unsupported action %s", a.asString()), 1);
+                        throw new NExecutionException(session, NMsg.ofC("unsupported action %s", a.asString()), NExecutionException.ERROR_1);
                 }
             }
         }
-        throw new NExecutionException(session, NMsg.ofPlain("missing tomcat action. Type: nuts tomcat --help"), 1);
+        throw new NExecutionException(session, NMsg.ofPlain("missing tomcat action. Type: nuts tomcat --help"), NExecutionException.ERROR_1);
     }
 
     public void list(NCmdLine args) {
@@ -438,7 +438,7 @@ public class LocalTomcat {
             session.configureLast(args);
         }
         if (!c.stop()) {
-            throw new NExecutionException(session, NMsg.ofPlain("unable to stop"), 1);
+            throw new NExecutionException(session, NMsg.ofPlain("unable to stop"), NExecutionException.ERROR_1);
         }
     }
 
@@ -507,10 +507,10 @@ public class LocalTomcat {
             }
         }
         if (app == null) {
-            throw new NExecutionException(session, NMsg.ofPlain("tomcat install: Missing Application"), 2);
+            throw new NExecutionException(session, NMsg.ofPlain("tomcat install: Missing Application"), NExecutionException.ERROR_2);
         }
         if (file == null) {
-            throw new NExecutionException(session, NMsg.ofPlain("tomcat install: Missing File"), 2);
+            throw new NExecutionException(session, NMsg.ofPlain("tomcat install: Missing File"), NExecutionException.ERROR_2);
         }
         app.install(version, file, true);
     }
@@ -787,7 +787,7 @@ public class LocalTomcat {
             }
         }
         if (file == null) {
-            throw new NExecutionException(session, NMsg.ofPlain("tomcat deploy: Missing File"), 2);
+            throw new NExecutionException(session, NMsg.ofPlain("tomcat deploy: Missing File"), NExecutionException.ERROR_2);
         }
         LocalTomcatConfigService c = openTomcatConfig(instance, NOpenMode.OPEN_OR_ERROR);
         c.deployFile(NPath.of(file, getSession()), contextName, domain);
@@ -931,10 +931,10 @@ public class LocalTomcat {
             LocalTomcatDomainConfigService d = u.getDomain(strings[1], null);
             LocalTomcatAppConfigService a = u.getApp(strings[1], null);
             if (d != null && a != null) {
-                throw new NExecutionException(session, NMsg.ofC("ambiguous name %s. Could be either domain or app", name), 3);
+                throw new NExecutionException(session, NMsg.ofC("ambiguous name %s. Could be either domain or app", name), NExecutionException.ERROR_3);
             }
             if (d == null && a == null) {
-                throw new NExecutionException(session, NMsg.ofC("unknown name %s. it is no domain nor app", name), 3);
+                throw new NExecutionException(session, NMsg.ofC("unknown name %s. it is no domain nor app", name), NExecutionException.ERROR_3);
             }
             if (d != null) {
                 return d;

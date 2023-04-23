@@ -160,7 +160,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
 
     public RemoteTomcatConfigService loadConfig() {
         if (name == null) {
-            throw new NExecutionException(session, NMsg.ofPlain("missing instance name"), 2);
+            throw new NExecutionException(session, NMsg.ofPlain("missing instance name"), NExecutionException.ERROR_2);
         }
         NPath f = getConfigPath();
         if (f.exists()) {
@@ -185,7 +185,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     public RemoteTomcatAppConfigService getAppOrError(String appName) {
         RemoteTomcatAppConfig a = getConfig().getApps().get(appName);
         if (a == null) {
-            throw new NExecutionException(session, NMsg.ofC("app not found :%s", appName), 2);
+            throw new NExecutionException(session, NMsg.ofC("app not found :%s", appName), NExecutionException.ERROR_2);
         }
         return new RemoteTomcatAppConfigService(appName, a, this);
     }

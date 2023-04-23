@@ -6,8 +6,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.push;
 
 import net.thevpc.nuts.NExecCommand;
+import net.thevpc.nuts.NExecutionException;
 import net.thevpc.nuts.NPushCommand;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExecutableCommand;
 
@@ -22,16 +22,17 @@ public class DefaultNPushInternalExecutable extends DefaultInternalNExecutableCo
     }
 
     @Override
-    public void execute() {
+    public int execute() {
         if(getSession().isDry()){
             dryExecute();
-            return;
+            return NExecutionException.SUCCESS;
         }
         if (NAppUtils.processHelpOptions(args, getSession())) {
             showDefaultHelp();
-            return;
+            return NExecutionException.SUCCESS;
         }
         NPushCommand.of(getSession()).configure(false, args).run();
+        return NExecutionException.SUCCESS;
     }
 
 }

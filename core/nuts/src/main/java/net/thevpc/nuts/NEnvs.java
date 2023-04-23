@@ -62,6 +62,7 @@ public interface NEnvs extends NComponent,NSessionProvider {
      */
     NEnvs setProperty(String property, Object value);
 
+    String getHostName();
     NOsFamily getOsFamily();
 
     Set<NShellFamily> getShellFamilies();

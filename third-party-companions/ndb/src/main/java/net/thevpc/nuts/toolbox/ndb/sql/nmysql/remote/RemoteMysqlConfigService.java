@@ -66,7 +66,7 @@ public class RemoteMysqlConfigService {
 
     public RemoteMysqlConfigService loadConfig() {
         if (name == null) {
-            throw new NExecutionException(session, NMsg.ofPlain("missing config name"), 2);
+            throw new NExecutionException(session, NMsg.ofPlain("missing config name"), NExecutionException.ERROR_2);
         }
         NPath f = getConfigPath();
         if (f.exists()) {

@@ -1,4 +1,4 @@
-package net.thevpc.nuts.lib.ssh;
+package net.thevpc.nuts.ext.ssh;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
@@ -28,7 +28,12 @@ public class SshFileInputStream extends DynamicInputStream {
         filesize = 0L;
         buf = new byte[1024];
         this.closeConnection = true;
-        SShConnection connection = new SShConnection(path, nSession);
+        SShConnection connection = new SShConnection(path
+                ,nSession.in()
+                ,nSession.out().asOutputStream()
+                ,nSession.err().asOutputStream()
+                , nSession
+                );
         this.connection = connection;
     }
 

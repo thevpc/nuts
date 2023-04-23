@@ -73,7 +73,7 @@ public class DefaultNFetchCommand extends AbstractNFetchCommand {
         try {
             checkSession();
             NSession session = getSession();
-            Path f = getResultDefinition().getContent().map(NPath::toFile).get(this.session);
+            Path f = getResultDefinition().getContent().flatMap(NPath::toPath).get(this.session);
             return NDigest.of(session).setSource(f).computeString();
         } catch (NNotFoundException ex) {
             if (!isFailFast()) {
@@ -140,7 +140,7 @@ public class DefaultNFetchCommand extends AbstractNFetchCommand {
     public Path getResultPath() {
         try {
             NDefinition def = fetchDefinition(getId(), copy().setContent(true).setEffective(false), true, false);
-            Path p = def.getContent().map(NPath::toFile).orNull();
+            Path p = def.getContent().flatMap(NPath::toPath).orNull();
             if (getLocation() != null) {
                 return getLocation();
             }

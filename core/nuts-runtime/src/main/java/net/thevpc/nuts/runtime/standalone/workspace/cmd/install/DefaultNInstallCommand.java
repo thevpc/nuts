@@ -497,7 +497,7 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
             failed = failedList.toArray(new NId[0]);
         }
         if (list.emptyCommand) {
-            throw new NExecutionException(getSession(), NMsg.ofPlain("missing packages to install"), 1);
+            throw new NExecutionException(getSession(), NMsg.ofPlain("missing packages to install"), NExecutionException.ERROR_1);
         }
         return this;
     }

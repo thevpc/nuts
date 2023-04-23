@@ -152,7 +152,7 @@ public class UnzipCommand extends NShellBuiltinDefault {
                             .run();
                 }
             } catch (UncheckedIOException | NIOException ex) {
-                throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, 1);
+                throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_1);
             }
         }
     }

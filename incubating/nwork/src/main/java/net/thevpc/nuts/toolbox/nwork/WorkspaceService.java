@@ -150,7 +150,7 @@ public class WorkspaceService {
         }
 
         if (count == 0) {
-            throw new NExecutionException(session, NMsg.ofPlain("missing projects"), 1);
+            throw new NExecutionException(session, NMsg.ofPlain("missing projects"), NExecutionException.ERROR_1);
         }
     }
 
@@ -286,7 +286,7 @@ public class WorkspaceService {
             remoteUser.set(System.getProperty("user.name"));
         }
         if (remoteServer.isBlank()) {
-            cmdLine.throwMissingArgumentByName("--remote-server");
+            cmdLine.throwMissingArgument("--remote-server");
         }
         for (NId id : idsToPush) {
             String groupIdPath = String.join("/", id.getGroupId().split("[.]"));

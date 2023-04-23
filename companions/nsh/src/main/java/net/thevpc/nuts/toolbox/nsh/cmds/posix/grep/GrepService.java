@@ -35,8 +35,8 @@ public class GrepService {
         boolean prefixFileName = false;
         if ((options.files.size() > 1) || (
                 options.files.size() == 1
-                        && options.files.get(0).getFile() != null
-                        && options.files.get(0).getFile().isDirectory())) {
+                        && options.files.get(0).getPath() != null
+                        && options.files.get(0).getPath().isDirectory())) {
             prefixFileName = true;
         }
         GrepResultCollectorImpl grepResultCollectorImpl = new GrepResultCollectorImpl(session, options, out, prefixFileName, 1024);
@@ -68,22 +68,22 @@ public class GrepService {
             }
         };
         for (FileInfo f : options.files) {
-            if (f.getFile() == null) {
+            if (f.getPath() == null) {
                 grepFile(f, p, options, session, prefixFileName, grepResultCollectorImpl);
-            } else if (f.getFile().isFile()) {
+            } else if (f.getPath().isRegularFile()) {
                 grepFile(f, p, options, session, prefixFileName, grepResultCollectorImpl);
-            } else if (f.getFile().isDirectory()) {
+            } else if (f.getPath().isDirectory()) {
                 if (options.recursive) {
                     Stack<FileInfo> stack = new Stack<>();
                     stack.add(f);
                     while (!stack.isEmpty()) {
                         FileInfo ff = stack.pop();
-                        if (ff.getFile().isFile()) {
+                        if (ff.getPath().isRegularFile()) {
 
                             grepFile(f, p, options, session, prefixFileName, grepResultCollectorImpl);
-                        } else if (ff.getFile().isDirectory()) {
-                            for (NPath nPath : ff.getFile().list()) {
-                                if (nPath.isDirectory() || (nPath.isFile() && fileName.test(nPath))) {
+                        } else if (ff.getPath().isDirectory()) {
+                            for (NPath nPath : ff.getPath().list()) {
+                                if (nPath.isDirectory() || (nPath.isRegularFile() && fileName.test(nPath))) {
                                     stack.push(
                                             new FileInfo(
                                                     nPath, f.getHighlighter()
@@ -119,8 +119,8 @@ public class GrepService {
         try {
             if (f == null) {
                 return processByLine(options, p, f, results, session);
-            } else if (f.getFile().isDirectory()) {
-                for (NPath ff : f.getFile().stream()) {
+            } else if (f.getPath().isDirectory()) {
+                for (NPath ff : f.getPath().stream()) {
                     if (!grepFile(new FileInfo(ff, f.getHighlighter()), p, options, session, true, results)) {
                         return false;
                     }
@@ -134,7 +134,7 @@ public class GrepService {
                 }
             }
         } catch (IOException ex) {
-            throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, 100);
+            throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_3);
         }
     }
 
@@ -163,7 +163,7 @@ public class GrepService {
     }
 
     private boolean processByLine(GrepOptions options, GrepFilter p, FileInfo f, GrepResultCollector results, NSession session) throws IOException {
-        try (Reader reader = (f == null ? new InputStreamReader(session.in()) : f.getFile().getReader())) {
+        try (Reader reader = (f == null ? new InputStreamReader(session.in()) : f.getPath().getReader())) {
             return processByText0(reader, null, options, p, f, results, session);
         }
     }
@@ -181,24 +181,24 @@ public class GrepService {
             results.acceptLine(line);
             if (i == wline.getPivotIndex()) {
                 if (filter.processPivot(line.getObject(), coloredLine0, selectionStyle(options), session)) {
-                    result.add(new GrepResultItem(f.getFile(), line.getNumber(), coloredLine0.build(), true));
+                    result.add(new GrepResultItem(f.getPath(), line.getNumber(), coloredLine0.build(), true));
                 }
             } else {
-                result.add(new GrepResultItem(f.getFile(), line.getNumber(), coloredLine0.build(), false));
+                result.add(new GrepResultItem(f.getPath(), line.getNumber(), coloredLine0.build(), false));
             }
         }
         return result;
     }
 
     private boolean processByText(GrepOptions options, GrepFilter p, FileInfo f, GrepResultCollector results, NSession session) throws IOException {
-        String text = new String(NCp.of(session).from(f.getFile()).getByteArrayResult());
+        String text = new String(NCp.of(session).from(f.getPath()).getByteArrayResult());
         if (NBlankable.isBlank(f.getHighlighter())) {
-            f.setHighlighter(f.getFile().getContentType());
+            f.setHighlighter(f.getPath().getContentType());
         }
         NTextBuilder flattened = NTexts.of(session).ofCode(f.getHighlighter(), text).highlight(session)
                 .builder()
                 .flatten();
-        try (Reader in = f.getFile().getReader()) {
+        try (Reader in = f.getPath().getReader()) {
             return processByText0(in, flattened, options, p, f, results, session);
         }
     }

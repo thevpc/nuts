@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
 import net.thevpc.nuts.NFormat;
+import net.thevpc.nuts.NOptional;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NString;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -13,6 +14,7 @@ import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NStream;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
@@ -129,12 +131,17 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public URL toURL() {
+    public NOptional<URL> toURL() {
         return base.toURL();
     }
 
     @Override
-    public Path toFile() {
+    public NOptional<Path> toPath() {
+        return base.toPath();
+    }
+
+    @Override
+    public NOptional<File> toFile() {
         return base.toFile();
     }
 
@@ -321,8 +328,8 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public int getPathCount() {
-        return base.getPathCount();
+    public int getLocationItemsCount() {
+        return base.getLocationItemsCount();
     }
 
     @Override
@@ -341,13 +348,13 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public String getItem(int index) {
-        return base.getItem(index);
+    public String getLocationItem(int index) {
+        return base.getLocationItem(index);
     }
 
     @Override
-    public List<String> getItems() {
-        return base.getItems();
+    public List<String> getLocationItems() {
+        return base.getLocationItems();
     }
 
     @Override

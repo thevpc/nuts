@@ -32,6 +32,7 @@ import net.thevpc.nuts.runtime.optional.jansi.OptionalJansi;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEvent;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamNull;
 import net.thevpc.nuts.runtime.standalone.io.terminal.*;
+import net.thevpc.nuts.runtime.standalone.io.util.NullOutputStream;
 import net.thevpc.nuts.runtime.standalone.session.DefaultNSession;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
@@ -45,6 +46,7 @@ import net.thevpc.nuts.util.NLogOp;
 import net.thevpc.nuts.util.NLogVerb;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.file.Paths;
 import java.util.*;
@@ -56,6 +58,7 @@ import java.util.logging.Level;
 public class DefaultNBootModel implements NBootModel {
 
     public NPrintStream nullOut;
+    public OutputStream nullOutputStream;
     protected NWorkspace workspace;
     protected boolean firstBoot;
     protected boolean initializing;
@@ -82,6 +85,7 @@ public class DefaultNBootModel implements NBootModel {
         this.systemTerminal = new NSystemTerminalRef(NutsSystemTerminal_of_NutsSystemTerminalBase(sys, bootSession));
         this.bootSession.setTerminal(new DefaultNSessionTerminalFromSystem(bootSession, this.systemTerminal));
         this.nullOut = new NPrintStreamNull(bootSession);
+        this.nullOutputStream = NullOutputStream.INSTANCE;
     }
 
     public static NWorkspaceTerminalOptions detectAnsiTerminalSupport(NOsFamily os, NWorkspaceOptions bOption, boolean boot, NSession session) {
@@ -175,7 +179,7 @@ public class DefaultNBootModel implements NBootModel {
     }
 
     public void setSystemTerminal(NSystemTerminalBase terminal, NSession session) {
-        this.systemTerminal.setBase(terminal,session);
+        this.systemTerminal.setBase(terminal, session);
     }
 
     public NSystemTerminal createSystemTerminal(NTerminalSpec spec, NSession session) {
@@ -281,6 +285,11 @@ public class DefaultNBootModel implements NBootModel {
 
     public NPrintStream nullPrintStream() {
         return nullOut;
+        //return createPrintStream(NullOutputStream.INSTANCE, NutsTerminalMode.FILTERED, session);
+    }
+
+    public OutputStream nullOutputStream() {
+        return nullOutputStream;
         //return createPrintStream(NullOutputStream.INSTANCE, NutsTerminalMode.FILTERED, session);
     }
 

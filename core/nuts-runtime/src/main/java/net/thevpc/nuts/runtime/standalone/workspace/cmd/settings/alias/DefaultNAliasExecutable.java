@@ -36,8 +36,8 @@ public class DefaultNAliasExecutable extends AbstractNExecutableCommand {
     }
 
     @Override
-    public void execute() {
-        command.exec(args, o, getSession());
+    public int execute() {
+        return command.exec(args, o, getSession());
     }
 
 

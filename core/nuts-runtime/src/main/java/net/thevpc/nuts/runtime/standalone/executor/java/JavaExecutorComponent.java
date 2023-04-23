@@ -33,7 +33,6 @@ import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelpe
 import net.thevpc.nuts.runtime.standalone.executor.embedded.ClassloaderAwareRunnableImpl;
 import net.thevpc.nuts.runtime.standalone.io.net.util.NetUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
-import net.thevpc.nuts.runtime.standalone.util.collections.StringKeyValueList;
 import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNClassLoader;
 import net.thevpc.nuts.runtime.standalone.util.NDebugString;
@@ -76,8 +75,8 @@ public class JavaExecutorComponent implements NExecutorComponent {
     }
 
     @Override
-    public void exec(NExecutionContext executionContext) {
-        execHelper(executionContext).exec();
+    public int exec(NExecutionContext executionContext) {
+        return execHelper(executionContext).exec();
     }
 
 
@@ -186,7 +185,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
     //@Override
     public IProcessExecHelper execHelper(NExecutionContext executionContext) {
         NDefinition def = executionContext.getDefinition();
-        Path contentFile = def.getContent().map(NPath::toFile).orNull();
+        Path contentFile = def.getContent().flatMap(NPath::toPath).orNull();
         NSession session = executionContext.getSession();
         final JavaExecutorOptions joptions = new JavaExecutorOptions(
                 def,
@@ -397,7 +396,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                                 .append(" ")
                                 .append(NCmdLine.of(cmdLine))
                 ));
-                return 0;
+                return NExecutionException.SUCCESS;
             }
             NSession session = getSession();
             //we must make a copy not to alter caller session
@@ -426,7 +425,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 }
                 Class<?> cls = Class.forName(joptions.getMainClass(), true, classLoader);
                 new ClassloaderAwareRunnableImpl(def.getId(), classLoader, cls, session, joptions, executionContext).runAndWaitFor();
-                return 0;
+                return NExecutionException.SUCCESS;
             } catch (InvocationTargetException e) {
                 th = e.getTargetException();
             } catch (MalformedURLException | NoSuchMethodException | SecurityException
@@ -444,14 +443,14 @@ public class JavaExecutorComponent implements NExecutorComponent {
                             , th);
                 }
                 NExecutionException nex = (NExecutionException) th;
-                if (nex.getExitCode() != 0) {
+                if (nex.getExitCode() != NExecutionException.SUCCESS) {
                     if (def != null) {
                         NWorkspaceExt.of(getSession()).getModel().recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(), nex), NRecommendationPhase.EXEC, false, getSession());
                     }
                     throw new NExecutionException(session, NMsg.ofC("error executing %s : %s", def == null ? null : def.getId(), th), th);
                 }
             }
-            return 0;
+            return NExecutionException.SUCCESS;
         }
     }
 

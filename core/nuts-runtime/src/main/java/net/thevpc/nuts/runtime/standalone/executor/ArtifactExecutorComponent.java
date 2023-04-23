@@ -54,15 +54,15 @@ public class ArtifactExecutorComponent implements NExecutorComponent {
         return NO_SUPPORT;
     }
 
-    public void exec(NExecutionContext executionContext) {
-        execHelper(executionContext,false);
+    public int exec(NExecutionContext executionContext) {
+        return execHelper(executionContext,false);
     }
 
     public void dryExec(NExecutionContext executionContext) {
         execHelper(executionContext,true);
     }
 
-    public void execHelper(NExecutionContext executionContext, boolean dry) {
+    public int execHelper(NExecutionContext executionContext, boolean dry) {
         NDefinition nutMainFile = executionContext.getDefinition();
         List<String> execArgs = executionContext.getExecutorOptions();
         List<String> appArgs = executionContext.getArguments();
@@ -73,14 +73,14 @@ public class ArtifactExecutorComponent implements NExecutorComponent {
         app.addAll(appArgs);
 
 //        File directory = NutsBlankable.isBlank(dir) ? null : new File(executionContext.getWorkspace().io().expandPath(dir));
-        NExecCommand.of(executionContext.getSession().setDry(dry))
+        return NExecCommand.of(executionContext.getSession().setDry(dry))
                 .addCommand(app)
                 .setSession(executionContext.getSession())
                 .setEnv(executionContext.getEnv())
                 .setDirectory(executionContext.getDirectory())
                 .setFailFast(true)
                 .setExecutionType(executionContext.getExecutionType())
-                .run();
+                .run().getResult();
     }
 
 }

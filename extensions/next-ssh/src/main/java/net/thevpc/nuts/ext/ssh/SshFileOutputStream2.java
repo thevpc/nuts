@@ -1,8 +1,7 @@
-package net.thevpc.nuts.lib.ssh;
+package net.thevpc.nuts.ext.ssh;
 
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.spi.NPaths;
 import net.thevpc.nuts.util.NConnexionString;
 
 import java.io.IOException;
@@ -39,7 +38,13 @@ public class SshFileOutputStream2 extends OutputStream {
     @Override
     public void close() throws IOException {
         tempOS.close();
-        try (SShConnection connection = new SShConnection(path, session)) {
+        try (SShConnection connection = new SShConnection(path
+                ,session.in()
+                ,session.out().asOutputStream()
+                ,session.err().asOutputStream()
+                , session
+
+        )) {
             connection.copyLocalToRemote(temp.toString(), path.getPath(), mkdirs);
         } finally {
             this.temp.delete();

@@ -148,7 +148,7 @@ public abstract class AbstractNShellContext implements NShellContext {
             if (nutsIds.size() == 1) {
                 NId selectedId = nutsIds.get(0);
                 NDefinition def = NSearchCommand.of(session).addId(selectedId).setEffective(true).setSession(this.getSession()
-                        .copy().setFetchStrategy(NFetchStrategy.OFFLINE)).getResultDefinitions().required();
+                        .copy().setFetchStrategy(NFetchStrategy.OFFLINE)).getResultDefinitions().findFirst().get();
                 NDescriptor d = def.getDescriptor();
                 String nuts_autocomplete_support = NStringUtils.trim(d.getPropertyValue("nuts.autocomplete").flatMap(NLiteral::asString).get(session));
                 if (d.isApplication()

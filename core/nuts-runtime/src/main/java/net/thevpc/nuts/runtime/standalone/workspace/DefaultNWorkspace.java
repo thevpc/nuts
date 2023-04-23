@@ -979,7 +979,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                             .setOptional(false)
                             .addScope(NDependencyScopePattern.RUN)
                             .setDependencyFilter(NDependencyFilters.of(session).byRunnable())
-                            .getResultDefinitions().required();
+                            .getResultDefinitions().findFirst().get();
                 }
                 def = d2;
             }
@@ -1005,7 +1005,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     default: {
                         oldDef = NSearchCommand.of(session).addId(def.getId().getShortId())
                                 .setInstallStatus(NInstallStatusFilters.of(session).byDeployed(true))
-                                .setFailFast(false).getResultDefinitions().first();
+                                .setFailFast(false).getResultDefinitions()
+                                .findFirst().orNull();
                         break;
                     }
                 }
@@ -1024,7 +1025,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                                 .hasNext()) {
                             NDefinition dd = NSearchCommand.of(session).addId(parent).setLatest(true)
                                     .setEffective(true)
-                                    .getResultDefinitions().first();
+                                    .getResultDefinitions()
+                                    .findFirst().orNull();
                             if (dd != null) {
                                 requiredDefinitions.add(dd);
                             }
@@ -1053,7 +1055,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                                 NDefinition dd = NSearchCommand.of(session).addId(dependency.toId()).setContent(true).setLatest(true)
                                         //.setDependencies(true)
                                         .setEffective(true)
-                                        .getResultDefinitions().first();
+                                        .getResultDefinitions()
+                                        .findFirst().orNull();
                                 if (dd != null) {
                                     if (dd.getContent().isNotPresent()) {
                                         throw new NInstallException(session, def.getId(),
@@ -1170,7 +1173,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             } else {
                 throw new NExecutionException(session,
                         NMsg.ofC("unable to install %s: unable to locate content", def.getId()),
-                        101);
+                        NExecutionException.ERROR_2);
             }
 
             NId forId = (forIds == null || forIds.length == 0) ? null : forIds[0];
@@ -1580,7 +1583,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                             .setDependencies(true)
                             .setLatest(true)
                             .setDistinct(true)
-                            .getResultDefinitions().first();
+                            .getResultDefinitions()
+                            .findFirst().orNull();
 
                 }
             }
@@ -1754,7 +1758,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     .setInlineDependencies(checkDependencies)
                     .setInstallStatus(NInstallStatusFilters.of(session).byDeployed(true))
                     .setOptional(false)
-                    .getResultDefinitions().first();
+                    .getResultDefinitions()
+                    .findFirst().orNull();
             if (nutToInstall == null) {
                 return NInstallStatus.NONE;
             }

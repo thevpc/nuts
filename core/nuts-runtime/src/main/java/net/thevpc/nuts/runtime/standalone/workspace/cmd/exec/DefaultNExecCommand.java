@@ -5,6 +5,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineUtils;
 import net.thevpc.nuts.runtime.standalone.executor.NExecutionContextUtils;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NExecutableInformationExt;
@@ -130,6 +131,9 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
 
     public NExecutableInformation whichOnTarget(NExecCommandExtension commExec, NConnexionString connexionString) {
         checkSession();
+        NExecInput in0 = CoreIOUtils.validateIn(in, session);
+        NExecOutput out0 = CoreIOUtils.validateOut(out, session);
+        NExecOutput err0 = CoreIOUtils.validateOut(err, session);
         NExecutableInformationExt exec = null;
         NExecutionType executionType = this.getExecutionType();
         if (executionType == null) {
@@ -150,17 +154,35 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                 return new DefaultNSystemExecutableRemote(
                         commExec, ts,
                         getExecutorOptions(),
-                        this
+                        this,
+                        in0,
+                        out0,
+                        err0
                 );
             }
             case SPAWN: {
                 if (commandDefinition != null) {
                     String[] ts = command == null ? new String[0] : command.toArray(new String[0]);
-                    return new DefaultSpawnExecutableRemote(commExec, commandDefinition, ts, getExecutorOptions(), this);
+                    return new DefaultSpawnExecutableRemote(commExec, commandDefinition, ts, getExecutorOptions(), this, in0, out0, err0);
                 } else {
                     NAssert.requireNonBlank(command, "command", session);
-                    String[] ts = command.toArray(new String[0]);
-                    return new DefaultSpawnExecutableRemote(commExec, null, ts, getExecutorOptions(), this);
+                    List<String> ts = new ArrayList<>(command);
+                    if (ts.size() == 0) {
+                        throw new NUnsupportedArgumentException(getSession(), NMsg.ofPlain("missing command"));
+                    }
+                    String id = ts.get(0);
+                    ts.remove(0);
+                    NDefinition def2 = NSearchCommand.of(getSession())
+                            .addId(id)
+                            .setContent(true)
+                            .setLatest(true)
+                            .setDependencies(true)
+                            .setDependencyFilter(NDependencyFilters.of(session).byRunnable())
+                            .setFailFast(true)
+                            .setEffective(true)
+                            .getResultDefinitions()
+                            .findFirst().get();
+                    return new DefaultSpawnExecutableRemote(commExec, def2, ts.toArray(new String[0]), getExecutorOptions(), this, in0, out0, err0);
                 }
             }
             case EMBEDDED: {
@@ -177,34 +199,42 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
         checkSession();
         NExecutableInformationExt exec = (NExecutableInformationExt) which();
         executed = true;
+        int exitCode = NExecutionException.SUCCESS;
         try {
-            exec.execute();
+            exitCode = exec.execute();
         } catch (NExecutionException ex) {
             String p = getExtraErrorMessage();
             if (p != null) {
-                result = new NExecutionException(getSession(),
+                resultException = new NExecutionException(getSession(),
                         NMsg.ofC("execution failed with code %s and message : %s", ex.getExitCode(), p),
                         ex, ex.getExitCode());
             } else {
-                result = ex;
+                resultException = ex;
             }
         } catch (Exception ex) {
             String p = getExtraErrorMessage();
-            int exitCode = NExceptionWithExitCodeBase.resolveExitCode(ex).orElse(244);
-            if (exitCode != 0) {
+            int exceptionExitCode = NExceptionWithExitCodeBase.resolveExitCode(ex).orElse(NExecutionException.ERROR_255);
+            if (exceptionExitCode != NExecutionException.SUCCESS) {
                 if (!NBlankable.isBlank(p)) {
-                    result = new NExecutionException(getSession(),
-                            NMsg.ofC("execution of (%s) failed with code %s ; error was : %s ; notes : %s", exitCode, exec, ex, p),
-                            ex, exitCode);
+                    resultException = new NExecutionException(getSession(),
+                            NMsg.ofC("execution of (%s) failed with code %s ; error was : %s ; notes : %s", exec, exceptionExitCode, ex, p),
+                            ex, exceptionExitCode);
                 } else {
-                    result = new NExecutionException(getSession(),
-                            NMsg.ofC("execution of (%s) failed with code %s ; error was : %s", exitCode, exec, ex),
-                            ex, exitCode);
+                    resultException = new NExecutionException(getSession(),
+                            NMsg.ofC("execution of (%s) failed with code %s ; error was : %s", exec, exceptionExitCode, ex),
+                            ex, exceptionExitCode);
                 }
             }
         }
-        if (result != null && result.getExitCode() != 0 && failFast) {
-            throw result;
+        if (resultException == null) {
+            if (exitCode != NExecutionException.SUCCESS) {
+                resultException = new NExecutionException(getSession(),
+                        NMsg.ofC("execution of (%s) failed with code %s", exec, exitCode),
+                        exitCode);
+            }
+        }
+        if (resultException != null && resultException.getExitCode() != NExecutionException.SUCCESS && failFast) {
+            throw resultException;
 //            checkFailFast(result.getExitCode());
         }
         return this;
@@ -261,7 +291,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
         }
         switch (cmdKind) {
             case PATH: {
-                return new DefaultNArtifactPathExecutable(cmdName, args, executorOptions, workspaceOptions, executionType, runAs,  this);
+                return new DefaultNArtifactPathExecutable(cmdName, args, executorOptions, workspaceOptions, executionType, runAs, this);
             }
             case ID: {
                 NId idToExec = findExecId(goodId, prepareSession, forceInstalled, true);
@@ -304,7 +334,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                         return new DefaultNSearchInternalExecutable(args, this);
                     }
                     case "version": {
-                        return new DefaultNVersionInternalExecutable(args,  this);
+                        return new DefaultNVersionInternalExecutable(args, this);
                     }
                     case "prepare": {
                         return new DefaultNPrepareInternalExecutable(args, this);
@@ -325,10 +355,10 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                         return new DefaultNInfoInternalExecutable(args, this);
                     }
                     case "which": {
-                        return new DefaultNWhichInternalExecutable(args,  this);
+                        return new DefaultNWhichInternalExecutable(args, this);
                     }
                     case "exec": {
-                        return new DefaultNExecInternalExecutable(args,  this);
+                        return new DefaultNExecInternalExecutable(args, this);
                     }
                     case "settings": {
                         return new DefaultNSettingsInternalExecutable(args, this);
@@ -339,7 +369,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                 if (command != null) {
                     NCommandExecOptions o = new NCommandExecOptions().setExecutorOptions(executorOptions).setDirectory(directory).setFailFast(failFast)
                             .setExecutionType(executionType).setEnv(env);
-                    return new DefaultNAliasExecutable(command, o,args,this);
+                    return new DefaultNAliasExecutable(command, o, args, this);
                 } else {
                     NId idToExec = null;
                     if (goodId != null) {
@@ -351,7 +381,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                             List<String> cmdArr = new ArrayList<>();
                             cmdArr.add(sw.toString());
                             cmdArr.addAll(Arrays.asList(args));
-                            return new DefaultNSystemExecutable(cmdArr.toArray(new String[0]), executorOptions,  this);
+                            return new DefaultNSystemExecutable(cmdArr.toArray(new String[0]), executorOptions, this);
                         }
                         List<String> cmdArr = new ArrayList<>();
                         cmdArr.add(cmdName);
@@ -458,15 +488,15 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
         return new DefaultNArtifactExecutable(def, commandName, appArgs, executorOptions, workspaceOptions, env, dir, failFast, executionType, runAs, this);
     }
 
-    public void ws_execId(NDefinition def, String commandName, String[] appArgs,
-                          List<String> executorOptions,
-                          List<String> workspaceOptions, Map<String, String> env, NPath dir, boolean failFast, boolean temporary,
-                          NSession session,
-                          NExecInput in,
-                          NExecOutput out,
-                          NExecOutput err,
-                          NExecutionType executionType,
-                          NRunAs runAs
+    public int ws_execId(NDefinition def, String commandName, String[] appArgs,
+                         List<String> executorOptions,
+                         List<String> workspaceOptions, Map<String, String> env, NPath dir, boolean failFast, boolean temporary,
+                         NSession session,
+                         NExecInput in,
+                         NExecOutput out,
+                         NExecOutput err,
+                         NExecutionType executionType,
+                         NRunAs runAs
     ) {
         //TODO ! one of the sessions needs to be removed!
         NSessionUtils.checkSession(ws, session);
@@ -549,8 +579,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                     .setOut(out)
                     .setErr(err)
                     .build();
-            execComponent.exec(executionContext);
-            return;
+            return execComponent.exec(executionContext);
         }
         throw new NNotFoundException(getSession(), def == null ? null : def.getId());
     }

@@ -35,7 +35,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
         RemoteTomcatConfig cconfig = client.getConfig();
         String localWarPath = this.config.getPath();
         if (!new File(localWarPath).exists()) {
-            throw new NExecutionException(session, NMsg.ofC("missing source war file %s", localWarPath), 2);
+            throw new NExecutionException(session, NMsg.ofC("missing source war file %s", localWarPath), NExecutionException.ERROR_2);
         }
         String remoteTempPath = cconfig.getRemoteTempPath();
         if (NBlankable.isBlank(remoteTempPath)) {
@@ -100,7 +100,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
             );
         } else {
             throw new NExecutionException(session, NMsg.ofC("unable to detect file version of %s.\n%s",localWarPath ,
-                    s.getOutputString()), 2);
+                    s.getOutputString()), NExecutionException.ERROR_2);
         }
     }
 

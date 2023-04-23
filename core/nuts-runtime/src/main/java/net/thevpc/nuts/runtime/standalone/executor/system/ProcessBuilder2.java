@@ -29,7 +29,6 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineFormatStrategy;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineShellOptions;
-import net.thevpc.nuts.runtime.standalone.io.util.NNonBlockingInputStreamAdapter;
 import net.thevpc.nuts.runtime.standalone.shell.NShellHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.text.NTextBuilder;
@@ -39,7 +38,6 @@ import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;
 import java.lang.reflect.Field;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -268,10 +266,10 @@ public class ProcessBuilder2 {
 
             case PATH: {
                 NPath path = in.base.getPath();
-                Path file = path.toFile();
+                Path file = path.toPath().get();
                 if (file == null) {
                     in.tempPath = NPath.ofTempFile(session);
-                    in.file = in.tempPath.toFile().toFile();
+                    in.file = in.tempPath.toFile().get();
                     path.copyTo(in.tempPath);
                 } else {
                     in.file = file.toFile();
@@ -307,12 +305,12 @@ public class ProcessBuilder2 {
             }
             case GRAB_FILE: {
                 out.tempPath = NPath.ofTempFile(session);
-                out.file = out.tempPath.toFile().toFile();
+                out.file = out.tempPath.toFile().get();
                 base.redirectOutput(ProcessBuilder.Redirect.to(out.file));
             }
             case PATH: {
                 NPath path = out.base.getPath();
-                Path file = path.toFile();
+                Path file = path.toPath().get();
                 Set<NPathOption> options = Arrays.stream(out.base.getOptions()).filter(Objects::nonNull).collect(Collectors.toSet());
                 if (file == null) {
                     base.redirectOutput(ProcessBuilder.Redirect.PIPE);
@@ -354,12 +352,12 @@ public class ProcessBuilder2 {
             }
             case GRAB_FILE: {
                 err.tempPath = NPath.ofTempFile(session);
-                err.file = err.tempPath.toFile().toFile();
+                err.file = err.tempPath.toFile().get();
                 base.redirectError(ProcessBuilder.Redirect.to(err.file));
             }
             case PATH: {
                 NPath path = err.base.getPath();
-                Path file = path.toFile();
+                Path file = path.toPath().get();
                 Set<NPathOption> options = Arrays.stream(err.base.getOptions()).filter(Objects::nonNull).collect(Collectors.toSet());
                 if (file == null) {
                     base.redirectError(ProcessBuilder.Redirect.PIPE);
@@ -415,6 +413,19 @@ public class ProcessBuilder2 {
                 + "-" + (pid < 0 ? ("unknown-pid" + String.valueOf(-pid)) : String.valueOf(pid));
         String cmdStr = String.join(" ", command);
         switch (in.base.getType()) {
+            case NULL: {
+                String pname = "pipe-in-proc-" + procString;
+                in.termIn = NIO.of(session).ofNonBlocking(
+                        NIO.of(session).ofNullInputStream()
+                        , new DefaultNContentMetadata().setMessage(NMsg.ofPlain(pname)));
+                PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "in", in.termIn, proc.getOutputStream(), session);
+                if (pipes == null) {
+                    pipes = Executors.newCachedThreadPool();
+                }
+                pipes.submit(t);
+                pipesList.add(t);
+                break;
+            }
             case STREAM: {
                 String pname = "pipe-in-proc-" + procString;
                 in.termIn = NIO.of(session).ofNonBlocking(in.base.getStream(), new DefaultNContentMetadata().setMessage(NMsg.ofPlain(pname)));
@@ -428,6 +439,21 @@ public class ProcessBuilder2 {
             }
         }
         switch (out.base.getType()) {
+            case NULL: {
+                String pname = "pipe-out-proc-" + procString;
+                NNonBlockingInputStream procInput = NIO.of(session).ofNonBlocking(
+                        proc.getInputStream()
+                        , new DefaultNContentMetadata().setMessage(NMsg.ofPlain(pname)));
+                PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "out", procInput,
+                        NIO.of(session).ofNullOutputStream()
+                        , session);
+                if (pipes == null) {
+                    pipes = Executors.newCachedThreadPool();
+                }
+                pipes.submit(t);
+                pipesList.add(t);
+                break;
+            }
             case STREAM: {
                 String pname = "pipe-out-proc-" + procString;
                 NNonBlockingInputStream procInput = NIO.of(session).ofNonBlocking(proc.getInputStream(), new DefaultNContentMetadata().setMessage(NMsg.ofPlain(pname)));
@@ -561,7 +587,7 @@ public class ProcessBuilder2 {
             }
             case GRAB_STREAM: {
                 out.tempStream.close();
-                out.base.setResult(NIO.of(session).ofInputSource(((ByteArrayOutputStream)out.tempStream).toByteArray()));
+                out.base.setResult(NIO.of(session).ofInputSource(((ByteArrayOutputStream) out.tempStream).toByteArray()));
                 break;
             }
             case GRAB_FILE: {
@@ -583,7 +609,7 @@ public class ProcessBuilder2 {
             }
             case GRAB_STREAM: {
                 err.tempStream.close();
-                err.base.setResult(NIO.of(session).ofInputSource(((ByteArrayOutputStream)err.tempStream).toByteArray()));
+                err.base.setResult(NIO.of(session).ofInputSource(((ByteArrayOutputStream) err.tempStream).toByteArray()));
                 break;
             }
             case GRAB_FILE: {
@@ -596,7 +622,7 @@ public class ProcessBuilder2 {
                 break;
             }
         }
-        if (result != 0) {
+        if (result != NExecutionException.SUCCESS) {
             if (isFailFast()) {
                 if (base.redirectErrorStream()) {
                     if (out.base.getType() == NExecRedirectType.GRAB_FILE || out.base.getType() == NExecRedirectType.GRAB_STREAM) {

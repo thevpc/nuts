@@ -211,12 +211,12 @@ public class DefaultNRepositoryModel {
             if (parentRepository == null) {
                 NConfigsExt cc = NConfigsExt.of(NConfigs.of(session));
                 rootFolder = options.isTemporary() ?
-                        cc.getModel().getTempRepositoriesRoot(session).toFile()
-                        : cc.getModel().getRepositoriesRoot(session).toFile();
+                        cc.getModel().getTempRepositoriesRoot(session).toPath().get()
+                        : cc.getModel().getRepositoriesRoot(session).toPath().get();
             } else {
                 NRepositoryConfigManagerExt cc = NRepositoryConfigManagerExt.of(parentRepository.config());
                 rootFolder = (options.isTemporary() ? cc.getModel().getTempMirrorsRoot(session)
-                        : cc.getModel().getMirrorsRoot(session)).toFile();
+                        : cc.getModel().getMirrorsRoot(session)).toPath().get();
             }
         }
         if (repoModel != null) {
@@ -392,7 +392,7 @@ public class DefaultNRepositoryModel {
         LOG.with().session(session).level(Level.SEVERE).verb(NLogVerb.FAIL)
                 .log(NMsg.ofJ("erroneous repository config file will be replaced by a fresh one. Old config is copied to {0}", newfile));
         try {
-            Files.move(file.toFile(), newfile.toFile());
+            Files.move(file.toPath().get(), newfile.toPath().get());
         } catch (IOException e) {
             throw new NIOException(session, NMsg.ofC("nable to load and re-create repository config file %s : %s", file, e), ex);
         }

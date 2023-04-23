@@ -29,7 +29,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.lib.ssh.SShConnection;
+import net.thevpc.nuts.ext.ssh.SShConnection;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
@@ -94,7 +94,11 @@ public class SshCommand extends NShellBuiltinDefault {
         NAssert.requireNonBlank(o.address, "ssh address", session);
         NAssert.requireNonBlank(o.cmd, () -> NMsg.ofPlain("missing ssh command. Interactive ssh is not yet supported!"), session);
         ShellHelper.WsSshListener listener = new ShellHelper.WsSshListener(session);
-        try (SShConnection sshSession = new SShConnection(o.address, session)
+        try (SShConnection sshSession = new SShConnection(o.address,
+                session.in(),
+                session.out().asOutputStream(),
+                session.err().asOutputStream(),
+                session)
                 .addListener(listener)) {
             List<String> cmd = new ArrayList<>();
             if (o.invokeNuts) {
@@ -130,7 +134,7 @@ public class SshCommand extends NShellBuiltinDefault {
                         nutsCommandFound = true;
                     }
                     if (!nutsCommandFound) {
-                        NPath from = NSearchCommand.of(session).addId(session.getWorkspace().getApiId()).getResultDefinitions().required().getContent().orNull();
+                        NPath from = NSearchCommand.of(session).addId(session.getWorkspace().getApiId()).getResultDefinitions().findFirst().get().getContent().orNull();
                         NAssert.requireNonNull(from, "jar file", session);
                         context.out().println(NMsg.ofC("Detected nuts.jar location : %s", from));
                         String bootApiFileName = "nuts-" + session.getWorkspace().getApiId() + ".jar";

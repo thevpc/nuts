@@ -197,7 +197,7 @@ public class NResourcePath implements NPathSPI {
     }
 
     @Override
-    public URL toURL(NPath basePath) {
+    public NOptional<URL> toURL(NPath basePath) {
         NPath up = toURLPath();
         if (up != null) {
             return up.toURL();
@@ -206,10 +206,10 @@ public class NResourcePath implements NPathSPI {
     }
 
     @Override
-    public Path toFile(NPath basePath) {
+    public NOptional<Path> toPath(NPath basePath) {
         NPath up = toURLPath();
         if (up != null) {
-            return up.toFile();
+            return up.toPath();
         }
         throw new NIOException(getSession(), NMsg.ofC("unable to resolve file from %s", toString()));
     }
@@ -406,12 +406,12 @@ public class NResourcePath implements NPathSPI {
     }
 
     @Override
-    public int getPathCount(NPath basePath) {
+    public int getLocationItemsCount(NPath basePath) {
         String location = getLocation(basePath);
         if (NBlankable.isBlank(location)) {
             return 0;
         }
-        return NPath.of(location, getSession()).getPathCount();
+        return NPath.of(location, getSession()).getLocationItemsCount();
     }
 
     @Override
@@ -449,8 +449,8 @@ public class NResourcePath implements NPathSPI {
     }
 
     @Override
-    public List<String> getItems(NPath basePath) {
-        return NPath.of(location, getSession()).getItems();
+    public List<String> getLocationItems(NPath basePath) {
+        return NPath.of(location, getSession()).getLocationItems();
     }
 
     @Override
@@ -613,5 +613,10 @@ public class NResourcePath implements NPathSPI {
                     ,session
             );
         }
+    }
+
+    @Override
+    public byte[] getDigest(NPath basePath, String algo) {
+        return null;
     }
 }

@@ -228,20 +228,22 @@ public class URLPath implements NPathSPI {
     }
 
     @Override
-    public URL toURL(NPath basePath) {
+    public NOptional<URL> toURL(NPath basePath) {
         if (url == null) {
-            throw new NIOException(getSession(), NMsg.ofC("unable to resolve url %s", toString()));
+            return NOptional.ofEmpty(s->NMsg.ofC("unable to resolve url %s", toString()));
         }
-        return url;
+        return NOptional.of(url);
     }
 
     @Override
-    public Path toFile(NPath basePath) {
-        File f = _toFile(toURL(basePath));
-        if (f != null) {
-            return f.toPath();
-        }
-        throw new NIOException(getSession(), NMsg.ofC("unable to resolve file %s", toString()));
+    public NOptional<Path> toPath(NPath basePath) {
+        return toURL(basePath).flatMap(x->{
+            File f = _toFile(x);
+            if (f != null) {
+                return NOptional.of(f.toPath());
+            }
+            return NOptional.ofEmpty(s->NMsg.ofC("unable to resolve url %s", toString()));
+        });
     }
 
     public boolean isSymbolicLink(NPath basePath) {
@@ -269,6 +271,24 @@ public class URLPath implements NPathSPI {
 
     @Override
     public boolean isLocal(NPath basePath) {
+        String urlString = url.toString();
+        int x=urlString.indexOf(':');
+        if(x>=0){
+            switch (urlString.substring(0,x)){
+                case "file":
+                case "classpath":
+                case "resource":
+                case "jar":
+                    return true;
+                case "http":
+                case "https":
+                case "ftp":
+                case "ftps":
+                case "sftp":
+                case "ssh":
+                    return false;
+            }
+        }
         NPath f = asFilePath(basePath);
         return f != null && f.isLocal();
     }
@@ -547,12 +567,12 @@ public class URLPath implements NPathSPI {
     }
 
     @Override
-    public int getPathCount(NPath basePath) {
+    public int getLocationItemsCount(NPath basePath) {
         String location = getLocation(basePath);
         if (NBlankable.isBlank(location)) {
             return 0;
         }
-        return NPath.of(location, getSession()).getPathCount();
+        return NPath.of(location, getSession()).getLocationItemsCount();
     }
 
     @Override
@@ -595,8 +615,8 @@ public class URLPath implements NPathSPI {
     }
 
     @Override
-    public List<String> getItems(NPath basePath) {
-        return NPath.of(getLocation(basePath), getSession()).getItems();
+    public List<String> getLocationItems(NPath basePath) {
+        return NPath.of(getLocation(basePath), getSession()).getLocationItems();
     }
 
     @Override
@@ -740,8 +760,13 @@ public class URLPath implements NPathSPI {
     }
 
     public NPath asFilePath(NPath basePath) {
-        File f = _toFile(toURL(basePath));
-        return (f != null) ? NPath.of(f, getSession()) : null;
+        return toURL(basePath).flatMap(x->{
+            File f = _toFile(x);
+            if (f != null) {
+                return NOptional.of(NPath.of(f, getSession()));
+            }
+            return NOptional.ofEmpty(s->NMsg.ofC("not a local file %s", toString()));
+        }).orNull();
     }
 
     private static class CacheInfo {
@@ -826,5 +851,10 @@ public class URLPath implements NPathSPI {
             }
             return NO_SUPPORT;
         }
+    }
+
+    @Override
+    public byte[] getDigest(NPath basePath, String algo) {
+        return null;
     }
 }

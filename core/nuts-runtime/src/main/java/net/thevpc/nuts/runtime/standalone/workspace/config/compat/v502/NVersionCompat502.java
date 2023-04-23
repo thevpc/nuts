@@ -23,7 +23,7 @@ public class NVersionCompat502 extends AbstractNVersionCompat {
         NWorkspaceConfigApi cc = new NWorkspaceConfigApi();
         cc.setApiVersion(getApiVersion());
         NWorkspaceConfigBoot502 c = parseConfig502(CompatUtils.readAllBytes(
-                NLocations.of(session).getWorkspaceLocation().toFile()
+                NLocations.of(session).getWorkspaceLocation().toPath().get()
                 .resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME),session), session);
         if (c != null) {
             cc.setApiVersion(c.getBootApiVersion());
@@ -39,7 +39,7 @@ public class NVersionCompat502 extends AbstractNVersionCompat {
         NWorkspaceConfigRuntime cc = new NWorkspaceConfigRuntime();
 //        cc.setApiVersion(getApiVersion());
         NWorkspaceConfigBoot502 c = parseConfig502(CompatUtils.readAllBytes(
-                NLocations.of(session).getWorkspaceLocation().toFile()
+                NLocations.of(session).getWorkspaceLocation().toPath().get()
                         .resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME),session), session);
         if (c != null) {
             cc.setDependencies(c.getBootRuntimeDependencies());
@@ -52,7 +52,7 @@ public class NVersionCompat502 extends AbstractNVersionCompat {
     public NWorkspaceConfigSecurity parseSecurityConfig(NId nutsApiId, NSession session) {
         NWorkspaceConfigSecurity cc = new NWorkspaceConfigSecurity();
         NWorkspaceConfigBoot502 c = parseConfig502(CompatUtils.readAllBytes(
-                NLocations.of(session).getWorkspaceLocation().toFile()
+                NLocations.of(session).getWorkspaceLocation().toPath().get()
                         .resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME),session), session);
         if (c != null) {
             cc.setSecure(c.isSecure());
@@ -67,7 +67,7 @@ public class NVersionCompat502 extends AbstractNVersionCompat {
     public NWorkspaceConfigMain parseMainConfig(NId nutsApiId, NSession session) {
         NWorkspaceConfigMain cc = new NWorkspaceConfigMain();
         NWorkspaceConfigBoot502 c = parseConfig502(CompatUtils.readAllBytes(
-                NLocations.of(session).getWorkspaceLocation().toFile()
+                NLocations.of(session).getWorkspaceLocation().toPath().get()
                         .resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME),session), session);
         if (c != null) {
             c.setRepositories(CompatUtils.copyNutsRepositoryRefList(c.getRepositories()));

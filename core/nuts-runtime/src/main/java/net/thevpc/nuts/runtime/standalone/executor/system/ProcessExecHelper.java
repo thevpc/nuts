@@ -90,7 +90,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                                                  NSession execSession
     ) throws NExecutionException {
         NId id = nutMainFile.getId();
-        Path installerFile = nutMainFile.getContent().map(NPath::toFile).orNull();
+        Path installerFile = nutMainFile.getContent().flatMap(NPath::toPath).orNull();
         NPath storeFolder = nutMainFile.getInstallInformation().get(session).getInstallFolder();
         HashMap<String, String> map = new HashMap<>();
         HashMap<String, String> envmap = new HashMap<>();
@@ -99,10 +99,10 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
             map.put("nuts.jar", nutsJarFile.toAbsolutePath().normalize().toString());
         }
         map.put("nuts.artifact", id.toString());
-        map.put("nuts.file", nutMainFile.getContent().map(NPath::toFile).map(Object::toString).orNull());
+        map.put("nuts.file", nutMainFile.getContent().flatMap(NPath::toPath).map(Object::toString).orNull());
         String defaultJavaCommand = NJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion("", false, session);
         if (defaultJavaCommand == null) {
-            throw new NExecutionException(session, NMsg.ofPlain("no java version was found"), 1);
+            throw new NExecutionException(session, NMsg.ofPlain("no java version was found"), NExecutionException.ERROR_1);
         }
         map.put("nuts.java", defaultJavaCommand);
         if (map.containsKey("nuts.jar")) {
@@ -130,7 +130,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                     }
                     String s = NJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion(javaVer, false, session);
                     if (s == null) {
-                        throw new NExecutionException(session, NMsg.ofC("no java version %s was found", javaVer), 1);
+                        throw new NExecutionException(session, NMsg.ofC("no java version %s was found", javaVer), NExecutionException.ERROR_1);
                     }
                     return s;
                 } else if (skey.equals("javaw") || skey.startsWith("javaw#")) {
@@ -140,7 +140,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                     }
                     String s = NJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion(javaVer, true, session);
                     if (s == null) {
-                        throw new NExecutionException(session, NMsg.ofC("no java version %s was found", javaVer), 1);
+                        throw new NExecutionException(session, NMsg.ofC("no java version %s was found", javaVer), NExecutionException.ERROR_1);
                     }
                     return s;
                 } else if (skey.equals("nuts")) {
@@ -175,7 +175,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         }
         args = args2.toArray(new String[0]);
 
-        Path wsLocation = NLocations.of(session).getWorkspaceLocation().toFile();
+        Path wsLocation = NLocations.of(session).getWorkspaceLocation().toPath().get();
         Path path = wsLocation.resolve(args[0]).normalize();
         if (Files.exists(path)) {
             NPath.of(path, session).addPermissions(NPathPermission.CAN_EXECUTE);
@@ -416,7 +416,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 trace.print("[dry] exec ");
                 trace.println(NMsg.ofPlain(pb.getCommandString()));
             }
-            return 0;
+            return NExecutionException.SUCCESS;
         } else {
             try {
                 if (trace != null) {

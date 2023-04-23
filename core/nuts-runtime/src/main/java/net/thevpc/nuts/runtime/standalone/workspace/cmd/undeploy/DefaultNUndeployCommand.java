@@ -16,7 +16,7 @@ public class DefaultNUndeployCommand extends AbstractNUndeployCommand {
     public NUndeployCommand run() {
         NWorkspaceUtils.of(getSession()).checkReadOnly();
         if (ids.isEmpty()) {
-            throw new NExecutionException(getSession(), NMsg.ofPlain("no package to undeploy"), 1);
+            throw new NExecutionException(getSession(), NMsg.ofPlain("no package to undeploy"), NExecutionException.ERROR_1);
         }
         checkSession();
         NSession session = getSession();
@@ -34,7 +34,7 @@ public class DefaultNUndeployCommand extends AbstractNUndeployCommand {
                     )
                     .setDistinct(true)
                     .setFailFast(true)
-                    .getResultDefinitions().required();
+                    .getResultDefinitions().findFirst().get();
             NRepository repository1 = NRepositories.of(session).setSession(getSession()).getRepository(p.getRepositoryUuid());
             NRepositorySPI repoSPI = NWorkspaceUtils.of(getSession()).repoSPI(repository1);
             repoSPI.undeploy()

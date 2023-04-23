@@ -79,7 +79,7 @@ public class TailCommand extends NShellBuiltinDefault {
         NSession session = context.getSession();
 
         if (options.files.isEmpty()) {
-            throw new NExecutionException(session, NMsg.ofPlain("not yet supported"), 2);
+            throw new NExecutionException(session, NMsg.ofPlain("not yet supported"), NExecutionException.ERROR_2);
         }
         for (NPath file : options.files) {
             tail(file, options.max, context);
@@ -111,7 +111,7 @@ public class TailCommand extends NShellBuiltinDefault {
                 }
             }
         } catch (IOException ex) {
-            throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, 100);
+            throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_3);
         }
     }
 

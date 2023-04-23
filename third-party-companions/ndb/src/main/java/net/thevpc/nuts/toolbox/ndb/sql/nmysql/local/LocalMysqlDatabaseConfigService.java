@@ -98,7 +98,7 @@ public class LocalMysqlDatabaseConfigService {
                 if (new File(path).exists()) {
                     new File(path).delete();
                 }
-                throw new NExecutionException(session, NMsg.ofNtf(cmd.getOutputString()), 2);
+                throw new NExecutionException(session, NMsg.ofNtf(cmd.getOutputString()), NExecutionException.ERROR_2);
             }
         } else {
             if (session.isPlainTrace()) {
@@ -138,7 +138,7 @@ public class LocalMysqlDatabaseConfigService {
                 if (new File(path).exists()) {
                     new File(path).delete();
                 }
-                throw new NExecutionException(session, NMsg.ofNtf(cmd.getOutputString()), 2);
+                throw new NExecutionException(session, NMsg.ofNtf(cmd.getOutputString()), NExecutionException.ERROR_2);
             }
         }
     }

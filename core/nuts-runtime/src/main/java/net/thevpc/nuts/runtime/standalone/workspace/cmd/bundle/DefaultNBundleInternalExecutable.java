@@ -13,7 +13,6 @@ import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExecutableCommand;
-import net.thevpc.nuts.spi.NPaths;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
@@ -29,14 +28,14 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
     }
 
     @Override
-    public void execute() {
+    public int execute() {
         if (getSession().isDry()) {
             dryExecute();
-            return;
+            return NExecutionException.SUCCESS;
         }
         if (NAppUtils.processHelpOptions(args, getSession())) {
             showDefaultHelp();
-            return;
+            return NExecutionException.SUCCESS;
         }
         NSession session = getSession();
         NCmdLine cmdLine = NCmdLine.of(args);
@@ -349,7 +348,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                 cmdLine.throwUnexpectedArgument(NMsg.ofC("invalid format %s", format));
             }
         }
-
+        return NExecutionException.SUCCESS;
     }
 
 }

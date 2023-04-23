@@ -69,7 +69,7 @@ public class RemoteTomcat {
                 }
             }
         }
-        throw new NExecutionException(session, NMsg.ofPlain("missing tomcat action. Type: nuts tomcat --help"), 1);
+        throw new NExecutionException(session, NMsg.ofPlain("missing tomcat action. Type: nuts tomcat --help"), NExecutionException.ERROR_1);
     }
 
     public void list(NCmdLine args) {
@@ -116,7 +116,7 @@ public class RemoteTomcat {
                     instanceName = a.getStringValue().get(session);
                     c = loadOrCreateTomcatConfig(instanceName);
                 } else {
-                    throw new NExecutionException(session, NMsg.ofPlain("instance already defined"), 2);
+                    throw new NExecutionException(session, NMsg.ofPlain("instance already defined"), NExecutionException.ERROR_2);
                 }
             } else if ((a = args.nextEntry("--server").orNull()) != null) {
                 if (c == null) {
@@ -206,7 +206,7 @@ public class RemoteTomcat {
                     }
                 }
             } catch (NCancelException ex) {
-                throw new NExecutionException(session, NMsg.ofPlain("cancelled"), 1);
+                throw new NExecutionException(session, NMsg.ofPlain("cancelled"), NExecutionException.ERROR_1);
             }
         }
         c.save();
@@ -216,7 +216,7 @@ public class RemoteTomcat {
         RemoteTomcatServiceBase s = null;
         NArg a;
         boolean processed = false;
-        int lastExitCode = 0;
+        int lastExitCode = NExecutionException.SUCCESS;
         args.setCommandName("tomcat --remote remove");
         while (args.hasNext()) {
             if ((s = readBaseServiceArg(args)) != null) {
@@ -225,15 +225,15 @@ public class RemoteTomcat {
                     toRemoteTomcatConfigService(s).save();
                 }
                 processed = true;
-                lastExitCode = 0;
+                lastExitCode = NExecutionException.SUCCESS;
             } else {
                 session.configureLast(args);
             }
         }
         if (!processed) {
-            throw new NExecutionException(session, NMsg.ofPlain("invalid parameters"), 2);
+            throw new NExecutionException(session, NMsg.ofPlain("invalid parameters"), NExecutionException.ERROR_2);
         }
-        if (lastExitCode != 0) {
+        if (lastExitCode != NExecutionException.SUCCESS) {
             throw new NExecutionException(session, NMsg.ofPlain("tomcat remove failed"), lastExitCode);
         }
     }
@@ -432,7 +432,7 @@ public class RemoteTomcat {
             RemoteTomcatConfigService u = loadOrCreateTomcatConfig(strings[0]);
             RemoteTomcatAppConfigService a = u.getAppOrNull(strings[1]);
             if (a == null) {
-                throw new NExecutionException(session, NMsg.ofC("unknown name %s. it is no domain or app", name), 3);
+                throw new NExecutionException(session, NMsg.ofC("unknown name %s. it is no domain or app", name), NExecutionException.ERROR_3);
             }
             return a;
         }

@@ -106,7 +106,7 @@ public class JsonCommand extends NShellBuiltinDefault {
                     try {
                         resultDocument = documentFactory.newDocumentBuilder().newDocument();
                     } catch (ParserConfigurationException ex) {
-                        throw new NExecutionException(session, NMsg.ofPlain("failed to create xml document"), ex, 1);
+                        throw new NExecutionException(session, NMsg.ofPlain("failed to create xml document"), ex, NExecutionException.ERROR_1);
                     }
                     Element resultElement = resultDocument.createElement("result");
                     resultDocument.appendChild(resultElement);
@@ -119,7 +119,7 @@ public class JsonCommand extends NShellBuiltinDefault {
                                 resultElement.appendChild(o);
                             }
                         } catch (XPathExpressionException ex) {
-                            throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, 103);
+                            throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_2);
                         }
                     }
                     NElement json = NElements.of(session).toElement(resultDocument);
@@ -162,7 +162,7 @@ public class JsonCommand extends NShellBuiltinDefault {
             if (file.exists()) {
                 inputDocument = njson.parse(file, cls);
             } else {
-                throw new NExecutionException(session, NMsg.ofC("invalid path %s", path), 1);
+                throw new NExecutionException(session, NMsg.ofC("invalid path %s", path), NExecutionException.ERROR_1);
             }
         } else {
             StringBuilder sb = new StringBuilder();
@@ -172,7 +172,7 @@ public class JsonCommand extends NShellBuiltinDefault {
                 try {
                     line = reader.readLine();
                 } catch (IOException ex) {
-                    throw new NExecutionException(session, NMsg.ofPlain("broken Input"), 2);
+                    throw new NExecutionException(session, NMsg.ofPlain("broken Input"), NExecutionException.ERROR_2);
                 }
                 if (line == null) {
                     inputDocument = njson.parse(new StringReader(sb.toString()), cls);

@@ -64,7 +64,7 @@ public class PostgresShowTableSizeCmd extends NdbCmd<NPostgresConfig> {
             }
         }
         if (NBlankable.isBlank(otherOptions.getDatabaseName())) {
-            cmdLine.throwMissingArgumentByName("--dbname");
+            cmdLine.throwMissingArgument("--dbname");
         }
         NPostgresConfig options = loadFromName(name, otherOptions);
         support.revalidateOptions(options);

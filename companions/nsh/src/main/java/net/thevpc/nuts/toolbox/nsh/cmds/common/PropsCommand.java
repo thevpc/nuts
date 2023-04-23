@@ -185,13 +185,13 @@ public class PropsCommand extends NShellBuiltinDefault {
         NSession session = context.getSession();
         cmdLine.setCommandName(getName());
         if (o.sourceType != SourceType.FILE && o.sourceFile != null) {
-            throw new NExecutionException(session, NMsg.ofPlain("props: Should not use file with --system flag"), 2);
+            throw new NExecutionException(session, NMsg.ofPlain("props: Should not use file with --system flag"), NExecutionException.ERROR_2);
         }
         if (o.sourceType == SourceType.FILE && o.sourceFile == null) {
-            throw new NExecutionException(session, NMsg.ofPlain("props: Missing file"), 3);
+            throw new NExecutionException(session, NMsg.ofPlain("props: Missing file"), NExecutionException.ERROR_3);
         }
         if (o.action == null) {
-            throw new NExecutionException(session, NMsg.ofPlain("props: Missing action"), 4);
+            throw new NExecutionException(session, NMsg.ofPlain("props: Missing action"), NExecutionException.ERROR_4);
         }
         switch (o.action) {
             case "get": {
@@ -206,7 +206,7 @@ public class PropsCommand extends NShellBuiltinDefault {
                     }
                     storeProperties(p, o, context);
                 } catch (Exception ex) {
-                    throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, 100);
+                    throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_2);
                 }
                 return;
             }
@@ -215,7 +215,7 @@ public class PropsCommand extends NShellBuiltinDefault {
                 return;
             }
             default: {
-                throw new NExecutionException(session, NMsg.ofC("props: Unsupported action %s", o.action), 2);
+                throw new NExecutionException(session, NMsg.ofC("props: Unsupported action %s", o.action), NExecutionException.ERROR_2);
             }
         }
     }
@@ -259,7 +259,7 @@ public class PropsCommand extends NShellBuiltinDefault {
         } else if (file.toLowerCase().endsWith(".xml")) {
             return Format.XML;
         }
-        throw new NExecutionException(context.getSession(), NMsg.ofC("unknown file format %s", file), 2);
+        throw new NExecutionException(context.getSession(), NMsg.ofC("unknown file format %s", file), NExecutionException.ERROR_2);
     }
 
     private Map<String, String> readProperties(Options o, NShellExecutionContext context) {
@@ -287,7 +287,7 @@ public class PropsCommand extends NShellBuiltinDefault {
                 }
             }
         } catch (Exception ex) {
-            throw new NExecutionException(context.getSession(), NMsg.ofC("%s", ex), ex, 100);
+            throw new NExecutionException(context.getSession(), NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_2);
         }
         return p;
     }

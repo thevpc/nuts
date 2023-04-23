@@ -23,14 +23,14 @@ public class DefaultNLicenseInternalExecutable extends DefaultInternalNExecutabl
     }
 
     @Override
-    public void execute() {
+    public int execute() {
         if (getSession().isDry()) {
             dryExecute();
-            return;
+            return NExecutionException.SUCCESS;
         }
         if (NAppUtils.processHelpOptions(args, getSession())) {
             showDefaultHelp();
-            return;
+            return NExecutionException.SUCCESS;
         }
         NSession session = getSession();
         NCmdLine cmdLine = NCmdLine.of(args);
@@ -41,6 +41,7 @@ public class DefaultNLicenseInternalExecutable extends DefaultInternalNExecutabl
 
         NText licenseString = NWorkspaceExt.of(session.getWorkspace()).getLicenseText(session);
         session.out().println(licenseString);
+        return NExecutionException.SUCCESS;
     }
 
 }

@@ -162,7 +162,7 @@ public class DefaultNDeployCommand extends AbstractNDeployCommand {
                 descriptor = characterizedFile.getDescriptor();
             }
             String name = NLocations.of(this.session).getDefaultIdFilename(descriptor.getId().builder().setFaceDescriptor().build());
-            tempFile = NPath.ofTempFile(name,session).toFile();
+            tempFile = NPath.ofTempFile(name,session).toPath().get();
             NCp.of(this.session).setSession(session).from(contentSource.getInputStream()).to(tempFile).addOptions(NPathOption.SAFE).run();
             contentFile2 = tempFile;
 

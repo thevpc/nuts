@@ -11,12 +11,11 @@ import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NStream;
 
 import java.io.*;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 public abstract class NPathBase extends AbstractMultiReadNInputSource implements NPath {
     public static final int BUFFER_SIZE = 8192;
@@ -276,33 +275,12 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
     @Override
     public boolean isURL() {
-        return asURL() != null;
+        return toURL().isPresent();
     }
 
     @Override
     public boolean isFile() {
-        Path f = asFile();
-        if (f == null) {
-            return false;
-        }
-        return Files.isRegularFile(f);
-    }
-
-    public URL asURL() {
-        try {
-            return toURL();
-        } catch (Exception ex) {
-            return null;
-        }
-    }
-
-    @Override
-    public Path asFile() {
-        try {
-            return toFile();
-        } catch (Exception ex) {
-            return null;
-        }
+        return toFile().orNull()!=null;
     }
 
     @Override

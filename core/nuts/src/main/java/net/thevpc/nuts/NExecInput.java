@@ -13,6 +13,10 @@ public class NExecInput {
     private NPath path;
     private NPathOption[] options;
 
+    public static NExecInput ofNull() {
+        return new NExecInput(NExecRedirectType.NULL, null, null, null);
+    }
+
     public static NExecInput ofInherit() {
         return new NExecInput(NExecRedirectType.INHERIT, null, null, null);
     }

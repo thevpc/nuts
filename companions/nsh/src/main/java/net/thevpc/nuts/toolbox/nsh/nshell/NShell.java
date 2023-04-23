@@ -394,7 +394,7 @@ public class NShell {
             int errorCode = je.getExitCode();
             String lastErrorMessage = getErrorHandler().errorToMessage(th);
             context.setLastResult(new NShellResult(errorCode, lastErrorMessage, th));
-            if (errorCode != 0) {
+            if (errorCode != NExecutionException.SUCCESS) {
                 getErrorHandler().onError(lastErrorMessage, th, context);
             }
             return errorCode;
@@ -561,7 +561,7 @@ public class NShell {
         } catch (NExecutionException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, 100);
+            throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_1);
         }
     }
 
@@ -671,7 +671,7 @@ public class NShell {
                     if (getOptions().isLogin()) {
                         executeLogoutScripts();
                     }
-                    if (q.getExitCode() == 0) {
+                    if (q.getExitCode() == NExecutionException.SUCCESS) {
                         return;
                     }
                     onQuit(q);

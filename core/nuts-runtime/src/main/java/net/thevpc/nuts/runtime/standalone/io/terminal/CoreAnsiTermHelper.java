@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
-import net.thevpc.nuts.NExecCommand;
-import net.thevpc.nuts.NExecutionType;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NLiteral;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 
 public class CoreAnsiTermHelper {
@@ -14,6 +11,7 @@ public class CoreAnsiTermHelper {
                     .grabOutputString()
                     .addCommand("tput", str)
                     .setFailFast(true)
+                    .setErr(NExecOutput.ofNull())
                     .getOutputString();
             return true;
         } catch (Exception ex) {
@@ -42,6 +40,7 @@ public class CoreAnsiTermHelper {
         try {
             String d = NExecCommand.of(session).setExecutionType(NExecutionType.SYSTEM)
                     .grabOutputString()
+                    .setErr(NExecOutput.ofNull())
                     .addCommand("tput", str)
                     .getOutputString();
             String s = d.trim();
@@ -53,6 +52,7 @@ public class CoreAnsiTermHelper {
                     .grabOutputString()
                     .addCommand("tput", str)
                     .setSleepMillis(500)
+                    .setErr(NExecOutput.ofNull())
                     .getOutputString();
             s = d.trim();
             if (s.isEmpty()) {

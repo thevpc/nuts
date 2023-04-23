@@ -69,7 +69,7 @@ public final class JavaExecutorOptions {
                 id = descriptor.getId();
             }
         }
-        Path path = def.getContent().map(NPath::toFile).orNull();
+        Path path = def.getContent().flatMap(NPath::toPath).orNull();
         this.dir = dir;
         this.execArgs = executorOptions;
 //        List<String> classPath0 = new ArrayList<>();
@@ -234,12 +234,12 @@ public final class JavaExecutorOptions {
         }
         NPlatformLocation nutsPlatformLocation = NJavaSdkUtils.of(session).resolveJdkLocation(getJavaVersion(), session);
         if (nutsPlatformLocation == null) {
-            throw new NExecutionException(session, NMsg.ofC("no java version %s was found", NStringUtils.trim(getJavaVersion())), 1);
+            throw new NExecutionException(session, NMsg.ofC("no java version %s was found", NStringUtils.trim(getJavaVersion())), NExecutionException.ERROR_1);
         }
         javaEffVersion = nutsPlatformLocation.getVersion();
         javaCommand = NJavaSdkUtils.of(session).resolveJavaCommandByVersion(nutsPlatformLocation, javaw, session);
         if (javaCommand == null) {
-            throw new NExecutionException(session, NMsg.ofC("no java version %s was found", getJavaVersion()), 1);
+            throw new NExecutionException(session, NMsg.ofC("no java version %s was found", getJavaVersion()), NExecutionException.ERROR_1);
         }
         java9 = NVersion.of(javaVersion).get(session).compareTo("1.8") > 0;
         if (this.jar) {
@@ -353,14 +353,14 @@ public final class JavaExecutorOptions {
                     if (!s.moduleName.endsWith("Empty")) {
                         j9_addModules.add(s.moduleName);
                     }
-                    j9_modulePath.add(s.path.toFile().toString());
+                    j9_modulePath.add(s.path.toPath().get().toString());
                     for (String requiredJfx : s.requiredJfx) {
                         if (!requiredJfx.endsWith("Empty")) {
                             j9_addModules.add(requiredJfx);
                         }
                     }
                 } else {
-                    classPath.add(s.path.toFile().toString());
+                    classPath.add(s.path.toPath().get().toString());
                 }
             }
 
@@ -377,7 +377,7 @@ public final class JavaExecutorOptions {
                                 || session.isBot()
 //                                    || !session.isAsk()
                         ) {
-                            throw new NExecutionException(session, NMsg.ofC("multiple runnable classes detected : %s", possibleClasses), 102);
+                            throw new NExecutionException(session, NMsg.ofC("multiple runnable classes detected : %s", possibleClasses), NExecutionException.ERROR_1);
                         }
                         NTexts text = NTexts.of(session);
                         NTextBuilder msgString = text.ofBuilder();
@@ -497,7 +497,7 @@ public final class JavaExecutorOptions {
         } else {
             for (String n : StringTokenizerUtils.splitColon(value)) {
                 if (!NBlankable.isBlank(n)) {
-                    URL url = NPath.of(n, session).toURL();
+                    URL url = NPath.of(n, session).toURL().get();
                     classPath.add(new NClassLoaderNode("", url, true, true));
                 }
             }
@@ -516,7 +516,7 @@ public final class JavaExecutorOptions {
         }
         for (NId nutsId : ns.getResultIds()) {
             NDefinition f = NSearchCommand.of(session).addId(nutsId)
-                    .setSession(searchSession).setLatest(true).getResultDefinitions().required();
+                    .setSession(searchSession).setLatest(true).getResultDefinitions().findFirst().get();
             classPath.add(NClassLoaderUtils.definitionToClassLoaderNode(f, session));
         }
     }
@@ -582,7 +582,7 @@ public final class JavaExecutorOptions {
 
     public void fillStrings(NClassLoaderNode n, List<String> list) {
         URL f = n.getURL();
-        list.add(NPath.of(f, getSession()).toFile().toString());
+        list.add(NPath.of(f, getSession()).toPath().get().toString());
         for (NClassLoaderNode d : n.getDependencies()) {
             fillStrings(d, list);
         }
@@ -592,7 +592,7 @@ public final class JavaExecutorOptions {
     public void fillNidStrings(NClassLoaderNode n, List<String> list) {
         if (n.getId() == null || n.getId().isEmpty()) {
             URL f = n.getURL();
-            list.add(NPath.of(f, getSession()).toFile().toString());
+            list.add(NPath.of(f, getSession()).toPath().get().toString());
         } else {
             list.add(n.getId());
         }

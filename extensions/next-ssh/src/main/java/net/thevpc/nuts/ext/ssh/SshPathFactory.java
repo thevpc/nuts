@@ -1,4 +1,4 @@
-package net.thevpc.nuts.lib.ssh;
+package net.thevpc.nuts.ext.ssh;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NPathFactory;

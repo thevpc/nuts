@@ -51,6 +51,8 @@ public interface NIO extends NComponent {
 
     NPrintStream ofNullPrintStream();
 
+    OutputStream ofNullOutputStream();
+
     NMemoryPrintStream ofInMemoryPrintStream();
 
     NMemoryPrintStream ofInMemoryPrintStream(NTerminalMode mode);

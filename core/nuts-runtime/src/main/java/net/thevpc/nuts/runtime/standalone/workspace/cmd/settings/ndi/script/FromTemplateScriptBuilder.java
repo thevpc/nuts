@@ -110,7 +110,8 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
             //Path script = getScriptFile(name);
             NDefinition anyIdDef = NSearchCommand.of(getSession()).addId(getAnyId()).setLatest(true)
                     .setDistinct(true)
-                    .getResultDefinitions().singleton();
+                    .getResultDefinitions()
+                    .findSingleton().get();
             NId anyId = anyIdDef.getId();
             StringWriter bos = new StringWriter();
             try (BufferedWriter w = new BufferedWriter(bos)) {

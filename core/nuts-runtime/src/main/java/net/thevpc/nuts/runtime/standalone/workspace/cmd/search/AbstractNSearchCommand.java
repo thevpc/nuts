@@ -633,7 +633,7 @@ public abstract class AbstractNSearchCommand extends DefaultNQueryBaseOptions<NS
         NId[] allIds = new NId[nDefinitions.size()];
         for (int i = 0; i < allURLs.length; i++) {
             NDefinition d = nDefinitions.get(i);
-            allURLs[i] = d.getContent().map(NPath::asURL).orNull();
+            allURLs[i] = d.getContent().flatMap(NPath::toURL).orNull();
             allIds[i] = d.getId();
         }
         DefaultNClassLoader cl = ((DefaultNExtensions) getSession().extensions())

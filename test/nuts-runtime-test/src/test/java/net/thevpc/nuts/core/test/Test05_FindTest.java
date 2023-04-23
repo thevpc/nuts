@@ -81,7 +81,7 @@ public class Test05_FindTest {
                 )
                 .setOptional(false).setInlineDependencies(true).setFailFast(true)
                 .setSession(session.copy().setFetchStrategy(NFetchStrategy.ONLINE))
-                .setLatest(true).getResultDefinitions().required();
+                .setLatest(true).getResultDefinitions().findFirst().get();
         TestUtils.println(def);
     }
 

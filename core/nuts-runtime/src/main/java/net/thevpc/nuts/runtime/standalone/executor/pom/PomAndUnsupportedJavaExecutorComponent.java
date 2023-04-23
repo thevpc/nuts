@@ -26,6 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.executor.pom;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
@@ -71,8 +72,8 @@ public class PomAndUnsupportedJavaExecutorComponent implements NExecutorComponen
     }
 
     @Override
-    public void exec(NExecutionContext executionContext) {
-        execHelper(executionContext).exec();
+    public int exec(NExecutionContext executionContext) {
+        return execHelper(executionContext).exec();
     }
 
 

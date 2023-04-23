@@ -239,7 +239,7 @@ public final class NReservedUtils {
             throw new NBootException(
                     NMsg.ofPlain("unable to switch to interactive mode for non plain text output format. "
                             + "You need to provide default response (-y|-n) for resetting/recovering workspace. "
-                            + "You was asked to confirm deleting folders as part as recover/reset option."), 243);
+                            + "You was asked to confirm deleting folders as part as recover/reset option."), NExecutionException.ERROR_255);
         }
         bLog.with().level(Level.FINEST).verb(NLogVerb.WARNING).log(NMsg.ofC("delete workspace location(s) at : %s",
                 lastBootOptions.getWorkspace().orNull()

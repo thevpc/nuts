@@ -223,7 +223,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
                 //                .parse(parse)
                 .build();
         reader.unsetOpt(LineReader.Option.INSERT_TAB);
-        reader.setVariable(LineReader.HISTORY_FILE, NLocations.of(session).getWorkspaceLocation().resolve("history").normalize().toFile());
+        reader.setVariable(LineReader.HISTORY_FILE, NLocations.of(session).getWorkspaceLocation().resolve("history").normalize().toPath().get());
         if (reader instanceof LineReaderImpl) {
             ((LineReaderImpl) reader).setHistory(new NJLineHistory(reader, session, this));
         }

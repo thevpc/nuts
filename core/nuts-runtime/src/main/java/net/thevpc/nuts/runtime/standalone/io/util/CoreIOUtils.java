@@ -733,7 +733,7 @@ public class CoreIOUtils {
                         ccu.lastModified = finalLastModified;
                         NPath newLocalPath = urlContent.resolve(s);
                         try {
-                            Files.move(outPath.toFile(), newLocalPath.toFile(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+                            Files.move(outPath.toPath().get(), newLocalPath.toPath().get(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
                         } catch (IOException ex) {
                             throw new NIOException(session, ex);
                         }
@@ -848,13 +848,13 @@ public class CoreIOUtils {
     public static Path toPathInputSource(NInputSource is, List<Path> tempPaths, boolean enforceExtension, NSession session) {
         boolean isPath = is instanceof NPath;
         if (isPath) {
-            Path sf = ((NPath) is).asFile();
+            Path sf = ((NPath) is).toPath().orNull();
             if (sf != null) {
                 return sf;
             }
         }
         String name = is.getMetaData().getName().orElse("no-name");
-        Path temp = NPath.ofTempFile(name, session).toFile();
+        Path temp = NPath.ofTempFile(name, session).toPath().get();
         NCp a = NCp.of(session).removeOptions(NPathOption.SAFE);
         if (isPath) {
             a.from(((NPath) is));
@@ -873,7 +873,7 @@ public class CoreIOUtils {
                     List<String> e = ctt.findExtensionsByContentType(ct);
                     if (!e.isEmpty()) {
                         NPath newFile = NPath.ofTempFile(name + "." + e.get(0), session);
-                        Path newFilePath = newFile.toFile();
+                        Path newFilePath = newFile.toPath().get();
                         try {
                             Files.move(temp, newFilePath, StandardCopyOption.REPLACE_EXISTING);
                         } catch (IOException ex) {

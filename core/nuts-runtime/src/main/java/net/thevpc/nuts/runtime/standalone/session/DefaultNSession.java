@@ -528,7 +528,7 @@ public class DefaultNSession implements Cloneable, NSession {
                             printAppHelp();
                         }
                         cmdLine.skipAll();
-                        throw new NExecutionException(this, NMsg.ofPlain("help"), 0);
+                        throw new NExecutionException(this, NMsg.ofPlain("help"), NExecutionException.SUCCESS);
                     }
                     break;
                 }
@@ -540,7 +540,7 @@ public class DefaultNSession implements Cloneable, NSession {
                         case UPDATE: {
                             if (enabled) {
                                 cmdLine.skip();
-                                throw new NExecutionException(this, NMsg.ofPlain("skip-event"), 0);
+                                throw new NExecutionException(this, NMsg.ofPlain("skip-event"), NExecutionException.SUCCESS);
                             }
                         }
                     }
@@ -554,7 +554,7 @@ public class DefaultNSession implements Cloneable, NSession {
                             out().println(NIdResolver.of(this).resolveId(getClass()).getVersion());
                             cmdLine.skipAll();
                         }
-                        throw new NExecutionException(this, NMsg.ofPlain("version"), 0);
+                        throw new NExecutionException(this, NMsg.ofPlain("version"), NExecutionException.SUCCESS);
                     }
                     return true;
                 }
@@ -1641,7 +1641,7 @@ public class DefaultNSession implements Cloneable, NSession {
                         break;
                     }
                     default: {
-                        throw new NExecutionException(this, NMsg.ofC("Unsupported nuts-exec-mode : %s", args.get(0)), 205);
+                        throw new NExecutionException(this, NMsg.ofC("Unsupported nuts-exec-mode : %s", args.get(0)), NExecutionException.ERROR_255);
                     }
                 }
             }
@@ -1654,7 +1654,7 @@ public class DefaultNSession implements Cloneable, NSession {
             _appId = NIdResolver.of(this).resolveId(appClass);
         }
         if (_appId == null) {
-            throw new NExecutionException(this, NMsg.ofC("invalid Nuts Application (%s). Id cannot be resolved", appClass.getName()), 203);
+            throw new NExecutionException(this, NMsg.ofC("invalid Nuts Application (%s). Id cannot be resolved", appClass.getName()), NExecutionException.ERROR_255);
         }
         this.appArgs = (args);
         this.appId = (_appId);
@@ -1987,7 +1987,7 @@ public class DefaultNSession implements Cloneable, NSession {
             NArgCandidate c = super.addCandidatesImpl(value);
             String v = value.getValue();
             if (v == null) {
-                throw new NExecutionException(session, NMsg.ofPlain("candidate cannot be null"), 2);
+                throw new NExecutionException(session, NMsg.ofPlain("candidate cannot be null"), NExecutionException.ERROR_2);
             }
             String d = value.getDisplay();
             if (Objects.equals(v, d) || d == null) {

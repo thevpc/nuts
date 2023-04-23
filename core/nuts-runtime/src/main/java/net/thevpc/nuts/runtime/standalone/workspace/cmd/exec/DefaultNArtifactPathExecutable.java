@@ -66,11 +66,11 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableCommand {
     }
 
     @Override
-    public void execute() {
-        executeHelper();
+    public int execute() {
+        return executeHelper();
     }
 
-    public void executeHelper() {
+    public int executeHelper() {
         NSession session = getSession();
         try (final CharacterizedExecFile c = characterizeForExec(NPath.of(cmdName, session), session, executorOptions)) {
             if (c.getDescriptor() == null) {
@@ -102,7 +102,7 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableCommand {
             nutToRun.setDependencies(resolver.solve());
 //            System.out.println(String.join(" ",args));
             try {
-                execCommand.ws_execId(nutToRun, cmdName, args, executorOptions, workspaceOptions, execCommand.getEnv(),
+                return execCommand.ws_execId(nutToRun, cmdName, args, executorOptions, workspaceOptions, execCommand.getEnv(),
                         execCommand.getDirectory(), execCommand.isFailFast(), true, session,
                         execCommand.getIn(),
                         execCommand.getOut(),
@@ -139,7 +139,7 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableCommand {
                 if (c.getDescriptor() != null) {
                     if ("zip".equals(c.getDescriptor().getPackaging())) {
                         Path zipFilePath = NPath.of(fileSource + ".zip", session)
-                                .toAbsolute().toFile();
+                                .toAbsolute().toPath().get();
                         ZipUtils.zip(session, fileSource.toString(), new ZipOptions(), zipFilePath.toString());
                         c.setContentFile(zipFilePath);
                         c.addTemp(zipFilePath);

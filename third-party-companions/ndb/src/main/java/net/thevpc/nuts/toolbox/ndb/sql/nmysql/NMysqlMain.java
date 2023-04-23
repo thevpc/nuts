@@ -300,7 +300,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
             s.out().println(result);
         } else {
             if (path.isNull()) {
-                cmdLine.throwMissingArgumentByName("--path");
+                cmdLine.throwMissingArgument("--path");
             }
             LocalMysqlDatabaseConfigService.RestoreResult result = d.restore(path.get());
             s.out().println(result);
@@ -572,7 +572,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
             d.expectedRemote = false;
         }
         if (d.expectedRemote && d.forRemote_server == null) {
-            cmdLine.throwMissingArgumentByName("--server");
+            cmdLine.throwMissingArgument("--server");
         }
         NTexts factory = NTexts.of(session);
         if (cmdLine.isExecMode()) {
@@ -593,7 +593,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                                                     ))
                                     )
                                     .setDefaultValue(false).getBooleanValue()) {
-                                throw new NExecutionException(session, NMsg.ofC("already exists %s", d.name), 2);
+                                throw new NExecutionException(session, NMsg.ofC("already exists %s", d.name), NExecutionException.ERROR_2);
                             }
                         }
                     } else {
@@ -605,18 +605,18 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                                             NMsg.ofC("already exists %s. override?", factory.ofStyled(d.name.toString(), NTextStyle.primary3()
                                             )))
                                     .setDefaultValue(false).getBooleanValue()) {
-                                throw new NExecutionException(session, NMsg.ofC("already exists %s", d.name), 2);
+                                throw new NExecutionException(session, NMsg.ofC("already exists %s", d.name), NExecutionException.ERROR_2);
                             }
                         }
                     }
                 } else {
                     if (d.name.getDatabaseName().isEmpty()) {
                         if (c.getDatabase(d.name.getDatabaseName(), NOpenMode.OPEN_OR_NULL) == null) {
-                            throw new NExecutionException(session, NMsg.ofC("not found %s", d.name), 2);
+                            throw new NExecutionException(session, NMsg.ofC("not found %s", d.name), NExecutionException.ERROR_2);
                         }
                     } else {
                         if (c.getDatabase(d.name.getDatabaseName(), NOpenMode.OPEN_OR_NULL) == null) {
-                            throw new NExecutionException(session, NMsg.ofC("not found  %s", d.name), 2);
+                            throw new NExecutionException(session, NMsg.ofC("not found  %s", d.name), NExecutionException.ERROR_2);
                         }
                     }
                 }
@@ -705,13 +705,13 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                         );
                     }
                     if (r.getConfig().getUser() == null) {
-                        throw new NExecutionException(session, NMsg.ofPlain("missing --user"), 2);
+                        throw new NExecutionException(session, NMsg.ofPlain("missing --user"), NExecutionException.ERROR_2);
                     }
                     if (r.getConfig().getPassword() == null) {
-                        throw new NExecutionException(session, NMsg.ofPlain("missing --password"), 2);
+                        throw new NExecutionException(session, NMsg.ofPlain("missing --password"), NExecutionException.ERROR_2);
                     }
                     if (r.getConfig().getDatabaseName() == null) {
-                        throw new NExecutionException(session, NMsg.ofPlain("missing --name"), 2);
+                        throw new NExecutionException(session, NMsg.ofPlain("missing --name"), NExecutionException.ERROR_2);
                     }
                     if (someUpdates && session.isPlainTrace()) {
                         if (add) {
@@ -736,7 +736,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                     }
                 }
                 if (!someUpdates) {
-                    throw new NExecutionException(session, NMsg.ofPlain("nothing to save"), 2);
+                    throw new NExecutionException(session, NMsg.ofPlain("nothing to save"), NExecutionException.ERROR_2);
                 }
 
                 c.saveConfig();
@@ -764,7 +764,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                                             NMsg.ofC("already exists %s. override?", factory.ofStyled(d.name.toString(), NTextStyle.primary3())
                                             ))
                                     .setDefaultValue(false).getBooleanValue()) {
-                                throw new NExecutionException(session, NMsg.ofC("already exists %s", d.name), 2);
+                                throw new NExecutionException(session, NMsg.ofC("already exists %s", d.name), NExecutionException.ERROR_2);
                             }
                         }
                     } else {
@@ -776,18 +776,18 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                                             NMsg.ofC("already exists %s. override?", factory.ofStyled(d.name.toString(), NTextStyle.primary3())
                                             ))
                                     .setDefaultValue(false).getBooleanValue()) {
-                                throw new NExecutionException(session, NMsg.ofC("already exists %s", d.name), 2);
+                                throw new NExecutionException(session, NMsg.ofC("already exists %s", d.name), NExecutionException.ERROR_2);
                             }
                         }
                     }
                 } else {
                     if (d.name.getDatabaseName().isEmpty()) {
                         if (c.getDatabase(d.name.getDatabaseName(), NOpenMode.OPEN_OR_NULL) == null) {
-                            throw new NExecutionException(session, NMsg.ofC("not found %s", d.name), 2);
+                            throw new NExecutionException(session, NMsg.ofC("not found %s", d.name), NExecutionException.ERROR_2);
                         }
                     } else {
                         if (c.getDatabase(d.name.getDatabaseName(), NOpenMode.OPEN_OR_NULL) == null) {
-                            throw new NExecutionException(session, NMsg.ofPlain("not found  %s" + d.name), 2);
+                            throw new NExecutionException(session, NMsg.ofPlain("not found  %s" + d.name), NExecutionException.ERROR_2);
                         }
                     }
                 }
@@ -852,7 +852,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                     }
                 }
                 if (!someUpdates) {
-                    throw new NExecutionException(session, NMsg.ofPlain("nothing to save"), 2);
+                    throw new NExecutionException(session, NMsg.ofPlain("nothing to save"), NExecutionException.ERROR_2);
                 }
 
                 c.saveConfig();

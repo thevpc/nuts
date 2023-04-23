@@ -88,7 +88,7 @@ public class CpCommand extends NShellBuiltinDefault {
             ), session));
         }
         if (options.xfiles.size() < 2) {
-            throw new NExecutionException(session, NMsg.ofPlain("missing parameters"), 2);
+            throw new NExecutionException(session, NMsg.ofPlain("missing parameters"), NExecutionException.ERROR_2);
         }
 
         options.sshlistener = new ShellHelper.WsSshListener(session);

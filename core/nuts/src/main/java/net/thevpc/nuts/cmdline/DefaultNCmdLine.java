@@ -225,11 +225,18 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public NCmdLine throwMissingArgument() {
-        return throwMissingArgument(null);
+        if (isEmpty()) {
+            if (autoComplete != null) {
+                skipAll();
+                return this;
+            }
+            throwError(NMsg.ofPlain("missing argument"));
+        }
+        return this;
     }
 
     @Override
-    public NCmdLine throwMissingArgumentByName(String argumentName) {
+    public NCmdLine throwMissingArgument(String argumentName) {
         if (NBlankable.isBlank(argumentName)) {
             throwMissingArgument();
         } else {

@@ -84,7 +84,7 @@ public class NJLineCmdLineHistory implements NCmdLineHistory {
     public NCmdLineHistory setPath(NPath path) {
         this.path=path;
         if(this.path!=null) {
-            reader.getVariables().put(LineReader.HISTORY_FILE, path.toFile());
+            reader.getVariables().put(LineReader.HISTORY_FILE, path.toPath().get());
         }
         return this;
     }
@@ -136,7 +136,7 @@ public class NJLineCmdLineHistory implements NCmdLineHistory {
                         if (idx < 0) {
                             throw new NExecutionException(session,  NMsg.ofPlain("Bad history file syntax! "
                                     + "The history file may be an older history: "
-                                    + "please remove it or use a different history file."), 2);
+                                    + "please remove it or use a different history file."), NExecutionException.ERROR_2);
                         }
                         Instant time = Instant.ofEpochMilli(Long.parseLong(l.substring(0, idx)));
                         String line = unescape(l.substring(idx + 1));

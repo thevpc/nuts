@@ -143,12 +143,12 @@ public class DefaultNLocks extends AbstractNLocks {
             }
             return NLocations.of(getSession()).getStoreLocation((NId) lockedObject, NStoreType.RUN)
                     .resolve("nuts-" + face)
-                    .toFile()
+                    .toPath().get()
                     ;
         } else if (lockedObject instanceof Path) {
             return (Path) lockedObject;
         } else if (lockedObject instanceof NPath) {
-            return ((NPath) lockedObject).toFile();
+            return ((NPath) lockedObject).toPath().get();
         } else if (lockedObject instanceof File) {
             return ((File) lockedObject).toPath();
         } else if (lockedObject instanceof String) {

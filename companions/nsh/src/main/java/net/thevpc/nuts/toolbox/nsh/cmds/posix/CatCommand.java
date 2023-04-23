@@ -113,7 +113,7 @@ public class CatCommand extends NShellBuiltinDefault {
             for (FileInfo f : options.files) {
                 boolean close = false;
                 InputStream in = null;
-                if (f.getFile() == null) {
+                if (f.getPath() == null) {
                     in = context.in();
                     if (f.getHighlighter() == null) {
                         f.setHighlighter("plain");
@@ -121,11 +121,11 @@ public class CatCommand extends NShellBuiltinDefault {
                         f.setHighlighter("ntf");
                     }
                 } else {
-                    in = f.getFile().getInputStream();
+                    in = f.getPath().getInputStream();
                     if (f.getHighlighter() == null) {
                         f.setHighlighter("plain");
                     } else if (f.getHighlighter().isEmpty()) {
-                        f.setHighlighter(f.getFile().getContentType());
+                        f.setHighlighter(f.getPath().getContentType());
                         if (f.getHighlighter() == null) {
                             f.setHighlighter("plain");
                         }
@@ -148,7 +148,7 @@ public class CatCommand extends NShellBuiltinDefault {
                 out.print(results);
             }
         } catch (IOException ex) {
-            throw new NExecutionException(context.getSession(), NMsg.ofC("%s", ex), ex, 100);
+            throw new NExecutionException(context.getSession(), NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_3);
         }
     }
 

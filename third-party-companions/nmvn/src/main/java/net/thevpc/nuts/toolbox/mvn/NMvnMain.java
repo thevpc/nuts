@@ -4,7 +4,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.spi.NPaths;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -83,7 +82,7 @@ public class NMvnMain implements NApplication {
                         }
                     }
                     int r = callMvn(cli,session, o, defaultArgs.toArray(new String[0]));
-                    if (r == 0) {
+                    if (r == NExecutionException.SUCCESS) {
                         return;
                     } else {
                         throw new NExecutionException(session, NMsg.ofC("Maven Call exited with code %d", r), r);
@@ -112,7 +111,7 @@ public class NMvnMain implements NApplication {
                     } catch (IOException ex) {
                         throw new IllegalArgumentException(ex);
                     }
-                    if (r == 0) {
+                    if (r == NExecutionException.SUCCESS) {
                         return;
                     } else {
                         throw new NExecutionException(session, NMsg.ofC("Maven Call exited with code %s", r), r);
@@ -159,7 +158,7 @@ public class NMvnMain implements NApplication {
     }
 
     private static Path createTempPom(NSession session) {
-        Path d = NPath.ofTempFolder(session).toFile();
+        Path d = NPath.ofTempFolder(session).toPath().get();
         try (Writer out = Files.newBufferedWriter(d.resolve("pom.xml"))) {
             out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                     + "<project xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://maven.apache.org/POM/4.0.0\"\n"

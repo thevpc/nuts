@@ -266,7 +266,7 @@ public interface NCmdLine extends Iterable<NArg>, NFormattable, NBlankable, NSes
 
     NCmdLine throwMissingArgument(NMsg errorMessage);
 
-    NCmdLine throwMissingArgumentByName(String argumentName);
+    NCmdLine throwMissingArgument(String argumentName);
 
 
     /**

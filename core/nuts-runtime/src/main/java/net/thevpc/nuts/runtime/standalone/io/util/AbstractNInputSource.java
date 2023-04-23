@@ -1,15 +1,19 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
+import net.thevpc.nuts.NBlankable;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NIOUtils;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -141,4 +145,48 @@ public abstract class AbstractNInputSource implements NInputSource {
         return c;
     }
 
+    @Override
+    public String getDigestString() {
+        return NStringUtils.toHexString(getDigest());
+    }
+
+    @Override
+    public String getDigestString(String algo) {
+        return NStringUtils.toHexString(getDigest(algo));
+    }
+
+    @Override
+    public byte[] getDigest() {
+        return getDigest(null);
+    }
+
+    @Override
+    public byte[] getDigest(String algo) {
+        if (NBlankable.isBlank(algo)) {
+            algo = "SHA-1";
+        }
+        try (InputStream input = getInputStream()) {
+            MessageDigest sha1 = null;
+            try {
+                sha1 = MessageDigest.getInstance(algo);
+            } catch (NoSuchAlgorithmException ex) {
+                throw new NIOException(getSession(), ex);
+            }
+            byte[] buffer = new byte[8192];
+            int len = 0;
+            try {
+                len = input.read(buffer);
+                while (len != -1) {
+                    sha1.update(buffer, 0, len);
+                    len = input.read(buffer);
+                }
+            } catch (IOException e) {
+                throw new NIOException(getSession(), e);
+            }
+            return sha1.digest();
+
+        } catch (IOException e) {
+            throw new NIOException(getSession(), e);
+        }
+    }
 }

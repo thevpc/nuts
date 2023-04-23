@@ -53,7 +53,7 @@ public class CoreDigestHelper {
 
     public CoreDigestHelper append(URL url) {
         if (url != null) {
-            Path ff = NPath.of(url,session).asFile();
+            Path ff = NPath.of(url,session).toPath().orNull();
             if (ff != null) {
                 append(ff);
                 return this;

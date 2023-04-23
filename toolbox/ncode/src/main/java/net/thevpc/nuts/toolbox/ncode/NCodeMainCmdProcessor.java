@@ -86,7 +86,7 @@ class NCodeMainCmdProcessor implements NCmdLineProcessor {
             paths.add(".");
         }
         if(typeComparators.isEmpty() && fileComparators.isEmpty()){
-            cmdLine.throwMissingArgumentByName("filter");
+            cmdLine.throwMissingArgument("filter");
         }
         List<Object> results=new ArrayList<>();
         if(!typeComparators.isEmpty()) {

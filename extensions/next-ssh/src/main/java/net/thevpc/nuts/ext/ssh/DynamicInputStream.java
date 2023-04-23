@@ -1,4 +1,4 @@
-package net.thevpc.nuts.lib.ssh;
+package net.thevpc.nuts.ext.ssh;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -35,10 +35,10 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
     }
 
     @Override
-    public void execute() {
+    public int execute() {
         if(getSession().isDry()){
             dryExecute();
-            return;
+            return NExecutionException.SUCCESS;
         }
         List<String> helpFor = new ArrayList<>();
         NSession session = getSession();
@@ -83,7 +83,6 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
                     n == null ? NTexts.of(session).ofStyled(("no help found for " + name), NTextStyle.error()) : n
             );
         }
-        NContentType outputFormat = session.getOutputFormat();
         NPrintStream fout = NPrintStream.ofInMemory(session);
         if (!helpColors && helpFor.isEmpty()) {
             fout.println(NWorkspaceExt.of(session.getWorkspace()).getHelpText(session));
@@ -112,6 +111,7 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
             }
         }
         session.out().println(NString.of(fout.toString(), session));
+        return NExecutionException.SUCCESS;
     }
 
 }

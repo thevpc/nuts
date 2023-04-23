@@ -1,4 +1,4 @@
-package net.thevpc.nuts.lib.ssh;
+package net.thevpc.nuts.ext.ssh;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
@@ -26,7 +26,12 @@ public class SshFileOutputStream extends OutputStream {
     public SshFileOutputStream(NConnexionString path, NSession nSession, boolean mkdirs, boolean failFast, long filesize) {
         super();
         this.session = nSession;
-        this.connection = new SShConnection(path, nSession);
+        this.connection = new SShConnection(path
+                ,nSession.in()
+                ,nSession.out().asOutputStream()
+                ,nSession.err().asOutputStream()
+                , nSession
+        );
         this.mkdirs = mkdirs;
         this.to = path.getPath();
         this.failFast = failFast;

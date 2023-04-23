@@ -188,7 +188,7 @@ public class ProjectService {
             }
             String nutsRepository = a.getNutsRepository();
             if (NBlankable.isBlank(nutsRepository)) {
-                throw new NExecutionException(session, NMsg.ofPlain("missing repository. try 'nwork set -r vpc-public-maven' or something like that"), 2);
+                throw new NExecutionException(session, NMsg.ofPlain("missing repository. try 'nwork set -r vpc-public-maven' or something like that"), NExecutionException.ERROR_2);
             }
             try {
                 NSession s = null;
@@ -212,7 +212,7 @@ public class ProjectService {
                     if (p == null) {
                         return null;
                     }
-                    return p.toFile().toFile();
+                    return p.toFile().get();
                 }
             } catch (Exception e) {
                 throw new IllegalArgumentException(e);
@@ -235,7 +235,7 @@ public class ProjectService {
                     }
                     String nutsRepository = a.getNutsRepository();
                     if (NBlankable.isBlank(nutsRepository)) {
-                        throw new NExecutionException(session, NMsg.ofPlain("missing repository. try 'nwork set -r vpc-public-maven' or something like that"), 2);
+                        throw new NExecutionException(session, NMsg.ofPlain("missing repository. try 'nwork set -r vpc-public-maven' or something like that"), NExecutionException.ERROR_2);
                     }
                     try {
                         NDescriptor g = NDescriptorParser.of(session)

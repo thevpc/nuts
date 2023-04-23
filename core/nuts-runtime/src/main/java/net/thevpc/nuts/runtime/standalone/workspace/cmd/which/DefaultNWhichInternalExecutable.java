@@ -30,15 +30,15 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
     }
 
     @Override
-    public void execute() {
+    public int execute() {
         if(getSession().isDry()){
             dryExecute();
-            return;
+            return NExecutionException.SUCCESS;
         }
         NSession session = getSession();
         if (NAppUtils.processHelpOptions(args, session)) {
             showDefaultHelp();
-            return;
+            return NExecutionException.SUCCESS;
         }
         List<String> commands = new ArrayList<String>();
 //        NutsWorkspace ws = getSession().getWorkspace();
@@ -178,6 +178,7 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                 }
             }
         }
+        return NExecutionException.SUCCESS;
     }
 
 }

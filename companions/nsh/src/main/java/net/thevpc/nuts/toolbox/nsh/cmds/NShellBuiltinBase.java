@@ -282,11 +282,11 @@ public abstract class NShellBuiltinBase implements NShellBuiltin {
         } catch (NExecutionException ex) {
             throw ex;
         } catch (NException ex) {
-            throw new NExecutionException(context.getSession(), ex.getFormattedMessage(), ex, 254);
+            throw new NExecutionException(context.getSession(), ex.getFormattedMessage(), ex, NExecutionException.ERROR_255);
         } catch (Exception ex) {
             throw new NExecutionException(context.getSession(),
                     NMsg.ofNtf(NTexts.of(context.getSession()).ofText(ex).toString())
-                    , ex, 254);
+                    , ex, NExecutionException.ERROR_255);
         }
     }
 

@@ -104,12 +104,12 @@ public class MongoAggregateCmd extends NdbCmd<NMongoConfig> {
             }
         }
         if (NBlankable.isBlank(eq.getTable())) {
-            cmdLine.throwMissingArgumentByName("--table");
+            cmdLine.throwMissingArgument("--table");
         }
         NMongoConfig options = loadFromName(name, otherOptions);
         support.revalidateOptions(options);
         if (NBlankable.isBlank(otherOptions.getDatabaseName())) {
-            cmdLine.throwMissingArgumentByName("--dbname");
+            cmdLine.throwMissingArgument("--dbname");
         }
         run(eq, options, session);
     }

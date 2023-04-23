@@ -91,7 +91,7 @@ public class DefaultNCompress implements NCompress {
             if (this.target instanceof NPath) {
                 Path tempPath = null;
                 if (isSafe()) {
-                    tempPath = NPath.ofTempFile("zip",session).toFile();
+                    tempPath = NPath.ofTempFile("zip",session).toPath().get();
                 }
                 if (this.target instanceof NPath) {
                     ((NPath) this.target).mkParentDirs();
@@ -132,7 +132,7 @@ public class DefaultNCompress implements NCompress {
                 }
                 if (tempPath != null) {
                     if (this.target instanceof NPath/* && ((NPath) target).isFile()*/) {
-                        Files.move(tempPath, ((NPath) target).toFile(),
+                        Files.move(tempPath, ((NPath) target).toPath().get(),
                                 StandardCopyOption.REPLACE_EXISTING);
                     } else if (this.target instanceof NPath) {
                         try (InputStream ii = Files.newInputStream(tempPath)) {

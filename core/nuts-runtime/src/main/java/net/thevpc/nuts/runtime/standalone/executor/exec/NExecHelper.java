@@ -78,7 +78,7 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
                                            NRunAs runAs,
                                            NSession session
     ) throws NExecutionException {
-        Path wsLocation = NLocations.of(session).getWorkspaceLocation().toFile();
+        Path wsLocation = NLocations.of(session).getWorkspaceLocation().toPath().get();
         Path pdirectory = null;
         if (NBlankable.isBlank(directory)) {
             pdirectory = wsLocation;
@@ -101,7 +101,7 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
                 out.print("[dry] exec ");
                 out.println(pb.format());
             }
-            return 0;
+            return NExecutionException.SUCCESS;
         }
         if (out != null) {
             out.resetLine();

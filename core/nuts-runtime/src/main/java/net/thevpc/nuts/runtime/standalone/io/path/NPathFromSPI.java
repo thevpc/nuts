@@ -12,10 +12,7 @@ import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.util.NStream;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
@@ -88,7 +85,7 @@ public class NPathFromSPI extends NPathBase {
     }
 
     @Override
-    public byte[] readBytes(NPathOption...options) {
+    public byte[] readBytes(NPathOption... options) {
         long len = getContentLength();
         int readSize = 1024;
         if (len < 0) {
@@ -130,7 +127,7 @@ public class NPathFromSPI extends NPathBase {
     }
 
     @Override
-    public NPath writeBytes(byte[] bytes, NPathOption...options) {
+    public NPath writeBytes(byte[] bytes, NPathOption... options) {
         try (OutputStream os = getOutputStream()) {
             os.write(bytes);
         } catch (IOException ex) {
@@ -163,13 +160,18 @@ public class NPathFromSPI extends NPathBase {
     }
 
     @Override
-    public URL toURL() {
+    public NOptional<URL> toURL() {
         return base.toURL(this);
     }
 
     @Override
-    public Path toFile() {
-        return base.toFile(this);
+    public NOptional<Path> toPath() {
+        return base.toPath(this);
+    }
+
+    @Override
+    public NOptional<File> toFile() {
+        return base.toPath(this).map(Path::toFile);
     }
 
     @Override
@@ -387,8 +389,8 @@ public class NPathFromSPI extends NPathBase {
     }
 
     @Override
-    public int getPathCount() {
-        return base.getPathCount(this);
+    public int getLocationItemsCount() {
+        return base.getLocationItemsCount(this);
     }
 
     @Override
@@ -419,14 +421,14 @@ public class NPathFromSPI extends NPathBase {
     }
 
     @Override
-    public String getItem(int index) {
-        return getItems().get(index);
+    public String getLocationItem(int index) {
+        return getLocationItems().get(index);
     }
 
     @Override
-    public List<String> getItems() {
+    public List<String> getLocationItems() {
         if (items == null) {
-            items = base.getItems(this);
+            items = base.getLocationItems(this);
         }
         return items == null ? Collections.emptyList() : items;
     }
@@ -526,4 +528,15 @@ public class NPathFromSPI extends NPathBase {
         }
     }
 
+    @Override
+    public byte[] getDigest(String algo) {
+        if (NBlankable.isBlank(algo)) {
+            algo = "SHA-1";
+        }
+        byte[] digest = base.getDigest(this, algo);
+        if (digest == null) {
+            return super.getDigest(algo);
+        }
+        return digest;
+    }
 }

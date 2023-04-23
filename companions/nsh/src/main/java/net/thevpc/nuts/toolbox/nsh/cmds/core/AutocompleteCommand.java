@@ -81,7 +81,7 @@ public class AutocompleteCommand extends NShellBuiltinDefault {
         Options options = context.getOptions();
         NSession session = context.getSession();
         if (options.cmd == null) {
-            throw new NExecutionException(session, NMsg.ofPlain("missing NShellCommandNode"), 1);
+            throw new NExecutionException(session, NMsg.ofPlain("missing NShellCommandNode"), NExecutionException.ERROR_1);
         }
         if (options.index < 0) {
             options.index = options.items.size();

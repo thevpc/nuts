@@ -363,8 +363,8 @@ public class DefaultNCp implements NCp {
             if (!(target instanceof NPath)) {
                 throw new NIllegalArgumentException(getSession(), NMsg.ofC("unsupported copy of directory to %s", target));
             }
-            Path fromPath = ((NPath) _source).toFile();
-            Path toPath = ((NPath) target).toFile();
+            Path fromPath = ((NPath) _source).toPath().get();
+            Path toPath = ((NPath) target).toPath().get();
             CopyData cd = new CopyData();
             if (
                     options.contains(NPathOption.LOG)
@@ -725,7 +725,7 @@ public class DefaultNCp implements NCp {
         if (source != null) {
             if (source instanceof NPath) {
                 NPath p = (NPath) source;
-                if (p.isFile()) {
+                if (p.isRegularFile()) {
                     return p;
                 }
             }
@@ -738,7 +738,7 @@ public class DefaultNCp implements NCp {
             if (target instanceof NPath) {
                 NPath p = (NPath) target;
                 //if (p.isFile()) {
-                    return p;
+                return p;
                 //}
             }
         }
@@ -746,27 +746,15 @@ public class DefaultNCp implements NCp {
     }
 
     private void copyStreamOnce(NInputSource source, NOutputTarget target) {
-        NInputSource _source = source;
-
         NAssert.requireNonNull(source, "source", getSession());
         NAssert.requireNonNull(target, "target", getSession());
-        NPath _target = asValidTargetPath();
-        NPath _source0 = asValidSourcePath();
-        boolean _target_isLocalPath = false;
-        Path _localFile = null;
-        try{
-            if(_target!=null) {
-                _localFile = _target.toFile();
-            }
-            _target_isLocalPath=_localFile!=null;
-        }catch (Exception e){
-            // ignore
-        }
+        NOutputTarget2 _target2 = new NOutputTarget2(target);
+        NInputSource2 _source2 = new NInputSource2(source);
         boolean safe = options.contains(NPathOption.SAFE);
-        if (checker != null && !_target_isLocalPath && !safe) {
+        if (checker != null && _target2.jpath == null && !safe) {
             throw new NIllegalArgumentException(getSession(), NMsg.ofNtf("unsupported validation if neither safeCopy is armed nor path is defined"));
         }
-        NMsg loggedSrc = _source.getMetaData().getMessage().orElse(NMsg.ofPlain("unknown-source"));
+        NMsg loggedSrc = _source2.source.getMetaData().getMessage().orElse(NMsg.ofPlain("unknown-source"));
         NMsg loggedTarget = target.getMetaData().getMessage().orElse(NMsg.ofPlain("unknown-target"));
         NMsg m = getActionMessage();
         if (m == null) {
@@ -780,12 +768,12 @@ public class DefaultNCp implements NCp {
                 || getProgressFactory() != null
         ) {
             NInputStreamMonitor monitor = NInputStreamMonitor.of(session);
-            monitor.setSource(_source);
+            monitor.setSource(_source2.source);
             monitor.setLogProgress(options.contains(NPathOption.LOG));
             monitor.setTraceProgress(options.contains(NPathOption.TRACE));
             monitor.setOrigin(getSourceOrigin());
             monitor.setSourceTypeName(getSourceTypeName());
-            _source = NIO.of(session).ofInputSource(
+            _source2.source = NIO.of(session).ofInputSource(
                     monitor.setProgressFactory(getProgressFactory())
                             .setLogProgress(options.contains(NPathOption.LOG))
                             .create());
@@ -800,30 +788,29 @@ public class DefaultNCp implements NCp {
         try {
             if (safe) {
                 Path temp = null;
-                if (_target_isLocalPath) {
-                    Path to = _localFile;
-                    NPath.of(to, session).mkParentDirs();
-                    temp = to.resolveSibling(to.getFileName() + "~");
+                if (_target2.jpath != null) {
+                    NPath.of(_target2.jpath, session).mkParentDirs();
+                    temp = _target2.jpath.resolveSibling(_target2.jpath.getFileName() + "~");
                 } else {
-                    temp = NPath.ofTempFile("temp~",getSession()).toFile();
+                    temp = NPath.ofTempFile("temp~", getSession()).toPath().get();
                 }
                 try {
-                    if (_source0 != null) {
-                        copy(_source0.toFile(), temp, new HashSet<>(Collections.singletonList(NPathOption.REPLACE_EXISTING)));
+                    if (_source2.jpath != null) {
+                        copy(_source2.jpath, temp, new HashSet<>(Collections.singletonList(NPathOption.REPLACE_EXISTING)));
                     } else {
-                        try (InputStream ins = _source.getInputStream()) {
+                        try (InputStream ins = _source2.source.getInputStream()) {
                             copy(ins, temp, new HashSet<>(Collections.singletonList(NPathOption.REPLACE_EXISTING)));
                         }
                     }
                     _validate(temp);
-                    if (_target_isLocalPath) {
+                    if (_target2.jpath != null) {
                         try {
-                            Files.move(temp, _localFile, StandardCopyOption.REPLACE_EXISTING);
+                            Files.move(temp, _target2.jpath, StandardCopyOption.REPLACE_EXISTING);
                         } catch (FileSystemException e) {
                             // happens when the file is used by another process
                             // in that case try to check if the file needs to be copied
                             //if not, return safely!
-                            if (CoreIOUtils.compareContent(temp, _localFile, session)) {
+                            if (CoreIOUtils.compareContent(temp, _target2.jpath, session)) {
                                 //cannot write the file (used by another process), but no pbm because does not need to
                                 return;
                             }
@@ -841,13 +828,13 @@ public class DefaultNCp implements NCp {
                     }
                 }
             } else {
-                if (_target_isLocalPath) {
-                    Path to = _localFile;
+                if (_target2.jpath != null) {
+                    Path to = _target2.jpath;
                     NPath.of(to, session).mkParentDirs();
-                    if (_source0 != null) {
-                        copy(_source0.toFile(), to, new HashSet<>(Collections.singletonList(NPathOption.REPLACE_EXISTING)));
+                    if (_source2.jpath != null) {
+                        copy(_source2.jpath, to, new HashSet<>(Collections.singletonList(NPathOption.REPLACE_EXISTING)));
                     } else {
-                        try (InputStream ins = _source.getInputStream()) {
+                        try (InputStream ins = _source2.source.getInputStream()) {
                             copy(ins, to, new HashSet<>(Collections.singletonList(NPathOption.REPLACE_EXISTING)));
                         }
                     }
@@ -856,10 +843,10 @@ public class DefaultNCp implements NCp {
                     ByteArrayOutputStream bos = null;
                     if (checker != null) {
                         bos = new ByteArrayOutputStream();
-                        if (_source0 != null) {
-                            copy(_source0.toFile(), bos);
+                        if (_source2.jpath != null) {
+                            copy(_source2.jpath, bos);
                         } else {
-                            try (InputStream ins = _source.getInputStream()) {
+                            try (InputStream ins = _source2.source.getInputStream()) {
                                 copy(ins, bos, options);
                             }
                         }
@@ -868,12 +855,12 @@ public class DefaultNCp implements NCp {
                         }
                         _validate(bos.toByteArray());
                     } else {
-                        if (_source0 != null) {
+                        if (_source2.jpath != null) {
                             try (OutputStream ops = target.getOutputStream()) {
-                                copy(_source0.toFile(), ops);
+                                copy(_source2.jpath, ops);
                             }
                         } else {
-                            try (InputStream ins = _source.getInputStream()) {
+                            try (InputStream ins = _source2.source.getInputStream()) {
                                 try (OutputStream ops = target.getOutputStream()) {
                                     copy(ins, ops, options);
                                 }
@@ -884,8 +871,7 @@ public class DefaultNCp implements NCp {
             }
         } catch (IOException ex) {
             lop.level(Level.CONFIG).verb(NLogVerb.FAIL)
-                    .log(NMsg.ofJ("error copying {0} to {1} : {2}", _source,
-                            target, ex));
+                    .log(NMsg.ofJ("error copying {0} to {1} : {2}", _source2.source, target, ex));
             throw new NIOException(session, ex);
         }
     }
@@ -910,6 +896,34 @@ public class DefaultNCp implements NCp {
                 throw ex;
             } catch (Exception ex) {
                 throw new NCpValidatorException(session, NMsg.ofPlain("validate file failed"), ex);
+            }
+        }
+    }
+
+    private static class NOutputTarget2 {
+        NOutputTarget target;
+        NPath path;
+        Path jpath;
+
+        public NOutputTarget2(NOutputTarget target) {
+            this.target = target;
+            this.path = (this.target instanceof NPath) ? (NPath) this.target : null;
+            if (this.path != null && this.path.isLocal()) {
+                this.jpath = this.path.toPath().orNull();
+            }
+        }
+    }
+
+    private static class NInputSource2 {
+        NInputSource source;
+        NPath path;
+        Path jpath;
+
+        public NInputSource2(NInputSource source) {
+            this.source = source;
+            this.path = (this.source instanceof NPath) ? (NPath) this.source : null;
+            if (this.path != null && this.path.isLocal()) {
+                this.jpath = this.path.toPath().orNull();
             }
         }
     }

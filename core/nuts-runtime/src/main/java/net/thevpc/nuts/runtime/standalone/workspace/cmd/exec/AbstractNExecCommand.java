@@ -13,7 +13,6 @@ import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NStringUtils;
 
-import java.io.ByteArrayOutputStream;
 import java.util.*;
 
 /**
@@ -28,7 +27,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
     protected List<String> executorOptions;
     protected List<String> workspaceOptions;
     protected Map<String, String> env;
-    protected NExecutionException result;
+    protected NExecutionException resultException;
     protected boolean executed;
     protected NPath directory;
     protected NExecOutput out = NExecOutput.ofInherit();
@@ -328,6 +327,13 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
         if (getOut() == null) {
             throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("no buffer was configured; should call grabOutputString"));
         }
+        if (getOut().getResultSource().isNotPresent()) {
+            if (getOut().getType() == NExecRedirectType.GRAB_FILE || getOut().getType() == NExecRedirectType.GRAB_STREAM) {
+                if (getResultException().isPresent()) {
+                    throw getResultException().get();
+                }
+            }
+        }
         return getOut().getResultString();
     }
 
@@ -342,6 +348,13 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
         }
         if (getErr().getType() == NExecRedirectType.REDIRECT) {
             return getOutputString();
+        }
+        if (getErr().getResultSource().isNotPresent()) {
+            if (getErr().getType() == NExecRedirectType.GRAB_FILE || getErr().getType() == NExecRedirectType.GRAB_STREAM) {
+                if (getResultException().isPresent()) {
+                    throw getResultException().get();
+                }
+            }
         }
         return getErr().getResultString();
     }
@@ -415,11 +428,11 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
 //                // ignore;
 //            }
         }
-        if (result != null && result.getExitCode() != 0 && failFast) {
-            throw result;
+        if (resultException != null && resultException.getExitCode() != NExecutionException.SUCCESS && failFast) {
+            throw resultException;
 //            checkFailFast(result.getExitCode());
         }
-        return result == null ? 0 : result.getExitCode();
+        return resultException == null ? NExecutionException.SUCCESS : resultException.getExitCode();
     }
 
     @Override
@@ -428,11 +441,11 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
     }
 
     @Override
-    public NExecutionException getResultException() {
+    public NOptional<NExecutionException> getResultException() {
         if (!executed) {
             run();
         }
-        return result;
+        return NOptional.ofNamed(resultException, "result-exception");
     }
 
     public long getSleepMillis() {
@@ -450,20 +463,26 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
                     getOut().getType() == NExecRedirectType.GRAB_FILE
                             || getOut().getType() == NExecRedirectType.GRAB_STREAM
             ) {
-                return getOutputString();
+                if (getOut() != null && getOut().getResultSource().isPresent()) {
+                    return getOutputString();
+                }
             }
         } else {
             if (
                     getErr().getType() == NExecRedirectType.GRAB_FILE
                             || getErr().getType() == NExecRedirectType.GRAB_STREAM
             ) {
-                return getErrorString();
+                if (getErr() != null && getErr().getResultSource().isPresent()) {
+                    return getErrorString();
+                }
             }
             if (
                     getOut().getType() == NExecRedirectType.GRAB_FILE
                             || getOut().getType() == NExecRedirectType.GRAB_STREAM
             ) {
-                return getOutputString();
+                if (getOut() != null && getOut().getResultSource().isPresent()) {
+                    return getOutputString();
+                }
             }
         }
         return null;

@@ -52,6 +52,6 @@ public interface NExecutorComponent extends NComponent {
      * @param executionContext executionContext
      * @throws NExecutionException when execution fails
      */
-    void exec(NExecutionContext executionContext) throws NExecutionException;
+    int exec(NExecutionContext executionContext) throws NExecutionException;
 
 }

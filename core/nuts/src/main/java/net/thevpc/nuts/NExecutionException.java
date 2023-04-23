@@ -34,7 +34,18 @@ package net.thevpc.nuts;
  */
 public class NExecutionException extends NException implements NExceptionWithExitCodeBase {
 
-    public static final int DEFAULT_ERROR_EXIT_CODE = 244;
+    public static final int SUCCESS = 0;
+    public static final int ERROR_1 = 1;
+    public static final int ERROR_2 = 2;
+    public static final int ERROR_3 = 3;
+    public static final int ERROR_4 = 4;
+    public static final int ERROR_5 = 5;
+    public static final int ERROR_250 = 250;
+    public static final int ERROR_251 = 251;
+    public static final int ERROR_252 = 252;
+    public static final int ERROR_253 = 253;
+    public static final int ERROR_254 = 254;
+    public static final int ERROR_255 = 255;
     private final int exitCode;
 
     /**
@@ -57,7 +68,7 @@ public class NExecutionException extends NException implements NExceptionWithExi
      * @param cause   cause
      */
     public NExecutionException(NSession session, NMsg message, Throwable cause) {
-        this(session, message, cause, DEFAULT_ERROR_EXIT_CODE);
+        this(session, message, cause, ERROR_255);
     }
 
     /**

@@ -377,4 +377,23 @@ public class NStringUtils {
         }
         return all;
     }
+
+    public static byte[] fromHexString(String s) {
+        int len = s.length();
+        if (len == 0) {
+            return new byte[0];
+        }
+        if (s.length() % 2 == 1) {
+            s = s + "0";
+            len++;
+        }
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            char c1 = s.charAt(i);
+            char c2 = s.charAt(i + 1);
+            data[i / 2] = (byte) ((Character.digit(c1, 16) << 4)
+                    + Character.digit(c2, 16));
+        }
+        return data;
+    }
 }

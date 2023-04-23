@@ -42,20 +42,20 @@ public class RemoteNExecCommand extends AbstractNExecCommand {
                     Integer.class
             );
         } catch (NExecutionException ex) {
-            result = ex;
+            resultException = ex;
         } catch (Exception ex) {
             String p = getExtraErrorMessage();
             if (p != null) {
-                result = new NExecutionException(session,
-                        NMsg.ofC("execution failed with code %d and message : %s", 244, p),
-                        ex, 244);
+                resultException = new NExecutionException(session,
+                        NMsg.ofC("execution failed with code %d and message : %s", NExecutionException.ERROR_255, p),
+                        ex, NExecutionException.ERROR_255);
             } else {
-                result = new NExecutionException(session, NMsg.ofPlain("remote command failed"), ex, 244);
+                resultException = new NExecutionException(session, NMsg.ofPlain("remote command failed"), ex, NExecutionException.ERROR_255);
             }
         }
         executed = true;
-        if (result != null && failFast) {
-            throw result;
+        if (resultException != null && failFast) {
+            throw resultException;
         }
         return this;
     }

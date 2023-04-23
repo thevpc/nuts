@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.executor.zip;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.executor.exec.NExecHelper;
 import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
@@ -51,8 +52,8 @@ public class ZipExecutorComponent implements NExecutorComponent {
     }
 
     @Override
-    public void exec(NExecutionContext executionContext) {
-        execHelper(executionContext).exec();
+    public int exec(NExecutionContext executionContext) {
+        return execHelper(executionContext).exec();
     }
 
     @Override

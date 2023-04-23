@@ -93,7 +93,7 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
                                 factory.ofStyled("already running", NTextStyle.warn()),
                                 factory.ofStyled("" + effectivePort, NTextStyle.number())
                         ));
-                        throw new NExecutionException(session, NMsg.ofC("derby is already running on port %d", effectivePort), 3);
+                        throw new NExecutionException(session, NMsg.ofC("derby is already running on port %d", effectivePort), NExecutionException.ERROR_3);
                     }
                 }
             } else if (options.getCmd() == Command.shutdown) {
@@ -105,7 +105,7 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
                                 factory.ofStyled("" + effectivePort, NTextStyle.number())
                         ));
                         session.out().println(NMsg.ofC("derby is %s", factory.ofStyled("already stopped", NTextStyle.warn())));
-                        throw new NExecutionException(session, NMsg.ofC("derby is already stopped on port %d", effectivePort), 3);
+                        throw new NExecutionException(session, NMsg.ofC("derby is already stopped on port %d", effectivePort), NExecutionException.ERROR_3);
                     }
                 }
             }

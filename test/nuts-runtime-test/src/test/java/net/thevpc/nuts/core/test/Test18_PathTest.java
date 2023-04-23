@@ -63,7 +63,7 @@ public class Test18_PathTest {
         NPath s = NPath.of("http://maven.ibiblio.org/maven2/archetype-catalog.xml", session);
 
         //this is a remote file
-        Assertions.assertFalse(s.isFile());
+        Assertions.assertFalse(s.isLocal());
         //the file is actually a http url
         Assertions.assertTrue(s.isURL());
     }
@@ -73,7 +73,7 @@ public class Test18_PathTest {
 
         NPath s = NPath.of("file://maven.ibiblio.org/maven2/archetype-catalog.xml", session);
         //the file has an 'authority' (//) so it cannot be converted to a valid file
-        Assertions.assertFalse(s.isFile());
+        Assertions.assertFalse(s.isLocal());
         //the file is actually a file url
         Assertions.assertTrue(s.isURL());
 
@@ -84,7 +84,7 @@ public class Test18_PathTest {
 
         NPath s = NPath.of("file:/maven.ibiblio.org/maven2/archetype-catalog.xml", session);
         //the file is actually a file url
-        Assertions.assertTrue(s.isFile());
+        Assertions.assertTrue(s.isLocal());
         //the file is actually a URL
         Assertions.assertTrue(s.isURL());
 
@@ -98,7 +98,7 @@ public class Test18_PathTest {
 //        Assertions.assertTrue(s.isURL());
         NPath s = NPath.of("/maven.ibiblio.org/maven2/archetype-catalog.xml", session);
         //the file is actually a file
-        Assertions.assertTrue(s.isFile());
+        Assertions.assertTrue(s.isLocal());
         //the file can be converted to URL
         Assertions.assertTrue(s.isURL());
     }

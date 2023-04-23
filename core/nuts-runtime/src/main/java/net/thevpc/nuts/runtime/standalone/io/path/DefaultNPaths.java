@@ -200,7 +200,7 @@ public class DefaultNPaths implements NPaths {
             for (int i = 0; i < 15; i++) {
                 File temp = null;
                 try {
-                    temp = File.createTempFile(prefix.toString(), ext.toString(), rootFolder.toFile().toFile());
+                    temp = File.createTempFile(prefix.toString(), ext.toString(), rootFolder.toFile().get());
                     if (temp.delete() && temp.mkdir()) {
                         return NPath.of(temp.toPath(), session)
                                 .setUserTemporary(true);
@@ -212,7 +212,7 @@ public class DefaultNPaths implements NPaths {
             throw new NIOException(session, NMsg.ofC("could not create temp directory: %s*%s", rootFolder + File.separator + prefix, ext));
         } else {
             try {
-                return NPath.of(File.createTempFile(prefix.toString(), ext.toString(), rootFolder.toFile().toFile()).toPath(), session)
+                return NPath.of(File.createTempFile(prefix.toString(), ext.toString(), rootFolder.toFile().get()).toPath(), session)
                         .setUserTemporary(true);
             } catch (IOException e) {
                 throw new NIOException(session, e);

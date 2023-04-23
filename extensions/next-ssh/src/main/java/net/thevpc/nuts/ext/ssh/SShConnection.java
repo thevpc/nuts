@@ -1,4 +1,4 @@
-package net.thevpc.nuts.lib.ssh;
+package net.thevpc.nuts.ext.ssh;
 
 import com.jcraft.jsch.*;
 import net.thevpc.nuts.NLiteral;
@@ -46,20 +46,20 @@ public class SShConnection implements AutoCloseable {
     private PrintStream err = new PrintStream(new NonClosableOutputStream(System.err));
     private List<SshListener> listeners = new ArrayList<>();
 
-    public SShConnection(String address, NSession sshSession) {
-        this(NConnexionString.of(address).get(), sshSession);
+    public SShConnection(String address,InputStream in,OutputStream out,OutputStream err, NSession sshSession) {
+        this(NConnexionString.of(address).get(),in,out,err, sshSession);
     }
 
-    public SShConnection(NConnexionString address, NSession sshSession) {
+    public SShConnection(NConnexionString address,InputStream in,OutputStream out,OutputStream err, NSession sshSession) {
         init(address.getUser(), address.getHost(),
                 NLiteral.of(address.getPort()).asInt().orElse(-1),
                 NStringMapFormat.URL_FORMAT.parse(address.getQueryString())
                         .orElse(Collections.emptyMap()).get("key-file"),
-                address.getPassword(), sshSession);
+                address.getPassword(), in,out,err,sshSession);
     }
 
-    public SShConnection(String user, String host, int port, String keyFilePath, String keyPassword, NSession sshSession) {
-        init(user, host, port, keyFilePath, keyPassword, sshSession);
+    public SShConnection(String user, String host, int port, String keyFilePath, String keyPassword,InputStream in,OutputStream out,OutputStream err, NSession sshSession) {
+        init(user, host, port, keyFilePath, keyPassword, in,out,err,sshSession);
     }
 
     public boolean isRedirectErrorStream() {
@@ -97,10 +97,10 @@ public class SShConnection implements AutoCloseable {
         return this;
     }
 
-    private void init(String user, String host, int port, String keyFilePath, String keyPassword, NSession session) {
+    private void init(String user, String host, int port, String keyFilePath, String keyPassword,InputStream in0,OutputStream out0,OutputStream err0, NSession session) {
         this.nSession = session;
-        out = new PrintStream(new NonClosableOutputStream(this.nSession.out().asOutputStream()));
-        err = new PrintStream(new NonClosableOutputStream(this.nSession.err().asOutputStream()));
+        out = new PrintStream(new NonClosableOutputStream(out0));
+        err = new PrintStream(new NonClosableOutputStream(err0));
         try {
             JSch jsch = new JSch();
 

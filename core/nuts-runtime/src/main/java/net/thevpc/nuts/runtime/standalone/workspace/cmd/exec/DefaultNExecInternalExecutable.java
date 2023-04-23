@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.NExecCommand;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NExecutionException;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 
 /**
@@ -20,16 +20,17 @@ public class DefaultNExecInternalExecutable extends DefaultInternalNExecutableCo
     }
 
     @Override
-    public void execute() {
+    public int execute() {
         if(getSession().isDry()){
             dryExecute();
-            return;
+            return NExecutionException.SUCCESS;
         }
         if (NAppUtils.processHelpOptions(args, getSession())) {
             showDefaultHelp();
-            return;
+            return NExecutionException.SUCCESS;
         }
-        getExecCommand().copy().setSession(getSession()).clearCommand().configure(false, args).setFailFast(true).run();
+        return getExecCommand().copy().setSession(getSession()).clearCommand().configure(false, args).setFailFast(true).run()
+                .getResult();
     }
 
     @Override

@@ -62,6 +62,12 @@ public class DefaultNIO implements NIO {
     }
 
     @Override
+    public OutputStream ofNullOutputStream() {
+        checkSession();
+        return getBootModel().nullOutputStream();
+    }
+
+    @Override
     public NMemoryPrintStream ofInMemoryPrintStream() {
         return ofInMemoryPrintStream(null);
     }

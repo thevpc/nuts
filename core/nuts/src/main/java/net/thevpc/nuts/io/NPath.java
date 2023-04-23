@@ -27,6 +27,7 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.NFormattable;
+import net.thevpc.nuts.NOptional;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NSessionProvider;
 import net.thevpc.nuts.format.NTreeVisitor;
@@ -43,7 +44,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 /**
  * this interface describes any local or remote resource path. It includes simple file path (ex. '/home/here' and 'c:\\here')
@@ -102,7 +102,7 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
      * @param name file name
      * @return newly created file path
      */
-    static NPath ofTempFile(String name, NSession session){
+    static NPath ofTempFile(String name, NSession session) {
         return NPaths.of(session).ofTempFile(name);
     }
 
@@ -111,7 +111,7 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
      *
      * @return newly created file path
      */
-    static NPath ofTempFile(NSession session){
+    static NPath ofTempFile(NSession session) {
         return NPaths.of(session).ofTempFile();
     }
 
@@ -121,7 +121,7 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
      * @param name folder name
      * @return newly created temp folder
      */
-    static NPath ofTempFolder(String name, NSession session){
+    static NPath ofTempFolder(String name, NSession session) {
         return NPaths.of(session).ofTempFolder(name);
     }
 
@@ -130,7 +130,7 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
      *
      * @return newly created temp folder
      */
-    static NPath ofTempFolder(NSession session){
+    static NPath ofTempFolder(NSession session) {
         return NPaths.of(session).ofTempFolder();
     }
 
@@ -140,8 +140,8 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
      * @param name file name
      * @return newly created file path
      */
-    static NPath ofTempRepositoryFile(String name, String repository, NSession session){
-        return NPaths.of(session).ofTempRepositoryFile(name,repository);
+    static NPath ofTempRepositoryFile(String name, String repository, NSession session) {
+        return NPaths.of(session).ofTempRepositoryFile(name, repository);
     }
 
     /**
@@ -149,7 +149,7 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
      *
      * @return newly created file path
      */
-    static NPath ofTempRepositoryFile(String repository, NSession session){
+    static NPath ofTempRepositoryFile(String repository, NSession session) {
         return NPaths.of(session).ofTempRepositoryFile(repository);
     }
 
@@ -159,8 +159,8 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
      * @param name folder name
      * @return newly created temp folder
      */
-    static NPath ofTempRepositoryFolder(String name, String repository, NSession session){
-        return NPaths.of(session).ofTempRepositoryFolder(name,repository);
+    static NPath ofTempRepositoryFolder(String name, String repository, NSession session) {
+        return NPaths.of(session).ofTempRepositoryFolder(name, repository);
     }
 
     /**
@@ -168,7 +168,7 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
      *
      * @return newly created temp folder
      */
-    static NPath ofTempRepositoryFolder(String repository, NSession session){
+    static NPath ofTempRepositoryFolder(String repository, NSession session) {
         return NPaths.of(session).ofTempRepositoryFolder(repository);
     }
 
@@ -256,7 +256,7 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
 
     NPath toCompressedForm();
 
-    URL toURL();
+    NOptional<URL> toURL();
 
     /**
      * return true if the path is or can be converted to a valid url
@@ -272,24 +272,12 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
      */
     boolean isFile();
 
-    Path toFile();
+    NOptional<Path> toPath();
+
+    NOptional<File> toFile();
 
 
     String toString();
-
-    /**
-     * return a valid url or null
-     *
-     * @return a valid url or null
-     */
-    URL asURL();
-
-    /**
-     * return a valid local file
-     *
-     * @return return a valid local file or null
-     */
-    Path asFile();
 
     NStream<NPath> stream();
 
@@ -407,7 +395,7 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
      *
      * @return path items count
      */
-    int getPathCount();
+    int getLocationItemsCount();
 
     /**
      * true if this is the root of the path file system.
@@ -457,9 +445,9 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
 
     NPath subpath(int beginIndex, int endIndex);
 
-    String getItem(int index);
+    String getLocationItem(int index);
 
-    List<String> getItems();
+    List<String> getLocationItems();
 
     void moveTo(NPath other, NPathOption... options);
 

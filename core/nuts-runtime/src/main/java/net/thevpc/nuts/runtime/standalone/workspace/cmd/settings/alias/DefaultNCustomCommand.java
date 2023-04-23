@@ -61,7 +61,7 @@ public class DefaultNCustomCommand implements NCustomCommand {
     }
 
     @Override
-    public void exec(String[] args, NCommandExecOptions options, NSession session) {
+    public int exec(String[] args, NCommandExecOptions options, NSession session) {
         if (session.isDry()) {
             List<String> executorOptions = new ArrayList<>(options.getExecutorOptions());
             executorOptions.addAll(this.getExecutorOptions());
@@ -69,7 +69,7 @@ public class DefaultNCustomCommand implements NCustomCommand {
             r.addAll(Arrays.asList(args));
             args = r.toArray(new String[0]);
 
-            NExecCommand.of(session)
+            return NExecCommand.of(session)
                     .addCommand(args)
                     .addExecutorOptions(executorOptions)
                     .setDirectory(options.getDirectory())
@@ -78,7 +78,8 @@ public class DefaultNCustomCommand implements NCustomCommand {
                     .setEnv(options.getEnv())
                     .setExecutionType(options.getExecutionType())
                     .setFailFast(true)
-                    .run();
+                    .run()
+                    .getResult();
 
             //load all needed dependencies!
 //        return ((DefaultNWorkspace) ws).exec(nutToRun, this.getName(), args, executorOptions, options.getEnv(), options.getDirectory(), options.isFailFast(), session, options.isEmbedded());
@@ -89,7 +90,7 @@ public class DefaultNCustomCommand implements NCustomCommand {
             r.addAll(Arrays.asList(args));
             args = r.toArray(new String[0]);
 
-            NExecCommand.of(session)
+            return NExecCommand.of(session)
                     .addCommand(args)
                     .addExecutorOptions(executorOptions)
                     .setDirectory(options.getDirectory())
@@ -98,7 +99,8 @@ public class DefaultNCustomCommand implements NCustomCommand {
                     .setEnv(options.getEnv())
                     .setExecutionType(options.getExecutionType())
                     .setFailFast(true)
-                    .run();
+                    .run()
+                    .getResult();
 
             //load all needed dependencies!
 //        return ((DefaultNWorkspace) ws).exec(nutToRun, this.getName(), args, executorOptions, options.getEnv(), options.getDirectory(), options.isFailFast(), session, options.isEmbedded());

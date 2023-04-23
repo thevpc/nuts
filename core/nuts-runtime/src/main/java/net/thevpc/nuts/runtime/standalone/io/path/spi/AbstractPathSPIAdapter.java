@@ -99,13 +99,13 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
     }
 
     @Override
-    public URL toURL(NPath basePath) {
+    public NOptional<URL> toURL(NPath basePath) {
         return ref.toURL();
     }
 
     @Override
-    public Path toFile(NPath basePath) {
-        return ref.toFile();
+    public NOptional<Path> toPath(NPath basePath) {
+        return ref.toPath();
     }
 
     public boolean isSymbolicLink(NPath basePath) {
@@ -247,8 +247,8 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
     }
 
     @Override
-    public int getPathCount(NPath basePath) {
-        return ref.getPathCount();
+    public int getLocationItemsCount(NPath basePath) {
+        return ref.getLocationItemsCount();
     }
 
     @Override
@@ -275,8 +275,8 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
     }
 
     @Override
-    public List<String> getItems(NPath basePath) {
-        return ref.getItems();
+    public List<String> getLocationItems(NPath basePath) {
+        return ref.getLocationItems();
     }
 
     @Override
@@ -321,6 +321,7 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
             sb.append(p.ref);
             return sb.build();
         }
+
         @Override
         public String getName() {
             return "path";
@@ -335,5 +336,10 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
         public boolean configureFirst(NCmdLine cmdLine) {
             return false;
         }
+    }
+
+    @Override
+    public byte[] getDigest(NPath basePath, String algo) {
+        return ref.getDigest();
     }
 }

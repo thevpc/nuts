@@ -73,13 +73,13 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
                     startParsing = true;
                     return parse(is, true);
                 } catch (RuntimeException ex) {
-                    return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor from %s : %S", path,ex),ex);
+                    return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor from %s : %s", path,ex),ex);
                 }
             } catch (IOException ex) {
                 if (!startParsing) {
                     return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor from %s : file not found", path),ex);
                 }
-                return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor from %s : %S", path,ex),ex);
+                return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor from %s : %s", path,ex),ex);
             }
         } catch (Exception ex) {
             return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor from %s : %s", path, ex),ex);

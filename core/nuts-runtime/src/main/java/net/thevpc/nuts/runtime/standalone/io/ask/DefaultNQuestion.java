@@ -81,7 +81,7 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
             throw new NExecutionException(getSession(), NMsg.ofC(
                     "unable to switch to interactive mode for non plain text output format. "
                             + "You need to provide default response (-y|-n) for question : %s", os
-            ), 243);
+            ), NExecutionException.ERROR_255);
         }
 
         boolean gui = session.isGui() && NEnvs.of(session).isGraphicalDesktopEnvironment();
@@ -271,7 +271,8 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
         if (session.getAppId() != null) {
             try {
                 NDefinition def = NSearchCommand.of(session).setId(session.getAppId())
-                        .setEffective(true).setLatest(true).getResultDefinitions().first();
+                        .setEffective(true).setLatest(true).getResultDefinitions()
+                        .findFirst().orNull();
                 if (def != null) {
                     String n = def.getEffectiveDescriptor().get(session).getName();
                     if (!NBlankable.isBlank(n)) {

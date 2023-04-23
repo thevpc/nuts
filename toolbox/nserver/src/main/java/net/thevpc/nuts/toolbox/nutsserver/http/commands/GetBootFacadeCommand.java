@@ -28,7 +28,8 @@ public class GetBootFacadeCommand extends AbstractFacadeCommand {
             }
         }
         if (version == null) {
-            NDefinition def = NSearchCommand.of(context.getSession()).addId(NConstants.Ids.NUTS_API).setLatest(true).setContent(true).getResultDefinitions().first();
+            NDefinition def = NSearchCommand.of(context.getSession()).addId(NConstants.Ids.NUTS_API).setLatest(true).setContent(true).getResultDefinitions()
+                    .findFirst().orNull();
             if (def != null && def.getContent().isPresent()) {
                 context.addResponseHeader("content-disposition", "attachment; filename=\"nuts-" + def.getId().getVersion().toString() + ".jar\"");
                 context.sendResponseFile(200, def.getContent().orNull());

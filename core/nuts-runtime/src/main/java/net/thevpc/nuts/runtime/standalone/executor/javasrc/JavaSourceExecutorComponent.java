@@ -57,10 +57,10 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
     }
 
     @Override
-    public void exec(NExecutionContext executionContext) {
+    public int exec(NExecutionContext executionContext) {
         if(executionContext.getSession().isDry()){
             NDefinition nutMainFile = executionContext.getDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
-            Path javaFile = nutMainFile.getContent().map(NPath::toFile).orNull();
+            Path javaFile = nutMainFile.getContent().flatMap(NPath::toPath).orNull();
             String folder = "__temp_folder";
             NPrintStream out = executionContext.getSession().out();
             out.println(NTexts.of(executionContext.getSession()).ofStyled("compile", NTextStyle.primary4()));
@@ -94,16 +94,16 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
                     .setFailFast(true)
                     .setTemporary(true)
                     .build();
-            cc.exec(executionContext2);
+            return cc.exec(executionContext2);
         }else {
             NDefinition nutMainFile = executionContext.getDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
-            Path javaFile = nutMainFile.getContent().map(NPath::toFile).orNull();
+            Path javaFile = nutMainFile.getContent().flatMap(NPath::toPath).orNull();
             JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
             NSession session = executionContext.getSession();
             Path folder = NPath
-                    .ofTempFolder("jj",session).toFile();
+                    .ofTempFolder("jj",session).toPath().get();
             int res = compiler.run(null, null, null, "-d", folder.toString(), javaFile.toString());
-            if (res != 0) {
+            if (res != NExecutionException.SUCCESS) {
                 throw new NExecutionException(session, NMsg.ofPlain("compilation failed"), res);
             }
             JavaExecutorComponent cc = new JavaExecutorComponent();
@@ -124,7 +124,7 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
                     .setFailFast(true)
                     .setTemporary(true)
                     .build();
-            cc.exec(executionContext2);
+            return cc.exec(executionContext2);
         }
     }
 

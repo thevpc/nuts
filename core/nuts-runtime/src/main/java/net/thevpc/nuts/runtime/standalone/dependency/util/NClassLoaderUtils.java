@@ -44,10 +44,10 @@ public final class NClassLoaderUtils {
         }
         def.getDependencies().get(session);
         def.getContent().get(session);
-        def.getContent().map(NPath::asURL).get(session);
+        def.getContent().flatMap(NPath::toURL).get(session);
         return new NClassLoaderNode(
                 def.getId().toString(),
-                def.getContent().map(NPath::asURL).orNull(),
+                def.getContent().flatMap(NPath::toURL).orNull(),
                 true,
                 true,
                 def.getDependencies().get(session).transitiveNodes().stream().map(x -> toClassLoaderNode(x, session))
@@ -74,7 +74,7 @@ public final class NClassLoaderUtils {
             //
         }
         if (cc != null) {
-            URL url = cc.asURL();
+            URL url = cc.toURL().orNull();
             if (url != null) {
                 List<NClassLoaderNode> aa=new ArrayList<>();
                 for (NDependencyTreeNode child : d.getChildren()) {

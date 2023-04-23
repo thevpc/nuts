@@ -355,7 +355,7 @@ public interface NExecCommand extends NWorkspaceCommand {
      *
      * @return result exception or null
      */
-    NExecutionException getResultException();
+    NOptional<NExecutionException> getResultException();
 
     /**
      * update session

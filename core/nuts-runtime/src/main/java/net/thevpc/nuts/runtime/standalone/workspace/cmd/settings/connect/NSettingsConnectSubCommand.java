@@ -13,7 +13,6 @@ import net.thevpc.nuts.concurrent.NScheduler;
 import net.thevpc.nuts.io.DefaultNContentMetadata;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
-import net.thevpc.nuts.runtime.standalone.io.util.NNonBlockingInputStreamAdapter;
 import net.thevpc.nuts.runtime.standalone.executor.system.PipeRunnable;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.util.NAssert;
@@ -96,7 +95,7 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
                     }
                 }
             } catch (Exception ex) {
-                throw new NExecutionException(session, NMsg.ofPlain("settings connect failed"), ex, 2);
+                throw new NExecutionException(session, NMsg.ofPlain("settings connect failed"), ex, NExecutionException.ERROR_2);
             }
             return true;
         }

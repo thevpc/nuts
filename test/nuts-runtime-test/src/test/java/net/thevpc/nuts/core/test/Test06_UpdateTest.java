@@ -11,7 +11,6 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.spi.NPaths;
 import org.junit.jupiter.api.*;
 
 import java.io.ByteArrayInputStream;
@@ -105,13 +104,13 @@ public class Test06_UpdateTest {
 
         if (!data.fromToAPI.isIdentity()) {
             NDeployCommand.of(uws)
-                    .setContent(replaceAPIJar(data.apiDef.getContent().map(NPath::toFile).get(uws), data.fromToAPI, uws))
+                    .setContent(replaceAPIJar(data.apiDef.getContent().flatMap(NPath::toPath).get(uws), data.fromToAPI, uws))
                     .setDescriptor(data.apiDef.getDescriptor().builder().setId(data.apiDef.getId().builder().setVersion(data.apiVersion2).build()).build())
                     //                        .setRepository("local")
                     .run();
         }
         NDeployCommand.of(uws)
-                .setContent(replaceRuntimeJar(data.rtDef.getContent().map(NPath::toFile).get(uws), data.fromToAPI, data.fromToImpl, uws))
+                .setContent(replaceRuntimeJar(data.rtDef.getContent().flatMap(NPath::toPath).get(uws), data.fromToAPI, data.fromToImpl, uws))
                 .setDescriptor(
                         data.rtDef.getDescriptor()
                                 .builder()
@@ -203,9 +202,9 @@ public class Test06_UpdateTest {
 //        Path bootFolder=Paths.get(workspacePath).resolve(NutsConstants.Folders.BOOT);
 //        Path bootCompFolder=Paths.get(workspacePath).resolve(NutsConstants.Folders.BOOT);
         NLocations nwsLocations = NLocations.of(nws);
-        Path bootCacheFolder = (nwsLocations.getStoreLocation(NStoreType.CACHE)).resolve(NConstants.Folders.ID).toFile();
-        Path libFolder = (nwsLocations.getStoreLocation(NStoreType.LIB)).resolve(NConstants.Folders.ID).toFile();
-        Path configFolder = (nwsLocations.getStoreLocation(NStoreType.CONF)).resolve(NConstants.Folders.ID).toFile();
+        Path bootCacheFolder = (nwsLocations.getStoreLocation(NStoreType.CACHE)).resolve(NConstants.Folders.ID).toPath().get();
+        Path libFolder = (nwsLocations.getStoreLocation(NStoreType.LIB)).resolve(NConstants.Folders.ID).toPath().get();
+        Path configFolder = (nwsLocations.getStoreLocation(NStoreType.CONF)).resolve(NConstants.Folders.ID).toPath().get();
         Assertions.assertTrue(Files.exists(libFolder.resolve("net/thevpc/nuts/nuts/").resolve(newApiVersion)
                 .resolve("nuts-" + newApiVersion + ".jar")
         ));
@@ -242,7 +241,7 @@ public class Test06_UpdateTest {
 
     private Path replaceAPIJar(Path p, FromTo api, NSession session) {
         try {
-            Path zipFilePath = NPath.ofTempFile(".zip",session).toFile();
+            Path zipFilePath = NPath.ofTempFile(".zip",session).toPath().get();
             Files.copy(p, zipFilePath, StandardCopyOption.REPLACE_EXISTING);
             try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader) null)) {
 
@@ -280,7 +279,7 @@ public class Test06_UpdateTest {
 
     private Path replaceRuntimeJar(Path p, FromTo api, FromTo impl, NSession session) {
         try {
-            Path zipFilePath = NPath.ofTempFile(".zip",session).toFile();
+            Path zipFilePath = NPath.ofTempFile(".zip",session).toPath().get();
             Files.copy(p, zipFilePath, StandardCopyOption.REPLACE_EXISTING);
             try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader) null)) {
 

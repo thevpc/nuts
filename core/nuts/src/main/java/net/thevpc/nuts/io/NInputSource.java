@@ -80,4 +80,12 @@ public interface NInputSource extends NFormattable, NContentMetadataProvider {
 
     default void dispose() {
     }
+
+    byte[] getDigest();
+
+    byte[] getDigest(String algo);
+
+    String getDigestString();
+
+    String getDigestString(String algo);
 }

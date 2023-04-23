@@ -69,7 +69,7 @@ public class WgetCommand extends NShellBuiltinDefault {
     protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.files.isEmpty()) {
-            throw new NExecutionException(context.getSession(), NMsg.ofPlain("wget: Missing Files"), 2);
+            throw new NExecutionException(context.getSession(), NMsg.ofPlain("wget: Missing Files"), NExecutionException.ERROR_2);
         }
         for (String file : options.files) {
             download(file, options.outputDocument, context);

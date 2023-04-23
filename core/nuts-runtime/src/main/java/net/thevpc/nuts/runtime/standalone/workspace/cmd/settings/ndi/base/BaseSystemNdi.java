@@ -180,7 +180,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             if (nid.getVersion().isBlank()) {
                 fetched = NSearchCommand.of(session)
                         .setSession(session.copy())
-                        .addId(options.getId()).setLatest(true).getResultDefinitions().required();
+                        .addId(options.getId()).setLatest(true).getResultDefinitions().findFirst().get();
                 nid = fetched.getId().getShortId();
                 //nutsId=fetched.getId().getLongNameId();
             }
@@ -268,7 +268,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         List<String> idsToInstall = Arrays.asList(all);
         NSession session = options.getSession();
         NSessionUtils.checkSession(getSession().getWorkspace(), options.getSession());
-        Path workspaceLocation = NLocations.of(session).getWorkspaceLocation().toFile();
+        Path workspaceLocation = NLocations.of(session).getWorkspaceLocation().toPath().get();
         List<PathInfo> result = new ArrayList<>();
         Boolean systemWideConfig = options.getLauncher().getSwitchWorkspace();
         if (!idsToInstall.isEmpty()) {
@@ -279,7 +279,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             for (String id : idsToInstall) {
                 NId nid = NId.of(id).get( session);
                 if (nid == null) {
-                    throw new NExecutionException(session, NMsg.ofC("unable to create script for %s : invalid id", id), 100);
+                    throw new NExecutionException(session, NMsg.ofC("unable to create script for %s : invalid id", id), NExecutionException.ERROR_1);
                 }
                 if (!nid.getVersion().isBlank()) {
                     includeEnv = true;
@@ -325,7 +325,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 try {
                     NId nid = NId.of(id).get(session);
                     if (nid == null) {
-                        throw new NExecutionException(session, NMsg.ofC("unable to create script for %s : invalid id", id), 100);
+                        throw new NExecutionException(session, NMsg.ofC("unable to create script for %s : invalid id", id), NExecutionException.ERROR_1);
                     }
                     NdiScriptOptions oo = options.copy()
                             .setId(id);
@@ -411,7 +411,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     private NDefinition loadIdDefinition(NId nid) {
-        return NSearchCommand.of(session).addId(nid).setLatest(true).setEffective(true).setDistinct(true).getResultDefinitions().singleton();
+        return NSearchCommand.of(session).addId(nid).setLatest(true).setEffective(true).setDistinct(true).getResultDefinitions().findSingleton().get();
     }
 
     public NSupportMode getDesktopIntegrationSupport(NDesktopIntegrationItem target) {
@@ -715,7 +715,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
             return getPreferredIconPath(rt);
         }
-        NDefinition appDef = NSearchCommand.of(session).addId(appId).setLatest(true).setEffective(true).setDistinct(true).getResultDefinitions().singleton();
+        NDefinition appDef = NSearchCommand.of(session).addId(appId).setLatest(true).setEffective(true).setDistinct(true).getResultDefinitions()
+                .findSingleton().get();
         String descAppIcon = resolveBestIcon(appDef.getId(),appDef.getDescriptor().getIcons());
         if (descAppIcon == null) {
             if (isNutsBootId(appDef.getId())
@@ -781,7 +782,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 .setLatest(true)
                 .setEffective(true)
                 .setDistinct(true)
-                .getResultDefinitions().singleton();
+                .getResultDefinitions()
+                .findSingleton().get();
 
         String fileName = options.getLauncher().getCustomScriptPath();
         fileName = resolveShortcutFileName(appDef.getId(), appDef.getDescriptor(), fileName, null);
@@ -794,7 +796,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         NId apiId = session.getWorkspace().getApiId().builder().setVersion(apiVersion).build();
         NDefinition apiDefinition = NSearchCommand.of(session).addId(apiId).setFailFast(true).setLatest(true).setContent(true)
                 .setDistinct(true)
-                .getResultDefinitions().singleton();
+                .getResultDefinitions()
+                .findSingleton().get();
 
         NSession session = options.getSession();
         NId appId = NId.of(options.getId()).get(session);

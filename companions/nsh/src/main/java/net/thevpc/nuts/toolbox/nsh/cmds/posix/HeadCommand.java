@@ -99,7 +99,7 @@ public class HeadCommand extends NShellBuiltinDefault {
                 }
             }
         } catch (IOException ex) {
-            throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, 100);
+            throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_3);
         }
     }
 

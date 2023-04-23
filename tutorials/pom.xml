@@ -18,9 +18,10 @@
         <module>naf/custom-cli-project-a</module>
         <module>naf/custom-cli-project-b</module>
         <module>naf/custom-cli-project-c</module>
-        <module>naf/custom-shell-project</module>
-        <module>naf/spring-boot-integration-hello-world</module>
-        <module>naf/spring-boot-integration-install-events</module>
+        <module>naf/custom-shell-example</module>
+        <module>naf/spring-boot-integration-hello-world-example</module>
+        <module>naf/spring-boot-integration-install-events-example</module>
+        <module>naf/remote-self-call-example</module>
         <module>lib/lib-integration-example</module>
     </modules>
     <properties>

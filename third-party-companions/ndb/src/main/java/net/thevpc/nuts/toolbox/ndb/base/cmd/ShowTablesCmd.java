@@ -42,7 +42,7 @@ public class ShowTablesCmd<C extends NdbConfig> extends NdbCmd<C> {
             }
         }
         if (NBlankable.isBlank(otherOptions.getDatabaseName())) {
-            cmdLine.throwMissingArgumentByName("--dbname");
+            cmdLine.throwMissingArgument("--dbname");
         }
         C options = loadFromName(name, otherOptions);
         support.revalidateOptions(options);

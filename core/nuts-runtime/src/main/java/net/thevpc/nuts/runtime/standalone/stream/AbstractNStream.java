@@ -83,53 +83,39 @@ public abstract class AbstractNStream<T> implements NStream<T> {
         return stream().collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
-    @Override
-    public T first() {
-        Iterator<T> it = iterator();
-        if (it.hasNext()) {
-            return it.next();
-        }
-        return null;
-    }
 
     @Override
-    public T last() {
+    public NOptional<T> findLast() {
         T t = null;
         Iterator<T> it = iterator();
-        if (it.hasNext()) {
+        while (it.hasNext()) {
             t = it.next();
         }
-        return t;
+        return NOptional.ofEmpty(s ->
+                nutsBase == null ?
+                        NMsg.ofPlain("missing last") :
+                        NMsg.ofC("missing last %s", nutsBase)
+        );
     }
 
     @Override
-    public T required() throws NNotFoundException {
-        Iterator<T> it = iterator();
-        if (it.hasNext()) {
-            return it.next();
-        }
-        NId n = NId.of(nutsBase).orNull();
-        if (n != null) {
-            throw new NNotFoundException(session, n);
-        }
-        throw new NNotFoundException(session, null, NMsg.ofC("artifact not found: %s%s", (nutsBase == null ? "<null>" : nutsBase)), null);
-    }
-
-    @Override
-    public T singleton() {
+    public NOptional<T> findSingleton() {
         Iterator<T> it = iterator();
         if (it.hasNext()) {
             T t = it.next();
             if (it.hasNext()) {
-                throw new NTooManyElementsException(session, NMsg.ofC("too many results for %s", nutsBase));
+                return NOptional.ofError(
+                        s->NMsg.ofC("too many results for %s", nutsBase),
+                        new NTooManyElementsException(session, NMsg.ofC("too many results for %s", nutsBase))
+                );
             }
-            return t;
+            return NOptional.of(t);
         } else {
-            NId nid = NId.of(nutsBase).orNull();
-            if (nid != null) {
-                throw new NNotFoundException(session, nid);
-            }
-            throw new NNotFoundException(session, null, NMsg.ofC("result not found for %s", nutsBase));
+            return NOptional.ofEmpty(s ->
+                    nutsBase == null ?
+                            NMsg.ofPlain("missing") :
+                            NMsg.ofC("missing %s", nutsBase)
+            );
         }
     }
 
@@ -358,7 +344,7 @@ public abstract class AbstractNStream<T> implements NStream<T> {
             public NIterator<R> iterator() {
                 IteratorBuilder<T> r = IteratorBuilder.of(AbstractNStream.this.iterator(), session);
                 return (NIterator<R>) r.flatMap(
-                        NFunction.of(t -> mapper.apply(t).iterator(),mapper::describe)
+                        NFunction.of(t -> mapper.apply(t).iterator(), mapper::describe)
                 ).build();
             }
         };
@@ -383,7 +369,7 @@ public abstract class AbstractNStream<T> implements NStream<T> {
             @Override
             public NIterator<R> iterator() {
                 return (NIterator<R>) IteratorBuilder.of(AbstractNStream.this.iterator(), session).flatMap(
-                        NFunction.of(t -> mapper.apply(t).iterator(),mapper::describe)
+                        NFunction.of(t -> mapper.apply(t).iterator(), mapper::describe)
                 ).build();
             }
         };
@@ -396,8 +382,8 @@ public abstract class AbstractNStream<T> implements NStream<T> {
             public NIterator<R> iterator() {
                 return (NIterator<R>) IteratorBuilder.of(AbstractNStream.this.iterator(), session)
                         .flatMap(
-                                NFunction.of(t -> mapper.apply(t).iterator(),mapper::describe)
-                                ).build();
+                                NFunction.of(t -> mapper.apply(t).iterator(), mapper::describe)
+                        ).build();
             }
         };
     }
@@ -425,12 +411,20 @@ public abstract class AbstractNStream<T> implements NStream<T> {
 
     @Override
     public NOptional<T> findAny() {
-        return NOptional.ofOptional(stream().findAny(), s-> NMsg.ofC("missing : %S",nutsBase));
+        return NOptional.ofOptional(stream().findAny(), s -> NMsg.ofC("missing : %s", nutsBase));
     }
 
     @Override
     public NOptional<T> findFirst() {
-        return NOptional.ofOptional(stream().findFirst(), s-> NMsg.ofC("missing : %S",nutsBase));
+        Iterator<T> it = iterator();
+        if (it.hasNext()) {
+            return NOptional.of(it.next());
+        }
+        return NOptional.ofEmpty(s ->
+                nutsBase == null ?
+                        NMsg.ofPlain("missing first") :
+                        NMsg.ofC("missing first %s", nutsBase)
+        );
     }
 
     @Override
@@ -475,12 +469,12 @@ public abstract class AbstractNStream<T> implements NStream<T> {
 
     @Override
     public NOptional<T> min(Comparator<? super T> comparator) {
-        return NOptional.ofOptional(stream().min(comparator), s-> NMsg.ofC("missing : %S",nutsBase));
+        return NOptional.ofOptional(stream().min(comparator), s -> NMsg.ofC("missing : %s", nutsBase));
     }
 
     @Override
     public NOptional<T> max(Comparator<? super T> comparator) {
-        return NOptional.ofOptional(stream().max(comparator), s-> NMsg.ofC("missing : %S",nutsBase));
+        return NOptional.ofOptional(stream().max(comparator), s -> NMsg.ofC("missing : %s", nutsBase));
     }
 
     @Override

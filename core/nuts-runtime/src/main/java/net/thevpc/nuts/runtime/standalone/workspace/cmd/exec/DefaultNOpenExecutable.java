@@ -100,8 +100,8 @@ public class DefaultNOpenExecutable extends AbstractNExecutableCommand {
     }
 
     @Override
-    public void execute() {
-        resolveExecHelper().run();
+    public int execute() {
+        return resolveExecHelper().run().getResult();
     }
 
     @Override

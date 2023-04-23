@@ -25,13 +25,23 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableCommand {
     List<String> executorOptions;
     private boolean showCommand = false;
     private NExecCommandExtension commExec;
+    private NExecInput in;
+    private NExecOutput out;
+    private NExecOutput err;
 
     public DefaultNSystemExecutableRemote(NExecCommandExtension commExec, String[] cmd,
                                           List<String> executorOptions,
-                                          NExecCommand execCommand) {
+                                          NExecCommand execCommand,
+                                          NExecInput in,
+                                          NExecOutput out,
+                                          NExecOutput err
+                                          ) {
         super(cmd[0],
                 NCmdLine.of(cmd).toString(),
                 NExecutableType.SYSTEM, execCommand);
+        this.in = in;
+        this.out = out;
+        this.err = err;
         this.cmd = cmd;
         this.executorOptions = CoreCollectionUtils.nonNullList(executorOptions);
         this.commExec = commExec;
@@ -81,9 +91,9 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableCommand {
                         getExecCommand().getTarget(),
                         cmd,
                         getExecCommand().getSession(),
-                        getExecCommand().getIn(),
-                        getExecCommand().getOut(),
-                        getExecCommand().getErr()
+                        in,
+                        out,
+                        err
                 ));
             }
         };
@@ -91,8 +101,8 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableCommand {
 
 
     @Override
-    public void execute() {
-        resolveExecHelper().exec();
+    public int execute() {
+        return resolveExecHelper().exec();
     }
 
 

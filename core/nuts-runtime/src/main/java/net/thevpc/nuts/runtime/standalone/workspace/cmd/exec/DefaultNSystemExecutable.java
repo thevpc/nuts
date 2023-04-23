@@ -8,7 +8,6 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.text.NText;
@@ -27,12 +26,13 @@ public class DefaultNSystemExecutable extends AbstractNExecutableCommand {
     String[] cmd;
     List<String> executorOptions;
     private boolean showCommand = false;
+
     public DefaultNSystemExecutable(String[] cmd,
                                     List<String> executorOptions,
                                     NExecCommand execCommand) {
         super(cmd[0],
                 NCmdLine.of(cmd).toString(),
-                NExecutableType.SYSTEM,execCommand);
+                NExecutableType.SYSTEM, execCommand);
         this.cmd = cmd;
         this.executorOptions = CoreCollectionUtils.nonNullList(executorOptions);
         NCmdLine cmdLine = NCmdLine.of(this.executorOptions);
@@ -64,7 +64,7 @@ public class DefaultNSystemExecutable extends AbstractNExecutableCommand {
         }
         return ProcessExecHelper.ofArgs(null,
                 execCommand.getCommand().toArray(new String[0]), e2,
-                execCommand.getDirectory() == null ? null : execCommand.getDirectory().toFile(),
+                execCommand.getDirectory() == null ? null : execCommand.getDirectory().toPath().get(),
                 showCommand, true,
                 execCommand.getSleepMillis(),
                 execCommand.getIn(),
@@ -77,8 +77,8 @@ public class DefaultNSystemExecutable extends AbstractNExecutableCommand {
 
 
     @Override
-    public void execute() {
-        resolveExecHelper().exec();
+    public int execute() {
+        return resolveExecHelper().exec();
     }
 
 

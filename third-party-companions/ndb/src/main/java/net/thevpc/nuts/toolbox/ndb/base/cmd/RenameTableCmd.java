@@ -48,15 +48,15 @@ public class RenameTableCmd<C extends NdbConfig> extends NdbCmd<C> {
         }
 
         if (table.isBlank()) {
-            cmdLine.throwMissingArgumentByName("--entity");
+            cmdLine.throwMissingArgument("--entity");
         }
         if (NBlankable.isBlank(otherOptions.getDatabaseName())) {
-            cmdLine.throwMissingArgumentByName("--dbname");
+            cmdLine.throwMissingArgument("--dbname");
         }
         C options = loadFromName(name, otherOptions);
         getSupport().revalidateOptions(options);
         if (NBlankable.isBlank(otherOptions.getDatabaseName())) {
-            cmdLine.throwMissingArgumentByName("--dbname");
+            cmdLine.throwMissingArgument("--dbname");
         }
         runRenameTable(eq, options, session);
     }

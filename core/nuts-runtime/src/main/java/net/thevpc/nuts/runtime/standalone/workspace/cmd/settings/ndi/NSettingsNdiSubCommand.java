@@ -196,7 +196,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     cmdLine.withNextTrueFlag((v, a, s) -> {
                         session.setConfirm(NConfirmationMode.YES);
                         for (NId companion : session.extensions().getCompanionIds()) {
-                            d.idsToInstall.add(NSearchCommand.of(session).addId(companion).setLatest(true).getResultIds().required().getLongName());
+                            d.idsToInstall.add(NSearchCommand.of(session).addId(companion).setLatest(true).getResultIds().findFirst().get().getLongName());
                             d.missingAnyArgument = false;
                         }
                     });
@@ -241,7 +241,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 if (d.ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NExecutionException(session, NMsg.ofC("platform not supported : %s", NEnvs.of(session).getOs()), 2);
+                throw new NExecutionException(session, NMsg.ofC("platform not supported : %s", NEnvs.of(session).getOs()), NExecutionException.ERROR_2);
             }
             if (!d.idsToInstall.isEmpty()) {
                 printResults(session, ndi.addScript(d.options, d.idsToInstall.toArray(new String[0])));
@@ -305,7 +305,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 if (ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NExecutionException(session, NMsg.ofC("platform not supported : %s", NEnvs.of(session).getOs()), 2);
+                throw new NExecutionException(session, NMsg.ofC("platform not supported : %s", NEnvs.of(session).getOs()), NExecutionException.ERROR_2);
             }
             boolean subTrace = session.isTrace();
             if (!session.isPlainTrace()) {
@@ -418,7 +418,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 if (d.ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NExecutionException(session, NMsg.ofC("platform not supported : %s ", NEnvs.of(session).getOs()), 2);
+                throw new NExecutionException(session, NMsg.ofC("platform not supported : %s ", NEnvs.of(session).getOs()), NExecutionException.ERROR_2);
             }
             if (d.switchWorkspaceLocation != null || d.switchWorkspaceApi != null) {
                 NdiScriptOptions oo = new NdiScriptOptions()

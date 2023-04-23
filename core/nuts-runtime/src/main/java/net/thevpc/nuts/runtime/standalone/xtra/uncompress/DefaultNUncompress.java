@@ -334,7 +334,7 @@ public class DefaultNUncompress implements NUncompress {
             if (_target == null) {
                 throw new NIllegalArgumentException(getSession(), NMsg.ofC("invalid target %s", target));
             }
-            Path folder = _target.toFile();
+            Path folder = _target.toPath().get();
             NPath.of(folder, session).mkdirs();
             byte[] buffer = new byte[1024];
             InputStream _in = source.getInputStream();
@@ -469,7 +469,7 @@ public class DefaultNUncompress implements NUncompress {
             if (_target == null) {
                 throw new NIllegalArgumentException(getSession(), NMsg.ofC("invalid target %s", target));
             }
-            Path folder = _target.toFile();
+            Path folder = _target.toPath().get();
             NPath.of(folder, session).mkdirs();
 
             String baseName = source.getMetaData().getName().orElse("no-name");

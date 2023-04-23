@@ -54,7 +54,7 @@ public class NBackup implements NApplication {
             public void onCmdInitParsing(NCmdLine cmdLine, NCmdLineContext context) {
                 NPath configFile = getConfigFile();
                 Config config = null;
-                if (configFile.isFile()) {
+                if (configFile.isRegularFile()) {
                     try {
                         config = NElements.of(cmdLine.getSession()).parse(
                                 configFile, Config.class
@@ -147,16 +147,16 @@ public class NBackup implements NApplication {
                     }
                     case RUN: {
                         if (config.getPaths().isEmpty()) {
-                            cmdLine.throwMissingArgumentByName("path");
+                            cmdLine.throwMissingArgument("path");
                         }
                         if (NBlankable.isBlank(config.getRemoteUser())) {
-                            cmdLine.throwMissingArgumentByName("--user");
+                            cmdLine.throwMissingArgument("--user");
                         }
                         if (NBlankable.isBlank(config.getRemoteServer())) {
-                            cmdLine.throwMissingArgumentByName("--server");
+                            cmdLine.throwMissingArgument("--server");
                         }
                         if (NBlankable.isBlank(config.getLocalPath())) {
-                            cmdLine.throwMissingArgumentByName("--local");
+                            cmdLine.throwMissingArgument("--local");
                         }
                         session.out().println(NMsg.ofC("Using local path %s", NMsg.ofStyled(config.getLocalPath(), NTextStyle.path())));
                         for (DecoratedPath path : config.getPaths()) {

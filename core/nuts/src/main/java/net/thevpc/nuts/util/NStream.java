@@ -111,17 +111,6 @@ public interface NStream<T> extends NIterable<T> {
     Set<T> toOrderedSet();
 
     /**
-     * return the first value or null if none found.
-     * <p>
-     * Calling this method twice will result in unexpected behavior (may return
-     * an incorrect value such as null as the result is already consumed or
-     * throw an Exception)
-     *
-     * @return the first value or null if none found
-     */
-    T first();
-
-    /**
      * return the last value or null if none found. consumes all of the stream
      * <p>
      * Calling this method twice will result in unexpected behavior (may return
@@ -130,18 +119,7 @@ public interface NStream<T> extends NIterable<T> {
      *
      * @return the last value or null if none found
      */
-    T last();
-
-    /**
-     * return the first value or NutsNotFoundException if not found.
-     * <p>
-     * Calling this method twice will result in unexpected behavior (may return
-     * an incorrect value such as null as the result is already consumed or
-     * throw an Exception)
-     *
-     * @return the first value or NutsNotFoundException if not found
-     */
-    T required() throws NNotFoundException;
+    NOptional<T> findLast();
 
     /**
      * return the first value while checking that there are no more elements.
@@ -155,7 +133,7 @@ public interface NStream<T> extends NIterable<T> {
      * to consume. An IllegalArgumentException is also thrown if the are more
      * than one element consumed
      */
-    T singleton() throws NTooManyElementsException, NNotFoundException;
+    NOptional<T> findSingleton();
 
     /**
      * return result as a  java.util.stream.Stream .

@@ -39,20 +39,20 @@ public class NVersionMain implements NApplication {
         try {
             Path p = Paths.get(filePath);
             if (!Files.exists(p)) {
-                throw new NExecutionException(session, NMsg.ofC("nversion: file does not exist: %s" , p), 2);
+                throw new NExecutionException(session, NMsg.ofC("nversion: file does not exist: %s" , p), NExecutionException.ERROR_2);
             }
             if (Files.isDirectory(p)) {
-                throw new NExecutionException(session, NMsg.ofC("nversion: unsupported directory: %s", p), 2);
+                throw new NExecutionException(session, NMsg.ofC("nversion: unsupported directory: %s", p), NExecutionException.ERROR_2);
             }
             if (Files.isRegularFile(p)) {
-                throw new NExecutionException(session, NMsg.ofC("nversion: unsupported file: %s", filePath), 2);
+                throw new NExecutionException(session, NMsg.ofC("nversion: unsupported file: %s", filePath), NExecutionException.ERROR_2);
             }
         } catch (NExecutionException ex) {
             throw ex;
         } catch (Exception ex) {
             //
         }
-        throw new NExecutionException(session, NMsg.ofC("nversion: unsupported path: %s", filePath), 2);
+        throw new NExecutionException(session, NMsg.ofC("nversion: unsupported path: %s", filePath), NExecutionException.ERROR_2);
     }
 
     @Override
@@ -111,20 +111,20 @@ public class NVersionMain implements NApplication {
                     processed++;
                     value = detectVersions(NPath.of(arg, session).toAbsolute().toString(), session);
                 } catch (IOException e) {
-                    throw new NExecutionException(session, NMsg.ofC("nversion: unable to detect version for %s",arg), e, 2);
+                    throw new NExecutionException(session, NMsg.ofC("nversion: unable to detect version for %s",arg), e, NExecutionException.ERROR_2);
                 }
                 if (!value.isEmpty()) {
                     results.put(arg, value);
                 }
             }
             if (processed == 0) {
-                throw new NExecutionException(session, NMsg.ofPlain("nversion: missing file"), 2);
+                throw new NExecutionException(session, NMsg.ofPlain("nversion: missing file"), NExecutionException.ERROR_2);
             }
             if (table && all) {
-                throw new NExecutionException(session, NMsg.ofPlain("nversion: options conflict --table --all"), 1);
+                throw new NExecutionException(session, NMsg.ofPlain("nversion: options conflict --table --all"), NExecutionException.ERROR_1);
             }
             if (table && longFormat) {
-                throw new NExecutionException(session, NMsg.ofPlain("nversion: options conflict --table --long"), 1);
+                throw new NExecutionException(session, NMsg.ofPlain("nversion: options conflict --table --long"), NExecutionException.ERROR_1);
             }
 
             NPrintStream out = session.out();
@@ -192,7 +192,7 @@ public class NVersionMain implements NApplication {
                 if (error) {
                     if (!unsupportedFileTypes.isEmpty()) {
                         for (String t : unsupportedFileTypes) {
-                            File f = NPath.of(t,session).toAbsolute().toFile().toFile();
+                            File f = NPath.of(t,session).toAbsolute().toFile().get();
                             if (f.isFile()) {
                                 err.println(NMsg.ofC("%s : unsupported file type%n", t));
                             } else if (f.isDirectory()) {
@@ -205,7 +205,7 @@ public class NVersionMain implements NApplication {
                 }
             }
             if (!unsupportedFileTypes.isEmpty()) {
-                throw new NExecutionException(session, NMsg.ofC("nversion: unsupported file types %s", unsupportedFileTypes), 3);
+                throw new NExecutionException(session, NMsg.ofC("nversion: unsupported file types %s", unsupportedFileTypes), NExecutionException.ERROR_3);
             }
         }
     }

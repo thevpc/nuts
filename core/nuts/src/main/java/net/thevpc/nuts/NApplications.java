@@ -24,7 +24,6 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NApiUtils;
-import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.util.NClock;
 import net.thevpc.nuts.util.NLog;
 import net.thevpc.nuts.util.NLogVerb;
@@ -33,7 +32,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -225,12 +223,12 @@ public final class NApplications {
                 }
             }
         } catch (NExecutionException e) {
-            if (e.getExitCode() == 0) {
+            if (e.getExitCode() == NExecutionException.SUCCESS) {
                 return;
             }
             throw e;
         }
-        throw new NExecutionException(session, NMsg.ofC("unsupported execution mode %s", session.getAppMode()), 204);
+        throw new NExecutionException(session, NMsg.ofC("unsupported execution mode %s", session.getAppMode()), NExecutionException.ERROR_255);
     }
 
     /**

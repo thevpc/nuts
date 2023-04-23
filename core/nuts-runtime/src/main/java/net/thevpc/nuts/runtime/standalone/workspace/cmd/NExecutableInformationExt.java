@@ -12,6 +12,6 @@ import net.thevpc.nuts.NExecutableInformation;
  */
 public interface NExecutableInformationExt extends NExecutableInformation {
 
-    void execute();
+    int execute();
 
 }
