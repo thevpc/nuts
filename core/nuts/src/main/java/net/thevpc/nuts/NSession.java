@@ -734,8 +734,10 @@ public interface NSession extends NCmdLineConfigurable {
 
     <T> T getOrComputeWorkspaceProperty(String name, Function<NSession, T> supplier);
 
+    NSession setWorkspaceProperty(String name, Object value) ;
 
-    //    @Override
+
+
     NSession setAppArguments(List<String> args);
 
     NSession setAppArguments(String[] args);

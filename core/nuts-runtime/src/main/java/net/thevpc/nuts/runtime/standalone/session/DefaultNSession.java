@@ -137,7 +137,7 @@ public class DefaultNSession implements Cloneable, NSession {
     public final NSession configure(boolean skipUnsupported, String... args) {
         NId appId = getAppId();
         String appName = appId == null ? "app" : appId.getArtifactId();
-        return NCmdLineConfigurable.configure(this, skipUnsupported, args,appName,this);
+        return NCmdLineConfigurable.configure(this, skipUnsupported, args, appName, this);
     }
 
     @Override
@@ -1560,13 +1560,19 @@ public class DefaultNSession implements Cloneable, NSession {
         }
     }
 
+    public NSession setWorkspaceProperty(String name, Object value) {
+        ((NWorkspaceExt) ws).getModel().properties.setProperty(name, value);
+        return this;
+    }
+
     public <T> T getOrComputeWorkspaceProperty(String name, Function<NSession, T> supplier) {
-        Object v = getWorkspaceProperty(name);
+        NPropertiesHolder p = ((NWorkspaceExt) ws).getModel().properties;
+        Object v = p.getProperty(name);
         if (v != null) {
             return (T) v;
         }
         v = supplier.apply(this);
-        setRefProperty(name, v);
+        p.setProperty(name, v);
         return (T) v;
     }
 

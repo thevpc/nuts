@@ -54,7 +54,7 @@ class SshNPath implements NPathSPI {
 
     @Override
     public NStream<NPath> list(NPath basePath) {
-        try (SShConnection c = prepareSshConnexion().grabOutputString()) {
+        try (SShConnection c = prepareSshConnexionGrab()) {
             int i = c.execStringCommand("ls " + path.getPath());
             if (i == 0) {
                 String[] s = c.getOutputString().split("[\n|\r]");
@@ -85,6 +85,16 @@ class SshNPath implements NPathSPI {
                 , getSession().err().asOutputStream()
                 , getSession()
         )
+                .addListener(listener);
+    }
+
+    private SShConnection prepareSshConnexionGrab() {
+        return new SShConnection(path
+                , getSession().in()
+                , getSession().out().asOutputStream()
+                , NIO.of(session).ofNullOutputStream()
+                , getSession()
+        ).grabOutputString()
                 .addListener(listener);
     }
 
@@ -285,34 +295,29 @@ class SshNPath implements NPathSPI {
     }
 
     public String detectType(NPath basePath) {
-        try (SShConnection c = prepareSshConnexion()) {
-            c.grabOutputString();
-            int i = c.execStringCommand("file " + path.getPath());
+        try (SShConnection c = prepareSshConnexionGrab()) {
+            int i = c.execStringCommand("file -b -E " + path.getPath());
             if (i > 0) {
                 return "";
             }
             String s = c.getOutputString();
-            int ii = s.indexOf(':');
-            if (ii > 0) {
-                s = s.substring(ii).trim();
-                if (s.startsWith("directory")) {
-                    return "directory";
-                }
-                if (s.startsWith("fifo (named pipe)")) {
-                    return "named-pipe";
-                }
-                if (s.startsWith("character special")) {
-                    return "character";
-                }
-                if (s.startsWith("symbolic link")) {
-                    return "symbolic-link";
-                }
-                if (s.startsWith("block special")) {
-                    return "block";
-                }
-                return "file";
+            s = s.trim();
+            if (s.startsWith("directory")) {
+                return "directory";
             }
-            return "";
+            if (s.startsWith("fifo (named pipe)")) {
+                return "named-pipe";
+            }
+            if (s.startsWith("character special")) {
+                return "character";
+            }
+            if (s.startsWith("symbolic link")) {
+                return "symbolic-link";
+            }
+            if (s.startsWith("block special")) {
+                return "block";
+            }
+            return "file";
         } catch (Exception e) {
             return "";
         }
@@ -325,13 +330,7 @@ class SshNPath implements NPathSPI {
 
     @Override
     public boolean exists(NPath basePath) {
-        try (SShConnection c = prepareSshConnexion()) {
-            c.grabOutputString();
-            int i = c.execStringCommand("file " + path.getPath());
-            return i == 0;
-        } catch (Exception e) {
-            return false;
-        }
+        return detectType(basePath).length()>0;
     }
 
     @Override
@@ -531,7 +530,7 @@ class SshNPath implements NPathSPI {
     public NStream<NPath> walk(NPath basePath, int maxDepth, NPathOption[] options) {
         EnumSet<NPathOption> optionsSet = EnumSet.noneOf(NPathOption.class);
         optionsSet.addAll(Arrays.asList(options));
-        try (SShConnection c = prepareSshConnexion().grabOutputString()) {
+        try (SShConnection c = prepareSshConnexionGrab()) {
             StringBuilder cmd = new StringBuilder();
             cmd.append("ls");
             if (optionsSet.contains(NPathOption.FOLLOW_LINKS)) {
@@ -585,7 +584,7 @@ class SshNPath implements NPathSPI {
                             && Objects.equals(sp.getUser(), path.getUser())
             ) {
                 int r = -1;
-                try (SShConnection c = prepareSshConnexion().grabOutputString()) {
+                try (SShConnection c = prepareSshConnexionGrab()) {
                     r = c.execStringCommand("mv " + path.getPath() + " " + sp);
                 }
                 if (r != 0) {
@@ -704,11 +703,15 @@ class SshNPath implements NPathSPI {
     }
 
     public byte[] getDigestWithCommand(String cmd, NPath basePath, String algo) {
-        try (SShConnection c = prepareSshConnexion().grabOutputString()) {
+        try (SShConnection c = prepareSshConnexionGrab()) {
             int r = c.execStringCommand(cmd + " " + path.getPath());
             if (r == 0) {
                 String z = NStringUtils.trim(c.getOutputString());
-                return NStringUtils.fromHexString(z);
+                int i = z.indexOf(' ');
+                if(i>0){
+                    z=z.substring(0,i);
+                    return NStringUtils.fromHexString(z);
+                }
             }
         }
         return null;

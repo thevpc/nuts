@@ -112,10 +112,10 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
 
                 storeLocationLibRepo = NPath.of(targetConnexion.copy()
                         .setPath(storeLocationLib)
-                        .toString(), session);
+                        .toString(), session).resolve(NConstants.Folders.ID);
                 storeLocationCacheRepo = NPath.of(targetConnexion.copy()
                         .setPath(storeLocationCache)
-                        .toString(), session);
+                        .toString(), session).resolve(NConstants.Folders.ID);
                 storeLocationCacheRepoSSH = storeLocationCacheRepo.resolve(NIdUtils.resolveIdPath(session.getAppId())).resolve("repo");
                 storeLocationCacheRepoSSH.resolve(".nuts-repository").mkParentDirs().writeString("{}");
                 if (NBlankable.isBlank(nutsJar)) {
@@ -149,11 +149,13 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
         public boolean copy(NPath local, NPath remote) {
             long localContentLength = local.getContentLength();
             long remoteContentLength = remote.getContentLength();
-            if (localContentLength == remoteContentLength) {
-                String ld = local.getDigestString();
-                String rd = remote.getDigestString();
-                if (ld.equals(rd)) {
-                    return false;
+            if(remoteContentLength>=0) {
+                if (localContentLength == remoteContentLength) {
+                    String ld = local.getDigestString();
+                    String rd = remote.getDigestString();
+                    if (ld.equals(rd)) {
+                        return false;
+                    }
                 }
             }
             local.copyTo(remote.mkParentDirs());
@@ -247,6 +249,7 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
                 count++;
             }
         }
+        k.copyId(def.getId(), k.storeLocationCacheRepoSSH, session, null);
         return count > 0;
     }
 
@@ -263,8 +266,8 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
     }
 
     @NotNull
-    private RemoteConnexionStringInfo getRemoteConnexionStringInfo(NSession Session) {
-        Map<String, RemoteConnexionStringInfo> m = Session.getOrComputeWorkspaceProperty(RemoteConnexionStringInfo.class.getName() + "Map",
+    private RemoteConnexionStringInfo getRemoteConnexionStringInfo(NSession session) {
+        Map<String, RemoteConnexionStringInfo> m = session.getOrComputeWorkspaceProperty(RemoteConnexionStringInfo.class.getName() + "Map",
                 s -> new HashMap<>()
         );
         RemoteConnexionStringInfo k = m.computeIfAbsent(getExecCommand().getTarget(), v -> new RemoteConnexionStringInfo());
