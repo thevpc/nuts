@@ -26,6 +26,7 @@ public class RemoteSelfCallApp implements NApplication {
     @Override
     public void run(NSession session) {
         NCmdLine cmdLine = session.getAppCommandLine();
+        log(NMsg.ofC("%s", cmdLine), session);
         Options options = new Options();
         while (cmdLine.hasNext()) {
             switch (cmdLine.peek().get().key()) {
@@ -50,15 +51,13 @@ public class RemoteSelfCallApp implements NApplication {
                 default: {
                     if (cmdLine.isNextNonOption()) {
                         options.nonOptions.add(cmdLine.next().get().toString());
+                    }else {
+                        session.configureLast(cmdLine);
                     }
-                    session.configureLast(cmdLine);
                 }
             }
         }
         if (cmdLine.isExecMode()) {
-            if (NBlankable.isBlank(options.host)) {
-                cmdLine.throwMissingArgument("--host");
-            }
             log(NMsg.ofC("start"), session);
             log(NMsg.ofC("arguments-count : %s", options.nonOptions.size()), session);
             List<String> nonOptions = options.nonOptions;
@@ -69,6 +68,9 @@ public class RemoteSelfCallApp implements NApplication {
             switch (options.command) {
                 case "call-self": {
                     //call remote machine wi
+                    if (NBlankable.isBlank(options.host)) {
+                        cmdLine.throwMissingArgument("--host");
+                    }
                     String e = NStringUtils.trim(
                             NExecCommand.of(session)
                                     // host is ion the form
