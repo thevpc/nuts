@@ -335,7 +335,7 @@ class SshNPath implements NPathSPI {
 
     @Override
     public long getContentLength(NPath basePath) {
-        try (SShConnection c = prepareSshConnexion()) {
+        try (SShConnection c = prepareSshConnexionGrab()) {
             c.grabOutputString();
             int i = c.execStringCommand("ls -l " + path.getPath());
             if (i != 0) {

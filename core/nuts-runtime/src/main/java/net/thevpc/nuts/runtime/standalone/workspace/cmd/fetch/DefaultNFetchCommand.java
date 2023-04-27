@@ -226,8 +226,8 @@ public class DefaultNFetchCommand extends AbstractNFetchCommand {
                     } catch (NNotFoundException ex) {
                         //ignore
                         _LOGOP(getSession()).level(Level.WARNING).verb(NLogVerb.WARNING)
-                                .log(NMsg.ofJ("artifact descriptor found, but its parent is not: {0} with parent {1}", id.getLongName(),
-                                        foundDefinition.getDescriptor().getParents()));
+                                .log(NMsg.ofJ("artifact descriptor found, but one of its parents or dependencies is not: {0} : missing {1}", id,
+                                        ex.getId()));
                         foundDefinition = null;
                     }
                 }

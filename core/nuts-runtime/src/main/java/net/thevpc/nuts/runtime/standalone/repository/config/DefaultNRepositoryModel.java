@@ -309,7 +309,7 @@ public class DefaultNRepositoryModel {
             String repoType = NRepositoryUtils.getRepoType(conf);
             if (options.isTemporary()) {
                 if (NBlankable.isBlank(repoType)) {
-                    throw new NInvalidRepositoryException(session, options.getName(), NMsg.ofPlain("unable to detect valid type for temporary repository"));
+                    throw new NInvalidRepositoryException(session, options.getName(), NMsg.ofC("unable to detect valid type for temporary repository %s",conf.getLocation()));
                 } else {
                     throw new NInvalidRepositoryException(session, options.getName(), NMsg.ofC("invalid repository type %s", repoType));
                 }

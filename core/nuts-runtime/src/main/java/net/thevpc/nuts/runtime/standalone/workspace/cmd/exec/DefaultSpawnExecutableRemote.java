@@ -221,7 +221,7 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
                 cmd2.add("---caller-app=remote-nuts");
                 if (requireTempRepo) {
                     RemoteConnexionStringInfo k = getRemoteConnexionStringInfo(getSession());
-                    cmd2.add("-r+=" + k.storeLocationCacheRepoSSH.getLocation());
+                    cmd2.add("-r=" + k.storeLocationCacheRepoSSH.getLocation());
                 }
                 cmd2.add("--exec");
                 cmd2.addAll(executorOptions);
@@ -249,7 +249,10 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
                 count++;
             }
         }
-        k.copyId(def.getId(), k.storeLocationCacheRepoSSH, session, null);
+        if(true) {
+            k.copyId(def.getId(), k.storeLocationCacheRepoSSH, session, null);
+            count++;
+        }
         return count > 0;
     }
 

@@ -114,29 +114,24 @@ public class DefaultNWorkspaceEnvManagerModel {
                 }
                 case UNIX:
                 case LINUX:
-                case MACOS: {
-                    try {
-                        this.hostName = NStringUtils.trim(NPath.of("/etc/hostname", NSessionUtils.defaultSession(workspace))
-                                .readString());
-                    } catch (Exception e) {
-                        //ignore
-                    }
-                    if (hostName == null) {
-                        hostName = "";
-                    }
-                    break;
-                }
+                case MACOS:
                 default: {
-                    //try unix anyways!!
+                    String h = null;
                     try {
-                        this.hostName = NStringUtils.trim(NPath.of("/etc/hostname", NSessionUtils.defaultSession(workspace))
+                        h = NStringUtils.trim(NPath.of("/etc/hostname", NSessionUtils.defaultSession(workspace))
                                 .readString());
                     } catch (Exception e) {
                         //ignore
                     }
-                    if (hostName == null) {
-                        hostName = "";
+                    if (NBlankable.isBlank(h)) {
+                        h = NExecCommand.of(NSessionUtils.defaultSession(workspace))
+                                .setExecutionType(NExecutionType.SYSTEM)
+                                .addCommand("/bin/hostname")
+                                .grabOutputString()
+                                .setErr(NExecOutput.ofNull())
+                                .getOutputString();
                     }
+                    hostName = NStringUtils.trim(h);
                     break;
                 }
             }
