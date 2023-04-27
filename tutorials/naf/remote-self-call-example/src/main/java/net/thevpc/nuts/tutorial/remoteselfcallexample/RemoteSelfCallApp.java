@@ -8,6 +8,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * This example show how you can write a code that executes itself on another machine.
+ *
+ * When you run this app on machine '192.168.1.1' using these arguments
+ * <pre>
+ *  nuts net.thevpc.nuts.tutorial:remote-self-call-example --call-self --host=ssh://me:mypassword@192.168.1.89 something
+ * </pre>
+ * This will connect on ssh to 192.168.1.2 as user 'me' and password 'mypassword' and then wil run the following command
+ * <pre>
+ *  nuts net.thevpc.nuts.tutorial:remote-self-call-example --on-call-self from=192.168.1.1 something
+ * </pre>
+ * Then will grab the result and redirect it to 192.168.1.1.
+ *
+ *
  * @author vpc
  */
 public class RemoteSelfCallApp implements NApplication {
