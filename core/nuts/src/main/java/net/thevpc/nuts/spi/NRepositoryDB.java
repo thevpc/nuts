@@ -2,10 +2,14 @@ package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NExtensions;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.reserved.NReservedBootRepositoryDB;
 
 import java.util.Set;
 
 public interface NRepositoryDB extends NComponent {
+    static NRepositoryDB ofDefault(){
+        return new NReservedBootRepositoryDB();
+    }
     static NRepositoryDB of(NSession session){
        return NExtensions.of(session).createComponent(NRepositoryDB.class).get();
     }

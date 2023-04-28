@@ -266,10 +266,10 @@ public class DefaultNRepositoryModel {
                 if (options.isEnabled()) {
                     options.setEnabled(
                             NBootManager.of(session).getBootOptions().getRepositories() == null
-                                    || NRepositorySelectorList.ofAll(
+                                    || NRepositorySelectorList.of(
                                     NBootManager.of(session).getBootOptions().getRepositories().orNull(),
                                     NRepositoryDB.of(session), session
-                            ).acceptExisting(
+                            ).get().acceptExisting(
                                     conf.getLocation().setName(options.getName())
                             ));
                 }
@@ -278,10 +278,10 @@ public class DefaultNRepositoryModel {
                 if (options.isEnabled()) {
                     options.setEnabled(
                             NBootManager.of(session).getBootOptions().getRepositories() == null
-                                    || NRepositorySelectorList.ofAll(
+                                    || NRepositorySelectorList.of(
                                     NBootManager.of(session).getBootOptions().getRepositories().orNull(),
                                     NRepositoryDB.of(session), session
-                            ).acceptExisting(
+                            ).get().acceptExisting(
                                     conf.getLocation().setName(options.getName())
                             ));
                 }
@@ -309,7 +309,7 @@ public class DefaultNRepositoryModel {
             String repoType = NRepositoryUtils.getRepoType(conf);
             if (options.isTemporary()) {
                 if (NBlankable.isBlank(repoType)) {
-                    throw new NInvalidRepositoryException(session, options.getName(), NMsg.ofC("unable to detect valid type for temporary repository %s",conf.getLocation()));
+                    throw new NInvalidRepositoryException(session, options.getName(), NMsg.ofC("unable to detect valid type for temporary repository %s", conf.getLocation()));
                 } else {
                     throw new NInvalidRepositoryException(session, options.getName(), NMsg.ofC("invalid repository type %s", repoType));
                 }
@@ -330,12 +330,7 @@ public class DefaultNRepositoryModel {
 
     public NRepository addRepository(String repositoryNamedUrl, NSession session) {
         NSessionUtils.checkSession(getWorkspace(), session);
-        NRepositoryLocation r = null;
-        try {
-            r = NRepositoryLocation.of(repositoryNamedUrl, NRepositoryDB.of(session), session);
-        } catch (Exception ex) {
-            throw new NInvalidRepositoryException(session, repositoryNamedUrl, NMsg.ofPlain("invalid repository definition"));
-        }
+        NRepositoryLocation r = NRepositoryLocation.of(repositoryNamedUrl, NRepositoryDB.of(session), session).get();
         NAddRepositoryOptions options = NRepositorySelectorHelper.createRepositoryOptions(r, true, session);
         return addRepository(options, session);
     }

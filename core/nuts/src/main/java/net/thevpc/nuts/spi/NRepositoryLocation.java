@@ -46,10 +46,10 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
     /**
      * Create a new NutsRepositoryLocation
      *
-     * @param name repository name
+     * @param name         repository name
      * @param locationType location type such as 'maven' or 'nuts'
-     * @param path repository location (file, URL or any NPath valid
-     * location)
+     * @param path         repository location (file, URL or any NPath valid
+     *                     location)
      */
     public NRepositoryLocation(String name, String locationType, String path) {
         this.name = NStringUtils.trimToNull(name);
@@ -61,7 +61,7 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
      * Create a new NutsRepositoryLocation
      *
      * @param locationString location string in the format
-     * {@code name=locationType:path}
+     *                       {@code name=locationType:path}
      */
     protected NRepositoryLocation(String locationString) {
         if (locationString == null) {
@@ -83,7 +83,7 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
      * Create a new NutsRepositoryLocation
      *
      * @param locationString location string in the format
-     * {@code name=locationType:path}
+     *                       {@code name=locationType:path}
      * @return new Instance
      */
     public static NRepositoryLocation of(String locationString) {
@@ -95,9 +95,9 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
      * {@code fullLocation} will preserve any existing name (where
      * {@code fullLocation} is entered as a {@code locationString})
      *
-     * @param name new name (or null)
+     * @param name         new name (or null)
      * @param fullLocation location string in the format
-     * {@code locationType:path}
+     *                     {@code locationType:path}
      * @return new Instance
      */
     public static NRepositoryLocation of(String name, String fullLocation) {
@@ -114,20 +114,16 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
      * {@code fullLocation} is entered as a {@code locationString})
      *
      * @param locationString location string in the format
-     * {@code name=locationType:path}
-     * @param db repository database
-     * @param session session or null
+     *                       {@code name=locationType:path}
+     * @param db             repository database
+     * @param session        session or null
      * @return new Instance
      */
-    public static NRepositoryLocation of(String locationString, NRepositoryDB db, NSession session) {
+    public static NOptional<NRepositoryLocation> of(String locationString, NRepositoryDB db, NSession session) {
         String name = null;
         String url = null;
         if (locationString == null) {
-            if (session == null) {
-                throw new IllegalArgumentException("invalid null repository");
-            } else {
-                throw new NIllegalArgumentException(session, NMsg.ofPlain("invalid null repository"));
-            }
+            return NOptional.<NRepositoryLocation>ofEmpty(s -> NMsg.ofPlain("repository location")).setSession(session);
         }
         locationString = locationString.trim();
         if (locationString.startsWith("-")
@@ -135,11 +131,8 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
                 || locationString.startsWith("=")
                 || locationString.indexOf(',') >= 0
                 || locationString.indexOf(';') >= 0) {
-            if (session == null) {
-                throw new IllegalArgumentException("invalid selection syntax");
-            } else {
-                throw new NIllegalArgumentException(session, NMsg.ofPlain("invalid repository syntax"));
-            }
+            String finalLocationString = locationString;
+            return NOptional.<NRepositoryLocation>ofError(s -> NMsg.ofC("invalid selection syntax : %s", finalLocationString)).setSession(session);
         }
         Matcher matcher = Pattern.compile("(?<name>[a-zA-Z-_]+)=(?<value>.+)").matcher(locationString);
         if (matcher.find()) {
@@ -165,23 +158,21 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
             }
         }
         if (url.length() > 0) {
-            return NRepositoryLocation.of(name, url);
+            return NOptional.of(NRepositoryLocation.of(name, url));
         }
-        return null;
+        return NOptional.<NRepositoryLocation>ofEmpty(s -> NMsg.ofPlain("repository location")).setSession(session);
     }
 
     /**
-     *
      * @param repositorySelectionExpression expression in the form +a,-b,=c
-     * @param available available (default) locations
-     * @param db repository database
-     * @param session session (or null)
+     * @param available                     available (default) locations
+     * @param db                            repository database
+     * @param session                       session (or null)
      * @return repository location list from db that include available/defaults
      * and fulfills the condition {@code repositorySelectionExpression}
      */
-    public static NRepositoryLocation[] ofAll(String repositorySelectionExpression, NRepositoryLocation[] available, NRepositoryDB db, NSession session) {
-        return NRepositorySelectorList.of(repositorySelectionExpression, db, session)
-                .resolve(available, db);
+    public static NOptional<NRepositoryLocation[]> of(String repositorySelectionExpression, NRepositoryLocation[] available, NRepositoryDB db, NSession session) {
+        return NRepositorySelectorList.of(repositorySelectionExpression, db, session).map(x -> x.resolve(available, db));
     }
 
     /**

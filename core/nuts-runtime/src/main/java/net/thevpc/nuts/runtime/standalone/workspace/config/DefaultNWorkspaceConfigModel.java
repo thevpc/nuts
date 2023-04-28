@@ -1369,8 +1369,8 @@ public class DefaultNWorkspaceConfigModel {
             return parsedBootRepositoriesList;
         }
         NBootOptions bOptions = NWorkspaceExt.of(ws).getModel().bootModel.getBootEffectiveOptions();
-        parsedBootRepositoriesList = NRepositorySelectorList.ofAll(
-                bOptions.getUserOptions().get().getRepositories().orNull(), NRepositoryDB.of(session), session);
+        parsedBootRepositoriesList = NRepositorySelectorList.of(
+                bOptions.getUserOptions().get().getRepositories().orNull(), NRepositoryDB.of(session), session).get();
         return parsedBootRepositoriesList;
     }
 

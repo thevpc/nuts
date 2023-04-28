@@ -44,6 +44,9 @@ public class DefaultNQuestionFormat<T> implements NQuestionFormat<T> {
             case "java.lang.Boolean": {
                 return Arrays.asList(true, false);
             }
+            case "[C": {
+                return null;
+            }
             default: {
                 throw new NUnsupportedArgumentException(session, NMsg.ofC("unsupported type %s", type.getName()));
             }

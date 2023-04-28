@@ -69,11 +69,11 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
         List<NAddRepositoryOptions> all=new ArrayList<>();
         if (!NConfigs.of(session).isSystemWorkspace()) {
             all.add(NRepositorySelectorHelper.createRepositoryOptions(
-                    Objects.requireNonNull(NRepositoryLocation.of("system", NRepositoryDB.of(session), session)),
+                    NRepositoryLocation.of("system", NRepositoryDB.of(session), session).get(),
                     true, session));
         }
         all.add(NRepositorySelectorHelper.createRepositoryOptions(
-                Objects.requireNonNull(NRepositoryLocation.of("nuts-public", NRepositoryDB.of(session), session)),
+                NRepositoryLocation.of("nuts-public", NRepositoryDB.of(session), session).get(),
                 true, session));
         return all;
     }

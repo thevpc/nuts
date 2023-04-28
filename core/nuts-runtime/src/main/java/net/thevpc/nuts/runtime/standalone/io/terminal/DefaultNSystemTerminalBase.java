@@ -12,6 +12,7 @@ import net.thevpc.nuts.text.NTerminalCommand;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.util.NLog;
 
+import java.io.Console;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
@@ -34,6 +35,7 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     private NCmdLineHistory history;
     private String commandHighlighter;
     private NCmdLineAutoCompleteResolver commandAutoCompleteResolver;
+    private Boolean preferConsole;
 
     public DefaultNSystemTerminalBase() {
 
@@ -60,12 +62,12 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
                 terminalMode = NTerminalMode.FORMATTED;
             }
         }
-        if(bootStdFd.getFlags().contains("tty")) {
-            termCursor =new NCachedValue<>(CoreAnsiTermHelper::evalCursor, THIRTY_SECONDS);
-            termSize =new NCachedValue<>(CoreAnsiTermHelper::evalSize, THIRTY_SECONDS);
-        }else{
-            termCursor =new NCachedValue<>(session -> null, THIRTY_SECONDS);
-            termSize =new NCachedValue<>(session -> null, THIRTY_SECONDS);
+        if (bootStdFd.getFlags().contains("tty")) {
+            termCursor = new NCachedValue<>(CoreAnsiTermHelper::evalCursor, THIRTY_SECONDS);
+            termSize = new NCachedValue<>(CoreAnsiTermHelper::evalSize, THIRTY_SECONDS);
+        } else {
+            termCursor = new NCachedValue<>(session -> null, THIRTY_SECONDS);
+            termSize = new NCachedValue<>(session -> null, THIRTY_SECONDS);
         }
         this.out = new NPrintStreamSystem(bootStdFd.getOut(), null, null, bootStdFd.getFlags().contains("ansi"),
                 session, this).setTerminalMode(terminalMode);
@@ -85,7 +87,7 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
             out = NIO.of(session).stdout();
         }
         if (message != null) {
-            out.print( message);
+            out.print(message);
             out.flush();
         }
         return scanner.nextLine();
@@ -100,8 +102,22 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
             out = NIO.of(session).stdout();
         }
         if (message != null) {
-            out.print( message);
+            out.print(message);
             out.flush();
+        }
+        if (preferConsole == null) {
+            if (NIO.of(session).isStdin(getIn())) {
+                Console c = System.console();
+                if (c != null) {
+                    preferConsole = true;
+                }
+            }
+            if (preferConsole == null) {
+                preferConsole = false;
+            }
+        }
+        if (preferConsole) {
+            return System.console().readPassword();
         }
         return scanner.nextLine().toCharArray();
     }
@@ -170,7 +186,7 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
             }
         }
         String s = NAnsiTermHelper.of(session).command(command, session);
-        if(s!=null) {
+        if (s != null) {
             try {
                 NWorkspaceTerminalOptions bootStdFd = NBootManager.of(session).getBootTerminal();
                 bootStdFd.getOut().write(s.getBytes());

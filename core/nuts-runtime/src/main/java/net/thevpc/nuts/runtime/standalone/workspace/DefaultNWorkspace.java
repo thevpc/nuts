@@ -523,7 +523,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                                         .append(")")
                         );
                     }
-                    NTableFormat.of(defaultSession()).setValue(
+                    NTableFormat.of(defaultSession())
+                            .setValue(
                             NTableModel.of(defaultSession())
                                     .addCell(
                                             txt.ofBuilder()
@@ -566,8 +567,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 List<String> transientRepositoriesSet =
                         CoreCollectionUtils.nonNullList(bootOptions.getRepositories().orElseGet(Collections::emptyList));
                 NRepositoryDB repoDB = NRepositoryDB.of(defaultSession());
-                NRepositorySelectorList expected = NRepositorySelectorList.ofAll(
-                        transientRepositoriesSet, repoDB, defaultSession());
+                NRepositorySelectorList expected = NRepositorySelectorList.of(transientRepositoriesSet, repoDB, defaultSession()).get();
                 for (NRepositoryLocation loc : expected.resolve(null, repoDB)) {
                     NAddRepositoryOptions d = NRepositorySelectorHelper.createRepositoryOptions(loc, false, defaultSession());
                     String n = d.getName();
@@ -825,7 +825,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     @Override
     public String toString() {
         return "NutsWorkspace{"
-                + wsModel.configModel
+                + (wsModel==null?null:wsModel.configModel)
                 + '}';
     }
 
@@ -1814,9 +1814,9 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             pr.put("project.version", def.getId().getVersion().toString());
             NRepositoryDB repoDB = NRepositoryDB.of(session);
             pr.put("repositories", "~/.m2/repository"
-                    + ";" + NRepositorySelectorHelper.createRepositoryOptions(NRepositoryLocation.of("vpc-public-maven", repoDB, session), true, session).getConfig().getLocation()
-                    + ";" + NRepositorySelectorHelper.createRepositoryOptions(NRepositoryLocation.of("maven-central", repoDB, session), true, session).getConfig().getLocation()
-                    + ";" + NRepositorySelectorHelper.createRepositoryOptions(NRepositoryLocation.of("nuts-public", repoDB, session), true, session).getConfig().getLocation()
+                    + ";" + NRepositorySelectorHelper.createRepositoryOptions(NRepositoryLocation.of("vpc-public-maven", repoDB, session).get(), true, session).getConfig().getLocation()
+                    + ";" + NRepositorySelectorHelper.createRepositoryOptions(NRepositoryLocation.of("maven-central", repoDB, session).get(), true, session).getConfig().getLocation()
+                    + ";" + NRepositorySelectorHelper.createRepositoryOptions(NRepositoryLocation.of("nuts-public", repoDB, session).get(), true, session).getConfig().getLocation()
             );
             pr.put("project.dependencies.compile",
                     String.join(";",

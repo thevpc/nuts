@@ -1,8 +1,14 @@
 package net.thevpc.nuts.core.test;
 
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.core.test.utils.TestUtils;
+import net.thevpc.nuts.spi.NRepositoryDB;
 import net.thevpc.nuts.spi.NRepositoryLocation;
+import net.thevpc.nuts.spi.NRepositorySelectorList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
 
 public class Test38_RepoListParserTest {
 
@@ -101,5 +107,12 @@ public class Test38_RepoListParserTest {
         Assertions.assertEquals(r.getName(), null);
         Assertions.assertEquals(r.getLocationType(), null);
         Assertions.assertEquals(r.getPath(), "=");
+    }
+
+    @Test
+    public void test13() {
+        NSession session = TestUtils.openNewTestWorkspace();
+        NRepositorySelectorList li = NRepositorySelectorList.of(Arrays.asList("+/toto"), session).get();
+        System.out.println(li);
     }
 }

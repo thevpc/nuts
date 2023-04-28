@@ -15,7 +15,7 @@ public class NReservedBootRepositoryDB implements NRepositoryDB {
     private final Map<String, String> aliasToBase = new LinkedHashMap<>();
     private final Map<String, Set<String>> baseToAliases = new LinkedHashMap<>();
 
-    public NReservedBootRepositoryDB(NLog logger) {
+    public NReservedBootRepositoryDB() {
         reg("system", NReservedIOUtils.getNativePath(
                         NPlatformHome.SYSTEM.getWorkspaceStore(
                                 NStoreType.LIB,

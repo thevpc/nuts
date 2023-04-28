@@ -25,6 +25,14 @@ public class NExecInput {
         return stream == null ? ofInherit() : new NExecInput(NExecRedirectType.STREAM, stream, null, null);
     }
 
+    public static NExecInput ofBytes(byte[] bytes) {
+        return bytes == null ? ofInherit() : new NExecInput(NExecRedirectType.STREAM, new ByteArrayInputStream(bytes), null, null);
+    }
+
+    public static NExecInput ofBytes(String string) {
+        return string == null ? ofInherit() : new NExecInput(NExecRedirectType.STREAM, new ByteArrayInputStream(string.getBytes()), null, null);
+    }
+
     public static NExecInput ofPipe() {
         return new NExecInput(NExecRedirectType.PIPE, null, null, null);
     }

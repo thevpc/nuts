@@ -66,7 +66,7 @@ public final class NBootWorkspace {
     private final NWorkspaceOptions userOptions;
     private final NReservedBootLog bLog;
     private final NBootOptionsBuilder computedOptions = new DefaultNBootOptionsBuilder();
-    private final NReservedBootRepositoryDB repositoryDB;
+    private final NRepositoryDB repositoryDB;
     private final Function<String, String> pathExpansionConverter = new Function<String, String>() {
         @Override
         public String apply(String from) {
@@ -105,7 +105,7 @@ public final class NBootWorkspace {
     };
     private int newInstanceRequirements = 0;
     private NBootOptionsBuilder lastWorkspaceOptions;
-    private Set<NRepositoryLocation> parsedBootRuntimeDependenciesRepositories;
+    //private Set<NRepositoryLocation> parsedBootRuntimeDependenciesRepositories;
     private Set<NRepositoryLocation> parsedBootRuntimeRepositories;
     private boolean preparedWorkspace;
     private NLog nLog;
@@ -133,7 +133,7 @@ public final class NBootWorkspace {
             bLog.log(Level.WARNING, NLogVerb.WARNING, NMsg.ofC("Error : %s", errorMessage));
         }
         this.userOptions = userOptions.readOnly();
-        repositoryDB = new NReservedBootRepositoryDB(nLog);
+        repositoryDB = NRepositoryDB.ofDefault();
         this.postInit();
     }
 
@@ -143,7 +143,7 @@ public final class NBootWorkspace {
         }
         this.bLog = new NReservedBootLog(new NWorkspaceTerminalOptions(userOptions.getStdin().orNull(), userOptions.getStdout().orNull(), userOptions.getStderr().orNull()));
         this.userOptions = userOptions.readOnly();
-        repositoryDB = new NReservedBootRepositoryDB(nLog);
+        repositoryDB = NRepositoryDB.ofDefault();
         this.postInit();
     }
 
@@ -272,27 +272,27 @@ public final class NBootWorkspace {
      * @return repositories
      */
     public Set<NRepositoryLocation> resolveBootRuntimeRepositories(boolean dependencies) {
-        if (dependencies) {
-            if (parsedBootRuntimeDependenciesRepositories != null) {
-                return parsedBootRuntimeDependenciesRepositories;
-            }
-            bLog.log(Level.FINE, NLogVerb.START, NMsg.ofC("resolve boot repositories to load nuts-runtime dependencies from options : %s and config: %s", computedOptions.getRepositories().orElseGet(Collections::emptyList).toString(), computedOptions.getBootRepositories().ifBlankEmpty().orElse("[]")));
-        } else {
+//        if (dependencies) {
+//            if (parsedBootRuntimeDependenciesRepositories != null) {
+//                return parsedBootRuntimeDependenciesRepositories;
+//            }
+//            bLog.log(Level.FINE, NLogVerb.START, NMsg.ofC("resolve boot repositories to load nuts-runtime dependencies from options : %s and config: %s", computedOptions.getRepositories().orElseGet(Collections::emptyList).toString(), computedOptions.getBootRepositories().ifBlankEmpty().orElse("[]")));
+//        } else {
             if (parsedBootRuntimeRepositories != null) {
                 return parsedBootRuntimeRepositories;
             }
             bLog.log(Level.FINE, NLogVerb.START, NMsg.ofC("resolve boot repositories to load nuts-runtime from options : %s and config: %s", computedOptions.getRepositories().orElseGet(Collections::emptyList).toString(), computedOptions.getBootRepositories().ifBlankEmpty().orElse("[]")));
-        }
-        NRepositorySelectorList bootRepositories = NRepositorySelectorList.ofAll(computedOptions.getRepositories().orNull(), repositoryDB, null);
-        NRepositorySelector[] old = NRepositorySelectorList.ofAll(Arrays.asList(computedOptions.getBootRepositories().orNull()), repositoryDB, null).toArray();
+//        }
+        NRepositorySelectorList bootRepositoriesSelector = NRepositorySelectorList.of(computedOptions.getRepositories().orNull(), repositoryDB, null).get();
+        NRepositorySelector[] old = NRepositorySelectorList.of(Arrays.asList(computedOptions.getBootRepositories().orNull()), repositoryDB, null).get().toArray();
         NRepositoryLocation[] result;
         if (old.length == 0) {
             //no previous config, use defaults!
-            result = bootRepositories.resolve(new NRepositoryLocation[]{
+            result = bootRepositoriesSelector.resolve(new NRepositoryLocation[]{
                     new NRepositoryLocation("maven", "maven", "maven")
             }, repositoryDB);
         } else {
-            result = bootRepositories.resolve(Arrays.stream(old).map(x -> NRepositoryLocation.of(x.getName(), x.getUrl())).toArray(NRepositoryLocation[]::new), repositoryDB);
+            result = bootRepositoriesSelector.resolve(Arrays.stream(old).map(x -> NRepositoryLocation.of(x.getName(), x.getUrl())).toArray(NRepositoryLocation[]::new), repositoryDB);
         }
         result = Arrays.stream(result).map(
                 r -> {
@@ -341,11 +341,11 @@ public final class NBootWorkspace {
                 }
         ).toArray(NRepositoryLocation[]::new);
         Set<NRepositoryLocation> rr = Arrays.stream(result).collect(Collectors.toCollection(LinkedHashSet::new));
-        if (dependencies) {
-            parsedBootRuntimeDependenciesRepositories = rr;
-        } else {
+//        if (dependencies) {
+//            parsedBootRuntimeDependenciesRepositories = rr;
+//        } else {
             parsedBootRuntimeRepositories = rr;
-        }
+//        }
         return rr;
     }
 
@@ -958,16 +958,16 @@ public final class NBootWorkspace {
             }
             factories.sort(new NReservedBootWorkspaceFactoryComparator(computedOptions));
             if (bLog.isLoggable(Level.CONFIG)) {
-                switch (factories.size()){
-                    case 0:{
+                switch (factories.size()) {
+                    case 0: {
                         bLog.log(Level.CONFIG, NLogVerb.SUCCESS, NMsg.ofPlain("unable to detect NutsBootWorkspaceFactory service implementations"));
                         break;
                     }
-                    case 1:{
+                    case 1: {
                         bLog.log(Level.CONFIG, NLogVerb.SUCCESS, NMsg.ofC("detect NutsBootWorkspaceFactory service implementation : %s", factories.get(0).getClass().getName()));
                         break;
                     }
-                    default:{
+                    default: {
                         bLog.log(Level.CONFIG, NLogVerb.SUCCESS, NMsg.ofPlain("detect NutsBootWorkspaceFactory service implementations are :"));
                         for (NBootWorkspaceFactory u : factories) {
                             bLog.log(Level.CONFIG, NLogVerb.SUCCESS, NMsg.ofC("    %s", u.getClass().getName()));

@@ -23,7 +23,7 @@ public class DefaultNRepositoryFilter extends AbstractRepositoryFilter{
         NRepositorySelectorList li=new NRepositorySelectorList();
         NRepositoryDB db = NRepositoryDB.of(session);
         for (String exactRepo : exactRepos) {
-            li=li.merge(NRepositorySelectorList.of(exactRepo, db,session));
+            li=li.merge(NRepositorySelectorList.of(exactRepo, db,session).get());
         }
         NRepositoryLocation[] input = NRepositories.of(session).getRepositories().stream()
                 .map(x -> x.config().getLocation().setName(x.getName()))

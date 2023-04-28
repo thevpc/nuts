@@ -27,10 +27,13 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NOptional;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class NRepositorySelectorList {
 
@@ -46,43 +49,51 @@ public class NRepositorySelectorList {
             }
         }
     }
-    public static NRepositorySelectorList ofAll(List<String> expressions, NRepositoryDB db, NSession session) {
+
+    public static NOptional<NRepositorySelectorList> of(List<String> expressions, NSession session) {
+        return of(expressions, session == null ? NRepositoryDB.ofDefault() : NRepositoryDB.of(session), session);
+    }
+
+    public static NOptional<NRepositorySelectorList> of(List<String> expressions, NRepositoryDB db, NSession session) {
         if (expressions == null) {
-            return new NRepositorySelectorList();
+            return NOptional.of(new NRepositorySelectorList());
         }
         NRepositorySelectorList result = new NRepositorySelectorList();
         for (String t : expressions) {
-            result = result.merge(of(t,db,session));
-        }
-        return result;
-    }
-
-    public static NRepositorySelectorList of(String expression, NRepositoryDB db, NSession session) {
-        if (NBlankable.isBlank(expression)) {
-            return new NRepositorySelectorList();
-        }
-        NSelectorOp op = NSelectorOp.EXACT;
-        List<NRepositorySelector> all = new ArrayList<>();
-        for (String s : NStringUtils.split(expression,",;",true,true)) {
-            s = s.trim();
-            if (s.length() > 0) {
-                if (s.startsWith("+")) {
-                    op = NSelectorOp.INCLUDE;
-                    s = s.substring(1);
-                } else if (s.startsWith("-")) {
-                    op = NSelectorOp.EXCLUDE;
-                    s = s.substring(1);
-                } else if (s.startsWith("=")) {
-                    op = NSelectorOp.EXACT;
-                    s = s.substring(1);
-                }
-                NRepositoryLocation z = NRepositoryLocation.of(s,db,session);
-                if (z != null) {
-                    all.add(new NRepositorySelector(op, z.getName(), z.getFullLocation()));
+            if (t != null) {
+                t = t.trim();
+                if (!t.isEmpty()) {
+                    NOptional<NRepositorySelectorList> r = of(t, db, session);
+                    if (r.isNotPresent()) {
+                        String finalT = t;
+                        return NOptional.ofError(x -> NMsg.ofC("invalid selector list : %s", finalT));
+                    }
+                    result = result.merge(r.get());
                 }
             }
         }
-        return new NRepositorySelectorList(all.toArray(new NRepositorySelector[0]));
+        return NOptional.of(result);
+    }
+
+    public static NOptional<NRepositorySelectorList> of(String expression, NRepositoryDB db, NSession session) {
+        if (NBlankable.isBlank(expression)) {
+            return NOptional.of(new NRepositorySelectorList());
+        }
+        NSelectorOp op = NSelectorOp.INCLUDE;
+        List<NRepositorySelector> all = new ArrayList<>();
+        for (String s : NStringUtils.split(expression, ",;", true, true)) {
+            s = s.trim();
+            if (s.length() > 0) {
+                NOptional<NRepositorySelector> oe = NRepositorySelector.of(op, s, db, session);
+                if (oe.isNotPresent()) {
+                    return NOptional.ofError(x -> NMsg.ofC("invalid selector list : %s", expression));
+                }
+                NRepositorySelector e = oe.get();
+                op = e.getOp();
+                all.add(e);
+            }
+        }
+        return NOptional.of(new NRepositorySelectorList(all.toArray(new NRepositorySelector[0])));
     }
 
     public NRepositorySelectorList merge(NRepositorySelectorList other) {
@@ -118,36 +129,54 @@ public class NRepositorySelectorList {
             }
         }
         List<NRepositoryLocation> result = new ArrayList<>();
-        Set<String> visited=new HashSet<>();
-        for (NRepositorySelector r : selectors) {
-            Set<String> allNames = db.getAllNames(r.getName());
-            if (r.getOp() != NSelectorOp.EXCLUDE) {
-                if (!NBlankable.isBlank(r.getName())) {
-                    String u2 = r.getUrl();
-                    int i = current.indexOfNames(allNames.toArray(new String[0]), 0);
-                    if (i >= 0) {
-                        NRepositoryLocation ss = current.removeAt(i);
-                        if (ss != null && u2 == null) {
-                            u2 = ss.getPath();
-                        }
-                    }
-                    boolean visitedFlag = isVisitedFlag(allNames, visited);
-                    if(!visitedFlag) {
-                        visited.addAll(allNames);
-                        result.add(NRepositoryLocation.of(r.getName(), u2));
-                    }
-                } else if (r.getOp() == NSelectorOp.EXACT) {
-                    if(!isVisitedFlag(allNames, visited)) {
-                        visited.addAll(allNames);
-                        result.add(NRepositoryLocation.of(r.getName(), r.getUrl()));
-                    }
+        Set<String> visited = new HashSet<>();
+
+        List<NRepositorySelector> selectorsExclude = new ArrayList<>();
+        List<NRepositorySelector> selectorsInclude = new ArrayList<>();
+        boolean exact = false;
+        for (NRepositorySelector selector : selectors) {
+            switch (selector.getOp()) {
+                case EXACT: {
+                    exact = true;
+                    selectorsInclude.add(selector);
+                    break;
                 }
+                case INCLUDE: {
+                    selectorsInclude.add(selector);
+                    break;
+                }
+                case EXCLUDE: {
+                    selectorsExclude.add(selector);
+                    break;
+                }
+            }
+        }
+        if (exact) {
+            current.clear();
+        }
+
+        //now remove all excluded
+        for (NRepositorySelector r : selectorsExclude) {
+            Set<String> allNames = getAllNames(r,db);
+            int i = current.indexOfNames(allNames.toArray(new String[0]), 0);
+            if (i >= 0) {
+                current.removeAt(i);
+            }
+        }
+        //finally add included in the defined order
+
+
+        for (NRepositorySelector r : selectorsInclude) {
+            Set<String> allNames = getAllNames(r,db);
+            if (!isVisitedFlag(allNames, visited)) {
+                visited.addAll(allNames);
+                result.add(NRepositoryLocation.of(r.getName(), r.getUrl()));
             }
         }
         for (NRepositoryLocation e : current.toArray()) {
             if (acceptExisting(e)) {
                 Set<String> allNames = db.getAllNames(e.getName());
-                if(!isVisitedFlag(allNames, visited)) {
+                if (!isVisitedFlag(allNames, visited)) {
                     visited.addAll(allNames);
                     result.add(e);
                 }
@@ -155,9 +184,16 @@ public class NRepositorySelectorList {
         }
         return result.toArray(new NRepositoryLocation[0]);
     }
-
+    private Set<String> getAllNames(NRepositorySelector r,NRepositoryDB db){
+        if (!NBlankable.isBlank(r.getName())) {
+            return db.getAllNames(r.getName());
+        }else{
+            String name = db.getRepositoryNameByLocation(r.getUrl());
+            return db.getAllNames(name);
+        }
+    }
     private boolean isVisitedFlag(Set<String> allNames, Set<String> visited) {
-        boolean visitedFlag=false;
+        boolean visitedFlag = false;
         for (String allName : allNames) {
             if (visited.contains(allName)) {
                 visitedFlag = true;
@@ -168,11 +204,9 @@ public class NRepositorySelectorList {
     }
 
     public boolean acceptExisting(NRepositoryLocation location) {
-        String n = location.getName();
-        String path = location.getPath();
         boolean includeOthers = true;
         for (NRepositorySelector s : selectors) {
-            if (s.matches(n, path)) {
+            if (s.matches(location)) {
                 switch (s.getOp()) {
                     case EXACT:
                     case INCLUDE:
@@ -193,4 +227,8 @@ public class NRepositorySelectorList {
     }
 
 
+    @Override
+    public String toString() {
+        return selectors.stream().map(x -> String.valueOf(x)).collect(Collectors.joining(","));
+    }
 }

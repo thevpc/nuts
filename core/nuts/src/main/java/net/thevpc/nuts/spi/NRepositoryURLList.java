@@ -69,9 +69,10 @@ public class NRepositoryURLList {
     public int indexOfNames(String[] names, int offset) {
         for (int i = offset; i < all.size(); i++) {
             NRepositoryLocation loc = all.get(i);
+            String trimmedLocName = NStringUtils.trim(loc.getName());
             for (String name : names) {
                 String trimmedName = NStringUtils.trim(name);
-                if (trimmedName.equals(NStringUtils.trim(loc.getName()))) {
+                if (trimmedName.equals(trimmedLocName)) {
                     return i;
                 }
             }
@@ -104,15 +105,16 @@ public class NRepositoryURLList {
         return -1;
     }
 
-    public void addAll(NRepositoryLocation[] all) {
+    public NRepositoryURLList addAll(NRepositoryLocation[] all) {
         if (all != null) {
             for (NRepositoryLocation a : all) {
                 add(a);
             }
         }
+        return this;
     }
 
-    public void add(NRepositoryLocation a) {
+    public NRepositoryURLList add(NRepositoryLocation a) {
         if (a != null) {
             String n = NStringUtils.trim(a.getName());
             if (n.isEmpty()) {
@@ -125,9 +127,15 @@ public class NRepositoryURLList {
                 }
             }
         }
+        return this;
     }
 
     public NRepositoryLocation removeAt(int i) {
         return all.remove(i);
+    }
+
+    public NRepositoryURLList clear() {
+        all.clear();
+        return this;
     }
 }

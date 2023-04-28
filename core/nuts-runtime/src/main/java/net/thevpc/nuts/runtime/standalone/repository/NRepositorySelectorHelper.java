@@ -14,7 +14,7 @@ import java.util.Objects;
 public class NRepositorySelectorHelper {
 
     public static NAddRepositoryOptions createRepositoryOptions(String s, boolean requireName, NSession session) {
-        NRepositorySelectorList r = NRepositorySelectorList.of(s, NRepositoryDB.of(session), session);
+        NRepositorySelectorList r = NRepositorySelectorList.of(s, NRepositoryDB.of(session), session).get();
         NRepositoryLocation[] all = r.resolve(null, NRepositoryDB.of(session));
         if (all.length != 1) {
             throw new IllegalArgumentException("unexpected");

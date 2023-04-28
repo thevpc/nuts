@@ -45,7 +45,7 @@ public class MavenRepositoryFactoryComponent implements NRepositoryFactoryCompon
     public List<NAddRepositoryOptions> getDefaultRepositories(NSession session) {
         return Arrays.asList(
                 NRepositorySelectorHelper.createRepositoryOptions(
-                        Objects.requireNonNull(NRepositoryLocation.of("maven", NRepositoryDB.of(session), session)),
+                        NRepositoryLocation.of("maven", NRepositoryDB.of(session), session).get(),
                         true, session)
         );
     }
