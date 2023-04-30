@@ -70,7 +70,9 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                 NExtensions.of(session)
                         .loadExtension(NId.of("net.thevpc.nuts.ext:next-ssh").get());
             }
-            NExecCommandExtension ee = NExtensions.of(session).createComponent(NExecCommandExtension.class, connexionString).get();
+            NExecCommandExtension ee = NExtensions.of(session).createComponent(NExecCommandExtension.class, connexionString)
+                    .orElseThrow(()->new NIllegalArgumentException(session, NMsg.ofC("invalid execution target string : %s",target)))
+                    ;
             return whichOnTarget(ee, connexionString);
         }
 

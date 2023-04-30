@@ -428,7 +428,7 @@ public class DefaultNSession implements Cloneable, NSession {
                         setExecutionType(NExecutionType.EMBEDDED);
                     }
                     //ignore
-                    break;
+                    return true;
                 }
                 case "--external":
                 case "--spawn":
@@ -437,42 +437,42 @@ public class DefaultNSession implements Cloneable, NSession {
                     if (active && a.getBooleanValue().get(this)) {
                         setExecutionType(NExecutionType.SPAWN);
                     }
-                    break;
+                    return true;
                 }
                 case "--system": {
                     a = cmdLine.nextFlag().get(this);
                     if (active && a.getBooleanValue().get(this)) {
                         setExecutionType(NExecutionType.SYSTEM);
                     }
-                    break;
+                    return true;
                 }
                 case "--current-user": {
                     a = cmdLine.nextFlag().get(this);
                     if (active && a.getBooleanValue().get(this)) {
                         setRunAs(NRunAs.currentUser());
                     }
-                    break;
+                    return true;
                 }
                 case "--as-root": {
                     a = cmdLine.nextFlag().get(this);
                     if (active && a.getBooleanValue().get(this)) {
                         setRunAs(NRunAs.root());
                     }
-                    break;
+                    return true;
                 }
                 case "--sudo": {
                     a = cmdLine.nextFlag().get(this);
                     if (active && a.getBooleanValue().get(this)) {
                         setRunAs(NRunAs.sudo());
                     }
-                    break;
+                    return true;
                 }
                 case "--as-user": {
                     a = cmdLine.nextEntry().get(this);
                     if (active) {
                         setRunAs(NRunAs.user(a.getStringValue().get(this)));
                     }
-                    break;
+                    return true;
                 }
                 case "--verbose":
 
@@ -516,7 +516,7 @@ public class DefaultNSession implements Cloneable, NSession {
                     if (active) {
                         parseLogLevel(cmdLine, active);
                     }
-                    break;
+                    return true;
                 }
                 case "-?":
                 case "-h":
@@ -530,7 +530,7 @@ public class DefaultNSession implements Cloneable, NSession {
                         cmdLine.skipAll();
                         throw new NExecutionException(this, NMsg.ofPlain("help"), NExecutionException.SUCCESS);
                     }
-                    break;
+                    return true;
                 }
                 case "--skip-event": {
                     boolean enabled = a.isActive();

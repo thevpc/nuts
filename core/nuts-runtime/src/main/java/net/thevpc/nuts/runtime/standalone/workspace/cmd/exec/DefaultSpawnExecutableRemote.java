@@ -20,6 +20,7 @@ import net.thevpc.nuts.util.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.logging.Level;
 
 /**
  * @author thevpc
@@ -61,14 +62,17 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
         }
 
         void update(DefaultSpawnExecutableRemote r) {
+            NLog log=NLog.of(DefaultSpawnExecutableRemote.class,r.getSession());
             if (userHome == null || userName == null) {
                 // echo -e "$USER\\n$HOME\n$OSTYPE"
+                log.with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("[%s] resolve remote env",r.getExecCommand().getTarget()));
                 String[] echoes = NStringUtils.trim(r.runOnceGrab("echo", "-e", "$USER\\\\n$HOME\\\\n$OSTYPE")).split("\n");
                 userName = echoes[0];
                 userHome = echoes[1];
                 osType = echoes[2];
             }
             if (NBlankable.isBlank(nutsJar)) {
+                log.with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("[%s] resolve remote jar",r.getExecCommand().getTarget()));
                 NSession session = r.getSession();
                 NConnexionString targetConnexion = NConnexionString.of(r.getExecCommand().getTarget()).get().copy()
                         .setQueryString(null)
@@ -137,7 +141,7 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
             if (remoteJar != null) {
                 remoteJar.set(remoteJarPath);
             }
-            if (copy(apiLocalPath, remoteJarPath)) {
+            if (copy(apiLocalPath, remoteJarPath,session)) {
                 def.getDescriptor().formatter(session).setNtf(false).print(
                         remoteRepo.resolve(NIdUtils.resolveDescPath(id)).mkParentDirs()
                 );
@@ -146,7 +150,9 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
             return false;
         }
 
-        public boolean copy(NPath local, NPath remote) {
+        public boolean copy(NPath local, NPath remote,NSession session) {
+            NLog log=NLog.of(DefaultSpawnExecutableRemote.class,session);
+            log.with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("try copy %s %s",local,remote));
             long localContentLength = local.getContentLength();
             long remoteContentLength = remote.getContentLength();
             if(remoteContentLength>=0) {
@@ -154,10 +160,12 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
                     String ld = local.getDigestString();
                     String rd = remote.getDigestString();
                     if (ld.equals(rd)) {
+                        log.with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("do not copy %s %s",local,remote));
                         return false;
                     }
                 }
             }
+            log.with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("copy %s %s",local,remote));
             local.copyTo(remote.mkParentDirs());
             return true;
         }
