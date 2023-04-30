@@ -71,4 +71,10 @@ public class NPrintStreamNull extends NPrintStreamBase {
     public OutputStream getOutputStream() {
         return nullOS;
     }
+
+    @Override
+    public NPrintStream writeRaw(byte[] buf, int off, int len) {
+        return this
+                ;
+    }
 }

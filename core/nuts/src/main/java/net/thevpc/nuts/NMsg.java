@@ -35,6 +35,7 @@ import net.thevpc.nuts.util.NStringUtils;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 
 public class NMsg {
@@ -135,17 +136,26 @@ public class NMsg {
     }
 
     public static NMsg ofV(String message, NMsgParam... params) {
-        Map<String, Object> vars = new LinkedHashMap<>();
+        Map<String, NMsgParam> vars = new LinkedHashMap<>();
         if (params != null) {
             for (NMsgParam param : params) {
                 String e = param.getName();
                 if (vars.containsKey(e)) {
                     throw new IllegalArgumentException("duplicate key " + e);
                 }
-                vars.put(e, param.getValue());
+                vars.put(e, param);
             }
         }
-        return ofV(message, vars);
+        return ofV(message, s->{
+            NMsgParam p = vars.get(s);
+            if(p!=null){
+                Supplier<?> ss = p.getValue();
+                if(ss!=null){
+                    return ss.get();
+                }
+            }
+            return null;
+        });
     }
 
     public static NMsg ofV(String message, Map<String, ?> vars) {

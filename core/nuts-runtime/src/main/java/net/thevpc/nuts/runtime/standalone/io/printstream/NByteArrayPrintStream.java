@@ -1,18 +1,18 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NMemoryPrintStream;
-import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.io.NTerminalMode;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 public class NByteArrayPrintStream extends NPrintStreamRaw implements NMemoryPrintStream {
     public NByteArrayPrintStream(NTerminalMode mode, NSession session) {
         super(new ByteArrayOutputStream(), mode, null, null, session, new Bindings(), null);
+        if (mode == NTerminalMode.ANSI) {
+            this.term = new AnsiNPrintStreamTerminalBase(this);
+        }
         getMetaData().setMessage(
                 NMsg.ofNtf(NTexts.of(session).ofStyled("<memory-buffer>", NTextStyle.path()))
         );
@@ -20,6 +20,9 @@ public class NByteArrayPrintStream extends NPrintStreamRaw implements NMemoryPri
 
     protected NByteArrayPrintStream(NTerminalMode mode, ByteArrayOutputStream bos, NSession session) {
         super(bos, mode, null, null, session, new Bindings(), null);
+        if (mode == NTerminalMode.ANSI) {
+            this.term = new AnsiNPrintStreamTerminalBase(this);
+        }
         getMetaData().setMessage(
                 NMsg.ofNtf(NTexts.of(session).ofStyled("<memory-buffer>", NTextStyle.path()))
         );
@@ -49,4 +52,5 @@ public class NByteArrayPrintStream extends NPrintStreamRaw implements NMemoryPri
     public OutputStream getOutputStream() {
         return asOutputStream();
     }
+
 }

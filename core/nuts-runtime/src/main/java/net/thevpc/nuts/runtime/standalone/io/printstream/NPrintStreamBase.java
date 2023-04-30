@@ -22,7 +22,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
     protected Writer writerWrapper;
     protected boolean autoFlash;
     private NTerminalMode mode;
-    private NSystemTerminalBase term;
+    protected NSystemTerminalBase term;
     private DefaultNContentMetadata md = new DefaultNContentMetadata();
 
     public NPrintStreamBase(boolean autoFlash, NTerminalMode mode, NSession session, Bindings bindings, NSystemTerminalBase term) {
@@ -54,6 +54,11 @@ public abstract class NPrintStreamBase implements NPrintStream {
         return print(b, 0, b.length);
     }
 
+    protected NPrintStream printParsed(NText b) {
+        print(b.toString());
+        return this;
+    }
+
     private NPrintStream printNormalized(NText b) {
         if (b != null) {
             switch (b.getType()) {
@@ -64,12 +69,12 @@ public abstract class NPrintStreamBase implements NPrintStream {
                     break;
                 }
                 case PLAIN: {
-                    print(b.toString());
+                    printParsed(b);
                     break;
                 }
                 case STYLED: {
                     if (isNtf()) {
-                        print(b.toString());
+                        printParsed(b);
                     } else {
                         NTextStyled s = (NTextStyled) b;
                         printNormalized(s.getChild());
@@ -78,7 +83,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
                 }
                 case COMMAND: {
                     if (isNtf()) {
-                        print(b.toString());
+                        printParsed(b);
                     }
                     break;
                 }
@@ -104,11 +109,12 @@ public abstract class NPrintStreamBase implements NPrintStream {
             return printNull();
         }
         NText t = b.toText();
-        printNormalized(txt().transform(t,
+        NText transformed = txt().transform(t,
                 new NTextTransformConfig()
                         .setNormalize(true)
                         .setFlatten(true)
-        ));
+        );
+        printNormalized(transformed);
         return this;
     }
 

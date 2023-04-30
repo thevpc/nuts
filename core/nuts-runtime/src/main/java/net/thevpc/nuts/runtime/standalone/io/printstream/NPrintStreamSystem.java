@@ -14,7 +14,6 @@ import java.io.UnsupportedEncodingException;
 public class NPrintStreamSystem extends NPrintStreamBase {
     private final OutputStream out;
     private PrintStream base;
-
     public NPrintStreamSystem(OutputStream out, Boolean autoFlush, String encoding, Boolean ansi, NSession session, NSystemTerminalBase term) {
         this(out, autoFlush, encoding, ansi, session, new Bindings(), term);
     }
@@ -121,6 +120,16 @@ public class NPrintStreamSystem extends NPrintStreamBase {
     }
 
     @Override
+    public NPrintStream writeRaw(byte[] buf, int off, int len) {
+        if (buf == null) {
+            base.print("null");
+        } else {
+            base.write(buf, off, len);
+        }
+        return this;
+    }
+
+    @Override
     public NPrintStream write(char[] buf, int off, int len) {
         if (buf == null) {
             base.print("null");
@@ -166,5 +175,4 @@ public class NPrintStreamSystem extends NPrintStreamBase {
     public OutputStream getOutputStream() {
         return asOutputStream();
     }
-
 }

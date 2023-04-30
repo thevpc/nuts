@@ -10,6 +10,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExecutableCommand;
 import net.thevpc.nuts.text.NText;
@@ -83,34 +84,34 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
                     n == null ? NTexts.of(session).ofStyled(("no help found for " + name), NTextStyle.error()) : n
             );
         }
-        NPrintStream fout = NPrintStream.ofInMemory(session);
+        //NPrintStream fout = NPrintStream.ofInMemory(session).setTerminalMode(NTerminalMode.FORMATTED);
+        NPrintStream out = session.out();
         if (!helpColors && helpFor.isEmpty()) {
-            fout.println(NWorkspaceExt.of(session.getWorkspace()).getHelpText(session));
-            fout.flush();
+            out.println(NWorkspaceExt.of(session.getWorkspace()).getHelpText(session));
+            out.flush();
         }
         for (String arg : helpFor) {
             NExecutableInformation w = null;
             if (arg.equals("help")) {
-                fout.println(arg + " :");
+                out.println(NMsg.ofC("%s :",arg));
                 showDefaultHelp();
-                fout.flush();
+                out.flush();
             } else {
                 try {
                     w = NExecCommand.of(session).addCommand(arg).which();
                 } catch (Exception ex) {
-                    LOG.with().session(session).level(Level.FINE).error(ex).log(NMsg.ofJ("failed to execute : {0}", arg));
+                    LOG.with().session(session).level(Level.FINE).error(ex).log(NMsg.ofC("failed to execute : %s", arg));
                     //ignore
                 }
                 if (w != null) {
-                    fout.println(arg + " :");
-                    fout.println(w.getHelpText());
-                    fout.flush();
+                    out.println(NMsg.ofC("%s :",arg));
+                    out.println(w.getHelpText());
+                    out.flush();
                 } else {
-                    session.getTerminal().err().println(arg + " : Not found");
+                    session.getTerminal().err().println(NMsg.ofC("%s : not found",arg));
                 }
             }
         }
-        session.out().println(NString.of(fout.toString(), session));
         return NExecutionException.SUCCESS;
     }
 

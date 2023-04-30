@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.io.outputstream.OutputHelper;
 import net.thevpc.nuts.runtime.standalone.text.parser.AbstractNTextNodeParserDefaults;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
@@ -18,10 +19,9 @@ public class FormatOutputStreamSupport {
     };
 
     public FormatOutputStreamSupport() {
-
     }
 
-    public FormatOutputStreamSupport(OutputHelper rawOutput, NSession session, NSystemTerminalBase term, boolean filtered) {
+    public FormatOutputStreamSupport(NPrintStream rawOutput, NSession session, NSystemTerminalBase term, boolean filtered) {
         this.session = session;
         this.ws = session.getWorkspace();
         this.parser = AbstractNTextNodeParserDefaults.createDefault(session);
@@ -53,6 +53,10 @@ public class FormatOutputStreamSupport {
         processBytes(new byte[]{(byte) oneByte}, 0, 1);
     }
 
+    public void writeRaw(byte[] buf, int off, int len) {
+        nodeWriter.writeRaw(buf, off, len);
+    }
+
     public void processBytes(byte[] buf, int off, int len) {
         if (!isFormatEnabled()) {
             nodeWriter.writeRaw(buf, off, len);
@@ -65,6 +69,11 @@ public class FormatOutputStreamSupport {
                 }
             });
         }
+    }
+
+    public void pushNode(NText node) {
+        flush();
+        nutsTextNodeVisitor.visit(node);
     }
 
     public void processChars(char[] buf, int off, int len) {

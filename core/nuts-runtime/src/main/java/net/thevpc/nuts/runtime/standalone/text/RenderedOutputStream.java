@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.io.outputstream.OutputStreamHelper;
+import net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamBase;
+import net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamRaw;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 
 public class RenderedOutputStream extends OutputStream implements NOutputStreamTransparentAdapter {
@@ -23,7 +25,7 @@ public class RenderedOutputStream extends OutputStream implements NOutputStreamT
         this.ws = session.getWorkspace();
         this.terminal=terminal;
         h = new FormatOutputStreamSupport(
-                new OutputStreamHelper(out,session)
+                new NPrintStreamRaw(out,true,null,session,new NPrintStreamBase.Bindings(), terminal)
                 , session,terminal,filtered);
     }
 

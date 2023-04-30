@@ -278,9 +278,9 @@ public class DefaultNRepositoryConfigModel implements NRepositoryConfigModel {
             fireChange = true;
             this.config.setStoreStrategy(NLocations.of(session).getRepositoryStoreStrategy());
         }
-        if (!Objects.equals(NRepositoryUtils.getRepoType(config), repositoryType)) {
+        if (!Objects.equals(NRepositoryUtils.getRepoType(config, session), repositoryType)) {
             throw new NIllegalArgumentException(session,
-                    NMsg.ofC("invalid Repository Type : expected %s, found %s", repositoryType, NRepositoryUtils.getRepoType(config))
+                    NMsg.ofC("invalid Repository Type : expected %s, found %s", repositoryType, NRepositoryUtils.getRepoType(config, session))
             );
         }
 

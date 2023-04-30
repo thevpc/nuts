@@ -4,6 +4,7 @@ import net.thevpc.nuts.NEvents;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspaceEvent;
 import net.thevpc.nuts.NWorkspaceListener;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEvent;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NTextStyles;
@@ -47,7 +48,7 @@ public class NSystemTerminalRef extends AbstractSystemTerminalAdapter {
     }
 
     @Override
-    public void setStyles(NTextStyles styles, NSession session) {
-        base.setStyles(styles, session);
+    public void setStyles(NTextStyles styles, NPrintStream printStream, NSession session) {
+        base.setStyles(styles, printStream, session);
     }
 }

@@ -352,7 +352,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public Object run(NTerminalCommand command, NSession session) {
+    public Object run(NTerminalCommand command, NPrintStream printStream, NSession session) {
         switch (command.getName()) {
             case NTerminalCommand.Ids.GET_CURSOR: {
                 org.jline.terminal.Cursor c = terminal.getCursorPosition(new IntConsumer() {
@@ -380,25 +380,29 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
             default: {
                 String s = NAnsiTermHelper.of(session).command(command, session);
                 if (s != null) {
-                    try {
-                        reader.getTerminal().output().write(s.getBytes());
-                    } catch (IOException e) {
-                        throw new NIOException(session, e);
-                    }
+                    byte[] bytes = s.getBytes();
+                    printStream.writeRaw(bytes,0,bytes.length);
+//                    try {
+//                        reader.getTerminal().output().write(bytes);
+//                    } catch (IOException e) {
+//                        throw new NIOException(session, e);
+//                    }
                 }
                 return null;
             }
         }
     }
 
-    public void setStyles(NTextStyles styles, NSession session) {
+    public void setStyles(NTextStyles styles, NPrintStream printStream, NSession session) {
         String s = NAnsiTermHelper.of(session).styled(styles, session);
         if (s != null) {
-            try {
-                reader.getTerminal().output().write(s.getBytes());
-            } catch (IOException e) {
-                throw new NIOException(session, e);
-            }
+            byte[] bytes = s.getBytes();
+            printStream.writeRaw(bytes,0,bytes.length);
+//            try {
+//                reader.getTerminal().output().write(s.getBytes());
+//            } catch (IOException e) {
+//                throw new NIOException(session, e);
+//            }
         }
     }
 

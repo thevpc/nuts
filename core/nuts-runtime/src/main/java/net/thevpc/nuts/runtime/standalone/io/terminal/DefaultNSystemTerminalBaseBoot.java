@@ -159,32 +159,34 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
 
 
     @Override
-    public Object run(NTerminalCommand command, NSession session) {
+    public Object run(NTerminalCommand command, NPrintStream printStream, NSession session) {
         return null;
     }
 
     @Override
     public Cursor getTerminalCursor(NSession session) {
         NSessionUtils.checkSession(session.getWorkspace(), session);
-        return (Cursor) run(NTerminalCommand.GET_CURSOR, session);
+        return (Cursor) run(NTerminalCommand.GET_CURSOR, getOut(), session);
     }
 
     @Override
     public Size getTerminalSize(NSession session) {
         NSessionUtils.checkSession(session.getWorkspace(), session);
-        return (Size) run(NTerminalCommand.GET_SIZE, session);
+        return (Size) run(NTerminalCommand.GET_SIZE, getOut(), session);
     }
 
     @Override
-    public void setStyles(NTextStyles styles, NSession session) {
+    public void setStyles(NTextStyles styles, NPrintStream printStream, NSession session) {
         String s = NAnsiTermHelper.of(session).styled(styles, session);
         if (s != null) {
-            try {
-                NWorkspaceTerminalOptions bootStdFd = NBootManager.of(session).getBootTerminal();
-                bootStdFd.getOut().write(s.getBytes());
-            } catch (IOException e) {
-                throw new NIOException(session, e);
-            }
+            //try {
+                byte[] bytes = s.getBytes();
+                printStream.writeRaw(bytes,0,bytes.length);
+//                NWorkspaceTerminalOptions bootStdFd = NBootManager.of(session).getBootTerminal();
+//                bootStdFd.getOut().write(bytes);
+            //} catch (IOException e) {
+            //    throw new NIOException(session, e);
+            //}
         }
     }
 }

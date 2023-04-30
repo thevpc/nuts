@@ -408,6 +408,12 @@ public class NPlainPrintStream implements NPrintStream {
     }
 
     @Override
+    public NPrintStream writeRaw(byte[] buf, int off, int len) {
+        sb.append(new String(buf, off, len));
+        return this;
+    }
+
+    @Override
     public NFormat formatter(NSession session) {
         return NFormat.of(session, new NContentMetadataProviderFormatSPI(this, null, "print-stream"));
     }

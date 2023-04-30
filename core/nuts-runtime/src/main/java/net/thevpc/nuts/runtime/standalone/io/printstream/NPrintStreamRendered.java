@@ -4,6 +4,9 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.text.FormatOutputStreamSupport;
+import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextStyled;
 
 public abstract class NPrintStreamRendered extends NPrintStreamBase {
     protected FormatOutputStreamSupport support;
@@ -12,13 +15,19 @@ public abstract class NPrintStreamRendered extends NPrintStreamBase {
     public NPrintStreamRendered(NPrintStreamBase base, NSession session, NTerminalMode mode, Bindings bindings) {
         super(true, mode, session, bindings, base.getTerminal());
         this.base = base;
-        this.support = new FormatOutputStreamSupport(new NPrintStreamHelper(base), session, base.getTerminal(),
+        this.support = new FormatOutputStreamSupport(base, session, base.getTerminal(),
                 (mode != NTerminalMode.ANSI && mode != NTerminalMode.FORMATTED)
         );
     }
 
     public NPrintStreamBase getBase() {
         return base;
+    }
+
+    @Override
+    public NPrintStream writeRaw(byte[] buf, int off, int len) {
+        support.writeRaw(buf, off, len);
+        return this;
     }
 
     @Override
@@ -53,6 +62,30 @@ public abstract class NPrintStreamRendered extends NPrintStreamBase {
         return this;
     }
 
+    protected NPrintStream printParsed(NText b) {
+        if (isNtf()) {
+            support.pushNode(b);
+        } else {
+            switch (b.getType()) {
+                case PLAIN: {
+                    support.pushNode(b);
+                    break;
+                }
+                case COMMAND: {
+                    //ignore
+                    break;
+                }
+                case STYLED: {
+                    printParsed(((NTextStyled) b).getChild());
+                    break;
+                }
+                default: {
+                    throw new IllegalArgumentException("not supported");
+                }
+            }
+        }
+        return this;
+    }
 
     @Override
     protected NPrintStream convertImpl(NTerminalMode other) {

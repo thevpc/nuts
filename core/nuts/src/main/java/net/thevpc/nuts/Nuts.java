@@ -26,10 +26,16 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
 import net.thevpc.nuts.boot.NBootWorkspace;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.io.NMemoryPrintStream;
+import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.reserved.NReservedBootLog;
 import net.thevpc.nuts.util.NApiUtils;
+import net.thevpc.nuts.util.NProgressMonitor;
+import net.thevpc.nuts.util.NProgressMonitors;
 import net.thevpc.nuts.util.NStringUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,7 +94,83 @@ public final class Nuts {
      * @param args main arguments
      */
     @SuppressWarnings("UseSpecificCatch")
-    public static void main(String[] args) {
+    public static void main(String[] args)  throws Throwable{
+//        String zz="\u001B[2K\r" +
+//                "\u001B[38;5;4m⠀\u001B[0m Hello \u001B[38;5;5m0\u001B[0m  \u001B[2K\r" +
+//                //"\u001B[2K\r" +
+//                "\u001B[38;5;4m⠀\u001B[0m Hello \u001B[38;5;5m1\u001B[0m  \u001B[2K\r" +
+//                //"\u001B[2K\r" +
+//                "\u001B[38;5;4m⠀\u001B[0m Hello \u001B[38;5;5m2\u001B[0m  \u001B[2K\r" +
+//                //"\u001B[2K\r" +
+//                "\u001B[38;5;4m⠀\u001B[0m Hello \u001B[38;5;5m3\u001B[0m  ";
+//        for (String s : zz.split("[\n\r]")) {
+//            System.out.print(s);
+//            System.out.print('\r');
+//            try {
+//                Thread.sleep(1000);
+//            } catch (InterruptedException e) {
+//                throw new RuntimeException(e);
+//            }
+//        }
+//        if(true){
+//            return;
+//        }
+//        NSession s = openWorkspace("-ZyS");
+//        NMemoryPrintStream e0 = NPrintStream.ofInMemory(s,NTerminalMode.ANSI);
+//        NPrintStream e = e0.setTerminalMode(NTerminalMode.FORMATTED);
+//        int max = 2000;
+//        //String zz="```!clear-line``````!move-line-start```##{p1:⠀}##\u001E Hello ##{number:11}##\u001E   >";
+//
+//        s.err().print("```!clear-line``````!move-line-start```A");
+//        s.err().flush();
+//
+//        s.err().print("```!clear-line``````!move-line-start```B");
+//        s.err().flush();
+//
+//        s.err().print("```!clear-line``````!move-line-start```C");
+//        s.err().flush();
+//
+//
+//        e.print("```!clear-line``````!move-line-start```A");
+//        e.flush();
+//
+//        e.print("```!clear-line``````!move-line-start```B");
+//        e.flush();
+//
+//        e.print("```!clear-line``````!move-line-start```C");
+//        e.flush();
+//
+//        byte[] r = e0.getBytes();
+//        System.out.println(r);
+//
+//        {
+//
+//            System.err.print("\u001b[2K\rHELLO 1  >");
+//            System.err.flush();
+//
+//            System.err.print("\u001b[2K\rHELLO 2  >");
+//            System.err.flush();
+//
+//            System.err.print("\u001b[2K\rHELLO 3  >");
+//            System.err.flush();
+//
+//
+//        }
+//
+//
+//        s.err().println();
+//        for (int i = 0; i < max; i++) {
+//            s.getTerminal().printProgress((float) (1.0 / max * i), NMsg.ofC("Hello %s", i));
+//            //s.err().println();
+//            try {
+//                Thread.sleep(1000);
+//            } catch (Exception ee) {
+//                throw new RuntimeException(ee);
+//            }
+//        }
+//        if(true){
+//            return;
+//        }
         try {
             runWorkspace(args);
             System.exit(0);
@@ -111,11 +193,11 @@ public final class Nuts {
      * workspace configuration.
      *
      * @param overriddenNutsArgs nuts arguments to override inherited arguments
-     * @param appArgs application arguments
+     * @param appArgs            application arguments
      * @return NutsSession instance
      */
     public static NSession openInheritedWorkspace(String[] overriddenNutsArgs, String... appArgs) throws NUnsatisfiedRequirementsException {
-        return openInheritedWorkspace(null, overriddenNutsArgs,appArgs);
+        return openInheritedWorkspace(null, overriddenNutsArgs, appArgs);
     }
 
     /**
@@ -125,9 +207,9 @@ public final class Nuts {
      * method is to be called by child processes of nuts in order to inherit
      * workspace configuration.
      *
-     * @param term boot terminal or null for defaults
+     * @param term               boot terminal or null for defaults
      * @param overriddenNutsArgs nuts arguments to override inherited arguments
-     * @param appArgs arguments
+     * @param appArgs            arguments
      * @return NutsSession instance
      */
     public static NSession openInheritedWorkspace(NWorkspaceTerminalOptions term, String[] overriddenNutsArgs, String... appArgs) throws NUnsatisfiedRequirementsException {
@@ -139,7 +221,7 @@ public final class Nuts {
             nutsArgs.addAll(Arrays.asList(overriddenNutsArgs));
         }
         NWorkspaceOptionsBuilder options = new DefaultNWorkspaceOptionsBuilder();
-        options.setCommandLine(nutsArgs.toArray(new String[0]),null);
+        options.setCommandLine(nutsArgs.toArray(new String[0]), null);
         if (options.getApplicationArguments().isNotPresent()) {
             options.setApplicationArguments(new ArrayList<>());
         }

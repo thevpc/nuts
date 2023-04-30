@@ -33,7 +33,6 @@ import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Created by vpc on 1/15/17.
@@ -56,7 +55,7 @@ public class MavenRepositoryFactoryComponent implements NRepositoryFactoryCompon
             return new MavenSettingsRepository(options, session, parentRepository);
         }
         final NRepositoryConfig config = options.getConfig();
-        String type = NRepositoryUtils.getRepoType(config);
+        String type = NRepositoryUtils.getRepoType(config, session);
         if (NBlankable.isBlank(type)) {
             return null;
         }
@@ -77,9 +76,10 @@ public class MavenRepositoryFactoryComponent implements NRepositoryFactoryCompon
         if (criteria == null) {
             return NO_SUPPORT;
         }
+        NSession session = criteria.getSession();
         NRepositoryConfig r = criteria.getConstraints(NRepositoryConfig.class);
         if (r != null) {
-            String type = NRepositoryUtils.getRepoType(r);
+            String type = NRepositoryUtils.getRepoType(r, session);
             if (NBlankable.isBlank(type)) {
                 return NO_SUPPORT;
             }

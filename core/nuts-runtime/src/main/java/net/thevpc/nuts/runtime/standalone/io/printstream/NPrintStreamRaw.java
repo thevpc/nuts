@@ -148,4 +148,14 @@ public class NPrintStreamRaw extends NPrintStreamBase {
     public OutputStream getOutputStream() {
         return asOutputStream();
     }
+
+    @Override
+    public NPrintStream writeRaw(byte[] buf, int off, int len) {
+        if (buf == null) {
+            base.print("null");
+        } else {
+            base.write(buf, off, len);
+        }
+        return this;
+    }
 }

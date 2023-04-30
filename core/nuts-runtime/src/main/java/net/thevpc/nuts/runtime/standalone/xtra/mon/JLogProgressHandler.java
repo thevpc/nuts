@@ -48,7 +48,7 @@ public class JLogProgressHandler implements NProgressHandler {
         long newd = System.currentTimeMillis();
         NMsg message = model.getMessage();
         return messageFormat.build(
-                NMsgParam.of("message",()-> message),
+                NMsgParam.of("message",()-> message==null?"":message),
                 NMsgParam.of("date",()-> new Date(newd)),
                 NMsgParam.of("progress",()-> Double.isNaN(model.getProgress()) ? "   ?%" : PERCENT_FORMAT.format(model.getProgress())),
                 NMsgParam.of("inuse",()->MF.format(MemoryUtils.inUseMemory())),

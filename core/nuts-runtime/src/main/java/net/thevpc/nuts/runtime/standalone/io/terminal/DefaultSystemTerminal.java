@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 
@@ -18,7 +19,7 @@ public class DefaultSystemTerminal extends AbstractSystemTerminalAdapter {
     }
 
     @Override
-    public void setStyles(NTextStyles styles, NSession session) {
-        base.setStyles(styles,session);
+    public void setStyles(NTextStyles styles, NPrintStream printStream, NSession session) {
+        base.setStyles(styles, printStream, session);
     }
 }

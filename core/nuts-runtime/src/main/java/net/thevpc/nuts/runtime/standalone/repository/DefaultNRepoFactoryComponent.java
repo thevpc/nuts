@@ -33,7 +33,6 @@ import net.thevpc.nuts.spi.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Created by vpc on 1/15/17.
@@ -46,14 +45,15 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
         if (criteria == null) {
             return NO_SUPPORT;
         }
+        NSession session = criteria.getSession();
         NRepositoryConfig r = criteria.getConstraints(NRepositoryConfig.class);
         if (r != null) {
-            String type = NRepositoryUtils.getRepoType(r);
+            String type = NRepositoryUtils.getRepoType(r, session);
             if (NConstants.RepoTypes.NUTS.equals(type)) {
                 return DEFAULT_SUPPORT + 10;
             }
             if (NBlankable.isBlank(type)) {
-                NPath rp = NPath.of(r.getLocation().getPath(), criteria.getSession()).resolve("nuts-repository.json");
+                NPath rp = NPath.of(r.getLocation().getPath(), session).resolve("nuts-repository.json");
                 if (rp.exists()) {
                     r.setLocation(r.getLocation().setLocationType(NConstants.RepoTypes.NUTS));
                     return DEFAULT_SUPPORT + 10;
@@ -81,7 +81,7 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
     @Override
     public NRepository create(NAddRepositoryOptions options, NSession session, NRepository parentRepository) {
         NRepositoryConfig config = options.getConfig();
-        String type = NRepositoryUtils.getRepoType(config);
+        String type = NRepositoryUtils.getRepoType(config, session);
         if (NBlankable.isBlank(type)) {
             return null;
         }

@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.reserved.NReservedJsonParser;
 import net.thevpc.nuts.reserved.NReservedPath;
 import net.thevpc.nuts.spi.NRepositoryLocation;
@@ -10,6 +11,7 @@ import net.thevpc.nuts.util.NLogVerb;
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 
 public class NRepositoryUtils {
@@ -36,11 +38,11 @@ public class NRepositoryUtils {
 
     }
 
-    public static NRepositoryLocation validateLocation(NRepositoryLocation r, NLog nLog) {
+    public static NRepositoryLocation validateLocation(NRepositoryLocation r, NLog nLog, NSession session) {
         if (NBlankable.isBlank(r.getLocationType()) || NBlankable.isBlank(r.getName())) {
             if (r.getFullLocation() != null) {
                 NReservedPath r1 = new NReservedPath(r.getPath()).toAbsolute();
-                if (!r.getPath().equals(r1.getPath())) {
+                if (!Objects.equals(r.getPath(),r1.getPath())) {
                     r = r.setPath(r1.getPath());
                 }
                 NReservedPath r2 = r1.resolve(".nuts-repository");
@@ -78,16 +80,24 @@ public class NRepositoryUtils {
                         r = r.setLocationType(NConstants.RepoTypes.NUTS);
                     }
                 }
+                if (NBlankable.isBlank(r.getLocationType())) {
+                    NPath p = NPath.of(r.getPath(), session);
+                    if (p.isLocal()) {
+                        if (!p.exists() || p.isDirectory()) {
+                            r = r.setLocationType(NConstants.RepoTypes.NUTS);
+                        }
+                    }
+                }
             }
         }
         return r;
     }
 
-    public static String getRepoType(NRepositoryConfig conf) {
+    public static String getRepoType(NRepositoryConfig conf, NSession session) {
         if (conf != null) {
             NRepositoryLocation loc = conf.getLocation();
             if (loc != null) {
-                loc = validateLocation(loc, null);
+                loc = validateLocation(loc, null, session);
                 if (!NBlankable.isBlank(loc.getLocationType())) {
                     return loc.getLocationType();
                 }

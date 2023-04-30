@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNSystemTerminalBase;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextCommand;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextStyled;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextTitle;
@@ -12,6 +13,7 @@ import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.*;
 
+import java.io.IOException;
 import java.io.OutputStream;
 
 public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
@@ -20,10 +22,10 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
     private int bufferSize = 0;
     private boolean enableBuffering = false;
     private byte[] later = null;
-    private OutputHelper rawOutput;
+    private NPrintStream rawOutput;
     private RenderedRawStream renderedRawStream = new RenderedRawStream() {
 
-        public OutputHelper baseOutput() {
+        public NPrintStream baseOutput() {
             return rawOutput;
         }
 
@@ -39,17 +41,16 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
     };
     private NSession session;
     private NSystemTerminalBase term;
-//    private NutsWorkspace ws;
 
-    public NTextNodeWriterRenderer(NPrintStream rawOutput, NSession session) {
-        this(new NPrintStreamHelper(rawOutput), session, rawOutput.getTerminal());
-    }
+//    public NTextNodeWriterRenderer(NPrintStream rawOutput, NSession session) {
+//        this(new NPrintStreamHelper(rawOutput), session, rawOutput.getTerminal());
+//    }
+//
+//    public NTextNodeWriterRenderer(OutputStream rawOutput, NSession session, NSystemTerminalBase term) {
+//        this(new OutputStreamHelper(rawOutput, session), session, term);
+//    }
 
-    public NTextNodeWriterRenderer(OutputStream rawOutput, NSession session, NSystemTerminalBase term) {
-        this(new OutputStreamHelper(rawOutput, session), session, term);
-    }
-
-    public NTextNodeWriterRenderer(OutputHelper rawOutput, NSession session, NSystemTerminalBase term) {
+    public NTextNodeWriterRenderer(NPrintStream rawOutput, NSession session, NSystemTerminalBase term) {
         this.rawOutput = rawOutput;
         this.session = session;
         this.term = term;
@@ -143,7 +144,7 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
                 DefaultNTextCommand s = (DefaultNTextCommand) node;
                 if (term != null) {
                     if (!ctx.isFiltered()) {
-                        term.run(s.getCommand(), session);
+                        term.run(s.getCommand(), rawOutput, session);
                     }
                 }
                 break;
@@ -200,13 +201,13 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
                 } else {
                     flush();
                     if (term != null) {
-                        term.setStyles(format, session);
+                        term.setStyles(format, rawOutput, session);
                     }
                     try {
                         writeRaw(rawString);
                     } finally {
                         if (term != null) {
-                            term.setStyles(null, session);
+                            term.setStyles(null, rawOutput, session);
                         }
                     }
                 }
@@ -236,6 +237,12 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
             }
         } else {
             rawOutput.write(b, 0, b.length);
+            try {
+                DefaultNSystemTerminalBase.TERM.write(b, 0, b.length);
+                DefaultNSystemTerminalBase.TERM.flush();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

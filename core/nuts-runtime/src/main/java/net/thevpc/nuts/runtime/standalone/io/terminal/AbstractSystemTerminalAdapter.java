@@ -200,12 +200,12 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
     }
 
     @Override
-    public Object run(NTerminalCommand command, NSession session) {
-        return getBase().run(command, session);
+    public Object run(NTerminalCommand command, NPrintStream printStream, NSession session) {
+        return getBase().run(command, printStream, session);
     }
 
     @Override
-    public void setStyles(NTextStyles styles, NSession session) {
-        getBase().setStyles(styles, session);
+    public void setStyles(NTextStyles styles, NPrintStream printStream, NSession session) {
+        getBase().setStyles(styles, printStream, session);
     }
 }

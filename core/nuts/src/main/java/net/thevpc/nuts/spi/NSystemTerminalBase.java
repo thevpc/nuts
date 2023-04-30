@@ -96,17 +96,17 @@ public interface NSystemTerminalBase extends NComponent {
      */
     NSystemTerminalBase setCommandHighlighter(String commandHighlighter);
 
-    Object run(NTerminalCommand command, NSession session);
+    Object run(NTerminalCommand command, NPrintStream printStream, NSession session);
 
     Cursor getTerminalCursor(NSession session);
 
     Size getTerminalSize(NSession session);
 
-    NSystemTerminalBase resetLine(NSession session) ;
+    NSystemTerminalBase resetLine(NSession session);
 
-    NSystemTerminalBase clearScreen(NSession session) ;
+    NSystemTerminalBase clearScreen(NSession session);
 
-    void setStyles(NTextStyles styles, NSession session);
+    void setStyles(NTextStyles styles, NPrintStream printStream, NSession session);
 
     class Cursor implements Serializable {
         private int x;
@@ -115,6 +115,7 @@ public interface NSystemTerminalBase extends NComponent {
         private Cursor() {
             // for serialization purposes
         }
+
         public Cursor(int x, int y) {
             this.x = x;
             this.y = y;
@@ -157,6 +158,7 @@ public interface NSystemTerminalBase extends NComponent {
         private Size() {
             // for serialization purposes
         }
+
         public Size(int columns, int rows) {
             this.columns = columns;
             this.rows = rows;

@@ -12,13 +12,19 @@ import net.thevpc.nuts.text.NTerminalCommand;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.util.NLog;
 
-import java.io.Console;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Scanner;
 
 @NComponentScope(NComponentScopeType.PROTOTYPE)
 public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
+    public static OutputStream TERM;
+    static {
+        try {
+            TERM=new FileOutputStream("/home/vpc/vpc-term.out",true);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public static final int THIRTY_SECONDS = 30000;
     NCachedValue<Cursor> termCursor;
     NCachedValue<Size> termSize;
@@ -176,7 +182,7 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public Object run(NTerminalCommand command, NSession session) {
+    public Object run(NTerminalCommand command, NPrintStream printStream, NSession session) {
         switch (command.getName()) {
             case NTerminalCommand.Ids.GET_CURSOR: {
                 return termCursor.getValue(session);
@@ -188,9 +194,16 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
         String s = NAnsiTermHelper.of(session).command(command, session);
         if (s != null) {
             try {
-                NWorkspaceTerminalOptions bootStdFd = NBootManager.of(session).getBootTerminal();
-                bootStdFd.getOut().write(s.getBytes());
-                bootStdFd.getOut().flush();
+                byte[] bytes = s.getBytes();
+                printStream.writeRaw(bytes,0,bytes.length);
+                printStream.flush();
+                //NWorkspaceTerminalOptions bootStdFd = NBootManager.of(session).getBootTerminal();
+                //PrintStream out2 = bootStdFd.getOut();
+                //out2.write(bytes);
+                //out2.flush();
+
+                TERM.write(bytes);
+                TERM.flush();
             } catch (IOException e) {
                 throw new NIOException(session, e);
             }
@@ -198,12 +211,19 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
         return null;
     }
 
-    public void setStyles(NTextStyles styles, NSession session) {
+    public void setStyles(NTextStyles styles, NPrintStream printStream, NSession session) {
         String s = NAnsiTermHelper.of(session).styled(styles, session);
         if (s != null) {
             try {
-                NWorkspaceTerminalOptions bootStdFd = NBootManager.of(session).getBootTerminal();
-                bootStdFd.getOut().write(s.getBytes());
+                byte[] bytes = s.getBytes();
+                printStream.writeRaw(bytes,0,bytes.length);
+                printStream.flush();
+//                NWorkspaceTerminalOptions bootStdFd = NBootManager.of(session).getBootTerminal();
+//                PrintStream out2 = bootStdFd.getOut();
+//                out2.write(s.getBytes());
+//                out2.flush();
+                TERM.write(s.getBytes());
+                TERM.flush();
             } catch (IOException e) {
                 throw new NIOException(session, e);
             }
