@@ -165,8 +165,8 @@ if [ x"$NUTS_FLAG_REPO_STATS" == x"true" ]; then
   pwd
   find -iregex '\(.*[.]jar\)\|\(.*[.]asc\)\|\(.*[.]pom\)' -exec cp --parents \{\} $w_preview/net/thevpc/nuts/ \;
   cd $NUTS_ROOT_BASE
-  $JAVA_CMD $NUTS_DEBUG_ARG -jar core/nuts/target/nuts-$NUTS_VERSION.jar -w development-build $NUTS_VERBOSE $NUTS_TRACE settings update stats $NUTS_ROOT_BASE/../nuts-preview
-  $JAVA_CMD $NUTS_DEBUG_ARG -jar core/nuts/target/nuts-$NUTS_VERSION.jar -w development-build $NUTS_VERBOSE $NUTS_TRACE settings update stats $NUTS_ROOT_BASE/../nuts-public
+#  $JAVA_CMD $NUTS_DEBUG_ARG -jar core/nuts/target/nuts-$NUTS_VERSION.jar -w development-build $NUTS_VERBOSE $NUTS_TRACE settings update stats $NUTS_ROOT_BASE/../nuts-preview
+#  $JAVA_CMD $NUTS_DEBUG_ARG -jar core/nuts/target/nuts-$NUTS_VERSION.jar -w development-build $NUTS_VERBOSE $NUTS_TRACE settings update stats $NUTS_ROOT_BASE/../nuts-public
 fi
 
 ####################################
@@ -214,8 +214,8 @@ cd $NUTS_ROOT_BASE
 
 ## GENERATE MAC BIN USING JAR2APP
 
-  echo jar2app --copyright="(c) 2022 thevpc" --short-version=$NUTS_VERSION --version=$NUTS_INSTALLER_VERSION --icon=$NUTS_ROOT_BASE/documentation/media/nuts-icon.icns --bundle-identifier=net.thevpc.nut.nuts-installer --display-name="Nuts Installer" --name=nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION  $NUTS_INSTALLER_JAR $NUTS_ROOT_BASE/installers/nuts-installer/dist/mac64-bin
+  echo jar2app --copyright="(c) 2023 thevpc" --short-version=$NUTS_VERSION --version=$NUTS_INSTALLER_VERSION --icon=$NUTS_ROOT_BASE/documentation/media/nuts-icon.icns --bundle-identifier=net.thevpc.nut.nuts-installer --display-name="Nuts Installer" --name=nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION  $NUTS_INSTALLER_JAR $NUTS_ROOT_BASE/installers/nuts-installer/dist/mac64-bin
    rm -Rf $NUTS_ROOT_BASE/installers/nuts-installer/dist/mac64-bin
-   jar2app --copyright="(c) 2022 thevpc" --short-version=$NUTS_VERSION --version=$NUTS_INSTALLER_VERSION --icon=$NUTS_ROOT_BASE/documentation/media/nuts-icon.icns --bundle-identifier=net.thevpc.nut.nuts-installer --display-name="Nuts Installer" --name=nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION  $NUTS_INSTALLER_JAR $NUTS_ROOT_BASE/installers/nuts-installer/dist/mac64-bin
+   jar2app --copyright="(c) 2023 thevpc" --short-version=$NUTS_VERSION --version=$NUTS_INSTALLER_VERSION --icon=$NUTS_ROOT_BASE/documentation/media/nuts-icon.icns --bundle-identifier=net.thevpc.nut.nuts-installer --display-name="Nuts Installer" --name=nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION  $NUTS_INSTALLER_JAR $NUTS_ROOT_BASE/installers/nuts-installer/dist/mac64-bin
 
 fi

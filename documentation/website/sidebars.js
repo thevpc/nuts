@@ -26,7 +26,6 @@ module.exports = {
       'Commands': [
          'cmd/exec-cmd',
          'cmd/fetch-cmd',
-         'cmd/help-cmd',
          'cmd/info-cmd',
          'cmd/install-cmd',
          'cmd/license-cmd',

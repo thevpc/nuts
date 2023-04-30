@@ -43,7 +43,7 @@ public class Docusaurus2Adoc {
 //    }
 
     public Docusaurus2Adoc(DocusaurusProject project) {
-
+        session = project.getSession();
         NObjectElement asciidoctorConfig = project.getConfig()
                 .getObject("customFields").orElse(NObjectElement.ofEmpty(session))
                 .getObject("asciidoctor").orElse(NObjectElement.ofEmpty(session));
@@ -53,8 +53,7 @@ public class Docusaurus2Adoc {
         NArrayElement headersJson = asciidoctorConfig.getObject("pdf")
                 .orElse(NObjectElement.ofEmpty(session))
                 .getArray("headers")
-                .orElse(NArrayElement.ofEmpty(session))
-                ;
+                .orElse(NArrayElement.ofEmpty(session));
         List<String> headersList = new ArrayList<>();
         for (NElement jsonItem : headersJson) {
             headersList.add(jsonItem.asString().get(session));
@@ -63,7 +62,6 @@ public class Docusaurus2Adoc {
         this.projectTitle = project.getTitle();
         this.headers = headersList.toArray(new String[0]);
         this.rootFolder = project.getSidebarsDocsFolder();
-        this.session = project.getSession();
     }
 
     public Docusaurus2Adoc(File project, NSession session) {
@@ -101,10 +99,10 @@ public class Docusaurus2Adoc {
     }
 
     protected String resolvePathParent(String s) {
-        if(s==null){
+        if (s == null) {
             return null;
         }
-        if(s.trim().isEmpty()){
+        if (s.trim().isEmpty()) {
             return null;
         }
         return Paths.get(s).getParent().toString();
@@ -145,29 +143,29 @@ public class Docusaurus2Adoc {
 //                b.add(new MdTitle("#", MdText.phrase(part.getTitle()), minDepth, new MdElement[0]));
 //            }
             if (tree2 != null) {
-                if(tree2 instanceof MdBody
-                        && ((MdBody) tree2).getChildren().length>0
+                if (tree2 instanceof MdBody
+                        && ((MdBody) tree2).getChildren().length > 0
                         && ((MdBody) tree2).getChildren()[0] instanceof MdTitle
-                        && ((MdTitle) (((MdBody) tree2).getChildren()[0])).type().depth()==minDepth
-                ){
+                        && ((MdTitle) (((MdBody) tree2).getChildren()[0])).type().depth() == minDepth
+                ) {
                     //discard the first title and replace with chapter title
-                    List<MdElement> cc=new ArrayList<>();
-                    MdTitle t0=((MdTitle) (((MdBody) tree2).getChildren()[0]));
-                    MdTitle t2=new MdTitle(t0.getCode(),MdText.phrase(part.getTitle()),t0.type().depth(),t0.getChildren());
+                    List<MdElement> cc = new ArrayList<>();
+                    MdTitle t0 = ((MdTitle) (((MdBody) tree2).getChildren()[0]));
+                    MdTitle t2 = new MdTitle(t0.getCode(), MdText.phrase(part.getTitle()), t0.type().depth(), t0.getChildren());
                     cc.add(t2);
-                    MdBody b2=new MdBody(cc.toArray(new MdElement[0]));
+                    MdBody b2 = new MdBody(cc.toArray(new MdElement[0]));
                     b.add(b2);
-                }else if(tree2 instanceof MdTitle &&  ((MdTitle) tree2).type().depth()==minDepth){
+                } else if (tree2 instanceof MdTitle && ((MdTitle) tree2).type().depth() == minDepth) {
                     //discard the first title and replace with chapter title
-                    MdTitle t0=((MdTitle) tree2);
-                    MdTitle t2=new MdTitle(t0.getCode(),MdText.phrase(part.getTitle()),t0.type().depth(),t0.getChildren());
+                    MdTitle t0 = ((MdTitle) tree2);
+                    MdTitle t2 = new MdTitle(t0.getCode(), MdText.phrase(part.getTitle()), t0.type().depth(), t0.getChildren());
                     b.add(t2);
-                }else {
+                } else {
                     //add chapter title
                     b.add(new MdTitle("#", MdText.phrase(part.getTitle()), minDepth, new MdElement[0]));
                     b.add(tree2);
                 }
-            }else{
+            } else {
                 b.add(new MdTitle("#", MdText.phrase(part.getTitle()), minDepth, new MdElement[0]));
             }
             if (!b.isEmpty()) {

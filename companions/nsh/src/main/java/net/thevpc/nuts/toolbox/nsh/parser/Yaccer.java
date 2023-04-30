@@ -111,7 +111,7 @@ public class Yaccer {
             if (not != null && (not.isNewline() || not.isEndCommand())) {
                 getLexer().nextToken();
             } else {
-                u=not;
+                u = not;
                 break;
             }
         }
@@ -269,13 +269,29 @@ public class Yaccer {
                         if (sep == null) {
                             sep = new Token("NEWLINE", "\n", "\n");
                         }
-                        a = new BinOpCommand(a, sep, b);
+                        a = ofBinOp(sep, a, b);
                     }
                     sep = null;
                     break;
                 }
             }
         }
+    }
+
+    private NShellCommandNode ofBinOp(Token sep, NShellCommandNode a, NShellCommandNode b) {
+        if (sep == null) {
+            sep = new Token("NEWLINE", "\n", "\n");
+        }
+        switch (sep.type) {
+            case ";":
+            case "NEWLINE": {
+                SequenceCommand s = new SequenceCommand(sep);
+                s.add(a);
+                s.add(b);
+                return s;
+            }
+        }
+        return new BinOpCommand(a, sep, b);
     }
 
     public NShellNode readNodeL1() {
@@ -449,7 +465,7 @@ public class Yaccer {
                         if (next == null) {
                             line = new SuffixOpCommand(line, t);
                         } else {
-                            line = new BinOpCommand(line, t, next);
+                            line = ofBinOp(t, line, next);
                             loop = true;
                         }
                         break;
@@ -477,7 +493,7 @@ public class Yaccer {
                         if (next == null) {
                             line = new SuffixOpCommand(line, t);
                         } else {
-                            line = new BinOpCommand(line, t, next);
+                            line = ofBinOp(t, line, next);
                             loop = true;
                         }
                     }
@@ -505,7 +521,7 @@ public class Yaccer {
                         if (next == null) {
                             line = new SuffixOpCommand(line, t);
                         } else {
-                            line = new BinOpCommand(line, t, next);
+                            line = ofBinOp(t, line, next);
                             loop = true;
                         }
                     }
@@ -686,7 +702,7 @@ public class Yaccer {
                         return g.escape(String.valueOf(context.getArgsCount()));
                     }
                     default: {
-                        String y = context.vars().get(s,"");
+                        String y = context.vars().get(s, "");
                         return g.escape(y);
                     }
                 }
@@ -730,17 +746,17 @@ public class Yaccer {
                 StringBuilder sb = new StringBuilder();
                 //TODO fix me, should implement ${...} expressions
                 List<Token> values = (List<Token>) token.value;
-                if(values.isEmpty()){
+                if (values.isEmpty()) {
                     throw new IllegalArgumentException("bad substitution");
                 }
-                String varVal="";
+                String varVal = "";
                 Token t = values.get(0);
-                if(t.isWord()) {
-                    String y = context.vars().get(evalTokenString(t,context),null);
+                if (t.isWord()) {
+                    String y = context.vars().get(evalTokenString(t, context), null);
                     if (y != null) {
                         varVal = y;
                     }
-                }else{
+                } else {
                     throw new IllegalArgumentException("bad substitution");
                 }
                 sb.append(g.escape(varVal));
@@ -805,6 +821,33 @@ public class Yaccer {
         }
     }
 
+
+    public static class SequenceCommand implements NShellCommandNode {
+        Token op;
+        List<NShellCommandNode> items = new ArrayList<>();
+
+        public SequenceCommand(Token op) {
+            this.op = op;
+        }
+
+        public void add(NShellCommandNode a) {
+            if (a instanceof SequenceCommand) {
+                items.addAll(((SequenceCommand) a).items);
+            } else {
+                items.add(a);
+            }
+        }
+
+        @Override
+        public int eval(NShellContext context) {
+            int i = 0;
+            for (NShellCommandNode item : items) {
+                i = item.eval(context);
+            }
+            return i;
+        }
+    }
+
     public static class BinOpCommand implements NShellCommandNode {
         NShellCommandNode left;
         Token op;
@@ -821,11 +864,12 @@ public class Yaccer {
             String cmd = op.isNewline() ? ";" : String.valueOf(op.value);
             return context.getShell().getEvaluator().evalBinaryOperation(cmd, left, right, context);
         }
-        private List<NShellCommandNode> expandCommands(NShellCommandNode c){
-            if(c instanceof BinOpCommand){
+
+        private List<NShellCommandNode> expandCommands(NShellCommandNode c) {
+            if (c instanceof BinOpCommand) {
                 BinOpCommand b = (BinOpCommand) c;
-                if(b.op.isSemiColon()){
-                    List<NShellCommandNode> a=new ArrayList<>();
+                if (b.op.isSemiColon()) {
+                    List<NShellCommandNode> a = new ArrayList<>();
                     a.addAll(expandCommands(b.left));
                     a.addAll(expandCommands(b.right));
                     return a;
@@ -836,13 +880,13 @@ public class Yaccer {
 
         @Override
         public String toString() {
-            if(op.isNewline()){
+            if (op.isNewline()) {
                 return
                         left +
-                        " " + op.value +
-                        right;
+                                " " + op.value +
+                                right;
             }
-            if(op.isSemiColon()){
+            if (op.isSemiColon()) {
                 return expandCommands(this).stream().map(Object::toString).collect(Collectors.joining(";"));
             }
             return "(" +
@@ -897,7 +941,7 @@ public class Yaccer {
                 }
                 if (trueCond) {
                     if (block != null) {
-                        context.getShell().evalNode(block,context);
+                        context.getShell().evalNode(block, context);
                     }
                     return true;
                 }
@@ -924,7 +968,7 @@ public class Yaccer {
                 }
             }
             if (_else != null) {
-                return context.getShell().evalNode(_else,context);
+                return context.getShell().evalNode(_else, context);
             }
             return 1;
         }
@@ -1021,10 +1065,10 @@ public class Yaccer {
 
         @Override
         public String toString() {
-            StringBuilder sb=new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             for (int i = 0; i < args.size(); i++) {
                 Argument arg = args.get(i);
-                if(i>0){
+                if (i > 0) {
                     sb.append(" ");
                 }
                 sb.append(arg);
@@ -1050,7 +1094,7 @@ public class Yaccer {
 
         @Override
         public String toString() {
-            return "(" +element +')';
+            return "(" + element + ')';
         }
     }
 
@@ -1071,7 +1115,7 @@ public class Yaccer {
 
         @Override
         public int eval(NShellContext context) {
-            throw new NIllegalArgumentException(context.getSession(), NMsg.ofC("not yet implemented UnOpSuffix %s",op.image));
+            throw new NIllegalArgumentException(context.getSession(), NMsg.ofC("not yet implemented UnOpSuffix %s", op.image));
         }
     }
 
@@ -1094,11 +1138,12 @@ public class Yaccer {
         public int eval(NShellContext context) {
             if (a != null) {
                 return context.getShell().evalNode(
-                        ((NShellCommandNode) a),context
+                        ((NShellCommandNode) a), context
                 );
             }
             return 0;
         }
+
         @Override
         public String toString() {
             return a.toString();
@@ -1121,7 +1166,7 @@ public class Yaccer {
 
         @Override
         public int eval(NShellContext context) {
-            throw new NIllegalArgumentException(context.getSession(), NMsg.ofC("not yet implemented UnOpPrefix %s",op.image));
+            throw new NIllegalArgumentException(context.getSession(), NMsg.ofC("not yet implemented UnOpPrefix %s", op.image));
         }
     }
 
@@ -1145,19 +1190,20 @@ public class Yaccer {
 
         @Override
         public int eval(NShellContext context) {
-            throw new NIllegalArgumentException(context.getSession(), NMsg.ofC("not yet implemented BinOp %s",op.image));
+            throw new NIllegalArgumentException(context.getSession(), NMsg.ofC("not yet implemented BinOp %s", op.image));
         }
     }
 
     public static class Argument implements NShellArgumentNode {
         List<NShellNode> nodes;
+
         public Argument(List<NShellNode> nodes) {
             this.nodes = nodes;
         }
 
         @Override
         public String toString() {
-            StringBuilder sb=new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             for (NShellNode node : nodes) {
                 sb.append(node);
             }
@@ -1170,9 +1216,9 @@ public class Yaccer {
                 sb.append(evalNodeString(node, context));
             }
             String value = sb.toString();
-            if(value.equals("~")){
-                value=context.getHome();
-            }else if(value.startsWith("~/") || value.startsWith("~\\")){
+            if (value.equals("~")) {
+                value = context.getHome();
+            } else if (value.startsWith("~/") || value.startsWith("~\\")) {
                 String c = context.getHome();
                 value = c + value.substring(1);
             }
@@ -1203,12 +1249,12 @@ public class Yaccer {
                 }
             }
             if (applyWildCard) {
-                NPath pp= NPath.of(value,context.getSession());
-                if(!pp.isAbsolute()){
-                    pp=pp.toAbsolute(context.getDirectory());
+                NPath pp = NPath.of(value, context.getSession());
+                if (!pp.isAbsolute()) {
+                    pp = pp.toAbsolute(context.getDirectory());
                 }
-                String[] r = pp.walkGlob().map(NPath::toString,"toString").toArray(String[]::new);
-                if(r.length>0){
+                String[] r = pp.walkGlob().map(NPath::toString, "toString").toArray(String[]::new);
+                if (r.length > 0) {
                     return r;
                 }
             }
@@ -1225,7 +1271,7 @@ public class Yaccer {
 
         @Override
         public String toString() {
-            StringBuilder sb=new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             for (Token token : tokens) {
                 sb.append(token.getImage());
             }

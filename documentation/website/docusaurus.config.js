@@ -129,8 +129,8 @@ module.exports = {
                     ':icons: font',
                     ':icon-set: pf',
                     ':doctype: book',
-                    ':revnumber: v0.8.3',
-                    ':revdate: Fri Feb 4 01:53:48 PM +0000 2022',
+                    ':revnumber: v0.8.4',
+                    ':revdate: Sun Apr 30 11:14:37 PM +0000 2023',
                     ':toc:',
                     ':toclevels: 4',
                     ':appendix-caption: Appx',
@@ -138,7 +138,7 @@ module.exports = {
                     ':sectnumlevels: 6'
                 ],
                 command: {
-                    bin: 'asciidoctor-pdf.ruby2.7',
+                    bin: 'asciidoctor-pdf',
                     args: [
                         '-a', 'pdf-themesdir=${asciidoctor.baseDir}/resources/themes',
                         '-a', 'pdf-theme=custom',

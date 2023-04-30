@@ -48,9 +48,16 @@ import java.util.List;
 public class CpCommand extends NShellBuiltinDefault {
 
     public CpCommand() {
-        super("cp", DEFAULT_SUPPORT,Options.class);
+        super("cp", DEFAULT_SUPPORT, Options.class);
     }
 
+
+    @Override
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        Options options = context.getOptions();
+        options.files.add(cmdLine.next().get().toString());
+        return true;
+    }
 
     @Override
     protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
@@ -58,20 +65,14 @@ public class CpCommand extends NShellBuiltinDefault {
         NSession session = context.getSession();
         switch (cmdLine.peek().get(session).key()) {
             case "--mkdir": {
-                cmdLine.withNextFlag((v, a, s) -> options.mkdir=v);
+                cmdLine.withNextFlag((v, a, s) -> options.mkdir = v);
                 return true;
             }
             case "-r":
             case "-R":
             case "--recursive": {
-                cmdLine.withNextFlag((v, a, s) -> options.recursive=v);
+                cmdLine.withNextFlag((v, a, s) -> options.recursive = v);
                 return true;
-            }
-            default: {
-                if (cmdLine.peek().get(session).isNonOption()) {
-                    cmdLine.withNextEntry((v, a, s) -> options.files.add(v));
-                    return true;
-                }
             }
         }
         return false;
@@ -187,9 +188,5 @@ public class CpCommand extends NShellBuiltinDefault {
         List<NPath> xfiles = new ArrayList<>();
     }
 
-    @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, cmdLine, context);
-    }
 
 }

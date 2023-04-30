@@ -332,8 +332,8 @@ public class DocusaurusCtrl {
 
     private static class NFileTemplater extends FileTemplater {
         public NFileTemplater(NSession session) {
-            super(session);
-            this.setDefaultExecutor("text/ntemplate-nsh-project", new NshEvaluator(session, this));
+            super(session.copy().setAppId(null).setAppArguments(new String[0]));
+            this.setDefaultExecutor("text/ntemplate-nsh-project", new NshEvaluator(getSession(), this));
             setProjectFileName("project.nsh");
         }
 
@@ -368,8 +368,17 @@ public class DocusaurusCtrl {
                 default: {
                     String[] a = Arrays.stream(varName.split("[./]")).map(String::trim).filter(x -> !x.isEmpty())
                             .toArray(String[]::new);
-                    for (String s : a) {
-                        config = config.asObject().orElse(NObjectElement.ofEmpty(session)).get(s).get(session);
+                    NElement config=this.config;
+                    if(config!=null) {
+                        for (String s : a) {
+                            config = config.asObject().orElse(NObjectElement.ofEmpty(session)).get(s).orNull();
+                            if (config == null) {
+                                return null;
+                            }
+                        }
+                    }
+                    if(config==null){
+                        return null;
                     }
                     if (config.isNull()) {
                         return null;

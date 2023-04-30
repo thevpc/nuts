@@ -1,10 +1,10 @@
 stableApiVersion=0.8.3
 stableRuntimeVersion=0.8.3.1
 stableJarLocation=https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar
-latestApiVersion=0.8.3
-latestRuntimeVersion=0.8.3.2-SNAPSHOT
-latestJarLocation=https://raw.githubusercontent.com/thevpc/nuts-preview/master/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar
-apiVersion=0.8.3
-runtimeVersion=0.8.3.2-SNAPSHOT
-jarLocation=https://raw.githubusercontent.com/thevpc/nuts-preview/master/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar
-buildTime=Fri Feb 4 01:53:47 PM +0000 2022
+latestApiVersion=0.8.4
+latestRuntimeVersion=0.8.4.0
+latestJarLocation=https://raw.githubusercontent.com/thevpc/nuts-preview/master/net/thevpc/nuts/nuts/0.8.4/nuts-0.8.4.jar
+apiVersion=0.8.4
+runtimeVersion=0.8.4.0
+jarLocation=https://raw.githubusercontent.com/thevpc/nuts-preview/master/net/thevpc/nuts/nuts/0.8.4/nuts-0.8.4.jar
+buildTime=Sun Apr 30 11:14:35 PM +0000 2023

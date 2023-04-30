@@ -142,7 +142,7 @@ Stable 0.8.3 Jar
                         target="_blank"
                         >
 
-                    Preview 0.8.3 Jar
+                    Preview 0.8.4 Jar
                     </Link>
 
 </li>

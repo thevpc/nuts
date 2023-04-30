@@ -138,7 +138,7 @@ module.exports = {
                     ':sectnumlevels: 6'
                 ],
                 command: {
-                    bin: 'asciidoctor-pdf.ruby2.7',
+                    bin: 'asciidoctor-pdf',
                     args: [
                         '-a', 'pdf-themesdir=${asciidoctor.baseDir}/resources/themes',
                         '-a', 'pdf-theme=custom',
