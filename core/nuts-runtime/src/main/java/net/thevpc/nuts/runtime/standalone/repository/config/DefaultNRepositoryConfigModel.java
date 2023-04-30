@@ -348,7 +348,7 @@ public class DefaultNRepositoryConfigModel implements NRepositoryConfigModel {
     }
 
     @Override
-    public NUserConfig getUser(String userId, NSession session) {
+    public NOptional<NUserConfig> findUser(String userId, NSession session) {
         NUserConfig u = configUsers.get(userId);
         if (u == null) {
             if (NConstants.Users.ADMIN.equals(userId) || NConstants.Users.ANONYMOUS.equals(userId)) {
@@ -357,34 +357,14 @@ public class DefaultNRepositoryConfigModel implements NRepositoryConfigModel {
                 fireConfigurationChanged("user", session);
             }
         }
-        return u;
+        return NOptional.ofNamed(u, "user " + userId);
     }
 
     @Override
-    public NUserConfig[] getUsers(NSession session) {
+    public NUserConfig[] findUsers(NSession session) {
         return configUsers.values().toArray(new NUserConfig[0]);
     }
 
-    //
-//    public NutsRepositoryConfigManager removeMirrorRef(String repositoryId) {
-//        if (configMirrorRefs.remove(repositoryId) != null) {
-//            fireConfigurationChanged();
-//        }
-//        return this;
-//    }
-//    
-//    public NutsRepositoryConfigManager addMirrorRef(NutsRepositoryRef c) {
-//        repositoryRegistryHelper.addRepositoryRef(c);
-//        if (LOG.isLoggable(Level.FINEST)) {
-//            LOG.log(Level.FINEST, CoreStringUtils.alignLeft(getName(), 20) + " add repo " + c.getName());
-//        }
-//        fireConfigurationChanged();
-//        return this;
-//    }
-//    
-//    public NutsRepositoryRef getMirrorRef(String name) {
-//        return configMirrorRefs.get(name);
-//    }
     public void setMirrorEnabled(String repoName, boolean enabled, NSession session) {
         NRepositoryRef e = repositoryRegistryHelper.findRepositoryRef(repoName);
         if (e != null && e.isEnabled() != enabled) {

@@ -15,7 +15,7 @@ public class NTomcatMain implements NApplication {
 
     @Override
     public void run(NSession session) {
-        NRepository apacheRepo = NRepositories.of(session).findRepository("apache-tomcat");
+        NRepository apacheRepo = NRepositories.of(session).findRepository("apache-tomcat").orNull();
         if (apacheRepo == null) {
             NRepositories.of(session).addRepository(
                     new NAddRepositoryOptions()

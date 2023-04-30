@@ -63,62 +63,60 @@ public class DefaultNRepositoryModel {
         return workspace;
     }
 
-    public NRepository findRepositoryById(String repositoryNameOrId, NSession session) {
-        NRepository y = repositoryRegistryHelper.findRepositoryById(repositoryNameOrId);
+    public NOptional<NRepository> findRepositoryById(String repositoryId, NSession session) {
+        NRepository y = repositoryRegistryHelper.findRepositoryById(repositoryId);
         if (y != null) {
-            return y;
+            return NOptional.of(y);
         }
         if (session.isTransitive()) {
             for (NRepository child : repositoryRegistryHelper.getRepositories()) {
                 final NRepository m = child.config()
                         .setSession(session.copy().setTransitive(true))
-                        .findMirrorById(repositoryNameOrId);
+                        .findMirrorById(repositoryId);
                 if (m != null) {
                     if (y == null) {
                         y = m;
                     } else {
-                        throw new NIllegalArgumentException(session,
-                                NMsg.ofC("ambiguous repository name %s found two Ids %s and %s",
-                                        repositoryNameOrId, y.getUuid(), m.getUuid()
-                                )
-                        );
+                        NRepository finalY = y;
+                        return NOptional.ofError(s -> NMsg.ofC("ambiguous repository name %s found two Ids %s and %s",
+                                repositoryId, finalY.getUuid(), m.getUuid()
+                        ));
                     }
                 }
             }
         }
-        return y;
+        return NOptional.ofNamed(y, "repository with Id : " + repositoryId);
     }
 
-    public NRepository findRepositoryByName(String repositoryNameOrId, NSession session) {
-        NRepository y = repositoryRegistryHelper.findRepositoryByName(repositoryNameOrId);
+    public NOptional<NRepository> findRepositoryByName(String repositoryName, NSession session) {
+        NRepository y = repositoryRegistryHelper.findRepositoryByName(repositoryName);
         if (y != null) {
-            return y;
+            return NOptional.of(y);
         }
         if (session.isTransitive()) {
             for (NRepository child : repositoryRegistryHelper.getRepositories()) {
                 final NRepository m = child.config()
                         .setSession(session.copy().setTransitive(true))
-                        .findMirrorByName(repositoryNameOrId);
+                        .findMirrorByName(repositoryName);
                 if (m != null) {
                     if (y == null) {
                         y = m;
                     } else {
-                        throw new NIllegalArgumentException(session,
-                                NMsg.ofC("ambiguous repository name %s found two Ids %s and %s",
-                                        repositoryNameOrId, y.getUuid(), m.getUuid()
-                                )
-                        );
+                        NRepository finalY = y;
+                        return NOptional.ofError(s -> NMsg.ofC("ambiguous repository name %s found two Ids %s and %s",
+                                repositoryName, finalY.getUuid(), m.getUuid()
+                        ));
                     }
                 }
             }
         }
-        return y;
+        return NOptional.ofNamed(y, "repository with name : " + repositoryName);
     }
 
-    public NRepository findRepository(String repositoryNameOrId, NSession session) {
+    public NOptional<NRepository> findRepository(String repositoryNameOrId, NSession session) {
         NRepository y = repositoryRegistryHelper.findRepository(repositoryNameOrId);
         if (y != null) {
-            return y;
+            return NOptional.of(y);
         }
         if (session.isTransitive()) {
             for (NRepository child : repositoryRegistryHelper.getRepositories()) {
@@ -129,17 +127,15 @@ public class DefaultNRepositoryModel {
                     if (y == null) {
                         y = m;
                     } else {
-                        throw new NIllegalArgumentException(session,
-                                NMsg.ofC("ambiguous repository name %s found two Ids %s and %s",
-                                        repositoryNameOrId, y.getUuid(), m.getUuid()
-                                )
-
-                        );
+                        NRepository finalY = y;
+                        return NOptional.ofError(s -> NMsg.ofC("ambiguous repository name %s found two Ids %s and %s",
+                                repositoryNameOrId, finalY.getUuid(), m.getUuid()
+                        ));
                     }
                 }
             }
         }
-        return y;
+        return NOptional.ofNamed(y, "repository with name or id : " + repositoryNameOrId);
     }
 
     public NRepository getRepository(String repositoryIdOrName, NSession session) throws NRepositoryNotFoundException {
@@ -147,11 +143,7 @@ public class DefaultNRepositoryModel {
         if (DefaultNInstalledRepository.INSTALLED_REPO_UUID.equals(repositoryIdOrName)) {
             return NWorkspaceExt.of(getWorkspace()).getInstalledRepository();
         }
-        NRepository r = findRepository(repositoryIdOrName, session);
-        if (r != null) {
-            return r;
-        }
-        throw new NRepositoryNotFoundException(session, repositoryIdOrName);
+        return findRepository(repositoryIdOrName, session).get();
     }
 
     public void removeRepository(String repositoryId, NSession session) {

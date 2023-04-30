@@ -35,7 +35,8 @@ public class DefaultNUndeployCommand extends AbstractNUndeployCommand {
                     .setDistinct(true)
                     .setFailFast(true)
                     .getResultDefinitions().findFirst().get();
-            NRepository repository1 = NRepositories.of(session).setSession(getSession()).getRepository(p.getRepositoryUuid());
+            NRepository repository1 = NRepositories.of(session).setSession(getSession())
+                    .findRepository(p.getRepositoryUuid()).get();
             NRepositorySPI repoSPI = NWorkspaceUtils.of(getSession()).repoSPI(repository1);
             repoSPI.undeploy()
                     .setId(p.getId()).setSession(getSession())

@@ -76,10 +76,6 @@ public interface NRepositoryConfigModel {
 
     NPath getStoreLocation(NStoreType folderType, NSession session);
 
-    //        @Override
-    //        public int getSupportLevel(NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode fetchMode, boolean transitive) {
-    //            return 0;
-    //        }
     NStoreStrategy getStoreStrategy(NSession session);
 
     String getType(NSession session);
@@ -120,9 +116,9 @@ public interface NRepositoryConfigModel {
 
     NPath getMirrorsRoot(NSession session);
 
-    NUserConfig[] getUsers(NSession session);
+    NUserConfig[] findUsers(NSession session);
 
-    NUserConfig getUser(String userId, NSession session);
+    NOptional<NUserConfig> findUser(String userId, NSession session);
 
     NRepositoryConfig getStoredConfig(NSession session);
 

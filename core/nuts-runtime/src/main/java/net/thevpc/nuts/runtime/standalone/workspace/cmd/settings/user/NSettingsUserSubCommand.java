@@ -32,7 +32,9 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 repository = editedRepo;
             } else {
                 if (cmdLine.next("--repo", "-r").isPresent()) {
-                    repository = NRepositories.of(session).getRepository(cmdLine.nextNonOption(NArgName.of("RepositoryId", session)).flatMap(NLiteral::asString).get(session));
+                    repository = NRepositories.of(session).findRepository(cmdLine.nextNonOption(NArgName.of("RepositoryId", session))
+                            .flatMap(NLiteral::asString).get(session))
+                            .get();
                 }
             }
             if (repository == null) {
@@ -66,7 +68,11 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r").isPresent()) {
-                        repository = NRepositories.of(session).getRepository(cmdLine.nextNonOption(NArgName.of("repository", session)).flatMap(NLiteral::asString).get(session));
+                        repository = NRepositories.of(session)
+                                .findRepository(
+                                        cmdLine.nextNonOption(NArgName.of("repository", session))
+                                                .flatMap(NLiteral::asString).get(session)
+                                ).get();
                     }
                 }
                 if (cmdLine.isExecMode()) {
@@ -94,7 +100,9 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r").isPresent()) {
-                        repository = NRepositories.of(session).getRepository(cmdLine.nextNonOption(NArgName.of("RepositoryId", session)).flatMap(NLiteral::asString).get(session));
+                        repository = NRepositories.of(session)
+                                .findRepository(cmdLine.nextNonOption(NArgName.of("RepositoryId", session)).flatMap(NLiteral::asString).get(session)
+                                ).get();
                     }
                 }
 
@@ -142,7 +150,9 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r").isPresent()) {
-                        repository = NRepositories.of(session).getRepository(cmdLine.nextNonOption(NArgName.of("RepositoryId", session)).flatMap(NLiteral::asString).get(session));
+                        repository = NRepositories.of(session).findRepository(
+                                cmdLine.nextNonOption(NArgName.of("RepositoryId", session)).flatMap(NLiteral::asString).get(session)
+                        ).get();
                     }
                 }
 
@@ -270,7 +280,9 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r").isPresent()) {
-                        repository = NRepositories.of(session).getRepository(cmdLine.nextNonOption(NArgName.of("RepositoryId", session)).flatMap(NLiteral::asString).get(session));
+                        repository = NRepositories.of(session).findRepository(
+                                cmdLine.nextNonOption(NArgName.of("RepositoryId", session)).flatMap(NLiteral::asString).get(session)
+                        ).get();
                     }
                 }
                 //unsecure-box
@@ -300,7 +312,9 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r").isPresent()) {
-                        repository = NRepositories.of(session).getRepository(cmdLine.nextNonOption(NArgName.of("RepositoryId", session)).flatMap(NLiteral::asString).get(session));
+                        repository = NRepositories.of(session).findRepository(
+                                cmdLine.nextNonOption(NArgName.of("RepositoryId", session)).flatMap(NLiteral::asString).get(session)
+                        ).get();
                     }
                 }
                 //secure-box

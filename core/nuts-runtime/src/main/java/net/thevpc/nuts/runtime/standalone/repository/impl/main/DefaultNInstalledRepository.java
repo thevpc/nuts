@@ -217,7 +217,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         InstallInfoConfig ii = getInstallInfoConfig(id, null, session);
         try {
             String repository = id.getRepository();
-            NRepository r = NRepositories.of(session).findRepository(repository);
+            NRepository r = NRepositories.of(session).findRepository(repository).orNull();
             if (ii == null) {
                 ii = new InstallInfoConfig();
                 ii.setId(id);

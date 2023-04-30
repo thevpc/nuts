@@ -481,8 +481,8 @@ public class DefaultNFetchCommand extends AbstractNFetchCommand {
                                 .json().parse(cachePath, DefaultNDefinition.class);
                         if (d != null) {
                             NRepositories rr = NRepositories.of(session.copy().setTransitive(true));
-                            NRepository repositoryById = rr.findRepositoryById(d.getRepositoryUuid());
-                            NRepository repositoryByName = rr.findRepositoryByName(d.getRepositoryName());
+                            NRepository repositoryById = rr.findRepositoryById(d.getRepositoryUuid()).orNull();
+                            NRepository repositoryByName = rr.findRepositoryByName(d.getRepositoryName()).orNull();
                             if (repositoryById == null || repositoryByName == null) {
                                 //this is invalid cache!
                                 cachePath.delete();

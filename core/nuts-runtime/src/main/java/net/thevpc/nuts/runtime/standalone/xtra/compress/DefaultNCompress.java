@@ -8,24 +8,24 @@ package net.thevpc.nuts.runtime.standalone.xtra.compress;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.progress.SingletonNInputStreamProgressFactory;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
+import net.thevpc.nuts.spi.NCompressPackaging;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.*;
+import net.thevpc.nuts.util.NFunction;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NProgressFactory;
+import net.thevpc.nuts.util.NProgressListener;
 
-import java.io.*;
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 /**
  * @author thevpc
@@ -40,7 +40,8 @@ public class DefaultNCompress implements NCompress {
     private NSession session;
     private boolean skipRoot;
     private NProgressFactory progressFactory;
-    private String format = "zip";
+    private String packaging = "zip";
+    private NCompressPackaging packagingImpl;
     private Set<NPathOption> options = new LinkedHashSet<>();
 
     public DefaultNCompress(NSession session) {
@@ -51,22 +52,6 @@ public class DefaultNCompress implements NCompress {
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
         return DEFAULT_SUPPORT;
-    }
-
-    private static String concatPath(String a, String b) {
-        if (a.endsWith("/")) {
-            if (b.startsWith("/")) {
-                return a + b.substring(1);
-            } else {
-                return a + b;
-            }
-        } else {
-            if (b.startsWith("/")) {
-                return a + b;
-            } else {
-                return a + "/" + b;
-            }
-        }
     }
 
     protected NLog _LOG(NSession session) {
@@ -80,148 +65,6 @@ public class DefaultNCompress implements NCompress {
         NSessionUtils.checkSession(ws, session);
     }
 
-    public void runZip() {
-        checkSession();
-        NAssert.requireNonBlank(sources, "source", session);
-        NAssert.requireNonBlank(target, "target", session);
-        _LOG(session).with().level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofJ("compress {0} to {1}", sources, target));
-        try {
-            OutputStream fW = null;
-            ZipOutputStream zip = null;
-            if (this.target instanceof NPath) {
-                Path tempPath = null;
-                if (isSafe()) {
-                    tempPath = NPath.ofTempFile("zip",session).toPath().get();
-                }
-                if (this.target instanceof NPath) {
-                    ((NPath) this.target).mkParentDirs();
-                }
-                if (tempPath == null) {
-                    fW = target.getOutputStream();
-                } else {
-                    fW = Files.newOutputStream(tempPath);
-                }
-                try {
-                    try {
-                        zip = new ZipOutputStream(fW);
-                        if (skipRoot) {
-                            for (NInputSource s : sources) {
-                                Item file1 = new Item(s, this);
-                                if (file1.isSourceDirectory()) {
-                                    for (Item c : file1.list()) {
-                                        add("", c, zip);
-                                    }
-                                } else {
-                                    add("", file1, zip);
-                                }
-                            }
-                        } else {
-                            for (NInputSource s : sources) {
-                                add("", new Item(s, this), zip);
-                            }
-                        }
-                    } finally {
-                        if (zip != null) {
-                            zip.close();
-                        }
-                    }
-                } finally {
-                    if (fW != null) {
-                        fW.close();
-                    }
-                }
-                if (tempPath != null) {
-                    if (this.target instanceof NPath/* && ((NPath) target).isFile()*/) {
-                        Files.move(tempPath, ((NPath) target).toPath().get(),
-                                StandardCopyOption.REPLACE_EXISTING);
-                    } else if (this.target instanceof NPath) {
-                        try (InputStream ii = Files.newInputStream(tempPath)) {
-                            try (OutputStream jj = target.getOutputStream()) {
-                                CoreIOUtils.copy(ii, jj, session);
-                            }
-                        }
-                    } else {
-                        CoreIOUtils.copy(
-                                Files.newInputStream(tempPath),
-                                this.target.getOutputStream(), session
-                        );
-                    }
-                }
-            } else {
-                throw new NIllegalArgumentException(getSession(), NMsg.ofC("unsupported target %s", target));
-            }
-        } catch (IOException ex) {
-            _LOG(session).with().level(Level.CONFIG).verb(NLogVerb.FAIL)
-                    .log(NMsg.ofJ("error compressing {0} to {1} : {2}",
-                            sources, target, ex));
-            throw new NIOException(session, ex);
-        }
-    }
-
-    private void add(String path, Item srcFolder, ZipOutputStream zip) {
-        if (srcFolder.isSourceDirectory()) {
-            addFolderToZip(path, srcFolder, zip);
-        } else {
-            addFileToZip(path, srcFolder, zip, false);
-        }
-    }
-
-    private void addFolderToZip(String path, Item srcFolder, ZipOutputStream zip) throws UncheckedIOException {
-        Item[] dirChildren = srcFolder.list();
-        if (dirChildren.length == 0) {
-            addFileToZip(path, srcFolder, zip, true);
-        } else {
-            for (Item c : dirChildren) {
-                if (path.equals("")) {
-                    addFileToZip(srcFolder.getName(), c, zip, false);
-                } else {
-                    addFileToZip(
-                            concatPath(path, srcFolder.getName()),
-                            c, zip, false);
-                }
-            }
-        }
-    }
-
-    private String stripZipPath(String path) {
-        if (path.length() > 1) {
-            if (path.charAt(0) == '/') {
-                return path.substring(1);
-            }
-        }
-        return path;
-    }
-
-    private void addFileToZip(String path, Item srcFile, ZipOutputStream zip, boolean flag) throws UncheckedIOException {
-//        File folder = new File(srcFile);
-        String pathPrefix = path;
-        if (!pathPrefix.endsWith("/")) {
-            pathPrefix = pathPrefix + "/";
-        }
-        if (!pathPrefix.startsWith("/")) {
-            pathPrefix = "/" + pathPrefix;
-        }
-        try {
-
-            if (flag) {
-                zip.putNextEntry(new ZipEntry(stripZipPath(pathPrefix + srcFile.getName() + "/")));
-            } else {
-                if (srcFile.isSourceDirectory()) {
-                    addFolderToZip(pathPrefix, srcFile, zip);
-                } else {
-                    byte[] buf = new byte[1024];
-                    int len;
-                    InputStream in = srcFile.open();
-                    zip.putNextEntry(new ZipEntry(stripZipPath(pathPrefix + srcFile.getName())));
-                    while ((len = in.read(buf)) > 0) {
-                        zip.write(buf, 0, len);
-                    }
-                }
-            }
-        } catch (IOException ex) {
-            throw new NIOException(session, ex);
-        }
-    }
 
     @Override
     public NCompress setFormatOption(String option, Object value) {
@@ -234,27 +77,18 @@ public class DefaultNCompress implements NCompress {
     }
 
     @Override
-    public String getFormat() {
-        return format;
+    public String getPackaging() {
+        return packaging;
     }
 
     @Override
-    public NCompress setFormat(String format) {
+    public NCompress setPackaging(String packaging) {
         checkSession();
-        if (NBlankable.isBlank(format)) {
-            format = "zip";
+        if (NBlankable.isBlank(packaging)) {
+            packaging = "zip";
         }
-        switch (format) {
-            case "zip":
-            case "gzip":
-            case "gz": {
-                this.format = format;
-                break;
-            }
-            default: {
-                throw new NUnsupportedArgumentException(getSession(), NMsg.ofC("unsupported compression format %s", format));
-            }
-        }
+        this.packaging = packaging;
+        this.packagingImpl = NExtensions.of(session).createComponent(NCompressPackaging.class, this).get();
         return this;
     }
 
@@ -319,7 +153,7 @@ public class DefaultNCompress implements NCompress {
     }
 
     @Override
-    public Object getTarget() {
+    public NOutputTarget getTarget() {
         return target;
     }
 
@@ -415,24 +249,17 @@ public class DefaultNCompress implements NCompress {
     @Override
     public NCompress run() {
         checkSession();
-        switch (getFormat()) {
-            case "zip":
-            case "gzip":
-            case "gz": {
-                runZip();
-                break;
-            }
-            default: {
-                throw new NUnsupportedArgumentException(getSession(), NMsg.ofC("unsupported compression format %s", getFormat()));
-            }
+        if(packagingImpl==null){
+            this.packagingImpl = NExtensions.of(session).createComponent(NCompressPackaging.class, this).get();
         }
+        packagingImpl.compressPackage(this);
         return this;
     }
 
     /**
-     * return progress factory responsible of creating progress monitor
+     * return progress factory responsible for creating progress monitor
      *
-     * @return progress factory responsible of creating progress monitor
+     * @return progress factory responsible for creating progress monitor
      * @since 0.5.8
      */
     @Override
@@ -441,7 +268,7 @@ public class DefaultNCompress implements NCompress {
     }
 
     /**
-     * set progress factory responsible of creating progress monitor
+     * set progress factory responsible for creating progress monitor
      *
      * @param value new value
      * @return {@code this} instance
@@ -497,12 +324,12 @@ public class DefaultNCompress implements NCompress {
         return this;
     }
 
-    private static class Item {
+    public static class Item {
 
         private final NInputSource inSource;
-        private final DefaultNCompress c;
+        private final NCompress c;
 
-        public Item(NInputSource value, DefaultNCompress c) {
+        public Item(NInputSource value, NCompress c) {
             this.inSource = value;
             this.c = c;
         }
@@ -515,7 +342,7 @@ public class DefaultNCompress implements NCompress {
             return isSourcePath() && ((NPath) inSource).isDirectory();
         }
 
-        private Item[] list() {
+        public Item[] list() {
             if (isSourcePath()) {
                 NPath p = (NPath) inSource;
                 return p.stream().map(
@@ -530,13 +357,13 @@ public class DefaultNCompress implements NCompress {
         }
 
         public InputStream open() {
-            if (c.options.contains(NPathOption.LOG)
-                    || c.options.contains(NPathOption.TRACE)
+            if (c.getOptions().contains(NPathOption.LOG)
+                    || c.getOptions().contains(NPathOption.TRACE)
                     || c.getProgressFactory() != null) {
-                NInputStreamMonitor monitor = NInputStreamMonitor.of(c.session);
+                NInputStreamMonitor monitor = NInputStreamMonitor.of(c.getSession());
                 monitor.setOrigin(inSource);
-                monitor.setLogProgress(c.options.contains(NPathOption.LOG));
-                monitor.setTraceProgress(c.options.contains(NPathOption.TRACE));
+                monitor.setLogProgress(c.getOptions().contains(NPathOption.LOG));
+                monitor.setTraceProgress(c.getOptions().contains(NPathOption.TRACE));
                 monitor.setProgressFactory(c.getProgressFactory());
                 monitor.setSource(inSource);
                 return monitor.create();

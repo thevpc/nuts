@@ -74,15 +74,15 @@ public interface NCompress extends NComponent, NSessionProvider {
      *
      * @return format
      */
-    String getFormat();
+    String getPackaging();
 
     /**
-     * update format
+     * update packaging
      *
-     * @param format format
+     * @param packaging packaging
      * @return {@code this} instance
      */
-    NCompress setFormat(String format);
+    NCompress setPackaging(String packaging);
 
     /**
      * sources to compress
@@ -143,7 +143,7 @@ public interface NCompress extends NComponent, NSessionProvider {
      *
      * @return target to compress to
      */
-    Object getTarget();
+    NOutputTarget getTarget();
 
     /**
      * update target

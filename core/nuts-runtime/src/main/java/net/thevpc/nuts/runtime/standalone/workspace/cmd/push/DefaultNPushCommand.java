@@ -111,7 +111,7 @@ public class DefaultNPushCommand extends AbstractDefaultNPushCommand {
                             ));
                 }
             } else {
-                NRepository repo = NRepositories.of(session).getRepository(this.getRepository());
+                NRepository repo = NRepositories.of(session).findRepository(this.getRepository()).get();
                 if (!repo.config().isEnabled()) {
                     throw new NIllegalArgumentException(getSession(), NMsg.ofC("repository %s is disabled", repo.getName()));
                 }

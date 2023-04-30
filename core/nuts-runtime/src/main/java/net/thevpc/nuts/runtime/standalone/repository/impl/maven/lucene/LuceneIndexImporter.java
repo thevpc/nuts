@@ -7,7 +7,6 @@ import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NUncompress;
 import net.thevpc.nuts.runtime.standalone.repository.index.ArtifactsIndexDB;
-import net.thevpc.nuts.spi.NPaths;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -32,7 +31,7 @@ public class LuceneIndexImporter {
         String tempFolder = NPath.ofTempFolder("lucene-repository",session).toString();
         NUncompress.of(session).from(NPath.of(tempGzFile,session)).to(
                 NPath.of(tempFolder,session)
-        ).setFormat("gz").run();
+        ).setPackaging("gz").run();
         try {
             long[] ref=new long[1];
             Files.list(Paths.get(tempFolder)).forEach(

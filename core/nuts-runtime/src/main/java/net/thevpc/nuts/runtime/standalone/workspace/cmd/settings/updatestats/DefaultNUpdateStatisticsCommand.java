@@ -34,7 +34,7 @@ public class DefaultNUpdateStatisticsCommand extends AbstractNUpdateStatisticsCo
         checkSession();
         for (String repository : getRepositories()) {
             processed = true;
-            NRepository repo = NRepositories.of(getSession()).getRepository(repository);
+            NRepository repo = NRepositories.of(getSession()).findRepository(repository).get();
             NRepositorySPI repoSPI = NWorkspaceUtils.of(session).repoSPI(repo);
             repoSPI.updateStatistics()
                     .setSession(session)

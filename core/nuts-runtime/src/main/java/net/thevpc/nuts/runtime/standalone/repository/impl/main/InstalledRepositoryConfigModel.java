@@ -211,13 +211,13 @@ class InstalledRepositoryConfigModel implements NRepositoryConfigModel {
     }
 
     @Override
-    public NUserConfig[] getUsers(NSession session) {
-        throw new NIllegalArgumentException(session, NMsg.ofPlain("not supported : getUsers"));
+    public NUserConfig[] findUsers(NSession session) {
+        throw new NIllegalArgumentException(session, NMsg.ofPlain("not supported : findUsers"));
     }
 
     @Override
-    public NUserConfig getUser(String userId, NSession session) {
-        throw new NIllegalArgumentException(session, NMsg.ofPlain("not supported : getUser"));
+    public NOptional<NUserConfig> findUser(String userId, NSession session) {
+        return NOptional.ofError(s->NMsg.ofPlain("not supported : findUser"));
     }
 
     @Override

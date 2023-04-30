@@ -1117,7 +1117,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 //update definition in the execution context
                 cc.setDefinition(def2);
                 executionContext = cc.build();
-                NRepository rep = NRepositories.of(session).findRepository(def.getRepositoryUuid());
+                NRepository rep = NRepositories.of(session).findRepository(def.getRepositoryUuid()).orNull();
                 remoteRepo = rep == null || rep.isRemote();
                 if (strategy0 == InstallStrategy0.REQUIRE) {
                     //

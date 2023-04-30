@@ -238,7 +238,7 @@ public class NHttpSrvRepository extends NCachedRepository {
 
     private String[] resolveEncryptedAuth(NSession session) {
         String login = NWorkspaceSecurityManager.of(session).getCurrentUsername();
-        NUserConfig security = NRepositoryConfigManagerExt.of(config()).getModel().getUser(login, session);
+        NUserConfig security = NRepositoryConfigManagerExt.of(config()).getModel().findUser(login, session).orNull();
         String newLogin = "";
         char[] credentials = new char[0];
         if (security == null) {
@@ -255,7 +255,7 @@ public class NHttpSrvRepository extends NCachedRepository {
             if (NBlankable.isBlank(newLogin)) {
                 newLogin = login;
             } else {
-                security = NRepositoryConfigManagerExt.of(config()).getModel().getUser(newLogin, session);
+                security = NRepositoryConfigManagerExt.of(config()).getModel().findUser(newLogin, session).orNull();
                 if (security == null) {
                     newLogin = "anonymous";
                     credentials = "anonymous".toCharArray();

@@ -314,7 +314,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
 
         switch (format) {
             case "jar": {
-                NCompress zip = NCompress.of(session).setFormat("zip");
+                NCompress zip = NCompress.of(session).setPackaging("zip");
                 zip.addSource(rootFolder)
                         .setSkipRoot(true)
                         .setTarget(
@@ -328,7 +328,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                 break;
             }
             case "zip": {
-                NCompress zip = NCompress.of(session).setFormat("zip");
+                NCompress zip = NCompress.of(session).setPackaging("zip");
                 zip.addSource(rootFolder)
                         .setSkipRoot(true)
                         .setTarget(

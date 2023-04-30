@@ -71,7 +71,7 @@ public class DefaultNRepositorySecurityModel {
         }
         NUserConfig s = NRepositoryConfigManagerExt.of(repository.config())
                 .getModel()
-                .getUser(n, session);
+                .findUser(n, session).orNull();
         if (s != null) {
             List<String> rr = s.getPermissions();
             aa = new NAuthorizations(
@@ -106,7 +106,7 @@ public class DefaultNRepositorySecurityModel {
             }
             NUserConfig uc = NRepositoryConfigManagerExt.of(repository.config())
                     .getModel()
-                    .getUser(n, session);
+                    .findUser(n, session).orNull();
             if (uc != null && uc.getGroups() != null) {
                 for (String g : uc.getGroups()) {
                     if (!visitedGroups.contains(g)) {
@@ -124,7 +124,7 @@ public class DefaultNRepositorySecurityModel {
         List<NUser> all = new ArrayList<>();
         for (NUserConfig secu : NRepositoryConfigManagerExt.of(repository.config())
                 .getModel()
-                .getUsers(session)) {
+                .findUsers(session)) {
             all.add(getEffectiveUser(secu.getUser(), session));
         }
         return all;
@@ -133,7 +133,7 @@ public class DefaultNRepositorySecurityModel {
     public NUser getEffectiveUser(String username, NSession session) {
         NUserConfig u = NRepositoryConfigManagerExt.of(repository.config())
                 .getModel()
-                .getUser(username, session);
+                .findUser(username, session).orNull();
         Stack<String> inherited = new Stack<>();
         if (u != null) {
             Stack<String> visited = new Stack<>();
@@ -145,7 +145,7 @@ public class DefaultNRepositorySecurityModel {
                 visited.add(s);
                 NUserConfig ss = NRepositoryConfigManagerExt.of(repository.config())
                         .getModel()
-                        .getUser(s, session);
+                        .findUser(s, session).orNull();
                 if (ss != null) {
                     inherited.addAll(ss.getPermissions());
                     for (String group : ss.getGroups()) {

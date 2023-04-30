@@ -1,7 +1,5 @@
 package net.thevpc.nuts.tutorial.lib;
 
-import net.thevpc.nuts.NExecCommand;
-import net.thevpc.nuts.NExecutionType;
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NCompress;
@@ -24,7 +22,7 @@ public class ExamplesOfZip {
             NCompress.of(session)
                     .addSource(example)
                     .setTarget(example.resolveSibling(example.getBaseName() + ".zip"))
-                    .setFormat("zip")
+                    .setPackaging("zip")
                     .run();
         }
     }

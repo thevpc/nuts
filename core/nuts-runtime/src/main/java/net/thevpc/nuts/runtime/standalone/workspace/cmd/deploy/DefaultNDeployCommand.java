@@ -240,10 +240,7 @@ public class DefaultNDeployCommand extends AbstractNDeployCommand {
                         return this;
                     }
                 } else {
-                    NRepository repo = NRepositories.of(getSession()).getRepository(repository);
-                    if (repo == null) {
-                        throw new NRepositoryNotFoundException(getSession(), repository);
-                    }
+                    NRepository repo = NRepositories.of(getSession()).findRepository(repository).get();
                     if (!repo.config().isEnabled()) {
                         throw new NRepositoryDisabledException(getSession(), repository);
                     }

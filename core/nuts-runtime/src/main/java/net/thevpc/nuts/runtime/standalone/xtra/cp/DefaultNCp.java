@@ -775,6 +775,7 @@ public class DefaultNCp implements NCp {
             monitor.setSourceTypeName(getSourceTypeName());
             _source2.source = NIO.of(session).ofInputSource(
                     monitor.setProgressFactory(getProgressFactory())
+                            .setLength(_source2.source.getMetaData().getContentLength().orElse(-1L))
                             .setLogProgress(options.contains(NPathOption.LOG))
                             .create());
         }

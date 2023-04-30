@@ -48,6 +48,10 @@ public class DefaultNRepositories implements NRepositories {
         return NRepositorySessionAwareImpl.of(x, model.getWorkspace(), session);
     }
 
+    private NOptional<NRepository> toSessionAwareRepoOptional(NOptional<NRepository> x) {
+        return x.map(r->NRepositorySessionAwareImpl.of(r, model.getWorkspace(), session));
+    }
+
     @Override
     public List<NRepository> getRepositories() {
         return Arrays.stream(model.getRepositories(session)).map(x -> toSessionAwareRepo(x))
@@ -55,27 +59,21 @@ public class DefaultNRepositories implements NRepositories {
     }
 
     @Override
-    public NRepository findRepositoryById(String repositoryNameOrId) {
+    public NOptional<NRepository> findRepositoryById(String repositoryNameOrId) {
         checkSession();
-        return toSessionAwareRepo(model.findRepositoryById(repositoryNameOrId, session));
+        return toSessionAwareRepoOptional(model.findRepositoryById(repositoryNameOrId, session));
     }
 
     @Override
-    public NRepository findRepositoryByName(String repositoryNameOrId) {
+    public NOptional<NRepository> findRepositoryByName(String repositoryNameOrId) {
         checkSession();
-        return toSessionAwareRepo(model.findRepositoryByName(repositoryNameOrId, session));
+        return toSessionAwareRepoOptional(model.findRepositoryByName(repositoryNameOrId, session));
     }
 
     @Override
-    public NRepository findRepository(String repositoryNameOrId) {
+    public NOptional<NRepository> findRepository(String repositoryNameOrId) {
         checkSession();
-        return toSessionAwareRepo(model.findRepository(repositoryNameOrId, session));
-    }
-
-    @Override
-    public NRepository getRepository(String repositoryIdOrName) throws NRepositoryNotFoundException {
-        checkSession();
-        return toSessionAwareRepo(model.getRepository(repositoryIdOrName, session));
+        return toSessionAwareRepoOptional(model.findRepository(repositoryNameOrId, session));
     }
 
     @Override

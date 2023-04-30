@@ -285,7 +285,7 @@ public class NIdFormatHelper {
             while (!stack.isEmpty()) {
                 NRepository r = stack.pop();
                 NRepositoryConfigManagerExt rc = NRepositoryConfigManagerExt.of(r.config());
-                NUserConfig[] users1 = rc.getModel().getUsers(session);
+                NUserConfig[] users1 = rc.getModel().findUsers(session);
                 if (users1 != null) {
                     for (NUserConfig user : users1) {
                         String s = user.getUser();
@@ -434,7 +434,7 @@ public class NIdFormatHelper {
                     }
                     if (def.getRepositoryUuid() != null) {
                         NRepository r = NRepositories.of(this.session.copy().setTransitive(false))
-                                .findRepositoryById(def.getRepositoryUuid());
+                                .findRepositoryById(def.getRepositoryUuid()).orNull();
                         if (r != null) {
                             rname = r.getName();
                         }
@@ -455,7 +455,7 @@ public class NIdFormatHelper {
                 if (ruuid == null && id != null) {
                     String p = id.getRepository();
                     NRepository r = NRepositories.of(this.session.copy().setTransitive(false))
-                            .findRepositoryByName(p);
+                            .findRepositoryByName(p).orNull();
                     if (r != null) {
                         ruuid = r.getUuid();
                     }

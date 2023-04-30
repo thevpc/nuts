@@ -79,17 +79,15 @@ public interface NRepositories extends NComponent, NSessionProvider {
      */
     NRepository addRepository(String repositoryNamedUrl);
 
-    NRepository findRepositoryById(String repositoryIdOrName);
+    NOptional<NRepository> findRepositoryById(String repositoryIdOrName);
 
-    NRepository findRepositoryByName(String repositoryIdOrName);
+    NOptional<NRepository> findRepositoryByName(String repositoryIdOrName);
 
     /**
      * @param repositoryIdOrName repository id or name
      * @return null if not found
      */
-    NRepository findRepository(String repositoryIdOrName);
-
-    NRepository getRepository(String repositoryIdOrName) throws NRepositoryNotFoundException;
+    NOptional<NRepository> findRepository(String repositoryIdOrName);
 
     NRepositories removeRepository(String locationOrRepositoryId);
 

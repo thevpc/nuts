@@ -106,7 +106,7 @@ net.thevpc.nuts.runtime.standalone.lock.DefaultNLocks
 net.thevpc.nuts.runtime.standalone.xtra.cp.DefaultNCp
 net.thevpc.nuts.runtime.standalone.xtra.ps.DefaultNPs
 net.thevpc.nuts.runtime.standalone.xtra.compress.DefaultNCompress
-net.thevpc.nuts.runtime.standalone.xtra.uncompress.DefaultNUncompress
+net.thevpc.nuts.runtime.standalone.xtra.compress.DefaultNUncompress
 net.thevpc.nuts.runtime.standalone.xtra.idresolver.DefaultNIdResolver
 net.thevpc.nuts.runtime.standalone.xtra.scheduler.DefaultNScheduler
 net.thevpc.nuts.runtime.standalone.descriptor.parser.DefaultNDescriptorParser
@@ -146,3 +146,7 @@ net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.alias.NSettingsAliasSu
 net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NSettingsNdiSubCommand
 net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.clinfo.NCliInfoSubCommand
 
+
+net.thevpc.nuts.runtime.standalone.xtra.compress.NCompressZip
+net.thevpc.nuts.runtime.standalone.xtra.compress.NUncompressZip
+net.thevpc.nuts.runtime.standalone.xtra.compress.NUncompressGzip

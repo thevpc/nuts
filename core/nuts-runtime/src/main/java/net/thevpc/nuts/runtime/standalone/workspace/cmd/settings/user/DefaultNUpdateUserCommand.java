@@ -61,10 +61,7 @@ public class DefaultNUpdateUserCommand extends AbstractNUpdateUserCommand {
             }
             if (repository != null) {
                 NRepositoryConfigModel rconf = NRepositoryConfigManagerExt.of(repository.config()).getModel();
-                NUserConfig u = rconf.getUser(login, session);
-                if (u == null) {
-                    throw new NIllegalArgumentException(session, NMsg.ofC("no such user %s", login));
-                }
+                NUserConfig u = rconf.findUser(login, session).get();
                 fillNutsUserConfig(u);
 
                 rconf.setUser(u, this.session);

@@ -122,9 +122,9 @@ public class Test06_UpdateTest {
                                 .build()
                 )
                 .run();
-        TestUtils.println(repos.getRepository("local").config().getStoreStrategy());
-        TestUtils.println(repos.getRepository("local").config().getStoreLocation());
-        TestUtils.println(repos.getRepository("local").config().getStoreLocation(NStoreType.LIB));
+        TestUtils.println(repos.findRepository("local").get().config().getStoreStrategy());
+        TestUtils.println(repos.findRepository("local").get().config().getStoreLocation());
+        TestUtils.println(repos.findRepository("local").get().config().getStoreLocation(NStoreType.LIB));
 
         String api = "net.thevpc.nuts:nuts";
         String rt = "net.thevpc.nuts:nuts-runtime";
@@ -152,13 +152,13 @@ public class Test06_UpdateTest {
         repos.addRepository(new NAddRepositoryOptions().setTemporary(true).setName("temp").setLocation(d.updateRepoPath)
                 .setConfig(new NRepositoryConfig().setStoreStrategy(NStoreStrategy.STANDALONE))
         );
-        TestUtils.println(repos.getRepository("temp").config().getStoreStrategy());
-        TestUtils.println(repos.getRepository("temp").config().getStoreLocation());
-        TestUtils.println(repos.getRepository("temp").config().getStoreLocation(NStoreType.LIB));
+        TestUtils.println(repos.findRepository("temp").get().config().getStoreStrategy());
+        TestUtils.println(repos.findRepository("temp").get().config().getStoreLocation());
+        TestUtils.println(repos.findRepository("temp").get().config().getStoreLocation(NStoreType.LIB));
         NInfoCommand.of(nws).configure(false, "--repos").setShowRepositories(true).println();
 
         Assertions.assertEquals(d.updateRepoPath,
-                repos.getRepository("temp").config().getLocationPath().toString()
+                repos.findRepository("temp").get().config().getLocationPath().toString()
         );
         String api = "net.thevpc.nuts:nuts";
         String rt = "net.thevpc.nuts:nuts-runtime";

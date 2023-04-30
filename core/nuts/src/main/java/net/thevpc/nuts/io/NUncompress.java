@@ -53,15 +53,15 @@ public interface NUncompress extends NComponent, NSessionProvider {
      *
      * @return format
      */
-    String getFormat();
+    String getPackaging();
 
     /**
-     * update format
+     * update packaging
      *
-     * @param format format
+     * @param packaging packaging
      * @return {@code this} instance
      */
-    NUncompress setFormat(String format);
+    NUncompress setPackaging(String packaging);
 
     /**
      * update format option
