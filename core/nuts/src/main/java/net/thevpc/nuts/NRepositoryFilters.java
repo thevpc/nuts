@@ -38,6 +38,7 @@ public interface NRepositoryFilters extends NTypedFilters<NRepositoryFilter> {
     }
 
     NRepositoryFilter byName(String... names);
+    NRepositoryFilter byNameSelector(String... names);
 
     NRepositoryFilter byUuid(String... uuids);
 

@@ -143,7 +143,7 @@ public class MavenRepositoryFolderHelper {
             public NDescriptor parseDescriptor(NPath pathname, InputStream in, NFetchMode fetchMode, NRepository repository, NSession session, NPath rootURL) throws IOException {
                 return MavenUtils.of(session).parsePomXmlAndResolveParents(pathname, NFetchMode.LOCAL, repo);
             }
-        }, maxDepth,"core",null);
+        }, maxDepth,"core",null,true);
     }
 
     public NPath getStoreLocation() {

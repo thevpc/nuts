@@ -542,7 +542,7 @@ public class DefaultNSearchCommand extends AbstractNSearchCommand {
         NElements elems = NElements.of(session);
         if (regularIds.length > 0) {
             for (String id : regularIds) {
-                NId nutsId = NId.of(id).get( session);
+                NId nutsId = NId.of(id).get(session);
                 if (nutsId != null) {
                     List<NId> nutsId2 = new ArrayList<>();
                     if (NBlankable.isBlank(nutsId.getGroupId())) {
@@ -575,13 +575,23 @@ public class DefaultNSearchCommand extends AbstractNSearchCommand {
                     }
                     List<NIterator<? extends NId>> toConcat = new ArrayList<>();
                     for (NId nutsId1 : nutsId2) {
+                        NId nutsIdNonLatest = nutsId1;
+                        boolean latestVersion = false;
+                        boolean releaseVersion = false;
+                        if (nutsIdNonLatest.getVersion().isLatestVersion()) {
+                            latestVersion = true;
+                            nutsIdNonLatest = nutsIdNonLatest.builder().setVersion("");
+                        } else if (nutsIdNonLatest.getVersion().isReleaseVersion()) {
+                            releaseVersion = true;
+                            nutsIdNonLatest = nutsIdNonLatest.builder().setVersion("");
+                        }
                         NIdFilter idFilter2 = NFilters.of(session).all(sIdFilter,
-                                NIdFilters.of(session).byName(nutsId1.getFullName())
+                                NIdFilters.of(session).byName(nutsIdNonLatest.getFullName())
                         );
-                        NIdFilter filter = CoreFilterUtils.simplify(CoreFilterUtils.idFilterOf(nutsId1.getProperties(),
+                        NIdFilter filter = CoreFilterUtils.simplify(CoreFilterUtils.idFilterOf(nutsIdNonLatest.getProperties(),
                                 idFilter2, sDescriptorFilter, session));
                         List<NRepositoryAndFetchMode> repositoryAndFetchModes = wu.filterRepositoryAndFetchModes(
-                                NRepositorySupportedAction.SEARCH, nutsId1, sRepositoryFilter, fetchMode, session
+                                NRepositorySupportedAction.SEARCH, nutsIdNonLatest, sRepositoryFilter, fetchMode, session
                         );
 
                         List<NIterator<? extends NId>> idLocal = new ArrayList<>();
@@ -593,20 +603,19 @@ public class DefaultNSearchCommand extends AbstractNSearchCommand {
                                     consideredRepos.add(repoAndMode.getRepository());
                                     NRepositorySPI repoSPI = wu.repoSPI(repoAndMode.getRepository());
 
-                                    idLookup.add(
-
-                                            IteratorBuilder.of(repoSPI.searchVersions().setId(nutsId1).setFilter(filter)
-                                                            .setSession(session)
-                                                            .setFetchMode(repoAndMode.getFetchMode())
-                                                            .getResult(), session)
-                                                    .named(
-                                                            elems.ofObject()
-                                                                    .set("description", "searchVersions")
-                                                                    .set("repository", repoAndMode.getRepository().getName())
-                                                                    .set("filter", NDescribables.resolveOrDestruct(filter, session))
-                                                                    .build()
-                                                    ).safeIgnore().iterator()
-                                    );
+                                    NIterator<NId> z = IteratorBuilder.of(repoSPI.searchVersions().setId(nutsIdNonLatest).setFilter(filter)
+                                                    .setSession(session)
+                                                    .setFetchMode(repoAndMode.getFetchMode())
+                                                    .getResult(), session)
+                                            .named(
+                                                    elems.ofObject()
+                                                            .set("description", "searchVersions")
+                                                            .set("repository", repoAndMode.getRepository().getName())
+                                                            .set("filter", NDescribables.resolveOrDestruct(filter, session))
+                                                            .build()
+                                            ).safeIgnore().iterator();
+                                    z = filterLatestAndDuplicatesThenSort(z, isLatest() || latestVersion || releaseVersion, isDistinct(),false);
+                                    idLookup.add(z);
                                 }
                             }
                         }
@@ -670,58 +679,7 @@ public class DefaultNSearchCommand extends AbstractNSearchCommand {
 
         if (inlineDependencies) {
             //optimize by applying latest and distinct when asking for dependencies
-
-            if (!isLatest() && !isDistinct()) {
-                //nothing
-            } else if (!isLatest() && isDistinct()) {
-                baseIterator = IteratorBuilder.of(baseIterator, session).distinct(
-                        NFunction.of(
-                                (NId nutsId) -> nutsId.getLongId()
-                                        .toString(), "getLongId")).iterator();
-            } else if (isLatest() && isDistinct()) {
-                NIterator<NId> curr = baseIterator;
-                baseIterator = IteratorBuilder.ofSupplier(() -> {
-                            Map<String, NId> visited = new LinkedHashMap<>();
-                            while (curr.hasNext()) {
-                                NId nutsId = curr.next();
-                                String k = nutsId.getShortName();
-                                NId old = visited.get(k);
-                                if (old == null || old.getVersion().isBlank() || old.getVersion().compareTo(nutsId.getVersion()) < 0) {
-                                    visited.put(k, nutsId);
-                                }
-                            }
-                            return visited.values().iterator();
-                        }, e-> NDescribables.resolveOrDestructAsObject(curr,session)
-                                .builder()
-                                .set("latest", true)
-                                .set("distinct", true)
-                                .build(),
-                        session).build();
-            } else if (isLatest() && !isDistinct()) {
-                NIterator<NId> curr = baseIterator;
-                baseIterator = IteratorBuilder.ofSupplier(() -> {
-                            Map<String, List<NId>> visited = new LinkedHashMap<>();
-                            while (curr.hasNext()) {
-                                NId nutsId = curr.next();
-                                String k = nutsId.getShortName();
-                                List<NId> oldList = visited.get(k);
-                                NId old = oldList == null ? null : oldList.get(0);
-                                if (old == null || old.getVersion().isBlank() || old.getVersion().compareTo(nutsId.getVersion()) < 0) {
-                                    visited.put(k, new ArrayList<>(Arrays.asList(nutsId)));
-                                } else if (old.getVersion().compareTo(nutsId.getVersion()) == 0) {
-                                    oldList.add(nutsId);
-                                }
-                            }
-                            return IteratorBuilder.ofFlatMap(NIterator.of(visited.values().iterator(), "visited"), session).build();
-                        }, e -> NDescribables.resolveOrDestructAsObject(curr,session)
-                                .builder()
-                                .set("latest", true)
-                                .set("duplicates", true)
-                                .build(),
-                                session)
-                        .build();
-            }
-
+            baseIterator = filterLatestAndDuplicatesThenSort(baseIterator, isLatest(), isDistinct(),false);
             //now include dependencies
             NIterator<NId> curr = baseIterator;
             baseIterator = IteratorBuilder.of(curr, session)
@@ -734,64 +692,7 @@ public class DefaultNSearchCommand extends AbstractNSearchCommand {
                     ).map(NFunction.of(NDependency::toId, "DependencyToId"))
                     .build();
         }
-
-        if (!isLatest() && !isDistinct()) {
-            //nothing
-        } else if (!isLatest() && isDistinct()) {
-            baseIterator = IteratorBuilder.of(baseIterator, session).distinct(
-                    NFunction.of((NId nutsId) -> nutsId.getLongId()
-                            .toString(), "getLongId()")
-            ).iterator();
-        } else if (isLatest() && isDistinct()) {
-            NIterator<NId> curr = baseIterator;
-            String fromName = curr.toString();
-            baseIterator = IteratorBuilder.ofSupplier(() -> {
-                        Map<String, NId> visited = new LinkedHashMap<>();
-                        while (curr.hasNext()) {
-                            NId nutsId = curr.next();
-                            String k = nutsId.getShortName();
-                            NId old = visited.get(k);
-                            if (old == null || old.getVersion().isBlank() || old.getVersion().compareTo(nutsId.getVersion()) < 0) {
-                                visited.put(k, nutsId);
-                            }
-                        }
-                        return visited.values().iterator();
-                    },
-                    e -> NDescribables.resolveOrDestructAsObject(curr,session)
-                            .builder()
-                            .set("latest", true)
-                            .set("distinct", true)
-                            .build(), session).build();
-        } else if (isLatest() && !isDistinct()) {
-            NIterator<NId> curr = baseIterator;
-            baseIterator = IteratorBuilder.ofSupplier(() -> {
-                        Map<String, List<NId>> visited = new LinkedHashMap<>();
-                        while (curr.hasNext()) {
-                            NId nutsId = curr.next();
-                            String k = nutsId.getShortName();
-                            List<NId> oldList = visited.get(k);
-                            NId old = oldList == null ? null : oldList.get(0);
-                            if (old == null || old.getVersion().isBlank() || old.getVersion().compareTo(nutsId.getVersion()) < 0) {
-                                visited.put(k, new ArrayList<>(Arrays.asList(nutsId)));
-                            } else if (old.getVersion().compareTo(nutsId.getVersion()) == 0) {
-                                oldList.add(nutsId);
-                            }
-                        }
-                        return IteratorBuilder.ofFlatMap(NIterator.of(visited.values().iterator(), "visited"), session).build();
-                    },
-                    e -> NDescribables.resolveOrDestructAsObject(curr,session)
-                            .builder()
-                            .set("latest", true)
-                            .set("duplicates", true)
-                            .build(),
-                    session).build();
-        }
-
-        if (isSorted()) {
-            baseIterator = IteratorUtils.sort(baseIterator, comparator, false);
-        }
-
-        return baseIterator;
+        return filterLatestAndDuplicatesThenSort(baseIterator, isLatest(), isDistinct(),isSorted());
     }
 
 //    public NutsIterator<NutsDependency> findIterator2(DefaultNSearch search) {
@@ -919,4 +820,61 @@ public class DefaultNSearchCommand extends AbstractNSearchCommand {
 //        }
 //        return IteratorUtils.concat(allResults);
 //    }
+
+    private NIterator<NId> filterLatestAndDuplicatesThenSort(NIterator<NId> baseIterator, boolean latest, boolean distinct, boolean sort) {
+        //ff ft tt tf
+        NIterator<NId> r;
+        if (!latest && !distinct) {
+            r = baseIterator;
+        } else if (!latest && distinct) {
+            r = IteratorBuilder.of(baseIterator, session).distinct(
+                    NFunction.of(
+                            (NId nutsId) -> nutsId.getLongId()
+                                    .toString(), "getLongId")).iterator();
+        } else if (latest && distinct) {
+            r = IteratorBuilder.ofSupplier(() -> {
+                        Map<String, NId> visited = new LinkedHashMap<>();
+                        while (baseIterator.hasNext()) {
+                            NId nutsId = baseIterator.next();
+                            String k = nutsId.getShortName();
+                            NId old = visited.get(k);
+                            if (old == null || old.getVersion().isBlank() || old.getVersion().compareTo(nutsId.getVersion()) < 0) {
+                                visited.put(k, nutsId);
+                            }
+                        }
+                        return visited.values().iterator();
+                    }, e -> NDescribables.resolveOrDestructAsObject(baseIterator, session)
+                            .builder()
+                            .set("latest", true)
+                            .set("distinct", true)
+                            .build(),
+                    session).build();
+        } else /*if (latest && !distinct)*/ {
+            r = IteratorBuilder.ofSupplier(() -> {
+                                Map<String, List<NId>> visited = new LinkedHashMap<>();
+                                while (baseIterator.hasNext()) {
+                                    NId nutsId = baseIterator.next();
+                                    String k = nutsId.getShortName();
+                                    List<NId> oldList = visited.get(k);
+                                    NId old = oldList == null ? null : oldList.get(0);
+                                    if (old == null || old.getVersion().isBlank() || old.getVersion().compareTo(nutsId.getVersion()) < 0) {
+                                        visited.put(k, new ArrayList<>(Arrays.asList(nutsId)));
+                                    } else if (old.getVersion().compareTo(nutsId.getVersion()) == 0) {
+                                        oldList.add(nutsId);
+                                    }
+                                }
+                                return IteratorBuilder.ofFlatMap(NIterator.of(visited.values().iterator(), "visited"), session).build();
+                            }, e -> NDescribables.resolveOrDestructAsObject(baseIterator, session)
+                                    .builder()
+                                    .set("latest", true)
+                                    .set("duplicates", true)
+                                    .build(),
+                            session)
+                    .build();
+        }
+        if (sort) {
+            r = IteratorUtils.sort(r, comparator, false);
+        }
+        return r;
+    }
 }

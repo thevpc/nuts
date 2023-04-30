@@ -102,13 +102,13 @@ public class Test40_NConnexionStringTest {
                 new NConnexionString()
                         .setProtocol("ssh")
                         .setUser("me")
-                        .setProtocol("ok")
+                        .setPassword("ok")
                         .setHost("192.168.1.89")
                 ,
                 test
         );
         Assertions.assertEquals(
-                "me:ok@192.168.1.89", test.toString()
+                "ssh://me:ok@192.168.1.89", test.toString()
         );
     }
 

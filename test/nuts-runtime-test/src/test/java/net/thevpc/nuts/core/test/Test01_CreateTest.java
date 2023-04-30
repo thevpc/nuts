@@ -113,14 +113,14 @@ public class Test01_CreateTest {
         String base = "";
         switch (NOsFamily.getCurrent()) {
             case WINDOWS: {
-                base = new File(System.getProperty("user.home"), "AppData\\Local\\nuts\\cache").getPath();
+                base = new File(System.getProperty("user.home"), "AppData\\Local\\nuts\\cache\\ws").getPath();
                 break;
             }
             case MACOS:
             case LINUX:
             case UNIX:
             case UNKNOWN: {
-                base = new File(System.getProperty("user.home"), ".cache/nuts").getPath();
+                base = new File(System.getProperty("user.home"), ".cache/nuts/ws").getPath();
                 break;
             }
         }

@@ -11,6 +11,7 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.util.NIdUtils;
 import org.junit.jupiter.api.*;
 
 import java.io.ByteArrayInputStream;
@@ -52,156 +53,141 @@ public class Test06_UpdateTest {
 
     private static class Data {
         String updateRepoPath;
-        NDefinition apiDef;
+        NDefinition apiDef1;
         NId apiId1;
         NId apiId2;
         NId rtId1;
         NId rtId2;
-        NDefinition rtDef;
+        NDefinition rtDef1;
 
-        NVersion apiVersion1;
-        NVersion apiVersion2;
-        FromTo fromToAPI;
+        FromTo apiFromTo;
 
-        NVersion rtVersion1;
-        NVersion rtVersion2;
-        FromTo fromToImpl;
-    }
-
-    private NSession prepareCustomUpdateRepository(boolean implOnly, Data data) {
-        TestUtils.println("\n------------------------------------------");
-        NSession uws = TestUtils.openNewTestWorkspace(
-                "--archetype", "minimal",
-                "--standalone",
-                "--standalone-repositories",
-                "--yes",
-                "--install-companions=false"
-        );
-        NRepositories repos = NRepositories.of(uws);
-        NRepository updateRepo1 = repos.addRepository("local");
-//        uws.config().save();
-        //NutsRepository updateRepo1 = uws.config().getRepository("local", session);
-        data.updateRepoPath = updateRepo1.config().getStoreLocation().toString();
-        TestUtils.println(updateRepo1.config().getStoreStrategy());
-        NInfoCommand.of(uws).configure(false, "--repos").println();
-
-        data.apiDef = NFetchCommand.ofNutsApi(uws).setContent(true).getResultDefinition();
-        data.rtDef = NFetchCommand.ofNutsRuntime(uws).setContent(true).getResultDefinition();
-        data.apiVersion1 = data.apiDef.getId().getVersion();
-        data.rtVersion1 = data.rtDef.getId().getVersion();
-        data.apiId1 = data.apiDef.getId().builder().setVersion(data.apiVersion1).build();
-
-        data.apiVersion2 = implOnly ? data.apiVersion1 : data.apiVersion1.inc(-1, 10);
-        data.apiId2 = data.apiDef.getId().builder().setVersion(data.apiVersion2).build();
-
-        data.fromToAPI = new FromTo(data.apiVersion1.toString(), data.apiVersion2.toString());
-
-        data.rtVersion2 = data.rtDef.getId().getVersion().inc(-2, 10);
-        data.rtId1 = data.rtDef.getId().builder().setVersion(data.rtVersion1).build();
-        data.rtId2 = data.rtDef.getId().builder().setVersion(data.rtVersion2).build();
-
-        data.fromToImpl = new FromTo(data.rtDef.getId().getVersion().toString(), data.rtVersion2.toString());
-
-        if (!data.fromToAPI.isIdentity()) {
-            NDeployCommand.of(uws)
-                    .setContent(replaceAPIJar(data.apiDef.getContent().flatMap(NPath::toPath).get(uws), data.fromToAPI, uws))
-                    .setDescriptor(data.apiDef.getDescriptor().builder().setId(data.apiDef.getId().builder().setVersion(data.apiVersion2).build()).build())
-                    //                        .setRepository("local")
-                    .run();
-        }
-        NDeployCommand.of(uws)
-                .setContent(replaceRuntimeJar(data.rtDef.getContent().flatMap(NPath::toPath).get(uws), data.fromToAPI, data.fromToImpl, uws))
-                .setDescriptor(
-                        data.rtDef.getDescriptor()
-                                .builder()
-                                .setId(data.rtDef.getId().builder().setVersion(data.rtVersion2).build())
-                                .replaceDependency(
-                                        x -> x.getSimpleName().equals(data.apiDef.getId().getShortName()),
-                                        x -> x.builder().setVersion(data.apiVersion2).build()
-                                )
-                                .build()
-                )
-                .run();
-        TestUtils.println(repos.findRepository("local").get().config().getStoreStrategy());
-        TestUtils.println(repos.findRepository("local").get().config().getStoreLocation());
-        TestUtils.println(repos.findRepository("local").get().config().getStoreLocation(NStoreType.LIB));
-
+        FromTo rtFromTo;
         String api = "net.thevpc.nuts:nuts";
         String rt = "net.thevpc.nuts:nuts-runtime";
-        TestUtils.println(NSearchCommand.of(uws).addId(api).getResultIds().toList());
-        TestUtils.println(NSearchCommand.of(uws).addId(rt).getResultIds().toList());
-        List<NId> foundApis = NSearchCommand.of(uws).addId(api).getResultIds().toList();
-        List<NId> foundRts = NSearchCommand.of(uws).addId(rt).getResultIds().toList();
-        Assertions.assertTrue(foundApis.stream().map(NId::getLongName).collect(Collectors.toSet()).contains(data.apiId1.getLongName()));
-        if (!implOnly) {
-            Assertions.assertTrue(foundApis.stream().map(NId::getLongName).collect(Collectors.toSet()).contains(data.apiId2.getLongName()));
-        }
-
-        return uws;
     }
 
-    private NSession prepareWorkspaceToUpdate(boolean implOnly, Data d) {
+    private void prepareCustomUpdateRepository(boolean implOnly, Data data, NSession session) {
         TestUtils.println("\n------------------------------------------");
-        NSession nws = TestUtils.openNewTestWorkspace(
+//        uws.config().save();
+        //NutsRepository updateRepo1 = uws.config().getRepository("local", session);
+
+
+        data.apiId2 = data.apiDef1.getId().builder().setVersion(implOnly ? data.apiId1.getVersion() : data.apiId1.getVersion().inc(-1, 10)).build();
+        data.apiFromTo = new FromTo(data.apiId1.getVersion().toString(), data.apiId2.getVersion().toString());
+
+        if (!data.apiFromTo.isIdentity()) {
+            Path path = replaceAPIJar(data.apiDef1.getContent().flatMap(NPath::toPath).get(session), data.apiFromTo, session);
+            NPath.of(path, session)
+                    .copyTo(NPath.of(data.updateRepoPath, session).resolve(NIdUtils.resolveJarPath(data.apiId2)));
+            data.apiDef1.getDescriptor().builder().setId(data.apiId2).build()
+                    .formatter(session)
+                    .print(NPath.of(data.updateRepoPath, session).resolve(NIdUtils.resolveNutsDescriptorPath(data.apiId2)));
+        }
+
+
+        data.rtId2 = data.rtDef1.getId().builder().setVersion(
+                (implOnly)? data.rtDef1.getId().getVersion().inc(-1, 10)
+                        :data.rtDef1.getId().getVersion().inc(-2, 10).inc(-2, 10)
+        ).build();
+
+        data.rtFromTo = new FromTo(data.rtDef1.getId().getVersion().toString(), data.rtId2.getVersion().toString());
+
+        if (!data.rtFromTo.isIdentity()) {
+            replaceRuntimeJar(data.rtDef1.getContent().flatMap(NPath::toPath).get(session), data.apiFromTo, data.rtFromTo,
+                    NPath.of(data.updateRepoPath, session).resolve(NIdUtils.resolveJarPath(data.rtId2)).toPath().get(),
+                    session);
+            data.rtDef1.getDescriptor()
+                    .builder()
+                    .setId(data.rtId2)
+                    .replaceDependency(
+                            x -> x.getSimpleName().equals(data.apiId1.getShortName()),
+                            x -> x.builder().setVersion(data.apiId2.getVersion()).build()
+                    )
+                    .build()
+                    .formatter(session)
+                    .print(NPath.of(data.updateRepoPath, session).resolve(NIdUtils.resolveNutsDescriptorPath(data.rtId2)));
+
+        }
+//        String api = "net.thevpc.nuts:nuts";
+//        String rt = "net.thevpc.nuts:nuts-runtime";
+    }
+
+    private NSession prepareWorkspaceToUpdate(boolean implOnly, Data data) {
+        TestUtils.println("\n------------------------------------------");
+        NSession session = TestUtils.openNewTestWorkspace(
                 "--standalone",
                 "--standalone-repositories",
                 "--yes",
                 "--install-companions=false"
         );
-        NRepositories repos = NRepositories.of(nws);
-        repos.addRepository(new NAddRepositoryOptions().setTemporary(true).setName("temp").setLocation(d.updateRepoPath)
+        NRepositories repos = NRepositories.of(session);
+        NPath tempRepo = NPath.ofTempFolder(session);
+        data.updateRepoPath = tempRepo.toString();
+        data.apiDef1 = NFetchCommand.ofNutsApi(session).setContent(true).getResultDefinition();
+        data.apiId1 = data.apiDef1.getId().builder().setVersion(data.apiDef1.getId().getVersion()).build();
+        data.rtDef1 = NFetchCommand.ofNutsRuntime(session).setContent(true).getResultDefinition();
+        data.rtId1 = data.rtDef1.getId().builder().setVersion(data.rtDef1.getId().getVersion()).build();
+
+        repos.addRepository(new NAddRepositoryOptions().setTemporary(true).setName("temp").setLocation(data.updateRepoPath)
                 .setConfig(new NRepositoryConfig().setStoreStrategy(NStoreStrategy.STANDALONE))
         );
         TestUtils.println(repos.findRepository("temp").get().config().getStoreStrategy());
         TestUtils.println(repos.findRepository("temp").get().config().getStoreLocation());
         TestUtils.println(repos.findRepository("temp").get().config().getStoreLocation(NStoreType.LIB));
-        NInfoCommand.of(nws).configure(false, "--repos").setShowRepositories(true).println();
+        NInfoCommand.of(session).configure(false, "--repos").setShowRepositories(true).println();
 
-        Assertions.assertEquals(d.updateRepoPath,
+        Assertions.assertEquals(data.updateRepoPath,
                 repos.findRepository("temp").get().config().getLocationPath().toString()
         );
-        String api = "net.thevpc.nuts:nuts";
-        String rt = "net.thevpc.nuts:nuts-runtime";
-        TestUtils.println(NSearchCommand.of(nws).addId(api).getResultIds().toList());
-        TestUtils.println(NSearchCommand.of(nws).addId(rt).getResultIds().toList());
-        List<NId> foundApis = NSearchCommand.of(nws).addId(api).getResultIds().toList();
-        List<NId> foundRts = NSearchCommand.of(nws).addId(rt).getResultIds().toList();
-        Assertions.assertTrue(foundApis.stream().map(NId::getLongName).collect(Collectors.toSet()).contains(d.apiId1.getLongName()));
-        if (!implOnly) {
-            Assertions.assertTrue(foundApis.stream().map(NId::getLongName).collect(Collectors.toSet()).contains(d.apiId2.getLongName()));
-        }
-        Assertions.assertTrue(foundRts.stream().map(NId::getLongName).collect(Collectors.toSet()).contains(d.rtId1.getLongName()));
-        Assertions.assertTrue(foundRts.stream().map(NId::getLongName).collect(Collectors.toSet()).contains(d.rtId2.getLongName()));
+        TestUtils.println(NSearchCommand.of(session).addId(data.api).getResultIds().toList());
+        TestUtils.println(NSearchCommand.of(session).addId(data.rt).getResultIds().toList());
+        List<NId> foundApis = NSearchCommand.of(session).addId(data.api).getResultIds().toList();
+        List<NId> foundRts = NSearchCommand.of(session).addId(data.rt).getResultIds().toList();
+        Assertions.assertTrue(foundApis.stream().map(NId::getLongName).collect(Collectors.toSet()).contains(data.apiId1.getLongName()));
+        Assertions.assertTrue(foundRts.stream().map(NId::getLongName).collect(Collectors.toSet()).contains(data.rtId1.getLongName()));
 
-        TestUtils.println(NSearchCommand.of(nws).addId(api).setRepositoryFilter("temp").getResultIds().toList());
-        TestUtils.println(NSearchCommand.of(nws).addId(rt).setRepositoryFilter("temp").getResultIds().toList());
-        TestUtils.println(NSearchCommand.of(nws).addId(api).getResultIds().toList());
-        TestUtils.println(NSearchCommand.of(nws).addId(rt).getResultIds().toList());
+        TestUtils.println(NSearchCommand.of(session).addId(data.api).setRepositoryFilter("temp").getResultIds().toList());
+        TestUtils.println(NSearchCommand.of(session).addId(data.rt).setRepositoryFilter("temp").getResultIds().toList());
+        TestUtils.println(NSearchCommand.of(session).addId(data.api).getResultIds().toList());
+        TestUtils.println(NSearchCommand.of(session).addId(data.rt).getResultIds().toList());
         TestUtils.println("========================");
 
-        return nws;
+        return session;
     }
 
     private void testUpdate(boolean implOnly, String callerName) throws Exception {
 //        CoreIOUtils.delete(null, new File(baseFolder));
 //        final String workspacePath = baseFolder + "/" + callerName;
-        Data d = new Data();
-        NSession uws = prepareCustomUpdateRepository(implOnly, d);
-        NSession nws = prepareWorkspaceToUpdate(implOnly, d);
+        Data data = new Data();
+        NSession session = prepareWorkspaceToUpdate(implOnly, data);
+        prepareCustomUpdateRepository(implOnly, data, session);
+
+        List<NId> foundApis = NSearchCommand.of(session).addId(data.api).getResultIds().toList();
+        List<NId> foundRts = NSearchCommand.of(session).addId(data.rt).getResultIds().toList();
+        if (!implOnly) {
+            Assertions.assertTrue(foundApis.stream().map(NId::getLongName).collect(Collectors.toSet()).contains(data.apiId2.getLongName()));
+        }
+        Assertions.assertTrue(foundRts.stream().map(NId::getLongName).collect(Collectors.toSet()).contains(data.rtId2.getLongName()));
 
         //check updates!
-        NUpdateCommand foundUpdates = NUpdateCommand.of(nws).setAll().checkUpdates();
+        NUpdateCommand foundUpdates = NUpdateCommand.of(session)
+                .setRepositoryFilter(NRepositoryFilters.of(session).byName("temp"))
+                .setAll().checkUpdates();
         for (NUpdateResult u : foundUpdates.getResult().getUpdatable()) {
             TestUtils.println(u.getAvailable());
         }
         Assertions.assertEquals(implOnly ? 1 : 2, foundUpdates.getResultCount(), "checkUpdates result count is incorrect");
         foundUpdates.update();
 
-        final String newApiVersion = foundUpdates.getResult().getApi().getAvailable().getId().getVersion().toString();
+        final String newApiVersion = implOnly?
+                foundUpdates.getResult().getApi().getInstalled().getId().getVersion().toString():
+                foundUpdates.getResult().getApi().getAvailable().getId().getVersion().toString()
+                ;
         final String newRuntimeVersion = foundUpdates.getResult().getRuntime().getAvailable().getId().getVersion().toString();
 //        Path bootFolder=Paths.get(workspacePath).resolve(NutsConstants.Folders.BOOT);
 //        Path bootCompFolder=Paths.get(workspacePath).resolve(NutsConstants.Folders.BOOT);
-        NLocations nwsLocations = NLocations.of(nws);
+        NLocations nwsLocations = NLocations.of(session);
         Path bootCacheFolder = (nwsLocations.getStoreLocation(NStoreType.CACHE)).resolve(NConstants.Folders.ID).toPath().get();
         Path libFolder = (nwsLocations.getStoreLocation(NStoreType.LIB)).resolve(NConstants.Folders.ID).toPath().get();
         Path configFolder = (nwsLocations.getStoreLocation(NStoreType.CONF)).resolve(NConstants.Folders.ID).toPath().get();
@@ -209,10 +195,10 @@ public class Test06_UpdateTest {
                 .resolve("nuts-" + newApiVersion + ".jar")
         ));
 
-        NExecCommand ee = NExecCommand.of(uws).setExecutionType(NExecutionType.SPAWN)
+        NExecCommand ee = NExecCommand.of(session).setExecutionType(NExecutionType.SPAWN)
                 .addCommand(
                         "nuts#" + newApiVersion,
-                        "--workspace", nws.getWorkspace().getLocation().toString(),
+                        "--workspace", session.getWorkspace().getLocation().toString(),
                         "--boot-version=" + newApiVersion,
                         "--bot",
                         "--color=never",
@@ -234,14 +220,14 @@ public class Test06_UpdateTest {
         TestUtils.println("CODE=" + ee.getResult());
         Assertions.assertEquals(0, ee.getResult());
 
-        Map m = NElements.of(uws).json().parse(ss, Map.class);
+        Map m = NElements.of(session).json().parse(ss, Map.class);
         Assertions.assertEquals(newApiVersion, m.get("nuts-api-version"));
         Assertions.assertEquals(newRuntimeVersion, m.get("nuts-runtime-version"));
     }
 
     private Path replaceAPIJar(Path p, FromTo api, NSession session) {
         try {
-            Path zipFilePath = NPath.ofTempFile(".zip",session).toPath().get();
+            Path zipFilePath = NPath.ofTempFile(".zip", session).toPath().get();
             Files.copy(p, zipFilePath, StandardCopyOption.REPLACE_EXISTING);
             try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader) null)) {
 
@@ -277,16 +263,17 @@ public class Test06_UpdateTest {
         }
     }
 
-    private Path replaceRuntimeJar(Path p, FromTo api, FromTo impl, NSession session) {
+    private Path replaceRuntimeJar(Path p, FromTo api, FromTo rt, Path to,NSession session) {
         try {
-            Path zipFilePath = NPath.ofTempFile(".zip",session).toPath().get();
+            Path zipFilePath = NPath.ofTempFile(p.getFileName().toString(), session).toPath().get();
             Files.copy(p, zipFilePath, StandardCopyOption.REPLACE_EXISTING);
             try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader) null)) {
 
                 Path fileInsideZipPath = fs.getPath("/META-INF/maven/net.thevpc.nuts/nuts-runtime/pom.properties");
                 if (Files.exists(fileInsideZipPath)) {
-                    String ss = new String(Files.readAllBytes(fileInsideZipPath))
-                            .replace("project.version=" + impl.from, "project.version=" + impl.to);
+                    String xml = new String(Files.readAllBytes(fileInsideZipPath));
+                    String ss = xml
+                            .replace("project.version=" + rt.from, "project.version=" + rt.to);
                     if (!api.isIdentity()) {
                         ss = ss.replace("net.thevpc.nuts:nuts:" + api.from, "net.thevpc.nuts:nuts:" + api.to);
                     }
@@ -296,8 +283,9 @@ public class Test06_UpdateTest {
 
                 fileInsideZipPath = fs.getPath("/META-INF/maven/net.thevpc.nuts/nuts-runtime/pom.xml");
                 if (Files.exists(fileInsideZipPath)) {
-                    String ss = new String(Files.readAllBytes(fileInsideZipPath))
-                            .replace(">" + impl.from + "<", ">" + impl.to + "<");
+                    String xml = new String(Files.readAllBytes(fileInsideZipPath));
+                    String ss = xml
+                            .replace(">" + rt.from + "<", ">" + rt.to + "<");
                     if (!api.isIdentity()) {
                         ss = ss.replace(">" + api.from + "<", ">" + api.to + "<");
                     }
@@ -308,7 +296,8 @@ public class Test06_UpdateTest {
                 if (!api.isIdentity()) {
                     fileInsideZipPath = fs.getPath("/META-INF/nuts/net.thevpc.nuts/nuts-runtime/nuts.properties");
                     if (Files.exists(fileInsideZipPath)) {
-                        String ss = new String(Files.readAllBytes(fileInsideZipPath)).replace(api.from, api.to);
+                        String xml = new String(Files.readAllBytes(fileInsideZipPath));
+                        String ss = xml.replace(api.from, api.to);
 //                    Files.write(fileInsideZipPath, ss.getBytes());
                         Files.copy(new ByteArrayInputStream(ss.getBytes()), fileInsideZipPath, StandardCopyOption.REPLACE_EXISTING);
                     }
@@ -317,9 +306,9 @@ public class Test06_UpdateTest {
             } catch (IOException ex) {
                 throw new NIOException(session, ex);
             }
-            Path jar = zipFilePath.resolveSibling("nuts-" + api.to + ".jar");
-            Files.move(zipFilePath, jar, StandardCopyOption.REPLACE_EXISTING);
-            return jar;
+            Files.createDirectories(to.getParent());
+            Files.move(zipFilePath, to, StandardCopyOption.REPLACE_EXISTING);
+            return to;
         } catch (IOException ex) {
             throw new NIOException(session, ex);
         }

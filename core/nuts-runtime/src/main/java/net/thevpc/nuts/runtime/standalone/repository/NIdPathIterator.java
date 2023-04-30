@@ -35,6 +35,7 @@ import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NDescribables;
 import net.thevpc.nuts.util.NLogOp;
 
+import java.util.LinkedList;
 import java.util.Stack;
 import java.util.logging.Level;
 
@@ -44,7 +45,7 @@ import java.util.logging.Level;
 public class NIdPathIterator extends NIteratorBase<NId> {
 
     private final NRepository repository;
-    private final Stack<PathAndDepth> stack = new Stack<>();
+    private final StackOrQueue<PathAndDepth> stack;
     private final NIdFilter filter;
     private final NSession session;
     private final NIdPathIteratorModel model;
@@ -57,7 +58,8 @@ public class NIdPathIterator extends NIteratorBase<NId> {
     private final NObjectElement extraProperties;
     private final String kind;
 
-    public NIdPathIterator(NRepository repository, NPath rootFolder, NPath basePath, NIdFilter filter, NSession session, NIdPathIteratorModel model, int maxDepth, String kind, NObjectElement extraProperties) {
+    public NIdPathIterator(NRepository repository, NPath rootFolder, NPath basePath, NIdFilter filter, NSession session, NIdPathIteratorModel model, int maxDepth, String kind, NObjectElement extraProperties,boolean bfs) {
+        this.stack = bfs?new OneQueue<>():new OneStack<>();
         this.repository = repository;
         this.extraProperties = extraProperties;
         this.kind = kind;
@@ -78,7 +80,7 @@ public class NIdPathIterator extends NIteratorBase<NId> {
                 startUrl = startUrl.resolve(basePath);
             }
         }
-        stack.push(new PathAndDepth(startUrl, true, 0));
+        stack.add(new PathAndDepth(startUrl, true, 0));
     }
 
     @Override
@@ -98,7 +100,7 @@ public class NIdPathIterator extends NIteratorBase<NId> {
     public boolean hasNext() {
         last = null;
         while (!stack.isEmpty()) {
-            PathAndDepth file = stack.pop();
+            PathAndDepth file = stack.remove();
             if (file.folder) {
                 session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s", repository.getName(), kind, "search folder", file.path.toCompressedForm()));
                 visitedFoldersCount++;
@@ -119,11 +121,11 @@ public class NIdPathIterator extends NIteratorBase<NId> {
                 for (NPath child : children) {
                     if (child.isDirectory()) {
                         if (deep) {
-                            stack.push(new PathAndDepth(child, true, file.depth + 1));
+                            stack.add(new PathAndDepth(child, true, file.depth + 1));
                         }
                     } else {
                         if (model.isDescFile(child)) {
-                            stack.push(new PathAndDepth(child, false, file.depth));
+                            stack.add(new PathAndDepth(child, false, file.depth));
                         }
                     }
                 }
@@ -181,6 +183,47 @@ public class NIdPathIterator extends NIteratorBase<NId> {
             this.folder = folder;
             this.depth = depth;
         }
+    }
 
+    private static class OneStack<T> implements StackOrQueue<T>{
+        private Stack<T> all=new Stack<T>();
+
+        @Override
+        public void add(T t) {
+            all.push(t);
+        }
+
+        @Override
+        public T remove() {
+            return all.pop();
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return all.isEmpty();
+        }
+    }
+    private static class OneQueue<T> implements StackOrQueue<T>{
+        private LinkedList<T> all=new LinkedList<>();
+
+        @Override
+        public void add(T t) {
+            all.add(t);
+        }
+
+        @Override
+        public T remove() {
+            return all.removeFirst();
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return all.isEmpty();
+        }
+    }
+    private interface StackOrQueue<T>{
+        void add(T t);
+        T remove();
+        boolean isEmpty();
     }
 }

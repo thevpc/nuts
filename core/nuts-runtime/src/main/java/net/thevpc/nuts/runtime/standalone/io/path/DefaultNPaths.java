@@ -168,7 +168,7 @@ public class DefaultNPaths implements NPaths {
             name = "";
         }
         rootFolder.mkdirs();
-        NStringBuilder ext = new NStringBuilder(CoreIOUtils.getFileExtension(name, true, true));
+        NStringBuilder ext = new NStringBuilder(CoreIOUtils.getFileExtension(name, false, true));
         NStringBuilder prefix = new NStringBuilder((ext.length() > 0) ? name.substring(0, name.length() - ext.length()) : name);
         if (ext.isEmpty() && prefix.isEmpty()) {
             prefix.append("nuts-");

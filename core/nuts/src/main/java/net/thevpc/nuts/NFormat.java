@@ -66,6 +66,15 @@ public interface NFormat extends NCmdLineConfigurable, NComponent, NSessionProvi
      */
     NString format();
 
+    default String formatPlain() {
+        boolean ntf = isNtf();
+        try {
+            return format().filteredText();
+        } finally {
+            setNtf(ntf);
+        }
+    }
+
     /**
      * format current value and write result to {@code getSession().out()}.
      */

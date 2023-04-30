@@ -6,7 +6,6 @@
 package net.thevpc.nuts.runtime.standalone.format;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.text.NTexts;
 
@@ -63,14 +62,27 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
     @Override
     public NString format() {
         checkSession();
-        if(isNtf()){
+        if (isNtf()) {
             NPrintStream out = NMemoryPrintStream.of(NTerminalMode.FORMATTED, getSession());
             print(out);
             return NTexts.of(getSession()).parse(out.toString());
-        }else{
+        } else {
             NPrintStream out = NMemoryPrintStream.of(NTerminalMode.INHERITED, getSession());
             print(out);
             return NTexts.of(getSession()).ofPlain(out.toString());
+        }
+    }
+
+    @Override
+    public String formatPlain() {
+        checkSession();
+        boolean ntf = isNtf();
+        try {
+            NPrintStream out = NPrintStream.ofInMemory(NTerminalMode.INHERITED, getSession());
+            print(out);
+            return out.toString();
+        } finally {
+            setNtf(ntf);
         }
     }
 
@@ -140,7 +152,7 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
 
     @Override
     public void print(File file) {
-        print(NPath.of(file,getSession()));
+        print(NPath.of(file, getSession()));
     }
 
     @Override
@@ -189,7 +201,7 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
     @Override
     public void println(Path path) {
         checkSession();
-        println(NPath.of(path,getSession()));
+        println(NPath.of(path, getSession()));
     }
 
     @Override
@@ -216,7 +228,7 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
 
     @Override
     public String toString() {
-        return format().toString();
+        return formatPlain();
     }
 
 }

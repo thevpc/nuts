@@ -114,9 +114,9 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
 
                             session).build());
             if (basePath.getName().equals("*")) {
-                list.add(new NIdPathIterator(this, repoRoot, basePath.getParent(), filter, session, repoIter, Integer.MAX_VALUE, "core", null));
+                list.add(new NIdPathIterator(this, repoRoot, basePath.getParent(), filter, session, repoIter, Integer.MAX_VALUE, "core", null,true));
             } else {
-                list.add(new NIdPathIterator(this, repoRoot, basePath, filter, session, repoIter, 2, "core", null));
+                list.add(new NIdPathIterator(this, repoRoot, basePath, filter, session, repoIter, 2, "core", null,true));
             }
         }
         return IteratorUtils.concat(list);

@@ -77,7 +77,7 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
  ```sh -w <workspace-location> ```
       workspace location to open (or create).
       this defaults to default-workspace. Typically this refers to ~/.config/nuts/default-workspace on *NIX Platforms*
-      (when ```sh --system-config-home``` is not specified). workspace location contains mainly config information.
+      (when ```sh --system-conf-home``` is not specified). workspace location contains mainly config information.
 
  ```sh --user      <username> ``` (default is ```kw ""```)
  ```sh -u          <username> ```
@@ -240,18 +240,18 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
         run      : ```sh "/run/user/$USER_ID/nuts"```
      
     These home locations are tuned individually using the following options
-            ```sh --system-apps-home <path>```
+            ```sh --system-bin-home <path>```
             ```sh --system-lib-home <path>```
-            ```sh --system-config-home <path>```
+            ```sh --system-conf-home <path>```
             ```sh --system-var-home <path>```
             ```sh --system-log-home <path>```
             ```sh --system-temp-home <path>```
             ```sh --system-cache-home <path>```
             ```sh --system-run-home <path>```
 
-            ```sh --<os-family>-apps-home <path>```
+            ```sh --<os-family>-bin-home <path>```
             ```sh --<os-family>-lib-home <path>```
-            ```sh --<os-family>-config-home <path>```
+            ```sh --<os-family>-conf-home <path>```
             ```sh --<os-family>-var-home <path>```
             ```sh --<os-family>-log-home <path>```
             ```sh --<os-family>-temp-home <path>```

@@ -101,9 +101,9 @@ public class Test08_ElementTest {
                                 .build()
                 ).build())
                 .build();
-        NObjectFormat ss = NObjectFormat.of(session).setValue(p);
+        NObjectFormat ss = NObjectFormat.of(session).setValue(p).setNtf(false);
         ss.println();
-        String json = ss.format().toString();
+        String json = ss.formatPlain();
         String EXPECTED = "[\n"
                 + "  {\n"
                 + "    \"first\": {\n"

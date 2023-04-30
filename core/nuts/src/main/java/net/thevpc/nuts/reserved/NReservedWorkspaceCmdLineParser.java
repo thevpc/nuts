@@ -307,8 +307,8 @@ public final class NReservedWorkspaceCmdLineParser {
                         }
                         break;
                     }
-                    case "--system-apps-home":
-                    case "--system-config-home":
+                    case "--system-bin-home":
+                    case "--system-conf-home":
                     case "--system-var-home":
                     case "--system-log-home":
                     case "--system-temp-home":
@@ -324,32 +324,32 @@ public final class NReservedWorkspaceCmdLineParser {
                         }
                         break;
                     }
-                    case "--windows-apps-home":
-                    case "--windows-config-home":
+                    case "--windows-bin-home":
+                    case "--windows-conf-home":
                     case "--windows-var-home":
                     case "--windows-log-home":
                     case "--windows-temp-home":
                     case "--windows-cache-home":
                     case "--windows-lib-home":
                     case "--windows-run-home":
-                    case "--macos-apps-home":
-                    case "--macos-config-home":
+                    case "--macos-bin-home":
+                    case "--macos-conf-home":
                     case "--macos-var-home":
                     case "--macos-log-home":
                     case "--macos-temp-home":
                     case "--macos-cache-home":
                     case "--macos-lib-home":
                     case "--macos-run-home":
-                    case "--linux-apps-home":
-                    case "--linux-config-home":
+                    case "--linux-bin-home":
+                    case "--linux-conf-home":
                     case "--linux-var-home":
                     case "--linux-log-home":
                     case "--linux-temp-home":
                     case "--linux-cache-home":
                     case "--linux-lib-home":
                     case "--linux-run-home":
-                    case "--unix-apps-home":
-                    case "--unix-config-home":
+                    case "--unix-bin-home":
+                    case "--unix-conf-home":
                     case "--unix-var-home":
                     case "--unix-log-home":
                     case "--unix-temp-home":

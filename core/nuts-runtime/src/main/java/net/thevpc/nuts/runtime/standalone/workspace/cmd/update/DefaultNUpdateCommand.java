@@ -727,6 +727,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
                 }
                 try {
                     newId = NSearchCommand.of(getSession()).setSession(session.copy().setFetchStrategy(NFetchStrategy.ANYWHERE))
+                            .setRepositoryFilter(getRepositoryFilter())
                             .addId(NConstants.Ids.NUTS_API + "#" + v).setLatest(true).getResultIds()
                             .findFirst().orNull();
                     newFile = newId == null ? null : latestOnlineDependencies(fetch0()).setFailFast(false).setSession(session).setId(newId).getResultDefinition();

@@ -138,7 +138,7 @@ public class Test03_CreateLayoutTest {
                 "--install-companions=false",
                 "info");
 
-        NSession w = TestUtils.runExistingTestWorkspace("--system-config-home", new File(base, "system.config.ignored").getPath(),
+        NSession w = TestUtils.runExistingTestWorkspace("--system-conf-home", new File(base, "system.conf.ignored").getPath(),
                 "info");
         TestUtils.println("==========================");
         NInfoCommand.of(w).println();
@@ -184,35 +184,35 @@ public class Test03_CreateLayoutTest {
                 "info");
         TestUtils.println(locations.getStoreLocation(NStoreType.BIN));
         Assertions.assertEquals(
-                NPath.of(new File(base, "bin"), w),
+                NPath.of(new File(base, "system.bin"), w),
                 locations.getStoreLocation(NStoreType.BIN)
         );
         Assertions.assertEquals(
-                NPath.of(new File(base, "conf"), w),
+                NPath.of(new File(base, "system.conf"), w),
                 locations.getStoreLocation(NStoreType.CONF)
         );
         Assertions.assertEquals(
-                NPath.of(new File(base, "var"), w),
+                NPath.of(new File(base, "system.var"), w),
                 locations.getStoreLocation(NStoreType.VAR)
         );
         Assertions.assertEquals(
-                NPath.of(new File(base, "log"), w),
+                NPath.of(new File(base, "system.log"), w),
                 locations.getStoreLocation(NStoreType.LOG)
         );
         Assertions.assertEquals(
-                NPath.of(new File(base, "temp"), w),
+                NPath.of(new File(base, "system.temp"), w),
                 locations.getStoreLocation(NStoreType.TEMP)
         );
         Assertions.assertEquals(
-                NPath.of(new File(base, "cache"), w),
+                NPath.of(new File(base, "system.cache"), w),
                 locations.getStoreLocation(NStoreType.CACHE)
         );
         Assertions.assertEquals(
-                NPath.of(new File(base, "lib"), w),
+                NPath.of(new File(base, "system.lib"), w),
                 locations.getStoreLocation(NStoreType.LIB)
         );
         Assertions.assertEquals(
-                NPath.of(new File(base, "run"), w),
+                NPath.of(new File(base, "system.run"), w),
                 locations.getStoreLocation(NStoreType.RUN)
         );
     }

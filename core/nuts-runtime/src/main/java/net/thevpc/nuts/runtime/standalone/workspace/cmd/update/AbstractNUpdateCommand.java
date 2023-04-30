@@ -40,6 +40,7 @@ public abstract class AbstractNUpdateCommand extends NWorkspaceCommandBase<NUpda
     protected final List<NId> ids = new ArrayList<>();
 
     protected NWorkspaceUpdateResult result;
+    protected NRepositoryFilter repositoryFilter;
 
     public AbstractNUpdateCommand(NSession session) {
         super(session, "update");
@@ -512,4 +513,12 @@ public abstract class AbstractNUpdateCommand extends NWorkspaceCommandBase<NUpda
         }
     }
 
+    public NRepositoryFilter getRepositoryFilter() {
+        return repositoryFilter;
+    }
+
+    public NUpdateCommand setRepositoryFilter(NRepositoryFilter repositoryFilter) {
+        this.repositoryFilter = repositoryFilter;
+        return this;
+    }
 }

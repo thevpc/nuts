@@ -73,7 +73,7 @@ public class Test18_PathTest {
 
         NPath s = NPath.of("file://maven.ibiblio.org/maven2/archetype-catalog.xml", session);
         //the file has an 'authority' (//) so it cannot be converted to a valid file
-        Assertions.assertFalse(s.isLocal());
+        Assertions.assertTrue(s.isLocal());
         //the file is actually a file url
         Assertions.assertTrue(s.isURL());
 

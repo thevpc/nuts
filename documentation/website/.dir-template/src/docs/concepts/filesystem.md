@@ -103,7 +103,7 @@ nuts -w my-workspace --standalone
 The following command will create an exploded workspace and moves all config files to the SSD partition folder /myssd/myconfig
 
 ```
-nuts -w my-workspace --system-config-home=/myssd/myconfig
+nuts -w my-workspace --system-conf-home=/myssd/myconfig
 ```
 
 You can type help for more details.

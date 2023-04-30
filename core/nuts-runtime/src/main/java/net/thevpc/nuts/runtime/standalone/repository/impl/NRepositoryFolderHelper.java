@@ -40,10 +40,7 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * @author thevpc
@@ -243,7 +240,10 @@ public class NRepositoryFolderHelper {
         if (!isReadEnabled()) {
             return null;
         }
-        String singleVersion = id.getVersion().asSingleValue().orNull();
+        String singleVersion =
+                id.getVersion().isLatestVersion() ? null :
+                        id.getVersion().isReleaseVersion() ? null :
+                                id.getVersion().asSingleValue().orNull();
         if (singleVersion != null) {
             return IteratorBuilder.ofSupplier(
                     () -> {
@@ -316,7 +316,7 @@ public class NRepositoryFolderHelper {
                     return NDescriptorParser.of(session).parse(pathname).get(session);
                 }
             }
-        }, maxDepth, kind, extraInfoElements
+        }, maxDepth, kind, extraInfoElements, true
         );
     }
 

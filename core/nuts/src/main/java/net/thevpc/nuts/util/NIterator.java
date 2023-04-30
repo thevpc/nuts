@@ -30,7 +30,9 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -53,5 +55,12 @@ public interface NIterator<T> extends Iterator<T>, NDescribable {
     @SuppressWarnings("unchecked")
     static <T> NIterator<T> ofEmpty(NSession session) {
         return (NIterator<T>) NStream.ofEmpty(session).iterator();
+    }
+    default List<T> toList() {
+        List<T> list=new ArrayList<>();
+        while(hasNext()){
+            list.add(next());
+        }
+        return list;
     }
 }

@@ -247,7 +247,7 @@ public class TestDocusaurusParser {
                 "### Finer Customization\n" +
                 "The following command will create an exploded workspace and moves all config files to the SSD partition folder /myssd/myconfig\n" +
                 "```\n" +
-                "nuts -w my-workspace --system-config-home=/myssd/myconfig\n" +
+                "nuts -w my-workspace --system-conf-home=/myssd/myconfig\n" +
                 "```\n" +
                 "You can type help for more details.\n" +
                 "```\n" +

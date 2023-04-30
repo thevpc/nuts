@@ -148,7 +148,7 @@ public class MavenNDependencySolver implements NDependencySolver {
                                         .addId(dependency.toId())
                                         .setSession(session).setEffective(true)
                                         .setContent(shouldIncludeContent)
-                                        .setLatest(true).getResultDefinitions().findFirst().get();
+                                        .setLatest(true).getResultDefinitions().findFirst().orNull();
                             } catch (NNotFoundException ex) {
                                 //
                             }
@@ -157,11 +157,7 @@ public class MavenNDependencySolver implements NDependencySolver {
                                         .builder()
                                         .setVersion(def2.getId().getVersion());
                             }
-                            NDependencyTreeNodeBuild info = new NDependencyTreeNodeBuild(currentNode, def2, dependency,
-                                    effDependency
-                                            .builder()
-                                            .setVersion(def2.getId().getVersion())
-                                    , currentNode.depth + 1, session);
+                            NDependencyTreeNodeBuild info = new NDependencyTreeNodeBuild(currentNode, def2, dependency,effDependency, currentNode.depth + 1, session);
                             info.exclusions.addAll(currentNode.exclusions);
                             for (NId exclusion : dependency.getExclusions()) {
                                 info.exclusions.add(exclusion.getShortId());

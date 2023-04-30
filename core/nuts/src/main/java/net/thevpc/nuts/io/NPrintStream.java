@@ -55,7 +55,7 @@ public interface NPrintStream extends NOutputTarget, NSessionProvider {
         return NIO.of(session).ofInMemoryPrintStream();
     }
 
-    static NMemoryPrintStream ofInMemory(NSession session,NTerminalMode mode) {
+    static NMemoryPrintStream ofInMemory(NTerminalMode mode, NSession session) {
         return NIO.of(session).ofInMemoryPrintStream(mode);
     }
 

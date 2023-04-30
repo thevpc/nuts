@@ -222,4 +222,20 @@ public interface NUpdateCommand extends NWorkspaceCommand {
      */
     @Override
     NUpdateCommand run();
+
+
+    /**
+     * return update repository filter
+     * @return update repository filter
+     * @since 0.8.4
+     */
+    NRepositoryFilter getRepositoryFilter();
+
+    /**
+     * set update repository filter
+     * @param repositoryFilter update repository filter
+     * @return {@code this} instance
+     * @since 0.8.4
+     */
+    NUpdateCommand setRepositoryFilter(NRepositoryFilter repositoryFilter);
 }

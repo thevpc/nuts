@@ -5,6 +5,7 @@ import net.thevpc.nuts.runtime.standalone.util.filters.InternalNTypedFilters;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalledRepository;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -46,7 +47,41 @@ public class InternalNRepositoryFilters extends InternalNTypedFilters<NRepositor
         if (names == null || names.length == 0) {
             return always();
         }
-        return new DefaultNRepositoryFilter(getSession(), Arrays.asList(names));
+        List<String> namesList = Arrays.asList(names).stream()
+                .filter(x -> !NBlankable.isBlank(x))
+                .map(x -> "=" + x.trim()).collect(Collectors.toList());
+        if (namesList.isEmpty()) {
+            return always();
+        }
+        return new DefaultNRepositoryFilter(getSession(), namesList);
+    }
+
+    @Override
+    public NRepositoryFilter byNameSelector(String... names) {
+        checkSession();
+        if (names == null || names.length == 0) {
+            return always();
+        }
+        List<String> namesList = Arrays.asList(names).stream()
+                .filter(x -> !NBlankable.isBlank(x))
+                .map(x -> {
+                    String v = x.trim();
+                    char s = v.charAt(0);
+                    switch (s) {
+                        case '+':
+                        case '-':
+                        case '=': {
+                            return v;
+                        }
+                        default: {
+                            return '+' + v;
+                        }
+                    }
+                }).collect(Collectors.toList());
+        if (namesList.isEmpty()) {
+            return always();
+        }
+        return new DefaultNRepositoryFilter(getSession(), namesList);
     }
 
     @Override
