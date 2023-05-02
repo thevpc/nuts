@@ -237,12 +237,6 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
             }
         } else {
             rawOutput.write(b, 0, b.length);
-            try {
-                DefaultNSystemTerminalBase.TERM.write(b, 0, b.length);
-                DefaultNSystemTerminalBase.TERM.flush();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
         }
     }
 
