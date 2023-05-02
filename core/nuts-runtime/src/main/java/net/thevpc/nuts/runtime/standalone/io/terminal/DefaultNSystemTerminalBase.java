@@ -17,14 +17,6 @@ import java.util.Scanner;
 
 @NComponentScope(NComponentScopeType.PROTOTYPE)
 public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
-    public static OutputStream TERM;
-    static {
-        try {
-            TERM=new FileOutputStream("/home/vpc/vpc-term.out",true);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
     public static final int THIRTY_SECONDS = 30000;
     NCachedValue<Cursor> termCursor;
     NCachedValue<Size> termSize;
@@ -193,20 +185,9 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
         }
         String s = NAnsiTermHelper.of(session).command(command, session);
         if (s != null) {
-            try {
-                byte[] bytes = s.getBytes();
-                printStream.writeRaw(bytes,0,bytes.length);
-                printStream.flush();
-                //NWorkspaceTerminalOptions bootStdFd = NBootManager.of(session).getBootTerminal();
-                //PrintStream out2 = bootStdFd.getOut();
-                //out2.write(bytes);
-                //out2.flush();
-
-                TERM.write(bytes);
-                TERM.flush();
-            } catch (IOException e) {
-                throw new NIOException(session, e);
-            }
+            byte[] bytes = s.getBytes();
+            printStream.writeRaw(bytes,0,bytes.length);
+            printStream.flush();
         }
         return null;
     }
@@ -214,19 +195,9 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     public void setStyles(NTextStyles styles, NPrintStream printStream, NSession session) {
         String s = NAnsiTermHelper.of(session).styled(styles, session);
         if (s != null) {
-            try {
-                byte[] bytes = s.getBytes();
-                printStream.writeRaw(bytes,0,bytes.length);
-                printStream.flush();
-//                NWorkspaceTerminalOptions bootStdFd = NBootManager.of(session).getBootTerminal();
-//                PrintStream out2 = bootStdFd.getOut();
-//                out2.write(s.getBytes());
-//                out2.flush();
-                TERM.write(s.getBytes());
-                TERM.flush();
-            } catch (IOException e) {
-                throw new NIOException(session, e);
-            }
+            byte[] bytes = s.getBytes();
+            printStream.writeRaw(bytes,0,bytes.length);
+            printStream.flush();
         }
     }
 
