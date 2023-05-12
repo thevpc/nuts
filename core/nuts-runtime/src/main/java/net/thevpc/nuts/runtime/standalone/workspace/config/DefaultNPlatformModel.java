@@ -104,15 +104,15 @@ public class DefaultNPlatformModel {
         return false;
     }
 
-    public NPlatformLocation findPlatformByName(NPlatformFamily type, String locationName, NSession session) {
+    public NOptional<NPlatformLocation> findPlatformByName(NPlatformFamily type, String locationName, NSession session) {
         return findOnePlatform(type, location -> location.getName().equals(locationName), session);
     }
 
-    public NPlatformLocation findPlatformByPath(NPlatformFamily type, String path, NSession session) {
+    public NOptional<NPlatformLocation> findPlatformByPath(NPlatformFamily type, String path, NSession session) {
         return findOnePlatform(type, location -> location.getPath() != null && location.getPath().equals(path.toString()), session);
     }
 
-    public NPlatformLocation findPlatformByVersion(NPlatformFamily type, String version, NSession session) {
+    public NOptional<NPlatformLocation> findPlatformByVersion(NPlatformFamily type, String version, NSession session) {
         return findOnePlatform(type, location -> location.getVersion().equals(version), session);
     }
 
@@ -123,9 +123,9 @@ public class DefaultNPlatformModel {
 //            fireConfigurationChanged();
 //        }
 //    }
-    public NPlatformLocation findPlatform(NPlatformLocation location, NSession session) {
+    public NOptional<NPlatformLocation> findPlatform(NPlatformLocation location, NSession session) {
         if (location == null) {
-            return null;
+            return NOptional.ofNamedEmpty(NMsg.ofC("platform %s", location));
         }
         String type = location.getId().getArtifactId();
         NPlatformFamily ftype = NPlatformFamily.parse(type).orElse(NPlatformFamily.JAVA);
@@ -133,16 +133,40 @@ public class DefaultNPlatformModel {
         if (list != null) {
             for (NPlatformLocation location2 : list) {
                 if (location2.equals(location)) {
-                    return location2;
+                    return NOptional.of(location2);
                 }
             }
         }
-        return null;
+        return NOptional.ofNamedEmpty(NMsg.ofC("platform %s", location));
     }
 
-    public NPlatformLocation findPlatformByVersion(NPlatformFamily type, NVersionFilter javaVersionFilter, final NSession session) {
+    public NOptional<NPlatformLocation> findPlatformByVersion(NPlatformFamily type, NVersionFilter versionFilter, final NSession session) {
         return findOnePlatform(type,
-                location -> javaVersionFilter == null || javaVersionFilter.acceptVersion(NVersion.of(location.getVersion()).get(session), session),
+                location -> {
+                    if (versionFilter == null) {
+                        return true;
+                    }
+                    String sVersion = location.getVersion();
+                    NVersion version = NVersion.of(sVersion).get(session);
+                    if (versionFilter.acceptVersion(version, session)) {
+                        return true;
+                    }
+                    // replace 1.6 by 6, and 1.8 by 8
+                    if (type == NPlatformFamily.JAVA || location.getPlatformType() == NPlatformFamily.JAVA) {
+                        int a = sVersion.indexOf('.');
+                        if (a > 0) {
+                            NLiteral p = NLiteral.of(sVersion.substring(0, a));
+                            if (p.isInt() && p.asInt().get() == 1) {
+                                String sVersion2 = sVersion.substring(a + 1);
+                                NVersion version2 = NVersion.of(sVersion2).get(session);
+                                if (versionFilter.acceptVersion(version2, session)) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                    return false;
+                },
                 session);
     }
 
@@ -166,12 +190,16 @@ public class DefaultNPlatformModel {
         return NStream.ofEmpty(session);
     }
 
-    public NPlatformLocation resolvePlatform(NPlatformFamily platformType, String path, String preferredName, NSession session) {
+    public NOptional<NPlatformLocation> resolvePlatform(NPlatformFamily platformType, String path, String preferredName, NSession session) {
         NSessionUtils.checkSession(workspace, session);
         if (platformType == NPlatformFamily.JAVA) {
-            return NJavaSdkUtils.of(session.getWorkspace()).resolveJdkLocation(path, null, session);
+            NPlatformLocation z = NJavaSdkUtils.of(session.getWorkspace()).resolveJdkLocation(path, preferredName, session);
+            if (z == null) {
+                return NOptional.ofNamedEmpty(NMsg.ofC("%s platform at %s", platformType.id(), path));
+            }
+            return NOptional.of(z);
         }
-        return null;
+        return NOptional.ofNamedEmpty(NMsg.ofC("%s platform at %s", platformType.id(), path));
     }
 
     //
@@ -182,13 +210,17 @@ public class DefaultNPlatformModel {
         }
     }
 
-    public NPlatformLocation findOnePlatform(NPlatformFamily type, Predicate<NPlatformLocation> filter, NSession session) {
+    public NOptional<NPlatformLocation> findOnePlatform(NPlatformFamily type, Predicate<NPlatformLocation> filter, NSession session) {
         NPlatformLocation[] a = findPlatforms(type, filter, session).toArray(NPlatformLocation[]::new);
         if (a.length == 0) {
-            return null;
+            return NOptional.ofNamedEmpty(type.id() + " platform");
         }
         if (a.length == 1) {
-            return a[0];
+            NPlatformLocation r = a[0];
+            if (r == null) {
+                return NOptional.ofNamedEmpty(type.id() + " platform");
+            }
+            return NOptional.of(r);
         }
         //find the best minimum version that is applicable!
         NPlatformLocation best = a[0];
@@ -215,7 +247,10 @@ public class DefaultNPlatformModel {
                 }
             }
         }
-        return best;
+        if (best == null) {
+            return NOptional.ofNamedEmpty(type.id() + " platform");
+        }
+        return NOptional.of(best);
     }
 
     public NStream<NPlatformLocation> findPlatforms(NPlatformFamily type, Predicate<NPlatformLocation> filter, NSession session) {

@@ -60,108 +60,109 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
             NPrintStream out = session.out();
             NElements elem = NElements.of(session);
             try {
-                NExecutableInformation p = getExecCommand().copy().setSession(session).clearCommand().configure(false, arg).which();
-                //                boolean showDesc = false;
-                switch (p.getType()) {
-                    case SYSTEM: {
-                        if (session.isPlainOut()) {
-                            out.println(NMsg.ofC("%s : %s %s",
-                                    factory.ofStyled(arg, NTextStyle.primary4()),
-                                    factory.ofStyled("system command", NTextStyle.primary6())
-                                    , p.getDescription()));
+                try (NExecutableInformation p = getExecCommand().copy().setSession(session).clearCommand().configure(false, arg).which()){
+                    switch (p.getType()) {
+                        case SYSTEM: {
+                            if (session.isPlainOut()) {
+                                out.println(NMsg.ofC("%s : %s %s",
+                                        factory.ofStyled(arg, NTextStyle.primary4()),
+                                        factory.ofStyled("system command", NTextStyle.primary6())
+                                        , p.getDescription()));
 
-                        } else {
-                            session.out().println(
-                                    elem.ofObject()
-                                            .set("name", arg)
-                                            .set("type", "system-command")
-                                            .set("description", p.getDescription())
-                                            .build()
-                            );
-                        }
-                        break;
-                    }
-                    case ALIAS: {
-                        if (session.isPlainOut()) {
-                            out.println(NMsg.ofC("%s : %s (owner %s ) : %s",
-                                    factory.ofStyled(arg, NTextStyle.primary4()),
-                                    factory.ofStyled("nuts alias", NTextStyle.primary6()),
-                                    p.getId(),
-                                    NCmdLine.of(NCommands.of(session).findCommand(p.getName()).getCommand())
-                            ));
-                        } else {
-                            session.out().println(
-                                    elem.ofObject()
-                                            .set("name", arg)
-                                            .set("type", "alias")
-                                            .set("description", p.getDescription())
-                                            .set("id", p.getId().toString())
-                                            .build()
-                            );
-                        }
-                        break;
-                    }
-                    case ARTIFACT: {
-                        if (p.getId() == null) {
-                            NId nid = NId.of(arg).get(session);
-                            if (nid != null) {
-                                throw new NNotFoundException(session, nid);
                             } else {
-                                throw new NNotFoundException(session, null, NMsg.ofC("artifact not found: %s%s", (arg == null ? "<null>" : arg)));
+                                session.out().println(
+                                        elem.ofObject()
+                                                .set("name", arg)
+                                                .set("type", "system-command")
+                                                .set("description", p.getDescription())
+                                                .build()
+                                );
                             }
+                            break;
                         }
-                        if (session.isPlainOut()) {
-                            out.println(NMsg.ofC("%s : %s %s",
-                                    factory.ofStyled(arg, NTextStyle.primary4()),
-                                    factory.ofStyled("artifact", NTextStyle.primary6()),
-                                    p.getId()/*, p.getDescription()*/
-                            ));
-                        } else {
-                            session.out().println(
-                                    elem.ofObject()
-                                            .set("name", arg)
-                                            .set("type", "artifact")
-                                            .set("id", p.getId().toString())
-                                            .set("description", p.getDescription())
-                                            .build()
-                            );
+                        case ALIAS: {
+                            if (session.isPlainOut()) {
+                                out.println(NMsg.ofC("%s : %s (owner %s ) : %s",
+                                        factory.ofStyled(arg, NTextStyle.primary4()),
+                                        factory.ofStyled("nuts alias", NTextStyle.primary6()),
+                                        p.getId(),
+                                        NCmdLine.of(NCommands.of(session).findCommand(p.getName()).getCommand())
+                                ));
+                            } else {
+                                session.out().println(
+                                        elem.ofObject()
+                                                .set("name", arg)
+                                                .set("type", "alias")
+                                                .set("description", p.getDescription())
+                                                .set("id", p.getId().toString())
+                                                .build()
+                                );
+                            }
+                            break;
                         }
-                        break;
-                    }
-                    case INTERNAL: {
-                        if (session.isPlainOut()) {
-                            out.println(NMsg.ofC("%s : %s",
-                                    factory.ofStyled("internal command", NTextStyle.primary6()),
-                                    factory.ofStyled(arg, NTextStyle.primary4())
-                            ));
-                        } else {
-                            session.out().println(
-                                    elem.ofObject()
-                                            .set("name", arg)
-                                            .set("type", "internal-command")
-                                            .set("description", p.getDescription())
-                                            .build()
-                            );
+                        case ARTIFACT: {
+                            if (p.getId() == null) {
+                                NId nid = NId.of(arg).get(session);
+                                if (nid != null) {
+                                    throw new NNotFoundException(session, nid);
+                                } else {
+                                    throw new NNotFoundException(session, null, NMsg.ofC("artifact not found: %s%s", (arg == null ? "<null>" : arg)));
+                                }
+                            }
+                            if (session.isPlainOut()) {
+                                out.println(NMsg.ofC("%s : %s %s",
+                                        factory.ofStyled(arg, NTextStyle.primary4()),
+                                        factory.ofStyled("artifact", NTextStyle.primary6()),
+                                        p.getId()/*, p.getDescription()*/
+                                ));
+                            } else {
+                                session.out().println(
+                                        elem.ofObject()
+                                                .set("name", arg)
+                                                .set("type", "artifact")
+                                                .set("id", p.getId().toString())
+                                                .set("description", p.getDescription())
+                                                .build()
+                                );
+                            }
+                            break;
                         }
-                        break;
-                    }
-                    case UNKNOWN: {
-                        if (session.isPlainOut()) {
-                            out.println(NMsg.ofC("%s : %s",
-                                    factory.ofStyled("unknown command", NTextStyle.primary6()),
-                                    factory.ofStyled(arg, NTextStyle.primary4())
-                            ));
-                        } else {
-                            session.out().println(
-                                    elem.ofObject()
-                                            .set("name", arg)
-                                            .set("type", "unknown-command")
-                                            .build()
-                            );
+                        case INTERNAL: {
+                            if (session.isPlainOut()) {
+                                out.println(NMsg.ofC("%s : %s",
+                                        factory.ofStyled("internal command", NTextStyle.primary6()),
+                                        factory.ofStyled(arg, NTextStyle.primary4())
+                                ));
+                            } else {
+                                session.out().println(
+                                        elem.ofObject()
+                                                .set("name", arg)
+                                                .set("type", "internal-command")
+                                                .set("description", p.getDescription())
+                                                .build()
+                                );
+                            }
+                            break;
                         }
-                        break;
+                        case UNKNOWN: {
+                            if (session.isPlainOut()) {
+                                out.println(NMsg.ofC("%s : %s",
+                                        factory.ofStyled("unknown command", NTextStyle.primary6()),
+                                        factory.ofStyled(arg, NTextStyle.primary4())
+                                ));
+                            } else {
+                                session.out().println(
+                                        elem.ofObject()
+                                                .set("name", arg)
+                                                .set("type", "unknown-command")
+                                                .build()
+                                );
+                            }
+                            break;
+                        }
                     }
                 }
+                //                boolean showDesc = false;
 //                if (showDesc) {
 //                    out.printf("\t %s%n", arg/*, p.getDescription()*/);
 //                }

@@ -54,7 +54,7 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
             } else {
                 while (cmdLine.hasNext()) {
                     NPlatformLocation loc = platforms.resolvePlatform(NPlatformFamily.JAVA, cmdLine.next()
-                            .flatMap(NLiteral::asString).get(session), null);
+                            .flatMap(NLiteral::asString).get(session), null).orNull();
                     if (loc != null) {
                         platforms.addPlatform(loc);
                     }
@@ -68,11 +68,11 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
             while (cmdLine.hasNext()) {
                 String name = cmdLine.next()
                         .flatMap(NLiteral::asString).get(session);
-                NPlatformLocation loc = platforms.findPlatformByName(NPlatformFamily.JAVA, name);
+                NPlatformLocation loc = platforms.findPlatformByName(NPlatformFamily.JAVA, name).orNull();
                 if (loc == null) {
-                    loc = platforms.findPlatformByPath(NPlatformFamily.JAVA, name);
+                    loc = platforms.findPlatformByPath(NPlatformFamily.JAVA, name).orNull();
                     if (loc == null) {
-                        loc = platforms.findPlatformByVersion(NPlatformFamily.JAVA, name);
+                        loc = platforms.findPlatformByVersion(NPlatformFamily.JAVA, name).orNull();
                     }
                 }
                 if (loc != null) {

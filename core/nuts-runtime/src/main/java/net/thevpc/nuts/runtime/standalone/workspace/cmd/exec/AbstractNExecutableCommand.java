@@ -69,4 +69,8 @@ public abstract class AbstractNExecutableCommand implements NExecutableInformati
         );
     }
 
+    @Override
+    public void close() {
+
+    }
 }

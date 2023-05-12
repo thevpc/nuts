@@ -45,15 +45,15 @@ public interface NPlatforms extends NComponent, NSessionProvider {
 
     boolean removePlatform(NPlatformLocation location);
 
-    NPlatformLocation findPlatformByName(NPlatformFamily platformType, String locationName);
+    NOptional<NPlatformLocation> findPlatformByName(NPlatformFamily platformType, String locationName);
 
-    NPlatformLocation findPlatformByPath(NPlatformFamily platformType, String path);
+    NOptional<NPlatformLocation> findPlatformByPath(NPlatformFamily platformType, String path);
 
-    NPlatformLocation findPlatformByVersion(NPlatformFamily platformType, String version);
+    NOptional<NPlatformLocation> findPlatformByVersion(NPlatformFamily platformType, String version);
 
-    NPlatformLocation findPlatform(NPlatformLocation location);
+    NOptional<NPlatformLocation> findPlatform(NPlatformLocation location);
 
-    NPlatformLocation findPlatformByVersion(NPlatformFamily platformType, NVersionFilter requestedVersion);
+    NOptional<NPlatformLocation> findPlatformByVersion(NPlatformFamily platformType, NVersionFilter requestedVersion);
 
 
     NStream<NPlatformLocation> searchSystemPlatforms(NPlatformFamily platformType);
@@ -68,9 +68,9 @@ public interface NPlatforms extends NComponent, NSessionProvider {
      * @param preferredName preferredName
      * @return null if not a valid jdk path
      */
-    NPlatformLocation resolvePlatform(NPlatformFamily platformType, String path, String preferredName);
+    NOptional<NPlatformLocation> resolvePlatform(NPlatformFamily platformType, String path, String preferredName);
 
-    NPlatformLocation findPlatform(NPlatformFamily type, Predicate<NPlatformLocation> filter);
+    NOptional<NPlatformLocation> findPlatform(NPlatformFamily type, Predicate<NPlatformLocation> filter);
 
     NStream<NPlatformLocation> findPlatforms(NPlatformFamily type, Predicate<NPlatformLocation> filter);
 

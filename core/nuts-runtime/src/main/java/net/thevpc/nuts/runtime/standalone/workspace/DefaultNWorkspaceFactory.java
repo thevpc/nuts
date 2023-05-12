@@ -86,7 +86,8 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         int bestSupportLevel = Integer.MIN_VALUE;
         T bestObj = null;
         NSupportLevelContext context = new NDefaultSupportLevelContext(session, supportCriteria);
-        for (T t : createAll(type, session)) {
+        List<T> all = createAll(type, session);
+        for (T t : all) {
             int supportLevel = t.getSupportLevel(context);
             if (supportLevel > 0) {
                 if (bestObj == null || supportLevel > bestSupportLevel) {

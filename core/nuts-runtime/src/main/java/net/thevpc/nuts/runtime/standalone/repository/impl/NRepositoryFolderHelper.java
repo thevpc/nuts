@@ -26,6 +26,7 @@ import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.CharacterizedExecFile;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNArtifactPathExecutable;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCommand;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.spi.NDeployRepositoryCommand;
 import net.thevpc.nuts.spi.NRepositorySPI;
@@ -370,7 +371,7 @@ public class NRepositoryFolderHelper {
             inputSource = NIO.of(session).ofMultiRead(deployment.getContent());
             inputSource.getMetaData().setKind("package content");
             if (descriptor == null) {
-                try (final CharacterizedExecFile c = DefaultNArtifactPathExecutable.characterizeForExec(inputSource, session, null)) {
+                try (final CharacterizedExecFile c = DefaultNExecCommand.characterizeForExec(inputSource, session, null)) {
 //                    NutsUtils.requireNonNull(c.getDescriptor(),session,s->NMsg.ofC("invalid deployment; missing descriptor for %s", deployment.getContent()));
                     if (c.getDescriptor() == null) {
                         throw new NNotFoundException(session, null,

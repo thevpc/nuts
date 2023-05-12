@@ -1,7 +1,7 @@
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NOsFamily;
-import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.util.NPlatformHome;
 import org.junit.jupiter.api.Test;
 
@@ -13,6 +13,13 @@ public class Test41_NPlatformHome {
         go(NOsFamily.LINUX, true);
         go(NOsFamily.WINDOWS, false);
         go(NOsFamily.WINDOWS, true);
+    }
+
+    @Test
+    public void test02() {
+        NSession session = TestUtils.openNewMinTestWorkspace();
+        NPlatformLocation z = NPlatforms.of(session).findPlatformByVersion(NPlatformFamily.JAVA, "[1.8,6]").orNull();
+        System.out.println(z);
     }
 
 

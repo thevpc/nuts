@@ -69,6 +69,14 @@ public class PostgresShowTableSizeCmd extends NdbCmd<NPostgresConfig> {
         NPostgresConfig options = loadFromName(name, otherOptions);
         support.revalidateOptions(options);
         SqlSupport<NPostgresConfig> support1 = (SqlSupport<NPostgresConfig>) getSupport();
+        // SELECT pg_size_pretty(pg_database_size('mydb'));
+        String sizeQuery="select\n" +
+                "  table_name,\n" +
+                "  pg_size_pretty(pg_relation_size(quote_ident(table_name))),\n" +
+                "  pg_relation_size(quote_ident(table_name))\n" +
+                "from information_schema.tables\n" +
+                "where table_schema = 'public'\n" +
+                "order by 3 desc;";
         SqlDB sqlDB = SqlHelper.computeSchema(eq, support1, options, session);
 
         LinkedHashMap<String, Result> all = new LinkedHashMap<>();

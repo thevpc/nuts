@@ -37,7 +37,7 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
 
     @Override
     public int execute() {
-        if(getSession().isDry()){
+        if (getSession().isDry()) {
             dryExecute();
             return NExecutionException.SUCCESS;
         }
@@ -93,26 +93,36 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
         for (String arg : helpFor) {
             NExecutableInformation w = null;
             if (arg.equals("help")) {
-                out.println(NMsg.ofC("%s :",arg));
+                out.println(NMsg.ofC("%s :", arg));
                 showDefaultHelp();
                 out.flush();
             } else {
                 try {
-                    w = NExecCommand.of(session).addCommand(arg).which();
-                } catch (Exception ex) {
-                    LOG.with().session(session).level(Level.FINE).error(ex).log(NMsg.ofC("failed to execute : %s", arg));
-                    //ignore
-                }
-                if (w != null) {
-                    out.println(NMsg.ofC("%s :",arg));
-                    out.println(w.getHelpText());
-                    out.flush();
-                } else {
-                    session.getTerminal().err().println(NMsg.ofC("%s : not found",arg));
+                    try {
+                        w = NExecCommand.of(session).addCommand(arg).which();
+                    } catch (Exception ex) {
+                        LOG.with().session(session).level(Level.FINE).error(ex).log(NMsg.ofC("failed to execute : %s", arg));
+                        //ignore
+                    }
+                    if (w != null) {
+                        out.println(NMsg.ofC("%s :", arg));
+                        out.println(w.getHelpText());
+                        out.flush();
+                    } else {
+                        session.getTerminal().err().println(NMsg.ofC("%s : not found", arg));
+                    }
+                } finally {
+                    if (w != null) {
+                        w.close();
+                    }
                 }
             }
         }
         return NExecutionException.SUCCESS;
     }
 
+    @Override
+    public void close() {
+
+    }
 }

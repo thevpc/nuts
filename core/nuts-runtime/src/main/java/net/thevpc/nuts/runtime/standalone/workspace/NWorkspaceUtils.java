@@ -277,7 +277,7 @@ public class NWorkspaceUtils {
             if (session.isPlainTrace()) {
                 session.out().resetLine().println("configuring current JVM...");
             }
-            NPlatformLocation found0 = platforms.resolvePlatform(NPlatformFamily.JAVA, System.getProperty("java.home"), null);
+            NPlatformLocation found0 = platforms.resolvePlatform(NPlatformFamily.JAVA, System.getProperty("java.home"), null).orNull();
             NPlatformLocation[] found = found0 == null ? new NPlatformLocation[0] : new NPlatformLocation[]{found0};
             int someAdded = 0;
             for (NPlatformLocation java : found) {

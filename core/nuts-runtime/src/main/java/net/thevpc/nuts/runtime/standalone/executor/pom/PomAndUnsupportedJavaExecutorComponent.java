@@ -56,6 +56,9 @@ public class PomAndUnsupportedJavaExecutorComponent implements NExecutorComponen
         if(ID==null){
             ID = NId.of("net.thevpc.nuts.exec:java-unsupported").get(session);
         }
+        if(true){
+            return NO_SUPPORT;
+        }
         NDefinition def = context.getConstraints(NDefinition.class);
         if (def != null) {
             switch (NStringUtils.trim(def.getDescriptor().getPackaging())){

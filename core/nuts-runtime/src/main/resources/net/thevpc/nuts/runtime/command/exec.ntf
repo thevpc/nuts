@@ -17,13 +17,33 @@ execute a command
         when invoking a nuts artifact, it will always be executed in a newly created
         process (this is the default)
 
-    ```sh --user-cmd```
+    ```sh --system```
         the command is considered as a native command (not a nuts) and will be passed
         to the os as is.
 
     ```sh --root-cmd```
         the command is considered as a native command (not a nuts) and will be passed
         to the os as is with root privileges (a password will be asked for).
+
+    ```sh --target=<connexion-string>```
+        the command is run on a remote machine using the given connexion string.
+        The current version supports ssh connexion strings in the following form
+        'ssh://username:password@address:port'.
+        When the username is not provided, the current user is considered.
+        When the password is not provided, the default ssh key is used.
+        When the port is not provided, 22 port number is considered.
+
+    ```sh --current-user```
+        when using a system command, the command is run with the current user privileges (default).
+
+    ```sh --as-root```
+        when using a system command, the command is run with the system root privileges. credentials may be asked for.
+
+    ```sh --as-user=<username>```
+        when using a system command, the command is run with the given system username privileges. credentials may be asked for.
+
+    ```sh --open-file```
+        the path to execute will not be executed. Instead it will be opened with assigned editor. System bindings are most likely to be considered.
 
 ```!include classpath:/net/thevpc/nuts/runtime/includes/standard-command.ntf```
 

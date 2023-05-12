@@ -528,7 +528,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
                 }
                 return true;
             }
-            case "--user-cmd":
+            case "--user-cmd"://Deprecated as of 0.8.1
             case "--system": {
                 cmdLine.skip();
                 if (enabled) {

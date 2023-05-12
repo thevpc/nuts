@@ -63,31 +63,31 @@ public class DefaultNPlatforms implements NPlatforms {
     }
 
     @Override
-    public NPlatformLocation findPlatformByName(NPlatformFamily platformType, String locationName) {
+    public NOptional<NPlatformLocation> findPlatformByName(NPlatformFamily platformType, String locationName) {
         checkSession();
         return model.findPlatformByName(platformType, locationName, session);
     }
 
     @Override
-    public NPlatformLocation findPlatformByPath(NPlatformFamily platformType, String path) {
+    public NOptional<NPlatformLocation> findPlatformByPath(NPlatformFamily platformType, String path) {
         checkSession();
         return model.findPlatformByPath(platformType, path, session);
     }
 
     @Override
-    public NPlatformLocation findPlatformByVersion(NPlatformFamily platformType, String version) {
+    public NOptional<NPlatformLocation> findPlatformByVersion(NPlatformFamily platformType, String version) {
         checkSession();
         return model.findPlatformByVersion(platformType, version, session);
     }
 
     @Override
-    public NPlatformLocation findPlatform(NPlatformLocation location) {
+    public NOptional<NPlatformLocation> findPlatform(NPlatformLocation location) {
         checkSession();
         return model.findPlatform(location, session);
     }
 
     @Override
-    public NPlatformLocation findPlatformByVersion(NPlatformFamily platformType, NVersionFilter requestedVersion) {
+    public NOptional<NPlatformLocation> findPlatformByVersion(NPlatformFamily platformType, NVersionFilter requestedVersion) {
         checkSession();
         return model.findPlatformByVersion(platformType, requestedVersion, session);
     }
@@ -105,13 +105,13 @@ public class DefaultNPlatforms implements NPlatforms {
     }
 
     @Override
-    public NPlatformLocation resolvePlatform(NPlatformFamily platformType, String path, String preferredName) {
+    public NOptional<NPlatformLocation> resolvePlatform(NPlatformFamily platformType, String path, String preferredName) {
         checkSession();
         return model.resolvePlatform(platformType, path, preferredName, session);
     }
 
     @Override
-    public NPlatformLocation findPlatform(NPlatformFamily type, Predicate<NPlatformLocation> filter) {
+    public NOptional<NPlatformLocation> findPlatform(NPlatformFamily type, Predicate<NPlatformLocation> filter) {
         checkSession();
         return model.findOnePlatform(type, filter, session);
     }

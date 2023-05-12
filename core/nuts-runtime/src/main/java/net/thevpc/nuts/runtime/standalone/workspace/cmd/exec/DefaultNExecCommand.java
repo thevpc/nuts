@@ -1,12 +1,22 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineUtils;
+import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinition;
+import net.thevpc.nuts.runtime.standalone.definition.DefaultNInstallInfo;
+import net.thevpc.nuts.runtime.standalone.descriptor.parser.NDescriptorContentResolver;
 import net.thevpc.nuts.runtime.standalone.executor.NExecutionContextUtils;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.URLBuilder;
+import net.thevpc.nuts.runtime.standalone.io.util.ZipOptions;
+import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
+import net.thevpc.nuts.runtime.standalone.security.util.CoreDigestHelper;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
+import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NExecutableInformationExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NExecutionContextBuilder;
@@ -33,6 +43,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.version.DefaultNVersionI
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.welcome.DefaultNWelcomeInternalExecutable;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.which.DefaultNWhichInternalExecutable;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
+import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.spi.NExecutorComponent;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -41,6 +52,9 @@ import net.thevpc.nuts.util.NConnexionString;
 import net.thevpc.nuts.util.NStream;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -71,8 +85,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                         .loadExtension(NId.of("net.thevpc.nuts.ext:next-ssh").get());
             }
             NExecCommandExtension ee = NExtensions.of(session).createComponent(NExecCommandExtension.class, connexionString)
-                    .orElseThrow(()->new NIllegalArgumentException(session, NMsg.ofC("invalid execution target string : %s",target)))
-                    ;
+                    .orElseThrow(() -> new NIllegalArgumentException(session, NMsg.ofC("invalid execution target string : %s", target)));
             return whichOnTarget(ee, connexionString);
         }
 
@@ -199,45 +212,46 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
     @Override
     public NExecCommand run() {
         checkSession();
-        NExecutableInformationExt exec = (NExecutableInformationExt) which();
-        executed = true;
-        int exitCode = NExecutionException.SUCCESS;
-        try {
-            exitCode = exec.execute();
-        } catch (NExecutionException ex) {
-            String p = getExtraErrorMessage();
-            if (p != null) {
-                resultException = new NExecutionException(getSession(),
-                        NMsg.ofC("execution failed with code %s and message : %s", ex.getExitCode(), p),
-                        ex, ex.getExitCode());
-            } else {
-                resultException = ex;
-            }
-        } catch (Exception ex) {
-            String p = getExtraErrorMessage();
-            int exceptionExitCode = NExceptionWithExitCodeBase.resolveExitCode(ex).orElse(NExecutionException.ERROR_255);
-            if (exceptionExitCode != NExecutionException.SUCCESS) {
-                if (!NBlankable.isBlank(p)) {
+        try (NExecutableInformationExt exec = (NExecutableInformationExt) which()) {
+            executed = true;
+            int exitCode = NExecutionException.SUCCESS;
+            try {
+                exitCode = exec.execute();
+            } catch (NExecutionException ex) {
+                String p = getExtraErrorMessage();
+                if (p != null) {
                     resultException = new NExecutionException(getSession(),
-                            NMsg.ofC("execution of (%s) failed with code %s ; error was : %s ; notes : %s", exec, exceptionExitCode, ex, p),
-                            ex, exceptionExitCode);
+                            NMsg.ofC("execution failed with code %s and message : %s", ex.getExitCode(), p),
+                            ex, ex.getExitCode());
                 } else {
-                    resultException = new NExecutionException(getSession(),
-                            NMsg.ofC("execution of (%s) failed with code %s ; error was : %s", exec, exceptionExitCode, ex),
-                            ex, exceptionExitCode);
+                    resultException = ex;
+                }
+            } catch (Exception ex) {
+                String p = getExtraErrorMessage();
+                int exceptionExitCode = NExceptionWithExitCodeBase.resolveExitCode(ex).orElse(NExecutionException.ERROR_255);
+                if (exceptionExitCode != NExecutionException.SUCCESS) {
+                    if (!NBlankable.isBlank(p)) {
+                        resultException = new NExecutionException(getSession(),
+                                NMsg.ofC("execution of (%s) failed with code %s ; error was : %s ; notes : %s", exec, exceptionExitCode, ex, p),
+                                ex, exceptionExitCode);
+                    } else {
+                        resultException = new NExecutionException(getSession(),
+                                NMsg.ofC("execution of (%s) failed with code %s ; error was : %s", exec, exceptionExitCode, ex),
+                                ex, exceptionExitCode);
+                    }
                 }
             }
-        }
-        if (resultException == null) {
-            if (exitCode != NExecutionException.SUCCESS) {
-                resultException = new NExecutionException(getSession(),
-                        NMsg.ofC("execution of (%s) failed with code %s", exec, exitCode),
-                        exitCode);
+            if (resultException == null) {
+                if (exitCode != NExecutionException.SUCCESS) {
+                    resultException = new NExecutionException(getSession(),
+                            NMsg.ofC("execution of (%s) failed with code %s", exec, exitCode),
+                            exitCode);
+                }
             }
-        }
-        if (resultException != null && resultException.getExitCode() != NExecutionException.SUCCESS && failFast) {
-            throw resultException;
+            if (resultException != null && resultException.getExitCode() != NExecutionException.SUCCESS && failFast) {
+                throw resultException;
 //            checkFailFast(result.getExitCode());
+            }
         }
         return this;
     }
@@ -269,7 +283,9 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
             goodId = NId.of(cmdName).orNull();
         }
 
-        if (cmdName.contains("/") || cmdName.contains("\\")) {
+        if (cmdName.equalsIgnoreCase(".") || cmdName.equals("..")) {
+            cmdKind = CmdKind.PATH;
+        } else if (cmdName.contains("/") || cmdName.contains("\\")) {
             if (goodId != null) {
                 cmdKind = CmdKind.ID;
             } else {
@@ -293,7 +309,68 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
         }
         switch (cmdKind) {
             case PATH: {
-                return new DefaultNArtifactPathExecutable(cmdName, args, executorOptions, workspaceOptions, executionType, runAs, this);
+                CharacterizedExecFile c = null;
+                NPath path = null;
+                try {
+                    path = NPath.of(cmdName, session);
+                    c = characterizeForExec(path, session, executorOptions);
+                } catch (Exception ex) {
+                    //
+                }
+                if (c != null) {
+                    if (c.getDescriptor() != null) {
+                        NId _id = c.getDescriptor().getId();
+                        DefaultNDefinition nutToRun = new DefaultNDefinition(
+                                null,
+                                null,
+                                _id.getLongId(),
+                                c.getDescriptor(),
+                                NPath.of(c.getContentFile(), session).setUserCache(false).setUserTemporary(c.getTemps().size() > 0)
+                                ,
+                                DefaultNInstallInfo.notInstalled(_id),
+                                null, session
+                        );
+                        NDependencySolver resolver = NDependencySolver.of(session);
+                        NDependencyFilters ff = NDependencyFilters.of(session);
+
+                        resolver
+                                .setFilter(ff.byScope(NDependencyScopePattern.RUN)
+//                            .and(ff.byOptional(getOptional())
+//                            ).and(getDependencyFilter())
+                                );
+                        for (NDependency dependency : c.getDescriptor().getDependencies()) {
+                            resolver.add(dependency);
+                        }
+                        nutToRun.setDependencies(resolver.solve());
+                        try {
+                            NExecutorComponentAndContext ec = this.ws_execId2(nutToRun, cmdName, args, executorOptions, workspaceOptions, this.getEnv(),
+                                    this.getDirectory(), this.isFailFast(), true, session,
+                                    this.getIn(),
+                                    this.getOut(),
+                                    this.getErr(),
+                                    executionType, runAs);
+                            return new DefaultNArtifactPathExecutable(cmdName, args, executorOptions, workspaceOptions, executionType, runAs, this, nutToRun, c, null, ec);
+                        }catch (Exception ex){
+                            //fallback to other cases
+                            c.close();
+                        }
+                    } else {
+                        c.close();
+                    }
+                }
+                if (path != null) {
+                    if (path.isLocal() && path.isRegularFile()) {
+                        List<String> cmdArr = new ArrayList<>();
+                        cmdArr.add(cmdName);
+                        cmdArr.addAll(Arrays.asList(args));
+                        return new DefaultNSystemExecutable(cmdArr.toArray(new String[0]), executorOptions, this);
+                    }
+                    List<String> cmdArr = new ArrayList<>();
+                    cmdArr.add(cmdName);
+                    cmdArr.addAll(Arrays.asList(args));
+                    return new DefaultUnknownExecutable(cmdArr.toArray(new String[0]), this);
+                }
+                throw new NNotFoundException(getSession(), goodId, NMsg.ofC("unable to resolve id %s", path));
             }
             case ID: {
                 NId idToExec = findExecId(goodId, prepareSession, forceInstalled, true);
@@ -500,6 +577,46 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                          NExecutionType executionType,
                          NRunAs runAs
     ) {
+        NExecutorComponentAndContext e = ws_execId2(def, commandName, appArgs,
+                executorOptions,
+                workspaceOptions, env, dir, failFast, temporary,
+                session,
+                in,
+                out,
+                err,
+                executionType,
+                runAs);
+        return e.component.exec(e.executionContext);
+    }
+
+    public static class NExecutorComponentAndContext {
+        NExecutorComponent component;
+        NExecutionContext executionContext;
+
+        public NExecutorComponentAndContext(NExecutorComponent component, NExecutionContext executionContext) {
+            this.component = component;
+            this.executionContext = executionContext;
+        }
+
+        public NExecutorComponent getComponent() {
+            return component;
+        }
+
+        public NExecutionContext getExecutionContext() {
+            return executionContext;
+        }
+    }
+
+    public NExecutorComponentAndContext ws_execId2(NDefinition def, String commandName, String[] appArgs,
+                                                   List<String> executorOptions,
+                                                   List<String> workspaceOptions, Map<String, String> env, NPath dir, boolean failFast, boolean temporary,
+                                                   NSession session,
+                                                   NExecInput in,
+                                                   NExecOutput out,
+                                                   NExecOutput err,
+                                                   NExecutionType executionType,
+                                                   NRunAs runAs
+    ) {
         //TODO ! one of the sessions needs to be removed!
         NSessionUtils.checkSession(ws, session);
         checkSession();
@@ -581,7 +698,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                     .setOut(out)
                     .setErr(err)
                     .build();
-            return execComponent.exec(executionContext);
+            return new NExecutorComponentAndContext(execComponent, executionContext);
         }
         throw new NNotFoundException(getSession(), def == null ? null : def.getId());
     }
@@ -591,4 +708,104 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
         ID,
         KEYWORD,
     }
+
+    public static CharacterizedExecFile characterizeForExec(NInputSource contentFile, NSession session, List<String> execOptions) {
+        String classifier = null;//TODO how to get classifier?
+        CharacterizedExecFile c = new CharacterizedExecFile(session);
+        try {
+            c.setStreamOrPath(contentFile);
+            c.setContentFile(CoreIOUtils.toPathInputSource(contentFile, c.getTemps(), true, session));
+            Path fileSource = c.getContentFile();
+            if (!Files.exists(fileSource)) {
+                throw new NIllegalArgumentException(session, NMsg.ofC("file does not exists %s", fileSource));
+            }
+            if (Files.isDirectory(fileSource)) {
+                Path ext = fileSource.resolve(NConstants.Files.DESCRIPTOR_FILE_NAME);
+                if (Files.exists(ext)) {
+                    c.setDescriptor(NDescriptorParser.of(session).parse(ext).get(session));
+                } else {
+                    c.setDescriptor(NDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.getContentFile(), execOptions, session));
+                }
+                if (c.getDescriptor() != null) {
+                    if ("zip".equals(c.getDescriptor().getPackaging())) {
+                        Path zipFilePath = NPath.of(fileSource + ".zip", session)
+                                .toAbsolute().toPath().get();
+                        ZipUtils.zip(session, fileSource.toString(), new ZipOptions(), zipFilePath.toString());
+                        c.setContentFile(zipFilePath);
+                        c.addTemp(zipFilePath);
+                    } else {
+                        throw new NIllegalArgumentException(session, NMsg.ofPlain("invalid nuts folder source. expected 'zip' ext in descriptor"));
+                    }
+                }
+            } else if (Files.isRegularFile(fileSource)) {
+                if (c.getContentFile().getFileName().toString().endsWith(NConstants.Files.DESCRIPTOR_FILE_NAME)) {
+                    try (InputStream in = Files.newInputStream(c.getContentFile())) {
+                        c.setDescriptor(NDescriptorParser.of(session).parse(in).get(session));
+                    }
+                    c.setContentFile(null);
+                    if (c.getStreamOrPath() instanceof NPath && ((NPath) c.getStreamOrPath()).isURL()) {
+                        URLBuilder ub = new URLBuilder(((NPath) c.getStreamOrPath()).toURL().toString());
+                        try {
+                            c.setContentFile(CoreIOUtils.toPathInputSource(
+                                    NPath.of(ub.resolveSibling(NLocations.of(session).getDefaultIdFilename(c.getDescriptor().getId())).toURL(), session),
+                                    c.getTemps(), true, session));
+                        } catch (Exception ex) {
+                            //TODO FIX ME
+                            ex.printStackTrace();
+                        }
+                    }
+                    if (c.getContentFile() == null) {
+                        for (NIdLocation location0 : c.getDescriptor().getLocations()) {
+                            if (CoreFilterUtils.acceptClassifier(location0, classifier)) {
+                                String location = location0.getUrl();
+                                if (NPath.of(location, session).isHttp()) {
+                                    try {
+                                        c.setContentFile(CoreIOUtils.toPathInputSource(
+                                                NPath.of(new URL(location), session),
+                                                c.getTemps(), true, session));
+                                    } catch (Exception ex) {
+                                        ex.printStackTrace();
+                                    }
+                                } else {
+                                    URLBuilder ub = new URLBuilder(((NPath) c.getStreamOrPath()).toURL().toString());
+                                    try {
+                                        c.setContentFile(CoreIOUtils.toPathInputSource(
+                                                NPath.of(ub.resolveSibling(NLocations.of(session)
+                                                        .getDefaultIdFilename(c.getDescriptor().getId())).toURL(), session),
+                                                c.getTemps(), true, session));
+                                    } catch (Exception ex) {
+                                        //TODO add log here
+                                        ex.printStackTrace();
+                                    }
+                                }
+                                if (c.getContentFile() == null) {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (c.getContentFile() == null) {
+                        throw new NIllegalArgumentException(session, NMsg.ofC("unable to locale package for %s", c.getStreamOrPath()));
+                    }
+                } else {
+                    c.setDescriptor(NDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.getContentFile(), execOptions, session));
+                    if (c.getDescriptor() == null) {
+                        CoreDigestHelper d = new CoreDigestHelper(session);
+                        d.append(c.getContentFile());
+                        String artifactId = d.getDigest();
+                        c.setDescriptor(new DefaultNDescriptorBuilder()
+                                .setId("temp:" + artifactId + "#1.0")
+                                .setPackaging(CoreIOUtils.getFileExtension(contentFile.getMetaData().getName().orElse("")))
+                                .build());
+                    }
+                }
+            } else {
+                throw new NIllegalArgumentException(session, NMsg.ofC("path does not denote a valid file or folder %s", c.getStreamOrPath()));
+            }
+        } catch (IOException ex) {
+            throw new NIOException(session, ex);
+        }
+        return c;
+    }
+
 }

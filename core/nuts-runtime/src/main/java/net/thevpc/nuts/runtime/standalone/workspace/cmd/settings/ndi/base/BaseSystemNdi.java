@@ -16,6 +16,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.script.Simp
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NPlatformHome;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -273,7 +274,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         Boolean systemWideConfig = options.getLauncher().getSwitchWorkspace();
         if (!idsToInstall.isEmpty()) {
             if (systemWideConfig == null) {
-                systemWideConfig = workspaceLocation.equals(Paths.get(System.getProperty("user.home")).resolve(".config/nuts/").resolve(NConstants.Names.DEFAULT_WORKSPACE_NAME));
+                systemWideConfig = workspaceLocation.toString().equals(NPlatformHome.of(NOsFamily.getCurrent()).getWorkspaceLocation(null));
             }
             boolean includeEnv = options.isIncludeEnv();
             for (String id : idsToInstall) {

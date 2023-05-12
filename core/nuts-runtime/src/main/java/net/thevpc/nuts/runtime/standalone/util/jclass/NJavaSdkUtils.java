@@ -109,7 +109,7 @@ public class NJavaSdkUtils {
         NVersionFilter requestedVersionFilter = NVersionFilters.of(session).byValue(requestedJavaVersion).get();
         NPlatforms platforms = NPlatforms.of(session);
         NPlatformLocation bestJava = platforms
-                .findPlatformByVersion(NPlatformFamily.JAVA, requestedVersionFilter);
+                .findPlatformByVersion(NPlatformFamily.JAVA, requestedVersionFilter).orNull();
         if (bestJava == null) {
             String appSuffix = NEnvs.of(session).getOsFamily() == NOsFamily.WINDOWS ? ".exe" : "";
             String packaging = "jre";

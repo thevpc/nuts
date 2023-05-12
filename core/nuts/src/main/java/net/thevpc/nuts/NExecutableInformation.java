@@ -28,6 +28,9 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.text.NText;
 
+import java.io.Closeable;
+import java.io.IOException;
+
 /**
  * Class describing executable command.
  *
@@ -35,7 +38,7 @@ import net.thevpc.nuts.text.NText;
  * @app.category Descriptor
  * @since 0.5.4
  */
-public interface NExecutableInformation {
+public interface NExecutableInformation extends Closeable {
 
     /**
      * return executable type
@@ -80,4 +83,6 @@ public interface NExecutableInformation {
     NText getHelpText();
 
 
+    @Override
+    void close();
 }
