@@ -94,4 +94,16 @@ public class Test10_ExecURLTest {
         Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
     }
 
+    @Test
+    public void testNtf() {
+        TestUtils.println(NVersionFormat.of(session));
+        String result = NExecCommand.of(session.copy().setBot(true))
+                //.addExecutorOption()
+                .addCommand("nsh","-c","ls")
+                .redirectErrorStream().grabOutputString().setFailFast(true).getOutputString();
+        TestUtils.println("Result:");
+        TestUtils.println(result);
+        Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
+    }
+
 }

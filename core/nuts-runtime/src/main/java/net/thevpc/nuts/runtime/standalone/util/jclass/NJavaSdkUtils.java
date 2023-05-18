@@ -142,8 +142,21 @@ public class NJavaSdkUtils {
                 bestJava = current;
             }
         }
-        if (requestedVersionFilter.acceptVersion(NVersion.of(bestJava.getVersion()).get( session), session)) {
+        String sVersion = bestJava.getVersion();
+        if (requestedVersionFilter.acceptVersion(NVersion.of(sVersion).get( session), session)) {
             return bestJava;
+        }
+        // replace 1.6 by 6, and 1.8 by 8
+        int a = sVersion.indexOf('.');
+        if (a > 0) {
+            NLiteral p = NLiteral.of(sVersion.substring(0, a));
+            if (p.isInt() && p.asInt().get() == 1) {
+                String sVersion2 = sVersion.substring(a + 1);
+                NVersion version2 = NVersion.of(sVersion2).get(session);
+                if (requestedVersionFilter.acceptVersion(version2, session)) {
+                    return bestJava;
+                }
+            }
         }
         _LOGOP(session).level(Level.FINE).verb(NLogVerb.WARNING)
                 .log(NMsg.ofJ("no valid JRE found for version {0}", _requestedJavaVersion));
