@@ -17,49 +17,29 @@ import java.util.Properties;
 
 public class SShConnection implements AutoCloseable {
 
-    //    public static final SshListener LOGGER = new SshListener() {
-//        @Override
-//        public void onExec(String command) {
-//            System.out.println("[SSH-EXEC] " + command);
-//        }
-//
-//        @Override
-//        public void onGet(String from, String to, boolean mkdir) {
-//            System.out.println("[SSH-GET ] " + from + " " + to);
-//        }
-//
-//        @Override
-//        public void onPut(String from, String to, boolean mkdir) {
-//            System.out.println("[SSH-PUT ] " + from + " " + to);
-//        }
-//
-//        @Override
-//        public InputStream monitorInputStream(InputStream stream, long length, NutsString message) {
-//            return null;
-//        }
-//    };
     Session sshSession;
     NSession nSession;
     private boolean redirectErrorStream;
     private boolean failFast;
     private PrintStream out = new PrintStream(new NonClosableOutputStream(System.out));
     private PrintStream err = new PrintStream(new NonClosableOutputStream(System.err));
+    private InputStream in;
     private List<SshListener> listeners = new ArrayList<>();
 
-    public SShConnection(String address,InputStream in,OutputStream out,OutputStream err, NSession sshSession) {
-        this(NConnexionString.of(address).get(),in,out,err, sshSession);
+    public SShConnection(String address, InputStream in, OutputStream out, OutputStream err, NSession sshSession) {
+        this(NConnexionString.of(address).get(), in, out, err, sshSession);
     }
 
-    public SShConnection(NConnexionString address,InputStream in,OutputStream out,OutputStream err, NSession sshSession) {
+    public SShConnection(NConnexionString address, InputStream in, OutputStream out, OutputStream err, NSession sshSession) {
         init(address.getUser(), address.getHost(),
                 NLiteral.of(address.getPort()).asInt().orElse(-1),
                 NStringMapFormat.URL_FORMAT.parse(address.getQueryString())
                         .orElse(Collections.emptyMap()).get("key-file"),
-                address.getPassword(), in,out,err,sshSession);
+                address.getPassword(), in, out, err, sshSession);
     }
 
-    public SShConnection(String user, String host, int port, String keyFilePath, String keyPassword,InputStream in,OutputStream out,OutputStream err, NSession sshSession) {
-        init(user, host, port, keyFilePath, keyPassword, in,out,err,sshSession);
+    public SShConnection(String user, String host, int port, String keyFilePath, String keyPassword, InputStream in, OutputStream out, OutputStream err, NSession sshSession) {
+        init(user, host, port, keyFilePath, keyPassword, in, out, err, sshSession);
     }
 
     public boolean isRedirectErrorStream() {
@@ -97,10 +77,11 @@ public class SShConnection implements AutoCloseable {
         return this;
     }
 
-    private void init(String user, String host, int port, String keyFilePath, String keyPassword,InputStream in0,OutputStream out0,OutputStream err0, NSession session) {
+    private void init(String user, String host, int port, String keyFilePath, String keyPassword, InputStream in0, OutputStream out0, OutputStream err0, NSession session) {
         this.nSession = session;
-        out = new PrintStream(new NonClosableOutputStream(out0));
-        err = new PrintStream(new NonClosableOutputStream(err0));
+        this.out = new PrintStream(new NonClosableOutputStream(out0));
+        this.err = new PrintStream(new NonClosableOutputStream(err0));
+        this.in = in0;
         try {
             JSch jsch = new JSch();
 
@@ -243,8 +224,8 @@ public class SShConnection implements AutoCloseable {
 
             // X Forwarding
             // channel.setXForwarding(true);
-            //channel.setInputStream(System.in);
-            channel.setInputStream(null);
+            //channel.setInputStream(new NonClosableInputStream(this.in0));
+            //channel.setInputStream(null);
 
             channel.setOutputStream(new NonClosableOutputStream(out));
 
@@ -255,21 +236,47 @@ public class SShConnection implements AutoCloseable {
             } else {
                 ((ChannelExec) channel).setErrStream(new NonClosableOutputStream(err));
             }
-            InputStream in = channel.getInputStream();
+            InputStream cin = channel.getInputStream();
+            OutputStream cout = channel.getOutputStream();
 
             channel.connect();
 
+            new Thread(() -> {
+                byte[] tmp = new byte[1024];
+                try {
+                    while(true) {
+                        while (this.in.available() > 0) {
+                            int i = this.in.read(tmp, 0, tmp.length);
+                            if (i < 0) {
+                                break;
+                            }
+                            cout.write(tmp, 0, i);
+                        }
+                        cout.flush();
+                        if (channel.isClosed()) {
+                            break;
+                        }
+                        try {
+                            Thread.sleep(1000);
+                        } catch (Exception ee) {
+                            //
+                        }
+                    }
+                } catch (Exception ex) {
+                    //
+                }
+            }).start();
             byte[] tmp = new byte[1024];
             while (true) {
-                while (in.available() > 0) {
-                    int i = in.read(tmp, 0, 1024);
+                while (cin.available() > 0) {
+                    int i = cin.read(tmp, 0, 1024);
                     if (i < 0) {
                         break;
                     }
                     out.print(new String(tmp, 0, i));
                 }
                 if (channel.isClosed()) {
-                    if (in.available() > 0) {
+                    if (cin.available() > 0) {
                         continue;
                     }
                     status = channel.getExitStatus();
@@ -278,6 +285,7 @@ public class SShConnection implements AutoCloseable {
                 try {
                     Thread.sleep(1000);
                 } catch (Exception ee) {
+                    //
                 }
             }
             channel.disconnect();

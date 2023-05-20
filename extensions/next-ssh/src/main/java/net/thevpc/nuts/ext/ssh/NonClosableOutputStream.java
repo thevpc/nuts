@@ -43,4 +43,5 @@ public class NonClosableOutputStream extends OutputStream {
     public void close() throws IOException {
         //do nothing
     }
+
 }

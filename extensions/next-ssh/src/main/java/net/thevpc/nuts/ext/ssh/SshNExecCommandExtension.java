@@ -32,7 +32,7 @@ public class SshNExecCommandExtension implements NExecCommandExtension {
                     h.err.get(),
                     session)) {
                 String[] command = context.getCommand();
-                return c.execStringCommand(String.join(" ", command));
+                return c.execStringCommand(NCmdLine.of(command).toString());
             }
         }
     }

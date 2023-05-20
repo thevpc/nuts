@@ -106,4 +106,43 @@ public class Test10_ExecURLTest {
         Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
     }
 
+//    public static void main(String[] args) {
+//        session = TestUtils.openNewMinTestWorkspace();
+//        TestUtils.println(NVersionFormat.of(session));
+//        String result = NExecCommand.of(session.copy()
+//                        .setBot(true).json())
+//                .setTarget("ssh://vpc:a@192.168.1.98")
+//                .addCommand("hostname","-I")
+//                .setExecutionType(NExecutionType.SYSTEM)
+//                .setRunAs(NRunAs.SUDO)
+//                .grabOutputString()
+//                .getOutputString();
+//        session.out().println(result);
+//        result = NExecCommand.of(session.copy()
+//                        .setBot(true).json())
+//                .setTarget("ssh://vpc:a@192.168.1.98")
+//                .addCommand("hostname","-I")
+//                .setExecutionType(NExecutionType.SYSTEM)
+//                .setRunAs(NRunAs.SUDO)
+//                .grabOutputString()
+//                .getOutputString();
+//        session.out().println(result);
+//        Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
+//
+//    }
+
+    @Test
+    public void testNtf2() {
+        TestUtils.println(NVersionFormat.of(session));
+        String result = NExecCommand.of(session.copy()
+                        .setBot(true).json())
+                //.setTarget("ssh://vpc:vpc@192.168.1.158")
+                .addCommand("ls","-l")
+                .setExecutionType(NExecutionType.SYSTEM)
+                .grabOutputString()
+                .getOutputString();
+        session.out().println(result);
+        Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
+    }
+
 }

@@ -3,18 +3,24 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
+package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.ssh;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
+import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableCommand;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCommandExtensionContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author thevpc
@@ -35,7 +41,7 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableCommand {
                                           NExecInput in,
                                           NExecOutput out,
                                           NExecOutput err
-                                          ) {
+    ) {
         super(cmd[0],
                 NCmdLine.of(cmd).toString(),
                 NExecutableType.SYSTEM, execCommand);
@@ -87,10 +93,13 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableCommand {
         return new AbstractSyncIProcessExecHelper(getSession()) {
             @Override
             public int exec() {
+                NSession session = getSession();
+                RemoteConnexionStringInfo k = RemoteConnexionStringInfo.of(getExecCommand().getTarget(), session);
+                String[] remoteCommand = k.buildEffectiveCommand(cmd, getExecCommand().getRunAs(), commExec, session);
                 return commExec.exec(new DefaultNExecCommandExtensionContext(
                         getExecCommand().getTarget(),
-                        cmd,
-                        getExecCommand().getSession(),
+                        remoteCommand,
+                        session,
                         in,
                         out,
                         err
@@ -98,7 +107,6 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableCommand {
             }
         };
     }
-
 
     @Override
     public int execute() {

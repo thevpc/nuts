@@ -106,9 +106,6 @@ public class LocalMysqlDatabaseConfigService {
                         NTexts.of(session)
                         .ofStyled(path, NTextStyle.path())));
             }
-//                ProcessBuilder2 p = new ProcessBuilder2().setCommand("sh", "-c",
-//                        "set -o pipefail && \"" + mysql.getMysqldumpCommand() + "\" -u \"$CMD_USER\" -p\"$CMD_PWD\" --databases \"$CMD_DB\" | gzip > \"$CMD_FILE\""
-//                )
             NExecCommand cmd = NExecCommand.of(session)
                     .setExecutionType(NExecutionType.SYSTEM)
                     .setCommand("sh", "-c",

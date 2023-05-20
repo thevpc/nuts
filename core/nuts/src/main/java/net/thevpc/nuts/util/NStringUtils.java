@@ -308,6 +308,9 @@ public class NStringUtils {
                 }
             }
         }
+        if(sb.length()==0){
+            requireQuotes=true;
+        }
         if (requireQuotes) {
             switch (quoteType) {
                 case DOUBLE: {

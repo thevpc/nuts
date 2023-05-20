@@ -24,6 +24,8 @@ import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.executor.ArtifactExecutorComponent;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.bundle.DefaultNBundleInternalExecutable;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy.DefaultNDeployInternalExecutable;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.ssh.DefaultNSystemExecutableRemote;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.ssh.DefaultSpawnExecutableRemote;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.fetch.DefaultNFetchInternalExecutable;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.help.DefaultNHelpInternalExecutable;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.info.DefaultNInfoInternalExecutable;
@@ -201,7 +203,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                 }
             }
             case EMBEDDED: {
-                throw new NUnsupportedArgumentException(getSession(), NMsg.ofC("invalid embedded execution type %s on host %s", connexionString));
+                throw new NUnsupportedArgumentException(getSession(), NMsg.ofC("invalid embedded execution type on host %s", connexionString));
             }
             default: {
                 throw new NUnsupportedArgumentException(getSession(), NMsg.ofC("invalid execution type %s on host %s", executionType, connexionString));
