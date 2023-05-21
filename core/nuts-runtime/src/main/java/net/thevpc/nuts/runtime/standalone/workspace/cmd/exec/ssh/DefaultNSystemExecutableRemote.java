@@ -94,10 +94,12 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableCommand {
             @Override
             public int exec() {
                 NSession session = getSession();
-                RemoteConnexionStringInfo k = RemoteConnexionStringInfo.of(getExecCommand().getTarget(), session);
-                String[] remoteCommand = k.buildEffectiveCommand(cmd, getExecCommand().getRunAs(), commExec, session);
+                NExecCommand execCommand = getExecCommand();
+                String[] executorOptions = execCommand.getExecutorOptions().toArray(new String[0]);
+                RemoteConnexionStringInfo k = RemoteConnexionStringInfo.of(execCommand.getTarget(), session);
+                String[] remoteCommand = k.buildEffectiveCommand(cmd, execCommand.getRunAs(), executorOptions, commExec, session);
                 return commExec.exec(new DefaultNExecCommandExtensionContext(
-                        getExecCommand().getTarget(),
+                        execCommand.getTarget(),
                         remoteCommand,
                         session,
                         in,

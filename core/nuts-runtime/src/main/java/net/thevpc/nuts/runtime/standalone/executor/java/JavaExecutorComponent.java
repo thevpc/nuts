@@ -356,7 +356,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                                 .collect(Collectors.toList())
                 );
                 args.addAll(joptions.getAppArgs());
-                return new JavaProcessExecHelper(session, session, xargs, joptions, session, executionContext, def, args, osEnv);
+                return new JavaProcessExecHelper(xargs, joptions, executionContext, def, args, osEnv);
 
             }
 

@@ -17,21 +17,17 @@ import java.util.concurrent.Future;
 
 class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
 
-    private final NSession execSession;
     private final List<NString> xargs;
     private final JavaExecutorOptions joptions;
-    private final NSession session;
     private final NExecutionContext executionContext;
     private final NDefinition def;
     private final List<String> args;
     private final HashMap<String, String> osEnv;
 
-    public JavaProcessExecHelper(NSession ns, NSession execSession, List<NString> xargs, JavaExecutorOptions joptions, NSession session, NExecutionContext executionContext, NDefinition def, List<String> args, HashMap<String, String> osEnv) {
-        super(ns);
-        this.execSession = execSession;
+    public JavaProcessExecHelper(List<NString> xargs, JavaExecutorOptions joptions, NExecutionContext executionContext, NDefinition def, List<String> args, HashMap<String, String> osEnv) {
+        super(executionContext.getSession());
         this.xargs = xargs;
         this.joptions = joptions;
-        this.session = session;
         this.executionContext = executionContext;
         this.def = def;
         this.args = args;
@@ -40,8 +36,8 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
 
     @Override
     public int exec() {
-        if (execSession.isDry()) {
-            NPrintStream out = execSession.out();
+        if (getSession().isDry()) {
+            NPrintStream out = executionContext.getSession().out();
             out.println("[dry] ==[nuts-exec]== ");
             for (int i = 0; i < xargs.size(); i++) {
                 NString xarg = xargs.get(i);
@@ -62,8 +58,8 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
                     executionContext.getOut(),
                     executionContext.getErr(),
                     executionContext.getRunAs(),
-                    executionContext.getSession(),
-                    execSession
+                    executionContext.getExecutorOptions().toArray(new String[0]),
+                    executionContext.getSession()
             ).exec();
         }
         return preExec().exec();
@@ -71,8 +67,8 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
 
     private ProcessExecHelper preExec() {
         if (joptions.isShowCommand() || CoreNUtils.isShowCommand(getSession())) {
-            NPrintStream out = execSession.out();
-            out.println(NMsg.ofC("%s ", NTexts.of(session).ofStyled("nuts-exec", NTextStyle.primary1())));
+            NPrintStream out = executionContext.getSession().out();
+            out.println(NMsg.ofC("%s ", NTexts.of(executionContext.getSession()).ofStyled("nuts-exec", NTextStyle.primary1())));
             for (int i = 0; i < xargs.size(); i++) {
                 NString xarg = xargs.get(i);
                 out.println(NMsg.ofC("\t\t %s", xarg));
@@ -89,8 +85,8 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 executionContext.getOut(),
                 executionContext.getErr(),
                 executionContext.getRunAs(),
-                executionContext.getSession(),
-                execSession
+                executionContext.getExecutorOptions().toArray(new String[0]),
+                executionContext.getSession()
         );
     }
 

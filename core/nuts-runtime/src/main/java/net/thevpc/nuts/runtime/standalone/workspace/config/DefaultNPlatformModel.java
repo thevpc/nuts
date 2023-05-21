@@ -174,7 +174,7 @@ public class DefaultNPlatformModel {
         NSessionUtils.checkSession(workspace, session);
         if (platformType == NPlatformFamily.JAVA) {
             try {
-                return NStream.of(NJavaSdkUtils.of(session.getWorkspace()).searchJdkLocationsFuture(session).get(), session);
+                return NStream.of(NJavaSdkUtils.of(session).searchJdkLocationsFuture(session).get(), session);
             } catch (InterruptedException | ExecutionException e) {
                 throw new RuntimeException(e);
             }
@@ -185,7 +185,7 @@ public class DefaultNPlatformModel {
     public NStream<NPlatformLocation> searchSystemPlatforms(NPlatformFamily platformType, String path, NSession session) {
         NSessionUtils.checkSession(workspace, session);
         if (platformType == NPlatformFamily.JAVA) {
-            return NStream.of(NJavaSdkUtils.of(session.getWorkspace()).searchJdkLocations(path, session), session);
+            return NStream.of(NJavaSdkUtils.of(session).searchJdkLocations(path, session), session);
         }
         return NStream.ofEmpty(session);
     }
@@ -193,7 +193,7 @@ public class DefaultNPlatformModel {
     public NOptional<NPlatformLocation> resolvePlatform(NPlatformFamily platformType, String path, String preferredName, NSession session) {
         NSessionUtils.checkSession(workspace, session);
         if (platformType == NPlatformFamily.JAVA) {
-            NPlatformLocation z = NJavaSdkUtils.of(session.getWorkspace()).resolveJdkLocation(path, preferredName, session);
+            NPlatformLocation z = NJavaSdkUtils.of(session).resolveJdkLocation(path, preferredName, session);
             if (z == null) {
                 return NOptional.ofNamedEmpty(NMsg.ofC("%s platform at %s", platformType.id(), path));
             }

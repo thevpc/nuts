@@ -43,7 +43,7 @@ import org.junit.jupiter.api.Test;
 public class TestExportVar {
     @Test
     public void testVars1() {
-        NSession session = TestUtils.openNewTestWorkspace("--verbose");
+        NSession session = TestUtils.openNewTestWorkspace();
         NPath tempFolder = NPath.ofTempFolder(session);
         NPath a = tempFolder.resolve("a.nsh");
         NPath b = tempFolder.resolve("b.nsh");
@@ -57,7 +57,6 @@ public class TestExportVar {
                         .setSession(session)
                         .setArgs(a.toString())
                         .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)
-                        .setArgs()
         );
         NSession shellSession = c.getRootContext().getSession();
         shellSession.setTerminal(NSessionTerminal.ofMem(shellSession));

@@ -89,7 +89,7 @@ public class NWorkspaceUtils {
         NAssert.requireNonBlank(type, "sdk type", session);
         NAssert.requireNonBlank(version, "version", session);
         if ("java".equalsIgnoreCase(type)) {
-            return NJavaSdkUtils.of(ws).createJdkId(version, session);
+            return NJavaSdkUtils.of(session).createJdkId(version, session);
         } else {
             return NIdBuilder.of().setArtifactId(type)
                     .setVersion(version)

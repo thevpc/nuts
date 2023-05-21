@@ -582,7 +582,7 @@ public class NShell {
             NDescriptor resultDescriptor = null;
             if (appId != null) {
                 try {
-                    resultDescriptor = NFetchCommand.of(appId,session).setEffective(true).getResultDescriptor();
+                    resultDescriptor = NFetchCommand.of(appId, session).setEffective(true).getResultDescriptor();
                 } catch (Exception ex) {
                     //just ignore
                 }
@@ -641,11 +641,17 @@ public class NShell {
 
     protected void executeInteractive(NShellContext context) {
         NSystemTerminal.enableRichTerm(session);
+        NPath appVarFolder = session.getAppVarFolder();
+        if (appVarFolder == null) {
+            appVarFolder = NLocations.of(session).getStoreLocation(
+                    NId.of("net.vpc.app.nuts.toolbox:nsh").get()
+                    , NStoreType.VAR);
+        }
         NIO.of(session).getSystemTerminal()
                 .setCommandAutoCompleteResolver(new NshAutoCompleter())
                 .setCommandHistory(
                         NCmdLineHistory.of(session)
-                                .setPath(session.getAppVarFolder().resolve("nsh-history.hist"))
+                                .setPath(appVarFolder.resolve("nsh-history.hist"))
                 );
         prepareContext(getRootContext());
         printHeader(context.out());
@@ -725,6 +731,9 @@ public class NShell {
             getHistory().save();
         } catch (IOException e) {
             //e.printStackTrace();
+        }
+        if (quitException.getExitCode() == 0) {
+            return;
         }
         throw new NExecutionException(getRootContext().getSession(), NMsg.ofC("%s", quitException), quitException.getExitCode());
 //        throw quitException;

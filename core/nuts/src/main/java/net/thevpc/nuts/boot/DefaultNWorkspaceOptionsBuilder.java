@@ -25,7 +25,6 @@ package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.reserved.NReservedWorkspaceCmdLineParser;
 import net.thevpc.nuts.reserved.NReservedCollectionUtils;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.util.NLogConfig;
@@ -1683,7 +1682,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NWorkspaceOptionsBuilder setCommandLine(String[] args, NSession session) {
-        NReservedWorkspaceCmdLineParser.parseNutsArguments(args, this, session);
+        NWorkspaceCmdLineParser.parseNutsArguments(args, this, session);
         return this;
     }
 

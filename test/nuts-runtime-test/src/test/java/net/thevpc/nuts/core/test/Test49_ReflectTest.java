@@ -20,16 +20,6 @@ public class Test49_ReflectTest {
     @Test
     public void test01() {
         NSession session = Nuts.openWorkspace();
-        System.out.println(NExecCommand.of(session)
-                .setExecutionType(NExecutionType.SYSTEM)
-                .setDirectory(NPath.of("/home/vpc/aaa",session))
-                .addCommand("pwd")
-                .grabOutputString()
-                .getOutputString());
-        if(true){
-            return;
-        }
-
         NReflectRepository typesRepository = NWorkspaceUtils.of(session).getReflectRepository();
         {
             NReflectType type = typesRepository.getParametrizedType(C.class, null, new Type[]{String.class, String.class, String.class});

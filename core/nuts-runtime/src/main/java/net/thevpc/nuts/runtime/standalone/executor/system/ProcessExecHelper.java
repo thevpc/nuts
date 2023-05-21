@@ -50,9 +50,9 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
     public static ProcessExecHelper ofArgs(NDefinition definition, String[] args, Map<String, String> env, Path directory,
                                            boolean showCommand, boolean failFast, long sleep,
                                            NExecInput in, NExecOutput out, NExecOutput err,
-                                           NRunAs runAs,
+                                           NRunAs runAs, String[] executorOptions,
                                            NSession session) {
-        List<String> newCommands = NSysExecUtils.buildEffectiveCommandLocal(args, runAs, session);
+        List<String> newCommands = NSysExecUtils.buildEffectiveCommandLocal(args, runAs, executorOptions, session);
         ProcessBuilder2 pb = new ProcessBuilder2(session);
         pb.setCommand(newCommands)
                 .setEnv(env)
@@ -86,8 +86,8 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                                                  String[] args, Map<String, String> env, String directory, boolean showCommand, boolean failFast, long sleep,
                                                  NExecInput in, NExecOutput out, NExecOutput err,
                                                  NRunAs runAs,
-                                                 NSession session,
-                                                 NSession execSession
+                                                 String[] executorOptions,
+                                                 NSession session
     ) throws NExecutionException {
         NId id = nutMainFile.getId();
         Path installerFile = nutMainFile.getContent().flatMap(NPath::toPath).orNull();
@@ -100,7 +100,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         }
         map.put("nuts.artifact", id.toString());
         map.put("nuts.file", nutMainFile.getContent().flatMap(NPath::toPath).map(Object::toString).orNull());
-        String defaultJavaCommand = NJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion("", false, session);
+        String defaultJavaCommand = NJavaSdkUtils.of(session).resolveJavaCommandByVersion("", false, session);
         if (defaultJavaCommand == null) {
             throw new NExecutionException(session, NMsg.ofPlain("no java version was found"), NExecutionException.ERROR_1);
         }
@@ -128,7 +128,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                     if (NBlankable.isBlank(javaVer)) {
                         return defaultJavaCommand;
                     }
-                    String s = NJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion(javaVer, false, session);
+                    String s = NJavaSdkUtils.of(session).resolveJavaCommandByVersion(javaVer, false, session);
                     if (s == null) {
                         throw new NExecutionException(session, NMsg.ofC("no java version %s was found", javaVer), NExecutionException.ERROR_1);
                     }
@@ -138,7 +138,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                     if (NBlankable.isBlank(javaVer)) {
                         return defaultJavaCommand;
                     }
-                    String s = NJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion(javaVer, true, session);
+                    String s = NJavaSdkUtils.of(session).resolveJavaCommandByVersion(javaVer, true, session);
                     if (s == null) {
                         throw new NExecutionException(session, NMsg.ofC("no java version %s was found", javaVer), NExecutionException.ERROR_1);
                     }
@@ -190,6 +190,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 sleep,
                 in, out, err,
                 runAs,
+                executorOptions,
                 session);
     }
 

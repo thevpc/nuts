@@ -1,7 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.executor.system;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NArg;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NNonBlockingInputStream;
+import net.thevpc.nuts.util.NRef;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.File;
@@ -92,6 +95,7 @@ public class NSysExecUtils {
 
     public static List<String> buildEffectiveCommandLocal(String[] args,
                                                           NRunAs runAsMode,
+                                                          String[] executionOptions,
                                                           NSession session
     ) {
         return NSysExecUtils.buildEffectiveCommand(args, runAsMode,
@@ -106,6 +110,7 @@ public class NSysExecUtils {
                 session.isGui() && NEnvs.of(session).isGraphicalDesktopEnvironment(),
                 NSysExecUtils.resolveRootUserName(session),
                 System.getProperty("user.name"),
+                executionOptions,
                 session);
     }
 
@@ -116,6 +121,7 @@ public class NSysExecUtils {
                                                      Boolean gui,
                                                      String rootName,
                                                      String userName,
+                                                     String[] executorOptions,
                                                      NSession session
     ) {
         //String runAsEffective = null;
@@ -246,14 +252,50 @@ public class NSysExecUtils {
                             String currSu = guiSudo(de, sysWhich, session).get();
                             cc.add(currSu);
                         } else {
+                            NCmdLine cmdLine = NCmdLine.of(executorOptions);
+                            NRef<Boolean> changePrompt = NRef.of(false);
+                            NRef<String> newPromptValue = NRef.of("");
+                            while (cmdLine.hasNext()) {
+                                NArg ac = cmdLine.peek().get();
+                                switch (ac.key()) {
+                                    case "--sudo-prompt": {
+                                        if (ac.getValue().isNull()) {
+                                            cmdLine.withNextFlag((v, a, s) -> {
+                                                if (v) {
+                                                    // --sudo-prompt will reset the prompt to its defaults!
+                                                    changePrompt.set(false);
+                                                    newPromptValue.set(null);
+                                                } else {
+                                                    // --!sudo-prompt is equivalent to "--!no-sudo-prompt="
+                                                    changePrompt.set(true);
+                                                    newPromptValue.set("");
+                                                }
+                                            });
+                                        } else if (ac.getValue().isString()) {
+                                            cmdLine.withNextEntry((v, a, s) -> {
+                                                changePrompt.set(true);
+                                                newPromptValue.set(v);
+                                            });
+                                        } else {
+                                            cmdLine.skip();
+                                        }
+                                        break;
+                                    }
+                                    default: {
+                                        cmdLine.skip();
+                                    }
+                                }
+                            }
                             String su = sysWhich.apply("sudo");
                             if (NBlankable.isBlank(su)) {
                                 throw new NIllegalArgumentException(session, NMsg.ofPlain("unable to resolve sudo application"));
                             }
                             cc.add(su);
                             cc.add("-S");
-                            //cc.add("-p");
-                            //cc.add("");
+                            if (changePrompt.get()) {
+                                cc.add("-p");
+                                cc.add(newPromptValue.get());
+                            }
                         }
                         break;
                     }

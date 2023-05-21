@@ -71,6 +71,7 @@ public class DefaultNSystemExecutable extends AbstractNExecutableCommand {
                 execCommand.getOut(),
                 execCommand.getErr(),
                 execCommand.getRunAs(),
+                executorOptions.toArray(new String[0]),
                 execCommand.getSession()
         );
     }

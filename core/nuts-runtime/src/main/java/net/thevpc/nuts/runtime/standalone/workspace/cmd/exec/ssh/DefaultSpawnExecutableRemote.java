@@ -8,8 +8,8 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.ssh;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.boot.NWorkspaceCmdLineParser;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
-import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCommandExtensionContext;
@@ -19,6 +19,7 @@ import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author thevpc
@@ -87,9 +88,28 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
                 cmd2.add("--bot");
                 cmd2.add("--yes");
                 cmd2.add("---caller-app=remote-nuts");
+                NCmdLine cmdLine = NCmdLine.of(executorOptions);
                 if (requireTempRepo) {
                     RemoteConnexionStringInfo k = RemoteConnexionStringInfo.of(getExecCommand().getTarget(), getSession());
                     cmd2.add("-r=" + k.getStoreLocationCacheRepoSSH(commExec, getSession()).getLocation());
+                }
+                //copy all nuts options here...
+                while (cmdLine.hasNext()) {
+                    NOptional<List<NArg>> o = NWorkspaceCmdLineParser.nextNutsArgument(cmdLine, null, getSession());
+                    if (o.isPresent()) {
+                        switch (o.get().get(0).key()) {
+                            case "--exec": {
+                                cmdLine.skip();
+                                break;
+                            }
+                            default: {
+                                cmd2.addAll(o.get().stream().map(x -> x.toString()).collect(Collectors.toList()));
+                            }
+                        }
+                    } else {
+                        cmdLine.skip();
+                    }
+                    break;
                 }
                 cmd2.add("--exec");
                 cmd2.addAll(executorOptions);
@@ -126,7 +146,9 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
 
     private String[] resolveNutsExecutableCommand() {
         NSession session1 = getSession();
-        RemoteConnexionStringInfo k = RemoteConnexionStringInfo.of(getExecCommand().getTarget(), session1);
+        NExecCommand execCommand = getExecCommand();
+        String[] executorOptions = execCommand.getExecutorOptions().toArray(new String[0]);
+        RemoteConnexionStringInfo k = RemoteConnexionStringInfo.of(execCommand.getTarget(), session1);
         k.tryUpdate(commExec, session1);
         ArrayList<String> cmd = new ArrayList<>();
         cmd.add(k.getJavaCommand(commExec, session1));
@@ -135,8 +157,8 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
         cmd.add("-w");
         cmd.add(k.getWorkspaceName(commExec, session1));
 
-        NSession session = getExecCommand().getSession();
-        String[] remoteCommand = k.buildEffectiveCommand(cmd.toArray(new String[0]), getExecCommand().getRunAs(), commExec, session);
+        NSession session = execCommand.getSession();
+        String[] remoteCommand = k.buildEffectiveCommand(cmd.toArray(new String[0]), execCommand.getRunAs(), executorOptions, commExec, session);
         return remoteCommand;
     }
 

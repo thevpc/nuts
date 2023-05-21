@@ -306,7 +306,7 @@ public class RemoteConnexionStringInfo {
         return sudoPath;
     }
 
-    public String[] buildEffectiveCommand(String[] cmd, NRunAs runAs, NExecCommandExtension commExec, NSession session) {
+    public String[] buildEffectiveCommand(String[] cmd, NRunAs runAs, String[] executionOptions, NExecCommandExtension commExec, NSession session) {
         return NSysExecUtils.buildEffectiveCommand(cmd, runAs,
                 new HashSet<NDesktopEnvironmentFamily>(),
                 s -> {
@@ -324,6 +324,7 @@ public class RemoteConnexionStringInfo {
                 false,
                 getRootName(commExec, session),
                 getUserName(commExec, session),
+                executionOptions,
                 session).toArray(new String[0]);
     }
 

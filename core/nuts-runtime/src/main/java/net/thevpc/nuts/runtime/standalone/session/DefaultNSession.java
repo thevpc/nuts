@@ -1866,8 +1866,16 @@ public class DefaultNSession implements Cloneable, NSession {
 
     @Override
     public NCmdLine getAppCommandLine() {
-        return NCmdLine.of(getAppArguments())
-                .setCommandName(getAppId().getArtifactId())
+        NId appId = getAppId();
+        if(appId==null){
+            return null;
+        }
+        List<String> appArguments = getAppArguments();
+        if(appArguments==null){
+            return null;
+        }
+        return NCmdLine.of(appArguments)
+                .setCommandName(appId.getArtifactId())
                 .setAutoComplete(getAppAutoComplete())
                 .setSession(this);
     }

@@ -29,7 +29,7 @@ public class NExecInput {
         return bytes == null ? ofInherit() : new NExecInput(NExecRedirectType.STREAM, new ByteArrayInputStream(bytes), null, null);
     }
 
-    public static NExecInput ofBytes(String string) {
+    public static NExecInput ofString(String string) {
         return string == null ? ofInherit() : new NExecInput(NExecRedirectType.STREAM, new ByteArrayInputStream(string.getBytes()), null, null);
     }
 
