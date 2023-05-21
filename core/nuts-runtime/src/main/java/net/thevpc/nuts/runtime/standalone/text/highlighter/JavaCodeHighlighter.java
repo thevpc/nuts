@@ -12,23 +12,12 @@ import net.thevpc.nuts.text.*;
 
 public class JavaCodeHighlighter implements NCodeHighlighter {
 
-    private static Set<String> reservedWords = new LinkedHashSet<>(
-            Arrays.asList(
-                    "abstract", "assert", "boolean", "break", "byte", "case",
-                    "catch", "char", "class", "const", "continue", "default",
-                    "double", "do", "else", "enum", "extends", "false",
-                    "final", "finally", "float", "for", "goto", "if",
-                    "implements", "import", "instanceof", "int", "interface", "long",
-                    "native", "new", "null", "package", "private", "protected",
-                    "public", "return", "short", "static", "strictfp", "super",
-                    "switch", "synchronized", "this", "throw", "throws", "transient",
-                    "true", "try", "void", "volatile", "while"
-            )
-    );
+    private Set<String> reservedWords = new HashSet<>();
     private NWorkspace ws;
 
     public JavaCodeHighlighter(NWorkspace ws) {
         this.ws = ws;
+        reservedWords.addAll(NCodeHighlighterHelper.loadNames("java.kw1",getClass()));
     }
 
     @Override

@@ -12,24 +12,14 @@ import java.util.*;
 
 public class SqlCodeHighlighter implements NCodeHighlighter {
 
-    private static Set<String> reservedWords = new LinkedHashSet<>(
-            Arrays.asList(
-                    "add", "constraint", "all", "alter", "column", "table",
-                    "and", "any", "as", "asc", "backup", "database",
-                    "between", "case", "check", "column", "create", "index",
-                    "replace", "procedure", "view", "unique", "default", "delete",
-                    "desc", "distinct", "drop", "exec", "exists", "foreign",
-                    "key", "full", "outer", "join", "left", "right",
-                    "group", "by", "having", "in", "inner", "into",
-                    "insert", "select", "null", "not", "like", "limit",
-                    "or", "order", "by", "primary", "rownum", "top", "set",
-                    "truncate", "union", "all", "update", "values", "where","from"
-            )
-    );
+    private Set<String> reservedWords1 =new HashSet<>();
+    private Set<String> reservedWords2 =new HashSet<>();
     private NWorkspace ws;
 
     public SqlCodeHighlighter(NWorkspace ws) {
         this.ws = ws;
+        reservedWords1.addAll(NCodeHighlighterHelper.loadNames("sql.kw1",getClass()));
+        reservedWords2.addAll(NCodeHighlighterHelper.loadNames("sql.kw2",getClass()));
     }
 
     @Override
@@ -41,18 +31,17 @@ public class SqlCodeHighlighter implements NCodeHighlighter {
     public NText tokenToText(String text, String nodeType, NTexts txt, NSession session) {
         return txt.setSession(session).ofPlain(text);
     }
-    
+
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
         String s = context.getConstraints();
-        if(s==null){
+        if (s == null) {
             return DEFAULT_SUPPORT;
         }
-        switch (s){
+        switch (s) {
             case "sql":
-            case "text/sql":
-            {
+            case "text/sql": {
                 return NComponent.DEFAULT_SUPPORT;
             }
         }
@@ -134,7 +123,7 @@ public class SqlCodeHighlighter implements NCodeHighlighter {
                         if (d != null) {
                             if (d.length == 1 && d[0].getType() == NTextType.PLAIN) {
                                 String txt2 = ((NTextPlain) d[0]).getText();
-                                if (reservedWords.contains(txt2.toLowerCase())) {
+                                if (reservedWords1.contains(txt2.toLowerCase())) {
                                     d[0] = txt.ofStyled(d[0], NTextStyle.keyword());
                                 }
                             }

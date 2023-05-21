@@ -1,28 +1,32 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
-
-import java.util.*;
-
-import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.NCodeHighlighter;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
+import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.*;
 
-public class HadraCodeHighlighter implements NCodeHighlighter {
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-    private Set<String> reservedWords = new HashSet<>();
+public class TsonCodeHighlighter implements NCodeHighlighter {
     private NWorkspace ws;
+
+    public TsonCodeHighlighter(NWorkspace ws) {
+        this.ws = ws;
+    }
 
     @Override
     public String getId() {
-        return "handra";
+        return "tson";
     }
 
-    public HadraCodeHighlighter(NWorkspace ws) {
-        this.ws = ws;
-        reservedWords.addAll(NCodeHighlighterHelper.loadNames("hadra.kw1",getClass()));
+    @Override
+    public NText tokenToText(String text, String nodeType, NTexts txt, NSession session) {
+        return txt.ofPlain(text);
     }
 
     @Override
@@ -32,27 +36,14 @@ public class HadraCodeHighlighter implements NCodeHighlighter {
             return DEFAULT_SUPPORT;
         }
         switch (s){
-            case "hadra":
-            case "hadra-lang":
-            case "hl":{
+            case "tson":
+            case "application/tson":
+            case "text/tson":
+            {
                 return NComponent.DEFAULT_SUPPORT;
             }
         }
         return NComponent.NO_SUPPORT;
-    }
-
-    @Override
-    public NText tokenToText(String text, String nodeType, NTexts txt, NSession session) {
-        String str = String.valueOf(text);
-        switch (nodeType.toLowerCase()) {
-            case "separator": {
-                return txt.ofStyled(str, NTextStyle.separator());
-            }
-            case "keyword": {
-                return txt.ofStyled(str, NTextStyle.keyword());
-            }
-        }
-        return txt.ofPlain(str);
     }
 
     @Override
@@ -63,21 +54,7 @@ public class HadraCodeHighlighter implements NCodeHighlighter {
             switch (ar.peekChar()) {
                 case '{':
                 case '}':
-                case '(':
-                case ')':
-                case '[':
-                case ']':
-                case '@':
-                case '=':
-                case '+':
-                case '*':
-                case '%':
-                case ':':
-                case '?':
-                case '<':
-                case '>':
-                case '!':
-                case ';': {
+                case ':': {
                     all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                     break;
                 }
@@ -103,35 +80,39 @@ public class HadraCodeHighlighter implements NCodeHighlighter {
                     break;
                 }
                 case '.':
-                case '-': {
+                case '-':{
                     NText[] d = StringReaderExtUtils.readNumber(session, ar);
-                    if (d != null) {
+                    if(d!=null) {
                         all.addAll(Arrays.asList(d));
-                    } else {
+                    }else{
                         all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                     }
                     break;
                 }
-                case '/': {
-                    if (ar.peekChars("//")) {
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashSlashComments(session, ar)));
-                    } else if (ar.peekChars("/*")) {
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashStarComments(session, ar)));
-                    } else {
+                case '/':{
+                    if(ar.peekChars("//")) {
+                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashSlashComments(session,ar)));
+                    }else if(ar.peekChars("/*")){
+                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashStarComments(session,ar)));
+                    }else{
                         all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                     }
                     break;
                 }
                 default: {
-                    if (Character.isWhitespace(ar.peekChar())) {
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(session, ar)));
-                    } else {
+                    if(Character.isWhitespace(ar.peekChar())){
+                        all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(session,ar)));
+                    }else {
                         NText[] d = StringReaderExtUtils.readJSIdentifier(session, ar);
                         if (d != null) {
                             if (d.length == 1 && d[0].getType() == NTextType.PLAIN) {
                                 String txt2 = ((NTextPlain) d[0]).getText();
-                                if (reservedWords.contains(txt2)) {
-                                    d[0] = txt.ofStyled(d[0], NTextStyle.keyword());
+                                switch (txt2) {
+                                    case "true":
+                                    case "false": {
+                                        d[0] = txt.ofStyled(d[0], NTextStyle.bool());
+                                        break;
+                                    }
                                 }
                             }
                             all.addAll(Arrays.asList(d));

@@ -1,29 +1,35 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
-
-import java.util.*;
-
-import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.NCodeHighlighter;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
+import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.*;
 
-public class HadraCodeHighlighter implements NCodeHighlighter {
+import java.util.*;
+
+public class CSharpCodeHighlighter implements NCodeHighlighter {
 
     private Set<String> reservedWords = new HashSet<>();
     private NWorkspace ws;
 
-    @Override
-    public String getId() {
-        return "handra";
+    public CSharpCodeHighlighter(NWorkspace ws) {
+        this.ws = ws;
+        reservedWords.addAll(NCodeHighlighterHelper.loadNames("csharp.kw1",getClass()));
     }
 
-    public HadraCodeHighlighter(NWorkspace ws) {
-        this.ws = ws;
-        reservedWords.addAll(NCodeHighlighterHelper.loadNames("hadra.kw1",getClass()));
+    @Override
+    public String getId() {
+        return "csharp";
     }
+
+    @Override
+    public NText tokenToText(String text, String nodeType, NTexts txt, NSession session) {
+        return txt.setSession(session).ofPlain(text);
+    }
+    
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
@@ -32,27 +38,13 @@ public class HadraCodeHighlighter implements NCodeHighlighter {
             return DEFAULT_SUPPORT;
         }
         switch (s){
-            case "hadra":
-            case "hadra-lang":
-            case "hl":{
+            case "csharp":
+            case "text/csharp":
+            {
                 return NComponent.DEFAULT_SUPPORT;
             }
         }
         return NComponent.NO_SUPPORT;
-    }
-
-    @Override
-    public NText tokenToText(String text, String nodeType, NTexts txt, NSession session) {
-        String str = String.valueOf(text);
-        switch (nodeType.toLowerCase()) {
-            case "separator": {
-                return txt.ofStyled(str, NTextStyle.separator());
-            }
-            case "keyword": {
-                return txt.ofStyled(str, NTextStyle.keyword());
-            }
-        }
-        return txt.ofPlain(str);
     }
 
     @Override

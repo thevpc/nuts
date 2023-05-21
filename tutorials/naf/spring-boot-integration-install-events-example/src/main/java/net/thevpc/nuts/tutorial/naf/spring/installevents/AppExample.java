@@ -80,7 +80,7 @@ public class AppExample implements NApplication {
         }
         // this will fire an exception if no option is provided!
         if (someStringOption == null) {
-            cmd.next("--some-string-option").get(session);
+            //cmd.next("--some-string-option").get(session);
         }
         //the application can be run in one of 'execMode' and 'autoCompleteMode' modes
         if (session.isAppExecMode()) {

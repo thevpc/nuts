@@ -87,6 +87,8 @@ net.thevpc.nuts.runtime.standalone.text.highlighter.BashCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.FishCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.HadraCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.JsonCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.TsonCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.CSharpCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.NtfCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.XmlCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.WinCmdBlocTextHighlighter
