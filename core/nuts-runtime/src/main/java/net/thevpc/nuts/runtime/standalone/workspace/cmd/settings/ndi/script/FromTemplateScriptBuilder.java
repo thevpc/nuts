@@ -162,7 +162,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                         return NLocations.of(getSession()).getWorkspaceLocation().toString();
                                     case "NUTS_WORKSPACE_BIN":
                                         return str(NLocations.of(getSession()).getStoreLocation(NStoreType.BIN));
-                                    case "NUTS_WORKSPACE_CON":
+                                    case "NUTS_WORKSPACE_CONF":
                                         return str(NLocations.of(getSession()).getStoreLocation(NStoreType.CONF));
                                     case "NUTS_WORKSPACE_CACHE":
                                         return str(NLocations.of(getSession()).getStoreLocation(NStoreType.CACHE));
