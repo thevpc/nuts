@@ -936,7 +936,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 //            String p0 = options.resolveBinFolder().toString().substring(
 //                    ws.locations().getStoreLocation(NutsStoreLocation.APPS).length()
 //            );
-//            tmp.printSet("NUTS_WORKSPACE_BINDIR", varRef("NUTS_WORKSPACE_APPS") + p0);
+//            tmp.printSet("NUTS_WORKSPACE_BINDIR", varRef("NUTS_WORKSPACE_BIN") + p0);
 //        }
 //        if (updatePATH) {
 //            exports.add("PATH");

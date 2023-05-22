@@ -154,7 +154,18 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
                     if (isJar.get()) {
                         return "application/java-archive";
                     }
+                    break;
                 }
+                case "text/plain": {
+                    if(file.getFileName().toString().endsWith(".hl")){
+                        return "text/x-hl";
+                    }
+                    if(file.getFileName().toString().endsWith(".ntf")){
+                        return "text/x-ntf";
+                    }
+                    break;
+                }
+
             }
         }
         return contentType;

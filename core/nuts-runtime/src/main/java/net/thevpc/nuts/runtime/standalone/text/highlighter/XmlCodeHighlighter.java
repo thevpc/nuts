@@ -37,6 +37,7 @@ public class XmlCodeHighlighter implements NCodeHighlighter {
         switch (s){
             case "xml":
             case "xsl":
+            case "application/xml":
             case "text/xml":
             case "text/html":
             case "html":
@@ -45,7 +46,8 @@ public class XmlCodeHighlighter implements NCodeHighlighter {
                 return NComponent.DEFAULT_SUPPORT;
             }
         }
-        return NComponent.NO_SUPPORT;    }
+        return NComponent.NO_SUPPORT;
+    }
 
     @Override
     public NText stringToText(String text, NTexts txt, NSession session) {

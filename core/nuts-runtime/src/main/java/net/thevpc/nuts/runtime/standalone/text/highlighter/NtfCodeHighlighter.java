@@ -26,6 +26,13 @@ public class NtfCodeHighlighter implements NCodeHighlighter {
             case "ntf":
             case "nuts-text-format":
             case "text/x-nuts-text-format":
+            case "text/x-ntf":
+            case "text/nuts-text-format":
+            case "text/ntf":
+            case "application/x-nuts-text-format":
+            case "application/x-ntf":
+            case "application/nuts-text-format":
+            case "application/ntf":
             {
                 return NComponent.DEFAULT_SUPPORT;
             }

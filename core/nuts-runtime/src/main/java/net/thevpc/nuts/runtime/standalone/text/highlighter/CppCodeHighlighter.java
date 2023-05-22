@@ -38,9 +38,13 @@ public class CppCodeHighlighter implements NCodeHighlighter {
         switch (s){
             case "c":
             case "h":
+            case "hpp":
             case "cpp":
             case "text/x-c":
             case "text/x-c++":
+            case "text/x-csrc":
+            case "text/x-c++src":
+            case "text/x-cppsrc":
             {
                 return NComponent.DEFAULT_SUPPORT;
             }

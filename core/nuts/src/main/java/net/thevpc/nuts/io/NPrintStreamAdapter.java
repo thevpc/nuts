@@ -26,6 +26,6 @@
  */
 package net.thevpc.nuts.io;
 
-public interface NOutputStreamAdapter {
-    NPrintStream getBaseOutputStream();
+public interface NPrintStreamAdapter {
+    NPrintStream getBasePrintStream();
 }

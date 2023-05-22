@@ -31,6 +31,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.text.*;
@@ -63,7 +64,7 @@ public class CatCommand extends NShellBuiltinDefault {
         Options options = context.getOptions();
         NArg a;
 
-        if (cmdLine.next("-") != null) {
+        if (cmdLine.next("-").orNull()!= null) {
             options.files.add(null);
             return true;
         } else if ((a = cmdLine.nextFlag("-n", "--number").orNull()) != null) {
@@ -76,11 +77,7 @@ public class CatCommand extends NShellBuiltinDefault {
             options.E = a.getBooleanValue().get(session);
             return true;
         } else if ((a = cmdLine.next("-H", "--highlight", "--highlighter").orNull()) != null) {
-            options.highlighter = NStringUtils.trim(a.getStringValue().get(session));
-            return true;
-        } else if (!cmdLine.isNextOption()) {
-            String path = cmdLine.next().flatMap(NLiteral::asString).get(session);
-            options.files.add(new FileInfo(NPath.of(path, session), options.highlighter));
+            options.highlighter = NStringUtils.trim(a.getStringValue().orNull());
             return true;
         }
         return false;
@@ -88,7 +85,11 @@ public class CatCommand extends NShellBuiltinDefault {
 
     @Override
     protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, cmdLine, context);
+        NSession session = context.getSession();
+        Options options = context.getOptions();
+        String path = cmdLine.next().flatMap(NLiteral::asString).get(session);
+        options.files.add(new FileInfo(NPath.of(path, session), options.highlighter));
+        return true;
     }
 
     @Override
@@ -310,22 +311,29 @@ public class CatCommand extends NShellBuiltinDefault {
             }
             case STYLED: {
                 NTextStyled tt = (NTextStyled) t;
-                NTextPlain pt = (NTextPlain) tt.getChild();
-
-                String text = pt.getText();
                 NTextBuilder tb = NTexts.of(session).ofBuilder();
                 if (options.n && tracker.wasNewline) {
                     tb.append(tracker.ruler.nextNum(tracker.line, session));
                 }
-                for (String s : ShellHelper.splitOn(text, '\t')) {
-                    if (s.startsWith("\t")) {
-                        tb.append("^I", NTextStyle.separator());
-                    } else {
-                        tb.append(s, tt.getStyles());
+                if(tt.getChild() instanceof NTextPlain) {
+                    NTextPlain pt = (NTextPlain) tt.getChild();
+                    String text = pt.getText();
+                    for (String s : ShellHelper.splitOn(text, '\t')) {
+                        if (s.startsWith("\t")) {
+                            tb.append("^I", NTextStyle.separator());
+                        } else {
+                            tb.append(s, tt.getStyles());
+                        }
                     }
+                    tracker.wasNewline = false;
+                    return tb.build();
+                }else if(tt.getChild() instanceof NTextStyled){
+                    NTextStyled pt = (NTextStyled) tt.getChild();
+                    tb.append(nextNode(pt,session, tracker, options), tt.getStyles());
+                    return tb.build();
+                }else{
+                    throw new NUnsupportedOperationException(session);
                 }
-                tracker.wasNewline = false;
-                return tb.build();
             }
         }
         throw new NUnsupportedOperationException(session);

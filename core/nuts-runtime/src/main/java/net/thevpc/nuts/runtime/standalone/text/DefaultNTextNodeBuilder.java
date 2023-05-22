@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextStyled;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NStream;
 
@@ -264,12 +265,29 @@ public class DefaultNTextNodeBuilder implements NTextBuilder {
             NText build = build();
             NText a = txt.transform(build, new NTextTransformConfig().setFlatten(true));
             this.children.clear();
-            if (a != null) {
-                this.children.addAll((a instanceof NTextList) ? ((NTextList) a).getChildren() : Collections.singletonList(a));
-            }
+            fill(a);
             flattened = true;
         }
         return this;
+    }
+
+    private void fill(NText z) {
+        if (z != null) {
+            if (z instanceof NTextList) {
+                for (NText c : ((NTextList) z).getChildren()) {
+                    fill(c);
+                }
+            } else if (z instanceof NTextPlain) {
+                this.children.add(z);
+            } else if (z instanceof NTextStyled) {
+                if(((NTextStyled) z).getChild() instanceof NTextList){
+                    NText z2 = txt.transform(z, new NTextTransformConfig().setFlatten(true));
+                }
+                this.children.add(z);
+            } else {
+                throw new NUnsupportedOperationException(session, NMsg.ofPlain("expected plain or styled nodes"));
+            }
+        }
     }
 
     @Override

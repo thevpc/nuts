@@ -101,8 +101,8 @@ public class DefaultNIO implements NIO {
                 expectedMode = NTerminalMode.FILTERED;
             }
         }
-        if (out instanceof NOutputStreamAdapter) {
-            return ((NOutputStreamAdapter) out).getBaseOutputStream().setTerminalMode(expectedMode);
+        if (out instanceof NPrintStreamAdapter) {
+            return ((NPrintStreamAdapter) out).getBasePrintStream().setTerminalMode(expectedMode);
         }
         return
                 new NPrintStreamRaw(out, null, null, session, new NPrintStreamBase.Bindings(), term)
@@ -113,6 +113,9 @@ public class DefaultNIO implements NIO {
     @Override
     public NPrintStream ofPrintStream(OutputStream out) {
         checkSession();
+        if (out instanceof NPrintStreamAdapter) {
+            return ((NPrintStreamAdapter) out).getBasePrintStream();
+        }
         return new NPrintStreamRaw(out, null, null, session, new NPrintStreamBase.Bindings(), null);
     }
 
@@ -124,8 +127,8 @@ public class DefaultNIO implements NIO {
         if (out == null) {
             return null;
         }
-        if (out instanceof NOutputStreamAdapter) {
-            return ((NOutputStreamAdapter) out).getBaseOutputStream().setTerminalMode(mode);
+        if (out instanceof NPrintStreamAdapter) {
+            return ((NPrintStreamAdapter) out).getBasePrintStream().setTerminalMode(mode);
         }
         SimpleWriterOutputStream w = new SimpleWriterOutputStream(out, terminal, session);
         return ofPrintStream(w, mode, terminal);

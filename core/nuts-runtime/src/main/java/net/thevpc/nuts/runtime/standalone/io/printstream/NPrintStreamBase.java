@@ -428,7 +428,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
     @Override
     public OutputStream asOutputStream() {
         if (osWrapper == null) {
-            osWrapper = new OutputStreamFromNOutputStream(this);
+            osWrapper = new OutputStreamFromNPrintStream(this);
         }
         return osWrapper;
     }
@@ -436,7 +436,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
     @Override
     public PrintStream asPrintStream() {
         if (psWrapper == null) {
-            psWrapper = new PrintStreamFromNOutputStream((OutputStreamFromNOutputStream) asOutputStream());
+            psWrapper = new PrintStreamFromNPrintStream((OutputStreamFromNPrintStream) asOutputStream());
         }
         return psWrapper;
     }
@@ -444,7 +444,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
     @Override
     public Writer asWriter() {
         if (writerWrapper == null) {
-            writerWrapper = new WriterFromNOutputStream(this);
+            writerWrapper = new WriterFromNPrintStream(this);
         }
         return writerWrapper;
     }

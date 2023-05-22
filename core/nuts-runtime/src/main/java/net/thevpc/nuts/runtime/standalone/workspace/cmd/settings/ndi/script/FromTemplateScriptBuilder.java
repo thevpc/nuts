@@ -186,8 +186,8 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                         }
                                     }
                                     case "NUTS_WORKSPACE_BINDIR_EXPR": {
-                                        //="${NUTS_WORKSPACE_APPS}/id/net/thevpc/nuts/nuts/0.8.2/bin"
-                                        return NShellHelper.of(getShellFamily()).varRef("NUTS_WORKSPACE_APPS") + options.resolveBinFolder().toString().substring(
+                                        //="${NUTS_WORKSPACE_BIN}/id/net/thevpc/nuts/nuts/0.8.2/bin"
+                                        return NShellHelper.of(getShellFamily()).varRef("NUTS_WORKSPACE_BIN") + options.resolveBinFolder().toString().substring(
                                                 NLocations.of(getSession()).getStoreLocation(NStoreType.BIN).toString().length()
                                         );
                                     }

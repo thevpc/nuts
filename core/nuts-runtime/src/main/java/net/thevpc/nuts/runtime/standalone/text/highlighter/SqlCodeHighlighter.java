@@ -41,7 +41,9 @@ public class SqlCodeHighlighter implements NCodeHighlighter {
         }
         switch (s) {
             case "sql":
-            case "text/sql": {
+            case "text/sql":
+            case "application/sql":
+            {
                 return NComponent.DEFAULT_SUPPORT;
             }
         }

@@ -56,6 +56,26 @@ public class DefaultNTextTransformer implements NTextTransformer {
     @Override
     public NText postTransform(NText text, NTextTransformerContext context) {
         switch (text.getType()) {
+            case LIST: {
+                if (config.isFlatten()) {
+                    NTextList t = (NTextList) text;
+                    List<NText> all = t.getChildren();
+                    List<NText> all2 = new ArrayList<>();
+                    for (NText a : all) {
+                        if (a instanceof NTextList) {
+                            all2.addAll(((NTextList) a).getChildren());
+                        } else {
+                            all2.add(a);
+                        }
+                    }
+                    if (all.size() == all2.size()) {
+                        return text;
+                    }
+                    return txt.ofList(all2);
+                } else {
+                    return text;
+                }
+            }
             case PLAIN: {
                 NTextPlain t = (NTextPlain) text;
                 String str = transformText(t.getText());
@@ -70,6 +90,17 @@ public class DefaultNTextTransformer implements NTextTransformer {
                 NTextStyled t = (NTextStyled) text;
                 NText child = t.getChild();
                 if (config.isFlatten()) {
+                    List<NText> cc = new ArrayList<>();
+                    if (child instanceof NTextList) {
+                        for (NText x : ((NTextList) child).getChildren()) {
+                            if (isNewline(x)) {
+                                cc.add(x);
+                            } else {
+                                cc.add(txt.ofStyled(x, t.getStyles()));
+                            }
+                        }
+                        return txt.ofList(cc);
+                    }
                     text = map(child, x -> {
                         if (isNewline(x)) {
                             return x;
@@ -181,7 +212,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
             }
             case CODE: {
                 NTextCode t = (NTextCode) text;
-                if (config.isNormalize()||config.isFlatten()) {
+                if (config.isNormalize() || config.isFlatten()) {
                     text = t.highlight(session);
                     // We have no insurance that highlight is not using special nodes so
                     // we enforce flattening

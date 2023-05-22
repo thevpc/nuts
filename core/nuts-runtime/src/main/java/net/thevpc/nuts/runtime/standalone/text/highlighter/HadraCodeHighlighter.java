@@ -34,7 +34,14 @@ public class HadraCodeHighlighter implements NCodeHighlighter {
         switch (s){
             case "hadra":
             case "hadra-lang":
-            case "hl":{
+            case "hl":
+            case "text/x-hl":
+            case "text/x-hadra":
+            case "application/x-hadra":
+            case "text/hl":
+            case "text/hadra":
+            case "application/hadra":
+            {
                 return NComponent.DEFAULT_SUPPORT;
             }
         }

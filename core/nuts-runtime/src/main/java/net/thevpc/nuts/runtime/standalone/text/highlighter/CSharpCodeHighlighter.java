@@ -38,8 +38,10 @@ public class CSharpCodeHighlighter implements NCodeHighlighter {
             return DEFAULT_SUPPORT;
         }
         switch (s){
+            case "cs":
             case "csharp":
             case "text/csharp":
+            case "text/x-csharp":
             {
                 return NComponent.DEFAULT_SUPPORT;
             }

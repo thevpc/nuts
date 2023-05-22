@@ -1,0 +1,12 @@
+int[10]a;
+int[10]b;
+for(x:a){
+    println(x);
+}
+for(x:a,y:b){
+    println(x,y);
+}
+Iterable<int> x = for(i=0;i<10;i++)−>i;
+IntStream<int> x = for(i=0;i<10;i++)−>i;
+List<int> x = for(i=0;i<10;i++)−>i;
+int[] x = for(i=0;i<10;i++)−>i;

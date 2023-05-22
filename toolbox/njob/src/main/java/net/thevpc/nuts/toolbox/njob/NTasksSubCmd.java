@@ -723,7 +723,7 @@ public class NTasksSubCmd {
             runTaskShow(cmd);
             return true;
         } else if (cmd.next("t", "tasks").isPresent()) {
-            if (cmd.next("--help") != null) {
+            if (cmd.next("--help").isPresent()) {
                 parent.showCustomHelp("njob-tasks");
             } else {
                 runTaskList(cmd);
