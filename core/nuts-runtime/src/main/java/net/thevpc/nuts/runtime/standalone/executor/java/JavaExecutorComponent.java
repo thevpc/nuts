@@ -25,6 +25,8 @@ package net.thevpc.nuts.runtime.standalone.executor.java;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NClassLoaderNode;
+import net.thevpc.nuts.boot.NWorkspaceCmdLineParser;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
@@ -241,7 +243,17 @@ public class JavaExecutorComponent implements NExecutorComponent {
                     options.setRuntimeId(null);
                 }
 
-                String bootArgumentsString = options.toCommandLine(config)
+                NCmdLine ncmdLine = options.toCommandLine(config);
+                if(!joptions.getExtraNutsOptions().isEmpty()){
+                    NCmdLine zzz = NCmdLine.of(joptions.getExtraNutsOptions());
+                    while(!zzz.isEmpty()) {
+                        List<NArg> z = NWorkspaceCmdLineParser.nextNutsArgument(zzz, options, session).orNull();
+                        if(z==null){
+                            zzz.skip();
+                        }
+                    }
+                }
+                String bootArgumentsString = ncmdLine
                         .add(executionContext.getDefinition().getId().getLongName())
                         .formatter(session).setShellFamily(NShellFamily.SH).setNtf(false).toString();
                 if (!NBlankable.isBlank(bootArgumentsString)) {

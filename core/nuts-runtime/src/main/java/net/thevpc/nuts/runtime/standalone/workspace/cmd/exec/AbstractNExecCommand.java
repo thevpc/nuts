@@ -92,7 +92,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
     }
 
     @Override
-    public NExecCommand setCommand(NDefinition definition) {
+    public NExecCommand setCommandDefinition(NDefinition definition) {
         this.commandDefinition = definition;
         if (this.commandDefinition != null) {
             this.commandDefinition.getContent().get(session);
@@ -101,6 +101,10 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
 //            this.commandDefinition.getInstallInformation().get(session);
         }
         return this;
+    }
+
+    public NDefinition getCommandDefinition() {
+        return commandDefinition;
     }
 
     @Override

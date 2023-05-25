@@ -380,14 +380,16 @@ public class DefaultNSession implements Cloneable, NSession {
                 case "-B":
                 case "--bot": {
                     a = cmdLine.nextFlag().get(this);
-                    if (active && a.getBooleanValue().get(this)) {
-                        getTerminal().setOut(getTerminal().out().setTerminalMode(NTerminalMode.FILTERED));
-                        getTerminal().setErr(getTerminal().err().setTerminalMode(NTerminalMode.FILTERED));
-                        setProgressOptions("none");
-                        setConfirm(NConfirmationMode.ERROR);
-                        setTrace(false);
-//                        setDebug(false);
-                        setGui(false);
+                    if (active) {
+                        setBot(a.getBooleanValue().get(this));
+                        if(isBot()) {
+                            getTerminal().setOut(getTerminal().out().setTerminalMode(NTerminalMode.FILTERED));
+                            getTerminal().setErr(getTerminal().err().setTerminalMode(NTerminalMode.FILTERED));
+                            //setProgressOptions("none");
+                            //setConfirm(NConfirmationMode.ERROR);
+                            //setTrace(false);
+                            //setGui(false);
+                        }
                     }
                     return true;
                 }
@@ -778,6 +780,7 @@ public class DefaultNSession implements Cloneable, NSession {
         this.confirm = other.getConfirm();
         this.dry = other.isDry();
         this.gui = other.isGui();
+        this.bot = other.isBot();
         this.errLinePrefix = other.getErrLinePrefix();
         this.outLinePrefix = other.getOutLinePrefix();
         this.fetchStrategy = other.getFetchStrategy();
@@ -1175,6 +1178,9 @@ public class DefaultNSession implements Cloneable, NSession {
 
     @Override
     public boolean isGui() {
+        if(isBot()){
+            return false;
+        }
         if (gui != null) {
             return gui;
         }

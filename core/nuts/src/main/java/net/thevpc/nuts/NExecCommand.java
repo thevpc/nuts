@@ -111,7 +111,9 @@ public interface NExecCommand extends NWorkspaceCommand {
      * @param definition definition for the executable
      * @return {@code this} instance
      */
-    NExecCommand setCommand(NDefinition definition);
+    NExecCommand setCommandDefinition(NDefinition definition);
+
+    NDefinition getCommandDefinition() ;
 
     /**
      * append command arguments

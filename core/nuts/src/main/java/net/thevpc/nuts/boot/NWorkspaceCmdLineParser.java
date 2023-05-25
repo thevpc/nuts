@@ -1180,14 +1180,9 @@ public final class NWorkspaceCmdLineParser {
                     //*
                     //**********************************
                     case "-": {
-                        NArg dash = cmdLine.next().get();
                         if (active) {
                             List<String> newArgs = new ArrayList<>();
-                            newArgs.add(NConstants.Ids.NUTS_SHELL);
-                            if (!cmdLine.isEmpty()) {
-                                newArgs.add("-c");
-                                newArgs.addAll(Arrays.asList(cmdLine.toStringArray()));
-                            }
+                            newArgs.addAll(Arrays.asList(cmdLine.toStringArray()));
                             cmdLine.skipAll();
                             if (options != null) {
                                 if (!a.getValue().isNull()) {
@@ -1206,8 +1201,6 @@ public final class NWorkspaceCmdLineParser {
                                 applicationArguments.addAll(newArgs);
                                 options.setApplicationArguments(applicationArguments);
                             }
-                            //put back the dash
-                            newArgs.add(0, dash.toString());
                             return NOptional.of(newArgs.stream().map(NArg::of).collect(Collectors.toList()));
                         } else {
                             List<String> newArgs = new ArrayList<>(Arrays.asList(cmdLine.toStringArray()));

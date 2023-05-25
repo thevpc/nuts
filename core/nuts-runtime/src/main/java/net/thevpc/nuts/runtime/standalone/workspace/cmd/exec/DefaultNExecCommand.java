@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NArg;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
@@ -74,10 +76,47 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
     }
 
 
+    private void refactorCommand() {
+        if(getCommandDefinition()!=null){
+            return;
+        }
+        boolean someUpdates = true;
+        while (someUpdates) {
+            someUpdates = false;
+            if (!getCommand().isEmpty()) {
+                String cmd = getCommand().get(0);
+                if ("exec".equals(cmd)) {
+                    NCmdLine cmdLine = NCmdLine.of(getCommand(), getSession());
+                    cmdLine.skip(); //skip exec
+                    setCommand(new ArrayList<>());//reset command
+                    while (cmdLine.hasNext()) {
+                        configureLast(cmdLine);
+                    }
+                    someUpdates = true;
+                } else if ("-".equals(cmd)) {
+                    List<String> newCmd = new ArrayList<>();
+                    newCmd.add(NConstants.Ids.NUTS_SHELL);
+                    if (!getCommand().isEmpty()) {
+                        newCmd.add("-c");
+                        newCmd.addAll(getCommand());
+                    }
+                    setCommand(newCmd);
+                    someUpdates = true;
+                } else if (NArg.of(cmd).isOption()) {
+                    ArrayList<String> aa = new ArrayList<>();
+                    aa.add("exec");
+                    aa.addAll(getCommand());
+                    setCommand(aa);
+                    someUpdates = true;
+                }
+            }
+        }
+    }
+
     @Override
     public NExecutableInformation which() {
         checkSession();
-
+        refactorCommand();
         NSession traceSession = getSession();
         String target = getTarget();
         if (!NBlankable.isBlank(target)) {
@@ -102,7 +141,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
         }
         switch (executionType) {
             case OPEN: {
-                NAssert.requireNonNull(commandDefinition, "artifact definition", session);
+                NAssert.requireNonNull(getCommandDefinition(), "artifact definition", session);
                 NAssert.requireNonBlank(command, "command", session);
                 String[] ts = command.toArray(new String[0]);
                 exec = new DefaultNOpenExecutable(ts, getExecutorOptions().toArray(new String[0]), this);
@@ -110,7 +149,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
             }
             case SYSTEM: {
                 NExecutionType finalExecutionType = executionType;
-                NAssert.requireNull(commandDefinition, () -> NMsg.ofC("unable to run artifact as %s cmd", finalExecutionType), session);
+                NAssert.requireNull(getCommandDefinition(), () -> NMsg.ofC("unable to run artifact as %s cmd", finalExecutionType), session);
                 NAssert.requireNonBlank(command, "command", session);
                 String[] ts = command.toArray(new String[0]);
                 List<String> tsl = new ArrayList<>(Arrays.asList(ts));
@@ -128,9 +167,9 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
             }
             case SPAWN:
             case EMBEDDED: {
-                if (commandDefinition != null) {
+                if (getCommandDefinition() != null) {
                     String[] ts = command == null ? new String[0] : command.toArray(new String[0]);
-                    return ws_execDef(commandDefinition, commandDefinition.getId().getLongName(), ts, getExecutorOptions(), workspaceOptions, env, directory, failFast,
+                    return ws_execDef(getCommandDefinition(), getCommandDefinition().getId().getLongName(), ts, getExecutorOptions(), workspaceOptions, env, directory, failFast,
                             executionType, runAs);
                 } else {
                     NAssert.requireNonBlank(command, "command", session);
@@ -165,7 +204,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
             }
             case SYSTEM: {
                 NExecutionType finalExecutionType = executionType;
-                NAssert.requireNull(commandDefinition, () -> NMsg.ofC("unable to run artifact as %s cmd", finalExecutionType), session);
+                NAssert.requireNull(getCommandDefinition(), () -> NMsg.ofC("unable to run artifact as %s cmd", finalExecutionType), session);
                 NAssert.requireNonBlank(command, "command", session);
                 String[] ts = command.toArray(new String[0]);
                 return new DefaultNSystemExecutableRemote(
@@ -178,9 +217,9 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                 );
             }
             case SPAWN: {
-                if (commandDefinition != null) {
+                if (getCommandDefinition() != null) {
                     String[] ts = command == null ? new String[0] : command.toArray(new String[0]);
-                    return new DefaultSpawnExecutableRemote(commExec, commandDefinition, ts, getExecutorOptions(), this, in0, out0, err0);
+                    return new DefaultSpawnExecutableRemote(commExec, getCommandDefinition(), ts, getExecutorOptions(), this, in0, out0, err0);
                 } else {
                     NAssert.requireNonBlank(command, "command", session);
                     List<String> ts = new ArrayList<>(command);
@@ -352,7 +391,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                                     this.getErr(),
                                     executionType, runAs);
                             return new DefaultNArtifactPathExecutable(cmdName, args, executorOptions, workspaceOptions, executionType, runAs, this, nutToRun, c, null, ec);
-                        }catch (Exception ex){
+                        } catch (Exception ex) {
                             //fallback to other cases
                             c.close();
                         }

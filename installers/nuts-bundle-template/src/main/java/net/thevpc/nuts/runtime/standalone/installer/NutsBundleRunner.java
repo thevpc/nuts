@@ -248,7 +248,6 @@ public class NutsBundleRunner {
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_';
     }
 
-
     private String[] splitKeyValue(String item) {
         int i = item.indexOf('=');
         if (i >= 0) {

@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.executor.java;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NClassLoaderNode;
+import net.thevpc.nuts.boot.NWorkspaceCmdLineParser;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
@@ -28,6 +29,8 @@ public final class JavaExecutorOptions {
     private final boolean mainClassApp = false;
     private final List<String> execArgs;
     private final List<String> jvmArgs = new ArrayList<String>();
+    private final List<String> extraExecutorOptions = new ArrayList<String>();
+    private final List<String> extraNutsOptions = new ArrayList<String>();
     private final List<String> j9_addModules = new ArrayList<String>();
     private final List<String> j9_modulePath = new ArrayList<String>();
     private final List<String> j9_upgradeModulePath = new ArrayList<String>();
@@ -78,17 +81,19 @@ public final class JavaExecutorOptions {
         NCmdLine cmdLine = NCmdLine.of(getExecArgs()).setExpandSimpleOptions(false);
         NArg a;
         List<NClassLoaderNode> currentCP = new ArrayList<>();
+        List<NArg> extraMayBeJvmOptions = new ArrayList<>();
+
         while (cmdLine.hasNext()) {
             a = cmdLine.peek().get(session);
             switch (a.key()) {
                 case "--java-version":
                 case "-java-version": {
-                    cmdLine.withNextEntry((v, r, s)-> javaVersion = v);
+                    cmdLine.withNextEntry((v, r, s) -> javaVersion = v);
                     break;
                 }
                 case "--java-home":
                 case "-java-home": {
-                    cmdLine.withNextEntry((v, r, s)-> javaCommand = v);
+                    cmdLine.withNextEntry((v, r, s) -> javaCommand = v);
                     break;
                 }
                 case "--class-path":
@@ -97,7 +102,7 @@ public final class JavaExecutorOptions {
                 case "-classpath":
                 case "--cp":
                 case "-cp": {
-                    cmdLine.withNextEntry((v, r, s)-> addCp(currentCP, v));
+                    cmdLine.withNextEntry((v, r, s) -> addCp(currentCP, v));
                     break;
                 }
 
@@ -107,69 +112,69 @@ public final class JavaExecutorOptions {
                 case "-nutspath":
                 case "--np":
                 case "-np": {
-                    cmdLine.withNextEntry((v, r, s)-> addNp(currentCP, v));
+                    cmdLine.withNextEntry((v, r, s) -> addNp(currentCP, v));
                     break;
                 }
                 case "--main-class":
                 case "-main-class":
                 case "--class":
                 case "-class": {
-                    cmdLine.withNextEntry((v, r, s)-> mainClass = v);
+                    cmdLine.withNextEntry((v, r, s) -> mainClass = v);
                     break;
                 }
                 case "--dir":
                 case "-dir": {
-                    cmdLine.withNextEntry((v, r, s)-> this.dir = NPath.of(v,session));
+                    cmdLine.withNextEntry((v, r, s) -> this.dir = NPath.of(v, session));
                     break;
                 }
                 case "--win":
                 case "--javaw": {
-                    cmdLine.withNextFlag((v, r, s)-> javaw = v);
+                    cmdLine.withNextFlag((v, r, s) -> javaw = v);
                     break;
                 }
                 case "--jar":
                 case "-jar": {
-                    cmdLine.withNextFlag((v, r, s)-> jar = v);
+                    cmdLine.withNextFlag((v, r, s) -> jar = v);
                     break;
                 }
                 case "--show-command":
                 case "-show-command": {
-                    cmdLine.withNextFlag((v, r, s)-> showCommand = v);
+                    cmdLine.withNextFlag((v, r, s) -> showCommand = v);
                     break;
                 }
                 case "--exclude-base":
                 case "-exclude-base": {
-                    cmdLine.withNextFlag((v, r, s)-> excludeBase = v);
+                    cmdLine.withNextFlag((v, r, s) -> excludeBase = v);
                     break;
                 }
                 case "--add-module": {
-                    cmdLine.withNextEntry((v, r, s)-> this.j9_addModules.add(v));
+                    cmdLine.withNextEntry((v, r, s) -> this.j9_addModules.add(v));
                     break;
                 }
                 case "-m":
                 case "--module": {
                     //<module>/<mainclass>
-                    cmdLine.withNextEntry((v, r, s)-> this.j9_module=v);
+                    cmdLine.withNextEntry((v, r, s) -> this.j9_module = v);
                     break;
                 }
                 case "--module-path": {
-                    cmdLine.withNextEntry((v, r, s)-> this.j9_modulePath.add(v));
+                    cmdLine.withNextEntry((v, r, s) -> this.j9_modulePath.add(v));
                     break;
                 }
                 case "-splash": {
-                    cmdLine.withNextEntry((v, r, s)-> splash = v);
+                    cmdLine.withNextEntry((v, r, s) -> splash = v);
                     break;
                 }
                 case "--upgrade-module-path": {
-                    cmdLine.withNextEntry((v, r, s)-> this.j9_upgradeModulePath.add(v));
+                    cmdLine.withNextEntry((v, r, s) -> this.j9_upgradeModulePath.add(v));
                     break;
                 }
                 case "--prepend-arg": {
-                    cmdLine.withNextEntry((v, r, s)-> this.prependArgs.add(v));
+                    cmdLine.withNextEntry((v, r, s) -> this.prependArgs.add(v));
                     break;
                 }
                 case "--append-arg": {
-                    cmdLine.withNextEntry((v, r, s)-> this.appendArgs.add(v));
+                    cmdLine.withNextEntry((v, r, s) -> this.appendArgs.add(v));
                     break;
                 }
                 case "-s": {
@@ -183,7 +188,20 @@ public final class JavaExecutorOptions {
                     break;
                 }
                 default: {
-                    getJvmArgs().add(cmdLine.next().flatMap(NLiteral::asString).get(session));
+                    if (a.isOption()) {
+                        List<NArg> nArgs = NWorkspaceCmdLineParser.nextNutsArgument(cmdLine, null, session).orNull();
+                        if (nArgs != null) {
+                            for (NArg nArg : nArgs) {
+                                extraNutsOptions.add(nArg.toString());
+                            }
+                        } else if (a.toString().startsWith("--jvm-")) {
+                            getJvmArgs().add(cmdLine.next().get().toString().substring("--jvm".length()));
+                        } else if (a.toString().startsWith("--nuts-")) {
+                            extraNutsOptions.add(cmdLine.next().get().toString().substring("--nuts".length()));
+                        } else {
+                            extraMayBeJvmOptions.add(cmdLine.next().get());
+                        }
+                    }
                 }
             }
         }
@@ -241,7 +259,21 @@ public final class JavaExecutorOptions {
         if (javaCommand == null) {
             throw new NExecutionException(session, NMsg.ofC("no java version %s was found", getJavaVersion()), NExecutionException.ERROR_1);
         }
-        java9 = NVersion.of(javaVersion).get(session).compareTo("1.8") > 0;
+        for (NArg varg : extraMayBeJvmOptions) {
+            if (isJvmOption(varg, explicitJavaVersion)) {
+                getJvmArgs().add(varg.toString());
+            } else {
+                extraExecutorOptions.add(varg.toString());
+            }
+        }
+        java9 = NVersion.of(javaVersion).get(session).compareTo("9") >= 0;
+        for (NArg extraMayBeJvmOption : extraMayBeJvmOptions) {
+            if (extraMayBeJvmOption.toString().startsWith("--jvm-")) {
+                getJvmArgs().add(extraMayBeJvmOption.toString().substring("--jvm".length()));
+            } else if (isJvmOption(extraMayBeJvmOption, NVersion.of(javaVersion).get(session))) {
+                getJvmArgs().add(extraMayBeJvmOption.toString());
+            }
+        }
         if (this.jar) {
             if (this.mainClass != null) {
                 if (session.isPlainOut()) {
@@ -429,6 +461,65 @@ public final class JavaExecutorOptions {
         }
 
 
+    }
+
+    private boolean isJvmOption(NArg extraMayBeJvmOption, NVersion nVersion) {
+        String s = extraMayBeJvmOption.toString();
+        if (s.startsWith("-d32")) {
+            return true;
+        }
+        if (s.startsWith("-d64")) {
+            return true;
+        }
+        if (s.startsWith("-server")) {
+            return true;
+        }
+        if (s.startsWith("-cp")) {
+            return true;
+        }
+        if (s.startsWith("-classpath")) {
+            return true;
+        }
+        if (s.startsWith("-D")) {
+            return true;
+        }
+        if (s.startsWith("-verbose:")) {
+            return true;
+        }
+        if (s.startsWith("-ea:")) {
+            return true;
+        }
+        if (s.startsWith("-enableassertions:")) {
+            return true;
+        }
+        if (s.startsWith("-da:")) {
+            return true;
+        }
+        if (s.startsWith("-disableassertions:")) {
+            return true;
+        }
+        if (s.startsWith("-esa")) {
+            return true;
+        }
+        if (s.startsWith("-dsa")) {
+            return true;
+        }
+        if (s.startsWith("-enablesystemassertions")) {
+            return true;
+        }
+        if (s.startsWith("-disablesystemassertions")) {
+            return true;
+        }
+        if (s.startsWith("-splash:")) {
+            return true;
+        }
+        if (s.startsWith("-agentlib:")) {
+            return true;
+        }
+        if (s.startsWith("-javaagent:")) {
+            return true;
+        }
+        return false;
     }
 
     private String resolveMainClass(String name, List<String> possibleClasses) {
@@ -649,4 +740,11 @@ public final class JavaExecutorOptions {
         return classPath;
     }
 
+    public List<String> getExtraNutsOptions() {
+        return extraNutsOptions;
+    }
+
+    public List<String> getExtraExecutorOptions() {
+        return extraExecutorOptions;
+    }
 }

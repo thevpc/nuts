@@ -120,4 +120,21 @@ public class Test10_ExecURLTest {
         Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
     }
 
+//    @Test
+//    public void testCallSpecialId() {
+//        TestUtils.println(NVersionFormat.of(session));
+//        NSession nSession = Nuts.openWorkspace("-y","--verbose");
+//        String result = NExecCommand.of(nSession.copy()
+//                        .setBot(true).json())
+//                .addExecutorOptions("--bot")
+//                //.setExecutionType(NExecutionType.EMBEDDED)
+//                .addCommand("com.cts.nuts.enterprise.postgres:pgcli")
+//                .addCommand("list","-i")
+//                .grabOutputString()
+//                .getOutputString();
+//        nSession.out().println(result);
+//        Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
+//    }
+
+
 }
