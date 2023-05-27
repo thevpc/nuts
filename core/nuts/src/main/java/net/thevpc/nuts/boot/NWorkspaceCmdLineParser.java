@@ -536,8 +536,20 @@ public final class NWorkspaceCmdLineParser {
                         a = cmdLine.next().get(session);
                         if (active) {
                             if (options != null) {
-                                options.setTerminalMode(a.getStringValue().flatMap(NTerminalMode::parse)
-                                        .ifEmpty(NTerminalMode.FORMATTED).get(session));
+                                if (a.isFlagOption()) {
+                                    if (a.isNegated()) {
+                                        options.setTerminalMode(NTerminalMode.INHERITED);
+                                    } else {
+                                        options.setTerminalMode(NTerminalMode.FORMATTED);
+                                    }
+                                } else {
+                                    NTerminalMode v = a.getStringValue().flatMap(NTerminalMode::parse)
+                                            .ifEmpty(NTerminalMode.FORMATTED).get(session);
+                                    if (v == NTerminalMode.DEFAULT) {
+                                        v = NTerminalMode.INHERITED;
+                                    }
+                                    options.setTerminalMode(v);
+                                }
                             }
                             return NOptional.of(Collections.singletonList(a));
                         } else {

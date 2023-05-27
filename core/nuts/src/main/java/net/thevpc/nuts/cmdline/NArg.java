@@ -202,4 +202,5 @@ public interface NArg extends NLiteral {
     NLiteral getKey();
 
 
+    boolean isFlagOption();
 }

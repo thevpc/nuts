@@ -415,6 +415,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
         setFailFast(other.isFailFast());
         setExecutionType(other.getExecutionType());
         setRunAs(other.getRunAs());
+        setTarget(other.getTarget());
         return this;
     }
 

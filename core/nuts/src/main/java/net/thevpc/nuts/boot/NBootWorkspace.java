@@ -1241,7 +1241,10 @@ public final class NBootWorkspace {
         if (executorOptions != null) {
             execCmd.configure(true, executorOptions.toArray(new String[0]));
         }
-        execCmd.addExecutorOptions(executorOptions);
+        NCmdLine executorOptionsCmdLine = NCmdLine.of(executorOptions, session).setExpandSimpleOptions(false);
+        while(executorOptionsCmdLine.hasNext()){
+            execCmd.configureLast(executorOptionsCmdLine);
+        }
         if (o.getApplicationArguments().get().size() == 0) {
             if (o.getSkipWelcome().orElse(false)) {
                 return session;

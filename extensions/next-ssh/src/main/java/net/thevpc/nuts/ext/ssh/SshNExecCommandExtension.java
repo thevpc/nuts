@@ -45,7 +45,7 @@ public class SshNExecCommandExtension implements NExecCommandExtension {
         NSession session = context.getSession();
         switch (in.getType()) {
             case NULL: {
-                h.in = new MyInHolder(session, NIO.of(session).ofNullInputStream(), false, null);
+                h.in = new MyInHolder(session, NIO.of(session).ofNullRawInputStream(), false, null);
                 break;
             }
             case PATH: {
@@ -64,7 +64,7 @@ public class SshNExecCommandExtension implements NExecCommandExtension {
         }
         switch (out.getType()) {
             case NULL: {
-                h.out = new MyOutHolder(session, NIO.of(session).ofNullOutputStream(), false, null);
+                h.out = new MyOutHolder(session, NIO.of(session).ofNullRawOutputStream(), false, null);
                 break;
             }
             case PATH: {
@@ -99,7 +99,7 @@ public class SshNExecCommandExtension implements NExecCommandExtension {
         }
         switch (err.getType()) {
             case NULL: {
-                h.err = new MyOutHolder(session, NIO.of(session).ofNullOutputStream(), false, null);
+                h.err = new MyOutHolder(session, NIO.of(session).ofNullRawOutputStream(), false, null);
                 break;
             }
             case PATH: {

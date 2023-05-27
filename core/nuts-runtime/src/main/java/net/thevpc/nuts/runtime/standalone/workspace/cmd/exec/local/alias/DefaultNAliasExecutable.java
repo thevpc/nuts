@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.alias;
+package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.alias;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;

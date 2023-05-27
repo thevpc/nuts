@@ -65,7 +65,6 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
     private Map<String, Object> formatParams = new HashMap<>();
     private boolean compact;
     private NContentType outputFormat;
-//    private NutsObjectFormat base;
 
     public DefaultNObjectFormat(NSession session) {
         super(session, "object-format");

@@ -43,20 +43,23 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
         );
         NBootOptions bOptions = bootModel.getBootEffectiveOptions();
         NTerminalMode terminalMode = bOptions.getUserOptions().get().getTerminalMode().orElse(NTerminalMode.DEFAULT);
+        boolean bootStdFdAnsi = bootStdFd.getFlags().contains("ansi");
         if (terminalMode == NTerminalMode.DEFAULT) {
             if (bOptions.getUserOptions().get().getBot().orElse(false)) {
                 terminalMode = NTerminalMode.FILTERED;
             } else {
-                if (bootStdFd.getFlags().contains("ansi")) {
+                if (bootStdFdAnsi) {
                     terminalMode = NTerminalMode.FORMATTED;
                 } else {
                     terminalMode = NTerminalMode.FILTERED;
                 }
             }
+        }else if (terminalMode == NTerminalMode.ANSI) {
+            terminalMode = NTerminalMode.FORMATTED;
         }
-        this.out = new NPrintStreamSystem(bootStdFd.getOut(), null, null, bootStdFd.getFlags().contains("ansi"),
+        this.out = new NPrintStreamSystem(bootStdFd.getOut(), null, null, bootStdFdAnsi,
                 bootModel.getBootSession(), this).setTerminalMode(terminalMode);
-        this.err = new NPrintStreamSystem(bootStdFd.getErr(), null, null, bootStdFd.getFlags().contains("ansi"),
+        this.err = new NPrintStreamSystem(bootStdFd.getErr(), null, null, bootStdFdAnsi,
                 bootModel.getBootSession(), this).setTerminalMode(terminalMode);
         this.in = bootStdFd.getIn();
         this.scanner = new Scanner(this.in);

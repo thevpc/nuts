@@ -158,7 +158,7 @@ public class NCompressedPathBase extends NPathBase {
 
     @Override
     public OutputStream getOutputStream(NPathOption... options) {
-        return NIO.of(getSession()).ofOutputStream(base.getOutputStream(options), this.getMetaData());
+        return NIO.of(getSession()).ofRawOutputStream(base.getOutputStream(options), this.getMetaData());
     }
 
     @Override

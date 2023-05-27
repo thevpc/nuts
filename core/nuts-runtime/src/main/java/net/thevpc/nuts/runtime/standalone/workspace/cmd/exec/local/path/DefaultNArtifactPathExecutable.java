@@ -3,30 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
+package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.path;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.io.NInputSource;
-import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinition;
-import net.thevpc.nuts.runtime.standalone.definition.DefaultNInstallInfo;
-import net.thevpc.nuts.runtime.standalone.descriptor.parser.NDescriptorContentResolver;
 import net.thevpc.nuts.runtime.standalone.io.util.*;
-import net.thevpc.nuts.runtime.standalone.security.util.CoreDigestHelper;
-import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
-import net.thevpc.nuts.spi.NDependencySolver;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableCommand;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.CharacterizedExecFile;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCommand;
 import net.thevpc.nuts.util.NLog;
 import net.thevpc.nuts.util.NLogVerb;
 
 import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Level;
@@ -85,7 +76,7 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableCommand i
 
     public int executeHelper() {
         try {
-            return executorComponentAndContext.component.exec(executorComponentAndContext.executionContext);
+            return executorComponentAndContext.getComponent().exec(executorComponentAndContext.getExecutionContext());
         } finally {
             dispose();
         }

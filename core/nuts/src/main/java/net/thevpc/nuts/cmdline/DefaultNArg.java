@@ -40,34 +40,37 @@ import java.util.regex.Pattern;
  * @author thevpc
  */
 public class DefaultNArg implements NArg {
-    public static final String KEY_PATTERN_STRING="[a-zA-Z0-9_.@&^$%][a-zA-Z0-9_.@&^$%+!-]*";
-    public static final Pattern PATTERN_OPTION_EQ = Pattern.compile("^((?<optp>[-]+|[+]+)(?<cmt>//)?(?<flg>[!~])?)?(?<optk>"+KEY_PATTERN_STRING+")?(?<opts>[=](?<optv>.*))?(?<optr>.*)$");
-    public static final Pattern PATTERN_OPTION_COL = Pattern.compile("^((?<optp>[-]+|[+]+)(?<cmt>//)?(?<flg>[!~])?)?(?<optk>"+KEY_PATTERN_STRING+")?(?<opts>[:](?<optv>.*))?(?<optr>.*)$");
+    public static final String KEY_PATTERN_STRING = "[a-zA-Z0-9_.@&^$%][a-zA-Z0-9_.@&^$%+!-]*";
+    public static final Pattern PATTERN_OPTION_EQ = Pattern.compile("^((?<optp>[-]+|[+]+)(?<cmt>//)?(?<flg>[!~])?)?(?<optk>" + KEY_PATTERN_STRING + ")?(?<opts>[=](?<optv>.*))?(?<optr>.*)$");
+    public static final Pattern PATTERN_OPTION_COL = Pattern.compile("^((?<optp>[-]+|[+]+)(?<cmt>//)?(?<flg>[!~])?)?(?<optk>" + KEY_PATTERN_STRING + ")?(?<opts>[:](?<optv>.*))?(?<optr>.*)$");
 
-    public static boolean isSimpleKey(char c){
-        return (c>='a' && c<='z')
-                || (c>='A' && c<='Z');
+    public static boolean isSimpleKey(char c) {
+        return (c >= 'a' && c <= 'z')
+                || (c >= 'A' && c <= 'Z');
     }
-    public static boolean isKeyStart(char c){
-        return (c>='a' && c<='z')
-                || (c>='A' && c<='Z')
-                || (c>='0' && c<='9')
-                || c=='_'
-                || c=='.'
-                || c=='@'
-                || c=='&'
-                || c=='^'
-                || c=='$'
-                || c=='%'
+
+    public static boolean isKeyStart(char c) {
+        return (c >= 'a' && c <= 'z')
+                || (c >= 'A' && c <= 'Z')
+                || (c >= '0' && c <= '9')
+                || c == '_'
+                || c == '.'
+                || c == '@'
+                || c == '&'
+                || c == '^'
+                || c == '$'
+                || c == '%'
                 ;
     }
-    public static boolean isKeyPart(char c){
+
+    public static boolean isKeyPart(char c) {
         return isKeyStart(c)
-                || c=='-'
-                || c=='+'
-                || c=='!'
+                || c == '-'
+                || c == '+'
+                || c == '!'
                 ;
     }
+
     /**
      * equal character
      */
@@ -106,7 +109,7 @@ public class DefaultNArg implements NArg {
                 break;
             }
             default: {
-                currOptionsPattern = Pattern.compile("^((?<optp>[-]+|[+]+)(?<cmt>//)?(?<flg>[!~])?)?(?<optk>"+KEY_PATTERN_STRING+"*)?(?<opts>[" + eq + "](?<optv>.*))?(?<optr>.*)$");
+                currOptionsPattern = Pattern.compile("^((?<optp>[-]+|[+]+)(?<cmt>//)?(?<flg>[!~])?)?(?<optk>" + KEY_PATTERN_STRING + "*)?(?<opts>[" + eq + "](?<optv>.*))?(?<optr>.*)$");
             }
         }
         Matcher matcher = currOptionsPattern.matcher(expression == null ? "" : expression);
@@ -273,6 +276,16 @@ public class DefaultNArg implements NArg {
     @Override
     public NLiteral getKey() {
         return NLiteral.of(key == null ? expression : key);
+    }
+
+    @Override
+    public boolean isFlagOption() {
+        if (isOption()) {
+            if (getValue().isNull()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private NLiteral toValue() {

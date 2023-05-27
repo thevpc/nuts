@@ -239,11 +239,15 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
                     if (i == 0) {
                         out.print(prefix);
                         if (prefix.isEmpty() || prefix.toString().endsWith("#")) {
-                            out.print(NConstants.Ntf.SILENT);
+                            if(out.isNtf()) {
+                                out.print(NConstants.Ntf.SILENT);
+                            }
                         }
                         out.print(formattedKey);
                         if (separator.isEmpty() || separator.startsWith("#")) {
-                            out.print(NConstants.Ntf.SILENT);
+                            if(out.isNtf()) {
+                                out.print(NConstants.Ntf.SILENT);
+                            }
                         }
                         out.print(separator);
                         out.print(s);
@@ -258,11 +262,15 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
         } else {
             out.print(prefix);
             if (prefix.isEmpty() || prefix.toString().endsWith("#")) {
-                out.print(NConstants.Ntf.SILENT);
+                if(out.isNtf()) {
+                    out.print(NConstants.Ntf.SILENT);
+                }
             }
             out.print(txt.ofStyled(formattedKey, NTextStyle.primary3()));
             if (separator.isEmpty() || separator.startsWith("#")) {
-                out.print(NConstants.Ntf.SILENT);
+                if(out.isNtf()) {
+                    out.print(NConstants.Ntf.SILENT);
+                }
             }
             out.print(separator);
             out.print(value);

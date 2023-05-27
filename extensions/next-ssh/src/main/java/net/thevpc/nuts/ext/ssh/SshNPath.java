@@ -92,7 +92,7 @@ class SshNPath implements NPathSPI {
         return new SShConnection(path
                 , getSession().in()
                 , getSession().out().asOutputStream()
-                , NIO.of(session).ofNullOutputStream()
+                , NIO.of(session).ofNullRawOutputStream()
                 , getSession()
         ).grabOutputString()
                 .addListener(listener);

@@ -186,7 +186,7 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
             }
         }
         NSession session = getSession().copy();
-        if (session.isPlainOut()) {
+        if (session.getOutputFormat() == NContentType.PLAIN) {
             session.setOutputFormat(NContentType.PROPS);
         }
         NObjectFormat.of(session).setValue(result).configure(true, args.toArray(new String[0])).print(w);

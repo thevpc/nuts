@@ -367,10 +367,19 @@ public class DefaultNSession implements Cloneable, NSession {
                     //if the value is not immediately attached with '=' don't consider
                     a = cmdLine.next().get(this);
                     if (active) {
-                        NTerminalMode v = a.getStringValue().flatMap(NTerminalMode::parse)
-                                .ifEmpty(NTerminalMode.FORMATTED).get(this);
-                        if (v == NTerminalMode.DEFAULT) {
-                            v = NTerminalMode.INHERITED;
+                        NTerminalMode v = null;
+                        if (a.isFlagOption()) {
+                            if (a.isNegated()) {
+                                v = NTerminalMode.INHERITED;
+                            } else {
+                                v = NTerminalMode.FORMATTED;
+                            }
+                        } else {
+                            v = a.getStringValue().flatMap(NTerminalMode::parse)
+                                    .ifEmpty(NTerminalMode.FORMATTED).get(this);
+                            if (v == NTerminalMode.DEFAULT) {
+                                v = NTerminalMode.INHERITED;
+                            }
                         }
                         getTerminal().setOut(getTerminal().out().setTerminalMode(v));
                         getTerminal().setErr(getTerminal().err().setTerminalMode(v));
@@ -382,7 +391,7 @@ public class DefaultNSession implements Cloneable, NSession {
                     a = cmdLine.nextFlag().get(this);
                     if (active) {
                         setBot(a.getBooleanValue().get(this));
-                        if(isBot()) {
+                        if (isBot()) {
                             getTerminal().setOut(getTerminal().out().setTerminalMode(NTerminalMode.FILTERED));
                             getTerminal().setErr(getTerminal().err().setTerminalMode(NTerminalMode.FILTERED));
                             //setProgressOptions("none");
@@ -751,7 +760,7 @@ public class DefaultNSession implements Cloneable, NSession {
             cloned.appArgs = this.getAppArguments() == null ? null : new ArrayList<>(this.getAppArguments());
             cloned.appMode = this.getAppMode();
             cloned.appStoreLocationResolver = this.getAppStoreLocationResolver();
-            this.appPreviousVersion = this.getAppPreviousVersion();
+            cloned.appPreviousVersion = this.getAppPreviousVersion();
             cloned.appModeArgs = this.getAppModeArguments() == null ? null : new ArrayList<>(this.getAppModeArguments());
 
 
@@ -1178,7 +1187,7 @@ public class DefaultNSession implements Cloneable, NSession {
 
     @Override
     public boolean isGui() {
-        if(isBot()){
+        if (isBot()) {
             return false;
         }
         if (gui != null) {
@@ -1873,11 +1882,11 @@ public class DefaultNSession implements Cloneable, NSession {
     @Override
     public NCmdLine getAppCommandLine() {
         NId appId = getAppId();
-        if(appId==null){
+        if (appId == null) {
             return null;
         }
         List<String> appArguments = getAppArguments();
-        if(appArguments==null){
+        if (appArguments == null) {
             return null;
         }
         return NCmdLine.of(appArguments)

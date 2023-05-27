@@ -34,6 +34,8 @@ import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogVerb;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;
@@ -43,6 +45,7 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class ProcessBuilder2 {
@@ -67,9 +70,11 @@ public class ProcessBuilder2 {
     private int result;
     private Process proc;
     private long pid;
+    private NLog nLog;
 
     public ProcessBuilder2(NSession session) {
         this.session = session;
+        this.nLog = NLog.of(ProcessBuilder2.class,session);
     }
 
     private static String formatArg(String s, NSession session) {
@@ -256,6 +261,9 @@ public class ProcessBuilder2 {
         if (proc != null) {
             throw new NIllegalStateException(session, NMsg.ofPlain("already started"));
         }
+        nLog.with().verb(NLogVerb.START).level(Level.FINEST).log(
+                NMsg.ofNtf(NTexts.of(session).ofCode("system", getCommandString()))
+        );
         switch (in.base.getType()) {
             case PIPE:
             case STREAM:
@@ -416,7 +424,7 @@ public class ProcessBuilder2 {
             case NULL: {
                 String pname = "pipe-in-proc-" + procString;
                 in.termIn = NIO.of(session).ofNonBlocking(
-                        NIO.of(session).ofNullInputStream()
+                        NIO.of(session).ofNullRawInputStream()
                         , new DefaultNContentMetadata().setMessage(NMsg.ofPlain(pname)));
                 PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "in", in.termIn, proc.getOutputStream(), session);
                 if (pipes == null) {
@@ -445,7 +453,7 @@ public class ProcessBuilder2 {
                         proc.getInputStream()
                         , new DefaultNContentMetadata().setMessage(NMsg.ofPlain(pname)));
                 PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "out", procInput,
-                        NIO.of(session).ofNullOutputStream()
+                        NIO.of(session).ofNullRawOutputStream()
                         , session);
                 if (pipes == null) {
                     pipes = Executors.newCachedThreadPool();

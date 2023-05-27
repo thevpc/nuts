@@ -87,6 +87,8 @@ public enum NTerminalMode implements NEnum {
                     return NOptional.of(DEFAULT);
                 case "H":
                     return NOptional.of(INHERITED);
+                case "A":
+                    return NOptional.of(ANSI);
                 default:{
                     Boolean b = NLiteral.of(normalizedValue).asBoolean().orNull();
                     if(b!=null){

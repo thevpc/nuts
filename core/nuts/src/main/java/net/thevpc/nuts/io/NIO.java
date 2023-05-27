@@ -43,7 +43,7 @@ public interface NIO extends NComponent {
        return NExtensions.of(session).createComponent(NIO.class).get();
     }
 
-    InputStream ofNullInputStream();
+    InputStream ofNullRawInputStream();
 
     boolean isStdin(InputStream in);
 
@@ -51,9 +51,13 @@ public interface NIO extends NComponent {
 
     NPrintStream ofNullPrintStream();
 
-    OutputStream ofNullOutputStream();
+    OutputStream ofNullRawOutputStream();
+    //NOutputStream ofNullOutputStream();
 
     NMemoryPrintStream ofInMemoryPrintStream();
+
+    //NOutputStream ofInMemoryOutputStream();
+    //NOutputStream ofInMemoryOutputStream(NTerminalMode mode);
 
     NMemoryPrintStream ofInMemoryPrintStream(NTerminalMode mode);
 
@@ -73,6 +77,7 @@ public interface NIO extends NComponent {
 
     NPrintStream ofPrintStream(Writer out, NTerminalMode mode, NSystemTerminalBase terminal);
 
+    NPrintStream ofPrintStream(NPath out);
     NPrintStream ofPrintStream(Writer out);
 
     boolean isStdout(NPrintStream out);
@@ -121,7 +126,8 @@ public interface NIO extends NComponent {
     NOutputTarget ofOutputTarget(OutputStream inputStream);
 
     NOutputTarget ofOutputTarget(OutputStream outputStream, NContentMetadata metadata);
-    OutputStream ofOutputStream(OutputStream outputStream, NContentMetadata metadata);
+    OutputStream ofRawOutputStream(OutputStream outputStream, NContentMetadata metadata);
+    //NOutputStream ofOutputStream(OutputStream outputStream, NContentMetadata metadata);
 
     /**
      * Checks for the current system terminal and does best effort

@@ -38,4 +38,5 @@ public interface NMemoryPrintStream extends NPrintStream {
     }
 
     byte[] getBytes();
+    NInputSource asInputSource();
 }

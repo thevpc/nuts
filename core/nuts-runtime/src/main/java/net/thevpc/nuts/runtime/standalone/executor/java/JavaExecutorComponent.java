@@ -253,6 +253,11 @@ public class JavaExecutorComponent implements NExecutorComponent {
                         }
                     }
                 }
+                List<String> extraStartWithAppArgs=new ArrayList<>();
+
+                if(def.getId().equalsShortId(session.getWorkspace().getApiId())){
+                    extraStartWithAppArgs.addAll(ncmdLine.toStringList());
+                }
                 String bootArgumentsString = ncmdLine
                         .add(executionContext.getDefinition().getId().getLongName())
                         .formatter(session).setShellFamily(NShellFamily.SH).setNtf(false).toString();
@@ -362,12 +367,22 @@ public class JavaExecutorComponent implements NExecutorComponent {
                     }
                     args.add(joptions.getMainClass());
                 }
+
+                xargs.addAll(
+                        extraStartWithAppArgs.stream()
+                                .map(txt::ofPlain)
+                                .collect(Collectors.toList())
+                );
                 xargs.addAll(
                         joptions.getAppArgs().stream()
                                 .map(txt::ofPlain)
                                 .collect(Collectors.toList())
                 );
+
+                args.addAll(extraStartWithAppArgs);
                 args.addAll(joptions.getAppArgs());
+
+
                 return new JavaProcessExecHelper(xargs, joptions, executionContext, def, args, osEnv);
 
             }

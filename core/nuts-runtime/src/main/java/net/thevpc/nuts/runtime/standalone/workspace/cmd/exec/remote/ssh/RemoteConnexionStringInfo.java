@@ -1,4 +1,4 @@
-package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.ssh;
+package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.remote.ssh;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
@@ -6,6 +6,7 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCommandExtensionContext;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.remote.ssh.artifact.DefaultSpawnExecutableNutsRemote;
 import net.thevpc.nuts.util.*;
 
 import java.util.HashMap;
@@ -55,18 +56,6 @@ public class RemoteConnexionStringInfo {
         this.target = target;
     }
 
-    void tryUpdate(NExecCommandExtension commExec, NSession session) {
-        if (isUpdatable()) {
-            update(commExec, session);
-            lastChecked = System.currentTimeMillis();
-        }
-    }
-
-    void update(NExecCommandExtension commExec, NSession session) {
-        NLog log = NLog.of(DefaultSpawnExecutableRemote.class, session);
-
-    }
-
     public boolean copyId(NId id, NPath remoteRepo, NSession session, NRef<NPath> remoteJar) {
         NDefinition def = NFetchCommand.of(session)
                 .setId(id)
@@ -87,7 +76,7 @@ public class RemoteConnexionStringInfo {
     }
 
     public boolean copy(NPath local, NPath remote, NSession session) {
-        NLog log = NLog.of(DefaultSpawnExecutableRemote.class, session);
+        NLog log = NLog.of(DefaultSpawnExecutableNutsRemote.class, session);
         log.with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("try copy %s %s", local, remote));
         long localContentLength = local.getContentLength();
         long remoteContentLength = remote.getContentLength();
@@ -222,7 +211,7 @@ public class RemoteConnexionStringInfo {
 
     private NLog log(NSession session) {
         if (log == null) {
-            log = NLog.of(DefaultSpawnExecutableRemote.class, session);
+            log = NLog.of(DefaultSpawnExecutableNutsRemote.class, session);
         }
         return log;
     }
@@ -276,7 +265,11 @@ public class RemoteConnexionStringInfo {
             storeLocationCacheRepo = NPath.of(targetConnexion.copy()
                     .setPath(storeLocationCache)
                     .toString(), session).resolve(NConstants.Folders.ID);
-            storeLocationCacheRepoSSH = storeLocationCacheRepo.resolve(NIdUtils.resolveIdPath(session.getAppId())).resolve("repo");
+            NId appId = session.getAppId();
+            if(appId==null){
+                appId=session.getWorkspace().getApiId();
+            }
+            storeLocationCacheRepoSSH = storeLocationCacheRepo.resolve(NIdUtils.resolveIdPath(appId)).resolve("repo");
             NPath e = storeLocationCacheRepoSSH.resolve(".nuts-repository");
             if (!e.isRegularFile()) {
                 e.mkParentDirs().writeString("{}");

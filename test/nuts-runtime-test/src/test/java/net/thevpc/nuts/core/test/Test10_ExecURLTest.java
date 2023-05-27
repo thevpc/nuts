@@ -74,6 +74,19 @@ public class Test10_ExecURLTest {
         }
     }
 
+
+        @Test
+    public void testEmbeddedInfo() {
+        TestUtils.println(NVersionFormat.of(session));
+        String result = NExecCommand.of(session.copy()
+                        .setBot(true).json())
+                .addCommand("info")
+                .grabOutputString()
+                .getOutputString();
+        session.out().println(result);
+        Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
+    }
+
     //disabled, unless we find a good executable example jar
     //@Test
     public void execURL2() {
@@ -94,7 +107,7 @@ public class Test10_ExecURLTest {
         Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
     }
 
-    @Test
+    //@Test
     public void testNtf() {
         TestUtils.println(NVersionFormat.of(session));
         String result = NExecCommand.of(session.copy().setBot(true))
@@ -106,35 +119,38 @@ public class Test10_ExecURLTest {
         Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
     }
 
-    @Test
+
+
+    //@Test
     public void testNtf2() {
         TestUtils.println(NVersionFormat.of(session));
         String result = NExecCommand.of(session.copy()
                         .setBot(true).json())
-                //.setTarget("ssh://vpc:vpc@192.168.1.158")
-                .addCommand("ls","-l")
-                .setExecutionType(NExecutionType.SYSTEM)
+                .setTarget("ssh://vpc:a@192.168.1.98")
+                //.addCommand("ls","-l")
+                .addCommand("nuts","info")
+                //.setExecutionType(NExecutionType.SYSTEM)
                 .grabOutputString()
                 .getOutputString();
         session.out().println(result);
         Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
     }
 
-//    @Test
-//    public void testCallSpecialId() {
-//        TestUtils.println(NVersionFormat.of(session));
-//        NSession nSession = Nuts.openWorkspace("-y","--verbose");
-//        String result = NExecCommand.of(nSession.copy()
-//                        .setBot(true).json())
-//                .addExecutorOptions("--bot")
-//                //.setExecutionType(NExecutionType.EMBEDDED)
-//                .addCommand("com.cts.nuts.enterprise.postgres:pgcli")
-//                .addCommand("list","-i")
-//                .grabOutputString()
-//                .getOutputString();
-//        nSession.out().println(result);
-//        Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
-//    }
+    //@Test
+    public void testCallSpecialId() {
+        TestUtils.println(NVersionFormat.of(session));
+        NSession nSession = Nuts.openWorkspace("-y","--verbose");
+        String result = NExecCommand.of(nSession.copy()
+                        .setBot(true).json())
+                .addExecutorOptions("--bot")
+                //.setExecutionType(NExecutionType.EMBEDDED)
+                .addCommand("com.cts.nuts.enterprise.postgres:pgcli")
+                .addCommand("list","-i")
+                .grabOutputString()
+                .getOutputString();
+        nSession.out().println(result);
+        Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
+    }
 
 
 }

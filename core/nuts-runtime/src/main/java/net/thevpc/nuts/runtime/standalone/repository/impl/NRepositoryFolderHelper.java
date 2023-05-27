@@ -25,7 +25,6 @@ import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.CharacterizedExecFile;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNArtifactPathExecutable;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCommand;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.spi.NDeployRepositoryCommand;

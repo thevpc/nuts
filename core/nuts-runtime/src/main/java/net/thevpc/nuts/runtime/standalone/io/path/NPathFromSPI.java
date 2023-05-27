@@ -190,7 +190,7 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public OutputStream getOutputStream(NPathOption... options) {
-        return NIO.of(getSession()).ofOutputStream(base.getOutputStream(this, options), this.getMetaData());
+        return NIO.of(getSession()).ofRawOutputStream(base.getOutputStream(this, options), this.getMetaData());
     }
 
     @Override

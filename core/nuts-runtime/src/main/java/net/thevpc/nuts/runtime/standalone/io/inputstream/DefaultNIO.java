@@ -31,7 +31,7 @@ public class DefaultNIO implements NIO {
     }
 
     @Override
-    public InputStream ofNullInputStream() {
+    public InputStream ofNullRawInputStream() {
         return NullInputStream.INSTANCE;
     }
 
@@ -62,7 +62,7 @@ public class DefaultNIO implements NIO {
     }
 
     @Override
-    public OutputStream ofNullOutputStream() {
+    public OutputStream ofNullRawOutputStream() {
         checkSession();
         return getBootModel().nullOutputStream();
     }
@@ -138,6 +138,11 @@ public class DefaultNIO implements NIO {
     public NPrintStream ofPrintStream(Writer out) {
         checkSession();
         return ofPrintStream(out, NTerminalMode.INHERITED, null);
+    }
+
+    @Override
+    public NPrintStream ofPrintStream(NPath out) {
+        return ofPrintStream(out.getOutputStream());
     }
 
     @Override
@@ -339,11 +344,11 @@ public class DefaultNIO implements NIO {
 
     @Override
     public NOutputTarget ofOutputTarget(OutputStream outputStream, NContentMetadata metadata) {
-        return new OutputTargetExt(ofOutputStream(outputStream, metadata), null, session);
+        return new OutputTargetExt(ofRawOutputStream(outputStream, metadata), null, session);
     }
 
     @Override
-    public OutputStream ofOutputStream(OutputStream outputStream, NContentMetadata metadata) {
+    public OutputStream ofRawOutputStream(OutputStream outputStream, NContentMetadata metadata) {
         if (outputStream == null) {
             return null;
         }

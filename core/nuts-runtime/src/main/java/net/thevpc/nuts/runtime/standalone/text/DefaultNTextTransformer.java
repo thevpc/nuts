@@ -113,7 +113,13 @@ public class DefaultNTextTransformer implements NTextTransformer {
                         if (isNewline(x)) {
                             return x;
                         }
-                        return ((NTextStyled) x).getChild();
+                        if(x instanceof NTextStyled){
+                            return ((NTextStyled) x).getChild();
+                        }
+                        if(x instanceof NTextPlain){
+                            return x;
+                        }
+                        return x;
                     });
                 }
                 return text;
