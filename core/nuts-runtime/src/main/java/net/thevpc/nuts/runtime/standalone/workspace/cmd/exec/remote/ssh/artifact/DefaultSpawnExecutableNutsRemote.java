@@ -148,11 +148,11 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableCommand
                 dependenciesCount++;
             }
         }
-        if (dependenciesCount > 0) {
-            if (requireTempRepo) {
+        //if (dependenciesCount > 0) {
+        //    if (requireTempRepo) {
                 cmd.add("-r=" + k.getStoreLocationCacheRepoSSH(commExec, getSession()).getLocation());
-            }
-        }
+        //    }
+        //}
         cmd.add("---caller-app=remote-nuts");
 
         // I'll see later on what to include here...
@@ -185,7 +185,7 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableCommand
         if (def != null) {
             cmd.add(def.getId().toString());
         }
-        cmd.addAll(execCommand.getCommand());
+        cmd.addAll(Arrays.asList(this.cmd));
         return k.buildEffectiveCommand(cmd.toArray(new String[0]), execCommand.getRunAs(), executorOptions, commExec, session);
     }
 
