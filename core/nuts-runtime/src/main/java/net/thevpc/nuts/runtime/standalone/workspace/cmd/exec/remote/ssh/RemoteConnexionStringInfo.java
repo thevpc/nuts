@@ -235,12 +235,15 @@ public class RemoteConnexionStringInfo {
             });
             try {
                 workspaceJson = null;
-                workspaceJson = NElements.of(session)
-                        .parse(
-                                NPath.of(targetConnexion.copy()
-                                        .setPath(pHome.getHome() + "/ws/" + workspaceName + "/nuts-workspace.json")
-                                        .toString(), session)
-                        );
+                NPath rpath = NPath.of(targetConnexion.copy()
+                        .setPath(pHome.getHome() + "/ws/" + workspaceName + "/nuts-workspace.json")
+                        .toString(), session);
+                if(rpath.isRegularFile()) {
+                    workspaceJson = NElements.of(session)
+                            .parse(
+                                    rpath
+                            );
+                }
             } catch (Exception e) {
                 //not found!
             }
@@ -254,9 +257,6 @@ public class RemoteConnexionStringInfo {
             }
             if (storeLocationCache == null) {
                 storeLocationCache = pHome.getWorkspaceStore(NStoreType.CACHE, workspaceName);
-            }
-            if (storeLocationCache != null) {
-                storeLocationCache += ("/" + NConstants.Folders.ID);
             }
 
             storeLocationLibRepo = NPath.of(targetConnexion.copy()
