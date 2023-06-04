@@ -278,10 +278,10 @@ public final class NBootWorkspace {
 //            }
 //            bLog.log(Level.FINE, NLogVerb.START, NMsg.ofC("resolve boot repositories to load nuts-runtime dependencies from options : %s and config: %s", computedOptions.getRepositories().orElseGet(Collections::emptyList).toString(), computedOptions.getBootRepositories().ifBlankEmpty().orElse("[]")));
 //        } else {
-            if (parsedBootRuntimeRepositories != null) {
-                return parsedBootRuntimeRepositories;
-            }
-            bLog.log(Level.FINE, NLogVerb.START, NMsg.ofC("resolve boot repositories to load nuts-runtime from options : %s and config: %s", computedOptions.getRepositories().orElseGet(Collections::emptyList).toString(), computedOptions.getBootRepositories().ifBlankEmpty().orElse("[]")));
+        if (parsedBootRuntimeRepositories != null) {
+            return parsedBootRuntimeRepositories;
+        }
+        bLog.log(Level.FINE, NLogVerb.START, NMsg.ofC("resolve boot repositories to load nuts-runtime from options : %s and config: %s", computedOptions.getRepositories().orElseGet(Collections::emptyList).toString(), computedOptions.getBootRepositories().ifBlankEmpty().orElse("[]")));
 //        }
         NRepositorySelectorList bootRepositoriesSelector = NRepositorySelectorList.of(computedOptions.getRepositories().orNull(), repositoryDB, null).get();
         NRepositorySelector[] old = NRepositorySelectorList.of(Arrays.asList(computedOptions.getBootRepositories().orNull()), repositoryDB, null).get().toArray();
@@ -344,7 +344,7 @@ public final class NBootWorkspace {
 //        if (dependencies) {
 //            parsedBootRuntimeDependenciesRepositories = rr;
 //        } else {
-            parsedBootRuntimeRepositories = rr;
+        parsedBootRuntimeRepositories = rr;
 //        }
         return rr;
     }
@@ -407,85 +407,88 @@ public final class NBootWorkspace {
 
 
     private NIdCache getFallbackCache(NId baseId, boolean lastWorkspace, boolean copyTemp) {
-        return cache.fallbackIdMap.computeIfAbsent(baseId,
-                bid -> {
-                    NIdCache fid = new NIdCache();
-                    fid.baseId = bid;
-                    String s = (lastWorkspace ? lastWorkspaceOptions : computedOptions).getStoreLocations().get().get(NStoreType.LIB) + "/id/" + NIdUtils.resolveIdPath(bid.getShortId());
-                    //
-                    Path ss = Paths.get(s);
-                    NId bestId = null;
-                    NVersion bestVersion = null;
-                    Path bestPath = null;
+        NIdCache old = cache.fallbackIdMap.get(baseId);
+        if (old != null) {
+            return old;
+        }
 
-                    if (Files.isDirectory(ss)) {
-                        try (Stream<Path> stream = Files.list(ss)) {
-                            for (Path path : stream.collect(Collectors.toList())) {
-                                NVersion version = NVersion.of(path.getFileName().toString()).orNull();
-                                if (version != null) {
-                                    if (Files.isDirectory(path)) {
-                                        NId rId = bid.builder().setVersion(version).build();
-                                        Path jar = ss.resolve(version.toString()).resolve(NIdUtils.resolveFileName(
-                                                rId,
-                                                "jar"
-                                        ));
-                                        if (Files.isRegularFile(jar)) {
-                                            if (bestVersion == null || bestVersion.compareTo(version) < 0) {
-                                                bestVersion = version;
-                                                bestPath = jar;
-                                                bestId = rId;
-                                            }
-                                        }
-                                    }
+        NIdCache fid = new NIdCache();
+        fid.baseId = baseId;
+        cache.fallbackIdMap.put(fid.baseId, fid);
+        String s = (lastWorkspace ? lastWorkspaceOptions : computedOptions).getStoreLocations().get().get(NStoreType.LIB) + "/id/"
+                + NIdUtils.resolveIdPath(baseId.getShortId());
+        //
+        Path ss = Paths.get(s);
+        NId bestId = null;
+        NVersion bestVersion = null;
+        Path bestPath = null;
+
+        if (Files.isDirectory(ss)) {
+            try (Stream<Path> stream = Files.list(ss)) {
+                for (Path path : stream.collect(Collectors.toList())) {
+                    NVersion version = NVersion.of(path.getFileName().toString()).orNull();
+                    if (version != null) {
+                        if (Files.isDirectory(path)) {
+                            NId rId = baseId.builder().setVersion(version).build();
+                            Path jar = ss.resolve(version.toString()).resolve(NIdUtils.resolveFileName(
+                                    rId,
+                                    "jar"
+                            ));
+                            if (Files.isRegularFile(jar)) {
+                                if (bestVersion == null || bestVersion.compareTo(version) < 0) {
+                                    bestVersion = version;
+                                    bestPath = jar;
+                                    bestId = rId;
                                 }
                             }
-                        } catch (Exception ex) {
-                            // ignore any error
                         }
                     }
-                    if (bestVersion != null) {
-                        Path descNutsPath = bestPath.resolveSibling(NIdUtils.resolveFileName(bestId, "nuts"));
-                        Set<NId> dependencies = NReservedMavenUtils.loadDependenciesFromNutsUrl(descNutsPath.toString(), bLog);
-                        if (dependencies != null) {
-                            fid.deps = dependencies.stream()
-                                    .filter(x -> NReservedUtils.isAcceptDependency(x.toDependency(), computedOptions))
-                                    .collect(Collectors.toSet());
-                            fid.depsData = fid.deps.stream()
-                                    .map(x -> {
-                                        try {
-                                            return getFallbackCache(x, lastWorkspace, copyTemp);
-                                        } catch (RuntimeException e) {
-                                            if (!x.toDependency().isOptional()) {
-                                                throw e;
-                                            }
-                                            //
-                                        }
-                                        return null;
-                                    })
-                                    .filter(Objects::nonNull)
-                                    .collect(Collectors.toList());
-                        }
-                        fid.id = bestId;
-                        if (copyTemp) {
-                            Path temp = null;
-                            try {
-                                temp = Files.createTempFile("old-", bestPath.getFileName().toString());
-                                Files.copy(bestPath, temp, StandardCopyOption.REPLACE_EXISTING);
-                            } catch (IOException e) {
-                                throw new NBootException(NMsg.ofPlain("error storing nuts-runtime.jar"), e);
-                            }
-                            fid.jar = temp.toString();
-                            fid.expected = bestPath.toString();
-                            fid.temp = true;
-
-                        } else {
-                            fid.jar = bestPath.toString();
-                        }
-                    }
-
-                    return fid;
                 }
-        );
+            } catch (Exception ex) {
+                // ignore any error
+            }
+        }
+        if (bestVersion != null) {
+            Path descNutsPath = bestPath.resolveSibling(NIdUtils.resolveFileName(bestId, "nuts"));
+            Set<NId> dependencies = NReservedMavenUtils.loadDependenciesFromNutsUrl(descNutsPath.toString(), bLog);
+            if (dependencies != null) {
+                fid.deps = dependencies.stream()
+                        .filter(x -> NReservedUtils.isAcceptDependency(x.toDependency(), computedOptions))
+                        .collect(Collectors.toSet());
+                fid.depsData = fid.deps.stream()
+                        .map(x -> {
+                            try {
+                                return getFallbackCache(x, lastWorkspace, copyTemp);
+                            } catch (RuntimeException e) {
+                                if (!x.toDependency().isOptional()) {
+                                    throw e;
+                                }
+                                //
+                            }
+                            return null;
+                        })
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+            }
+            fid.id = bestId;
+            if (copyTemp) {
+                Path temp = null;
+                try {
+                    temp = Files.createTempFile("old-", bestPath.getFileName().toString());
+                    Files.copy(bestPath, temp, StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                    throw new NBootException(NMsg.ofPlain("error storing nuts-runtime.jar"), e);
+                }
+                fid.jar = temp.toString();
+                fid.expected = bestPath.toString();
+                fid.temp = true;
+
+            } else {
+                fid.jar = bestPath.toString();
+            }
+        }
+
+        return fid;
     }
 
     @SuppressWarnings("unchecked")
@@ -1242,7 +1245,7 @@ public final class NBootWorkspace {
             execCmd.configure(true, executorOptions.toArray(new String[0]));
         }
         NCmdLine executorOptionsCmdLine = NCmdLine.of(executorOptions, session).setExpandSimpleOptions(false);
-        while(executorOptionsCmdLine.hasNext()){
+        while (executorOptionsCmdLine.hasNext()) {
             execCmd.configureLast(executorOptionsCmdLine);
         }
         if (o.getApplicationArguments().get().size() == 0) {
