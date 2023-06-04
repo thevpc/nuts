@@ -94,6 +94,15 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                         });
                         break;
                     }
+                    case "--exploded":
+                    case "--as-exploded": {
+                        cmdLine.withNextFlag((v, ar, s) -> {
+                            if (v) {
+                                withFormat.set("exploded");
+                            }
+                        });
+                        break;
+                    }
                     case "--jar":
                     case "--as-jar": {
                         cmdLine.withNextFlag((v, ar, s) -> {
@@ -151,12 +160,16 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     nIds.add(apiId);
                     nIds.add(session.getWorkspace().getRuntimeId());
                 } else {
-                    for (NId resultId : NSearchCommand.of(session).addId(id)
+                    List<NId> found = NSearchCommand.of(session).addId(id)
                             .setLatest(true)
                             .setDistinct(true)
                             .setDependencyFilter(NDependencyFilters.of(session).byRunnable())
                             .setInlineDependencies(true)
-                            .getResultIds()) {
+                            .getResultIds().toList();
+                    if (found.isEmpty()) {
+                        throw new NNotFoundException(session, NId.of(id).get());
+                    }
+                    for (NId resultId : found) {
                         if (resultId.getShortName().equals(session.getWorkspace().getApiId().getShortName())) {
                             toBaseDir.add(resultId);
                         }
@@ -186,6 +199,31 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                 bundleFolder = rootFolder.resolve("META-INF/bundle");
                 break;
             }
+            case "exploded": {
+                rootFolder = NBlankable.isBlank(withTarget.get()) ?
+                        NPath.ofUserDirectory(session).resolve(appName + "-bundle")
+                        : NPath.of(withTarget.get(), session)
+                ;
+                includeConfigFiles = true;
+                bundleFolder = rootFolder.resolve("META-INF/bundle");
+                if (withClean.get()) {
+                    if (bundleFolder.isDirectory()) {
+                        for (NPath nPath : bundleFolder.list()) {
+                            nPath.deleteTree();
+                        }
+                    }
+                    for (String s : new String[]{
+                            "META-INF/nuts-bundle-info.config",
+                            "META-INF/nuts-bundle-files.config"
+                    }) {
+                        NPath p = rootFolder.resolve(s);
+                        if (p.isRegularFile()) {
+                            p.delete();
+                        }
+                    }
+                }
+                break;
+            }
             case "dir": {
                 rootFolder = NBlankable.isBlank(withTarget.get()) ?
                         NPath.ofUserDirectory(session).resolve(appName + "-bundle")
@@ -206,6 +244,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                 cmdLine.throwUnexpectedArgument(NMsg.ofC("invalid format %s", format));
             }
         }
+        bundleFolder.mkdirs();
 
         NCp cp = NCp.of(session);
         if ("jar".equals(format)) {
@@ -341,11 +380,12 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                 }
                 break;
             }
-            case "dir": {
+            case "dir":
+            case "exploded": {
                 break;
             }
             default: {
-                cmdLine.throwUnexpectedArgument(NMsg.ofC("invalid format %s", format));
+                cmdLine.throwError(NMsg.ofC("invalid format %s", format));
             }
         }
         return NExecutionException.SUCCESS;
