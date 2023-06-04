@@ -26,16 +26,10 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
 import net.thevpc.nuts.boot.NBootWorkspace;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.io.NMemoryPrintStream;
-import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.reserved.NReservedBootLog;
 import net.thevpc.nuts.util.NApiUtils;
-import net.thevpc.nuts.util.NProgressMonitor;
-import net.thevpc.nuts.util.NProgressMonitors;
 import net.thevpc.nuts.util.NStringUtils;
 
-import java.io.ByteArrayOutputStream;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,7 +37,7 @@ import java.util.List;
 
 /**
  * Nuts Top Class. Nuts is a Package manager for Java Applications and this
- * class is it's main class for creating and opening nuts workspaces.
+ * class is its main class for creating and opening nuts workspaces.
  *
  * @author thevpc
  * @app.category Base

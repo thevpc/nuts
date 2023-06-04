@@ -77,12 +77,15 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
  * @author thevpc
  */
 public class DefaultNWorkspaceConfigModel {
+    private  static Pattern PRELOAD_EXTENSION_PATH_PATTERN = Pattern.compile("^(?<protocol>[a-z][a-z0-9_-]*):.*");
 
     private final DefaultNWorkspace ws;
     private final Map<String, NUserConfig> configUsers = new LinkedHashMap<>();
@@ -116,6 +119,11 @@ public class DefaultNWorkspaceConfigModel {
     //    private NutsRepositorySelector[] parsedBootRepositoriesArr;
     private ExecutorService executorService;
     private NSessionTerminal terminal;
+    private Map<String,NId> protocolToExtensionMap=new HashMap<>(
+            NMaps.of(
+                    "ssh",NId.of("net.thevpc.nuts.ext:next-ssh").get()
+            )
+    );
     //    private final NutsLogger LOG;
 
     public DefaultNWorkspaceConfigModel(final DefaultNWorkspace ws) {
@@ -1482,8 +1490,16 @@ public class DefaultNWorkspaceConfigModel {
         if (classLoader == null) {
             classLoader = Thread.currentThread().getContextClassLoader();
         }
-        //
+
         ClassLoader finalClassLoader = classLoader;
+        Matcher m = PRELOAD_EXTENSION_PATH_PATTERN.matcher(path);
+        if(m.find()){
+            String protocol = m.group("protocol");
+            NId eid = protocolToExtensionMap.get(protocol);
+            if(eid!=null){
+                NExtensions.of(session).loadExtension(eid);
+            }
+        }
         NSupported<NPathSPI> z = Arrays.stream(getPathFactories())
                 .map(x -> {
                     NSupported<NPathSPI> v = null;
