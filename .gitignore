@@ -236,3 +236,4 @@
 /documentation/website-old
 /installers/nuts-installer/src/dist/nuts-installer-*.jar
 /installers/nuts-installer/dist/portable-jar/nuts-*.jar
+/installers/nuts-builder-tool/target

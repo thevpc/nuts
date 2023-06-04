@@ -14,7 +14,6 @@
 -Zy -P=false --!init-java --verbose
 -Zy -P=false --!init-java --verbose install ndb
 -ZbyS -r=null --verbose
--ZyS -P=newline com.cts.probots.server:probots-lightweight-server
 -ZyS -r=./lib  --verbose
 -Zy --verbose --exec --target=ssh://linux:linux@192.168.1.13 --system hostname
 -Zy --!init-java --as-root --system ls
@@ -22,5 +21,3 @@
 
 
 
-cd /home/vpc/work/cts/projects-ongoing/2022-09-25-robots-systems-succeeded/dev/robotic-systems-emulator/bundle/
--ZbyS bundle com.cts.probots.server:probots-lightweight-server
