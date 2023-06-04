@@ -232,3 +232,7 @@
 /tutorials/naf/custom-shell-example/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
 /tutorials/naf/custom-shell-example/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
 /tutorials/naf/custom-shell-example/target/custom-shell-example-1.0-SNAPSHOT.jar
+/documentation/website/old/
+/documentation/website-old
+/installers/nuts-installer/src/dist/nuts-installer-*.jar
+/installers/nuts-installer/dist/portable-jar/nuts-*.jar
