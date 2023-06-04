@@ -3,8 +3,8 @@ id: license-cmd
 title: License Command
 sidebar_label: License Command
 ---
-${{include($"${resources}/header.md")}}
 
+${{include($"${resources}/header.md")}}
 
 **license** command shows license of **nuts** and exits. **nuts** adopts GNU General Public License v3 which is quite permissive.
 ```

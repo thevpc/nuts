@@ -3,6 +3,7 @@ id: nutsApp
 title: Your first Application using nuts
 sidebar_label: Your first Application using nuts
 ---
+
 ${{include($"${resources}/header.md")}}
 
 ## Running your application with Nuts

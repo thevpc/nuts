@@ -3,8 +3,8 @@ id: search-cmds
 title: Search Command
 sidebar_label: Search Command
 ---
-${{include($"${resources}/header.md")}}
 
+${{include($"${resources}/header.md")}}
 
 Artifact can be in multiple states. they can be
 + 'unavailable' if no registered repository can serve that artifact

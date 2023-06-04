@@ -4,6 +4,8 @@ title: Automation
 sidebar_label: Automation & DevOps
 ---
 
+${{include($"${resources}/header.md")}}
+
 ```nuts``` has been designed and implemented with automation and devops philosophy in mind.
 
 ```nuts``` Application Framework infrastructure provides a seamless support process automation

@@ -4,8 +4,8 @@ id: help-cmd
 title: Help Command
 sidebar_label: Help Command
 ---
-${{include($"${resources}/header.md")}}
 
+${{include($"${resources}/header.md")}}
 
 This command, as you should have guessed, show. help manual of your favorite command or of nuts it self.
 ```

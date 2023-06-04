@@ -3,8 +3,8 @@ id: welcome-cmd
 title: Welcome Command
 sidebar_label: Welcome Command
 ---
-${{include($"${resources}/header.md")}}
 
+${{include($"${resources}/header.md")}}
 
 This command does absolutely nothing but showing this message
 ```

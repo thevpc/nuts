@@ -3,6 +3,7 @@ id: version-cmd
 title: Version Command
 sidebar_label: Version Command
 ---
+
 ${{include($"${resources}/header.md")}}
 
 This command will show **nuts** version. It is helpful to note that **nuts** has a couple of components : api and impl.

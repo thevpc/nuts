@@ -3,6 +3,7 @@ id: nutsStream
 title: Nuts Stream
 sidebar_label: Nuts Stream
 ---
+
 ${{include($"${resources}/header.md")}}
 
 **nuts** introduces a concept very similar to java's Stream but with better extension builtin mechanisms and helper methods : ```NutsStream```

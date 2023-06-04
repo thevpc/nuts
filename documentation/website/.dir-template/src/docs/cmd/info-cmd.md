@@ -3,8 +3,8 @@ id: info-cmd
 title: Info Command
 sidebar_label: Info Command
 ---
-${{include($"${resources}/header.md")}}
 
+${{include($"${resources}/header.md")}}
 
 **info** command is a more verbose command than version. It shows a lot of other **nuts** properties that describe the booted workspace, such as the workspace name, the store locations (artifacts, caches, ....)
 ```

@@ -3,8 +3,8 @@ id: cmds
 title: Nuts Commands
 sidebar_label: Nuts Commands
 ---
-${{include($"${resources}/header.md")}}
 
+${{include($"${resources}/header.md")}}
 
 Nuts supports multiple types of commands (internal , external), multiple types of execution (embedded, spawn, and system execution) and multiple modes of execution (effective, dry).
 
@@ -25,6 +25,7 @@ Internal Commands include:
 * check-updates
 * deploy
 * push
+* bundle
 
 
 ### 1.1.7 search command

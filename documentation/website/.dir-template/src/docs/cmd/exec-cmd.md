@@ -3,8 +3,8 @@ id: exec-cmd
 title: Exec and Which Commands
 sidebar_label: Exec and Which Commands
 ---
-${{include($"${resources}/header.md")}}
 
+${{include($"${resources}/header.md")}}
 
 **exec** command runs another command and **which** command does a dry run of it.
 
