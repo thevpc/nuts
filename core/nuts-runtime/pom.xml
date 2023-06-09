@@ -92,6 +92,12 @@
              <os>windows</os>
             -->
         </dependency>
+        <dependency>
+            <groupId>net.thevpc.nuts</groupId>
+            <artifactId>nuts</artifactId>
+            <version>0.8.4</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
     <distributionManagement>
         <snapshotRepository>
