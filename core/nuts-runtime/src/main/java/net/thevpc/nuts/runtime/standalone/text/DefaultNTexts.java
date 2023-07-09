@@ -1,10 +1,16 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.io.path.NFormatFromSPI;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
+import net.thevpc.nuts.runtime.standalone.text.util.DefaultNDurationFormat2;
+import net.thevpc.nuts.runtime.standalone.text.util.DefaultUnitFormat;
 import net.thevpc.nuts.runtime.standalone.util.collections.ClassMap;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.text.highlighter.CustomStyleCodeHighlighter;
@@ -20,7 +26,9 @@ import java.io.*;
 import java.lang.reflect.Array;
 import java.net.URL;
 import java.nio.file.Path;
+import java.text.DecimalFormat;
 import java.text.MessageFormat;
+import java.time.Duration;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAmount;
 import java.util.*;
@@ -882,6 +890,87 @@ public class DefaultNTexts implements NTexts {
     }
 
     @Override
+    public NStream<NText> flatten(NText text) {
+        return flatten(text, null, null);
+    }
+
+    @Override
+    public NStream<NText> flatten(NText text, NTextTransformConfig config) {
+        return flatten(text, null, config);
+    }
+
+    @Override
+    public NStream<NText> flatten(NText text, NTextTransformer transformer, NTextTransformConfig config) {
+        if (config == null) {
+            config = new NTextTransformConfig();
+        }
+        config.setFlatten(true);
+        config.setNormalize(true);
+        NText z = transform(text, transformer, config);
+        return NStream.of(new NIterator<NText>() {
+            Deque<NText> queue = new ArrayDeque<>();
+
+            {
+                if (z != null) {
+                    queue.addFirst(z);
+                }
+                refactorNext();
+            }
+
+            private void refactorNext() {
+                while (!queue.isEmpty()) {
+                    NText z = queue.peek();
+                    switch (z.getType()) {
+                        case PLAIN:
+                        case CODE:
+                        case ANCHOR:
+                        case LINK:
+                        case COMMAND:
+                        case TITLE:
+                        case STYLED: {
+                            return;
+                        }
+                        case LIST: {
+                            NTextList t = (NTextList) z;
+                            queue.removeFirst();
+                            List<NText> children = t.getChildren();
+                            if (children.size() > 0) {
+                                for (int i = children.size() - 1; i >= 0; i--) {
+                                    queue.addFirst(children.get(i));
+                                }
+                            }
+                            break;
+                        }
+                        case INCLUDE:
+                        default: {
+                            //won't be processed!
+                            queue.removeFirst();
+                            break;
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public boolean hasNext() {
+                refactorNext();
+                return !queue.isEmpty();
+            }
+
+            @Override
+            public NText next() {
+                refactorNext();
+                return queue.remove();
+            }
+
+            @Override
+            public NElement describe(NSession session) {
+                return NElements.of(session).ofString("flattened text");
+            }
+        }, getSession());
+    }
+
+    @Override
     public NText transform(NText text, NTextTransformConfig config) {
         if (NBlankable.isBlank(config)) {
             return text;
@@ -1172,8 +1261,160 @@ public class DefaultNTexts implements NTexts {
     }
 
     @Override
-    public NFormat createFormat(NFormatSPI value) {
-        return new NFormatFromSPI(value, getSession());
+    public NFormat createFormat(NFormatSPI format) {
+        return new NFormatFromSPI(format, getSession());
+    }
+
+    @Override
+    public <T> NFormat createFormat(T object, NTextFormat<T> format) {
+        return new DefaultFormatBase<NFormat>(getSession(), "NTextFormat") {
+            @Override
+            public void print(NPrintStream out) {
+                NText u = format.toText(object, getSession());
+                out.print(u);
+            }
+
+            @Override
+            public boolean configureFirst(NCmdLine cmdLine) {
+                return false;
+            }
+        };
+    }
+
+    public <T> NOptional<NTextFormat<T>> createTextFormat(String type, Class<T> expectedType, String pattern) {
+        NSession session = getSession();
+        NAssert.requireNonNull(type, "type", session);
+        NAssert.requireNonNull(expectedType, "expectedType", session);
+        NAssert.requireNonNull(pattern, "pattern", session);
+        switch (type.toLowerCase().trim()) {
+            case "duration": {
+                DefaultNDurationFormat2 d = new DefaultNDurationFormat2(pattern);
+                if (NDuration.class.equals(expectedType)) {
+                    return NOptional.of(
+                            (NTextFormat<T>) new NTextFormat<NDuration>() {
+                                @Override
+                                public NText toText(NDuration object, NSession session) {
+                                    return d.format(object, session);
+                                }
+                            }
+                    );
+                }
+                if (Duration.class.equals(expectedType)) {
+                    return NOptional.of(
+                            (NTextFormat<T>) new NTextFormat<Duration>() {
+                                @Override
+                                public NText toText(Duration object, NSession session) {
+                                    return d.format(object, session);
+                                }
+                            }
+                    );
+                }
+                return NOptional.ofEmpty(s -> NMsg.ofC("unknown duration format with type %s. Expected Duration or NDuration.", expectedType));
+            }
+            case "double":
+            case "decimal": {
+                if (pattern.endsWith("%")) {
+                    DecimalFormat d = new DecimalFormat(pattern.substring(0,pattern.length() - 1));
+                    if (Double.class.equals(expectedType)) {
+                        return NOptional.of(
+                                (NTextFormat<T>) new NTextFormat<Double>() {
+                                    @Override
+                                    public NText toText(Double object, NSession session) {
+                                        return NTextBuilder.of(session)
+                                                .append(d.format(object*100.0), NTextStyle.number())
+                                                .append("%", NTextStyle.separator())
+                                                .toText()
+                                                ;
+                                    }
+                                }
+                        );
+                    }
+                    return NOptional.ofEmpty(s -> NMsg.ofC("unknown %s format with type %s. Expected .", type, expectedType, "Double"));
+                } else if (pattern.endsWith("'°'")) {
+                    DecimalFormat d = new DecimalFormat(pattern.substring(0,pattern.length() - 3));
+                    if (Double.class.equals(expectedType)) {
+                        return NOptional.of(
+                                (NTextFormat<T>) new NTextFormat<Double>() {
+                                    @Override
+                                    public NText toText(Double object, NSession session) {
+                                        return NTextBuilder.of(session)
+                                                .append(d.format(object), NTextStyle.number())
+                                                .append("°", NTextStyle.separator())
+                                                .toText()
+                                                ;
+                                    }
+                                }
+                        );
+                    }
+                    return NOptional.ofEmpty(s -> NMsg.ofC("unknown %s format with type %s. Expected .", type, expectedType, "Double"));
+                } else {
+                    DecimalFormat d = new DecimalFormat(pattern);
+                    if (Double.class.equals(expectedType)) {
+                        return NOptional.of(
+                                (NTextFormat<T>) new NTextFormat<Double>() {
+                                    @Override
+                                    public NText toText(Double object, NSession session) {
+                                        return NTextBuilder.of(session)
+                                                .append(d.format(object), NTextStyle.number())
+                                                .toText()
+                                                ;
+                                    }
+                                }
+                        );
+                    }
+                    return NOptional.ofEmpty(s -> NMsg.ofC("unknown %s format with type %s. Expected .", type, expectedType, "Double"));
+                }
+            }
+            case "m":
+            case "meter":
+            case "metric": {
+                String p = NStringUtils.trim(pattern);
+                DefaultUnitFormat d = new DefaultUnitFormat("m " + (p.isEmpty() ? "M-3 M3 I2 D2" : p));
+                if (Double.class.equals(expectedType)) {
+                    return NOptional.of(
+                            (NTextFormat<T>) new NTextFormat<Double>() {
+                                @Override
+                                public NText toText(Double object, NSession session) {
+                                    return d.format(object, session);
+                                }
+                            }
+                    );
+                }
+                return NOptional.ofEmpty(s -> NMsg.ofC("unknown %s format with type %s. Expected .", type, expectedType, "Double"));
+            }
+            case "freq":
+            case "frequency":
+            case "hz": {
+                String p = NStringUtils.trim(pattern);
+                DefaultUnitFormat d = new DefaultUnitFormat("Hz " + (p.isEmpty() ? "HT I2 D3" : p));
+                if (Double.class.equals(expectedType)) {
+                    return NOptional.of(
+                            (NTextFormat<T>) new NTextFormat<Double>() {
+                                @Override
+                                public NText toText(Double object, NSession session) {
+                                    return d.format(object, session);
+                                }
+                            }
+                    );
+                }
+                return NOptional.ofEmpty(s -> NMsg.ofC("unknown %s format with type %s. Expected .", type, expectedType, "Double"));
+            }
+            default:{
+                String p = NStringUtils.trim(pattern);
+                DefaultUnitFormat d = new DefaultUnitFormat(type+" " + (p.isEmpty() ? "HT I2 D3" : p));
+                if (Double.class.equals(expectedType)) {
+                    return NOptional.of(
+                            (NTextFormat<T>) new NTextFormat<Double>() {
+                                @Override
+                                public NText toText(Double object, NSession session) {
+                                    return d.format(object, session);
+                                }
+                            }
+                    );
+                }
+                return NOptional.ofEmpty(s -> NMsg.ofC("unknown %s format with type %s. Expected .", type, expectedType, "Double"));
+            }
+        }
     }
 
     private interface NTextMapper {

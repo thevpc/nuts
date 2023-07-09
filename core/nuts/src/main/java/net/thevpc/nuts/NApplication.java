@@ -59,7 +59,7 @@ package net.thevpc.nuts;
  *     }
  *
  *     public void run(NSession session) {
- *         session.processCommandLine(new NCmdLineProcessor() {
+ *         session.processAppCommandLine(new NCmdLineProcessor() {
  *             boolean noMoreOptions = false;
  *             boolean clean = false;
  *             List<String> params = new ArrayList<>();

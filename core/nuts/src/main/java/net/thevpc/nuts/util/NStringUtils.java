@@ -308,8 +308,8 @@ public class NStringUtils {
                 }
             }
         }
-        if(sb.length()==0){
-            requireQuotes=true;
+        if (sb.length() == 0) {
+            requireQuotes = true;
         }
         if (requireQuotes) {
             switch (quoteType) {
@@ -345,6 +345,54 @@ public class NStringUtils {
     public static List<String> split(String value, String chars) {
         return split(value, chars, true, false);
     }
+
+    public static String repeat(char c, int count) {
+        char[] e = new char[count];
+        Arrays.fill(e, c);
+        return new String(e);
+    }
+
+    public static String repeat(String str, int count) {
+        if (count < 0) {
+            throw new ArrayIndexOutOfBoundsException(count);
+        }
+        switch (count) {
+            case 0:
+                return "";
+            case 1:
+                return str;
+        }
+        StringBuilder sb = new StringBuilder(str.length() * count);
+        for (int i = 0; i < count; i++) {
+            sb.append(str);
+        }
+        return sb.toString();
+    }
+
+    public static String alignLeft(String s, int width) {
+        StringBuilder sb = new StringBuilder();
+        if (s != null) {
+            sb.append(s);
+            int x = width - sb.length();
+            if (x > 0) {
+                sb.append(repeat(' ', x));
+            }
+        }
+        return sb.toString();
+    }
+
+    public static String alignRight(String s, int width) {
+        StringBuilder sb = new StringBuilder();
+        if (s != null) {
+            sb.append(s);
+            int x = width - sb.length();
+            if (x > 0) {
+                sb.insert(0, repeat(' ', x));
+            }
+        }
+        return sb.toString();
+    }
+
 
     public static List<String> split(String value, String chars, boolean trim, boolean ignoreEmpty) {
         if (value == null) {

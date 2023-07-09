@@ -26,9 +26,49 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.util.NAssert;
+
+import java.util.Collection;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public interface NSupported<T> {
+    static <T> NSupported<T> resolve(Collection<Supplier<NSupported<T>>> source) {
+        if (source == null) {
+            return invalid();
+        }
+        return resolve(source.stream());
+    }
+
+    static <T> NSupported<T> resolve(Stream<Supplier<NSupported<T>>> source) {
+        Object[] track = new Object[2];
+        if (source != null) {
+            source.forEach(i -> {
+                NSupported<T> s = i.get();
+                NAssert.requireNonNull(s, "NSupported<T>");
+                int supportLevel = s.getSupportLevel();
+                boolean valid = supportLevel > 0;
+                if (valid) {
+                    if (track[0] == null) {
+                        track[0] = s;
+                        track[1] = supportLevel;
+                    } else {
+                        int oldSupportLevel = (Integer) track[1];
+                        if (supportLevel > oldSupportLevel) {
+                            track[0] = s;
+                            track[1] = supportLevel;
+                        }
+                    }
+                }
+            });
+        }
+        NSupported<T> r = (NSupported<T>) track[0];
+        if (r == null) {
+            return invalid();
+        }
+        return (NSupported<T>) r;
+    }
+
     static <T> NSupported<T> of(int supportLevel, T value) {
         return supportLevel <= 0 ? invalid() : new DefaultNSupported<>(() -> value, supportLevel);
     }
@@ -45,7 +85,7 @@ public interface NSupported<T> {
     }
 
     static <T> boolean isValid(NSupported<T> s) {
-        return s!=null && s.isValid();
+        return s != null && s.isValid();
     }
 
     T getValue();

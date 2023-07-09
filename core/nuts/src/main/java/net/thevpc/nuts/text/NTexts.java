@@ -29,6 +29,7 @@ package net.thevpc.nuts.text;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NFormatSPI;
+import net.thevpc.nuts.util.NStream;
 
 import java.util.Collection;
 import java.util.List;
@@ -36,9 +37,9 @@ import java.util.List;
 /**
  * @app.category Format
  */
-public interface NTexts extends NComponent, NSessionProvider{
+public interface NTexts extends NComponent, NSessionProvider {
     static NTexts of(NSession session) {
-       return NExtensions.of(session).createComponent(NTexts.class).get();
+        return NExtensions.of(session).createComponent(NTexts.class).get();
     }
 
     NTexts setSession(NSession session);
@@ -128,6 +129,12 @@ public interface NTexts extends NComponent, NSessionProvider{
 
     NText transform(NText text, NTextTransformer transformer, NTextTransformConfig config);
 
+    NStream<NText> flatten(NText text);
+
+    NStream<NText> flatten(NText text, NTextTransformConfig config);
+
+    NStream<NText> flatten(NText text, NTextTransformer transformer, NTextTransformConfig config);
+
     String escapeText(String str);
 
     String filterText(String text);
@@ -137,5 +144,9 @@ public interface NTexts extends NComponent, NSessionProvider{
 
     NTextInclude ofInclude(String value, char sep);
 
-    NFormat createFormat(NFormatSPI value);
+    NFormat createFormat(NFormatSPI format);
+
+    <T> NFormat createFormat(T object, NTextFormat<T> format);
+
+    <T> NOptional<NTextFormat<T>> createTextFormat(String type, Class<T> expectedType, String pattern);
 }

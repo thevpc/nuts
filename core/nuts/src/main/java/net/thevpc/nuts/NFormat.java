@@ -33,6 +33,7 @@ import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NAssert;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -49,6 +50,12 @@ import java.nio.file.Path;
 public interface NFormat extends NCmdLineConfigurable, NComponent, NSessionProvider {
     static NFormat of(NSession session, NFormatSPI spi) {
         return NTexts.of(session).createFormat(spi);
+    }
+
+    static <T> NFormat of(NSession session, T object, NTextFormat<T> format) {
+        NTexts texts = NTexts.of(session);
+        NAssert.requireNonNull(format, "format", session);
+        return texts.createFormat(object, format);
     }
 
     /**
