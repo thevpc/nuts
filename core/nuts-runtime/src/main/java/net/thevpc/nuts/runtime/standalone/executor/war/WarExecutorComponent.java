@@ -26,12 +26,11 @@
 package net.thevpc.nuts.runtime.standalone.executor.war;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
 import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NExecutorComponent;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NStringUtils;
@@ -39,7 +38,7 @@ import net.thevpc.nuts.util.NStringUtils;
 /**
  * Created by vpc on 1/7/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class WarExecutorComponent implements NExecutorComponent {
 
     public static NId ID;
@@ -59,10 +58,10 @@ public class WarExecutorComponent implements NExecutorComponent {
         NDefinition def = context.getConstraints(NDefinition.class);
         if (def != null) {
             if ("war".equals(NStringUtils.trim(def.getDescriptor().getPackaging()))) {
-                return DEFAULT_SUPPORT + 1;
+                return NSupported.DEFAULT_SUPPORT + 1;
             }
         }
-        return NO_SUPPORT;
+        return NSupported.NO_SUPPORT;
     }
 
     @Override

@@ -7,6 +7,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NdiScriptOptions;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NSettingsNdiSubCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.SystemNdi;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NAssert;
 
@@ -22,6 +24,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@NComponentScope(NScopeType.SESSION)
 public class DefaultNEnvs implements NEnvs {
 
     public static final Pattern UNIX_USER_DIRS_PATTERN = Pattern.compile("^\\s*(?<k>[A-Z_]+)\\s*=\\s*(?<v>.*)$");
@@ -39,7 +42,7 @@ public class DefaultNEnvs implements NEnvs {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 
     @Override
@@ -70,6 +73,11 @@ public class DefaultNEnvs implements NEnvs {
     @Override
     public String getHostName() {
         return model.getHostName();
+    }
+
+    @Override
+    public String getPid() {
+        return model.getPid();
     }
 
     @Override

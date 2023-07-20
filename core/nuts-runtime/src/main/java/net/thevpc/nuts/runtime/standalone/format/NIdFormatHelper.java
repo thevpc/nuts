@@ -242,7 +242,6 @@ public class NIdFormatHelper {
             int z = 0;
             Stack<NRepository> stack = new Stack<>();
             for (NRepository repository : NRepositories.of(session)
-                    .setSession(session)
                     .getRepositories()) {
                 stack.push(repository);
             }

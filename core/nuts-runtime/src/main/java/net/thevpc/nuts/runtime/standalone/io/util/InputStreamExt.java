@@ -39,16 +39,18 @@ public class InputStreamExt extends InputStream implements NInterruptible, NForm
 
     //
     private boolean interrupted;
+    private boolean closeBase;
 
     public InputStreamExt(InputStream base,
-                                     NContentMetadata md0,
-                                     Runnable onClose,
-                                     NProgressListener monitor,
-                                     Object source,
-                                     NMsg sourceName,
-                                     Long length,
-                                     NSession session) {
+                          NContentMetadata md0,
+                          boolean closeBase, Runnable onClose,
+                          NProgressListener monitor,
+                          Object source,
+                          NMsg sourceName,
+                          Long length,
+                          NSession session) {
         this.base = base;
+        this.closeBase = closeBase;
         this.session = session;
         this.onClose = onClose;
         this.md = CoreIOUtils.createContentMetadata(md0, base);
@@ -184,10 +186,12 @@ public class InputStreamExt extends InputStream implements NInterruptible, NForm
         if(monitor!=null) {
             onComplete(null);
         }
-        try {
-            base.close();
-        } catch (IOException e) {
-            throw new NIOException(session, NMsg.ofPlain("error closing base stream"), e);
+        if(closeBase) {
+            try {
+                base.close();
+            } catch (IOException e) {
+                throw new NIOException(session, NMsg.ofPlain("error closing base stream"), e);
+            }
         }
         if (onClose != null) {
             onClose.run();

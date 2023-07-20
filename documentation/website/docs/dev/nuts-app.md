@@ -4,6 +4,7 @@ title: Your first Application using nuts
 sidebar_label: Your first Application using nuts
 ---
 
+
 ## Running your application with Nuts
 
 Lets take, step by step, an example of an application that you will run using ```nuts``` package manager

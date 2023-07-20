@@ -48,7 +48,7 @@ public class DefaultNUncompress implements NUncompress {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 
     protected NLogOp _LOGOP(NSession session) {

@@ -35,7 +35,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathPermission;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
@@ -54,7 +54,7 @@ import java.util.stream.Stream;
 /**
  * Created by vpc on 1/7/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class LsCommand extends NShellBuiltinDefault {
 
     private static final FileSorter FILE_SORTER = new FileSorter();
@@ -65,7 +65,7 @@ public class LsCommand extends NShellBuiltinDefault {
             .withZone(ZoneId.systemDefault());
 
     public LsCommand() {
-        super("ls", DEFAULT_SUPPORT, Options.class);
+        super("ls", NSupported.DEFAULT_SUPPORT, Options.class);
     }
 
     @Override

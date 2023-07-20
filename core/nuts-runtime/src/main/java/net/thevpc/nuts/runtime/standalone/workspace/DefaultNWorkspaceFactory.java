@@ -30,16 +30,18 @@ import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.ClassClassMap;
 import net.thevpc.nuts.runtime.standalone.util.collections.ListMap;
 import net.thevpc.nuts.runtime.standalone.extension.CoreServiceUtils;
+import net.thevpc.nuts.runtime.standalone.util.collections.NPropertiesHolder;
+import net.thevpc.nuts.runtime.standalone.workspace.factorycache.CachedConstructor;
+import net.thevpc.nuts.runtime.standalone.workspace.factorycache.NBeanCache;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.NLog;
 import net.thevpc.nuts.util.NLogVerb;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.PrintStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -50,15 +52,15 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
 
     private final NLog LOG;
     private final ListMap<Class, Object> instances = new ListMap<>();
-    private final Map<Class, Object> singletons = new HashMap<>();
     private final Map<NId, IdCache> discoveredCacheById = new HashMap<>();
-    private final Map<Class, CachedConstructor> cachedCtrls = new HashMap<>();
     private final HashMap<String, String> _alreadyLogger = new HashMap<>();
     private final NWorkspace workspace;
+    private final NBeanCache cache;
 
     public DefaultNWorkspaceFactory(NWorkspace ws) {
         this.workspace = ws;
         LOG = ((DefaultNWorkspace) ws).LOG;
+        cache=new NBeanCache(LOG);
     }
 
     @Override
@@ -83,23 +85,12 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
 
     @Override
     public <T extends NComponent> NOptional<T> createComponent(Class<T> type, Object supportCriteria, NSession session) {
-        int bestSupportLevel = Integer.MIN_VALUE;
-        T bestObj = null;
         NSupportLevelContext context = new NDefaultSupportLevelContext(session, supportCriteria);
         List<T> all = createAll(type, session);
-        for (T t : all) {
-            int supportLevel = t.getSupportLevel(context);
-            if (supportLevel > 0) {
-                if (bestObj == null || supportLevel > bestSupportLevel) {
-                    bestSupportLevel = supportLevel;
-                    bestObj = t;
-                }
-            }
-        }
-        if (bestObj == null) {
-            return NOptional.ofNamedEmpty(NMsg.ofC("extensions component %s",type));
-        }
-        return NOptional.of(bestObj);
+        NSupported<T> s=NSupported.resolve(all.stream().map(x-> (Supplier<NSupported<T>>) () -> NSupported.of(x.getSupportLevel(context),x)),
+                ss->NMsg.ofMissingValue(NMsg.ofC("extensions component %s", type).toString())
+                );
+        return s.toOptional();
     }
 
     @Override
@@ -239,120 +230,59 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         return null;
     }
 
-    protected <T> CachedConstructor<T> getCtrl0(Class<T> t, NSession session) {
-        CachedConstructor o = cachedCtrls.get(t);
-        if (o != null) {
-            return o;
-        }
-        try {
-            Constructor<T> ctrl = t.getDeclaredConstructor(NSession.class);
-            ctrl.setAccessible(true);
-            CachedConstructor<T> r = new CachedConstructor<T>() {
-                @Override
-                public Constructor<T> ctrl() {
-                    return ctrl;
-                }
 
-                @Override
-                public Object[] args(NSession session) {
-                    return new Object[]{session};
-                }
-            };
-            cachedCtrls.put(t, r);
-            return r;
-        } catch (NoSuchMethodException e) {
-            //
-        }
-        try {
-            Constructor<T> ctrl = t.getDeclaredConstructor(NWorkspace.class);
-            ctrl.setAccessible(true);
-            CachedConstructor<T> r = new CachedConstructor<T>() {
-                @Override
-                public Constructor<T> ctrl() {
-                    return ctrl;
-                }
-
-                @Override
-                public Object[] args(NSession session) {
-                    return new Object[]{session.getWorkspace()};
-                }
-            };
-            cachedCtrls.put(t, r);
-            return r;
-        } catch (NoSuchMethodException e) {
-            //
-        }
-        try {
-            Constructor<T> ctrl = t.getDeclaredConstructor();
-            ctrl.setAccessible(true);
-            CachedConstructor<T> r = new CachedConstructor<T>() {
-                @Override
-                public Constructor<T> ctrl() {
-                    return ctrl;
-                }
-
-                @Override
-                public Object[] args(NSession session) {
-                    return new Object[0];
-                }
-            };
-            cachedCtrls.put(t, r);
-            return r;
-        } catch (NoSuchMethodException e) {
-            //
-        }
-        return null;
+    public <T> T newInstance(Class<T> t, Class apiType, NSession session) {
+        checkSession(session);
+        return newInstance(t,new Class[0],new Object[0],apiType,session);
     }
 
-    public <T> T newInstance(Class<T> t, NSession session, Class apiType) {
-        checkSession(session);
-        T theInstance = null;
-        CachedConstructor<T> ctrl = getCtrl0(t, session);
-        if (ctrl == null) {
-            throw new NFactoryException(session, NMsg.ofC("instantiate '%s' failed. missing constructor", t));
+    protected <T> T newInstanceAndLog(Class<T> type, Class[] argTypes, Object[] args, Class apiType, NSession session,NScopeType scope) {
+        T o = newInstance(type, apiType, session);
+//        if (LOG.isLoggable(Level.CONFIG)) {
+//            LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.READ)
+//                    .log(NMsg.ofJ("resolve {0} to  ```underlined {1}``` {2}",
+//                            NStringUtils.formatAlign(apiType.getSimpleName(), 40, NPositionType.FIRST),
+//                            scope,
+//                            o.getClass().getName()));
+//        }
+
+        //skip logging this to avoid infinite recursion
+        if (isBootstrapLogType(apiType)) {
+            //
+        }else if (LOG.isLoggable(Level.CONFIG)) {
+            String old = _alreadyLogger.get(apiType.getName());
+            if (old == null || !old.equals(type.getName())) {
+                _alreadyLogger.put(apiType.getName(), type.getName());
+                LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.READ)
+                        .log(NMsg.ofJ("resolve {0} to  ```underlined {1}``` {2}",
+                                NStringUtils.formatAlign(apiType.getSimpleName(), 40, NPositionType.FIRST),
+                                scope,
+                                type.getName()
+                        ));
+            }
         }
-        try {
-            theInstance = ctrl.ctrl().newInstance(ctrl.args(session));
-        } catch (InstantiationException | InvocationTargetException e) {
-            if (isBootstrapLogType(apiType)) {
-                //do not use log. this is a bug that must be resolved fast!
-                safeLog(NMsg.ofC("unable to instantiate %s as %s", apiType, t), e, session);
-            } else {
-                if (LOG.isLoggable(Level.FINEST)) {
-                    LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.FAIL).error(e)
-                            .log(NMsg.ofJ("unable to instantiate {0}", t));
-                }
-            }
-            Throwable cause = e.getCause();
-            if (cause == null) {
-                cause = e;
-            }
-            if (cause instanceof RuntimeException) {
-                throw (RuntimeException) cause;
-            }
-            throw new NFactoryException(session, NMsg.ofC("instantiate '%s' failed", t), cause);
-        } catch (IllegalAccessException e) {
-            if (isBootstrapLogType(apiType)) {
-                //do not use log. this is a bug that must be resolved fast!
-                safeLog(NMsg.ofC("unable to instantiate %s as %s", apiType, t), e, session);
-            } else {
-                if (LOG.isLoggable(Level.FINEST)) {
-                    LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.FAIL).error(e)
-                            .log(NMsg.ofJ("unable to instantiate {0}", t));
-                }
-            }
-            throw new NFactoryException(session, NMsg.ofC("instantiate '%s' failed", t), e);
-        }
-        //initialize?
-        return theInstance;
+
+        return o;
     }
 
     protected <T> T newInstance(Class<T> t, Class[] argTypes, Object[] args, Class apiType, NSession session) {
         checkSession(session);
         T t1 = null;
+        CachedConstructor<T> ctrl0 = cache.getCtrl0(t, argTypes, session);
+        if(ctrl0==null){
+            if (isBootstrapLogType(apiType)) {
+                //do not use log. this is a bug that must be resolved fast!
+                safeLog(NMsg.ofC("unable to instantiate %s as %s", apiType, t), null, session);
+            } else {
+                if (LOG.isLoggable(Level.FINEST)) {
+                    LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.FAIL).error(null)
+                            .log(NMsg.ofJ("unable to instantiate {0}", t));
+                }
+            }
+        }
         try {
-            t1 = t.getConstructor(argTypes).newInstance(args);
-        } catch (InstantiationException e) {
+            t1 = ctrl0.newInstance(args, session);
+        } catch (Exception e) {
             if (isBootstrapLogType(apiType)) {
                 //do not use log. this is a bug that must be resolved fast!
                 safeLog(NMsg.ofC("unable to instantiate %s as %s", apiType, t), e, session);
@@ -371,69 +301,19 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 throw (RuntimeException) cause;
             }
             throw new NFactoryException(session, NMsg.ofC("instantiate '%s' failed", t), cause);
-        } catch (Exception e) {
-            if (isBootstrapLogType(apiType)) {
-                //do not use log. this is a bug that must be resolved fast!
-                safeLog(NMsg.ofC("unable to instantiate %s as %s", apiType, t), e, session);
-            } else {
-                if (LOG.isLoggable(Level.FINEST)) {
-                    LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.FAIL).error(e)
-                            .log(NMsg.ofJ("unable to instantiate {0}", t));
-                }
-            }
-            if (e instanceof RuntimeException) {
-                throw (RuntimeException) e;
-            }
-            throw new NFactoryException(session, NMsg.ofC("instantiate '%s' failed", t), e);
         }
         //initialize?
         return t1;
     }
 
     protected <T> T resolveInstance(Class<T> implType, Class<T> apiType, NSession session) {
-        if (implType == null) {
-            return null;
-        }
-        NComponentScopeType scope = computeScope(implType, apiType, session);
-        switch (scope) {
-            case WORKSPACE: {
-                Object o = singletons.get(implType);
-                if (o == null) {
-                    o = newInstance(implType, session, apiType);
-                    if (o != null) {
-                        singletons.put(implType, o);
-                        doLogInstantiation(apiType, o.getClass(), "singleton", session);
-                    }
-                }
-                return (T) o;
-            }
-            case SESSION: {
-                //the same class wont be create twice for this session!
-                String key = "session-scoped:" + Integer.toHexString(System.identityHashCode(session)).toUpperCase() + ":" + implType.getName();
-                Object o = session.getProperty(key);
-                if (o == null) {
-                    o = newInstance(implType, session, apiType);
-                    if (o != null) {
-                        session.setProperty(key, o);
-                        doLogInstantiation(apiType, o.getClass(), "session", session);
-                    }
-                }
-                return (T) o;
-            }
-            default: {
-                T o = newInstance(implType, session, apiType);
-                if (o != null) {
-                    doLogInstantiation(apiType, o.getClass(), "prototype", session);
-                }
-                return o;
-            }
-        }
+        return resolveInstance(implType,apiType,new Class[0],new Object[0],session );
     }
 
-    private <T> NComponentScopeType computeScope(Class<T> implType, Class<T> apiType, NSession session) {
+    private <T> NScopeType computeScope(Class<T> implType, Class<T> apiType, NSession session) {
         NComponentScope apiScope = apiType.getAnnotation(NComponentScope.class);
         NComponentScope implScope = implType.getAnnotation(NComponentScope.class);
-        NComponentScopeType scope = NComponentScopeType.PROTOTYPE;
+        NScopeType scope = NScopeType.PROTOTYPE;
         if (apiScope != null || implScope != null) {
             if (apiScope != null && implScope == null) {
                 scope = apiScope.value();
@@ -491,25 +371,6 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         return false;
     }
 
-    private void doLogInstantiation(Class baseType, Class implType, String scope, NSession session) {
-        //skip logging this to avoid infinite recursion
-        if (isBootstrapLogType(baseType)) {
-            return;
-        }
-        if (LOG.isLoggable(Level.CONFIG)) {
-            String old = _alreadyLogger.get(baseType.getName());
-            if (old == null || !old.equals(implType.getName())) {
-                _alreadyLogger.put(baseType.getName(), implType.getName());
-                LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.READ)
-                        .log(NMsg.ofJ("resolve {0} to  ```underlined {1}``` {2}",
-                                NStringUtils.formatAlign(baseType.getSimpleName(), 40, NPositionType.FIRST),
-                                scope,
-                                implType.getName()
-                        ));
-            }
-        }
-    }
-
     private NSession validLogSession(NSession session) {
         if (session == null) {
             //this is a bug
@@ -527,42 +388,25 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         if (type == null) {
             return null;
         }
-        Boolean singleton = null;
-        if (apiType.getAnnotation(NSingleton.class) != null) {
-            singleton = true;
-        } else if (apiType.getAnnotation(NPrototype.class) != null) {
-            singleton = false;
+        NScopeType scope = computeScope(type,apiType,session);
+        if (apiType.getAnnotation(NComponentScope.class) != null) {
+            scope = apiType.getAnnotation(NComponentScope.class).value();
         }
-        if (type.getAnnotation(NSingleton.class) != null) {
-            singleton = true;
-        } else if (type.getAnnotation(NPrototype.class) != null) {
-            singleton = false;
+        if (scope == null) {
+            scope = NScopeType.PROTOTYPE;
         }
-        if (singleton == null) {
-            singleton = false;
+        NScopeType finalScope = scope;
+        if (scope == NScopeType.PROTOTYPE) {
+            return newInstanceAndLog(type,argTypes,args,apiType,session,finalScope);
         }
-        if (singleton) {
-            if (argTypes.length > 0) {
-                throw new NIllegalArgumentException(session, NMsg.ofPlain("singletons should have no arg types"));
-            }
-            Object o = singletons.get(type);
-            if (o == null) {
-                o = newInstance(type, session, apiType);
-                singletons.put(type, o);
-                if (LOG.isLoggable(Level.CONFIG)) {
-                    LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.READ)
-                            .log(NMsg.ofJ("resolve {0} to  ```underlined singleton``` {1}", NStringUtils.formatAlign(apiType.getSimpleName(), 40, NPositionType.FIRST), o.getClass().getName()));
-                }
-            }
-            return (T) o;
-        } else {
-            T o = newInstance(type, argTypes, args, apiType, session);
-            if (LOG.isLoggable(Level.CONFIG)) {
-                LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.READ)
-                        .log(NMsg.ofJ("resolve {0} to  ```underlined prototype``` {1}", NStringUtils.formatAlign(apiType.getSimpleName(), 40, NPositionType.FIRST), o.getClass().getName()));
-            }
-            return o;
-        }
+        NPropertiesHolder beans = resolveBeansHolder(session, scope);
+        return (T) beans.getOrComputeProperty(type.getName(), session, k -> {
+            return newInstanceAndLog(type,argTypes,args,apiType,session,finalScope);
+        });
+    }
+
+    private static NPropertiesHolder resolveBeansHolder(NSession session, NScopeType scope) {
+        return session.getOrComputeProperty(NWorkspaceFactory.class.getName() + "::beans", scope, k -> new NPropertiesHolder());
     }
 
     //    @Override
@@ -582,7 +426,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             return (T) resolveInstance(e, type, session);
         }
         for (Class<T> t : extensionTypes) {
-            return newInstance(t, session, type);
+            return newInstance(t, type, session);
         }
         throw new NElementNotFoundException(session, NMsg.ofC("type %s not found", type));
     }
@@ -604,11 +448,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         return all;
     }
 
-    private interface CachedConstructor<T> {
-        Constructor<T> ctrl();
 
-        Object[] args(NSession session);
-    }
 
     private final static class ClassExtension {
 

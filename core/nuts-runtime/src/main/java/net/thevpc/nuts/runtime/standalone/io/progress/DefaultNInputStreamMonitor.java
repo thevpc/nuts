@@ -7,6 +7,7 @@ package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NSupported;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
@@ -163,7 +164,12 @@ public class DefaultNInputStreamMonitor implements NInputStreamMonitor {
             sourceTypeName = source.getMetaData().getKind().orElse("nuts-Path");
         }
 
-        InputStream z = NIO.of(session).ofMonitored(openedStream, source, new SilentStartNProgressListenerAdapter(monitor, sourceName));
+        InputStream z = NIO.of(session)
+                .ofInputStreamBuilder(openedStream)
+                .setSource(source)
+                .setMonitoringListener(new SilentStartNProgressListenerAdapter(monitor, sourceName))
+                .createInputStream()
+                ;
         ((NContentMetadataProvider)z).getMetaData().setKind(sourceTypeName);
         return z;
 //        return (InputStream) NIO.of(session).ofInputSource(
@@ -267,6 +273,6 @@ public class DefaultNInputStreamMonitor implements NInputStreamMonitor {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 }

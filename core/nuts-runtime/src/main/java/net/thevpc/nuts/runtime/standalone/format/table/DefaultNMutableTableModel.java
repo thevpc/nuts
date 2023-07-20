@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.format.table;
 
+import net.thevpc.nuts.NSupported;
 import net.thevpc.nuts.format.NMutableTableModel;
 import java.util.ArrayList;
 import java.util.List;
@@ -219,6 +220,6 @@ public class DefaultNMutableTableModel implements NMutableTableModel {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 }

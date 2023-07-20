@@ -849,7 +849,7 @@ public class URLPath implements NPathSPI {
                     }
                 }
             }
-            return NO_SUPPORT;
+            return NSupported.NO_SUPPORT;
         }
     }
 

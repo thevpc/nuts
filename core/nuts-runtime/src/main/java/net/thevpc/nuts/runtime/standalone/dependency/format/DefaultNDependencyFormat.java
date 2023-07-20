@@ -7,8 +7,11 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
+@NComponentScope(NScopeType.PROTOTYPE)
 public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyFormat> implements NDependencyFormat {
 
     private boolean omitRepository;
@@ -250,6 +253,6 @@ public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyForma
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 }

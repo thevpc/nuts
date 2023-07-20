@@ -91,7 +91,7 @@ public class ClassLoaderPath extends URLPath {
             NSessionUtils.checkSession(ws, session);
             try {
                 if (path.startsWith("classpath:")) {
-                    return NSupported.of(DEFAULT_SUPPORT,()->new ClassLoaderPath(path, classLoader, session));
+                    return NSupported.of(NSupported.DEFAULT_SUPPORT,()->new ClassLoaderPath(path, classLoader, session));
                 }
             } catch (Exception ex) {
                 //ignore
@@ -103,9 +103,9 @@ public class ClassLoaderPath extends URLPath {
         public int getSupportLevel(NSupportLevelContext context) {
             String path= context.getConstraints();
             if (path.startsWith("classpath:")) {
-                return DEFAULT_SUPPORT;
+                return NSupported.DEFAULT_SUPPORT;
             }
-            return NO_SUPPORT;
+            return NSupported.NO_SUPPORT;
         }
     }
 }

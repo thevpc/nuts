@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts.spi;
 
+import net.thevpc.nuts.NSupported;
+
 /**
  * Top Level extension Point in Nuts.
  * Extension mechanism in nuts is based on a factory that selects the best
@@ -42,19 +44,6 @@ package net.thevpc.nuts.spi;
 public interface NComponent {
 
     /**
-     * minimum support level for user defined implementations.
-     */
-    int CUSTOM_SUPPORT = 1000;
-    /**
-     * this is the default support level for runtime implementation (nuts-runtime).
-     */
-    int DEFAULT_SUPPORT = 10;
-    /**
-     * when getSupportLevel(...)==NO_SUPPORT the package is discarded.
-     */
-    int NO_SUPPORT = -1;
-
-    /**
      * evaluate support level (who much this instance should be considered convenient, acceptable)
      * for the given arguments (provided in context).
      *
@@ -62,6 +51,6 @@ public interface NComponent {
      * @return support level value
      */
     default int getSupportLevel(NSupportLevelContext context) {
-        return CUSTOM_SUPPORT;
+        return NSupported.CUSTOM_SUPPORT;
     }
 }

@@ -85,7 +85,7 @@ import java.util.stream.Collectors;
 /**
  * Created by vpc on 1/6/17.
  */
-@NComponentScope(NComponentScopeType.PROTOTYPE)
+@NComponentScope(NScopeType.PROTOTYPE)
 public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceExt {
 
     public static final NVersion VERSION_INSTALL_INFO_CONFIG = NVersion.of("0.8.0").get();
@@ -494,7 +494,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     out.resetLine();
                     StringBuilder version = new StringBuilder(nutsVersion.toString());
                     CoreStringUtils.fillString(' ', 25 - version.length(), version);
-                    NTexts txt = text.setSession(defaultSession());
+                    NTexts txt = text;
                     NPath p = NPath.of("classpath:/net/thevpc/nuts/runtime/includes/standard-header.ntf", getClass().getClassLoader(), defaultSession());
                     NText n = txt.parser().parse(p);
                     n = txt.transform(n, new NTextTransformConfig()
@@ -819,7 +819,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
     @Override
     public int getSupportLevel(NSupportLevelContext criteria) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 
     @Override
@@ -1753,8 +1753,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     public NInstallStatus getInstallStatus(NId id, boolean checkDependencies, NSession session) {
         NDefinition nutToInstall;
         try {
-            nutToInstall = NSearchCommand.of(session).addId(id)
-                    .setSession(session.copy().setTransitive(false))
+            nutToInstall = NSearchCommand.of(session.copy().setTransitive(false)).addId(id)
                     .setInlineDependencies(checkDependencies)
                     .setInstallStatus(NInstallStatusFilters.of(session).byDeployed(true))
                     .setOptional(false)

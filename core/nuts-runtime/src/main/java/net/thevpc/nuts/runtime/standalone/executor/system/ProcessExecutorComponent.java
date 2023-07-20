@@ -37,7 +37,7 @@ import java.util.*;
 /**
  * Created by vpc on 1/7/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class ProcessExecutorComponent implements NExecutorComponent {
 
     public static NId ID;
@@ -54,7 +54,7 @@ public class ProcessExecutorComponent implements NExecutorComponent {
         if(ID==null){
             ID= NId.of("net.thevpc.nuts.exec:exec-native").get(session);
         }
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 
     @Override

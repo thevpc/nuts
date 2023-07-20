@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.NCodeHighlighter;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.*;
@@ -34,7 +33,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
     public int getSupportLevel(NSupportLevelContext context) {
         String s = context.getConstraints();
         if(s==null){
-            return DEFAULT_SUPPORT;
+            return NSupported.DEFAULT_SUPPORT;
         }
         switch (s) {
             case "sh":
@@ -44,7 +43,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
             case "ksh":
             case "text/x-shellscript":
             {
-                return NComponent.DEFAULT_SUPPORT;
+                return NSupported.DEFAULT_SUPPORT;
             }
             case "system": {
                 switch (NShellFamily.getCurrent()) {
@@ -53,13 +52,13 @@ public class BashCodeHighlighter implements NCodeHighlighter {
                     case CSH:
                     case ZSH:
                     case KSH:{
-                        return NComponent.DEFAULT_SUPPORT + 10;
+                        return NSupported.DEFAULT_SUPPORT + 10;
                     }
                 }
-                return NComponent.DEFAULT_SUPPORT;
+                return NSupported.DEFAULT_SUPPORT;
             }
         }
-        return NComponent.NO_SUPPORT;
+        return NSupported.NO_SUPPORT;
     }
 
     @Override

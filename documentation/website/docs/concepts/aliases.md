@@ -4,6 +4,7 @@ title: Aliases, Imports & Launchers
 sidebar_label: Aliases, Imports & Launchers
 ---
 
+
 Aliases, Imports and launchers, are three features in nuts where you can call artifacts with a simple word instead of using the full id. Indeed, usually, artifacts are uniquely identified by groupId, artifactId, version and classifier (whenever applicable). This is kind of cumbersome if most of the cases:
 
 ```bash

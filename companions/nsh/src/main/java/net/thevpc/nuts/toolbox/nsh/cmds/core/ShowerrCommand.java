@@ -31,7 +31,7 @@ import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinCore;
@@ -41,11 +41,11 @@ import net.thevpc.nuts.toolbox.nsh.eval.NShellResult;
 /**
  * Created by vpc on 1/7/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class ShowerrCommand extends NShellBuiltinCore {
 
     public ShowerrCommand() {
-        super("showerr", DEFAULT_SUPPORT,Options.class);
+        super("showerr", NSupported.DEFAULT_SUPPORT,Options.class);
     }
 
     @Override

@@ -25,6 +25,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.core;
 
+import net.thevpc.nuts.NSupported;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
@@ -38,7 +39,7 @@ import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 public class VersionCommand extends NShellBuiltinCore {
 
     public VersionCommand() {
-        super("version", DEFAULT_SUPPORT, Options.class);
+        super("version", NSupported.DEFAULT_SUPPORT, Options.class);
     }
 
     @Override

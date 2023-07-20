@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
+import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NSupported;
 
@@ -8,6 +9,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,7 +32,8 @@ public class ApacheReposHtmlfsParser extends AbstractHtmlfsParser {
             //ignore
         }
         if (expected < 2) {
-            return NSupported.invalid();
+            Function<NSession, NMsg> msg = s -> NMsg.ofInvalidValue("apache repo");
+            return NSupported.invalid(msg);
         }
         List<String> found = new ArrayList<>();
         Pattern pattern = Pattern.compile("<img src=\"/icons/[a-z.]+\" alt=\"\\[[a-zA-Z ]+]\"> +<a href=\"(?<href>[^\"]+)\">(?<hname>[^>]+)</a> +(?<d>[^ ]+) (?<h>[^ ]+) +(?<s>[^ ]+)");

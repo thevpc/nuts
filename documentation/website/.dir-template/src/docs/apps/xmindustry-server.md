@@ -1,5 +1,5 @@
 ---
-id: app-xmindustry-desktop
+id: app-xmindustry-server
 title: Mindustry Server
 sidebar_label: Mindustry Server
 order: 2

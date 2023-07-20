@@ -178,7 +178,6 @@ public class DerbyService {
                     .setIdFilter(
                             (java.getVersion().compareTo("1.9") < 0) ? NVersionFilters.of(session).byValue("[,10.15.1.3[").get().to(NIdFilter.class) :
                                     null)
-                    .setSession(session.copy())
                     .getResultIds().findSingleton().get();
             currentDerbyVersion = best.getVersion().toString();
         }

@@ -5,14 +5,14 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.ask.DefaultNQuestion;
 import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
 import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NQuestion;
 
 import java.io.*;
 import java.util.Scanner;
 
-@NComponentScope(NComponentScopeType.PROTOTYPE)
+@NComponentScope(NScopeType.PROTOTYPE)
 public class DefaultNSessionTerminalFromSession extends AbstractNSessionTerminal {
 
     protected NWorkspace ws;

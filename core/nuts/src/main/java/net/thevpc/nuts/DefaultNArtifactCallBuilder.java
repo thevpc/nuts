@@ -26,6 +26,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.reserved.NReservedCollectionUtils;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
 import java.io.Serializable;
@@ -36,23 +38,18 @@ import java.util.*;
  *
  * @since 0.5.4
  */
+@NComponentScope(NScopeType.PROTOTYPE)
 public class DefaultNArtifactCallBuilder implements NArtifactCallBuilder, Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private NId id;
     private List<String> arguments = new ArrayList<>();
-    private NSession session;
 
     public DefaultNArtifactCallBuilder() {
     }
 
-    public DefaultNArtifactCallBuilder(NSession session) {
-        this.session=session;
-    }
-
-    public DefaultNArtifactCallBuilder(NArtifactCall value, NSession session) {
-        this.session=session;
+    public DefaultNArtifactCallBuilder(NArtifactCall value) {
         setId(value.getId());
         setArguments(value.getArguments());
     }
@@ -131,6 +128,6 @@ public class DefaultNArtifactCallBuilder implements NArtifactCallBuilder, Serial
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 }

@@ -158,7 +158,7 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
 
     @Override
     public int getSupportLevel(NSupportLevelContext criteria) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 
     @Override

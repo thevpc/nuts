@@ -2,9 +2,9 @@ package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
 import net.thevpc.nuts.NCodeHighlighter;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NSupported;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
-import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.*;
 
@@ -29,7 +29,7 @@ public class SqlCodeHighlighter implements NCodeHighlighter {
 
     @Override
     public NText tokenToText(String text, String nodeType, NTexts txt, NSession session) {
-        return txt.setSession(session).ofPlain(text);
+        return txt.ofPlain(text);
     }
 
 
@@ -37,17 +37,17 @@ public class SqlCodeHighlighter implements NCodeHighlighter {
     public int getSupportLevel(NSupportLevelContext context) {
         String s = context.getConstraints();
         if (s == null) {
-            return DEFAULT_SUPPORT;
+            return NSupported.DEFAULT_SUPPORT;
         }
         switch (s) {
             case "sql":
             case "text/sql":
             case "application/sql":
             {
-                return NComponent.DEFAULT_SUPPORT;
+                return NSupported.DEFAULT_SUPPORT;
             }
         }
-        return NComponent.NO_SUPPORT;
+        return NSupported.NO_SUPPORT;
     }
 
     @Override

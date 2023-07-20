@@ -29,8 +29,9 @@ import javax.security.auth.callback.*;
 
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NAuthenticationAgent;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
 import java.util.List;
@@ -39,6 +40,7 @@ import java.util.List;
  *
  * @author thevpc
  */
+@NComponentScope(NScopeType.SESSION)
 public class DefaultNWorkspaceSecurityManager implements NWorkspaceSecurityManager {
 
     public final DefaultNWorkspaceSecurityModel model;
@@ -53,18 +55,12 @@ public class DefaultNWorkspaceSecurityManager implements NWorkspaceSecurityManag
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 
     @Override
     public NSession getSession() {
         return session;
-    }
-
-    @Override
-    public NWorkspaceSecurityManager setSession(NSession session) {
-        this.session = NWorkspaceUtils.bindSession(model.getWorkspace(), session);
-        return this;
     }
 
     @Override

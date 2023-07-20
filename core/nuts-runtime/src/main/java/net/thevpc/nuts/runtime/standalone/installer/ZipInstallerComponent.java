@@ -27,26 +27,23 @@ package net.thevpc.nuts.runtime.standalone.installer;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.cmdline.NCmdLines;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.UnzipOptions;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinition;
 import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NInstallerComponent;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.NRef;
 
 import java.io.IOException;
 
 /**
  * Created by vpc on 1/7/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class ZipInstallerComponent implements NInstallerComponent {
 
     @Override
@@ -55,11 +52,11 @@ public class ZipInstallerComponent implements NInstallerComponent {
         if (def != null) {
             if (def.getDescriptor() != null) {
                 if ("zip".equals(def.getDescriptor().getPackaging())) {
-                    return DEFAULT_SUPPORT;
+                    return NSupported.DEFAULT_SUPPORT;
                 }
             }
         }
-        return NO_SUPPORT;
+        return NSupported.NO_SUPPORT;
     }
 
     @Override

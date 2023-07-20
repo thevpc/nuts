@@ -96,7 +96,7 @@ public final class Nuts {
             NSession session = NSessionAwareExceptionBase.resolveSession(ex).orNull();
             if (session != null) {
                 System.exit(NApplicationExceptionHandler.of(session)
-                        .processThrowable(args, ex, session));
+                        .processThrowable(args, ex));
             } else {
                 System.exit(NApiUtils.processThrowable(ex, args));
             }

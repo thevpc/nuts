@@ -563,7 +563,7 @@ public class MavenUtils {
                         NDescriptor d = cache.get(pid);
                         if (d == null) {
                             try {
-                                d = NFetchCommand.of(pid,session).setEffective(true).setSession(session).getResultDescriptor();
+                                d = NFetchCommand.of(pid,session).setEffective(true).getResultDescriptor();
                             } catch (NException ex) {
                                 throw ex;
                             } catch (Exception ex) {

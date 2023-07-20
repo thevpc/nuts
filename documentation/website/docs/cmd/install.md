@@ -4,6 +4,7 @@ title: Install Command
 sidebar_label: Install Command
 ---
 
+
 A part from URL and path based executions, an artifact should be installed to be run. Installation can be auto fired when you first execute the artifact (you will be prompted to install the artifact) or manually using the **install** command. Note that when you run directly a jar file as a path or url, the artifact will not be installed!
 to install an application just type
 ```

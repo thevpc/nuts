@@ -109,7 +109,7 @@ public class DefaultNDeployCommand extends AbstractNDeployCommand {
         if (ids.size() > 0) {
             for (NId nutsId : NSearchCommand.of(session)
                     .addIds(ids.toArray(new NId[0])).setLatest(true).setRepositoryFilter(fromRepository).getResultIds()) {
-                NDefinition fetched = NFetchCommand.of(nutsId,session).setContent(true).setSession(getSession()).getResultDefinition();
+                NDefinition fetched = NFetchCommand.of(nutsId,getSession()).setContent(true).getResultDefinition();
                 if (fetched.getContent().isPresent()) {
                     runDeployFile(fetched.getContent().get(session), fetched.getDescriptor(), null);
                 }

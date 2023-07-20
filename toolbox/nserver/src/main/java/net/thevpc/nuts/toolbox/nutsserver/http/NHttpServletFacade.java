@@ -189,9 +189,7 @@ public class NHttpServletFacade {
             List<NId> fetch = null;
             try {
                 NSession session = context.getSession();
-                fetch = NSearchCommand.of(session).setSession(
-                        context.getSession().copy().setTransitive(transitive)
-                )
+                fetch = NSearchCommand.of(context.getSession().copy().setTransitive(transitive))
                         .addId(id).getResultIds().toList();
             } catch (Exception exc) {
                 //

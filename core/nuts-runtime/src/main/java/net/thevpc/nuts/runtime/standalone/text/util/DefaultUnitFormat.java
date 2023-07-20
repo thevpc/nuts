@@ -40,16 +40,23 @@ public class DefaultUnitFormat {
     }
 
     public DefaultUnitFormat(String format) {
+        if(format==null){
+            format="";
+        }
+        format=format.trim();
         int e = format.indexOf(' ');
         if (e < 0) {
-            this.mainUnitName = format;
-            format = "M-3 M3 I2 D2";
+            this.mainUnitName = format.trim();
+            format = "";
         } else {
             this.mainUnitName = format.substring(0, e);
-            format = format.substring(e + 1);
+            format = format.substring(e + 1).trim();
         }
         if (this.mainUnitName.isEmpty()) {
             throw new IllegalArgumentException("expected unit name");
+        }
+        if (format.isEmpty()) {
+            format = "M-3 M3 I2 D2";
         }
         leadingZeros = false;
         intermediateZeros = false;
@@ -69,19 +76,14 @@ public class DefaultUnitFormat {
                     case 'X': {
                         ValAndI t = readInt(charArray, i);
                         i = t.i;
-                        if (isValidGenPow(t.v)) {
-                            excludedPows.add(t.v);
-                        } else {
-                            throw new IllegalArgumentException("Invalid Power " + t.v);
-                        }
+                        requireValidMultiplier(t);
+                        excludedPows.add(t.v);
                         break;
                     }
                     case 'M': {
                         ValAndI t = readInt(charArray, i);
                         i = t.i;
-                        if (!isValidGenPow(t.v)) {
-                            throw new IllegalArgumentException("Invalid Power " + t.v);
-                        }
+                        requireValidMultiplier(t);
                         if (startInterval) {
                             startInterval = false;
                             low = t.v;
@@ -147,6 +149,12 @@ public class DefaultUnitFormat {
             decimalFormat = new DecimalFormat("0." + NStringUtils.repeat('0', integerDigits));
         } else {
             decimalFormat = new DecimalFormat("0.0");
+        }
+    }
+
+    private void requireValidMultiplier(ValAndI t) {
+        if (!isValidGenPow(t.v)) {
+            throw new IllegalArgumentException("Invalid Power " + t.v);
         }
     }
 

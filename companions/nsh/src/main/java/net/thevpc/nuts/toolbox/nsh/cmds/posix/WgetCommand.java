@@ -32,7 +32,7 @@ import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 
@@ -42,11 +42,11 @@ import java.util.List;
 /**
  * Created by vpc on 1/7/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class WgetCommand extends NShellBuiltinDefault {
 
     public WgetCommand() {
-        super("wget", DEFAULT_SUPPORT,Options.class);
+        super("wget", NSupported.DEFAULT_SUPPORT,Options.class);
     }
 
     @Override

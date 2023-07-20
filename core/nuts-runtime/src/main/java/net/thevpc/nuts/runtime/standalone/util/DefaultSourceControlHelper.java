@@ -72,7 +72,7 @@ public class DefaultSourceControlHelper {
             } else {
                 d = d.builder().setId(d.getId().builder().setVersion(oldVersion + ".1").build()).build();
             }
-            NId newId = NDeployCommand.of(session).setContent(folder).setDescriptor(d).setSession(session).getResult().get(0);
+            NId newId = NDeployCommand.of(session).setContent(folder).setDescriptor(d).getResult().get(0);
             d.formatter(session).print(file);
             CoreIOUtils.delete(session, folder);
             return newId;

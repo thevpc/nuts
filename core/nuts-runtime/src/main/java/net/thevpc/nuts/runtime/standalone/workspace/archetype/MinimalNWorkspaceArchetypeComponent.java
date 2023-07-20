@@ -32,7 +32,7 @@ import net.thevpc.nuts.util.NLog;
 /**
  * Created by vpc on 1/23/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeComponent {
     private NLog LOG;
 
@@ -50,7 +50,7 @@ public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 //        defaults.put(NutsConstants.Names.DEFAULT_REPOSITORY_NAME, null);
         NRepositoryLocation[] br = rm.getModel().resolveBootRepositoriesList(session).resolve(
                 new NRepositoryLocation[0], NRepositoryDB.of(session));
-        NRepositories repos = NRepositories.of(session).setSession(session);
+        NRepositories repos = NRepositories.of(session);
         for (NRepositoryLocation s : br) {
             repos.addRepository(s.toString());
         }
@@ -89,6 +89,6 @@ public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 
     @Override
     public int getSupportLevel(NSupportLevelContext criteria) {
-        return DEFAULT_SUPPORT + 1;
+        return NSupported.DEFAULT_SUPPORT + 1;
     }
 }

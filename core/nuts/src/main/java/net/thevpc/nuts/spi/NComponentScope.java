@@ -41,5 +41,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface NComponentScope {
-    NComponentScopeType value() default NComponentScopeType.PROTOTYPE;
+    NScopeType value() default NScopeType.PROTOTYPE;
 }

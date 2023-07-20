@@ -25,12 +25,13 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.posix;
 
+import net.thevpc.nuts.NSupported;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
@@ -43,11 +44,11 @@ import java.util.List;
  * Created by vpc on 1/7/17. ssh copy credits to Chanaka Lakmal from
  * https://medium.com/ldclakmal/scp-with-java-b7b7dbcdbc85
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class MkdirCommand extends NShellBuiltinDefault {
 
     public MkdirCommand() {
-        super("mkdir", DEFAULT_SUPPORT,Options.class);
+        super("mkdir", NSupported.DEFAULT_SUPPORT,Options.class);
     }
 
     @Override

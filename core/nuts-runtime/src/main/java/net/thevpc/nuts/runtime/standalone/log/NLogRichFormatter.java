@@ -27,7 +27,7 @@ public class NLogRichFormatter extends Formatter {
     @Override
     public String format(LogRecord record) {
         NLogRecord wRecord = NLogUtils.toNutsLogRecord(record, session);
-        NTexts tf = NTexts.of(wRecord.getSession()).setSession(wRecord.getSession());
+        NTexts tf = NTexts.of(wRecord.getSession());
 
         NTextBuilder sb = tf.ofBuilder();
         String date = CoreNUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(wRecord.getMillis()));

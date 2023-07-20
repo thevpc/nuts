@@ -32,6 +32,7 @@ import net.thevpc.nuts.format.NIterableFormat;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSessionTerminal;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NClock;
 import net.thevpc.nuts.util.NMapListener;
@@ -409,7 +410,9 @@ public interface NSession extends NCmdLineConfigurable {
      *
      * @return defined properties
      */
-    Map<String, Object> getProperties();
+    Map<String, Object> getProperties(NScopeType scope,boolean inherit);
+
+    Map<String, Object> getProperties(NScopeType scope);
 
     /**
      * add session properties
@@ -417,7 +420,7 @@ public interface NSession extends NCmdLineConfigurable {
      * @param properties properties
      * @return {@code this} instance
      */
-    NSession setProperties(Map<String, Object> properties);
+    NSession setProperties(NScopeType scope,Map<String, Object> properties);
 
     /**
      * return property value or null
@@ -426,40 +429,6 @@ public interface NSession extends NCmdLineConfigurable {
      * @return return property value or null
      */
     Object getProperty(String key);
-
-    Object getWorkspaceProperty(String key);
-
-    /**
-     * set session property
-     *
-     * @param key   property key
-     * @param value property value
-     * @return {@code this} instance
-     */
-    NSession setRefProperty(String key, Object value);
-
-    /**
-     * return defined properties
-     *
-     * @return defined properties
-     */
-    Map<String, Object> getRefProperties();
-
-    /**
-     * add session properties
-     *
-     * @param properties properties
-     * @return {@code this} instance
-     */
-    NSession setRefProperties(Map<String, Object> properties);
-
-    /**
-     * return property value or null
-     *
-     * @param key property key
-     * @return return property value or null
-     */
-    Object getRefProperty(String key);
 
     /**
      * return confirmation mode or {@link NConfirmationMode#ASK}
@@ -719,24 +688,13 @@ public interface NSession extends NCmdLineConfigurable {
      */
     NSession setDependencySolver(String dependencySolver);
 
-    /**
-     * return value or create new one and add it to ref properties
-     *
-     * @param name     property name
-     * @param supplier supplier
-     * @param <T>      returned Type
-     * @return value or create new one and add it to ref properties
-     * @since 0.8.4
-     */
-    <T> T getOrComputeRefProperty(String name, Function<NSession, T> supplier);
+    <T> T getOrComputeProperty(String name, NScopeType scope, Function<NSession, T> supplier);
 
-    <T> T getOrComputeProperty(String name, Function<NSession, T> supplier);
+    <T> T setProperty(String name, NScopeType scope, T value);
 
-    <T> T getOrComputeWorkspaceProperty(String name, Function<NSession, T> supplier);
+    <T> NOptional<T> getProperty(String name, NScopeType scope);
 
-    NSession setWorkspaceProperty(String name, Object value) ;
-
-
+    <T> NOptional<T> getProperty(String name, NScopeType scope, boolean inherit);
 
     NSession setAppArguments(List<String> args);
 

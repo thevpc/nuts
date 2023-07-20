@@ -4,6 +4,8 @@ title: Nuts Path
 sidebar_label: Nuts Path
 ---
 
+
+
 **nuts** introduces a concept very similar to java's URL but with better extension builtin mechanisms and helper methods : ```NPath```
 
 supported formats/protocols are:

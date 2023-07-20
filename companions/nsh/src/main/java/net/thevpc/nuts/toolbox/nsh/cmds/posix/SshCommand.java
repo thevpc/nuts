@@ -45,7 +45,7 @@ import java.util.List;
 public class SshCommand extends NShellBuiltinDefault {
 
     public SshCommand() {
-        super("ssh", DEFAULT_SUPPORT, Options.class);
+        super("ssh", NSupported.DEFAULT_SUPPORT, Options.class);
     }
 
     @Override

@@ -1,9 +1,10 @@
 ---
-id: app-xmindustry-desktop
+id: app-xmindustry-server
 title: Mindustry Server
 sidebar_label: Mindustry Server
 order: 2
 ---
+
 
 ## Nuts Bash Like Shell
 This is a list of applications that can be installed and run using ```nuts``` 

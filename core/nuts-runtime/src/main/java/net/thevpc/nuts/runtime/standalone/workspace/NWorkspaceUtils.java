@@ -67,7 +67,7 @@ public class NWorkspaceUtils {
     }
 
     public NRepositorySPI repoSPI(NRepository repo) {
-        DefaultNRepositories repos = (DefaultNRepositories) NRepositories.of(session).setSession(session);
+        DefaultNRepositories repos = (DefaultNRepositories) NRepositories.of(session);
         return repos.getModel().toRepositorySPI(repo);
     }
 
@@ -165,7 +165,7 @@ public class NWorkspaceUtils {
         List<RepoAndLevel> repos2 = new ArrayList<>();
         //        List<Integer> reposLevels = new ArrayList<>();
 
-        for (NRepository repository : NRepositories.of(session).setSession(session).getRepositories()) {
+        for (NRepository repository : NRepositories.of(session).getRepositories()) {
             /*repository.isAvailable()*/
             if (repository.isEnabled(session)
                     && (fmode == NRepositorySupportedAction.SEARCH || repository.isSupportedDeploy(session))

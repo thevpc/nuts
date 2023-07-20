@@ -134,6 +134,6 @@ public class InternalNIdFilters extends InternalNTypedFilters<NIdFilter> impleme
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 }

@@ -26,11 +26,12 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.posix;
 
+import net.thevpc.nuts.NSupported;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 
@@ -43,11 +44,11 @@ import java.time.format.DateTimeFormatter;
 /**
  * Created by vpc on 1/7/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class DateCommand extends NShellBuiltinDefault {
 
     public DateCommand() {
-        super("date", DEFAULT_SUPPORT,Options.class);
+        super("date", NSupported.DEFAULT_SUPPORT,Options.class);
     }
 
     @Override

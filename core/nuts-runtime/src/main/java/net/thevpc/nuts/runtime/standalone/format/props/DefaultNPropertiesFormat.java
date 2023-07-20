@@ -298,6 +298,6 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 }

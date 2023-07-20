@@ -42,15 +42,18 @@ import net.thevpc.nuts.util.NStringUtils;
 /**
  * Created by vpc on 1/15/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class JarDescriptorContentParserComponent implements NDescriptorContentParserComponent {
 
     public static final Set<String> POSSIBLE_EXT = new HashSet<>(Collections.singletonList("jar"));//, "war", "ear"
     private NSession session;
 
+    public JarDescriptorContentParserComponent(NSession session) {
+        this.session = session;
+    }
+
     @Override
     public int getSupportLevel(NSupportLevelContext criteria) {
-        this.session = criteria.getSession();
         NDescriptorContentParserContext cons = criteria.getConstraints(NDescriptorContentParserContext.class);
         if (cons != null) {
             String e = NStringUtils.trim(cons.getFileExtension());
@@ -58,14 +61,14 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
                 case "jar":
                 case "war":
                 case "ear": {
-                    return DEFAULT_SUPPORT + 10;
+                    return NSupported.DEFAULT_SUPPORT + 10;
                 }
                 case "zip": {
-                    return DEFAULT_SUPPORT + 5;
+                    return NSupported.DEFAULT_SUPPORT + 5;
                 }
             }
         }
-        return NO_SUPPORT;
+        return NSupported.NO_SUPPORT;
     }
 
     @Override
@@ -73,13 +76,13 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
         if (!POSSIBLE_EXT.contains(parserContext.getFileExtension())) {
             return null;
         }
+        NSession session = parserContext.getSession();
         final NId JAVA = NId.of("java").get(session);
         final NRef<NDescriptor> nutsjson = new NRef<>();
         final NRef<NDescriptor> metainf = new NRef<>();
         final NRef<NDescriptor> maven = new NRef<>();
 //        final NutsRef<String> mainClass = new NutsRef<>();
 
-        NSession session = parserContext.getSession();
         ZipUtils.visitZipStream(parserContext.getFullStream(), (path, inputStream) -> {
             switch (path) {
                 case "META-INF/MANIFEST.MF": {

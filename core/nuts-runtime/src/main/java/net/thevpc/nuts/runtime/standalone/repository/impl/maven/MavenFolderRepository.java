@@ -89,7 +89,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
     }
 
     private NRepository getLocalMavenRepo(NSession session) {
-        for (NRepository nRepository : NRepositories.of(session).setSession(session).getRepositories()) {
+        for (NRepository nRepository : NRepositories.of(session).getRepositories()) {
             if (nRepository.getRepositoryType().equals(NConstants.RepoTypes.MAVEN)
                     && nRepository.config().getLocationPath() != null
                     && nRepository.config().getLocationPath().toString()

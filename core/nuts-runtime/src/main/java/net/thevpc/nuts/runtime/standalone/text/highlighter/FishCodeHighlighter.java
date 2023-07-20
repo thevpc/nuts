@@ -4,7 +4,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextPlain;
-import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.*;
 
@@ -31,21 +30,21 @@ public class FishCodeHighlighter implements NCodeHighlighter {
     public int getSupportLevel(NSupportLevelContext context) {
         String s = context.getConstraints();
         if(s==null){
-            return DEFAULT_SUPPORT;
+            return NSupported.DEFAULT_SUPPORT;
         }
         switch (s) {
             case "fish": {
-                return NComponent.DEFAULT_SUPPORT;
+                return NSupported.DEFAULT_SUPPORT;
             }
             case "system": {
                 switch (NShellFamily.getCurrent()) {
                     case FISH: {
-                        return NComponent.DEFAULT_SUPPORT;
+                        return NSupported.DEFAULT_SUPPORT;
                     }
                 }
             }
         }
-        return NComponent.NO_SUPPORT;
+        return NSupported.NO_SUPPORT;
     }
 
     @Override

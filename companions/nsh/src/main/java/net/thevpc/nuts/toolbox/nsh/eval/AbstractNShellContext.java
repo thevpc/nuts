@@ -138,17 +138,16 @@ public abstract class AbstractNShellContext implements NShellContext {
             command.autoComplete(new DefaultNShellExecutionContext(this, command), autoComplete);
         } else {
             NSession session = this.getSession();
-            List<NId> nutsIds = NSearchCommand.of(session)
+            List<NId> nutsIds = NSearchCommand.of(this.getSession().copy().setFetchStrategy(NFetchStrategy.OFFLINE))
                     .addId(commandName)
                     .setLatest(true)
                     .addScope(NDependencyScopePattern.RUN)
                     .setOptional(false)
-                    .setSession(this.getSession().copy().setFetchStrategy(NFetchStrategy.OFFLINE))
                     .getResultIds().toList();
             if (nutsIds.size() == 1) {
                 NId selectedId = nutsIds.get(0);
-                NDefinition def = NSearchCommand.of(session).addId(selectedId).setEffective(true).setSession(this.getSession()
-                        .copy().setFetchStrategy(NFetchStrategy.OFFLINE)).getResultDefinitions().findFirst().get();
+                NDefinition def = NSearchCommand.of(this.getSession().copy().setFetchStrategy(NFetchStrategy.OFFLINE)).addId(selectedId).setEffective(true)
+                        .getResultDefinitions().findFirst().get();
                 NDescriptor d = def.getDescriptor();
                 String nuts_autocomplete_support = NStringUtils.trim(d.getPropertyValue("nuts.autocomplete").flatMap(NLiteral::asString).get(session));
                 if (d.isApplication()

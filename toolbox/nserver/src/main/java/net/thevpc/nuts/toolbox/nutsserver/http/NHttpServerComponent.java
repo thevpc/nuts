@@ -98,7 +98,7 @@ public class NHttpServerComponent implements NServerComponent {
     @Override
     public int getSupportLevel(NSupportLevelContext config) {
         ServerConfig c = config.getConstraints();
-        return (c == null || c instanceof NHttpServerConfig) ? DEFAULT_SUPPORT : NO_SUPPORT;
+        return (c == null || c instanceof NHttpServerConfig) ? NSupported.DEFAULT_SUPPORT : NSupported.NO_SUPPORT;
     }
 
     @Override

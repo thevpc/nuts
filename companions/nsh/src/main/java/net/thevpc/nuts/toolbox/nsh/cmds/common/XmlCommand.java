@@ -30,7 +30,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 import org.w3c.dom.Document;
@@ -50,11 +50,11 @@ import java.util.List;
 /**
  * Created by vpc on 1/7/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class XmlCommand extends NShellBuiltinDefault {
 
     public XmlCommand() {
-        super("xml", DEFAULT_SUPPORT,Options.class);
+        super("xml", NSupported.DEFAULT_SUPPORT,Options.class);
     }
 
     @Override

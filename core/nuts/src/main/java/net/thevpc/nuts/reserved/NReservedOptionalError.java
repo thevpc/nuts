@@ -12,14 +12,7 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
     public NReservedOptionalError(Function<NSession, NMsg> message, Throwable error) {
         super(null);
         if (message == null) {
-            message = (s) -> {
-                Throwable error1 = NReservedOptionalError.this.error;
-                if (error1 == null) {
-                    return NMsg.ofPlain("erroneous value");
-                } else {
-                    return NMsg.ofC("erroneous value : %s", NReservedLangUtils.getErrorMessage(error));
-                }
-            };
+            message = (s) -> NMsg.ofInvalidValue(error,null);
         }
         this.message = message;
         this.error = error;

@@ -4,6 +4,7 @@ title: Command Line Arguments
 sidebar_label: Command Line Arguments
 ---
 
+
 **nuts** supports a specific format for command line arguments. This format is the format supported in **```nuts```** Application Framework (NAF) and as such all NAF applications support the same command line arguments format.
 Arguments in **```nuts```** can be options or non options. Options always start with hyphen (-). 
 

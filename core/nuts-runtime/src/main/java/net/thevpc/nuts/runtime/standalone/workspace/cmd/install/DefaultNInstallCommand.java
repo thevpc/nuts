@@ -183,7 +183,7 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
         InstallIdList list = new InstallIdList(NInstallStrategy.INSTALL);
         for (Map.Entry<NId, NInstallStrategy> idAndStrategy : this.getIdMap().entrySet()) {
             if (!list.isVisited(idAndStrategy.getKey())) {
-                List<NId> allIds = NSearchCommand.of(session).addId(idAndStrategy.getKey()).setSession(session).setLatest(true).getResultIds().toList();
+                List<NId> allIds = NSearchCommand.of(session).addId(idAndStrategy.getKey()).setLatest(true).getResultIds().toList();
                 if (allIds.isEmpty()) {
                     throw new NNotFoundException(getSession(), idAndStrategy.getKey());
                 }

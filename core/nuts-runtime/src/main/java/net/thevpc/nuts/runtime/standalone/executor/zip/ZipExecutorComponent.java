@@ -24,12 +24,11 @@
 package net.thevpc.nuts.runtime.standalone.executor.zip;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.executor.exec.NExecHelper;
 import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
 import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NExecutorComponent;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NAssert;
@@ -40,11 +39,16 @@ import java.util.*;
 /**
  * Created by vpc on 1/7/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class ZipExecutorComponent implements NExecutorComponent {
 
     public static NId ID;
     NSession session;
+
+    public ZipExecutorComponent(NSession session) {
+        this.session = session;
+        ID = NId.of("net.thevpc.nuts.exec:zip").get(session);
+    }
 
     @Override
     public NId getId() {
@@ -58,27 +62,23 @@ public class ZipExecutorComponent implements NExecutorComponent {
 
     @Override
     public int getSupportLevel(NSupportLevelContext ctx) {
-        this.session = ctx.getSession();
-        if (ID == null) {
-            ID = NId.of("net.thevpc.nuts.exec:zip").get(session);
-        }
         NDefinition def = ctx.getConstraints(NDefinition.class);
         if (def != null) {
             String shortName = def.getId().getShortName();
             //for executors
             if ("net.thevpc.nuts.exec:exec-zip".equals(shortName)) {
-                return DEFAULT_SUPPORT + 10;
+                return NSupported.DEFAULT_SUPPORT + 10;
             }
             if ("zip".equals(shortName)) {
-                return DEFAULT_SUPPORT + 10;
+                return NSupported.DEFAULT_SUPPORT + 10;
             }
             switch (NStringUtils.trim(def.getDescriptor().getPackaging())) {
                 case "zip": {
-                    return DEFAULT_SUPPORT + 10;
+                    return NSupported.DEFAULT_SUPPORT + 10;
                 }
             }
         }
-        return NO_SUPPORT;
+        return NSupported.NO_SUPPORT;
     }
 
     //@Override

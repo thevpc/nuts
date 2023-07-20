@@ -31,9 +31,8 @@ public class MvnClient {
             case INIT: {
                 status = Status.DIRTY;
                 try {
-                    NDefinition ff = NSearchCommand.of(session)
+                    NDefinition ff = NSearchCommand.of(session.copy().setFetchStrategy(NFetchStrategy.ONLINE))
                             .addId(NET_VPC_APP_NUTS_MVN)
-                            .setSession(session.copy().setFetchStrategy(NFetchStrategy.ONLINE))
                             .setOptional(false)
                             .setInlineDependencies(true).setLatest(true).getResultDefinitions().findFirst().get();
                     for (NId nutsId : NSearchCommand.of(this.session).addId(ff.getId()).setInlineDependencies(true).getResultIds()) {
@@ -63,7 +62,7 @@ public class MvnClient {
             }
         }
         try {
-            NExecCommand b = NExecCommand.of(this.session)
+            NExecCommand b = NExecCommand.of(session)
                     .setFailFast(true)
                     .addCommand(
                             NET_VPC_APP_NUTS_MVN,
@@ -71,7 +70,7 @@ public class MvnClient {
                             "get",
                             id.toString(),
                             repoURL == null ? "" : repoURL
-                    ).setSession(session).run();
+                    ).run();
             return (b.getResult() == 0);
         } catch (Exception ex) {
             LOG.with().session(session).level(Level.SEVERE).error(ex)

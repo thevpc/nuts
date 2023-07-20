@@ -29,7 +29,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 
@@ -42,11 +42,11 @@ import java.util.List;
 /**
  * Created by vpc on 1/7/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class JpsCommand extends NShellBuiltinDefault {
 
     public JpsCommand() {
-        super("jps", DEFAULT_SUPPORT,Options.class);
+        super("jps", NSupported.DEFAULT_SUPPORT,Options.class);
     }
 
     public static String resolveJpsCommand(NSession session) {

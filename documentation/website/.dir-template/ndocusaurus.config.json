@@ -1,0 +1,38 @@
+{
+  "projectName": "nuts",
+  "title": "Nuts",
+  "copyBuildPath": "../../docs",
+  "docusaurus": {
+    "generateSidebarMenu": true
+  },
+  "asciidoctor": {
+    "path": "asciidoctor",
+    "pdf": {
+      "headers": [
+        ":source-highlighter: pygments",
+        ":icons: font",
+        ":icon-set: pf",
+        ":doctype: book",
+        ":revnumber: v0.8.4",
+        ":revdate: Sun Apr 30 11:14:37 PM +0000 2023",
+        ":toc:",
+        ":toclevels: 4",
+        ":appendix-caption: Appx",
+        ":sectnums:",
+        ":sectnumlevels: 6"
+      ],
+      "command": {
+        "bin": "asciidoctor-pdf",
+        "args": [
+          "-a",
+          "pdf-themesdir=${asciidoctor.baseDir}/resources/themes",
+          "-a",
+          "pdf-theme=custom",
+          "-a",
+          "pdf-fontsdir=${asciidoctor.baseDir}/resources/fonts/;GEM_FONTS_DIR"
+        ]
+      },
+      "output": "static/pdf/nuts-documentation.pdf"
+    }
+  }
+}

@@ -45,9 +45,9 @@ public class DefaultNUninstallCommand extends AbstractNUninstallCommand {
         NAssert.requireNonBlank(nutsIds, "packages to uninstall", session);
         List<NId> installed = new ArrayList<>();
         for (NId id : nutsIds) {
-            List<NDefinition> resultDefinitions = NSearchCommand.of(session).addId(id)
+            List<NDefinition> resultDefinitions = NSearchCommand.of(session.copy().setTransitive(false))
+                    .addId(id)
                     .setInstallStatus(NInstallStatusFilters.of(session).byInstalled(true))
-                    .setSession(session.copy().setTransitive(false))
                     .setOptional(false).setEffective(true)
                     .setContent(true)//include content so that we can remove it by calling executor
                     .setDependencies(true)//include dependencies so that we can remove it by calling executor

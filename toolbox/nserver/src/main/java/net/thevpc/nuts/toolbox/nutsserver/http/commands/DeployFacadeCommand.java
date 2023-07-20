@@ -70,10 +70,9 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
         if (contentFile == null) {
             context.sendError(400, "invalid NShellCommandNode arguments : " + getName() + " : missing file");
         }
-        NId id = NDeployCommand.of(session).setContent(NPath.of(contentFile,session))
+        NId id = NDeployCommand.of(session.copy()).setContent(NPath.of(contentFile,session))
                 .setSha1(receivedContentHash)
                 .setDescriptor(descriptor)
-                .setSession(session.copy())
                 .getResult().get(0);
 //                NutsId id = workspace.deploy(content, descriptor, null);
         context.sendResponseText(200, id.toString());

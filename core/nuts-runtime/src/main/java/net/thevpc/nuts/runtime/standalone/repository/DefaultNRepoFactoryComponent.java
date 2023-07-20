@@ -37,31 +37,31 @@ import java.util.Map;
 /**
  * Created by vpc on 1/15/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent {
 
     @Override
     public int getSupportLevel(NSupportLevelContext criteria) {
         if (criteria == null) {
-            return NO_SUPPORT;
+            return NSupported.NO_SUPPORT;
         }
         NSession session = criteria.getSession();
         NRepositoryConfig r = criteria.getConstraints(NRepositoryConfig.class);
         if (r != null) {
             String type = NRepositoryUtils.getRepoType(r, session);
             if (NConstants.RepoTypes.NUTS.equals(type)) {
-                return DEFAULT_SUPPORT + 10;
+                return NSupported.DEFAULT_SUPPORT + 10;
             }
             if (NBlankable.isBlank(type)) {
                 NPath rp = NPath.of(r.getLocation().getPath(), session).resolve("nuts-repository.json");
                 if (rp.exists()) {
                     r.setLocation(r.getLocation().setLocationType(NConstants.RepoTypes.NUTS));
-                    return DEFAULT_SUPPORT + 10;
+                    return NSupported.DEFAULT_SUPPORT + 10;
                 }
-                return DEFAULT_SUPPORT + 2;
+                return NSupported.DEFAULT_SUPPORT + 2;
             }
         }
-        return NO_SUPPORT;
+        return NSupported.NO_SUPPORT;
     }
 
     @Override

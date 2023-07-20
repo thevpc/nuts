@@ -37,7 +37,7 @@ import net.thevpc.nuts.util.NNameFormat;
  * @app.category Application
  * @since 0.5.5
  */
-public enum NComponentScopeType implements NEnum {
+public enum NScopeType implements NEnum {
     /**
      * a new instance will be created per workspace reference
      */
@@ -46,6 +46,10 @@ public enum NComponentScopeType implements NEnum {
      * a new instance will be created per session reference
      */
     SESSION,
+    /**
+     * a new instance will be created per session and its copies
+     */
+    SHARED_SESSION,
     /**
      * a new instance will be created at each call
      */
@@ -59,12 +63,12 @@ public enum NComponentScopeType implements NEnum {
     /**
      * default constructor
      */
-    NComponentScopeType() {
+    NScopeType() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
-    public static NOptional<NComponentScopeType> parse(String value) {
-        return NEnumUtils.parseEnum(value, NComponentScopeType.class);
+    public static NOptional<NScopeType> parse(String value) {
+        return NEnumUtils.parseEnum(value, NScopeType.class);
     }
 
 

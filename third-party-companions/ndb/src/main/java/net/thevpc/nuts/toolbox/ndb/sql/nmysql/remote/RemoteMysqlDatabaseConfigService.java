@@ -132,8 +132,7 @@ public class RemoteMysqlDatabaseConfigService {
                     throw new NIOException(session, e);
                 }
             }
-            NExecCommand.of(session).setExecutionType(NExecutionType.EMBEDDED)
-                    .setSession(session.copy())
+            NExecCommand.of(session.copy()).setExecutionType(NExecutionType.EMBEDDED)
                     .addCommand("nsh",
                             "--bot",
                             "-c",
@@ -213,7 +212,7 @@ public class RemoteMysqlDatabaseConfigService {
                         "cp",
                         localPath,
                         remoteFullFilePath.getLocation()
-                ).setSession(session)
+                )
                 .redirectErrorStream()
                 .grabOutputString()
                 .setFailFast(true)
@@ -247,8 +246,7 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     public String execRemoteNuts(String... cmd) {
-        NExecCommand b = NExecCommand.of(session)
-                .setSession(session.copy());
+        NExecCommand b = NExecCommand.of(session.copy());
         if ("localhost".equals(this.config.getServer())) {
             b.addCommand("nuts");
             b.addCommand("-b");

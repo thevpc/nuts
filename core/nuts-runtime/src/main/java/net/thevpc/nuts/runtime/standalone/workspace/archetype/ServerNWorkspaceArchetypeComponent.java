@@ -34,7 +34,7 @@ import net.thevpc.nuts.util.NLog;
 /**
  * Created by vpc on 1/23/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeComponent {
     private NLog LOG;
 
@@ -55,7 +55,7 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
                 },
                 NRepositoryDB.of(session)
         );
-        NRepositories repos = NRepositories.of(session).setSession(session);
+        NRepositories repos = NRepositories.of(session);
         for (NRepositoryLocation s : br) {
             repos.addRepository(s.toString());
         }
@@ -103,6 +103,6 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
 
     @Override
     public int getSupportLevel(NSupportLevelContext criteria) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 }

@@ -28,12 +28,12 @@ package net.thevpc.nuts.toolbox.nutsserver;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.spi.NScopeType;
 
 /**
  * Created by vpc on 1/24/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public interface NServerComponent extends NComponent {
 
     /**

@@ -30,23 +30,15 @@ import net.thevpc.nuts.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
 
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.cmds.util.*;
 import net.thevpc.nuts.toolbox.nsh.cmds.util.filter.JavaExceptionWindowFilter;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.FileInfo;
-import net.thevpc.nuts.util.NGlob;
-import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.util.NStringUtils;
 
 /**
@@ -55,7 +47,7 @@ import net.thevpc.nuts.util.NStringUtils;
 public class GrepCommand extends NShellBuiltinDefault {
 
     public GrepCommand() {
-        super("grep", DEFAULT_SUPPORT, GrepOptions.class);
+        super("grep", NSupported.DEFAULT_SUPPORT, GrepOptions.class);
     }
 
 

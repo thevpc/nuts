@@ -90,7 +90,7 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCommandFactory
         if (findCommand.length > 0 && execCommand.length > 0) {
             String[] fc = replaceParam(findCommand, name);
             String[] ec = replaceParam(execCommand, name);
-            NExecCommand exec = NExecCommand.of(session).addCommand(fc).setSession(session)
+            NExecCommand exec = NExecCommand.of(session).addCommand(fc)
                     //                        .setExecutorOptions("--show-command")
                     .grabOutputString()
                     .run();
@@ -110,7 +110,7 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCommandFactory
     public List<NCommandConfig> findCommands(NSession session) {
         List<NCommandConfig> c = new ArrayList<>();
         if (listCommand.length > 0) {
-            NExecCommand b = NExecCommand.of(session).addCommand(listCommand).setSession(session)
+            NExecCommand b = NExecCommand.of(session).addCommand(listCommand)
                     .redirectErrorStream()
                     .grabOutputString();
             int r = b.getResult();

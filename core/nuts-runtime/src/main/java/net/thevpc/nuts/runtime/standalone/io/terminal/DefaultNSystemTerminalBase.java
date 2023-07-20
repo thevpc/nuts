@@ -15,7 +15,7 @@ import net.thevpc.nuts.util.NLog;
 import java.io.*;
 import java.util.Scanner;
 
-@NComponentScope(NComponentScopeType.PROTOTYPE)
+@NComponentScope(NScopeType.PROTOTYPE)
 public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     public static final int THIRTY_SECONDS = 30000;
     NCachedValue<Cursor> termCursor;
@@ -73,7 +73,7 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
                 session, this).setTerminalMode(terminalMode);
         this.in = bootStdFd.getIn();
         this.scanner = new Scanner(this.in);
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 
     @Override

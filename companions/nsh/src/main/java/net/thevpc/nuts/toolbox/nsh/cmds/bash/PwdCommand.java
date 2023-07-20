@@ -25,21 +25,22 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
+import net.thevpc.nuts.NSupported;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 
 /**
  * Created by vpc on 1/7/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class PwdCommand extends NShellBuiltinDefault {
 
     public PwdCommand() {
-        super("pwd", DEFAULT_SUPPORT,Options.class);
+        super("pwd", NSupported.DEFAULT_SUPPORT,Options.class);
     }
 
     @Override

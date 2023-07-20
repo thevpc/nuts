@@ -27,7 +27,6 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NSupported;
 
 import java.util.List;
@@ -40,22 +39,20 @@ public interface NContentTypeResolver extends NComponent {
     /**
      * probe from path name and extension
      *
-     * @param path    path to probe
-     * @param session session
+     * @param path path to probe
      * @return best probe of {@code NutsSupported.invalid()} (or null)
      */
-    NSupported<String> probeContentType(NPath path, NSession session);
+    NSupported<String> probeContentType(NPath path);
 
     /**
      * probe from content
      *
-     * @param bytes   content
-     * @param session session
+     * @param bytes content
      * @return best probe of {@code NutsSupported.invalid()} (or null)
      */
-    NSupported<String> probeContentType(byte[] bytes, NSession session);
+    NSupported<String> probeContentType(byte[] bytes);
 
-    List<String> findExtensionsByContentType(String contentType, NSession session);
-    List<String> findContentTypesByExtension(String extension, NSession session);
+    List<String> findExtensionsByContentType(String contentType);
+    List<String> findContentTypesByExtension(String extension);
 
 }

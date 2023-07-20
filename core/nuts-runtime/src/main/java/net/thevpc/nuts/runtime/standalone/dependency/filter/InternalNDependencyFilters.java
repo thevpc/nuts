@@ -357,6 +357,6 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 }

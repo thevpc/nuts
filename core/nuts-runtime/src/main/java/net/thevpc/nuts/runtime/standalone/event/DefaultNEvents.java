@@ -3,11 +3,14 @@ package net.thevpc.nuts.runtime.standalone.event;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NMapListener;
 
 import java.util.List;
 
+@NComponentScope(NScopeType.SESSION)
 public class DefaultNEvents implements NEvents {
 
     private DefaultNWorkspaceEventModel model;
@@ -22,7 +25,7 @@ public class DefaultNEvents implements NEvents {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 
     public DefaultNWorkspaceEventModel getModel() {
@@ -36,12 +39,6 @@ public class DefaultNEvents implements NEvents {
     @Override
     public NSession getSession() {
         return session;
-    }
-
-    @Override
-    public NEvents setSession(NSession session) {
-        this.session = NWorkspaceUtils.bindSession(model.getWorkspace(), session);
-        return this;
     }
 
     @Override

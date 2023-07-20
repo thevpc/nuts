@@ -101,7 +101,7 @@ public class DefaultNExecutionEntries implements NExecutionEntries {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 
 }

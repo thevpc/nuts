@@ -458,7 +458,7 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
         props.put("creation-started", session -> NBootManager.of(session).getCreationStartTime());
         props.put("creation-finished", session -> NBootManager.of(session).getCreationFinishTime());
         props.put("creation-within", session -> CoreTimeUtils.formatPeriodMilli(NBootManager.of(session).getCreationDuration()).trim());
-        props.put("repositories-count", session -> (NRepositories.of(session).setSession(getSession()).getRepositories().size()));
+        props.put("repositories-count", session -> (NRepositories.of(session).getRepositories().size()));
         return props;
     }
 
@@ -662,14 +662,14 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
         props.put("creation-started", NBootManager.of(session).getCreationStartTime());
         props.put("creation-finished", NBootManager.of(session).getCreationFinishTime());
         props.put("creation-within", CoreTimeUtils.formatPeriodMilli(NBootManager.of(session).getCreationDuration()).trim());
-        props.put("repositories-count", (NRepositories.of(session).setSession(getSession()).getRepositories().size()));
+        props.put("repositories-count", (NRepositories.of(session).getRepositories().size()));
         for (String extraKey : extraKeys) {
             props.put(extraKey, extraProperties.get(extraKey));
         }
         if (deep) {
             Map<String, Object> repositories = new LinkedHashMap<>();
             props.put("repos", repositories);
-            for (NRepository repository : NRepositories.of(session).setSession(getSession()).getRepositories()) {
+            for (NRepository repository : NRepositories.of(session).getRepositories()) {
                 repositories.put(repository.getName(), buildRepoRepoMap(repository, deep, prefix));
             }
         }
@@ -741,7 +741,7 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 
     @Override

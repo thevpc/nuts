@@ -3,11 +3,9 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.format;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.runtime.standalone.executor.system.NExecOutput2;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
-import java.io.*;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -257,6 +255,6 @@ public class DefaultNExecCommandFormat extends DefaultFormatBase<NExecCommandFor
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 }

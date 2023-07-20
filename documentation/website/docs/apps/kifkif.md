@@ -5,6 +5,8 @@ sidebar_label: KifKif
 order: 1
 ---
 
+
+
 ## Java Applications
 This is a list of applications that can be installed and run using ```nuts``` 
 

@@ -58,7 +58,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
                         "--mkdir",
                         localWarPath,
                         server + "/" + remoteFilePath
-                ).setSession(session)
+                )
                 .run();
         String v = config.getVersionCommand();
         if (NBlankable.isBlank(v)) {

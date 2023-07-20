@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
 import net.thevpc.nuts.NMsgTemplate;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NSupported;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NProgressHandler;
@@ -175,7 +176,7 @@ public class DefaultNProgressMonitors implements NProgressMonitors {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 
 

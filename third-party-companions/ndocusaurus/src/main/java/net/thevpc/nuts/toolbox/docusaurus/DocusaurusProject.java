@@ -5,6 +5,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementEntry;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.lib.md.MdElement;
 
 import java.io.File;
@@ -119,8 +120,14 @@ public class DocusaurusProject {
     }
 
     public NObjectElement getConfig() {
-        return loadModuleExportsFile("docusaurus.config.js")
-                .asObject().orElse(NObjectElement.ofEmpty(session));
+        NObjectElement e1 = loadModuleExportsFile("docusaurus.config.js").asObject().orElse(NObjectElement.ofEmpty(session));
+        if(e1.isEmpty()){
+            NPath newPath = NPath.of(Paths.get(resolvePath(".dir-template/ndocusaurus.config.json")), session);
+            if(newPath.exists()) {
+                e1 = NElements.of(session).json().parse(newPath, NObjectElement.class);
+            }
+        }
+        return e1;
     }
 
     private String resolvePath(String path) {

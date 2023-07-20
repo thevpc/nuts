@@ -7,6 +7,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCommandExtensionContext;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.remote.ssh.artifact.DefaultSpawnExecutableNutsRemote;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.*;
 
 import java.util.HashMap;
@@ -44,7 +45,8 @@ public class RemoteConnexionStringInfo {
 
 
     public static RemoteConnexionStringInfo of(String target, NSession session) {
-        Map<String, RemoteConnexionStringInfo> m = session.getOrComputeWorkspaceProperty(RemoteConnexionStringInfo.class.getName() + "Map",
+        Map<String, RemoteConnexionStringInfo> m = session.getOrComputeProperty(RemoteConnexionStringInfo.class.getName() + "Map",
+                NScopeType.WORKSPACE,
                 s -> new HashMap<>()
         );
         RemoteConnexionStringInfo k = m.computeIfAbsent(target, v -> new RemoteConnexionStringInfo(v));

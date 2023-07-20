@@ -22,7 +22,7 @@ public abstract class AbstractNUndeployCommand extends NWorkspaceCommandBase<NUn
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 
     @Override

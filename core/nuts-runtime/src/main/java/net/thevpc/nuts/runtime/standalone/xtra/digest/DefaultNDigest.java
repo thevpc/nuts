@@ -31,7 +31,9 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.util.AbstractMultiReadNInputSource;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
+import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NFormatSPI;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -46,6 +48,7 @@ import java.security.NoSuchAlgorithmException;
 /**
  * @author thevpc
  */
+@NComponentScope(NScopeType.PROTOTYPE)
 public class DefaultNDigest implements NDigest {
 
     private final NWorkspace ws;
@@ -198,7 +201,7 @@ public class DefaultNDigest implements NDigest {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 
     private class NDescriptorInputSource extends AbstractMultiReadNInputSource {

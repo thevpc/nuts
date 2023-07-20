@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.text.NTextFormatType;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextStyles;
@@ -47,6 +48,42 @@ public class NMsg {
     private final NTextFormatType format;
     private final Object[] params;
     private final NTextStyles styles;
+
+    public static NMsg ofMissingValue() {
+        return ofMissingValue(null);
+    }
+
+    public static NMsg ofMissingValue(String valueName) {
+        if (NBlankable.isBlank(valueName)) {
+            return NMsg.ofPlain("missing value");
+        }
+        return NMsg.ofC("missing %s", valueName);
+    }
+
+    public static NMsg ofInvalidValue() {
+        return ofInvalidValue(null, null);
+    }
+
+    public static NMsg ofInvalidValue(Throwable throwable) {
+        return ofInvalidValue(throwable, null);
+    }
+
+    public static NMsg ofInvalidValue(String valueName) {
+        return ofInvalidValue(null, valueName);
+    }
+
+    public static NMsg ofInvalidValue(Throwable throwable, String valueName) {
+        if (throwable == null) {
+            if (NBlankable.isBlank(valueName)) {
+                return NMsg.ofPlain("invalid value");
+            }
+            return NMsg.ofC("invalid %s", valueName);
+        }
+        if (NBlankable.isBlank(valueName)) {
+            return NMsg.ofC("invalid value : %s", NReservedLangUtils.getErrorMessage(throwable));
+        }
+        return NMsg.ofC("invalid %s : %s", valueName, NReservedLangUtils.getErrorMessage(throwable));
+    }
 
     private static NMsg of(NTextFormatType format, Object message, Object[] params, NTextStyles styles, String codeLang, Level level) {
         return new NMsg(format, message, params, styles, codeLang, level);
@@ -146,11 +183,11 @@ public class NMsg {
                 vars.put(e, param);
             }
         }
-        return ofV(message, s->{
+        return ofV(message, s -> {
             NMsgParam p = vars.get(s);
-            if(p!=null){
+            if (p != null) {
                 Supplier<?> ss = p.getValue();
-                if(ss!=null){
+                if (ss != null) {
                     return ss.get();
                 }
             }

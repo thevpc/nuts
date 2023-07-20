@@ -12,7 +12,7 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
     public NReservedOptionalEmpty(Function<NSession, NMsg> message) {
         super(null);
         if (message == null) {
-            message = (s) -> NMsg.ofPlain("missing value");
+            message = (s) -> NMsg.ofMissingValue();
         }
         this.message = message;
     }

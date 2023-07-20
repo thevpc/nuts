@@ -8,6 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,7 +27,8 @@ public class TomcatWebServerHtmlfsParser extends AbstractHtmlfsParser {
             //ignore
         }
         if (!expectTomcat) {
-            return NSupported.invalid();
+            Function<NSession, NMsg> msg = s -> NMsg.ofInvalidValue("tomcat repo");
+            return NSupported.invalid(msg);
         }
         //<a href="/maven/net/"><tt>net/</tt></a></td>
         Pattern pattern = Pattern.compile("<a href=\"(?<href>[^\"]+)\"><tt>(?<title>[^<]+)</tt></a></td>");

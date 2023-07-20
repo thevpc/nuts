@@ -28,9 +28,8 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.DefaultNBootOptionsBuilder;
-import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.cmdline.NCmdLineFormatStrategy;
 import net.thevpc.nuts.reserved.*;
+import net.thevpc.nuts.spi.NScopeType;
 
 import java.lang.reflect.Array;
 import java.net.URL;
@@ -194,7 +193,7 @@ public class NApiUtils {
             name = "default";
         }
         String key = type.getName() + "(" + name + ")";
-        return session.getOrComputeRefProperty(key, s->sup.get());
+        return session.getOrComputeProperty(key, NScopeType.SESSION, s->sup.get());
     }
 
     public static <T> T getOrCreateRefProperty(Class<T> type, NSession session, Supplier<T> sup) {

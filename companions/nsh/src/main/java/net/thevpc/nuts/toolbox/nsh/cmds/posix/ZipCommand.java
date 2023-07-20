@@ -43,7 +43,7 @@ import java.util.List;
 public class ZipCommand extends NShellBuiltinDefault {
 
     public ZipCommand() {
-        super("zip", DEFAULT_SUPPORT, Options.class);
+        super("zip", NSupported.DEFAULT_SUPPORT, Options.class);
     }
 
     @Override

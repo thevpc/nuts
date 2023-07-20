@@ -5,6 +5,7 @@ sidebar_label: Binjr
 order: 1
 ---
 
+
 :::info
 
 - **Category**  : Productivity / Time Series Dashboard

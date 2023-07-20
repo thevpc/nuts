@@ -371,7 +371,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 //        b.setOutput(context.getSession().out());
 //        b.setErr(context.getSession().err());
         NExecCommand b = NExecCommand.of(session)
-                .setExecutionType(NExecutionType.SYSTEM).setSession(session);
+                .setExecutionType(NExecutionType.SYSTEM);
         b.addCommand(catalinaHome + "/bin/catalina." + ext);
         b.addCommand(catalinaCommand);
 //        if (catalinaHome != null) {

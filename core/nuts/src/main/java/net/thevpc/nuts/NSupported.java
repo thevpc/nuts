@@ -29,18 +29,32 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.util.NAssert;
 
 import java.util.Collection;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public interface NSupported<T> {
-    static <T> NSupported<T> resolve(Collection<Supplier<NSupported<T>>> source) {
+    /**
+     * minimum support level for user defined implementations.
+     */
+    int CUSTOM_SUPPORT = 1000;
+    /**
+     * this is the default support level for runtime implementation (nuts-runtime).
+     */
+    int DEFAULT_SUPPORT = 10;
+    /**
+     * when getSupportLevel(...)==NO_SUPPORT the package is discarded.
+     */
+    int NO_SUPPORT = -1;
+
+    static <T> NSupported<T> resolve(Collection<Supplier<NSupported<T>>> source, Function<NSession, NMsg> emptyMessage) {
         if (source == null) {
-            return invalid();
+            return invalid(emptyMessage);
         }
-        return resolve(source.stream());
+        return resolve(source.stream(),emptyMessage);
     }
 
-    static <T> NSupported<T> resolve(Stream<Supplier<NSupported<T>>> source) {
+    static <T> NSupported<T> resolve(Stream<Supplier<NSupported<T>>> source, Function<NSession, NMsg> emptyMessage) {
         Object[] track = new Object[2];
         if (source != null) {
             source.forEach(i -> {
@@ -64,24 +78,32 @@ public interface NSupported<T> {
         }
         NSupported<T> r = (NSupported<T>) track[0];
         if (r == null) {
-            return invalid();
+            return invalid(emptyMessage);
         }
         return (NSupported<T>) r;
     }
 
     static <T> NSupported<T> of(int supportLevel, T value) {
-        return supportLevel <= 0 ? invalid() : new DefaultNSupported<>(() -> value, supportLevel);
+        return of(supportLevel,value,null);
+    }
+
+    static <T> NSupported<T> of(int supportLevel, T value, Function<NSession, NMsg> emptyMessage) {
+        return supportLevel <= 0 ? invalid(emptyMessage) : new DefaultNSupported<>(() -> value, supportLevel,emptyMessage);
     }
 
     static <T> NSupported<T> of(int supportLevel, Supplier<T> supplier) {
-        return (supportLevel <= 0 || supplier == null) ? invalid()
-                : new DefaultNSupported<>(supplier, supportLevel)
+        return of(supportLevel,supplier,null);
+    }
+
+    static <T> NSupported<T> of(int supportLevel, Supplier<T> supplier, Function<NSession, NMsg> emptyMessage) {
+        return (supportLevel <= 0 || supplier == null) ? invalid(emptyMessage)
+                : new DefaultNSupported<>(supplier, supportLevel,emptyMessage)
                 ;
     }
 
     @SuppressWarnings("unchecked")
-    static <T> NSupported<T> invalid() {
-        return DefaultNSupported.INVALID;
+    static <T> NSupported<T> invalid(Function<NSession, NMsg> emptyMessage) {
+        return new DefaultNSupported<>(null, -1,emptyMessage);
     }
 
     static <T> boolean isValid(NSupported<T> s) {
@@ -95,4 +117,6 @@ public interface NSupported<T> {
     }
 
     int getSupportLevel();
+
+    NOptional<T> toOptional();
 }

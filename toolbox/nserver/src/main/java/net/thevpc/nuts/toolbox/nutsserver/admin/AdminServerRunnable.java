@@ -39,9 +39,8 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.io.NTerminalMode;
-import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinBase;
 import net.thevpc.nuts.toolbox.nsh.nshell.NShell;
 import net.thevpc.nuts.toolbox.nsh.nshell.NShellConfiguration;
@@ -165,13 +164,13 @@ public class AdminServerRunnable implements NServer, Runnable {
         return "Nuts Admin Server{" + "running=" + running + '}';
     }
 
-    @NComponentScope(NComponentScopeType.WORKSPACE)
+    @NComponentScope(NScopeType.WORKSPACE)
     private static class StopServerBuiltin2 extends NShellBuiltinBase {
 
         private final ServerSocket socket;
 
         public StopServerBuiltin2(ServerSocket finalServerSocket) {
-            super("stop-server", NComponent.DEFAULT_SUPPORT, Options.class);
+            super("stop-server", NSupported.DEFAULT_SUPPORT, Options.class);
             this.socket = finalServerSocket;
         }
 

@@ -62,7 +62,6 @@ public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
     public NText highlight(NSession session) {
         NTexts txt = NTexts.of(session);
         NCodeHighlighter t = ((DefaultNTexts) txt)
-                .setSession(session)
                 .resolveCodeHighlighter(getKind());
         return t.stringToText(text, txt, session);
     }

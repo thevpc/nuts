@@ -51,7 +51,7 @@ import org.jline.utils.AttributedStyle;
 /**
  * Created by vpc on 2/20/17.
  */
-@NComponentScope(NComponentScopeType.PROTOTYPE)
+@NComponentScope(NScopeType.PROTOTYPE)
 public class NJLineTerminal extends NSystemTerminalBaseImpl {
 
     private static final Logger LOG = Logger.getLogger(NJLineTerminal.class.getName());
@@ -261,9 +261,9 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
             NLog.of(NJLineTerminal.class, session)
                     .with().level(Level.FINEST).verb(NLogVerb.FAIL).error(ex)
                     .log(NMsg.ofPlain("unable to create NutsJLineTerminal. ignored."));
-            return NO_SUPPORT;
+            return NSupported.NO_SUPPORT;
         }
-        return DEFAULT_SUPPORT + 1;
+        return NSupported.DEFAULT_SUPPORT + 1;
     }
 
     @Override

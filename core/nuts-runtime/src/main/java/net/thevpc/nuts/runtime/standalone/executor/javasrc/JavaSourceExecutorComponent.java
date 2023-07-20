@@ -45,7 +45,7 @@ import java.util.List;
 /**
  * Created by vpc on 1/7/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class JavaSourceExecutorComponent implements NExecutorComponent {
 
     public static NId ID;
@@ -137,10 +137,10 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
         NDefinition def = context.getConstraints(NDefinition.class);
         if (def != null) {
             if ("java".equals(def.getDescriptor().getPackaging())) {
-                return DEFAULT_SUPPORT + 1;
+                return NSupported.DEFAULT_SUPPORT + 1;
             }
         }
-        return NO_SUPPORT;
+        return NSupported.NO_SUPPORT;
     }
 
 }

@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.scheduler;
 
+import net.thevpc.nuts.NSupported;
 import net.thevpc.nuts.concurrent.NScheduler;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -22,6 +23,6 @@ public class DefaultNScheduler implements NScheduler {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 }

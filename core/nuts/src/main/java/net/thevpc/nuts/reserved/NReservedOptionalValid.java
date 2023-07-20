@@ -51,14 +51,14 @@ public class NReservedOptionalValid<T> extends NReservedOptionalImpl<T> {
 
     public NOptional<T> ifBlankEmpty() {
         if (isBlank()) {
-            return NOptional.ofEmpty((session) -> NMsg.ofPlain("blank value"));
+            return NOptional.ofEmpty((session) -> NMsg.ofMissingValue());
         }
         return this;
     }
 
     @Override
     public Function<NSession, NMsg> getMessage() {
-        return (session) -> NMsg.ofPlain("element not found");
+        return (session) -> NMsg.ofMissingValue();
     }
 
     @Override

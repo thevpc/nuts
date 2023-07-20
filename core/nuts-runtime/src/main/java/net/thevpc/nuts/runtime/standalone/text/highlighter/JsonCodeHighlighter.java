@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.NCodeHighlighter;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.*;
@@ -33,17 +32,17 @@ public class JsonCodeHighlighter implements NCodeHighlighter {
     public int getSupportLevel(NSupportLevelContext context) {
         String s = context.getConstraints();
         if(s==null){
-            return DEFAULT_SUPPORT;
+            return NSupported.DEFAULT_SUPPORT;
         }
         switch (s){
             case "json":
             case "application/json":
             case "text/json":
             {
-                return NComponent.DEFAULT_SUPPORT;
+                return NSupported.DEFAULT_SUPPORT;
             }
         }
-        return NComponent.NO_SUPPORT;
+        return NSupported.NO_SUPPORT;
     }
 
     @Override

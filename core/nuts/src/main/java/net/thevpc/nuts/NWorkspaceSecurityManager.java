@@ -234,6 +234,4 @@ public interface NWorkspaceSecurityManager extends NComponent, NSessionProvider 
      */
     char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId);
 
-    NWorkspaceSecurityManager setSession(NSession session);
-
 }

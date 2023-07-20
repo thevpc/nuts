@@ -179,8 +179,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
             NDefinition fetched = null;
             if (nid.getVersion().isBlank()) {
-                fetched = NSearchCommand.of(session)
-                        .setSession(session.copy())
+                fetched = NSearchCommand.of(session.copy())
                         .addId(options.getId()).setLatest(true).getResultDefinitions().findFirst().get();
                 nid = fetched.getId().getShortId();
                 //nutsId=fetched.getId().getLongNameId();

@@ -40,7 +40,7 @@ import java.io.Writer;
 
 public interface NIO extends NComponent {
     static NIO of(NSession session) {
-       return NExtensions.of(session).createComponent(NIO.class).get();
+        return NExtensions.of(session).createComponent(NIO.class).get();
     }
 
     InputStream ofNullRawInputStream();
@@ -52,12 +52,8 @@ public interface NIO extends NComponent {
     NPrintStream ofNullPrintStream();
 
     OutputStream ofNullRawOutputStream();
-    //NOutputStream ofNullOutputStream();
 
     NMemoryPrintStream ofInMemoryPrintStream();
-
-    //NOutputStream ofInMemoryOutputStream();
-    //NOutputStream ofInMemoryOutputStream(NTerminalMode mode);
 
     NMemoryPrintStream ofInMemoryPrintStream(NTerminalMode mode);
 
@@ -78,6 +74,7 @@ public interface NIO extends NComponent {
     NPrintStream ofPrintStream(Writer out, NTerminalMode mode, NSystemTerminalBase terminal);
 
     NPrintStream ofPrintStream(NPath out);
+
     NPrintStream ofPrintStream(Writer out);
 
     boolean isStdout(NPrintStream out);
@@ -88,46 +85,19 @@ public interface NIO extends NComponent {
 
     NPrintStream stderr();
 
-    InputStream ofTee(InputStream from, OutputStream via);
-
-    InputStream ofTee(InputStream from, OutputStream via,NContentMetadata metadata);
-
-    InputStream ofMonitored(InputStream from, Object source,
-                            NString sourceName, Long length, NProgressListener monitor);
-
-    InputStream ofMonitored(InputStream from, Object source,
-                            NMsg sourceName, Long length, NProgressListener monitor);
-
-    InputStream ofMonitored(InputStream from, Object source, NProgressListener monitor);
-    NNonBlockingInputStream ofNonBlocking(InputStream from);
-
-    NNonBlockingInputStream ofNonBlocking(InputStream from,NContentMetadata metadata);
-
     NInputSource ofMultiRead(NInputSource source);
 
-    InputStream ofInterruptible(InputStream inputStream);
-
-    InputStream ofInterruptible(InputStream inputStream, NContentMetadata metadata);
-
-    InputStream ofInputStream(InputStream inputStream);
-
-    InputStream ofInputStream(InputStream inputStream, NContentMetadata metadata);
-
-    InputStream ofCloseable(InputStream inputStream, Runnable onClose);
-
-    InputStream ofCloseable(InputStream inputStream, Runnable onClose, NContentMetadata metadata);
-
     NInputSource ofInputSource(InputStream inputStream);
+
     NInputSource ofInputSource(InputStream inputStream, NContentMetadata metadata);
+
     NInputSource ofInputSource(byte[] inputStream);
 
     NInputSource ofInputSource(byte[] inputStream, NContentMetadata metadata);
 
-    NOutputTarget ofOutputTarget(OutputStream inputStream);
+    NOutputTarget ofOutputTarget(OutputStream outputStream);
 
     NOutputTarget ofOutputTarget(OutputStream outputStream, NContentMetadata metadata);
-    OutputStream ofRawOutputStream(OutputStream outputStream, NContentMetadata metadata);
-    //NOutputStream ofOutputStream(OutputStream outputStream, NContentMetadata metadata);
 
     /**
      * Checks for the current system terminal and does best effort
@@ -212,5 +182,9 @@ public interface NIO extends NComponent {
      * @return {@code this} instance
      */
     NIO setDefaultTerminal(NSessionTerminal terminal);
+
+
+    NInputStreamBuilder ofInputStreamBuilder(InputStream base);
+    NOutputStreamBuilder ofOutputStreamBuilder(OutputStream base);
 
 }

@@ -41,6 +41,8 @@ import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.NPropertiesHolder;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextTransformConfig;
@@ -64,7 +66,7 @@ public class DefaultNSession implements Cloneable, NSession {
     protected NWorkspace ws = null;
     protected List<String> outputFormatOptions = new ArrayList<>();
     private NSessionTerminal terminal;
-    private NPropertiesHolder properties = new NPropertiesHolder();
+    private NPropertiesHolder sharedProperties = new NPropertiesHolder();
     private NPropertiesHolder refProperties = new NPropertiesHolder();
     private Map<Class, LinkedHashSet<NListener>> listeners = new HashMap<>();
     private String dependencySolver;
@@ -740,7 +742,7 @@ public class DefaultNSession implements Cloneable, NSession {
             DefaultNSession cloned = (DefaultNSession) clone();
             cloned.ws = new NWorkspaceSessionAwareImpl(cloned, ws);
             cloned.terminal = terminal == null ? null : NSessionTerminal.of(terminal, cloned);
-            cloned.properties = properties == null ? null : properties.copy();
+            cloned.sharedProperties = sharedProperties == null ? null : sharedProperties.copy();
             cloned.refProperties = new NPropertiesHolder();
             cloned.outputFormatOptions = outputFormatOptions == null ? null : new ArrayList<>(outputFormatOptions);
             cloned.listeners = null;
@@ -778,8 +780,7 @@ public class DefaultNSession implements Cloneable, NSession {
     @Override
     public NSession setAll(NSession other) {
         this.terminal = other.getTerminal();
-        Map<String, Object> properties = other.getProperties();
-        this.properties.setProperties(properties == null ? null : new LinkedHashMap<>(properties));
+        this.sharedProperties.setProperties(other.getProperties(NScopeType.SHARED_SESSION));
         this.listeners.clear();
         for (NListener listener : other.getListeners()) {
             addListener(listener);
@@ -954,52 +955,87 @@ public class DefaultNSession implements Cloneable, NSession {
 
     @Override
     public NSession setProperty(String key, Object value) {
-        this.properties.setProperty(key, value);
+        this.sharedProperties.setProperty(key, value);
         return this;
     }
 
     @Override
-    public Map<String, Object> getProperties() {
-        return properties.getProperties();
+    public Map<String, Object> getProperties(NScopeType scope, boolean inherit) {
+        if (scope == null) {
+            scope = NScopeType.SHARED_SESSION;
+        }
+        switch (scope) {
+            case PROTOTYPE: {
+                if (inherit) {
+                    return getProperties(NScopeType.SESSION, inherit);
+                }
+                return new LinkedHashMap<>();
+            }
+            case SESSION: {
+                LinkedHashMap<String, Object> a = new LinkedHashMap<>();
+                if (inherit) {
+                    a.putAll(getProperties(NScopeType.SHARED_SESSION));
+                }
+                a.putAll(refProperties.toMap());
+                return a;
+            }
+            case SHARED_SESSION: {
+                LinkedHashMap<String, Object> a = new LinkedHashMap<>();
+                if (inherit) {
+                    a.putAll(getProperties(NScopeType.WORKSPACE));
+                }
+                a.putAll(sharedProperties.toMap());
+                return a;
+            }
+            case WORKSPACE: {
+                LinkedHashMap<String, Object> a = new LinkedHashMap<>();
+                a.putAll(((NWorkspaceExt) ws).getModel().properties.toMap());
+                return a;
+            }
+        }
+        return new LinkedHashMap<>();
     }
 
     @Override
-    public NSession setProperties(Map<String, Object> properties) {
-        this.properties.setProperties(properties);
+    public Map<String, Object> getProperties(NScopeType scope) {
+        return getProperties(scope, false);
+    }
+
+    public Map<String, Object> getProperties() {
+        return sharedProperties.toMap();
+    }
+
+    @Override
+    public NSession setProperties(NScopeType scope, Map<String, Object> properties) {
+        if (scope == null) {
+            scope = NScopeType.SHARED_SESSION;
+        }
+        switch (scope) {
+            case SESSION: {
+                this.refProperties.setProperties(properties);
+                break;
+            }
+            case SHARED_SESSION: {
+                this.sharedProperties.setProperties(properties);
+                break;
+            }
+            case WORKSPACE: {
+                ((NWorkspaceExt) ws).getModel().properties.setProperties(properties);
+                break;
+            }
+            case PROTOTYPE: {
+                break;
+            }
+            default: {
+                throw new NUnsupportedEnumException(this, scope);
+            }
+        }
         return this;
     }
 
     @Override
     public Object getProperty(String key) {
-        return properties.getProperty(key);
-    }
-
-
-    @Override
-    public NSession setRefProperty(String key, Object value) {
-        this.refProperties.setProperty(key, value);
-        return this;
-    }
-
-    @Override
-    public Map<String, Object> getRefProperties() {
-        return refProperties.getProperties();
-    }
-
-    @Override
-    public NSession setRefProperties(Map<String, Object> properties) {
-        this.refProperties.setProperties(properties);
-        return this;
-    }
-
-    @Override
-    public Object getRefProperty(String key) {
-        return refProperties.getProperty(key);
-    }
-
-    @Override
-    public Object getWorkspaceProperty(String key) {
-        return ((NWorkspaceExt) ws).getModel().properties.getProperty(key);
+        return sharedProperties.getProperty(key);
     }
 
     @Override
@@ -1433,8 +1469,8 @@ public class DefaultNSession implements Cloneable, NSession {
     public String toString() {
         StringBuilder sb = new StringBuilder("NutsSession(");
         sb.append(getWorkspace().getLocation());
-        if (properties.size() > 0) {
-            sb.append(", properties=").append(properties);
+        if (sharedProperties.size() > 0) {
+            sb.append(", properties=").append(sharedProperties);
         }
         sb.append(")");
         return sb.toString();
@@ -1575,42 +1611,99 @@ public class DefaultNSession implements Cloneable, NSession {
         }
     }
 
-    public NSession setWorkspaceProperty(String name, Object value) {
-        ((NWorkspaceExt) ws).getModel().properties.setProperty(name, value);
-        return this;
+    public <T> T getOrComputeProperty(String name, NScopeType scope, Function<NSession, T> supplier) {
+        NAssert.requireNonNull(supplier, this);
+        if (scope == null) {
+            scope = NScopeType.SHARED_SESSION;
+        }
+        switch (scope) {
+            case SESSION: {
+                return refProperties.getOrComputeProperty(name, this, supplier);
+            }
+            case SHARED_SESSION: {
+                return sharedProperties.getOrComputeProperty(name, this, supplier);
+            }
+            case WORKSPACE: {
+                return ((NWorkspaceExt) ws).getModel().properties.getOrComputeProperty(name, this, supplier);
+            }
+            case PROTOTYPE: {
+                return supplier.apply(this);
+            }
+            default: {
+                throw new NUnsupportedEnumException(this, scope);
+            }
+        }
     }
 
-    public <T> T getOrComputeWorkspaceProperty(String name, Function<NSession, T> supplier) {
-        NPropertiesHolder p = ((NWorkspaceExt) ws).getModel().properties;
-        Object v = p.getProperty(name);
-        if (v != null) {
-            return (T) v;
+    public <T> T setProperty(String name, NScopeType scope, T value) {
+        if (scope == null) {
+            scope = NScopeType.SHARED_SESSION;
         }
-        v = supplier.apply(this);
-        p.setProperty(name, v);
-        return (T) v;
+        switch (scope) {
+            case SESSION: {
+                return (T) refProperties.setProperty(name, value);
+            }
+            case SHARED_SESSION: {
+                return (T) sharedProperties.setProperty(name, value);
+            }
+            case WORKSPACE: {
+                NWorkspaceModel m = ((NWorkspaceExt) ws).getModel();
+                return (T) m.properties.setProperty(name, value);
+            }
+            case PROTOTYPE:
+            default: {
+                throw new NUnsupportedEnumException(this, scope);
+            }
+        }
     }
 
-    public <T> T getOrComputeRefProperty(String name, Function<NSession, T> supplier) {
-        Object v = getRefProperty(name);
-        if (v != null) {
-            return (T) v;
-        }
-        v = supplier.apply(this);
-        setRefProperty(name, v);
-        return (T) v;
+    public <T> NOptional<T> getProperty(String name, NScopeType scope) {
+        return getProperty(name, scope, false);
     }
 
-    @Override
-    public <T> T getOrComputeProperty(String name, Function<NSession, T> supplier) {
-        Object v = getProperty(name);
-        if (v != null) {
-            return (T) v;
+    public <T> NOptional<T> getProperty(String name, NScopeType scope, boolean inherit) {
+        if (scope == null) {
+            scope = NScopeType.SHARED_SESSION;
         }
-        v = supplier.apply(this);
-        setRefProperty(name, v);
-        return (T) v;
+        switch (scope) {
+            case SESSION: {
+                NOptional<T> a = refProperties.getOptional(name);
+                if (!inherit || a.isPresent()) {
+                    return a;
+                }
+                return getProperty(name, NScopeType.SHARED_SESSION, true);
+            }
+            case SHARED_SESSION: {
+                NOptional<T> a = sharedProperties.getOptional(name);
+                if (!inherit || a.isPresent()) {
+                    return a;
+                }
+                return getProperty(name, NScopeType.WORKSPACE, true);
+            }
+            case WORKSPACE: {
+                return ((NWorkspaceExt) ws).getModel().properties.getOptional(name);
+            }
+            case PROTOTYPE: {
+                if (inherit) {
+                    return getProperty(name, NScopeType.SESSION, true);
+                }
+                throw new NUnsupportedEnumException(this, scope);
+            }
+            default: {
+                throw new NUnsupportedEnumException(this, scope);
+            }
+        }
     }
+
+//    public <T> T getOrComputeRefProperty(String name, Function<NSession, T> supplier) {
+//        Object v = getRefProperty(name);
+//        if (v != null) {
+//            return (T) v;
+//        }
+//        v = supplier.apply(this);
+//        setRefProperty(name, v);
+//        return (T) v;
+//    }
 
     @Override
     public NSession prepareApplication(String[] args0, Class appClass, String storeId, NClock startTime) {

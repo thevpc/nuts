@@ -96,6 +96,4 @@ public interface NRepositories extends NComponent, NSessionProvider {
     ///////////////
     NRepositories removeAllRepositories();
 
-    NRepositories setSession(NSession session);
-
 }

@@ -30,7 +30,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 
@@ -39,11 +39,11 @@ import java.util.*;
 /**
  * Created by vpc on 1/7/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class EnvCommand extends NShellBuiltinDefault {
 
     public EnvCommand() {
-        super("env", DEFAULT_SUPPORT, Options.class);
+        super("env", NSupported.DEFAULT_SUPPORT, Options.class);
     }
 
     @Override

@@ -720,9 +720,10 @@ public class CoreIOUtils {
         OutputStream p = outPath.getOutputStream();
         long finalLastModified = lastModified;
         NIO io = NIO.of(session);
-        InputStream ist =io.ofCloseable(
-                io.ofTee(header.getInputStream(), p),
-                () -> {
+        InputStream ist = io
+                .ofInputStreamBuilder(header.getInputStream())
+                .setTee(p)
+                .setCloseAction(() -> {
                     if (outPath.exists()) {
                         CachedURL ccu = new CachedURL();
                         ccu.url = path;
@@ -740,14 +741,15 @@ public class CoreIOUtils {
                         cacheTable.add(ccu, session);
                         cacheTable.flush(session);
                     }
-                }
-        );
-        return io.ofInputStream(ist, new DefaultNContentMetadata(
+                })
+                .createInputStream();
+        return io.ofInputStreamBuilder(ist)
+                .setMetadata(new DefaultNContentMetadata(
                         path,
                         NMsg.ofNtf(NTexts.of(session).ofStyled(path, NTextStyle.path())),
                         size, NPath.of(path, session).getContentType(), sourceTypeName
-                )
-        );
+                )).createInputStream()
+                ;
 
     }
 
@@ -1051,15 +1053,14 @@ public class CoreIOUtils {
     }
 
     public static InputStream createBytesStream(byte[] bytes, NMsg message, String contentType, String kind, NSession session) {
-        return NIO.of(session).ofInputStream(
-                new ByteArrayInputStream(bytes),
-                new DefaultNContentMetadata(
-                        message,
-                        (long)bytes.length,
-                        contentType,
-                        kind
-                )
-        );
+        return NIO.of(session).ofInputStreamBuilder(new ByteArrayInputStream(bytes))
+                .setMetadata(new DefaultNContentMetadata(
+                                message,
+                                (long) bytes.length,
+                                contentType,
+                                kind
+                        )
+                ).createInputStream();
     }
 
     public static String betterPath(String path1) {

@@ -7,6 +7,8 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -18,9 +20,16 @@ import net.thevpc.nuts.util.NLogOp;
 import java.io.PrintStream;
 import java.util.logging.Level;
 
+@NComponentScope(NScopeType.SESSION)
 public class DefaultNApplicationExceptionHandler implements NApplicationExceptionHandler {
+    private NSession session;
+
+    public DefaultNApplicationExceptionHandler(NSession session) {
+        this.session = session;
+    }
+
     @Override
-    public int processThrowable(String[] args, Throwable throwable, NSession session) {
+    public int processThrowable(String[] args, Throwable throwable) {
         NAssert.requireSession(session);
         NBootOptionsBuilder bo = null;
         bo = NBootManager.of(session).getBootOptions().builder();
@@ -151,6 +160,6 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return 1;
+        return NSupported.DEFAULT_SUPPORT;
     }
 }

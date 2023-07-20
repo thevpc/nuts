@@ -15,11 +15,18 @@ public class OutputStreamExt extends OutputStream implements NFormattable, NCont
     private NMsg sourceName;
     private NContentMetadata md;
     private NSession session;
+    private boolean closeBase;
+    private Runnable onClose;
 
-    public OutputStreamExt(OutputStream base, NContentMetadata md0,NSession session) {
+    public OutputStreamExt(OutputStream base, NContentMetadata md0,
+                           boolean closeBase,
+                           Runnable onClose,
+                           NSession session) {
         this.base = base;
         this.session = session;
-        this.md = CoreIOUtils.createContentMetadata(md0,base);
+        this.closeBase = closeBase;
+        this.onClose = onClose;
+        this.md = CoreIOUtils.createContentMetadata(md0, base);
     }
 
     @Override
@@ -49,7 +56,12 @@ public class OutputStreamExt extends OutputStream implements NFormattable, NCont
 
     @Override
     public void close() throws IOException {
-        base.close();
+        if (closeBase) {
+            base.close();
+        }
+        if (onClose != null) {
+            onClose.run();
+        }
     }
 
     @Override

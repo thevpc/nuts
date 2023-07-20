@@ -28,4 +28,5 @@ public enum MdAdmonitionType {
     CAUTION,
     WARNING,
     DANGER,
+    INFO,
 }

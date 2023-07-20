@@ -1,166 +1,152 @@
-// @ts-check
-// Note: type annotations allow type checking and IDEs autocompletion
-
-const lightCodeTheme = require('prism-react-renderer/themes/github');
-const darkCodeTheme = require('prism-react-renderer/themes/dracula');
-
-/** @type {import('@docusaurus/types').Config} */
-const config = {
+module.exports = {
   title: 'Nuts',
   tagline: 'The Java Package Manager',
+  url: 'https://thevpc.github.io/nuts',
+  baseUrl: '/nuts/',
+  onBrokenLinks: 'log',
   favicon: 'img/favicon.ico',
-
-  // Set the production url of your site here
-  url: 'https://thevpc.github.io',
-  // Set the /<baseUrl>/ pathname under which your site is served
-  // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/',
-
-  // GitHub pages deployment config.
-  // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'thevpc', // Usually your GitHub org/user name.
-  projectName: 'nuts', // Usually your repo name.
-
-  onBrokenLinks: 'warn',
-  onBrokenMarkdownLinks: 'warn',
-
-  // Even if you don't use internalization, you can use this field to set useful
-  // metadata like html lang. For example, if your site is Chinese, you may want
-  // to replace "en" with "zh-Hans".
-  i18n: {
-    defaultLocale: 'en',
-    locales: ['en'],
+  organizationName: 'thevpc',
+  projectName: 'nuts',
+  themeConfig: {
+    navbar: {
+      title: 'Nuts Package Manager',
+      logo: {
+        alt: 'Nuts Package Manager',
+        src: 'img/nuts-icon.png',
+      },
+      items: [
+        {
+          to: 'docs',
+          activeBasePath: 'docs',
+          label: 'Docs',
+          position: 'left',
+        },
+        {to: 'blog', label: 'Blog', position: 'left'},
+        {
+          href: 'https://github.com/thevpc/nuts',
+          label: 'GitHub',
+          position: 'right',
+        },
+      ],
+    },
+    footer: {
+      style: 'dark',
+      links: [
+        {
+          title: 'Docs',
+          items: [
+            {
+              label: 'Documentation',
+              to: 'docs/',
+            },
+            {
+              label: 'FAQ',
+              to: 'docs/info/faq',
+            },
+            {
+              label: 'Change Log',
+              to: 'docs/info/changelog',
+            },
+            {
+              label: 'PDF Documentation',
+              to: 'pdf/nuts-documentation.pdf',
+              target: "_blank"
+            },
+          ],
+        },
+        {
+          title: 'Community',
+          items: [
+            {
+              label: 'Stack Overflow',
+              href: 'https://stackoverflow.com/questions/tagged/nuts',
+            },
+            {
+              label: 'Issues Tracker',
+              href: 'https://github.com/thevpc/nuts/issues',
+            },
+//            {
+//              label: 'Discord',
+//              href: 'https://discordapp.com/invite/nuts',
+//            },
+//            {
+//              label: 'Twitter',
+//              href: 'https://twitter.com/nuts',
+//            },
+          ],
+        },
+        {
+          title: 'More',
+          items: [
+            {
+              label: 'Blog',
+              to: 'blog',
+            },
+            {
+              label: 'GitHub',
+              href: 'https://github.com/thevpc/nuts',
+            },
+          ],
+        },
+      ],
+      copyright: `Copyright © ${new Date().getFullYear()} Nuts Package Manager Team.`,
+    },
   },
-
   presets: [
     [
-      'classic',
-      /** @type {import('@docusaurus/preset-classic').Options} */
-      ({
+      '@docusaurus/preset-classic',
+      {
         docs: {
+          // It is recommended to set document id as docs home page (`docs/` path).
+          homePageId: 'intro/introduction',
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+            'https://github.com/thevpc/nuts/edit/master/website/',
         },
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+            'https://github.com/thevpc/nuts/edit/master/website/blog/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
         },
-      }),
+      },
     ],
   ],
-
-  themeConfig:
-    /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
-    ({
-      // Replace with your project's social card
-      image: 'img/docusaurus-social-card.jpg',
-      navbar: {
-        title: 'Nuts',
-        logo: {
-          alt: 'The Java Package Manager',
-          src: 'img/nuts-icon.png',
+    customFields: {
+        copyBuildPath:'../../docs',
+        docusaurus: {
+            generateSidebarMenu: true
         },
-        items: [
-          {
-            type: 'docSidebar',
-            sidebarId: 'tutorialSidebar',
-            position: 'left',
-            label: 'Tutorial',
-          },
-          {to: '/blog', label: 'Blog', position: 'left'},
-          {
-            href: 'https://github.com/thevpc/nuts',
-            label: 'GitHub',
-            position: 'right',
-          },
-        ],
-      },
-      footer: {
-        style: 'dark',
-        links: [
-          {
-            title: 'Docs',
-            items: [
-              {
-                label: 'Tutorial',
-                to: '/docs/intro',
-              },
-            ],
-          },
-          {
-            title: 'Docs',
-            items: [
-              {
-                label: 'Documentation',
-                to: '/docs/intro/Introduction',
-              },
-              {
-                label: 'FAQ',
-                to: '/docs/info/faq',
-              },
-              {
-                label: 'Change Log',
-                to: '/docs/info/changelog',
-              },
-              {
-                label: 'PDF Documentation',
-                to: 'pdf/nuts-documentation.pdf',
-                target: "_blank"
-              },
-            ],
-          },
-          {
-            title: 'Community',
-            items: [
-              {
-                label: 'Stack Overflow',
-                href: 'https://stackoverflow.com/questions/tagged/nuts',
-              },
-              {
-                label: 'Issues Tracker',
-                href: 'https://github.com/thevpc/nuts/issues',
-              },
-              {
-                label: 'Discord',
-                href: 'https://discordapp.com/invite/nuts',
-              },
-              {
-                label: 'Twitter',
-                href: 'https://twitter.com/nuts',
-              },
-            ],
-          },
-          {
-            title: 'More',
-            items: [
-              {
-                label: 'Blog',
-                to: '/blog',
-              },
-              {
-                label: 'GitHub',
-                href: 'https://github.com/thevpc/nuts',
-              },
-            ],
-          },
-        ],
-        copyright: `Copyright © ${new Date().getFullYear()} thevpc. (Built with Docusaurus).`,
-      },
-      prism: {
-        theme: lightCodeTheme,
-        darkTheme: darkCodeTheme,
-      },
-    }),
-
+        asciidoctor: {
+            path: 'asciidoctor',
+            pdf: {
+                headers: [
+                    ':source-highlighter: pygments',
+                    ':icons: font',
+                    ':icon-set: pf',
+                    ':doctype: book',
+                    ':revnumber: v0.8.4',
+                    ':revdate: Thu Jul 20 10:46:26 AM +0000 2023',
+                    ':toc:',
+                    ':toclevels: 4',
+                    ':appendix-caption: Appx',
+                    ':sectnums:',
+                    ':sectnumlevels: 6'
+                ],
+                command: {
+                    bin: 'asciidoctor-pdf',
+                    args: [
+                        '-a', 'pdf-themesdir=${asciidoctor.baseDir}/resources/themes',
+                        '-a', 'pdf-theme=custom',
+                        '-a', 'pdf-fontsdir=${asciidoctor.baseDir}/resources/fonts/;GEM_FONTS_DIR',
+                    ]
+                },
+                output:'static/pdf/nuts-documentation.pdf',
+            }
+        }
+    },
 };
-
-module.exports = config;

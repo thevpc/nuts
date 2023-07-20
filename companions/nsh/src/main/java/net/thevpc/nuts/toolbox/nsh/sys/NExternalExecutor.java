@@ -41,7 +41,6 @@ public class NExternalExecutor implements NShellExternalExecutor {
         return NExecCommand.of(context.getSession()).addCommand(command).setFailFast(true)
                 .setExecutionType(context.getSession().getExecutionType())
                 .setDirectory(NPath.of(context.getDirectory(), context.getSession()))
-                .setSession(context.getSession())
                 .run().getResult();
     }
 

@@ -43,7 +43,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.NRecommendationPhase;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.RequestQueryInfo;
 import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NExecutorComponent;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTextStyle;
@@ -65,7 +65,7 @@ import java.util.stream.Collectors;
 /**
  * Created by vpc on 1/7/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class JavaExecutorComponent implements NExecutorComponent {
 
     public static NId ID;
@@ -93,16 +93,16 @@ public class JavaExecutorComponent implements NExecutorComponent {
             String shortName = def.getId().getShortName();
             //for executors
             if ("net.thevpc.nuts.exec:exec-java".equals(shortName)) {
-                return DEFAULT_SUPPORT + 10;
+                return NSupported.DEFAULT_SUPPORT + 10;
             }
             if ("java".equals(shortName)) {
-                return DEFAULT_SUPPORT + 10;
+                return NSupported.DEFAULT_SUPPORT + 10;
             }
             if ("jar".equals(def.getDescriptor().getPackaging())) {
-                return DEFAULT_SUPPORT + 10;
+                return NSupported.DEFAULT_SUPPORT + 10;
             }
         }
-        return NO_SUPPORT;
+        return NSupported.NO_SUPPORT;
     }
 
     public static NWorkspaceOptionsBuilder createChildOptions(NExecutionContext executionContext) {

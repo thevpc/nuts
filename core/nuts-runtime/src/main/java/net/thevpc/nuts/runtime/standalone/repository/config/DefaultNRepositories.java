@@ -9,8 +9,11 @@ import net.thevpc.nuts.runtime.standalone.session.NRepositorySessionAwareImpl;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
+@NComponentScope(NScopeType.SESSION)
 public class DefaultNRepositories implements NRepositories {
 
     private DefaultNRepositoryModel model;
@@ -25,18 +28,12 @@ public class DefaultNRepositories implements NRepositories {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 
     @Override
     public NSession getSession() {
         return session;
-    }
-
-    @Override
-    public NRepositories setSession(NSession session) {
-        this.session = NWorkspaceUtils.bindSession(model.getWorkspace(), session);
-        return this;
     }
 
     @Override

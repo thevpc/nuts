@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -14,13 +15,14 @@ import java.util.function.Supplier;
  * @author thevpc
  */
 public class DefaultNSupported<T> implements NSupported<T> {
-    public static final NSupported INVALID = new DefaultNSupported<>(null, -1);
     private final Supplier<T> value;
     private final int supportLevel;
+    private final Function<NSession, NMsg> emptyMessage;
 
-    public DefaultNSupported(Supplier<T> value, int supportLevel) {
+    public DefaultNSupported(Supplier<T> value, int supportLevel, Function<NSession, NMsg> emptyMessage) {
         this.value = value;
         this.supportLevel = supportLevel;
+        this.emptyMessage = emptyMessage==null?session ->NMsg.ofInvalidValue():emptyMessage;
     }
 
     public T getValue() {
@@ -29,5 +31,16 @@ public class DefaultNSupported<T> implements NSupported<T> {
 
     public int getSupportLevel() {
         return supportLevel;
+    }
+
+    @Override
+    public NOptional<T> toOptional() {
+        if(isValid()){
+            T v = getValue();
+            if(v!=null){
+                return NOptional.of(v);
+            }
+        }
+        return NOptional.ofEmpty(emptyMessage);
     }
 }

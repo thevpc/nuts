@@ -24,6 +24,7 @@ Internal Commands include:
 * check-updates
 * deploy
 * push
+* bundle
 
 
 ### 1.1.7 search command

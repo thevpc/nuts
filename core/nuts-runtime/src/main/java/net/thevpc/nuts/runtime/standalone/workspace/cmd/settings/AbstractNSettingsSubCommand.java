@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings;
 
+import net.thevpc.nuts.NSupported;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
 /**
@@ -15,6 +16,6 @@ public abstract class AbstractNSettingsSubCommand implements NSettingsSubCommand
 
     @Override
     public int getSupportLevel(NSupportLevelContext criteria) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 }

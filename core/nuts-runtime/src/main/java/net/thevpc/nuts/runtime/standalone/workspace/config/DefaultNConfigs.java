@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 /**
  * @author thevpc
  */
+@NComponentScope(NScopeType.SESSION)
 public class DefaultNConfigs implements NConfigs, NConfigsExt {
 
     private final DefaultNWorkspaceConfigModel cmodel;
@@ -51,7 +52,7 @@ public class DefaultNConfigs implements NConfigs, NConfigsExt {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 
     public DefaultNWorkspaceConfigModel getModel() {

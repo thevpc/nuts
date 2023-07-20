@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
 
@@ -33,17 +32,17 @@ public class PlainCodeHighlighter implements NCodeHighlighter {
     public int getSupportLevel(NSupportLevelContext context) {
         String s = context.getConstraints();
         if(s==null){
-            return DEFAULT_SUPPORT;
+            return NSupported.DEFAULT_SUPPORT;
         }
         switch (s){
             case "plain":
             case "text":
             case "text/plain":
             {
-                return NComponent.DEFAULT_SUPPORT;
+                return NSupported.DEFAULT_SUPPORT;
             }
         }
-        return NComponent.NO_SUPPORT;
+        return NSupported.NO_SUPPORT;
     }
 
 }

@@ -35,6 +35,7 @@ import net.thevpc.nuts.runtime.standalone.app.gui.CoreNUtilGui;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NJavaSdkUtils;
 import net.thevpc.nuts.util.NStringUtils;
 
+import java.lang.management.ManagementFactory;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -56,6 +57,7 @@ public class DefaultNWorkspaceEnvManagerModel {
     private final NId os;
     private NOsFamily osFamily;
     private String hostName;
+    private String pid;
     private NShellFamily shellFamily;
     private Set<NId> desktopEnvironments;
     private Set<NDesktopEnvironmentFamily> osDesktopEnvironmentFamilies;
@@ -84,6 +86,30 @@ public class DefaultNWorkspaceEnvManagerModel {
 
     public NArchFamily getArchFamily() {
         return archFamily;
+    }
+
+    public String getPid() {
+        if(pid==null){
+            String fallback="";
+            // Note: may fail in some JVM implementations
+            // therefore fallback has to be provided
+
+            // something like '<pid>@<hostname>', at least in SUN / Oracle JVMs
+            final String jvmName = ManagementFactory.getRuntimeMXBean().getName();
+            final int index = jvmName.indexOf('@');
+            if (index < 1) {
+                // part before '@' empty (index = 0) / '@' not found (index = -1)
+                return pid=fallback;
+            }
+
+            try {
+                return pid=String.valueOf(Long.toString(Long.parseLong(jvmName.substring(0, index))));
+            } catch (NumberFormatException e) {
+                // ignore
+            }
+            return pid=fallback;
+        }
+        return pid;
     }
 
     public String getHostName() {

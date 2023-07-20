@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NTexts;
 
 import java.util.function.Function;
@@ -10,7 +11,7 @@ public class NWorkspaceVarExpansionFunction implements Function<String, String> 
     private final NSession session;
 
     public static NWorkspaceVarExpansionFunction of(NSession session) {
-        return session.getOrComputeRefProperty(NWorkspaceVarExpansionFunction.class.getName(), NWorkspaceVarExpansionFunction::new);
+        return session.getOrComputeProperty(NWorkspaceVarExpansionFunction.class.getName(), NScopeType.SESSION, NWorkspaceVarExpansionFunction::new);
     }
 
     public NWorkspaceVarExpansionFunction(NSession session) {

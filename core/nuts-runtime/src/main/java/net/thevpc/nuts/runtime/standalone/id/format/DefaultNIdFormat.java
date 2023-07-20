@@ -347,6 +347,6 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 }

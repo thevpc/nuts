@@ -52,7 +52,6 @@ public class UserNonOption extends DefaultNonOption {
             }
         } else {
             for (NUser nutsSecurityEntityConfig : NWorkspaceSecurityManager.of(context.getSession())
-                    .setSession(context.getSession())
                     .findUsers()) {
                 all.add(new DefaultNArgCandidate(nutsSecurityEntityConfig.getUser()));
             }

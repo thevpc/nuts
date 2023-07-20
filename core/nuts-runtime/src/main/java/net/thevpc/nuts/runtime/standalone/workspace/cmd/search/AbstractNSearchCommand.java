@@ -76,7 +76,7 @@ public abstract class AbstractNSearchCommand extends DefaultNQueryBaseOptions<NS
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 
     @Override

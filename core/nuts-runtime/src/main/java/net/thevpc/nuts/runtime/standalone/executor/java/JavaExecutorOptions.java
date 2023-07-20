@@ -598,16 +598,15 @@ public final class JavaExecutorOptions {
 
     private void addNp(List<NClassLoaderNode> classPath, String value) {
         NSession searchSession = this.session;
-        NSearchCommand ns = NSearchCommand.of(session).setLatest(true)
-                .setSession(searchSession);
+        NSearchCommand ns = NSearchCommand.of(searchSession).setLatest(true);
         for (String n : StringTokenizerUtils.splitDefault(value)) {
             if (!NBlankable.isBlank(n)) {
                 ns.addId(n);
             }
         }
         for (NId nutsId : ns.getResultIds()) {
-            NDefinition f = NSearchCommand.of(session).addId(nutsId)
-                    .setSession(searchSession).setLatest(true).getResultDefinitions().findFirst().get();
+            NDefinition f = NSearchCommand.of(searchSession).addId(nutsId)
+                    .setLatest(true).getResultDefinitions().findFirst().get();
             classPath.add(NClassLoaderUtils.definitionToClassLoaderNode(f, session));
         }
     }

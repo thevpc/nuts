@@ -75,12 +75,11 @@ public class Test05_FindTest {
 
     @Test
     public void find6() throws Exception {
-        NDefinition def = NSearchCommand.of(session).addId(
+        NDefinition def = NSearchCommand.of(session.copy().setFetchStrategy(NFetchStrategy.ONLINE)).addId(
                         "net.thevpc.common:thevpc-common-io#1.3.12"
 //                "netbeans-launcher#1.1.0"
                 )
                 .setOptional(false).setInlineDependencies(true).setFailFast(true)
-                .setSession(session.copy().setFetchStrategy(NFetchStrategy.ONLINE))
                 .setLatest(true).getResultDefinitions().findFirst().get();
         TestUtils.println(def);
     }

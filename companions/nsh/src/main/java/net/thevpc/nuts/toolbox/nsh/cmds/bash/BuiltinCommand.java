@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
+import net.thevpc.nuts.NSupported;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
@@ -41,7 +42,7 @@ import java.util.Arrays;
 public class BuiltinCommand extends NShellBuiltinDefault {
 
     public BuiltinCommand() {
-        super("builtin", DEFAULT_SUPPORT, Options.class);
+        super("builtin", NSupported.DEFAULT_SUPPORT, Options.class);
     }
 
     @Override

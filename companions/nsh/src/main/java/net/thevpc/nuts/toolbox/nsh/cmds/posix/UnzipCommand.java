@@ -33,7 +33,7 @@ import net.thevpc.nuts.io.NUncompressVisitor;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NUncompress;
 import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
@@ -46,11 +46,11 @@ import java.util.List;
 /**
  * Created by vpc on 1/7/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class UnzipCommand extends NShellBuiltinDefault {
 
     public UnzipCommand() {
-        super("unzip", DEFAULT_SUPPORT, Options.class);
+        super("unzip", NSupported.DEFAULT_SUPPORT, Options.class);
     }
 
     @Override

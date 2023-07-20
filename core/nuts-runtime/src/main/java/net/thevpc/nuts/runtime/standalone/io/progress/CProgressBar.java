@@ -12,7 +12,7 @@ import java.util.function.Function;
 import java.util.logging.Level;
 
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NLog;
 import net.thevpc.nuts.util.NLogVerb;
@@ -251,7 +251,7 @@ public class CProgressBar {
     }
 
     public static CProgressBar of(NSession session) {
-        return session.getOrComputeRefProperty(CProgressBar.class.getName(), CProgressBar::new);
+        return session.getOrComputeProperty(CProgressBar.class.getName(), NScopeType.SESSION, CProgressBar::new);
     }
 
     public CProgressBar(NSession session) {
@@ -603,6 +603,7 @@ public class CProgressBar {
             }
         }
     }
+
     public void printProgress2(NText p, NPrintStream out) {
         if (p == null || p.isEmpty()) {
             return;
@@ -610,11 +611,11 @@ public class CProgressBar {
         Level armedLogLevel = options.getArmedLogLevel();
         if (options.isArmedNewline()) {
             out.print("\n");
-        }else if (armedLogLevel!=null) {
+        } else if (armedLogLevel != null) {
             logger.with().verb(NLogVerb.PROGRESS)
                     .level(armedLogLevel)
                     .log(NMsg.ofNtf(p));
-        }else{
+        } else {
             synchronized (CProgressBar.class) {
                 out.resetLine();
                 out.print(p);

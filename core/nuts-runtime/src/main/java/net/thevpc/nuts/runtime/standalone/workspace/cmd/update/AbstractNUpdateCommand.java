@@ -48,7 +48,7 @@ public abstract class AbstractNUpdateCommand extends NWorkspaceCommandBase<NUpda
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 
     @Override

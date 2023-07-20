@@ -26,9 +26,6 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NComponentScopeType;
-
 /**
  * @app.category Base
  */

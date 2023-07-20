@@ -46,7 +46,7 @@ import java.util.*;
 public class PropsCommand extends NShellBuiltinDefault {
 
     public PropsCommand() {
-        super("props", DEFAULT_SUPPORT,Options.class);
+        super("props", NSupported.DEFAULT_SUPPORT,Options.class);
     }
 
     @Override

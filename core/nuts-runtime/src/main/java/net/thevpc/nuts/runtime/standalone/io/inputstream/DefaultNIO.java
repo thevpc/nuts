@@ -47,7 +47,7 @@ public class DefaultNIO implements NIO {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 
     private DefaultNBootModel getBootModel() {
@@ -198,55 +198,13 @@ public class DefaultNIO implements NIO {
     }
 
     @Override
-    public InputStream ofInterruptible(InputStream inputStream) {
-        return ofInterruptible(inputStream, null);
+    public NInputStreamBuilder ofInputStreamBuilder(InputStream inputStream) {
+        return new DefaultNInputStreamBuilder(session).setBase(inputStream);
     }
 
     @Override
-    public InputStream ofInterruptible(InputStream inputStream, NContentMetadata metadata) {
-        if (inputStream == null) {
-            return null;
-        }
-        if (inputStream instanceof NInterruptible) {
-            if (metadata == null) {
-                return inputStream;
-            }
-        }
-        return new InputStreamExt(inputStream, metadata, null, null, null, null, null, session);
-    }
-
-    @Override
-    public InputStream ofInputStream(InputStream inputStream) {
-        return ofInputStream(inputStream, null);
-    }
-
-    @Override
-    public InputStream ofInputStream(InputStream inputStream, NContentMetadata metadata) {
-        if (inputStream == null) {
-            return null;
-        }
-        if (inputStream instanceof NContentMetadataProvider) {
-            if (metadata == null) {
-                return inputStream;
-            }
-        }
-        return new InputStreamExt(inputStream, metadata, null, null, null, null, null, session);
-    }
-
-    @Override
-    public InputStream ofCloseable(InputStream inputStream, Runnable onClose) {
-        return ofCloseable(inputStream, onClose, null);
-    }
-
-    @Override
-    public InputStream ofCloseable(InputStream inputStream, Runnable onClose, NContentMetadata metadata) {
-        if (inputStream == null) {
-            return null;
-        }
-        if (onClose != null) {
-            return new InputStreamExt(inputStream, metadata, onClose, null, null, null, null, session);
-        }
-        return inputStream;
+    public NOutputStreamBuilder ofOutputStreamBuilder(OutputStream base) {
+        return new DefaultNOutputStreamBuilder(session).setBase(base);
     }
 
     @Override
@@ -278,37 +236,11 @@ public class DefaultNIO implements NIO {
             }
             metadata = new DefaultNContentMetadata(NMsg.ofNtf(str), contentLength, null, null);
         }
-        InputStreamExt inputStreamExt = new InputStreamExt(inputStream, metadata, null, null, null, null, null, session);
+
+        InputStream inputStreamExt = ofInputStreamBuilder(inputStream).setMetadata(metadata).createInputStream();
         return new NInputStreamSource(inputStreamExt, null, session);
     }
 
-
-    @Override
-    public java.io.InputStream ofMonitored(java.io.InputStream from, Object source,
-                                           NString sourceName, Long length, NProgressListener monitor) {
-        return new InputStreamExt(from, null, null, monitor, source, sourceName == null ? null : NMsg.ofNtf(sourceName), length, session);
-    }
-
-    @Override
-    public java.io.InputStream ofMonitored(java.io.InputStream from, Object source,
-                                           NMsg sourceName, Long length, NProgressListener monitor) {
-        return new InputStreamExt(from, null, null, monitor, source, sourceName, length, session);
-    }
-
-    @Override
-    public java.io.InputStream ofMonitored(java.io.InputStream from, Object source, NProgressListener monitor) {
-        return new InputStreamExt(from, null, null, monitor, source, null, null, session);
-    }
-
-    @Override
-    public NNonBlockingInputStream ofNonBlocking(InputStream from) {
-        return ofNonBlocking(from, null);
-    }
-
-    @Override
-    public NNonBlockingInputStream ofNonBlocking(InputStream from, NContentMetadata metadata) {
-        return new NNonBlockingInputStreamAdapter(from, metadata, null, session);
-    }
 
     @Override
     public NInputSource ofMultiRead(NInputSource source) {
@@ -338,24 +270,13 @@ public class DefaultNIO implements NIO {
     }
 
     @Override
-    public NOutputTarget ofOutputTarget(OutputStream output) {
-        return ofOutputTarget(output, null);
+    public NOutputTarget ofOutputTarget(OutputStream outputStream) {
+        return ofOutputTarget(outputStream, null);
     }
 
     @Override
     public NOutputTarget ofOutputTarget(OutputStream outputStream, NContentMetadata metadata) {
-        return new OutputTargetExt(ofRawOutputStream(outputStream, metadata), null, session);
-    }
-
-    @Override
-    public OutputStream ofRawOutputStream(OutputStream outputStream, NContentMetadata metadata) {
-        if (outputStream == null) {
-            return null;
-        }
-        if (NBlankable.isBlank(metadata) && outputStream instanceof NContentMetadataProvider) {
-            return outputStream;
-        }
-        return new OutputStreamExt(outputStream, metadata, session);
+        return new OutputTargetExt(ofOutputStreamBuilder(outputStream).setMetadata(metadata).createOutputStream(), null, session);
     }
 
     @Override
@@ -424,15 +345,5 @@ public class DefaultNIO implements NIO {
     public NIO setDefaultTerminal(NSessionTerminal terminal) {
         cmodel.setTerminal(terminal, session);
         return this;
-    }
-
-    @Override
-    public InputStream ofTee(InputStream from, OutputStream via) {
-        return ofTee(from, via, null);
-    }
-
-    @Override
-    public InputStream ofTee(InputStream from, OutputStream via, NContentMetadata metadata) {
-        return new InputStreamTee(from, via, null, metadata, session);
     }
 }

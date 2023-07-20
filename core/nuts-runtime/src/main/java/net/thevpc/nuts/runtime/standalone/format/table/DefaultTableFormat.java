@@ -152,7 +152,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
     }
 
     public static void formatAndHorizontalAlign(StringBuilder sb, NPositionType a, int columns, NTexts tf, NSession session) {
-        int length = tf.setSession(session).parse(sb.toString()).textLength();
+        int length = tf.parse(sb.toString()).textLength();
         switch (a) {
             case FIRST: {
 //                if (sb.length() > length) {
@@ -847,7 +847,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 
     public static class Row {
@@ -914,7 +914,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
         }
 
         public int len(String other) {
-            return metrics.setSession(session).parse(other).textLength();
+            return metrics.parse(other).textLength();
         }
 
         public RenderedCell appendHorizontally(RenderedCell other) {

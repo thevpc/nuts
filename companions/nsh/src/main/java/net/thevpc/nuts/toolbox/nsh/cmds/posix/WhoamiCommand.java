@@ -30,7 +30,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
@@ -41,11 +41,11 @@ import java.util.*;
 /**
  * Created by vpc on 1/7/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class WhoamiCommand extends NShellBuiltinDefault {
 
     public WhoamiCommand() {
-        super("whoami", DEFAULT_SUPPORT, Options.class);
+        super("whoami", NSupported.DEFAULT_SUPPORT, Options.class);
     }
 
     @Override

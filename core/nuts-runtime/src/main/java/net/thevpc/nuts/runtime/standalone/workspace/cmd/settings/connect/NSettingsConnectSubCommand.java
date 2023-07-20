@@ -69,9 +69,9 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
                     socket = new Socket(InetAddress.getByName(server), validPort);
                     PipeRunnable rr = NSysExecUtils.pipe("pipe-out-socket-" + server + ":" + validPort,
                             cmd0, "connect-socket",
-                            NIO.of(session).ofNonBlocking(
-                                    socket.getInputStream(),new DefaultNContentMetadata().setMessage(NMsg.ofC("pipe-out-socket-%s:%s",server,validPort))
-                            ), session.out().asPrintStream(), session);
+                            NIO.of(session).ofInputStreamBuilder(socket.getInputStream())
+                                    .setMetadata(new DefaultNContentMetadata().setMessage(NMsg.ofC("pipe-out-socket-%s:%s",server,validPort)))
+                                    .createNonBlockingInputStream(), session.out().asPrintStream(), session);
                     NScheduler.of(session).executorService().submit(rr);
                     PrintStream out = new PrintStream(socket.getOutputStream());
                     if (!NBlankable.isBlank(login)) {

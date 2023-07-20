@@ -99,7 +99,7 @@ public class MavenNDependencySolver implements NDependencySolver {
                             try {
                                 def2 = NSearchCommand.of(session)
                                         .addId(dependency.toId())
-                                        .setSession(session).setEffective(true)
+                                        .setEffective(true)
                                         .setContent(shouldIncludeContent)
                                         .setLatest(true).getResultDefinitions().findFirst().get();
                             } catch (NNotFoundException ex) {
@@ -146,7 +146,7 @@ public class MavenNDependencySolver implements NDependencySolver {
                             try {
                                 def2 = NSearchCommand.of(session)
                                         .addId(dependency.toId())
-                                        .setSession(session).setEffective(true)
+                                        .setEffective(true)
                                         .setContent(shouldIncludeContent)
                                         .setLatest(true).getResultDefinitions().findFirst().orNull();
                             } catch (NNotFoundException ex) {
@@ -208,8 +208,7 @@ public class MavenNDependencySolver implements NDependencySolver {
         }
         if (def == null) {
             def = NSearchCommand.of(session)
-                    .addId(dependency.toId()).setSession(session
-                    ).setEffective(true)
+                    .addId(dependency.toId()).setEffective(true)
                     .setContent(shouldIncludeContent)
                     .setEffective(true)
                     .setLatest(true).getResultDefinitions().findFirst().get();

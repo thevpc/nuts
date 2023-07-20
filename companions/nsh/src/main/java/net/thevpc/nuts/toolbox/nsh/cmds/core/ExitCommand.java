@@ -30,7 +30,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinCore;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.err.NShellQuitException;
@@ -38,11 +38,11 @@ import net.thevpc.nuts.toolbox.nsh.err.NShellQuitException;
 /**
  * Created by vpc on 1/7/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class ExitCommand extends NShellBuiltinCore {
 
     public ExitCommand() {
-        super("exit", DEFAULT_SUPPORT, Options.class);
+        super("exit", NSupported.DEFAULT_SUPPORT, Options.class);
     }
 
     @Override

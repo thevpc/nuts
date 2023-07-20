@@ -5,6 +5,7 @@ sidebar_label: Frequently Asked Questions
 order: 3
 ---
 
+
 ## Why not maven?
 or, "Why do we need a package manager for Java. Isn't **Maven** enough?".
 

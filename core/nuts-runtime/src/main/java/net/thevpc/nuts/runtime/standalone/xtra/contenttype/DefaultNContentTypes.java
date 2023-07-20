@@ -46,7 +46,7 @@ public class DefaultNContentTypes implements NContentTypes {
                 .createComponents(NContentTypeResolver.class, path);
         NSupported<String> best = null;
         for (NContentTypeResolver r : allSupported) {
-            NSupported<String> s = r.probeContentType(path, session);
+            NSupported<String> s = r.probeContentType(path);
             if (s != null && s.isValid()) {
                 if (best == null || s.getSupportLevel() > best.getSupportLevel()) {
                     best = s;
@@ -65,7 +65,7 @@ public class DefaultNContentTypes implements NContentTypes {
                 .createComponents(NContentTypeResolver.class, null);
         LinkedHashSet<String> all = new LinkedHashSet<>();
         for (NContentTypeResolver r : allSupported) {
-            List<String> s = r.findExtensionsByContentType(contentType, session);
+            List<String> s = r.findExtensionsByContentType(contentType);
             if (s != null) {
                 all.addAll(s.stream().filter(x->!NBlankable.isBlank(x)).collect(Collectors.toList()));
             }
@@ -79,7 +79,7 @@ public class DefaultNContentTypes implements NContentTypes {
                 .createComponents(NContentTypeResolver.class, null);
         LinkedHashSet<String> all = new LinkedHashSet<>();
         for (NContentTypeResolver r : allSupported) {
-            List<String> s = r.findContentTypesByExtension(extension, session);
+            List<String> s = r.findContentTypesByExtension(extension);
             if (s != null) {
                 all.addAll(s.stream().filter(NBlankable::isBlank).collect(Collectors.toList()));
             }
@@ -99,7 +99,7 @@ public class DefaultNContentTypes implements NContentTypes {
                 .createComponents(NContentTypeResolver.class, bytes);
         NSupported<String> best = null;
         for (NContentTypeResolver r : allSupported) {
-            NSupported<String> s = r.probeContentType(bytes, session);
+            NSupported<String> s = r.probeContentType(bytes);
             if (s != null && s.isValid()) {
                 if (best == null || s.getSupportLevel() > best.getSupportLevel()) {
                     best = s;
@@ -114,7 +114,7 @@ public class DefaultNContentTypes implements NContentTypes {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 //
 //    private static class Shared {

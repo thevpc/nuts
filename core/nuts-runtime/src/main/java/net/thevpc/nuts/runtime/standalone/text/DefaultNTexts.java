@@ -9,15 +9,16 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.io.path.NFormatFromSPI;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
-import net.thevpc.nuts.runtime.standalone.text.util.DefaultNDurationFormat2;
-import net.thevpc.nuts.runtime.standalone.text.util.DefaultUnitFormat;
-import net.thevpc.nuts.runtime.standalone.util.collections.ClassMap;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.text.highlighter.CustomStyleCodeHighlighter;
 import net.thevpc.nuts.runtime.standalone.text.parser.*;
+import net.thevpc.nuts.runtime.standalone.text.util.DefaultNDurationFormat2;
+import net.thevpc.nuts.runtime.standalone.text.util.DefaultUnitFormat;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.util.collections.ClassMap;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NFormatSPI;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.*;
@@ -34,6 +35,7 @@ import java.time.temporal.TemporalAmount;
 import java.util.*;
 import java.util.logging.Level;
 
+@NComponentScope(NScopeType.SESSION)
 public class DefaultNTexts implements NTexts {
 
     private final NWorkspace ws;
@@ -381,12 +383,6 @@ public class DefaultNTexts implements NTexts {
     @Override
     public NSession getSession() {
         return session;
-    }
-
-    @Override
-    public DefaultNTexts setSession(NSession session) {
-        this.session = NWorkspaceUtils.bindSession(ws, session);
-        return this;
     }
 
     @Override
@@ -886,7 +882,7 @@ public class DefaultNTexts implements NTexts {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 
     @Override
@@ -1281,11 +1277,34 @@ public class DefaultNTexts implements NTexts {
         };
     }
 
-    public <T> NOptional<NTextFormat<T>> createTextFormat(String type, Class<T> expectedType, String pattern) {
+    @Override
+    public NOptional<NTextFormat<Number>> createNumberTextFormat(String type, String pattern) {
+        return createTextFormat(type, pattern, Number.class);
+    }
+
+    @Override
+    public NOptional<NStringFormat<Number>> createNumberStringFormat(String type, String pattern) {
+        return createStringFormat(type, pattern, Number.class);
+    }
+
+    @Override
+    public <T> NOptional<NStringFormat<T>> createStringFormat(String type, String pattern, Class<T> expectedType) {
+        NOptional<NTextFormat<T>> e = createTextFormat(type, pattern, expectedType);
+        if (e.isEmpty()) {
+            return NOptional.ofEmpty(s -> NMsg.ofC("unknown %s format with type %s. Expected %s.", type, expectedType, "Double"));
+        }
+        return e.map(x -> x);
+    }
+
+    public <T> NOptional<NTextFormat<T>> createTextFormat(String type, String pattern, Class<T> expectedType) {
         NSession session = getSession();
+        Class<T> finalExpectedType = expectedType;
         NAssert.requireNonNull(type, "type", session);
         NAssert.requireNonNull(expectedType, "expectedType", session);
         NAssert.requireNonNull(pattern, "pattern", session);
+        if (expectedType.isPrimitive()) {
+            expectedType = (Class) NReflectUtils.toBoxedType(expectedType).get();
+        }
         switch (type.toLowerCase().trim()) {
             case "duration": {
                 DefaultNDurationFormat2 d = new DefaultNDurationFormat2(pattern);
@@ -1309,19 +1328,23 @@ public class DefaultNTexts implements NTexts {
                             }
                     );
                 }
-                return NOptional.ofEmpty(s -> NMsg.ofC("unknown duration format with type %s. Expected Duration or NDuration.", expectedType));
+                return NOptional.ofEmpty(s -> NMsg.ofC("unknown duration format with type %s. Expected Duration or NDuration.", finalExpectedType));
             }
             case "double":
-            case "decimal": {
+            case "decimal":
+            case "number": {
                 if (pattern.endsWith("%")) {
-                    DecimalFormat d = new DecimalFormat(pattern.substring(0,pattern.length() - 1));
-                    if (Double.class.equals(expectedType)) {
+                    DecimalFormat d = new DecimalFormat(pattern.substring(0, pattern.length() - 1));
+                    if (Number.class.isAssignableFrom(expectedType)) {
                         return NOptional.of(
-                                (NTextFormat<T>) new NTextFormat<Double>() {
+                                (NTextFormat<T>) new NTextFormat<Number>() {
                                     @Override
-                                    public NText toText(Double object, NSession session) {
+                                    public NText toText(Number object, NSession session) {
+                                        if (object == null) {
+                                            return NTextBuilder.of(session).toText();
+                                        }
                                         return NTextBuilder.of(session)
-                                                .append(d.format(object*100.0), NTextStyle.number())
+                                                .append(d.format(object.doubleValue() * 100.0), NTextStyle.number())
                                                 .append("%", NTextStyle.separator())
                                                 .toText()
                                                 ;
@@ -1329,14 +1352,17 @@ public class DefaultNTexts implements NTexts {
                                 }
                         );
                     }
-                    return NOptional.ofEmpty(s -> NMsg.ofC("unknown %s format with type %s. Expected .", type, expectedType, "Double"));
+                    return NOptional.ofEmpty(s -> NMsg.ofC("unknown %s format with type %s. Expected .", type, finalExpectedType, "Number"));
                 } else if (pattern.endsWith("'°'")) {
-                    DecimalFormat d = new DecimalFormat(pattern.substring(0,pattern.length() - 3));
-                    if (Double.class.equals(expectedType)) {
+                    DecimalFormat d = new DecimalFormat(pattern.substring(0, pattern.length() - 3));
+                    if (Number.class.isAssignableFrom(expectedType)) {
                         return NOptional.of(
-                                (NTextFormat<T>) new NTextFormat<Double>() {
+                                (NTextFormat<T>) new NTextFormat<Number>() {
                                     @Override
-                                    public NText toText(Double object, NSession session) {
+                                    public NText toText(Number object, NSession session) {
+                                        if (object == null) {
+                                            return NTextBuilder.of(session).toText();
+                                        }
                                         return NTextBuilder.of(session)
                                                 .append(d.format(object), NTextStyle.number())
                                                 .append("°", NTextStyle.separator())
@@ -1346,14 +1372,17 @@ public class DefaultNTexts implements NTexts {
                                 }
                         );
                     }
-                    return NOptional.ofEmpty(s -> NMsg.ofC("unknown %s format with type %s. Expected .", type, expectedType, "Double"));
+                    return NOptional.ofEmpty(s -> NMsg.ofC("unknown %s format with type %s. Expected .", type, finalExpectedType, "Number"));
                 } else {
                     DecimalFormat d = new DecimalFormat(pattern);
-                    if (Double.class.equals(expectedType)) {
+                    if (Number.class.isAssignableFrom(expectedType)) {
                         return NOptional.of(
-                                (NTextFormat<T>) new NTextFormat<Double>() {
+                                (NTextFormat<T>) new NTextFormat<Number>() {
                                     @Override
-                                    public NText toText(Double object, NSession session) {
+                                    public NText toText(Number object, NSession session) {
+                                        if (object == null) {
+                                            return NTextBuilder.of(session).toText();
+                                        }
                                         return NTextBuilder.of(session)
                                                 .append(d.format(object), NTextStyle.number())
                                                 .toText()
@@ -1362,7 +1391,7 @@ public class DefaultNTexts implements NTexts {
                                 }
                         );
                     }
-                    return NOptional.ofEmpty(s -> NMsg.ofC("unknown %s format with type %s. Expected .", type, expectedType, "Double"));
+                    return NOptional.ofEmpty(s -> NMsg.ofC("unknown %s format with type %s. Expected .", type, finalExpectedType, "Number"));
                 }
             }
             case "m":
@@ -1370,49 +1399,49 @@ public class DefaultNTexts implements NTexts {
             case "metric": {
                 String p = NStringUtils.trim(pattern);
                 DefaultUnitFormat d = new DefaultUnitFormat("m " + (p.isEmpty() ? "M-3 M3 I2 D2" : p));
-                if (Double.class.equals(expectedType)) {
+                if (Number.class.isAssignableFrom(expectedType)) {
                     return NOptional.of(
-                            (NTextFormat<T>) new NTextFormat<Double>() {
+                            (NTextFormat<T>) new NTextFormat<Number>() {
                                 @Override
-                                public NText toText(Double object, NSession session) {
-                                    return d.format(object, session);
+                                public NText toText(Number object, NSession session) {
+                                    return d.format(object.doubleValue(), session);
                                 }
                             }
                     );
                 }
-                return NOptional.ofEmpty(s -> NMsg.ofC("unknown %s format with type %s. Expected .", type, expectedType, "Double"));
+                return NOptional.ofEmpty(s -> NMsg.ofC("unknown %s format with type %s. Expected .", type, finalExpectedType, "Number"));
             }
             case "freq":
             case "frequency":
             case "hz": {
                 String p = NStringUtils.trim(pattern);
-                DefaultUnitFormat d = new DefaultUnitFormat("Hz " + (p.isEmpty() ? "HT I2 D3" : p));
-                if (Double.class.equals(expectedType)) {
+                DefaultUnitFormat d = new DefaultUnitFormat("Hz " + (p.isEmpty() ? "M1 M12 I2 D3" : p));
+                if (Number.class.isAssignableFrom(expectedType)) {
                     return NOptional.of(
-                            (NTextFormat<T>) new NTextFormat<Double>() {
+                            (NTextFormat<T>) new NTextFormat<Number>() {
                                 @Override
-                                public NText toText(Double object, NSession session) {
-                                    return d.format(object, session);
+                                public NText toText(Number object, NSession session) {
+                                    return d.format(object.longValue(), session);
                                 }
                             }
                     );
                 }
-                return NOptional.ofEmpty(s -> NMsg.ofC("unknown %s format with type %s. Expected .", type, expectedType, "Double"));
+                return NOptional.ofEmpty(s -> NMsg.ofC("unknown %s format with type %s. Expected .", type, finalExpectedType, "Number"));
             }
-            default:{
+            default: {
                 String p = NStringUtils.trim(pattern);
-                DefaultUnitFormat d = new DefaultUnitFormat(type+" " + (p.isEmpty() ? "HT I2 D3" : p));
-                if (Double.class.equals(expectedType)) {
+                DefaultUnitFormat d = new DefaultUnitFormat(type + " " + (p.isEmpty() ? "M-6 M12 I2 D3" : p));
+                if (Number.class.isAssignableFrom(expectedType)) {
                     return NOptional.of(
-                            (NTextFormat<T>) new NTextFormat<Double>() {
+                            (NTextFormat<T>) new NTextFormat<Number>() {
                                 @Override
-                                public NText toText(Double object, NSession session) {
-                                    return d.format(object, session);
+                                public NText toText(Number object, NSession session) {
+                                    return d.format(object.doubleValue(), session);
                                 }
                             }
                     );
                 }
-                return NOptional.ofEmpty(s -> NMsg.ofC("unknown %s format with type %s. Expected .", type, expectedType, "Double"));
+                return NOptional.ofEmpty(s -> NMsg.ofC("unknown %s format with type %s. Expected %s.", type, finalExpectedType, "Number"));
             }
         }
     }

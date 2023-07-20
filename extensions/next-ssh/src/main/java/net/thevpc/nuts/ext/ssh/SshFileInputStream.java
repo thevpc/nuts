@@ -20,7 +20,6 @@ public class SshFileInputStream extends DynamicInputStream {
     private InputStream in;
     private boolean closeConnection;
     private SShConnection connection;
-
     public SshFileInputStream(NConnexionString path, NSession nSession) {
         super(4096);
         this.from = path.getPath();

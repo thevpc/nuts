@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
-import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.*;
 
@@ -33,7 +32,7 @@ public class CppCodeHighlighter implements NCodeHighlighter {
     public int getSupportLevel(NSupportLevelContext context) {
         String s = context.getConstraints();
         if(s==null){
-            return DEFAULT_SUPPORT;
+            return NSupported.DEFAULT_SUPPORT;
         }
         switch (s){
             case "c":
@@ -46,10 +45,10 @@ public class CppCodeHighlighter implements NCodeHighlighter {
             case "text/x-c++src":
             case "text/x-cppsrc":
             {
-                return NComponent.DEFAULT_SUPPORT;
+                return NSupported.DEFAULT_SUPPORT;
             }
         }
-        return NComponent.NO_SUPPORT;
+        return NSupported.NO_SUPPORT;
     }
 
     @Override

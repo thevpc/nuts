@@ -423,9 +423,7 @@ public class ProcessBuilder2 {
         switch (in.base.getType()) {
             case NULL: {
                 String pname = "pipe-in-proc-" + procString;
-                in.termIn = NIO.of(session).ofNonBlocking(
-                        NIO.of(session).ofNullRawInputStream()
-                        , new DefaultNContentMetadata().setMessage(NMsg.ofPlain(pname)));
+                in.termIn = createNonBlockingInput(NIO.of(session).ofNullRawInputStream(), pname);
                 PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "in", in.termIn, proc.getOutputStream(), session);
                 if (pipes == null) {
                     pipes = Executors.newCachedThreadPool();
@@ -436,7 +434,7 @@ public class ProcessBuilder2 {
             }
             case STREAM: {
                 String pname = "pipe-in-proc-" + procString;
-                in.termIn = NIO.of(session).ofNonBlocking(in.base.getStream(), new DefaultNContentMetadata().setMessage(NMsg.ofPlain(pname)));
+                in.termIn = createNonBlockingInput(in.base.getStream(), pname);
                 PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "in", in.termIn, proc.getOutputStream(), session);
                 if (pipes == null) {
                     pipes = Executors.newCachedThreadPool();
@@ -449,9 +447,7 @@ public class ProcessBuilder2 {
         switch (out.base.getType()) {
             case NULL: {
                 String pname = "pipe-out-proc-" + procString;
-                NNonBlockingInputStream procInput = NIO.of(session).ofNonBlocking(
-                        proc.getInputStream()
-                        , new DefaultNContentMetadata().setMessage(NMsg.ofPlain(pname)));
+                NNonBlockingInputStream procInput = createNonBlockingInput(proc.getInputStream(), pname);
                 PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "out", procInput,
                         NIO.of(session).ofNullRawOutputStream()
                         , session);
@@ -464,7 +460,7 @@ public class ProcessBuilder2 {
             }
             case STREAM: {
                 String pname = "pipe-out-proc-" + procString;
-                NNonBlockingInputStream procInput = NIO.of(session).ofNonBlocking(proc.getInputStream(), new DefaultNContentMetadata().setMessage(NMsg.ofPlain(pname)));
+                NNonBlockingInputStream procInput = createNonBlockingInput(proc.getInputStream(), pname);
                 PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "out", procInput, out.base.getStream(), session);
                 if (pipes == null) {
                     pipes = Executors.newCachedThreadPool();
@@ -475,7 +471,7 @@ public class ProcessBuilder2 {
             }
             case GRAB_STREAM: {
                 String pname = "pipe-out-proc-" + procString;
-                NNonBlockingInputStream procInput = NIO.of(session).ofNonBlocking(proc.getInputStream(), new DefaultNContentMetadata().setMessage(NMsg.ofPlain(pname)));
+                NNonBlockingInputStream procInput = createNonBlockingInput(proc.getInputStream(), pname);
                 PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "out", procInput, out.tempStream, session);
                 if (pipes == null) {
                     pipes = Executors.newCachedThreadPool();
@@ -488,7 +484,7 @@ public class ProcessBuilder2 {
                 if (out.tempStream != null) {
                     //this happens when the path is not local
                     String pname = "pipe-out-proc-" + procString;
-                    NNonBlockingInputStream procInput = NIO.of(session).ofNonBlocking(proc.getInputStream(), new DefaultNContentMetadata().setMessage(NMsg.ofPlain(pname)));
+                    NNonBlockingInputStream procInput = createNonBlockingInput(proc.getInputStream(), pname);
                     PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "out", procInput, out.tempStream, session);
                     if (pipes == null) {
                         pipes = Executors.newCachedThreadPool();
@@ -502,7 +498,7 @@ public class ProcessBuilder2 {
         switch (err.base.getType()) {
             case STREAM: {
                 String pname = "pipe-err-proc-" + procString;
-                NNonBlockingInputStream procInput = NIO.of(session).ofNonBlocking(proc.getErrorStream(), new DefaultNContentMetadata().setMessage(NMsg.ofPlain(pname)));
+                NNonBlockingInputStream procInput = createNonBlockingInput(proc.getErrorStream(), pname);
                 PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "err", procInput, err.base.getStream(), session);
                 if (pipes == null) {
                     pipes = Executors.newCachedThreadPool();
@@ -513,7 +509,7 @@ public class ProcessBuilder2 {
             }
             case GRAB_STREAM: {
                 String pname = "pipe-err-proc-" + procString;
-                NNonBlockingInputStream procInput = NIO.of(session).ofNonBlocking(proc.getErrorStream(), new DefaultNContentMetadata().setMessage(NMsg.ofPlain(pname)));
+                NNonBlockingInputStream procInput = createNonBlockingInput(proc.getErrorStream(), pname);
                 PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "err", procInput, err.tempStream, session);
                 if (pipes == null) {
                     pipes = Executors.newCachedThreadPool();
@@ -526,7 +522,7 @@ public class ProcessBuilder2 {
                 if (err.tempStream != null) {
                     //this happens when the path is not local
                     String pname = "pipe-err-proc-" + procString;
-                    NNonBlockingInputStream procInput = NIO.of(session).ofNonBlocking(proc.getErrorStream(), new DefaultNContentMetadata().setMessage(NMsg.ofPlain(pname)));
+                    NNonBlockingInputStream procInput = createNonBlockingInput(proc.getErrorStream(), pname);
                     PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "err", procInput, err.tempStream, session);
                     if (pipes == null) {
                         pipes = Executors.newCachedThreadPool();
@@ -659,6 +655,14 @@ public class ProcessBuilder2 {
             }
         }
         return this;
+    }
+
+    private NNonBlockingInputStream createNonBlockingInput(InputStream proc, String pname) {
+        return NIO.of(session)
+                .ofInputStreamBuilder(proc)
+                .setMetadata(new DefaultNContentMetadata().setMessage(NMsg.ofPlain(pname)))
+                .createNonBlockingInputStream()
+                ;
     }
 
     public int getResult() {

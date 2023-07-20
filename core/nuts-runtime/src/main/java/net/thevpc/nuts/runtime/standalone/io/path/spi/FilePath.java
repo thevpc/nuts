@@ -848,14 +848,14 @@ public class FilePath implements NPathSPI {
             String path = context.getConstraints();
             try {
                 if (URLPath.MOSTLY_URL_PATTERN.matcher(path).matches()) {
-                    return NO_SUPPORT;
+                    return NSupported.NO_SUPPORT;
                 }
                 Path value = Paths.get(path);
-                return DEFAULT_SUPPORT;
+                return NSupported.DEFAULT_SUPPORT;
             } catch (Exception ex) {
                 //ignore
             }
-            return NO_SUPPORT;
+            return NSupported.NO_SUPPORT;
         }
 
     }

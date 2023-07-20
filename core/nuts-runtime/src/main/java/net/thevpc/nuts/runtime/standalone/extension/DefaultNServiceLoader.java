@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.extension;
 
+import net.thevpc.nuts.NSupported;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.io.NServiceLoader;
 
@@ -34,7 +35,7 @@ public class DefaultNServiceLoader<T extends NComponent, B> implements NServiceL
         NSupportLevelContext c=new NDefaultSupportLevelContext(session,criteria);
         for (T t : loader) {
             int p = t.getSupportLevel(c);
-            if (p > NComponent.NO_SUPPORT) {
+            if (p > NSupported.NO_SUPPORT) {
                 all.add(t);
             }
         }
@@ -44,11 +45,11 @@ public class DefaultNServiceLoader<T extends NComponent, B> implements NServiceL
     @Override
     public T loadBest(Object criteria) {
         T best = null;
-        int bestVal = NComponent.NO_SUPPORT;
+        int bestVal = NSupported.NO_SUPPORT;
         NSupportLevelContext c=new NDefaultSupportLevelContext(session,criteria);
         for (T t : loader) {
             int p = t.getSupportLevel(c);
-            if (p > NComponent.NO_SUPPORT) {
+            if (p > NSupported.NO_SUPPORT) {
                 if (best == null || bestVal < p) {
                     best = t;
                     bestVal = p;

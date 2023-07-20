@@ -29,7 +29,9 @@ package net.thevpc.nuts.runtime.standalone.xtra.contenttype;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
+import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NContentTypeResolver;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NRef;
 import net.thevpc.nuts.util.NStringUtils;
@@ -45,37 +47,21 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+@NComponentScope(NScopeType.SESSION)
 public class DefaultNContentTypeResolver implements NContentTypeResolver {
-    private Map<String, Set<String>> contentTypesToExtensions;
-    private Map<String, Set<String>> extensionsToContentType;
 
-    public DefaultNContentTypeResolver() {
-        contentTypesToExtensions = new HashMap<>();
-        extensionsToContentType = new HashMap<>();
-        Properties p = new Properties();
-        try (InputStream is = getClass().getResource("/net/thevpc/nuts/runtime/content-types.properties").openStream()) {
-            p.load(is);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-        for (Map.Entry<Object, Object> e : p.entrySet()) {
-            String extension = (String) e.getKey();
-            for (String contentType : NStringUtils.split((String) e.getValue(), ",; ")) {
-                contentTypesToExtensions.computeIfAbsent(contentType, x -> new LinkedHashSet<>())
-                        .add(extension);
-                extensionsToContentType.computeIfAbsent(extension, x -> new LinkedHashSet<>())
-                        .add(contentType);
-            }
-        }
+    private NSession session;
+    public DefaultNContentTypeResolver(NSession session) {
+        this.session=session;
     }
 
-    public NSupported<String> probeContentType(NPath path, NSession session) {
+    public NSupported<String> probeContentType(NPath path) {
         String contentType = null;
         if (path != null) {
             if (path.isRegularFile()) {
                 Path file = path.toPath().orNull();
                 if (file != null) {
-                    contentType = probeFile(file, session);
+                    contentType = probeFile(file);
                 }
             }
             if (contentType == null) {
@@ -99,25 +85,25 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
                 if (contentType == null || "text/plain".equals(contentType)) {
                     String e = NPath.of(Paths.get(name), session).getLastExtension();
                     if (e != null && e.equalsIgnoreCase("ntf")) {
-                        return NSupported.of(DEFAULT_SUPPORT + 10, "text/x-nuts-text-format");
+                        return NSupported.of(NSupported.DEFAULT_SUPPORT + 10, "text/x-nuts-text-format");
                     }
                 }
                 if (contentType == null || "text/plain".equals(contentType)) {
                     String e = NPath.of(Paths.get(name), session).getLastExtension();
                     if (e != null && e.equalsIgnoreCase("nuts")) {
-                        return NSupported.of(DEFAULT_SUPPORT + 10, "application/json");
+                        return NSupported.of(NSupported.DEFAULT_SUPPORT + 10, "application/json");
                     }
                 }
             }
             if (contentType != null) {
-                return NSupported.of(DEFAULT_SUPPORT, contentType);
+                return NSupported.of(NSupported.DEFAULT_SUPPORT, contentType);
             }
         }
 
-        return NSupported.invalid();
+        return NSupported.invalid(s ->NMsg.ofInvalidValue("content-type"));
     }
 
-    private String probeFile(Path file, NSession session) {
+    private String probeFile(Path file) {
         String contentType = null;
         try {
             contentType = Files.probeContentType(file);
@@ -173,7 +159,7 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
 
 
     @Override
-    public NSupported<String> probeContentType(byte[] bytes, NSession session) {
+    public NSupported<String> probeContentType(byte[] bytes) {
         String contentType = null;
         if (bytes != null) {
             try {
@@ -183,26 +169,59 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
             }
         }
         if (contentType != null) {
-            return NSupported.of(DEFAULT_SUPPORT, contentType);
+            return NSupported.of(NSupported.DEFAULT_SUPPORT, contentType);
         }
-        return NSupported.invalid();
+        return NSupported.invalid(s ->NMsg.ofInvalidValue("content-type"));
     }
 
     @Override
-    public List<String> findExtensionsByContentType(String contentType, NSession session) {
-        Set<String> v = contentTypesToExtensions.get(contentType);
+    public List<String> findExtensionsByContentType(String contentType) {
+        Set<String> v = model().contentTypesToExtensions.get(contentType);
         return v == null ? Collections.emptyList() : new ArrayList<>(v);
     }
 
     @Override
-    public List<String> findContentTypesByExtension(String extension, NSession session) {
-        Set<String> v = extensionsToContentType.get(extension);
+    public List<String> findContentTypesByExtension(String extension) {
+        Set<String> v = model().extensionsToContentType.get(extension);
         return v == null ? Collections.emptyList() : new ArrayList<>(v);
     }
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
+    }
+
+    public DefaultNContentTypeResolverModel model(){
+        synchronized (session) {
+            return session.getOrComputeProperty(
+                    DefaultNContentTypeResolverModel.class.getName(), NScopeType.WORKSPACE,
+                    s -> new DefaultNContentTypeResolverModel()
+            );
+        }
+    }
+    public static class DefaultNContentTypeResolverModel{
+        private Map<String, Set<String>> contentTypesToExtensions;
+        private Map<String, Set<String>> extensionsToContentType;
+
+        public DefaultNContentTypeResolverModel() {
+            contentTypesToExtensions = new HashMap<>();
+            extensionsToContentType = new HashMap<>();
+            Properties p = new Properties();
+            try (InputStream is = getClass().getResource("/net/thevpc/nuts/runtime/content-types.properties").openStream()) {
+                p.load(is);
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+            for (Map.Entry<Object, Object> e : p.entrySet()) {
+                String extension = (String) e.getKey();
+                for (String contentType : NStringUtils.split((String) e.getValue(), ",; ")) {
+                    contentTypesToExtensions.computeIfAbsent(contentType, x -> new LinkedHashSet<>())
+                            .add(extension);
+                    extensionsToContentType.computeIfAbsent(extension, x -> new LinkedHashSet<>())
+                            .add(contentType);
+                }
+            }
+        }
     }
 }
 

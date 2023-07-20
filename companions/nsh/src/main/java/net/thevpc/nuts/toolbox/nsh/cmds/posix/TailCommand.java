@@ -47,7 +47,7 @@ import java.util.List;
 public class TailCommand extends NShellBuiltinDefault {
 
     public TailCommand() {
-        super("tail", DEFAULT_SUPPORT, Options.class);
+        super("tail", NSupported.DEFAULT_SUPPORT, Options.class);
     }
 
     @Override

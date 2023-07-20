@@ -62,6 +62,4 @@ public interface NEvents extends NComponent, NSessionProvider {
 
     List<NInstallListener> getInstallListeners();
 
-    NEvents setSession(NSession session);
-
 }

@@ -29,7 +29,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NTextCode;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
@@ -39,11 +39,11 @@ import net.thevpc.nuts.util.NStringUtils;
 /**
  * Created by vpc on 1/7/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class EchoCommand extends NShellBuiltinDefault {
 
     public EchoCommand() {
-        super("echo", DEFAULT_SUPPORT,Options.class);
+        super("echo", NSupported.DEFAULT_SUPPORT,Options.class);
     }
 
     @Override

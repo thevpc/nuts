@@ -43,12 +43,18 @@ import java.util.Set;
 /**
  * Created by vpc on 1/15/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class NshDescriptorContentParserComponent implements NDescriptorContentParserComponent {
 
     public static NId NSH;
     public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("nsh", "sh", "bash"));
-    private NWorkspace ws;
+
+    public NshDescriptorContentParserComponent(NSession session) {
+        if(NSH==null){
+            NSH= NId.of("nsh").get(session);
+        }
+    }
+
     @Override
     public NDescriptor parse(NDescriptorContentParserContext parserContext) {
         if (!POSSIBLE_EXT.contains(parserContext.getFileExtension())) {
@@ -63,10 +69,6 @@ public class NshDescriptorContentParserComponent implements NDescriptorContentPa
 
     @Override
     public int getSupportLevel(NSupportLevelContext criteria) {
-        if(NSH==null){
-            NSession session = criteria.getSession();
-            NSH= NId.of("nsh").get(session);
-        }
         NDescriptorContentParserContext ctr=criteria.getConstraints(NDescriptorContentParserContext.class);
         if(ctr!=null) {
             String e = NStringUtils.trim(ctr.getFileExtension());
@@ -75,11 +77,11 @@ public class NshDescriptorContentParserComponent implements NDescriptorContentPa
                 case "sh":
                 case "nsh":
                 case "bash": {
-                    return DEFAULT_SUPPORT;
+                    return NSupported.DEFAULT_SUPPORT;
                 }
             }
         }
-        return NO_SUPPORT;
+        return NSupported.NO_SUPPORT;
     }
 
     private static String removeBashComment(String str) {

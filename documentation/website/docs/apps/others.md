@@ -5,6 +5,7 @@ sidebar_label: misc
 order: 2000
 ---
 
+
 ## Java Applications
 This is a list of applications that can be installed and run using ```nuts``` 
 

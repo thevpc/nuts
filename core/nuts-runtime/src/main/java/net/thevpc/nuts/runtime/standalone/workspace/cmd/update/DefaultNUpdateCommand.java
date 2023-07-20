@@ -253,7 +253,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
 
         HashSet<NId> baseRegulars = new HashSet<>(ids);
         if (isInstalled()) {
-            baseRegulars.addAll(NSearchCommand.of(getSession()).setSession(getSession())
+            baseRegulars.addAll(NSearchCommand.of(getSession())
                     .setInstallStatus(NInstallStatusFilters.of(getSession()).byInstalled(true))
                     .getResultIds().stream().map(NId::getShortId).collect(Collectors.toList()));
             // This bloc is to handle packages that were installed by their jar/content but was removed for any reason!
@@ -472,7 +472,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
         DefaultNUpdateResult r = new DefaultNUpdateResult();
         r.setId(id.getShortId());
         boolean shouldUpdateDefault = false;
-        NDefinition d0 = NSearchCommand.of(session).addId(id).setSession(session)
+        NDefinition d0 = NSearchCommand.of(session).addId(id)
                 .setInstallStatus(NInstallStatusFilters.of(session).byDeployed(true))
                 .setOptional(false).setFailFast(false)//.setDefaultVersions(true)
                 .sort(DEFAULT_THEN_LATEST_VERSION_FIRST)
@@ -493,8 +493,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
             newAnywhereSession.setExpireTime(now);
         }
 
-        NSearchCommand sc = NSearchCommand.of(session).addId(d0.getId().getShortId())
-                .setSession(newAnywhereSession)
+        NSearchCommand sc = NSearchCommand.of(newAnywhereSession).addId(d0.getId().getShortId())
                 .setFailFast(false)
                 .setLatest(true)
                 .addLockedIds(getLockedIds())
@@ -726,7 +725,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
                     //ignore
                 }
                 try {
-                    newId = NSearchCommand.of(getSession()).setSession(session.copy().setFetchStrategy(NFetchStrategy.ANYWHERE))
+                    newId = NSearchCommand.of(session.copy().setFetchStrategy(NFetchStrategy.ANYWHERE))
                             .setRepositoryFilter(getRepositoryFilter())
                             .addId(NConstants.Ids.NUTS_API + "#" + v).setLatest(true).getResultIds()
                             .findFirst().orNull();
@@ -752,13 +751,12 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
                     }
                 }
                 try {
-                    NSearchCommand se = NSearchCommand.of(getSession())
+                    NSearchCommand se = NSearchCommand.of(session.copy().setFetchStrategy(NFetchStrategy.ANYWHERE))
                             .addId(oldFile != null ? oldFile.getId().builder().setVersion("").build().toString() : NConstants.Ids.NUTS_RUNTIME)
                             .setRuntime(true)
                             .setTargetApiVersion(bootApiVersion)
                             .addLockedIds(getLockedIds())
                             .setLatest(true)
-                            .setSession(session.copy().setFetchStrategy(NFetchStrategy.ANYWHERE))
                             .sort(LATEST_VERSION_FIRST);
                     newId = se.getResultIds()
                             .findFirst().orNull();

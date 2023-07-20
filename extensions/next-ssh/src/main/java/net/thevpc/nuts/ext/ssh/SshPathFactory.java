@@ -26,9 +26,9 @@ public class SshPathFactory implements NPathFactory {
     public int getSupportLevel(NSupportLevelContext context) {
         String path= context.getConstraints();
         if(path.startsWith("ssh:")){
-            return DEFAULT_SUPPORT;
+            return NSupported.DEFAULT_SUPPORT;
         }
-        return NO_SUPPORT;
+        return NSupported.NO_SUPPORT;
     }
 
 }

@@ -159,6 +159,6 @@ public class InternalNRepositoryFilters extends InternalNTypedFilters<NRepositor
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 }

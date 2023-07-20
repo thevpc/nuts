@@ -273,7 +273,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         public NSupported<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
             NSessionUtils.checkSession(ws, session);
             if (path.startsWith(PREFIX)) {
-                return NSupported.of(DEFAULT_SUPPORT, () -> new HtmlfsPath(path, session));
+                return NSupported.of(NSupported.DEFAULT_SUPPORT, () -> new HtmlfsPath(path, session));
             }
             return null;
         }
@@ -283,12 +283,12 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
             String path = context.getConstraints();
             try {
                 if (path.startsWith(PREFIX)) {
-                    return DEFAULT_SUPPORT;
+                    return NSupported.DEFAULT_SUPPORT;
                 }
             } catch (Exception ex) {
                 //ignore
             }
-            return NO_SUPPORT;
+            return NSupported.NO_SUPPORT;
         }
     }
 

@@ -152,7 +152,7 @@ public class DefaultNWorkspaceConfigModel {
         if (NPathFactory.class.isAssignableFrom(componentType)) {
             DefaultNWorkspaceFactory aa = (DefaultNWorkspaceFactory) (((NWorkspaceExt) ws).getModel().extensionModel.getObjectFactory());
             addPathFactory(
-                    (NPathFactory) aa.newInstance(componentType, session, NPathFactory.class)
+                    (NPathFactory) aa.newInstance(componentType, NPathFactory.class, session)
             );
         }
     }

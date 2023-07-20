@@ -26,9 +26,6 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NComponentScopeType;
-
 import java.util.List;
 
 /**

@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.spi.NStreams;
 import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NIterable;
 import net.thevpc.nuts.util.NIterator;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-@NComponentScope(NComponentScopeType.SESSION)
+@NComponentScope(NScopeType.SESSION)
 public class DefaultNStreams implements NStreams {
     private final NSession session;
 
@@ -27,7 +27,7 @@ public class DefaultNStreams implements NStreams {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 
     @Override

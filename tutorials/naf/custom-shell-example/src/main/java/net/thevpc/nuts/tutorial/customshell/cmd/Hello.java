@@ -7,7 +7,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinBase;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 
@@ -21,7 +21,7 @@ import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
  *
  * @author vpc
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class Hello extends NShellBuiltinBase {
 
     /**

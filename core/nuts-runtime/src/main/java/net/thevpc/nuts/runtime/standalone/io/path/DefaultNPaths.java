@@ -104,7 +104,7 @@ public class DefaultNPaths implements NPaths {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 
 
@@ -154,7 +154,7 @@ public class DefaultNPaths implements NPaths {
         if (repositoryId == null) {
             rootFolder = NLocations.of(session).getStoreLocation(NStoreType.TEMP);
         } else {
-            repositoryById = NRepositories.of(session).setSession(session).findRepository(repositoryId).get();
+            repositoryById = NRepositories.of(session).findRepository(repositoryId).get();
             rootFolder = repositoryById.config().setSession(session).getStoreLocation(NStoreType.TEMP);
         }
         NId appId = session.getAppId();

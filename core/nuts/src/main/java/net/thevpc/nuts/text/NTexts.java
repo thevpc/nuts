@@ -42,8 +42,6 @@ public interface NTexts extends NComponent, NSessionProvider {
         return NExtensions.of(session).createComponent(NTexts.class).get();
     }
 
-    NTexts setSession(NSession session);
-
     NTextBuilder ofBuilder();
 
     NText ofBlank();
@@ -148,5 +146,11 @@ public interface NTexts extends NComponent, NSessionProvider {
 
     <T> NFormat createFormat(T object, NTextFormat<T> format);
 
-    <T> NOptional<NTextFormat<T>> createTextFormat(String type, Class<T> expectedType, String pattern);
+    <T> NOptional<NTextFormat<T>> createTextFormat(String type, String pattern, Class<T> expectedType);
+
+    <T> NOptional<NStringFormat<T>> createStringFormat(String type, String pattern, Class<T> expectedType);
+
+    NOptional<NTextFormat<Number>> createNumberTextFormat(String type, String pattern);
+
+    NOptional<NStringFormat<Number>> createNumberStringFormat(String type, String pattern);
 }

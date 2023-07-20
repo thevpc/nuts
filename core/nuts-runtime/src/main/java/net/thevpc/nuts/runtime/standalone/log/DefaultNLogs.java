@@ -1,19 +1,20 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
+import net.thevpc.nuts.NSupported;
 import net.thevpc.nuts.spi.NLogs;
 import net.thevpc.nuts.util.NLog;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
 import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class DefaultNLogs implements NLogs {
 
     private final DefaultNLogModel model;
@@ -104,6 +105,6 @@ public class DefaultNLogs implements NLogs {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 }

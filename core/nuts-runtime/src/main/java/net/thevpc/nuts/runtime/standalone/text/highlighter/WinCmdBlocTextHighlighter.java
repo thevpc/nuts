@@ -5,7 +5,6 @@ import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextPlain;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextStyled;
-import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.*;
 
@@ -129,7 +128,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
     public int getSupportLevel(NSupportLevelContext context) {
         String s = context.getConstraints();
         if (s == null) {
-            return DEFAULT_SUPPORT;
+            return NSupported.DEFAULT_SUPPORT;
         }
         switch (s) {
             case "bat":
@@ -139,24 +138,23 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
             case "powsershell":
             case "powser-shell":
             case "text/x-msdos-batch": {
-                return NComponent.DEFAULT_SUPPORT;
+                return NSupported.DEFAULT_SUPPORT;
             }
             case "system": {
                 switch (NShellFamily.getCurrent()) {
                     case WIN_CMD:
                     case WIN_POWER_SHELL: {
-                        return NComponent.DEFAULT_SUPPORT + 10;
+                        return NSupported.DEFAULT_SUPPORT + 10;
                     }
                 }
-                return NComponent.DEFAULT_SUPPORT;
+                return NSupported.DEFAULT_SUPPORT;
             }
         }
-        return NComponent.NO_SUPPORT;
+        return NSupported.NO_SUPPORT;
     }
 
     @Override
     public NText stringToText(String text, NTexts txt, NSession session) {
-        txt.setSession(session);
         List<NText> all = new ArrayList<>();
         BufferedReader reader = new BufferedReader(new StringReader(text));
         String line = null;
@@ -341,7 +339,6 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
 
     private NText[] parseCommandLine_readDoubleQuotes(StringReaderExt ar, NTexts txt, NSession session) {
         List<NText> ret = new ArrayList<>();
-        txt.setSession(session);
         StringBuilder sb = new StringBuilder();
 
         ret.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.string()));
@@ -380,7 +377,6 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
 
     private NText[] parseCommandLine_readAntiQuotes(StringReaderExt ar, NTexts txt, NSession session) {
         List<NText> all = new ArrayList<>();
-        txt.setSession(session);
         all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
         boolean inLoop = true;
         boolean wasSpace = true;
@@ -403,7 +399,6 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
 
     private NText[] parseCommandLine_readDollarPar(NWorkspace ws, StringReaderExt ar, NTexts txt, NSession session) {
         List<NText> all = new ArrayList<>();
-        txt.setSession(session);
         all.add(txt.ofStyled(String.valueOf(ar.nextChar()) + ar.nextChar(), NTextStyle.separator()));
         boolean inLoop = true;
         boolean wasSpace = false;
@@ -425,7 +420,6 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
 
     private NText[] parseCommandLine_readDollarPar2(StringReaderExt ar, NTexts txt, NSession session) {
         List<NText> all = new ArrayList<>();
-        txt.setSession(session);
         all.add(txt.ofStyled(String.valueOf(ar.nextChar()) + ar.nextChar() + ar.nextChar(), NTextStyle.separator()));
         boolean inLoop = true;
         boolean wasSpace = true;
@@ -461,7 +455,6 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
 
     private NText[] parseCommandLine_readDollarCurlyBrackets(StringReaderExt ar, NTexts txt, NSession session) {
         List<NText> all = new ArrayList<>();
-        txt.setSession(session);
         all.add(txt.ofStyled(String.valueOf(ar.nextChar()) + ar.nextChar(), NTextStyle.separator()));
         boolean inLoop = true;
         int startIndex = 0;
@@ -495,7 +488,6 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
 
     private NText[] parseCommandLine_readPar2(StringReaderExt ar, NTexts txt, NSession session) {
         List<NText> all = new ArrayList<>();
-        txt.setSession(session);
         all.add(txt.ofStyled(String.valueOf(ar.nextChar()) + ar.nextChar(), NTextStyle.separator()));
         boolean inLoop = true;
         boolean wasSpace = true;
@@ -1163,7 +1155,6 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
     }
 
     public NText commandToNode(String text, NTexts txt, NSession session) {
-        txt.setSession(session);
         return txt.ofList(parseCommandLine(text, txt, session));
     }
 

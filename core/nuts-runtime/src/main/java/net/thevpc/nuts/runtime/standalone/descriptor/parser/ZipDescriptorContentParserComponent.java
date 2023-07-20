@@ -42,7 +42,7 @@ import java.util.Set;
 /**
  * Created by vpc on 1/15/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class ZipDescriptorContentParserComponent implements NDescriptorContentParserComponent {
 
     public static final Set<String> POSSIBLE_PATHS = new LinkedHashSet<>(Arrays.asList(
@@ -59,10 +59,10 @@ public class ZipDescriptorContentParserComponent implements NDescriptorContentPa
         if(constraints!=null) {
             String e = NStringUtils.trim(constraints.getFileExtension());
             if (!POSSIBLE_EXT.contains(e)) {
-                return NO_SUPPORT;
+                return NSupported.NO_SUPPORT;
             }
         }
-        return NO_SUPPORT;
+        return NSupported.NO_SUPPORT;
     }
 
     @Override

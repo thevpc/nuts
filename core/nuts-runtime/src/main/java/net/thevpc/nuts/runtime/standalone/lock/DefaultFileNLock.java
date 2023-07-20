@@ -6,12 +6,14 @@ import net.thevpc.nuts.concurrent.NLockAcquireException;
 import net.thevpc.nuts.concurrent.NLockBarrierException;
 import net.thevpc.nuts.concurrent.NLockReleaseException;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NPs;
 import net.thevpc.nuts.runtime.standalone.util.TimePeriod;
 import net.thevpc.nuts.util.NAssert;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 
@@ -193,6 +195,15 @@ public class DefaultFileNLock implements NLock {
                 NPath p = NPath.of(path, session);
                 p.mkParentDirs();
                 Files.createFile(path);
+                NEnvs e = NEnvs.of(session);
+                Date now = new Date();
+                Files.write(path,
+                        (
+                                "hostname=" + e.getHostName() + "\n"
+                                        + "pid=" + e.getPid() + "\n"
+                                        + "time=" + now.getTime() + "\n"
+                                        + "date=" + now + "\n"
+                        ).getBytes());
                 return true;
             }
         } catch (IOException ex) {

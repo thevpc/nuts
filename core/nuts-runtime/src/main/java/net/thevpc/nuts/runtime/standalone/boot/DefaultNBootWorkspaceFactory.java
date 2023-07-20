@@ -25,11 +25,11 @@
 */
 package net.thevpc.nuts.runtime.standalone.boot;
 
+import net.thevpc.nuts.NSupported;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.spi.NBootWorkspaceFactory;
-import net.thevpc.nuts.spi.NComponent;
 
 /**
  * Created by vpc on 1/5/17.
@@ -41,7 +41,7 @@ public class DefaultNBootWorkspaceFactory implements NBootWorkspaceFactory {
 
     @Override
     public int getBootSupportLevel(NBootOptions options) {
-        return NComponent.DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 
     @Override

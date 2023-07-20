@@ -692,7 +692,8 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                     ));
                     traceSession.out().flush();
                 }
-                ff = NSearchCommand.of(traceSession).addId(nid).setSession(traceSession.copy().setFetchStrategy(NFetchStrategy.ONLINE))
+                ff = NSearchCommand.of(traceSession.copy().setFetchStrategy(NFetchStrategy.ONLINE))
+                        .addId(nid)
                         .setOptional(false).setFailFast(false)
                         .setLatest(true)
                         //                        .configure(true,"--trace-monitor")

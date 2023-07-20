@@ -94,6 +94,6 @@ public class DefaultNCmdLineFormat extends DefaultFormatBase<NCmdLineFormat> imp
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 }

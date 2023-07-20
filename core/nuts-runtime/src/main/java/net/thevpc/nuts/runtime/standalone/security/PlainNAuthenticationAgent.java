@@ -6,7 +6,7 @@ import net.thevpc.nuts.spi.*;
 import java.util.Arrays;
 import java.util.Map;
 
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class PlainNAuthenticationAgent implements NAuthenticationAgent {
 
     private NWorkspace ws;
@@ -61,7 +61,7 @@ public class PlainNAuthenticationAgent implements NAuthenticationAgent {
 
     @Override
     public int getSupportLevel(NSupportLevelContext authenticationAgent) {
-        return DEFAULT_SUPPORT - 1;
+        return NSupported.DEFAULT_SUPPORT - 1;
     }
 
     private char[] extractId(char[] a, NSession session) {

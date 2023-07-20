@@ -36,7 +36,7 @@ import net.thevpc.nuts.util.NLog;
 /**
  * Created by vpc on 1/23/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeComponent {
     private NLog LOG;
 
@@ -128,7 +128,7 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 
     @Override
     public int getSupportLevel(NSupportLevelContext criteria) {
-        return DEFAULT_SUPPORT + 2;
+        return NSupported.DEFAULT_SUPPORT + 2;
     }
 
 }

@@ -40,7 +40,7 @@ import java.net.URL;
 /**
  * Created by vpc on 1/21/17.
  */
-@NComponentScope(NComponentScopeType.SESSION)
+@NComponentScope(NScopeType.SESSION)
 public class DefaultHttpTransportComponent implements NTransportComponent {
 
     public static final NTransportComponent INSTANCE = new DefaultHttpTransportComponent();
@@ -48,7 +48,7 @@ public class DefaultHttpTransportComponent implements NTransportComponent {
     @Override
     public int getSupportLevel(NSupportLevelContext url) {
         session=url.getSession();
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 
     @Override

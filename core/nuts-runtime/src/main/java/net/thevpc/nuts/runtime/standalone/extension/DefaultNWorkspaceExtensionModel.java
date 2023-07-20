@@ -364,7 +364,6 @@ public class DefaultNWorkspaceExtensionModel {
                 } else {
                     //load extension
                     NDefinition def = NSearchCommand.of(session)
-                            .setSession(session)
                             .addId(extension).setTargetApiVersion(ws.getApiVersion())
                             .setContent(true)
                             .setDependencies(true)
@@ -402,7 +401,6 @@ public class DefaultNWorkspaceExtensionModel {
         loadedExtensionURLs.clear();
         for (NDefinition def : NSearchCommand.of(session).addIds(loadedExtensionIds.toArray(new NId[0]))
                 .setTargetApiVersion(ws.getApiVersion())
-                .setSession(session)
                 .setContent(true)
                 .setDependencies(true)
                 .setDependencyFilter(NDependencyFilters.of(session).byRunnable())

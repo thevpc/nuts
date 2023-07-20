@@ -8,6 +8,7 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NDuration;
 import net.thevpc.nuts.util.NDurationFormatMode;
 import net.thevpc.nuts.util.NStringUtils;
@@ -206,6 +207,12 @@ public class DefaultNDurationFormat2 {
 
     public NText format(NDuration duration, NSession session) {
         NTextBuilder sb = NTextBuilder.of(session);
+        print(duration, sb);
+        return sb.toText();
+    }
+
+    public NText format(NDuration duration, NTexts texts) {
+        NTextBuilder sb = texts.ofBuilder();
         print(duration, sb);
         return sb.toText();
     }

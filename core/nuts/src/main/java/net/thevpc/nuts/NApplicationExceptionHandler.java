@@ -49,5 +49,5 @@ public interface NApplicationExceptionHandler extends NComponent {
      * @param session session
      * @return return exit code
      */
-    int processThrowable(String[] args, Throwable throwable, NSession session);
+    int processThrowable(String[] args, Throwable throwable);
 }

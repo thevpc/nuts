@@ -75,7 +75,6 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                                         )
                         );
                 NExecCommand cmd = NExecCommand.of(session)
-                        .setSession(executionContext.getSession())
                         .setCommandDefinition(def2)
                         .addCommand("--nuts-exec-mode=" + mode);
                 if (mode.equals("install")) {
@@ -120,7 +119,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
 
     @Override
     public int getSupportLevel(NSupportLevelContext criteria) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 
 

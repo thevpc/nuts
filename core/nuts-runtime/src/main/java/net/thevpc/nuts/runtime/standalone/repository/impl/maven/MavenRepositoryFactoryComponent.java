@@ -37,7 +37,7 @@ import java.util.List;
 /**
  * Created by vpc on 1/15/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class MavenRepositoryFactoryComponent implements NRepositoryFactoryComponent {
 
     @Override
@@ -74,22 +74,22 @@ public class MavenRepositoryFactoryComponent implements NRepositoryFactoryCompon
     @Override
     public int getSupportLevel(NSupportLevelContext criteria) {
         if (criteria == null) {
-            return NO_SUPPORT;
+            return NSupported.NO_SUPPORT;
         }
         NSession session = criteria.getSession();
         NRepositoryConfig r = criteria.getConstraints(NRepositoryConfig.class);
         if (r != null) {
             String type = NRepositoryUtils.getRepoType(r, session);
             if (NBlankable.isBlank(type)) {
-                return NO_SUPPORT;
+                return NSupported.NO_SUPPORT;
             }
             if (NConstants.RepoTypes.MAVEN.equals(type)) {
-                return DEFAULT_SUPPORT + 10;
+                return NSupported.DEFAULT_SUPPORT + 10;
             }
             if (NBlankable.isBlank(type)) {
-                return DEFAULT_SUPPORT + 5;
+                return NSupported.DEFAULT_SUPPORT + 5;
             }
         }
-        return NO_SUPPORT;
+        return NSupported.NO_SUPPORT;
     }
 }

@@ -332,7 +332,6 @@ public class NJavaSdkUtils {
             final int MAX_ITER = 5;
             for (int i = 0; i < MAX_ITER; i++) {
                 NExecCommand cmd = NExecCommand.of(session)
-                        .setSession(session)
                         .setExecutionType(NExecutionType.SYSTEM)
                         .addCommand(javaExePath.toString(), "-version")
                         .redirectErrorStream()

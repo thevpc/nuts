@@ -13,6 +13,8 @@ import net.thevpc.nuts.runtime.standalone.io.progress.SingletonNInputStreamProgr
 import net.thevpc.nuts.runtime.standalone.io.util.*;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
@@ -30,6 +32,7 @@ import java.util.logging.Level;
 /**
  * @author thevpc
  */
+@NComponentScope(NScopeType.PROTOTYPE)
 public class DefaultNCp implements NCp {
 
     private final NWorkspace ws;
@@ -72,7 +75,7 @@ public class DefaultNCp implements NCp {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 
     protected NLogOp _LOGOP(NSession session) {
@@ -572,7 +575,7 @@ public class DefaultNCp implements NCp {
                     return null;
                 }
             }
-            try (InputStream in = NIO.of(session).ofInterruptible(Files.newInputStream(source))) {
+            try (InputStream in = NIO.of(session).ofInputStreamBuilder(Files.newInputStream(source)).setInterruptible(true).createInputStream()) {
                 interruptibleInstance = (NInterruptible) in;
                 try (OutputStream out = Files.newOutputStream(target)) {
                     transferTo(in, out);
@@ -586,7 +589,7 @@ public class DefaultNCp implements NCp {
     public long copy(InputStream in, Path target, Set<NPathOption> options)
             throws IOException {
         if (options.contains(NPathOption.INTERRUPTIBLE)) {
-            in = NIO.of(session).ofInterruptible(in);
+            in = NIO.of(session).ofInputStreamBuilder(in).setInterruptible(true).createInputStream();
             interruptibleInstance = (NInterruptible) in;
             try (OutputStream out = Files.newOutputStream(target)) {
                 return transferTo(in, out);
@@ -598,7 +601,7 @@ public class DefaultNCp implements NCp {
     public long copy(InputStream in, OutputStream out, Set<NPathOption> options)
             throws IOException {
         if (options.contains(NPathOption.INTERRUPTIBLE)) {
-            in = NIO.of(session).ofInterruptible(in);
+            in = NIO.of(session).ofInputStreamBuilder(in).setInterruptible(true).createInputStream();
             interruptibleInstance = (NInterruptible) in;
             return transferTo(in, out);
         }
@@ -607,7 +610,7 @@ public class DefaultNCp implements NCp {
 
     public long copy(Path source, OutputStream out) throws IOException {
         if (options.contains(NPathOption.INTERRUPTIBLE)) {
-            try (InputStream in = NIO.of(session).ofInterruptible(Files.newInputStream(source))) {
+            try (InputStream in = NIO.of(session).ofInputStreamBuilder(Files.newInputStream(source)).setInterruptible(true).createInputStream()) {
                 interruptibleInstance = (NInterruptible) in;
                 try {
                     return transferTo(in, out);

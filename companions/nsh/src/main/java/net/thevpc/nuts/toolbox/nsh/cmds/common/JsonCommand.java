@@ -32,7 +32,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellContext;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
@@ -54,11 +54,11 @@ import java.util.List;
 /**
  * Created by vpc on 1/7/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class JsonCommand extends NShellBuiltinDefault {
 
     public JsonCommand() {
-        super("json", DEFAULT_SUPPORT, Options.class);
+        super("json", NSupported.DEFAULT_SUPPORT, Options.class);
     }
 
     @Override

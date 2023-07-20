@@ -33,7 +33,7 @@ public class DefaultNPs implements NPs {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 
     protected void checkSession() {

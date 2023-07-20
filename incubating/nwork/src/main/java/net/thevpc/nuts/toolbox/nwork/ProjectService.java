@@ -206,7 +206,7 @@ public class ProjectService {
                 List<NDefinition> found = NSearchCommand.of(s)
                         .addId(sid)
                         .addRepositoryFilter(NRepositoryFilters.of(s).byName(nutsRepository))
-                        .setLatest(true).setSession(s).setContent(true).getResultDefinitions().toList();
+                        .setLatest(true).setContent(true).getResultDefinitions().toList();
                 if (found.size() > 0) {
                     NPath p = found.get(0).getContent().orNull();
                     if (p == null) {
@@ -256,7 +256,7 @@ public class ProjectService {
                         List<NId> found = NSearchCommand.of(s)
                                 .addId(g.getId().getGroupId() + ":" + g.getId().getArtifactId())
                                 .addRepositoryFilter(NRepositoryFilters.of(s).byName(nutsRepository))
-                                .setLatest(true).setSession(s).getResultIds().toList();
+                                .setLatest(true).getResultIds().toList();
                         if (found.size() > 0) {
                             return found.get(0).getVersion().toString();
                         }

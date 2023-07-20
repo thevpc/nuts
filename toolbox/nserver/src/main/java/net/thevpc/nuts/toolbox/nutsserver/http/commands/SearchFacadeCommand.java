@@ -53,8 +53,7 @@ public class SearchFacadeCommand extends AbstractFacadeCommand {
                     break;
             }
         }
-        Iterator<NId> it = NSearchCommand.of(context.getSession())
-                .setSession(context.getSession().setTransitive(transitive))
+        Iterator<NId> it = NSearchCommand.of(context.getSession().setTransitive(transitive))
                 .addScripts(js).addId(pattern).getResultIds().iterator();
 //                    Writer ps = new OutputStreamWriter(context.getResponseBody());
         context.sendResponseText(200, NServerUtils.iteratorNutsIdToString(it));

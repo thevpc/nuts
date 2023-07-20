@@ -31,7 +31,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathPermission;
 import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 
@@ -40,11 +40,11 @@ import java.util.*;
 /**
  * Created by vpc on 1/7/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NScopeType.WORKSPACE)
 public class ChmodCommand extends NShellBuiltinDefault {
 
     public ChmodCommand() {
-        super("chmod", DEFAULT_SUPPORT,Options.class);
+        super("chmod", NSupported.DEFAULT_SUPPORT,Options.class);
     }
 
 

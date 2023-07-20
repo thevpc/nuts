@@ -627,7 +627,6 @@ public class DefaultNSearchCommand extends AbstractNSearchCommand {
                     if (nutsId.getGroupId() == null) {
                         //now will look with *:artifactId pattern
                         NSearchCommand search2 = NSearchCommand.of(session)
-                                .setSession(session)
                                 .setRepositoryFilter(search.getRepositoryFilter())
                                 .setDescriptorFilter(search.getDescriptorFilter());
                         search2.setIdFilter(

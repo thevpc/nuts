@@ -51,7 +51,7 @@ public class ArtifactExecutorComponent implements NExecutorComponent {
 
     @Override
     public int getSupportLevel(NSupportLevelContext nutsDefinition) {
-        return NO_SUPPORT;
+        return NSupported.NO_SUPPORT;
     }
 
     public int exec(NExecutionContext executionContext) {
@@ -75,7 +75,6 @@ public class ArtifactExecutorComponent implements NExecutorComponent {
 //        File directory = NutsBlankable.isBlank(dir) ? null : new File(executionContext.getWorkspace().io().expandPath(dir));
         return NExecCommand.of(executionContext.getSession().setDry(dry))
                 .addCommand(app)
-                .setSession(executionContext.getSession())
                 .setEnv(executionContext.getEnv())
                 .setDirectory(executionContext.getDirectory())
                 .setFailFast(true)

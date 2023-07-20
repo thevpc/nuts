@@ -13,11 +13,10 @@ import net.thevpc.nuts.text.NTerminalCommand;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.util.NLog;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
 
-@NComponentScope(NComponentScopeType.PROTOTYPE)
+@NComponentScope(NScopeType.PROTOTYPE)
 public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
 
     private final Scanner scanner;
@@ -75,7 +74,7 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
 
     @Override
     public int getSupportLevel(NSupportLevelContext criteria) {
-        return DEFAULT_SUPPORT;
+        return NSupported.DEFAULT_SUPPORT;
     }
 
     public String readLine(NPrintStream out, NMsg message, NSession session) {

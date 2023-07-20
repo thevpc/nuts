@@ -32,7 +32,7 @@ public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImp
             );
         }
         if(m==null){
-            m=NMsg.ofPlain("missing value");
+            m=NMsg.ofMissingValue();
         }
         return m;
     }
