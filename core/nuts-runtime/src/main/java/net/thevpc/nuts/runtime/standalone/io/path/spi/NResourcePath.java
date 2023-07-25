@@ -280,6 +280,15 @@ public class NResourcePath implements NPathSPI {
     }
 
     @Override
+    public String getCharset(NPath basePath) {
+        NPath up = toURLPath();
+        if (up != null) {
+            return up.getCharset();
+        }
+        return null;
+    }
+
+    @Override
     public String getLocation(NPath basePath) {
         return location;
     }
@@ -583,11 +592,11 @@ public class NResourcePath implements NPathSPI {
         }
 
         @Override
-        public NSupported<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
+        public NCallableSupport<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
             NSessionUtils.checkSession(ws, session);
             try {
                 if (path.startsWith("nuts-resource:")) {
-                    return NSupported.of(NSupported.DEFAULT_SUPPORT, () -> new NResourcePath(path, session));
+                    return NCallableSupport.of(NCallableSupport.DEFAULT_SUPPORT, () -> new NResourcePath(path, session));
                 }
             } catch (Exception ex) {
                 //ignore
@@ -599,9 +608,9 @@ public class NResourcePath implements NPathSPI {
         public int getSupportLevel(NSupportLevelContext context) {
             String path= context.getConstraints();
             if (path.startsWith("nuts-resource:")) {
-                return NSupported.DEFAULT_SUPPORT;
+                return NCallableSupport.DEFAULT_SUPPORT;
             }
-            return NSupported.NO_SUPPORT;
+            return NCallableSupport.NO_SUPPORT;
         }
     }
 

@@ -382,6 +382,26 @@ public class URLPath implements NPathSPI {
     }
 
     @Override
+    public String getCharset(NPath basePath) {
+        if (url == null) {
+            return null;
+        }
+        NPath f = asFilePath(basePath);
+        if (f != null) {
+            return f.getContentType();
+        }
+        try {
+            CacheInfo a = cachedHeader.getValue(session);
+            if (a != null) {
+                return a.contentEncoding;
+            }
+        } catch (Exception e) {
+            //
+        }
+        return NContentTypes.of(session).probeCharset(basePath);
+    }
+
+    @Override
     public String getLocation(NPath basePath) {
         return url == null ? null : url.getFile();
     }
@@ -816,14 +836,14 @@ public class URLPath implements NPathSPI {
         }
 
         @Override
-        public NSupported<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
+        public NCallableSupport<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
             NSessionUtils.checkSession(ws, session);
             try {
                 if (path != null && path.length() > 0) {
                     char s = path.charAt(0);
                     if (Character.isAlphabetic(s)) {
                         URL url = new URL(path);
-                        return NSupported.of(5, () -> new URLPath(url, session));
+                        return NCallableSupport.of(5, () -> new URLPath(url, session));
                     }
                 }
             } catch (Exception ex) {
@@ -849,7 +869,7 @@ public class URLPath implements NPathSPI {
                     }
                 }
             }
-            return NSupported.NO_SUPPORT;
+            return NCallableSupport.NO_SUPPORT;
         }
     }
 

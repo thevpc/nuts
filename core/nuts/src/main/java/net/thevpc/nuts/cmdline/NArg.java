@@ -68,7 +68,13 @@ public interface NArg extends NLiteral {
      * @return non null key as string
      */
     String key();
-    
+
+    /**
+     * equivalent to getStringValue().orElse(null)
+     * @return string as string
+     */
+    String value();
+
     NOptional<String> getStringKey();
 
     NOptional<String> getStringValue();

@@ -23,7 +23,7 @@ public class DefaultCommands implements NCommands {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NSupported.DEFAULT_SUPPORT;
+        return NCallableSupport.DEFAULT_SUPPORT;
     }
 
     private void checkSession() {

@@ -44,6 +44,11 @@ public class NPathFromSPI extends NPathBase {
     }
 
     @Override
+    public String getCharset() {
+        return base.getCharset(this);
+    }
+
+    @Override
     public String getName() {
         String n = base.getName(this);
         if (n == null) {

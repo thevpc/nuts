@@ -84,7 +84,7 @@ public class DefaultNDescriptorContentParserContext implements NDescriptorConten
             }
         }
         return CoreIOUtils.createBytesStream(bytes, NMsg.ofC("%s", file), file.getContentType(),
-                file.getMetaData().getKind().orNull(), session);
+                file.getCharset(), file.getMetaData().getKind().orNull(), session);
     }
 
     @Override

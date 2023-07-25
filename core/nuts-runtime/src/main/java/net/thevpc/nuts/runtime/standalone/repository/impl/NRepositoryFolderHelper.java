@@ -35,6 +35,7 @@ import net.thevpc.nuts.util.NIterator;
 import net.thevpc.nuts.util.NLog;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
@@ -443,7 +444,7 @@ public class NRepositoryFolderHelper {
                                             NMsg.ofC("sha1://%s", desc.getId()),
                                             (long) bytes.length,
                                             CoreIOUtils.MIME_TYPE_SHA1,
-                                            "descriptor hash"
+                                    StandardCharsets.UTF_8.name(), "descriptor hash"
                                     )
                             )
                     ).to(descFile.resolveSibling(descFile.getName() + ".sha1")).addOptions(NPathOption.SAFE).run();
@@ -489,7 +490,7 @@ public class NRepositoryFolderHelper {
                     CoreIOUtils.createBytesStream(NDigestUtils.evalSHA1Hex(pckFile, session).getBytes(),
                             NMsg.ofC("sha1://%s", id),
                             CoreIOUtils.MIME_TYPE_SHA1,
-                            null,
+                            StandardCharsets.UTF_8.name(), null,
                             session
                     )
             ).to(pckFile.resolveSibling(pckFile.getName() + ".sha1")).addOptions(NPathOption.SAFE).run();

@@ -32,7 +32,7 @@ public class CppCodeHighlighter implements NCodeHighlighter {
     public int getSupportLevel(NSupportLevelContext context) {
         String s = context.getConstraints();
         if(s==null){
-            return NSupported.DEFAULT_SUPPORT;
+            return NCallableSupport.DEFAULT_SUPPORT;
         }
         switch (s){
             case "c":
@@ -45,10 +45,10 @@ public class CppCodeHighlighter implements NCodeHighlighter {
             case "text/x-c++src":
             case "text/x-cppsrc":
             {
-                return NSupported.DEFAULT_SUPPORT;
+                return NCallableSupport.DEFAULT_SUPPORT;
             }
         }
-        return NSupported.NO_SUPPORT;
+        return NCallableSupport.NO_SUPPORT;
     }
 
     @Override

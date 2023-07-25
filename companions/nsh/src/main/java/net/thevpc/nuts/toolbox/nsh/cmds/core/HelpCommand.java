@@ -50,7 +50,7 @@ import java.util.function.Function;
 public class HelpCommand extends NShellBuiltinCore {
 
     public HelpCommand() {
-        super("help", NSupported.DEFAULT_SUPPORT, Options.class);
+        super("help", NCallableSupport.DEFAULT_SUPPORT, Options.class);
     }
 
     @Override

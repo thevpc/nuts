@@ -47,7 +47,7 @@ import net.thevpc.nuts.util.NStringUtils;
 public class GrepCommand extends NShellBuiltinDefault {
 
     public GrepCommand() {
-        super("grep", NSupported.DEFAULT_SUPPORT, GrepOptions.class);
+        super("grep", NCallableSupport.DEFAULT_SUPPORT, GrepOptions.class);
     }
 
 

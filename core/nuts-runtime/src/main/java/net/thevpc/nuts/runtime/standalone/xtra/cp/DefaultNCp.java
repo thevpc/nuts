@@ -75,7 +75,7 @@ public class DefaultNCp implements NCp {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NSupported.DEFAULT_SUPPORT;
+        return NCallableSupport.DEFAULT_SUPPORT;
     }
 
     protected NLogOp _LOGOP(NSession session) {

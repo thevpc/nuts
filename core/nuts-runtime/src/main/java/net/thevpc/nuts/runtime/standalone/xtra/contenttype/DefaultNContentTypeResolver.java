@@ -55,7 +55,7 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
         this.session=session;
     }
 
-    public NSupported<String> probeContentType(NPath path) {
+    public NCallableSupport<String> probeContentType(NPath path) {
         String contentType = null;
         if (path != null) {
             if (path.isRegularFile()) {
@@ -85,22 +85,22 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
                 if (contentType == null || "text/plain".equals(contentType)) {
                     String e = NPath.of(Paths.get(name), session).getLastExtension();
                     if (e != null && e.equalsIgnoreCase("ntf")) {
-                        return NSupported.of(NSupported.DEFAULT_SUPPORT + 10, "text/x-nuts-text-format");
+                        return NCallableSupport.of(NCallableSupport.DEFAULT_SUPPORT + 10, "text/x-nuts-text-format");
                     }
                 }
                 if (contentType == null || "text/plain".equals(contentType)) {
                     String e = NPath.of(Paths.get(name), session).getLastExtension();
                     if (e != null && e.equalsIgnoreCase("nuts")) {
-                        return NSupported.of(NSupported.DEFAULT_SUPPORT + 10, "application/json");
+                        return NCallableSupport.of(NCallableSupport.DEFAULT_SUPPORT + 10, "application/json");
                     }
                 }
             }
             if (contentType != null) {
-                return NSupported.of(NSupported.DEFAULT_SUPPORT, contentType);
+                return NCallableSupport.of(NCallableSupport.DEFAULT_SUPPORT, contentType);
             }
         }
 
-        return NSupported.invalid(s ->NMsg.ofInvalidValue("content-type"));
+        return NCallableSupport.invalid(s ->NMsg.ofInvalidValue("content-type"));
     }
 
     private String probeFile(Path file) {
@@ -159,7 +159,7 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
 
 
     @Override
-    public NSupported<String> probeContentType(byte[] bytes) {
+    public NCallableSupport<String> probeContentType(byte[] bytes) {
         String contentType = null;
         if (bytes != null) {
             try {
@@ -169,9 +169,9 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
             }
         }
         if (contentType != null) {
-            return NSupported.of(NSupported.DEFAULT_SUPPORT, contentType);
+            return NCallableSupport.of(NCallableSupport.DEFAULT_SUPPORT, contentType);
         }
-        return NSupported.invalid(s ->NMsg.ofInvalidValue("content-type"));
+        return NCallableSupport.invalid(s ->NMsg.ofInvalidValue("content-type"));
     }
 
     @Override
@@ -188,7 +188,7 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NSupported.DEFAULT_SUPPORT;
+        return NCallableSupport.DEFAULT_SUPPORT;
     }
 
     public DefaultNContentTypeResolverModel model(){

@@ -15,7 +15,6 @@ import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NProgressListener;
 
 import java.io.*;
 
@@ -47,7 +46,7 @@ public class DefaultNIO implements NIO {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NSupported.DEFAULT_SUPPORT;
+        return NCallableSupport.DEFAULT_SUPPORT;
     }
 
     private DefaultNBootModel getBootModel() {
@@ -234,7 +233,7 @@ public class DefaultNIO implements NIO {
             } else {
                 str = NTexts.of(session).ofStyled(inputStream.toString(), NTextStyle.path());
             }
-            metadata = new DefaultNContentMetadata(NMsg.ofNtf(str), contentLength, null, null);
+            metadata = new DefaultNContentMetadata(NMsg.ofNtf(str), contentLength, null, null, null);
         }
 
         InputStream inputStreamExt = ofInputStreamBuilder(inputStream).setMetadata(metadata).createInputStream();

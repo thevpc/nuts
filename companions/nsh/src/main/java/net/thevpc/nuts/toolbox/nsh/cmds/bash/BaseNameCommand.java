@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
-import net.thevpc.nuts.NSupported;
+import net.thevpc.nuts.NCallableSupport;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
@@ -44,7 +44,7 @@ import java.util.List;
 public class BaseNameCommand extends NShellBuiltinDefault {
 
     public BaseNameCommand() {
-        super("basename", NSupported.DEFAULT_SUPPORT, Options.class);
+        super("basename", NCallableSupport.DEFAULT_SUPPORT, Options.class);
     }
 
     @Override

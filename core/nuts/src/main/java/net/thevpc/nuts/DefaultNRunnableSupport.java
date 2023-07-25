@@ -11,36 +11,25 @@ import java.util.function.Supplier;
 /**
  * Default implementation of NutsSupported
  *
- * @param <T> value type
  * @author thevpc
  */
-public class DefaultNSupported<T> implements NSupported<T> {
-    private final Supplier<T> value;
+public class DefaultNRunnableSupport implements NRunnableSupport {
+    private final Runnable value;
     private final int supportLevel;
     private final Function<NSession, NMsg> emptyMessage;
 
-    public DefaultNSupported(Supplier<T> value, int supportLevel, Function<NSession, NMsg> emptyMessage) {
+    public DefaultNRunnableSupport(Runnable value, int supportLevel, Function<NSession, NMsg> emptyMessage) {
         this.value = value;
         this.supportLevel = supportLevel;
         this.emptyMessage = emptyMessage==null?session ->NMsg.ofInvalidValue():emptyMessage;
     }
 
-    public T getValue() {
-        return value == null ? null : value.get();
+    public void run() {
+        value.run();
     }
 
     public int getSupportLevel() {
         return supportLevel;
     }
 
-    @Override
-    public NOptional<T> toOptional() {
-        if(isValid()){
-            T v = getValue();
-            if(v!=null){
-                return NOptional.of(v);
-            }
-        }
-        return NOptional.ofEmpty(emptyMessage);
-    }
 }

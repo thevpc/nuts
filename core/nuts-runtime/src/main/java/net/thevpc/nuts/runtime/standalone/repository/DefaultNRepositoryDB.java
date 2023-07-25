@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.repository;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NStoreType;
-import net.thevpc.nuts.NSupported;
+import net.thevpc.nuts.NCallableSupport;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NRepositoryDB;
 import net.thevpc.nuts.spi.NRepositoryLocation;
@@ -106,6 +106,6 @@ public class DefaultNRepositoryDB implements NRepositoryDB {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NSupported.DEFAULT_SUPPORT;
+        return NCallableSupport.DEFAULT_SUPPORT;
     }
 }

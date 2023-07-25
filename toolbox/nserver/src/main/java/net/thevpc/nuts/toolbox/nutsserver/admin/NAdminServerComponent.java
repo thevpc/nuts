@@ -51,7 +51,7 @@ public class NAdminServerComponent implements NServerComponent {
     @Override
     public int getSupportLevel(NSupportLevelContext config) {
         ServerConfig c = config.getConstraints();
-        return (c == null || c instanceof AdminServerConfig) ? NSupported.DEFAULT_SUPPORT : NSupported.NO_SUPPORT;
+        return (c == null || c instanceof AdminServerConfig) ? NCallableSupport.DEFAULT_SUPPORT : NCallableSupport.NO_SUPPORT;
     }
 
     public NServer start(NSession session, ServerConfig config) {

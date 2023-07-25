@@ -74,7 +74,7 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
 
     @Override
     public int getSupportLevel(NSupportLevelContext criteria) {
-        return NSupported.DEFAULT_SUPPORT;
+        return NCallableSupport.DEFAULT_SUPPORT;
     }
 
     public String readLine(NPrintStream out, NMsg message, NSession session) {

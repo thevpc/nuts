@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NContentTypes;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.spi.NCharsetResolver;
 import net.thevpc.nuts.spi.NContentTypeResolver;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
@@ -44,9 +45,9 @@ public class DefaultNContentTypes implements NContentTypes {
     public String probeContentType(NPath path) {
         List<NContentTypeResolver> allSupported = session.extensions()
                 .createComponents(NContentTypeResolver.class, path);
-        NSupported<String> best = null;
+        NCallableSupport<String> best = null;
         for (NContentTypeResolver r : allSupported) {
-            NSupported<String> s = r.probeContentType(path);
+            NCallableSupport<String> s = r.probeContentType(path);
             if (s != null && s.isValid()) {
                 if (best == null || s.getSupportLevel() > best.getSupportLevel()) {
                     best = s;
@@ -56,7 +57,7 @@ public class DefaultNContentTypes implements NContentTypes {
         if (best == null) {
             return null;
         }
-        return best.getValue();
+        return best.call();
     }
 
     @Override
@@ -97,9 +98,9 @@ public class DefaultNContentTypes implements NContentTypes {
     public String probeContentType(byte[] bytes) {
         List<NContentTypeResolver> allSupported = session.extensions()
                 .createComponents(NContentTypeResolver.class, bytes);
-        NSupported<String> best = null;
+        NCallableSupport<String> best = null;
         for (NContentTypeResolver r : allSupported) {
-            NSupported<String> s = r.probeContentType(bytes);
+            NCallableSupport<String> s = r.probeContentType(bytes);
             if (s != null && s.isValid()) {
                 if (best == null || s.getSupportLevel() > best.getSupportLevel()) {
                     best = s;
@@ -109,12 +110,71 @@ public class DefaultNContentTypes implements NContentTypes {
         if (best == null) {
             return null;
         }
-        return best.getValue();
+        return best.call();
+    }
+
+    @Override
+    public String probeCharset(URL path) {
+        return probeCharset(path == null ? null : NPath.of(path, session));
+    }
+
+    @Override
+    public String probeCharset(File path) {
+        return probeCharset(path == null ? null : NPath.of(path, session));
+    }
+
+    @Override
+    public String probeCharset(Path path) {
+        return probeCharset(path == null ? null : NPath.of(path, session));
+    }
+
+    @Override
+    public String probeCharset(NPath path) {
+        List<NCharsetResolver> allSupported = session.extensions()
+                .createComponents(NCharsetResolver.class, path);
+        NCallableSupport<String> best = null;
+        for (NCharsetResolver r : allSupported) {
+            NCallableSupport<String> s = r.probeCharset(path);
+            if (s != null && s.isValid()) {
+                if (best == null || s.getSupportLevel() > best.getSupportLevel()) {
+                    best = s;
+                }
+            }
+        }
+        if (best == null) {
+            return null;
+        }
+        return best.call();
+    }
+
+    @Override
+    public String probeCharset(InputStream stream) {
+        byte[] buffer = CoreIOUtils.readBestEffort(4096*10, stream, session);
+        return probeCharset(buffer);
+    }
+
+    @Override
+    public String probeCharset(byte[] bytes) {
+        List<NCharsetResolver> allSupported = session.extensions()
+                .createComponents(NCharsetResolver.class, bytes);
+        NCallableSupport<String> best = null;
+        for (NCharsetResolver r : allSupported) {
+            NCallableSupport<String> s = r.probeCharset(bytes);
+            if (s != null && s.isValid()) {
+                if (best == null || s.getSupportLevel() > best.getSupportLevel()) {
+                    best = s;
+                }
+            }
+        }
+        if (best == null) {
+            return null;
+        }
+        return best.call();
     }
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NSupported.DEFAULT_SUPPORT;
+        return NCallableSupport.DEFAULT_SUPPORT;
     }
 //
 //    private static class Shared {

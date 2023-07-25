@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NSupported;
+import net.thevpc.nuts.NCallableSupport;
 
 /**
  * Top Level extension Point in Nuts.
@@ -51,6 +51,6 @@ public interface NComponent {
      * @return support level value
      */
     default int getSupportLevel(NSupportLevelContext context) {
-        return NSupported.CUSTOM_SUPPORT;
+        return NCallableSupport.CUSTOM_SUPPORT;
     }
 }

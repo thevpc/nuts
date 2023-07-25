@@ -30,6 +30,7 @@ import net.thevpc.nuts.elem.NObjectElement;
 
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -56,14 +57,15 @@ public final class NDescribables {
 
     public static NObjectElement resolveOrDestructAsObject(Object o, NSession session) {
         NElement e = resolveOrDestruct(o, session);
-        if(e instanceof NObjectElement){
+        if (e instanceof NObjectElement) {
             return (NObjectElement) e;
         }
         return NElements.of(session)
                 .ofObject()
-                .set("value",e)
+                .set("value", e)
                 .build();
     }
+
     public static NElement resolveOrDestruct(Object o, NSession session) {
         NElement e = resolveOrNull(o, session);
         if (e != null) {
@@ -97,6 +99,22 @@ public final class NDescribables {
 
     public static NRunnable ofRunnable(Runnable runnable, Function<NSession, NElement> nfo) {
         return new NamedRunnable(runnable, nfo);
+    }
+
+    public static NUnsafeRunnable ofUnsafeRunnable(NUnsafeRunnable runnable, Function<NSession, NElement> nfo) {
+        return new NamedUnsafeRunnable(runnable, nfo);
+    }
+
+    public static <T> NUnsafeCallable<T> ofUnsafeCallable(NUnsafeCallable<T> runnable, Function<NSession, NElement> nfo) {
+        return new NamedUnsafeCallable<T>(runnable, nfo);
+    }
+
+    public static <T> NCallable<T> ofCallable(NCallable<T> runnable, Function<NSession, NElement> nfo) {
+        return new NamedCallable<T>(runnable, nfo);
+    }
+
+    public static <T> NUnsafeCallable<T> ofUnsafeCallable(Callable<T> runnable, Function<NSession, NElement> nfo) {
+        return new NamedCallable2<T>(runnable, nfo);
     }
 
     public static <F, T> NUnsafeFunction<F, T> ofUnsafeFunction(NUnsafeFunctionBase<F, T> fun, Function<NSession, NElement> nfo) {
@@ -373,6 +391,86 @@ public final class NDescribables {
         @Override
         public void run() {
             base.run();
+        }
+    }
+
+    private static class NamedUnsafeRunnable implements NUnsafeRunnable {
+        private final NUnsafeRunnable base;
+        private final Function<NSession, NElement> nfo;
+
+        public NamedUnsafeRunnable(NUnsafeRunnable base, Function<NSession, NElement> nfo) {
+            this.base = base;
+            this.nfo = nfo;
+        }
+
+        @Override
+        public NElement describe(NSession session) {
+            return nfo.apply(session);
+        }
+
+        @Override
+        public void run() throws Exception {
+            base.run();
+        }
+    }
+
+    private static class NamedUnsafeCallable<T> implements NUnsafeCallable<T> {
+        private final NUnsafeCallable<T> base;
+        private final Function<NSession, NElement> nfo;
+
+        public NamedUnsafeCallable(NUnsafeCallable<T> base, Function<NSession, NElement> nfo) {
+            this.base = base;
+            this.nfo = nfo;
+        }
+
+        @Override
+        public NElement describe(NSession session) {
+            return nfo.apply(session);
+        }
+
+        @Override
+        public T call() throws Exception {
+            return base.call();
+        }
+    }
+
+    private static class NamedCallable<T> implements NCallable<T> {
+        private final NCallable<T> base;
+        private final Function<NSession, NElement> nfo;
+
+        public NamedCallable(NCallable<T> base, Function<NSession, NElement> nfo) {
+            this.base = base;
+            this.nfo = nfo;
+        }
+
+        @Override
+        public NElement describe(NSession session) {
+            return nfo.apply(session);
+        }
+
+        @Override
+        public T call() {
+            return base.call();
+        }
+    }
+
+    private static class NamedCallable2<T> implements NUnsafeCallable<T> {
+        private final Callable<T> base;
+        private final Function<NSession, NElement> nfo;
+
+        public NamedCallable2(Callable<T> base, Function<NSession, NElement> nfo) {
+            this.base = base;
+            this.nfo = nfo;
+        }
+
+        @Override
+        public NElement describe(NSession session) {
+            return nfo.apply(session);
+        }
+
+        @Override
+        public T call() throws Exception {
+            return base.call();
         }
     }
 }

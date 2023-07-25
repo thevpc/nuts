@@ -1500,9 +1500,9 @@ public class DefaultNWorkspaceConfigModel {
                 NExtensions.of(session).loadExtension(eid);
             }
         }
-        NSupported<NPathSPI> z = Arrays.stream(getPathFactories())
+        NCallableSupport<NPathSPI> z = Arrays.stream(getPathFactories())
                 .map(x -> {
-                    NSupported<NPathSPI> v = null;
+                    NCallableSupport<NPathSPI> v = null;
                     try {
                         v = x.createPath(path, session, finalClassLoader);
                     } catch (Exception ex) {
@@ -1511,9 +1511,9 @@ public class DefaultNWorkspaceConfigModel {
                     return v;
                 })
                 .filter(x -> x != null && x.getSupportLevel() > 0)
-                .max(Comparator.comparingInt(NSupported::getSupportLevel))
+                .max(Comparator.comparingInt(NCallableSupport::getSupportLevel))
                 .orElse(null);
-        NPathSPI s = z == null ? null : z.getValue();
+        NPathSPI s = z == null ? null : z.call();
         if (s != null) {
             if (s instanceof NPath) {
                 return (NPath) s;
@@ -1694,10 +1694,10 @@ public class DefaultNWorkspaceConfigModel {
 
     private class InvalidFilePathFactory implements NPathFactory {
         @Override
-        public NSupported<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
+        public NCallableSupport<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
             NSessionUtils.checkSession(getWorkspace(), session);
             try {
-                return NSupported.of(1, () -> new InvalidFilePath(path, session));
+                return NCallableSupport.of(1, () -> new InvalidFilePath(path, session));
             } catch (Exception ex) {
                 //ignore
             }

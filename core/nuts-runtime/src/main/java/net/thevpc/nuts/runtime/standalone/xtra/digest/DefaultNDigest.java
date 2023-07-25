@@ -201,7 +201,7 @@ public class DefaultNDigest implements NDigest {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NSupported.DEFAULT_SUPPORT;
+        return NCallableSupport.DEFAULT_SUPPORT;
     }
 
     private class NDescriptorInputSource extends AbstractMultiReadNInputSource {
@@ -229,7 +229,7 @@ public class DefaultNDigest implements NDigest {
             } else {
                 str = NTexts.of(session).ofStyled("<empty-descriptor>", NTextStyle.path());
             }
-            return new DefaultNContentMetadata(NMsg.ofNtf(str), null, null, null);
+            return new DefaultNContentMetadata(NMsg.ofNtf(str), null, null, null, null);
         }
 
         @Override

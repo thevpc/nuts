@@ -168,6 +168,11 @@ public class GenericFilePath implements NPathSPI {
     }
 
     @Override
+    public String getCharset(NPath basePath) {
+        return null;
+    }
+
+    @Override
     public String getLocation(NPath basePath) {
         return value;
     }
@@ -527,7 +532,7 @@ public class GenericFilePath implements NPathSPI {
         }
 
         @Override
-        public NSupported<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
+        public NCallableSupport<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
             NSessionUtils.checkSession(ws, session);
             if (path != null) {
                 if (path.trim().length() > 0) {
@@ -536,7 +541,7 @@ public class GenericFilePath implements NPathSPI {
                             return null;
                         }
                     }
-                    return NSupported.of(1, () -> new GenericFilePath(path, session));
+                    return NCallableSupport.of(1, () -> new GenericFilePath(path, session));
                 }
             }
             return null;
@@ -550,7 +555,7 @@ public class GenericFilePath implements NPathSPI {
                     if (path.trim().length() > 0) {
                         for (char c : path.toCharArray()) {
                             if (c < 32) {
-                                return NSupported.NO_SUPPORT;
+                                return NCallableSupport.NO_SUPPORT;
                             }
                         }
                         return 1;
@@ -559,7 +564,7 @@ public class GenericFilePath implements NPathSPI {
             } catch (Exception ex) {
                 //ignore
             }
-            return NSupported.NO_SUPPORT;
+            return NCallableSupport.NO_SUPPORT;
         }
 
     }

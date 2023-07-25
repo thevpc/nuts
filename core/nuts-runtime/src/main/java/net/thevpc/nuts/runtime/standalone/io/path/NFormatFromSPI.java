@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.path;
 
 import net.thevpc.nuts.NFormat;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NSupported;
+import net.thevpc.nuts.NCallableSupport;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
@@ -29,6 +29,6 @@ public class NFormatFromSPI extends DefaultFormatBase<NFormat> {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NSupported.DEFAULT_SUPPORT;
+        return NCallableSupport.DEFAULT_SUPPORT;
     }
 }

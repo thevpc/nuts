@@ -35,6 +35,21 @@ public class NInputStreamSource extends AbstractSingleReadNInputSource {
     }
 
     @Override
+    public String getName() {
+        return getMetaData().getName().orNull();
+    }
+
+    @Override
+    public String getContentType() {
+        return getMetaData().getContentType().orNull();
+    }
+
+    @Override
+    public String getCharset() {
+        return getMetaData().getCharset().orNull();
+    }
+
+    @Override
     public void dispose() {
         try {
             inputStream.close();

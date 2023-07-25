@@ -59,6 +59,20 @@ public interface NContentTypes extends NComponent {
     String probeContentType(InputStream stream);
 
     String probeContentType(byte[] stream);
+
+    ////////
+    String probeCharset(URL path);
+
+    String probeCharset(File path);
+
+    String probeCharset(Path path);
+
+    String probeCharset(NPath path);
+
+    String probeCharset(InputStream stream);
+
+    String probeCharset(byte[] stream);
+
     List<String> findExtensionsByContentType(String contentType);
     List<String> findContentTypesByExtension(String extension);
 }

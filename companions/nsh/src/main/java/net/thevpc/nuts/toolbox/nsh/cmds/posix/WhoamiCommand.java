@@ -45,7 +45,7 @@ import java.util.*;
 public class WhoamiCommand extends NShellBuiltinDefault {
 
     public WhoamiCommand() {
-        super("whoami", NSupported.DEFAULT_SUPPORT, Options.class);
+        super("whoami", NCallableSupport.DEFAULT_SUPPORT, Options.class);
     }
 
     @Override

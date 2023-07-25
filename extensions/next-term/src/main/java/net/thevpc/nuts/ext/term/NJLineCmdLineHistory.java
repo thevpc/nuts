@@ -8,7 +8,7 @@ package net.thevpc.nuts.ext.term;
 import net.thevpc.nuts.NExecutionException;
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NSupported;
+import net.thevpc.nuts.NCallableSupport;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.cmdline.NCmdLineHistoryEntry;
 import net.thevpc.nuts.io.NIO;
@@ -106,7 +106,7 @@ public class NJLineCmdLineHistory implements NCmdLineHistory {
             }
         }
         if(jline) {
-            return NSupported.DEFAULT_SUPPORT + 10;
+            return NCallableSupport.DEFAULT_SUPPORT + 10;
         }else{
             return -1;
         }

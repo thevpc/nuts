@@ -17,6 +17,7 @@ public class DefaultNPathMetadata {
     private String kind;
     private Long contentLength;
     private String contentType;
+    private String charset;
     private String name;
     private boolean userCache;
     private boolean userTemporary;
@@ -85,6 +86,13 @@ public class DefaultNPathMetadata {
                 ;
     }
 
+    public NOptional<String> getCharset() {
+        return NOptional.ofNamed(charset, "charset")
+                .orElseOf(() -> path.getCharset())
+                ;
+    }
+
+
     public void setMessage(NMsg message) {
         this.message = message;
     }
@@ -105,11 +113,16 @@ public class DefaultNPathMetadata {
         this.contentType = contentType;
     }
 
+    public void setCharset(String charset) {
+        this.charset = charset;
+    }
+
     public void setAll(NContentMetadata omd) {
         this.message = omd.getMessage().orNull();
         this.kind = omd.getKind().orNull();
         this.contentLength = omd.getContentLength().orNull();
         this.contentType = omd.getContentType().orNull();
+        this.charset = omd.getCharset().orNull();
         this.name = omd.getName().orNull();
     }
 
@@ -118,6 +131,7 @@ public class DefaultNPathMetadata {
         this.kind = omd.kind;
         this.contentLength = omd.contentLength;
         this.contentType = omd.contentType;
+        this.charset = omd.charset;
         this.name = omd.name;
         this.userCache = omd.userCache;
         this.userTemporary = omd.userTemporary;
@@ -197,6 +211,17 @@ public class DefaultNPathMetadata {
         }
 
         @Override
+        public NOptional<String> getCharset() {
+            return outer.getCharset();
+        }
+
+        @Override
+        public NContentMetadata setCharset(String charset) {
+            outer.setCharset(charset);
+            return this;
+        }
+
+        @Override
         public boolean isBlank() {
             if (outer.contentLength != null && outer.contentLength >= 0) {
                 return false;
@@ -208,6 +233,9 @@ public class DefaultNPathMetadata {
                 return false;
             }
             if (outer.name != null) {
+                return false;
+            }
+            if (outer.charset != null) {
                 return false;
             }
             if (kind != null) {

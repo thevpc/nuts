@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.common;
 
-import net.thevpc.nuts.NSupported;
+import net.thevpc.nuts.NCallableSupport;
 import net.thevpc.nuts.NWorkspaceSecurityManager;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -42,7 +42,7 @@ import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 public class LogoutCommand extends NShellBuiltinDefault {
 
     public LogoutCommand() {
-        super("logout", NSupported.DEFAULT_SUPPORT,Options.class);
+        super("logout", NCallableSupport.DEFAULT_SUPPORT,Options.class);
     }
 
     private static class Options{

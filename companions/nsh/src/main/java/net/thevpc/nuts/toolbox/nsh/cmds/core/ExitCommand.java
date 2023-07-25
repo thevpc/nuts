@@ -42,7 +42,7 @@ import net.thevpc.nuts.toolbox.nsh.err.NShellQuitException;
 public class ExitCommand extends NShellBuiltinCore {
 
     public ExitCommand() {
-        super("exit", NSupported.DEFAULT_SUPPORT, Options.class);
+        super("exit", NCallableSupport.DEFAULT_SUPPORT, Options.class);
     }
 
     @Override

@@ -33,7 +33,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-public interface NSupported<T> {
+public interface NCallableSupport<T> {
     /**
      * minimum support level for user defined implementations.
      */
@@ -47,18 +47,18 @@ public interface NSupported<T> {
      */
     int NO_SUPPORT = -1;
 
-    static <T> NSupported<T> resolve(Collection<Supplier<NSupported<T>>> source, Function<NSession, NMsg> emptyMessage) {
+    static <T> NCallableSupport<T> resolve(Collection<Supplier<NCallableSupport<T>>> source, Function<NSession, NMsg> emptyMessage) {
         if (source == null) {
             return invalid(emptyMessage);
         }
-        return resolve(source.stream(),emptyMessage);
+        return resolve(source.stream(), emptyMessage);
     }
 
-    static <T> NSupported<T> resolve(Stream<Supplier<NSupported<T>>> source, Function<NSession, NMsg> emptyMessage) {
+    static <T> NCallableSupport<T> resolve(Stream<Supplier<NCallableSupport<T>>> source, Function<NSession, NMsg> emptyMessage) {
         Object[] track = new Object[2];
         if (source != null) {
             source.forEach(i -> {
-                NSupported<T> s = i.get();
+                NCallableSupport<T> s = i.get();
                 NAssert.requireNonNull(s, "NSupported<T>");
                 int supportLevel = s.getSupportLevel();
                 boolean valid = supportLevel > 0;
@@ -76,41 +76,41 @@ public interface NSupported<T> {
                 }
             });
         }
-        NSupported<T> r = (NSupported<T>) track[0];
+        NCallableSupport<T> r = (NCallableSupport<T>) track[0];
         if (r == null) {
             return invalid(emptyMessage);
         }
-        return (NSupported<T>) r;
+        return (NCallableSupport<T>) r;
     }
 
-    static <T> NSupported<T> of(int supportLevel, T value) {
-        return of(supportLevel,value,null);
+    static <T> NCallableSupport<T> of(int supportLevel, T value) {
+        return of(supportLevel, value, null);
     }
 
-    static <T> NSupported<T> of(int supportLevel, T value, Function<NSession, NMsg> emptyMessage) {
-        return supportLevel <= 0 ? invalid(emptyMessage) : new DefaultNSupported<>(() -> value, supportLevel,emptyMessage);
+    static <T> NCallableSupport<T> of(int supportLevel, T value, Function<NSession, NMsg> emptyMessage) {
+        return supportLevel <= 0 ? invalid(emptyMessage) : new DefaultNCallableSupport<>(() -> value, supportLevel, emptyMessage);
     }
 
-    static <T> NSupported<T> of(int supportLevel, Supplier<T> supplier) {
-        return of(supportLevel,supplier,null);
+    static <T> NCallableSupport<T> of(int supportLevel, Supplier<T> supplier) {
+        return of(supportLevel, supplier, null);
     }
 
-    static <T> NSupported<T> of(int supportLevel, Supplier<T> supplier, Function<NSession, NMsg> emptyMessage) {
+    static <T> NCallableSupport<T> of(int supportLevel, Supplier<T> supplier, Function<NSession, NMsg> emptyMessage) {
         return (supportLevel <= 0 || supplier == null) ? invalid(emptyMessage)
-                : new DefaultNSupported<>(supplier, supportLevel,emptyMessage)
+                : new DefaultNCallableSupport<>(supplier, supportLevel, emptyMessage)
                 ;
     }
 
     @SuppressWarnings("unchecked")
-    static <T> NSupported<T> invalid(Function<NSession, NMsg> emptyMessage) {
-        return new DefaultNSupported<>(null, -1,emptyMessage);
+    static <T> NCallableSupport<T> invalid(Function<NSession, NMsg> emptyMessage) {
+        return new DefaultNCallableSupport<>(null, NO_SUPPORT, emptyMessage);
     }
 
-    static <T> boolean isValid(NSupported<T> s) {
+    static <T> boolean isValid(NCallableSupport<T> s) {
         return s != null && s.isValid();
     }
 
-    T getValue();
+    T call();
 
     default boolean isValid() {
         return getSupportLevel() > 0;

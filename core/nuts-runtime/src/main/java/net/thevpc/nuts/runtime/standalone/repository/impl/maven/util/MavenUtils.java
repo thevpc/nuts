@@ -48,6 +48,7 @@ import org.w3c.dom.Element;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -215,7 +216,7 @@ public class MavenUtils {
             byte[] bytes = CoreIOUtils.loadByteArray(stream, session);
             InputStream bytesStream = CoreIOUtils.createBytesStream(bytes,
                     urlDesc == null ? NMsg.ofNtf("pom.xml") : NMsg.ofNtf(urlDesc), "text/xml",
-                    urlDesc == null ? "pom.xml" : urlDesc, session);
+                    StandardCharsets.UTF_8.name(), urlDesc == null ? "pom.xml" : urlDesc, session);
             NPom pom = new NPomXmlParser(session).parse(bytesStream, session);
             LinkedHashSet<NDescriptorFlag> flags = new LinkedHashSet<>();
             if (NLiteral.of(pom.getProperties().get("nuts.executable")).asBoolean().orElse(false)) {

@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 public class TomcatWebServerHtmlfsParser extends AbstractHtmlfsParser {
     @Override
-    public NSupported<List<String>> parseHtmlTomcat(byte[] bytes, NSession session) {
+    public NCallableSupport<List<String>> parseHtmlTomcat(byte[] bytes, NSession session) {
         boolean expectTomcat = false;
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)))) {
             String line = null;
@@ -28,7 +28,7 @@ public class TomcatWebServerHtmlfsParser extends AbstractHtmlfsParser {
         }
         if (!expectTomcat) {
             Function<NSession, NMsg> msg = s -> NMsg.ofInvalidValue("tomcat repo");
-            return NSupported.invalid(msg);
+            return NCallableSupport.invalid(msg);
         }
         //<a href="/maven/net/"><tt>net/</tt></a></td>
         Pattern pattern = Pattern.compile("<a href=\"(?<href>[^\"]+)\"><tt>(?<title>[^<]+)</tt></a></td>");

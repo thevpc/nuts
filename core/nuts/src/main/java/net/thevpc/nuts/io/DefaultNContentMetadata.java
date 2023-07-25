@@ -19,6 +19,7 @@ public class DefaultNContentMetadata implements NContentMetadata {
     private String contentType;
     private String name;
     private String kind;
+    private String charset;
 
     public DefaultNContentMetadata(NContentMetadata other) {
         if (other != null) {
@@ -27,12 +28,14 @@ public class DefaultNContentMetadata implements NContentMetadata {
             this.message = other.getMessage().orNull();
             this.kind = other.getKind().orNull();
             this.contentType = other.getContentType().orNull();
+            this.charset = other.getCharset().orNull();
         } else {
             this.contentLength = null;
             this.name = null;
             this.message = null;
             this.kind = null;
             this.contentType = null;
+            this.charset = null;
         }
     }
 
@@ -56,6 +59,9 @@ public class DefaultNContentMetadata implements NContentMetadata {
         if (kind != null) {
             return false;
         }
+        if (charset != null) {
+            return false;
+        }
         return true;
     }
 
@@ -69,7 +75,7 @@ public class DefaultNContentMetadata implements NContentMetadata {
 //    }
 //
 //
-    public DefaultNContentMetadata(NMsg message, Long contentLength, String contentType, String kind) {
+    public DefaultNContentMetadata(NMsg message, Long contentLength, String contentType, String charset, String kind) {
         this.contentLength = contentLength;
         this.name = message == null ? null : message.toString();
         this.message = message;
@@ -77,7 +83,7 @@ public class DefaultNContentMetadata implements NContentMetadata {
         this.contentType = contentType;
     }
 
-    public DefaultNContentMetadata(String name, NMsg message, Long contentLength, String contentType, String kind) {
+    public DefaultNContentMetadata(String name, NMsg message, Long contentLength, String contentType, String charset, String kind) {
         this.contentLength = contentLength;
         this.name = name;
         this.message = message;
@@ -108,6 +114,11 @@ public class DefaultNContentMetadata implements NContentMetadata {
         return NOptional.ofNamed(message, "message");
     }
 
+    @Override
+    public NOptional<String> getCharset() {
+        return NOptional.ofNamed(charset, "encoding");
+    }
+
     public NContentMetadata setKind(String kind) {
         this.kind = kind;
         return this;
@@ -130,6 +141,11 @@ public class DefaultNContentMetadata implements NContentMetadata {
 
     public DefaultNContentMetadata setName(String name) {
         this.name = name;
+        return this;
+    }
+
+    public DefaultNContentMetadata setCharset(String charset) {
+        this.charset = charset;
         return this;
     }
 

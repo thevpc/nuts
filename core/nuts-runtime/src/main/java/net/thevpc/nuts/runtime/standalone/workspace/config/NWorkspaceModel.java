@@ -1,9 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NVersion;
-import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEventModel;
 import net.thevpc.nuts.runtime.standalone.util.collections.NPropertiesHolder;
 import net.thevpc.nuts.runtime.standalone.util.filters.DefaultNFilterModel;
@@ -49,8 +47,30 @@ public class NWorkspaceModel {
     public SafeRecommendationConnector recomm =new SafeRecommendationConnector(new SimpleRecommendationConnector());
     public List<String> recommendedCompanions=new ArrayList<>();
     public NPropertiesHolder properties = new NPropertiesHolder();
+    public NVersion askedApiVersion;
+    public NId askedRuntimeId;
+    public NBootOptions bOption0;
 
-    public NWorkspaceModel(NWorkspace ws) {
+    public NWorkspaceModel(NWorkspace ws, NBootOptions bOption0) {
         this.ws = ws;
+        this.bOption0 = bOption0;
+    }
+
+    public void init(){
+        askedApiVersion = bOption0.getApiVersion().orNull();
+        askedRuntimeId = bOption0.getRuntimeId().orNull();
+        if (askedRuntimeId == null) {
+            askedRuntimeId = NId.ofRuntime("").get();
+        }
+
+        this.textModel = new DefaultNTextManagerModel(ws);
+        this.apiVersion = Nuts.getVersion();
+        this.apiId = NId.ofApi(this.apiVersion).get();
+        this.runtimeId = NId.of(
+                askedRuntimeId.getGroupId(),
+                askedRuntimeId.getArtifactId(),
+                NVersion.of(askedRuntimeId.getVersion().toString()).get()).get();
+        this.bootModel = new DefaultNBootModel(ws,this);
+        this.bootModel.init(bOption0);
     }
 }

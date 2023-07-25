@@ -50,7 +50,7 @@ import java.util.List;
 public class UnzipCommand extends NShellBuiltinDefault {
 
     public UnzipCommand() {
-        super("unzip", NSupported.DEFAULT_SUPPORT, Options.class);
+        super("unzip", NCallableSupport.DEFAULT_SUPPORT, Options.class);
     }
 
     @Override

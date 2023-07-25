@@ -44,7 +44,7 @@ import java.util.List;
 public class SourceCommand extends NShellBuiltinDefault {
 
     public SourceCommand() {
-        super("source", NSupported.DEFAULT_SUPPORT, Options.class);
+        super("source", NCallableSupport.DEFAULT_SUPPORT, Options.class);
     }
 
     @Override

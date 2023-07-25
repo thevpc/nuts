@@ -147,6 +147,11 @@ public class InvalidFilePath implements NPathSPI {
     }
 
     @Override
+    public String getCharset(NPath basePath) {
+        return null;
+    }
+
+    @Override
     public String getLocation(NPath basePath) {
         return value;
     }

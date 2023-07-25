@@ -41,7 +41,7 @@ import java.util.List;
 public class UnameCommand extends NShellBuiltinDefault {
 
     public UnameCommand() {
-        super("uname", NSupported.DEFAULT_SUPPORT,Options.class);
+        super("uname", NCallableSupport.DEFAULT_SUPPORT,Options.class);
     }
 
 

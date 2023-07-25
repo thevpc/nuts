@@ -207,6 +207,11 @@ public class NCompressedPath extends NPathBase {
     }
 
     @Override
+    public String getCharset() {
+        return base.getCharset();
+    }
+
+    @Override
     public Instant getLastModifiedInstant() {
         return base.getLastModifiedInstant();
     }
@@ -395,7 +400,7 @@ public class NCompressedPath extends NPathBase {
 
         @Override
         public int getSupportLevel(NSupportLevelContext context) {
-            return NSupported.DEFAULT_SUPPORT;
+            return NCallableSupport.DEFAULT_SUPPORT;
         }
     }
 

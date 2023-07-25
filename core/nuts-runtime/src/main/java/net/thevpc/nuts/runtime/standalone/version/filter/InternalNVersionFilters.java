@@ -103,6 +103,6 @@ public class InternalNVersionFilters extends InternalNTypedFilters<NVersionFilte
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NSupported.DEFAULT_SUPPORT;
+        return NCallableSupport.DEFAULT_SUPPORT;
     }
 }

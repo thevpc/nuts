@@ -35,6 +35,7 @@ import net.thevpc.nuts.util.NStringUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
@@ -102,14 +103,14 @@ public class NFolderRepository extends NFolderRepositoryBase {
                     name = NIO.of(session).ofInputSource(stream).getMetaData().getName().orElse("no-name");
                     nutsDescriptor = NDescriptorParser.of(session)
                             .setDescriptorStyle(NDescriptorStyle.NUTS)
-                            .parse(CoreIOUtils.createBytesStream(bytes, NMsg.ofNtf(name), "application/json", "nuts.json", session)).get();
+                            .parse(CoreIOUtils.createBytesStream(bytes, NMsg.ofNtf(name), "application/json", StandardCharsets.UTF_8.name(), "nuts.json", session)).get();
                 } finally {
                     if (stream != null) {
                         stream.close();
                     }
                 }
                 checkSHA1Hash(id.builder().setFace(NConstants.QueryFaces.DESCRIPTOR_HASH).build(),
-                        CoreIOUtils.createBytesStream(bytes, name == null ? null : NMsg.ofNtf(name), "application/json", "nuts.json", session)
+                        CoreIOUtils.createBytesStream(bytes, name == null ? null : NMsg.ofNtf(name), "application/json", StandardCharsets.UTF_8.name(), "nuts.json", session)
                         , "artifact descriptor", session);
                 return nutsDescriptor;
             } catch (IOException | UncheckedIOException | NIOException ex) {
@@ -147,7 +148,7 @@ public class NFolderRepository extends NFolderRepositoryBase {
                 name = NIO.of(session).ofInputSource(stream).getMetaData().getName().orElse("no-name");
                 nutsDescriptor = NDescriptorParser.of(session)
                         .setDescriptorStyle(NDescriptorStyle.NUTS)
-                        .parse(CoreIOUtils.createBytesStream(bytes, NMsg.ofNtf(name), "text/xml", "pom.xml", session)).get();
+                        .parse(CoreIOUtils.createBytesStream(bytes, NMsg.ofNtf(name), "text/xml", StandardCharsets.UTF_8.name(), "pom.xml", session)).get();
 
             } finally {
                 if (stream != null) {
@@ -155,7 +156,7 @@ public class NFolderRepository extends NFolderRepositoryBase {
                 }
             }
             checkSHA1Hash(id.builder().setFace(NConstants.QueryFaces.DESCRIPTOR_HASH).build(),
-                    CoreIOUtils.createBytesStream(bytes, name == null ? null : NMsg.ofNtf(name), "text/xml", "pom.xml", session)
+                    CoreIOUtils.createBytesStream(bytes, name == null ? null : NMsg.ofNtf(name), "text/xml", StandardCharsets.UTF_8.name(), "pom.xml", session)
                     , "artifact descriptor", session);
             return nutsDescriptor;
         } catch (IOException | UncheckedIOException | NIOException ex) {

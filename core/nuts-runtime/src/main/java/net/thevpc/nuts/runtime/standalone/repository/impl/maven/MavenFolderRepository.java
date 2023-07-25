@@ -40,6 +40,7 @@ import net.thevpc.nuts.util.NStringUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Map;
 
@@ -194,7 +195,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
                 name = NIO.of(session).ofInputSource(stream).getMetaData().getName().orElse("no-name");
                 bytes = CoreIOUtils.loadByteArray(stream, true, session);
                 nutsDescriptor = MavenUtils.of(session).parsePomXmlAndResolveParents(
-                        CoreIOUtils.createBytesStream(bytes, name == null ? null : NMsg.ofNtf(name), "text/xml", "pom.xml", session)
+                        CoreIOUtils.createBytesStream(bytes, name == null ? null : NMsg.ofNtf(name), "text/xml", StandardCharsets.UTF_8.name(), "pom.xml", session)
                         , fetchMode, getIdRemotePath(id, session).toString(), this);
             } finally {
                 if (stream != null) {
@@ -202,7 +203,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
                 }
             }
             checkSHA1Hash(id.builder().setFace(NConstants.QueryFaces.DESCRIPTOR_HASH).build(),
-                    CoreIOUtils.createBytesStream(bytes, name == null ? null : NMsg.ofNtf(name), "text/xml", "pom.xml", session)
+                    CoreIOUtils.createBytesStream(bytes, name == null ? null : NMsg.ofNtf(name), "text/xml", StandardCharsets.UTF_8.name(), "pom.xml", session)
                     , "artifact descriptor", session);
             return nutsDescriptor;
         } catch (IOException | UncheckedIOException | NIOException ex) {

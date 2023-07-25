@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.security;
 
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NSupported;
+import net.thevpc.nuts.NCallableSupport;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreSecurityUtils;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
@@ -10,7 +10,7 @@ import net.thevpc.nuts.spi.NScopeType;
 public class DefaultNAuthenticationAgent extends AbstractNAuthenticationAgent {
 
     public DefaultNAuthenticationAgent() {
-        super("default#1", NSupported.DEFAULT_SUPPORT);
+        super("default#1", NCallableSupport.DEFAULT_SUPPORT);
     }
 
     @Override

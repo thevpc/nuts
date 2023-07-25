@@ -87,11 +87,11 @@ public class ClassLoaderPath extends URLPath {
         }
 
         @Override
-        public NSupported<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
+        public NCallableSupport<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
             NSessionUtils.checkSession(ws, session);
             try {
                 if (path.startsWith("classpath:")) {
-                    return NSupported.of(NSupported.DEFAULT_SUPPORT,()->new ClassLoaderPath(path, classLoader, session));
+                    return NCallableSupport.of(NCallableSupport.DEFAULT_SUPPORT,()->new ClassLoaderPath(path, classLoader, session));
                 }
             } catch (Exception ex) {
                 //ignore
@@ -103,9 +103,9 @@ public class ClassLoaderPath extends URLPath {
         public int getSupportLevel(NSupportLevelContext context) {
             String path= context.getConstraints();
             if (path.startsWith("classpath:")) {
-                return NSupported.DEFAULT_SUPPORT;
+                return NCallableSupport.DEFAULT_SUPPORT;
             }
-            return NSupported.NO_SUPPORT;
+            return NCallableSupport.NO_SUPPORT;
         }
     }
 }

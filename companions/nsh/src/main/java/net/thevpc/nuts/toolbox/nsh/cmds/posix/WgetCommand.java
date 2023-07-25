@@ -46,7 +46,7 @@ import java.util.List;
 public class WgetCommand extends NShellBuiltinDefault {
 
     public WgetCommand() {
-        super("wget", NSupported.DEFAULT_SUPPORT,Options.class);
+        super("wget", NCallableSupport.DEFAULT_SUPPORT,Options.class);
     }
 
     @Override

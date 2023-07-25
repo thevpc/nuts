@@ -8,12 +8,12 @@ import net.thevpc.nuts.util.NConnexionString;
 
 public class SshPathFactory implements NPathFactory {
     @Override
-    public NSupported<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
+    public NCallableSupport<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
         try{
             if(path.startsWith("ssh:")){
                 NConnexionString a=NConnexionString.of(path).orNull();
                 if(a!=null) {
-                    return NSupported.of(3, () -> new SshNPath(a, session));
+                    return NCallableSupport.of(3, () -> new SshNPath(a, session));
                 }
             }
         }catch (Exception ex){
@@ -26,9 +26,9 @@ public class SshPathFactory implements NPathFactory {
     public int getSupportLevel(NSupportLevelContext context) {
         String path= context.getConstraints();
         if(path.startsWith("ssh:")){
-            return NSupported.DEFAULT_SUPPORT;
+            return NCallableSupport.DEFAULT_SUPPORT;
         }
-        return NSupported.NO_SUPPORT;
+        return NCallableSupport.NO_SUPPORT;
     }
 
 }

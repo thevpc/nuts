@@ -64,7 +64,7 @@ public class DefaultNGlob implements NGlob {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NSupported.DEFAULT_SUPPORT;
+        return NCallableSupport.DEFAULT_SUPPORT;
     }
 
     public String escape(String s) {

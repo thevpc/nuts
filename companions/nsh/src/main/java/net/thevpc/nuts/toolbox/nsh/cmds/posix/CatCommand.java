@@ -54,7 +54,7 @@ import java.util.List;
 public class CatCommand extends NShellBuiltinDefault {
 
     public CatCommand() {
-        super("cat", NSupported.DEFAULT_SUPPORT, Options.class);
+        super("cat", NCallableSupport.DEFAULT_SUPPORT, Options.class);
     }
 
     @Override

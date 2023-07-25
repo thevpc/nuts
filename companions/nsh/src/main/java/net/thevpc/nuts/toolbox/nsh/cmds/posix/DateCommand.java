@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.posix;
 
-import net.thevpc.nuts.NSupported;
+import net.thevpc.nuts.NCallableSupport;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
@@ -48,7 +48,7 @@ import java.time.format.DateTimeFormatter;
 public class DateCommand extends NShellBuiltinDefault {
 
     public DateCommand() {
-        super("date", NSupported.DEFAULT_SUPPORT,Options.class);
+        super("date", NCallableSupport.DEFAULT_SUPPORT,Options.class);
     }
 
     @Override

@@ -191,6 +191,11 @@ public class DefaultNArg implements NArg {
     }
 
     @Override
+    public String value() {
+        return getStringValue().orNull();
+    }
+
+    @Override
     public NOptional<String> getStringValue() {
         return getValue().asString()
                 .ifEmptyUse(

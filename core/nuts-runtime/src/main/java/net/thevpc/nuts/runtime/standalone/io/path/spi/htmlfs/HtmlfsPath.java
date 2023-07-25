@@ -226,7 +226,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
 
     public List<String> parseHtml(InputStream html) {
         byte[] bytes = NCp.of(session).from(html).getByteArrayResult();
-        NSupported<List<String>> best = Arrays.stream(PARSERS).map(p -> {
+        NCallableSupport<List<String>> best = Arrays.stream(PARSERS).map(p -> {
                     try {
                         return p.parseHtmlTomcat(bytes, session);
                     } catch (Exception ex) {
@@ -237,10 +237,10 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
                                 .log(NMsg.ofC("failed to parse using %s", p.getClass().getSimpleName()));
                     }
                     return null;
-                }).filter(p -> NSupported.isValid(p)).max(Comparator.comparing(NSupported::getSupportLevel))
+                }).filter(p -> NCallableSupport.isValid(p)).max(Comparator.comparing(NCallableSupport::getSupportLevel))
                 .orElse(null);
         if (best != null) {
-            List<String> value = best.getValue();
+            List<String> value = best.call();
             if (value != null) {
                 return value;
             }
@@ -270,10 +270,10 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         }
 
         @Override
-        public NSupported<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
+        public NCallableSupport<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
             NSessionUtils.checkSession(ws, session);
             if (path.startsWith(PREFIX)) {
-                return NSupported.of(NSupported.DEFAULT_SUPPORT, () -> new HtmlfsPath(path, session));
+                return NCallableSupport.of(NCallableSupport.DEFAULT_SUPPORT, () -> new HtmlfsPath(path, session));
             }
             return null;
         }
@@ -283,12 +283,12 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
             String path = context.getConstraints();
             try {
                 if (path.startsWith(PREFIX)) {
-                    return NSupported.DEFAULT_SUPPORT;
+                    return NCallableSupport.DEFAULT_SUPPORT;
                 }
             } catch (Exception ex) {
                 //ignore
             }
-            return NSupported.NO_SUPPORT;
+            return NCallableSupport.NO_SUPPORT;
         }
     }
 

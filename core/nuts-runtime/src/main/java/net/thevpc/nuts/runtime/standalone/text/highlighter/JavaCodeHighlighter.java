@@ -34,17 +34,17 @@ public class JavaCodeHighlighter implements NCodeHighlighter {
     public int getSupportLevel(NSupportLevelContext context) {
         String s = context.getConstraints();
         if(s==null){
-            return NSupported.DEFAULT_SUPPORT;
+            return NCallableSupport.DEFAULT_SUPPORT;
         }
         switch (s){
             case "java":
             case "jav":
             case "text/x-java":
             {
-                return NSupported.DEFAULT_SUPPORT;
+                return NCallableSupport.DEFAULT_SUPPORT;
             }
         }
-        return NSupported.NO_SUPPORT;
+        return NCallableSupport.NO_SUPPORT;
     }
 
     @Override

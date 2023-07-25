@@ -38,7 +38,7 @@ public abstract class AbstractNWorkspace implements NWorkspace {
 
     @Override
     public int getSupportLevel(NSupportLevelContext criteria) {
-        return NSupported.DEFAULT_SUPPORT;
+        return NCallableSupport.DEFAULT_SUPPORT;
     }
 
     @Override

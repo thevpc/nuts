@@ -46,7 +46,7 @@ import java.util.List;
 public class JpsCommand extends NShellBuiltinDefault {
 
     public JpsCommand() {
-        super("jps", NSupported.DEFAULT_SUPPORT,Options.class);
+        super("jps", NCallableSupport.DEFAULT_SUPPORT,Options.class);
     }
 
     public static String resolveJpsCommand(NSession session) {

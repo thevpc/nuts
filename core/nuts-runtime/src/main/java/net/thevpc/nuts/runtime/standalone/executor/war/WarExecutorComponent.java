@@ -58,10 +58,10 @@ public class WarExecutorComponent implements NExecutorComponent {
         NDefinition def = context.getConstraints(NDefinition.class);
         if (def != null) {
             if ("war".equals(NStringUtils.trim(def.getDescriptor().getPackaging()))) {
-                return NSupported.DEFAULT_SUPPORT + 1;
+                return NCallableSupport.DEFAULT_SUPPORT + 1;
             }
         }
-        return NSupported.NO_SUPPORT;
+        return NCallableSupport.NO_SUPPORT;
     }
 
     @Override

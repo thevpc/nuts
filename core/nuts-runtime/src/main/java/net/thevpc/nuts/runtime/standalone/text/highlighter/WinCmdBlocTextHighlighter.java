@@ -128,7 +128,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
     public int getSupportLevel(NSupportLevelContext context) {
         String s = context.getConstraints();
         if (s == null) {
-            return NSupported.DEFAULT_SUPPORT;
+            return NCallableSupport.DEFAULT_SUPPORT;
         }
         switch (s) {
             case "bat":
@@ -138,19 +138,19 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
             case "powsershell":
             case "powser-shell":
             case "text/x-msdos-batch": {
-                return NSupported.DEFAULT_SUPPORT;
+                return NCallableSupport.DEFAULT_SUPPORT;
             }
             case "system": {
                 switch (NShellFamily.getCurrent()) {
                     case WIN_CMD:
                     case WIN_POWER_SHELL: {
-                        return NSupported.DEFAULT_SUPPORT + 10;
+                        return NCallableSupport.DEFAULT_SUPPORT + 10;
                     }
                 }
-                return NSupported.DEFAULT_SUPPORT;
+                return NCallableSupport.DEFAULT_SUPPORT;
             }
         }
-        return NSupported.NO_SUPPORT;
+        return NCallableSupport.NO_SUPPORT;
     }
 
     @Override

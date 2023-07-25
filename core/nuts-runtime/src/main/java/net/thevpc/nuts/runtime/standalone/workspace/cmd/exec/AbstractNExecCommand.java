@@ -45,7 +45,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NSupported.DEFAULT_SUPPORT;
+        return NCallableSupport.DEFAULT_SUPPORT;
     }
 
     @Override

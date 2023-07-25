@@ -54,7 +54,7 @@ public class ProcessExecutorComponent implements NExecutorComponent {
         if(ID==null){
             ID= NId.of("net.thevpc.nuts.exec:exec-native").get(session);
         }
-        return NSupported.DEFAULT_SUPPORT;
+        return NCallableSupport.DEFAULT_SUPPORT;
     }
 
     @Override

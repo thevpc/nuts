@@ -43,7 +43,7 @@ import net.thevpc.nuts.util.NStringUtils;
 public class EchoCommand extends NShellBuiltinDefault {
 
     public EchoCommand() {
-        super("echo", NSupported.DEFAULT_SUPPORT,Options.class);
+        super("echo", NCallableSupport.DEFAULT_SUPPORT,Options.class);
     }
 
     @Override

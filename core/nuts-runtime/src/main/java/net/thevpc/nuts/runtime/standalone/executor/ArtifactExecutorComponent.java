@@ -51,7 +51,7 @@ public class ArtifactExecutorComponent implements NExecutorComponent {
 
     @Override
     public int getSupportLevel(NSupportLevelContext nutsDefinition) {
-        return NSupported.NO_SUPPORT;
+        return NCallableSupport.NO_SUPPORT;
     }
 
     public int exec(NExecutionContext executionContext) {

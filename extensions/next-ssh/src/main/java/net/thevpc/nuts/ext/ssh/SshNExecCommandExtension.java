@@ -179,16 +179,16 @@ public class SshNExecCommandExtension implements NExecCommandExtension {
         if (c instanceof String) {
             NConnexionString z = NConnexionString.of((String) c).orNull();
             if (z != null && "ssh".equals(z.getProtocol())) {
-                return NSupported.DEFAULT_SUPPORT;
+                return NCallableSupport.DEFAULT_SUPPORT;
             }
         }
         if (c instanceof NConnexionString) {
             NConnexionString z = (NConnexionString) c;
             if ("ssh".equals(z.getProtocol())) {
-                return NSupported.DEFAULT_SUPPORT;
+                return NCallableSupport.DEFAULT_SUPPORT;
             }
         }
-        return NSupported.NO_SUPPORT;
+        return NCallableSupport.NO_SUPPORT;
     }
 
     private static class MyInHolder implements InHolder {

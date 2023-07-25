@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.event;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -25,7 +24,7 @@ public class DefaultNEvents implements NEvents {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NSupported.DEFAULT_SUPPORT;
+        return NCallableSupport.DEFAULT_SUPPORT;
     }
 
     public DefaultNWorkspaceEventModel getModel() {

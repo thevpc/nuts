@@ -43,25 +43,25 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
     @Override
     public int getSupportLevel(NSupportLevelContext criteria) {
         if (criteria == null) {
-            return NSupported.NO_SUPPORT;
+            return NCallableSupport.NO_SUPPORT;
         }
         NSession session = criteria.getSession();
         NRepositoryConfig r = criteria.getConstraints(NRepositoryConfig.class);
         if (r != null) {
             String type = NRepositoryUtils.getRepoType(r, session);
             if (NConstants.RepoTypes.NUTS.equals(type)) {
-                return NSupported.DEFAULT_SUPPORT + 10;
+                return NCallableSupport.DEFAULT_SUPPORT + 10;
             }
             if (NBlankable.isBlank(type)) {
                 NPath rp = NPath.of(r.getLocation().getPath(), session).resolve("nuts-repository.json");
                 if (rp.exists()) {
                     r.setLocation(r.getLocation().setLocationType(NConstants.RepoTypes.NUTS));
-                    return NSupported.DEFAULT_SUPPORT + 10;
+                    return NCallableSupport.DEFAULT_SUPPORT + 10;
                 }
-                return NSupported.DEFAULT_SUPPORT + 2;
+                return NCallableSupport.DEFAULT_SUPPORT + 2;
             }
         }
-        return NSupported.NO_SUPPORT;
+        return NCallableSupport.NO_SUPPORT;
     }
 
     @Override

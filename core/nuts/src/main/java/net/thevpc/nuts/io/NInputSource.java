@@ -41,8 +41,7 @@ import java.util.stream.Stream;
  * @app.category Input Output
  * @since 0.5.5
  */
-public interface NInputSource extends NFormattable, NContentMetadataProvider {
-    InputStream getInputStream();
+public interface NInputSource extends NFormattable, NContentMetadataProvider,NInputContentProvider {
 
     byte[] readBytes();
 

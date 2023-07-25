@@ -27,7 +27,7 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.NSupported;
+import net.thevpc.nuts.NCallableSupport;
 
 import java.util.List;
 
@@ -42,7 +42,7 @@ public interface NContentTypeResolver extends NComponent {
      * @param path path to probe
      * @return best probe of {@code NutsSupported.invalid()} (or null)
      */
-    NSupported<String> probeContentType(NPath path);
+    NCallableSupport<String> probeContentType(NPath path);
 
     /**
      * probe from content
@@ -50,7 +50,7 @@ public interface NContentTypeResolver extends NComponent {
      * @param bytes content
      * @return best probe of {@code NutsSupported.invalid()} (or null)
      */
-    NSupported<String> probeContentType(byte[] bytes);
+    NCallableSupport<String> probeContentType(byte[] bytes);
 
     List<String> findExtensionsByContentType(String contentType);
     List<String> findContentTypesByExtension(String extension);

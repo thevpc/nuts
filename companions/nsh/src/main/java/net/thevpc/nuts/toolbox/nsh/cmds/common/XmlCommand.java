@@ -54,7 +54,7 @@ import java.util.List;
 public class XmlCommand extends NShellBuiltinDefault {
 
     public XmlCommand() {
-        super("xml", NSupported.DEFAULT_SUPPORT,Options.class);
+        super("xml", NCallableSupport.DEFAULT_SUPPORT,Options.class);
     }
 
     @Override

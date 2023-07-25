@@ -34,7 +34,7 @@ public abstract class AbstractNUninstallCommand extends NWorkspaceCommandBase<NU
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NSupported.DEFAULT_SUPPORT;
+        return NCallableSupport.DEFAULT_SUPPORT;
     }
 
     @Override

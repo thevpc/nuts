@@ -69,6 +69,8 @@ public class DefaultNTextManagerModel {
 
     public DefaultNTextManagerModel(NWorkspace ws) {
         this.ws = ws;
+    }
+    public void loadExtensions(){
         NSession session = NSessionUtils.defaultSession(ws);
         List<NCodeHighlighter> all = session.extensions().createComponents(NCodeHighlighter.class, null);
         for (NCodeHighlighter h : all) {

@@ -46,7 +46,7 @@ import java.util.List;
 public class HistoryCommand extends NShellBuiltinDefault {
 
     public HistoryCommand() {
-        super("history", NSupported.DEFAULT_SUPPORT,Options.class);
+        super("history", NCallableSupport.DEFAULT_SUPPORT,Options.class);
     }
 
     @Override

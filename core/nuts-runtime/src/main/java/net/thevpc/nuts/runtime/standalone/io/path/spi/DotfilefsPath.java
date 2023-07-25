@@ -34,10 +34,10 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         }
 
         @Override
-        public NSupported<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
+        public NCallableSupport<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
             NSessionUtils.checkSession(ws, session);
             if (path.startsWith(PREFIX)) {
-                return NSupported.of(10, () -> new DotfilefsPath(path, session));
+                return NCallableSupport.of(10, () -> new DotfilefsPath(path, session));
             }
             return null;
         }
@@ -46,9 +46,9 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         public int getSupportLevel(NSupportLevelContext context) {
             String path= context.getConstraints();
             if (path.startsWith(PREFIX)) {
-                return NSupported.DEFAULT_SUPPORT;
+                return NCallableSupport.DEFAULT_SUPPORT;
             }
-            return NSupported.NO_SUPPORT;
+            return NCallableSupport.NO_SUPPORT;
         }
     }
 

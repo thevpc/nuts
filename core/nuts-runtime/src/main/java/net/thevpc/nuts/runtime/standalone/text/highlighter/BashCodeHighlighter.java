@@ -33,7 +33,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
     public int getSupportLevel(NSupportLevelContext context) {
         String s = context.getConstraints();
         if(s==null){
-            return NSupported.DEFAULT_SUPPORT;
+            return NCallableSupport.DEFAULT_SUPPORT;
         }
         switch (s) {
             case "sh":
@@ -43,7 +43,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
             case "ksh":
             case "text/x-shellscript":
             {
-                return NSupported.DEFAULT_SUPPORT;
+                return NCallableSupport.DEFAULT_SUPPORT;
             }
             case "system": {
                 switch (NShellFamily.getCurrent()) {
@@ -52,13 +52,13 @@ public class BashCodeHighlighter implements NCodeHighlighter {
                     case CSH:
                     case ZSH:
                     case KSH:{
-                        return NSupported.DEFAULT_SUPPORT + 10;
+                        return NCallableSupport.DEFAULT_SUPPORT + 10;
                     }
                 }
-                return NSupported.DEFAULT_SUPPORT;
+                return NCallableSupport.DEFAULT_SUPPORT;
             }
         }
-        return NSupported.NO_SUPPORT;
+        return NCallableSupport.NO_SUPPORT;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NSupported;
+import net.thevpc.nuts.NCallableSupport;
 import net.thevpc.nuts.runtime.standalone.util.XmlEscaper;
 
 import java.io.BufferedReader;
@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 public class JettyWebServerHtmlfsParser extends AbstractHtmlfsParser {
     @Override
-    public NSupported<List<String>> parseHtmlTomcat(byte[] bytes, NSession session) {
+    public NCallableSupport<List<String>> parseHtmlTomcat(byte[] bytes, NSession session) {
         List<String> found = new ArrayList<>();
         Pattern pattern = Pattern.compile("tr><td class=\"name\"><a href=\"(?<href>[^\"]+)\">(?<title>[^\"]+)</a></td><td class=\"lastmodified\">(?<date>[^\"]+)</td><td class=\"size\">(?<size>[^\"]+)</td></tr>");
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)))) {

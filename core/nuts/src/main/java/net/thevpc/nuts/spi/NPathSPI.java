@@ -83,6 +83,8 @@ public interface NPathSPI extends NSessionProvider {
 
     String getContentType(NPath basePath);
 
+    String getCharset(NPath basePath);
+
     String toString();
 
     String getLocation(NPath basePath);

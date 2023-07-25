@@ -78,6 +78,11 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
+    public String getCharset() {
+        return base.getCharset();
+    }
+
+    @Override
     public String getName() {
         return base.getName();
     }
@@ -423,7 +428,7 @@ public class NCompressedPathBase extends NPathBase {
 
         @Override
         public int getSupportLevel(NSupportLevelContext context) {
-            return NSupported.DEFAULT_SUPPORT;
+            return NCallableSupport.DEFAULT_SUPPORT;
         }
     }
 }

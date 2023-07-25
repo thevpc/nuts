@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.NIndexStore;
-import net.thevpc.nuts.NSupported;
+import net.thevpc.nuts.NCallableSupport;
 import net.thevpc.nuts.spi.NIndexStoreFactory;
 import net.thevpc.nuts.NRepository;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -10,7 +10,7 @@ public class DummyNIndexStoreFactory implements NIndexStoreFactory {
 
     @Override
     public int getSupportLevel(NSupportLevelContext criteria) {
-        return NSupported.DEFAULT_SUPPORT;
+        return NCallableSupport.DEFAULT_SUPPORT;
     }
 
     @Override

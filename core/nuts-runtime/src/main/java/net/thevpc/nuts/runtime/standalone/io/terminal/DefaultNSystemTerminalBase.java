@@ -73,7 +73,7 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
                 session, this).setTerminalMode(terminalMode);
         this.in = bootStdFd.getIn();
         this.scanner = new Scanner(this.in);
-        return NSupported.DEFAULT_SUPPORT;
+        return NCallableSupport.DEFAULT_SUPPORT;
     }
 
     @Override

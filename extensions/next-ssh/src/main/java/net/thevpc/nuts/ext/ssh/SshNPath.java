@@ -396,9 +396,32 @@ class SshNPath implements NPathSPI {
                 return null;
             }
             String outputString = c.getOutputString();
-            String[] r = NStringUtils.trim(outputString).split(" ");
+            String[] r = Arrays.stream(NStringUtils.trim(outputString).split("[ ;]")).map(String::trim).filter(x -> x.length() > 0).toArray(String[]::new);
             if (r.length > 0) {
                 return NStringUtils.trim(r[0]);
+            }
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public String getCharset(NPath basePath) {
+        try (SShConnection c = prepareSshConnexion()) {
+            c.grabOutputString();
+            int i = c.execStringCommand("file -bi " + path.getPath());
+            if (i != 0) {
+                return null;
+            }
+            String outputString = c.getOutputString();
+            String[] r = Arrays.stream(NStringUtils.trim(outputString).split("[ ;]")).map(String::trim).filter(x -> x.length() > 0).toArray(String[]::new);
+            if (r.length > 1) {
+                String v = NStringUtils.trim(r[1]);
+                if (v.startsWith("charset=")) {
+                    v = v.substring("charset=".length()).trim();
+                }
+                return v;
             }
             return null;
         } catch (Exception e) {

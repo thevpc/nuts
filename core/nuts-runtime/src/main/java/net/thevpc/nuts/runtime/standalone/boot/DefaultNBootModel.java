@@ -68,19 +68,20 @@ public class DefaultNBootModel implements NBootModel {
     private NWorkspaceTerminalOptions bootTerminal;
     private NLog LOG;
     private NSystemTerminalRef systemTerminal;
+    private NWorkspaceModel workspaceModel;
 
-    public DefaultNBootModel(NWorkspace workspace) {
+    public DefaultNBootModel(NWorkspace workspace,NWorkspaceModel workspaceModel) {
         this.workspace = workspace;
+        this.workspaceModel = workspaceModel;
     }
 
     public void init(NBootOptions bOption0) {
         this.initializing = true;
-        NWorkspaceModel _model = NWorkspaceExt.of(workspace).getModel();
         this.bootSession = new DefaultNSession(workspace, bOption0);
         this.bOptions = bOption0.readOnly();
         this.bootTerminal = detectAnsiTerminalSupport(NOsFamily.getCurrent(), bOptions, true, bootSession);
-        _model.uuid = bOptions.getUuid().orNull();
-        _model.name = Paths.get(bOptions.getWorkspace().get()).getFileName().toString();
+        workspaceModel.uuid = bOptions.getUuid().orNull();
+        workspaceModel.name = Paths.get(bOptions.getWorkspace().get()).getFileName().toString();
         DefaultSystemTerminal sys = new DefaultSystemTerminal(new DefaultNSystemTerminalBaseBoot(this));
         this.systemTerminal = new NSystemTerminalRef(NutsSystemTerminal_of_NutsSystemTerminalBase(sys, bootSession));
         this.bootSession.setTerminal(new DefaultNSessionTerminalFromSystem(bootSession, this.systemTerminal));

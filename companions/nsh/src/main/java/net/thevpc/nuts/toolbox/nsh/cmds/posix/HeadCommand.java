@@ -47,7 +47,7 @@ import java.util.List;
 @NComponentScope(NScopeType.WORKSPACE)
 public class HeadCommand extends NShellBuiltinDefault {
     public HeadCommand() {
-        super("head", NSupported.DEFAULT_SUPPORT,Options.class);
+        super("head", NCallableSupport.DEFAULT_SUPPORT,Options.class);
     }
 
     @Override

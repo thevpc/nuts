@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
-import net.thevpc.nuts.NSupported;
+import net.thevpc.nuts.NCallableSupport;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
@@ -45,7 +45,7 @@ import java.util.Set;
 public class UnaliasCommand extends NShellBuiltinDefault {
 
     public UnaliasCommand() {
-        super("unalias", NSupported.DEFAULT_SUPPORT,Options.class);
+        super("unalias", NCallableSupport.DEFAULT_SUPPORT,Options.class);
     }
 
     @Override

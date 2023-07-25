@@ -320,6 +320,6 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NSupported.DEFAULT_SUPPORT;
+        return NCallableSupport.DEFAULT_SUPPORT;
     }
 }

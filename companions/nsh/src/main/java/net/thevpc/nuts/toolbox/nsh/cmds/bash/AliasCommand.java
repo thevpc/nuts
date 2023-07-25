@@ -26,7 +26,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.NMsg;
-import net.thevpc.nuts.NSupported;
+import net.thevpc.nuts.NCallableSupport;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
@@ -45,7 +45,7 @@ import java.util.*;
 public class AliasCommand extends NShellBuiltinDefault {
 
     public AliasCommand() {
-        super("alias", NSupported.DEFAULT_SUPPORT,Options.class);
+        super("alias", NCallableSupport.DEFAULT_SUPPORT,Options.class);
     }
 
     @Override

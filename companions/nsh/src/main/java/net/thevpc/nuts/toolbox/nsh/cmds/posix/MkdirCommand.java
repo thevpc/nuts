@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.posix;
 
-import net.thevpc.nuts.NSupported;
+import net.thevpc.nuts.NCallableSupport;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
@@ -48,7 +48,7 @@ import java.util.List;
 public class MkdirCommand extends NShellBuiltinDefault {
 
     public MkdirCommand() {
-        super("mkdir", NSupported.DEFAULT_SUPPORT,Options.class);
+        super("mkdir", NCallableSupport.DEFAULT_SUPPORT,Options.class);
     }
 
     @Override

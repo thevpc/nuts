@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
-import net.thevpc.nuts.NSupported;
+import net.thevpc.nuts.NCallableSupport;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
@@ -43,7 +43,7 @@ import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 public class CdCommand extends NShellBuiltinDefault {
 
     public CdCommand() {
-        super("cd", NSupported.DEFAULT_SUPPORT, Options.class);
+        super("cd", NCallableSupport.DEFAULT_SUPPORT, Options.class);
     }
 
     @Override

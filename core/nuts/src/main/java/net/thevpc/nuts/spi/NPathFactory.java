@@ -27,11 +27,11 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NSupported;
+import net.thevpc.nuts.NCallableSupport;
 
 /**
  * @app.category Input Output
  */
 public interface NPathFactory extends NComponent{
-    NSupported<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader);
+    NCallableSupport<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader);
 }

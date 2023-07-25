@@ -747,7 +747,7 @@ public class CoreIOUtils {
                 .setMetadata(new DefaultNContentMetadata(
                         path,
                         NMsg.ofNtf(NTexts.of(session).ofStyled(path, NTextStyle.path())),
-                        size, NPath.of(path, session).getContentType(), sourceTypeName
+                        size,header.getContentType(), header.getCharset(), sourceTypeName
                 )).createInputStream()
                 ;
 
@@ -1052,13 +1052,13 @@ public class CoreIOUtils {
         return false;
     }
 
-    public static InputStream createBytesStream(byte[] bytes, NMsg message, String contentType, String kind, NSession session) {
+    public static InputStream createBytesStream(byte[] bytes, NMsg message, String contentType, String encoding, String kind, NSession session) {
         return NIO.of(session).ofInputStreamBuilder(new ByteArrayInputStream(bytes))
                 .setMetadata(new DefaultNContentMetadata(
                                 message,
                                 (long) bytes.length,
                                 contentType,
-                                kind
+                        encoding, kind
                         )
                 ).createInputStream();
     }

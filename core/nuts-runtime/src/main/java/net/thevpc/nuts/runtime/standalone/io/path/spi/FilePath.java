@@ -201,6 +201,11 @@ public class FilePath implements NPathSPI {
     }
 
     @Override
+    public String getCharset(NPath basePath) {
+        return NContentTypes.of(session).probeCharset(value);
+    }
+
+    @Override
     public String getLocation(NPath basePath) {
         return value.toString();
     }
@@ -829,14 +834,14 @@ public class FilePath implements NPathSPI {
         }
 
         @Override
-        public NSupported<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
+        public NCallableSupport<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
             NSessionUtils.checkSession(ws, session);
             try {
                 if (URLPath.MOSTLY_URL_PATTERN.matcher(path).matches()) {
                     return null;
                 }
                 Path value = Paths.get(path);
-                return NSupported.of(10, () -> new FilePath(value, session));
+                return NCallableSupport.of(10, () -> new FilePath(value, session));
             } catch (Exception ex) {
                 //ignore
             }
@@ -848,14 +853,14 @@ public class FilePath implements NPathSPI {
             String path = context.getConstraints();
             try {
                 if (URLPath.MOSTLY_URL_PATTERN.matcher(path).matches()) {
-                    return NSupported.NO_SUPPORT;
+                    return NCallableSupport.NO_SUPPORT;
                 }
                 Path value = Paths.get(path);
-                return NSupported.DEFAULT_SUPPORT;
+                return NCallableSupport.DEFAULT_SUPPORT;
             } catch (Exception ex) {
                 //ignore
             }
-            return NSupported.NO_SUPPORT;
+            return NCallableSupport.NO_SUPPORT;
         }
 
     }

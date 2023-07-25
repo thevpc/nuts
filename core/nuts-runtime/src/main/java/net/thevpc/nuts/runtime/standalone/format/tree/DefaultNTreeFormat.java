@@ -310,6 +310,6 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NSupported.DEFAULT_SUPPORT;
+        return NCallableSupport.DEFAULT_SUPPORT;
     }
 }

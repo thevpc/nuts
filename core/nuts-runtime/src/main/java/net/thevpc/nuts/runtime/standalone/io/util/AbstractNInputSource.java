@@ -27,6 +27,21 @@ public abstract class AbstractNInputSource implements NInputSource {
         this.session = session;
     }
 
+    @Override
+    public String getName() {
+        return getMetaData().getName().orNull();
+    }
+
+    @Override
+    public String getContentType() {
+        return getMetaData().getContentType().orNull();
+    }
+
+    @Override
+    public String getCharset() {
+        return getMetaData().getCharset().orNull();
+    }
+
     public NSession getSession() {
         return session;
     }

@@ -261,9 +261,9 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
             NLog.of(NJLineTerminal.class, session)
                     .with().level(Level.FINEST).verb(NLogVerb.FAIL).error(ex)
                     .log(NMsg.ofPlain("unable to create NutsJLineTerminal. ignored."));
-            return NSupported.NO_SUPPORT;
+            return NCallableSupport.NO_SUPPORT;
         }
-        return NSupported.DEFAULT_SUPPORT + 1;
+        return NCallableSupport.DEFAULT_SUPPORT + 1;
     }
 
     @Override

@@ -47,7 +47,7 @@ public abstract class AbstractNDeployCommand extends NWorkspaceCommandBase<NDepl
     }
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NSupported.DEFAULT_SUPPORT;
+        return NCallableSupport.DEFAULT_SUPPORT;
     }
     public List<String> getParseOptions() {
         return parseOptions;

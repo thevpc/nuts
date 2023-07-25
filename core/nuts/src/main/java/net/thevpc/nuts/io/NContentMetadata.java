@@ -18,6 +18,8 @@ public interface NContentMetadata extends NBlankable {
     NOptional<NMsg> getMessage();
 
 
+    NOptional<String> getCharset();
+
     NOptional<String> getContentType();
 
     NOptional<String> getName();
@@ -27,6 +29,8 @@ public interface NContentMetadata extends NBlankable {
     NContentMetadata setKind(String userKind);
 
     NContentMetadata setName(String name);
+
+    NContentMetadata setCharset(String name);
 
     NContentMetadata setMessage(NMsg message);
 
