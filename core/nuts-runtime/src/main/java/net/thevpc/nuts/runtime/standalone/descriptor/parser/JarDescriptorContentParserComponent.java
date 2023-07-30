@@ -61,14 +61,14 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
                 case "jar":
                 case "war":
                 case "ear": {
-                    return NCallableSupport.DEFAULT_SUPPORT + 10;
+                    return NConstants.Support.DEFAULT_SUPPORT + 10;
                 }
                 case "zip": {
-                    return NCallableSupport.DEFAULT_SUPPORT + 5;
+                    return NConstants.Support.DEFAULT_SUPPORT + 5;
                 }
             }
         }
-        return NCallableSupport.NO_SUPPORT;
+        return NConstants.Support.NO_SUPPORT;
     }
 
     @Override

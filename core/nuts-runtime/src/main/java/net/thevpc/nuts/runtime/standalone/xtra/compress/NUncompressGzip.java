@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.compress;
 
-import net.thevpc.nuts.NIllegalArgumentException;
-import net.thevpc.nuts.NMsg;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NCallableSupport;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.spi.NUncompressPackaging;
@@ -153,8 +150,8 @@ public class NUncompressGzip implements NUncompressPackaging {
                 z.equals("gzip")
                         || z.equals("gz")
         ) {
-            return NCallableSupport.DEFAULT_SUPPORT;
+            return NConstants.Support.DEFAULT_SUPPORT;
         }
-        return NCallableSupport.NO_SUPPORT;
+        return NConstants.Support.NO_SUPPORT;
     }
 }

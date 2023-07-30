@@ -853,14 +853,14 @@ public class FilePath implements NPathSPI {
             String path = context.getConstraints();
             try {
                 if (URLPath.MOSTLY_URL_PATTERN.matcher(path).matches()) {
-                    return NCallableSupport.NO_SUPPORT;
+                    return NConstants.Support.NO_SUPPORT;
                 }
                 Path value = Paths.get(path);
-                return NCallableSupport.DEFAULT_SUPPORT;
+                return NConstants.Support.DEFAULT_SUPPORT;
             } catch (Exception ex) {
                 //ignore
             }
-            return NCallableSupport.NO_SUPPORT;
+            return NConstants.Support.NO_SUPPORT;
         }
 
     }

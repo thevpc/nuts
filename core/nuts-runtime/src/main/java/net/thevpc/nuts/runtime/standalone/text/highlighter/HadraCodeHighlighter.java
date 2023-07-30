@@ -28,7 +28,7 @@ public class HadraCodeHighlighter implements NCodeHighlighter {
     public int getSupportLevel(NSupportLevelContext context) {
         String s = context.getConstraints();
         if(s==null){
-            return NCallableSupport.DEFAULT_SUPPORT;
+            return NConstants.Support.DEFAULT_SUPPORT;
         }
         switch (s){
             case "hadra":
@@ -41,10 +41,10 @@ public class HadraCodeHighlighter implements NCodeHighlighter {
             case "text/hadra":
             case "application/hadra":
             {
-                return NCallableSupport.DEFAULT_SUPPORT;
+                return NConstants.Support.DEFAULT_SUPPORT;
             }
         }
-        return NCallableSupport.NO_SUPPORT;
+        return NConstants.Support.NO_SUPPORT;
     }
 
     @Override

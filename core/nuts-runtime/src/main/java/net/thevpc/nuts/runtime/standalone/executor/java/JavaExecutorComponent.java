@@ -93,16 +93,16 @@ public class JavaExecutorComponent implements NExecutorComponent {
             String shortName = def.getId().getShortName();
             //for executors
             if ("net.thevpc.nuts.exec:exec-java".equals(shortName)) {
-                return NCallableSupport.DEFAULT_SUPPORT + 10;
+                return NConstants.Support.DEFAULT_SUPPORT + 10;
             }
             if ("java".equals(shortName)) {
-                return NCallableSupport.DEFAULT_SUPPORT + 10;
+                return NConstants.Support.DEFAULT_SUPPORT + 10;
             }
             if ("jar".equals(def.getDescriptor().getPackaging())) {
-                return NCallableSupport.DEFAULT_SUPPORT + 10;
+                return NConstants.Support.DEFAULT_SUPPORT + 10;
             }
         }
-        return NCallableSupport.NO_SUPPORT;
+        return NConstants.Support.NO_SUPPORT;
     }
 
     public static NWorkspaceOptionsBuilder createChildOptions(NExecutionContext executionContext) {

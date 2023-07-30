@@ -46,7 +46,7 @@ import java.util.List;
 public class RmCommand extends NShellBuiltinDefault {
 
     public RmCommand() {
-        super("rm", NCallableSupport.DEFAULT_SUPPORT, Options.class);
+        super("rm", NConstants.Support.DEFAULT_SUPPORT, Options.class);
     }
 
     @Override

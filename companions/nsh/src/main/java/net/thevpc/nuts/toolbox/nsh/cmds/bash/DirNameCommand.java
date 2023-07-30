@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
-import net.thevpc.nuts.NCallableSupport;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
@@ -45,7 +45,7 @@ import java.util.List;
 public class DirNameCommand extends NShellBuiltinDefault {
 
     public DirNameCommand() {
-        super("dirname", NCallableSupport.DEFAULT_SUPPORT,Options.class);
+        super("dirname", NConstants.Support.DEFAULT_SUPPORT,Options.class);
     }
 
     @Override

@@ -25,7 +25,7 @@
 */
 package net.thevpc.nuts.runtime.standalone.boot;
 
-import net.thevpc.nuts.NCallableSupport;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
@@ -41,7 +41,7 @@ public class DefaultNBootWorkspaceFactory implements NBootWorkspaceFactory {
 
     @Override
     public int getBootSupportLevel(NBootOptions options) {
-        return NCallableSupport.DEFAULT_SUPPORT;
+        return NConstants.Support.DEFAULT_SUPPORT;
     }
 
     @Override

@@ -847,7 +847,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NCallableSupport.DEFAULT_SUPPORT;
+        return NConstants.Support.DEFAULT_SUPPORT;
     }
 
     public static class Row {

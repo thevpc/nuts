@@ -1,7 +1,7 @@
 package net.thevpc.nuts.ext.term;
 
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NCallableSupport;
 import net.thevpc.nuts.NWorkspaceExtension;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.spi.NExtensionLifeCycle;
@@ -10,7 +10,7 @@ import net.thevpc.nuts.spi.NSupportLevelContext;
 public class NJLineExtensionLifeCycle implements NExtensionLifeCycle {
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NCallableSupport.DEFAULT_SUPPORT;
+        return NConstants.Support.DEFAULT_SUPPORT;
     }
 
     @Override

@@ -22,7 +22,7 @@ public class DefaultNPlatforms implements NPlatforms {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NCallableSupport.DEFAULT_SUPPORT;
+        return NConstants.Support.DEFAULT_SUPPORT;
     }
 
     public DefaultNPlatformModel getModel() {

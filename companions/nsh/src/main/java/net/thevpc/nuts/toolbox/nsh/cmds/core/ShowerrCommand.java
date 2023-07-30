@@ -45,7 +45,7 @@ import net.thevpc.nuts.toolbox.nsh.eval.NShellResult;
 public class ShowerrCommand extends NShellBuiltinCore {
 
     public ShowerrCommand() {
-        super("showerr", NCallableSupport.DEFAULT_SUPPORT,Options.class);
+        super("showerr", NConstants.Support.DEFAULT_SUPPORT,Options.class);
     }
 
     @Override

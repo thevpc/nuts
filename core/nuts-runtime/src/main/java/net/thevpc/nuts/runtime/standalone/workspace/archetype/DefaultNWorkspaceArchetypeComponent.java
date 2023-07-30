@@ -128,7 +128,7 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 
     @Override
     public int getSupportLevel(NSupportLevelContext criteria) {
-        return NCallableSupport.DEFAULT_SUPPORT + 2;
+        return NConstants.Support.DEFAULT_SUPPORT + 2;
     }
 
 }

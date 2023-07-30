@@ -170,7 +170,7 @@ public class AdminServerRunnable implements NServer, Runnable {
         private final ServerSocket socket;
 
         public StopServerBuiltin2(ServerSocket finalServerSocket) {
-            super("stop-server", NCallableSupport.DEFAULT_SUPPORT, Options.class);
+            super("stop-server", NConstants.Support.DEFAULT_SUPPORT, Options.class);
             this.socket = finalServerSocket;
         }
 

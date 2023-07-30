@@ -34,27 +34,29 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public interface NCallableSupport<T> {
-    /**
-     * minimum support level for user defined implementations.
-     */
-    int CUSTOM_SUPPORT = 1000;
-    /**
-     * this is the default support level for runtime implementation (nuts-runtime).
-     */
-    int DEFAULT_SUPPORT = 10;
-    /**
-     * when getSupportLevel(...)==NO_SUPPORT the package is discarded.
-     */
-    int NO_SUPPORT = -1;
 
-    static <T> NCallableSupport<T> resolve(Collection<Supplier<NCallableSupport<T>>> source, Function<NSession, NMsg> emptyMessage) {
+    static <T> NCallableSupport<T> resolve(Collection<NCallableSupport<T>> source, Function<NSession, NMsg> emptyMessage) {
         if (source == null) {
             return invalid(emptyMessage);
         }
         return resolve(source.stream(), emptyMessage);
     }
 
-    static <T> NCallableSupport<T> resolve(Stream<Supplier<NCallableSupport<T>>> source, Function<NSession, NMsg> emptyMessage) {
+    static <T> NCallableSupport<T> resolve(Stream<NCallableSupport<T>> source, Function<NSession, NMsg> emptyMessage) {
+        if (source == null) {
+            return invalid(emptyMessage);
+        }
+        return resolveSupplier(source.map(x -> () -> x), emptyMessage);
+    }
+
+    static <T> NCallableSupport<T> resolveSupplier(Collection<Supplier<NCallableSupport<T>>> source, Function<NSession, NMsg> emptyMessage) {
+        if (source == null) {
+            return invalid(emptyMessage);
+        }
+        return resolveSupplier(source.stream(), emptyMessage);
+    }
+
+    static <T> NCallableSupport<T> resolveSupplier(Stream<Supplier<NCallableSupport<T>>> source, Function<NSession, NMsg> emptyMessage) {
         Object[] track = new Object[2];
         if (source != null) {
             source.forEach(i -> {
@@ -103,7 +105,7 @@ public interface NCallableSupport<T> {
 
     @SuppressWarnings("unchecked")
     static <T> NCallableSupport<T> invalid(Function<NSession, NMsg> emptyMessage) {
-        return new DefaultNCallableSupport<>(null, NO_SUPPORT, emptyMessage);
+        return new DefaultNCallableSupport<>(null, NConstants.Support.NO_SUPPORT, emptyMessage);
     }
 
     static <T> boolean isValid(NCallableSupport<T> s) {

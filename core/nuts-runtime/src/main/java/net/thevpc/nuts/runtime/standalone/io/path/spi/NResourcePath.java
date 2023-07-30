@@ -596,7 +596,7 @@ public class NResourcePath implements NPathSPI {
             NSessionUtils.checkSession(ws, session);
             try {
                 if (path.startsWith("nuts-resource:")) {
-                    return NCallableSupport.of(NCallableSupport.DEFAULT_SUPPORT, () -> new NResourcePath(path, session));
+                    return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, () -> new NResourcePath(path, session));
                 }
             } catch (Exception ex) {
                 //ignore
@@ -608,9 +608,9 @@ public class NResourcePath implements NPathSPI {
         public int getSupportLevel(NSupportLevelContext context) {
             String path= context.getConstraints();
             if (path.startsWith("nuts-resource:")) {
-                return NCallableSupport.DEFAULT_SUPPORT;
+                return NConstants.Support.DEFAULT_SUPPORT;
             }
-            return NCallableSupport.NO_SUPPORT;
+            return NConstants.Support.NO_SUPPORT;
         }
     }
 

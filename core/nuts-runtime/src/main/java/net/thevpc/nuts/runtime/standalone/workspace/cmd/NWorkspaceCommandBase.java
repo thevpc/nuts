@@ -36,7 +36,7 @@ public abstract class NWorkspaceCommandBase<T extends NWorkspaceCommand> impleme
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NCallableSupport.DEFAULT_SUPPORT;
+        return NConstants.Support.DEFAULT_SUPPORT;
     }
 
     protected NLogOp _LOGOP(NSession session) {

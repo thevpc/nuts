@@ -69,7 +69,7 @@ public abstract class NShellBuiltinBase implements NShellBuiltin {
 
     public NShellBuiltinBase(String name, Class<?> optionsSupplier) {
         this.name = name;
-        this.supportLevel = NCallableSupport.DEFAULT_SUPPORT;
+        this.supportLevel = NConstants.Support.DEFAULT_SUPPORT;
         this.optionsSupplier = ()->createOptions(optionsSupplier);
     }
     public NShellBuiltinBase(String name, int supportLevel, Supplier<?> optionsSupplier) {
@@ -79,7 +79,7 @@ public abstract class NShellBuiltinBase implements NShellBuiltin {
     }
     public NShellBuiltinBase(String name, Supplier<?> optionsSupplier) {
         this.name = name;
-        this.supportLevel = NCallableSupport.DEFAULT_SUPPORT;
+        this.supportLevel = NConstants.Support.DEFAULT_SUPPORT;
         this.optionsSupplier = (Supplier)optionsSupplier;
     }
 

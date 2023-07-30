@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
-import net.thevpc.nuts.NCallableSupport;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
@@ -47,7 +47,7 @@ import java.util.Map;
 public class SetCommand extends NShellBuiltinDefault {
 
     public SetCommand() {
-        super("set", NCallableSupport.DEFAULT_SUPPORT,Options.class);
+        super("set", NConstants.Support.DEFAULT_SUPPORT,Options.class);
     }
 
     @Override

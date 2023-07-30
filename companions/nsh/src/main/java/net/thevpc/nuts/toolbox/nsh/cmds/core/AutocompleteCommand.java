@@ -45,7 +45,7 @@ import java.util.*;
 public class AutocompleteCommand extends NShellBuiltinDefault {
 
     public AutocompleteCommand() {
-        super("autocomplete", NCallableSupport.DEFAULT_SUPPORT,Options.class);
+        super("autocomplete", NConstants.Support.DEFAULT_SUPPORT,Options.class);
     }
 
     @Override

@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
-import net.thevpc.nuts.NCallableSupport;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NExecutionException;
@@ -43,7 +43,7 @@ import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 public class FalseCommand extends NShellBuiltinDefault {
 
     public FalseCommand() {
-        super("false", NCallableSupport.DEFAULT_SUPPORT,Options.class);
+        super("false", NConstants.Support.DEFAULT_SUPPORT,Options.class);
     }
 
     private static class Options{

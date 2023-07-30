@@ -67,18 +67,18 @@ public class ZipExecutorComponent implements NExecutorComponent {
             String shortName = def.getId().getShortName();
             //for executors
             if ("net.thevpc.nuts.exec:exec-zip".equals(shortName)) {
-                return NCallableSupport.DEFAULT_SUPPORT + 10;
+                return NConstants.Support.DEFAULT_SUPPORT + 10;
             }
             if ("zip".equals(shortName)) {
-                return NCallableSupport.DEFAULT_SUPPORT + 10;
+                return NConstants.Support.DEFAULT_SUPPORT + 10;
             }
             switch (NStringUtils.trim(def.getDescriptor().getPackaging())) {
                 case "zip": {
-                    return NCallableSupport.DEFAULT_SUPPORT + 10;
+                    return NConstants.Support.DEFAULT_SUPPORT + 10;
                 }
             }
         }
-        return NCallableSupport.NO_SUPPORT;
+        return NConstants.Support.NO_SUPPORT;
     }
 
     //@Override

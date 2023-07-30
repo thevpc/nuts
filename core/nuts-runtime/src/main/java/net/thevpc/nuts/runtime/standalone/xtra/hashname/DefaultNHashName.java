@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.hashname;
 
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NCallableSupport;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.io.NHashName;
 import net.thevpc.nuts.io.NPath;
@@ -85,6 +85,6 @@ public class DefaultNHashName implements NHashName {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NCallableSupport.DEFAULT_SUPPORT;
+        return NConstants.Support.DEFAULT_SUPPORT;
     }
 }

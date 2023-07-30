@@ -32,17 +32,17 @@ public class JsonCodeHighlighter implements NCodeHighlighter {
     public int getSupportLevel(NSupportLevelContext context) {
         String s = context.getConstraints();
         if(s==null){
-            return NCallableSupport.DEFAULT_SUPPORT;
+            return NConstants.Support.DEFAULT_SUPPORT;
         }
         switch (s){
             case "json":
             case "application/json":
             case "text/json":
             {
-                return NCallableSupport.DEFAULT_SUPPORT;
+                return NConstants.Support.DEFAULT_SUPPORT;
             }
         }
-        return NCallableSupport.NO_SUPPORT;
+        return NConstants.Support.NO_SUPPORT;
     }
 
     @Override

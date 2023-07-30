@@ -253,7 +253,7 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NCallableSupport.DEFAULT_SUPPORT;
+        return NConstants.Support.DEFAULT_SUPPORT;
     }
 
     @Override

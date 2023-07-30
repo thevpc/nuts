@@ -30,21 +30,21 @@ public class FishCodeHighlighter implements NCodeHighlighter {
     public int getSupportLevel(NSupportLevelContext context) {
         String s = context.getConstraints();
         if(s==null){
-            return NCallableSupport.DEFAULT_SUPPORT;
+            return NConstants.Support.DEFAULT_SUPPORT;
         }
         switch (s) {
             case "fish": {
-                return NCallableSupport.DEFAULT_SUPPORT;
+                return NConstants.Support.DEFAULT_SUPPORT;
             }
             case "system": {
                 switch (NShellFamily.getCurrent()) {
                     case FISH: {
-                        return NCallableSupport.DEFAULT_SUPPORT;
+                        return NConstants.Support.DEFAULT_SUPPORT;
                     }
                 }
             }
         }
-        return NCallableSupport.NO_SUPPORT;
+        return NConstants.Support.NO_SUPPORT;
     }
 
     @Override

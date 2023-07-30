@@ -77,11 +77,11 @@ public class NshDescriptorContentParserComponent implements NDescriptorContentPa
                 case "sh":
                 case "nsh":
                 case "bash": {
-                    return NCallableSupport.DEFAULT_SUPPORT;
+                    return NConstants.Support.DEFAULT_SUPPORT;
                 }
             }
         }
-        return NCallableSupport.NO_SUPPORT;
+        return NConstants.Support.NO_SUPPORT;
     }
 
     private static String removeBashComment(String str) {

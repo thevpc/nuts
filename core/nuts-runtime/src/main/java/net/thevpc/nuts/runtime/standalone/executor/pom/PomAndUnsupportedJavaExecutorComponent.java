@@ -56,7 +56,7 @@ public class PomAndUnsupportedJavaExecutorComponent implements NExecutorComponen
             ID = NId.of("net.thevpc.nuts.exec:java-unsupported").get(session);
         }
         if(true){
-            return NCallableSupport.NO_SUPPORT;
+            return NConstants.Support.NO_SUPPORT;
         }
         NDefinition def = context.getConstraints(NDefinition.class);
         if (def != null) {
@@ -65,12 +65,12 @@ public class PomAndUnsupportedJavaExecutorComponent implements NExecutorComponen
                 case "war":
                 case "zip":
                 {
-                    return NCallableSupport.NO_SUPPORT;
+                    return NConstants.Support.NO_SUPPORT;
                 }
             }
-            return NCallableSupport.DEFAULT_SUPPORT + 1;
+            return NConstants.Support.DEFAULT_SUPPORT + 1;
         }
-        return NCallableSupport.NO_SUPPORT;
+        return NConstants.Support.NO_SUPPORT;
     }
 
     @Override

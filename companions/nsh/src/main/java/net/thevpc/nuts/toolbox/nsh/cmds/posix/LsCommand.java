@@ -65,7 +65,7 @@ public class LsCommand extends NShellBuiltinDefault {
             .withZone(ZoneId.systemDefault());
 
     public LsCommand() {
-        super("ls", NCallableSupport.DEFAULT_SUPPORT, Options.class);
+        super("ls", NConstants.Support.DEFAULT_SUPPORT, Options.class);
     }
 
     @Override

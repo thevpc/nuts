@@ -159,7 +159,7 @@ public class DefaultNLocks extends AbstractNLocks {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NCallableSupport.DEFAULT_SUPPORT;
+        return NConstants.Support.DEFAULT_SUPPORT;
     }
 
 }

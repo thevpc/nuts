@@ -61,7 +61,7 @@ public class PlainNAuthenticationAgent implements NAuthenticationAgent {
 
     @Override
     public int getSupportLevel(NSupportLevelContext authenticationAgent) {
-        return NCallableSupport.DEFAULT_SUPPORT - 1;
+        return NConstants.Support.DEFAULT_SUPPORT - 1;
     }
 
     private char[] extractId(char[] a, NSession session) {

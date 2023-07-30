@@ -1,12 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.dependency.solver;
 
-import net.thevpc.nuts.NConfigs;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NCallableSupport;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.spi.NDependencySolvers;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
@@ -40,6 +37,6 @@ public class DefaultNDependencySolvers implements NDependencySolvers {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NCallableSupport.DEFAULT_SUPPORT;
+        return NConstants.Support.DEFAULT_SUPPORT;
     }
 }

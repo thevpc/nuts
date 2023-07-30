@@ -5,10 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.prepare;
 
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NPrepareCommand;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NCallableSupport;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCommandBase;
@@ -35,7 +32,7 @@ public abstract class AbstractNPrepareCommand extends NWorkspaceCommandBase<NPre
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NCallableSupport.DEFAULT_SUPPORT;
+        return NConstants.Support.DEFAULT_SUPPORT;
     }
 
     @Override

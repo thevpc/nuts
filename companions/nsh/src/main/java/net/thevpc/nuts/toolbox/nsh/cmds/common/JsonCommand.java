@@ -58,7 +58,7 @@ import java.util.List;
 public class JsonCommand extends NShellBuiltinDefault {
 
     public JsonCommand() {
-        super("json", NCallableSupport.DEFAULT_SUPPORT, Options.class);
+        super("json", NConstants.Support.DEFAULT_SUPPORT, Options.class);
     }
 
     @Override

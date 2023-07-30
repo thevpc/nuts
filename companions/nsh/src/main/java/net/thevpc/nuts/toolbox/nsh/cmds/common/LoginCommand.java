@@ -39,7 +39,7 @@ import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 public class LoginCommand extends NShellBuiltinDefault {
 
     public LoginCommand() {
-        super("login", NCallableSupport.DEFAULT_SUPPORT, Options.class);
+        super("login", NConstants.Support.DEFAULT_SUPPORT, Options.class);
     }
 
     @Override

@@ -18,7 +18,7 @@ public abstract class AbstractNFetchCommand extends DefaultNQueryBaseOptions<NFe
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NCallableSupport.DEFAULT_SUPPORT;
+        return NConstants.Support.DEFAULT_SUPPORT;
     }
 
     @Override

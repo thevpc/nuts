@@ -43,7 +43,7 @@ import java.util.*;
 public class EnvCommand extends NShellBuiltinDefault {
 
     public EnvCommand() {
-        super("env", NCallableSupport.DEFAULT_SUPPORT, Options.class);
+        super("env", NConstants.Support.DEFAULT_SUPPORT, Options.class);
     }
 
     @Override

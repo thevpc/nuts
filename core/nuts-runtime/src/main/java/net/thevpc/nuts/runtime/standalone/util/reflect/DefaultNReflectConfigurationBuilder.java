@@ -23,7 +23,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.reflect;
 
-import net.thevpc.nuts.NCallableSupport;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NReflectConfiguration;
 import net.thevpc.nuts.util.NReflectConfigurationBuilder;
@@ -94,6 +94,6 @@ public class DefaultNReflectConfigurationBuilder implements NReflectConfiguratio
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NCallableSupport.DEFAULT_SUPPORT;
+        return NConstants.Support.DEFAULT_SUPPORT;
     }
 }

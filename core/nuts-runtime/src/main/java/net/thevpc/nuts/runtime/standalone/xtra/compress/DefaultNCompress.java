@@ -51,7 +51,7 @@ public class DefaultNCompress implements NCompress {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NCallableSupport.DEFAULT_SUPPORT;
+        return NConstants.Support.DEFAULT_SUPPORT;
     }
 
     protected NLog _LOG(NSession session) {

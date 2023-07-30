@@ -555,7 +555,7 @@ public class GenericFilePath implements NPathSPI {
                     if (path.trim().length() > 0) {
                         for (char c : path.toCharArray()) {
                             if (c < 32) {
-                                return NCallableSupport.NO_SUPPORT;
+                                return NConstants.Support.NO_SUPPORT;
                             }
                         }
                         return 1;
@@ -564,7 +564,7 @@ public class GenericFilePath implements NPathSPI {
             } catch (Exception ex) {
                 //ignore
             }
-            return NCallableSupport.NO_SUPPORT;
+            return NConstants.Support.NO_SUPPORT;
         }
 
     }

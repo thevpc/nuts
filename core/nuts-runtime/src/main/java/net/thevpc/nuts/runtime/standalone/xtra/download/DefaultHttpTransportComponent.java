@@ -48,7 +48,7 @@ public class DefaultHttpTransportComponent implements NTransportComponent {
     @Override
     public int getSupportLevel(NSupportLevelContext url) {
         session=url.getSession();
-        return NCallableSupport.DEFAULT_SUPPORT;
+        return NConstants.Support.DEFAULT_SUPPORT;
     }
 
     @Override

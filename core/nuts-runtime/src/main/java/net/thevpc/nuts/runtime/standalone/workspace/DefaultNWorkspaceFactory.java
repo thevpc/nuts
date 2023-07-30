@@ -87,7 +87,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     public <T extends NComponent> NOptional<T> createComponent(Class<T> type, Object supportCriteria, NSession session) {
         NSupportLevelContext context = new NDefaultSupportLevelContext(session, supportCriteria);
         List<T> all = createAll(type, session);
-        NCallableSupport<T> s= NCallableSupport.resolve(all.stream().map(x-> (Supplier<NCallableSupport<T>>) () -> NCallableSupport.of(x.getSupportLevel(context),x)),
+        NCallableSupport<T> s= NCallableSupport.resolve(all.stream().map(x->NCallableSupport.of(x.getSupportLevel(context),x)),
                 ss->NMsg.ofMissingValue(NMsg.ofC("extensions component %s", type).toString())
                 );
         return s.toOptional();

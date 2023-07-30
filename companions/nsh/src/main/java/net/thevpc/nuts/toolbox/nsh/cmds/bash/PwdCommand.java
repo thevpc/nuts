@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
-import net.thevpc.nuts.NCallableSupport;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.spi.NComponentScope;
@@ -40,7 +40,7 @@ import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 public class PwdCommand extends NShellBuiltinDefault {
 
     public PwdCommand() {
-        super("pwd", NCallableSupport.DEFAULT_SUPPORT,Options.class);
+        super("pwd", NConstants.Support.DEFAULT_SUPPORT,Options.class);
     }
 
     @Override

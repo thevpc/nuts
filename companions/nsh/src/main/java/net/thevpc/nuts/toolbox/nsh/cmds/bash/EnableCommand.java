@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
-import net.thevpc.nuts.NCallableSupport;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
@@ -46,7 +46,7 @@ import java.util.*;
 public class EnableCommand extends NShellBuiltinDefault {
 
     public EnableCommand() {
-        super("enable", NCallableSupport.DEFAULT_SUPPORT,Options.class);
+        super("enable", NConstants.Support.DEFAULT_SUPPORT,Options.class);
     }
 
     @Override

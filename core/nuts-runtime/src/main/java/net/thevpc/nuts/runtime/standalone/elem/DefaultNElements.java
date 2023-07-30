@@ -678,7 +678,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NCallableSupport.DEFAULT_SUPPORT;
+        return NConstants.Support.DEFAULT_SUPPORT;
     }
 
     @Override

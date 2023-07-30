@@ -44,7 +44,7 @@ import java.util.*;
 public class ChmodCommand extends NShellBuiltinDefault {
 
     public ChmodCommand() {
-        super("chmod", NCallableSupport.DEFAULT_SUPPORT,Options.class);
+        super("chmod", NConstants.Support.DEFAULT_SUPPORT,Options.class);
     }
 
 

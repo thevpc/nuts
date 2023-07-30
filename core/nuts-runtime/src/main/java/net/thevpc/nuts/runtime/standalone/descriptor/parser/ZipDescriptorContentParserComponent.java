@@ -59,10 +59,10 @@ public class ZipDescriptorContentParserComponent implements NDescriptorContentPa
         if(constraints!=null) {
             String e = NStringUtils.trim(constraints.getFileExtension());
             if (!POSSIBLE_EXT.contains(e)) {
-                return NCallableSupport.NO_SUPPORT;
+                return NConstants.Support.NO_SUPPORT;
             }
         }
-        return NCallableSupport.NO_SUPPORT;
+        return NConstants.Support.NO_SUPPORT;
     }
 
     @Override

@@ -52,11 +52,11 @@ public class ZipInstallerComponent implements NInstallerComponent {
         if (def != null) {
             if (def.getDescriptor() != null) {
                 if ("zip".equals(def.getDescriptor().getPackaging())) {
-                    return NCallableSupport.DEFAULT_SUPPORT;
+                    return NConstants.Support.DEFAULT_SUPPORT;
                 }
             }
         }
-        return NCallableSupport.NO_SUPPORT;
+        return NConstants.Support.NO_SUPPORT;
     }
 
     @Override

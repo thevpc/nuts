@@ -48,7 +48,7 @@ import java.util.List;
 public class CpCommand extends NShellBuiltinDefault {
 
     public CpCommand() {
-        super("cp", NCallableSupport.DEFAULT_SUPPORT, Options.class);
+        super("cp", NConstants.Support.DEFAULT_SUPPORT, Options.class);
     }
 
 

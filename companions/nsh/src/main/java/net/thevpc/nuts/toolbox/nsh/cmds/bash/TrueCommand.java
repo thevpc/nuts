@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
-import net.thevpc.nuts.NCallableSupport;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.spi.NComponentScope;
@@ -41,7 +41,7 @@ import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 public class TrueCommand extends NShellBuiltinDefault {
 
     public TrueCommand() {
-        super("true", NCallableSupport.DEFAULT_SUPPORT,Options.class);
+        super("true", NConstants.Support.DEFAULT_SUPPORT,Options.class);
     }
 
     private static class Options{

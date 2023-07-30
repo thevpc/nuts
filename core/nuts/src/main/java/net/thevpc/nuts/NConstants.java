@@ -48,6 +48,26 @@ public final class NConstants {
     }
 
     /**
+     * support constants
+     *
+     * @app.category Constants
+     */
+    public static final class Support {
+
+        /**
+         * minimum support level for user defined implementations.
+         */
+        public static final int CUSTOM_SUPPORT = 1000;
+        /**
+         * this is the default support level for runtime implementation (nuts-runtime).
+         */
+        public static final int DEFAULT_SUPPORT = 10;
+        /**
+         * when getSupportLevel(...)==NO_SUPPORT the package is discarded.
+         */
+        public static final int NO_SUPPORT = -1;
+    }
+    /**
      * name constants
      *
      * @app.category Constants
@@ -607,7 +627,6 @@ public final class NConstants {
         /**
          * latest version (inherited from maven)
          */
-//        public static final char SILENT = '¤';//ø
         public static final char SILENT = '\u001E';//record separator
 
         /**

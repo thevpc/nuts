@@ -43,7 +43,7 @@ import java.util.Stack;
 public class TestCommand extends NShellBuiltinDefault {
 
     public TestCommand() {
-        super("test", NCallableSupport.DEFAULT_SUPPORT, Options.class);
+        super("test", NConstants.Support.DEFAULT_SUPPORT, Options.class);
     }
 
     private static NPath evalPath(Eval a, NShellExecutionContext context) {

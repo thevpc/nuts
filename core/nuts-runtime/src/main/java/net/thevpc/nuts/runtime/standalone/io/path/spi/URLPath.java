@@ -869,7 +869,7 @@ public class URLPath implements NPathSPI {
                     }
                 }
             }
-            return NCallableSupport.NO_SUPPORT;
+            return NConstants.Support.NO_SUPPORT;
         }
     }
 

@@ -137,10 +137,10 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
         NDefinition def = context.getConstraints(NDefinition.class);
         if (def != null) {
             if ("java".equals(def.getDescriptor().getPackaging())) {
-                return NCallableSupport.DEFAULT_SUPPORT + 1;
+                return NConstants.Support.DEFAULT_SUPPORT + 1;
             }
         }
-        return NCallableSupport.NO_SUPPORT;
+        return NConstants.Support.NO_SUPPORT;
     }
 
 }

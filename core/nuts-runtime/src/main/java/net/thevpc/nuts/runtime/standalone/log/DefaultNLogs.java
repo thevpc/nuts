@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
-import net.thevpc.nuts.NCallableSupport;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.spi.NLogs;
 import net.thevpc.nuts.util.NLog;
 import net.thevpc.nuts.NSession;
@@ -105,6 +105,6 @@ public class DefaultNLogs implements NLogs {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NCallableSupport.DEFAULT_SUPPORT;
+        return NConstants.Support.DEFAULT_SUPPORT;
     }
 }

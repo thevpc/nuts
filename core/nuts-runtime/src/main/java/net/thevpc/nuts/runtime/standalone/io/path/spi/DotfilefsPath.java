@@ -46,9 +46,9 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         public int getSupportLevel(NSupportLevelContext context) {
             String path= context.getConstraints();
             if (path.startsWith(PREFIX)) {
-                return NCallableSupport.DEFAULT_SUPPORT;
+                return NConstants.Support.DEFAULT_SUPPORT;
             }
-            return NCallableSupport.NO_SUPPORT;
+            return NConstants.Support.NO_SUPPORT;
         }
     }
 

@@ -85,18 +85,18 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
                 if (contentType == null || "text/plain".equals(contentType)) {
                     String e = NPath.of(Paths.get(name), session).getLastExtension();
                     if (e != null && e.equalsIgnoreCase("ntf")) {
-                        return NCallableSupport.of(NCallableSupport.DEFAULT_SUPPORT + 10, "text/x-nuts-text-format");
+                        return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT + 10, "text/x-nuts-text-format");
                     }
                 }
                 if (contentType == null || "text/plain".equals(contentType)) {
                     String e = NPath.of(Paths.get(name), session).getLastExtension();
                     if (e != null && e.equalsIgnoreCase("nuts")) {
-                        return NCallableSupport.of(NCallableSupport.DEFAULT_SUPPORT + 10, "application/json");
+                        return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT + 10, "application/json");
                     }
                 }
             }
             if (contentType != null) {
-                return NCallableSupport.of(NCallableSupport.DEFAULT_SUPPORT, contentType);
+                return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, contentType);
             }
         }
 
@@ -169,7 +169,7 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
             }
         }
         if (contentType != null) {
-            return NCallableSupport.of(NCallableSupport.DEFAULT_SUPPORT, contentType);
+            return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, contentType);
         }
         return NCallableSupport.invalid(s ->NMsg.ofInvalidValue("content-type"));
     }
@@ -188,7 +188,7 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NCallableSupport.DEFAULT_SUPPORT;
+        return NConstants.Support.DEFAULT_SUPPORT;
     }
 
     public DefaultNContentTypeResolverModel model(){

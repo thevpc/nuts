@@ -201,7 +201,7 @@ public class DefaultNDigest implements NDigest {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        return NCallableSupport.DEFAULT_SUPPORT;
+        return NConstants.Support.DEFAULT_SUPPORT;
     }
 
     private class NDescriptorInputSource extends AbstractMultiReadNInputSource {
