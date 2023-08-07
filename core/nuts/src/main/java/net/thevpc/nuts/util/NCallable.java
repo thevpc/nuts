@@ -49,7 +49,7 @@ public interface NCallable<T> extends NDescribable {
         return NDescribables.ofCallable(o, descr);
     }
 
-    T call();
+    T call(NSession session);
 
     default NElement describe(NSession session) {
         return NElements.of(session).ofString(toString());

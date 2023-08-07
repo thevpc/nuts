@@ -8,25 +8,16 @@ import net.thevpc.nuts.NSession;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class NReservedOptionalValid<T> extends NReservedOptionalImpl<T> {
-    private T value;
-
-    public NReservedOptionalValid(T value) {
-        this.value = value;
-    }
-
-    public T get(NSession session) {
-        return value;
-    }
+public abstract class NReservedOptionalValid<T> extends NReservedOptionalImpl<T> {
 
     @Override
     public T get(Function<NSession, NMsg> message, NSession session) {
-        return value;
+        return get(session);
     }
 
     @Override
     public T get(Supplier<NMsg> message) {
-        return value;
+        return get();
     }
 
     @Override
@@ -63,7 +54,7 @@ public class NReservedOptionalValid<T> extends NReservedOptionalImpl<T> {
 
     @Override
     public boolean isBlank() {
-        return NBlankable.isBlank(value);
+        return NBlankable.isBlank(get());
     }
 
     @Override
@@ -93,7 +84,7 @@ public class NReservedOptionalValid<T> extends NReservedOptionalImpl<T> {
 
     @Override
     public boolean isNull() {
-        return value==null;
+        return get()==null;
     }
 
 }

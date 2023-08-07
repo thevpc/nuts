@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * this class implements several utility methods to be used by Nuts API interfaces
@@ -46,6 +47,7 @@ import java.util.logging.Level;
  * @author thevpc
  */
 public class NApiUtils {
+    private static Logger LOG = Logger.getLogger(NApiUtils.class.getName());
 
     private NApiUtils() {
     }
@@ -56,7 +58,7 @@ public class NApiUtils {
 
     public static <T> T firstNonBlank(List<T> any) {
         for (T t : any) {
-            if(!isBlank(t)){
+            if (!isBlank(t)) {
                 return t;
             }
         }
@@ -65,7 +67,7 @@ public class NApiUtils {
 
     public static <T> T firstNonBlank(T... any) {
         for (T t : any) {
-            if(!isBlank(t)){
+            if (!isBlank(t)) {
                 return t;
             }
         }
@@ -193,11 +195,33 @@ public class NApiUtils {
             name = "default";
         }
         String key = type.getName() + "(" + name + ")";
-        return session.getOrComputeProperty(key, NScopeType.SESSION, s->sup.get());
+        return session.getOrComputeProperty(key, NScopeType.SESSION, s -> sup.get());
     }
 
     public static <T> T getOrCreateRefProperty(Class<T> type, NSession session, Supplier<T> sup) {
         return getOrCreateRefProperty("default", type, session, sup);
     }
 
+    public static NMsg resolveValidErrorMessage(Supplier<NMsg> supplier) {
+        if (supplier == null) {
+            NMsg m = NMsg.ofC("unexpected error : %s", "empty message supplier");
+            LOG.log(Level.SEVERE, new Throwable(m.toString()), m::toString);
+            return m;
+        }
+        NMsg t;
+        try {
+            t = supplier.get();
+        } catch (Exception ex) {
+            NMsg m = NMsg.ofC("unexpected error : %s", "message builder failed with : " + ex);
+            LOG.log(Level.SEVERE, new Throwable(m.toString()), m::toString);
+            return m;
+        }
+
+        if (t == null) {
+            NMsg m = NMsg.ofC("unexpected error : %s", "empty error message");
+            LOG.log(Level.SEVERE, new Throwable(m.toString()), m::toString);
+            return m;
+        }
+        return t;
+    }
 }

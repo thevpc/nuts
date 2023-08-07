@@ -103,7 +103,7 @@ public interface NRunnableSupport {
         return s != null && s.isValid();
     }
 
-    void run();
+    void run(NSession session);
 
     default boolean isValid() {
         return getSupportLevel() > 0;

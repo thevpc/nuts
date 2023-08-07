@@ -2,7 +2,10 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.reserved.NReservedOptionalEmpty;
 import net.thevpc.nuts.reserved.NReservedOptionalError;
-import net.thevpc.nuts.reserved.NReservedOptionalValid;
+import net.thevpc.nuts.reserved.NReservedOptionalValidCallable;
+import net.thevpc.nuts.reserved.NReservedOptionalValidValue;
+import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NCallable;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Collection;
@@ -60,7 +63,17 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
     }
 
     static <T> NOptional<T> ofNullable(T value) {
-        return new NReservedOptionalValid<>(value);
+        return new NReservedOptionalValidValue<>(value);
+    }
+
+    static <T> NOptional<T> ofCallable(NCallable<T> value) {
+        NAssert.requireNonNull(value, "callable");
+        return new NReservedOptionalValidCallable<>(value);
+    }
+
+    static <T> NOptional<T> ofSupplier(Supplier<T> value) {
+        NAssert.requireNonNull(value, "supplier");
+        return new NReservedOptionalValidCallable<>(s -> value.get());
     }
 
     static <T> NOptional<T> ofNamed(T value, String name) {
@@ -71,7 +84,7 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
         if (value == null) {
             return ofEmpty(emptyMessage);
         }
-        return new NReservedOptionalValid<>(value);
+        return ofNullable(value);
     }
 
     static <T> NOptional<T> ofNull() {

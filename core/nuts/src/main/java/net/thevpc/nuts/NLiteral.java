@@ -2,6 +2,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.elem.NPrimitiveElement;
 
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
@@ -29,6 +30,8 @@ public interface NLiteral extends NBlankable {
     NOptional<Byte> asByte();
 
     NOptional<Short> asShort();
+
+    NOptional<Character> asChar();
 
     NOptional<Integer> asInt();
 
@@ -70,4 +73,11 @@ public interface NLiteral extends NBlankable {
     boolean isBlank();
 
     boolean isNumber();
+
+    boolean isSupportedType(Class<?> type);
+
+    <ET> NOptional<ET> asType(Class<ET> expectedType);
+
+    <ET> NOptional<ET> asType(Type expectedType);
+
 }

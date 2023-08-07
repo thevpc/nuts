@@ -1,11 +1,16 @@
 package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NNoSuchElementException;
 import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.util.NApiUtils;
 
+import java.util.NoSuchElementException;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
-public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImpl<T> implements Cloneable{
+public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImpl<T> implements Cloneable {
     private static boolean DEBUG;
 
     static {
@@ -21,7 +26,7 @@ public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImp
     }
 
     public T orDefault() {
-        return defaultValue==null?null:defaultValue.get();
+        return defaultValue == null ? null : defaultValue.get();
     }
 
     protected NMsg prepareMessage(NMsg m) {
@@ -31,8 +36,8 @@ public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImp
                     NReservedLangUtils.stacktrace(rootStack)
             );
         }
-        if(m==null){
-            m=NMsg.ofMissingValue();
+        if (m == null) {
+            m = NMsg.ofMissingValue();
         }
         return m;
     }
@@ -45,20 +50,21 @@ public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImp
     @Override
     public NOptional<T> withDefault(Supplier<T> value) {
         NReservedOptionalThrowable<T> c = (NReservedOptionalThrowable<T>) clone();
-        c.defaultValue=value;
+        c.defaultValue = value;
         return c;
     }
+
     @Override
     public NOptional<T> withDefault(T value) {
         NReservedOptionalThrowable<T> c = (NReservedOptionalThrowable<T>) clone();
-        c.defaultValue=()->value;
+        c.defaultValue = () -> value;
         return c;
     }
 
     @Override
     public NOptional<T> withoutDefault() {
         NReservedOptionalThrowable<T> c = (NReservedOptionalThrowable<T>) clone();
-        c.defaultValue=null;
+        c.defaultValue = null;
         return c;
     }
 
@@ -70,4 +76,6 @@ public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImp
             throw new RuntimeException(e);
         }
     }
+
+
 }

@@ -90,6 +90,11 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
     }
 
     @Override
+    public NOptional<Character> asChar() {
+        return value.asChar();
+    }
+
+    @Override
     public NOptional<Integer> asInt() {
         return value.asInt();
     }

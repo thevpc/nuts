@@ -29,6 +29,7 @@ import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NOptional;
 import net.thevpc.nuts.NLiteral;
 
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
@@ -435,5 +436,25 @@ public class DefaultNArg implements NArg {
     @Override
     public String toStringLiteral() {
         return toValue().toStringLiteral();
+    }
+
+    @Override
+    public NOptional<Character> asChar() {
+        return toValue().asChar();
+    }
+
+    @Override
+    public boolean isSupportedType(Class<?> type) {
+        return toValue().isSupportedType(type);
+    }
+
+    @Override
+    public <ET> NOptional<ET> asType(Class<ET> expectedType) {
+        return toValue().asType(expectedType);
+    }
+
+    @Override
+    public <ET> NOptional<ET> asType(Type expectedType) {
+        return toValue().asType(expectedType);
     }
 }

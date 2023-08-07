@@ -5,8 +5,10 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.util.NApiUtils;
+
+import java.util.NoSuchElementException;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * Default implementation of NutsSupported
@@ -20,12 +22,26 @@ public class DefaultNRunnableSupport implements NRunnableSupport {
 
     public DefaultNRunnableSupport(Runnable value, int supportLevel, Function<NSession, NMsg> emptyMessage) {
         this.value = value;
+        if (this.value == null && supportLevel > 0) {
+            throw new IllegalArgumentException("null runnable requires invalid support");
+        } else if (this.value != null && supportLevel <= 0) {
+            throw new IllegalArgumentException("non null runnable requires valid support");
+        }
         this.supportLevel = supportLevel;
-        this.emptyMessage = emptyMessage==null?session ->NMsg.ofInvalidValue():emptyMessage;
+        this.emptyMessage = emptyMessage == null ? session -> NMsg.ofInvalidValue() : emptyMessage;
     }
 
-    public void run() {
-        value.run();
+    public void run(NSession session) {
+        if (isValid()) {
+            value.run();
+        } else {
+            NMsg nMsg = NApiUtils.resolveValidErrorMessage(() -> emptyMessage.apply(session));
+            if (session == null) {
+                throw new NoSuchElementException(nMsg.toString());
+            } else {
+                throw new NNoSuchElementException(session, nMsg);
+            }
+        }
     }
 
     public int getSupportLevel() {

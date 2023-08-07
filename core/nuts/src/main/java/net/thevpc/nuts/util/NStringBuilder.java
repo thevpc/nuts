@@ -167,8 +167,32 @@ public class NStringBuilder implements CharSequence, NBlankable {
         return data.length() == 0;
     }
 
+    private int wiseIndex(int index,int length) {
+        if (index < 0) {
+            int rIndex = length + index;
+            if (rIndex >= 0 && rIndex < length) {
+                return rIndex;
+            }
+        }
+        return index;
+    }
+    private int wiseIndex(int index) {
+        return wiseIndex(index,data.length());
+    }
+
+    private int wiseIndexOther(int index,CharSequence other) {
+        return wiseIndex(index,other.length());
+    }
+
+    private int wiseIndexOther(int index,char[] other) {
+        return wiseIndex(index,other.length);
+    }
+    private int wiseIndexOther(int index,byte[] other) {
+        return wiseIndex(index,other.length);
+    }
+
     public char charAt(int index) {
-        return data.charAt(index);
+        return data.charAt(wiseIndex(index));
     }
 
     public int indexOf(String str) {
@@ -176,7 +200,7 @@ public class NStringBuilder implements CharSequence, NBlankable {
     }
 
     public int indexOf(String str, int fromIndex) {
-        return data.indexOf(str, fromIndex);
+        return data.indexOf(str, wiseIndex(fromIndex));
     }
 
     public int lastIndexOf(String str) {
@@ -184,7 +208,7 @@ public class NStringBuilder implements CharSequence, NBlankable {
     }
 
     public int lastIndexOf(String str, int fromIndex) {
-        return data.lastIndexOf(str, fromIndex);
+        return data.lastIndexOf(str, wiseIndex(fromIndex));
     }
 
     public int indexOf(CharSequence str) {
@@ -192,7 +216,7 @@ public class NStringBuilder implements CharSequence, NBlankable {
     }
 
     public int indexOf(CharSequence str, int fromIndex) {
-        return data.indexOf(str.toString(), fromIndex);
+        return data.indexOf(str.toString(), wiseIndex(fromIndex));
     }
 
     public int lastIndexOf(CharSequence str) {
@@ -208,7 +232,7 @@ public class NStringBuilder implements CharSequence, NBlankable {
     }
 
     public int indexOf(char[] str, int fromIndex) {
-        return data.indexOf(new String(str), fromIndex);
+        return data.indexOf(new String(str), wiseIndex(fromIndex));
     }
 
     public int lastIndexOf(char[] str) {
@@ -216,7 +240,7 @@ public class NStringBuilder implements CharSequence, NBlankable {
     }
 
     public int lastIndexOf(char[] str, int fromIndex) {
-        return data.lastIndexOf(new String(str), fromIndex);
+        return data.lastIndexOf(new String(str), wiseIndex(fromIndex));
     }
 
     public NStringBuilder println(Object str) {
@@ -229,8 +253,8 @@ public class NStringBuilder implements CharSequence, NBlankable {
         return this;
     }
 
-    public NStringBuilder replace(int s, int e, String str) {
-        data.replace(s, e, str);
+    public NStringBuilder replace(int start, int end, String str) {
+        data.replace(wiseIndex(start), wiseIndex(end), str);
         return this;
     }
 
@@ -249,17 +273,17 @@ public class NStringBuilder implements CharSequence, NBlankable {
     }
 
     public NStringBuilder deleteCharAt(int index) {
-        data.deleteCharAt(index);
+        data.deleteCharAt(wiseIndex(index));
         return this;
     }
 
     public NStringBuilder delete(int start, int end) {
-        data.delete(start, end);
+        data.delete(wiseIndex(start), wiseIndex(end));
         return this;
     }
 
     public char get(int index) {
-        return data.charAt(index);
+        return data.charAt(wiseIndex(index));
     }
 
     public char getFirst() {
@@ -321,7 +345,7 @@ public class NStringBuilder implements CharSequence, NBlankable {
     }
 
     public String substring(int start, int end) {
-        return data.substring(start, end);
+        return data.substring(wiseIndex(start), wiseIndex(end));
     }
 
     public String head(int size) {
@@ -339,6 +363,7 @@ public class NStringBuilder implements CharSequence, NBlankable {
     }
 
     public boolean startsWith(String other, int toffset) {
+        toffset=wiseIndex(toffset);
         int olength = other.length();
         int length = length() - toffset;
         return length > olength && subSequence(toffset, toffset + olength).equals(other);
@@ -352,15 +377,16 @@ public class NStringBuilder implements CharSequence, NBlankable {
 
     public boolean regionMatches(boolean ignoreCase, int toffset,
                                  String other, int ooffset, int len) {
-        return data.toString().regionMatches(ignoreCase, toffset, other, ooffset, len);
+        return data.toString().regionMatches(ignoreCase, wiseIndex(toffset), other, wiseIndexOther(ooffset,other), len);
     }
 
     public boolean regionMatches(int toffset, String other, int ooffset,
                                  int len) {
-        return data.toString().regionMatches(toffset, other, ooffset, len);
+        return data.toString().regionMatches(wiseIndex(toffset), other, wiseIndexOther(ooffset,other), len);
     }
 
     public NStringBuilder setUpperCaseAt(int index) {
+        index=wiseIndex(index);
         data.setCharAt(index,
                 Character.toUpperCase(data.charAt(index))
         );
@@ -368,6 +394,7 @@ public class NStringBuilder implements CharSequence, NBlankable {
     }
 
     public NStringBuilder setLowerCaseAt(int index) {
+        index=wiseIndex(index);
         data.setCharAt(index,
                 Character.toLowerCase(data.charAt(index))
         );
@@ -376,7 +403,7 @@ public class NStringBuilder implements CharSequence, NBlankable {
 
     @Override
     public CharSequence subSequence(int start, int end) {
-        return data.subSequence(start, end);
+        return data.subSequence(wiseIndex(start), wiseIndex(end));
     }
 
     @Override
@@ -395,7 +422,7 @@ public class NStringBuilder implements CharSequence, NBlankable {
     }
 
     public NStringBuilder insert(int index, CharSequence value) {
-        data.insert(index, value);
+        data.insert(wiseIndex(index), value);
         return this;
     }
 
@@ -405,47 +432,47 @@ public class NStringBuilder implements CharSequence, NBlankable {
     }
 
     public NStringBuilder append(CharSequence value, int from, int to) {
-        data.append(value, from, to);
+        data.append(value, wiseIndexOther(from,value), wiseIndexOther(to,value));
         return this;
     }
 
     public NStringBuilder insert(int index, CharSequence value, int from, int to) {
-        data.insert(index, value, from, to);
+        data.insert(index, value, wiseIndexOther(from,value), wiseIndexOther(to,value));
         return this;
     }
 
     public NStringBuilder insertFirst(CharSequence value, int from, int to) {
-        data.insert(0, value, from, to);
+        data.insert(0, value, wiseIndexOther(from,value), wiseIndexOther(to,value));
         return this;
     }
 
     public NStringBuilder append(char[] value, int from, int to) {
-        data.append(value, from, to);
+        data.append(value, wiseIndexOther(from,value), wiseIndexOther(to,value));
         return this;
     }
 
     public NStringBuilder insert(int index, char[] value, int from, int to) {
-        data.insert(index, value, from, to);
+        data.insert(wiseIndex(index), value, wiseIndexOther(from,value), wiseIndexOther(to,value));
         return this;
     }
 
     public NStringBuilder insertFirst(char[] value, int from, int to) {
-        data.insert(0, value, from, to);
+        data.insert(0, value, wiseIndexOther(from,value), wiseIndexOther(to,value));
         return this;
     }
 
     public NStringBuilder append(StringBuilder value, int from, int to) {
-        data.append(value, from, to);
+        data.append(value, wiseIndexOther(from,value), wiseIndexOther(to,value));
         return this;
     }
 
     public NStringBuilder insert(int index, StringBuilder value, int from, int to) {
-        data.insert(index, value, from, to);
+        data.insert(wiseIndex(index), value, wiseIndexOther(from,value), wiseIndexOther(to,value));
         return this;
     }
 
     public NStringBuilder insertFirst(StringBuilder value, int from, int to) {
-        data.insert(0, value, from, to);
+        data.insert(0, value, wiseIndexOther(from,value), wiseIndexOther(to,value));
         return this;
     }
 
@@ -464,43 +491,43 @@ public class NStringBuilder implements CharSequence, NBlankable {
     }
 
     public int indexOf(int ch, int fromIndex) {
-        return data.indexOf(String.valueOf(ch), fromIndex);
+        return data.indexOf(String.valueOf(ch), wiseIndex(fromIndex));
     }
 
     public int lastIndexOf(int ch, int fromIndex) {
-        return data.lastIndexOf(String.valueOf(ch), fromIndex);
+        return data.lastIndexOf(String.valueOf(ch), wiseIndex(fromIndex));
     }
 
     public int codePointAt(int index) {
-        return data.codePointAt(index);
+        return data.codePointAt(wiseIndex(index));
     }
 
     public int codePointBefore(int index) {
-        return data.codePointBefore(index);
+        return data.codePointBefore(wiseIndex(index));
     }
 
     public int codePointCount(int begin, int end) {
-        return data.codePointCount(begin, end);
+        return data.codePointCount(wiseIndex(begin), wiseIndex(end));
     }
 
     public int offsetByCodePoints(int index, int codePointOffset) {
-        return data.offsetByCodePoints(index, codePointOffset);
+        return data.offsetByCodePoints(wiseIndex(index), codePointOffset);
     }
 
     public void getChars(int srcBegin, int srcEnd, char[] dst, int dstBegin) {
-        data.getChars(srcBegin, srcEnd, dst, dstBegin);
+        data.getChars(wiseIndex(srcBegin), wiseIndex(srcEnd), dst, wiseIndexOther(dstBegin,dst));
     }
 
     public void setCharAt(int index, char ch) {
-        data.setCharAt(index, ch);
+        data.setCharAt(wiseIndex(index), ch);
     }
 
     public String substring(int start) {
-        return data.substring(start);
+        return data.substring(wiseIndex(start));
     }
 
     public void getBytes(int srcBegin, int srcEnd, byte[] dst, int dstBegin) {
-        data.toString().getBytes(srcBegin, srcEnd, dst, dstBegin);
+        data.toString().getBytes(wiseIndex(srcBegin), wiseIndex(srcEnd), dst, wiseIndexOther(dstBegin,dst));
     }
 
     public byte[] getBytes(String charsetName) {
@@ -641,6 +668,7 @@ public class NStringBuilder implements CharSequence, NBlankable {
     }
 
     public NStringBuilder toNameFormat(NNameFormat format) {
+        NAssert.requireNonNull(format,"format");
         return setContent(format.format(toString()));
     }
 

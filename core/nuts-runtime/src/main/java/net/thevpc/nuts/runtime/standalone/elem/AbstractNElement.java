@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.elem;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
@@ -63,6 +64,7 @@ public abstract class AbstractNElement implements NElement {
         }
         return NOptional.ofError(s -> NMsg.ofC("unable to cast %s to object: %s", type().id(), this));
     }
+
     @Override
     public NOptional<NNavigatableElement> asNavigatable() {
         if (this instanceof NNavigatableElement) {
@@ -252,6 +254,40 @@ public abstract class AbstractNElement implements NElement {
     @Override
     public NOptional<Short> asShort() {
         return asPrimitive().flatMap(NLiteral::asShort);
+    }
+
+    @Override
+    public NOptional<Character> asChar() {
+        return asPrimitive().flatMap(NLiteral::asChar);
+    }
+
+    @Override
+    public boolean isSupportedType(Class<?> type) {
+        NOptional<NPrimitiveElement> p = asPrimitive();
+        if (p.isPresent()) {
+            return p.get().isSupportedType(type);
+        }
+        return false;
+    }
+
+    @Override
+    public <ET> NOptional<ET> asType(Class<ET> expectedType) {
+        return asPrimitive().flatMap(x -> x.asType(expectedType));
+    }
+
+    @Override
+    public <ET> NOptional<ET> asType(Type expectedType) {
+        return asPrimitive().flatMap(x -> x.asType(expectedType));
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public boolean isBlank() {
+        return false;
     }
 
     @Override

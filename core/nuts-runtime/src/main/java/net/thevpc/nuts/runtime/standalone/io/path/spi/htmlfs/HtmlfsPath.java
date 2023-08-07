@@ -240,7 +240,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
                 }).filter(p -> NCallableSupport.isValid(p)).max(Comparator.comparing(NCallableSupport::getSupportLevel))
                 .orElse(null);
         if (best != null) {
-            List<String> value = best.call();
+            List<String> value = best.call(session);
             if (value != null) {
                 return value;
             }

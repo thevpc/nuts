@@ -3,10 +3,8 @@ package net.thevpc.nuts.toolbox.ndb.util;
 import net.thevpc.nuts.NBlankable;
 import net.thevpc.nuts.NOptional;
 import net.thevpc.nuts.util.NConnexionString;
-import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Objects;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DbUrlString {
@@ -104,5 +102,26 @@ public class DbUrlString {
     public DbUrlString setDb(NConnexionString db) {
         this.db = db;
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DbUrlString that = (DbUrlString) o;
+        return Objects.equals(ssh, that.ssh) && Objects.equals(db, that.db);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ssh, db);
+    }
+
+    @Override
+    public String toString() {
+        return "DbUrlString{" +
+                "ssh=" + ssh +
+                ", db=" + db +
+                '}';
     }
 }

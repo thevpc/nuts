@@ -449,8 +449,8 @@ public final class NDescribables {
         }
 
         @Override
-        public T call() {
-            return base.call();
+        public T call(NSession session) {
+            return base.call(session);
         }
     }
 

@@ -1513,7 +1513,7 @@ public class DefaultNWorkspaceConfigModel {
                 .filter(x -> x != null && x.getSupportLevel() > 0)
                 .max(Comparator.comparingInt(NCallableSupport::getSupportLevel))
                 .orElse(null);
-        NPathSPI s = z == null ? null : z.call();
+        NPathSPI s = z == null ? null : z.call(session);
         if (s != null) {
             if (s instanceof NPath) {
                 return (NPath) s;

@@ -7,6 +7,22 @@ public class NReflectUtils {
     private NReflectUtils() {
     }
 
+    public static Object getDefaultValue(Class<?> anyType){
+        NAssert.requireNonNull(anyType,"type");
+        switch (anyType.getName()){
+            case "boolean":return false;
+            case "byte":return (byte)0;
+            case "short":return (short)0;
+            case "int":return (int)0;
+            case "long":return 0L;
+            case "char":return '\0';
+            case "float":return 0.0f;
+            case "double":return 0.0;
+            case "void":return null;
+        }
+        return null;
+    }
+
     public static NOptional<Class<?>> toBoxedType(Class<?> anyType){
         if(anyType==null){
             return NOptional.ofNamedError("no boxed type for null");

@@ -50,6 +50,7 @@ public class NNameFormat {
 
     /**
      * true if a and b have equivalent (cas ignored) parts.
+     *
      * @param a first string
      * @param b second string
      * @return true if a and b have equivalent (case ignored) parts.
@@ -61,10 +62,10 @@ public class NNameFormat {
         if (bb.length != length) {
             return false;
         }
-        for (int i=0; i<length; i++) {
+        for (int i = 0; i < length; i++) {
             String o1 = aa[i];
             String o2 = bb[i];
-            if (!(o1==null ? o2==null : o1.equalsIgnoreCase(o2)))
+            if (!(o1 == null ? o2 == null : o1.equalsIgnoreCase(o2)))
                 return false;
         }
         return true;
@@ -84,13 +85,64 @@ public class NNameFormat {
 
 
     public static String[] parse(CharSequence value) {
-        if(value==null){
+        return parse(value, false);
+    }
+
+    public static String[] parse(CharSequence value, boolean sep) {
+        if (value == null) {
             return new String[]{""};
         }
-        return parse(value.toString());
+        return parse(value.toString(), sep);
     }
 
     public static String[] parse(String value) {
+        return parse(value, false);
+    }
+
+    public static boolean isSeparator(char c) {
+        int t = Character.getType(c);
+        return isSeparator(c,t);
+    }
+    private static boolean isSeparator(char c,int codeType) {
+        switch (c) {
+            case '-':
+            case '_':
+            case ' ':
+            case '.':
+            case ':':
+            case '/':
+            case '\\':
+            case ',':
+            case ';':
+                return true;
+            default:{
+                if(c<=32){
+                    return true;
+                }
+            }
+        }
+        switch (codeType) {
+            case Character.DASH_PUNCTUATION:
+            case Character.CONNECTOR_PUNCTUATION:
+            case Character.START_PUNCTUATION:
+            case Character.END_PUNCTUATION:
+            case Character.FINAL_QUOTE_PUNCTUATION:
+            case Character.INITIAL_QUOTE_PUNCTUATION:
+            case Character.SPACE_SEPARATOR:
+            case Character.DIRECTIONALITY_COMMON_NUMBER_SEPARATOR:
+            case Character.DIRECTIONALITY_EUROPEAN_NUMBER_SEPARATOR:
+            case Character.DIRECTIONALITY_PARAGRAPH_SEPARATOR:
+            case Character.LINE_SEPARATOR:
+            case Character.PARAGRAPH_SEPARATOR:
+            case Character.CONTROL:
+            case Character.OTHER_PUNCTUATION:{
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static String[] parse(String value, boolean sep) {
         if (NBlankable.isBlank(value)) {
             return new String[]{""};
         }
@@ -104,63 +156,38 @@ public class NNameFormat {
         final int wasOther = 4;
         int was = wasSep;
         for (char c : aValue.toCharArray()) {
-            switch (c) {
-                case '-':
-                case '_':
-                case ' ': {
-                    if (sb.length() > 0) {
-                        all.add(sb.toString());
-                        sb.setLength(0);
-                    }
-                    was = wasSep;
-                    break;
+            int t = Character.getType(c);
+            if (isSeparator(c,t)) {
+                if (sb.length() > 0) {
+                    all.add(sb.toString());
+                    sb.setLength(0);
                 }
-                default: {
-                    int t = Character.getType(c);
-                    switch (t) {
-                        case Character.UPPERCASE_LETTER: {
-                            if (was == wasLower) {
-                                if (sb.length() > 0) {
-                                    all.add(sb.toString());
-                                    sb.setLength(0);
-                                }
-                            }
-                            sb.append(c);
-                            was = wasUpper;
-                            break;
-                        }
-                        case Character.LOWERCASE_LETTER: {
-                            sb.append(c);
-                            was = wasLower;
-                            break;
-                        }
-                        case Character.DASH_PUNCTUATION:
-                        case Character.CONNECTOR_PUNCTUATION:
-                        case Character.START_PUNCTUATION:
-                        case Character.END_PUNCTUATION:
-                        case Character.FINAL_QUOTE_PUNCTUATION:
-                        case Character.INITIAL_QUOTE_PUNCTUATION:
-                        case Character.SPACE_SEPARATOR:
-                        case Character.DIRECTIONALITY_COMMON_NUMBER_SEPARATOR:
-                        case Character.DIRECTIONALITY_EUROPEAN_NUMBER_SEPARATOR:
-                        case Character.DIRECTIONALITY_PARAGRAPH_SEPARATOR:
-                        case Character.LINE_SEPARATOR:
-                        case Character.PARAGRAPH_SEPARATOR:
-                        case Character.CONTROL:
-                        case Character.OTHER_PUNCTUATION: {
+                if (sep) {
+                    all.add(String.valueOf(c));
+                }
+                was = wasSep;
+            } else {
+                switch (t) {
+                    case Character.UPPERCASE_LETTER: {
+                        if (was == wasLower) {
                             if (sb.length() > 0) {
                                 all.add(sb.toString());
                                 sb.setLength(0);
                             }
-                            was = wasSep;
-                            break;
                         }
-                        default: {
-                            was = wasOther;
-                            sb.append(c);
-                        }
+                        sb.append(c);
+                        was = wasUpper;
+                        break;
                     }
-                    break;
+                    case Character.LOWERCASE_LETTER: {
+                        sb.append(c);
+                        was = wasLower;
+                        break;
+                    }
+                    default: {
+                        was = wasOther;
+                        sb.append(c);
+                    }
                 }
             }
         }

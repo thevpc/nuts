@@ -112,7 +112,7 @@ public interface NCallableSupport<T> {
         return s != null && s.isValid();
     }
 
-    T call();
+    T call(NSession session);
 
     default boolean isValid() {
         return getSupportLevel() > 0;

@@ -1,6 +1,7 @@
 package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NApiUtils;
 
 import java.util.NoSuchElementException;
 import java.util.function.Function;
@@ -29,18 +30,9 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
 
     @Override
     public T get(Function<NSession, NMsg> message, NSession session) {
-        if(session==null){
-            session=getSession();
-        }
-        if (message == null) {
-            message = this.message;
-        }
-        NMsg m = prepareMessage(message.apply(session));
-        if (session == null) {
-            throw new NoSuchElementException(m.toString());
-        } else {
-            throw new NNoSuchElementException(session, m);
-        }
+        throwError(message, session,this.message);
+        //never reached!
+        return null;
     }
 
     @Override
@@ -97,5 +89,26 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
     @Override
     protected NOptional<T> clone() {
         return super.clone();
+    }
+
+    protected void throwError(Function<NSession, NMsg> message, NSession session, Function<NSession, NMsg> message0) {
+        if (session == null) {
+            session = getSession();
+        }
+        if (message == null) {
+            message = message0;
+        }
+        if (message == null) {
+            message = s -> NMsg.ofMissingValue();
+        }
+        Function<NSession, NMsg> finalMessage = message;
+        NSession finalSession = session;
+        NMsg eMsg = NApiUtils.resolveValidErrorMessage(() -> finalMessage == null ? null : finalMessage.apply(finalSession));
+        NMsg m = prepareMessage(eMsg);
+        if (session == null) {
+            throw new NoSuchElementException(m.toString());
+        } else {
+            throw new NNoSuchElementException(session, m);
+        }
     }
 }

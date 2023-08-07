@@ -1,9 +1,10 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.elem.NElementType;
-import net.thevpc.nuts.util.NQuoteType;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.*;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
@@ -448,7 +449,10 @@ public class DefaultNLiteral implements NLiteral {
 
     @Override
     public NOptional<String> asString() {
-        return NOptional.of(value == null ? null : value.toString());
+        if (value == null) {
+            return NOptional.of(null);
+        }
+        return NOptional.of(value.toString());
     }
 
     @Override
@@ -700,5 +704,212 @@ public class DefaultNLiteral implements NLiteral {
         return false;
     }
 
+
+    @Override
+    public NOptional<Character> asChar() {
+        if (isBlank()) {
+            return NOptional.ofEmpty(session -> NMsg.ofPlain("empty Character"));
+        }
+        if (value instanceof Character) {
+            return NOptional.of((Character) value);
+        }
+        if (value instanceof Number) {
+            return NOptional.of((char) ((Number) value).shortValue());
+        }
+        if (value instanceof CharSequence) {
+            CharSequence e = (CharSequence) value;
+            if (e.length() == 1) {
+                return NOptional.of(e.charAt(0));
+            }
+            if (e.length() == 0) {
+                return NOptional.ofEmpty(session -> NMsg.ofPlain("empty Character"));
+            }
+        }
+        return NOptional.ofEmpty(session -> NMsg.ofC("invalid character %s", value));
+    }
+
+    @Override
+    public boolean isSupportedType(Class<?> type) {
+        if (type == null) {
+            return false;
+        }
+        switch (type.getName()) {
+            case "java.lang.String":
+            case "java.lang.Boolean":
+            case "boolean":
+            case "java.lang.Byte":
+            case "byte":
+            case "java.lang.Short":
+            case "short":
+            case "java.lang.Character":
+            case "char":
+            case "java.lang.Integer":
+            case "int":
+            case "java.lang.Long":
+            case "long":
+            case "java.lang.Float":
+            case "float":
+            case "java.lang.Double":
+            case "double":
+            case "java.time.Instant":
+            case "java.lang.Number":
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public <ET> NOptional<ET> asType(Type expectedType) {
+        if(expectedType instanceof Class<?>){
+            return (NOptional<ET>) asType((Class<?>) expectedType);
+        }
+        if(expectedType instanceof ParameterizedType){
+            return (NOptional<ET>) asType(((ParameterizedType) expectedType).getRawType());
+        }
+        return NOptional.ofError(s -> NMsg.ofC("unsupported type %s", expectedType));
+    }
+
+    @Override
+    public <ET> NOptional<ET> asType(Class<ET> type) {
+        NAssert.requireNonNull(type, "type");
+        switch (type.getName()) {
+            case "java.lang.String":
+                return (NOptional<ET>) NOptional.of(value);
+            case "java.lang.Boolean": {
+                if (NBlankable.isBlank(value)) {
+                    return null;
+                }
+                return (NOptional<ET>) asBoolean();
+            }
+            case "boolean": {
+                if (NBlankable.isBlank(value)) {
+                    return (NOptional<ET>) NOptional.of(NReflectUtils.getDefaultValue(type));
+                }
+                return (NOptional<ET>) asBoolean();
+            }
+            case "java.lang.Byte": {
+                if (NBlankable.isBlank(value)) {
+                    return null;
+                }
+                return (NOptional<ET>) asByte();
+            }
+            case "byte": {
+                if (NBlankable.isBlank(value)) {
+                    return (NOptional<ET>) NOptional.of(NReflectUtils.getDefaultValue(type));
+                }
+                return (NOptional<ET>) asByte();
+            }
+            case "java.lang.Short": {
+                if (NBlankable.isBlank(value)) {
+                    return null;
+                }
+                return (NOptional<ET>) asShort();
+            }
+            case "short": {
+                if (NBlankable.isBlank(value)) {
+                    return (NOptional<ET>) NOptional.of(NReflectUtils.getDefaultValue(type));
+                }
+                return (NOptional<ET>) asShort();
+            }
+            case "java.lang.Character": {
+                if (NBlankable.isBlank(value)) {
+                    return null;
+                }
+                return (NOptional<ET>) asChar();
+            }
+            case "char": {
+                if (NBlankable.isBlank(value)) {
+                    return (NOptional<ET>) NOptional.of(NReflectUtils.getDefaultValue(type));
+                }
+                return (NOptional<ET>) asChar();
+            }
+            case "java.lang.Integer": {
+                if (NBlankable.isBlank(value)) {
+                    return null;
+                }
+                return (NOptional<ET>) asInt();
+            }
+            case "int": {
+                if (NBlankable.isBlank(value)) {
+                    return (NOptional<ET>) NOptional.of(NReflectUtils.getDefaultValue(type));
+                }
+                return (NOptional<ET>) asInt();
+            }
+            case "java.lang.Long": {
+                if (NBlankable.isBlank(value)) {
+                    return null;
+                }
+                return (NOptional<ET>) asLong();
+            }
+            case "long": {
+                if (NBlankable.isBlank(value)) {
+                    return (NOptional<ET>) NOptional.of(NReflectUtils.getDefaultValue(type));
+                }
+                return (NOptional<ET>) asLong();
+            }
+            case "java.lang.Float": {
+                if (NBlankable.isBlank(value)) {
+                    return null;
+                }
+                return (NOptional<ET>) asFloat();
+            }
+            case "float": {
+                if (NBlankable.isBlank(value)) {
+                    return (NOptional<ET>) NOptional.of(NReflectUtils.getDefaultValue(type));
+                }
+                return (NOptional<ET>) asFloat();
+            }
+            case "java.lang.Double": {
+                if (NBlankable.isBlank(value)) {
+                    return null;
+                }
+                return (NOptional<ET>) asDouble();
+            }
+            case "double": {
+                if (NBlankable.isBlank(value)) {
+                    return (NOptional<ET>) NOptional.of(NReflectUtils.getDefaultValue(type));
+                }
+                return (NOptional<ET>) asDouble();
+            }
+            case "java.time.Instant": {
+                if (NBlankable.isBlank(value)) {
+                    return NOptional.ofEmpty();
+                }
+                return (NOptional<ET>) asInstant();
+            }
+            case "java.lang.Number": {
+                if (NBlankable.isBlank(value)) {
+                    return NOptional.ofEmpty();
+                }
+                return (NOptional<ET>) asNumber();
+            }
+        }
+        if (type.isEnum()) {
+            if (NBlankable.isBlank(value)) {
+                return NOptional.ofEmpty();
+            }
+            if (isInt()) {
+                ET[] enumConstants = type.getEnumConstants();
+                Integer ordinal = asInt().get();
+                if (ordinal >= 0 && ordinal <= enumConstants.length) {
+                    return (NOptional<ET>) NOptional.of(enumConstants[ordinal]);
+                }
+                NOptional.ofError(s -> NMsg.ofC("invalid ordinal %s for %s", ordinal, type));
+            }
+            if (NEnum.class.isAssignableFrom(type)) {
+                try {
+                    return (NOptional<ET>) NOptional.of(NEnum.parse((Class<? extends NEnum>) type, String.valueOf(value).trim()).get());
+                } catch (RuntimeException ex) {
+                    NOptional.ofError(s -> NMsg.ofC("unable to parse %s as %s", String.valueOf(value).trim(), type));
+                }
+            }
+            try {
+                return (NOptional<ET>) NOptional.of(Enum.valueOf((Class) type, String.valueOf(value).trim()));
+            } catch (RuntimeException ex) {
+                NOptional.ofError(s -> NMsg.ofC("unable to parse %s as %s", String.valueOf(value).trim(), type));
+            }
+        }
+        return NOptional.ofError(s -> NMsg.ofC("unsupported type %s", type));
+    }
 }
 

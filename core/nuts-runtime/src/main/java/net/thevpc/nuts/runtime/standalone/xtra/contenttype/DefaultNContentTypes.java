@@ -57,7 +57,7 @@ public class DefaultNContentTypes implements NContentTypes {
         if (best == null) {
             return null;
         }
-        return best.call();
+        return best.call(session);
     }
 
     @Override
@@ -110,7 +110,7 @@ public class DefaultNContentTypes implements NContentTypes {
         if (best == null) {
             return null;
         }
-        return best.call();
+        return best.call(session);
     }
 
     @Override
@@ -144,7 +144,7 @@ public class DefaultNContentTypes implements NContentTypes {
         if (best == null) {
             return null;
         }
-        return best.call();
+        return best.call(session);
     }
 
     @Override
@@ -169,7 +169,7 @@ public class DefaultNContentTypes implements NContentTypes {
         if (best == null) {
             return null;
         }
-        return best.call();
+        return best.call(session);
     }
 
     @Override
