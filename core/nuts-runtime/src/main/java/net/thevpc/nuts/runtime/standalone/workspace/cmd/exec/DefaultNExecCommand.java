@@ -1011,6 +1011,10 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                 NExtensions.of(session)
                         .loadExtension(NId.of("net.thevpc.nuts.ext:next-ssh").get());
             }
+            if ("nagent".equals(connexionString.getProtocol())) {
+                NExtensions.of(session)
+                        .loadExtension(NId.of("com.cts.nuts.enterprise:next-agent").get());
+            }
             RemoteInfo0 ii=new RemoteInfo0();
             ii.commExec = NExtensions.of(session).createComponent(NExecCommandExtension.class, connexionString)
                     .orElseThrow(() -> new NIllegalArgumentException(session, NMsg.ofC("invalid execution target string : %s", target)));

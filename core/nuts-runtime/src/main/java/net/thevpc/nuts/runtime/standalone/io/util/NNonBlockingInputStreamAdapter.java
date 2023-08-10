@@ -49,13 +49,13 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
         this.session = session;
         this.md = CoreIOUtils.createContentMetadata(md, base);
         if (sourceName == null) {
-            NMsg m2 = md.getMessage().orElse(null);
+            NMsg m2 = this.md.getMessage().orElse(null);
             if (m2 != null) {
                 sourceName = m2;
             }
         }
         if (sourceName == null) {
-            String m2 = md.getName().orElse(null);
+            String m2 = this.md.getName().orElse(null);
             if (m2 != null) {
                 sourceName = NMsg.ofPlain(m2);
             }
