@@ -20,6 +20,7 @@ import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.*;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -83,7 +84,7 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableCommand
                 String[] nec = resolveNutsExecutableCommand();
                 ArrayList<String> cmd2 = new ArrayList<>();
                 cmd2.addAll(Arrays.asList(nec));
-                return runOnce(cmd2.toArray(new String[0]));
+                return runOnce(cmd2.toArray(new String[0]), getSession());
             }
         };
     }
@@ -150,7 +151,7 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableCommand
         }
         //if (dependenciesCount > 0) {
         //    if (requireTempRepo) {
-                cmd.add("-r=" + k.getStoreLocationCacheRepoSSH(commExec, getSession()).getLocation());
+        cmd.add("-r=" + k.getStoreLocationCacheRepoSSH(commExec, getSession()).getLocation());
         //    }
         //}
         cmd.add("---caller-app=remote-nuts");
@@ -190,14 +191,19 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableCommand
     }
 
 
-    private int runOnce(String[] cmd) {
-        return commExec.exec(new DefaultNExecCommandExtensionContext(
+    private int runOnce(String[] cmd, NSession session) {
+        int e;
+        try (DefaultNExecCommandExtensionContext d = new DefaultNExecCommandExtensionContext(
                 getExecCommand().getTarget(),
                 cmd, getSession(),
                 in,
                 out,
                 err
-        ));
+        )) {
+            return commExec.exec(d);
+        } catch (IOException ex) {
+            throw new NExecutionException(session, NMsg.ofC("command failed :%s", ex), ex);
+        }
     }
 
 

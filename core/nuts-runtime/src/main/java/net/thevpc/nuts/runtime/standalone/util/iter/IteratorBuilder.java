@@ -9,7 +9,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
-import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.util.*;
 
 import java.util.Arrays;
@@ -204,7 +203,7 @@ public class IteratorBuilder<T> {
     }
 
     public List<T> list() {
-        return CoreCollectionUtils.toList(it);
+        return NCollections.list(it);
     }
 
     public NIterator<T> build() {

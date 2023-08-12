@@ -46,7 +46,6 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt0;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryFolderHelper;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
-import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.LRUMap;
 import net.thevpc.nuts.runtime.standalone.util.filters.NIdFilterToPredicate;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
@@ -285,7 +284,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                         )) //search only in installed, ignore deployed!
                         .setFetchMode(NFetchMode.LOCAL)
                         .setSession(session).getResult();
-                List<NId> nutsIds = CoreCollectionUtils.toList(versions == null ? Collections.emptyIterator() : versions);
+                List<NId> nutsIds = NCollections.list(versions == null ? Collections.emptyIterator() : versions);
                 nutsIds.sort(null);
                 if (nutsIds.size() > 0) {
                     setDefaultVersion(nutsIds.get(0), session);

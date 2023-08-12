@@ -33,6 +33,7 @@ net.thevpc.nuts.toolbox.nsh.cmds.posix.SshCommand
 net.thevpc.nuts.toolbox.nsh.cmds.posix.RmCommand
 net.thevpc.nuts.toolbox.nsh.cmds.common.PropsCommand
 net.thevpc.nuts.toolbox.nsh.cmds.posix.MkdirCommand
+net.thevpc.nuts.toolbox.nsh.cmds.posix.DfCommand
 net.thevpc.nuts.toolbox.nsh.cmds.core.AutocompleteCommand
 net.thevpc.nuts.toolbox.nsh.cmds.bash.DirNameCommand
 net.thevpc.nuts.toolbox.nsh.cmds.posix.DateCommand

@@ -5,7 +5,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
-import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.util.BytesSizeFormat;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
@@ -14,12 +13,10 @@ import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NLog;
-import net.thevpc.nuts.util.NLogVerb;
 import net.thevpc.nuts.util.NProgressEvent;
 import net.thevpc.nuts.util.NProgressListener;
 
 import java.text.DecimalFormat;
-import java.util.logging.Level;
 
 /**
  * @author thevpc
@@ -94,15 +91,15 @@ public class TraceNProgressListener implements NProgressListener/*, NutsOutputSt
             }else {
                 formattedLine.append(" ").append(text.ofStyled(String.format("%6s", df.format(percent)), NTextStyle.config())).append("% ");
             }
-            formattedLine.append(" ").append(text.ofStyled(String.format("%6s", mf.format(partialSpeed)), NTextStyle.config())).append("/s");
+            formattedLine.append(" ").append(text.ofStyled(String.format("%6s", mf.formatString(partialSpeed)), NTextStyle.config())).append("/s");
             if (event.getMaxValue() < 0) {
                 if (globalSpeed == 0) {
                     formattedLine.append(" ( -- )");
                 } else {
-                    formattedLine.append(" (").append(text.ofStyled(mf.format(globalSpeed), NTextStyle.info())).append(")");
+                    formattedLine.append(" (").append(text.ofStyled(mf.formatString(globalSpeed), NTextStyle.info())).append(")");
                 }
             } else {
-                formattedLine.append(" (").append(text.ofStyled(mf.format(event.getMaxValue()), NTextStyle.warn())).append(")");
+                formattedLine.append(" (").append(text.ofStyled(mf.formatString(event.getMaxValue()), NTextStyle.warn())).append(")");
             }
             if (event.getError() != null) {
                 formattedLine.append(" ").append(text.ofStyled("ERROR", NTextStyle.error())).append(" ");

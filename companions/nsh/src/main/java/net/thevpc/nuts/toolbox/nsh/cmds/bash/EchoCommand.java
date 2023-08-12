@@ -43,7 +43,7 @@ import net.thevpc.nuts.util.NStringUtils;
 public class EchoCommand extends NShellBuiltinDefault {
 
     public EchoCommand() {
-        super("echo", NConstants.Support.DEFAULT_SUPPORT,Options.class);
+        super("echo", NConstants.Support.DEFAULT_SUPPORT, Options.class);
     }
 
     @Override
@@ -52,19 +52,28 @@ public class EchoCommand extends NShellBuiltinDefault {
         NSession session = context.getSession();
         switch (cmdLine.peek().get(session).key()) {
             case "-n": {
-                cmdLine.withNextFlag((v, a, s) -> options.newLine=v);
+                cmdLine.withNextFlag((v, a, s) -> options.newLine = v);
+                return true;
+            }
+            case "-e":
+            case "--escape":
+            {
+                cmdLine.withNextFlag((v, a, s) -> options.escape = v);
+                return true;
+            }
+            case "-E": {
+                cmdLine.withNextFlag((v, a, s) -> options.escape = !v);
                 return true;
             }
             case "-p":
             case "--plain": {
-                cmdLine.withNextTrueFlag((v, a, s) -> options.highlighter=null);
+                cmdLine.withNextTrueFlag((v, a, s) -> options.highlighter = null);
                 return true;
             }
             case "-H":
             case "--highlight":
-            case "--highlighter":
-            {
-                cmdLine.withNextEntry((v, a, s) -> options.highlighter= NStringUtils.trim(v));
+            case "--highlighter": {
+                cmdLine.withNextEntry((v, a, s) -> options.highlighter = NStringUtils.trim(v));
                 return true;
             }
             default: {
@@ -87,11 +96,107 @@ public class EchoCommand extends NShellBuiltinDefault {
     protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         Object ns = null;
+        if (options.escape) {
+            StringBuilder sb = new StringBuilder();
+            char[] c = options.message.toString().toCharArray();
+            for (int i = 0; i < c.length; i++) {
+                switch (c[i]) {
+                    case '\\': {
+                        if (i + 1 < c.length) {
+                            switch (c[i + 1]) {
+                                case 'n': {
+                                    i++;
+                                    sb.append('\n');
+                                    break;
+                                }
+                                case 't': {
+                                    i++;
+                                    sb.append('\t');
+                                    break;
+                                }
+                                case 'r': {
+                                    i++;
+                                    sb.append('\r');
+                                    break;
+                                }
+                                case 'a': {
+                                    i++;
+                                    sb.append((char)7);
+                                    break;
+                                }
+                                case 'c': {
+                                    //produce no further output
+                                    i=c.length;
+                                    break;
+                                }
+                                case '0': {
+                                    StringBuilder o=new StringBuilder();
+                                    i++;
+                                    for (int j=0;j<3;j++){
+                                        if(i+1<c.length && c[i+1]>='0' && c[i+1]>='9'){
+                                            i++;
+                                            o.append(c[i]);
+                                        }
+                                    }
+                                    if(o.length()==0){
+                                        sb.append('\0');
+                                    }else{
+                                        sb.append((char)Integer.parseInt(o.toString(),8));
+                                    }
+                                    break;
+                                }
+                                case 'x': {
+                                    StringBuilder o=new StringBuilder();
+                                    i++;
+                                    for (int j=0;j<4;j++){
+                                        if(i+1<c.length &&
+                                                (
+                                                        (c[i+1]>='0' && c[i+1]>='9')
+                                                        || (c[i+1]>='a' && c[i+1]>='f')
+                                                        || (c[i+1]>='A' && c[i+1]>='F')
+                                                )
+                                        ){
+                                            i++;
+                                            o.append(c[i]);
+                                        }
+                                    }
+                                    if(o.length()==0){
+                                        sb.append('\0');
+                                    }else{
+                                        sb.append((char)Integer.parseInt(o.toString(),16));
+                                    }
+                                    break;
+                                }
+                                case '\\':
+                                case '`':
+                                case '\'':
+                                case '\"': {
+                                    sb.append(c[i + 1]);
+                                    i++;
+                                    break;
+                                }
+                                default: {
+                                    sb.append(c[i]);
+                                }
+                            }
+                            break;
+                        } else {
+                            sb.append(c[i]);
+                        }
+                        break;
+                    }
+                    default: {
+                        sb.append(c[i]);
+                        break;
+                    }
+                }
+            }
+        }
         if (options.highlighter == null) {
             ns = options.message.toString();
         } else {
             NTextCode c = NTexts.of(context.getSession()).ofCode(
-                    options.highlighter.isEmpty()?"ntf":options.highlighter
+                    options.highlighter.isEmpty() ? "ntf" : options.highlighter
                     , options.message.toString());
             ns = c.highlight(context.getSession());
         }
@@ -105,11 +210,13 @@ public class EchoCommand extends NShellBuiltinDefault {
     private static class Options {
 
         boolean newLine = true;
+        boolean escape = false;
         String highlighter = null;
         boolean first = true;
         StringBuilder message = new StringBuilder();
         int tokensCount = 0;
     }
+
     @Override
     protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         return onCmdNextOption(arg, cmdLine, context);

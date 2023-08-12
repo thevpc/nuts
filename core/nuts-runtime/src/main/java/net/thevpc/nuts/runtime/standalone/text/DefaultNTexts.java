@@ -13,6 +13,7 @@ import net.thevpc.nuts.runtime.standalone.text.highlighter.CustomStyleCodeHighli
 import net.thevpc.nuts.runtime.standalone.text.parser.*;
 import net.thevpc.nuts.runtime.standalone.text.util.DefaultNDurationFormat2;
 import net.thevpc.nuts.runtime.standalone.text.util.DefaultUnitFormat;
+import net.thevpc.nuts.runtime.standalone.util.BytesSizeFormat;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.ClassMap;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -1405,6 +1406,24 @@ public class DefaultNTexts implements NTexts {
                                 @Override
                                 public NText toText(Number object, NSession session) {
                                     return d.format(object.doubleValue(), session);
+                                }
+                            }
+                    );
+                }
+                return NOptional.ofEmpty(s -> NMsg.ofC("unknown %s format with type %s. Expected .", type, finalExpectedType, "Number"));
+            }
+            case "memory":
+            case "bytes":
+            case "size":
+            {
+                String p = NStringUtils.trim(pattern);
+                BytesSizeFormat d = new BytesSizeFormat(null,session);
+                if (Number.class.isAssignableFrom(expectedType)) {
+                    return NOptional.of(
+                            (NTextFormat<T>) new NTextFormat<Number>() {
+                                @Override
+                                public NText toText(Number object, NSession session) {
+                                    return d.formatText(object.longValue(), session);
                                 }
                             }
                     );

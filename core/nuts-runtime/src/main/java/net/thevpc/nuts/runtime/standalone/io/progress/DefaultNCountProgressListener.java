@@ -96,15 +96,15 @@ public class DefaultNCountProgressListener implements NProgressListener/*, NutsO
             BytesSizeFormat mf = mf(event);
             DecimalFormat df = df(event);
             formattedLine.append(" ").append(text.ofStyled(String.format("%6s", df.format(percent)), NTextStyle.config())).append("% ");
-            formattedLine.append(" ").append(text.ofStyled(mf.format(partialSpeed), NTextStyle.config())).append("/s");
+            formattedLine.append(" ").append(text.ofStyled(mf.formatString(partialSpeed), NTextStyle.config())).append("/s");
             if (event.getMaxValue() < 0) {
                 if (globalSpeed == 0) {
                     formattedLine.append(" ( -- )");
                 } else {
-                    formattedLine.append(" (").append(text.ofStyled(mf.format(globalSpeed), NTextStyle.info())).append(")");
+                    formattedLine.append(" (").append(text.ofStyled(mf.formatString(globalSpeed), NTextStyle.info())).append(")");
                 }
             } else {
-                formattedLine.append(" (").append(text.ofStyled(mf.format(event.getMaxValue()), NTextStyle.warn())).append(")");
+                formattedLine.append(" (").append(text.ofStyled(mf.formatString(event.getMaxValue()), NTextStyle.warn())).append(")");
             }
             if (event.getError() != null) {
                 formattedLine.append(" ").append(text.ofStyled("ERROR", NTextStyle.error())).append(" ");

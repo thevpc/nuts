@@ -52,14 +52,6 @@ public class CoreCollectionUtils {
         return new ArrayList<>(other);
     }
 
-    public static <T> List<T> toList(Iterator<T> it) {
-        List<T> all = new ArrayList<>();
-        while (it.hasNext()) {
-            all.add(it.next());
-        }
-        return all;
-    }
-
     public static Set<String> toTrimmedNonEmptySet(String[] values0) {
         LinkedHashSet<String> set = new LinkedHashSet<>();
         if (values0 != null) {

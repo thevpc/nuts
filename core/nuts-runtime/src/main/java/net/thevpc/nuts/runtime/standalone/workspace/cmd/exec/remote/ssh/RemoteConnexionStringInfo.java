@@ -10,6 +10,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.remote.ssh.artifact
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.*;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -109,13 +110,18 @@ public class RemoteConnexionStringInfo {
     public static String runOnceGrab(NExecCommandExtension commExec, String target, NSession session, String... cmd) {
         NExecOutput out = NExecOutput.ofGrabMem();
         NExecOutput err = NExecOutput.ofGrabMem();
-        int e = commExec.exec(new DefaultNExecCommandExtensionContext(
+        int e;
+        try (DefaultNExecCommandExtensionContext d = new DefaultNExecCommandExtensionContext(
                 target,
                 cmd, session,
                 NExecInput.ofNull(),
                 out,
                 err
-        ));
+        )) {
+            e = commExec.exec(d);
+        } catch (IOException ex) {
+            throw new NExecutionException(session, NMsg.ofC("command failed :%s", ex), ex);
+        }
         if (e != NExecutionException.SUCCESS) {
             session.err().println(out.getResultString());
             session.err().println(err.getResultString());
@@ -240,7 +246,7 @@ public class RemoteConnexionStringInfo {
                 NPath rpath = NPath.of(targetConnexion.copy()
                         .setPath(pHome.getHome() + "/ws/" + workspaceName + "/nuts-workspace.json")
                         .toString(), session);
-                if(rpath.isRegularFile()) {
+                if (rpath.isRegularFile()) {
                     workspaceJson = NElements.of(session)
                             .parse(
                                     rpath
@@ -268,8 +274,8 @@ public class RemoteConnexionStringInfo {
                     .setPath(storeLocationCache)
                     .toString(), session).resolve(NConstants.Folders.ID);
             NId appId = session.getAppId();
-            if(appId==null){
-                appId=session.getWorkspace().getApiId();
+            if (appId == null) {
+                appId = session.getWorkspace().getApiId();
             }
             storeLocationCacheRepoSSH = storeLocationCacheRepo.resolve(NIdUtils.resolveIdPath(appId)).resolve("repo");
             NPath e = storeLocationCacheRepoSSH.resolve(".nuts-repository");

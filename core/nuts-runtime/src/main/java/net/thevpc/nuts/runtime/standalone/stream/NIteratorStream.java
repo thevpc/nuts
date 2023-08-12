@@ -5,9 +5,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.stream;
 
+import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.util.NIterator;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -27,7 +27,7 @@ public class NIteratorStream<T> extends AbstractNStream<T> {
 
     @Override
     public List<T> toList() {
-        return CoreCollectionUtils.toList((Iterator<T>) o);
+        return NCollections.list((Iterator<T>) o);
     }
 
     @Override

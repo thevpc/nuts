@@ -40,10 +40,6 @@ import net.thevpc.nuts.util.NAssert;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by vpc on 1/7/17. ssh copy credits to Chanaka Lakmal from
- * https://medium.com/ldclakmal/scp-with-java-b7b7dbcdbc85
- */
 @NComponentScope(NScopeType.WORKSPACE)
 public class CpCommand extends NShellBuiltinDefault {
 

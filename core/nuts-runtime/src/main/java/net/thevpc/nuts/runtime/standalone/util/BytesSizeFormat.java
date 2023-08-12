@@ -2,6 +2,10 @@ package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NPositionType;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextBuilder;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NStringUtils;
 
 /**
@@ -243,7 +247,7 @@ public class BytesSizeFormat {
 
     //    @Override
     public String formatDouble(double value) {
-        return format((long) value);
+        return formatString((long) value);
     }
 
     private long eval(char c) {
@@ -287,7 +291,11 @@ public class BytesSizeFormat {
         }
     }
 
-    public String format(long bytes) {
+    public String formatString(long bytes) {
+        return formatString(bytes,session);
+    }
+
+    public String formatString(long bytes, NSession session) {
         StringBuilder sb = new StringBuilder();
         boolean neg = bytes < 0;
         long v = bytes < 0 ? -bytes : bytes;
@@ -304,48 +312,6 @@ public class BytesSizeFormat {
 //        long Z = eval('Z');
 //        long Y = eval('Y');
         if (low <= E) {
-//            if (high >= Y) {
-//                r = v / T;
-//                if ((leadingZeros && leading) || r > 0 || (!empty && intermediateZeros && ((v % Y)>0)) || (v==0 && trailingZeros)) {
-//                    if (currDepth < 0) {
-//                        currDepth = 1;
-//                    } else {
-//                        currDepth++;
-//                    }
-//                    if (currDepth <= depth) {
-//                        if (sb.length() > 0) {
-//                            sb.append(" ");
-//                        }
-//                        sb.append(formatLeft(r, 3)).append("Y");
-//                        if(r!=0){
-//                            leading=false;
-//                        }
-//                        v = v % Y;
-//                        empty = false;
-//                    }
-//                }
-//            }
-//            if (high >= Z) {
-//                r = v / T;
-//                if ((leadingZeros && leading) || r > 0 || (!empty && intermediateZeros && ((v % Z)>0)) || (v==0 && trailingZeros)) {
-//                    if (currDepth < 0) {
-//                        currDepth = 1;
-//                    } else {
-//                        currDepth++;
-//                    }
-//                    if (currDepth <= depth) {
-//                        if (sb.length() > 0) {
-//                            sb.append(" ");
-//                        }
-//                        sb.append(formatLeft(r, 3)).append("Z");
-//                        if(r!=0){
-//                            leading=false;
-//                        }
-//                        v = v % Z;
-//                        empty = false;
-//                    }
-//                }
-//            }
             if (high >= E) {
                 r = v / T;
                 if ((leadingZeros && leading) || r > 0 || (!empty && intermediateZeros && ((v % E) > 0)) || (v == 0 && trailingZeros)) {
@@ -518,6 +484,197 @@ public class BytesSizeFormat {
             }
         }
         return sb.toString();
+    }
+
+    public NText formatText(long bytes, NSession session) {
+        NTextBuilder sb = NTextBuilder.of(session);
+        boolean neg = bytes < 0;
+        long v = bytes < 0 ? -bytes : bytes;
+        long r = v;
+        int currDepth = -1;
+        boolean empty = true;
+        boolean leading = true;
+        long K = eval('K');
+        long M = eval('M');
+        long G = eval('G');
+        long T = eval('T');
+        long P = eval('P');
+        long E = eval('E');
+//        long Z = eval('Z');
+//        long Y = eval('Y');
+        if (low <= E) {
+            if (high >= E) {
+                r = v / T;
+                if ((leadingZeros && leading) || r > 0 || (!empty && intermediateZeros && ((v % E) > 0)) || (v == 0 && trailingZeros)) {
+                    if (currDepth < 0) {
+                        currDepth = 1;
+                    } else {
+                        currDepth++;
+                    }
+                    if (currDepth <= depth) {
+                        if (sb.filteredText().length() > 0) {
+                            sb.append(" ");
+                        }
+                        sb.append(formatLeft(r, 3), NTextStyle.number()).append(binaryPrefix ? "Ei" : "E", NTextStyle.info());
+                        if (r != 0) {
+                            leading = false;
+                        }
+                        v = v % E;
+                        empty = false;
+                    }
+                }
+            }
+            if (high >= P) {
+                r = v / T;
+                if ((leadingZeros && leading) || r > 0 || (!empty && intermediateZeros && ((v % P) > 0)) || (v == 0 && trailingZeros)) {
+                    if (currDepth < 0) {
+                        currDepth = 1;
+                    } else {
+                        currDepth++;
+                    }
+                    if (currDepth <= depth) {
+                        if (sb.filteredText().length() > 0) {
+                            sb.append(" ");
+                        }
+                        sb.append(formatLeft(r, 3),NTextStyle.number()).append(binaryPrefix ? "Pi" : "P");
+                        if (r != 0) {
+                            leading = false;
+                        }
+                        v = v % P;
+                        empty = false;
+                    }
+                }
+            }
+            if (high >= T) {
+                r = v / T;
+                if ((leadingZeros && leading) || r > 0 || (!empty && intermediateZeros && ((v % T) > 0)) || (v == 0 && trailingZeros)) {
+                    if (currDepth < 0) {
+                        currDepth = 1;
+                    } else {
+                        currDepth++;
+                    }
+                    if (currDepth <= depth) {
+                        if (sb.filteredText().length() > 0) {
+                            sb.append(" ");
+                        }
+                        sb.append(formatLeft(r, 3),NTextStyle.number()).append(binaryPrefix ? "Ti" : "T");
+                        if (r != 0) {
+                            leading = false;
+                        }
+                        v = v % T;
+                        empty = false;
+                    }
+                }
+            }
+            if (low <= G) {
+                if (high >= G) {
+                    r = v / G;
+                }
+                if ((leadingZeros && leading) || r > 0 || (!empty && intermediateZeros && ((v % G) > 0)) || (v == 0 && trailingZeros)) {
+                    if (currDepth < 0) {
+                        currDepth = 1;
+                    } else {
+                        currDepth++;
+                    }
+                    if (currDepth <= depth) {
+                        if (sb.filteredText().length() > 0) {
+                            sb.append(" ");
+                        }
+                        if (r != 0) {
+                            leading = false;
+                        }
+                        sb.append(formatLeft(r, 3),NTextStyle.number()).append(binaryPrefix ? "Gi" : "G");
+                        v = v % G;
+                        empty = false;
+                    }
+                }
+                if (low <= M) {
+                    if (high >= M) {
+                        r = v / M;
+                        if ((leadingZeros && leading) || r > 0 || (!empty && intermediateZeros && ((v % M) > 0)) || (v == 0 && trailingZeros)) {
+                            if (currDepth < 0) {
+                                currDepth = 1;
+                            } else {
+                                currDepth++;
+                            }
+                            if (currDepth <= depth) {
+                                if (sb.filteredText().length() > 0) {
+                                    sb.append(" ");
+                                }
+                                if (r != 0) {
+                                    leading = false;
+                                }
+                                sb.append(formatLeft(r, 3),NTextStyle.number()).append(binaryPrefix ? "Mi" : "M");
+                                v = v % M;
+                                empty = false;
+                            }
+                        }
+                    }
+                    if (low <= K) {
+                        if (high >= K) {
+                            r = v / K;
+                            if ((leadingZeros && leading) || r > 0 || (!empty && intermediateZeros && ((v % K) > 0)) || (v == 0 && trailingZeros)) {
+                                if (currDepth < 0) {
+                                    currDepth = 1;
+                                } else {
+                                    currDepth++;
+                                }
+                                if (currDepth <= depth) {
+                                    if (sb.filteredText().length() > 0) {
+                                        sb.append(" ");
+                                    }
+                                    if (r != 0) {
+                                        leading = false;
+                                    }
+                                    sb.append(formatLeft(r, 3),NTextStyle.number()).append("K").append(binaryPrefix ? "i" : "");
+                                    v = v % K;
+                                    empty = false;
+                                }
+                            }
+                        }
+                        if (low <= 1) {
+                            if ((leadingZeros && leading) || v > 0 || sb.filteredText().length() == 0 /*|| (!empty && intermediateZeros)*/) {
+                                if (currDepth < 0) {
+                                    currDepth = 1;
+                                } else {
+                                    currDepth++;
+                                }
+                                if (currDepth <= depth) {
+                                    if (sb.filteredText().length() > 0) {
+                                        sb.append(" ");
+                                    }
+                                    if (r != 0) {
+                                        leading = false;
+                                    }
+                                    sb.append(formatLeft(v, 3),NTextStyle.number()).append(binaryPrefix ? "B " : "B");
+                                    empty = false;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (sb.filteredText().length() == 0) {
+            if (neg) {
+                sb.insert(0, NTexts.of(session).ofText("-"));
+            }
+            if (low >= T) {
+                sb.append(formatLeft(0, 3),NTextStyle.number()).append(binaryPrefix ? "Ti" : "T");
+            } else if (low >= G) {
+                sb.append(formatLeft(0, 3),NTextStyle.number()).append(binaryPrefix ? "Gi" : "G");
+            } else if (low >= M) {
+                sb.append(formatLeft(0, 3),NTextStyle.number()).append(binaryPrefix ? "Mi" : "M");
+            } else if (low >= K) {
+                sb.append(formatLeft(0, 3),NTextStyle.number()).append(binaryPrefix ? "Ki" : "K");
+                sb.append(formatLeft(0, 3),NTextStyle.number()).append(binaryPrefix ? "B " : "B");
+            }
+        } else {
+            if (neg) {
+                sb.insert(0, NTexts.of(session).ofText("-"));
+            }
+        }
+        return sb.toText();
     }
 
 }

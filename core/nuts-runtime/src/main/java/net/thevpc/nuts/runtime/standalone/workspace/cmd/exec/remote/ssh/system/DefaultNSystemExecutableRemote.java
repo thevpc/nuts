@@ -17,6 +17,7 @@ import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -95,14 +96,18 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableCommand {
                 String[] executorOptions = execCommand.getExecutorOptions().toArray(new String[0]);
                 RemoteConnexionStringInfo k = RemoteConnexionStringInfo.of(execCommand.getTarget(), session);
                 String[] remoteCommand = k.buildEffectiveCommand(cmd, execCommand.getRunAs(), executorOptions, commExec, session);
-                return commExec.exec(new DefaultNExecCommandExtensionContext(
+                try(DefaultNExecCommandExtensionContext d=new DefaultNExecCommandExtensionContext(
                         execCommand.getTarget(),
                         remoteCommand,
                         session,
                         in,
                         out,
                         err
-                ));
+                )) {
+                    return commExec.exec(d);
+                }catch (IOException ex){
+                    throw new NExecutionException(session, NMsg.ofC("command failed :%s", ex), ex);
+                }
             }
         };
     }
