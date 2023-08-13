@@ -366,13 +366,13 @@ public class NStringBuilder implements CharSequence, NBlankable {
         toffset=wiseIndex(toffset);
         int olength = other.length();
         int length = length() - toffset;
-        return length > olength && subSequence(toffset, toffset + olength).equals(other);
+        return length >= olength && subSequence(toffset, toffset + olength).equals(other);
     }
 
     public boolean endsWith(String other) {
         int length = length();
         int olength = other.length();
-        return length > olength && subSequence(length - olength, length).equals(other);
+        return length >= olength && subSequence(length - olength, length).equals(other);
     }
 
     public boolean regionMatches(boolean ignoreCase, int toffset,

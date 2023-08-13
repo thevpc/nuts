@@ -124,4 +124,42 @@ public class NAssert {
     public static <T> T requireNonBlank(T object, Supplier<NMsg> msg) {
         return requireNonBlank(object, msg, null);
     }
+
+    public static boolean requireTrue(boolean value, Supplier<NMsg> msg) {
+        return requireTrue(value, msg, null);
+    }
+
+    public static boolean requireTrue(boolean value, String name) {
+        return requireTrue(value, name, null);
+    }
+
+    public static <T> T requireTrue(T value, String name, NSession session) {
+        return requireNonNull(value, () -> NMsg.ofC("should be %s", createName(name)), session);
+    }
+
+    public static boolean requireTrue(boolean object, Supplier<NMsg> msg, NSession session) {
+        if (!object) {
+            throw creatIllegalArgumentException(session, createMessage(msg, session));
+        }
+        return object;
+    }
+
+    public static boolean requireFalse(boolean value, Supplier<NMsg> msg) {
+        return requireFalse(value, msg, null);
+    }
+
+    public static boolean requireFalse(boolean value, String name) {
+        return requireFalse(value, name, null);
+    }
+
+    public static <T> T requireFalse(T value, String name, NSession session) {
+        return requireNonNull(value, () -> NMsg.ofC("should not be %s", createName(name)), session);
+    }
+
+    public static boolean requireFalse(boolean object, Supplier<NMsg> msg, NSession session) {
+        if (!object) {
+            throw creatIllegalArgumentException(session, createMessage(msg, session));
+        }
+        return object;
+    }
 }

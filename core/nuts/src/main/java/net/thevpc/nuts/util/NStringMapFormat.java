@@ -176,7 +176,24 @@ public class NStringMapFormat {
      * @return parsed map
      */
     public NOptional<Map<String, String>> parse(String text) {
-        Map<String, String> m = new LinkedHashMap<>();
+        NOptional<Map<String, List<String>>> d = parseDuplicates(text);
+        return d.map(x->{
+            Map<String,String> r=new HashMap<>();
+            for (Map.Entry<String, List<String>> e : x.entrySet()) {
+                r.put(e.getKey(),e.getValue().get(e.getValue().size()-1));
+            }
+            return r;
+        });
+    }
+
+    /**
+     * copied from StringUtils (in order to remove dependency)
+     *
+     * @param text text to parse
+     * @return parsed map
+     */
+    public NOptional<Map<String, List<String>>> parseDuplicates(String text) {
+        Map<String, List<String>> m = new LinkedHashMap<>();
         if (NBlankable.isBlank(text)) {
             return NOptional.of(m);
         }
@@ -207,7 +224,7 @@ public class NStringMapFormat {
                     } catch (IOException e) {
                         return NOptional.ofError(x -> NMsg.ofPlain("failed to read token"), e);
                     }
-                    m.put(t, value.toString());
+                    m.computeIfAbsent(t,v->new ArrayList<>()).add(value.toString());
                     if (r == -1) {
                         break;
                     }
@@ -223,6 +240,17 @@ public class NStringMapFormat {
     }
 
     public String format(Map<String, String> map) {
+        if (map != null) {
+            Map<String, List<String>> map2=new HashMap<>();
+            for (Map.Entry<String, String> e : map.entrySet()) {
+                map2.put(e.getKey(),Arrays.asList(e.getValue()));
+            }
+            return formatDuplicates(map2);
+        }
+        return "";
+    }
+
+    public String formatDuplicates(Map<String, List<String>> map) {
         StringBuilder sb = new StringBuilder();
         if (map != null) {
             if (sort) {
@@ -231,29 +259,31 @@ public class NStringMapFormat {
             String escapedChars = separatorChars + equalsChars + escapeChars;
             Set<String> sortedKeys = map.keySet();
             for (String k : sortedKeys) {
-                String v = map.get(k);
-                if (v != null) {
-                    if (sb.length() > 0) {
-                        sb.append(separatorChars);
-                    }
-                    if (v.isEmpty()) {
+                List<String> strings = map.get(k);
+                for (String v : strings) {
+                    if (v != null) {
+                        if (sb.length() > 0) {
+                            sb.append(separatorChars);
+                        }
+                        if (v.isEmpty()) {
+                            sb.append(
+                                    NStringUtils.formatStringLiteral(k, NQuoteType.SIMPLE, NSupportMode.PREFERRED, escapedChars)
+                            );
+                        } else {
+                            sb.append(
+                                            NStringUtils.formatStringLiteral(k, NQuoteType.SIMPLE, NSupportMode.PREFERRED, escapedChars))
+                                    .append(equalsChars)
+                                    .append(NStringUtils.formatStringLiteral(v, NQuoteType.SIMPLE, NSupportMode.PREFERRED, escapedChars)
+                                    );
+                        }
+                    } else {
+                        if (sb.length() > 0) {
+                            sb.append(separatorChars);
+                        }
                         sb.append(
                                 NStringUtils.formatStringLiteral(k, NQuoteType.SIMPLE, NSupportMode.PREFERRED, escapedChars)
                         );
-                    } else {
-                        sb.append(
-                                        NStringUtils.formatStringLiteral(k, NQuoteType.SIMPLE, NSupportMode.PREFERRED, escapedChars))
-                                .append(equalsChars)
-                                .append(NStringUtils.formatStringLiteral(v, NQuoteType.SIMPLE, NSupportMode.PREFERRED, escapedChars)
-                                );
                     }
-                } else {
-                    if (sb.length() > 0) {
-                        sb.append(separatorChars);
-                    }
-                    sb.append(
-                            NStringUtils.formatStringLiteral(k, NQuoteType.SIMPLE, NSupportMode.PREFERRED, escapedChars)
-                    );
                 }
             }
         }
