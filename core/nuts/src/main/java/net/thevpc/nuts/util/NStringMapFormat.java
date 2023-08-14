@@ -212,7 +212,7 @@ public class NStringMapFormat {
             String t = key.toString();
             if (r == -1) {
                 if (!t.isEmpty()) {
-                    m.put(t, null);
+                    m.computeIfAbsent(t,v->new ArrayList<>()).add(null);
                 }
                 break;
             } else {
@@ -230,7 +230,7 @@ public class NStringMapFormat {
                     }
                 } else if (separatorChars.indexOf(c) >= 0) {
                     //this is a key without a value
-                    m.put(t, null);
+                    m.computeIfAbsent(t,v->new ArrayList<>()).add(null);
                 } else {
                     //
                 }
