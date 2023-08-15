@@ -22,8 +22,10 @@ public class JavaClassUtils {
     }
 
     public static boolean isCGLib(Class clazz) {
-        if(clazz.getSimpleName().contains("$$EnhancerBySpringCGLIB$$")
-                ||clazz.getSimpleName().contains("$$CGLIB$$")
+        String simpleName = clazz.getSimpleName();
+        if(simpleName.contains("$$EnhancerBySpringCGLIB$$")
+                || simpleName.contains("$$CGLIB$$")
+                || simpleName.contains("$$SpringCGLIB$$")
         ){
             return true;
         }
