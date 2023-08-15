@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NLogs;
+import net.thevpc.nuts.log.NLogs;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogRecord;
 import net.thevpc.nuts.log.NLog;

@@ -1,10 +1,8 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NBlankable;
 import net.thevpc.nuts.elem.NMapBy;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class NNameFormat {

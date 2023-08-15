@@ -30,7 +30,7 @@ import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NOsFamily;
+import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.util.NSupportMode;
 
 import java.io.InputStream;

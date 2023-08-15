@@ -9,6 +9,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NClassLoaderNode;
 import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.ext.NExtensionAlreadyRegisteredException;
+import net.thevpc.nuts.ext.NExtensionInformation;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NServiceLoader;
 import net.thevpc.nuts.io.NSessionTerminal;

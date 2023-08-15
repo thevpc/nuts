@@ -30,7 +30,6 @@ import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NSessionTerminal;
-import net.thevpc.nuts.spi.NPaths;
 import net.thevpc.nuts.toolbox.nsh.nshell.NShell;
 import net.thevpc.nuts.toolbox.nsh.nshell.NShellConfiguration;
 import org.junit.jupiter.api.Assertions;

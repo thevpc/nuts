@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.dependency.filter;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
+import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.util.NStream;
 
 import java.util.*;

@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.ndb.nosql.mongodb.cmd;
 
-import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
 import net.thevpc.nuts.toolbox.ndb.base.cmd.InsertCmd;

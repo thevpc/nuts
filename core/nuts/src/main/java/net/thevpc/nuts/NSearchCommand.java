@@ -25,6 +25,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NComparator;
 import net.thevpc.nuts.util.NStream;

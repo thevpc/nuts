@@ -7,6 +7,7 @@ package net.thevpc.nuts.runtime.standalone.id.filter;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.descriptor.filter.AbstractDescriptorFilter;
+import net.thevpc.nuts.util.NFilterOp;
 
 /**
  *

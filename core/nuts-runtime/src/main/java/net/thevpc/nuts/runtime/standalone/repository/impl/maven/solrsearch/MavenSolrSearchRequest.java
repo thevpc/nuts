@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.solrsearch;
 
-import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.util.NBlankable;
 
 import java.util.HashMap;
 import java.util.Map;

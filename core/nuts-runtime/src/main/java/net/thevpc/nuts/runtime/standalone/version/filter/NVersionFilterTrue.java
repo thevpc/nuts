@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.version.filter;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.id.filter.NExprIdFilter;
+import net.thevpc.nuts.util.NFilterOp;
 
 public class NVersionFilterTrue extends AbstractVersionFilter implements NExprIdFilter {
 

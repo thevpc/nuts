@@ -26,7 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.extension;
 
 import java.util.Objects;
-import net.thevpc.nuts.NExtensionInformation;
+import net.thevpc.nuts.ext.NExtensionInformation;
 import net.thevpc.nuts.NId;
 
 /**

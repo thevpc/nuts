@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util.filters;
 
-import net.thevpc.nuts.NFilter;
+import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.NTypedFilters;
 import net.thevpc.nuts.NWorkspace;
 

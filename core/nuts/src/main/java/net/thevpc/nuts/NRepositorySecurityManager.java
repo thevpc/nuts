@@ -24,7 +24,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.spi.NAuthenticationAgent;
+import net.thevpc.nuts.security.NAuthenticationAgent;
 
 import java.util.List;
 

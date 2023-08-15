@@ -24,11 +24,11 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts.spi;
+package net.thevpc.nuts.log;
 
-import net.thevpc.nuts.NExtensions;
-import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.spi.NComponent;
 
 import java.util.List;
 import java.util.logging.Handler;

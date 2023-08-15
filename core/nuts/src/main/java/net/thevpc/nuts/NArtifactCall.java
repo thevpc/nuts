@@ -25,9 +25,10 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.util.NBlankable;
+
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 /**
  * artifact call descriptor used to define executor and installer call definitions.

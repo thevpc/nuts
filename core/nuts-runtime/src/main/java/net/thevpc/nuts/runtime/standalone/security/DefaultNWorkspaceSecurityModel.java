@@ -37,10 +37,12 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConf
 import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigSecurity;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
-import net.thevpc.nuts.spi.NAuthenticationAgent;
+import net.thevpc.nuts.security.NLoginException;
+import net.thevpc.nuts.security.NAuthenticationAgent;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 

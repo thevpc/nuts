@@ -11,6 +11,7 @@ import java.util.Objects;
 
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
+import net.thevpc.nuts.util.NFilterOp;
 
 /**
  *

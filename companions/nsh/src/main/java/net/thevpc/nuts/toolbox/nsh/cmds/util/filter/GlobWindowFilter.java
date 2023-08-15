@@ -4,7 +4,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.util.filter;
 
-import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.toolbox.nsh.cmds.util.WindowFilter;
 import net.thevpc.nuts.toolbox.nsh.cmds.util.NNumberedObject;
 import net.thevpc.nuts.util.NStringUtils;

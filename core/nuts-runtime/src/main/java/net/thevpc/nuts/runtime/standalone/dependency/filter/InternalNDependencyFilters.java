@@ -1,11 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.env.NDesktopEnvironmentFamily;
 import net.thevpc.nuts.runtime.standalone.util.filters.InternalNTypedFilters;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.NArchFamily;
+import net.thevpc.nuts.env.NArchFamily;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NOsFamily;
+import net.thevpc.nuts.env.NOsFamily;
+import net.thevpc.nuts.env.NPlatformFamily;
+import net.thevpc.nuts.util.NFilter;
 
 import java.util.Arrays;
 import java.util.Collection;

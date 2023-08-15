@@ -38,6 +38,7 @@ import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NUncompressVisitor;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NUncompress;
+import net.thevpc.nuts.util.NBlankable;
 
 /**
  * @author thevpc

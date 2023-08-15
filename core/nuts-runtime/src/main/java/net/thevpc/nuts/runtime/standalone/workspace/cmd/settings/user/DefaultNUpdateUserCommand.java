@@ -32,6 +32,7 @@ import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import java.util.*;
 import net.thevpc.nuts.runtime.standalone.repository.config.NRepositoryConfigModel;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 
 /**

@@ -1301,13 +1301,13 @@ public class CoreIOUtils {
         if (err == null) {
             err = NExecOutput.ofStream(session.err());
         }
-        if (err.getType() == NExecRedirectType.INHERIT) {
+        if (err.getType() == NRedirectType.INHERIT) {
             if (NIO.of(session).isStderr(session.err())) {
                 err = NExecOutput.ofInherit();
             } else {
                 err = NExecOutput.ofStream(session.err());
             }
-        } else if (err.getType() == NExecRedirectType.STREAM) {
+        } else if (err.getType() == NRedirectType.STREAM) {
             if (NIO.of(session).isStderr(session.err())) {
                 err = NExecOutput.ofStream(session.err());
             }
@@ -1337,13 +1337,13 @@ public class CoreIOUtils {
         if (in == null) {
             in = NExecInput.ofStream(session.in());
         }
-        if (in.getType() == NExecRedirectType.INHERIT) {
+        if (in.getType() == NRedirectType.INHERIT) {
             if (NIO.of(session).isStdin(session.in())) {
                 in = NExecInput.ofInherit();
             } else {
                 in = NExecInput.ofStream(session.in());
             }
-        } else if (in.getType() == NExecRedirectType.STREAM) {
+        } else if (in.getType() == NRedirectType.STREAM) {
             if (NIO.of(session).isStdin(in.getStream())) {
                 in = NExecInput.ofInherit();
             }
@@ -1355,13 +1355,13 @@ public class CoreIOUtils {
         if (out == null) {
             out = NExecOutput.ofStream(session.out());
         }
-        if (out.getType() == NExecRedirectType.INHERIT) {
+        if (out.getType() == NRedirectType.INHERIT) {
             if (NIO.of(session).isStdout(session.out())) {
                 out = NExecOutput.ofInherit();
             } else {
                 out = NExecOutput.ofStream(session.out());
             }
-        } else if (out.getType() == NExecRedirectType.STREAM) {
+        } else if (out.getType() == NRedirectType.STREAM) {
             if (NIO.of(session).isStdout(session.out())) {
                 out = NExecOutput.ofStream(session.out());
             }

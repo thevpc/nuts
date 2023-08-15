@@ -24,30 +24,32 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.util.NEnum;
-import net.thevpc.nuts.util.NEnumUtils;
-import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NOptional;
-
-public enum NDesktopIntegrationItem implements NEnum {
-    MENU,
-    DESKTOP,
-    USER;
+/**
+ * Filter Type
+ *
+ * @since 0.8.0
+ */
+public enum NFilterOp implements NEnum {
+    CUSTOM,
+    CONVERT,
+    TRUE,
+    FALSE,
+    AND,
+    OR,
+    NOT;
     private final String id;
 
-    NDesktopIntegrationItem() {
+    NFilterOp() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
-    public static NOptional<NDesktopIntegrationItem> parse(String value) {
-        return NEnumUtils.parseEnum(value, NDesktopIntegrationItem.class);
+    public static NOptional<NFilterOp> parse(String value) {
+        return NEnumUtils.parseEnum(value, NFilterOp.class);
     }
-
     @Override
     public String id() {
         return id;
     }
-
 }

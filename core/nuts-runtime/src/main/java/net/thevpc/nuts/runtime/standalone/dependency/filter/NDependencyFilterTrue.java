@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NFilterOp;
 
 public final class NDependencyFilterTrue extends AbstractDependencyFilter{
 

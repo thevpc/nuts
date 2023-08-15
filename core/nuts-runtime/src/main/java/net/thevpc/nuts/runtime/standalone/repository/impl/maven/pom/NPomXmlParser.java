@@ -8,6 +8,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.impl.*;
 import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
 import net.thevpc.nuts.runtime.standalone.util.XmlEscaper;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 import org.w3c.dom.Document;

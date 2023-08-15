@@ -24,6 +24,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.reserved.*;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringMapFormat;
 import net.thevpc.nuts.util.NStringUtils;
 

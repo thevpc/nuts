@@ -26,7 +26,6 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NBlankable;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.NSession;

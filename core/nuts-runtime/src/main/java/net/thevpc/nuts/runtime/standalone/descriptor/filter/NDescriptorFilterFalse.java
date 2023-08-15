@@ -26,6 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.filter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NFilterOp;
 
 /**
  * Created by vpc on 2/20/17.

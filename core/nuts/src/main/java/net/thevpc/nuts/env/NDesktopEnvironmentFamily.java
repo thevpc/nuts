@@ -24,7 +24,7 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.env;
 
 import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.util.NEnumUtils;

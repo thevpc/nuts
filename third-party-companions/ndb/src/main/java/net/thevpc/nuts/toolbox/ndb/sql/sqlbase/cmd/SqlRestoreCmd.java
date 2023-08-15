@@ -2,6 +2,7 @@ package net.thevpc.nuts.toolbox.ndb.sql.sqlbase.cmd;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;

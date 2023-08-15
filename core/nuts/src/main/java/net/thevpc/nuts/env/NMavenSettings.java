@@ -1,4 +1,4 @@
-package net.thevpc.nuts.util;
+package net.thevpc.nuts.env;
 
 import net.thevpc.nuts.spi.NRepositoryLocation;
 

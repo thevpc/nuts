@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.noapi.util;
 
-import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.util.NBlankable;
 
 public class _StringUtils {
     public static String trim(String a){

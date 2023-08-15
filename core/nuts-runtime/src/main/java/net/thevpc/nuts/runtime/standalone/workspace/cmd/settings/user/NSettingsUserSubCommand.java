@@ -11,6 +11,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElementNotFoundException;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
 

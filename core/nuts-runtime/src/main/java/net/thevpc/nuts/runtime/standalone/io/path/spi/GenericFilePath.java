@@ -12,7 +12,7 @@ import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NOsFamily;
+import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.util.NStream;
 
 import java.io.*;

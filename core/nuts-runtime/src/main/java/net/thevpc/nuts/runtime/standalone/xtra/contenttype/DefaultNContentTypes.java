@@ -7,6 +7,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NCharsetResolver;
 import net.thevpc.nuts.spi.NContentTypeResolver;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.util.NBlankable;
 
 import java.io.File;
 import java.io.InputStream;

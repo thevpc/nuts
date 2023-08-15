@@ -29,7 +29,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.util.NOsFamily;
+import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.env.NOsFamily;
 
 /**
  *

@@ -1,6 +1,7 @@
 package net.thevpc.nuts.tutorial.lib;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.util.NMsg;
 
 public class ExamplesOfExec {

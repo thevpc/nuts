@@ -28,6 +28,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 
 /**

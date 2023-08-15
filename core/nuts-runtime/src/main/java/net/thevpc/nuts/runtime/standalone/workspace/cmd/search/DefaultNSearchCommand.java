@@ -25,7 +25,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.search;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.util.NDescribables;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.id.filter.NIdFilterOr;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
@@ -46,8 +46,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.util.NFunction;
-import net.thevpc.nuts.util.NIterator;
 
 /**
  * @author thevpc

@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.ext.NExtensions;
+
 /**
  * @app.category Base
  */

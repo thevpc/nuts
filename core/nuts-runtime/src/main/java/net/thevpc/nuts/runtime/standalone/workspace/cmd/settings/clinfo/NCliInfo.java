@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.clinfo;
 
-import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.util.NPlatformHome;

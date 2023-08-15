@@ -32,7 +32,7 @@ import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
-import net.thevpc.nuts.util.NOsFamily;
+import net.thevpc.nuts.env.NOsFamily;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

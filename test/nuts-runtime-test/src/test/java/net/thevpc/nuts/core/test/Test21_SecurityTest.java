@@ -5,7 +5,7 @@ import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreSecurityUtils;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNAuthenticationAgent;
 import net.thevpc.nuts.runtime.standalone.security.PlainNAuthenticationAgent;
-import net.thevpc.nuts.spi.NAuthenticationAgent;
+import net.thevpc.nuts.security.NAuthenticationAgent;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

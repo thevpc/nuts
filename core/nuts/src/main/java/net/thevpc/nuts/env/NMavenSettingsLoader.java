@@ -1,10 +1,12 @@
-package net.thevpc.nuts.util;
+package net.thevpc.nuts.env;
 
-import net.thevpc.nuts.NBlankable;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.reserved.NReservedIOUtils;
 import net.thevpc.nuts.spi.NRepositoryLocation;
+import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOptional;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

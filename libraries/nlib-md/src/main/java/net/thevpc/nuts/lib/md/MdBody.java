@@ -1,6 +1,6 @@
 package net.thevpc.nuts.lib.md;
 
-import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.util.NBlankable;
 
 import java.util.Arrays;
 

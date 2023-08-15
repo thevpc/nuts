@@ -30,6 +30,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLines;
 import net.thevpc.nuts.elem.NElementNotFoundException;
 import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.env.NDesktopIntegrationItem;
 import net.thevpc.nuts.format.NTableFormat;
 import net.thevpc.nuts.format.NTableModel;
 import net.thevpc.nuts.io.*;

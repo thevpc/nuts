@@ -27,6 +27,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.util.NStream;
 
 import java.util.Collection;

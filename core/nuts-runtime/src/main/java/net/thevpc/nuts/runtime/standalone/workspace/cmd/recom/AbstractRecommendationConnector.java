@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.recom;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.clinfo.NCliInfo;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NIdUtils;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NStringUtils;

@@ -30,6 +30,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.text.NTerminalCommand;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextStyles;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NColor;
 import net.thevpc.nuts.util.NLiteral;
 

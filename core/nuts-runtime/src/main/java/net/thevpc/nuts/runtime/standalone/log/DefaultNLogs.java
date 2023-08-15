@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.spi.NLogs;
+import net.thevpc.nuts.log.NLogs;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;

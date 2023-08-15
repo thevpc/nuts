@@ -24,6 +24,8 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.env.NMavenSettings;
+import net.thevpc.nuts.env.NMavenSettingsLoader;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryList;

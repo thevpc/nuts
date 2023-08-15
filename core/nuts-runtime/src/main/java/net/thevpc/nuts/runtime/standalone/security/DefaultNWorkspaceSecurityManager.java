@@ -29,7 +29,7 @@ import javax.security.auth.callback.*;
 
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.spi.NAuthenticationAgent;
+import net.thevpc.nuts.security.NAuthenticationAgent;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;

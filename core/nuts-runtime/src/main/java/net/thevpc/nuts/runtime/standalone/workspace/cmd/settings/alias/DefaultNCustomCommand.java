@@ -7,6 +7,7 @@ import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 
 import java.util.ArrayList;

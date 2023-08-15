@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.NWorkspaceSecurityManager;
 
 /**

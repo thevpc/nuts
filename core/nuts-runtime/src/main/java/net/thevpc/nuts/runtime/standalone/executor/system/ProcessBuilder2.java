@@ -630,20 +630,20 @@ public class ProcessBuilder2 {
         if (result != NExecutionException.SUCCESS) {
             if (isFailFast()) {
                 if (base.redirectErrorStream()) {
-                    if (out.base.getType() == NExecRedirectType.GRAB_FILE || out.base.getType() == NExecRedirectType.GRAB_STREAM) {
+                    if (out.base.getType() == NRedirectType.GRAB_FILE || out.base.getType() == NRedirectType.GRAB_STREAM) {
                         throw new NExecutionException(session,
                                 NMsg.ofC("execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
                                         NCmdLine.of(getCommand())),
                                 result);
                     }
                 } else {
-                    if (err.base.getType() == NExecRedirectType.GRAB_FILE || err.base.getType() == NExecRedirectType.GRAB_STREAM) {
+                    if (err.base.getType() == NRedirectType.GRAB_FILE || err.base.getType() == NRedirectType.GRAB_STREAM) {
                         throw new NExecutionException(session,
                                 NMsg.ofC("execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
                                         NCmdLine.of(getCommand())),
                                 result);
                     }
-                    if (out.base.getType() == NExecRedirectType.GRAB_FILE || out.base.getType() == NExecRedirectType.GRAB_STREAM) {
+                    if (out.base.getType() == NRedirectType.GRAB_FILE || out.base.getType() == NRedirectType.GRAB_STREAM) {
                         throw new NExecutionException(session, NMsg.ofC(
                                 "execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
                                 NCmdLine.of(getCommand())

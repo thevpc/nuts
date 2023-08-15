@@ -3,9 +3,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NPathOption;
-import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessBuilder2;
 import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCommandBase;
@@ -334,7 +332,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
             throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("no buffer was configured; should call grabOutputString"));
         }
         if (getOut().getResultSource().isNotPresent()) {
-            if (getOut().getType() == NExecRedirectType.GRAB_FILE || getOut().getType() == NExecRedirectType.GRAB_STREAM) {
+            if (getOut().getType() == NRedirectType.GRAB_FILE || getOut().getType() == NRedirectType.GRAB_STREAM) {
                 if (getResultException().isPresent()) {
                     throw getResultException().get();
                 }
@@ -352,11 +350,11 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
         if (getErr() == null) {
             throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("no buffer was configured; should call grabErrorString"));
         }
-        if (getErr().getType() == NExecRedirectType.REDIRECT) {
+        if (getErr().getType() == NRedirectType.REDIRECT) {
             return getOutputString();
         }
         if (getErr().getResultSource().isNotPresent()) {
-            if (getErr().getType() == NExecRedirectType.GRAB_FILE || getErr().getType() == NExecRedirectType.GRAB_STREAM) {
+            if (getErr().getType() == NRedirectType.GRAB_FILE || getErr().getType() == NRedirectType.GRAB_STREAM) {
                 if (getResultException().isPresent()) {
                     throw getResultException().get();
                 }
@@ -465,10 +463,10 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
     }
 
     protected String getExtraErrorMessage() {
-        if (getErr().getType() == NExecRedirectType.REDIRECT) {
+        if (getErr().getType() == NRedirectType.REDIRECT) {
             if (
-                    getOut().getType() == NExecRedirectType.GRAB_FILE
-                            || getOut().getType() == NExecRedirectType.GRAB_STREAM
+                    getOut().getType() == NRedirectType.GRAB_FILE
+                            || getOut().getType() == NRedirectType.GRAB_STREAM
             ) {
                 if (getOut() != null && getOut().getResultSource().isPresent()) {
                     return getOutputString();
@@ -476,16 +474,16 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
             }
         } else {
             if (
-                    getErr().getType() == NExecRedirectType.GRAB_FILE
-                            || getErr().getType() == NExecRedirectType.GRAB_STREAM
+                    getErr().getType() == NRedirectType.GRAB_FILE
+                            || getErr().getType() == NRedirectType.GRAB_STREAM
             ) {
                 if (getErr() != null && getErr().getResultSource().isPresent()) {
                     return getErrorString();
                 }
             }
             if (
-                    getOut().getType() == NExecRedirectType.GRAB_FILE
-                            || getOut().getType() == NExecRedirectType.GRAB_STREAM
+                    getOut().getType() == NRedirectType.GRAB_FILE
+                            || getOut().getType() == NRedirectType.GRAB_STREAM
             ) {
                 if (getOut() != null && getOut().getResultSource().isPresent()) {
                     return getOutputString();

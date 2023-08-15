@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.id.filter;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
+import net.thevpc.nuts.util.NFilterOp;
 
 public class NIdFilterFalse extends AbstractIdFilter implements NIdFilter, Simplifiable<NIdFilter>, NExprIdFilter {
 

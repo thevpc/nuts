@@ -1,6 +1,7 @@
 package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 

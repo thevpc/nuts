@@ -29,6 +29,7 @@ import net.thevpc.nuts.runtime.standalone.repository.NRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Arrays;

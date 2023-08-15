@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.thevpc.nuts.runtime.standalone.descriptor.filter.AbstractDescriptorFilter;
+import net.thevpc.nuts.util.NFilterOp;
 
 /**
  *

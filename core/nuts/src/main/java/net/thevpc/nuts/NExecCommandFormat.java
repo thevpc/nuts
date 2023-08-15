@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.ext.NExtensions;
+
 import java.util.function.Function;
 import java.util.function.Predicate;
 

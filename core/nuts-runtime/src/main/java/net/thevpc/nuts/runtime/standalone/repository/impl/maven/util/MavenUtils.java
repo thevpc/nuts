@@ -27,6 +27,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.DefaultNArtifactCall;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.env.NArchFamily;
+import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;

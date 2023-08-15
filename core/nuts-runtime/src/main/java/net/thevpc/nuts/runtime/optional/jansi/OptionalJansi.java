@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.optional.jansi;
 
 import net.thevpc.nuts.NWorkspaceTerminalOptions;
-import net.thevpc.nuts.util.NOsFamily;
+import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.NSession;
 
 import java.util.List;

@@ -2,6 +2,8 @@ package net.thevpc.nuts.runtime.standalone.version.filter;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.filters.NTypedFiltersParser;
+import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.ArrayList;
 import java.util.List;

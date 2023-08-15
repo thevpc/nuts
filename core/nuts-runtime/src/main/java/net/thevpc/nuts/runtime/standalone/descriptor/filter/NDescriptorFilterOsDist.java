@@ -27,6 +27,8 @@ package net.thevpc.nuts.runtime.standalone.descriptor.filter;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
+import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.Objects;
 

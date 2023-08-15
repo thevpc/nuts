@@ -24,6 +24,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NExecInput;
+import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 

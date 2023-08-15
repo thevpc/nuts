@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.util.NFilter;
 
 public class DefaultNFilters implements NFilters {
     public DefaultNFilterModel model;

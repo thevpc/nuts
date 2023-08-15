@@ -24,9 +24,7 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts;
-
-import net.thevpc.nuts.util.NApiUtils;
+package net.thevpc.nuts.util;
 
 import java.util.Arrays;
 import java.util.List;

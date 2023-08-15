@@ -30,6 +30,7 @@ import net.thevpc.nuts.DefaultNArtifactCall;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NRef;
 
 import java.util.*;

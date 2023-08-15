@@ -24,6 +24,11 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.env.NArchFamily;
+import net.thevpc.nuts.env.NDesktopEnvironmentFamily;
+import net.thevpc.nuts.env.NDesktopIntegrationItem;
+import net.thevpc.nuts.env.NOsFamily;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.*;
 

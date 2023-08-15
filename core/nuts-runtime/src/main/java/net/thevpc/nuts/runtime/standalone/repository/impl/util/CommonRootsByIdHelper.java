@@ -9,6 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.id.filter.NIdFilterAnd;
 import net.thevpc.nuts.runtime.standalone.id.filter.NIdFilterOr;
 import net.thevpc.nuts.runtime.standalone.id.filter.NPatternIdFilter;
+import net.thevpc.nuts.util.NBlankable;
 
 import java.util.*;
 

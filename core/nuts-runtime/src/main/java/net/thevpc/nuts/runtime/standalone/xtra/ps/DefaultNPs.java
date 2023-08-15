@@ -2,6 +2,8 @@ package net.thevpc.nuts.runtime.standalone.xtra.ps;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.env.NOsFamily;
+import net.thevpc.nuts.env.NPlatformFamily;
 import net.thevpc.nuts.io.NPsInfo;
 import net.thevpc.nuts.io.NPs;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;

@@ -6,7 +6,7 @@ import net.thevpc.nuts.reserved.NReservedBootConfigLoader;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NOsFamily;
+import net.thevpc.nuts.env.NOsFamily;
 
 import java.util.*;
 import java.util.logging.Level;

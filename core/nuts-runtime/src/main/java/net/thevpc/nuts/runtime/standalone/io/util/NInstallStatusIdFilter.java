@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.io.util;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.id.filter.AbstractIdFilter;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.util.NFilterOp;
 
 public class NInstallStatusIdFilter extends AbstractIdFilter {
     private final NInstallStatusFilter installStatus;

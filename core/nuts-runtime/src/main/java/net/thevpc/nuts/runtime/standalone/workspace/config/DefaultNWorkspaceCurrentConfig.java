@@ -4,7 +4,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.boot.NBootConfig;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
-import net.thevpc.nuts.util.NOsFamily;
+import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.util.NPlatformHome;
 
 import java.nio.file.Path;

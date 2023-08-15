@@ -6,8 +6,8 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.stream.Collectors;
 
-import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
+import net.thevpc.nuts.util.NFilterOp;
 
 public class NDependencyScopeFilter extends AbstractDependencyFilter {
 

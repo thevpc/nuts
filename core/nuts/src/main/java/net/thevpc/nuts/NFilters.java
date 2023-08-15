@@ -23,7 +23,9 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.util.NFilter;
 
 /**
  * Filters helper

@@ -15,6 +15,8 @@ import java.util.regex.Pattern;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
+import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.util.NPredicates;
 import net.thevpc.nuts.util.NStringUtils;
 

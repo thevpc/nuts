@@ -3,12 +3,14 @@ package net.thevpc.nuts.toolbox.ndb.base.cmd;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NObjectFormat;
+import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;
 import net.thevpc.nuts.toolbox.ndb.base.CmdRedirect;
 import net.thevpc.nuts.toolbox.ndb.base.NdbCmd;
 import net.thevpc.nuts.toolbox.ndb.base.NdbSupportBase;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.util.AtName;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NRef;
 import net.thevpc.nuts.util.NStringUtils;
 

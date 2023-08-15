@@ -28,7 +28,6 @@ package net.thevpc.nuts.log;
 
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.spi.NLogs;
 
 import java.util.List;
 import java.util.function.Supplier;

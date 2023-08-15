@@ -1,8 +1,10 @@
-package net.thevpc.nuts.spi;
+package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.NExtensions;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.spi.NPathFactory;
+import net.thevpc.nuts.spi.NPathSPI;
 
 import java.io.File;
 import java.net.URL;

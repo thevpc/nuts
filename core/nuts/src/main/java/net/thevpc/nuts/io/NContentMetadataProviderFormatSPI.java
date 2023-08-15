@@ -1,6 +1,6 @@
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.cmdline.NCmdLine;

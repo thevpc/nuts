@@ -10,6 +10,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.NRecommendationPha
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.RequestQueryInfo;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 
 import java.util.HashMap;

@@ -26,7 +26,6 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.reserved.NReservedUtils;
 import net.thevpc.nuts.reserved.NReservedStringUtils;

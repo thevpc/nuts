@@ -27,6 +27,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
 
 import java.nio.file.Path;

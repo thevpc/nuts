@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.lib.template;
 
-import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.util.NBlankable;
 
 import java.util.Arrays;
 import java.util.HashSet;

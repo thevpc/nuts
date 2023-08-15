@@ -23,7 +23,12 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts.util;
+package net.thevpc.nuts.env;
+
+import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
+import net.thevpc.nuts.util.NNameFormat;
+import net.thevpc.nuts.util.NOptional;
 
 /**
  * Supported Operating System Families

@@ -12,6 +12,7 @@ import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextStyleType;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NQuoteType;
 import net.thevpc.nuts.util.NStringUtils;
 import net.thevpc.nuts.util.NSupportMode;

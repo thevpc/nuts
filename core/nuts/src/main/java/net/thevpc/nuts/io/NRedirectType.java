@@ -1,11 +1,11 @@
-package net.thevpc.nuts;
+package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
 import net.thevpc.nuts.util.NOptional;
 
-public enum NExecRedirectType implements NEnum {
+public enum NRedirectType implements NEnum {
     REDIRECT,
     STREAM,
     GRAB_STREAM,
@@ -32,12 +32,12 @@ public enum NExecRedirectType implements NEnum {
     /**
      * default constructor
      */
-    NExecRedirectType() {
+    NRedirectType() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
-    public static NOptional<NExecRedirectType> parse(String value) {
-        return NEnumUtils.parseEnum(value, NExecRedirectType.class);
+    public static NOptional<NRedirectType> parse(String value) {
+        return NEnumUtils.parseEnum(value, NRedirectType.class);
     }
 
     /**

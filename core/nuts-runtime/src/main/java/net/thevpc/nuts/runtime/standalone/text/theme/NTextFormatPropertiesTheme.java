@@ -8,6 +8,7 @@ import net.thevpc.nuts.text.NTextFormatTheme;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextStyleType;
 import net.thevpc.nuts.text.NTextStyles;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
 

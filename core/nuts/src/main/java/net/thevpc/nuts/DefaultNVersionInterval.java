@@ -27,6 +27,7 @@ package net.thevpc.nuts;
 
 import java.io.Serializable;
 
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringUtils;
 
 /**

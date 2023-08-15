@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 

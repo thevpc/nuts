@@ -24,8 +24,8 @@
 package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import net.thevpc.nuts.NDependencyFilter;
-import net.thevpc.nuts.NFilter;
-import net.thevpc.nuts.NFilterOp;
+import net.thevpc.nuts.util.NFilter;
+import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.util.filters.AbstractNFilter;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;

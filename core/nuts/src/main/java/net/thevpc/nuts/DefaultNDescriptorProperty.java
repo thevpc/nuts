@@ -1,6 +1,7 @@
 package net.thevpc.nuts;
 
 
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 
 import java.util.Objects;

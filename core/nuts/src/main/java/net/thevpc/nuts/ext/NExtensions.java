@@ -24,8 +24,12 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.ext;
 
+import net.thevpc.nuts.NId;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NSessionProvider;
+import net.thevpc.nuts.NWorkspaceOptions;
 import net.thevpc.nuts.io.NServiceLoader;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NAssert;
@@ -39,7 +43,7 @@ import java.util.Set;
  * @app.category Extensions
  * @since 0.5.4
  */
-public interface NExtensions extends NComponent ,NSessionProvider{
+public interface NExtensions extends NComponent , NSessionProvider {
     static NExtensions of(NSession session) {
         return NAssert.requireSession(session).extensions();
     }

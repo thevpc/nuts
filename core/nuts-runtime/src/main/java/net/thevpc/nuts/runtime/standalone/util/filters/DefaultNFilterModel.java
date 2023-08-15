@@ -6,6 +6,8 @@ import net.thevpc.nuts.runtime.standalone.descriptor.filter.NDescriptorFilterNon
 import net.thevpc.nuts.runtime.standalone.id.filter.NIdFilterNone;
 import net.thevpc.nuts.runtime.standalone.repository.filter.NRepositoryFilterNone;
 import net.thevpc.nuts.runtime.standalone.version.filter.NVersionFilterNone;
+import net.thevpc.nuts.util.NFilter;
+import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.util.NMsg;
 
 import java.util.*;

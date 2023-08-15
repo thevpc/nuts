@@ -17,6 +17,7 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
+import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.UncheckedException;
 

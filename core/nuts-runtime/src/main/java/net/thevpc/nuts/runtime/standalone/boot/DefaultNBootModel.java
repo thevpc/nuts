@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.boot;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.cmdline.DefaultNArg;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSystemTerminal;
 import net.thevpc.nuts.runtime.optional.jansi.OptionalJansi;
@@ -45,7 +46,7 @@ import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NOsFamily;
+import net.thevpc.nuts.env.NOsFamily;
 
 import java.io.InputStream;
 import java.io.OutputStream;

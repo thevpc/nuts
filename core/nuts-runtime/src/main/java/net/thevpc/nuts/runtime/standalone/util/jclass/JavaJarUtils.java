@@ -8,6 +8,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NPom;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.NPomXmlParser;
 import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNExecutionEntry;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NRef;
 import net.thevpc.nuts.util.NStringUtils;

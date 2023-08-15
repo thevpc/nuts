@@ -25,6 +25,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.reserved.NReservedCollectionUtils;
+import net.thevpc.nuts.util.NBlankable;
 
 import java.io.Serializable;
 import java.util.*;

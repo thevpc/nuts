@@ -1,6 +1,6 @@
 package net.thevpc.nuts.reserved;
 
-import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.util.NRef;
 

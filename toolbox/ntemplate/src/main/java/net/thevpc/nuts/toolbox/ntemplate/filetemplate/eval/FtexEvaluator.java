@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.ntemplate.filetemplate.eval;
 
-import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.NExecCommand;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;

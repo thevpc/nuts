@@ -31,6 +31,7 @@ import net.thevpc.nuts.cmdline.DefaultNArgCandidate;
 import net.thevpc.nuts.cmdline.NArgCandidate;
 import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
+import net.thevpc.nuts.util.NBlankable;
 
 import java.util.ArrayList;
 import java.util.List;

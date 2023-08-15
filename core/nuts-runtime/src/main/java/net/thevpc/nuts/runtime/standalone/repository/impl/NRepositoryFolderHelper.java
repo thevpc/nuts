@@ -27,6 +27,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.CharacterizedExecFile;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCommand;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
+import net.thevpc.nuts.security.NDigest;
 import net.thevpc.nuts.spi.NDeployRepositoryCommand;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.spi.NRepositoryUndeployCommand;

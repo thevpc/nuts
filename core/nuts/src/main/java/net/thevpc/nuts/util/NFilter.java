@@ -22,9 +22,9 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.util.NDescribable;
+import net.thevpc.nuts.NWorkspace;
 
 import java.util.List;
 

@@ -32,7 +32,6 @@ import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NSessionProvider;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.spi.NPathSPI;
-import net.thevpc.nuts.spi.NPaths;
 import net.thevpc.nuts.util.NStream;
 
 import java.io.*;

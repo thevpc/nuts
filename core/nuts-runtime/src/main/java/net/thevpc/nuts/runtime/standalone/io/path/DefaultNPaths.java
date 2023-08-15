@@ -11,7 +11,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
 import net.thevpc.nuts.spi.NPathFactory;
 import net.thevpc.nuts.spi.NPathSPI;
-import net.thevpc.nuts.spi.NPaths;
+import net.thevpc.nuts.io.NPaths;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringBuilder;

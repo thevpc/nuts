@@ -23,7 +23,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.collections;
 
-import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.NIdLocation;
 import net.thevpc.nuts.util.NStringUtils;
 

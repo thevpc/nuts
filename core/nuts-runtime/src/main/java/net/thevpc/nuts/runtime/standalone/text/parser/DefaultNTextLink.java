@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
-import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.text.NTextLink;
 import net.thevpc.nuts.text.NTextType;

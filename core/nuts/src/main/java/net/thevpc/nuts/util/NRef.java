@@ -25,8 +25,6 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NBlankable;
-
 import java.util.Objects;
 
 public class NRef<T> {

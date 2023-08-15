@@ -38,6 +38,7 @@ import java.util.*;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNRepositorySecurityManager;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNRepositorySecurityModel;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMapListener;
 
 /**

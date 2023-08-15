@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.ndb.sql.postgres.cmd;
 
-import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;

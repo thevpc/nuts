@@ -3,6 +3,8 @@ package net.thevpc.nuts.ext.ssh;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.env.NDesktopEnvironmentFamily;
+import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;

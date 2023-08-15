@@ -1,9 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.executor.system;
 
-import net.thevpc.nuts.NExecInput;
+import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NNonBlockingInputStream;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.io.util.NNonBlockingInputStreamAdapter;
 
 import java.io.File;
 

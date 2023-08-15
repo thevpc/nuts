@@ -10,6 +10,7 @@ import net.thevpc.nuts.toolbox.noapi.util.NoApiUtils;
 import net.thevpc.nuts.toolbox.noapi.service.OpenApiParser;
 import net.thevpc.nuts.toolbox.noapi.model.ConfigVar;
 import net.thevpc.nuts.toolbox.noapi.model.Vars;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.util.NMsg;
 

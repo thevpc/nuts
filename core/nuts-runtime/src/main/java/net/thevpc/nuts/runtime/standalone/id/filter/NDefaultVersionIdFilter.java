@@ -10,6 +10,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import java.util.Objects;
 
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
+import net.thevpc.nuts.util.NFilterOp;
 
 /**
  *

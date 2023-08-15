@@ -23,12 +23,14 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts.io;
+package net.thevpc.nuts.security;
 
 import net.thevpc.nuts.NDescriptor;
-import net.thevpc.nuts.NExtensions;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NSessionProvider;
+import net.thevpc.nuts.io.NInputSource;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponent;
 
 import java.io.File;

@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.text;
 
-import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.io.NPath;
 
 import java.util.Objects;

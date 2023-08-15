@@ -26,8 +26,6 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.*;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;

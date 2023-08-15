@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.log;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.log.NLogRecord;
+import net.thevpc.nuts.util.NBlankable;
 
 import java.io.File;
 import java.io.IOException;

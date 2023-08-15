@@ -26,11 +26,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.DefaultNProperties;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.reserved.NReservedCollectionUtils;
-import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
 import java.util.function.Function;

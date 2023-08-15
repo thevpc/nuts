@@ -7,6 +7,7 @@ import java.util.List;
 
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NFilter;
 
 public class InternalNInstallStatusFilters extends InternalNTypedFilters<NInstallStatusFilter>
         implements NInstallStatusFilters {

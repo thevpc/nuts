@@ -1,10 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api;
 
-import net.thevpc.nuts.NBlankable;
-
-import java.util.Arrays;
-import java.util.Objects;
-
 public class NPomLicense {
 
     private String name;

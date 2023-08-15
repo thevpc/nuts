@@ -23,6 +23,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.io.NExecInput;
+import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NExecutorComponent;
 import net.thevpc.nuts.spi.NInstallerComponent;

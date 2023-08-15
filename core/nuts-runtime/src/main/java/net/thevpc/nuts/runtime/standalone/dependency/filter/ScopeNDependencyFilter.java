@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.dependency.filter;
 import java.util.EnumSet;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.Objects;
 

@@ -37,6 +37,7 @@ import java.util.Set;
 
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 

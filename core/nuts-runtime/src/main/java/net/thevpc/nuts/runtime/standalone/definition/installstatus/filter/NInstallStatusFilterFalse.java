@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.definition.installstatus.filter;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.id.filter.NExprIdFilter;
+import net.thevpc.nuts.util.NFilterOp;
 
 public class NInstallStatusFilterFalse extends AbstractInstallStatusFilter implements NExprIdFilter {
 

@@ -25,10 +25,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.*;
 
 import java.io.Serializable;
 import java.math.BigInteger;

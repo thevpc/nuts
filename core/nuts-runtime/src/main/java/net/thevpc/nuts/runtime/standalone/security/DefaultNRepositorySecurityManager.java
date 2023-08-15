@@ -9,7 +9,7 @@ import net.thevpc.nuts.*;
 
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.spi.NAuthenticationAgent;
+import net.thevpc.nuts.security.NAuthenticationAgent;
 
 import java.util.List;
 

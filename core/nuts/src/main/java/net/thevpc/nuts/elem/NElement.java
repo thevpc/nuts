@@ -23,7 +23,7 @@
  */
 package net.thevpc.nuts.elem;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NDescribable;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NOptional;

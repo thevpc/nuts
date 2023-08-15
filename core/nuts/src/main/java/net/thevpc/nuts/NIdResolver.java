@@ -25,6 +25,7 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 
 import java.util.List;

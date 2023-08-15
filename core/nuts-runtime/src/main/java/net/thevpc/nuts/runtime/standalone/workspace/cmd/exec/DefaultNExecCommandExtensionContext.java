@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NExecInput;
+import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPath;
 

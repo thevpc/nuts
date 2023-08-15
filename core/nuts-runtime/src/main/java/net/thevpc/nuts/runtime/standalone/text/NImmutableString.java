@@ -30,6 +30,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NBlankable;
 
 import java.io.StringReader;
 

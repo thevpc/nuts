@@ -24,37 +24,58 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.ext;
 
-import net.thevpc.nuts.util.NEnum;
-import net.thevpc.nuts.util.NEnumUtils;
-import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.NId;
 
 /**
- * Filter Type
+ * Extension information
  *
- * @since 0.8.0
+ * @author thevpc
+ * @app.category Config
+ * @since 0.5.4
  */
-public enum NFilterOp implements NEnum {
-    CUSTOM,
-    CONVERT,
-    TRUE,
-    FALSE,
-    AND,
-    OR,
-    NOT;
-    private final String id;
+public interface NExtensionInformation {
 
-    NFilterOp() {
-        this.id = NNameFormat.ID_NAME.format(name());
-    }
+    /**
+     * extension id
+     *
+     * @return extension id
+     */
+    NId getId();
 
-    public static NOptional<NFilterOp> parse(String value) {
-        return NEnumUtils.parseEnum(value, NFilterOp.class);
-    }
-    @Override
-    public String id() {
-        return id;
-    }
+    /**
+     * extension user name
+     *
+     * @return extension user name
+     */
+    String getName();
+
+    /**
+     * extension long description
+     *
+     * @return extension long description
+     */
+    String getDescription();
+
+    /**
+     * extension main author(s)
+     *
+     * @return extension main author(s)
+     */
+    String getAuthor();
+
+    /**
+     * extension category
+     *
+     * @return extension category
+     */
+    String getCategory();
+
+    /**
+     * extension source
+     *
+     * @return extension source
+     */
+    String getSource();
 }

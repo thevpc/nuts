@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
-import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.NSession;
 
 import java.lang.reflect.Field;

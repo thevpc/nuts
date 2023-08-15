@@ -41,8 +41,9 @@ import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.NDefaultSupportLevelContext;
 import net.thevpc.nuts.text.NTextFormatTheme;
 import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NOsFamily;
+import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.BufferedReader;

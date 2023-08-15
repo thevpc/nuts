@@ -26,7 +26,6 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NBlankable;
 import net.thevpc.nuts.NString;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.text.NTextFormatType;

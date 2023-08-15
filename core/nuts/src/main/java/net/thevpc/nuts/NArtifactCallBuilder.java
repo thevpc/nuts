@@ -25,11 +25,11 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 /**
  * NutsArtifactCallBuilder is responsible of building instances of {@code NutsArtifactCall} to be used

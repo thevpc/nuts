@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.compress;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;

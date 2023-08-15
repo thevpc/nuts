@@ -24,8 +24,10 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.ext;
 
+import net.thevpc.nuts.NId;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NMsg;
 
 /**

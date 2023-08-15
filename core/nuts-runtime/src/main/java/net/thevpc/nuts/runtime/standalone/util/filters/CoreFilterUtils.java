@@ -26,6 +26,11 @@
 package net.thevpc.nuts.runtime.standalone.util.filters;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.env.NArchFamily;
+import net.thevpc.nuts.env.NDesktopEnvironmentFamily;
+import net.thevpc.nuts.env.NOsFamily;
+import net.thevpc.nuts.env.NPlatformFamily;
+import net.thevpc.nuts.ext.NExtensionInformation;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
 import net.thevpc.nuts.util.*;
 

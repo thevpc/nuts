@@ -25,6 +25,7 @@ package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElementNotFoundException;
+import net.thevpc.nuts.ext.NFactoryException;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.ClassClassMap;
@@ -361,9 +362,9 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     public boolean isBootstrapLogType(Class apiType) {
         switch (apiType.getName()) {
             //skip logging this to avoid infinite recursion
-            case "net.thevpc.nuts.spi.NPaths":
+            case "net.thevpc.nuts.io.NPaths":
             case "net.thevpc.nuts.text.NTexts":
-            case "net.thevpc.nuts.spi.NLogs":
+            case "net.thevpc.nuts.log.NLogs":
             case "net.thevpc.nuts.log.NLog":
             case "net.thevpc.nuts.log.NLogOp": {
                 return true;

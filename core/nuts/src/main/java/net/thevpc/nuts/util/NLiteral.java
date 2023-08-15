@@ -1,7 +1,6 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.DefaultNLiteral;
-import net.thevpc.nuts.NBlankable;
 import net.thevpc.nuts.elem.NPrimitiveElement;
 
 import java.lang.reflect.Type;

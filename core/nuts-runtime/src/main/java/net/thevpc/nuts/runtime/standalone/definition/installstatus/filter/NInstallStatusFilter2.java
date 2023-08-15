@@ -27,6 +27,8 @@
 package net.thevpc.nuts.runtime.standalone.definition.installstatus.filter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NFilter;
+import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.Collections;
 import java.util.List;

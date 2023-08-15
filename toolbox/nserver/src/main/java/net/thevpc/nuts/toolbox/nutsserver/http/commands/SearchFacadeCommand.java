@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 
-import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.NSearchCommand;
 import net.thevpc.nuts.toolbox.nutsserver.AbstractFacadeCommand;
 import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;

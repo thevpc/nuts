@@ -5,6 +5,9 @@ import net.thevpc.nuts.runtime.standalone.dependency.util.NComplexExpressionStri
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
+import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NFilter;
+import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.ArrayList;
 import java.util.Arrays;

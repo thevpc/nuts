@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NServiceLoader;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;

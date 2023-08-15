@@ -45,11 +45,9 @@ import java.util.logging.Level;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
+import net.thevpc.nuts.security.NDigest;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.util.NIterator;
-import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.*;
 
 public class NHttpSrvRepository extends NCachedRepository {
 

@@ -1,7 +1,5 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NBlankable;
-
 import java.util.function.Function;
 
 public class NEnumUtils {

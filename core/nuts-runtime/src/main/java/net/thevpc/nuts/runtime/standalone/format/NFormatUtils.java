@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.standalone.format;
 import java.util.Map;
 import static net.thevpc.nuts.runtime.standalone.util.CoreStringUtils.stringValue;
 
-import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementEntry;
 import net.thevpc.nuts.NSession;

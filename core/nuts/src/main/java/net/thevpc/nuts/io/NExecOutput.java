@@ -1,39 +1,35 @@
-package net.thevpc.nuts;
+package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.io.NInputSource;
-import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NPathOption;
-import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 import java.io.OutputStream;
 
 public class NExecOutput {
-    private NExecRedirectType type;
+    private NRedirectType type;
     private OutputStream stream;
     private NPath path;
     private NPathOption[] options;
     private NInputSource result;
 
     public static NExecOutput ofNull() {
-        return new NExecOutput(NExecRedirectType.NULL, null, null, null);
+        return new NExecOutput(NRedirectType.NULL, null, null, null);
     }
 
     public static NExecOutput ofGrabMem() {
-        return new NExecOutput(NExecRedirectType.GRAB_STREAM, null, null, null);
+        return new NExecOutput(NRedirectType.GRAB_STREAM, null, null, null);
     }
 
     public static NExecOutput ofGrabFile() {
-        return new NExecOutput(NExecRedirectType.GRAB_FILE, null, null, null);
+        return new NExecOutput(NRedirectType.GRAB_FILE, null, null, null);
     }
 
     public static NExecOutput ofInherit() {
-        return new NExecOutput(NExecRedirectType.INHERIT, null, null, null);
+        return new NExecOutput(NRedirectType.INHERIT, null, null, null);
     }
 
     public static NExecOutput ofRedirect() {
-        return new NExecOutput(NExecRedirectType.REDIRECT, null, null, null);
+        return new NExecOutput(NRedirectType.REDIRECT, null, null, null);
     }
 
     public static NExecOutput ofStream(NPrintStream stream) {
@@ -41,33 +37,33 @@ public class NExecOutput {
     }
 
     public static NExecOutput ofStream(OutputStream stream) {
-        return stream == null ? ofInherit() : new NExecOutput(NExecRedirectType.STREAM, stream, null, null);
+        return stream == null ? ofInherit() : new NExecOutput(NRedirectType.STREAM, stream, null, null);
     }
 
     public static NExecOutput ofPipe() {
-        return new NExecOutput(NExecRedirectType.PIPE, null, null, null);
+        return new NExecOutput(NRedirectType.PIPE, null, null, null);
     }
 
     public static NExecOutput ofPath(NPath path, NPathOption... options) {
-        return path == null ? ofInherit() : new NExecOutput(NExecRedirectType.PATH, null, path, options);
+        return path == null ? ofInherit() : new NExecOutput(NRedirectType.PATH, null, path, options);
     }
 
     public static NExecOutput ofPath(NPath path, boolean append) {
-        return path == null ? ofInherit() : new NExecOutput(NExecRedirectType.PATH, null, path, append ? null : new NPathOption[]{NPathOption.APPEND});
+        return path == null ? ofInherit() : new NExecOutput(NRedirectType.PATH, null, path, append ? null : new NPathOption[]{NPathOption.APPEND});
     }
 
     public static NExecOutput ofPath(NPath path) {
-        return path == null ? ofInherit() : new NExecOutput(NExecRedirectType.PATH, null, path, null);
+        return path == null ? ofInherit() : new NExecOutput(NRedirectType.PATH, null, path, null);
     }
 
-    private NExecOutput(NExecRedirectType type, OutputStream stream, NPath path, NPathOption[] options) {
+    private NExecOutput(NRedirectType type, OutputStream stream, NPath path, NPathOption[] options) {
         this.type = type;
         this.stream = stream;
         this.path = path;
         this.options = options == null ? new NPathOption[0] : options;
     }
 
-    public NExecRedirectType getType() {
+    public NRedirectType getType() {
         return type;
     }
 
@@ -112,7 +108,7 @@ public class NExecOutput {
         return options;
     }
 
-    public NExecOutput setType(NExecRedirectType type) {
+    public NExecOutput setType(NRedirectType type) {
         this.type = type;
         return this;
     }

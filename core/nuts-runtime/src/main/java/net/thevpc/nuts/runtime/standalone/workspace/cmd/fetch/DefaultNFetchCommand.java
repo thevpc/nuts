@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.fetch;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.io.NDigest;
+import net.thevpc.nuts.security.NDigest;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.descriptor.util.NDescriptorUtils;
@@ -24,6 +24,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.NRepositoryAndFetchModeT
 import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 
 import java.nio.file.Files;

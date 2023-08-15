@@ -24,56 +24,30 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.env;
 
-/**
- * Extension information
- *
- * @author thevpc
- * @app.category Config
- * @since 0.5.4
- */
-public interface NExtensionInformation {
+import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
+import net.thevpc.nuts.util.NNameFormat;
+import net.thevpc.nuts.util.NOptional;
 
-    /**
-     * extension id
-     *
-     * @return extension id
-     */
-    NId getId();
+public enum NDesktopIntegrationItem implements NEnum {
+    MENU,
+    DESKTOP,
+    USER;
+    private final String id;
 
-    /**
-     * extension user name
-     *
-     * @return extension user name
-     */
-    String getName();
+    NDesktopIntegrationItem() {
+        this.id = NNameFormat.ID_NAME.format(name());
+    }
 
-    /**
-     * extension long description
-     *
-     * @return extension long description
-     */
-    String getDescription();
+    public static NOptional<NDesktopIntegrationItem> parse(String value) {
+        return NEnumUtils.parseEnum(value, NDesktopIntegrationItem.class);
+    }
 
-    /**
-     * extension main author(s)
-     *
-     * @return extension main author(s)
-     */
-    String getAuthor();
+    @Override
+    public String id() {
+        return id;
+    }
 
-    /**
-     * extension category
-     *
-     * @return extension category
-     */
-    String getCategory();
-
-    /**
-     * extension source
-     *
-     * @return extension source
-     */
-    String getSource();
 }

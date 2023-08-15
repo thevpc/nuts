@@ -1,6 +1,6 @@
 package net.thevpc.nuts.time;
 
-import net.thevpc.nuts.NExtensions;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.util.NMsgTemplate;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NPrintStream;

@@ -31,6 +31,7 @@ import java.util.*;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NStoreLocationsMap;
 import net.thevpc.nuts.spi.NRepositoryLocation;
+import net.thevpc.nuts.util.NBlankable;
 
 /**
  *

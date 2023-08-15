@@ -31,6 +31,8 @@ import net.thevpc.nuts.*;
 import java.util.Objects;
 
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
+import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NFilterOp;
 
 /**
  * Created by vpc on 2/20/17.

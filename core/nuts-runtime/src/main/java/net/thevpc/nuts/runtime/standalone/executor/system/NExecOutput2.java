@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.executor.system;
 
-import net.thevpc.nuts.NExecOutput;
+import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.util.NNonBlockingInputStreamAdapter;
 

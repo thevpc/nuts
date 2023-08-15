@@ -25,7 +25,7 @@
 */
 package net.thevpc.nuts.runtime.standalone.repository.filter;
 
-import net.thevpc.nuts.NFilterOp;
+import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.NRepository;
 import net.thevpc.nuts.NRepositoryFilter;
 import net.thevpc.nuts.NSession;

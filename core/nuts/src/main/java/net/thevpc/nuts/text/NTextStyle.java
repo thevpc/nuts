@@ -26,11 +26,7 @@
  */
 package net.thevpc.nuts.text;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.util.NEnum;
-import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.*;
 
 import java.util.Objects;
 
