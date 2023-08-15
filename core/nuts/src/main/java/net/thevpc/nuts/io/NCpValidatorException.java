@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 
 /**

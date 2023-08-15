@@ -36,9 +36,9 @@ import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.spi.NFetchDescriptorRepositoryCommand;
-import net.thevpc.nuts.util.NLog;
-import net.thevpc.nuts.util.NLogOp;
-import net.thevpc.nuts.util.NLogVerb;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NLogOp;
+import net.thevpc.nuts.log.NLogVerb;
 
 /**
  * @author thevpc

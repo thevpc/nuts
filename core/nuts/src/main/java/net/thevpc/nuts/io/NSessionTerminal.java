@@ -26,7 +26,7 @@
 package net.thevpc.nuts.io;
 
 
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NQuestion;
 
@@ -52,11 +52,11 @@ public interface NSessionTerminal {
     }
 
     static NSessionTerminal ofMem(NSession session) {
-        return NIO.of(session).createMemTerminal();
+        return NIO.of(session).createInMemoryTerminal();
     }
 
     static NSessionTerminal ofMem(boolean mergeError, NSession session) {
-        return NIO.of(session).createMemTerminal(mergeError);
+        return NIO.of(session).createInMemoryTerminal(mergeError);
     }
 
     String readLine(NPrintStream out, NMsg message);

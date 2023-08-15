@@ -5,7 +5,8 @@ import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
-import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.log.NLogOp;
+import net.thevpc.nuts.util.NMsg;
 
 import java.util.List;
 import java.util.logging.Level;

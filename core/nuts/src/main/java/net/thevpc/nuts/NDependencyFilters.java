@@ -24,6 +24,9 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.util.NArchFamily;
+import net.thevpc.nuts.util.NOsFamily;
+
 import java.util.Collection;
 
 /**

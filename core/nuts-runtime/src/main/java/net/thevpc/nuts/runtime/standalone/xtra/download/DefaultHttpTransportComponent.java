@@ -31,6 +31,7 @@ import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.SimpleHttpClient;
 import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.util.NMsg;
 
 import java.io.InputStream;
 import java.io.UncheckedIOException;

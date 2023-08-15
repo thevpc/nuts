@@ -8,6 +8,7 @@ import java.util.Map;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreSecurityUtils;
 import net.thevpc.nuts.spi.NAuthenticationAgent;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.util.NMsg;
 
 public abstract class AbstractNAuthenticationAgent implements NAuthenticationAgent {
 

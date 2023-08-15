@@ -28,9 +28,7 @@ import net.thevpc.nuts.reserved.ReservedSimpleCharQueue;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NQuoteType;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.*;
 
 import java.util.*;
 import java.util.stream.Collectors;

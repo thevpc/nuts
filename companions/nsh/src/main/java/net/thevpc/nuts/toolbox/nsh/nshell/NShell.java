@@ -54,8 +54,9 @@ import net.thevpc.nuts.toolbox.nsh.sys.NShellExternalExecutor;
 import net.thevpc.nuts.toolbox.nsh.sys.NShellNoExternalExecutor;
 import net.thevpc.nuts.toolbox.nsh.util.ByteArrayPrintStream;
 import net.thevpc.nuts.toolbox.nsh.util.MemResult;
-import net.thevpc.nuts.util.NClock;
-import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.time.NClock;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.ByteArrayInputStream;

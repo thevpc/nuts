@@ -11,6 +11,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.util.NOptional;
 
 @NComponentScope(NScopeType.SESSION)
 public class DefaultNRepositories implements NRepositories {

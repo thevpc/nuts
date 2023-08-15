@@ -39,6 +39,8 @@ import net.thevpc.nuts.toolbox.nsh.cmds.util.*;
 import net.thevpc.nuts.toolbox.nsh.cmds.util.filter.JavaExceptionWindowFilter;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.FileInfo;
+import net.thevpc.nuts.util.NLiteral;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
 /**

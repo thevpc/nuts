@@ -4,8 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NNonBlockingInputStream;
-import net.thevpc.nuts.util.NRef;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.*;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -162,46 +161,6 @@ public class NSysExecUtils {
                 break;
             }
         }
-
-//        switch (runAsMode.getMode()) {
-//            case CURRENT_USER: {
-//                break;
-//            }
-//            case USER: {
-//                if (NutsBlankable.isBlank(runAsUser)
-//                        || System.getProperty("user.name").equals(runAsUser.trim())
-//                ) {
-//                    runAsMode = NutsExecutionType.SYSTEM;
-//                    runAsEffective = null;
-//                } else {
-//                    runAsEffective = runAsUser.trim();
-//                }
-//                break;
-//            }
-//            case SYSTEM_ROOT: {
-//                switch (sysFamily) {
-//                    case LINUX:
-//                    case MACOS:
-//                    case UNIX:
-//                    case WINDOWS: {
-//                        runAsEffective = rootUserName;
-//                        break;
-//                    }
-//                    default: {
-//                        throw new NutsIllegalArgumentException(session, NMsg.plain("cannot run as admin/root on unknown system OS family"));
-//                    }
-//                }
-//                if (System.getProperty("user.name").equals(runAsEffective.trim())) {
-//                    runAsMode = NutsExecutionType.SYSTEM_USER.SYSTEM;
-//                    runAsEffective = null;
-//                }
-//                break;
-//            }
-//            case SYSTEM_SUDO: {
-//                runAsEffective = null;
-//                break;
-//            }
-//        }
         switch (runAsMode.getMode()) {
             case CURRENT_USER: {
                 List<String> cc = new ArrayList<>();

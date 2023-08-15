@@ -12,9 +12,10 @@ import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.spi.NPushRepositoryCommand;
-import net.thevpc.nuts.util.NLog;
-import net.thevpc.nuts.util.NLogOp;
-import net.thevpc.nuts.util.NLogVerb;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NLogOp;
+import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
 /**

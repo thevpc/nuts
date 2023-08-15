@@ -8,6 +8,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.AbstractNWorkspace;
 import net.thevpc.nuts.runtime.standalone.xtra.ntalk.NTalkClient;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NMsg;
 
 
 public abstract class RemoteNWorkspace extends AbstractNWorkspace {

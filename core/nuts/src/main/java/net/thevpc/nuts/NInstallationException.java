@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.util.NMsg;
+
 /**
  * Base exception for installation fails.
  *

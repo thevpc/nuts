@@ -2,7 +2,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds.posix.grep;
 
 import net.thevpc.nuts.NBlankable;
 import net.thevpc.nuts.NExecutionException;
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;

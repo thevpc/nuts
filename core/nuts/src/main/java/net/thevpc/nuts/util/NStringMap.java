@@ -26,8 +26,6 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NOptional;
-
 import java.util.*;
 
 public class NStringMap<V> {

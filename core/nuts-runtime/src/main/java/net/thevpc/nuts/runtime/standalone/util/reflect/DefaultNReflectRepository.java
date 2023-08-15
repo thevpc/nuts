@@ -25,8 +25,11 @@ package net.thevpc.nuts.runtime.standalone.util.reflect;
 
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.reflect.NReflectConfiguration;
+import net.thevpc.nuts.reflect.NReflectConfigurationBuilder;
+import net.thevpc.nuts.reflect.NReflectRepository;
+import net.thevpc.nuts.reflect.NReflectType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.*;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;

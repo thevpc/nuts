@@ -7,6 +7,9 @@ package net.thevpc.nuts.runtime.standalone.repository.cmd.search;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NPositionType;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NLogOp;
+import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.*;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;

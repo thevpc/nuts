@@ -25,7 +25,7 @@ package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.NException;
 import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 

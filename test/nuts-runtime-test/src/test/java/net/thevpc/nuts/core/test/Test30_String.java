@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 import net.thevpc.nuts.util.NNameFormat;

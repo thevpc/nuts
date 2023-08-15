@@ -24,6 +24,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.util.NOptional;
+
 import java.util.List;
 
 /**

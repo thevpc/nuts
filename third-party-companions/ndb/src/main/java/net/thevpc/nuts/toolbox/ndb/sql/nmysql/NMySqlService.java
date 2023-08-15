@@ -6,6 +6,7 @@ import net.thevpc.nuts.toolbox.ndb.sql.nmysql.local.LocalMysqlConfigService;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.local.config.LocalMysqlConfig;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.remote.RemoteMysqlConfigService;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.remote.config.RemoteMysqlConfig;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NUnsafeFunction;
 
 import java.util.logging.Logger;

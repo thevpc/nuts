@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.index;
 
 import net.thevpc.nuts.NConfigs;
-import net.thevpc.nuts.NLiteral;
+import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NUpdateStatisticsCommand;
 import net.thevpc.nuts.cmdline.NCmdLine;

@@ -26,7 +26,7 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.util.NEnum;
-import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
 

@@ -49,8 +49,9 @@ import net.thevpc.nuts.DefaultNVersion;
 import net.thevpc.nuts.runtime.standalone.repository.NIdPathIterator;
 import net.thevpc.nuts.runtime.standalone.repository.NIdPathIteratorBase;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
-import net.thevpc.nuts.util.NLogOp;
-import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.log.NLogOp;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.util.NMsg;
 
 /**
  *

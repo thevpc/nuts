@@ -32,7 +32,8 @@ import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.spi.NRepositoryUndeployCommand;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NIterator;
-import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.util.NMsg;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

@@ -27,7 +27,7 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NExtensions;
-import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.NSession;
 
 import java.util.List;

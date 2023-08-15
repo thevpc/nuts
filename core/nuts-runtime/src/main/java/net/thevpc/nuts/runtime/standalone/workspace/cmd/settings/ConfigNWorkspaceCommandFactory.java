@@ -7,8 +7,9 @@ import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.ConfigEventType;
-import net.thevpc.nuts.util.NLog;
-import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NLogOp;
+import net.thevpc.nuts.util.NMsg;
 
 import java.util.ArrayList;
 import java.util.List;

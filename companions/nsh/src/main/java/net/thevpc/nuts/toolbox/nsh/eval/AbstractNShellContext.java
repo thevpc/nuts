@@ -7,6 +7,7 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.toolbox.nsh.autocomplete.NShellAutoCompleteCandidate;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltin;
 import net.thevpc.nuts.util.NFunction;
+import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.IOException;

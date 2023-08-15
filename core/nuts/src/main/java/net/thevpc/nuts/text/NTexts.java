@@ -29,6 +29,8 @@ package net.thevpc.nuts.text;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NFormatSPI;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStream;
 
 import java.util.Collection;

@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace;
 
-import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.NId;

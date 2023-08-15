@@ -1,6 +1,6 @@
 package net.thevpc.nuts.tutorial.lib;
 
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NCompress;
 import net.thevpc.nuts.io.NPath;

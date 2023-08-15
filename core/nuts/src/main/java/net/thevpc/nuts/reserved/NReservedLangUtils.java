@@ -1,7 +1,7 @@
 package net.thevpc.nuts.reserved;
 
-import net.thevpc.nuts.NMsg;
-import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOptional;
 
 import java.io.BufferedReader;
 import java.io.PrintWriter;

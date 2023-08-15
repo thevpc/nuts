@@ -7,6 +7,7 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.ntomcat.local.config.LocalTomcatDomainConfig;
+import net.thevpc.nuts.util.NMsg;
 
 public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase {
 

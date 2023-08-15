@@ -1,7 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
 
-import net.thevpc.nuts.util.*;
+import net.thevpc.nuts.time.NProgressHandler;
+import net.thevpc.nuts.time.NProgressHandlerEvent;
+import net.thevpc.nuts.time.NProgressMonitor;
 
 /**
  * @author Taha Ben Salah (taha.bensalah@gmail.com)

@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.util.jclass;
 
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.NIllegalArgumentException;
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 
 import java.io.*;

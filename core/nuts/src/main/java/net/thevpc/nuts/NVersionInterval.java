@@ -27,6 +27,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.reserved.NReservedVersionIntervalParser;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOptional;
 
 import java.io.Serializable;
 import java.util.List;

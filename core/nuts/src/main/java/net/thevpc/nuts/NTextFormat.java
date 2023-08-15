@@ -3,6 +3,7 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NOptional;
 
 public interface NTextFormat<T> extends NStringFormat<T> {
     static <T> NOptional<NTextFormat<T>> of(NSession session, String type, Class<T> expectedType, String pattern) {

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
-import net.thevpc.nuts.util.NProgressFactory;
-import net.thevpc.nuts.util.NProgressListener;
+import net.thevpc.nuts.time.NProgressFactory;
+import net.thevpc.nuts.time.NProgressListener;
 import net.thevpc.nuts.NSession;
 
 public class DefaultNProgressFactory implements NProgressFactory {

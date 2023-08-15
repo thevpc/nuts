@@ -57,6 +57,7 @@ import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NConnexionString;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStream;
 
 import java.io.File;
@@ -622,6 +623,21 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                         }
                         return new DefaultNSettingsInternalExecutable(args, this);
                     }
+                }
+                RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
+                if (remoteInfo0!=null) {
+                    NExecutionType finalExecutionType = executionType;
+                    NAssert.requireNull(getCommandDefinition(), () -> NMsg.ofC("unable to run artifact as %s cmd", finalExecutionType), session);
+                    NAssert.requireNonBlank(command, "command", session);
+                    String[] ts = command.toArray(new String[0]);
+                    return new DefaultNSystemExecutableRemote(
+                            remoteInfo0.commExec, ts,
+                            getExecutorOptions(),
+                            this,
+                            remoteInfo0.in0,
+                            remoteInfo0.out0,
+                            remoteInfo0.err0
+                    );
                 }
                 NCustomCommand command = null;
                 command = NCommands.of(prepareSession).findCommand(goodKw);

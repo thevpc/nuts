@@ -6,8 +6,9 @@ import net.thevpc.nuts.runtime.standalone.descriptor.util.NDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NDescriptorContentParserComponent;
 import net.thevpc.nuts.spi.NDescriptorContentParserContext;
-import net.thevpc.nuts.util.NLogOp;
-import net.thevpc.nuts.util.NLogVerb;
+import net.thevpc.nuts.log.NLogOp;
+import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.util.NMsg;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

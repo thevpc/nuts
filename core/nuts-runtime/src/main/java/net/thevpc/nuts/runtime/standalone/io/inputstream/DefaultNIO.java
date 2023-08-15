@@ -15,6 +15,7 @@ import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NMsg;
 
 import java.io.*;
 
@@ -312,12 +313,12 @@ public class DefaultNIO implements NIO {
     }
 
     @Override
-    public NSessionTerminal createMemTerminal() {
-        return createMemTerminal(false);
+    public NSessionTerminal createInMemoryTerminal() {
+        return createInMemoryTerminal(false);
     }
 
     @Override
-    public NSessionTerminal createMemTerminal(boolean mergeErr) {
+    public NSessionTerminal createInMemoryTerminal(boolean mergeErr) {
         ByteArrayInputStream in = new ByteArrayInputStream(new byte[0]);
         NMemoryPrintStream out = NMemoryPrintStream.of(session);
         NMemoryPrintStream err = mergeErr ? out : NMemoryPrintStream.of(session);

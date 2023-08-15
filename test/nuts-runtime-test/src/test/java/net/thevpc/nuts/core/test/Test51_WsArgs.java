@@ -1,12 +1,9 @@
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NMsg;
-import net.thevpc.nuts.NOptional;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.boot.NWorkspaceCmdLineParser;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.core.test.utils.TestUtils;
 
 import java.util.List;
 

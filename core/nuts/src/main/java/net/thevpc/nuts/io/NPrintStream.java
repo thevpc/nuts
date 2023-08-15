@@ -31,6 +31,7 @@ import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NTerminalCommand;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextStyles;
+import net.thevpc.nuts.util.NMsg;
 
 import java.io.OutputStream;
 import java.io.PrintStream;

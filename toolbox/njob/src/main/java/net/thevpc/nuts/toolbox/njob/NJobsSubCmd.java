@@ -10,6 +10,7 @@ import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.njob.model.*;
 import net.thevpc.nuts.toolbox.njob.time.*;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NRef;
 
 import java.time.Instant;

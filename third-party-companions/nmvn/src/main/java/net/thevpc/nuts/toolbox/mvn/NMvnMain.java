@@ -4,6 +4,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.util.NLiteral;
+import net.thevpc.nuts.util.NMsg;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;

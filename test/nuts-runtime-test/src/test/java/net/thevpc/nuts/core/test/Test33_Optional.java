@@ -5,9 +5,9 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NNoSessionOptionalErrorException;
-import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.NSession;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;

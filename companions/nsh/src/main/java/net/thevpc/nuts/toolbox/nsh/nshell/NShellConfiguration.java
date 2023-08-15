@@ -24,7 +24,7 @@
 package net.thevpc.nuts.toolbox.nsh.nshell;
 
 import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.toolbox.nsh.cmdresolver.NShellCommandTypeResolver;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltin;

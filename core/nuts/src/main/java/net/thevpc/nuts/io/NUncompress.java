@@ -27,8 +27,8 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NComponent;
-import net.thevpc.nuts.util.NProgressFactory;
-import net.thevpc.nuts.util.NProgressListener;
+import net.thevpc.nuts.time.NProgressFactory;
+import net.thevpc.nuts.time.NProgressListener;
 
 import java.io.File;
 import java.io.InputStream;

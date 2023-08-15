@@ -37,6 +37,7 @@ import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinCore;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellResult;
+import net.thevpc.nuts.util.NLiteral;
 
 /**
  * Created by vpc on 1/7/17.

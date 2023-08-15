@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.noapi.util;
 
-import net.thevpc.nuts.NMsg;
-import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementEntry;

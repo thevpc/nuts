@@ -14,10 +14,7 @@ import net.thevpc.nuts.runtime.standalone.stream.NEmptyStream;
 import net.thevpc.nuts.runtime.standalone.stream.NIteratorStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.NFunction;
-import net.thevpc.nuts.util.NIterator;
-import net.thevpc.nuts.util.NStream;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.*;
 
 public class DefaultNPs implements NPs {
 

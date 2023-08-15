@@ -1,7 +1,5 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NOptional;
-
 public enum NQuoteType implements NEnum {
     DOUBLE,
     SIMPLE,

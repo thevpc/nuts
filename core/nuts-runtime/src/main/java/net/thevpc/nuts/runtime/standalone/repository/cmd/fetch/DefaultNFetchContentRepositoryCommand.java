@@ -33,9 +33,9 @@ import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NFetchContentRepositoryCommand;
 import net.thevpc.nuts.spi.NRepositorySPI;
-import net.thevpc.nuts.util.NLog;
-import net.thevpc.nuts.util.NLogOp;
-import net.thevpc.nuts.util.NLogVerb;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NLogOp;
+import net.thevpc.nuts.log.NLogVerb;
 
 import java.util.logging.Level;
 

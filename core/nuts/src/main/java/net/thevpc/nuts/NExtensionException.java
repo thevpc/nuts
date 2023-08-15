@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.util.NMsg;
+
 /**
  * Base exception for Extension related exceptions
  *

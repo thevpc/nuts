@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.ndb.sql.sqlbase.cmd;
 
 import net.thevpc.nuts.NIllegalArgumentException;
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;

@@ -2,14 +2,9 @@ package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NInputSource;
-import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NContentMetadata;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NProgressFactory;
-import net.thevpc.nuts.util.NProgressListener;
+import net.thevpc.nuts.time.NProgressFactory;
+import net.thevpc.nuts.time.NProgressListener;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 

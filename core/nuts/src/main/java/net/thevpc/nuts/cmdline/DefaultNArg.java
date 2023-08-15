@@ -25,9 +25,9 @@
  */
 package net.thevpc.nuts.cmdline;
 
-import net.thevpc.nuts.NMsg;
-import net.thevpc.nuts.NOptional;
-import net.thevpc.nuts.NLiteral;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NLiteral;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;

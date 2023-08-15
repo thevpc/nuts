@@ -25,10 +25,13 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.util.*;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * @author thevpc
@@ -99,5 +102,15 @@ public interface NEnvs extends NComponent,NSessionProvider {
     Path getDesktopPath();
 
     void addLauncher(NLauncherOptions launcher);
+
+    List<String> buildEffectiveCommand(String[] cmd,
+                                                     NRunAs runAsMode,
+                                                     Set<NDesktopEnvironmentFamily> de,
+                                                     Function<String, String> sysWhich,
+                                                     Boolean gui,
+                                                     String rootName,
+                                                     String userName,
+                                                     String[] executorOptions
+    );
 
 }

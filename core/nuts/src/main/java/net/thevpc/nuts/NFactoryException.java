@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.util.NMsg;
+
 /**
  * Exception thrown when a package cannot be resolved by the factory.
  *

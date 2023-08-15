@@ -43,8 +43,9 @@ import javax.xml.transform.stream.StreamResult;
 import net.thevpc.nuts.*;
 
 import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.util.NLogOp;
-import net.thevpc.nuts.util.NLogVerb;
+import net.thevpc.nuts.log.NLogOp;
+import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.util.NMsg;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

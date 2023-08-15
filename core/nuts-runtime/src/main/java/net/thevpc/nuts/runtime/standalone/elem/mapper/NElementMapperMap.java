@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactoryService;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNObjectElement;
+import net.thevpc.nuts.util.NMsg;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

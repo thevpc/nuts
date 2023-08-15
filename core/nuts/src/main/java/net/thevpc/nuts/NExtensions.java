@@ -29,6 +29,7 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.io.NServiceLoader;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
 import java.util.Set;

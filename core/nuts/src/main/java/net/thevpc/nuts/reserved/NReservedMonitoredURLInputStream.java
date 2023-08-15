@@ -1,10 +1,10 @@
 package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.NBootException;
-import net.thevpc.nuts.util.NChronometer;
-import net.thevpc.nuts.util.NLog;
-import net.thevpc.nuts.util.NLogVerb;
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.time.NChronometer;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.util.NMsg;
 
 import java.io.FilterInputStream;
 import java.io.IOException;

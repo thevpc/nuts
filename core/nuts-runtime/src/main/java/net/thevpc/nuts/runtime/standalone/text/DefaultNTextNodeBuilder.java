@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextStyled;
 import net.thevpc.nuts.text.*;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStream;
 
 import java.io.ByteArrayOutputStream;

@@ -1,11 +1,9 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.NBlankable;
-import net.thevpc.nuts.NMsg;
-import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.io.NContentMetadataProvider;
-import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.text.NTextStyle;
 

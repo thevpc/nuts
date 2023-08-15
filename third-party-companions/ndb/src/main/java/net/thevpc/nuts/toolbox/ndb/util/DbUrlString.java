@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.ndb.util;
 
 import net.thevpc.nuts.NBlankable;
-import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NConnexionString;
 
 import java.util.Objects;

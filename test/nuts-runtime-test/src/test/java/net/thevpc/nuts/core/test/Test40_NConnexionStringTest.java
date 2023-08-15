@@ -1,13 +1,8 @@
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NMsgParam;
-import net.thevpc.nuts.NMsgTemplate;
-import net.thevpc.nuts.NOptional;
 import net.thevpc.nuts.util.NConnexionString;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.Arrays;
 
 public class Test40_NConnexionStringTest {
 

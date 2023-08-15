@@ -24,6 +24,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.util.NOptional;
+
 /**
  * @author thevpc
  * @app.category Base

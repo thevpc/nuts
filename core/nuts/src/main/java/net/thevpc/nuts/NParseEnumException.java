@@ -26,6 +26,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NMsg;
 
 /**
  * Exception Thrown when for any reason, the enum value is not expected/supported.

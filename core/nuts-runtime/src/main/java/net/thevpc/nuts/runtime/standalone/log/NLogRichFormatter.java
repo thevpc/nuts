@@ -7,7 +7,8 @@ import net.thevpc.nuts.runtime.standalone.util.CoreTimeUtils;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NLogRecord;
+import net.thevpc.nuts.log.NLogRecord;
+import net.thevpc.nuts.util.NMsg;
 
 import java.time.Instant;
 import java.util.logging.Formatter;

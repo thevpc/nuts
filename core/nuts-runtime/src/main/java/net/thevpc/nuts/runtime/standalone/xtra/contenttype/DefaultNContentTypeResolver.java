@@ -33,6 +33,7 @@ import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NContentTypeResolver;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NRef;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -100,7 +101,7 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
             }
         }
 
-        return NCallableSupport.invalid(s ->NMsg.ofInvalidValue("content-type"));
+        return NCallableSupport.invalid(s -> NMsg.ofInvalidValue("content-type"));
     }
 
     private String probeFile(Path file) {

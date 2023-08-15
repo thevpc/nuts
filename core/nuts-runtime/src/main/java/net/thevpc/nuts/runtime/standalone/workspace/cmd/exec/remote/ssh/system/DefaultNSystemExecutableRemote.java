@@ -12,10 +12,10 @@ import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelpe
 import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCommandExtensionContext;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.remote.ssh.RemoteConnexionStringInfo;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NMsg;
 
 import java.io.IOException;
 import java.util.List;
@@ -93,16 +93,14 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableCommand {
             public int exec() {
                 NSession session = getSession();
                 NExecCommand execCommand = getExecCommand();
-                String[] executorOptions = execCommand.getExecutorOptions().toArray(new String[0]);
-                RemoteConnexionStringInfo k = RemoteConnexionStringInfo.of(execCommand.getTarget(), session);
-                String[] remoteCommand = k.buildEffectiveCommand(cmd, execCommand.getRunAs(), executorOptions, commExec, session);
                 try(DefaultNExecCommandExtensionContext d=new DefaultNExecCommandExtensionContext(
                         execCommand.getTarget(),
-                        remoteCommand,
+                        cmd,
                         session,
                         in,
                         out,
-                        err
+                        err,
+                        execCommand
                 )) {
                     return commExec.exec(d);
                 }catch (IOException ex){

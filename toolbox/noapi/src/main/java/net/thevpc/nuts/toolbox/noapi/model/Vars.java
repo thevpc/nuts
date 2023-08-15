@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.noapi.model;
 
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.util.NMsg;
 
 import java.util.Map;
 

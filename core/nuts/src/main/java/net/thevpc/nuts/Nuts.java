@@ -28,6 +28,7 @@ import net.thevpc.nuts.boot.NBootWorkspace;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.reserved.NReservedBootLog;
 import net.thevpc.nuts.util.NApiUtils;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.time.Instant;

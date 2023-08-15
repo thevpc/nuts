@@ -28,6 +28,8 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.DefaultNBootOptionsBuilder;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.reserved.*;
 import net.thevpc.nuts.spi.NScopeType;
 

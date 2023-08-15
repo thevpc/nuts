@@ -7,6 +7,7 @@ import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NQuestion;
 
 import java.io.*;

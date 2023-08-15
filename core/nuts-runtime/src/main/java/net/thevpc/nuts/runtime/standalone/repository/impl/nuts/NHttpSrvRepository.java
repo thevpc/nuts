@@ -33,8 +33,8 @@ import net.thevpc.nuts.runtime.standalone.util.iter.NIteratorBase;
 import net.thevpc.nuts.runtime.standalone.id.filter.NExprIdFilter;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NCachedRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
-import net.thevpc.nuts.util.NLog;
-import net.thevpc.nuts.util.NLogVerb;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreSecurityUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 
@@ -47,6 +47,8 @@ import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.util.NLiteral;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
 public class NHttpSrvRepository extends NCachedRepository {

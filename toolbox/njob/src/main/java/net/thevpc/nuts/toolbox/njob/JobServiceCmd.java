@@ -12,6 +12,7 @@ import net.thevpc.nuts.text.NTextTransformConfig;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.njob.model.*;
 import net.thevpc.nuts.toolbox.njob.time.TimeFormatter;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NRef;
 
 import java.io.InputStream;

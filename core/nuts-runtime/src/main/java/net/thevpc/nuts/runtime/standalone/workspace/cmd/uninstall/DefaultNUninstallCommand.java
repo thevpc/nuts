@@ -16,6 +16,7 @@ import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NMsg;
 
 import java.util.ArrayList;
 import java.util.List;

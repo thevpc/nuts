@@ -15,8 +15,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.script.From
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.script.SimpleScriptBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NPlatformHome;
+import net.thevpc.nuts.util.*;
 
 import java.io.*;
 import java.nio.file.Files;

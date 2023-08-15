@@ -25,6 +25,9 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.util.NLiteral;
+import net.thevpc.nuts.util.NOptional;
+
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;

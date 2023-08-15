@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.util.NMsg;
+
 /**
  * Base Boot Nuts Exception. Thrown when the Workspace could is booting
  * and is not yet available.

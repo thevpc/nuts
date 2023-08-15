@@ -5,9 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.id.filter;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.logging.Level;
 
 import net.thevpc.nuts.*;
@@ -15,10 +13,11 @@ import net.thevpc.nuts.runtime.standalone.descriptor.DelegateNDescriptor;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenRepositoryFolderHelper;
-import net.thevpc.nuts.util.NLog;
-import net.thevpc.nuts.util.NLogVerb;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.UncheckedException;
 
 /**

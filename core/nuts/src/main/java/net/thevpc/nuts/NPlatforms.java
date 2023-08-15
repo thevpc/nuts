@@ -27,6 +27,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStream;
 
 import java.util.function.Predicate;

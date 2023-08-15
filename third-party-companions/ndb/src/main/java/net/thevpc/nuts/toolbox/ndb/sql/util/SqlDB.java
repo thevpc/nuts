@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.ndb.sql.util;
 
-import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NOptional;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;

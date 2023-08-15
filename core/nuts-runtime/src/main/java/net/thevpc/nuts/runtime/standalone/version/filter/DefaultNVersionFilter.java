@@ -29,8 +29,10 @@ package net.thevpc.nuts.runtime.standalone.version.filter;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.id.filter.NExprIdFilter;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NQuoteType;
 import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.NSupportMode;
 
 import java.io.Serializable;
 import java.util.ArrayList;

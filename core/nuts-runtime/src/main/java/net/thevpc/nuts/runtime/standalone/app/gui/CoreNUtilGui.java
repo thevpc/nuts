@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.app.gui;
 
 import net.thevpc.nuts.Nuts;
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.text.NTexts;
 

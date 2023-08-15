@@ -41,6 +41,8 @@ import net.thevpc.nuts.toolbox.nsh.util.bundles._StringUtils;
 import net.thevpc.nuts.toolbox.nsh.util.ColumnRuler;
 import net.thevpc.nuts.toolbox.nsh.util.FileInfo;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
+import net.thevpc.nuts.util.NLiteral;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;

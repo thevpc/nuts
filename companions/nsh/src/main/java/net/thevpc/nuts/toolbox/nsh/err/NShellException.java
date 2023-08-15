@@ -32,7 +32,7 @@
 package net.thevpc.nuts.toolbox.nsh.err;
 
 import net.thevpc.nuts.NExecutionException;
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 
 /**

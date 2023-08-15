@@ -1,8 +1,8 @@
 package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.NBlankable;
-import net.thevpc.nuts.NMsg;
-import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.NSession;
 
 import java.util.function.Function;

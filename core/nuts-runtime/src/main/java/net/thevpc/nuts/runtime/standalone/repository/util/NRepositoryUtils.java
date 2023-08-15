@@ -5,8 +5,9 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.reserved.NReservedJsonParser;
 import net.thevpc.nuts.reserved.NReservedPath;
 import net.thevpc.nuts.spi.NRepositoryLocation;
-import net.thevpc.nuts.util.NLog;
-import net.thevpc.nuts.util.NLogVerb;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.util.NMsg;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;

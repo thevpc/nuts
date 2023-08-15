@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.noapi.util;
 
 import net.thevpc.nuts.NBlankable;
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NPath;
@@ -10,7 +10,6 @@ import net.thevpc.nuts.lib.md.MdElement;
 import net.thevpc.nuts.lib.md.MdFactory;
 import net.thevpc.nuts.lib.md.MdWriter;
 import net.thevpc.nuts.lib.md.asciidoctor.AsciiDoctorWriter;
-import net.thevpc.nuts.spi.NPaths;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.noapi.model.FieldInfo;

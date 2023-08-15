@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.inputstream;
 
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NContentMetadata;
 import net.thevpc.nuts.io.NInputStreamBuilder;
@@ -10,7 +10,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.InputStreamExt;
 import net.thevpc.nuts.runtime.standalone.io.util.InputStreamTee;
 import net.thevpc.nuts.runtime.standalone.io.util.NNonBlockingInputStreamAdapter;
 import net.thevpc.nuts.runtime.standalone.io.util.NullInputStream;
-import net.thevpc.nuts.util.NProgressListener;
+import net.thevpc.nuts.time.NProgressListener;
 
 import java.io.InputStream;
 import java.io.OutputStream;

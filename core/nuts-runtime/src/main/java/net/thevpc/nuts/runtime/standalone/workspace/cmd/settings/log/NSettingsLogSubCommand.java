@@ -12,7 +12,8 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstallLogRecord
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.logging.Level;

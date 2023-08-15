@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.executor.embedded;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorComponent;
 import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorOptions;
-import net.thevpc.nuts.util.NClock;
+import net.thevpc.nuts.time.NClock;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;

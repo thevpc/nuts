@@ -10,8 +10,8 @@ import net.thevpc.nuts.toolbox.nsh.nshell.NShell;
 import net.thevpc.nuts.toolbox.nsh.options.DefaultNShellOptionsParser;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.nshell.NShellOptions;
-import net.thevpc.nuts.util.NLogOp;
-import net.thevpc.nuts.util.NLogVerb;
+import net.thevpc.nuts.log.NLogOp;
+import net.thevpc.nuts.log.NLogVerb;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -20,6 +20,8 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 
 import net.thevpc.nuts.toolbox.nsh.nshell.NShellConfiguration;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NSupportMode;
 
 public class Nsh implements NApplication {
 

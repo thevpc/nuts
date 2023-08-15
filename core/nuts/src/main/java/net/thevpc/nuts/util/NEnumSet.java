@@ -1,9 +1,5 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NMsg;
-import net.thevpc.nuts.NOptional;
-import net.thevpc.nuts.NLiteral;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.expr;
 
-import net.thevpc.nuts.NMsg;
-import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOptional;
 
 public interface NExprEvaluator {
     default NOptional<NExprFct> getFunction(String fctName, Object[] args, NExprDeclarations context) {

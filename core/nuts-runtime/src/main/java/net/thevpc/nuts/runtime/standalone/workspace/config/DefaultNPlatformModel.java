@@ -8,8 +8,7 @@ import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.util.*;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;

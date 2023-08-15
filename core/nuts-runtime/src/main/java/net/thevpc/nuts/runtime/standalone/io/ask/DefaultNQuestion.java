@@ -12,10 +12,7 @@ import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NQuestion;
-import net.thevpc.nuts.util.NQuestionFormat;
-import net.thevpc.nuts.util.NQuestionParser;
-import net.thevpc.nuts.util.NQuestionValidator;
+import net.thevpc.nuts.util.*;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;

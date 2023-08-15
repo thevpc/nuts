@@ -25,7 +25,6 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NSessionProvider;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;

@@ -31,11 +31,8 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
-import net.thevpc.nuts.util.NDescribables;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.util.NIterator;
-import net.thevpc.nuts.util.NPredicates;
-import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;

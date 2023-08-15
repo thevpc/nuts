@@ -10,6 +10,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.dependency.NDependencyScopes;
+import net.thevpc.nuts.util.NLiteral;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

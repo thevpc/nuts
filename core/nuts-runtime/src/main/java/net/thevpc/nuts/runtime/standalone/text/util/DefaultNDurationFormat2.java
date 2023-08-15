@@ -3,14 +3,12 @@ package net.thevpc.nuts.runtime.standalone.text.util;
 import net.thevpc.nuts.NBlankable;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.format.NPositionType;
-import net.thevpc.nuts.io.NPlainPrintStream;
-import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NDuration;
-import net.thevpc.nuts.util.NDurationFormatMode;
+import net.thevpc.nuts.time.NDuration;
+import net.thevpc.nuts.time.NDurationFormatMode;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.text.DecimalFormat;

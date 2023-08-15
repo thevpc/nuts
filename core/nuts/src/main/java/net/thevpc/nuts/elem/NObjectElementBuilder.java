@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.elem;
 
-import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.NSession;
 
 import java.util.Collection;

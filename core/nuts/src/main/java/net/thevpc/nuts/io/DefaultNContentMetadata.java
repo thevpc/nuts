@@ -6,8 +6,8 @@
 package net.thevpc.nuts.io;
 
 
-import net.thevpc.nuts.NMsg;
-import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOptional;
 
 /**
  * @author thevpc

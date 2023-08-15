@@ -27,6 +27,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOptional;
 
 import java.util.Collection;
 import java.util.function.Function;

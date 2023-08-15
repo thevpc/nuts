@@ -1,16 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
-import net.thevpc.nuts.NExecCommandExtensionContext;
-import net.thevpc.nuts.NExecInput;
-import net.thevpc.nuts.NExecOutput;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPath;
 
 import java.io.*;
 
 public class DefaultNExecCommandExtensionContext implements NExecCommandExtensionContext, Closeable {
-    private String host;
+    private String target;
     private String[] command;
     private NSession session;
     private NExecInput xin;
@@ -19,14 +16,16 @@ public class DefaultNExecCommandExtensionContext implements NExecCommandExtensio
     private InHolder hin;
     private OutHolder hout;
     private OutHolder herr;
+    private NExecCommand execCommand;
 
-    public DefaultNExecCommandExtensionContext(String host, String[] command, NSession session, NExecInput in, NExecOutput out, NExecOutput err) {
-        this.host = host;
+    public DefaultNExecCommandExtensionContext(String target, String[] command, NSession session, NExecInput in, NExecOutput out, NExecOutput err, NExecCommand execCommand) {
+        this.target = target;
         this.command = command;
         this.session = session;
         this.xin = in;
         this.xout = out;
         this.xerr = err;
+        this.execCommand = execCommand;
         switch (in.getType()) {
             case NULL: {
                 hin = new MyInHolder(session, NIO.of(session).ofNullRawInputStream(), false, null);
@@ -147,8 +146,8 @@ public class DefaultNExecCommandExtensionContext implements NExecCommandExtensio
     }
 
     @Override
-    public String getHost() {
-        return host;
+    public String getTarget() {
+        return target;
     }
 
     @Override
@@ -246,5 +245,9 @@ public class DefaultNExecCommandExtensionContext implements NExecCommandExtensio
                 onClose.run();
             }
         }
+    }
+
+    public NExecCommand getExecCommand() {
+        return execCommand;
     }
 }

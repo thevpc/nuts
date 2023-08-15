@@ -14,6 +14,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NSystemTerminal;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.util.NMsg;
 import org.jline.reader.History;
 import org.jline.reader.History.Entry;
 import org.jline.reader.LineReader;

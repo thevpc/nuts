@@ -31,6 +31,7 @@ import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.io.NPathPermission;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStream;
 
 import java.io.InputStream;

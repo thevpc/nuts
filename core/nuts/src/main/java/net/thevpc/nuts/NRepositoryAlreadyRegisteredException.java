@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.util.NMsg;
+
 /**
  * This exception is thrown when a repository location could no be loaded because
  * the repository is already registered for the actual workspace.

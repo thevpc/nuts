@@ -27,7 +27,7 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.NFormattable;
-import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NSessionProvider;
 import net.thevpc.nuts.format.NTreeVisitor;

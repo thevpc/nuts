@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.security;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.util.NMsg;
 
 import java.util.Arrays;
 import java.util.Map;

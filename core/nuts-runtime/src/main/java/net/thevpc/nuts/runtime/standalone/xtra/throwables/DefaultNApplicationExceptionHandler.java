@@ -14,8 +14,9 @@ import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NApiUtils;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NLogConfig;
-import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.log.NLogConfig;
+import net.thevpc.nuts.log.NLogOp;
+import net.thevpc.nuts.util.NMsg;
 
 import java.io.PrintStream;
 import java.util.logging.Level;

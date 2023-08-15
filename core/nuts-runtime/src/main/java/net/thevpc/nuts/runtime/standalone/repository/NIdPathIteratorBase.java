@@ -7,7 +7,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.id.filter.NSearchIdByDescriptor;
 import net.thevpc.nuts.runtime.standalone.id.filter.NSearchIdById;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
-import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.log.NLogOp;
+import net.thevpc.nuts.util.NMsg;
 
 import java.io.IOException;
 import java.util.logging.Level;

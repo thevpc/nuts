@@ -28,6 +28,8 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NIndexStoreFactory;
+import net.thevpc.nuts.util.NLiteral;
+import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
 import java.util.Map;

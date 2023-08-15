@@ -4,7 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public interface NExecCommandExtensionContext extends NSessionProvider {
-    String getHost();
+    String getTarget();
 
     String[] getCommand();
 
@@ -13,4 +13,6 @@ public interface NExecCommandExtensionContext extends NSessionProvider {
     OutputStream out();
 
     OutputStream err();
+
+    NExecCommand getExecCommand();
 }

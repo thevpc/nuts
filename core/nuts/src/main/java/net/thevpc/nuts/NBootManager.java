@@ -26,6 +26,8 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.NClassLoaderNode;
 import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.util.NLiteral;
+import net.thevpc.nuts.util.NOptional;
 
 import java.net.URL;
 import java.time.Duration;

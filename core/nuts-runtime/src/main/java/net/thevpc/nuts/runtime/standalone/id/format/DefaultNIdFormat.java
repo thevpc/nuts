@@ -14,6 +14,7 @@ import net.thevpc.nuts.text.NTextStyleType;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NQuoteType;
 import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.NSupportMode;
 
 import java.util.*;
 

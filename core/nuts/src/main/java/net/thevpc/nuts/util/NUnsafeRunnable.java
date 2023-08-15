@@ -26,11 +26,9 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.text.NTexts;
 
 import java.util.function.Function;
 

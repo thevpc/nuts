@@ -11,8 +11,8 @@ import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NProgressEvent;
-import net.thevpc.nuts.util.NProgressListener;
+import net.thevpc.nuts.time.NProgressEvent;
+import net.thevpc.nuts.time.NProgressListener;
 
 import java.text.DecimalFormat;
 

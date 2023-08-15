@@ -27,6 +27,9 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NOsFamily;
 
 import java.util.HashMap;
 import java.util.Map;

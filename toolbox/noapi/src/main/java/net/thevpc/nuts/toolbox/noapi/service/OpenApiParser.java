@@ -6,6 +6,7 @@ import net.thevpc.nuts.toolbox.noapi.model.ConfigVar;
 import net.thevpc.nuts.toolbox.noapi.model.FieldInfo;
 import net.thevpc.nuts.toolbox.noapi.model.TypeInfo;
 import net.thevpc.nuts.toolbox.noapi.model.Vars;
+import net.thevpc.nuts.util.NOptional;
 
 import java.util.*;
 

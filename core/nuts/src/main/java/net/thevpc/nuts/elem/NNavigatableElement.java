@@ -23,7 +23,7 @@
  */
 package net.thevpc.nuts.elem;
 
-import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NOptional;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

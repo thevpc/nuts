@@ -1,7 +1,7 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.NDescriptor;
-import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.NWorkspaceOptions;
 import net.thevpc.nuts.spi.NBootWorkspaceFactory;
 

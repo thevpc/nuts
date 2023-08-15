@@ -1,6 +1,6 @@
 package net.thevpc.nuts.expr;
 
-import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NSessionProvider;
 

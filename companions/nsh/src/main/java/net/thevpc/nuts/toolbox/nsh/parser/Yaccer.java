@@ -10,6 +10,7 @@ import net.thevpc.nuts.toolbox.nsh.nodes.NShellCmdLineNode;
 import net.thevpc.nuts.toolbox.nsh.nodes.NShellCommandNode;
 import net.thevpc.nuts.toolbox.nsh.nodes.NShellNode;
 import net.thevpc.nuts.util.NGlob;
+import net.thevpc.nuts.util.NMsg;
 
 import java.util.*;
 import java.util.stream.Collectors;

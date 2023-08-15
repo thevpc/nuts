@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.id.filter;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
-import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.log.NLog;
 
 import java.util.Map;
 import java.util.Objects;

@@ -46,7 +46,7 @@ import net.thevpc.nuts.NIllegalArgumentException;
 
 import java.io.*;
 
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.toolbox.nutsserver.bundled._IOUtils;
 

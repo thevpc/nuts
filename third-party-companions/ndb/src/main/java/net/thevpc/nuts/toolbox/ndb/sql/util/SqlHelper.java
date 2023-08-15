@@ -5,6 +5,7 @@ import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;
 import net.thevpc.nuts.toolbox.ndb.sql.sqlbase.SqlSupport;
 import net.thevpc.nuts.toolbox.ndb.util.ClassloaderAwareCallable;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.Closeable;

@@ -23,9 +23,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.reflect;
 
-import net.thevpc.nuts.util.NReflectConfiguration;
-import net.thevpc.nuts.util.NReflectPropertyAccessStrategy;
-import net.thevpc.nuts.util.NReflectPropertyDefaultValueStrategy;
+import net.thevpc.nuts.reflect.NReflectConfiguration;
+import net.thevpc.nuts.reflect.NReflectPropertyAccessStrategy;
+import net.thevpc.nuts.reflect.NReflectPropertyDefaultValueStrategy;
 
 import java.util.function.Function;
 

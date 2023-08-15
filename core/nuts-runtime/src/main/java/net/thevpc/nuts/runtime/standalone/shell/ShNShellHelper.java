@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.shell;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLineFormatStrategy;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineShellOptions;
+import net.thevpc.nuts.util.NMsg;
 
 import java.util.ArrayList;
 import java.util.Arrays;

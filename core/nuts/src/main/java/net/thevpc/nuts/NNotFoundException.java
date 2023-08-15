@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.util.NMsg;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;

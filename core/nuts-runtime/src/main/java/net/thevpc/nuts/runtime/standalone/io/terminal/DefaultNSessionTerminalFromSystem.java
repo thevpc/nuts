@@ -6,6 +6,7 @@ import net.thevpc.nuts.runtime.standalone.io.ask.DefaultNQuestion;
 import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NQuestion;
 
 import java.io.*;

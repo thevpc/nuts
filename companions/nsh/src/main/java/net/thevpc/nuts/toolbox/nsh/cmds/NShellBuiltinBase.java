@@ -37,6 +37,7 @@ import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nsh.autocomplete.NCommandAutoCompleteComponent;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.bundles._IOUtils;
+import net.thevpc.nuts.util.NMsg;
 
 import java.io.BufferedReader;
 import java.io.IOException;

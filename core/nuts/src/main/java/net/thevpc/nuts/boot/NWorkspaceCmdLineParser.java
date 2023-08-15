@@ -29,11 +29,11 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.reserved.NReservedStringUtils;
 import net.thevpc.nuts.reserved.NReservedUtils;
-import net.thevpc.nuts.util.NApiUtils;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.io.NTerminalMode;
-import net.thevpc.nuts.util.NLogConfig;
-import net.thevpc.nuts.util.NLogUtils;
+import net.thevpc.nuts.log.NLogConfig;
+import net.thevpc.nuts.log.NLogUtils;
 
 import java.time.Instant;
 import java.util.*;

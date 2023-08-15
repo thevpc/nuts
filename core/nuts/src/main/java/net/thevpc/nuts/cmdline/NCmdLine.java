@@ -26,6 +26,9 @@
 package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NLiteral;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
 

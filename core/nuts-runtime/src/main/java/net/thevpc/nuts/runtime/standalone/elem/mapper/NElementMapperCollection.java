@@ -4,7 +4,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.util.NReflectType;
+import net.thevpc.nuts.reflect.NReflectType;
 import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNArrayElement;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactoryService;

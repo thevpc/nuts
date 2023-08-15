@@ -27,7 +27,7 @@
 package net.thevpc.nuts.toolbox.nutsserver.util;
 
 import net.thevpc.nuts.NIllegalArgumentException;
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.util.NMsg;
 
 import java.io.BufferedReader;
 import java.io.IOException;

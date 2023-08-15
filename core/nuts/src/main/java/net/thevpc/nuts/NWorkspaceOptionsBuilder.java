@@ -27,7 +27,10 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
 import net.thevpc.nuts.io.NTerminalMode;
-import net.thevpc.nuts.util.NLogConfig;
+import net.thevpc.nuts.log.NLogConfig;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOsFamily;
+import net.thevpc.nuts.util.NSupportMode;
 
 import java.io.InputStream;
 import java.io.PrintStream;

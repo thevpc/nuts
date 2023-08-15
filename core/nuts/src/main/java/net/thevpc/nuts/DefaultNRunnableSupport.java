@@ -6,6 +6,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NApiUtils;
+import net.thevpc.nuts.util.NMsg;
 
 import java.util.NoSuchElementException;
 import java.util.function.Function;

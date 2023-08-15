@@ -1,9 +1,8 @@
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.NExtensions;
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.util.NProgressListener;
+import net.thevpc.nuts.time.NProgressListener;
 
 import java.io.InputStream;
 import java.io.OutputStream;

@@ -163,7 +163,7 @@ package net.thevpc.nuts;
  *
  * import net.thevpc.nuts.NApplication;
  * import net.thevpc.nuts.NSession;
- * import net.thevpc.nuts.NMsg;
+ * import net.thevpc.nuts.util.NMsg;
  * import net.thevpc.nuts.NSession;
  * import net.thevpc.nuts.cmdline.NArg;
  * import net.thevpc.nuts.cmdline.NCmdLine;
@@ -222,7 +222,7 @@ package net.thevpc.nuts;
  *     package org.example.test;
  *
  * import net.thevpc.nuts.NApplication;
- * import net.thevpc.nuts.NMsg;
+ * import net.thevpc.nuts.util.NMsg;
  * import net.thevpc.nuts.NSession;
  * import net.thevpc.nuts.cmdline.NArg;
  * import net.thevpc.nuts.cmdline.NCmdLine;

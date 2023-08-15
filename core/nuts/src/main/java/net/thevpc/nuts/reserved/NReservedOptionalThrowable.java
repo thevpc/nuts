@@ -1,13 +1,8 @@
 package net.thevpc.nuts.reserved;
 
-import net.thevpc.nuts.NMsg;
-import net.thevpc.nuts.NNoSuchElementException;
-import net.thevpc.nuts.NOptional;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.util.NApiUtils;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOptional;
 
-import java.util.NoSuchElementException;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImpl<T> implements Cloneable {

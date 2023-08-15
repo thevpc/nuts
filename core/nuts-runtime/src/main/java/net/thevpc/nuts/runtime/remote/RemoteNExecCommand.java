@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.remote;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecCommand;
+import net.thevpc.nuts.util.NMsg;
 
 public class RemoteNExecCommand extends AbstractNExecCommand {
 

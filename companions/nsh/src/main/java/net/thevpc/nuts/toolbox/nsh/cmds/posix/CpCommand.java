@@ -36,6 +36,7 @@ import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NMsg;
 
 import java.util.ArrayList;
 import java.util.List;

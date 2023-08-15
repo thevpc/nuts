@@ -31,6 +31,8 @@ import net.thevpc.nuts.boot.NBootCache;
 import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.boot.NBootOptionsBuilder;
 import net.thevpc.nuts.boot.NIdCache;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.util.*;
 import org.w3c.dom.Document;

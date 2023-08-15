@@ -46,6 +46,7 @@ import net.thevpc.nuts.toolbox.nsh.nshell.NShell;
 import net.thevpc.nuts.toolbox.nsh.nshell.NShellConfiguration;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 import net.thevpc.nuts.toolbox.nutsserver.NServer;
+import net.thevpc.nuts.util.NMsg;
 
 /**
  * @author thevpc

@@ -1,9 +1,5 @@
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NOptional;
-import net.thevpc.nuts.boot.NWorkspaceCmdLineParser;
-import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.util.NStringMap;
 import org.junit.jupiter.api.Assertions;
@@ -12,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 
 public class Test52_NStringMap {
 

@@ -23,10 +23,9 @@
  */
 package net.thevpc.nuts.elem;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NSessionProvider;
 import net.thevpc.nuts.NWorkspace;
-import net.thevpc.nuts.util.NReflectRepository;
+import net.thevpc.nuts.reflect.NReflectRepository;
 
 import java.lang.reflect.Type;
 import java.util.Map;

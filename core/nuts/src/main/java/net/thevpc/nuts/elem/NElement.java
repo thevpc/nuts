@@ -25,6 +25,8 @@ package net.thevpc.nuts.elem;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.util.NDescribable;
+import net.thevpc.nuts.util.NLiteral;
+import net.thevpc.nuts.util.NOptional;
 
 /**
  * Nuts Element types are generic JSON like parsable objects. elements are a superset of JSON actually

@@ -2,7 +2,7 @@ package net.thevpc.nuts.tutorial.customshell.cmd;
 
 import java.util.HashMap;
 
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;

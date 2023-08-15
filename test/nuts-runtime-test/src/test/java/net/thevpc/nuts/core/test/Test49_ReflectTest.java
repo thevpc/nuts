@@ -1,18 +1,15 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.util.NReflectProperty;
-import net.thevpc.nuts.util.NReflectRepository;
-import net.thevpc.nuts.util.NReflectType;
+import net.thevpc.nuts.reflect.NReflectProperty;
+import net.thevpc.nuts.reflect.NReflectRepository;
+import net.thevpc.nuts.reflect.NReflectType;
 import net.thevpc.nuts.util.NStringBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.List;
 
 public class Test49_ReflectTest {

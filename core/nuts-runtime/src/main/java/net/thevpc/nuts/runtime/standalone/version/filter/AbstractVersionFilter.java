@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.version.filter;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.filters.AbstractNFilter;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
+import net.thevpc.nuts.util.NOptional;
 
 import java.util.Collections;
 import java.util.List;

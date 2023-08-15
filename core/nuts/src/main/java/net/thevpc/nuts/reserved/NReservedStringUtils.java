@@ -1,9 +1,9 @@
 package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.NBlankable;
-import net.thevpc.nuts.NMsg;
-import net.thevpc.nuts.NOptional;
-import net.thevpc.nuts.NLiteral;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;

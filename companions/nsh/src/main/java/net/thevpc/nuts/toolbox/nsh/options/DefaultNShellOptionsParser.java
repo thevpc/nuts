@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.nsh.options;
 
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.toolbox.nsh.err.NShellException;

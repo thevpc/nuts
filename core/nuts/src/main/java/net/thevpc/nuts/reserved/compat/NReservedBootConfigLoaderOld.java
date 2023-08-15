@@ -3,8 +3,10 @@ package net.thevpc.nuts.reserved.compat;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NBootOptionsBuilder;
 import net.thevpc.nuts.reserved.NReservedBootConfigLoader;
-import net.thevpc.nuts.util.NLog;
-import net.thevpc.nuts.util.NLogVerb;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOsFamily;
 
 import java.util.*;
 import java.util.logging.Level;

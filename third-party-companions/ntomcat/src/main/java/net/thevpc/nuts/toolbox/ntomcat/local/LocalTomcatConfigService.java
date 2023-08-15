@@ -11,6 +11,8 @@ import net.thevpc.nuts.toolbox.ntomcat.local.config.LocalTomcatAppConfig;
 import net.thevpc.nuts.toolbox.ntomcat.local.config.LocalTomcatConfig;
 import net.thevpc.nuts.toolbox.ntomcat.local.config.LocalTomcatDomainConfig;
 import net.thevpc.nuts.toolbox.ntomcat.util.*;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOsFamily;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;

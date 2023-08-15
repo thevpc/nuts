@@ -7,6 +7,7 @@ import net.thevpc.nuts.runtime.standalone.dependency.DefaultNDependencies;
 import net.thevpc.nuts.runtime.standalone.dependency.DefaultNDependencyTreeNode;
 import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NMsg;
 
 import java.util.*;
 import java.util.stream.Collectors;

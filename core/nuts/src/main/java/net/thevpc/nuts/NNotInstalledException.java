@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.util.NMsg;
+
 /**
  * This Exception is fired when an artifact fails to be uninstalled for the artifact not being installed yet.
  *

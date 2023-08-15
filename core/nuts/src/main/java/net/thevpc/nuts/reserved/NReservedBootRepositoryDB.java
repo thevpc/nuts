@@ -5,7 +5,6 @@ import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.spi.NRepositoryDB;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.NLog;
 import net.thevpc.nuts.util.NPlatformHome;
 
 import java.util.*;

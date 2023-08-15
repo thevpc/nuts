@@ -2,6 +2,8 @@ package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.util.NApiUtils;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOptional;
 
 import java.util.NoSuchElementException;
 import java.util.function.Function;

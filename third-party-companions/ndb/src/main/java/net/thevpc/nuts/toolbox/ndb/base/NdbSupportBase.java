@@ -11,9 +11,7 @@ import net.thevpc.nuts.toolbox.ndb.sql.nmysql.NMySqlConfigVersions;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.util.AtName;
 import net.thevpc.nuts.toolbox.ndb.util.DbUrlString;
 import net.thevpc.nuts.toolbox.ndb.util.NdbUtils;
-import net.thevpc.nuts.util.NConnexionString;
-import net.thevpc.nuts.util.NRef;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.*;
 
 import java.util.HashMap;
 import java.util.Map;

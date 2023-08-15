@@ -21,6 +21,7 @@ import net.thevpc.nuts.toolbox.nsh.nodes.NShellVariables;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.*;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.FileProcessorUtils;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.StringUtils;
+import net.thevpc.nuts.util.NMsg;
 
 import java.io.*;
 import java.nio.file.Files;

@@ -4,8 +4,9 @@ import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOptional;
 
-import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 
 public class NExecOutput {

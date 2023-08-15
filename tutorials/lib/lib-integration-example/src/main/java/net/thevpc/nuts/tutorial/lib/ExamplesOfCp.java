@@ -1,14 +1,12 @@
 package net.thevpc.nuts.tutorial.lib;
 
-import net.thevpc.nuts.NExecCommand;
-import net.thevpc.nuts.NExecutionType;
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
-import net.thevpc.nuts.util.NProgressEvent;
-import net.thevpc.nuts.util.NProgressListener;
+import net.thevpc.nuts.time.NProgressEvent;
+import net.thevpc.nuts.time.NProgressListener;
 
 import java.text.DecimalFormat;
 

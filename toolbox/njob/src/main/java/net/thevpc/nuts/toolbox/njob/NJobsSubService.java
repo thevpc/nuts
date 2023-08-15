@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.njob;
 
 import net.thevpc.nuts.NIllegalArgumentException;
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.toolbox.njob.model.NJob;
 import net.thevpc.nuts.toolbox.njob.model.NJobGroup;

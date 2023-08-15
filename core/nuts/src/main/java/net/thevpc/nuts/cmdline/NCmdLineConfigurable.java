@@ -26,7 +26,7 @@
 package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.NIllegalArgumentException;
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 
 import java.util.Arrays;

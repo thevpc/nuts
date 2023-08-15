@@ -1,7 +1,5 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NOptional;
-
 import java.util.function.Function;
 
 public enum NMemoryUnit implements NEnum {

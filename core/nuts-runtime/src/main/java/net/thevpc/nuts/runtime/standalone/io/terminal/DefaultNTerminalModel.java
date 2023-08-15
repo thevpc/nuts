@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.util.NLog;
-import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NLogOp;
 
 public class DefaultNTerminalModel {
 

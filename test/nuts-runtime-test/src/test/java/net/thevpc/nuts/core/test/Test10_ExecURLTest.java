@@ -121,14 +121,15 @@ public class Test10_ExecURLTest {
 
 
 
-    //@Test
+    @Test
     public void testNtf2() {
         TestUtils.println(NVersionFormat.of(session));
         String result = NExecCommand.of(session.copy()
                         .setBot(true).json())
-                .setTarget("ssh://vpc:a@192.168.1.98")
+                .setTarget("ssh://vpc:a@192.168.1.36")
                 //.addCommand("ls","-l")
                 .addCommand("nuts","info")
+                .failFast()
                 //.setExecutionType(NExecutionType.SYSTEM)
                 .grabOutputString()
                 .getOutputString();

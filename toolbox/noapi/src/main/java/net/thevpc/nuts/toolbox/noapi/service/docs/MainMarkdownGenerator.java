@@ -10,6 +10,8 @@ import net.thevpc.nuts.toolbox.noapi.service.OpenApiParser;
 import net.thevpc.nuts.toolbox.noapi.util._StringUtils;
 import net.thevpc.nuts.toolbox.noapi.model.*;
 import net.thevpc.nuts.util.NMaps;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOptional;
 
 import java.io.InputStream;
 import java.time.LocalDate;

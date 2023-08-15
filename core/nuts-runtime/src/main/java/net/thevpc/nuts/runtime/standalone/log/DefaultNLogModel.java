@@ -26,8 +26,8 @@ package net.thevpc.nuts.runtime.standalone.log;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.util.NLog;
-import net.thevpc.nuts.util.NLogConfig;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NLogConfig;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

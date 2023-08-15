@@ -27,9 +27,9 @@
 package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.Nuts;
-import net.thevpc.nuts.NMsg;
-import net.thevpc.nuts.util.NLog;
-import net.thevpc.nuts.util.NLogVerb;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NLogVerb;
 
 import java.util.Scanner;
 import java.util.function.Supplier;

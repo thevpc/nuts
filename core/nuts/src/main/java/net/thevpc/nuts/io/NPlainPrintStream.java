@@ -1,7 +1,7 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.NFormat;
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NString;
 import net.thevpc.nuts.spi.NSystemTerminalBase;

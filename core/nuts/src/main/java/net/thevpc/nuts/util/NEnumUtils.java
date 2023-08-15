@@ -1,8 +1,6 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.NBlankable;
-import net.thevpc.nuts.NMsg;
-import net.thevpc.nuts.NOptional;
 
 import java.util.function.Function;
 

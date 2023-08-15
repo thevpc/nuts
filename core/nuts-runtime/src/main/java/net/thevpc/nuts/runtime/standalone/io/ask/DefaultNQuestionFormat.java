@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.ask;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NQuestion;
 import net.thevpc.nuts.util.NQuestionFormat;
 

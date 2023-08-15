@@ -24,9 +24,10 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NApiUtils;
-import net.thevpc.nuts.util.NClock;
-import net.thevpc.nuts.util.NLog;
-import net.thevpc.nuts.util.NLogVerb;
+import net.thevpc.nuts.time.NClock;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.util.NMsg;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

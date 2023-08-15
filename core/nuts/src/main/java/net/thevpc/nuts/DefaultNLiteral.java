@@ -1,6 +1,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.elem.NElementType;
+import net.thevpc.nuts.reflect.NReflectUtils;
 import net.thevpc.nuts.util.*;
 
 import java.lang.reflect.ParameterizedType;

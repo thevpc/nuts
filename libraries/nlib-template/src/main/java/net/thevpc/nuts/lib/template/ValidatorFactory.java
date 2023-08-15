@@ -1,7 +1,7 @@
 package net.thevpc.nuts.lib.template;
 
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NLiteral;
+import net.thevpc.nuts.util.NLiteral;
 
 public class ValidatorFactory {
 

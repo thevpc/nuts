@@ -11,6 +11,8 @@ import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCommandBase;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
@@ -632,6 +634,13 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
                 }
                 sb.append(NStringUtils.formatStringLiteral(k)).append("=").append(NStringUtils.formatStringLiteral(v));
             }
+        }
+        NDefinition d = getCommandDefinition();
+        if (d != null) {
+            if (sb.length() > 0) {
+                sb.append(" ");
+            }
+            sb.append(NStringUtils.formatStringLiteral(d.getId().toString()));
         }
         for (int i = 0; i < command.size(); i++) {
             String s = command.get(i);

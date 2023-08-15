@@ -1,7 +1,6 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.NBlankable;
-import net.thevpc.nuts.NOptional;
 
 import java.util.Objects;
 import java.util.regex.Matcher;

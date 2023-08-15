@@ -4,9 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
-import net.thevpc.nuts.util.NFunction;
-import net.thevpc.nuts.util.NIterator;
-import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.util.*;
 
 import java.io.InputStream;
 import java.net.MalformedURLException;

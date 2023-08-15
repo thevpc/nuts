@@ -7,6 +7,7 @@ import net.thevpc.nuts.toolbox.ndb.NdbConfig;
 import net.thevpc.nuts.toolbox.ndb.base.NdbCmd;
 import net.thevpc.nuts.toolbox.ndb.base.NdbSupportBase;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.util.AtName;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NRef;
 
 import java.util.Arrays;

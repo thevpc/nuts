@@ -2,6 +2,8 @@ package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NScopeType;
+import net.thevpc.nuts.util.NLiteral;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NRef;
 import net.thevpc.nuts.util.NStringMapFormat;
 

@@ -1,13 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.NMsgTemplate;
+import net.thevpc.nuts.util.NMsgTemplate;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.NProgressHandler;
-import net.thevpc.nuts.util.NProgressMonitors;
-import net.thevpc.nuts.util.NProgressMonitor;
+import net.thevpc.nuts.time.NProgressHandler;
+import net.thevpc.nuts.time.NProgressMonitors;
+import net.thevpc.nuts.time.NProgressMonitor;
 
 import java.io.PrintStream;
 import java.util.logging.Logger;

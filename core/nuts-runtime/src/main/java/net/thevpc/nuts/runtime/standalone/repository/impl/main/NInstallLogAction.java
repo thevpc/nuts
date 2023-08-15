@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.main;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
+import net.thevpc.nuts.util.NOptional;
 
 public enum NInstallLogAction implements NEnum {
     INSTALL,

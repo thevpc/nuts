@@ -23,9 +23,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.executor.system;
 
-import net.thevpc.nuts.util.NLogVerb;
-import net.thevpc.nuts.util.NLogOp;
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.log.NLogOp;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NNonBlockingInputStream;
 import net.thevpc.nuts.runtime.standalone.io.util.StopMonitor;

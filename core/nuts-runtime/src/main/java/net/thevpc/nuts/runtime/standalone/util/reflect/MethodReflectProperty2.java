@@ -23,8 +23,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.reflect;
 
-import net.thevpc.nuts.util.NReflectPropertyDefaultValueStrategy;
-import net.thevpc.nuts.util.NReflectType;
+import net.thevpc.nuts.reflect.NReflectPropertyDefaultValueStrategy;
+import net.thevpc.nuts.reflect.NReflectType;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

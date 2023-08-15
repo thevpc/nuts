@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.DefaultNArg;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NQuestion;
 import net.thevpc.nuts.util.NQuestionParser;
 

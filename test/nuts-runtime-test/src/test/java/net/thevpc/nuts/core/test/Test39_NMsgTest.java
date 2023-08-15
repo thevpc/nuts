@@ -1,8 +1,7 @@
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NMsgParam;
-import net.thevpc.nuts.NMsgTemplate;
-import net.thevpc.nuts.spi.NRepositoryLocation;
+import net.thevpc.nuts.util.NMsgParam;
+import net.thevpc.nuts.util.NMsgTemplate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -2,10 +2,11 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.util.NReflectProperty;
-import net.thevpc.nuts.util.NReflectType;
+import net.thevpc.nuts.reflect.NReflectProperty;
+import net.thevpc.nuts.reflect.NReflectType;
 import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactoryService;
+import net.thevpc.nuts.util.NMsg;
 
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;

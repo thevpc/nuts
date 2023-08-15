@@ -5,8 +5,8 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.util.NDuration;
-import net.thevpc.nuts.util.NDurationFormatMode;
+import net.thevpc.nuts.time.NDuration;
+import net.thevpc.nuts.time.NDurationFormatMode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -12,9 +12,9 @@ import net.thevpc.nuts.runtime.standalone.repository.util.NIdLocationUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
-import net.thevpc.nuts.spi.NPaths;
 import net.thevpc.nuts.util.NIterator;
-import net.thevpc.nuts.util.NLogVerb;
+import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.IOException;

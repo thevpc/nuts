@@ -1,12 +1,11 @@
 package net.thevpc.nuts.toolbox.ndb.sql.sqlbase.cmd;
 
 import net.thevpc.nuts.NIllegalArgumentException;
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;
-import net.thevpc.nuts.toolbox.ndb.base.cmd.InsertCmd;
 import net.thevpc.nuts.toolbox.ndb.base.cmd.ReplaceCmd;
 import net.thevpc.nuts.toolbox.ndb.sql.sqlbase.SqlSupport;
 

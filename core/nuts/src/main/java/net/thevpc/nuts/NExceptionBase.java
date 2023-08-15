@@ -27,6 +27,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.reserved.NReservedLangUtils;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOptional;
 
 /**
  * Base Nuts Exception Interface. Parent of all Nuts defined Exceptions.

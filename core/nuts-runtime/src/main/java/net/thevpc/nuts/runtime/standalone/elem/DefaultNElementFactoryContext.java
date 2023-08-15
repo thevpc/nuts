@@ -32,7 +32,8 @@ import java.util.function.Predicate;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.util.NReflectRepository;
+import net.thevpc.nuts.reflect.NReflectRepository;
+import net.thevpc.nuts.util.NMsg;
 
 /**
  * @author thevpc

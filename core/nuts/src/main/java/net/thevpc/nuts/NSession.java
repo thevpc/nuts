@@ -34,8 +34,9 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.util.NClock;
+import net.thevpc.nuts.time.NClock;
 import net.thevpc.nuts.util.NMapListener;
+import net.thevpc.nuts.util.NOptional;
 
 import java.io.InputStream;
 import java.time.Instant;

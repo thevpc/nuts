@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.executor.embedded;
 
 import net.thevpc.nuts.NBootException;
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 
 import java.lang.reflect.Constructor;

@@ -11,6 +11,7 @@ import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.NFunction;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStream;
 import net.thevpc.nuts.util.NStringUtils;
 

@@ -34,14 +34,15 @@ import net.thevpc.nuts.runtime.standalone.util.collections.NPropertiesHolder;
 import net.thevpc.nuts.runtime.standalone.workspace.factorycache.CachedConstructor;
 import net.thevpc.nuts.runtime.standalone.workspace.factorycache.NBeanCache;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.util.NLog;
-import net.thevpc.nuts.util.NLogVerb;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.PrintStream;
 import java.net.URL;
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -363,8 +364,8 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             case "net.thevpc.nuts.spi.NPaths":
             case "net.thevpc.nuts.text.NTexts":
             case "net.thevpc.nuts.spi.NLogs":
-            case "net.thevpc.nuts.util.NLog":
-            case "net.thevpc.nuts.util.NLogOp": {
+            case "net.thevpc.nuts.log.NLog":
+            case "net.thevpc.nuts.log.NLogOp": {
                 return true;
             }
         }

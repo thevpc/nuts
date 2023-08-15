@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.io.util;
 
 import net.thevpc.nuts.NFormat;
 import net.thevpc.nuts.NFormattable;
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.*;
 

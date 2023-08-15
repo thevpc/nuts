@@ -23,6 +23,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NQuestion;
 import net.thevpc.nuts.util.NQuestionValidator;
 import org.w3c.dom.Document;

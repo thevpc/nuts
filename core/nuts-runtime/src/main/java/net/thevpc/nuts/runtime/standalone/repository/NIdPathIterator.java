@@ -33,7 +33,8 @@ import net.thevpc.nuts.runtime.standalone.util.iter.NIteratorBase;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NDescribables;
-import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.log.NLogOp;
+import net.thevpc.nuts.util.NMsg;
 
 import java.util.LinkedList;
 import java.util.Stack;

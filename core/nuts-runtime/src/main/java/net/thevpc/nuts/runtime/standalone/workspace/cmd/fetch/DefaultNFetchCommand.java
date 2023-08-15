@@ -23,7 +23,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.NRepositoryAndFetchMode;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NRepositoryAndFetchModeTracker;
 import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.spi.NRepositorySPI;
-import net.thevpc.nuts.util.NLogVerb;
+import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.util.NMsg;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

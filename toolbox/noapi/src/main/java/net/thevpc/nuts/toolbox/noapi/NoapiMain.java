@@ -8,6 +8,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.toolbox.noapi.model.NoapiCmdData;
 import net.thevpc.nuts.toolbox.noapi.service.NOpenAPIService;
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NMsg;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -27,6 +27,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.elem.NElementNotFoundException;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.util.NOptional;
 
 import java.io.Serializable;
 

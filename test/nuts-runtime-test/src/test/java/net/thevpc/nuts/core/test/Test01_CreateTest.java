@@ -18,6 +18,8 @@ import net.thevpc.nuts.format.NObjectFormat;
 import net.thevpc.nuts.format.NTableFormat;
 import net.thevpc.nuts.format.NTreeFormat;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.spi.NPaths;
 import net.thevpc.nuts.text.NText;

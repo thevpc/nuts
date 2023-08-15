@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.util.NSupportMode;
+
 import java.util.ArrayList;
 import java.util.List;
 

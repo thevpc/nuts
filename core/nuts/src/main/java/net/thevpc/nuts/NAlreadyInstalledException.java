@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.util.NMsg;
+
 /**
  * Thrown to indicate that the artifact is already installed and should not be
  * reinstalled Created by vpc on 1/15/17.

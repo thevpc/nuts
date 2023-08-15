@@ -25,26 +25,13 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryList;
-import net.thevpc.nuts.runtime.standalone.repository.impl.folder.NFolderRepositoryBase;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.solrsearch.MavenSolrSearchCommand;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MvnClient;
-import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.spi.NPaths;
 import net.thevpc.nuts.spi.NRepositoryLocation;
-import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.util.*;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by vpc on 1/15/17.

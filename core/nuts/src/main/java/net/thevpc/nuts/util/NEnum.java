@@ -26,9 +26,6 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NMsg;
-import net.thevpc.nuts.NOptional;
-
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 

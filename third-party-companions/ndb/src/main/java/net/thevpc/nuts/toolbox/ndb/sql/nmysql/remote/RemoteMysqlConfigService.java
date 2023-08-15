@@ -7,6 +7,7 @@ import net.thevpc.nuts.toolbox.ndb.sql.nmysql.NMySqlConfigVersions;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.remote.config.RemoteMysqlConfig;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.remote.config.RemoteMysqlDatabaseConfig;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.util.MysqlUtils;
+import net.thevpc.nuts.util.NMsg;
 
 import java.io.PrintStream;
 import java.util.ArrayList;

@@ -37,6 +37,7 @@ import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.bundles._StringUtils;
 import net.thevpc.nuts.toolbox.nsh.options.CommandNonOption;
+import net.thevpc.nuts.util.NMsg;
 
 import java.util.ArrayList;
 import java.util.Arrays;

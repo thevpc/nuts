@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.nsh.sys;
 
-import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellContext;
 import net.thevpc.nuts.toolbox.nsh.err.NShellException;
 

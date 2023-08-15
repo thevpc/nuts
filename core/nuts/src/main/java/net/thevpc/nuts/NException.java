@@ -26,6 +26,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NMsg;
 
 /**
  * Base Nuts Exception. Parent of all Nuts defined Exceptions.

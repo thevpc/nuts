@@ -6,6 +6,7 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NMsg;
 
 import java.io.OutputStream;
 import java.io.PrintStream;

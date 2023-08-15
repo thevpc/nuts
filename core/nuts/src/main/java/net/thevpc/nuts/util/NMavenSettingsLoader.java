@@ -1,10 +1,9 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.NBlankable;
-import net.thevpc.nuts.NMsg;
-import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.reserved.NReservedIOUtils;
-import net.thevpc.nuts.reserved.NReservedMavenUtils;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -13,11 +12,7 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;

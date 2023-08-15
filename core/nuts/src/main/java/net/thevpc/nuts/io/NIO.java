@@ -27,12 +27,9 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.NExtensions;
-import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NString;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
-import net.thevpc.nuts.util.NProgressListener;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -141,7 +138,7 @@ public interface NIO extends NComponent {
      *
      * @return a new terminal with empty input and byte-array output/error.
      */
-    NSessionTerminal createMemTerminal();
+    NSessionTerminal createInMemoryTerminal();
 
     /**
      * return a new terminal with empty input and byte-array output/error.
@@ -150,7 +147,7 @@ public interface NIO extends NComponent {
      * @param mergeErr when true out and err are merged into a single stream
      * @return a new terminal with empty input and byte-array output/error.
      */
-    NSessionTerminal createMemTerminal(boolean mergeErr);
+    NSessionTerminal createInMemoryTerminal(boolean mergeErr);
 
 
     /**

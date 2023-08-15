@@ -31,6 +31,7 @@ import net.thevpc.nuts.text.NTerminalCommand;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.util.NColor;
+import net.thevpc.nuts.util.NLiteral;
 
 import java.util.List;
 

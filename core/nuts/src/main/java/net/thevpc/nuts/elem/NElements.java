@@ -29,7 +29,7 @@ import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.format.NIterableFormat;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.util.NProgressFactory;
+import net.thevpc.nuts.time.NProgressFactory;
 
 import java.io.File;
 import java.io.InputStream;

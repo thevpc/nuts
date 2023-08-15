@@ -29,6 +29,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.nuts.NFolderRepository
 import net.thevpc.nuts.runtime.standalone.repository.impl.nuts.NHttpSrvRepository;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.util.NLiteral;
 
 import java.util.ArrayList;
 import java.util.List;

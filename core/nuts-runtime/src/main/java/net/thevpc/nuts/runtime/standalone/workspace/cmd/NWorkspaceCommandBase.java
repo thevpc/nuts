@@ -12,8 +12,8 @@ import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.NLog;
-import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NLogOp;
 
 /**
  * @param <T> Type

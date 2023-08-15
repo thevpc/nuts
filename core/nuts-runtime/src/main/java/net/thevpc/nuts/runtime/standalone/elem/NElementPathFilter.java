@@ -29,6 +29,7 @@ package net.thevpc.nuts.runtime.standalone.elem;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.util.NLiteral;
 
 import java.io.IOException;
 import java.io.StreamTokenizer;

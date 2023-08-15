@@ -16,6 +16,7 @@ import net.thevpc.nuts.toolbox.ntemplate.filetemplate.FileTemplater;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.ProcessCmd;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.TemplateConfig;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.StringUtils;
+import net.thevpc.nuts.util.NLiteral;
 
 import java.nio.file.Path;
 
