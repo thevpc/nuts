@@ -21,6 +21,8 @@ import net.thevpc.nuts.util.NConnexionString;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -30,6 +32,8 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableCommand
 
     NDefinition def;
     String[] cmd;
+    // effective cmd (incudes def)
+    String[] ecmd;
     List<String> executorOptions;
     NConnexionString connexionString;
     private boolean showCommand = false;
@@ -54,6 +58,12 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableCommand
         this.out = out;
         this.err = err;
         this.cmd = cmd;
+        List<String> ecmdList = new ArrayList<>();
+        if (def != null) {
+            ecmdList.add(def.getId().toString());
+        }
+        ecmdList.addAll(Arrays.asList(cmd));
+        ecmd = ecmdList.toArray(new String[0]);
         this.executorOptions = CoreCollectionUtils.nonNullList(executorOptions);
         this.commExec = commExec;
         NCmdLine cmdLine = NCmdLine.of(this.executorOptions);
@@ -80,12 +90,10 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableCommand
         return new AbstractSyncIProcessExecHelper(getSession()) {
             @Override
             public int exec() {
-                return runOnce(cmd, getSession());
+                return runOnce(ecmd, getSession());
             }
         };
     }
-
-
 
 
     private int runOnce(String[] cmd, NSession session) {
@@ -132,7 +140,7 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableCommand
 
     @Override
     public String toString() {
-        return getExecCommand().getRunAs() + " " + (def == null ? "" : (def.getId() + " ")) + NCmdLine.of(cmd).toString();
+        return getExecCommand().getRunAs() + " " + NCmdLine.of(ecmd);
     }
 
 }

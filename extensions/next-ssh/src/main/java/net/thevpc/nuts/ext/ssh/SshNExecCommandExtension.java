@@ -118,13 +118,17 @@ public class SshNExecCommandExtension implements NExecCommandExtension {
 
                 cmd.add("--exec");
                 cmd.addAll(exportedExecutorOptions);
+
                 if (def != null) {
                     cmd.add(def.getId().toString());
                 }
-                cmd.addAll(Arrays.asList(context.getCommand()));
+                //wil not call context.getCommand() because we already added def!
+                cmd.addAll(execCommand.getCommand());
+
                 return k.buildEffectiveCommand(cmd.toArray(new String[0]), execCommand.getRunAs(), executorOptions, this, session);
             }
             case SYSTEM: {
+                //effective command including def which should be null!
                 return context.getCommand();
             }
             default: {
