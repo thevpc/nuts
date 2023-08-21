@@ -116,7 +116,7 @@ public class RemoteConnexionStringInfo {
         OutputStream err = new ByteArrayOutputStream();
         int e;
         try (MyNExecCommandExtensionContext d = new MyNExecCommandExtensionContext(
-                NExecCommand.of(session).setTarget(target).setExecutionType(NExecutionType.SYSTEM),
+                NExecCommand.of(session).setTarget(target).system(),
                 commExec, target, session, cmd, out, err)) {
             e = commExec.exec(d);
         } catch (RuntimeException ex) {
