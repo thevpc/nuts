@@ -57,7 +57,7 @@ public class DerbyService {
         NDerbyConfig options=new NDerbyConfig();
         options.setCmd(Command.ping);
         try {
-            String s= command(options).setFailFast(true).grabOutputString().getOutputString();
+            String s= command(options).failFast().getGrabbedOutString();
             if(s!=null){
                 return true;
             }
@@ -143,7 +143,7 @@ public class DerbyService {
                     LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.READ).log(NMsg.ofJ("downloading {0} to {1}", id, targetFile));
                 }
             } else {
-                NFetchCommand.of(id,session).setLocation(targetFile).setFailFast(true).getResultPath();
+                NFetchCommand.of(id,session).setLocation(targetFile).failFast().getResultPath();
                 LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.READ).log(NMsg.ofJ("downloading {0} to {1}", id, targetFile));
             }
         } else {
@@ -248,7 +248,7 @@ public class DerbyService {
                 .addExecutorOptions(executorOptions)
                 .addCommand(command)
                 .setDirectory(NPath.of(derbyBinHome,session))
-                .setFailFast(true)
+                .failFast()
                 ;
     }
 

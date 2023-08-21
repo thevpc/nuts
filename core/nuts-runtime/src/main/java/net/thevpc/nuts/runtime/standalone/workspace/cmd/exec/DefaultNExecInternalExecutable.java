@@ -30,8 +30,9 @@ public class DefaultNExecInternalExecutable extends DefaultInternalNExecutableCo
             showDefaultHelp();
             return NExecutionException.SUCCESS;
         }
-        return getExecCommand().copy().setSession(getSession()).clearCommand().configure(false, args).setFailFast(true).run()
-                .getResult();
+        return getExecCommand().copy().setSession(getSession()).clearCommand().configure(false, args)
+                .failFast().run()
+                .getResultCode();
     }
 
     @Override
@@ -42,7 +43,8 @@ public class DefaultNExecInternalExecutable extends DefaultInternalNExecutableCo
         }
         getExecCommand()
                 .copy()
-                .setSession(getSession().copy().setDry(true)).clearCommand().configure(false, args).setFailFast(true)
+                .setSession(getSession().copy().setDry(true)).clearCommand().configure(false, args)
+                .failFast()
                 .run()
         ;
     }

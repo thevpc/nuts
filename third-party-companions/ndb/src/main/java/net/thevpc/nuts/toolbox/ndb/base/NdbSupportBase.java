@@ -287,8 +287,8 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
 
     public NExecCommand sysCmd(NSession session) {
         return NExecCommand.of(session)
-                .setFailFast(true)
-                .setExecutionType(NExecutionType.SYSTEM)
+                .failFast()
+                .system()
                 ;
     }
 

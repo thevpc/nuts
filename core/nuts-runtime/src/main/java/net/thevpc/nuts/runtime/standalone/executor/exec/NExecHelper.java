@@ -109,13 +109,13 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
         if (out != null) {
             out.resetLine();
         }
-        return pb.getResult();
+        return pb.getResultCode();
     }
 
     public Future<Integer> execAsync() {
         if (out != null) {
             out.run(NTerminalCommand.MOVE_LINE_START, getSession());
         }
-        return NScheduler.of(getSession()).executorService().submit(() -> pb.getResult());
+        return NScheduler.of(getSession()).executorService().submit(() -> pb.getResultCode());
     }
 }

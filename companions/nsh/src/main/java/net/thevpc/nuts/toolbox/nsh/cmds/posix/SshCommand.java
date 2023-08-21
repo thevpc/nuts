@@ -121,7 +121,7 @@ public class SshCommand extends NShellBuiltinDefault {
                     cmd.add(o.nutsCommand);
                 } else {
                     String userHome = null;
-                    sshSession.setFailFast(true)
+                    sshSession.failFast()
                             .redirectErrorStream()
                             .grabOutputString().exec("echo", "$HOME");
                     userHome = sshSession.getOutputString().trim();
@@ -141,7 +141,7 @@ public class SshCommand extends NShellBuiltinDefault {
                         NAssert.requireNonNull(from, "jar file", session);
                         context.out().println(NMsg.ofC("Detected nuts.jar location : %s", from));
                         String bootApiFileName = "nuts-" + session.getWorkspace().getApiId() + ".jar";
-                        sshSession.setFailFast(true).copyLocalToRemote(from.toString(), workspace + "/" + bootApiFileName, true);
+                        sshSession.failFast().copyLocalToRemote(from.toString(), workspace + "/" + bootApiFileName, true);
                         String javaCmd = null;
                         if (o.nutsJre != null) {
                             javaCmd = (o.nutsJre + "/bin/java");
@@ -153,7 +153,7 @@ public class SshCommand extends NShellBuiltinDefault {
                 }
             }
             cmd.addAll(o.cmd);
-            sshSession.grabOutputString(false).setFailFast(true).exec(cmd);
+            sshSession.grabOutputString(false).failFast().exec(cmd);
         }
     }
 

@@ -82,7 +82,7 @@ public class LocalMysqlDatabaseConfigService {
             }
 
             NExecCommand cmd = NExecCommand.of(session)
-                    .setExecutionType(NExecutionType.SYSTEM)
+                    .system()
                     .setCommand("sh", "-c",
                             "\"" + mysql.getMysqldumpCommand() + "\" -u \"$CMD_USER\" -p\"$CMD_PWD\" --databases \"$CMD_DB\" > \"$CMD_FILE\""
                     )
@@ -90,17 +90,16 @@ public class LocalMysqlDatabaseConfigService {
                     .setEnv("CMD_USER", getConfig().getUser())
                     .setEnv("CMD_PWD", password)
                     .setEnv("CMD_DB", getDatabaseName())
-                    .grabOutputString()
-                    .redirectErrorStream();
+                    .grabAll();
             int result = cmd
-                    .getResult();
+                    .getResultCode();
             if (result == 0) {
                 return new ArchiveResult(path, result, false);
             } else {
                 if (new File(path).exists()) {
                     new File(path).delete();
                 }
-                throw new NExecutionException(session, NMsg.ofNtf(cmd.getOutputString()), NExecutionException.ERROR_2);
+                throw new NExecutionException(session, NMsg.ofNtf(cmd.getGrabbedOutString()), NExecutionException.ERROR_2);
             }
         } else {
             if (session.isPlainTrace()) {
@@ -109,7 +108,7 @@ public class LocalMysqlDatabaseConfigService {
                         .ofStyled(path, NTextStyle.path())));
             }
             NExecCommand cmd = NExecCommand.of(session)
-                    .setExecutionType(NExecutionType.SYSTEM)
+                    .system()
                     .setCommand("sh", "-c",
                             "set -o pipefail && \"" + mysql.getMysqldumpCommand() + "\" -u \"$CMD_USER\" -p" + password + " --databases \"$CMD_DB\" | gzip > \"$CMD_FILE\""
                     )
@@ -118,8 +117,7 @@ public class LocalMysqlDatabaseConfigService {
                     .setEnv("CMD_PWD", password)
                     .setEnv("CMD_DB", getDatabaseName())
                     //                    .inheritIO()
-                    .grabOutputString()
-                    .redirectErrorStream();
+                    .grabAll();
             if (session.isPlainTrace()) {
                 session.out().println(NMsg.ofC("%s    [exec] %s", getBracketsPrefix(getDatabaseName()),
                         cmd.formatter().setEnvReplacer(envEntry -> {
@@ -130,14 +128,14 @@ public class LocalMysqlDatabaseConfigService {
                         }).format()
                 ));
             }
-            int result = cmd.getResult();
+            int result = cmd.getResultCode();
             if (result == 0) {
                 return new ArchiveResult(path, result, false);
             } else {
                 if (new File(path).exists()) {
                     new File(path).delete();
                 }
-                throw new NExecutionException(session, NMsg.ofNtf(cmd.getOutputString()), NExecutionException.ERROR_2);
+                throw new NExecutionException(session, NMsg.ofNtf(cmd.getGrabbedOutString()), NExecutionException.ERROR_2);
             }
         }
     }
@@ -153,7 +151,7 @@ public class LocalMysqlDatabaseConfigService {
                 session.out().println(NMsg.ofC("%s restore archive %s", getBracketsPrefix(getDatabaseName()), path));
             }
             int result = NExecCommand.of(session)
-                    .setExecutionType(NExecutionType.SYSTEM)
+                    .system()
                     .setCommand("sh", "-c",
                             "cat \"$CMD_FILE\" | " + "\"" + mysql.getMysqlCommand() + "\" -h \"$CMD_HOST\" -u \"$CMD_USER\" \"-p$CMD_PWD\" \"$CMD_DB\""
                     )
@@ -164,7 +162,7 @@ public class LocalMysqlDatabaseConfigService {
                     .setEnv("CMD_HOST", "localhost")
                     //.inheritIO()
 //                        .start().waitFor()
-                    .getResult();
+                    .getResultCode();
             return new RestoreResult(path, result, false);
         } else {
             if (session.isPlainTrace()) {
@@ -172,7 +170,7 @@ public class LocalMysqlDatabaseConfigService {
             }
 
             int result = NExecCommand.of(session)
-                    .setExecutionType(NExecutionType.SYSTEM).setCommand("sh", "-c",
+                    .system().setCommand("sh", "-c",
                             "gunzip -c \"$CMD_FILE\" | \"" + mysql.getMysqlCommand() + "\" -h \"$CMD_HOST\" -u \"$CMD_USER\" \"-p$CMD_PWD\" \"$CMD_DB\""
                     )
                     .setEnv("CMD_FILE", path)
@@ -183,7 +181,7 @@ public class LocalMysqlDatabaseConfigService {
 //                        .start()
 //                        .inheritIO()
 //                        .waitFor()
-                    .getResult();
+                    .getResultCode();
             return new RestoreResult(path, result, true);
         }
     }

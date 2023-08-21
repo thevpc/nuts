@@ -79,6 +79,16 @@ public class NByteArrayPrintStream extends NPrintStreamRaw implements NMemoryPri
             public NContentMetadata getMetaData() {
                 return NByteArrayPrintStream.this.getMetaData();
             }
+
+            @Override
+            public boolean isKnownContentLength() {
+                return true;
+            }
+
+            @Override
+            public long getContentLength() {
+                return out2().size();
+            }
         };
     }
 

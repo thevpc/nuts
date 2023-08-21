@@ -374,7 +374,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 //        b.setOutput(context.getSession().out());
 //        b.setErr(context.getSession().err());
         NExecCommand b = NExecCommand.of(session)
-                .setExecutionType(NExecutionType.SYSTEM);
+                .system();
         b.addCommand(catalinaHome + "/bin/catalina." + ext);
         b.addCommand(catalinaCommand);
 //        if (catalinaHome != null) {
@@ -405,11 +405,11 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         if ("start".equals(catalinaCommand)) {
             if (session.isPlainOut()) {
                 session.out().print(NMsg.ofC("%s starting Tomcat on port " + getHttpConnectorPort() + ". CMD=%s.\n", getFormattedPrefix(getName()), b.toString()));
-                b.getResult();
+                b.getResultCode();
             } else {
-                b.grabOutputString();
-                int x = b.getResult();
-                String txt = b.getOutputString();
+                b.grabAll();
+                int x = b.getResultCode();
+                String txt = b.getGrabbedOutString();
                 session.eout().add(
                         elem.ofObject()
                                 .set("command", "catalina-start")
@@ -421,11 +421,11 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         } else if ("stop".equals(catalinaCommand)) {
             if (session.isPlainOut()) {
                 session.out().print(NMsg.ofC("%s stopping Tomcat. CMD=%s.\n", getFormattedPrefix(getName()), b.toString()));
-                b.getResult();
+                b.getResultCode();
             } else {
-                b.grabOutputString();
-                int x = b.getResult();
-                String txt = b.getOutputString();
+                b.grabAll();
+                int x = b.getResultCode();
+                String txt = b.getGrabbedOutString();
                 session.eout().add(
                         elem.ofObject()
                                 .set("command", "catalina-stop")

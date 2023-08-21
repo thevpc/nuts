@@ -14,9 +14,9 @@ public class ExamplesOfExec {
         session.out().println("Example of ## Exec ##");
         int result = NExecCommand.of(session)
                 .addCommand("ls", "-l")
-                .setExecutionType(NExecutionType.SYSTEM)
+                .system()
                 .run()
-                .getResult();
+                .getResultCode();
         session.out().println(NMsg.ofC("result was %s", result));
     }
 
@@ -24,11 +24,9 @@ public class ExamplesOfExec {
         session.out().println("Example of ## Exec with String Grab ##");
         String result = NExecCommand.of(session)
                 .addCommand("ls", "-l")
-                .setExecutionType(NExecutionType.SYSTEM)
-                .grabOutputString()
-                .redirectErrorStream()
+                .system()
                 .run()
-                .getOutputString();
+                .getGrabbedAllString();
         session.out().println(NMsg.ofC("result was %s", result));
     }
 
@@ -37,9 +35,8 @@ public class ExamplesOfExec {
                         .setBot(true).json())
                 .setTarget("ssh://remoteUserName:remoteUserPassword@192.168.1.98")
                 .addCommand("hostname", "-I")
-                .setExecutionType(NExecutionType.SYSTEM)
-                .grabOutputString()
-                .getOutputString();
+                .system()
+                .getGrabbedAllString();
         session.out().println(result);
         session.out().println(NMsg.ofC("result was %s", result));
 
@@ -52,11 +49,10 @@ public class ExamplesOfExec {
                 .setTarget("ssh://remoteUserName:remoteUserPassword@192.168.1.98")
                 .addCommand("hostname", "-I")
                 .addExecutorOptions("--!sudo-prompt")
-                .setExecutionType(NExecutionType.SYSTEM)
-                .setRunAs(NRunAs.SUDO)
+                .system()
+                .sudo()
                 .setIn(NExecInput.ofString("sudoPassword\n"))
-                .grabOutputString()
-                .getOutputString();
+                .getGrabbedAllString();
         session.out().println(NMsg.ofC("result was %s", result));
     }
 }

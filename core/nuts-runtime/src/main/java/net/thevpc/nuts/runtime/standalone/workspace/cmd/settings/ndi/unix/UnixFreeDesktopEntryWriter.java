@@ -128,10 +128,8 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
             String outStr = NExecCommand.of(session)
                     .setCommand(cmdList)
                     .addCommand()
-                    .setExecutionType(NExecutionType.SYSTEM)
-                    .redirectErrorStream().grabOutputString()
-                    .run()
-                    .getOutputString().trim();
+                    .system()
+                    .getGrabbedAllString().trim();
             if (session.isPlainTrace() && !outStr.isEmpty()) {
                 session.out().println(CoreStringUtils.prefixLinesOsNL(outStr, "[" + sysCmd + "] "));
             }

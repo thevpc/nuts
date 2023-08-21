@@ -36,6 +36,7 @@ public class DefaultNEnvs implements NEnvs {
 
     public static final Pattern UNIX_USER_DIRS_PATTERN = Pattern.compile("^\\s*(?<k>[A-Z_]+)\\s*=\\s*(?<v>.*)$");
     private final DefaultNWorkspaceEnvManagerModel model;
+
     protected DefaultNPlatformModel sdkModel;
     private NSession session;
 

@@ -86,10 +86,10 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
         }
         try {
             def.definition = NFetchCommand.of(id,session)
-                    .setContent(true)
-                    .setEffective(true)
+                    .content()
+                    .effective()
                     .setDependencies(includeDeps)
-                    .setFailFast(true)
+                    .failFast()
                     //
                     .setOptional(false)
                     .addScope(NDependencyScopePattern.RUN)

@@ -64,7 +64,7 @@ public class ExecFacadeCommand extends AbstractFacadeCommand {
         ));
         int result = NExecCommand.of(session)
                 .addCommand(cmd)
-                .getResult();
+                .getResultCode();
         context.sendResponseText(200, result + "\n" + session.out().toString());
     }
 }

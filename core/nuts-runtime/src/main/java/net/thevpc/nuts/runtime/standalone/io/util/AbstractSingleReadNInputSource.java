@@ -11,4 +11,14 @@ public abstract class AbstractSingleReadNInputSource extends AbstractNInputSourc
     public boolean isMultiRead() {
         return false;
     }
+
+    @Override
+    public boolean isKnownContentLength() {
+        return false;
+    }
+
+    @Override
+    public long getContentLength() {
+        return -1;
+    }
 }

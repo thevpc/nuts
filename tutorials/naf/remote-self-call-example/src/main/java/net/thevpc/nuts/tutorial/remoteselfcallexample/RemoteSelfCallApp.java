@@ -98,8 +98,7 @@ public class RemoteSelfCallApp implements NApplication {
                                     .addCommand("from=" + NEnvs.of(session).getHostName())
                                     .addCommand(options.nonOptions)
                                     .failFast()
-                                    .grabOutputString()
-                                    .getOutputString()
+                                    .getGrabbedAllString()
                     );
                     log(NMsg.ofC("received"), session);
                     session.out().println(e);

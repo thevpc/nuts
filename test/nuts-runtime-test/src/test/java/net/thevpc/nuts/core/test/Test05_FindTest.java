@@ -79,7 +79,7 @@ public class Test05_FindTest {
                         "net.thevpc.common:thevpc-common-io#1.3.12"
 //                "netbeans-launcher#1.1.0"
                 )
-                .setOptional(false).setInlineDependencies(true).setFailFast(true)
+                .setOptional(false).setInlineDependencies(true).failFast()
                 .setLatest(true).getResultDefinitions().findFirst().get();
         TestUtils.println(def);
     }

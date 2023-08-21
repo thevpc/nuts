@@ -94,7 +94,7 @@ public class DefaultNOpenExecutable extends AbstractNExecutableCommand {
             throw new NIllegalArgumentException(getExecCommand().getSession(), NMsg.ofC("unable to resolve viewer for %s", cmd[0]));
         }
         NExecCommand cc = getExecCommand().copy();
-        cc.setExecutionType(NExecutionType.SYSTEM);
+        cc.system();
         List<String> ss = new ArrayList<>(Arrays.asList(effectiveOpenExecutable));
         ss.addAll(Arrays.asList(cmd));
         cc.setCommand(ss);
@@ -103,7 +103,7 @@ public class DefaultNOpenExecutable extends AbstractNExecutableCommand {
 
     @Override
     public int execute() {
-        return resolveExecHelper().run().getResult();
+        return resolveExecHelper().run().getResultCode();
     }
 
     @Override

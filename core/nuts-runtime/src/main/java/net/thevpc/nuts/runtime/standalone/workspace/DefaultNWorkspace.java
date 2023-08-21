@@ -899,12 +899,12 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     || (!NDescriptorUtils.isNoContent(def.getDescriptor()) && def.getContent().isNotPresent())) {
                 // reload def
                 NFetchCommand fetch2 = NFetchCommand.of(def.getId(), session)
-                        .setContent(true)
+                        .content()
                         .setRepositoryFilter(NRepositories.of(session).filter().installedRepo())
-                        .setFailFast(true);
+                        .failFast();
                 if (def.getDependencies().isPresent()) {
                     fetch2.setDependencyFilter(def.getDependencies().get(session).filter());
-                    fetch2.setDependencies(true);
+                    fetch2.dependencies();
                 }
                 def = fetch2.getResultDefinition();
             }
@@ -963,9 +963,9 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     // perhaps the version does no more exist
                     // search latest!
                     d2 = NSearchCommand.of(session).setId(def.getId().getShortId())
-                            .setEffective(true)
-                            .setFailFast(true)
-                            .setLatest(true)
+                            .effective()
+                            .failFast()
+                            .latest()
                             .setOptional(false)
                             .addScope(NDependencyScopePattern.RUN)
                             .setDependencyFilter(NDependencyFilters.of(session).byRunnable())
@@ -1070,7 +1070,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 //should change def to reflect install location!
                 NExecutionContextBuilder cc = createExecutionContext()
                         .setSession(session.copy())
-                        .setDefinition(def).setArguments(args).setFailFast(true).setTemporary(false)
+                        .setDefinition(def).setArguments(args).failFast().setTemporary(false)
                         .setExecutionType(NBootManager.of(session).getBootOptions().getExecutionType().orNull())
                         .setRunAs(NRunAs.currentUser())// install or update always uses current user
                         ;
@@ -1094,12 +1094,12 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
                 //now should reload definition
                 NFetchCommand fetch2 = NFetchCommand.of(executionContext.getDefinition().getId(), session)
-                        .setContent(true)
+                        .content()
                         .setRepositoryFilter(NRepositories.of(session).filter().installedRepo())
-                        .setFailFast(true);
+                        .failFast();
                 if (def.getDependencies().isPresent()) {
                     fetch2.setDependencyFilter(def.getDependencies().get(session).filter());
-                    fetch2.setDependencies(true);
+                    fetch2.dependencies();
                 }
                 NDefinition def2 = fetch2
                         .getResultDefinition();
@@ -1618,7 +1618,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                         .setArguments(args)
                         .setSession(session)
                         .setWorkspace(session.getWorkspace())
-                        .setFailFast(true)
+                        .failFast()
                         .setTemporary(false)
                         .setExecutionType(NBootManager.of(session).getBootOptions().getExecutionType().orNull())
                         .setRunAs(NRunAs.currentUser())//uninstall always uses current user

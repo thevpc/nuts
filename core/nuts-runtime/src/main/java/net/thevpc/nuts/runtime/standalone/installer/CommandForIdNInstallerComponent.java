@@ -84,7 +84,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                 }
                 cmd.addCommand(executionContext.getArguments())
                         .setExecutionType(NBootManager.of(session).getBootOptions().getExecutionType().orNull())
-                        .setFailFast(true)
+                        .failFast()
                         .run();
             }
         } else {
@@ -111,7 +111,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                                 "nsh".equals(def2.getId().getArtifactId()) ?
                                         NExecutionType.EMBEDDED : NExecutionType.SPAWN
                         )
-                        .setFailFast(true)
+                        .failFast()
                         .run();
             }
         }

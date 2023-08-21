@@ -38,10 +38,10 @@ public class NExternalExecutor implements NShellExternalExecutor {
 
     @Override
     public int execExternalCommand(String[] command, NShellContext context) {
-        return NExecCommand.of(context.getSession()).addCommand(command).setFailFast(true)
+        return NExecCommand.of(context.getSession()).addCommand(command).failFast()
                 .setExecutionType(context.getSession().getExecutionType())
                 .setDirectory(NPath.of(context.getDirectory(), context.getSession()))
-                .run().getResult();
+                .run().getResultCode();
     }
 
 }

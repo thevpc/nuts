@@ -32,7 +32,7 @@ public class DefaultNUndeployCommand extends AbstractNUndeployCommand {
                             NRepositories.of(session).filter().byName(DefaultNInstalledRepository.INSTALLED_REPO_UUID).neg()
                     )
                     .setDistinct(true)
-                    .setFailFast(true)
+                    .failFast()
                     .getResultDefinitions().findFirst().get();
             NRepository repository1 = NRepositories.of(session)
                     .findRepository(p.getRepositoryUuid()).get();

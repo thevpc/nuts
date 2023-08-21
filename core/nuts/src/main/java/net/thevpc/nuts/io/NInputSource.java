@@ -55,6 +55,10 @@ public interface NInputSource extends NFormattable, NContentMetadataProvider,NIn
 
     boolean isMultiRead();
 
+    boolean isKnownContentLength();
+
+    long getContentLength();
+
     Stream<String> getLines(Charset cs);
 
     Stream<String> getLines();

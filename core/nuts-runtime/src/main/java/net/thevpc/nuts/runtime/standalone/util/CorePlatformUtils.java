@@ -169,12 +169,10 @@ public class CorePlatformUtils {
             CoreStringUtils.clear(osVersion);
             try {
                 osVersion.append(
-                        NExecCommand.of(session).setExecutionType(NExecutionType.SYSTEM)
+                        NExecCommand.of(session).system()
                                 .setCommand("uname", "-r")
-                                .redirectErrorStream()
-                                .grabOutputString()
                                 .setSleepMillis(50)
-                                .getOutputString()
+                                .getGrabbedAllString()
                 );
             } catch (Exception e) {
                 e.printStackTrace();

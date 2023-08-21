@@ -238,9 +238,8 @@ public class FtexEvaluator implements ExprEvaluator {
                         NBlankable.isBlank(ctx.getWorkingDirRequired()) ? null :
                                 NPath.of(ctx.getWorkingDirRequired(), session)
                 )
-                .grabOutputString()
                 .run()
-                .getOutputString();
+                .getGrabbedOutOnlyString();
     }
 
     private Object evalSimpleQuotesString(String value, FileTemplater ctx) {

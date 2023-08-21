@@ -78,10 +78,9 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
             cmd.add(config.getPath());
         }
         NExecCommand s = NExecCommand.of(session)
-                .redirectErrorStream()
-                .grabOutputString()
+                .grabAll()
                 .addCommand(cmd).run();
-        if (s.getResult() == 0) {
+        if (s.getResultCode() == 0) {
             client.execRemoteNuts(
                     "net.thevpc.nuts.toolbox:tomcat",
                     "install",
@@ -90,7 +89,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
                     "--app",
                     name,
                     "--version",
-                    s.getOutputString().trim(),
+                    s.getGrabbedOutString().trim(),
                     "--file",
                     remoteFilePath
             );
@@ -102,7 +101,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
             );
         } else {
             throw new NExecutionException(session, NMsg.ofC("unable to detect file version of %s.\n%s",localWarPath ,
-                    s.getOutputString()), NExecutionException.ERROR_2);
+                    s.getGrabbedOutString()), NExecutionException.ERROR_2);
         }
     }
 

@@ -117,12 +117,11 @@ public class JpsCommand extends NShellBuiltinDefault {
         List<JpsRow> results = new ArrayList<>();
 
         NExecCommand e = NExecCommand.of(context.getSession())
-                .setExecutionType(NExecutionType.SYSTEM)
+                .system()
                 .addCommand(resolveJpsCommand(context.getSession()), "-l", "-v", "-m")
-                .redirectErrorStream()
-                .grabOutputString()
-                .setFailFast(true).run();
-        String resultString = e.getOutputString();
+                .grabAll()
+                .failFast().run();
+        String resultString = e.getGrabbedOutString();
         for (String line : resultString.split("[\n\r]+")) {
             line = line.trim();
             if (line.length() > 0) {

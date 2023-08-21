@@ -230,7 +230,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
         cmdList.addAll(Arrays.asList(cmd));
         NExecCommand.of(session)
                 .addCommand(cmdList)
-                .setFailFast(true)
+                .failFast()
                 .run();
 
     }

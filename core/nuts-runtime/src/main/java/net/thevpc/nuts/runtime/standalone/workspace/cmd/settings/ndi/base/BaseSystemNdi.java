@@ -796,8 +796,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         String apiVersion = options.getNutsApiVersion().toString();
         NAssert.requireNonBlank(apiVersion, "nuts-api version to link to", session);
         NId apiId = session.getWorkspace().getApiId().builder().setVersion(apiVersion).build();
-        NDefinition apiDefinition = NSearchCommand.of(session).addId(apiId).setFailFast(true).setLatest(true).setContent(true)
-                .setDistinct(true)
+        NDefinition apiDefinition = NSearchCommand.of(session).addId(apiId).failFast().latest()
+                .content()
+                .distinct()
                 .getResultDefinitions()
                 .findSingleton().get();
 

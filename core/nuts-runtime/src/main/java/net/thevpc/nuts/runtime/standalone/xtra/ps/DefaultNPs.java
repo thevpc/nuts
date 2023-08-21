@@ -63,7 +63,7 @@ public class DefaultNPs implements NPs {
         checkSession();
         return NExecCommand.of(getSession())
                 .addCommand("kill", "-9", processId)
-                .getResult()==0;
+                .getResultCode()==0;
     }
 
     @Override
@@ -170,15 +170,14 @@ public class DefaultNPs implements NPs {
                 cmd = jdkHome + File.separator + "bin" + File.separator + cmd;
             }
             b = NExecCommand.of(getSession())
-                    .setExecutionType(NExecutionType.SYSTEM)
+                    .system()
                     .addCommand(cmd)
                     .addCommand("-l" + (mainArgs ? "m" : "") + (vmArgs ? "v" : ""))
-                    .redirectErrorStream()
-                    .grabOutputString()
+                    .grabAll()
                     .setFailFast(isFailFast());
-            b.getResult();
-            if (b.getResult() == 0) {
-                String out = b.getOutputString();
+            b.getResultCode();
+            if (b.getResultCode() == 0) {
+                String out = b.getGrabbedOutString();
                 String[] split = out.split("\n");
                 return Arrays.asList(split).iterator();
             }

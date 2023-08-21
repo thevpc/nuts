@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.util.NLiteral;
 
@@ -9,12 +8,12 @@ public class CoreAnsiTermHelper {
     public static boolean isXTerm(NSession session) {
         try {
             String str = "cols";
-            NExecCommand.of(session).setExecutionType(NExecutionType.SYSTEM)
-                    .grabOutputString()
+            NExecCommand.of(session)
+                    .system()
                     .addCommand("tput", str)
-                    .setFailFast(true)
-                    .setErr(NExecOutput.ofNull())
-                    .getOutputString();
+                    .failFast()
+                    .getGrabbedOutOnlyString()
+            ;
             return true;
         } catch (Exception ex) {
             return false;
@@ -40,22 +39,18 @@ public class CoreAnsiTermHelper {
 
     public static String evalCapability(String str, NSession session) {
         try {
-            String d = NExecCommand.of(session).setExecutionType(NExecutionType.SYSTEM)
-                    .grabOutputString()
-                    .setErr(NExecOutput.ofNull())
+            String d = NExecCommand.of(session).system()
                     .addCommand("tput", str)
-                    .getOutputString();
+                    .getGrabbedOutOnlyString();
             String s = d.trim();
             if (s.isEmpty()) {
                 return null;
             }
             //add 500 of sleep time!
-            d = NExecCommand.of(session).setExecutionType(NExecutionType.SYSTEM)
-                    .grabOutputString()
+            d = NExecCommand.of(session).system()
                     .addCommand("tput", str)
                     .setSleepMillis(500)
-                    .setErr(NExecOutput.ofNull())
-                    .getOutputString();
+                    .getGrabbedOutOnlyString();
             s = d.trim();
             if (s.isEmpty()) {
                 return null;

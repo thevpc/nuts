@@ -30,7 +30,6 @@ import net.thevpc.nuts.env.NArchFamily;
 import net.thevpc.nuts.env.NDesktopEnvironmentFamily;
 import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.env.NPlatformFamily;
-import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
@@ -129,10 +128,8 @@ public class DefaultNWorkspaceEnvManagerModel {
                             String hostname = NExecCommand.of(
                                             NSessionUtils.defaultSession(workspace)
                                     ).addCommand("hostname")
-                                    .grabOutputString()
                                     .failFast()
-                                    .setErr(NExecOutput.ofNull())
-                                    .getOutputString();
+                                    .getGrabbedOutOnlyString();
                             hostName = NStringUtils.trim(hostname);
                         } catch (Exception any) {
                             //
@@ -156,11 +153,9 @@ public class DefaultNWorkspaceEnvManagerModel {
                     }
                     if (NBlankable.isBlank(h)) {
                         h = NExecCommand.of(NSessionUtils.defaultSession(workspace))
-                                .setExecutionType(NExecutionType.SYSTEM)
+                                .system()
                                 .addCommand("/bin/hostname")
-                                .grabOutputString()
-                                .setErr(NExecOutput.ofNull())
-                                .getOutputString();
+                                .getGrabbedOutOnlyString();
                     }
                     hostName = NStringUtils.trim(h);
                     break;

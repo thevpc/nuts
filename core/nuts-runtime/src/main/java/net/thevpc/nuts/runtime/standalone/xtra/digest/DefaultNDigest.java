@@ -212,12 +212,27 @@ public class DefaultNDigest implements NDigest {
             this.source = source;
         }
 
+        private byte[] getBytes(){
+            return source.formatter(session)
+                    .setNtf(false)
+                    .format().filteredText().getBytes();
+        }
+
         @Override
         public InputStream getInputStream() {
-            return new ByteArrayInputStream(source.formatter(session)
+            return new ByteArrayInputStream(getBytes());
+        }
+
+        @Override
+        public boolean isKnownContentLength() {
+            return true;
+        }
+
+        @Override
+        public long getContentLength() {
+            return source.formatter(session)
                     .setNtf(false)
-                    .format().filteredText().getBytes()
-            );
+                    .format().filteredText().getBytes().length;
         }
 
         @Override

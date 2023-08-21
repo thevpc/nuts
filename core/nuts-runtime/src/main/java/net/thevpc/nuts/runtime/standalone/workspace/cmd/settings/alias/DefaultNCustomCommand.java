@@ -75,12 +75,11 @@ public class DefaultNCustomCommand implements NCustomCommand {
                     .addCommand(args)
                     .addExecutorOptions(executorOptions)
                     .setDirectory(options.getDirectory())
-                    .setFailFast(true)
+                    .failFast()
                     .setEnv(options.getEnv())
                     .setExecutionType(options.getExecutionType())
-                    .setFailFast(true)
                     .run()
-                    .getResult();
+                    .getResultCode();
 
             //load all needed dependencies!
 //        return ((DefaultNWorkspace) ws).exec(nutToRun, this.getName(), args, executorOptions, options.getEnv(), options.getDirectory(), options.isFailFast(), session, options.isEmbedded());
@@ -95,12 +94,11 @@ public class DefaultNCustomCommand implements NCustomCommand {
                     .addCommand(args)
                     .addExecutorOptions(executorOptions)
                     .setDirectory(options.getDirectory())
-                    .setFailFast(true)
+                    .failFast()
                     .setEnv(options.getEnv())
                     .setExecutionType(options.getExecutionType())
-                    .setFailFast(true)
                     .run()
-                    .getResult();
+                    .getResultCode();
 
             //load all needed dependencies!
 //        return ((DefaultNWorkspace) ws).exec(nutToRun, this.getName(), args, executorOptions, options.getEnv(), options.getDirectory(), options.isFailFast(), session, options.isEmbedded());
@@ -119,10 +117,8 @@ public class DefaultNCustomCommand implements NCustomCommand {
                         NExecCommand.of(session)
                                 .addCommand(helpCommand)
                                 .setFailFast(false)
-                                .redirectErrorStream()
-                                .grabOutputString()
                                 .run()
-                                .getOutputString()
+                                .getGrabbedAllString()
                 );
             } catch (Exception ex) {
                 _LOGOP(session).level(Level.FINE).error(ex).log(NMsg.ofJ("failed to retrieve help for {0}", getName()));

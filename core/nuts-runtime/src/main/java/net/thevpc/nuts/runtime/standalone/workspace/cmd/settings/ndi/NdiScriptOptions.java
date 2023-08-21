@@ -166,8 +166,8 @@ public class NdiScriptOptions implements Cloneable {
     public NPath resolveNutsApiBinFolder() {
         NWorkspaceBootConfig bootConfig = null;
         NId apiId = session.getWorkspace().getApiId().builder().setVersion(nutsVersion).build();
-        apiId = NSearchCommand.of(session).addId(apiId).setLatest(true).setFailFast(true).setContent(true)
-                .setDistinct(true)
+        apiId = NSearchCommand.of(session).addId(apiId).latest().failFast().content()
+                .distinct()
                 .getResultDefinitions()
                 .findSingleton().get().getId();
         if (getLauncher().getSwitchWorkspaceLocation() != null) {
@@ -180,10 +180,10 @@ public class NdiScriptOptions implements Cloneable {
 
     public NDefinition resolveNutsApiDef() {
         return NSearchCommand.of(session).addId(resolveNutsApiId())
-                .setLatest(true)
-                .setContent(true)
-                .setFailFast(true)
-                .setDistinct(true)
+                .latest()
+                .content()
+                .failFast()
+                .distinct()
                 .getResultDefinitions()
                 .findSingleton().get();
     }

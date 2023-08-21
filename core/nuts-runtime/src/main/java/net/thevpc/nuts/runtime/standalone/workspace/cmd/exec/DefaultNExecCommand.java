@@ -372,12 +372,12 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                     List<String> ts = new ArrayList<>(command);
                     NDefinition def2 = NSearchCommand.of(getSession())
                             .addId(getSession().getWorkspace().getApiId())
-                            .setContent(true)
-                            .setLatest(true)
-                            .setDependencies(true)
+                            .content()
+                            .latest()
+                            .dependencies()
                             .setDependencyFilter(NDependencyFilters.of(session).byRunnable())
-                            .setFailFast(true)
-                            .setEffective(true)
+                            .failFast()
+                            .effective()
                             .getResultDefinitions()
                             .findFirst().get();
                     return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec, def2, ts.toArray(new String[0]), getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
@@ -459,12 +459,12 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                     ts.remove(0);
                     NDefinition def2 = NSearchCommand.of(getSession())
                             .addId(id)
-                            .setContent(true)
-                            .setLatest(true)
-                            .setDependencies(true)
+                            .content()
+                            .latest()
+                            .dependencies()
                             .setDependencyFilter(NDependencyFilters.of(session).byRunnable())
-                            .setFailFast(true)
-                            .setEffective(true)
+                            .failFast()
+                            .effective()
                             .getResultDefinitions()
                             .findFirst().get();
                     return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec, def2, ts.toArray(new String[0]), getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
@@ -669,12 +669,12 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
     private NExecutableInformationExt _runRemoteInternalCommand(String goodKw, RemoteInfo0 remoteInfo0) {
         NDefinition def2 = NSearchCommand.of(getSession())
                 .addId(getSession().getWorkspace().getApiId())
-                .setContent(true)
-                .setLatest(true)
-                .setDependencies(true)
+                .content()
+                .latest()
+                .dependencies()
                 .setDependencyFilter(NDependencyFilters.of(session).byRunnable())
-                .setFailFast(true)
-                .setEffective(true)
+                .failFast()
+                .effective()
                 .getResultDefinitions()
                 .findFirst().get();
         return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec, def2, command.toArray(new String[0]), getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
@@ -757,10 +757,10 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
     protected NExecutableInformationExt ws_execId(NId goodId, String commandName, String[] appArgs, List<String> executorOptions,
                                                   List<String> workspaceOptions, NExecutionType executionType, NRunAs runAs) {
         NDefinition def = NFetchCommand.of(goodId, session)
-                .setDependencies(true)
-                .setFailFast(true)
-                .setEffective(true)
-                .setContent(true)
+                .dependencies()
+                .failFast()
+                .effective()
+                .content()
                 //
                 .setOptional(false)
                 .addScope(NDependencyScopePattern.RUN)

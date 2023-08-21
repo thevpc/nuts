@@ -5,22 +5,24 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NTreeVisitResult;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.NPathParts;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.NCachedValue;
-import net.thevpc.nuts.runtime.standalone.xtra.download.DefaultHttpTransportComponent;
-import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.spi.NFormatSPI;
+import net.thevpc.nuts.spi.NPathFactory;
+import net.thevpc.nuts.spi.NPathSPI;
+import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.web.NWebCli;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
@@ -413,12 +415,15 @@ public class URLPath implements NPathSPI {
         if (url == null) {
             throw new NIOException(getSession(), NMsg.ofC("unable to resolve input stream %s", toString()));
         }
-        NTransportComponent best = session.extensions().createComponent(NTransportComponent.class, url).orNull();
-        if (best == null) {
-            best = DefaultHttpTransportComponent.INSTANCE;
+        if("file".equals(url.getProtocol())){
+            try {
+                return Files.newInputStream(CoreIOUtils.resolveLocalPathFromURL(url));
+            } catch (IOException e) {
+                throw new NIOException(getSession(), NMsg.ofC("unable to resolve input stream %s", toString()));
+            }
         }
-        NTransportConnection uu = best.open(url.toString());
-        return uu.open();
+        NWebCli best = session.extensions().createComponent(NWebCli.class, url).get();
+        return best.req().get().setUrl(url.toString()).run().getContent().getInputStream();
     }
 
     public OutputStream getOutputStream(NPath basePath, NPathOption... options) {

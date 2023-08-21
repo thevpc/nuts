@@ -349,6 +349,8 @@ public interface NFetchCommand extends NWorkspaceCommand {
      */
     NFetchCommand setDependencies(boolean enable);
 
+    NFetchCommand dependencies();
+
     /**
      * return repository filter
      *
@@ -493,4 +495,9 @@ public interface NFetchCommand extends NWorkspaceCommand {
      */
     NFetchCommand setDependencyFilter(String filter);
 
+    NFetchCommand failFast();
+
+    NFetchCommand content();
+
+    NFetchCommand effective();
 }

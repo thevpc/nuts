@@ -308,24 +308,58 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
     }
 
     @Override
-    public NExecCommand grabOutputString() {
+    public NExecCommand grabOut() {
         checkSession();
         // DO NOT CALL setOut :: setOut(new SPrintStream());
         this.out = NExecOutput.ofGrabMem();
         return this;
     }
 
+
     @Override
-    public NExecCommand grabErrorString() {
+    public NExecCommand grabAll() {
+        return grabOut().redirectErr();
+    }
+
+    @Override
+    public NExecCommand grabOutOnly() {
+        return grabOut().setErr(NExecOutput.ofNull());
+    }
+
+    @Override
+    public NExecCommand grabErr() {
         checkSession();
         setErr(NExecOutput.ofGrabMem());
         return this;
     }
 
     @Override
-    public String getOutputString() {
+    public String getGrabbedAllString() {
         checkSession();
         if (!executed) {
+            grabAll();
+        }
+        return getGrabbedOutString();
+    }
+
+    @Override
+    public String getGrabbedOutOnlyString() {
+        checkSession();
+        if (!executed) {
+            if (out.getType() != NRedirectType.GRAB_STREAM) {
+                grabOutOnly();
+            }
+        }
+        return getGrabbedOutString();
+    }
+
+    @Override
+    public String getGrabbedOutString() {
+        checkSession();
+        if (!executed) {
+            if (out.getType() != NRedirectType.GRAB_STREAM) {
+                grabOut();
+            }
             run();
         }
         if (getOut() == null) {
@@ -342,16 +376,19 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
     }
 
     @Override
-    public String getErrorString() {
+    public String getGrabbedErrString() {
         checkSession();
         if (!executed) {
+            if (err.getType() != NRedirectType.GRAB_STREAM) {
+                grabErr();
+            }
             run();
         }
         if (getErr() == null) {
             throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("no buffer was configured; should call grabErrorString"));
         }
         if (getErr().getType() == NRedirectType.REDIRECT) {
-            return getOutputString();
+            return getGrabbedOutString();
         }
         if (getErr().getResultSource().isNotPresent()) {
             if (getErr().getType() == NRedirectType.GRAB_FILE || getErr().getType() == NRedirectType.GRAB_STREAM) {
@@ -391,8 +428,43 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
     }
 
     @Override
+    public NExecCommand system() {
+        return setExecutionType(NExecutionType.SYSTEM);
+    }
+
+    @Override
+    public NExecCommand embedded() {
+        return setExecutionType(NExecutionType.EMBEDDED);
+    }
+
+    @Override
+    public NExecCommand spawn() {
+        return setExecutionType(NExecutionType.SPAWN);
+    }
+
+    @Override
+    public NExecCommand open() {
+        return setExecutionType(NExecutionType.OPEN);
+    }
+
+    @Override
     public NRunAs getRunAs() {
         return runAs;
+    }
+
+    @Override
+    public NExecCommand sudo() {
+        return setRunAs(NRunAs.SUDO);
+    }
+
+    @Override
+    public NExecCommand root() {
+        return setRunAs(NRunAs.ROOT);
+    }
+
+    @Override
+    public NExecCommand currentUser() {
+        return setRunAs(NRunAs.CURRENT_USER);
     }
 
     @Override
@@ -425,7 +497,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
     }
 
     @Override
-    public int getResult() {
+    public int getResultCode() {
         if (!executed) {
 //            try {
             run();
@@ -469,7 +541,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
                             || getOut().getType() == NRedirectType.GRAB_STREAM
             ) {
                 if (getOut() != null && getOut().getResultSource().isPresent()) {
-                    return getOutputString();
+                    return getGrabbedOutString();
                 }
             }
         } else {
@@ -478,7 +550,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
                             || getErr().getType() == NRedirectType.GRAB_STREAM
             ) {
                 if (getErr() != null && getErr().getResultSource().isPresent()) {
-                    return getErrorString();
+                    return getGrabbedErrString();
                 }
             }
             if (
@@ -486,7 +558,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
                             || getOut().getType() == NRedirectType.GRAB_STREAM
             ) {
                 if (getOut() != null && getOut().getResultSource().isPresent()) {
-                    return getOutputString();
+                    return getGrabbedOutString();
                 }
             }
         }
@@ -537,7 +609,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
             case "--system": {
                 cmdLine.skip();
                 if (enabled) {
-                    setExecutionType(NExecutionType.SYSTEM);
+                    system();
                 }
                 return true;
             }
@@ -740,7 +812,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
     }
 
     @Override
-    public NExecCommand redirectErrorStream() {
+    public NExecCommand redirectErr() {
         return setErr(NExecOutput.ofRedirect());
     }
 }

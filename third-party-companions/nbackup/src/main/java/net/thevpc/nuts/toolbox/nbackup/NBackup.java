@@ -194,7 +194,7 @@ public class NBackup implements NApplication {
                         NMsg.ofStyled(remotePath, NTextStyle.path())
                 ));
                 session.out().println(NCmdLine.of(cmd));
-                NExecCommand.of(session).addCommand(cmd).setFailFast(true).run();
+                NExecCommand.of(session).addCommand(cmd).failFast().run();
             }
         }, new DefaultNCmdLineContext(session));
     }

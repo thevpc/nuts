@@ -286,6 +286,16 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
     }
 
     @Override
+    public NExecutionContextBuilder failFast() {
+        return setFailFast(true);
+    }
+
+    @Override
+    public NExecutionContextBuilder temporary() {
+        return setTemporary(true);
+    }
+
+    @Override
     public NExecutionContextBuilder setExecutionType(NExecutionType executionType) {
         this.executionType = executionType;
         return this;

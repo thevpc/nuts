@@ -140,11 +140,9 @@ public class RemoteMysqlDatabaseConfigService {
                             "-c",
                             "cp",
                             remoteFullFilePath.toString(), localPath)
-                    .redirectErrorStream()
-                    .grabOutputString()
-                    .setFailFast(true)
+                    .failFast()
                     .run()
-                    .getOutputString();
+                    .getGrabbedAllString();
 
             lastRun.put("localPath", localPath);
         }
@@ -215,9 +213,8 @@ public class RemoteMysqlDatabaseConfigService {
                         localPath,
                         remoteFullFilePath.getLocation()
                 )
-                .redirectErrorStream()
-                .grabOutputString()
-                .setFailFast(true)
+                .grabAll()
+                .failFast()
                 .run();
         if (session.isPlainTrace()) {
             session.out().println(NMsg.ofC("%s remote restore %s",
@@ -280,10 +277,8 @@ public class RemoteMysqlDatabaseConfigService {
                     .format();
             session.out().println(NMsg.ofC("[exec] %s", ff));
         }
-        b.redirectErrorStream()
-                .grabOutputString()
-                .setFailFast(true);
-        return b.run().getOutputString();
+        b.grabAll().failFast();
+        return b.run().getGrabbedOutString();
     }
 
     private String prepareSshServer(String server) {

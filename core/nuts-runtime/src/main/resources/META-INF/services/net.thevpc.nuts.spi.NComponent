@@ -57,6 +57,7 @@ net.thevpc.nuts.runtime.standalone.security.DefaultNWorkspaceSecurityManager
 net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepositories
 net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs
 net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions
+net.thevpc.nuts.runtime.standalone.web.NWebCliImpl
 
 
 ##################### Utilities
@@ -98,7 +99,6 @@ net.thevpc.nuts.runtime.standalone.text.highlighter.PlainCodeHighlighter
 
 net.thevpc.nuts.runtime.standalone.xtra.contenttype.DefaultNContentTypeResolver
 net.thevpc.nuts.runtime.standalone.xtra.contenttype.DefaultNContentTypes
-net.thevpc.nuts.runtime.standalone.xtra.download.DefaultHttpTransportComponent
 net.thevpc.nuts.runtime.standalone.io.path.DefaultNPaths
 net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIO
 net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNExecutionEntries

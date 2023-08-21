@@ -90,7 +90,7 @@ public class ZipInstallerComponent implements NInstallerComponent {
                     .addExecutorOptions(executionContext.getExecutorOptions())
                     .setEnv(executionContext.getEnv())
                     .setDirectory(installFolder)
-                    .getResult();
+                    .getResultCode();
         }
     }
 

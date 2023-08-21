@@ -1242,9 +1242,9 @@ public final class NBootWorkspace {
             }
         }
         NExecCommand execCmd = NExecCommand.of(session.setDry(computedOptions.getDry().orElse(false)))
-                .setExecutionType(o.getExecutionType().orElse(null))
-                .setRunAs(o.getRunAs().orElse(null))
-                .setFailFast(true);
+                .setExecutionType(o.getExecutionType().orNull())
+                .setRunAs(o.getRunAs().orNull())
+                .failFast();
         List<String> executorOptions = o.getExecutorOptions().orNull();
         if (executorOptions != null) {
             execCmd.configure(true, executorOptions.toArray(new String[0]));

@@ -92,9 +92,9 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCommandFactory
             String[] ec = replaceParam(execCommand, name);
             NExecCommand exec = NExecCommand.of(session).addCommand(fc)
                     //                        .setExecutorOptions("--show-command")
-                    .grabOutputString()
+                    .grabAll()
                     .run();
-            int r = exec.getResult();
+            int r = exec.getResultCode();
             if (r == 0) {
                 return new NCommandConfig()
                         .setFactoryId(getFactoryId())
@@ -111,11 +111,10 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCommandFactory
         List<NCommandConfig> c = new ArrayList<>();
         if (listCommand.length > 0) {
             NExecCommand b = NExecCommand.of(session).addCommand(listCommand)
-                    .redirectErrorStream()
-                    .grabOutputString();
-            int r = b.getResult();
+                    .grabAll();
+            int r = b.getResultCode();
             if (r == 0) {
-                for (String s : b.getOutputString().split("\n")) {
+                for (String s : b.getGrabbedOutString().split("\n")) {
                     s = s.trim();
                     if (s.length() > 0) {
                         c.add(new NCommandConfig().setName(s).setCommand(new String[]{"nsh", s}));

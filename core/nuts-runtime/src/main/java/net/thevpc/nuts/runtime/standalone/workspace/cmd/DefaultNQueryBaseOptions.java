@@ -8,14 +8,17 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.dependency.NDependencyScopes;
+import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * @param <T> Type
@@ -23,7 +26,7 @@ import java.util.*;
  */
 public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCommand> extends NWorkspaceCommandBase<T> {
 
-//    private final List<String> repos = new ArrayList<>();
+    //    private final List<String> repos = new ArrayList<>();
     protected NDependencyFilter dependencyFilter;
     private boolean failFast = false;
     private Boolean optional = null;
@@ -163,6 +166,14 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCommand> exte
         return (T) this;
     }
 
+    public T content() {
+        return setContent(true);
+    }
+
+    public T effective() {
+        return setEffective(true);
+    }
+
     //@Override
     public boolean isEffective() {
         return effective;
@@ -185,6 +196,11 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCommand> exte
         return (T) this;
     }
 
+    public T failFast() {
+        setFailFast(true);
+        return (T) this;
+    }
+
     public boolean isDependencies() {
         return dependencies;
     }
@@ -194,6 +210,11 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCommand> exte
         dependencies = include;
         return (T) this;
     }
+
+    public T dependencies() {
+        return setDependencies(true);
+    }
+
 
     //@Override
     public Path getLocation() {
@@ -270,22 +291,22 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCommand> exte
         if (a == null) {
             return false;
         }
-        switch(a.key()) {
+        switch (a.key()) {
             case "--failfast": {
-                cmdLine.withNextFlag((v, r, s)->this.setFailFast(v));
+                cmdLine.withNextFlag((v, r, s) -> this.setFailFast(v));
                 return true;
             }
             case "-r":
             case "--repository": {
-                cmdLine.withNextEntry((v, r, s)->addRepositoryFilter(NRepositoryFilters.of(getSession()).byName(v)));
+                cmdLine.withNextEntry((v, r, s) -> addRepositoryFilter(NRepositoryFilters.of(getSession()).byName(v)));
                 return true;
             }
             case "--dependencies": {
-                cmdLine.withNextFlag((v, r, s)->this.setDependencies(v));
+                cmdLine.withNextFlag((v, r, s) -> this.setDependencies(v));
                 return true;
             }
             case "--scope": {
-                cmdLine.withNextEntry((v, r, s)->this.addScope(NDependencyScopePattern.parse(v).orElse(NDependencyScopePattern.API)));
+                cmdLine.withNextEntry((v, r, s) -> this.addScope(NDependencyScopePattern.parse(v).orElse(NDependencyScopePattern.API)));
                 return true;
             }
 
@@ -297,21 +318,21 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCommand> exte
 //                return true;
 //            }
             case "--optional": {
-                cmdLine.withNextEntryValue((v, r, s)->this.setOptional(
+                cmdLine.withNextEntryValue((v, r, s) -> this.setOptional(
                         NLiteral.of(v.asString().get(session)).asBoolean()
                                 .orNull()));
                 return true;
             }
             case "--effective": {
-                cmdLine.withNextFlag((v, r, s)->this.setEffective(v));
+                cmdLine.withNextFlag((v, r, s) -> this.setEffective(v));
                 return true;
             }
             case "--content": {
-                cmdLine.withNextFlag((v, r, s)->this.setContent(v));
+                cmdLine.withNextFlag((v, r, s) -> this.setContent(v));
                 return true;
             }
             case "--location": {
-                cmdLine.withNextEntry((v, r, s)->this.setLocation(NBlankable.isBlank(v) ? null : Paths.get(v)));
+                cmdLine.withNextEntry((v, r, s) -> this.setLocation(NBlankable.isBlank(v) ? null : Paths.get(v)));
                 return true;
             }
         }
@@ -323,23 +344,24 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCommand> exte
         return repositoryFilter;
     }
 
-//    @Override
+    //    @Override
     public T setRepositoryFilter(String filter) {
         checkSession();
-        if(NBlankable.isBlank(filter)){
+        if (NBlankable.isBlank(filter)) {
             this.repositoryFilter = null;
-        }else {
+        } else {
             this.repositoryFilter = NRepositories.of(getSession()).filter().byName(filter);
         }
         return (T) this;
     }
-//    @Override
+
+    //    @Override
     public T setRepositoryFilter(NRepositoryFilter filter) {
         this.repositoryFilter = filter;
         return (T) this;
     }
 
-//    @Override
+    //    @Override
     public T addRepositoryFilter(NRepositoryFilter filter) {
         if (filter != null) {
             if (this.repositoryFilter == null) {
@@ -386,4 +408,6 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCommand> exte
         this.dependencyFilter = NDependencyFilters.of(getSession()).parse(filter);
         return (T) this;
     }
+
+
 }

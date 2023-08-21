@@ -92,8 +92,8 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
                     .setAll(executionContext)
                     .setDefinition(d)
                     .setExecutorOptions(z)
-                    .setFailFast(true)
-                    .setTemporary(true)
+                    .failFast()
+                    .temporary()
                     .build();
             return cc.exec(executionContext2);
         }else {
@@ -122,8 +122,8 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
                     .setAll(executionContext)
                     .setDefinition(d)
                     .setExecutorOptions(z)
-                    .setFailFast(true)
-                    .setTemporary(true)
+                    .failFast()
+                    .temporary()
                     .build();
             return cc.exec(executionContext2);
         }

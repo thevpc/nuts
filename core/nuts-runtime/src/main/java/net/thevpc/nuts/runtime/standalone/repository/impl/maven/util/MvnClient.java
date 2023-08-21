@@ -64,7 +64,7 @@ public class MvnClient {
         }
         try {
             NExecCommand b = NExecCommand.of(session)
-                    .setFailFast(true)
+                    .failFast()
                     .addCommand(
                             NET_VPC_APP_NUTS_MVN,
                             "--json",
@@ -72,7 +72,7 @@ public class MvnClient {
                             id.toString(),
                             repoURL == null ? "" : repoURL
                     ).run();
-            return (b.getResult() == 0);
+            return (b.getResultCode() == 0);
         } catch (Exception ex) {
             LOG.with().session(session).level(Level.SEVERE).error(ex)
                     .log(NMsg.ofJ("failed to invoke {0} : {1}", NET_VPC_APP_NUTS_MVN, ex));

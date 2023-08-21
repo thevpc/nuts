@@ -134,8 +134,8 @@ public class AbstractRunner {
 //        String out =
         NExecCommand.of(session)
                 .addCommand(cmd)
-                .setFailFast(true)
-                .setExecutionType(NExecutionType.SYSTEM)
+                .failFast()
+                .system()
                 .setDirectory(CURRENT_FOLDER)
                 .run()
 //                .setRedirectErrorStream()
@@ -151,13 +151,11 @@ public class AbstractRunner {
         }
         return NExecCommand.of(session)
                 .addCommand(cmd)
-                .setFailFast(true)
-                .setExecutionType(NExecutionType.SYSTEM)
+                .failFast()
+                .system()
                 .setDirectory(CURRENT_FOLDER)
-                .redirectErrorStream()
-                .grabOutputString()
                 .run()
-                .getOutputString();
+                .getGrabbedAllString();
     }
 
     public void copyWithHeader(NPath from, NPath to, String header) {

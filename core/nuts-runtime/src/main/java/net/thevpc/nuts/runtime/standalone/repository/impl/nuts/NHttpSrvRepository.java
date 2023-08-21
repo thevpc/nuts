@@ -48,6 +48,7 @@ import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.security.NDigest;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.*;
+import net.thevpc.nuts.web.*;
 
 public class NHttpSrvRepository extends NCachedRepository {
 
@@ -92,15 +93,14 @@ public class NHttpSrvRepository extends NCachedRepository {
         NSessionUtils.checkSession(getWorkspace(), session);
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
         desc.formatter(session).print(new OutputStreamWriter(descStream));
-        httpUpload(CoreIOUtils.buildUrl(config().getLocationPath().toString(), "/deploy?" + resolveAuthURLPart(session)),
-                session,
-                new NTransportParamBinaryStreamPart("descriptor", "Project.nuts",
-                        new ByteArrayInputStream(descStream.toByteArray())),
-                new NTransportParamBinaryFilePart("content", content.getName(), content),
-                new NTransportParamParamPart("descriptor-hash", NDigest.of(session).sha1().setSource(desc).computeString()),
-                new NTransportParamParamPart("content-hash", NDigestUtils.evalSHA1Hex(content, session)),
-                new NTransportParamParamPart("force", String.valueOf(session.isYes()))
-        );
+        NWebCli nWebCli = NWebCli.of(session);
+        nWebCli.req().post()
+                .setUrl(CoreIOUtils.buildUrl(config().getLocationPath().toString(), "/deploy?" + resolveAuthURLPart(session)))
+                .addPart("descriptor-hash", NDigest.of(session).sha1().setSource(desc).computeString())
+                .addPart("content-hash", NDigestUtils.evalSHA1Hex(content, session))
+                .addPart("force", NDigestUtils.evalSHA1Hex(content, session))
+                .addPart().setName("descriptor").setFileName("Project.nuts").setBody(NIO.of(session).ofInputSource(descStream.toByteArray())).end()
+                .run();
     }
 
     @Override
@@ -160,22 +160,28 @@ public class NHttpSrvRepository extends NCachedRepository {
         if (filter instanceof NExprIdFilter) {
             String js = ((NExprIdFilter) filter).toExpr();
             if (js != null) {
-                ret = httpUpload(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart(session)), session,
-                        new NTransportParamParamPart("root", "/"),
-                        new NTransportParamParamPart("ul", ulp[0]),
-                        new NTransportParamParamPart("up", ulp[1]),
-                        new NTransportParamTextReaderPart("js", "search.js", new StringReader(js))
-                );
+                NWebCli nWebCli = NWebCli.of(session);
+                ret = nWebCli.req().post()
+                        .setUrl(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart(session)))
+                        .addPart("root", "/")
+                        .addPart("ul", ulp[0])
+                        .addPart("up", ulp[1])
+                        .addPart("js").setFileName("search.js").setBody(NIO.of(session).ofInputSource(js.getBytes())).end()
+                        .run()
+                        .getContent().getInputStream();
                 return IteratorBuilder.of(new NamedNIdFromStreamIterator(ret, session), session).filter(CoreFilterUtils.createFilter(filter, session)).iterator();
             }
         } else {
-            ret = httpUpload(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart(session)), session,
-                    new NTransportParamParamPart("root", "/"),
-                    new NTransportParamParamPart("ul", ulp[0]),
-                    new NTransportParamParamPart("up", ulp[1]),
-                    new NTransportParamParamPart("pattern", ("*")),
-                    new NTransportParamParamPart("transitive", String.valueOf(transitive))
-            );
+            NWebCli nWebCli = NWebCli.of(session);
+            ret = nWebCli.req().post()
+                    .setUrl(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart(session)))
+                    .addPart("root", "/")
+                    .addPart("ul", ulp[0])
+                    .addPart("up", ulp[1])
+                    .addPart("pattern", ("*"))
+                    .addPart("transitive", String.valueOf(transitive))
+                    .run()
+                    .getContent().getInputStream();
         }
         if (filter == null) {
             return new NamedNIdFromStreamIterator(ret, session);
@@ -198,14 +204,14 @@ public class NHttpSrvRepository extends NCachedRepository {
             temp = true;
             String p = getIdFilename(id, session);
             localPath = NPath
-                    .ofTempRepositoryFile(new File(p).getName(), getUuid(),session).toString();
+                    .ofTempRepositoryFile(new File(p).getName(), getUuid(), session).toString();
         }
 
         try {
             String location = getUrl("/fetch?id=" + CoreIOUtils.urlEncodeString(id.toString(), session) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session));
             NCp.of(session).from(
-                    NPath.of(location,session)
-            ).to(NPath.of(localPath,session)).addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE).run();
+                    NPath.of(location, session)
+            ).to(NPath.of(localPath, session)).addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE).run();
             String rhash = httpGetString(getUrl("/fetch-hash?id=" + CoreIOUtils.urlEncodeString(id.toString(), session) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session)), session);
             String lhash = NDigestUtils.evalSHA1Hex(NPath.of(localPath, session), session);
             if (rhash.equalsIgnoreCase(lhash)) {
@@ -223,12 +229,6 @@ public class NHttpSrvRepository extends NCachedRepository {
         LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.START)
                 .log(NMsg.ofJ("get URL{0}", url));
         return CoreIOUtils.loadString(NPath.of(url, session).getInputStream(), true, session);
-    }
-
-    private InputStream httpUpload(String url, NSession session, NTransportParamPart... parts) {
-        LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.START)
-                .log(NMsg.ofJ("uploading URL {0}", url));
-        return CoreIOUtils.getHttpClientFacade(session, url).upload(parts);
     }
 
     @Override

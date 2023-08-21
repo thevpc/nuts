@@ -552,6 +552,11 @@ public abstract class AbstractNSearchCommand extends DefaultNQueryBaseOptions<NS
     }
 
     @Override
+    public NSearchCommand distinct() {
+        return setDistinct(true);
+    }
+
+    @Override
     public NVersion getTargetApiVersion() {
         return targetApiVersion;
     }
@@ -582,6 +587,11 @@ public abstract class AbstractNSearchCommand extends DefaultNQueryBaseOptions<NS
     public NSearchCommand setLatest(boolean enable) {
         this.latest = enable;
         return this;
+    }
+
+    @Override
+    public NSearchCommand latest() {
+        return setLatest(true);
     }
 
     @Override

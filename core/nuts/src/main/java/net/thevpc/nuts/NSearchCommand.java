@@ -608,6 +608,8 @@ public interface NSearchCommand extends NWorkspaceCommand {
      */
     NSearchCommand setDistinct(boolean distinct);
 
+    NSearchCommand distinct();
+
     /**
      * target api version
      *
@@ -657,6 +659,8 @@ public interface NSearchCommand extends NWorkspaceCommand {
      * @return {@code this} instance
      */
     NSearchCommand setLatest(boolean enable);
+
+    NSearchCommand latest();
 
     /**
      * create fetch command initialized with this instance options.
@@ -860,6 +864,8 @@ public interface NSearchCommand extends NWorkspaceCommand {
      */
     NSearchCommand setContent(boolean enable);
 
+    NSearchCommand content();
+
     /**
      * true if descriptor is resolved against its effective value
      *
@@ -874,6 +880,8 @@ public interface NSearchCommand extends NWorkspaceCommand {
      * @return {@code this} instance
      */
     NSearchCommand setEffective(boolean enable);
+
+    NSearchCommand effective();
 
     /**
      * true if dependencies are inlined
@@ -890,6 +898,8 @@ public interface NSearchCommand extends NWorkspaceCommand {
      */
     NSearchCommand setInlineDependencies(boolean enable);
 
+    NSearchCommand failFast();
+
     /**
      * true if dependencies as list is activated
      *
@@ -904,6 +914,8 @@ public interface NSearchCommand extends NWorkspaceCommand {
      * @return {@code this} instance
      */
     NSearchCommand setDependencies(boolean enable);
+
+    NSearchCommand dependencies();
 
     //
     // NutsWorkspaceCommand overridden methods

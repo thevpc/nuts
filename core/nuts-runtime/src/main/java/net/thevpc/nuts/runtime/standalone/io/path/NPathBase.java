@@ -50,6 +50,11 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
     }
 
     @Override
+    public boolean isKnownContentLength() {
+        return true;
+    }
+
+    @Override
     public PrintStream getPrintStream(Charset cs, NPathOption... options) {
         OutputStream out = getOutputStream(options);
         if (out instanceof PrintStream) {

@@ -48,7 +48,7 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
                         .addCommand(appArgs)
                         .addExecutorOptions(o.getExecutorOptions().orNull())
                         .setExecutionType(o.getExecutionType().orNull())
-                        .setFailFast(true)
+                        .failFast()
                         .run();
             } finally {
                 NApplications.getSharedMap().put("nuts.embedded.application.id", oldId);

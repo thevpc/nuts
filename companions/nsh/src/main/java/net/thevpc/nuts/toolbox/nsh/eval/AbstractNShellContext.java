@@ -155,8 +155,7 @@ public abstract class AbstractNShellContext implements NShellContext {
                         || "true".equalsIgnoreCase(nuts_autocomplete_support)
                         || "supported".equalsIgnoreCase(nuts_autocomplete_support)) {
                     NExecCommand t = NExecCommand.of(session)
-                            .grabOutputString()
-                            .grabErrorString()
+                            .grabAll()
                             .addCommand(
                                     selectedId
                                             .getLongName(),
@@ -164,8 +163,8 @@ public abstract class AbstractNShellContext implements NShellContext {
                             )
                             .addCommand(autoCompleteWords)
                             .run();
-                    if (t.getResult() == 0) {
-                        String rr = t.getOutputString();
+                    if (t.getResultCode() == 0) {
+                        String rr = t.getGrabbedOutString();
                         for (String s : rr.split("\n")) {
                             s = s.trim();
                             if (s.length() > 0) {

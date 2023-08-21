@@ -207,18 +207,17 @@ public class Test06_UpdateTest {
                         "version"
                 )
                 .setFailFast(false)
-                .grabOutputString()
-                .grabErrorString()
+                .grabAll()
                 .setSleepMillis(5000);
         TestUtils.println(ee.formatter().format().filteredText());
         ee.run();
 
-        String ss = ee.getOutputString();
+        String ss = ee.getGrabbedOutString();
         TestUtils.println("================");
         TestUtils.println("OUT =" + ss);
-        TestUtils.println("ERR =" + ee.getErrorString());
-        TestUtils.println("CODE=" + ee.getResult());
-        Assertions.assertEquals(0, ee.getResult());
+        TestUtils.println("ERR =" + ee.getGrabbedErrString());
+        TestUtils.println("CODE=" + ee.getResultCode());
+        Assertions.assertEquals(0, ee.getResultCode());
 
         Map m = NElements.of(session).json().parse(ss, Map.class);
         Assertions.assertEquals(newApiVersion, m.get("nuts-api-version"));

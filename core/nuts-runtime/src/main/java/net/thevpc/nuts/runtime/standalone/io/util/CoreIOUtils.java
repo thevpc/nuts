@@ -39,7 +39,6 @@ import net.thevpc.nuts.runtime.standalone.util.DoWhenExist;
 import net.thevpc.nuts.runtime.standalone.util.DoWhenNotExists;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
-import net.thevpc.nuts.runtime.standalone.xtra.download.DefaultHttpTransportComponent;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDB;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBTableFile;
 import net.thevpc.nuts.spi.*;
@@ -540,15 +539,6 @@ public class CoreIOUtils {
         } catch (MalformedURLException ex) {
             return false;
         }
-    }
-
-    public static NTransportConnection getHttpClientFacade(NSession session, String url) {
-        NTransportComponent best = session.extensions()
-                .createComponent(NTransportComponent.class, url).orNull();
-        if (best == null) {
-            best = DefaultHttpTransportComponent.INSTANCE;
-        }
-        return best.open(url);
     }
 
     public static String urlEncodeString(String s, NSession session) {

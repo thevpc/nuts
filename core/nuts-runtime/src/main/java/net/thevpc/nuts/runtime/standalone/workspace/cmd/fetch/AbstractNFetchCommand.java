@@ -14,7 +14,7 @@ public abstract class AbstractNFetchCommand extends DefaultNQueryBaseOptions<NFe
 
     public AbstractNFetchCommand(NSession session) {
         super(session, "fetch");
-        setFailFast(true);
+        failFast();
     }
 
     @Override

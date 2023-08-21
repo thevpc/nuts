@@ -154,7 +154,10 @@ public interface NExecutionContextBuilder extends NSessionProvider{
 
     NExecutionContextBuilder setFailFast(boolean failFast);
 
+    NExecutionContextBuilder failFast();
+
     NExecutionContextBuilder setTemporary(boolean temporary);
+    NExecutionContextBuilder temporary();
 
     NExecutionContextBuilder setExecutionType(NExecutionType executionType);
 

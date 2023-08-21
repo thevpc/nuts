@@ -32,6 +32,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.*;
+import net.thevpc.nuts.web.NWebCli;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -60,7 +61,7 @@ public class DefaultNWorkspaceExtensionModel {
                     NExecutorComponent.class,
                     NInstallerComponent.class,
                     NRepositoryFactoryComponent.class,
-                    NTransportComponent.class,
+                    NWebCli.class,
                     NWorkspace.class,
                     NWorkspaceArchetypeComponent.class
             )

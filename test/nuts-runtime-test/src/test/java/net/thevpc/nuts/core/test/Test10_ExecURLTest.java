@@ -61,7 +61,7 @@ public class Test10_ExecURLTest {
                         "https://search.maven.org/remotecontent?filepath=net/thevpc/hl/hl/0.1.0/hl-0.1.0.jar",
 //                "https://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar",
                         "--version"
-                ).redirectErrorStream().grabOutputString().setFailFast(true).getOutputString();
+                ).grabAll().failFast().getGrabbedOutString();
         TestUtils.println("Result:");
         TestUtils.println(result);
         Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
@@ -81,8 +81,7 @@ public class Test10_ExecURLTest {
         String result = NExecCommand.of(session.copy()
                         .setBot(true).json())
                 .addCommand("info")
-                .grabOutputString()
-                .getOutputString();
+                .getGrabbedAllString();
         session.out().println(result);
         Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
     }
@@ -101,7 +100,7 @@ public class Test10_ExecURLTest {
                         "https://search.maven.org/remotecontent?filepath=net/java/sezpoz/demo/app/1.6/app-1.6.jar"
 //                "https://search.maven.org/remotecontent?filepath=net/thevpc/hl/hl/0.1.0/hl-0.1.0.jar",
 //                "--version"
-        ).redirectErrorStream().grabOutputString().setFailFast(true).getOutputString();
+        ).grabAll().failFast().getGrabbedOutString();
         TestUtils.println("Result:");
         TestUtils.println(result);
         Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
@@ -113,7 +112,7 @@ public class Test10_ExecURLTest {
         String result = NExecCommand.of(session.copy().setBot(true))
                 //.addExecutorOption()
                 .addCommand("nsh","-c","ls")
-                .redirectErrorStream().grabOutputString().setFailFast(true).getOutputString();
+                .grabAll().failFast().getGrabbedOutString();
         TestUtils.println("Result:");
         TestUtils.println(result);
         Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
@@ -130,9 +129,8 @@ public class Test10_ExecURLTest {
                 //.addCommand("ls","-l")
                 .addCommand("nuts","info")
                 .failFast()
-                //.setExecutionType(NExecutionType.SYSTEM)
-                .grabOutputString()
-                .getOutputString();
+                //.system()
+                .getGrabbedAllString();
         session.out().println(result);
         Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
     }
@@ -147,8 +145,7 @@ public class Test10_ExecURLTest {
                 //.setExecutionType(NExecutionType.EMBEDDED)
                 .addCommand("com.cts.nuts.enterprise.postgres:pgcli")
                 .addCommand("list","-i")
-                .grabOutputString()
-                .getOutputString();
+                .getGrabbedAllString();
         nSession.out().println(result);
         Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
     }

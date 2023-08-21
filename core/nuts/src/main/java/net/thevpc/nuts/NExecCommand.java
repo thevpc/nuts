@@ -117,7 +117,7 @@ public interface NExecCommand extends NWorkspaceCommand {
      */
     NExecCommand setCommandDefinition(NDefinition definition);
 
-    NDefinition getCommandDefinition() ;
+    NDefinition getCommandDefinition();
 
     /**
      * append command arguments
@@ -268,23 +268,56 @@ public interface NExecCommand extends NWorkspaceCommand {
     NExecCommand setOut(NExecOutput out);
 
 
-    NExecCommand grabOutputString();
+    /**
+     * grub output stream while redirecting error stream to output stream.
+     * equivalent to <code>grabOut().redirectErr()</code>
+     *
+     * @return
+     */
+    NExecCommand grabAll();
 
-    NExecCommand grabErrorString();
+    NExecCommand grabOut();
+
+    /**
+     * handy method to grab output stream and silence error stream
+     *
+     * @return output stream, ignoring error stream
+     */
+    NExecCommand grabOutOnly();
+
+    NExecCommand grabErr();
+
+    /**
+     * redirects error to out, runs the command and returns out string
+     * equivalent to
+     * <code>grabAll().getGrabbedOutString()</code>
+     *
+     * @return output stream, ignoring error stream
+     */
+    String getGrabbedAllString();
+
+    /**
+     * silences error, runs the command and return out string
+     * equivalent to
+     * <code>grabOutOnly().getGrabbedOutString()</code>
+     *
+     * @return output stream, ignoring error stream
+     */
+    String getGrabbedOutOnlyString();
 
     /**
      * return grabbed output after command execution
      *
      * @return grabbed output after command execution
      */
-    String getOutputString();
+    String getGrabbedOutString();
 
     /**
      * return grabbed error after command execution
      *
      * @return grabbed error after command execution
      */
-    String getErrorString();
+    String getGrabbedErrString();
 
     /**
      * return new command error stream (standard error destination)
@@ -316,9 +349,23 @@ public interface NExecCommand extends NWorkspaceCommand {
      */
     NExecCommand setExecutionType(NExecutionType executionType);
 
+    NExecCommand system();
+
+    NExecCommand embedded();
+
+    NExecCommand spawn();
+
+    NExecCommand open();
+
     NRunAs getRunAs();
 
     NExecCommand setRunAs(NRunAs runAs);
+
+    NExecCommand sudo();
+
+    NExecCommand root();
+
+    NExecCommand currentUser();
 
     /**
      * copy all field from the given command into {@code this} instance
@@ -340,7 +387,7 @@ public interface NExecCommand extends NWorkspaceCommand {
      *
      * @return result value
      */
-    int getResult();
+    int getResultCode();
 
     /**
      * return executable information
@@ -409,19 +456,21 @@ public interface NExecCommand extends NWorkspaceCommand {
     /**
      * return host connexion string.
      * when host is not blank, this connexion string will be used to connect to a remote host for execution
+     *
      * @return host
      * @since 0.8.4
      */
-    String getTarget() ;
+    String getTarget();
 
     /**
      * update host connexion string.
      * when host is not blank, this connexion string will be used to connect to a remote host for execution
+     *
      * @param host host
      * @return {@code this} instance
      */
     NExecCommand setTarget(String host);
 
 
-    NExecCommand redirectErrorStream();
+    NExecCommand redirectErr();
 }

@@ -199,7 +199,7 @@ public class DocusaurusCtrl {
         NExecCommand.of(session)
                 .setExecutionType(NExecutionType.EMBEDDED)
                 .addCommand(cmd).setDirectory(NPath.of(workFolder, session))
-                .setFailFast(true).getResult();
+                .failFast().getResultCode();
     }
 
     private void runCommand(Path workFolder, boolean yes, String... cmd) {
@@ -211,7 +211,7 @@ public class DocusaurusCtrl {
         }
         NExecCommand.of(s).addCommand(cmd).setDirectory(NPath.of(workFolder, session))
                 .setExecutionType(NExecutionType.EMBEDDED)
-                .setFailFast(true).getResult();
+                .failFast().getResultCode();
     }
 
     private boolean deleteFolderIfFound(Path toPath, String... names) {
