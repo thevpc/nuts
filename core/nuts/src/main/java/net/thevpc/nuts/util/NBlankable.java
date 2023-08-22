@@ -88,6 +88,10 @@ public interface NBlankable {
         return NApiUtils.isBlank(value);
     }
 
+    static boolean isNonBlank(Object v) {
+        return !NApiUtils.isBlank(v);
+    }
+
     /**
      * true if blank
      *

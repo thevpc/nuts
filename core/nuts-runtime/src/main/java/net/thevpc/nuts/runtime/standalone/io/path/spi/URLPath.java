@@ -20,7 +20,10 @@ import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStream;
 import net.thevpc.nuts.web.NWebCli;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -144,7 +147,7 @@ public class URLPath implements NPathSPI {
 
     @Override
     public String getName(NPath basePath) {
-        return new NPathParts(toString(),session).getName();
+        return new NPathParts(toString(), session).getName();
     }
 
     @Override
@@ -154,7 +157,7 @@ public class URLPath implements NPathSPI {
 
     @Override
     public NPath resolve(NPath basePath, String path) {
-        if(url==null){
+        if (url == null) {
             NPathParts p = new NPathParts(toString(), session);
             String u = p.getFile();
             if (!u.endsWith("/") && !path.startsWith("/")) {
@@ -173,7 +176,7 @@ public class URLPath implements NPathSPI {
 
     @Override
     public NPath resolve(NPath basePath, NPath path) {
-        if(url==null){
+        if (url == null) {
             NPathParts p = new NPathParts(toString(), session);
             String spath = path.toString().replace("\\", "/");
             String u = p.getFile();
@@ -195,7 +198,7 @@ public class URLPath implements NPathSPI {
 
     @Override
     public NPath resolveSibling(NPath basePath, String path) {
-        if(url==null){
+        if (url == null) {
             NPathParts p = new NPathParts(toString(), session);
             String u = _parent(p.getFile());
             String spath = path.replace("\\", "/");
@@ -235,19 +238,19 @@ public class URLPath implements NPathSPI {
     @Override
     public NOptional<URL> toURL(NPath basePath) {
         if (url == null) {
-            return NOptional.ofEmpty(s->NMsg.ofC("unable to resolve url %s", toString()));
+            return NOptional.ofEmpty(s -> NMsg.ofC("unable to resolve url %s", toString()));
         }
         return NOptional.of(url);
     }
 
     @Override
     public NOptional<Path> toPath(NPath basePath) {
-        return toURL(basePath).flatMap(x->{
+        return toURL(basePath).flatMap(x -> {
             File f = _toFile(x);
             if (f != null) {
                 return NOptional.of(f.toPath());
             }
-            return NOptional.ofEmpty(s->NMsg.ofC("unable to resolve url %s", toString()));
+            return NOptional.ofEmpty(s -> NMsg.ofC("unable to resolve url %s", toString()));
         });
     }
 
@@ -277,9 +280,9 @@ public class URLPath implements NPathSPI {
     @Override
     public boolean isLocal(NPath basePath) {
         String urlString = url.toString();
-        int x=urlString.indexOf(':');
-        if(x>=0){
-            switch (urlString.substring(0,x)){
+        int x = urlString.indexOf(':');
+        if (x >= 0) {
+            switch (urlString.substring(0, x)) {
                 case "file":
                 case "classpath":
                 case "resource":
@@ -415,15 +418,22 @@ public class URLPath implements NPathSPI {
         if (url == null) {
             throw new NIOException(getSession(), NMsg.ofC("unable to resolve input stream %s", toString()));
         }
-        if("file".equals(url.getProtocol())){
+        if ("file".equals(url.getProtocol())) {
             try {
                 return Files.newInputStream(CoreIOUtils.resolveLocalPathFromURL(url));
             } catch (IOException e) {
                 throw new NIOException(getSession(), NMsg.ofC("unable to resolve input stream %s", toString()));
             }
         }
-        NWebCli best = session.extensions().createComponent(NWebCli.class, url).get();
-        return best.req().get().setUrl(url.toString()).run().getContent().getInputStream();
+        if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
+            NWebCli best = session.extensions().createComponent(NWebCli.class, url).get();
+            return best.req().get().setUrl(url.toString()).run().getContent().getInputStream();
+        }
+        try {
+            return url.openStream();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public OutputStream getOutputStream(NPath basePath, NPathOption... options) {
@@ -715,7 +725,7 @@ public class URLPath implements NPathSPI {
                 HttpURLConnection hc = (HttpURLConnection) uu;
                 hc.setRequestMethod("HEAD");
                 cc.responseCode = hc.getResponseCode();
-            }else{
+            } else {
                 cc.responseCode = 200;
             }
             cc.contentLength = uu.getContentLengthLong();
@@ -788,12 +798,12 @@ public class URLPath implements NPathSPI {
     }
 
     public NPath asFilePath(NPath basePath) {
-        return toURL(basePath).flatMap(x->{
+        return toURL(basePath).flatMap(x -> {
             File f = _toFile(x);
             if (f != null) {
                 return NOptional.of(NPath.of(f, getSession()));
             }
-            return NOptional.ofEmpty(s->NMsg.ofC("not a local file %s", toString()));
+            return NOptional.ofEmpty(s -> NMsg.ofC("not a local file %s", toString()));
         }).orNull();
     }
 
@@ -863,8 +873,8 @@ public class URLPath implements NPathSPI {
         @Override
         public int getSupportLevel(NSupportLevelContext context) {
             Object c = context.getConstraints();
-            if(c instanceof String) {
-                String path=(String) c;
+            if (c instanceof String) {
+                String path = (String) c;
                 if (path.length() > 0) {
                     char s = path.charAt(0);
                     if (Character.isAlphabetic(s)) {

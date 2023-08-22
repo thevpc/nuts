@@ -1421,4 +1421,21 @@ public class CoreIOUtils {
         }
         return md;
     }
+
+    public static boolean isHttpUrl(String s) {
+        if(s!=null){
+            s=s.toLowerCase();
+            return s.startsWith("http://") || s.startsWith("https://");
+        }
+        return false;
+    }
+
+    public static boolean isFileProtocol(String s) {
+        if(s!=null){
+            s=s.toLowerCase();
+            return s.startsWith("file://");
+        }
+        return false;
+    }
+
 }

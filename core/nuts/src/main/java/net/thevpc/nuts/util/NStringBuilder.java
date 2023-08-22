@@ -709,4 +709,38 @@ public class NStringBuilder implements CharSequence, NBlankable {
         data.append("\n");
         return this;
     }
+
+    public NStringBuilder indent(String prefix) {
+        if (prefix == null || prefix.isEmpty()) {
+            return this;
+        }
+        char[] charArray = data.toString().toCharArray();
+        boolean wasNewLine = true;
+        data.setLength(0);
+        for (int i = 0; i < charArray.length; i++) {
+            if (wasNewLine) {
+                data.append(prefix);
+            }
+            char c = charArray[i];
+            if (c == '\r') {
+                if (i + 1 < charArray.length && charArray[i + 1] == '\n') {
+                    i++;
+                    data.append('\r');
+                    data.append('\n');
+                } else {
+                    data.append('\r');
+                    data.append(prefix);
+                }
+                wasNewLine = true;
+            } else if (c == '\n') {
+                data.append('\r');
+                data.append(prefix);
+                wasNewLine = true;
+            } else {
+                data.append(c);
+                wasNewLine = false;
+            }
+        }
+        return this;
+    }
 }
