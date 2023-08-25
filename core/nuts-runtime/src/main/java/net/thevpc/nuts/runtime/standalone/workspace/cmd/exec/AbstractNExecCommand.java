@@ -363,7 +363,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
             run();
         }
         if (getOut() == null) {
-            throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("no buffer was configured; should call grabOutputString"));
+            throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("no buffer was configured; should call grabOut"));
         }
         if (getOut().getResultSource().isNotPresent()) {
             if (getOut().getType() == NRedirectType.GRAB_FILE || getOut().getType() == NRedirectType.GRAB_STREAM) {
@@ -385,7 +385,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
             run();
         }
         if (getErr() == null) {
-            throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("no buffer was configured; should call grabErrorString"));
+            throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("no buffer was configured; should call grabErr"));
         }
         if (getErr().getType() == NRedirectType.REDIRECT) {
             return getGrabbedOutString();

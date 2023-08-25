@@ -73,8 +73,8 @@ public interface NExecCommand extends NWorkspaceCommand {
 
     /**
      * when the execution returns a non zero result, an exception is
-     * thrown. Particularly, if grabOutputString is used, error exception will
-     * state the output message
+     * thrown. Particularly, if <code>grabOut</code> is used, error exception will
+     * be stated in the output message
      *
      * @param failFast failFast if true an exception will be thrown if exit code
      *                 is not zero
@@ -82,6 +82,10 @@ public interface NExecCommand extends NWorkspaceCommand {
      */
     NExecCommand setFailFast(boolean failFast);
 
+    /**
+     * equivalent to <code>failFast(true)</code>
+     * @return {@code this} instance
+     */
     NExecCommand failFast();
 
     /**
@@ -269,13 +273,17 @@ public interface NExecCommand extends NWorkspaceCommand {
 
 
     /**
-     * grub output stream while redirecting error stream to output stream.
+     * grub output stream while redirecting error stream to the grabbed output stream.
      * equivalent to <code>grabOut().redirectErr()</code>
      *
      * @return
      */
     NExecCommand grabAll();
 
+    /**
+     * grub output stream to be retrieved later using <code>getGrabbedOutString</code>.
+     * @return
+     */
     NExecCommand grabOut();
 
     /**
@@ -285,13 +293,17 @@ public interface NExecCommand extends NWorkspaceCommand {
      */
     NExecCommand grabOutOnly();
 
+    /**
+     * grub error stream to be retrieved later using <code>getGrabbedErrString</code>.
+     * @return
+     */
     NExecCommand grabErr();
 
     /**
      * redirects error to out, runs the command and returns out string
      * equivalent to
      * <code>grabAll().getGrabbedOutString()</code>
-     *
+     * if the command is already run, has no effect, and may fail if the out stream is not configured to bed grabbed.
      * @return output stream, ignoring error stream
      */
     String getGrabbedAllString();
@@ -300,14 +312,14 @@ public interface NExecCommand extends NWorkspaceCommand {
      * silences error, runs the command and return out string
      * equivalent to
      * <code>grabOutOnly().getGrabbedOutString()</code>
-     *
+     * if the command is already run, has no effect, and may fail if the out stream is not configured to bed grabbed.
      * @return output stream, ignoring error stream
      */
     String getGrabbedOutOnlyString();
 
     /**
      * return grabbed output after command execution
-     *
+     * Also runs the command if not yet run.
      * @return grabbed output after command execution
      */
     String getGrabbedOutString();

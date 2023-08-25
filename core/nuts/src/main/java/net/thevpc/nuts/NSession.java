@@ -57,6 +57,8 @@ import java.util.logging.Level;
 public interface NSession extends NCmdLineConfigurable {
     String AUTO_COMPLETE_CANDIDATE_PREFIX = "```error Candidate```: ";
 
+    Boolean getTrace(boolean inherit);
+
     /**
      * When true, operations are invited to print to output stream extra
      * information about processing. Output may be in different formats
@@ -65,6 +67,8 @@ public interface NSession extends NCmdLineConfigurable {
      * @return true if trace flag is armed
      */
     boolean isTrace();
+
+    NSession trace();
 
     /**
      * change trace flag value. When true, operations are invited to print to
@@ -137,11 +141,19 @@ public interface NSession extends NCmdLineConfigurable {
      */
     boolean isPlainOut();
 
+    Boolean getBot(boolean withDefaults);
+
     boolean isBot();
 
-    Boolean getBot();
-
     NSession setBot(Boolean bot);
+
+    NSession bot();
+
+    NSession yes();
+
+    NSession no();
+
+    NSession ask();
 
     /**
      * true if YES is armed.
@@ -165,6 +177,8 @@ public interface NSession extends NCmdLineConfigurable {
      * @return true if ASK is armed.
      */
     boolean isAsk();
+
+    NContentType getOutputFormat(boolean withDefaults);
 
     /**
      * return effective trace output format. The effective trace output format
@@ -331,6 +345,8 @@ public interface NSession extends NCmdLineConfigurable {
 
     NSession setAppId(NId appId);
 
+    NFetchStrategy getFetchStrategy(boolean withDefaults);
+
     /**
      * return current fetch strategy. When no strategy (or null strategy) was
      * set, return workspace strategy default strategy. When none defines use
@@ -412,7 +428,7 @@ public interface NSession extends NCmdLineConfigurable {
      *
      * @return defined properties
      */
-    Map<String, Object> getProperties(NScopeType scope,boolean inherit);
+    Map<String, Object> getProperties(NScopeType scope,boolean withDefaults);
 
     Map<String, Object> getProperties(NScopeType scope);
 
@@ -431,6 +447,8 @@ public interface NSession extends NCmdLineConfigurable {
      * @return return property value or null
      */
     Object getProperty(String key);
+
+    NConfirmationMode getConfirm(boolean withDefaults);
 
     /**
      * return confirmation mode or {@link NConfirmationMode#ASK}
@@ -517,6 +535,8 @@ public interface NSession extends NCmdLineConfigurable {
      */
     NWorkspace getWorkspace();
 
+    Boolean getTransitive(boolean withDefaults);
+
     /**
      * true when considering transitive repositories.
      *
@@ -532,6 +552,8 @@ public interface NSession extends NCmdLineConfigurable {
      */
     NSession setTransitive(Boolean value);
 
+    Boolean getCached(boolean withDefaults);
+
     /**
      * true when using cache
      *
@@ -546,6 +568,8 @@ public interface NSession extends NCmdLineConfigurable {
      * @return {@code this} instance
      */
     NSession setCached(Boolean value);
+
+    Boolean getIndexed(boolean withDefaults);
 
     /**
      * true when using indexes
@@ -598,6 +622,8 @@ public interface NSession extends NCmdLineConfigurable {
      */
     NSession setProgressOptions(String progressOptions);
 
+    Boolean getGui(boolean withDefaults);
+
     boolean isGui();
 
     NSession setGui(Boolean gui);
@@ -609,6 +635,8 @@ public interface NSession extends NCmdLineConfigurable {
     String getOutLinePrefix();
 
     NSession setOutLinePrefix(String outLinePrefix);
+
+    Boolean getDry(boolean withDefaults);
 
     boolean isDry();
 
@@ -643,17 +671,31 @@ public interface NSession extends NCmdLineConfigurable {
 
     NSession flush();
 
+    NExecutionType getExecutionType(boolean withDefaults);
+
     NExecutionType getExecutionType();
 
+    NSession embedded();
+
+    NSession system();
+
+    NSession spawn();
+
     NSession setExecutionType(NExecutionType executionType);
+
+    String getDebug(boolean withDefaults);
 
     String getDebug();
 
     NSession setDebug(String debug);
 
+    String getLocale(boolean withDefaults);
+
     String getLocale();
 
     NSession setLocale(String locale);
+
+    NRunAs getRunAs(boolean withDefaults);
 
     NRunAs getRunAs();
 
@@ -666,6 +708,12 @@ public interface NSession extends NCmdLineConfigurable {
     ////////////////////////////////////
     /// CONFIG
     ////////////////////////////////////
+
+    NSession sudo();
+
+    NSession root();
+
+    NSession currentUser();
 
     /**
      * @return new extension manager instance
@@ -696,7 +744,7 @@ public interface NSession extends NCmdLineConfigurable {
 
     <T> NOptional<T> getProperty(String name, NScopeType scope);
 
-    <T> NOptional<T> getProperty(String name, NScopeType scope, boolean inherit);
+    <T> NOptional<T> getProperty(String name, NScopeType scope, boolean withDefaults);
 
     NSession setAppArguments(List<String> args);
 
