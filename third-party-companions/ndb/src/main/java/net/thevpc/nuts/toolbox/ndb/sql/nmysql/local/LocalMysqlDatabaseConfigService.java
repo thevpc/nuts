@@ -2,6 +2,7 @@ package net.thevpc.nuts.toolbox.ndb.sql.nmysql.local;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.local.config.LocalMysqlDatabaseConfig;

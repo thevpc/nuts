@@ -25,6 +25,7 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.format.NFormat;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;

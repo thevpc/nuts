@@ -27,7 +27,7 @@
 package net.thevpc.nuts.format;
 
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NString;
+import net.thevpc.nuts.text.NString;
 
 /**
  * classes implementing this interface handle formatting of the tree node.

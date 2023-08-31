@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.format.tree;
 
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NString;
+import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
 
 /**

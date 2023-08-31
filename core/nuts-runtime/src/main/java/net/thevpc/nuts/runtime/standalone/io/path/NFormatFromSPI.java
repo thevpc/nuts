@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.NFormat;
+import net.thevpc.nuts.format.NFormat;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPrintStream;

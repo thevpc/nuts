@@ -26,8 +26,10 @@ package net.thevpc.nuts.runtime.standalone.text.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.format.NFormattable;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
+import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;

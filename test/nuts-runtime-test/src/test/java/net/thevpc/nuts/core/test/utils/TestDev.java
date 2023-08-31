@@ -1,6 +1,7 @@
 package net.thevpc.nuts.core.test.utils;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
 import org.junit.jupiter.api.Test;

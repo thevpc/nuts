@@ -8,6 +8,7 @@ import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.NRecommendationPhase;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.RequestQueryInfo;
+import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NBlankable;

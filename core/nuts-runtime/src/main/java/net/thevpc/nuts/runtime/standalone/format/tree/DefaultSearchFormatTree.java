@@ -11,12 +11,14 @@ import java.util.List;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.format.NTreeFormat;
 import net.thevpc.nuts.format.NTreeNodeFormat;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.NIdFormatHelper;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
+import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.text.NTexts;
 
 /**

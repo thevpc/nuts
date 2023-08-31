@@ -25,6 +25,7 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.elem.NDescribable;
 
 import java.util.List;
 

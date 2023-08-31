@@ -25,6 +25,7 @@ package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.reserved.ReservedSimpleCharQueue;
+import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;

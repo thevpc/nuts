@@ -6,6 +6,7 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.runtime.standalone.workspace.AbstractNWorkspace;
 import net.thevpc.nuts.runtime.standalone.xtra.ntalk.NTalkClient;
+import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;

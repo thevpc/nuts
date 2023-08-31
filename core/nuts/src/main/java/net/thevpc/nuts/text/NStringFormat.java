@@ -1,6 +1,6 @@
-package net.thevpc.nuts;
+package net.thevpc.nuts.text;
 
-import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NOptional;
 

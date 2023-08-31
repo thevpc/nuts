@@ -26,6 +26,8 @@
 package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.format.NFormattable;
+import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;

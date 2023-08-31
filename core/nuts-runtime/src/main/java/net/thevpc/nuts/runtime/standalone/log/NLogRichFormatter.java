@@ -4,6 +4,7 @@ package net.thevpc.nuts.runtime.standalone.log;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreTimeUtils;
+import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;

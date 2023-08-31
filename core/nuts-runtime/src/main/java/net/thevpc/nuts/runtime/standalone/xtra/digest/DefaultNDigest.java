@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.digest;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.format.NFormat;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.util.AbstractMultiReadNInputSource;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
@@ -36,6 +37,7 @@ import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.*;

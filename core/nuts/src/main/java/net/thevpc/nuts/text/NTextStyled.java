@@ -27,7 +27,6 @@
 package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NString;
 
 /**
  * @app.category Format

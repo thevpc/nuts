@@ -26,7 +26,7 @@
 package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.NFormat;
+import net.thevpc.nuts.format.NFormat;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NShellFamily;
 

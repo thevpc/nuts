@@ -27,6 +27,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.format.NContentType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

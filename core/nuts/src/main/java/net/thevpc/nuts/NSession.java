@@ -29,6 +29,7 @@ import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.cmdline.NCmdLineProcessor;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.format.NIterableFormat;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;

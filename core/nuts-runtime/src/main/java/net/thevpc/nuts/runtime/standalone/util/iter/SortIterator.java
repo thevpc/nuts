@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.util.NComparator;
-import net.thevpc.nuts.util.NDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.util.NIterator;
 
 import java.util.Iterator;

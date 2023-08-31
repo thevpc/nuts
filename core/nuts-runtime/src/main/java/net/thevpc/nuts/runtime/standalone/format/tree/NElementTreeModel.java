@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.format.tree;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NTreeModel;
+import net.thevpc.nuts.text.NString;
 
 import java.util.List;
 import java.util.Map;

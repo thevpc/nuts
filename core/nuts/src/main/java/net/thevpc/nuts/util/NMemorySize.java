@@ -4,6 +4,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NMapBy;
+import net.thevpc.nuts.format.NFormat;
+import net.thevpc.nuts.format.NFormattable;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NFormatSPI;
 

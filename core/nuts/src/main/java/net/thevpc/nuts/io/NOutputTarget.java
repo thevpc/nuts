@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.NFormattable;
+import net.thevpc.nuts.format.NFormattable;
 
 import java.io.OutputStream;
 

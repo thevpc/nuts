@@ -1,7 +1,7 @@
 package net.thevpc.nuts.time;
 
-import net.thevpc.nuts.NFormat;
-import net.thevpc.nuts.NFormattable;
+import net.thevpc.nuts.format.NFormat;
+import net.thevpc.nuts.format.NFormattable;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;

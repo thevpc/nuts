@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.env.NDesktopIntegrationItem;
+import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.format.NObjectFormat;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;

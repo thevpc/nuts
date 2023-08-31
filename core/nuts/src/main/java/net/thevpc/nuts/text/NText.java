@@ -27,8 +27,6 @@
 package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NString;
-import net.thevpc.nuts.util.NAssert;
 
 /**
  * Created by vpc on 5/23/17.

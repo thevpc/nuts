@@ -15,6 +15,8 @@ import java.util.function.Predicate;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.format.NContentType;
+import net.thevpc.nuts.format.NFormattable;
 import net.thevpc.nuts.format.NIterableFormat;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -29,6 +31,7 @@ import net.thevpc.nuts.runtime.standalone.format.tree.DefaultSearchFormatTree;
 import net.thevpc.nuts.runtime.standalone.format.xml.DefaultSearchFormatXml;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.time.NProgressFactory;

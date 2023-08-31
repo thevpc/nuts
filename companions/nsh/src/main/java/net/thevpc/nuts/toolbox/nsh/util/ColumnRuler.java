@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.nsh.util;
 
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NString;
+import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nsh.util.bundles._StringUtils;

@@ -24,58 +24,18 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.format;
 
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextBuilder;
-import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
-
-import java.io.PrintStream;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.text.NString;
 
 /**
- * @app.category Base
+ * @app.category Format
  */
-public interface NString extends NBlankable {
+public interface NFormattable {
+    NFormat formatter(NSession session);
 
-    static NString of(NMsg str, NSession session) {
-        return NTexts.of(session).ofText(str);
+    default NString format(NSession session) {
+        return formatter(session).format();
     }
-
-    static NString of(String str, NSession session) {
-        return NTexts.of(session).parse(str);
-    }
-
-    static NString ofPlain(String str, NSession session) {
-        return NTexts.of(session).ofPlain(str);
-    }
-
-    NString immutable();
-
-    /**
-     * this method removes all special "nuts print format" sequences support
-     * and returns the raw string to be printed on an
-     * ordinary {@link PrintStream}
-     *
-     * @return string without any escape sequences so that the text printed
-     * correctly on any non formatted {@link PrintStream}
-     */
-    String filteredText();
-
-    String toString();
-
-    /**
-     * text length after filtering all special characters
-     *
-     * @return effective length after filtering the text
-     */
-
-    int textLength();
-
-    NText toText();
-
-    boolean isEmpty();
-
-    NTextBuilder builder();
 }

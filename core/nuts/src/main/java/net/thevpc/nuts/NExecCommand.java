@@ -28,6 +28,7 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.Collection;

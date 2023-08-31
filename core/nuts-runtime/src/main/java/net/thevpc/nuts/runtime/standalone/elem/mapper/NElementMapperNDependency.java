@@ -6,6 +6,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
 import net.thevpc.nuts.elem.NElementType;
+import net.thevpc.nuts.text.NString;
 
 import java.lang.reflect.Type;
 

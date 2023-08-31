@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.util.iter;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.util.NDescribable;
+import net.thevpc.nuts.elem.NDescribable;
 import net.thevpc.nuts.util.NPredicates;
 
 import java.util.HashSet;

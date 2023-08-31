@@ -1,6 +1,6 @@
 //package net.thevpc.nuts.runtime.standalone.io.printstream;
 //
-//import net.thevpc.nuts.NFormat;
+//import net.thevpc.nuts.format.NFormat;
 //import net.thevpc.nuts.NSession;
 //import net.thevpc.nuts.io.*;
 //import net.thevpc.nuts.spi.NSystemTerminalBase;

@@ -28,6 +28,7 @@ import net.thevpc.nuts.cmdline.*;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.format.NIterableFormat;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;

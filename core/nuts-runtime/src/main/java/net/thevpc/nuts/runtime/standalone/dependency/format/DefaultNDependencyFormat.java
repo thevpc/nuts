@@ -10,6 +10,7 @@ import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.text.NString;
 
 @NComponentScope(NScopeType.PROTOTYPE)
 public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyFormat> implements NDependencyFormat {

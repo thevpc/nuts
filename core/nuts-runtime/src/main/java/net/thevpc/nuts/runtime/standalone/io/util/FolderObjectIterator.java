@@ -30,7 +30,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.util.iter.NIteratorBase;
-import net.thevpc.nuts.util.NDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalledRepository;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;

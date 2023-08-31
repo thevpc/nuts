@@ -8,6 +8,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.welcome;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;

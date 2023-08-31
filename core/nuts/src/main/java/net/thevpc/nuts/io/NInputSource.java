@@ -25,10 +25,9 @@
  */
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.NFormattable;
+import net.thevpc.nuts.format.NFormattable;
 
 import java.io.BufferedReader;
-import java.io.InputStream;
 import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.List;

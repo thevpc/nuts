@@ -26,6 +26,7 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.reserved.NReservedCollectionUtils;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.spi.NBootWorkspaceFactory;

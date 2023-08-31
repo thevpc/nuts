@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.format.NFormat;
+import net.thevpc.nuts.format.NFormattable;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.io.NContentMetadataProviderFormatSPI;

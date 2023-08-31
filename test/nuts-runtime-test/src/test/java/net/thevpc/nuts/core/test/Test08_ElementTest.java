@@ -36,10 +36,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.format.NObjectFormat;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTextStyled;
-import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.text.*;
 import org.junit.jupiter.api.*;
 
 /**

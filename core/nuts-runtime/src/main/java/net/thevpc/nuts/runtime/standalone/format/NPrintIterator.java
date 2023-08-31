@@ -13,7 +13,7 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NIterableFormat;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.util.iter.NIteratorBase;
-import net.thevpc.nuts.util.NDescribables;
+import net.thevpc.nuts.elem.NDescribables;
 
 /**
  *

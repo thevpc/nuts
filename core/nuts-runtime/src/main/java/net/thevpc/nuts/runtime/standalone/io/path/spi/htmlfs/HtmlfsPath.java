@@ -7,6 +7,7 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.AbstractPathSPIAdapter;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.log.NLogOp;

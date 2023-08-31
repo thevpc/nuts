@@ -27,6 +27,8 @@ package net.thevpc.nuts.elem;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.format.NContentType;
+import net.thevpc.nuts.format.NContentTypeFormat;
 import net.thevpc.nuts.format.NIterableFormat;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;

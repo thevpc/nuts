@@ -34,6 +34,7 @@ import net.thevpc.nuts.elem.NArrayElement;
 import net.thevpc.nuts.elem.NElementEntry;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
+import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.text.NTexts;
 
 /**

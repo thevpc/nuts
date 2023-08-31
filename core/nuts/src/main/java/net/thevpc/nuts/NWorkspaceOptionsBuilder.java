@@ -26,6 +26,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
+import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.util.NMsg;

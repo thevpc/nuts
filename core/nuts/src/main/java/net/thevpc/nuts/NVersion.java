@@ -25,6 +25,7 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.format.NFormattable;
 import net.thevpc.nuts.util.*;
 
 import java.io.Serializable;

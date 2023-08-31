@@ -24,14 +24,18 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.format;
 
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NSessionProvider;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NFormatSPI;
+import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NTextFormat;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NAssert;
 

@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.search;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;

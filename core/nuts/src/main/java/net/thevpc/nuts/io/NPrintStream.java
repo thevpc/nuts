@@ -28,6 +28,7 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.text.NTerminalCommand;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextStyles;

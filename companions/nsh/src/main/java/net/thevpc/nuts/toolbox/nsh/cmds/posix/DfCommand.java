@@ -27,7 +27,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds.posix;
 
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NTextFormat;
+import net.thevpc.nuts.text.NTextFormat;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;

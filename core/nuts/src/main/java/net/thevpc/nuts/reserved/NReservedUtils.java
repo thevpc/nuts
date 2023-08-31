@@ -27,6 +27,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.DefaultNBootOptionsBuilder;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.env.NOsFamily;
+import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogConfig;

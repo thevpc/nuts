@@ -25,7 +25,6 @@
  */
 package net.thevpc.nuts.format;
 
-import net.thevpc.nuts.NContentType;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 
 /**

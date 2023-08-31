@@ -1,6 +1,7 @@
 package net.thevpc.nuts.toolbox.ndb.sql.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;
 import net.thevpc.nuts.toolbox.ndb.sql.sqlbase.SqlSupport;

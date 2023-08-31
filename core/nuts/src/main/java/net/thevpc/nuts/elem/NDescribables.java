@@ -21,12 +21,10 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.util;
+package net.thevpc.nuts.elem;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.elem.NObjectElement;
+import net.thevpc.nuts.util.*;
 
 import java.util.Comparator;
 import java.util.Iterator;

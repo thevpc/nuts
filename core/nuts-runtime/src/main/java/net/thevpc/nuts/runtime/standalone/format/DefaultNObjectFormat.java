@@ -28,9 +28,7 @@ package net.thevpc.nuts.runtime.standalone.format;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.format.NObjectFormat;
-import net.thevpc.nuts.format.NTableFormat;
-import net.thevpc.nuts.format.NTreeFormat;
+import net.thevpc.nuts.format.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSessionTerminal;
@@ -38,6 +36,7 @@ import net.thevpc.nuts.runtime.standalone.format.obj.RollingFileService;
 import net.thevpc.nuts.runtime.standalone.format.plain.NFormatPlain;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.util.*;
 

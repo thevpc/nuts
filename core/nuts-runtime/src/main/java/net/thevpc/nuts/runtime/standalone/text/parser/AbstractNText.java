@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.text.parser;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.text.NImmutableString;
 import net.thevpc.nuts.runtime.standalone.text.NTextNodeWriterStringer;
+import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTexts;

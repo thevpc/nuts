@@ -6,6 +6,8 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.format.NFormat;
+import net.thevpc.nuts.format.NFormattable;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.time.NProgressEvent;
