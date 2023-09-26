@@ -1370,4 +1370,25 @@ public class DefaultNCmdLine implements NCmdLine {
             processor.onCmdAutoComplete(this.getAutoComplete(), context);
         }
     }
+
+    public NCmdLine pushBack(NArg... args) {
+        if (args != null) {
+            this.lookahead.addAll(0, Arrays.stream(args).filter(Objects::nonNull).collect(Collectors.toList()));
+        }
+        return this;
+    }
+
+    public NCmdLine pushBack(String... args) {
+        if (args != null) {
+            this.lookahead.addAll(0, Arrays.stream(args).map(x -> new DefaultNArg(x == null ? "" : x)).collect(Collectors.toList()));
+        }
+        return this;
+    }
+
+    public NCmdLine append(String... args) {
+        if (args != null) {
+            this.args.addAll(Arrays.stream(args).map(x -> x == null ? "" : x).collect(Collectors.toList()));
+        }
+        return this;
+    }
 }

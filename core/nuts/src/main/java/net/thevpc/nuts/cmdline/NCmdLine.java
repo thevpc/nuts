@@ -33,7 +33,10 @@ import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Simple Command line parser implementation. The command line supports
@@ -651,4 +654,9 @@ public interface NCmdLine extends Iterable<NArg>, NFormattable, NBlankable, NSes
 
     void process(NCmdLineProcessor processor, NCmdLineContext context);
 
+    NCmdLine pushBack(NArg... args);
+
+    NCmdLine pushBack(String... args);
+
+    NCmdLine append(String... args);
 }
