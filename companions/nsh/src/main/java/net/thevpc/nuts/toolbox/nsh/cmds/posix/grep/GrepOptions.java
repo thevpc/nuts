@@ -4,6 +4,7 @@ import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.toolbox.nsh.cmds.util.NNumberedObject;
+import net.thevpc.nuts.toolbox.nsh.cmds.util.filter.JavaExceptionWindowFilter;
 import net.thevpc.nuts.toolbox.nsh.cmds.util.filter.WindowFilterBuilder;
 import net.thevpc.nuts.toolbox.nsh.util.FileInfo;
 
@@ -36,6 +37,7 @@ class GrepOptions implements NCmdLineConfigurable {
     List<FileInfo> files = new ArrayList<>();
     List<ExpressionInfo> expressions = new ArrayList<>();
     NSession session;
+    JavaExceptionWindowFilter lastJavaExceptionWindowFilter=null;
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {

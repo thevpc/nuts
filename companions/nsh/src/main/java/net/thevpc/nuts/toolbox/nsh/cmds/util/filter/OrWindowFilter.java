@@ -32,6 +32,13 @@ public class OrWindowFilter<T> implements WindowFilter<T> {
     }
 
     @Override
+    public void prepare(List<T> all, int pivotIndex) {
+        for (WindowFilter<T> a : this.all) {
+            a.prepare(all,pivotIndex);
+        }
+    }
+
+    @Override
     public boolean accept(T line) {
         if (all.isEmpty()) {
             return true;

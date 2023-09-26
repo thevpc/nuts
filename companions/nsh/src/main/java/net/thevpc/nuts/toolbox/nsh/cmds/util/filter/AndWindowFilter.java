@@ -104,4 +104,11 @@ public class AndWindowFilter<T> implements WindowFilter<T> {
         return max;
     }
 
+    @Override
+    public void prepare(List<T> all, int pivotIndex) {
+        for (WindowFilter<T> a : this.all) {
+            a.prepare(all,pivotIndex);
+        }
+    }
+
 }

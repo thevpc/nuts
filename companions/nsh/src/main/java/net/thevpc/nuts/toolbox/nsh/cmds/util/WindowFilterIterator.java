@@ -39,11 +39,11 @@ public class WindowFilterIterator<T> implements Iterator<WindowObject<T>> {
 
     @Override
     public boolean hasNext() {
-        while(true) {
+        while (true) {
             T ll;
             if (pushedBack != null) {
                 ll = pushedBack;
-                pushedBack=null;
+                pushedBack = null;
             } else {
                 pushedBack = null;
                 T line;
@@ -91,8 +91,11 @@ public class WindowFilterIterator<T> implements Iterator<WindowObject<T>> {
                         break;
                     }
                 }
-                ret = new WindowObject<>(all, pivotIndex);
-                return true;
+                filter.prepare(all, pivotIndex);
+                if (!all.isEmpty()) {
+                    ret = new WindowObject<>(all, pivotIndex);
+                    return true;
+                }
             }
         }
     }

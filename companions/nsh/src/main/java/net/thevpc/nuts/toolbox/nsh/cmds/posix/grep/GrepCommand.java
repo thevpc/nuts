@@ -30,6 +30,7 @@ import net.thevpc.nuts.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.stream.Collectors;
 
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -82,20 +83,6 @@ public class GrepCommand extends NShellBuiltinDefault {
             return true;
         } else if ((a = cmdLine.next("-e", "--regexp").orNull()) != null) {
             //options.regexp = true;
-            return true;
-        } else if ((a = cmdLine.nextEntry("--expr", "--like").orNull()) != null) {
-            processRequireNutsOption(a, cmdLine, options);
-            options.expressions.add(
-                    new ExpressionInfo()
-                            .setPattern(a.getStringValue().get())
-                            .setIgnoreCase(options.ignoreCase)
-                            .setInvertMatch(options.invertMatch)
-                            .setWord(options.word)
-            );
-            return true;
-        } else if ((a = cmdLine.nextFlag("--summary", "-s").orNull()) != null) {
-            processRequireNutsOption(a, cmdLine, options);
-            options.summary = a.getBooleanValue().get();
             return true;
         } else if ((a = cmdLine.next("-v", "--invert-match").orNull()) != null) {
             if (a.isActive()) {
@@ -164,8 +151,40 @@ public class GrepCommand extends NShellBuiltinDefault {
             options.recursive = true;
             options.followSymbolicLinks = true;
             return true;
-        } else if ((a = cmdLine.next("--nuts").orNull()) != null) {
+        } else if (parseNutsSpecific(cmdLine, options,session)) {
+            return true;
+        } else if (cmdLine.next("-n").isPresent()) {
+            options.n = true;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private static void processRequireNutsOption(NArg a, NCmdLine cmdLine, GrepOptions options) {
+        if (!options.withNutsOptions) {
+            if (options.requireNutsOptions) {
+                cmdLine.throwUnexpectedArgument(NMsg.ofC("option can be used along with --nuts", a));
+            } else {
+                options.withNutsOptions = true;
+            }
+        }
+    }
+
+    private boolean parseNutsSpecific(NCmdLine cmdLine, GrepOptions options,NSession session) {
+        NArg a;
+        if ((a = cmdLine.next("--nuts").orNull()) != null) {
             options.withNutsOptions = true;
+            return true;
+        }else if ((a = cmdLine.nextEntry("--expr", "--like").orNull()) != null) {
+            processRequireNutsOption(a, cmdLine, options);
+            options.expressions.add(
+                    new ExpressionInfo()
+                            .setPattern(a.getStringValue().get())
+                            .setIgnoreCase(options.ignoreCase)
+                            .setInvertMatch(options.invertMatch)
+                            .setWord(options.word)
+            );
             return true;
         } else if ((a = cmdLine.nextEntry("--file-name").orNull()) != null) {
             processRequireNutsOption(a, cmdLine, options);
@@ -183,6 +202,18 @@ public class GrepCommand extends NShellBuiltinDefault {
             processRequireNutsOption(a, cmdLine, options);
             options.to = NLiteral.of(a).asLong().orElse(null);
             return true;
+        } else if ((a = cmdLine.next("--@include").orNull()) != null) {
+            processRequireNutsOption(a, cmdLine, options);
+            for (String s : NPath.of(NLiteral.of(a).asString().get(), session).getLines().collect(Collectors.toList())) {
+                s = s.trim();
+                if (!s.isEmpty()) {
+                    if (!s.startsWith("#")) {
+                        String[] found = NCmdLine.parseSystem(s, session).get().toStringArray();
+                        cmdLine.pushBack(found);
+                    }
+                }
+            }
+            return true;
         } else if ((a = cmdLine.next("--range").orNull()) != null) {
             processRequireNutsOption(a, cmdLine, options);
             NumberRangeList rl = NumberRangeList.parse(a.getStringValue().get());
@@ -192,9 +223,9 @@ public class GrepCommand extends NShellBuiltinDefault {
                 options.to = r.getTo();
             }
             return true;
-        } else if ((a = cmdLine.next("--jex", "--java-exception").orNull()) != null) {
+        } else if ((a = cmdLine.nextFlag("--summary", "-s").orNull()) != null) {
             processRequireNutsOption(a, cmdLine, options);
-            options.windowFilter.add(new JavaExceptionWindowFilter());
+            options.summary = a.getBooleanValue().get();
             return true;
         } else if ((a = cmdLine.next("--less").orNull()) != null) {
             processRequireNutsOption(a, cmdLine, options);
@@ -208,30 +239,51 @@ public class GrepCommand extends NShellBuiltinDefault {
             processRequireNutsOption(a, cmdLine, options);
             options.selectionStyle = NStringUtils.trimToNull(a.getStringValue().get(session));
             return true;
-        } else if (cmdLine.next("-n").isPresent()) {
-            options.n = true;
+        } else if (parseJex(cmdLine, options)) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
-    private static void processRequireNutsOption(NArg a, NCmdLine cmdLine, GrepOptions options) {
-        if (!options.withNutsOptions) {
-            if (options.requireNutsOptions) {
-                cmdLine.throwUnexpectedArgument(NMsg.ofC(" option can be used along with --nuts", a));
+    private boolean parseJex(NCmdLine cmdLine, GrepOptions options) {
+        NArg a;
+        if ((a = cmdLine.next("--jex", "--java-exception").orNull()) != null) {
+            processRequireNutsOption(a, cmdLine, options);
+            options.windowFilter.add(options.lastJavaExceptionWindowFilter = new JavaExceptionWindowFilter());
+            return true;
+        } else if ((a = cmdLine.nextEntry("--jex-rows").orNull()) != null) {
+            processRequireNutsOption(a, cmdLine, options);
+            if (options.lastJavaExceptionWindowFilter != null) {
+                options.lastJavaExceptionWindowFilter.setRows(a.getValue().asInt().get());
             } else {
-                options.withNutsOptions = true;
+                cmdLine.throwError(NMsg.ofPlain("expected --jex first"));
             }
+            return true;
+        } else if ((a = cmdLine.nextEntry("--jex-include").orNull()) != null) {
+            processRequireNutsOption(a, cmdLine, options);
+            if (options.lastJavaExceptionWindowFilter != null) {
+                options.lastJavaExceptionWindowFilter.getJexFilters().add(new JavaExceptionWindowFilter.JexFilter(a.getValue().asString().get(), true));
+            } else {
+                cmdLine.throwError(NMsg.ofPlain("expected --jex first"));
+            }
+            return true;
+        } else if ((a = cmdLine.nextEntry("--jex-exclude").orNull()) != null) {
+            processRequireNutsOption(a, cmdLine, options);
+            if (options.lastJavaExceptionWindowFilter != null) {
+                options.lastJavaExceptionWindowFilter.getJexFilters().add(new JavaExceptionWindowFilter.JexFilter(a.getValue().asString().get(), true));
+            } else {
+                cmdLine.throwError(NMsg.ofPlain("expected --jex first"));
+            }
+            return true;
         }
+        return false;
     }
 
     @Override
     protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         GrepOptions options = context.getOptions();
-        GrepService service=new GrepService();
-        service.run(options,context.getSession());
-
+        GrepService service = new GrepService();
+        service.run(options, context.getSession());
     }
 
 

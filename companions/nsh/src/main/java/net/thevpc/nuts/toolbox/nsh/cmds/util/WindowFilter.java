@@ -38,4 +38,8 @@ public interface WindowFilter<T> {
     boolean accept(T line);
 
     WindowFilter<T> copy();
+
+    default void prepare(List<T> all, int pivotIndex) {
+
+    }
 }
