@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NNameFormat {
-    public static final NNameFormat LOWER_CAMEL_CASE = new NNameFormat(NWordFormat.UNCAPITALIZED, NWordFormat.CAPITALIZED, null);
+    public static final NNameFormat LOWER_CAMEL_CASE = new NNameFormat(NWordFormat.LOWERCASE, NWordFormat.CAPITALIZED, null);
     public static final NNameFormat UPPER_CAMEL_CASE = new NNameFormat(NWordFormat.CAPITALIZED, NWordFormat.CAPITALIZED, null);
     public static final NNameFormat CAMEL_CASE = UPPER_CAMEL_CASE;
     public static final NNameFormat LOWER_KEBAB_CASE = new NNameFormat(NWordFormat.LOWERCASE, NWordFormat.LOWERCASE, "-");
@@ -21,7 +21,7 @@ public class NNameFormat {
     public static final NNameFormat SPACE_CASE = LOWER_SPACE_CASE;
 
     public static final NNameFormat UPPER_TITLE_CASE = new NNameFormat(NWordFormat.CAPITALIZED, NWordFormat.CAPITALIZED, " ");
-    public static final NNameFormat LOWER_TITLE_CASE = new NNameFormat(NWordFormat.CAPITALIZED, NWordFormat.UNCAPITALIZED, " ");
+    public static final NNameFormat LOWER_TITLE_CASE = new NNameFormat(NWordFormat.CAPITALIZED, NWordFormat.LOWERCASE, " ");
     public static final NNameFormat TITLE_CASE = UPPER_TITLE_CASE;
 
     public static final NNameFormat TITLE_NAME = TITLE_CASE;
