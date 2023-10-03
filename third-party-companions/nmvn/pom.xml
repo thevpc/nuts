@@ -24,7 +24,7 @@
         <resolverVersion>1.1.0</resolverVersion>
         <wagonVersion>3.3.2</wagonVersion>
         <sisuInjectVersion>0.3.4</sisuInjectVersion>
-        <mavenMinimalVersion>3.5.4</mavenMinimalVersion>
+        <mavenMinimalVersion>3.8.1</mavenMinimalVersion>
     </properties>
     <scm>
         <connection>scm:git:git://github.com/thevpc/nuts.git</connection>
