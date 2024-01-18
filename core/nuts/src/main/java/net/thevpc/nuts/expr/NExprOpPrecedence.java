@@ -43,4 +43,5 @@ public final class NExprOpPrecedence {
     public static int BRACKETS = PARS;
     public static int BRACES = PARS;
     public static int DOT = PARS;
+    public static int STATEMENT_SEPARATOR = 50;
 }

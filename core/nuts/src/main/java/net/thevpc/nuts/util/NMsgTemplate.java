@@ -192,7 +192,7 @@ public class NMsgTemplate {
                                             break;
                                         }
                                         c = (char) i;
-                                        if (NMsg._isValidMessageVar(c)) {
+                                        if (NMsgVarTextParser.isValidMessageVar(c)) {
                                             n.append(c);
                                         } else {
                                             r.reset();

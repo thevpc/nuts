@@ -121,5 +121,8 @@ public interface NWebRequest {
 
     NWebRequest addPart(String name, String fileName,String contentType, NInputSource body);
 
+    String getEffectiveUrl();
+
     NWebResponse run();
+
 }

@@ -1,4 +1,4 @@
-package net.thevpc.nuts.runtime.standalone.xtra.expr;
+package net.thevpc.nuts.expr;
 
 import net.thevpc.nuts.util.NQuoteType;
 import net.thevpc.nuts.util.NStringUtils;
@@ -57,6 +57,9 @@ public class NToken {
     public static final int TT_NOT_LIKE = -60;
     public static final int TT_LIKE2 = -62;
     public static final int TT_LIKE3 = -63;
+    public static final int TT_DOLLAR = -64;
+    public static final int TT_DOLLAR_BRACE = -65;
+    public static final int TT_DEFAULT = Integer.MIN_VALUE;
 
 
     public static final int TT_EQ = '=';
@@ -76,13 +79,50 @@ public class NToken {
     public int ttype;
     public int lineno;
     public String sval;
+    public String image;
+    public String ttypeString;
     public Number nval;
 
-    public NToken(int ttype, String sval, Number nval, int lineno) {
+    public static NToken ofSpecial(int ttype, String sval,int lineno) {
+        String ttypeString;
+        switch (ttype){
+            case '\t': {
+                ttypeString="'\\t'";
+                break;
+            }
+            case '\f': {
+                ttypeString = "'\\f'";
+                break;
+            }
+            default: {
+                if (ttype >= 32) {
+                    ttypeString= "'" + (char) ttype + "'";
+                }else {
+                    ttypeString= String.valueOf(ttype);
+                }
+            }
+        }
+        return new NToken(ttype, sval, 0, lineno, sval, ttypeString);
+    }
+    public static NToken ofChar(char ttype, int lineno) {
+        String sval = String.valueOf((char) ttype);
+        return new NToken(ttype, sval, 0, lineno, sval, "'" + sval + "'");
+    }
+    public static NToken ofStr(int ttype, String sval,String ttypeString,int lineno) {
+        return new NToken(ttype, sval, 0, lineno, sval, ttypeString);
+    }
+
+    public static NToken of(int ttype, String sval, Number nval, int lineno, String image, String ttypeString) {
+        return new NToken(ttype, sval, nval, lineno, image, ttypeString);
+    }
+
+    public NToken(int ttype, String sval, Number nval, int lineno, String image, String ttypeString) {
         this.ttype = ttype;
         this.sval = sval;
         this.nval = nval;
         this.lineno = lineno;
+        this.image = image;
+        this.ttypeString = ttypeString;
     }
 
 
@@ -196,6 +236,7 @@ public class NToken {
     }
 
     public String toString() {
+        String ts=ttypeString==null?typeString(ttype):ttypeString;
         return "NutsToken{" +
                 "ttype=" + typeString(ttype) +
                 ", lineno=" + lineno +

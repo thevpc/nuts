@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.logging.Level;
 
 public class ProgressOptions {
-    public static NStringMapFormat COMMAS_FORMAT = new NStringMapFormat("=", ",; ", "", true);
+    public static NStringMapFormat COMMAS_FORMAT = NStringMapFormat.of("=", ",;", "", true);
 
     public static ProgressOptions of(NSession session) {
         return session.getOrComputeProperty(ProgressOptions.class.getName(), NScopeType.SESSION, s -> {

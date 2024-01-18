@@ -9,7 +9,9 @@ public enum NExprNodeType implements NEnum {
     FUNCTION,
     OPERATOR,
     WORD,
-    LITERAL;
+    LITERAL,
+    IF,
+    ;
     private final String id;
 
     NExprNodeType() {
@@ -33,6 +35,8 @@ public enum NExprNodeType implements NEnum {
                 case "LIT":
                 case "LITERAL":
                     return NOptional.of(LITERAL);
+                case "IF":
+                    return NOptional.of(IF);
             }
             return null;
         });

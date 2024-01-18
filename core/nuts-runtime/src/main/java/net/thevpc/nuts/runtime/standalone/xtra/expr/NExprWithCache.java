@@ -6,7 +6,7 @@ import net.thevpc.nuts.expr.NExprOpType;
 
 import java.util.*;
 
-class NExprWithCache {
+public class NExprWithCache {
     NExprDeclarations evaluator;
     int[] precedences;
 

@@ -34,6 +34,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
         addDefaultOp(new MinusFctNode(), "minus", "-");
         addDefaultOp(new MulFctNode(), "multiply", "mul", "*");
         addDefaultOp(new DivFctNode(), "divide", "div", "/");
+        addDefaultOp(new SemiCommaFctNode(";", NExprOpPrecedence.STATEMENT_SEPARATOR), ";");
         addDefaultOp(new ParsFctNode(), "(");
         addDefaultOp(new BracketsFctNode(), "[");
         addDefaultOp(new BracesFctNode(), "{");

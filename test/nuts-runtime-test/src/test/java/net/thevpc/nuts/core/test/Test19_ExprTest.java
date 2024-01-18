@@ -24,7 +24,7 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.expr.*;
-import net.thevpc.nuts.runtime.standalone.xtra.expr.NToken;
+import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StreamTokenizerExt;
@@ -159,4 +159,38 @@ public class Test19_ExprTest {
     }
 
 
+    @Test
+    public void test6() throws Exception {
+        NExprDeclarations expr = NExpr.of(session).newDeclarations(true);
+//        _retain(expr,"infix:+");
+        NExprNode n = expr.parse("if (a) 'hello' else 'hella'").get();
+        Assertions.assertEquals(NExprNodeType.IF, n.getType());
+        TestUtils.println(n);
+    }
+
+    @Test
+    public void test7() throws Exception {
+        NExprDeclarations expr = NExpr.of(session).newDeclarations(true);
+//        _retain(expr,"infix:+");
+        NExprNode n = expr.parse("if (a) 'hello' else {'hella'};x=3").get();
+//        Assertions.assertEquals(NExprNodeType.IF, n.getType());
+        TestUtils.println(n);
+    }
+    @Test
+    public void test8() throws Exception {
+        NExprDeclarations expr = NExpr.of(session).newDeclarations(true);
+//        _retain(expr,"infix:+");
+        NExprNode n = expr.parse("printChunk(0);;;;\n").get();
+//        Assertions.assertEquals(NExprNodeType.IF, n.getType());
+        TestUtils.println(n);
+    }
+
+    @Test
+    public void test9() throws Exception {
+        NExprDeclarations expr = NExpr.of(session).newDeclarations(true);
+//        _retain(expr,"infix:+");
+        NExprNode n = expr.parse("printChunk(0);;printChunk(0);;printChunk(0)\n").get();
+//        Assertions.assertEquals(NExprNodeType.IF, n.getType());
+        TestUtils.println(n);
+    }
 }

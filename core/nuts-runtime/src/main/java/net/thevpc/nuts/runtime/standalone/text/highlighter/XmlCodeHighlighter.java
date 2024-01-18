@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.text.highlighter;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.collections.EvictingQueue;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StreamTokenizerExt;
-import net.thevpc.nuts.runtime.standalone.xtra.expr.NToken;
+import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;

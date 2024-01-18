@@ -27,13 +27,13 @@
 package net.thevpc.nuts.util;
 
 import java.io.IOException;
-import java.io.Reader;
+import java.io.PushbackReader;
 import java.io.StringReader;
 import java.util.*;
 
 public class NStringMapFormat {
-    public static NStringMapFormat URL_FORMAT = new NStringMapFormat("=", "&", "?", true);
-    public static NStringMapFormat COMMA_FORMAT = new NStringMapFormat("=", ",", "", true);
+    public static NStringMapFormat URL_FORMAT = NStringMapFormat.of("=", "&", "?", true);
+    public static NStringMapFormat COMMA_FORMAT = NStringMapFormat.of("=", ",", "", true);
     public static NStringMapFormat DEFAULT = URL_FORMAT;
 
     private final String equalsChars;
@@ -51,84 +51,170 @@ public class NStringMapFormat {
      */
     public NStringMapFormat(String equalsChars, String separatorChars, String escapeChars, boolean sort) {
         this.sort = sort;
-        if (NBlankable.isBlank(equalsChars)) {
-            throw new IllegalArgumentException("missing equal separators");
+        if (equalsChars != null) {
+            for (char c : equalsChars.toCharArray()) {
+                if (isWhitespace(c)) {
+                    throw new IllegalArgumentException("eq chars could not include whitespaces");
+                }
+            }
         }
-        if (NBlankable.isBlank(separatorChars)) {
-            throw new IllegalArgumentException("missing entry separators");
+        if (escapeChars != null) {
+            for (char c : escapeChars.toCharArray()) {
+                if (isWhitespace(c)) {
+                    throw new IllegalArgumentException("eq chars could not include whitespaces");
+                }
+            }
         }
-        this.equalsChars = equalsChars;
-        this.separatorChars = separatorChars;
+        if (separatorChars != null) {
+            for (char c : separatorChars.toCharArray()) {
+                if (isWhitespace(c)) {
+                    throw new IllegalArgumentException("eq chars could not include whitespaces");
+                }
+            }
+        }
+        this.equalsChars = equalsChars == null ? "" : equalsChars;
+        this.separatorChars = separatorChars == null ? "" : separatorChars;
         this.escapeChars = escapeChars == null ? "" : escapeChars;
     }
 
-    /**
-     * copied from StringUtils (in order to remove dependency)
-     *
-     * @param reader     reader
-     * @param stopTokens stopTokens
-     * @param result     result
-     * @return next token
-     * @throws IOException IOException
-     */
-    private static int readToken(Reader reader, String stopTokens, String escapedTokens, StringBuilder result) throws IOException {
-        while (true) {
-            int r = reader.read();
-            if (r == -1) {
-                return -1;
+    private enum TokenType {
+        DOUBLE_QUOTED,
+        SIMPLE_QUOTED,
+        WORD,
+        EQ,
+        SEP;
+
+        boolean isAnyWord() {
+            return this == DOUBLE_QUOTED || this == SIMPLE_QUOTED || this == WORD;
+        }
+    }
+
+    private static class TokenConfig {
+        String eqChars;
+        String sepChars;
+        String escapeChars;
+
+        public String getEqChars() {
+            return eqChars;
+        }
+
+        public TokenConfig setEqChars(String eqChars) {
+            this.eqChars = eqChars;
+            return this;
+        }
+
+        public String getSepChars() {
+            return sepChars;
+        }
+
+        public TokenConfig setSepChars(String sepChars) {
+            this.sepChars = sepChars;
+            return this;
+        }
+
+        public String getEscapeChars() {
+            return escapeChars;
+        }
+
+        public TokenConfig setEscapeChars(String escapeChars) {
+            this.escapeChars = escapeChars;
+            return this;
+        }
+    }
+
+    private static class Token {
+        TokenType type;
+        String value;
+
+        public Token(TokenType type, String value) {
+            this.type = type;
+            this.value = value;
+        }
+    }
+
+    private static Token readToken(PushbackReader reader, TokenConfig conf) throws IOException {
+        String escapedTokens = conf.getEscapeChars();
+        String eqChars = conf.getEqChars();
+        String sepChars = conf.getSepChars();
+        StringBuilder result = new StringBuilder();
+        int r = reader.read();
+        if (r == -1) {
+            return null;
+        }
+        char r1 = (char) r;
+        if (isWhitespace(r1)) {
+            while (true) {
+                r = reader.read();
+                if (r == -1) {
+                    return null;
+                }
+                if (!isWhitespace((char) r)) {
+                    r1 = (char) r;
+                    break;
+                }
             }
-            if (r == '\"' || r == '\'') {
-                char cr = (char) r;
-                while (true) {
+        } else if (eqChars.indexOf(r1) >= 0) {
+            return new Token(TokenType.EQ, String.valueOf(r1));
+        } else if (sepChars.indexOf(r1) >= 0) {
+            return new Token(TokenType.SEP, String.valueOf(r1));
+        }
+        if (r == '\"' || r == '\'') {
+            char cr = (char) r;
+            while (true) {
+                r = reader.read();
+                if (r == -1) {
+                    throw new RuntimeException("Expected " + cr);
+                }
+                if (r == cr) {
+                    return new Token(cr == '\"' ? TokenType.SIMPLE_QUOTED : TokenType.DOUBLE_QUOTED, result.toString());
+                }
+                if (r == '\\') {
                     r = reader.read();
                     if (r == -1) {
                         throw new RuntimeException("Expected " + cr);
                     }
-                    if (r == cr) {
-                        break;
-                    }
-                    if (r == '\\') {
-                        r = reader.read();
-                        if (r == -1) {
-                            throw new RuntimeException("Expected " + cr);
+                    switch ((char) r) {
+                        case 'n': {
+                            result.append('\n');
+                            break;
                         }
-                        switch ((char) r) {
-                            case 'n': {
-                                result.append('\n');
-                                break;
-                            }
-                            case 'r': {
-                                result.append('\r');
-                                break;
-                            }
-                            case 'f': {
-                                result.append('\f');
-                                break;
-                            }
-                            case 't': {
-                                result.append('\t');
-                                break;
-                            }
-                            default: {
-                                result.append('\\');
-                                result.append((char) r);
-                            }
+                        case 'r': {
+                            result.append('\r');
+                            break;
                         }
-                    } else {
-                        result.append((char) r);
+                        case 'f': {
+                            result.append('\f');
+                            break;
+                        }
+                        case 't': {
+                            result.append('\t');
+                            break;
+                        }
+                        default: {
+                            result.append('\\');
+                            result.append((char) r);
+                        }
                     }
+                } else {
+                    result.append((char) r);
                 }
-            } else {
+            }
+        } else {
+            reader.unread(r);
+            while (true) {
+                r = reader.read();
+                if (r < 0) {
+                    return new Token(TokenType.WORD, result.toString());
+                }
                 char cr = (char) r;
                 if (r == '\\') {
                     r = reader.read();
                     if (r == -1) {
                         result.append(cr);
+                        return new Token(TokenType.WORD, result.toString());
                     } else {
-                        if (stopTokens.indexOf(r) >= 0) {
-                            result.append((char) r);
-                        } else if (escapedTokens.indexOf(r) >= 0) {
-                            result.append((char) r);
+                        if (escapedTokens.indexOf(cr) >= 0) {
+                            result.append(cr);
                         } else {
                             switch ((char) r) {
                                 case ' ': {
@@ -153,19 +239,23 @@ public class NStringMapFormat {
                                 }
                                 default: {
                                     result.append('\\');
-                                    result.append((char) r);
+                                    result.append(cr);
                                 }
                             }
                         }
                     }
-                } else if (stopTokens.indexOf(cr) >= 0) {
-                    return cr;
+                } else if (escapedTokens.indexOf(cr) >= 0) {
+                    result.append(cr);
+                } else if (isWhitespace(cr) || eqChars.indexOf(cr) >= 0 || sepChars.indexOf(cr) >= 0) {
+                    reader.unread(cr);
+                    return new Token(TokenType.WORD, result.toString());
                 } else {
                     result.append(cr);
                 }
             }
         }
     }
+
 
     /**
      * copied from StringUtils (in order to remove dependency)
@@ -175,10 +265,10 @@ public class NStringMapFormat {
      */
     public NOptional<Map<String, String>> parse(String text) {
         NOptional<Map<String, List<String>>> d = parseDuplicates(text);
-        return d.map(x->{
-            Map<String,String> r=new HashMap<>();
+        return d.map(x -> {
+            Map<String, String> r = new HashMap<>();
             for (Map.Entry<String, List<String>> e : x.entrySet()) {
-                r.put(e.getKey(),e.getValue().get(e.getValue().size()-1));
+                r.put(e.getKey(), e.getValue().get(e.getValue().size() - 1));
             }
             return r;
         });
@@ -195,53 +285,114 @@ public class NStringMapFormat {
         if (NBlankable.isBlank(text)) {
             return NOptional.of(m);
         }
-        StringReader reader = new StringReader(text);
-        String sepAndEsc = separatorChars + escapeChars;
-        String eqAndSep = equalsChars + separatorChars;
-        String eqAndEsc = equalsChars + escapeChars;
+        PushbackReader reader = new PushbackReader(new StringReader(text));
+        TokenConfig conf = new TokenConfig()
+                .setSepChars(separatorChars)
+                .setEqChars(equalsChars)
+                .setEscapeChars(escapeChars);
+        List<Token> tokens = new ArrayList<>();
         while (true) {
-            StringBuilder key = new StringBuilder();
-            int r = 0;
+            Token r = null;
             try {
-                r = readToken(reader, eqAndSep, sepAndEsc, key);
+                r = readToken(reader, conf);
             } catch (IOException e) {
                 return NOptional.ofError(x -> NMsg.ofPlain("failed to read token"), e);
             }
-            String t = key.toString();
-            if (r == -1) {
-                if (!t.isEmpty()) {
-                    m.computeIfAbsent(t,v->new ArrayList<>()).add(null);
-                }
-                break;
+            if (r != null) {
+                tokens.add(r);
             } else {
-                char c = (char) r;
-                if (equalsChars.indexOf(c) >= 0) {
-                    StringBuilder value = new StringBuilder();
-                    try {
-                        r = readToken(reader, separatorChars, eqAndEsc, value);
-                    } catch (IOException e) {
-                        return NOptional.ofError(x -> NMsg.ofPlain("failed to read token"), e);
-                    }
-                    m.computeIfAbsent(t,v->new ArrayList<>()).add(value.toString());
-                    if (r == -1) {
-                        break;
-                    }
-                } else if (separatorChars.indexOf(c) >= 0) {
-                    //this is a key without a value
-                    m.computeIfAbsent(t,v->new ArrayList<>()).add(null);
-                } else {
-                    //
-                }
+                break;
+            }
+        }
+        if (skipSeparator(tokens, conf)) {
+            m.computeIfAbsent(null, v -> new ArrayList<>()).add(null);
+        }
+        while (true) {
+            skipSeparator(tokens, conf);
+            Map.Entry<String, String> u;
+            if ((u = readEntry(tokens, conf)) != null) {
+                m.computeIfAbsent(u.getKey(), v -> new ArrayList<>()).add(u.getValue());
+            } else {
+                break;
             }
         }
         return NOptional.of(m);
     }
 
+    private static boolean skipSeparator(List<Token> tokens, TokenConfig conf) {
+        if (!tokens.isEmpty()) {
+            if (tokens.get(0).type == TokenType.SEP) {
+                tokens.remove(0);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static Map.Entry<String, String> readEntry(List<Token> tokens, TokenConfig conf) {
+        if (!tokens.isEmpty()) {
+            if (tokens.get(0).type.isAnyWord()) {
+                String k = tokens.remove(0).value;
+                if (!tokens.isEmpty()) {
+                    if (tokens.get(0).type == TokenType.EQ) {
+                        tokens.remove(0);
+                        if (!tokens.isEmpty()) {
+                            if (tokens.get(0).type.isAnyWord()) {
+                                Token v = tokens.remove(0);
+                                return new AbstractMap.SimpleEntry<>(k, v.value);
+                            } else {
+                                return new AbstractMap.SimpleEntry<>(k, null);
+                            }
+                        } else {
+                            return new AbstractMap.SimpleEntry<>(k, null);
+                        }
+                    } else if (tokens.get(0).type == TokenType.SEP) {
+                        tokens.remove(0);
+                        return new AbstractMap.SimpleEntry<>(k, null);
+                    } else if (conf.getEqChars().isEmpty() && tokens.get(0).type.isAnyWord()) {
+                        String v = tokens.remove(0).value;
+                        return new AbstractMap.SimpleEntry<>(k, v);
+                    } else {
+                        return new AbstractMap.SimpleEntry<>(k, null);
+                    }
+                } else {
+                    return new AbstractMap.SimpleEntry<>(k, null);
+                }
+            } else if (tokens.get(0).type == TokenType.SEP) {
+                tokens.remove(0);
+                return new AbstractMap.SimpleEntry<>(null, null);
+            } else if (tokens.get(0).type == TokenType.EQ) {
+                tokens.remove(0);
+                if (!tokens.isEmpty()) {
+                    if (tokens.get(0).type.isAnyWord()) {
+                        Token v = tokens.remove(0);
+                        return new AbstractMap.SimpleEntry<>(null, v.value);
+                    } else {
+                        return new AbstractMap.SimpleEntry<>(null, null);
+                    }
+                } else {
+                    return new AbstractMap.SimpleEntry<>(null, null);
+                }
+            } else {
+                return new AbstractMap.SimpleEntry<>(null, null);
+            }
+        } else {
+            return null;
+        }
+    }
+
+    private static boolean isWhitespace(char c) {
+        if (c <= 32) {
+            return true;
+        }
+        return Character.isWhitespace(c);
+    }
+
     public String format(Map<String, String> map) {
         if (map != null) {
-            Map<String, List<String>> map2=new HashMap<>();
+            Map<String, List<String>> map2 = new HashMap<>();
             for (Map.Entry<String, String> e : map.entrySet()) {
-                map2.put(e.getKey(),Arrays.asList(e.getValue()));
+                map2.put(e.getKey(), Arrays.asList(e.getValue()));
             }
             return formatDuplicates(map2);
         }

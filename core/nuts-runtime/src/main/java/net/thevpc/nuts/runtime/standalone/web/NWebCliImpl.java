@@ -111,10 +111,7 @@ public class NWebCliImpl implements NWebCli {
         return null;
     }
 
-    public NWebResponse run(NWebRequest r) {
-        NAssert.requireNonNull(r, "request");
-        NAssert.requireNonNull(r.getMethod(), "method");
-        NHttpMethod method = r.getMethod();
+    public String formatURL(NWebRequest r,boolean safe){
         String p = r.getUrl();
         StringBuilder u = new StringBuilder();
         if (prefix == null || p.startsWith("http:") || p.startsWith("https:")) {
@@ -132,13 +129,17 @@ public class NWebCliImpl implements NWebCli {
         }
         String bu = u.toString().trim();
         if (bu.isEmpty() || bu.equals("/")) {
-            throw new IllegalArgumentException("missing url : " + bu);
+            if(!safe) {
+                throw new IllegalArgumentException("missing url : " + bu);
+            }
         }
         if (
                 !bu.startsWith("http://")
                         && !bu.startsWith("https://")
         ) {
-            throw new IllegalArgumentException("unsupported url : " + bu);
+            if(!safe) {
+                throw new IllegalArgumentException("unsupported url : " + bu);
+            }
         }
 
         if (r.getParameters() != null && r.getParameters().size() > 0) {
@@ -166,8 +167,15 @@ public class NWebCliImpl implements NWebCli {
                 }
             }
         }
+        return u.toString();
+    }
+    public NWebResponse run(NWebRequest r) {
+        NAssert.requireNonNull(r, "request");
+        NAssert.requireNonNull(r.getMethod(), "method");
+        NHttpMethod method = r.getMethod();
+
         try {
-            URL h = new URL(u.toString());
+            URL h = new URL(formatURL(r,false));
             HttpURLConnection uc = null;
             try {
                 uc = (HttpURLConnection) h.openConnection();

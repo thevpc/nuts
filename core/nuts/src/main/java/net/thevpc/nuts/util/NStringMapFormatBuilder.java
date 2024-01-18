@@ -59,6 +59,6 @@ public class NStringMapFormatBuilder {
     }
 
     public NStringMapFormat build() {
-        return new NStringMapFormat(equalsChars, separatorChars, escapeChars, sort);
+        return NStringMapFormat.of(equalsChars, separatorChars, escapeChars, sort);
     }
 }

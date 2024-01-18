@@ -581,5 +581,14 @@ public class NWebRequestImpl implements NWebRequest {
     public NWebResponse run() {
         return cli.run(this);
     }
+
+    public String getEffectiveUrl(){
+        return cli.formatURL(this,true);
+    }
+
+    @Override
+    public String toString() {
+        return getEffectiveUrl();
+    }
 }
 
