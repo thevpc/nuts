@@ -15,12 +15,11 @@ public class NMsgVarTextParser {
                     switch (t.ttype) {
                         case NToken.TT_DOLLAR:
                         case NToken.TT_DOLLAR_BRACE: {
-                            String mm = t.sval;
                             String x = m.apply(t.sval);
                             if (x == null) {
                                 throw new IllegalArgumentException("var not found " + t.sval);
                             }
-                            return mm;
+                            return x;
                         }
                     }
                     return t.sval;
