@@ -17,7 +17,7 @@ import java.util.List;
 public class NutsBuildRunner extends AbstractRunner {
     private boolean keepStamp = false;
     private boolean updateVersion = false;
-    private boolean publishNutsPreview = false;
+    private boolean publishNutsPreview = true;
     private Boolean productionMode = null;
     private String home = System.getProperty("user.home");
     private String user = System.getProperty("user.name");
@@ -82,7 +82,7 @@ public class NutsBuildRunner extends AbstractRunner {
     }
 
     private boolean isAnyNutsArmed() {
-        return publishNutsPreview;
+        return true;//publishNutsPreview;
     }
 
     private void runNutsPublishPreview() {
