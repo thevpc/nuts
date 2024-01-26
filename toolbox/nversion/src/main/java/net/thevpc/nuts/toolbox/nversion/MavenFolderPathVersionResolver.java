@@ -49,14 +49,14 @@ public class MavenFolderPathVersionResolver implements PathVersionResolver {
                         .setDescriptorStyle(NDescriptorStyle.MAVEN)
                         .parse(inputStream).get(session);
 
-                properties.put("groupId", d.getId().getGroupId());
-                properties.put("artifactId", d.getId().getArtifactId());
-                properties.put("version", d.getId().getVersion());
-                properties.put("name", d.getName());
+                putNonNull(properties,"groupId", d.getId().getGroupId());
+                putNonNull(properties,"artifactId", d.getId().getArtifactId());
+                putNonNull(properties,"version", d.getId().getVersion());
+                putNonNull(properties,"name", d.getName());
                 properties.setProperty("nuts.version-provider", "maven");
                 if (d.getProperties() != null) {
                     for (NDescriptorProperty e : d.getProperties()) {
-                        properties.put("property." + e.getName(), e.getValue());
+                        putNonNull(properties,"property." + e.getName(), e.getValue());
                     }
                 }
                 all.add(new VersionDescriptor(
@@ -65,11 +65,17 @@ public class MavenFolderPathVersionResolver implements PathVersionResolver {
                                 .build(),
                         properties));
             } catch (Exception e) {
-                //e.printStackTrace();
+//                e.printStackTrace();
             }
             return all;
         } else {
             return null;
         }
+    }
+    private void putNonNull(Properties p,String s,Object v){
+        if(s==null || v==null){
+            return;
+        }
+        p.put(s,v.toString());
     }
 }
