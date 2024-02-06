@@ -95,9 +95,11 @@ public interface NWebRequest {
 
     String getContentLanguage();
 
+    NWebRequest setFormUrlEncoded(Map<String,String> m) ;
+
     String getContentType();
 
-    NWebRequest setContentTypeForm();
+    NWebRequest setContentTypeFormUrlEncoded();
 
     NWebRequest setContentType(String contentType);
 

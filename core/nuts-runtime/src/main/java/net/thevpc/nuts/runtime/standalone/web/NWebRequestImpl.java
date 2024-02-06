@@ -9,6 +9,8 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.web.*;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.*;
 
 public class NWebRequestImpl implements NWebRequest {
@@ -513,8 +515,35 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     @Override
-    public NWebRequest setContentTypeForm() {
+    public NWebRequest setContentTypeFormUrlEncoded() {
         return setContentType("application/x-www-form-urlencoded");
+    }
+
+    @Override
+    public NWebRequest setFormUrlEncoded(Map<String,String> m) {
+        setContentTypeFormUrlEncoded();
+        StringBuilder sb=new StringBuilder();
+        if(m!=null){
+            boolean first=true;
+            for (Map.Entry<String, String> e : m.entrySet()) {
+                if(first){
+                    first=false;
+                }else{
+                    sb.append("&");
+                }
+                try {
+                    sb
+                            .append(URLEncoder.encode(NStringUtils.trim(e.getKey()),"UTF-8"))
+                            .append("=")
+                            .append(URLEncoder.encode(NStringUtils.trim(e.getValue()),"UTF-8"))
+                            ;
+                } catch (UnsupportedEncodingException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+        setBody(sb.toString().getBytes());
+        return this;
     }
 
     @Override

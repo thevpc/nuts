@@ -10,6 +10,7 @@ import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NStringUtils;
 import net.thevpc.nuts.web.*;
 
 import java.io.IOException;
@@ -236,7 +237,7 @@ public class NWebCliImpl implements NWebCli {
                 }
                 NWebResponse httpResponse = new NWebResponseImpl(
                         uc.getResponseCode(),
-                        NMsg.ofPlain(uc.getResponseMessage()),
+                        NMsg.ofPlain(NStringUtils.trim(uc.getResponseMessage())),
                         uc.getHeaderFields(),
                         bytes,
                         session
