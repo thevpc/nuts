@@ -349,6 +349,34 @@ public class NMsg {
         );
     }
 
+    public NMsg asSevere(){
+        return withLevel(Level.SEVERE);
+    }
+
+    public NMsg asInfo(){
+        return withLevel(Level.FINE);
+    }
+
+    public NMsg asConfig(){
+        return withLevel(Level.CONFIG);
+    }
+
+    public NMsg asWarning(){
+        return withLevel(Level.WARNING);
+    }
+
+    public NMsg asFinest(){
+        return withLevel(Level.FINEST);
+    }
+
+    public NMsg asFine(){
+        return withLevel(Level.FINE);
+    }
+
+    public NMsg asFiner(){
+        return withLevel(Level.FINER);
+    }
+
     public NMsg withLevel(Level level) {
         return of(format, message, params, styles, codeLang, level);
     }

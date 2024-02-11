@@ -1224,7 +1224,7 @@ public class DefaultNWorkspaceConfigModel {
 
     private NClassLoaderNode searchBootNode(NId id, NSession session) {
         NBootManager boot = NBootManager.of(session);
-        List<NClassLoaderNode> all = new ArrayList();
+        List<NClassLoaderNode> all = new ArrayList<>();
         all.add(boot.getBootRuntimeClassLoaderNode());
         all.addAll(boot.getBootExtensionClassLoaderNode());
         return searchBootNode(id, all);

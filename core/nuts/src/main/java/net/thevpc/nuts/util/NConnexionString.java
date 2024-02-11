@@ -124,7 +124,7 @@ public class NConnexionString implements Cloneable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         boolean fileProtocol = "file".equals(protocol);
-        if (protocol != null && protocol.length() > 0) {
+        if (!NBlankable.isBlank(protocol)) {
             sb.append(NStringUtils.trim(protocol)).append(":");
             if (!fileProtocol) {
                 sb.append("//");
@@ -146,7 +146,28 @@ public class NConnexionString implements Cloneable {
                     sb.append(port);
                 }
             }
-
+        }else{
+            if (!NBlankable.isBlank(user)) {
+                sb.append(NStringUtils.trim(user));
+                if (!NBlankable.isBlank(password)) {
+                    sb.append(':');
+                    sb.append(password);
+                }
+                if (!NBlankable.isBlank(host) || !NBlankable.isBlank(port)) {
+                    sb.append('@');
+                }
+            }
+            if (!NBlankable.isBlank(host) || !NBlankable.isBlank(port)) {
+                if (NBlankable.isBlank(host)) {
+                    sb.append("localhost");
+                } else {
+                    sb.append(NStringUtils.trim(host));
+                }
+                if (!NBlankable.isBlank(port)) {
+                    sb.append(":");
+                    sb.append(port);
+                }
+            }
         }
 
         if (!NBlankable.isBlank(path)) {

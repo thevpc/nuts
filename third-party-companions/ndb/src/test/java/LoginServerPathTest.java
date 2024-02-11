@@ -10,12 +10,12 @@ public class LoginServerPathTest {
         check("user:password@server:1/12", new DbUrlString()
                 .setDb(new NConnexionString().setUser("user").setPassword("password").setHost("server").setPort(String.valueOf(1)).setPath("12"))
         );
-        check("ssh:u:p@s:12/du:dp@ds:13", new DbUrlString()
-                .setSsh(new NConnexionString().setUser("u").setPassword("p").setHost("s").setPort("12"))
+        check("ssh://u:p@s:12/du:dp@ds:13", new DbUrlString()
+                .setSsh(new NConnexionString().setProtocol("ssh").setUser("u").setPassword("p").setHost("s").setPort("12"))
                 .setDb(new NConnexionString().setUser("du").setPassword("dp").setHost("ds").setPort("13"))
         );
-        check("ssh:u@s/ds", new DbUrlString()
-                .setSsh(new NConnexionString().setUser("u").setHost("s"))
+        check("ssh://u@s/ds", new DbUrlString()
+                .setSsh(new NConnexionString().setProtocol("ssh").setUser("u").setHost("s"))
                 .setDb(new NConnexionString().setPath("ds"))
         );
     }

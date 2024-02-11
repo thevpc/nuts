@@ -36,7 +36,12 @@ public class DbUrlString {
             if (ssh.isPresent()) {
                 v.ssh = ssh.get();
                 dbStr = v.ssh.getPath();
+                if(dbStr!=null && dbStr.startsWith("/")){
+                    dbStr=dbStr.substring(1);
+                }
                 dbStrQ = v.ssh.getQueryString();
+                v.ssh.setPath(null);
+                v.ssh.setQueryString(null);
             } else {
                 dbStr = value;
             }
