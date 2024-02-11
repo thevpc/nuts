@@ -15,6 +15,7 @@
         <module>nlib-template</module>
         <module>nlib-tomcat-classloader</module>
         <module>nlib-spring-boot</module>
+        <module>nlib-swing</module>
     </modules>
     <properties>
     </properties>

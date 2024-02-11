@@ -141,6 +141,12 @@ public class NPrintStreamRaw extends NPrintStreamBase {
             case FILTERED: {
                 return new NPrintStreamFiltered(this, getSession(), bindings);
             }
+            case ANSI: {
+                if(this.getTerminalMode()==NTerminalMode.INHERITED){
+                    return this;
+                }
+                break;
+            }
         }
         throw new NIllegalArgumentException(getSession(), NMsg.ofC("unsupported %s -> %s", getTerminalMode(), other));
     }
