@@ -6,6 +6,8 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NFormat;
 import net.thevpc.nuts.format.NFormattable;
+import net.thevpc.nuts.format.NMsgFormattable;
+import net.thevpc.nuts.format.NStringFormattable;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.log.NLogOp;
@@ -59,6 +61,8 @@ public class DefaultNTexts implements NTexts {
 
     private void registerDefaults() {
         register(NFormattable.class, (o, t, s) -> (((NFormattable) o).formatter(session).setSession(getSession()).setNtf(true).format()).toText());
+        register(NStringFormattable.class, (o, t, s) -> (((NStringFormattable) o).format(session)).toText());
+        register(NMsgFormattable.class, (o, t, s) -> _NMsg_toString((((NMsgFormattable) o).toMsg())));
         register(NMsg.class, (o, t, s) -> _NMsg_toString((NMsg) o));
         register(NString.class, (o, t, s) -> ((NString) o).toText());
         register(InputStream.class, (o, t, s) -> t.ofStyled(NIO.of(s).ofInputSource((InputStream) o).getMetaData().getName().orElse(o.toString()), NTextStyle.path()));
@@ -1420,10 +1424,9 @@ public class DefaultNTexts implements NTexts {
             }
             case "memory":
             case "bytes":
-            case "size":
-            {
+            case "size": {
                 String p = NStringUtils.trim(pattern);
-                BytesSizeFormat d = new BytesSizeFormat(null,session);
+                BytesSizeFormat d = new BytesSizeFormat(null, session);
                 if (Number.class.isAssignableFrom(expectedType)) {
                     return NOptional.of(
                             (NTextFormat<T>) new NTextFormat<Number>() {

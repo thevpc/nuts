@@ -170,7 +170,7 @@ public final class NApplications {
         } catch (InvocationTargetException ex) {
             throw new NBootException(NMsg.ofC("invocation exception for %s", appType.getName()), ex);
         }
-        throw new NBootException(NMsg.ofC("missing application constructor one of : \n\t static createApplicationInstance(NutsSession,String[])\n\t Constructor(NutsSession,String[])\n\t Constructor()", appType.getName()));
+        throw new NBootException(NMsg.ofC("missing application constructor for %s from of : \n\t static createApplicationInstance(NutsSession,String[])\n\t Constructor(NutsSession,String[])\n\t Constructor()", appType.getName()));
     }
 
     /**

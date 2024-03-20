@@ -68,13 +68,6 @@ public interface NFetchCommand extends NWorkspaceCommand {
     ////////////////////////////////////////////////////////
 
     /**
-     * unset location to store to fetched id and fall back to default location.
-     *
-     * @return {@code this} instance
-     */
-    NFetchCommand setDefaultLocation();
-
-    /**
      * when true, NutsNotFoundException instances are ignored
      *
      * @return true if armed FailFast mode
@@ -177,7 +170,7 @@ public interface NFetchCommand extends NWorkspaceCommand {
      *
      * @return result as content path
      */
-    Path getResultPath();
+    NPath getResultPath();
 
     /**
      * create copy (new instance) of {@code this} command
@@ -259,23 +252,6 @@ public interface NFetchCommand extends NWorkspaceCommand {
      * @return {@code this} instance
      */
     NFetchCommand clearScopes();
-
-    /**
-     * get locating where to fetch the artifact. If the location is a folder, a
-     * new name will be generated.
-     *
-     * @return location path
-     */
-    Path getLocation();
-
-    /**
-     * set locating where to fetch the artifact. If the location is a folder, a
-     * new name will be generated.
-     *
-     * @param fileOrFolder path to store to
-     * @return {@code this} instance
-     */
-    NFetchCommand setLocation(Path fileOrFolder);
 
     /**
      * dependencies scope filters

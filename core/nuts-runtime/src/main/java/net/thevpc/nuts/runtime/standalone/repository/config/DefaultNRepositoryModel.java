@@ -168,7 +168,7 @@ public class DefaultNRepositoryModel {
 
     protected void addRepository(NRepository repo, NSession session, boolean temp, boolean enabled) {
         repositoryRegistryHelper.addRepository(repo, session);
-        repo.setEnabled(enabled, session);
+        repo.config().setSession(session).setEnabled(enabled);
         NConfigs.of(session).save();
         if (!temp) {
             NConfigsExt config = NConfigsExt.of(NConfigs.of(session));

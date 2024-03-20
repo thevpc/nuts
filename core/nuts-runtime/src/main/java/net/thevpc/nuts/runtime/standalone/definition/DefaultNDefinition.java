@@ -50,7 +50,9 @@ public class DefaultNDefinition implements NDefinition {
     public DefaultNDefinition() {
     }
 
-    public DefaultNDefinition(String repoUuid, String repoName, NId id, NDescriptor descriptor, NPath content, NInstallInformation install, NId apiId, NSession session) {
+    public DefaultNDefinition(String repoUuid, String repoName, NId id, NDescriptor descriptor, NPath content, NInstallInformation install, NId apiId,
+                              NDescriptor effectiveDescriptor,
+                              NSession session) {
         this.descriptor = descriptor;
         this.content = content;
         this.id = id;
@@ -60,6 +62,7 @@ public class DefaultNDefinition implements NDefinition {
         this.installInformation = install;
         this.repositoryUuid = repoUuid;
         this.repositoryName = repoName;
+        this.effectiveDescriptor = effectiveDescriptor;
         this.apiId = apiId;
         this.session = session;
     }

@@ -31,7 +31,10 @@ public class NPrintStreamRaw extends NPrintStreamBase {
         this(out, null, autoFlush, encoding, session, bindings, term);
     }
 
-    public NPrintStreamRaw(OutputStream out, NTerminalMode mode, Boolean autoFlush, String encoding, NSession session, Bindings bindings, NSystemTerminalBase term) {
+    public NPrintStreamRaw(OutputStream out, NTerminalMode mode, Boolean autoFlush,
+                           String encoding, NSession session,
+                           Bindings bindings,
+                           NSystemTerminalBase term) {
         super(true, mode == null ? NTerminalMode.INHERITED : mode, session, bindings, term);
         getMetaData().setMessage(NMsg.ofNtf(NTexts.of(session).ofStyled("<raw-stream>", NTextStyle.path())));
         this.out = out;
@@ -51,25 +54,28 @@ public class NPrintStreamRaw extends NPrintStreamBase {
                 throw new IllegalArgumentException(e);
             }
         }
-        switch (getTerminalMode()) {
-            case ANSI: {
-                if (bindings.ansi != null) {
-                    throw new IllegalArgumentException("already bound ansi");
-                }
-                bindings.ansi = this;
-                if (bindings.inherited == null) {
-                    bindings.inherited = this;
-                }
-                break;
-            }
-            case INHERITED: {
-                if (bindings.inherited != null) {
-                    throw new IllegalArgumentException("already bound ansi");
-                }
-                bindings.inherited = this;
-                break;
-            }
-        }
+//        switch (getTerminalMode()) {
+//            case ANSI: {
+//                if (bindings.ansi != null) {
+//                    throw new IllegalArgumentException("already bound ansi");
+//                }
+//                bindings.ansi = this;
+//                if (bindings.inherited == null) {
+//                    bindings.inherited = this;
+//                }
+//                if (bindings.raw == null) {
+//                    bindings.raw = this;
+//                }
+//                break;
+//            }
+//            case INHERITED: {
+//                if (bindings.inherited != null) {
+//                    throw new IllegalArgumentException("already bound ansi");
+//                }
+//                bindings.inherited = this;
+//                break;
+//            }
+//        }
     }
 
     public PrintStream getBase() {

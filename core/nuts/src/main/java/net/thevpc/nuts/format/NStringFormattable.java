@@ -32,10 +32,6 @@ import net.thevpc.nuts.text.NString;
 /**
  * @app.category Format
  */
-public interface NFormattable extends NStringFormattable {
-    NFormat formatter(NSession session);
-
-    default NString format(NSession session) {
-        return formatter(session).format();
-    }
+public interface NStringFormattable {
+    NString format(NSession session);
 }

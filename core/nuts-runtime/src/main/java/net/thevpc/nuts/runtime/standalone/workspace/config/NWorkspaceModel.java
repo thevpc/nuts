@@ -2,7 +2,10 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NBootOptions;
+import net.thevpc.nuts.runtime.standalone.NWsConfDB;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEventModel;
+import net.thevpc.nuts.runtime.standalone.io.cache.CachedSupplier;
+import net.thevpc.nuts.runtime.standalone.util.collections.LRUMap;
 import net.thevpc.nuts.runtime.standalone.util.collections.NPropertiesHolder;
 import net.thevpc.nuts.runtime.standalone.util.filters.DefaultNFilterModel;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTextManagerModel;
@@ -44,12 +47,15 @@ public class NWorkspaceModel {
     public DefaultCustomCommandsModel aliasesModel;
     public DefaultImportModel importModel;
     public String apiDigest;
+    public String installationDigest;
     public SafeRecommendationConnector recomm =new SafeRecommendationConnector(new SimpleRecommendationConnector());
     public List<String> recommendedCompanions=new ArrayList<>();
     public NPropertiesHolder properties = new NPropertiesHolder();
     public NVersion askedApiVersion;
     public NId askedRuntimeId;
     public NBootOptions bOption0;
+    public NWsConfDB confDB=new NWsConfDB();
+    public LRUMap<NId, CachedSupplier<NDefinition>> cachedDefs=new LRUMap<>(100);
 
     public NWorkspaceModel(NWorkspace ws, NBootOptions bOption0) {
         this.ws = ws;

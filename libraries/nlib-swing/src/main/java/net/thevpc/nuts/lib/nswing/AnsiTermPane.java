@@ -13,8 +13,8 @@ import java.util.regex.Pattern;
  * thanks to https://stackoverflow.com/questions/6913983/jtextpane-removing-first-line
  */
 public class AnsiTermPane extends JTextPane {
-    public static Color colorForeground = Color.BLACK;//cReset;
-    public static Color colorBackground = null;//cReset;
+    //    public static Color colorForeground = Color.BLACK;//cReset;
+//    public static Color colorBackground = null;//cReset;
     public Color D_Black = Color.getHSBColor(0.000f, 0.000f, 0.000f);
     public Color D_Red = Color.getHSBColor(0.000f, 1.000f, 0.502f);
     public Color D_Blue = Color.getHSBColor(0.667f, 1.000f, 0.502f);
@@ -31,7 +31,8 @@ public class AnsiTermPane extends JTextPane {
     public Color B_Yellow = Color.getHSBColor(0.167f, 1.000f, 1.000f).darker();
     public Color B_Cyan = Color.getHSBColor(0.500f, 1.000f, 1.000f);
     public Color B_White = Color.getHSBColor(0.000f, 0.000f, 1.000f);
-    public Color cReset = Color.BLACK;//Color.getHSBColor(0.000f, 0.000f, 1.000f);
+    public Color cResetForeground = Color.BLACK;//Color.getHSBColor(0.000f, 0.000f, 1.000f);
+    public Color cResetBackground = Color.WHITE;//Color.getHSBColor(0.000f, 0.000f, 1.000f);
     public Color[] COLS = new Color[]{
             D_Black, D_Red, D_Green, D_Yellow, D_Blue, D_Magenta, D_Cyan, D_White,
             B_Black, B_Red, B_Green, B_Yellow, B_Blue, B_Magenta, B_Cyan, B_White,
@@ -39,13 +40,15 @@ public class AnsiTermPane extends JTextPane {
     //    public static Color colorCurrent = Color.WHITE;//cReset;
     String remaining = "";
     PrintStream ps;
+    Style currentStyle = new Style()
+            .setForeColor(Color.BLACK);
 
     public AnsiTermPane(boolean darkMode) {
         setDarkMode(darkMode);
     }
 
     public String colorName(Color c) {
-        if (c.equals(cReset)) {
+        if (c.equals(cResetForeground)) {
             return "reset";
         }
         if (c.equals(D_Black)) {
@@ -99,12 +102,21 @@ public class AnsiTermPane extends JTextPane {
         return "?";
     }
 
+    public Style restStyle() {
+        return new Style().setForeColor(cResetForeground).setBackColor(cResetBackground);
+    }
+
+    public void resetCurr() {
+        currentStyle = restStyle();
+    }
+
     public void setDarkMode(boolean darkMode) {
-        cReset = darkMode ? Color.WHITE : Color.BLACK;
+        cResetForeground = darkMode ? Color.WHITE : Color.BLACK;
+        cResetBackground = getBackground();
 //        setForeground(Color.WHITE);
         setFont(new Font("Courier New", Font.PLAIN, 14));
-        setForeground(cReset);
-        colorForeground = cReset;
+        setForeground(cResetForeground);
+        resetCurr();
         if (darkMode) {
             D_Blue = new Color(124, 124, 220);
             B_Blue = new Color(162, 162, 225);
@@ -145,7 +157,7 @@ public class AnsiTermPane extends JTextPane {
         if (c < 16) {
             c = Math.abs(c) % COLS.length;
             if (c == 0) {
-                return cReset;
+                return cResetForeground;
             } else {
                 return COLS[c];
             }
@@ -169,20 +181,100 @@ public class AnsiTermPane extends JTextPane {
 
 
     public void append(int c, String s) {
-        append(color256(c), s);
+        append(currentStyle.copy().setForeColor(color256(c)), s);
     }
 
-    public void append(Color c, String s) {
+    public void append(Style c, String s) {
 //        System.out.println(">>"+colorName(c)+" : "+s);
         StyleContext sc = StyleContext.getDefaultStyleContext();
-        AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, c);
+        AttributeSet aset = SimpleAttributeSet.EMPTY;
+        aset = sc.addAttribute(aset, StyleConstants.Foreground, c.foreColor);
+        if (c.backColor != null) {
+            aset = sc.addAttribute(aset, StyleConstants.Background, c.backColor);
+        }
+        aset = sc.addAttribute(aset, StyleConstants.Underline, c.underline);
+        aset = sc.addAttribute(aset, StyleConstants.Bold, c.bold);
+        aset = sc.addAttribute(aset, StyleConstants.Italic, c.italic);
+        aset = sc.addAttribute(aset, StyleConstants.StrikeThrough, c.strikeThrough);
         int len = getDocument().getLength(); // same value as getText().length();
         boolean editable = isEditable();
         setEditable(true);
         setCaretPosition(len);  // place caret at the end (with no selection)
         setCharacterAttributes(aset, false);
-        replaceSelection(s); // there is no selection, so inserts at caret
+        replaceSelection(s);
+        System.out.print(s);// there is no selection, so inserts at caret
         setEditable(editable);
+    }
+
+    private static class Style implements Cloneable {
+        Color foreColor;
+        Color backColor;
+        boolean underline;
+        boolean bold;
+        boolean strikeThrough;
+        boolean italic;
+
+        public Color getForeColor() {
+            return foreColor;
+        }
+
+        public Style setForeColor(Color foreColor) {
+            this.foreColor = foreColor;
+            return this;
+        }
+
+        public Color getBackColor() {
+            return backColor;
+        }
+
+        public Style setBackColor(Color backColor) {
+            this.backColor = backColor;
+            return this;
+        }
+
+        public boolean isUnderline() {
+            return underline;
+        }
+
+        public Style setUnderline(boolean underline) {
+            this.underline = underline;
+            return this;
+        }
+
+        public boolean isBold() {
+            return bold;
+        }
+
+        public Style setBold(boolean bold) {
+            this.bold = bold;
+            return this;
+        }
+
+        public boolean isStrikeThrough() {
+            return strikeThrough;
+        }
+
+        public Style setStrikeThrough(boolean strikeThrough) {
+            this.strikeThrough = strikeThrough;
+            return this;
+        }
+
+        public boolean isItalic() {
+            return italic;
+        }
+
+        public Style setItalic(boolean italic) {
+            this.italic = italic;
+            return this;
+        }
+
+        public Style copy() {
+            try {
+                return (Style) clone();
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     public PrintStream asPrintStream() {
@@ -191,14 +283,14 @@ public class AnsiTermPane extends JTextPane {
                     new OutputStream() {
                         @Override
                         public void write(int b) throws IOException {
-                            UI.withinGUI(()->{
+                            UI.withinGUI(() -> {
                                 appendANSI(String.valueOf((char) b));
                             });
                         }
 
                         @Override
                         public void write(byte[] b, int off, int len) throws IOException {
-                            UI.withinGUI(()->{
+                            UI.withinGUI(() -> {
                                 appendANSI(new String(b, off, len));
                             });
                         }
@@ -237,14 +329,14 @@ public class AnsiTermPane extends JTextPane {
         if (addString.length() > 0) {
             aIndex = addString.indexOf("\u001B"); // find first escape
             if (aIndex == -1) { // no escape/color change in this string, so just send it with current color
-                append(colorForeground, addString);
+                append(currentStyle, addString);
                 return;
             }
 // otherwise There is an escape character in the string, so we must process it
 
             if (aIndex > 0) { // Escape is not first char, so send text up to first escape
                 tmpString = addString.substring(0, aIndex);
-                append(colorForeground, tmpString);
+                append(currentStyle, tmpString);
                 aPos = aIndex;
             }
 // aPos is now at the beginning of the first escape sequence
@@ -258,7 +350,7 @@ public class AnsiTermPane extends JTextPane {
                     continue;
                 } else {
                     tmpString = addString.substring(aPos, mIndex + 1);
-                    getANSIColor(tmpString);
+                    applyANSIColor(tmpString);
                 }
                 aPos = mIndex + 1;
 // now we have the color, send text that is in that color (up to next escape)
@@ -267,7 +359,7 @@ public class AnsiTermPane extends JTextPane {
 
                 if (aIndex == -1) { // if that was the last sequence of the input, send remaining text
                     tmpString = addString.substring(aPos);
-                    append(colorForeground, tmpString);
+                    append(currentStyle, tmpString);
                     stillSearching = false;
                     continue; // jump out of loop early, as the whole string has been sent now
                 }
@@ -275,13 +367,13 @@ public class AnsiTermPane extends JTextPane {
                 // there is another escape sequence, so send part of the string and prepare for the next
                 tmpString = addString.substring(aPos, aIndex);
                 aPos = aIndex;
-                append(colorForeground, tmpString);
+                append(currentStyle, tmpString);
 
             } // while there's text in the input buffer
         }
     }
 
-    public void getANSIColor(String ANSIColor) {
+    public void applyANSIColor(String ANSIColor) {
         Pattern p = Pattern.compile("\u001B\\[(?<a>\\d+)(;(?<b>\\d+)(;(?<c>\\d+)(;(?<d>\\d+)(;(?<e>\\d+))?)?)?)?m");
         Matcher m = p.matcher(ANSIColor);
         if (m.find()) {
@@ -292,7 +384,24 @@ public class AnsiTermPane extends JTextPane {
             int e = m.group("e") == null ? -1 : Integer.parseInt(m.group("e"));
             switch (a) {
                 case 0: {
-                    colorForeground = color256(0);
+//                    currentStyle=currentStyle.copy().setForeColor(color256(0));
+                    currentStyle = restStyle();// new Style().setForeColor(color256(0));
+                    break;
+                }
+                case 1: {
+                    currentStyle = currentStyle.copy().setBold(true);
+                    break;
+                }
+                case 3: {
+                    currentStyle = currentStyle.copy().setItalic(true);
+                    break;
+                }
+                case 4: {
+                    currentStyle = currentStyle.copy().setUnderline(true);
+                    break;
+                }
+                case 9: {
+                    currentStyle = currentStyle.copy().setStrikeThrough(true);
                     break;
                 }
                 case 30:
@@ -303,20 +412,20 @@ public class AnsiTermPane extends JTextPane {
                 case 35:
                 case 36:
                 case 37: {
-                    colorForeground = color256(a - 30);
+                    currentStyle = currentStyle.copy().setForeColor(color256(a - 30));
                     break;
                 }
                 case 38: {
                     switch (b) {
                         case 5: {
-                            colorForeground = color256(c);
+                            currentStyle = currentStyle.copy().setForeColor(color256(c));
                             break;
                         }
                         case 2: {
                             int rr = valid255(c);
                             int gg = valid255(d);
                             int bb = valid255(e);
-                            colorForeground = new Color(rr, gg, bb);
+                            currentStyle = currentStyle.copy().setForeColor(new Color(rr, gg, bb));
                             break;
                         }
                     }
@@ -326,9 +435,9 @@ public class AnsiTermPane extends JTextPane {
                     switch (b) {
                         case 5: {
                             if (c == 0) {
-                                colorBackground = null;
+                                currentStyle = currentStyle.copy().setBackColor(null);
                             } else {
-                                colorBackground = color256(c);
+                                currentStyle = currentStyle.copy().setBackColor(color256(c));
                             }
                             break;
                         }
@@ -336,7 +445,7 @@ public class AnsiTermPane extends JTextPane {
                             int rr = valid255(c);
                             int gg = valid255(d);
                             int bb = valid255(e);
-                            colorBackground = new Color(rr, gg, bb);
+                            currentStyle = currentStyle.copy().setBackColor(new Color(rr, gg, bb));
                             break;
                         }
                     }

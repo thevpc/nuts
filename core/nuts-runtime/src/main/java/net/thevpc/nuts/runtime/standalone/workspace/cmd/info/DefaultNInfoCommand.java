@@ -694,6 +694,7 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
         );
         props.put(key(prefix, "speed"), (repo.config().getSpeed()));
         props.put(key(prefix, "enabled"), (repo.config().isEnabled()));
+        props.put(key(prefix, "active"), (repo.isEnabled(session)));
         props.put(key(prefix, "index-enabled"), (repo.config().isIndexEnabled()));
         props.put(key(prefix, "index-subscribed"), (repo.config().setSession(getSession()).isIndexSubscribed()));
         props.put(key(prefix, "location"), repo.config().getLocation());

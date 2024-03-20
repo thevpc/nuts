@@ -281,6 +281,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                             .log(NMsg.ofJ("unable to instantiate {0}", t));
                 }
             }
+            throw new NFactoryException(session, NMsg.ofC("instantiate '%s' failed", t), new NoSuchElementException("No constructor was found for "+t.getName()));
         }
         try {
             t1 = ctrl0.newInstance(args, session);

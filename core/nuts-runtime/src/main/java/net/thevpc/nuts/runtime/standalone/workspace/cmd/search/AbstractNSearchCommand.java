@@ -1033,7 +1033,6 @@ public abstract class AbstractNSearchCommand extends DefaultNQueryBaseOptions<NS
                 + ", inlineDependencies=" + isInlineDependencies()
                 + ", dependencies=" + isDependencies()
                 + ", effective=" + isEffective()
-                + ", location=" + getLocation()
                 + ", displayOptions=" + getDisplayOptions()
                 + ", comparator=" + getComparator()
                 + ", dependencyFilter=" + getDependencyFilter()

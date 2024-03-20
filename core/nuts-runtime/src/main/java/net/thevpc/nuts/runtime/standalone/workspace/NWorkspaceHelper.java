@@ -48,7 +48,7 @@ public class NWorkspaceHelper {
             List<NRepository> subrepos = new ArrayList<>();
             boolean ok = false;
             for (NRepository repository : parent.config().setSession(session).getMirrors()) {
-                if (repository.config().isEnabled()) {
+                if (repository.isEnabled(session)) {
                     if (repositoryFilter == null || repositoryFilter.acceptRepository(repository)) {
                         repos.add(repository);
                         ok = true;

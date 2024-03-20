@@ -78,7 +78,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
 
 
     private void refactorCommand() {
-        if(getCommandDefinition()!=null){
+        if (getCommandDefinition() != null) {
             return;
         }
         boolean someUpdates = true;
@@ -135,7 +135,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                 NAssert.requireNonBlank(command, "command", session);
                 String target = getTarget();
                 if (!NBlankable.isBlank(target)) {
-                    throw new NIllegalArgumentException(session, NMsg.ofC("cannot run %s command remotely",executionType));
+                    throw new NIllegalArgumentException(session, NMsg.ofC("cannot run %s command remotely", executionType));
                 }
                 String[] ts = command.toArray(new String[0]);
                 exec = new DefaultNOpenExecutable(ts, getExecutorOptions().toArray(new String[0]), this);
@@ -143,7 +143,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
             }
             case SYSTEM: {
                 RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                if (remoteInfo0!=null) {
+                if (remoteInfo0 != null) {
                     NExecutionType finalExecutionType = executionType;
                     NAssert.requireNull(getCommandDefinition(), () -> NMsg.ofC("unable to run artifact as %s cmd", finalExecutionType), session);
                     NAssert.requireNonBlank(command, "command", session);
@@ -156,7 +156,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                             remoteInfo0.out0,
                             remoteInfo0.err0
                     );
-                }else {
+                } else {
                     NExecutionType finalExecutionType = executionType;
                     NAssert.requireNull(getCommandDefinition(), () -> NMsg.ofC("unable to run artifact as %s cmd", finalExecutionType), session);
                     NAssert.requireNonBlank(command, "command", session);
@@ -179,10 +179,10 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
             case EMBEDDED: {
                 if (getCommandDefinition() != null) {
                     RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                    if (remoteInfo0!=null) {
+                    if (remoteInfo0 != null) {
                         String[] ts = command == null ? new String[0] : command.toArray(new String[0]);
                         return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec, getCommandDefinition(), ts, getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
-                    }else {
+                    } else {
                         String[] ts = command == null ? new String[0] : command.toArray(new String[0]);
                         return ws_execDef(getCommandDefinition(), getCommandDefinition().getId().getLongName(), ts, getExecutorOptions(), workspaceOptions, env, directory, failFast,
                                 executionType, runAs);
@@ -367,7 +367,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
         switch (cmdKind) {
             case PATH: {
                 RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                if (remoteInfo0!=null) {
+                if (remoteInfo0 != null) {
                     NAssert.requireNonBlank(command, "command", session);
                     List<String> ts = new ArrayList<>(command);
                     NDefinition def2 = NSearchCommand.of(getSession())
@@ -381,7 +381,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                             .getResultDefinitions()
                             .findFirst().get();
                     return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec, def2, ts.toArray(new String[0]), getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
-                }else {
+                } else {
                     CharacterizedExecFile c = null;
                     NPath path = null;
                     try {
@@ -401,7 +401,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                                     NPath.of(c.getContentFile(), session).setUserCache(false).setUserTemporary(c.getTemps().size() > 0)
                                     ,
                                     DefaultNInstallInfo.notInstalled(_id),
-                                    null, session
+                                    null, null, session
                             );
                             NDependencySolver resolver = NDependencySolver.of(session);
                             NDependencyFilters ff = NDependencyFilters.of(session);
@@ -449,7 +449,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
             case ID: {
                 NId idToExec = findExecId(goodId, prepareSession, forceInstalled, true);
                 RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                if (remoteInfo0!=null) {
+                if (remoteInfo0 != null) {
                     NAssert.requireNonBlank(command, "command", session);
                     List<String> ts = new ArrayList<>(command);
                     if (ts.size() == 0) {
@@ -469,7 +469,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                             .findFirst().get();
                     return new DefaultSpawnExecutableNutsRemote(remoteInfo0.commExec, def2, ts.toArray(new String[0]), getExecutorOptions(), this, remoteInfo0.in0, remoteInfo0.out0, remoteInfo0.err0);
 
-                }else{
+                } else {
                     if (idToExec != null) {
                         return ws_execId(idToExec, cmdName, args, executorOptions, workspaceOptions, executionType, runAs);
                     } else {
@@ -481,147 +481,147 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                 switch (goodKw) {
                     case "update": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0!=null) {
-                            return _runRemoteInternalCommand(goodKw,remoteInfo0);
+                        if (remoteInfo0 != null) {
+                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
                         return new DefaultNUpdateInternalExecutable(args, this);
                     }
                     case "check-updates": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0!=null) {
-                            return _runRemoteInternalCommand(goodKw,remoteInfo0);
+                        if (remoteInfo0 != null) {
+                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
                         return new DefaultNCheckUpdatesInternalExecutable(args, this);
                     }
                     case "install": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0!=null) {
-                            return _runRemoteInternalCommand(goodKw,remoteInfo0);
+                        if (remoteInfo0 != null) {
+                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
                         return new DefaultNInstallInternalExecutable(args, this);
                     }
                     case "reinstall": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0!=null) {
-                            return _runRemoteInternalCommand(goodKw,remoteInfo0);
+                        if (remoteInfo0 != null) {
+                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
                         return new DefaultNReinstallInternalExecutable(args, this);
                     }
                     case "uninstall": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0!=null) {
-                            return _runRemoteInternalCommand(goodKw,remoteInfo0);
+                        if (remoteInfo0 != null) {
+                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
                         return new DefaultNUninstallInternalExecutable(args, this);
                     }
                     case "deploy": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0!=null) {
-                            return _runRemoteInternalCommand(goodKw,remoteInfo0);
+                        if (remoteInfo0 != null) {
+                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
                         return new DefaultNDeployInternalExecutable(args, this);
                     }
                     case "undeploy": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0!=null) {
-                            return _runRemoteInternalCommand(goodKw,remoteInfo0);
+                        if (remoteInfo0 != null) {
+                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
                         return new DefaultNUndeployInternalExecutable(args, this);
                     }
                     case "push": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0!=null) {
-                            return _runRemoteInternalCommand(goodKw,remoteInfo0);
+                        if (remoteInfo0 != null) {
+                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
                         return new DefaultNPushInternalExecutable(args, this);
                     }
                     case "fetch": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0!=null) {
-                            return _runRemoteInternalCommand(goodKw,remoteInfo0);
+                        if (remoteInfo0 != null) {
+                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
                         return new DefaultNFetchInternalExecutable(args, this);
                     }
                     case "search": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0!=null) {
-                            return _runRemoteInternalCommand(goodKw,remoteInfo0);
+                        if (remoteInfo0 != null) {
+                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
                         return new DefaultNSearchInternalExecutable(args, this);
                     }
                     case "version": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0!=null) {
-                            return _runRemoteInternalCommand(goodKw,remoteInfo0);
+                        if (remoteInfo0 != null) {
+                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
                         return new DefaultNVersionInternalExecutable(args, this);
                     }
                     case "prepare": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0!=null) {
-                            return _runRemoteInternalCommand(goodKw,remoteInfo0);
+                        if (remoteInfo0 != null) {
+                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
                         return new DefaultNPrepareInternalExecutable(args, this);
                     }
                     case "license": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0!=null) {
-                            return _runRemoteInternalCommand(goodKw,remoteInfo0);
+                        if (remoteInfo0 != null) {
+                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
                         return new DefaultNLicenseInternalExecutable(args, this);
                     }
                     case "bundle": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0!=null) {
-                            return _runRemoteInternalCommand(goodKw,remoteInfo0);
+                        if (remoteInfo0 != null) {
+                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
                         return new DefaultNBundleInternalExecutable(args, this);
                     }
                     case "help": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0!=null) {
-                            return _runRemoteInternalCommand(goodKw,remoteInfo0);
+                        if (remoteInfo0 != null) {
+                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
                         return new DefaultNHelpInternalExecutable(args, this);
                     }
                     case "welcome": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0!=null) {
-                            return _runRemoteInternalCommand(goodKw,remoteInfo0);
+                        if (remoteInfo0 != null) {
+                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
                         return new DefaultNWelcomeInternalExecutable(args, this);
                     }
                     case "info": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0!=null) {
-                            return _runRemoteInternalCommand(goodKw,remoteInfo0);
+                        if (remoteInfo0 != null) {
+                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
                         return new DefaultNInfoInternalExecutable(args, this);
                     }
                     case "which": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0!=null) {
-                            return _runRemoteInternalCommand(goodKw,remoteInfo0);
+                        if (remoteInfo0 != null) {
+                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
                         return new DefaultNWhichInternalExecutable(args, this);
                     }
                     case "exec": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0!=null) {
-                            return _runRemoteInternalCommand(goodKw,remoteInfo0);
+                        if (remoteInfo0 != null) {
+                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
                         return new DefaultNExecInternalExecutable(args, this);
                     }
                     case "settings": {
                         RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                        if (remoteInfo0!=null) {
-                            return _runRemoteInternalCommand(goodKw,remoteInfo0);
+                        if (remoteInfo0 != null) {
+                            return _runRemoteInternalCommand(goodKw, remoteInfo0);
                         }
                         return new DefaultNSettingsInternalExecutable(args, this);
                     }
                 }
                 RemoteInfo0 remoteInfo0 = resolveRemoteInfo0();
-                if (remoteInfo0!=null) {
+                if (remoteInfo0 != null) {
                     NExecutionType finalExecutionType = executionType;
                     NAssert.requireNull(getCommandDefinition(), () -> NMsg.ofC("unable to run artifact as %s cmd", finalExecutionType), session);
                     NAssert.requireNonBlank(command, "command", session);
@@ -1027,7 +1027,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                 NExtensions.of(session)
                         .loadExtension(NId.of("com.cts.nuts.enterprise:next-agent").get());
             }
-            RemoteInfo0 ii=new RemoteInfo0();
+            RemoteInfo0 ii = new RemoteInfo0();
             ii.commExec = NExtensions.of(session).createComponent(NExecCommandExtension.class, connexionString)
                     .orElseThrow(() -> new NIllegalArgumentException(session, NMsg.ofC("invalid execution target string : %s", target)));
             ii.in0 = CoreIOUtils.validateIn(in, session);
@@ -1037,7 +1037,8 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
         }
         return null;
     }
-    private static class RemoteInfo0{
+
+    private static class RemoteInfo0 {
         NExecCommandExtension commExec;
         NExecInput in0;
         NExecOutput out0;

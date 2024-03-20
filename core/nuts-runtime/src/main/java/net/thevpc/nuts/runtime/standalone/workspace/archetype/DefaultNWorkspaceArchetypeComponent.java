@@ -48,15 +48,15 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 
     @Override
     public void initializeWorkspace(NSession session) {
-        this.LOG = NLog.of(DefaultNWorkspaceArchetypeComponent.class,session);
+        this.LOG = NLog.of(DefaultNWorkspaceArchetypeComponent.class, session);
         DefaultNConfigs rm = (DefaultNConfigs) NConfigs.of(session);
         LinkedHashMap<String, NAddRepositoryOptions> def = new LinkedHashMap<>();
         List<NRepositoryLocation> defaults = new ArrayList<>();
         for (NAddRepositoryOptions d : rm.getDefaultRepositories()) {
             if (d.getConfig() != null) {
-                def.put(NPath.of(d.getConfig().getLocation().getPath(),session).toAbsolute().toString(), d);
+                def.put(NPath.of(d.getConfig().getLocation().getPath(), session).toAbsolute().toString(), d);
             } else {
-                def.put(NPath.of(d.getLocation(),session).toAbsolute().toString(), d);
+                def.put(NPath.of(d.getLocation(), session).toAbsolute().toString(), d);
             }
             defaults.add(NRepositoryLocation.of(d.getName(), null));
         }
@@ -64,13 +64,24 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
         NRepositoryLocation[] br = rm.getModel().resolveBootRepositoriesList(session).resolve(defaults.toArray(new NRepositoryLocation[0]), NRepositoryDB.of(session));
         for (NRepositoryLocation s : br) {
             NAddRepositoryOptions oo = NRepositorySelectorHelper.createRepositoryOptions(s, false, session);
-            String sloc = NPath.of(oo.getConfig().getLocation().getPath(),session).toAbsolute().toString();
+            String sloc = NPath.of(oo.getConfig().getLocation().getPath(), session).toAbsolute().toString();
             if (def.containsKey(sloc)) {
                 NAddRepositoryOptions r = def.get(sloc).copy();
-                if(!NBlankable.isBlank(s.getName())){
+                if (!NBlankable.isBlank(s.getName())) {
                     r.setName(oo.getName());
                 }
-                NRepositories.of(session).addRepository(r);
+                NRepository nr = NRepositories.of(session).addRepository(r);
+                if (
+                        "system".equals(nr.getName())
+                                && "system".equals(nr.config().getGlobalName())
+                                && (
+                                nr.config().getLocationPath() == null
+                                        || !nr.config().getLocationPath().isDirectory()
+                        )
+                ) {
+                    //runtime disable system repo if it is not accessible.
+                    nr.setEnabled(false, session);
+                }
                 def.remove(sloc);
             } else {
                 NRepositories.of(session).addRepository(oo

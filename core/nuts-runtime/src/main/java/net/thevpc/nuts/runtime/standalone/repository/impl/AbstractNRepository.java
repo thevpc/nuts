@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,6 +35,7 @@ import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.spi.NRepositorySPI;
 
 import java.util.*;
+
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNRepositorySecurityManager;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNRepositorySecurityModel;
@@ -58,6 +59,7 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     protected NSession initSession;
     protected NCachedValue<Boolean> available = new NCachedValue<>(this::isAvailableImpl, 0);
     protected boolean supportsDeploy;
+    protected boolean enabled=true;
 
     public AbstractNRepository() {
         userProperties = new DefaultObservableMap<>();
@@ -172,11 +174,11 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     }
 
     public boolean isEnabled(NSession session) {
-        return this.config().setSession(session).isEnabled();
+        return this.enabled && this.config().setSession(session).isEnabled();
     }
 
     public NRepository setEnabled(boolean enabled, NSession session) {
-        this.config().setSession(session).setEnabled(enabled);
+        this.enabled = enabled;
         return this;
     }
 
@@ -217,7 +219,7 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     }
 
     public String getIdFilename(NId id, NSession session) {
-        return getIdFilename(id,getIdExtension(id, session),session);
+        return getIdFilename(id, getIdExtension(id, session), session);
     }
 
     public String getIdFilename(NId id, String ext, NSession session) {

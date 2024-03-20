@@ -12,16 +12,8 @@ import java.io.OutputStream;
 
 public class NPrintStreamFormatted extends NPrintStreamRendered {
     public NPrintStreamFormatted(NPrintStreamBase base, NSession session, Bindings bindings) {
-        super(base, session, NTerminalMode.FORMATTED,
-                bindings);
-        if (bindings.formatted != null) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("formatted already bound"));
-        }
-        getMetaData().setMessage(
-                NMsg.ofStyled(
-                        "<formatted-stream>", NTextStyle.path())
-        );
-        bindings.formatted = this;
+        super(base, session, NTerminalMode.FORMATTED, bindings);
+        getMetaData().setMessage(NMsg.ofStyled("<formatted-stream>", NTextStyle.path()));
     }
 
     @Override

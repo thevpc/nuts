@@ -83,6 +83,6 @@ public class Test32_Id {
         Map<String, String> p = a.getProperties();
         TestUtils.println(a.toString());
         Assertions.assertEquals(1,p.size());
-        Assertions.assertEquals("?a='?'",a.toString());
+        Assertions.assertEquals("?a=?",a.toString());
     }
 }

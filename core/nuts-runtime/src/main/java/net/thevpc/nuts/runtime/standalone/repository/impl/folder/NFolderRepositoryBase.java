@@ -34,6 +34,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                 speed == null ? (NPath.of(options.getConfig().getLocation().getPath()
                         , session).isRemote() ? NSpeedQualifier.SLOW : NSpeedQualifier.FASTER) : speed
                 , supportedMirroring, repositoryType,supportsDeploy);
+        NPath locationPath = config().setSession(initSession).getLocationPath();
         if (!isRemote()) {
             if (options.getConfig().getStoreStrategy() != NStoreStrategy.STANDALONE) {
                 cache.setWriteEnabled(false);

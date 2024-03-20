@@ -44,6 +44,7 @@ public interface NWorkspaceExt {
     void installImpl(NDefinition def, String[] args, boolean updateDefaultVersion, NSession session);
 
     void updateImpl(NDefinition def, String[] args, boolean updateDefaultVersion, NSession session);
+
     void uninstallImpl(NDefinition def, String[] args, boolean runInstaller, boolean deleteFiles, boolean eraseFiles, boolean traceBeforeEvent, NSession session);
 
     /**
@@ -74,4 +75,8 @@ public interface NWorkspaceExt {
     NSession defaultSession();
 
     NWorkspaceModel getModel();
+
+    String getInstallationDigest();
+
+    void setInstallationDigest(String value,NSession session);
 }

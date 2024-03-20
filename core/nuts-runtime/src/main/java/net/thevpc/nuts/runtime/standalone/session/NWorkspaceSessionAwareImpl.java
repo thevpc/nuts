@@ -203,4 +203,14 @@ public class NWorkspaceSessionAwareImpl implements NWorkspace, NWorkspaceExt {
     public String toString() {
         return ws.toString();
     }
+
+    @Override
+    public String getInstallationDigest() {
+        return ((NWorkspaceExt) ws).getInstallationDigest();
+    }
+
+    @Override
+    public void setInstallationDigest(String value, NSession session) {
+        ((NWorkspaceExt) ws).setInstallationDigest(value, session);
+    }
 }

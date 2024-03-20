@@ -91,7 +91,7 @@ import java.util.stream.Collectors;
  * @author thevpc
  */
 public class DefaultNWorkspaceConfigModel {
-    private  static Pattern PRELOAD_EXTENSION_PATH_PATTERN = Pattern.compile("^(?<protocol>[a-z][a-z0-9_-]*):.*");
+    private static Pattern PRELOAD_EXTENSION_PATH_PATTERN = Pattern.compile("^(?<protocol>[a-z][a-z0-9_-]*):.*");
 
     private final DefaultNWorkspace ws;
     private final Map<String, NUserConfig> configUsers = new LinkedHashMap<>();
@@ -125,9 +125,9 @@ public class DefaultNWorkspaceConfigModel {
     //    private NutsRepositorySelector[] parsedBootRepositoriesArr;
     private ExecutorService executorService;
     private NSessionTerminal terminal;
-    private Map<String,NId> protocolToExtensionMap=new HashMap<>(
+    private Map<String, NId> protocolToExtensionMap = new HashMap<>(
             NMaps.of(
-                    "ssh",NId.of("net.thevpc.nuts.ext:next-ssh").get()
+                    "ssh", NId.of("net.thevpc.nuts.ext:next-ssh").get()
             )
     );
     //    private final NutsLogger LOG;
@@ -1103,7 +1103,7 @@ public class DefaultNWorkspaceConfigModel {
     }
 
     public NBootDef fetchBootDef(NId id, boolean content, NSession session) {
-        NDefinition nd = NFetchCommand.of(id,session)
+        NDefinition nd = NFetchCommand.of(id, session)
                 .setDependencies(true).setContent(content)
                 .setDependencyFilter(NDependencyFilters.of(session).byRunnable())
                 .setFailFast(false).getResultDefinition();
@@ -1214,7 +1214,7 @@ public class DefaultNWorkspaceConfigModel {
                     descriptor.getId(),
                     descriptor, NPath.of(tmp, session).setUserCache(true).setUserTemporary(true),
                     new DefaultNInstallInfo(descriptor.getId(), NInstallStatus.NONE, null, null, null, null, null, null, false, false),
-                    null, session
+                    null, null, session
             );
             ins.install(b, session);
             return true;
@@ -1499,10 +1499,10 @@ public class DefaultNWorkspaceConfigModel {
 
         ClassLoader finalClassLoader = classLoader;
         Matcher m = PRELOAD_EXTENSION_PATH_PATTERN.matcher(path);
-        if(m.find()){
+        if (m.find()) {
             String protocol = m.group("protocol");
             NId eid = protocolToExtensionMap.get(protocol);
-            if(eid!=null){
+            if (eid != null) {
                 NExtensions.of(session).loadExtension(eid);
             }
         }
