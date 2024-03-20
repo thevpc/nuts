@@ -8,9 +8,14 @@ package net.thevpc.nuts.core.test;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.DefaultNBootOptionsBuilder;
 import net.thevpc.nuts.core.test.utils.TestUtils;
+import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NStringMapFormat;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -27,6 +32,10 @@ public class Test29_DependencyTest {
 
     @Test
     public void testSearchDescriptor() {
+//        NStringMapFormat f = NStringMapFormat.of("=", "&", "\\", false);
+//        NOptional<Map<String, List<String>>> u = f.parseDuplicates("b\\=c");
+//        NOptional<Map<String, List<String>>> u = f.parseDuplicates("d=a,b\\=c");
+//        NOptional<Map<String, List<String>>> u = f.parseDuplicates("cond-properties=a,b\\=c&exclusions=asm:asm,asm:asm-tree,log4j:log4j,oro:oro&profile=coverage");
         String t1="net.sourceforge.cobertura:cobertura#${cobertura.version}?cond-properties=a,b\\=c&exclusions=asm:asm,asm:asm-tree,log4j:log4j,oro:oro&profile=coverage";
         String t2="net.sourceforge.cobertura:cobertura#${cobertura.version}?cond-properties='a,b=c'&exclusions=asm:asm,asm:asm-tree,log4j:log4j,oro:oro&profile=coverage";
         NDependency s = NDependency.of(t1).get(session);

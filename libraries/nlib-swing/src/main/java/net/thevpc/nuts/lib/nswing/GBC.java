@@ -3,7 +3,26 @@ package net.thevpc.nuts.lib.nswing;
 import java.awt.*;
 
 public class GBC {
-    GridBagConstraints b = new GridBagConstraints();
+    private int gridx;
+    private int gridy;
+    private int gridwidth;
+    private int gridheight;
+
+    private double weightx;
+    private double weighty;
+
+    private int anchor;
+    private int fill;
+
+    private Insets insets;
+
+    private int ipadx;
+
+    private int ipady;
+
+    public GBC() {
+        this.reset();
+    }
 
     public static GBC of(int x, int y) {
         return of().at(x, y);
@@ -14,34 +33,34 @@ public class GBC {
     }
 
     public GBC ipad(int x, int y) {
-        b.ipadx = x;
-        b.ipady = y;
+        this.ipadx = x;
+        this.ipady = y;
         return this;
     }
 
     public GBC weightx(int x) {
-        b.weightx = x;
+        this.weightx = x;
         return this;
     }
 
     public GBC weighty(int y) {
-        b.weighty = y;
+        this.weighty = y;
         return this;
     }
 
     public GBC weight(int x) {
-        return weight(x,x);
+        return weight(x, x);
     }
 
     public GBC weight(int x, int y) {
-        b.weightx = x;
-        b.weighty = y;
+        this.weightx = x;
+        this.weighty = y;
         return this;
     }
 
     public GBC at(int x, int y) {
-        b.gridx = x;
-        b.gridy = y;
+        this.gridx = x;
+        this.gridy = y;
         return this;
     }
 
@@ -50,28 +69,25 @@ public class GBC {
     }
 
     public GBC fillNone() {
-        b.fill = GridBagConstraints.NONE;
+        this.fill = GridBagConstraints.NONE;
         return this;
     }
 
     public GBC fillVertical() {
-        b.fill = GridBagConstraints.VERTICAL;
+        this.fill = GridBagConstraints.VERTICAL;
         return this;
     }
 
     public GBC fillHorizontal() {
-        b.fill = GridBagConstraints.HORIZONTAL;
+        this.fill = GridBagConstraints.HORIZONTAL;
         return this;
     }
 
     public GBC fillBoth() {
-        b.fill = GridBagConstraints.BOTH;
+        this.fill = GridBagConstraints.BOTH;
         return this;
     }
 
-    public GridBagConstraints build() {
-        return b;
-    }
 
     public GBC anchorWest() {
         return anchor(GridBagConstraints.WEST);
@@ -96,42 +112,66 @@ public class GBC {
     public GBC anchorNorthEast() {
         return anchor(GridBagConstraints.NORTHEAST);
     }
+
     public GBC anchorNorth() {
         return anchor(GridBagConstraints.NORTH);
     }
 
+    public GridBagConstraints moveNextColumn() {
+        GridBagConstraints g = build();
+        this.nextColumn();
+        return g;
+    }
+
+    public GridBagConstraints moveNextLine() {
+        GridBagConstraints g = build();
+        this.nextLine();
+        return g;
+    }
+
+    public GBC nextColumn() {
+        this.gridx += this.gridwidth;
+        return this;
+    }
+
+    public GBC nextLine() {
+        this.gridx = 0;
+        this.gridy += this.gridheight;
+        return this;
+    }
+
     public GBC anchor(int a) {
-        this.b.anchor = a;
+        this.anchor = a;
         return this;
     }
 
     public GBC colspanReminder() {
-        b.gridwidth = GridBagConstraints.REMAINDER;
+        this.gridwidth = GridBagConstraints.REMAINDER;
         return this;
     }
 
     public GBC colspanRelative() {
-        b.gridwidth = GridBagConstraints.RELATIVE;
+        this.gridwidth = GridBagConstraints.RELATIVE;
         return this;
     }
 
     public GBC colspan(int c) {
-        b.gridwidth = c;
+        this.gridwidth = c;
         return this;
     }
 
     public GBC rowspan(int c) {
-        b.gridheight = c;
+        this.gridheight = c;
         return this;
     }
 
     public GBC rowspanReminder() {
-        b.gridheight = GridBagConstraints.REMAINDER;
+        this.gridheight = GridBagConstraints.REMAINDER;
         return this;
     }
 
     public GBC rowspanRelative() {
-        b.gridheight = GridBagConstraints.RELATIVE;
+        this.gridheight = GridBagConstraints.RELATIVE;
         return this;
     }
 
@@ -139,7 +179,7 @@ public class GBC {
         return insets(new Insets(v, h, v, h));
     }
 
-    public GBC insets(int top,int left,int bottom,int right) {
+    public GBC insets(int top, int left, int bottom, int right) {
         return insets(new Insets(top, left, bottom, right));
     }
 
@@ -148,8 +188,83 @@ public class GBC {
     }
 
     public GBC insets(Insets i) {
-        b.insets = i;
+        this.insets = i;
         return this;
     }
 
+    ////////////////////////////////////////
+
+
+    public GridBagConstraints build() {
+        GridBagConstraints b = new GridBagConstraints();
+        b.gridx = this.gridx;
+        b.gridy = this.gridy;
+        b.gridwidth = this.gridwidth;
+        b.gridheight = this.gridheight;
+        b.weightx = this.weightx;
+        b.weighty = this.weighty;
+        b.anchor = this.anchor;
+        b.fill = this.fill;
+        b.insets = copyInsets(this.insets);
+        b.ipadx = this.ipadx;
+        b.ipady = this.ipady;
+        return b;
+    }
+
+    public GBC reset() {
+        this.gridx = 0;
+        this.gridy = 0;
+//        this.gridx = GridBagConstraints.RELATIVE;
+//        this.gridy = GridBagConstraints.RELATIVE;
+        this.gridwidth = 1;
+        this.gridheight = 1;
+        this.weightx = 0;
+        this.weighty = 0;
+        this.anchor = GridBagConstraints.CENTER;
+        this.fill = 0;
+        this.insets = new Insets(0, 0, 0, 0);
+        this.ipadx = 0;
+        this.ipady = 0;
+        return this;
+    }
+
+    public GBC copy() {
+        GBC c2 = new GBC();
+        c2.gridx = this.gridx;
+        c2.gridy = this.gridy;
+        c2.gridwidth = this.gridwidth;
+        c2.gridheight = this.gridheight;
+        c2.weightx = this.weightx;
+        c2.weighty = this.weighty;
+        c2.anchor = this.anchor;
+        c2.fill = this.fill;
+        c2.insets = copyInsets(this.insets);
+        c2.ipadx = this.ipadx;
+        c2.ipady = this.ipady;
+        return c2;
+    }
+
+    public GBC set(GridBagConstraints b) {
+        if (b != null) {
+            this.gridx = b.gridx;
+            this.gridy = b.gridy;
+            this.gridwidth = b.gridwidth;
+            this.gridheight = b.gridheight;
+            this.weightx = b.weightx;
+            this.weighty = b.weighty;
+            this.anchor = b.anchor;
+            this.fill = b.fill;
+            this.insets = copyInsets(b.insets);
+            this.ipadx = b.ipadx;
+            this.ipady = b.ipady;
+        }
+        return this;
+    }
+
+    private Insets copyInsets(Insets o) {
+        if (o == null) {
+            return new Insets(0, 0, 0, 0);
+        }
+        return (Insets) o.clone();
+    }
 }

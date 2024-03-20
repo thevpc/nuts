@@ -41,6 +41,8 @@ public class Test01_CreateTest {
 
     @Test
     public void minimal1()  {
+        long a=System.currentTimeMillis();
+
         String wsPath = TestUtils.getTestBaseFolder().getPath();
 
         NSession session = TestUtils.openNewTestWorkspace("--workspace", wsPath,
@@ -83,6 +85,8 @@ public class Test01_CreateTest {
         NText txt = NTexts.of(session).parse(str);
         TestUtils.println("-----------------------");
         TestUtils.println(txt);
+        long b=System.currentTimeMillis();
+        System.out.println(b-a);
     }
 
     @Test
@@ -157,7 +161,15 @@ public class Test01_CreateTest {
                 "--exploded",
                 "--archetype", "minimal",
                 "--verbose",
-                "--install-companions=false");
+                "--install-companions=false"
+        );
+    }
+    @Test
+    public void default4() throws Exception {
+        TestUtils.openNewTestWorkspace(
+                "--verbose"
+                ,"--install-companions=false"
+        );
     }
 
     @Test

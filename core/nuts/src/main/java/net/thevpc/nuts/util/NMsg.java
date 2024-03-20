@@ -26,11 +26,11 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NUnsupportedEnumException;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
-import net.thevpc.nuts.text.NTextFormatType;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTextStyles;
 
 import java.text.MessageFormat;
 import java.util.*;
@@ -128,6 +128,13 @@ public class NMsg {
 
     public static NMsg ofCode(String text) {
         return of(NTextFormatType.CODE, text, NO_PARAMS, null, null, null);
+    }
+
+    public static NMsg ofStringLiteral(String literal) {
+        if(literal==null){
+            return NMsg.ofStyled("null",NTextStyle.primary1());
+        }
+        return NMsg.ofStyled(NStringUtils.formatStringLiteral(literal),NTextStyle.string());
     }
 
     public static NMsg ofStyled(String message, NTextStyle style) {

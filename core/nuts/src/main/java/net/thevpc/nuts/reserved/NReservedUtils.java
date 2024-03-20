@@ -608,6 +608,9 @@ public final class NReservedUtils {
     }
 
     private static void setIdProperty(String key, String value, NIdBuilder builder, NEnvConditionBuilder sb, Map<String, String> props) {
+        if (key == null) {
+            return;
+        }
         switch (key) {
             case NConstants.IdProperties.CLASSIFIER: {
                 builder.setClassifier(value);

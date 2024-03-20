@@ -28,14 +28,11 @@ package net.thevpc.nuts.format;
 
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.util.NMsg;
 
 /**
  * @app.category Format
  */
-public interface NFormattable extends NStringFormattable {
-    NFormat formatter(NSession session);
-
-    default NString format(NSession session) {
-        return formatter(session).format();
-    }
+public interface NMsgFormattable {
+    NMsg toMsg();
 }

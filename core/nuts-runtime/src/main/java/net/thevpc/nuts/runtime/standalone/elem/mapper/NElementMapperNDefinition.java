@@ -25,7 +25,7 @@ public class NElementMapperNDefinition implements NElementMapper<NDefinition> {
     @Override
     public NDefinition createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
         NDefinition d = context.defaultElementToObject(o, DefaultNDefinition.class);
-        //pass the session the the instance
+        //pass the session the instance
         return new DefaultNDefinition(d, context.getSession());
     }
 }

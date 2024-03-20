@@ -14,6 +14,7 @@ import net.thevpc.nuts.util.NStringUtils;
 import net.thevpc.nuts.web.*;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -174,9 +175,10 @@ public class NWebCliImpl implements NWebCli {
         NAssert.requireNonNull(r, "request");
         NAssert.requireNonNull(r.getMethod(), "method");
         NHttpMethod method = r.getMethod();
-
+        String spec=null;
         try {
-            URL h = new URL(formatURL(r,false));
+            spec = formatURL(r, false);
+            URL h = new URL(spec);
             HttpURLConnection uc = null;
             try {
                 uc = (HttpURLConnection) h.openConnection();
@@ -258,8 +260,8 @@ public class NWebCliImpl implements NWebCli {
                     }
                 }
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException ex) {
+            throw new UncheckedIOException("error loading "+spec,ex);
         }
     }
 
