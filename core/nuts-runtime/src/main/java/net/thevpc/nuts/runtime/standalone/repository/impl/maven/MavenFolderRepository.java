@@ -73,12 +73,12 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
     }
 
 
-    public NPath fetchContentCoreUsingRepoHelper(NId id, NDescriptor descriptor, String localPath, NFetchMode fetchMode, NSession session) {
-        NPath cc = fetchContentCoreUsingWrapper(id, descriptor, localPath, fetchMode, session);
+    public NPath fetchContentCoreUsingRepoHelper(NId id, NDescriptor descriptor, NFetchMode fetchMode, NSession session) {
+        NPath cc = fetchContentCoreUsingWrapper(id, descriptor, fetchMode, session);
         if (cc != null) {
             return cc;
         }
-        return super.fetchContentCoreUsingRepoHelper(id, descriptor, localPath, fetchMode, session);
+        return super.fetchContentCoreUsingRepoHelper(id, descriptor, fetchMode, session);
     }
 
     public NIterator<NId> findNonSingleVersionImpl(final NId id, NIdFilter idFilter, NFetchMode fetchMode, final NSession session) {
@@ -118,7 +118,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
         return new MvnClient(session);
     }
 
-    public NPath fetchContentCoreUsingWrapper(NId id, NDescriptor descriptor, String localPath, NFetchMode fetchMode, NSession session) {
+    public NPath fetchContentCoreUsingWrapper(NId id, NDescriptor descriptor, NFetchMode fetchMode, NSession session) {
         if (wrapper == null) {
             wrapper = getWrapper(session);
         }
@@ -129,7 +129,6 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
                 return repoSPI.fetchContent()
                         .setId(id)
                         .setDescriptor(descriptor)
-                        .setLocalPath(localPath)
                         .setSession(session)
                         .setFetchMode(NFetchMode.LOCAL)
                         .run()
@@ -138,15 +137,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
             //should be already downloaded to m2 folder
             NPath content = getMavenLocalFolderContent(id, session);
             if (content != null && content.exists()) {
-                if (localPath == null) {
-                    return content.setUserCache(true).setUserTemporary(false);
-                } else {
-                    String tempFile = NPath
-                            .ofTempRepositoryFile(content.getName(),getUuid(),session).toString();
-                    NCp.of(session)
-                            .from(content).to(NPath.of(tempFile,session)).addOptions(NPathOption.SAFE).run();
-                    return NPath.of(tempFile, session).setUserCache(true).setUserTemporary(false);
-                }
+                return content.setUserCache(true).setUserTemporary(false);
             }
         }
         return null;

@@ -651,7 +651,7 @@ public abstract class AbstractNSearchCommand extends DefaultNQueryBaseOptions<NS
         DefaultNClassLoader cl = ((DefaultNExtensions) getSession().extensions())
                 .getModel().getNutsURLClassLoader("SEARCH-" + UUID.randomUUID(), parent, getSession());
         for (NDefinition def : nDefinitions) {
-            cl.add(NClassLoaderUtils.definitionToClassLoaderNode(def, getSession()));
+            cl.add(NClassLoaderUtils.definitionToClassLoaderNode(def, getRepositoryFilter(), getSession()));
         }
         return cl;
     }
@@ -1033,7 +1033,6 @@ public abstract class AbstractNSearchCommand extends DefaultNQueryBaseOptions<NS
                 + ", inlineDependencies=" + isInlineDependencies()
                 + ", dependencies=" + isDependencies()
                 + ", effective=" + isEffective()
-                + ", location=" + getLocation()
                 + ", displayOptions=" + getDisplayOptions()
                 + ", comparator=" + getComparator()
                 + ", dependencyFilter=" + getDependencyFilter()

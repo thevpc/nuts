@@ -6,9 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNContentEvent;
 import net.thevpc.nuts.runtime.standalone.id.filter.NSearchIdByDescriptor;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
@@ -73,23 +71,17 @@ public class NRepositoryMirroringHelper {
         return IteratorUtils.concat(list);
     }
 
-    protected NPath fetchContent(NId id, NDescriptor descriptor, String localPath, NFetchMode fetchMode, NSession session) {
+    protected NPath fetchContent(NId id, NDescriptor descriptor, NFetchMode fetchMode, NSession session) {
         NPath cacheContent = cache.getLongIdLocalFile(id, session);
         NRepositoryConfigManager rconfig = repo.config().setSession(session);
         if (session.isTransitive() && rconfig.isSupportedMirroring()) {
             for (NRepository mirror : rconfig.setSession(session).getMirrors()) {
                 try {
                     NRepositorySPI repoSPI = NWorkspaceUtils.of(session).repoSPI(mirror);
-                    NPath c = repoSPI.fetchContent().setId(id).setDescriptor(descriptor).setLocalPath(cacheContent.toString()).setSession(session)
+                    NPath c = repoSPI.fetchContent().setId(id).setDescriptor(descriptor).setSession(session)
                             .setFetchMode(fetchMode)
                             .getResult();
                     if (c != null) {
-                        if (localPath != null) {
-                            NCp.of(session)
-                                    .from(c).to(NPath.of(localPath,session)).addOptions(NPathOption.SAFE).run();
-                        } else {
-                            return c;
-                        }
                         return c;
                     }
                 } catch (NNotFoundException ex) {

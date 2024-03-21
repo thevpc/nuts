@@ -89,7 +89,7 @@ public interface NRepositoryModel {
         return null;
     }
 
-    default NPath fetchContent(NId id, NDescriptor descriptor, String localPath, NFetchMode fetchMode, NRepository repository, NSession session) {
+    default NPath fetchContent(NId id, NDescriptor descriptor, NFetchMode fetchMode, NRepository repository, NSession session) {
         return null;
     }
 

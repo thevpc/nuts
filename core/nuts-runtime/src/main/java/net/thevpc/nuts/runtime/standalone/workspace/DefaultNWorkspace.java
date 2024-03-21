@@ -38,6 +38,7 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.runtime.standalone.NLocationKey;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNLog;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.DefaultNProperties;
@@ -197,7 +198,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             NBootManager _boot = NBootManager.of(defaultSession());
             NBootConfig cfg = new NBootConfig();
             cfg.setWorkspace(workspaceLocation);
-            cfg.setApiVersion( this.wsModel.askedApiVersion);
+            cfg.setApiVersion(this.wsModel.askedApiVersion);
             cfg.setRuntimeId(this.wsModel.askedRuntimeId);
             cfg.setRuntimeBootDescriptor(bootOptions.getRuntimeBootDescriptor().orNull());
             cfg.setExtensionBootDescriptors(bootOptions.getExtensionBootDescriptors().orNull());
@@ -338,10 +339,10 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 LOGCRF.log(NMsg.ofJ("   nuts-inherited-nuts-boot-args  : {0}", System.getProperty("nuts.boot.args") == null ? NTextUtils.desc(null, text)
                         : NTextUtils.desc(NCmdLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH, defaultSession()), text)
                 ));
-                LOGCRF.log(NMsg.ofJ("   nuts-inherited-nuts-args     : {0}", System.getProperty("nuts.args") == null ? NTextUtils.desc(null, text)
+                LOGCRF.log(NMsg.ofJ("   nuts-inherited-nuts-args       : {0}", System.getProperty("nuts.args") == null ? NTextUtils.desc(null, text)
                         : NTextUtils.desc(text.ofText(NCmdLine.of(System.getProperty("nuts.args"), NShellFamily.SH, defaultSession())), text)
                 ));
-                LOGCRF.log(NMsg.ofJ("   nuts-open-mode               : {0}", NTextUtils.formatLogValue(text, bootOptions.getOpenMode().orNull(), bootOptions.getOpenMode().orElse(NOpenMode.OPEN_OR_CREATE))));
+                LOGCRF.log(NMsg.ofJ("   nuts-open-mode                 : {0}", NTextUtils.formatLogValue(text, bootOptions.getOpenMode().orNull(), bootOptions.getOpenMode().orElse(NOpenMode.OPEN_OR_CREATE))));
                 NEnvs senvs = NEnvs.of(defaultSession());
                 LOGCRF.log(NMsg.ofJ("   java-home                      : {0}", System.getProperty("java.home")));
                 LOGCRF.log(NMsg.ofJ("   java-classpath                 : {0}", System.getProperty("java.class.path")));
@@ -1904,6 +1905,21 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         return wsModel.importModel;
     }
 
+
+    @Override
+    public String getInstallationDigest() {
+        return wsModel.installationDigest;
+    }
+
+    @Override
+    public void setInstallationDigest(String value,NSession session) {
+        this.wsModel.installationDigest = value;
+        this.wsModel.confDB.storeStringNonBlank(NLocationKey.of(NStoreType.CONF, getApiId(),"installation-digest"),value,session);
+    }
+
+
+
+
     public enum InstallStrategy0 implements NEnum {
         INSTALL,
         UPDATE,
@@ -1918,12 +1934,10 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             return NEnumUtils.parseEnum(value, InstallStrategy0.class);
         }
 
-
         @Override
         public String id() {
             return id;
         }
-
     }
 
 }

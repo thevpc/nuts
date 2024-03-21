@@ -13,13 +13,7 @@ public class NPrintStreamFiltered extends NPrintStreamRendered {
     public NPrintStreamFiltered(NPrintStreamBase base, NSession session, Bindings bindings) {
         super(base, session, NTerminalMode.FILTERED,
                 bindings);
-        getMetaData().setMessage(
-                NMsg.ofStyled( "<filtered-stream>", NTextStyle.path())
-                );
-        if (bindings.filtered != null) {
-            throw new IllegalArgumentException("already bound ansi");
-        }
-        bindings.filtered = this;
+        getMetaData().setMessage(NMsg.ofStyled( "<filtered-stream>", NTextStyle.path()));
     }
 
     @Override

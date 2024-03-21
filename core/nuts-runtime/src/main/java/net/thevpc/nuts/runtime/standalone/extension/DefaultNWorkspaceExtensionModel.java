@@ -383,7 +383,7 @@ public class DefaultNWorkspaceExtensionModel {
                         throw new NIllegalArgumentException(session, NMsg.ofC("not an extension: %s", extension));
                     }
 //                    ws.install().setSession(session).id(def.getId());
-                    workspaceExtensionsClassLoader.add(NClassLoaderUtils.definitionToClassLoaderNode(def, session));
+                    workspaceExtensionsClassLoader.add(NClassLoaderUtils.definitionToClassLoaderNode(def, null, session));
                     Set<Class> classes = objectFactory.discoverTypes(def.getId(), def.getContent().flatMap(NPath::toURL).orNull(), workspaceExtensionsClassLoader, session);
                     for (Class aClass : classes) {
                         ((NWorkspaceExt) ws).getModel().configModel.onNewComponent(aClass, session);
@@ -463,7 +463,7 @@ public class DefaultNWorkspaceExtensionModel {
                 .setLatest(true)
                 .getResultDefinitions().findFirst().get();
         if (!isLoadedClassPath(nDefinitions, session)) {
-            this.workspaceExtensionsClassLoader.add(NClassLoaderUtils.definitionToClassLoaderNode(nDefinitions, session));
+            this.workspaceExtensionsClassLoader.add(NClassLoaderUtils.definitionToClassLoaderNode(nDefinitions, null, session));
         }
         DefaultNWorkspaceExtension workspaceExtension = new DefaultNWorkspaceExtension(id, nDefinitions.getId(), this.workspaceExtensionsClassLoader);
         //now will iterate over Extension classes to wire them ...

@@ -85,7 +85,7 @@ public class NHttpSrvRepository extends NCachedRepository {
     @Override
     public void pushImpl(NPushRepositoryCommand command) {
         NSession session = command.getSession();
-        NPath content = lib.fetchContentImpl(command.getId(), null, session);
+        NPath content = lib.fetchContentImpl(command.getId(), session);
         NDescriptor desc = lib.fetchDescriptorImpl(command.getId(), session);
         if (content == null || desc == null) {
             throw new NNotFoundException(session, command.getId());
@@ -191,32 +191,26 @@ public class NHttpSrvRepository extends NCachedRepository {
     }
 
     @Override
-    public NPath fetchContentCore(NId id, NDescriptor descriptor, String localPath, NFetchMode fetchMode, NSession session) {
+    public NPath fetchContentCore(NId id, NDescriptor descriptor, NFetchMode fetchMode, NSession session) {
         if (fetchMode != NFetchMode.REMOTE) {
             throw new NNotFoundException(session, id, new NFetchModeNotSupportedException(session, this, fetchMode, id.toString(), null));
         }
-        if (NIdLocationUtils.fetch(id, descriptor.getLocations(), localPath, session)) {
-            return NPath.of(localPath, session);
+        NPath localPath=NIdLocationUtils.fetch(id, descriptor.getLocations(), this, session);
+        if (localPath!=null) {
+            return localPath;
         }
         boolean transitive = session.isTransitive();
-        boolean temp = false;
-        if (localPath == null) {
-            temp = true;
-            String p = getIdFilename(id, session);
-            localPath = NPath
-                    .ofTempRepositoryFile(new File(p).getName(), getUuid(), session).toString();
-        }
 
         try {
+            localPath = NPath.ofTempRepositoryFile(new File(this.getIdFilename(id, session)).getName(), this, session);
             String location = getUrl("/fetch?id=" + CoreIOUtils.urlEncodeString(id.toString(), session) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session));
             NCp.of(session).from(
                     NPath.of(location, session)
-            ).to(NPath.of(localPath, session)).addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE).run();
+            ).to(localPath).addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE).run();
             String rhash = httpGetString(getUrl("/fetch-hash?id=" + CoreIOUtils.urlEncodeString(id.toString(), session) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session)), session);
-            String lhash = NDigestUtils.evalSHA1Hex(NPath.of(localPath, session), session);
+            String lhash = NDigestUtils.evalSHA1Hex(localPath, session);
             if (rhash.equalsIgnoreCase(lhash)) {
-                return NPath.of(localPath, session).setUserCache(false).setUserTemporary(temp)
-                        ;
+                return localPath.setUserCache(false);
             }
         } catch (UncheckedIOException | NIOException ex) {
             throw new NNotFoundException(session, id, ex);

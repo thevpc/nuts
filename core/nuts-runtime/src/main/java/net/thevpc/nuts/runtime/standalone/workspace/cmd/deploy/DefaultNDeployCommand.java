@@ -244,7 +244,7 @@ public class DefaultNDeployCommand extends AbstractNDeployCommand {
                     }
                 } else {
                     NRepository repo = NRepositories.of(getSession()).findRepository(repository).get();
-                    if (!repo.config().isEnabled()) {
+                    if (!repo.isEnabled(session)) {
                         throw new NRepositoryDisabledException(getSession(), repository);
                     }
                     effId = CoreNIdUtils.createContentFaceId(effId.builder().setPropertiesQuery("").build(), descriptor, session);

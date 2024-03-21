@@ -53,25 +53,25 @@ public class NPrintStreamSystem extends NPrintStreamBase {
                 throw new IllegalArgumentException(e);
             }
         }
-        switch (getTerminalMode()) {
-            case ANSI: {
-                if (bindings.ansi != null) {
-                    throw new IllegalArgumentException("already bound ansi");
-                }
-                bindings.ansi = this;
-                if (bindings.inherited == null) {
-                    bindings.inherited = this;
-                }
-                break;
-            }
-            case INHERITED: {
-                if (bindings.inherited != null) {
-                    throw new IllegalArgumentException("already bound ansi");
-                }
-                bindings.inherited = this;
-                break;
-            }
-        }
+//        switch (getTerminalMode()) {
+//            case ANSI: {
+//                if (bindings.ansi != null) {
+//                    throw new IllegalArgumentException("already bound ansi");
+//                }
+//                bindings.ansi = this;
+//                if (bindings.inherited == null) {
+//                    bindings.inherited = this;
+//                }
+//                break;
+//            }
+//            case INHERITED: {
+//                if (bindings.inherited != null) {
+//                    throw new IllegalArgumentException("already bound ansi");
+//                }
+//                bindings.inherited = this;
+//                break;
+//            }
+//        }
     }
 
     private static NTerminalMode resolveMode(OutputStream out, Boolean ansi, NSession session) {

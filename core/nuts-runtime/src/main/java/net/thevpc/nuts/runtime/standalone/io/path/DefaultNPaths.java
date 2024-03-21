@@ -129,33 +129,33 @@ public class DefaultNPaths implements NPaths {
     }
 
 
-    public NPath ofTempRepositoryFile(String name, String repository) {
+    public NPath ofTempRepositoryFile(String name, NRepository repository) {
         return createAnyTempFile(name, false, repository);
     }
 
     @Override
-    public NPath ofTempRepositoryFolder(String name, String repository) {
+    public NPath ofTempRepositoryFolder(String name, NRepository repository) {
         return createAnyTempFile(name, true, repository);
     }
 
     @Override
-    public NPath ofTempRepositoryFile(String repository) {
+    public NPath ofTempRepositoryFile(NRepository repository) {
         return createAnyTempFile(null, false, repository);
     }
 
     @Override
-    public NPath ofTempRepositoryFolder(String repository) {
+    public NPath ofTempRepositoryFolder(NRepository repository) {
         return createAnyTempFile(null, true, repository);
     }
 
 
-    public NPath createAnyTempFile(String name, boolean folder, String repositoryId) {
+    public NPath createAnyTempFile(String name, boolean folder, NRepository repositoryId) {
         NPath rootFolder = null;
         NRepository repositoryById = null;
         if (repositoryId == null) {
             rootFolder = NLocations.of(session).getStoreLocation(NStoreType.TEMP);
         } else {
-            repositoryById = NRepositories.of(session).findRepository(repositoryId).get();
+            repositoryById = repositoryId;
             rootFolder = repositoryById.config().setSession(session).getStoreLocation(NStoreType.TEMP);
         }
         NId appId = session.getAppId();

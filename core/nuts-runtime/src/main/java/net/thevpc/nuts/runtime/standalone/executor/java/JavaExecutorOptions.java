@@ -316,18 +316,23 @@ public final class JavaExecutorOptions {
             NId finalId = id;
             NAssert.requireNonNull(mainClass, () -> NMsg.ofC("missing Main Class for %s", finalId), session);
             boolean baseDetected = false;
+            NRepositoryFilters nRepositoryFilters = NRepositoryFilters.of(session);
             for (NDefinition nDefinition : nDefinitions) {
                 NClassLoaderNode nn = null;
                 if (nDefinition.getContent().isPresent()) {
                     if (id.getLongName().equals(nDefinition.getId().getLongName())) {
                         baseDetected = true;
                         if (!isExcludeBase()) {
-                            nn = (NClassLoaderUtils.definitionToClassLoaderNode(nDefinition, session));
+                            nn = (NClassLoaderUtils.definitionToClassLoaderNode(nDefinition,
+                                    nRepositoryFilters.installedRepo(),
+                                    session));
 //                            classPath.add(nutsDefinition.getPath().toString());
 //                            nutsPath.add(nutsIdFormat.value(nutsDefinition.getId()).format());
                         }
                     } else {
-                        nn = (NClassLoaderUtils.definitionToClassLoaderNode(nDefinition, session));
+                        nn = (NClassLoaderUtils.definitionToClassLoaderNode(nDefinition,
+                                nRepositoryFilters.installedRepo(),
+                                session));
 //                        classPath.add(nutsDefinition.getPath().toString());
 //                        nutsPath.add(nutsIdFormat.value(nutsDefinition.getId()).format());
                     }
@@ -338,7 +343,7 @@ public final class JavaExecutorOptions {
             }
             if (!isExcludeBase() && !baseDetected) {
                 NAssert.requireNonNull(path, () -> NMsg.ofC("missing path %s", finalId), session);
-                currentCP.add(0, NClassLoaderUtils.definitionToClassLoaderNode(def, session));
+                currentCP.add(0, NClassLoaderUtils.definitionToClassLoaderNode(def,nRepositoryFilters.installedRepo(), session));
             }
             classPathNodes.addAll(currentCP);
             List<NClassLoaderNodeExt> ln =
@@ -598,6 +603,7 @@ public final class JavaExecutorOptions {
     private void addNp(List<NClassLoaderNode> classPath, String value) {
         NSession searchSession = this.session;
         NSearchCommand ns = NSearchCommand.of(searchSession).setLatest(true);
+        NRepositoryFilters nRepositoryFilters = NRepositoryFilters.of(session);
         for (String n : StringTokenizerUtils.splitDefault(value)) {
             if (!NBlankable.isBlank(n)) {
                 ns.addId(n);
@@ -606,7 +612,7 @@ public final class JavaExecutorOptions {
         for (NId nutsId : ns.getResultIds()) {
             NDefinition f = NSearchCommand.of(searchSession).addId(nutsId)
                     .setLatest(true).getResultDefinitions().findFirst().get();
-            classPath.add(NClassLoaderUtils.definitionToClassLoaderNode(f, session));
+            classPath.add(NClassLoaderUtils.definitionToClassLoaderNode(f, nRepositoryFilters.installedRepo(),session));
         }
     }
 

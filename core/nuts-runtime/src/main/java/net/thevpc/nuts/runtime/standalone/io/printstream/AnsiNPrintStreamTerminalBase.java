@@ -13,7 +13,7 @@ import net.thevpc.nuts.text.NTextStyles;
 
 import java.io.InputStream;
 
-class AnsiNPrintStreamTerminalBase extends NSystemTerminalBaseImpl {
+public class AnsiNPrintStreamTerminalBase extends NSystemTerminalBaseImpl {
     private NPrintStream out;
     private NCmdLineHistory history;
     private String commandHighlighter;

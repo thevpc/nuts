@@ -80,7 +80,7 @@ public class DefaultNFetchContentRepositoryCommand extends AbstractNFetchContent
         xrepo.checkAllowedFetch(id, session);
         long startTime = System.currentTimeMillis();
         try {
-            NPath f = xrepo.fetchContentImpl(id, descriptor0, localPath, getFetchMode(), session);
+            NPath f = xrepo.fetchContentImpl(id, descriptor0, getFetchMode(), session);
             if (f == null) {
                 throw new NNotFoundException(getSession(), id);
             }

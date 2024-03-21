@@ -111,18 +111,16 @@ public class ApacheTomcatRepositoryModel implements NRepositoryModel {
     }
 
     @Override
-    public NPath fetchContent(NId id, NDescriptor descriptor, String localPath, NFetchMode fetchMode, NRepository repository, NSession session) {
+    public NPath fetchContent(NId id, NDescriptor descriptor, NFetchMode fetchMode, NRepository repository, NSession session) {
         if (fetchMode != NFetchMode.REMOTE) {
             return null;
         }
         if ("org.apache.catalina:apache-tomcat".equals(id.getShortName())) {
             String r = getUrl(id.getVersion(), ".zip");
-            if (localPath == null) {
-                localPath = getIdLocalFile(id.builder().setFaceContent().build(), fetchMode, repository, session);
-            }
-            NCp.of(session).from(NPath.of(r, session)).to(NPath.of(localPath, session))
+            NPath localPath = NPath.of(getIdLocalFile(id.builder().setFaceContent().build(), fetchMode, repository, session),session);
+            NCp.of(session).from(NPath.of(r, session)).to(localPath)
                     .addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE).run();
-            return NPath.of(localPath, session);
+            return localPath;
         }
         return null;
     }

@@ -35,8 +35,8 @@ public class NSimpleRepositoryWrapper extends NCachedRepository {
         return base.fetchDescriptor(id, fetchMode, this, session);
     }
 
-    public NPath fetchContentCore(NId id, NDescriptor descriptor, String localPath, NFetchMode fetchMode, NSession session) {
-        return base.fetchContent(id, descriptor, localPath, fetchMode, this, session);
+    public NPath fetchContentCore(NId id, NDescriptor descriptor, NFetchMode fetchMode, NSession session) {
+        return base.fetchContent(id, descriptor, fetchMode, this, session);
     }
 
     public NIterator<NId> searchCore(final NIdFilter filter, NPath[] basePaths, NId[] baseIds, NFetchMode fetchMode, NSession session) {

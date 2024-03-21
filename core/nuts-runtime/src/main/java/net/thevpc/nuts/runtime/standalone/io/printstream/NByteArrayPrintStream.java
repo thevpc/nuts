@@ -16,9 +16,6 @@ public class NByteArrayPrintStream extends NPrintStreamRaw implements NMemoryPri
 
     public NByteArrayPrintStream(NTerminalMode mode, NSession session) {
         super(new ByteArrayOutputStream2(), mode, null, null, session, new Bindings(), null);
-        if (mode == NTerminalMode.ANSI) {
-            this.term = new AnsiNPrintStreamTerminalBase(this);
-        }
         getMetaData().setMessage(
                 NMsg.ofNtf(NTexts.of(session).ofStyled("<memory-buffer>", NTextStyle.path()))
         );
@@ -26,9 +23,6 @@ public class NByteArrayPrintStream extends NPrintStreamRaw implements NMemoryPri
 
     protected NByteArrayPrintStream(NTerminalMode mode, ByteArrayOutputStream2 bos, NSession session) {
         super(bos, mode, null, null, session, new Bindings(), null);
-        if (mode == NTerminalMode.ANSI) {
-            this.term = new AnsiNPrintStreamTerminalBase(this);
-        }
         getMetaData().setMessage(
                 NMsg.ofNtf(NTexts.of(session).ofStyled("<memory-buffer>", NTextStyle.path()))
         );

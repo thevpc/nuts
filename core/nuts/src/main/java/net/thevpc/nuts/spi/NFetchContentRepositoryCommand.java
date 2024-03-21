@@ -94,21 +94,6 @@ public interface NFetchContentRepositoryCommand extends NRepositoryCommand {
     NFetchContentRepositoryCommand setFetchMode(NFetchMode fetchMode);
 
     /**
-     * path to store to
-     *
-     * @return path to store to
-     */
-    String getLocalPath();
-
-    /**
-     * set localPath to store to.
-     *
-     * @param localPath localPath to store to
-     * @return {@code this} instance
-     */
-    NFetchContentRepositoryCommand setLocalPath(String localPath);
-
-    /**
      * description
      *
      * @return description

@@ -42,7 +42,6 @@ public abstract class AbstractNFetchContentRepositoryCommand extends NRepository
     protected NId id;
     protected NPath result;
     protected NDescriptor descriptor;
-    protected String localPath;
 
     public AbstractNFetchContentRepositoryCommand(NRepository repo) {
         super(repo, "fetch");
@@ -64,17 +63,6 @@ public abstract class AbstractNFetchContentRepositoryCommand extends NRepository
     @Override
     public NFetchContentRepositoryCommand setDescriptor(NDescriptor descriptor) {
         this.descriptor = descriptor;
-        return this;
-    }
-
-    @Override
-    public String getLocalPath() {
-        return localPath;
-    }
-
-    @Override
-    public NFetchContentRepositoryCommand setLocalPath(String localPath) {
-        this.localPath = localPath;
         return this;
     }
 

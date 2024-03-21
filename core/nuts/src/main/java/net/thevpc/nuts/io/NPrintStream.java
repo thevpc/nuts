@@ -80,6 +80,10 @@ public interface NPrintStream extends NOutputTarget, NSessionProvider {
         return NIO.of(session).ofPrintStream(out, mode, terminal);
     }
 
+    static NPrintStream of(OutputStream out, NTerminalMode mode, NSession session) {
+        return NIO.of(session).ofPrintStream(out, mode);
+    }
+
     static NPrintStream of(Writer out, NSession session) {
         return NIO.of(session).ofPrintStream(out);
     }

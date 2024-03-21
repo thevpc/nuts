@@ -36,6 +36,7 @@ public interface NRepositoryFilters extends NTypedFilters<NRepositoryFilter> {
        return NExtensions.of(session).createComponent(NRepositoryFilters.class).get();
     }
 
+    NRepositoryFilter bySelector(String... names);
     NRepositoryFilter byName(String... names);
     NRepositoryFilter byNameSelector(String... names);
 

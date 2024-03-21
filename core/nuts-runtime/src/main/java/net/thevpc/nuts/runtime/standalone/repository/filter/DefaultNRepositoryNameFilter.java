@@ -1,37 +1,29 @@
 package net.thevpc.nuts.runtime.standalone.repository.filter;
 
-import java.util.*;
-
-import net.thevpc.nuts.*;
-
-import java.util.regex.Pattern;
-
+import net.thevpc.nuts.NRepositories;
+import net.thevpc.nuts.NRepository;
+import net.thevpc.nuts.NRepositoryFilter;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
 import net.thevpc.nuts.spi.NRepositoryDB;
-import net.thevpc.nuts.spi.NRepositorySelectorList;
 import net.thevpc.nuts.spi.NRepositoryLocation;
+import net.thevpc.nuts.spi.NRepositorySelectorList;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NFilterOp;
 
-public class DefaultNRepositoryFilter extends AbstractRepositoryFilter{
+import java.util.*;
+import java.util.regex.Pattern;
+
+public class DefaultNRepositoryNameFilter extends AbstractRepositoryFilter{
 
     private final Set<String> exactRepos;
     private final Set<Pattern> wildcardRepos;
 
-    public DefaultNRepositoryFilter(NSession session, Collection<String> exactRepos) {
+    public DefaultNRepositoryNameFilter(NSession session, Collection<String> exactRepos) {
         super(session, NFilterOp.CUSTOM);
         this.exactRepos = new HashSet<>();
         this.wildcardRepos = new HashSet<>();
-        NRepositorySelectorList li=new NRepositorySelectorList();
-        NRepositoryDB db = NRepositoryDB.of(session);
-        for (String exactRepo : exactRepos) {
-            li=li.merge(NRepositorySelectorList.of(exactRepo, db,session).get());
-        }
-        NRepositoryLocation[] input = NRepositories.of(session).getRepositories().stream()
-                .map(x -> x.config().getLocation().setName(x.getName()))
-                .toArray(NRepositoryLocation[]::new);
-        String[] names = Arrays.stream(li.resolve(input,db)).map(NRepositoryLocation::getName).toArray(String[]::new);
-        for (String repo : names) {
+        for (String repo : (exactRepos==null?new ArrayList<String>():exactRepos)) {
             if (!NBlankable.isBlank(repo)) {
                 if(repo.indexOf('*')>0) {
                     this.wildcardRepos.add(GlobUtils.ofExact(repo));
@@ -93,7 +85,7 @@ public class DefaultNRepositoryFilter extends AbstractRepositoryFilter{
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final DefaultNRepositoryFilter other = (DefaultNRepositoryFilter) obj;
+        final DefaultNRepositoryNameFilter other = (DefaultNRepositoryNameFilter) obj;
         if (!Objects.equals(this.exactRepos, other.exactRepos)) {
             return false;
         }

@@ -29,10 +29,14 @@ public abstract class NPrintStreamBase implements NPrintStream {
 
     public NPrintStreamBase(boolean autoFlash, NTerminalMode mode, NSession session, Bindings bindings, NSystemTerminalBase term) {
         NAssert.requireNonNull(mode, "mode", session);
+        bindings.setOrErr(this, mode);
         this.bindings = bindings;
         this.autoFlash = autoFlash;
         this.mode = mode;
         this.session = session;
+        if(term==null && mode==NTerminalMode.ANSI){
+            term=new AnsiNPrintStreamTerminalBase(this);
+        }
         this.term = term;
     }
 
@@ -398,33 +402,11 @@ public abstract class NPrintStreamBase implements NPrintStream {
         if (other == null || other == this.getTerminalMode()) {
             return this;
         }
-        switch (other) {
-            case ANSI: {
-                if (bindings.ansi != null) {
-                    return bindings.filtered;
-                }
-                return convertImpl(other);
-            }
-            case INHERITED: {
-                if (bindings.inherited != null) {
-                    return bindings.inherited;
-                }
-                return convertImpl(other);
-            }
-            case FORMATTED: {
-                if (bindings.formatted != null) {
-                    return bindings.formatted;
-                }
-                return convertImpl(other);
-            }
-            case FILTERED: {
-                if (bindings.filtered != null) {
-                    return bindings.filtered;
-                }
-                return convertImpl(other);
-            }
+        NPrintStreamBase o = bindings.get(other);
+        if (o != null) {
+            return o;
         }
-        throw new IllegalArgumentException("unsupported yet");
+        return convertImpl(other);
     }
 
     @Override
@@ -472,6 +454,126 @@ public abstract class NPrintStreamBase implements NPrintStream {
         protected NPrintStreamBase ansi;
         protected NPrintStreamBase inherited;
         protected NPrintStreamBase formatted;
+
+        public void set(NPrintStreamBase o, NTerminalMode mode) {
+            NAssert.requireNonNull(o, "terminal");
+            NAssert.requireNonNull(mode, "mode");
+            switch (mode) {
+                case ANSI: {
+                    this.ansi = o;
+                    if (this.raw == null) {
+                        this.raw = this.ansi;
+                    }
+                    break;
+                }
+                case FILTERED: {
+                    this.filtered = o;
+                    break;
+                }
+                case FORMATTED: {
+                    this.formatted = o;
+                    break;
+                }
+                case INHERITED: {
+                    this.inherited = o;
+                    if (this.raw == null) {
+                        this.raw = this.ansi;
+                    }
+                    break;
+                }
+                case DEFAULT: {
+                    this.raw = o;
+                    break;
+                }
+            }
+        }
+
+        public NPrintStreamBase get(NTerminalMode mode) {
+            NAssert.requireNonNull(mode, "mode");
+            switch (mode) {
+                case FILTERED:
+                    return this.filtered;
+                case ANSI:
+                    return this.ansi;
+                case FORMATTED:
+                    return this.formatted;
+                case INHERITED:
+                    return this.inherited;
+                case DEFAULT:
+                    return this.raw;
+            }
+            throw new IllegalArgumentException("unexpected");
+        }
+
+        public void setOrErr(NPrintStreamBase o, NTerminalMode mode) {
+            setIfNull(o,mode,true);
+        }
+
+        public void setIfNull(NPrintStreamBase o, NTerminalMode mode, boolean err) {
+            NAssert.requireNonNull(o, "terminal");
+            NAssert.requireNonNull(mode, "mode");
+            switch (mode) {
+                case ANSI: {
+                    if (this.ansi == null) {
+                        this.ansi = o;
+                        if (this.raw == null) {
+                            this.raw = this.ansi;
+                        }
+                    } else {
+                        if (err) {
+                            throw new IllegalArgumentException("already bound " + mode);
+                        }
+                    }
+                    break;
+                }
+                case FILTERED: {
+                    if (this.filtered == null) {
+                        this.filtered = o;
+                    } else {
+                        if (err) {
+                            throw new IllegalArgumentException("already bound " + mode);
+                        }
+                    }
+                    break;
+                }
+                case FORMATTED: {
+                    if (this.formatted == null) {
+                        this.formatted = o;
+                    } else {
+                        if (err) {
+                            throw new IllegalArgumentException("already bound " + mode);
+                        }
+                    }
+                    break;
+                }
+                case INHERITED: {
+                    if (this.inherited == null) {
+                        this.inherited = o;
+                        if (this.ansi == null) {
+                            this.ansi = o;
+                        }
+                        if (this.raw == null) {
+                            this.raw = this.ansi;
+                        }
+                    } else {
+                        if (err) {
+                            throw new IllegalArgumentException("already bound " + mode);
+                        }
+                    }
+                    break;
+                }
+                case DEFAULT: {
+                    if (this.raw == null) {
+                        this.raw = o;
+                    }else {
+                        if (err) {
+                            throw new IllegalArgumentException("already bound " + mode);
+                        }
+                    }
+                    break;
+                }
+            }
+        }
     }
 
     @Override

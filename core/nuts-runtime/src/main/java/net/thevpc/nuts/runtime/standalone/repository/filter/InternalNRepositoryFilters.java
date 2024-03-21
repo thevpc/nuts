@@ -41,7 +41,7 @@ public class InternalNRepositoryFilters extends InternalNTypedFilters<NRepositor
     @Override
     public NRepositoryFilter installedRepo() {
         checkSession();
-        return new DefaultNRepositoryFilter(getSession(), Arrays.asList(DefaultNInstalledRepository.INSTALLED_REPO_UUID));
+        return new DefaultNRepositoryUuidFilter(getSession(), Arrays.asList(DefaultNInstalledRepository.INSTALLED_REPO_UUID));
     }
 
     @Override
@@ -52,11 +52,35 @@ public class InternalNRepositoryFilters extends InternalNTypedFilters<NRepositor
         }
         List<String> namesList = Arrays.asList(names).stream()
                 .filter(x -> !NBlankable.isBlank(x))
-                .map(x -> "=" + x.trim()).collect(Collectors.toList());
+                .map(String::trim).collect(Collectors.toList());
         if (namesList.isEmpty()) {
             return always();
         }
-        return new DefaultNRepositoryFilter(getSession(), namesList);
+        return new DefaultNRepositoryNameFilter(getSession(), namesList);
+    }
+
+    @Override
+    public NRepositoryFilter bySelector(String[] names) {
+        checkSession();
+        if (names == null || names.length == 0) {
+            return always();
+        }
+        List<String> namesList = Arrays.asList(names).stream()
+                .filter(x -> !NBlankable.isBlank(x))
+                .map(x -> {
+                    String i = x.trim();
+                    switch (i.charAt(0)) {
+                        case '=':
+                        case '+':
+                        case '-':
+                            return i;
+                    }
+                    return "=" + i;
+                }).collect(Collectors.toList());
+        if (namesList.isEmpty()) {
+            return always();
+        }
+        return new DefaultNRepositorySelectorFilter(getSession(), namesList);
     }
 
     @Override
@@ -84,7 +108,7 @@ public class InternalNRepositoryFilters extends InternalNTypedFilters<NRepositor
         if (namesList.isEmpty()) {
             return always();
         }
-        return new DefaultNRepositoryFilter(getSession(), namesList);
+        return new DefaultNRepositorySelectorFilter(getSession(), namesList);
     }
 
     @Override
@@ -93,8 +117,7 @@ public class InternalNRepositoryFilters extends InternalNTypedFilters<NRepositor
         if (uuids == null || uuids.length == 0) {
             return always();
         }
-        //TODO should create another class for uuids!
-        return new DefaultNRepositoryFilter(getSession(), Arrays.asList(uuids));
+        return new DefaultNRepositoryUuidFilter(getSession(), Arrays.asList(uuids));
     }
 
     @Override

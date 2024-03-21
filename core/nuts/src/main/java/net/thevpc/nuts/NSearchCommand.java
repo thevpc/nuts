@@ -797,31 +797,7 @@ public interface NSearchCommand extends NWorkspaceCommand {
     NSearchCommand removeScope(NDependencyScopePattern scope);
 
     /**
-     * unset location to store to fetched id and fall back to default location.
-     *
-     * @return {@code this} instance
-     */
-    NSearchCommand setDefaultLocation();
-
-    /**
-     * get locating where to fetch the artifact. If the location is a folder, a
-     * new name will be generated.
-     *
-     * @return location path
-     */
-    Path getLocation();
-
-    /**
-     * set locating where to fetch the artifact. If the location is a folder, a
-     * new name will be generated.
-     *
-     * @param fileOrFolder path to store to
-     * @return {@code this} instance
-     */
-    NSearchCommand setLocation(Path fileOrFolder);
-
-    /**
-     * scope filter filter. applicable with
+     * scope filter. applicable with
      * {@link #setInlineDependencies(boolean)}
      *
      * @return optional filter

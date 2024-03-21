@@ -8,6 +8,8 @@ package net.thevpc.nuts.core.test;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
 import net.thevpc.nuts.core.test.utils.TestUtils;
+import net.thevpc.nuts.time.NChronometer;
+import net.thevpc.nuts.util.NAssert;
 import org.junit.jupiter.api.*;
 
 import java.util.List;
@@ -22,7 +24,27 @@ public class Test10_ExecURLTest {
 
     @BeforeAll
     public static void init() {
-        session = TestUtils.openNewMinTestWorkspace();
+        session = TestUtils.openNewMinTestWorkspace("--verbose");
+    }
+
+    @Test
+    public void execURLLs() {
+        TestUtils.println(NVersionFormat.of(session));
+        NInstallCommand.of(session).addId("nsh").run();
+
+        for (int i = 0; i < 3; i++) {
+            session.out().println("------------------------");
+            NChronometer c1 = NChronometer.startNow();
+            String result = NExecCommand.of(session)
+                    .addWorkspaceOptions(new DefaultNWorkspaceOptionsBuilder().setBot(true))
+//                    .addCommand("nsh","-c","ls")
+                    .addCommand("com.cts.probots.server:probots-server","--version")
+//                    .system().addCommand("sh","-c","ls")
+                    .failFast().getGrabbedAllString();
+            TestUtils.println("Result:");
+            TestUtils.println(result);
+            TestUtils.println(c1.stop());
+        }
     }
 
     @Test
@@ -30,12 +52,13 @@ public class Test10_ExecURLTest {
         TestUtils.println(NVersionFormat.of(session));
         NSearchCommand q = NSearchCommand.of(session)
                 .setId("net.thevpc.hl:hadra-build-tool#0.1.0")
-                .setRepositoryFilter("maven-central")
+                //.setRepositoryFilter("maven-central")
                 .setLatest(true);
         session.out().println(q.getResultQueryPlan());
         List<NId> nutsIds = q
                 .getResultIds()
                 .toList();
+        NAssert.requireFalse(nutsIds.isEmpty(),"not found hadra-build-tool");
         TestUtils.println(nutsIds);
         List<NDependencies> allDeps = NSearchCommand.of(session).addId("net.thevpc.hl:hl#0.1.0")
                 .setDependencies(true)
@@ -119,21 +142,6 @@ public class Test10_ExecURLTest {
     }
 
 
-
-    @Test
-    public void testNtf2() {
-        TestUtils.println(NVersionFormat.of(session));
-        String result = NExecCommand.of(session.copy()
-                        .setBot(true).json())
-                .setTarget("ssh://vpc:a@192.168.1.36")
-                //.addCommand("ls","-l")
-                .addCommand("nuts","info")
-                .failFast()
-                //.system()
-                .getGrabbedAllString();
-        session.out().println(result);
-        Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
-    }
 
     //@Test
     public void testCallSpecialId() {

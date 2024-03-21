@@ -286,9 +286,14 @@ public class NReservedWorkspaceOptionsArgumentsBuilder {
                     }
                 }
                 if (value instanceof NTerminalMode) {
+                    NVersion apiVersionObj = config.getApiVersion();
                     switch ((NTerminalMode) value) {
                         case FILTERED: {
-                            arguments.add(selectOptionName("--!color", "-!c"));
+                            if (apiVersionObj == null || apiVersionObj.compareTo("0.8.4") >= 0) {
+                                arguments.add(selectOptionName("--!color", "-!c"));
+                            } else {
+                                arguments.add("--color=filtered");
+                            }
                             return true;
                         }
                         case FORMATTED: {
@@ -371,8 +376,17 @@ public class NReservedWorkspaceOptionsArgumentsBuilder {
         fillOption("--boot-version", "-V", options.getApiVersion().map(Object::toString).orNull(), arguments, false);
         fillOption("--boot-runtime", null, options.getRuntimeId().map(Object::toString).orNull(), arguments, false);
 
-        if (!(config.isOmitDefaults() && options.getTerminalMode().orNull() == NTerminalMode.FORMATTED)) {
-            fillOption("--color", "-c", options.getTerminalMode().orNull(), NTerminalMode.class, arguments, true);
+        {
+            NTerminalMode nTerminalMode = options.getTerminalMode().orNull();
+            if (apiVersionObj != null && apiVersionObj.compareTo("0.8.4") < 0) {
+                if (options.getBot().orElse(false)) {
+                    //force
+                    nTerminalMode = NTerminalMode.FILTERED;
+                }
+            }
+            if (!(config.isOmitDefaults() && nTerminalMode == NTerminalMode.FORMATTED)) {
+                fillOption("--color", "-c", nTerminalMode, NTerminalMode.class, arguments, true);
+            }
         }
         NLogConfig logConfig = options.getLogConfig().orNull();
         if (logConfig != null) {

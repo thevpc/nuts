@@ -27,7 +27,6 @@ import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
@@ -139,14 +138,10 @@ public class DefaultNFetchCommand extends AbstractNFetchCommand {
         }
     }
 
-    public Path getResultPath() {
+    public NPath getResultPath() {
         try {
             NDefinition def = fetchDefinition(getId(), copy().setContent(true).setEffective(false), true, false);
-            Path p = def.getContent().flatMap(NPath::toPath).orNull();
-            if (getLocation() != null) {
-                return getLocation();
-            }
-            return p;
+            return def.getContent().orNull();
         } catch (NNotFoundException ex) {
             if (!isFailFast()) {
                 return null;
@@ -237,8 +232,9 @@ public class DefaultNFetchCommand extends AbstractNFetchCommand {
                     if (isDependencies()) {
                         foundDefinition.setDependencies(
                                 NDependencySolver.of(getSession())
-                                        .setFilter(buildActualDependencyFilter())
+                                        .setDependencyFilter(buildActualDependencyFilter())
                                         .add(id.toDependency(), foundDefinition)
+                                        .setRepositoryFilter(this.getRepositoryFilter())
                                         .solve()
                         );
                     }
@@ -250,15 +246,11 @@ public class DefaultNFetchCommand extends AbstractNFetchCommand {
                             boolean loadedFromInstallRepo = DefaultNInstalledRepository.INSTALLED_REPO_UUID.equals(successfulDescriptorLocation
                                     .getRepository().getUuid());
                             NId id1 = CoreNIdUtils.createContentFaceId(foundDefinition.getId(), foundDefinition.getDescriptor(), session);
-                            Path copyTo = options.getLocation();
-                            if (copyTo != null && Files.isDirectory(copyTo)) {
-                                copyTo = copyTo.resolve(NLocations.of(_ws).getDefaultIdFilename(id1));
-                            }
 //                        boolean escalateMode = false;
                             boolean contentSuccessful = false;
                             NRepositoryAndFetchModeTracker contentTracker = new NRepositoryAndFetchModeTracker(descTracker.available());
-
-                            contentSuccessful = fetchContent(id1, foundDefinition, successfulDescriptorLocation, copyTo, reasons);
+                            NPath fetchedPath = fetchContent(id1, foundDefinition, successfulDescriptorLocation, reasons);
+                            contentSuccessful = fetchedPath != null;
                             if (contentSuccessful) {
                                 successfulContentLocation = successfulDescriptorLocation;
                             } else {
@@ -271,7 +263,8 @@ public class DefaultNFetchCommand extends AbstractNFetchCommand {
                                             .filter(x -> x.getRepository().getUuid().equals(finalSuccessfulDescriptorLocation.getRepository().getUuid()) &&
                                                     x.getFetchMode() == NFetchMode.REMOTE).findFirst().orElse(null);
                                     if (n != null/* && contentTracker.accept(n)*/) {
-                                        contentSuccessful = fetchContent(id1, foundDefinition, n, copyTo, reasons);
+                                        fetchedPath = fetchContent(id1, foundDefinition, n, reasons);
+                                        contentSuccessful = fetchedPath != null;
                                         if (contentSuccessful) {
                                             successfulContentLocation = n;
                                         } else {
@@ -282,7 +275,8 @@ public class DefaultNFetchCommand extends AbstractNFetchCommand {
                             }
                             if (!contentSuccessful) {
                                 for (NRepositoryAndFetchMode repoAndMode : contentTracker.available()) {
-                                    contentSuccessful = fetchContent(id1, foundDefinition, repoAndMode, copyTo, reasons);
+                                    fetchedPath = fetchContent(id1, foundDefinition, repoAndMode, reasons);
+                                    contentSuccessful = fetchedPath != null;
                                     if (contentSuccessful) {
                                         successfulContentLocation = repoAndMode;
                                         break;
@@ -352,54 +346,51 @@ public class DefaultNFetchCommand extends AbstractNFetchCommand {
                 ).and(getDependencyFilter());
     }
 
-    protected boolean fetchContent(NId id1, DefaultNDefinition foundDefinition, NRepository repo0, NFetchStrategy nutsFetchModes, Path copyTo, List<Exception> reasons) {
+    protected NPath fetchContent(NId id1, DefaultNDefinition foundDefinition, NRepository repo0, NFetchStrategy nutsFetchModes, List<Exception> reasons) {
         NRepositorySPI repoSPI = NWorkspaceUtils.of(session).repoSPI(repo0);
         for (NFetchMode mode : nutsFetchModes) {
             try {
                 NPath content = repoSPI.fetchContent()
                         .setId(id1).setDescriptor(foundDefinition.getDescriptor())
-                        .setLocalPath(copyTo == null ? null : copyTo.toString())
                         .setSession(session)
                         .setFetchMode(mode)
                         .getResult();
                 if (content != null) {
                     content = repoSPI.fetchContent()
                             .setId(id1).setDescriptor(foundDefinition.getDescriptor())
-                            .setLocalPath(copyTo == null ? null : copyTo.toString())
                             .setSession(session)
                             .setFetchMode(mode)
                             .getResult();
                     foundDefinition.setContent(content);
                     foundDefinition.setDescriptor(resolveExecProperties(foundDefinition.getDescriptor(), content));
-                    return true;
+                    return content;
                 }
             } catch (NNotFoundException ex) {
                 reasons.add(ex);
                 //
             }
         }
-        return false;
+        return null;
     }
 
-    protected boolean fetchContent(NId id1, DefaultNDefinition foundDefinition, NRepositoryAndFetchMode repo, Path copyTo, List<Exception> reasons) {
+    protected NPath fetchContent(NId id1, DefaultNDefinition foundDefinition, NRepositoryAndFetchMode repo, List<Exception> reasons) {
         NRepositorySPI repoSPI = NWorkspaceUtils.of(getSession()).repoSPI(repo.getRepository());
         try {
             NPath content = repoSPI.fetchContent()
                     .setId(id1).setDescriptor(foundDefinition.getDescriptor())
-                    .setLocalPath(copyTo == null ? null : copyTo.toString())
                     .setSession(session)
                     .setFetchMode(repo.getFetchMode())
                     .getResult();
             if (content != null) {
                 foundDefinition.setContent(content);
                 foundDefinition.setDescriptor(resolveExecProperties(foundDefinition.getDescriptor(), content));
-                return true;
+                return content;
             }
         } catch (NNotFoundException ex) {
             reasons.add(ex);
             //
         }
-        return false;
+        return null;
     }
 
     protected NDescriptor resolveExecProperties(NDescriptor nutsDescriptor, NPath jar) {

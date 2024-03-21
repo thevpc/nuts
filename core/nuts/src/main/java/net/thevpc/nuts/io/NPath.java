@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts.io;
 
+import net.thevpc.nuts.NRepository;
 import net.thevpc.nuts.format.NFormattable;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.NSession;
@@ -139,7 +140,7 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
      * @param name file name
      * @return newly created file path
      */
-    static NPath ofTempRepositoryFile(String name, String repository, NSession session) {
+    static NPath ofTempRepositoryFile(String name, NRepository repository, NSession session) {
         return NPaths.of(session).ofTempRepositoryFile(name, repository);
     }
 
@@ -148,7 +149,7 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
      *
      * @return newly created file path
      */
-    static NPath ofTempRepositoryFile(String repository, NSession session) {
+    static NPath ofTempRepositoryFile(NRepository repository, NSession session) {
         return NPaths.of(session).ofTempRepositoryFile(repository);
     }
 
@@ -158,7 +159,7 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
      * @param name folder name
      * @return newly created temp folder
      */
-    static NPath ofTempRepositoryFolder(String name, String repository, NSession session) {
+    static NPath ofTempRepositoryFolder(String name, NRepository repository, NSession session) {
         return NPaths.of(session).ofTempRepositoryFolder(name, repository);
     }
 
@@ -167,7 +168,7 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
      *
      * @return newly created temp folder
      */
-    static NPath ofTempRepositoryFolder(String repository, NSession session) {
+    static NPath ofTempRepositoryFolder(NRepository repository, NSession session) {
         return NPaths.of(session).ofTempRepositoryFolder(repository);
     }
 

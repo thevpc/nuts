@@ -106,8 +106,8 @@ public class DefaultNIO implements NIO {
             return ((NPrintStreamAdapter) out).getBasePrintStream().setTerminalMode(expectedMode);
         }
         return
-                new NPrintStreamRaw(out, null, null, session, new NPrintStreamBase.Bindings(), term)
-                        .setTerminalMode(expectedMode)
+                new NPrintStreamRaw(out,expectedMode, null, null, session, new NPrintStreamBase.Bindings(), term)
+//                        .setTerminalMode(expectedMode)
                 ;
     }
 
@@ -118,6 +118,16 @@ public class DefaultNIO implements NIO {
             return ((NPrintStreamAdapter) out).getBasePrintStream();
         }
         return new NPrintStreamRaw(out, null, null, session, new NPrintStreamBase.Bindings(), null);
+    }
+
+    @Override
+    public NPrintStream ofPrintStream(Writer out, NTerminalMode mode) {
+        return ofPrintStream(out,mode,null);
+    }
+
+    @Override
+    public NPrintStream ofPrintStream(OutputStream out, NTerminalMode mode) {
+        return ofPrintStream(out,mode,null);
     }
 
     public NPrintStream ofPrintStream(Writer out, NTerminalMode mode, NSystemTerminalBase terminal) {

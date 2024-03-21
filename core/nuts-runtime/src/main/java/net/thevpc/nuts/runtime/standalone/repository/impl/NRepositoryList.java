@@ -67,14 +67,13 @@ public class NRepositoryList extends NCachedRepository {
 
 
     @Override
-    public NPath fetchContentCore(NId id, NDescriptor descriptor, String localPath, NFetchMode fetchMode, NSession session) {
+    public NPath fetchContentCore(NId id, NDescriptor descriptor, NFetchMode fetchMode, NSession session) {
         for (NRepository repoItem : repoItems) {
             try {
                 NPath result = ((NRepositorySPI) repoItem).fetchContent()
                         .setId(id)
                         .setDescriptor(descriptor)
                         .setFetchMode(fetchMode)
-                        .setLocalPath(localPath)
                         .setSession(session)
                         .getResult();
                 if (result != null) {

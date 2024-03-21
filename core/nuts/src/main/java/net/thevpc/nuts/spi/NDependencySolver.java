@@ -56,7 +56,8 @@ public interface NDependencySolver {
 
     NDependencySolver add(NDependency dependency, NDefinition def);
 
-    NDependencySolver setFilter(NDependencyFilter dependencyFilter);
+    NDependencySolver setDependencyFilter(NDependencyFilter dependencyFilter);
+    NDependencySolver setRepositoryFilter(NRepositoryFilter repositoryFilter);
 
     NDependencies solve();
 

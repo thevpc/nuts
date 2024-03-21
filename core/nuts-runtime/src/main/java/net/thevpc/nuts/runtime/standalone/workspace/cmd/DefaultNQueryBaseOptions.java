@@ -13,8 +13,6 @@ import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
@@ -35,7 +33,6 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCommand> exte
     private boolean inlineDependencies = false;
     private boolean dependencies = false;
     private boolean effective = false;
-    private Path location = null;
     private NFetchDisplayOptions displayOptions;
     private NRepositoryFilter repositoryFilter;
 
@@ -55,18 +52,11 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCommand> exte
             super.copyFromWorkspaceCommandBase(other);
             this.optional = other.getOptional();
             this.failFast = other.isFailFast();
-//            this.fetchStrategy = other.getFetchStrategy();
-//            this.indexed = other.getIndexed();
-//            this.transitive = other.isTransitive();
-//            this.cached = other.isCached();
             this.content = other.isContent();
             this.inlineDependencies = other.isInlineDependencies();
             this.dependencies = other.isDependencies();
             this.effective = other.isEffective();
             this.scope = EnumSet.copyOf(other.getScope());
-            this.location = other.getLocation();
-//            this.repos.clear();
-//            this.repos.addAll(Arrays.asList(other.getRepositories()));
             this.dependencyFilter = other.getDependencyFilter();
             this.repositoryFilter = other.getRepositoryFilter();
 
@@ -215,24 +205,6 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCommand> exte
         return setDependencies(true);
     }
 
-
-    //@Override
-    public Path getLocation() {
-        return location;
-    }
-
-    //@Override
-    public T setLocation(Path location) {
-        this.location = location;
-        return (T) this;
-    }
-
-    //@Override
-    public T setDefaultLocation() {
-        this.location = null;
-        return (T) this;
-    }
-
     public boolean isFailFast() {
         return failFast;
     }
@@ -298,7 +270,7 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCommand> exte
             }
             case "-r":
             case "--repository": {
-                cmdLine.withNextEntry((v, r, s) -> addRepositoryFilter(NRepositoryFilters.of(getSession()).byName(v)));
+                cmdLine.withNextEntry((v, r, s) -> addRepositoryFilter(NRepositoryFilters.of(getSession()).bySelector(v)));
                 return true;
             }
             case "--dependencies": {
@@ -331,10 +303,6 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCommand> exte
                 cmdLine.withNextFlag((v, r, s) -> this.setContent(v));
                 return true;
             }
-            case "--location": {
-                cmdLine.withNextEntry((v, r, s) -> this.setLocation(NBlankable.isBlank(v) ? null : Paths.get(v)));
-                return true;
-            }
         }
         return false;
     }
@@ -350,7 +318,7 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCommand> exte
         if (NBlankable.isBlank(filter)) {
             this.repositoryFilter = null;
         } else {
-            this.repositoryFilter = NRepositories.of(getSession()).filter().byName(filter);
+            this.repositoryFilter = NRepositories.of(getSession()).filter().bySelector(filter);
         }
         return (T) this;
     }
@@ -384,7 +352,6 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCommand> exte
                 + ", inlineDependencies=" + inlineDependencies
                 + ", dependencies=" + dependencies
                 + ", effective=" + effective
-                + ", location=" + location
 //                + ", repos=" + repos
                 + ", displayOptions=" + displayOptions
                 + ", session=" + getSession()

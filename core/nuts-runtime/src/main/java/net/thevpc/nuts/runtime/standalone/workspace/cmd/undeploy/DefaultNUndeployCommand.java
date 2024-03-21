@@ -29,7 +29,7 @@ public class DefaultNUndeployCommand extends AbstractNUndeployCommand {
                     .addRepositoryFilter(NRepositoryFilters.of(session).byName(getRepository()))
                     //skip 'installed' repository
                     .setRepositoryFilter(
-                            NRepositories.of(session).filter().byName(DefaultNInstalledRepository.INSTALLED_REPO_UUID).neg()
+                            NRepositories.of(session).filter().installedRepo().neg()
                     )
                     .setDistinct(true)
                     .failFast()

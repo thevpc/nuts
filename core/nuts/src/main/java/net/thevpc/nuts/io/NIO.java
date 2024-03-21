@@ -65,10 +65,12 @@ public interface NIO extends NComponent {
      * @return {@code mode} supporting PrintStream
      */
     NPrintStream ofPrintStream(OutputStream out, NTerminalMode mode, NSystemTerminalBase terminal);
+    NPrintStream ofPrintStream(OutputStream out, NTerminalMode mode);
 
     NPrintStream ofPrintStream(OutputStream out);
 
     NPrintStream ofPrintStream(Writer out, NTerminalMode mode, NSystemTerminalBase terminal);
+    NPrintStream ofPrintStream(Writer out, NTerminalMode mode);
 
     NPrintStream ofPrintStream(NPath out);
 

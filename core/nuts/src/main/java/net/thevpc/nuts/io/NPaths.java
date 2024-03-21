@@ -1,5 +1,6 @@
 package net.thevpc.nuts.io;
 
+import net.thevpc.nuts.NRepository;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponent;
@@ -72,14 +73,14 @@ public interface NPaths extends NComponent {
      * @param name file name
      * @return newly created file path
      */
-    NPath ofTempRepositoryFile(String name, String repository);
+    NPath ofTempRepositoryFile(String name, NRepository repository);
 
     /**
      * create temp file in the repositoryId's temp folder
      *
      * @return newly created file path
      */
-    NPath ofTempRepositoryFile(String repository);
+    NPath ofTempRepositoryFile(NRepository repository);
 
     /**
      * create temp folder in the repository's temp folder
@@ -87,12 +88,12 @@ public interface NPaths extends NComponent {
      * @param name folder name
      * @return newly created temp folder
      */
-    NPath ofTempRepositoryFolder(String name, String repository);
+    NPath ofTempRepositoryFolder(String name, NRepository repository);
 
     /**
      * create temp folder in the repository's temp folder
      *
      * @return newly created temp folder
      */
-    NPath ofTempRepositoryFolder(String repository);
+    NPath ofTempRepositoryFolder(NRepository repository);
 }

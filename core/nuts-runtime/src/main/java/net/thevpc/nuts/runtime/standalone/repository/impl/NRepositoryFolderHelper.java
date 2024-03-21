@@ -110,7 +110,7 @@ public class NRepositoryFolderHelper {
         return getStoreLocation().resolve(NRepositoryExt0.of(repo).getIdBasedir(id.builder().setVersion("").build(), session));
     }
 
-    public NPath fetchContentImpl(NId id, String localPath, NSession session) {
+    public NPath fetchContentImpl(NId id, NSession session) {
         NPath cacheContent = getLongIdLocalFile(id.builder().setFaceContent().build(), session);
         if (cacheContent != null && pathExists(cacheContent, session)) {
             return cacheContent.setUserCache(cacheFolder).setUserTemporary(false);

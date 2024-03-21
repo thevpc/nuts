@@ -110,7 +110,6 @@ public abstract class AbstractNFetchCommand extends DefaultNQueryBaseOptions<NFe
                 + ", inlineDependencies=" + isInlineDependencies()
                 + ", dependencies=" + isDependencies()
                 + ", effective=" + isEffective()
-                + ", location=" + getLocation()
                 + ", repos=" + getRepositoryFilter()
                 + ", displayOptions=" + getDisplayOptions()
                 + ", id=" + getId()

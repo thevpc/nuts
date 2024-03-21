@@ -37,7 +37,7 @@ public interface NRepositoryExt extends NRepositoryExt0 {
 
     NIterator<NId> searchVersionsImpl(NId id, NIdFilter idFilter, NFetchMode fetchMode, NSession session);
 
-    NPath fetchContentImpl(NId id, NDescriptor descriptor, String localPath, NFetchMode fetchMode, NSession session);
+    NPath fetchContentImpl(NId id, NDescriptor descriptor, NFetchMode fetchMode, NSession session);
 
     NIterator<NId> searchImpl(final NIdFilter filter, NFetchMode fetchMode, NSession session);
 

@@ -274,8 +274,8 @@ public class NRepositorySessionAwareImpl implements NRepository, NRepositorySPI,
     }
 
     @Override
-    public NPath fetchContentImpl(NId id, NDescriptor descriptor, String localPath, NFetchMode fetchMode, NSession session) {
-        return repoExt().fetchContentImpl(id, descriptor, localPath, fetchMode, session);
+    public NPath fetchContentImpl(NId id, NDescriptor descriptor, NFetchMode fetchMode, NSession session) {
+        return repoExt().fetchContentImpl(id, descriptor, fetchMode, session);
     }
 
     @Override

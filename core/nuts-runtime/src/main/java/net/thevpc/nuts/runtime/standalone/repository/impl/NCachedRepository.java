@@ -58,7 +58,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
     protected final NRepositoryFolderHelper cache;
     private final NRepositoryMirroringHelper mirroring;
     public NLog LOG;
-    private boolean lockEnabled=true;
+    private boolean lockEnabled = true;
 
     public NCachedRepository(NAddRepositoryOptions options, NSession session, NRepository parent, NSpeedQualifier speed, boolean supportedMirroring, String repositoryType, boolean supportsDeploy) {
         super(options, session, parent, speed, supportedMirroring, repositoryType, supportsDeploy);
@@ -117,7 +117,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
     @Override
     public NDescriptor fetchDescriptorImpl(NId id, NFetchMode fetchMode, NSession session) {
         if (fetchMode != NFetchMode.REMOTE) {
-            if(lib.isReadEnabled()) {
+            if (lib.isReadEnabled()) {
                 NDescriptor libDesc = lib.fetchDescriptorImpl(id, session);
                 if (libDesc != null) {
                     return libDesc;
@@ -158,7 +158,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
             boolean lockEnabled = isLockEnabled();
             res = lockEnabled ?
                     NLocks.of(session).setSource(id.builder().setFaceDescriptor().build()).call(nOptionalCallable)
-                    :nOptionalCallable.call();
+                    : nOptionalCallable.call();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -246,15 +246,15 @@ public class NCachedRepository extends AbstractNRepositoryBase {
     }
 
     @Override
-    public final NPath fetchContentImpl(NId id, NDescriptor descriptor, String localPath, NFetchMode fetchMode, NSession session) {
+    public final NPath fetchContentImpl(NId id, NDescriptor descriptor, NFetchMode fetchMode, NSession session) {
         if (fetchMode != NFetchMode.REMOTE) {
-            NPath c = lib.fetchContentImpl(id, localPath, session);
+            NPath c = lib.fetchContentImpl(id, session);
             if (c != null) {
                 return c;
             }
         }
         if (cache.isReadEnabled() && session.isCached()) {
-            NPath c = cache.fetchContentImpl(id, localPath, session);
+            NPath c = cache.fetchContentImpl(id, session);
             if (c != null) {
                 return c;
             }
@@ -265,18 +265,10 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         Callable<NOptional<NPath>> nOptionalCallable = () -> {
             if (cache.isWriteEnabled()) {
                 NPath cachePath = cache.getLongIdLocalFile(id, session);
-                NPath c2 = fetchContentCore(id, descriptor, cachePath.toString(), fetchMode, session);
+                NPath c2 = fetchContentCore(id, descriptor, fetchMode, session);
                 if (c2 != null) {
-                    String localPath2 = localPath;
-                    //already deployed because fetchContentImpl2 is run against cachePath
-//                cache.deployContent(id, c.getPath(), session);
-                    if (localPath2 != null) {
-                        NCp.of(session)
-                                .from(cachePath).to(NPath.of(localPath2, session)).run();
-                    } else {
-                        localPath2 = cachePath.toString();
-                    }
-                    return NOptional.of(NPath.of(localPath2, session).setUserCache(true).setUserTemporary(false));
+                    NCp.of(session).from(c2).to(cachePath).run();
+                    return NOptional.of(cachePath.setUserCache(true).setUserTemporary(false));
                 } else {
                     return NOptional.ofError(session1 -> NMsg.ofC("nuts content not found %s", id), new NNotFoundException(session, id));
                 }
@@ -284,7 +276,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                 NPath c2 = null;
                 RuntimeException impl2Ex = null;
                 try {
-                    c2 = fetchContentCore(id, descriptor, localPath, fetchMode, session);
+                    c2 = fetchContentCore(id, descriptor, fetchMode, session);
                 } catch (RuntimeException ex) {
                     impl2Ex = ex;
                 }
@@ -297,14 +289,12 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                 }
             }
         };
-        NOptional<NPath> res =
-                null
-                ;
+        NOptional<NPath> res = null;
         try {
             boolean lockEnabled = isLockEnabled();
             res = lockEnabled ?
                     NLocks.of(session).setSource(id.builder().setFaceContent().build()).call(nOptionalCallable)
-                    :nOptionalCallable.call();
+                    : nOptionalCallable.call();
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -315,7 +305,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
             return res.get(session);
         }
         try {
-            c = mirroring.fetchContent(id, descriptor, localPath, fetchMode, session);
+            c = mirroring.fetchContent(id, descriptor, fetchMode, session);
         } catch (RuntimeException ex) {
             mirrorsEx = ex;
         }
@@ -392,7 +382,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         return null;
     }
 
-    public NPath fetchContentCore(NId id, NDescriptor descriptor, String localPath, NFetchMode fetchMode, NSession session) {
+    public NPath fetchContentCore(NId id, NDescriptor descriptor, NFetchMode fetchMode, NSession session) {
         return null;
     }
 

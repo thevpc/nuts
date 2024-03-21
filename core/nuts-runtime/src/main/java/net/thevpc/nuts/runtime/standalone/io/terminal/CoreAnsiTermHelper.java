@@ -5,15 +5,18 @@ import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.util.NLiteral;
 
 public class CoreAnsiTermHelper {
+    public static String tput(String str,long timeout,NSession session) {
+        return NExecCommand.of(session)
+                .system()
+                .addCommand("tput", str)
+                .failFast()
+                .getGrabbedOutOnlyString()
+                .trim()
+        ;
+    }
     public static boolean isXTerm(NSession session) {
         try {
-            String str = "cols";
-            NExecCommand.of(session)
-                    .system()
-                    .addCommand("tput", str)
-                    .failFast()
-                    .getGrabbedOutOnlyString()
-            ;
+            tput("cols",0,session);
             return true;
         } catch (Exception ex) {
             return false;
@@ -39,19 +42,12 @@ public class CoreAnsiTermHelper {
 
     public static String evalCapability(String str, NSession session) {
         try {
-            String d = NExecCommand.of(session).system()
-                    .addCommand("tput", str)
-                    .getGrabbedOutOnlyString();
-            String s = d.trim();
+            String s = tput(str,0,session);
             if (s.isEmpty()) {
                 return null;
             }
             //add 500 of sleep time!
-            d = NExecCommand.of(session).system()
-                    .addCommand("tput", str)
-                    .setSleepMillis(500)
-                    .getGrabbedOutOnlyString();
-            s = d.trim();
+            s = tput(str,500,session);
             if (s.isEmpty()) {
                 return null;
             }

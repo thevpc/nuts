@@ -52,6 +52,7 @@ import net.thevpc.nuts.runtime.standalone.util.collections.LRUMap;
 import net.thevpc.nuts.runtime.standalone.util.filters.NIdFilterToPredicate;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.*;
@@ -217,6 +218,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         NWorkspaceUtils.of(session).checkReadOnly();
         InstallInfoConfig ii = getInstallInfoConfig(id, null, session);
         try {
+            invalidateInstallationDigest(session);
             String repository = id.getRepository();
             NRepository r = NRepositories.of(session).findRepository(repository).orNull();
             if (ii == null) {
@@ -543,6 +545,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     private NInstallInformation updateInstallInformation(NDefinition def, Boolean install, Boolean require, boolean deploy, NSession session) {
+        invalidateInstallationDigest(session);
         NId id1 = def.getId();
         InstallInfoConfig ii = getInstallInfoConfig(id1, null, session);
         boolean wasInstalled = false;
@@ -693,6 +696,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         return new AbstractNDeployRepositoryCommand(this) {
             @Override
             public NDeployRepositoryCommand run() {
+                invalidateInstallationDigest(getSession());
                 boolean succeeded = false;
                 try {
                     NDescriptor rep = deployments.deploy(this, NConfirmationMode.YES);
@@ -712,6 +716,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         return new AbstractNRepositoryUndeployCommand(this) {
             @Override
             public NRepositoryUndeployCommand run() {
+                invalidateInstallationDigest(getSession());
                 boolean succeeded = false;
                 try {
                     deployments.undeploy(this);
@@ -722,6 +727,11 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                 return this;
             }
         };
+    }
+
+    private static void invalidateInstallationDigest(NSession session) {
+        String uuid = UUID.randomUUID().toString();
+        NWorkspaceExt.of(session).setInstallationDigest(uuid,session);
     }
 
     @Override
@@ -752,7 +762,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         return new AbstractNFetchContentRepositoryCommand(this) {
             @Override
             public NFetchContentRepositoryCommand run() {
-                result = deployments.fetchContentImpl(getId(), getLocalPath(), getSession());
+                result = deployments.fetchContentImpl(getId(), getSession());
                 return this;
             }
         };
@@ -831,6 +841,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         return new AbstractNUpdateRepositoryStatisticsCommand(this) {
             @Override
             public NUpdateRepositoryStatisticsCommand run() {
+                invalidateInstallationDigest(getSession());
                 deployments.reindexFolder(getSession());
                 return this;
             }
