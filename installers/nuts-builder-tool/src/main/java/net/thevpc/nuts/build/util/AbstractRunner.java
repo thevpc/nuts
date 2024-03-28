@@ -132,7 +132,7 @@ public class AbstractRunner {
             traceCmd(cmd);
         }
 //        String out =
-        NExecCommand.of(session)
+        NExecCmd.of(session)
                 .addCommand(cmd)
                 .failFast()
                 .system()
@@ -149,7 +149,7 @@ public class AbstractRunner {
         if (session.isDry() || session.isTrace()) {
             traceCmd(cmd);
         }
-        return NExecCommand.of(session)
+        return NExecCmd.of(session)
                 .addCommand(cmd)
                 .failFast()
                 .system()

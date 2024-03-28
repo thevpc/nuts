@@ -93,11 +93,11 @@ public class Test03_CreateLayoutTest {
         if (NDI_COMPANIONS > 0) {
             NId nshId = null;
             try {
-                nshId = NSearchCommand.of(session).setInstallStatus(NInstallStatusFilters.of(session).byInstalled(true)).addId("nsh")
+                nshId = NSearchCmd.of(session).setInstallStatus(NInstallStatusFilters.of(session).byInstalled(true)).addId("nsh")
                         .setDistinct(true).getResultIds()
                         .findSingleton().get();
             } catch (Exception ex) {
-                nshId = NSearchCommand.of(session).setInstallStatus(NInstallStatusFilters.of(session).byInstalled(true)).addId("nsh")
+                nshId = NSearchCmd.of(session).setInstallStatus(NInstallStatusFilters.of(session).byInstalled(true)).addId("nsh")
                         .setDistinct(true).getResultIds()
                         .findSingleton().get();
             }
@@ -142,7 +142,7 @@ public class Test03_CreateLayoutTest {
         NSession w = TestUtils.runExistingTestWorkspace("--system-conf-home", new File(base, "system.conf.ignored").getPath(),
                 "info");
         TestUtils.println("==========================");
-        NInfoCommand.of(w).println();
+        NInfoCmd.of(w).println();
         TestUtils.println("==========================");
         TestUtils.println(new File(base, "system.bin").getPath());
         NLocations locations = NLocations.of(w);

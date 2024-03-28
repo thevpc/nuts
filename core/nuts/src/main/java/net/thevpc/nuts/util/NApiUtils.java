@@ -119,7 +119,7 @@ public class NApiUtils {
 
     public static int processThrowable(Throwable ex, String[] args) {
         DefaultNBootOptionsBuilder bo = new DefaultNBootOptionsBuilder();
-        bo.setCommandLine(args, null);
+        bo.setCmdLine(args, null);
         try {
             if (NApiUtils.isGraphicalDesktopEnvironment()) {
                 bo.setGui(false);

@@ -37,8 +37,7 @@ public class NIndexSubscriberListManager {
 
     private NPath getConfigFile(NSession session) {
         return NLocations.of(session)
-                .getStoreLocation(NIdResolver.of(session)
-                                .resolveId(NIndexSubscriberListManager.class),
+                .getStoreLocation(NId.ofClass(NIndexSubscriberListManager.class,session).get(),
                         NStoreType.CONF).resolve(
                         name + "-nuts-subscriber-list.json");
     }

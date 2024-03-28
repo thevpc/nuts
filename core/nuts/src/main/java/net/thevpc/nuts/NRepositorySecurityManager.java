@@ -39,11 +39,11 @@ public interface NRepositorySecurityManager extends NSessionProvider {
 
     NRepositorySecurityManager checkAllowed(String right, String operationName) throws SecurityException;
 
-    NAddUserCommand addUser(String name);
+    NAddUserCmd addUser(String name);
 
-    NUpdateUserCommand updateUser(String name);
+    NUpdateUserCmd updateUser(String name);
 
-    NRemoveUserCommand removeUser(String name);
+    NRemoveUserCmd removeUser(String name);
 
     List<NUser> findUsers();
 

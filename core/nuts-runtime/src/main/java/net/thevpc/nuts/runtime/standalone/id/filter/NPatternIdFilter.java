@@ -86,7 +86,7 @@ public class NPatternIdFilter extends AbstractIdFilter implements NIdFilter {
         if (condition != null && !condition.isBlank()) {
             NEnvCondition otherCondition = null;
             try {
-                otherCondition = NFetchCommand.of(other,session).getResultDescriptor().getCondition();
+                otherCondition = NFetchCmd.of(other,session).getResultDescriptor().getCondition();
             } catch (Exception ex) {
                 //ignore any error
             }

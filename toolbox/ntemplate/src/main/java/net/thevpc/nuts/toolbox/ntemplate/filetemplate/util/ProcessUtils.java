@@ -14,7 +14,7 @@
 //public class ProcessUtils {
 //
 //    public static Object execProcess(String cmdLine, String dir) {
-//        return execProcess(CommandlineUtils.parseCommandLine(commandline), dir);
+//        return execProcess(CommandlineUtils.parseCmdLine(commandline), dir);
 //    }
 //
 //    public static Object execProcess(String[] cmdLine, String dir) {

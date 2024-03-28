@@ -888,7 +888,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
 
     @Override
     public String toString() {
-        return toCommandLine().toString();
+        return toCmdLine().toString();
     }
 
     @Override
@@ -897,13 +897,13 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
     }
 
     @Override
-    public NCmdLine toCommandLine() {
-        return toCommandLine(new NWorkspaceOptionsConfig());
+    public NCmdLine toCmdLine() {
+        return toCmdLine(new NWorkspaceOptionsConfig());
     }
 
     @Override
-    public NCmdLine toCommandLine(NWorkspaceOptionsConfig config) {
-        return new NReservedWorkspaceOptionsArgumentsBuilder(config, this).toCommandLine();
+    public NCmdLine toCmdLine(NWorkspaceOptionsConfig config) {
+        return new NReservedWorkspaceOptionsArgumentsBuilder(config, this).toCmdLine();
     }
 
     @Override

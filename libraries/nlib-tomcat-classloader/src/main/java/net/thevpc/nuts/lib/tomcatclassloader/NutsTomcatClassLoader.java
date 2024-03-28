@@ -110,7 +110,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
                 String[] pathList = splitString(nutsPath, "; ,");
                 try {
                     NSession session = resolveNutsWorkspace();
-                    nutsClassLoader = NSearchCommand.of(session).addIds(pathList).setInlineDependencies(true).getResultClassLoader();
+                    nutsClassLoader = NSearchCmd.of(session).addIds(pathList).setInlineDependencies(true).getResultClassLoader();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     nutsClassLoader = Thread.currentThread().getContextClassLoader();

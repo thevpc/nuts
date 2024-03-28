@@ -85,7 +85,7 @@ public class ZipInstallerComponent implements NInstallerComponent {
         nutsDefinition.setInstallInformation(NWorkspaceExt.of(session).getInstalledRepository().getInstallInformation(nutsDefinition.getId(),
                 executionContext.getSession()));
         if (executionContext.getExecutorOptions().size() > 0) {
-            NExecCommand.of(session)
+            NExecCmd.of(session)
                     .addCommand(executionContext.getExecutorOptions())
                     .addExecutorOptions(executionContext.getExecutorOptions())
                     .setEnv(executionContext.getEnv())

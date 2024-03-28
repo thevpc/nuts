@@ -5,9 +5,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.update;
 
-import net.thevpc.nuts.NExecCommand;
+import net.thevpc.nuts.NExecCmd;
 import net.thevpc.nuts.NExecutionException;
-import net.thevpc.nuts.NUpdateCommand;
+import net.thevpc.nuts.NUpdateCmd;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 
@@ -17,7 +17,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
  */
 public class DefaultNUpdateInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNUpdateInternalExecutable(String[] args, NExecCommand execCommand) {
+    public DefaultNUpdateInternalExecutable(String[] args, NExecCmd execCommand) {
         super("update", args, execCommand);
     }
 
@@ -31,7 +31,7 @@ public class DefaultNUpdateInternalExecutable extends DefaultInternalNExecutable
             showDefaultHelp();
             return NExecutionException.SUCCESS;
         }
-        NUpdateCommand.of(getSession())
+        NUpdateCmd.of(getSession())
                 .configure(false, args).update();
         return NExecutionException.SUCCESS;
     }

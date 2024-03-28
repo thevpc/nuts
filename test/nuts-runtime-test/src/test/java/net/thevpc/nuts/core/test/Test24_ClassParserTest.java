@@ -15,8 +15,9 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 
-import net.thevpc.nuts.NExecutionEntries;
+import net.thevpc.nuts.NLibPaths;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.format.NVisitResult;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.core.test.utils.TestUtils;
@@ -99,8 +100,8 @@ public class Test24_ClassParserTest {
         TestUtils.println("parse jar " + file + " ... ");
         try (InputStream in = Files.newInputStream(file)) {
             TestUtils.println("parse jar " + file + " :: " + Arrays.asList(
-                    NExecutionEntries.of(session)
-                            .parse(in, "java", file.toString())
+                    NLibPaths.of(session)
+                            .parseExecutionEntries(in, "java", file.toString())
             ));
         }
     }
@@ -110,26 +111,26 @@ public class Test24_ClassParserTest {
 
         JavaClassByteCode scs = new JavaClassByteCode(Files.newInputStream(file), new JavaClassByteCode.Visitor() {
             @Override
-            public boolean visitVersion(int major, int minor) {
+            public NVisitResult visitVersion(int major, int minor) {
                 TestUtils.println("\t" + major + "." + minor);
-                return true;
+                return NVisitResult.CONTINUE;
             }
 
-            public boolean visitClassDeclaration(int accessFlags, String thisClass, String superClass, String[] interfaces) {
+            public NVisitResult visitClassDeclaration(int accessFlags, String thisClass, String superClass, String[] interfaces) {
                 TestUtils.println("\tclass " + accessFlags + " " + thisClass + " extends " + superClass + " implements " + Arrays.asList(interfaces));
-                return true;
+                return NVisitResult.CONTINUE;
             }
 
             @Override
-            public boolean visitMethod(int accessFlags, String name, String descriptor) {
+            public NVisitResult visitMethod(int accessFlags, String name, String descriptor) {
                 TestUtils.println("\t\tmethod " + accessFlags + " " + name + " " + descriptor);
-                return true;
+                return NVisitResult.CONTINUE;
             }
 
             @Override
-            public boolean visitField(int accessFlags, String name, String descriptor) {
+            public NVisitResult visitField(int accessFlags, String name, String descriptor) {
                 TestUtils.println("\t\tfield " + accessFlags + " " + name + " " + descriptor);
-                return true;
+                return NVisitResult.CONTINUE;
             }
 
         }, session

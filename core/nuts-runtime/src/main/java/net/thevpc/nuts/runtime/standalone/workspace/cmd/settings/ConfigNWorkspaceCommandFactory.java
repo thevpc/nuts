@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 
-public class ConfigNWorkspaceCommandFactory implements NWorkspaceCommandFactory {
+public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
 
     private NLog LOG;
     private NWorkspace ws;

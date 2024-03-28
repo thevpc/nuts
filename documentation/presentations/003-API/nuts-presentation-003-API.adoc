@@ -117,14 +117,14 @@ image::images/nuts-components.png[scaledwidth=80%]
 
 ```java
     NSession session=...;
-    NStream<NId> ids=NSearchCommand.of(session)
+    NStream<NId> ids=NSearchCmd.of(session)
         .addId("org.jedit:jedit")
         .setLatest(true)
         .setDistinct(true).getResultIds();
     for(NId id:ids){
        ...
     }
-    NStream<NDefinition> defs=NSearchCommand.of(session)
+    NStream<NDefinition> defs=NSearchCmd.of(session)
         .addId("org.jedit:jedit")
         .setLatest(true)
         .setDistinct(true).getResultDefnintions();
@@ -138,7 +138,7 @@ image::images/nuts-components.png[scaledwidth=80%]
 
 ```java
     NSession session=...;
-    ClassLoader loader=NSearchCommand.of(session)
+    ClassLoader loader=NSearchCmd.of(session)
         .addId("org.jedit:jedit")
         .addId("org.spring.framework:spring-context")
         .setLatest(true)
@@ -191,8 +191,8 @@ image::images/nuts-components.png[scaledwidth=80%]
 
 ```java
     NSession session=Nuts.openWorkspace("-Z","-S");
-    int code=NExecCommand.of(session).addCommand("ls", "-l").getResult();
-    String out=NExecCommand.of(session).addCommand("nsh", "ls","--table")
+    int code=NExecCmd.of(session).addCommand("ls", "-l").getResult();
+    String out=NExecCmd.of(session).addCommand("nsh", "ls","--table")
         .grabOutputString()
         .getOutputString();
 ```

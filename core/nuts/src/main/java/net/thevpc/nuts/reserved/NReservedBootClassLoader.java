@@ -51,7 +51,9 @@ public class NReservedBootClassLoader extends URLClassLoader {
     public NReservedBootClassLoader(NClassLoaderNode[] urls, ClassLoader parent) {
         super(new URL[0], parent);
         for (NClassLoaderNode url : urls) {
-            add(url);
+            if(url!=null) {
+                add(url);
+            }
         }
     }
 

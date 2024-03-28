@@ -27,14 +27,14 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
-import net.thevpc.nuts.runtime.standalone.repository.cmd.deploy.DefaultNDeployRepositoryCommand;
-import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.DefaultNFetchContentRepositoryCommand;
-import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.DefaultNFetchDescriptorRepositoryCommand;
-import net.thevpc.nuts.runtime.standalone.repository.cmd.push.DefaultNPushRepositoryCommand;
-import net.thevpc.nuts.runtime.standalone.repository.cmd.search.DefaultNSearchRepositoryCommand;
-import net.thevpc.nuts.runtime.standalone.repository.cmd.search.DefaultNSearchVersionsRepositoryCommand;
-import net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy.DefaultNRepositoryUndeployCommand;
-import net.thevpc.nuts.runtime.standalone.repository.cmd.updatestats.AbstractNUpdateRepositoryStatisticsCommand;
+import net.thevpc.nuts.runtime.standalone.repository.cmd.deploy.DefaultNDeployRepositoryCmd;
+import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.DefaultNFetchContentRepositoryCmd;
+import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.DefaultNFetchDescriptorRepositoryCmd;
+import net.thevpc.nuts.runtime.standalone.repository.cmd.push.DefaultNPushRepositoryCmd;
+import net.thevpc.nuts.runtime.standalone.repository.cmd.search.DefaultNSearchRepositoryCmd;
+import net.thevpc.nuts.runtime.standalone.repository.cmd.search.DefaultNSearchVersionsRepositoryCmd;
+import net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy.DefaultNRepositoryUndeployCmd;
+import net.thevpc.nuts.runtime.standalone.repository.cmd.updatestats.AbstractNUpdateRepositoryStatsCmd;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepositoryConfigModel;
 import net.thevpc.nuts.spi.*;
 
@@ -115,8 +115,8 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
     }
 
     @Override
-    public NFetchDescriptorRepositoryCommand fetchDescriptor() {
-        return new DefaultNFetchDescriptorRepositoryCommand(this);
+    public NFetchDescriptorRepositoryCmd fetchDescriptor() {
+        return new DefaultNFetchDescriptorRepositoryCmd(this);
     }
 
     @Override
@@ -139,33 +139,33 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
     }
 
     @Override
-    public NDeployRepositoryCommand deploy() {
-        return new DefaultNDeployRepositoryCommand(this);
+    public NDeployRepositoryCmd deploy() {
+        return new DefaultNDeployRepositoryCmd(this);
     }
 
     @Override
-    public NPushRepositoryCommand push() {
-        return new DefaultNPushRepositoryCommand(this);
+    public NPushRepositoryCmd push() {
+        return new DefaultNPushRepositoryCmd(this);
     }
 
     @Override
-    public NSearchRepositoryCommand search() {
-        return new DefaultNSearchRepositoryCommand(this);
+    public NSearchRepositoryCmd search() {
+        return new DefaultNSearchRepositoryCmd(this);
     }
 
     @Override
-    public NFetchContentRepositoryCommand fetchContent() {
-        return new DefaultNFetchContentRepositoryCommand(this);
+    public NFetchContentRepositoryCmd fetchContent() {
+        return new DefaultNFetchContentRepositoryCmd(this);
     }
 
     @Override
-    public NSearchVersionsRepositoryCommand searchVersions() {
-        return new DefaultNSearchVersionsRepositoryCommand(this);
+    public NSearchVersionsRepositoryCmd searchVersions() {
+        return new DefaultNSearchVersionsRepositoryCmd(this);
     }
 
     @Override
-    public NRepositoryUndeployCommand undeploy() {
-        return new DefaultNRepositoryUndeployCommand(this);
+    public NRepositoryUndeployCmd undeploy() {
+        return new DefaultNRepositoryUndeployCmd(this);
     }
 
     protected String getIdComponentExtension(String packaging, NSession session) {
@@ -190,10 +190,10 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
     }
 
     @Override
-    public NUpdateRepositoryStatisticsCommand updateStatistics() {
-        return new AbstractNUpdateRepositoryStatisticsCommand(this) {
+    public NUpdateRepositoryStatsCmd updateStatistics() {
+        return new AbstractNUpdateRepositoryStatsCmd(this) {
             @Override
-            public NUpdateRepositoryStatisticsCommand run() {
+            public NUpdateRepositoryStatsCmd run() {
                 return this;
             }
         };

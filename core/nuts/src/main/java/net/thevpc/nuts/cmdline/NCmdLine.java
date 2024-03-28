@@ -33,10 +33,7 @@ import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Simple Command line parser implementation. The command line supports
@@ -131,13 +128,13 @@ public interface NCmdLine extends Iterable<NArg>, NFormattable, NBlankable, NSes
     }
 
     static NOptional<NCmdLine> parseSystem(String line, NSession session) {
-        return NOptional.of(NCmdLines.of(session).parseCommandline(line));
+        return NOptional.of(NCmdLines.of(session).parseCmdLine(line));
     }
 
     static NOptional<NCmdLine> parseSystem(String line, NShellFamily shellFamily, NSession session) {
         return NOptional.of(NCmdLines.of(session)
                 .setShellFamily(shellFamily)
-                .parseCommandline(line));
+                .parseCmdLine(line));
     }
 
     /**
@@ -149,7 +146,7 @@ public interface NCmdLine extends Iterable<NArg>, NFormattable, NBlankable, NSes
      * @return new command line instance
      */
     static NCmdLine of(String line, NShellFamily shellFamily, NSession session) {
-        return NCmdLines.of(session).setShellFamily(shellFamily).parseCommandline(line);
+        return NCmdLines.of(session).setShellFamily(shellFamily).parseCmdLine(line);
     }
 
     /**

@@ -13,6 +13,10 @@ source $nbw_here/.dir-template/vars.nsh
 echo run ntemplate -p $nbw_here/.dir-template -t $nbw_here
 ntemplate -p $nbw_here/.dir-template -t $nbw_here
 
+echo searching for apiVersion
+nversion $nbw_here/core/nuts
+apiVersion=`nuts -y nversion $nbw_here/core/nuts`
+echo apiVersion=$apiVersion
 ## update nuts.jar
 echo copy nuts.jar
 echo cp ~/.m2/repository/net/thevpc/nuts/nuts/${apiVersion}/nuts-${apiVersion}.jar $nbw_here/documentation/website/static/nuts-preview.jar

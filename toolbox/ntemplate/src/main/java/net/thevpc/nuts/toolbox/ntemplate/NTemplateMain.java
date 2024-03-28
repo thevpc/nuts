@@ -30,7 +30,7 @@ public class NTemplateMain implements NApplication {
 
     @Override
     public void run(NSession session) {
-        session.processAppCommandLine(new NCmdLineProcessor() {
+        session.processAppCmdLine(new NCmdLineProcessor() {
 
             @Override
             public boolean onCmdNextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {

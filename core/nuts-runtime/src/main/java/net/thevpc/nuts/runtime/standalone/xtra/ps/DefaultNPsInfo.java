@@ -31,7 +31,7 @@ public class DefaultNPsInfo implements NPsInfo {
     }
 
     @Override
-    public String getCommandLine() {
+    public String getCmdLine() {
         return cmdLine;
     }
 }

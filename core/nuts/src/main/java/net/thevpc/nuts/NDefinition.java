@@ -56,7 +56,7 @@ public interface NDefinition extends Serializable, Comparable<NDefinition> {
 
     /**
      * return artifact content file info (including path).
-     * this is an <strong>optional</strong> property. It must be requested (see {@link NSearchCommand#setContent(boolean)}) to be available.
+     * this is an <strong>optional</strong> property. It must be requested (see {@link NSearchCmd#setContent(boolean)}) to be available.
      *
      * @return artifact content file info
      * @throws NElementNotFoundException if the property is not requested
@@ -74,7 +74,7 @@ public interface NDefinition extends Serializable, Comparable<NDefinition> {
     /**
      * return artifact effective descriptor.
      * this is an <strong>optional</strong> property.
-     * It must be requested (see {@link NSearchCommand#setEffective(boolean)} to be available).
+     * It must be requested (see {@link NSearchCmd#setEffective(boolean)} to be available).
      *
      * @return artifact effective descriptor
      * @throws NElementNotFoundException if the property is not requested
@@ -85,7 +85,7 @@ public interface NDefinition extends Serializable, Comparable<NDefinition> {
      * return all or some of the transitive dependencies of the current Nuts as List
      * result of the search command
      * this is an <strong>optional</strong> property.
-     * It must be requested (see {@link NSearchCommand#setDependencies(boolean)} to be available.
+     * It must be requested (see {@link NSearchCmd#setDependencies(boolean)} to be available.
      *
      * @return all or some of the transitive dependencies of the current Nuts as List
      * result of the search command.

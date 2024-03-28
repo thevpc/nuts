@@ -16,7 +16,7 @@ public class NdbMain implements NApplication {
 
     @Override
     public void run(NSession session) {
-        run(session.getAppCommandLine(), session);
+        run(session.getAppCmdLine(), session);
     }
 
     public void run(NCmdLine cmdLine, NSession session) {

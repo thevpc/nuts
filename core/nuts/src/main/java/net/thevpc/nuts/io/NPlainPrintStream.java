@@ -5,7 +5,7 @@ import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
-import net.thevpc.nuts.text.NTerminalCommand;
+import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextStyles;
 
@@ -280,7 +280,7 @@ public class NPlainPrintStream implements NPrintStream {
     }
 
     @Override
-    public NPrintStream run(NTerminalCommand command, NSession session) {
+    public NPrintStream run(NTerminalCmd command, NSession session) {
         return this;
     }
 

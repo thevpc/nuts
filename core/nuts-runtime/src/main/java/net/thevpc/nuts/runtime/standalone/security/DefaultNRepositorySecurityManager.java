@@ -53,19 +53,19 @@ public class DefaultNRepositorySecurityManager implements NRepositorySecurityMan
     }
 
     @Override
-    public NAddUserCommand addUser(String name) {
+    public NAddUserCmd addUser(String name) {
         checkSession(session);
         return model.addUser(name, session);
     }
 
     @Override
-    public NUpdateUserCommand updateUser(String name) {
+    public NUpdateUserCmd updateUser(String name) {
         checkSession(session);
         return model.updateUser(name, session);
     }
 
     @Override
-    public NRemoveUserCommand removeUser(String name) {
+    public NRemoveUserCmd removeUser(String name) {
         checkSession(session);
         return model.removeUser(name, session);
     }

@@ -238,8 +238,8 @@ public class MavenNDependencySolver implements NDependencySolver {
         return this;
     }
 
-    private NSearchCommand search(NSession session) {
-        return NSearchCommand.of(session)
+    private NSearchCmd search(NSession session) {
+        return NSearchCmd.of(session)
                 .setRepositoryFilter(repositoryFilter);
     }
 

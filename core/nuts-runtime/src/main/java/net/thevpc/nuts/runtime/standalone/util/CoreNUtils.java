@@ -320,7 +320,7 @@ public class CoreNUtils {
         return x;
     }
 
-    //    public static NutsContentType readOptionOutputFormat(NutsCommandLine cmdLine) {
+    //    public static NutsContentType readOptionOutputFormat(NutsCmdLine cmdLine) {
 //        NutsArgument a = cmdLine.peek();
 //        switch(a.key()) {
 //            case "--output-format": {
@@ -532,7 +532,7 @@ public class CoreNUtils {
     }
 
     public static List<NId> resolveNutsApiIdsFromId(NId id, NSession session) {
-        List<NDependency> deps = NFetchCommand.of(id,session).setDependencies(true).getResultDefinition()
+        List<NDependency> deps = NFetchCmd.of(id,session).setDependencies(true).getResultDefinition()
                 .getDependencies().get(session).transitive().toList();
         return resolveNutsApiIdsFromDependencyList(deps, session);
     }

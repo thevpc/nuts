@@ -81,23 +81,31 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
     @Override
     public void startWorkspace(NSession session) {
         NBootManager boot = NBootManager.of(session);
-        boolean initializePlatforms = boot.getBootOptions().getInitPlatforms().ifEmpty(true).get(session);
-        boolean initializeJava = boot.getBootOptions().getInitJava().ifEmpty(initializePlatforms).get(session);
+//        boolean initializePlatforms = boot.getBootOptions().getInitPlatforms().ifEmpty(false).get(session);
+//        boolean initializeJava = boot.getBootOptions().getInitJava().ifEmpty(initializePlatforms).get(session);
         boolean initializeScripts = boot.getBootOptions().getInitScripts().ifEmpty(true).get(session);
         boolean initializeLaunchers = boot.getBootOptions().getInitLaunchers().ifEmpty(true).get(session);
-
-        if (initializeJava) {
-            NWorkspaceUtils.of(session).installAllJVM();
-        } else {
-            //at least add current vm
-            NWorkspaceUtils.of(session).installCurrentJVM();
-        }
-        if (initializeScripts || initializeLaunchers) {
-            NWorkspaceUtils.of(session).installScriptsAndLaunchers(initializeLaunchers);
-        }
         Boolean installCompanions = NBootManager.of(session).getBootOptions().getInstallCompanions().orElse(false);
-        if (installCompanions) {
-            NWorkspaceUtils.of(session).installCompanions();
+
+//        if (initializeJava) {
+//            NWorkspaceUtils.of(session).installAllJVM();
+//        } else {
+//            //at least add current vm
+//            NWorkspaceUtils.of(session).installCurrentJVM();
+//        }
+        if (initializeScripts || initializeLaunchers || installCompanions) {
+            NId api = NFetchCmd.of(session).setId(session.getWorkspace().getApiId()).setFailFast(false).getResultId();
+            if (api != null) {
+                if (initializeScripts || initializeLaunchers) {
+                    //api would be null if running in fatjar and no internet/maven is available
+                    NWorkspaceUtils.of(session).installScriptsAndLaunchers(initializeLaunchers);
+                }
+                if (installCompanions) {
+                    if (api != null) {
+                        NWorkspaceUtils.of(session).installCompanions();
+                    }
+                }
+            }
         }
     }
 

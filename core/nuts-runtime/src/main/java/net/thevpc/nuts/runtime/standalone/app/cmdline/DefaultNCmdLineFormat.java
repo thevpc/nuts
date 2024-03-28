@@ -40,7 +40,7 @@ public class DefaultNCmdLineFormat extends DefaultFormatBase<NCmdLineFormat> imp
 
     @Override
     public NCmdLineFormat setValue(String args) {
-        return setValue(args == null ? null : NCmdLines.of(getSession()).parseCommandline(args));
+        return setValue(args == null ? null : NCmdLines.of(getSession()).parseCmdLine(args));
     }
 
     public NShellFamily getShellFamily() {

@@ -5,9 +5,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.prepare;
 
-import net.thevpc.nuts.NExecCommand;
+import net.thevpc.nuts.NExecCmd;
 import net.thevpc.nuts.NExecutionException;
-import net.thevpc.nuts.NPrepareCommand;
+import net.thevpc.nuts.NPrepareCmd;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 
@@ -16,7 +16,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
  */
 public class DefaultNPrepareInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNPrepareInternalExecutable(String[] args, NExecCommand execCommand) {
+    public DefaultNPrepareInternalExecutable(String[] args, NExecCmd execCommand) {
         super("prepare", args, execCommand);
     }
 
@@ -30,7 +30,7 @@ public class DefaultNPrepareInternalExecutable extends DefaultInternalNExecutabl
             showDefaultHelp();
             return NExecutionException.SUCCESS;
         }
-        NPrepareCommand.of(getSession()).configure(false, args).run();
+        NPrepareCmd.of(getSession()).configure(false, args).run();
         return NExecutionException.SUCCESS;
     }
 

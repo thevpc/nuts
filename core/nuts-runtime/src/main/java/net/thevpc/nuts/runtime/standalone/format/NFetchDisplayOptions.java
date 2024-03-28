@@ -186,7 +186,7 @@ public class NFetchDisplayOptions {
         return false;
     }
 
-    public String[] toCommandLineOptions() {
+    public String[] toCmdLineOptions() {
         List<String> displayOptionsArgs = new ArrayList<>();
         if (this.getIdFormat() != null) {
             if (this.getIdFormat().isHighlightImportedGroupId()) {

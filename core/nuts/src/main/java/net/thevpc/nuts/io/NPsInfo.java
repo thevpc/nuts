@@ -58,5 +58,5 @@ public interface NPsInfo {
      *
      * @return Process command line
      */
-    String getCommandLine();
+    String getCmdLine();
 }

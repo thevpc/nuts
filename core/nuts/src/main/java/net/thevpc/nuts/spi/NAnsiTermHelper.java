@@ -27,7 +27,7 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.text.NTerminalCommand;
+import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.util.NBlankable;
@@ -259,12 +259,12 @@ public class NAnsiTermHelper {
         return sb.toString();
     }
 
-    public String command(NTerminalCommand command, NSession session) {
+    public String command(NTerminalCmd command, NSession session) {
         switch (command.getName()) {
-            case NTerminalCommand.Ids.MOVE_LINE_START: {
+            case NTerminalCmd.Ids.MOVE_LINE_START: {
                 return ("\r");
             }
-            case NTerminalCommand.Ids.MOVE_TO: {
+            case NTerminalCmd.Ids.MOVE_TO: {
                 List<String> a = command.getArgs();
                 if (a.size() >= 2) {
                     Integer count1 = NLiteral.of(a.get(0)).asInt().orNull();
@@ -276,7 +276,7 @@ public class NAnsiTermHelper {
                 return null;
             }
 
-            case NTerminalCommand.Ids.MOVE_UP: {
+            case NTerminalCmd.Ids.MOVE_UP: {
                 List<String> a = command.getArgs();
                 if (a.size() >= 1) {
                     Integer count1 = NLiteral.of(a.get(0)).asInt().orNull();
@@ -286,7 +286,7 @@ public class NAnsiTermHelper {
                 }
                 return null;
             }
-            case NTerminalCommand.Ids.MOVE_DOWN: {
+            case NTerminalCmd.Ids.MOVE_DOWN: {
                 List<String> a = command.getArgs();
                 if (a.size() >= 1) {
                     Integer count1 = NLiteral.of(a.get(0)).asInt().orNull();
@@ -296,7 +296,7 @@ public class NAnsiTermHelper {
                 }
                 return null;
             }
-            case NTerminalCommand.Ids.MOVE_RIGHT: {
+            case NTerminalCmd.Ids.MOVE_RIGHT: {
                 List<String> a = command.getArgs();
                 if (a.size() >= 1) {
                     Integer count1 = NLiteral.of(a.get(0)).asInt().orNull();
@@ -306,7 +306,7 @@ public class NAnsiTermHelper {
                 }
                 return null;
             }
-            case NTerminalCommand.Ids.MOVE_LEFT: {
+            case NTerminalCmd.Ids.MOVE_LEFT: {
                 List<String> a = command.getArgs();
                 if (a.size() >= 1) {
                     Integer count1 = NLiteral.of(a.get(0)).asInt().orNull();
@@ -316,22 +316,22 @@ public class NAnsiTermHelper {
                 }
                 return null;
             }
-            case NTerminalCommand.Ids.CLEAR_SCREEN: {
+            case NTerminalCmd.Ids.CLEAR_SCREEN: {
                 return ("\u001b[" + 2 + "J");
             }
-            case NTerminalCommand.Ids.CLEAR_SCREEN_FROM_CURSOR: {
+            case NTerminalCmd.Ids.CLEAR_SCREEN_FROM_CURSOR: {
                 return ("\u001b[" + 0 + "J");
             }
-            case NTerminalCommand.Ids.CLEAR_SCREEN_TO_CURSOR: {
+            case NTerminalCmd.Ids.CLEAR_SCREEN_TO_CURSOR: {
                 return ("\u001b[" + 1 + "J");
             }
-            case NTerminalCommand.Ids.CLEAR_LINE: {
+            case NTerminalCmd.Ids.CLEAR_LINE: {
                 return ("\u001b[" + 2 + "K");
             }
-            case NTerminalCommand.Ids.CLEAR_LINE_FROM_CURSOR: {
+            case NTerminalCmd.Ids.CLEAR_LINE_FROM_CURSOR: {
                 return ("\u001b[" + 0 + "K");
             }
-            case NTerminalCommand.Ids.CLEAR_LINE_TO_CURSOR: {
+            case NTerminalCmd.Ids.CLEAR_LINE_TO_CURSOR: {
                 return ("\u001b[" + 1 + "K");
             }
         }

@@ -324,9 +324,9 @@ public interface NSession extends NCmdLineConfigurable {
 
     NVersion getAppPreviousVersion();
 
-    NCmdLine getAppCommandLine();
+    NCmdLine getAppCmdLine();
 
-    void processAppCommandLine(NCmdLineProcessor commandLineProcessor);
+    void processAppCmdLine(NCmdLineProcessor commandLineProcessor);
 
     NPath getAppFolder(NStoreType location);
 

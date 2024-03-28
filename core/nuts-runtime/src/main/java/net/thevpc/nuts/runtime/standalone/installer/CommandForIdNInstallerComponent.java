@@ -74,7 +74,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                                                 definition.getInstallInformation().get(session).getInstallStatus().withInstalled(true)
                                         )
                         );
-                NExecCommand cmd = NExecCommand.of(session)
+                NExecCmd cmd = NExecCmd.of(session)
                         .setCommandDefinition(def2)
                         .addCommand("--nuts-exec-mode=" + mode);
                 if (mode.equals("install")) {
@@ -103,7 +103,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                     eargs.add(evalString(a, mode, executionContext));
                 }
                 eargs.addAll(executionContext.getArguments());
-                NExecCommand.of(executionContext.getSession())
+                NExecCmd.of(executionContext.getSession())
                         .setCommandDefinition(def2)
                         .addCommand(eargs)
                         .setExecutionType(NBootManager.of(executionContext.getSession()).getBootOptions().getExecutionType().orNull())

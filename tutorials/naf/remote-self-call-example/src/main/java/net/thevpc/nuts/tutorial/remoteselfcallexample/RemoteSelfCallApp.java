@@ -40,7 +40,7 @@ public class RemoteSelfCallApp implements NApplication {
 
     @Override
     public void run(NSession session) {
-        NCmdLine cmdLine = session.getAppCommandLine();
+        NCmdLine cmdLine = session.getAppCmdLine();
         log(NMsg.ofC("%s", cmdLine), session);
         Options options = new Options();
         while (cmdLine.hasNext()) {
@@ -87,7 +87,7 @@ public class RemoteSelfCallApp implements NApplication {
                         cmdLine.throwMissingArgument("--host");
                     }
                     String e = NStringUtils.trim(
-                            NExecCommand.of(session)
+                            NExecCmd.of(session)
                                     // host is ion the form
                                     // ssh://user@machine
                                     .setTarget(options.host)

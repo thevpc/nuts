@@ -28,11 +28,13 @@ package net.thevpc.nuts.runtime.standalone.xtra.digest;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NFormat;
+import net.thevpc.nuts.format.NTreeVisitResult;
+import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.util.AbstractMultiReadNInputSource;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.security.NDigest;
+import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NScopeType;
@@ -43,9 +45,13 @@ import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.*;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author thevpc
@@ -54,7 +60,7 @@ import java.security.NoSuchAlgorithmException;
 public class DefaultNDigest implements NDigest {
 
     private final NWorkspace ws;
-    private NInputSource source;
+    private List<NInputSource> sources;
     private String algorithm;
     private NSession session;
 
@@ -63,55 +69,76 @@ public class DefaultNDigest implements NDigest {
         this.ws = session.getWorkspace();
     }
 
-    @Override
-    public NDigest setSource(NInputSource source) {
-        this.source = source;
+    public NDigest addSource(NInputSource source) {
+        return addSource0(source);
+    }
+
+    private NDigest addSource0(NInputSource source) {
+        if (source != null) {
+            if (this.sources == null) {
+                this.sources = new ArrayList<>();
+            }
+            this.sources.add(source);
+        }
         return this;
     }
 
-    public NInputSource getSource() {
-        return source;
+    private NDigest setSource0(NInputSource source) {
+        this.sources = source == null ? new ArrayList<>() : new ArrayList<>(Arrays.asList(source));
+        return this;
+    }
+
+    @Override
+    public NDigest setSource(NInputSource source) {
+        setSource0(source);
+        return this;
+    }
+
+    public List<NInputSource> getSource() {
+        return sources;
     }
 
     @Override
     public NDigest setSource(InputStream source) {
-        if (source == null) {
-            this.source = null;
-        } else {
-            this.source = NIO.of(session).ofInputSource(source);
-        }
+        this.setSource0((source == null ? null : NIO.of(session).ofInputSource(source)));
         return this;
     }
 
     @Override
     public NDigest setSource(File source) {
-        this.source = source == null ? null : NPath.of(source, getSession());
+        this.setSource0((source == null ? null : NPath.of(source, getSession())));
         return this;
     }
 
     @Override
     public NDigest setSource(Path source) {
-        this.source = source == null ? null : NPath.of(source, getSession());
+        this.setSource0(source == null ? null : NPath.of(source, getSession()));
+        return this;
+    }
+
+    @Override
+    public NDigest setSource(URL url) {
+        this.setSource0(url == null ? null : NPath.of(url, getSession()));
         return this;
     }
 
     @Override
     public NDigest setSource(NPath source) {
-        this.source = source;
+        this.setSource0(source);
         return this;
     }
 
     @Override
     public NDigest setSource(byte[] source) {
         checkSession();
-        this.source = source == null ? null : NIO.of(session).ofInputSource(new ByteArrayInputStream(source));
-        return null;
+        this.setSource0(source == null ? null : NIO.of(session).ofInputSource(new ByteArrayInputStream(source)));
+        return this;
     }
 
     @Override
     public NDigest setSource(NDescriptor source) {
         checkSession();
-        this.source = source == null ? null : new NDescriptorInputSource(source, session);
+        this.setSource0(source == null ? null : new NDescriptorInputSource(source, session));
         return this;
     }
 
@@ -122,9 +149,75 @@ public class DefaultNDigest implements NDigest {
 
     @Override
     public byte[] computeBytes() {
-        NAssert.requireNonNull(source, "source", getSession());
-        try (InputStream is = new BufferedInputStream(source.getInputStream())) {
-            return NDigestUtils.evalHash(is, getValidAlgo(), session);
+        NAssert.requireTrue(!(sources == null || sources.isEmpty()), "source", getSession());
+        String algo = getValidAlgo();
+        MessageDigest md;
+        try {
+            md = MessageDigest.getInstance(algo);
+            for (NInputSource source : sources) {
+                incrementalUpdateFileDigestInputSource(source, md);
+            }
+        } catch (NoSuchAlgorithmException e) {
+            throw new NIOException(session, new IOException(e));
+        }
+        return md.digest();
+    }
+
+    private void incrementalUpdateFileDigestPath(NPath file, MessageDigest md) {
+        if (file.isDirectory()) {
+            file.walkDfs(new NTreeVisitor<NPath>() {
+                @Override
+                public NTreeVisitResult visitFile(NPath file, NSession session) {
+                    incrementalUpdateFileDigestInputStream(new ByteArrayInputStream(file.toString().getBytes()), md);
+                    try (InputStream is = file.getInputStream()) {
+                        incrementalUpdateFileDigestInputStream(is, md);
+                    } catch (IOException ex) {
+                        throw new NIOException(session, ex);
+                    }
+                    return NTreeVisitResult.CONTINUE;
+                }
+
+                @Override
+                public NTreeVisitResult preVisitDirectory(NPath dir, NSession session) {
+                    incrementalUpdateFileDigestInputStream(new ByteArrayInputStream(dir.toString().getBytes()), md);
+                    return NTreeVisitResult.CONTINUE;
+                }
+            });
+        } else if (file.isFile()) {
+            try (InputStream is = file.getInputStream()) {
+                incrementalUpdateFileDigestInputStream(is, md);
+            } catch (IOException ex) {
+                throw new NIOException(session, ex);
+            }
+        }
+    }
+
+    private void incrementalUpdateFileDigestInputSource(NInputSource source, MessageDigest md) {
+        if (source instanceof NPath) {
+            NPath file = (NPath) source;
+            incrementalUpdateFileDigestPath(file, md);
+            return;
+        }
+        try (InputStream is = source.getInputStream()) {
+            incrementalUpdateFileDigestInputStream(is, md);
+        } catch (IOException ex) {
+            throw new NIOException(session, ex);
+        }
+    }
+
+    private void incrementalUpdateFileDigestInputStream(InputStream inputStream, MessageDigest md) {
+        try (InputStream is = new BufferedInputStream(inputStream)) {
+            byte[] buffer = new byte[8192];
+            int len = 0;
+            try {
+                len = is.read(buffer);
+                while (len != -1) {
+                    md.update(buffer, 0, len);
+                    len = is.read(buffer);
+                }
+            } catch (IOException e) {
+                throw new NIOException(session, e);
+            }
         } catch (IOException ex) {
             throw new NIOException(session, ex);
         }
@@ -214,7 +307,7 @@ public class DefaultNDigest implements NDigest {
             this.source = source;
         }
 
-        private byte[] getBytes(){
+        private byte[] getBytes() {
             return source.formatter(session)
                     .setNtf(false)
                     .format().filteredText().getBytes();

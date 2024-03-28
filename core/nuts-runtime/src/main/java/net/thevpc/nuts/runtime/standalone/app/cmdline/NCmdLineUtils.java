@@ -93,7 +93,7 @@ public class NCmdLineUtils {
         return sb.toString();
     }
 
-    public static String[] parseCommandLine(String commandLineString, NSession session) {
+    public static String[] parseCmdLine(String commandLineString, NSession session) {
         if (commandLineString == null) {
             return new String[0];
         }

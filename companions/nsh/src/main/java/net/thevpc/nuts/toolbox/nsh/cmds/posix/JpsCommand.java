@@ -116,7 +116,7 @@ public class JpsCommand extends NShellBuiltinDefault {
         Options options = context.getOptions();
         List<JpsRow> results = new ArrayList<>();
 
-        NExecCommand e = NExecCommand.of(context.getSession())
+        NExecCmd e = NExecCmd.of(context.getSession())
                 .system()
                 .addCommand(resolveJpsCommand(context.getSession()), "-l", "-v", "-m")
                 .grabAll()

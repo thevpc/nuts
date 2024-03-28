@@ -56,6 +56,14 @@ public class MavenSettingsRepository extends NRepositoryList {
         this.repoItems = base.toArray(base.toArray(new NRepository[0]));
     }
 
+    @Override
+    public boolean isEnabled(NSession session) {
+        if(Boolean.getBoolean("nomaven")){
+            return false;
+        }
+        return super.isEnabled(session);
+    }
+
     private MavenFolderRepository createChild(NAddRepositoryOptions options0, String type, String id, String url, NSession session) {
         NPath p = NPath.of(url, session);
         String pr = NStringUtils.trim(p.getProtocol());

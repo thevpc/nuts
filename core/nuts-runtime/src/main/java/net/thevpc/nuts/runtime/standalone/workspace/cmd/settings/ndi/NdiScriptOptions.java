@@ -130,7 +130,7 @@ public class NdiScriptOptions implements Cloneable {
         if (nutsApiJarPath == null) {
             NId nid = resolveNutsApiId();
             if (getLauncher().getSwitchWorkspaceLocation() == null) {
-                NDefinition apiDef = NSearchCommand.of(session)
+                NDefinition apiDef = NSearchCmd.of(session)
                         .addId(nid).setOptional(false).setLatest(true).setContent(true).getResultDefinitions().findFirst().get();
                 nutsApiJarPath = apiDef.getContent().orNull();
             } else {
@@ -166,7 +166,7 @@ public class NdiScriptOptions implements Cloneable {
     public NPath resolveNutsApiBinFolder() {
         NWorkspaceBootConfig bootConfig = null;
         NId apiId = session.getWorkspace().getApiId().builder().setVersion(nutsVersion).build();
-        apiId = NSearchCommand.of(session).addId(apiId).latest().failFast().content()
+        apiId = NSearchCmd.of(session).addId(apiId).latest().failFast().content()
                 .distinct()
                 .getResultDefinitions()
                 .findSingleton().get().getId();
@@ -179,7 +179,7 @@ public class NdiScriptOptions implements Cloneable {
     }
 
     public NDefinition resolveNutsApiDef() {
-        return NSearchCommand.of(session).addId(resolveNutsApiId())
+        return NSearchCmd.of(session).addId(resolveNutsApiId())
                 .latest()
                 .content()
                 .failFast()
@@ -194,7 +194,7 @@ public class NdiScriptOptions implements Cloneable {
                 if (nutsVersion == null) {
                     nutsApiId = session.getWorkspace().getApiId();
                 } else {
-                    nutsApiId = NSearchCommand.of(session).addId(
+                    nutsApiId = NSearchCmd.of(session).addId(
                                     session.getWorkspace().getApiId().builder().setVersion(nutsVersion).build()
                             ).setLatest(true)
                             .setDistinct(true)

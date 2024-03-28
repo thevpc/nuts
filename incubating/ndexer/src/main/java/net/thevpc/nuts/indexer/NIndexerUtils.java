@@ -24,7 +24,7 @@ public class NIndexerUtils {
         String m = NEnvs.of(session).getProperty(k).flatMap(NLiteral::asString).orNull();
         if (m == null) {
             m = NLocations.of(session)
-                    .getStoreLocation(NIdResolver.of(session).resolveId(NIndexerUtils.class),
+                    .getStoreLocation(NId.ofClass(NIndexerUtils.class,session).get(),
                             NStoreType.CACHE) + File.separator + entity;
             NEnvs.of(session).setProperty(k, m);
         }

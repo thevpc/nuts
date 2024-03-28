@@ -31,7 +31,7 @@ public class StyledParserStep extends ParserStep {
     private NSession session;
     private EvictingCharQueue charQueue = new EvictingCharQueue(5);
     private DefaultNTextNodeParser.State state;
-    private StyledParserStepCommandParser parseHelper = new StyledParserStepCommandParser();
+    private StyledParserStepCmdParser parseHelper = new StyledParserStepCmdParser();
     private boolean wasEscape;
     private boolean exitOnBrace;
 

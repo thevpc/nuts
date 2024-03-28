@@ -13,7 +13,7 @@ import java.util.List;
  * @author thevpc
  */
 public class CommandlineUtils {
-    public static String[] parseCommandLine(String commandLineString) {
+    public static String[] parseCmdLine(String commandLineString) {
         if (commandLineString == null) {
             return new String[0];
         }

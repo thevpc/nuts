@@ -27,16 +27,32 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElementNotFoundException;
 import net.thevpc.nuts.ext.NFactoryException;
 import net.thevpc.nuts.format.NPositionType;
+import net.thevpc.nuts.io.NContentTypes;
+import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootManager;
+import net.thevpc.nuts.runtime.standalone.dependency.util.NClassLoaderUtils;
+import net.thevpc.nuts.runtime.standalone.elem.DefaultNElements;
+import net.thevpc.nuts.runtime.standalone.format.DefaultNObjectFormat;
+import net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIO;
+import net.thevpc.nuts.runtime.standalone.io.path.DefaultNPaths;
+import net.thevpc.nuts.runtime.standalone.log.DefaultNLogs;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
+import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
 import net.thevpc.nuts.runtime.standalone.util.collections.ClassClassMap;
 import net.thevpc.nuts.runtime.standalone.util.collections.ListMap;
 import net.thevpc.nuts.runtime.standalone.extension.CoreServiceUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.NPropertiesHolder;
+import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
+import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNEnvs;
 import net.thevpc.nuts.runtime.standalone.workspace.factorycache.CachedConstructor;
 import net.thevpc.nuts.runtime.standalone.workspace.factorycache.NBeanCache;
+import net.thevpc.nuts.runtime.standalone.xtra.contenttype.DefaultNContentTypes;
+import net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest;
+import net.thevpc.nuts.io.NDigest;
+import net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNLibPaths;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
@@ -62,7 +78,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     public DefaultNWorkspaceFactory(NWorkspace ws) {
         this.workspace = ws;
         LOG = ((DefaultNWorkspace) ws).LOG;
-        cache=new NBeanCache(LOG);
+        cache = new NBeanCache(LOG);
     }
 
     @Override
@@ -89,9 +105,67 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     public <T extends NComponent> NOptional<T> createComponent(Class<T> type, Object supportCriteria, NSession session) {
         NSupportLevelContext context = new NDefaultSupportLevelContext(session, supportCriteria);
         List<T> all = createAll(type, session);
-        NCallableSupport<T> s= NCallableSupport.resolve(all.stream().map(x->NCallableSupport.of(x.getSupportLevel(context),x)),
-                ss->NMsg.ofMissingValue(NMsg.ofC("extensions component %s", type).toString())
-                );
+        NCallableSupport<T> s = NCallableSupport.resolve(all.stream().map(x -> NCallableSupport.of(x.getSupportLevel(context), x)),
+                ss -> NMsg.ofMissingValue(NMsg.ofC("extensions component %s", type).toString())
+        );
+        if (!s.isValid()) {
+            //fallback needed in botstrap or if the extensions are broken!
+            switch (type.getName()) {
+                case "net.thevpc.nuts.log.NLogs": {
+                    DefaultNLogs p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, ss -> new DefaultNLogs(session));
+                    return NOptional.of((T) p);
+                }
+                case "net.thevpc.nuts.io.NPaths": {
+                    DefaultNPaths p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, ss -> new DefaultNPaths(session));
+                    return NOptional.of((T) p);
+                }
+                case "net.thevpc.nuts.text.NTexts": {
+                    DefaultNTexts p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, ss -> new DefaultNTexts(session));
+                    return NOptional.of((T) p);
+                }
+                case "net.thevpc.nuts.NEnvs": {
+                    DefaultNEnvs p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, ss -> new DefaultNEnvs(session));
+                    return NOptional.of((T) p);
+                }
+                case "net.thevpc.nuts.format.NObjectFormat": {
+                    DefaultNObjectFormat p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, ss -> new DefaultNObjectFormat(session));
+                    return NOptional.of((T) p);
+                }
+                case "net.thevpc.nuts.io.NIO": {
+                    DefaultNIO p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, ss -> new DefaultNIO(session));
+                    return NOptional.of((T) p);
+                }
+                case "net.thevpc.nuts.NConfigs": {
+                    DefaultNConfigs p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, ss -> new DefaultNConfigs(session));
+                    return NOptional.of((T) p);
+                }
+                case "net.thevpc.nuts.NBootManager": {
+                    DefaultNBootManager p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, ss -> new DefaultNBootManager(session));
+                    return NOptional.of((T) p);
+                }
+                case "net.thevpc.nuts.elem.NElements": {
+                    DefaultNElements p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, ss -> new DefaultNElements(session));
+                    return NOptional.of((T) p);
+                }
+                case "net.thevpc.nuts.NLibPaths": {
+                    DefaultNLibPaths p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, ss -> new DefaultNLibPaths(session));
+                    return NOptional.of((T) p);
+                }
+                case "net.thevpc.nuts.io.NDigest": {
+                    NDigest p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, ss -> new DefaultNDigest(session));
+                    return NOptional.of((T) p);
+                }
+                case "net.thevpc.nuts.io.NContentTypes": {
+                    NContentTypes p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, ss -> new DefaultNContentTypes(session));
+                    return NOptional.of((T) p);
+                }
+                default:{
+                    //wont use NLog because not yet initialized!
+//                    System.err.println("[Nuts] createComponent failed for :"+type.getName());
+                }
+            }
+
+        }
         return s.toOptional();
     }
 
@@ -235,10 +309,10 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
 
     public <T> T newInstance(Class<T> t, Class apiType, NSession session) {
         checkSession(session);
-        return newInstance(t,new Class[0],new Object[0],apiType,session);
+        return newInstance(t, new Class[0], new Object[0], apiType, session);
     }
 
-    protected <T> T newInstanceAndLog(Class<T> type, Class[] argTypes, Object[] args, Class apiType, NSession session,NScopeType scope) {
+    protected <T> T newInstanceAndLog(Class<T> type, Class[] argTypes, Object[] args, Class apiType, NSession session, NScopeType scope) {
         T o = newInstance(type, apiType, session);
 //        if (LOG.isLoggable(Level.CONFIG)) {
 //            LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.READ)
@@ -251,12 +325,12 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         //skip logging this to avoid infinite recursion
         if (isBootstrapLogType(apiType)) {
             //
-        }else if (LOG.isLoggable(Level.CONFIG)) {
+        } else if (LOG.isLoggable(Level.CONFIG)) {
             String old = _alreadyLogger.get(apiType.getName());
             if (old == null || !old.equals(type.getName())) {
                 _alreadyLogger.put(apiType.getName(), type.getName());
                 LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.READ)
-                        .log(NMsg.ofJ("resolve {0} to  ```underlined {1}``` {2}",
+                        .log(NMsg.ofC("resolve %s to  %s %s",
                                 NStringUtils.formatAlign(apiType.getSimpleName(), 40, NPositionType.FIRST),
                                 scope,
                                 type.getName()
@@ -271,7 +345,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         checkSession(session);
         T t1 = null;
         CachedConstructor<T> ctrl0 = cache.getCtrl0(t, argTypes, session);
-        if(ctrl0==null){
+        if (ctrl0 == null) {
             if (isBootstrapLogType(apiType)) {
                 //do not use log. this is a bug that must be resolved fast!
                 safeLog(NMsg.ofC("unable to instantiate %s as %s", apiType, t), null, session);
@@ -281,7 +355,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                             .log(NMsg.ofJ("unable to instantiate {0}", t));
                 }
             }
-            throw new NFactoryException(session, NMsg.ofC("instantiate '%s' failed", t), new NoSuchElementException("No constructor was found for "+t.getName()));
+            throw new NFactoryException(session, NMsg.ofC("instantiate '%s' failed", t), new NoSuchElementException("No constructor was found for " + t.getName()));
         }
         try {
             t1 = ctrl0.newInstance(args, session);
@@ -310,7 +384,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     }
 
     protected <T> T resolveInstance(Class<T> implType, Class<T> apiType, NSession session) {
-        return resolveInstance(implType,apiType,new Class[0],new Object[0],session );
+        return resolveInstance(implType, apiType, new Class[0], new Object[0], session);
     }
 
     private <T> NScopeType computeScope(Class<T> implType, Class<T> apiType, NSession session) {
@@ -391,7 +465,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         if (type == null) {
             return null;
         }
-        NScopeType scope = computeScope(type,apiType,session);
+        NScopeType scope = computeScope(type, apiType, session);
         if (apiType.getAnnotation(NComponentScope.class) != null) {
             scope = apiType.getAnnotation(NComponentScope.class).value();
         }
@@ -400,11 +474,11 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         }
         NScopeType finalScope = scope;
         if (scope == NScopeType.PROTOTYPE) {
-            return newInstanceAndLog(type,argTypes,args,apiType,session,finalScope);
+            return newInstanceAndLog(type, argTypes, args, apiType, session, finalScope);
         }
         NPropertiesHolder beans = resolveBeansHolder(session, scope);
         return (T) beans.getOrComputeProperty(type.getName(), session, k -> {
-            return newInstanceAndLog(type,argTypes,args,apiType,session,finalScope);
+            return newInstanceAndLog(type, argTypes, args, apiType, session, finalScope);
         });
     }
 
@@ -452,7 +526,6 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     }
 
 
-
     private final static class ClassExtension {
 
         Class clazz;
@@ -480,12 +553,12 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         }
 
         public IdCache(NId id, URL url, ClassLoader bootClassLoader, NLog LOG, Class[] extensionPoints, NSession session, NWorkspace workspace) {
+            NAssert.requireNonBlank(url,"url");
             this.id = id;
             this.url = url;
             this.workspace = workspace;
             for (Class extensionPoint : extensionPoints) {
-                ClassClassMap cc = new ClassClassMap();
-                classes.put(extensionPoint, cc);
+                ClassClassMap cc = classes.computeIfAbsent(extensionPoint, r->new ClassClassMap());
                 Class<NComponent> serviceClass = NComponent.class;
                 for (String n : CoreServiceUtils.loadZipServiceClassNames(url, serviceClass, session)) {
                     Class<?> c = null;

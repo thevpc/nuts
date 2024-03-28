@@ -9,7 +9,7 @@ import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.spi.NSystemTerminalBaseImpl;
-import net.thevpc.nuts.text.NTerminalCommand;
+import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
@@ -201,7 +201,7 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
     }
 
     @Override
-    public Object run(NTerminalCommand command, NPrintStream printStream, NSession session) {
+    public Object run(NTerminalCmd command, NPrintStream printStream, NSession session) {
         return getBase().run(command, printStream, session);
     }
 

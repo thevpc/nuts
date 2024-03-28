@@ -130,6 +130,21 @@ public class DefaultNPlatforms implements NPlatforms {
     }
 
     @Override
+    public void addDefaultPlatforms(NPlatformFamily type) {
+        if(type==NPlatformFamily.JAVA) {
+            NWorkspaceUtils.of(session).installAllJVM();
+        }
+    }
+
+    @Override
+    public void addDefaultPlatform(NPlatformFamily type) {
+        if(type==NPlatformFamily.JAVA) {
+            //at least add current vm
+            NWorkspaceUtils.of(session).installCurrentJVM();
+        }
+    }
+
+    @Override
     public NStream<NPlatformLocation> findPlatforms(NPlatformFamily type) {
         checkSession();
         return model.findPlatforms(type, null, session);

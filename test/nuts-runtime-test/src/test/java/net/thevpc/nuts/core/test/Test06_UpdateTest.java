@@ -124,9 +124,9 @@ public class Test06_UpdateTest {
         NRepositories repos = NRepositories.of(session);
         NPath tempRepo = NPath.ofTempFolder(session);
         data.updateRepoPath = tempRepo.toString();
-        data.apiDef1 = NFetchCommand.ofNutsApi(session).setContent(true).getResultDefinition();
+        data.apiDef1 = NFetchCmd.ofNutsApi(session).setContent(true).getResultDefinition();
         data.apiId1 = data.apiDef1.getId().builder().setVersion(data.apiDef1.getId().getVersion()).build();
-        data.rtDef1 = NFetchCommand.ofNutsRuntime(session).setContent(true).getResultDefinition();
+        data.rtDef1 = NFetchCmd.ofNutsRuntime(session).setContent(true).getResultDefinition();
         data.rtId1 = data.rtDef1.getId().builder().setVersion(data.rtDef1.getId().getVersion()).build();
 
         repos.addRepository(new NAddRepositoryOptions().setTemporary(true).setName("temp").setLocation(data.updateRepoPath)
@@ -135,22 +135,22 @@ public class Test06_UpdateTest {
         TestUtils.println(repos.findRepository("temp").get().config().getStoreStrategy());
         TestUtils.println(repos.findRepository("temp").get().config().getStoreLocation());
         TestUtils.println(repos.findRepository("temp").get().config().getStoreLocation(NStoreType.LIB));
-        NInfoCommand.of(session).configure(false, "--repos").setShowRepositories(true).println();
+        NInfoCmd.of(session).configure(false, "--repos").setShowRepositories(true).println();
 
         Assertions.assertEquals(data.updateRepoPath,
                 repos.findRepository("temp").get().config().getLocationPath().toString()
         );
-        TestUtils.println(NSearchCommand.of(session).addId(data.api).getResultIds().toList());
-        TestUtils.println(NSearchCommand.of(session).addId(data.rt).getResultIds().toList());
-        List<NId> foundApis = NSearchCommand.of(session).addId(data.api).getResultIds().toList();
-        List<NId> foundRts = NSearchCommand.of(session).addId(data.rt).getResultIds().toList();
+        TestUtils.println(NSearchCmd.of(session).addId(data.api).getResultIds().toList());
+        TestUtils.println(NSearchCmd.of(session).addId(data.rt).getResultIds().toList());
+        List<NId> foundApis = NSearchCmd.of(session).addId(data.api).getResultIds().toList();
+        List<NId> foundRts = NSearchCmd.of(session).addId(data.rt).getResultIds().toList();
         Assertions.assertTrue(foundApis.stream().map(NId::getLongName).collect(Collectors.toSet()).contains(data.apiId1.getLongName()));
         Assertions.assertTrue(foundRts.stream().map(NId::getLongName).collect(Collectors.toSet()).contains(data.rtId1.getLongName()));
 
-        TestUtils.println(NSearchCommand.of(session).addId(data.api).setRepositoryFilter("temp").getResultIds().toList());
-        TestUtils.println(NSearchCommand.of(session).addId(data.rt).setRepositoryFilter("temp").getResultIds().toList());
-        TestUtils.println(NSearchCommand.of(session).addId(data.api).getResultIds().toList());
-        TestUtils.println(NSearchCommand.of(session).addId(data.rt).getResultIds().toList());
+        TestUtils.println(NSearchCmd.of(session).addId(data.api).setRepositoryFilter("temp").getResultIds().toList());
+        TestUtils.println(NSearchCmd.of(session).addId(data.rt).setRepositoryFilter("temp").getResultIds().toList());
+        TestUtils.println(NSearchCmd.of(session).addId(data.api).getResultIds().toList());
+        TestUtils.println(NSearchCmd.of(session).addId(data.rt).getResultIds().toList());
         TestUtils.println("========================");
 
         return session;
@@ -163,15 +163,15 @@ public class Test06_UpdateTest {
         NSession session = prepareWorkspaceToUpdate(implOnly, data);
         prepareCustomUpdateRepository(implOnly, data, session);
 
-        List<NId> foundApis = NSearchCommand.of(session).addId(data.api).getResultIds().toList();
-        List<NId> foundRts = NSearchCommand.of(session).addId(data.rt).getResultIds().toList();
+        List<NId> foundApis = NSearchCmd.of(session).addId(data.api).getResultIds().toList();
+        List<NId> foundRts = NSearchCmd.of(session).addId(data.rt).getResultIds().toList();
         if (!implOnly) {
             Assertions.assertTrue(foundApis.stream().map(NId::getLongName).collect(Collectors.toSet()).contains(data.apiId2.getLongName()));
         }
         Assertions.assertTrue(foundRts.stream().map(NId::getLongName).collect(Collectors.toSet()).contains(data.rtId2.getLongName()));
 
         //check updates!
-        NUpdateCommand foundUpdates = NUpdateCommand.of(session)
+        NUpdateCmd foundUpdates = NUpdateCmd.of(session)
                 .setRepositoryFilter(NRepositoryFilters.of(session).byName("temp"))
                 .setAll().checkUpdates();
         for (NUpdateResult u : foundUpdates.getResult().getUpdatable()) {
@@ -195,7 +195,7 @@ public class Test06_UpdateTest {
                 .resolve("nuts-" + newApiVersion + ".jar")
         ));
 
-        NExecCommand ee = NExecCommand.of(session).setExecutionType(NExecutionType.SPAWN)
+        NExecCmd ee = NExecCmd.of(session).setExecutionType(NExecutionType.SPAWN)
                 .addCommand(
                         "nuts#" + newApiVersion,
                         "--workspace", session.getWorkspace().getLocation().toString(),

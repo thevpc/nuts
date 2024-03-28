@@ -185,7 +185,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 case "--installed": {
                     cmdLine.withNextTrueFlag((v, a, s) -> {
                         session.setConfirm(NConfirmationMode.YES);
-                        for (NId resultId : NSearchCommand.of(session).setInstallStatus(
+                        for (NId resultId : NSearchCmd.of(session).setInstallStatus(
                                 NInstallStatusFilters.of(session).byInstalled(true)
                         ).getResultIds()) {
                             d.idsToInstall.add(resultId.getLongName());
@@ -199,7 +199,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     cmdLine.withNextTrueFlag((v, a, s) -> {
                         session.setConfirm(NConfirmationMode.YES);
                         for (NId companion : session.extensions().getCompanionIds()) {
-                            d.idsToInstall.add(NSearchCommand.of(session).addId(companion).setLatest(true).getResultIds().findFirst().get().getLongName());
+                            d.idsToInstall.add(NSearchCmd.of(session).addId(companion).setLatest(true).getResultIds().findFirst().get().getLongName());
                             d.missingAnyArgument = false;
                         }
                     });

@@ -9,7 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCommand;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmd;
 
 /**
  *
@@ -17,7 +17,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCommand
  */
 public class DefaultNVersionInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNVersionInternalExecutable(String[] args, final DefaultNExecCommand execCommand) {
+    public DefaultNVersionInternalExecutable(String[] args, final DefaultNExecCmd execCommand) {
         super("version", args, execCommand);
     }
 

@@ -139,7 +139,7 @@ public abstract class AbstractNShellContext implements NShellContext {
             command.autoComplete(new DefaultNShellExecutionContext(this, command), autoComplete);
         } else {
             NSession session = this.getSession();
-            List<NId> nutsIds = NSearchCommand.of(this.getSession().copy().setFetchStrategy(NFetchStrategy.OFFLINE))
+            List<NId> nutsIds = NSearchCmd.of(this.getSession().copy().setFetchStrategy(NFetchStrategy.OFFLINE))
                     .addId(commandName)
                     .setLatest(true)
                     .addScope(NDependencyScopePattern.RUN)
@@ -147,14 +147,14 @@ public abstract class AbstractNShellContext implements NShellContext {
                     .getResultIds().toList();
             if (nutsIds.size() == 1) {
                 NId selectedId = nutsIds.get(0);
-                NDefinition def = NSearchCommand.of(this.getSession().copy().setFetchStrategy(NFetchStrategy.OFFLINE)).addId(selectedId).setEffective(true)
+                NDefinition def = NSearchCmd.of(this.getSession().copy().setFetchStrategy(NFetchStrategy.OFFLINE)).addId(selectedId).setEffective(true)
                         .getResultDefinitions().findFirst().get();
                 NDescriptor d = def.getDescriptor();
                 String nuts_autocomplete_support = NStringUtils.trim(d.getPropertyValue("nuts.autocomplete").flatMap(NLiteral::asString).get(session));
                 if (d.isApplication()
                         || "true".equalsIgnoreCase(nuts_autocomplete_support)
                         || "supported".equalsIgnoreCase(nuts_autocomplete_support)) {
-                    NExecCommand t = NExecCommand.of(session)
+                    NExecCmd t = NExecCmd.of(session)
                             .grabAll()
                             .addCommand(
                                     selectedId

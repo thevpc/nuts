@@ -138,7 +138,7 @@ public class DerbyService {
         Path targetFile = folder.resolve(iid.getArtifactId() + ".jar");
         if (!Files.exists(targetFile)) {
             NPath targetPath=NPath.of(targetFile,session);
-            NPath r = NFetchCommand.of(id,session).setFailFast(!optional).getResultPath();
+            NPath r = NFetchCmd.of(id,session).setFailFast(!optional).getResultPath();
             if (r != null) {
                 r.copyTo(targetPath);
                 LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.READ).log(NMsg.ofJ("downloading {0} to {1}", id, targetFile));
@@ -151,7 +151,7 @@ public class DerbyService {
 
     public Set<String> findVersions() {
         NId java = NEnvs.of(session).getPlatform();
-        List<String> all = NSearchCommand.of(session.copy()).addId("org.apache.derby:derbynet").setDistinct(true)
+        List<String> all = NSearchCmd.of(session.copy()).addId("org.apache.derby:derbynet").setDistinct(true)
                 .setIdFilter(
                         (java.getVersion().compareTo("1.9") < 0) ? NVersionFilters.of(session).byValue("[,10.15.1.3[").get().to(NIdFilter.class) :
                                 null)
@@ -166,13 +166,13 @@ public class DerbyService {
         return lastFirst;
     }
 
-    public NExecCommand command(NDerbyConfig options) {
+    public NExecCmd command(NDerbyConfig options) {
         List<String> command = new ArrayList<>();
         List<String> executorOptions = new ArrayList<>();
         String currentDerbyVersion = options.getDerbyVersion();
         if (currentDerbyVersion == null) {
             NId java = NEnvs.of(session).getPlatform();
-            NId best = NSearchCommand.of(session.copy()).addId("org.apache.derby:derbynet").setDistinct(true).setLatest(true)
+            NId best = NSearchCmd.of(session.copy()).addId("org.apache.derby:derbynet").setDistinct(true).setLatest(true)
                     .setIdFilter(
                             (java.getVersion().compareTo("1.9") < 0) ? NVersionFilters.of(session).byValue("[,10.15.1.3[").get().to(NIdFilter.class) :
                                     null)
@@ -241,7 +241,7 @@ public class DerbyService {
         if (options.getExtraArg() != null) {
             command.add(options.getExtraArg());
         }
-        return NExecCommand.of(session)
+        return NExecCmd.of(session)
                 .addExecutorOptions(executorOptions)
                 .addCommand(command)
                 .setDirectory(NPath.of(derbyBinHome,session))
@@ -250,7 +250,7 @@ public class DerbyService {
     }
 
     void exec(NDerbyConfig options) {
-        NExecCommand cmd = command(options);
+        NExecCmd cmd = command(options);
         boolean[] finished = new boolean[1];
         Thread t = new Thread(() -> {
             try {

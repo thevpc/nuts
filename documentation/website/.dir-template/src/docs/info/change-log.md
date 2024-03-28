@@ -43,7 +43,7 @@ Starred releases are most stable ones.
 - CHANGED: Now NWorkspaceOptionsBuilder extends NWorkspaceOptions
 - CHANGED: Rename NRepositoryDB::getRepositoryNameByURL -> NRepositoryDB::getRepositoryNameByLocation
 - CHANGED: Rename NRepositoryDB::getRepositoryURLByName -> NRepositoryDB::getRepositoryLocationByName
-- CHANGED: Change type to long in NExecCommand::getSleepMillis()/setSleepMillis(int sleepMillis);
+- CHANGED: Change type to long in NExecCmd::getSleepMillis()/setSleepMillis(int sleepMillis);
 - CHANGED: complete rewrite of NTF parser
 - CHANGED: classes refactored to be repackaged in inner packages
 - REMOVED: Remove session dependency from NVersion,NId and NDescriptor

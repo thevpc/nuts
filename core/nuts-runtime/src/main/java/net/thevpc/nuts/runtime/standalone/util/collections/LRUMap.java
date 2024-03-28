@@ -55,12 +55,4 @@ public class LRUMap<A, B> extends LinkedHashMap<A, B> {
             }
         }
     }
-
-//    public B put(A key, B value) {
-//        B o = super.put(key, value);
-//        if(size()>=maxEntries){
-//            System.out.println("Max entries reached "+size()+"/"+maxEntries);
-//        }
-//        return o;
-//    }
 }

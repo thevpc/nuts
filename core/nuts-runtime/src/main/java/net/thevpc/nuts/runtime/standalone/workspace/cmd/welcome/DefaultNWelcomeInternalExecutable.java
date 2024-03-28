@@ -24,7 +24,7 @@ import java.util.Map;
  */
 public class DefaultNWelcomeInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNWelcomeInternalExecutable(String[] args, NExecCommand execCommand) {
+    public DefaultNWelcomeInternalExecutable(String[] args, NExecCmd execCommand) {
         super("welcome", args, execCommand);
     }
 

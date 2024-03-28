@@ -18,19 +18,19 @@ import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repository.NIdPathIterator;
 import net.thevpc.nuts.runtime.standalone.repository.NIdPathIteratorBase;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositoryHelper;
-import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.DefaultNFetchContentRepositoryCommand;
-import net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy.DefaultNRepositoryUndeployCommand;
+import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.DefaultNFetchContentRepositoryCmd;
+import net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy.DefaultNRepositoryUndeployCmd;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.CharacterizedExecFile;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCommand;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmd;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
-import net.thevpc.nuts.security.NDigest;
-import net.thevpc.nuts.spi.NDeployRepositoryCommand;
+import net.thevpc.nuts.io.NDigest;
+import net.thevpc.nuts.spi.NDeployRepositoryCmd;
 import net.thevpc.nuts.spi.NRepositorySPI;
-import net.thevpc.nuts.spi.NRepositoryUndeployCommand;
+import net.thevpc.nuts.spi.NRepositoryUndeployCmd;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NIterator;
 import net.thevpc.nuts.log.NLog;
@@ -294,7 +294,7 @@ public class NRepositoryFolderHelper {
             @Override
             public void undeploy(NId id, NSession session) throws NExecutionException {
                 if (repo == null) {
-                    NRepositoryFolderHelper.this.undeploy(new DefaultNRepositoryUndeployCommand(session.getWorkspace())
+                    NRepositoryFolderHelper.this.undeploy(new DefaultNRepositoryUndeployCmd(session.getWorkspace())
                             .setFetchMode(NFetchMode.LOCAL)
                             .setId(id).setSession(session));
                 } else {
@@ -353,7 +353,7 @@ public class NRepositoryFolderHelper {
         return bestId;
     }
 
-    public NDescriptor deploy(NDeployRepositoryCommand deployment, NConfirmationMode writeType) {
+    public NDescriptor deploy(NDeployRepositoryCmd deployment, NConfirmationMode writeType) {
         NSession session = deployment.getSession();
         if (!isWriteEnabled()) {
             throw new NIllegalArgumentException(session, NMsg.ofPlain("read-only repository"));
@@ -373,7 +373,7 @@ public class NRepositoryFolderHelper {
             inputSource = NIO.of(session).ofMultiRead(deployment.getContent());
             inputSource.getMetaData().setKind("package content");
             if (descriptor == null) {
-                try (final CharacterizedExecFile c = DefaultNExecCommand.characterizeForExec(inputSource, session, null)) {
+                try (final CharacterizedExecFile c = DefaultNExecCmd.characterizeForExec(inputSource, session, null)) {
 //                    NutsUtils.requireNonNull(c.getDescriptor(),session,s->NMsg.ofC("invalid deployment; missing descriptor for %s", deployment.getContent()));
                     if (c.getDescriptor() == null) {
                         throw new NNotFoundException(session, null,
@@ -414,7 +414,7 @@ public class NRepositoryFolderHelper {
 
     protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLog.of(DefaultNFetchContentRepositoryCommand.class, session);
+            LOG = NLog.of(DefaultNFetchContentRepositoryCmd.class, session);
         }
         return LOG;
     }
@@ -500,7 +500,7 @@ public class NRepositoryFolderHelper {
         });
     }
 
-    public boolean undeploy(NRepositoryUndeployCommand command) {
+    public boolean undeploy(NRepositoryUndeployCmd command) {
         if (!isWriteEnabled()) {
             return false;
         }

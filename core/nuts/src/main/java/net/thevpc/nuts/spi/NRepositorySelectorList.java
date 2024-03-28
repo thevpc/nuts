@@ -110,22 +110,24 @@ public class NRepositorySelectorList {
         NRepositoryURLList current = new NRepositoryURLList();
         if (available != null) {
             for (NRepositoryLocation entry : available) {
-                String k = entry.getName();
-                String v = entry.getFullLocation();
-                if (NBlankable.isBlank(v) && !NBlankable.isBlank(k)) {
-                    String u2 = db.getRepositoryLocationByName(k);
-                    if (u2 != null) {
-                        v = u2;
-                    } else {
-                        v = k;
+                if(entry!=null) {
+                    String k = entry.getName();
+                    String v = entry.getFullLocation();
+                    if (NBlankable.isBlank(v) && !NBlankable.isBlank(k)) {
+                        String u2 = db.getRepositoryLocationByName(k);
+                        if (u2 != null) {
+                            v = u2;
+                        } else {
+                            v = k;
+                        }
+                    } else if (!NBlankable.isBlank(v) && NBlankable.isBlank(k)) {
+                        String u2 = db.getRepositoryNameByLocation(k);
+                        if (u2 != null) {
+                            k = u2;
+                        }
                     }
-                } else if (!NBlankable.isBlank(v) && NBlankable.isBlank(k)) {
-                    String u2 = db.getRepositoryNameByLocation(k);
-                    if (u2 != null) {
-                        k = u2;
-                    }
+                    current.add(NRepositoryLocation.of(k, v));
                 }
-                current.add(NRepositoryLocation.of(k, v));
             }
         }
         List<NRepositoryLocation> result = new ArrayList<>();

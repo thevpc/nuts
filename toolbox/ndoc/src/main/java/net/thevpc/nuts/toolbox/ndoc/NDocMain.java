@@ -23,7 +23,7 @@ public class NDocMain implements NApplication, NCmdLineProcessor {
 
     @Override
     public void run(NSession session) {
-        session.processAppCommandLine(this);
+        session.processAppCmdLine(this);
     }
 
     @Override

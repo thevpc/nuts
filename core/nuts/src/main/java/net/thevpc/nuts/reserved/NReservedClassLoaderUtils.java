@@ -68,7 +68,9 @@ public class NReservedClassLoaderUtils {
         LinkedHashSet<URL> urls = new LinkedHashSet<>();
         Set<String> visitedIds = new HashSet<>();
         for (NClassLoaderNode info : nodes) {
-            fillBootDependencyNodes(info, urls, visitedIds, bLog);
+            if(info!=null) {
+                fillBootDependencyNodes(info, urls, visitedIds, bLog);
+            }
         }
         return urls.toArray(new URL[0]);
     }

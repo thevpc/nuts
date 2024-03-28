@@ -21,7 +21,7 @@ import net.thevpc.nuts.format.NTreeFormat;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
-import net.thevpc.nuts.security.NDigest;
+import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.io.NPaths;
 import net.thevpc.nuts.text.NText;
@@ -223,7 +223,7 @@ public class Test01_CreateTest {
 
 
         {
-            NExecutionEntries c = NExecutionEntries.of(s);
+            NLibPaths c = NLibPaths.of(s);
             Assertions.assertNotNull(c);
         }
 
@@ -265,10 +265,6 @@ public class Test01_CreateTest {
             Assertions.assertNotNull(log);
             NLogOp logop = NLogOp.of(Test01_CreateTest.class, s);
             Assertions.assertNotNull(logop);
-        }
-        {
-            NIdResolver r = NIdResolver.of(s);
-            Assertions.assertNotNull(r);
         }
         {
             NIdFormat r = NIdFormat.of(s);
@@ -335,11 +331,11 @@ public class Test01_CreateTest {
             Assertions.assertNotNull(r);
         }
         {
-            NInfoCommand r = NInfoCommand.of(s);
+            NInfoCmd r = NInfoCmd.of(s);
             Assertions.assertNotNull(r);
         }
         {
-            NExecCommandFormat r = NExecCommandFormat.of(s);
+            NExecCmdFormat r = NExecCmdFormat.of(s);
             Assertions.assertNotNull(r);
         }
         {

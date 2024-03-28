@@ -8,9 +8,9 @@ package net.thevpc.nuts.runtime.standalone.repository.impl;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
-import net.thevpc.nuts.spi.NDeployRepositoryCommand;
-import net.thevpc.nuts.spi.NPushRepositoryCommand;
-import net.thevpc.nuts.spi.NRepositoryUndeployCommand;
+import net.thevpc.nuts.spi.NDeployRepositoryCmd;
+import net.thevpc.nuts.spi.NPushRepositoryCmd;
+import net.thevpc.nuts.spi.NRepositoryUndeployCmd;
 import net.thevpc.nuts.util.NIterator;
 
 /**
@@ -25,11 +25,11 @@ public interface NRepositoryExt extends NRepositoryExt0 {
 
     NIndexStore getIndexStore();
 
-    void pushImpl(NPushRepositoryCommand command);
+    void pushImpl(NPushRepositoryCmd command);
 
-    NDescriptor deployImpl(NDeployRepositoryCommand command);
+    NDescriptor deployImpl(NDeployRepositoryCmd command);
 
-    void undeployImpl(NRepositoryUndeployCommand command);
+    void undeployImpl(NRepositoryUndeployCmd command);
 
     void checkAllowedFetch(NId id, NSession session);
 

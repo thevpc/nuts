@@ -9,7 +9,7 @@ import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamSystem;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.text.NTerminalCommand;
+import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.util.NMsg;
@@ -162,20 +162,20 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
 
 
     @Override
-    public Object run(NTerminalCommand command, NPrintStream printStream, NSession session) {
+    public Object run(NTerminalCmd command, NPrintStream printStream, NSession session) {
         return null;
     }
 
     @Override
     public Cursor getTerminalCursor(NSession session) {
         NSessionUtils.checkSession(session.getWorkspace(), session);
-        return (Cursor) run(NTerminalCommand.GET_CURSOR, getOut(), session);
+        return (Cursor) run(NTerminalCmd.GET_CURSOR, getOut(), session);
     }
 
     @Override
     public Size getTerminalSize(NSession session) {
         NSessionUtils.checkSession(session.getWorkspace(), session);
-        return (Size) run(NTerminalCommand.GET_SIZE, getOut(), session);
+        return (Size) run(NTerminalCmd.GET_SIZE, getOut(), session);
     }
 
     @Override

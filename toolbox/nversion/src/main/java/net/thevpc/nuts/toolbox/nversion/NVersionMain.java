@@ -71,7 +71,7 @@ public class NVersionMain implements NApplication {
         boolean sort = false;
         boolean table = false;
         boolean error = false;
-        NCmdLine cmdLine = session.getAppCommandLine();
+        NCmdLine cmdLine = session.getAppCmdLine();
         NArg a;
         int processed = 0;
         while (cmdLine.hasNext()) {

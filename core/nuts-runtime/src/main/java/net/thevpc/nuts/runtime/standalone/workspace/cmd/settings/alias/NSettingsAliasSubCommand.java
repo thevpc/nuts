@@ -37,11 +37,11 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                 }
             }
             if (cmdLine.isExecMode()) {
-                List<NCustomCommand> r = NCommands.of(session).findAllCommands()
+                List<NCustomCmd> r = NCommands.of(session).findAllCommands()
                         .stream()
-                        .filter(new Predicate<NCustomCommand>() {
+                        .filter(new Predicate<NCustomCmd>() {
                             @Override
-                            public boolean test(NCustomCommand nutsWorkspaceCommandAlias) {
+                            public boolean test(NCustomCmd nutsWorkspaceCommandAlias) {
                                 if (toList.isEmpty()) {
                                     return true;
                                 }
@@ -65,7 +65,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                     NPropertiesFormat.of(session).setValue(
                             r.stream().collect(
                                     Collectors.toMap(
-                                            NCustomCommand::getName,
+                                            NCustomCmd::getName,
                                             x -> NCmdLine.of(x.getCommand()).toString(),
                                             (x, y) -> {
                                                 throw new NIllegalArgumentException(session, NMsg.ofC("duplicate %s", x));
@@ -170,7 +170,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
             this.executionOptions = executionOptions;
         }
 
-        public AliasInfo(NCustomCommand a, NSession session) {
+        public AliasInfo(NCustomCmd a, NSession session) {
             name = a.getName();
             command = NCmdLine.of(a.getCommand()).toString();
             executionOptions = NCmdLine.of(a.getExecutorOptions()).toString();

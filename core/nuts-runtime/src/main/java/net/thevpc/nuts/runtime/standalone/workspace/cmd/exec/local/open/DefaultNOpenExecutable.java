@@ -9,7 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableCommand;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * @author thevpc
  */
-public class DefaultNOpenExecutable extends AbstractNExecutableCommand {
+public class DefaultNOpenExecutable extends AbstractNExecutableInformationExt {
 
     String[] cmd;
     String[] executorOptions;
@@ -31,7 +31,7 @@ public class DefaultNOpenExecutable extends AbstractNExecutableCommand {
     private String[] effectiveOpenExecutable;
 
     public DefaultNOpenExecutable(String[] cmd,
-                                  String[] executorOptions, NExecCommand execCommand
+                                  String[] executorOptions, NExecCmd execCommand
     ) {
         super(cmd[0],
                 NCmdLine.of(cmd).toString(),
@@ -89,11 +89,11 @@ public class DefaultNOpenExecutable extends AbstractNExecutableCommand {
         return null;
     }
 
-    private NExecCommand resolveExecHelper() {
+    private NExecCmd resolveExecHelper() {
         if (effectiveOpenExecutable == null) {
             throw new NIllegalArgumentException(getExecCommand().getSession(), NMsg.ofC("unable to resolve viewer for %s", cmd[0]));
         }
-        NExecCommand cc = getExecCommand().copy();
+        NExecCmd cc = getExecCommand().copy();
         cc.system();
         List<String> ss = new ArrayList<>(Arrays.asList(effectiveOpenExecutable));
         ss.addAll(Arrays.asList(cmd));

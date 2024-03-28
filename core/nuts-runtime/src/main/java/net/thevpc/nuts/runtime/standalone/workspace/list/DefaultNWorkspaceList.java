@@ -58,7 +58,7 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
 
     private NPath getConfigFile(NSession session) {
         return NLocations.of(session)
-                .getStoreLocation(NIdResolver.of(session).resolveId(DefaultNWorkspaceList.class),
+                .getStoreLocation(NId.ofClass(DefaultNWorkspaceList.class,session).get(),
                         NStoreType.CONF)
                 .resolve(name + "-nuts-workspace-list.json");
     }

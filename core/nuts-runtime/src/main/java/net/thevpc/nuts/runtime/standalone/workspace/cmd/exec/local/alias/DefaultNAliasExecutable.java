@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.alias;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableCommand;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -15,13 +15,13 @@ import net.thevpc.nuts.text.NTexts;
 /**
  * @author thevpc
  */
-public class DefaultNAliasExecutable extends AbstractNExecutableCommand {
+public class DefaultNAliasExecutable extends AbstractNExecutableInformationExt {
 
-    NCustomCommand command;
-    NCommandExecOptions o;
+    NCustomCmd command;
+    NCmdExecOptions o;
    String[] args;
 
-    public DefaultNAliasExecutable(NCustomCommand command, NCommandExecOptions o, String[] args,NExecCommand execCommand) {
+    public DefaultNAliasExecutable(NCustomCmd command, NCmdExecOptions o, String[] args, NExecCmd execCommand) {
         super(command.getName(),
                 NCmdLine.of(command.getCommand()).toString(),
                 NExecutableType.ALIAS,execCommand);

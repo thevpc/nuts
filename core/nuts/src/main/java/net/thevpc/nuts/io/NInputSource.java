@@ -25,11 +25,13 @@
  */
 package net.thevpc.nuts.io;
 
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.format.NFormattable;
 
-import java.io.BufferedReader;
-import java.io.Reader;
+import java.io.*;
+import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -40,7 +42,27 @@ import java.util.stream.Stream;
  * @app.category Input Output
  * @since 0.5.5
  */
-public interface NInputSource extends NFormattable, NContentMetadataProvider,NInputContentProvider {
+public interface NInputSource extends NFormattable, NContentMetadataProvider, NInputContentProvider {
+
+    static NInputSource of(File file, NSession session) {
+        return file == null ? null : NPath.of(file, session);
+    }
+
+    static NInputSource of(Path file, NSession session) {
+        return file == null ? null :NPath.of(file, session);
+    }
+
+    static NInputSource of(URL file, NSession session) {
+        return file == null ? null :NPath.of(file, session);
+    }
+
+    static NInputSource of(byte[] bytes, NSession session) {
+        return bytes == null ? null :NIO.of(session).ofInputSource(new ByteArrayInputStream(bytes));
+    }
+
+    static NInputSource of(InputStream inputSource, NSession session) {
+        return inputSource == null ? null :NIO.of(session).ofInputSource(inputSource);
+    }
 
     byte[] readBytes();
 

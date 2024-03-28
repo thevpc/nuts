@@ -27,7 +27,7 @@ public class NBackup implements NApplication {
     @Override
     public void run(NSession session) {
         session.out().println(NMsg.ofC("%s Backup Tool.", NMsg.ofStyled("Nuts", NTextStyle.keyword())));
-        session.processAppCommandLine(new NCmdLineProcessor() {
+        session.processAppCmdLine(new NCmdLineProcessor() {
 
             @Override
             public boolean onCmdNextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
@@ -194,7 +194,7 @@ public class NBackup implements NApplication {
                         NMsg.ofStyled(remotePath, NTextStyle.path())
                 ));
                 session.out().println(NCmdLine.of(cmd));
-                NExecCommand.of(session).addCommand(cmd).failFast().run();
+                NExecCmd.of(session).addCommand(cmd).failFast().run();
             }
         }, new DefaultNCmdLineContext(session));
     }

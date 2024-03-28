@@ -363,8 +363,8 @@ public abstract class NPrintStreamBase implements NPrintStream {
 
     @Override
     public NPrintStream resetLine() {
-        run(NTerminalCommand.CLEAR_LINE, session);
-        run(NTerminalCommand.MOVE_LINE_START, session);
+        run(NTerminalCmd.CLEAR_LINE, session);
+        run(NTerminalCmd.MOVE_LINE_START, session);
         return this;
     }
 

@@ -44,7 +44,7 @@ public interface NTextBuilder extends NString {
 
     NTextBuilder setStyleGenerator(NTextStyleGenerator styleGenerator);
 
-    NTextBuilder appendCommand(NTerminalCommand command);
+    NTextBuilder appendCommand(NTerminalCmd command);
 
     NTextBuilder appendCode(String lang, String text);
 

@@ -30,12 +30,12 @@ public class Test10_ExecURLTest {
     @Test
     public void execURLLs() {
         TestUtils.println(NVersionFormat.of(session));
-        NInstallCommand.of(session).addId("nsh").run();
+        NInstallCmd.of(session).addId("nsh").run();
 
         for (int i = 0; i < 3; i++) {
             session.out().println("------------------------");
             NChronometer c1 = NChronometer.startNow();
-            String result = NExecCommand.of(session)
+            String result = NExecCmd.of(session)
                     .addWorkspaceOptions(new DefaultNWorkspaceOptionsBuilder().setBot(true))
 //                    .addCommand("nsh","-c","ls")
                     .addCommand("com.cts.probots.server:probots-server","--version")
@@ -50,7 +50,7 @@ public class Test10_ExecURLTest {
     @Test
     public void execURL() {
         TestUtils.println(NVersionFormat.of(session));
-        NSearchCommand q = NSearchCommand.of(session)
+        NSearchCmd q = NSearchCmd.of(session)
                 .setId("net.thevpc.hl:hadra-build-tool#0.1.0")
                 //.setRepositoryFilter("maven-central")
                 .setLatest(true);
@@ -60,7 +60,7 @@ public class Test10_ExecURLTest {
                 .toList();
         NAssert.requireFalse(nutsIds.isEmpty(),"not found hadra-build-tool");
         TestUtils.println(nutsIds);
-        List<NDependencies> allDeps = NSearchCommand.of(session).addId("net.thevpc.hl:hl#0.1.0")
+        List<NDependencies> allDeps = NSearchCmd.of(session).addId("net.thevpc.hl:hl#0.1.0")
                 .setDependencies(true)
                 .getResultDependencies().toList();
         for (NDependencies ds : allDeps) {
@@ -74,7 +74,7 @@ public class Test10_ExecURLTest {
                 printlnNode(d,"");
             }
         }
-        String result = NExecCommand.of(session)
+        String result = NExecCmd.of(session)
                 .addWorkspaceOptions(new DefaultNWorkspaceOptionsBuilder()
                         .setBot(true)
                         .setWorkspace(NLocations.of(session).getWorkspaceLocation().resolve("temp-ws").toString())
@@ -101,7 +101,7 @@ public class Test10_ExecURLTest {
         @Test
     public void testEmbeddedInfo() {
         TestUtils.println(NVersionFormat.of(session));
-        String result = NExecCommand.of(session.copy()
+        String result = NExecCmd.of(session.copy()
                         .setBot(true).json())
                 .addCommand("info")
                 .getGrabbedAllString();
@@ -113,7 +113,7 @@ public class Test10_ExecURLTest {
     //@Test
     public void execURL2() {
         TestUtils.println(NVersionFormat.of(session));
-        String result = NExecCommand.of(session)
+        String result = NExecCmd.of(session)
                 //there are three classes and no main-class, so need to specify the one
                 .addExecutorOption("--main-class=Version")
 //                .addExecutorOption("--main-class=junit.runner.Version")
@@ -132,7 +132,7 @@ public class Test10_ExecURLTest {
     //@Test
     public void testNtf() {
         TestUtils.println(NVersionFormat.of(session));
-        String result = NExecCommand.of(session.copy().setBot(true))
+        String result = NExecCmd.of(session.copy().setBot(true))
                 //.addExecutorOption()
                 .addCommand("nsh","-c","ls")
                 .grabAll().failFast().getGrabbedOutString();
@@ -147,7 +147,7 @@ public class Test10_ExecURLTest {
     public void testCallSpecialId() {
         TestUtils.println(NVersionFormat.of(session));
         NSession nSession = Nuts.openWorkspace("-y","--verbose");
-        String result = NExecCommand.of(nSession.copy()
+        String result = NExecCmd.of(nSession.copy()
                         .setBot(true).json())
                 .addExecutorOptions("--bot")
                 //.setExecutionType(NExecutionType.EMBEDDED)

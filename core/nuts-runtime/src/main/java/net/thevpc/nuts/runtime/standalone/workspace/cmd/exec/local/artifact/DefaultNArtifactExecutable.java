@@ -10,8 +10,8 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableCommand;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCommand;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmd;
 import net.thevpc.nuts.util.NMsg;
 
 import java.util.*;
@@ -19,7 +19,7 @@ import java.util.*;
 /**
  * @author thevpc
  */
-public class DefaultNArtifactExecutable extends AbstractNExecutableCommand {
+public class DefaultNArtifactExecutable extends AbstractNExecutableInformationExt {
 
     NDefinition def;
     String commandName;
@@ -31,12 +31,12 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableCommand {
     boolean failFast;
     NExecutionType executionType;
     NRunAs runAs;
-    DefaultNExecCommand execCommand;
+    DefaultNExecCmd execCommand;
     boolean autoInstall = true;
 
     public DefaultNArtifactExecutable(NDefinition def, String commandName, String[] appArgs, List<String> executorOptions,
                                       List<String> workspaceOptions, Map<String, String> env, NPath dir, boolean failFast,
-                                      NExecutionType executionType, NRunAs runAs, DefaultNExecCommand execCommand) {
+                                      NExecutionType executionType, NRunAs runAs, DefaultNExecCmd execCommand) {
         super(commandName, def.getId().getLongName(), NExecutableType.ARTIFACT, execCommand);
         this.def = def;
         this.runAs = runAs;
@@ -96,8 +96,8 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableCommand {
         NInstallStatus installStatus = def.getInstallInformation().get(session).getInstallStatus();
         if (!installStatus.isInstalled()) {
             if (autoInstall) {
-                NInstallCommand.of(session).addId(def.getId()).run();
-                NInstallStatus st = NFetchCommand.of(def.getId(), session).getResultDefinition().getInstallInformation().get(session).getInstallStatus();
+                NInstallCmd.of(session).addId(def.getId()).run();
+                NInstallStatus st = NFetchCmd.of(def.getId(), session).getResultDefinition().getInstallInformation().get(session).getInstallStatus();
                 if (!st.isInstalled()) {
                     throw new NUnexpectedException(session, NMsg.ofC("auto installation of %s failed", def.getId()));
                 }
@@ -106,7 +106,7 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableCommand {
             }
         } else if (installStatus.isObsolete()) {
             if (autoInstall) {
-                NInstallCommand.of(session)
+                NInstallCmd.of(session)
                         .configure(true, "--reinstall")
                         .addId(def.getId()).run();
             }

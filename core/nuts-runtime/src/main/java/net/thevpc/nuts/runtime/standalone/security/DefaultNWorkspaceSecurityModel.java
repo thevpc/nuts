@@ -215,18 +215,18 @@ public class DefaultNWorkspaceSecurityModel {
     }
 
 
-    public NAddUserCommand addUser(String name, NSession session) {
-        return NAddUserCommand.of(session).setUsername(name);
+    public NAddUserCmd addUser(String name, NSession session) {
+        return NAddUserCmd.of(session).setUsername(name);
     }
 
 
-    public NUpdateUserCommand updateUser(String name, NSession session) {
-        return NUpdateUserCommand.of(session).setUsername(name);
+    public NUpdateUserCmd updateUser(String name, NSession session) {
+        return NUpdateUserCmd.of(session).setUsername(name);
     }
 
 
-    public NRemoveUserCommand removeUser(String name, NSession session) {
-        return NRemoveUserCommand.of(session).setUsername(name);
+    public NRemoveUserCmd removeUser(String name, NSession session) {
+        return NRemoveUserCmd.of(session).setUsername(name);
     }
 
 

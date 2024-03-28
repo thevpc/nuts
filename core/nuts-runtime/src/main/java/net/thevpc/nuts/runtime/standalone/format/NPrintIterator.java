@@ -38,7 +38,7 @@ public class NPrintIterator<T> extends NIteratorBase<T> {
             this.listFormat = NElements.of(session).setContentType(session.getOutputFormat()).iter(out);
         }
         this.listFormat
-                .configure(true, displayOptions.toCommandLineOptions())
+                .configure(true, displayOptions.toCmdLineOptions())
                 ;
     }
 

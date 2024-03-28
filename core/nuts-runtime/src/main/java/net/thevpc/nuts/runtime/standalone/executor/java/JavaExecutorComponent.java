@@ -174,7 +174,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
             }
         }
         for (String a : executionContext.getWorkspaceOptions()) {
-            NWorkspaceOptions extraOptions = NWorkspaceOptionsBuilder.of().setCommandLine(
+            NWorkspaceOptions extraOptions = NWorkspaceOptionsBuilder.of().setCmdLine(
                     NCmdLine.parseDefault(a).get(session).toStringArray(),
                     session
             ).readOnly();
@@ -247,7 +247,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                     options.setRuntimeId(null);
                 }
 
-                NCmdLine ncmdLine = options.toCommandLine(config);
+                NCmdLine ncmdLine = options.toCmdLine(config);
                 if(!joptions.getExtraNutsOptions().isEmpty()){
                     NCmdLine zzz = NCmdLine.of(joptions.getExtraNutsOptions());
                     while(!zzz.isEmpty()) {

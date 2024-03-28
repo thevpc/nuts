@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  */
 public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNBundleInternalExecutable(String[] args, NExecCommand execCommand) {
+    public DefaultNBundleInternalExecutable(String[] args, NExecCmd execCommand) {
         super("bundle", args, execCommand);
     }
 
@@ -160,7 +160,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     nIds.add(apiId);
                     nIds.add(session.getWorkspace().getRuntimeId());
                 } else {
-                    List<NId> found = NSearchCommand.of(session).addId(id)
+                    List<NId> found = NSearchCmd.of(session).addId(id)
                             .setLatest(true)
                             .setDistinct(true)
                             .setDependencyFilter(NDependencyFilters.of(session).byRunnable())
@@ -249,7 +249,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         NCp cp = NCp.of(session);
         if ("jar".equals(format)) {
             cp
-                    .from(getClass().getResource("/META-INF/bundle/NutsBundleRunner.class"))
+                    .from(getClass().getResource("/META-INF/bundle/NutsBundleRunner.class.template"))
                     .setMkdirs(true)
                     .to(rootFolder.resolve("net/thevpc/nuts/runtime/standalone/installer/NutsBundleRunner.class"))
                     .run();
@@ -261,7 +261,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         }
 
 
-        NFetchCommand f = NFetchCommand.of(session);
+        NFetchCmd f = NFetchCmd.of(session);
         NStringBuilder nuts_bundle_files_config = new NStringBuilder();
         NStringBuilder nuts_bundle_info_config = new NStringBuilder();
 

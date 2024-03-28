@@ -203,6 +203,7 @@ public class DefaultNLog implements NLog {
             logManager.getModel().updateHandlers(r);
             if (ch != null) {
                 ch.publish(r);
+                ch.flush();
             }
         }
         if (ch != null) {

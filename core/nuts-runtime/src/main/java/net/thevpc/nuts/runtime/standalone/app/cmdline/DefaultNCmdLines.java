@@ -46,17 +46,17 @@ public class DefaultNCmdLines implements NCmdLines {
     }
 
     @Override
-    public NCmdLine parseCommandline(String line) {
+    public NCmdLine parseCmdLine(String line) {
         checkSession();
-        return new DefaultNCmdLine(parseCommandLineArr(line)).setSession(getSession());
+        return new DefaultNCmdLine(parseCmdLineArr(line)).setSession(getSession());
     }
 
-    private String[] parseCommandLineArr(String line) {
+    private String[] parseCmdLineArr(String line) {
         NShellFamily f = getShellFamily();
         if (f == null) {
             f = NShellFamily.getCurrent();
         }
-        return NShellHelper.of(f).parseCommandLineArr(line,session);
+        return NShellHelper.of(f).parseCmdLineArr(line,session);
     }
 
     protected void checkSession() {

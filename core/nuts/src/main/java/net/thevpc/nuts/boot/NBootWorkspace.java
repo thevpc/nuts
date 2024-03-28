@@ -118,6 +118,7 @@ public final class NBootWorkspace {
     private NSession nLogSession;
     private Scanner scanner;
     private NBootCache cache = new NBootCache();
+    boolean runtimeLoaded = false;
 
     public NBootWorkspace(NWorkspaceTerminalOptions bootTerminal, String... args) {
         this.bLog = new NReservedBootLog(bootTerminal);
@@ -129,7 +130,7 @@ public final class NBootWorkspace {
         }
         InputStream in = userOptions.getStdin().orNull();
         scanner = new Scanner(in == null ? System.in : in);
-        userOptions.setCommandLine(args, null);
+        userOptions.setCmdLine(args, null);
         if (userOptions.getSkipErrors().orElse(false)) {
             StringBuilder errorMessage = new StringBuilder();
             for (NMsg s : userOptions.getErrors().orElseGet(Collections::emptyList)) {
@@ -235,7 +236,7 @@ public final class NBootWorkspace {
     }
 
     private static final class ApiDigestHolder {
-        static final String apiDigest = NApiUtils.resolveNutsIdDigestOrError();
+        static final String apiDigest = NApiUtils.resolveNutsIdDigest();
     }
 
     /**
@@ -243,8 +244,8 @@ public final class NBootWorkspace {
      *
      * @return current nuts version
      */
-    private static String getApiDigest() {
-        return ApiDigestHolder.apiDigest;
+    private static String getApiDigestOrInternal() {
+        return ApiDigestHolder.apiDigest == null ? "<internal>" : ApiDigestHolder.apiDigest;
     }
 
     public boolean hasUnsatisfiedRequirements() {
@@ -253,15 +254,15 @@ public final class NBootWorkspace {
     }
 
     public void runNewProcess() {
-        String[] processCommandLine = createProcessCommandLine();
+        String[] processCmdLine = createProcessCmdLine();
         int result;
         try {
             if (nLog != null) {
-                nLog.with().session(nLogSession).level(Level.FINE).verb(NLogVerb.START).log(NMsg.ofC("start new process : %s", NCmdLine.of(processCommandLine)));
+                nLog.with().session(nLogSession).level(Level.FINE).verb(NLogVerb.START).log(NMsg.ofC("start new process : %s", NCmdLine.of(processCmdLine)));
             } else {
-                bLog.log(Level.FINE, NLogVerb.START, NMsg.ofC("start new process : %s", NCmdLine.of(processCommandLine)));
+                bLog.log(Level.FINE, NLogVerb.START, NMsg.ofC("start new process : %s", NCmdLine.of(processCmdLine)));
             }
-            result = new ProcessBuilder(processCommandLine).inheritIO().start().waitFor();
+            result = new ProcessBuilder(processCmdLine).inheritIO().start().waitFor();
         } catch (IOException | InterruptedException ex) {
             throw new NBootException(NMsg.ofPlain("failed to run new nuts process"), ex);
         }
@@ -295,7 +296,7 @@ public final class NBootWorkspace {
         if (old.length == 0) {
             //no previous config, use defaults!
             result = bootRepositoriesSelector.resolve(new NRepositoryLocation[]{
-                    new NRepositoryLocation("maven", "maven", "maven")
+                    Boolean.getBoolean("nomaven") ? null : new NRepositoryLocation("maven", "maven", "maven")
             }, repositoryDB);
         } else {
             result = bootRepositoriesSelector.resolve(Arrays.stream(old).map(x -> NRepositoryLocation.of(x.getName(), x.getUrl())).toArray(NRepositoryLocation[]::new), repositoryDB);
@@ -355,7 +356,7 @@ public final class NBootWorkspace {
         return rr;
     }
 
-    public String[] createProcessCommandLine() {
+    public String[] createProcessCmdLine() {
         prepareWorkspace();
         bLog.log(Level.FINE, NLogVerb.START, NMsg.ofC("running version %s.  %s", computedOptions.getApiVersion().orNull(), getRequirementsHelpString(true)));
         String defaultWorkspaceLibFolder = computedOptions.getStoreType(NStoreType.LIB).orNull();
@@ -392,7 +393,7 @@ public final class NBootWorkspace {
         }
         cmd.add("-jar");
         cmd.add(file.getPath());
-        cmd.addAll(computedOptions.toCommandLine(new NWorkspaceOptionsConfig().setCompact(true).setApiVersion(computedOptions.getApiVersion().orNull())).toStringList());
+        cmd.addAll(computedOptions.toCmdLine(new NWorkspaceOptionsConfig().setCompact(true).setApiVersion(computedOptions.getApiVersion().orNull())).toStringList());
         if (showCommand) {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < cmd.size(); i++) {
@@ -504,7 +505,7 @@ public final class NBootWorkspace {
             preparedWorkspace = true;
             NIsolationLevel isolationMode = computedOptions.getIsolationLevel().orElse(NIsolationLevel.SYSTEM);
             if (bLog.isLoggable(Level.CONFIG)) {
-                bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofC("bootstrap Nuts version %s %s digest %s...", Nuts.getVersion(), isolationMode == NIsolationLevel.SYSTEM ? "" : isolationMode == NIsolationLevel.USER ? " (user mode)" : isolationMode == NIsolationLevel.CONFINED ? " (confined mode)" : isolationMode == NIsolationLevel.SANDBOX ? " (sandbox mode)" : " (unsupported mode)", getApiDigest()));
+                bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofC("bootstrap Nuts version %s %s digest %s...", Nuts.getVersion(), isolationMode == NIsolationLevel.SYSTEM ? "" : isolationMode == NIsolationLevel.USER ? " (user mode)" : isolationMode == NIsolationLevel.CONFINED ? " (confined mode)" : isolationMode == NIsolationLevel.SANDBOX ? " (sandbox mode)" : " (unsupported mode)", getApiDigestOrInternal()));
                 bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofPlain("boot-class-path:"));
                 for (String s : NStringUtils.split(System.getProperty("java.class.path"), File.pathSeparator, true, true)) {
                     bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofC("                  %s", s));
@@ -815,6 +816,16 @@ public final class NBootWorkspace {
                         loadedDeps = r.deps;
                     }
                     if (loadedDeps == null) {
+                        runtimeLoaded = false;
+                        try {
+                            Class.forName("net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace");
+                            runtimeLoaded = true;
+                            loadedDeps = new HashSet<>();
+                        } catch (Exception ex) {
+                            //
+                        }
+                    }
+                    if (loadedDeps == null) {
                         throw new NBootException(NMsg.ofC("unable to load dependencies for %s", rid));
                     }
                     computedOptions.setRuntimeBootDescriptor(new DefaultNDescriptorBuilder().setId(computedOptions.getRuntimeId().get()).setDependencies(loadedDeps.stream().map(NId::toDependency).collect(Collectors.toList())));
@@ -923,7 +934,12 @@ public final class NBootWorkspace {
                     throw new NWorkspaceAlreadyExistsException(computedOptions.getWorkspace().orNull());
                 }
             }
-            if (computedOptions.getApiVersion().isBlank() || computedOptions.getRuntimeId().isBlank() || computedOptions.getBootRepositories().isBlank() || computedOptions.getRuntimeBootDescriptor().isNotPresent() || computedOptions.getExtensionBootDescriptors().isNotPresent()) {
+            if (computedOptions.getApiVersion().isBlank()
+                    || computedOptions.getRuntimeId().isBlank()
+                    || computedOptions.getRuntimeBootDescriptor().isNotPresent()
+                    || computedOptions.getExtensionBootDescriptors().isNotPresent()
+//                    || (!runtimeLoaded && (computedOptions.getBootRepositories().isBlank()))
+            ) {
                 throw new NBootException(NMsg.ofPlain("invalid workspace state"));
             }
             boolean recover = computedOptions.getRecover().orElse(false) || computedOptions.getReset().orElse(false);
@@ -935,7 +951,10 @@ public final class NBootWorkspace {
             NRepositoryLocation[] repositories = NStringUtils.split(computedOptions.getBootRepositories().orNull(), "\n;", true, true).stream().map(NRepositoryLocation::of).toArray(NRepositoryLocation[]::new);
 
             NRepositoryLocation workspaceBootLibFolderRepo = NRepositoryLocation.of("nuts@" + workspaceBootLibFolder);
-            computedOptions.setRuntimeBootDependencyNode(createClassLoaderNode(computedOptions.getRuntimeBootDescriptor().orNull(), repositories, workspaceBootLibFolderRepo, recover, errorList, true));
+            computedOptions.setRuntimeBootDependencyNode(
+                    runtimeLoaded ? null :
+                            createClassLoaderNode(computedOptions.getRuntimeBootDescriptor().orNull(), repositories, workspaceBootLibFolderRepo, recover, errorList, true)
+            );
 
             for (NDescriptor nutsBootDescriptor : computedOptions.getExtensionBootDescriptors().orElseGet(ArrayList::new)) {
                 deps.add(createClassLoaderNode(nutsBootDescriptor, repositories, workspaceBootLibFolderRepo, recover, errorList, false));
@@ -1157,44 +1176,44 @@ public final class NBootWorkspace {
             case JSON: {
                 bLog.outln("{");
                 bLog.outln("  \"version\": \"%s\",", Nuts.getVersion());
-                bLog.outln("  \"digest\": \"%s\"", getApiDigest());
+                bLog.outln("  \"digest\": \"%s\"", getApiDigestOrInternal());
                 bLog.outln("}");
                 return;
             }
             case TSON: {
                 bLog.outln("{");
                 bLog.outln("  version: \"%s\",", Nuts.getVersion());
-                bLog.outln("  digest: \"%s\"", getApiDigest());
+                bLog.outln("  digest: \"%s\"", getApiDigestOrInternal());
                 bLog.outln("}");
                 return;
             }
             case YAML: {
                 bLog.outln("version: %s", Nuts.getVersion());
-                bLog.outln("digest: %s", getApiDigest());
+                bLog.outln("digest: %s", getApiDigestOrInternal());
                 return;
             }
             case TREE: {
                 bLog.outln("- version: %s", Nuts.getVersion());
-                bLog.outln("- digest: %s", getApiDigest());
+                bLog.outln("- digest: %s", getApiDigestOrInternal());
                 return;
             }
             case TABLE: {
                 bLog.outln("version      %s", Nuts.getVersion());
-                bLog.outln("digest  %s", getApiDigest());
+                bLog.outln("digest  %s", getApiDigestOrInternal());
                 return;
             }
             case XML: {
                 bLog.outln("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
                 bLog.outln("<object>");
                 bLog.outln("  <string key=\"%s\" value=\"%s\"/>", "version", Nuts.getVersion());
-                bLog.outln("  <string key=\"%s\" value=\"%s\"/>", "digest", getApiDigest());
+                bLog.outln("  <string key=\"%s\" value=\"%s\"/>", "digest", getApiDigestOrInternal());
                 bLog.outln("</object>");
                 return;
             }
             case PROPS: {
                 bLog.outln("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
                 bLog.outln("version=%s", Nuts.getVersion());
-                bLog.outln("digest=%s", getApiDigest());
+                bLog.outln("digest=%s", getApiDigestOrInternal());
                 bLog.outln("</object>");
                 return;
             }
@@ -1242,7 +1261,7 @@ public final class NBootWorkspace {
                 }
             }
         }
-        NExecCommand execCmd = NExecCommand.of(session.setDry(computedOptions.getDry().orElse(false)))
+        NExecCmd execCmd = NExecCmd.of(session.setDry(computedOptions.getDry().orElse(false)))
                 .setExecutionType(o.getExecutionType().orNull())
                 .setRunAs(o.getRunAs().orNull())
                 .failFast();
@@ -1273,7 +1292,7 @@ public final class NBootWorkspace {
     private void logError(URL[] bootClassWorldURLs, NReservedErrorInfoList ths) {
         String workspace = computedOptions.getWorkspace().orNull();
         Map<NStoreType, String> rbc_locations = computedOptions.getStoreLocations().orElse(Collections.emptyMap());
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("unable to bootstrap nuts (digest %s):", getApiDigest()));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("unable to bootstrap nuts (digest %s):", getApiDigestOrInternal()));
         if (!ths.list().isEmpty()) {
             bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("%s", ths.list().get(0)));
         }
@@ -1292,7 +1311,7 @@ public final class NBootWorkspace {
         bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  nuts-store-lib                   : %s", rbc_locations.get(NStoreType.LIB)));
         bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  nuts-store-strategy              : %s", NReservedUtils.desc(computedOptions.getStoreStrategy().orNull())));
         bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  nuts-store-layout                : %s", NReservedUtils.desc(computedOptions.getStoreLayout().orNull())));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  nuts-boot-args                   : %s", this.computedOptions.toCommandLine()));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  nuts-boot-args                   : %s", this.computedOptions.toCmdLine()));
         bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  nuts-app-args                    : %s", this.computedOptions.getApplicationArguments().get()));
         bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  option-read-only                 : %s", this.computedOptions.getReadOnly().orElse(false)));
         bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  option-trace                     : %s", this.computedOptions.getTrace().orElse(false)));

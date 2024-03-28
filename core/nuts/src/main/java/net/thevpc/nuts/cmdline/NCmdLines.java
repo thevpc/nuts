@@ -48,7 +48,7 @@ public interface NCmdLines extends NComponent, NSessionProvider {
      * @param line command line to parse
      * @return new Command line instance
      */
-    NCmdLine parseCommandline(String line);
+    NCmdLine parseCmdLine(String line);
 
     /**
      * create argument name

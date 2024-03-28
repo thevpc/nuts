@@ -95,7 +95,7 @@ public class URLPath implements NPathSPI {
         return name;
     }
 
-    private static File _toFile(URL url) {
+    public static File _toFile(URL url) {
         if (url == null) {
             return null;
         }

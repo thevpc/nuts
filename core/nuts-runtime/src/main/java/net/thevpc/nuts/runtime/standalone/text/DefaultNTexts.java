@@ -520,7 +520,7 @@ public class DefaultNTexts implements NTexts {
     }
 
     @Override
-    public NTextCommand ofCommand(NTerminalCommand command) {
+    public NTextCmd ofCommand(NTerminalCmd command) {
         checkSession();
         return new DefaultNTextCommand(getSession(), "```!", command, "", "```");
     }
@@ -614,7 +614,7 @@ public class DefaultNTexts implements NTexts {
                     return ofInclude(text, sep);
                 }
             }
-            return ofCommand(NTerminalCommand.of(name.substring(1), text));
+            return ofCommand(NTerminalCmd.of(name.substring(1), text));
         }
         return ofCode(name, text, sep);
     }
@@ -876,7 +876,7 @@ public class DefaultNTexts implements NTexts {
         return new DefaultNTextCode(getSession(), start, kind, separator, end, text);
     }
 
-    public NTextCommand createCommand(String start, NTerminalCommand command, String separator, String end) {
+    public NTextCmd createCommand(String start, NTerminalCmd command, String separator, String end) {
         checkSession();
         return new DefaultNTextCommand(getSession(), start, command, separator, end);
     }

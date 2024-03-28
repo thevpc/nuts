@@ -10,7 +10,7 @@ public class NutsBuildToolMain implements NApplication {
 
     public void run(NSession session) {
         NutsBuildRunner nutsBuildRunner = new NutsBuildRunner(session);
-        nutsBuildRunner.configure(session.getAppCommandLine());
+        nutsBuildRunner.configure(session.getAppCmdLine());
         nutsBuildRunner.run();
     }
 

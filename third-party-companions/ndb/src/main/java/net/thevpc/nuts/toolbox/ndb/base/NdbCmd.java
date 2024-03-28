@@ -120,7 +120,7 @@ public abstract class NdbCmd<C extends NdbConfig> {
         return getSupport().isRemoteCommand(options);
     }
 
-    public NExecCommand sysSsh(C options, NSession session) {
+    public NExecCmd sysSsh(C options, NSession session) {
         return getSupport().sysSsh(options, session);
     }
 
@@ -142,11 +142,11 @@ public abstract class NdbCmd<C extends NdbConfig> {
         run(sysSsh(options, session).addCommand("rm -rf " + upRestorePath.toString()));
     }
 
-    public NExecCommand run(NExecCommand cmd) {
+    public NExecCmd run(NExecCmd cmd) {
         return getSupport().run(cmd);
     }
 
-    public NExecCommand sysCmd(NSession session) {
+    public NExecCmd sysCmd(NSession session) {
         return getSupport().sysCmd(session);
     }
 }

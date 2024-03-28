@@ -27,6 +27,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.contenttype;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.format.NVisitResult;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.spi.NComponentScope;
@@ -121,19 +122,19 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
                             case "META-INF/MANIFEST.MF": {
                                 isJar.set(true);
                                 if (isJar.orElse(false) && isWar.orElse(false)) {
-                                    return false;
+                                    return NVisitResult.TERMINATE;
                                 }
                                 break;
                             }
                             case "WEB-INF/web.xml": {
                                 isWar.set(true);
                                 if (isJar.orElse(false) && isWar.orElse(false)) {
-                                    return false;
+                                    return NVisitResult.TERMINATE;
                                 }
                                 break;
                             }
                         }
-                        return true;
+                        return NVisitResult.CONTINUE;
                     }, session);
                     if (isWar.get()) {
                         return "application/x-webarchive";

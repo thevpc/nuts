@@ -32,7 +32,7 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
                 NId id = NIdBuilder.of().setArtifactId(split.get(split.size() - 3))
                         .setGroupId(String.join(".", split.subList(0, split.size() - 3)))
                         .setVersion(split.get(split.size() - 2)).build();
-                NDefinition fetch = NFetchCommand.of(id,session)
+                NDefinition fetch = NFetchCmd.of(id,session)
                         .getResultDefinition();
                 NDescriptor d = fetch.getDescriptor();
                 if(context.isHeadMethod()){
@@ -110,7 +110,7 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
                 NId id = NIdBuilder.of().setArtifactId(split.get(split.size() - 3))
                         .setGroupId(String.join(".", split.subList(0, split.size() - 3)))
                         .setVersion(split.get(split.size() - 2)).build();
-                NDefinition fetch = NFetchCommand.of(id,session)
+                NDefinition fetch = NFetchCmd.of(id,session)
                         .getResultDefinition();
                 if(fetch.getContent().isPresent()) {
                     if (context.isHeadMethod()) {
@@ -128,7 +128,7 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
             if (split.size() >= 3) {
                 NId id = NIdBuilder.of().setArtifactId(split.get(split.size() - 2))
                         .setGroupId(String.join(".", split.subList(0, split.size() - 2))).build();
-                NStream<NId> resultIds = NSearchCommand.of(session).addId(id).setDistinct(true).setSorted(true).getResultIds();
+                NStream<NId> resultIds = NSearchCmd.of(session).addId(id).setDistinct(true).setSorted(true).getResultIds();
                 if(context.isHeadMethod()){
                     context.sendResponseHeaders(200,-1);
                     return;

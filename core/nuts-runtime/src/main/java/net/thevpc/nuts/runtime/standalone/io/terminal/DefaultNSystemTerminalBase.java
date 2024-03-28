@@ -8,7 +8,7 @@ import net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamSystem;
 import net.thevpc.nuts.runtime.standalone.util.NCachedValue;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.text.NTerminalCommand;
+import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.util.NMsg;
@@ -175,12 +175,12 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public Object run(NTerminalCommand command, NPrintStream printStream, NSession session) {
+    public Object run(NTerminalCmd command, NPrintStream printStream, NSession session) {
         switch (command.getName()) {
-            case NTerminalCommand.Ids.GET_CURSOR: {
+            case NTerminalCmd.Ids.GET_CURSOR: {
                 return termCursor.getValue(session);
             }
-            case NTerminalCommand.Ids.GET_SIZE: {
+            case NTerminalCmd.Ids.GET_SIZE: {
                 return termSize.getValue(session);
             }
         }

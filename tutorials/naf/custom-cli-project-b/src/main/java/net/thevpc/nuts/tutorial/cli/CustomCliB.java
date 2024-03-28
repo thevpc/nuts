@@ -20,7 +20,7 @@ public class CustomCliB implements NApplication {
 
     @Override
     public void run(NSession session) {
-        NCmdLine cmdLine = session.getAppCommandLine();
+        NCmdLine cmdLine = session.getAppCmdLine();
         boolean boolOption = false;
         String stringOption = null;
         List<String> others = new ArrayList<>();

@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public class CommandNWorkspaceCommandFactory implements NWorkspaceCommandFactory {
+public class CommandNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
 
     private int priority = 10;
     private String factoryId;
@@ -90,7 +90,7 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCommandFactory
         if (findCommand.length > 0 && execCommand.length > 0) {
             String[] fc = replaceParam(findCommand, name);
             String[] ec = replaceParam(execCommand, name);
-            NExecCommand exec = NExecCommand.of(session).addCommand(fc)
+            NExecCmd exec = NExecCmd.of(session).addCommand(fc)
                     //                        .setExecutorOptions("--show-command")
                     .grabAll()
                     .run();
@@ -110,7 +110,7 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCommandFactory
     public List<NCommandConfig> findCommands(NSession session) {
         List<NCommandConfig> c = new ArrayList<>();
         if (listCommand.length > 0) {
-            NExecCommand b = NExecCommand.of(session).addCommand(listCommand)
+            NExecCmd b = NExecCmd.of(session).addCommand(listCommand)
                     .grabAll();
             int r = b.getResultCode();
             if (r == 0) {

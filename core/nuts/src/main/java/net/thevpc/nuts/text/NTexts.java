@@ -81,7 +81,7 @@ public interface NTexts extends NComponent, NSessionProvider {
 
     NTextTitle ofTitle(NText other, int level);
 
-    NTextCommand ofCommand(NTerminalCommand command);
+    NTextCmd ofCommand(NTerminalCmd command);
 
     NTextCode ofCode(String lang, String text, char sep);
 

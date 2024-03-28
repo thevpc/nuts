@@ -169,7 +169,7 @@ public class EnvCommand extends NShellBuiltinDefault {
                 context.getSession().out().println(env);
             }
         } else {
-            final NExecCommand e = NExecCommand.of(context.getSession()).addCommand(options.command)
+            final NExecCmd e = NExecCmd.of(context.getSession()).addCommand(options.command)
                     .setEnv(env)
                     .failFast();
             if (!NBlankable.isBlank(options.dir)) {

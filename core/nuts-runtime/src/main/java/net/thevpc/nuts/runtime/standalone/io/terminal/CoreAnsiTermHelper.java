@@ -6,7 +6,7 @@ import net.thevpc.nuts.util.NLiteral;
 
 public class CoreAnsiTermHelper {
     public static String tput(String str,long timeout,NSession session) {
-        return NExecCommand.of(session)
+        return NExecCmd.of(session)
                 .system()
                 .addCommand("tput", str)
                 .failFast()

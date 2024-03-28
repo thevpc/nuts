@@ -37,6 +37,7 @@ import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.DoWhenExist;
 import net.thevpc.nuts.runtime.standalone.util.DoWhenNotExists;
+import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDB;
@@ -56,7 +57,9 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Instant;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 
 /**
  * Created by vpc on 5/16/17.
@@ -80,6 +83,43 @@ public class CoreIOUtils {
         ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer, term, session);
         NSessionUtils.setSession(s, session);
         return s;
+    }
+
+    public static boolean isValidConfLine(String line) {
+        String l = NStringUtils.trimLeftToNull(line);
+        if (l == null) {
+            return false;
+        }
+        if (l.charAt(0) == '#') {
+            return false;
+        }
+        return true;
+    }
+
+    public static Stream<String> confLines(InputStream stream, NSession session) {
+        return lines(stream, session).filter(CoreIOUtils::isValidConfLine);
+    }
+
+    public static Stream<String> confLines(Reader stream, NSession session) {
+        return lines(stream, session).filter(CoreIOUtils::isValidConfLine);
+    }
+
+    public static Stream<String> lines(InputStream stream, NSession session) {
+        return lines(new InputStreamReader(stream),session);
+    }
+
+    public static Stream<String> lines(Reader reader, NSession session) {
+        return CoreCollectionUtils.finiteStream(new Supplier<String>() {
+            private BufferedReader r = new BufferedReader(reader);
+
+            public String get() {
+                try {
+                    return r.readLine();
+                } catch (IOException e) {
+                    throw new NIOException(session, e);
+                }
+            }
+        });
     }
 
     @Deprecated
@@ -739,7 +779,7 @@ public class CoreIOUtils {
                 .setMetadata(new DefaultNContentMetadata(
                         path,
                         NMsg.ofNtf(NTexts.of(session).ofStyled(path, NTextStyle.path())),
-                        size,header.getContentType(), header.getCharset(), sourceTypeName
+                        size, header.getContentType(), header.getCharset(), sourceTypeName
                 )).createInputStream()
                 ;
 
@@ -1050,7 +1090,7 @@ public class CoreIOUtils {
                                 message,
                                 (long) bytes.length,
                                 contentType,
-                        encoding, kind
+                                encoding, kind
                         )
                 ).createInputStream();
     }
@@ -1305,6 +1345,22 @@ public class CoreIOUtils {
         return err;
     }
 
+    public static NOptional<InputStream> openStream(URL u) {
+        if(u==null){
+            return NOptional.ofNamedEmpty("null url");
+        }
+        InputStream in = null;
+        try {
+            in = u.openStream();
+        } catch (IOException e) {
+            return NOptional.ofNamedEmpty("error stream for "+u);
+        }
+        if(in==null){
+            return NOptional.ofNamedEmpty("null stream for "+u);
+        }
+        return NOptional.of(in);
+    }
+
 
     public static class CachedURL {
 
@@ -1423,16 +1479,16 @@ public class CoreIOUtils {
     }
 
     public static boolean isHttpUrl(String s) {
-        if(s!=null){
-            s=s.toLowerCase();
+        if (s != null) {
+            s = s.toLowerCase();
             return s.startsWith("http://") || s.startsWith("https://");
         }
         return false;
     }
 
     public static boolean isFileProtocol(String s) {
-        if(s!=null){
-            s=s.toLowerCase();
+        if (s != null) {
+            s = s.toLowerCase();
             return s.startsWith("file://");
         }
         return false;

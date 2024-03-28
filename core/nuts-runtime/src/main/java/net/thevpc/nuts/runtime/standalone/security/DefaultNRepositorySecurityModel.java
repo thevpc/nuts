@@ -54,16 +54,16 @@ public class DefaultNRepositorySecurityModel {
 //        return this;
     }
 
-    public NAddUserCommand addUser(String name, NSession session) {
-        return NAddUserCommand.of(session).setRepository(repository).setUsername(name);
+    public NAddUserCmd addUser(String name, NSession session) {
+        return NAddUserCmd.of(session).setRepository(repository).setUsername(name);
     }
 
-    public NUpdateUserCommand updateUser(String name, NSession session) {
-        return NUpdateUserCommand.of(session).setRepository(repository).setUsername(name);
+    public NUpdateUserCmd updateUser(String name, NSession session) {
+        return NUpdateUserCmd.of(session).setRepository(repository).setUsername(name);
     }
 
-    public NRemoveUserCommand removeUser(String name, NSession session) {
-        return NRemoveUserCommand.of(session).setRepository(repository).setUsername(name);
+    public NRemoveUserCmd removeUser(String name, NSession session) {
+        return NRemoveUserCmd.of(session).setRepository(repository).setUsername(name);
     }
 
     private NAuthorizations getAuthorizations(String n, NSession session) {

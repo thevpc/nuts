@@ -1231,8 +1231,8 @@ public class Test04_NTFTest {
                 "```!clear-line``````!move-line-start```", session).toText();
         Assertions.assertEquals(NTextType.LIST, s.getType());
         Assertions.assertEquals(2, ((NTextList)s).size());
-        Assertions.assertEquals(true, ((NTextList)s).get(0) instanceof NTextCommand);
-        Assertions.assertEquals(true, ((NTextCommand)((NTextList)s).get(0)).getCommand().getName().equals("clear-line"));
+        Assertions.assertEquals(true, ((NTextList)s).get(0) instanceof NTextCmd);
+        Assertions.assertEquals(true, ((NTextCmd)((NTextList)s).get(0)).getCommand().getName().equals("clear-line"));
     }
     @Test
     public void test35() {

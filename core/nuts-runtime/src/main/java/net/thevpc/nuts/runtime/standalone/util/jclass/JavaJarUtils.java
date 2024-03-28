@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.util.jclass;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.format.NVisitResult;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
@@ -25,44 +26,7 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 public class JavaJarUtils {
-    public static void main(String[] args) {
-        String spath = "/data/git/nuts/core/nuts/target/nuts-0.8.3.jar";
-        final Map<String, Set<String>> classes = new HashMap<>();
-        try (InputStream jarStream = Files.newInputStream(Paths.get(spath))) {
-            ZipUtils.visitZipStream(jarStream, (path, inputStream) -> {
-                if (path.endsWith(".class")) {
-                    JavaClassByteCode.Visitor cl = new JavaClassByteCode.Visitor() {
-                        @Override
-                        public boolean visitVersion(int major, int minor) {
-                            String v = JavaClassUtils.classVersionToSourceVersion(major, minor, null);
-                            Set<String> r = classes.get(v);
-                            if (r == null) {
-                                r = new HashSet<>();
-                                classes.put(v, r);
-                            }
-                            r.add(path.substring(0, path.length() - 6));
-                            return false;
-                        }
-                    };
-                    JavaClassByteCode classReader = new JavaClassByteCode(new BufferedInputStream(inputStream), cl, null);
 
-                }
-                return true;
-            }, null);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        for (Map.Entry<String, Set<String>> e : classes.entrySet()) {
-            System.out.println(e.getKey() + " (" + e.getValue().size() + ")");
-        }
-        System.out.println("DETAILS:");
-        for (Map.Entry<String, Set<String>> e : classes.entrySet()) {
-            System.out.println(e.getKey() + " (" + e.getValue().size() + ")");
-            for (String s : e.getValue()) {
-                System.out.println("\t" + s);
-            }
-        }
-    }
 
     public static NVersion[] parseJarClassVersions(InputStream jarStream, NSession session) {
         if (!(jarStream instanceof BufferedInputStream)) {
@@ -73,15 +37,15 @@ public class JavaJarUtils {
             if (path.endsWith(".class")) {
                 JavaClassByteCode.Visitor cl = new JavaClassByteCode.Visitor() {
                     @Override
-                    public boolean visitVersion(int major, int minor) {
+                    public NVisitResult visitVersion(int major, int minor) {
                         classes.add(JavaClassUtils.classVersionToSourceVersion(major, minor, session));
-                        return false;
+                        return NVisitResult.TERMINATE;
                     }
 
                 };
                 JavaClassByteCode classReader = new JavaClassByteCode(new BufferedInputStream(inputStream), cl, session);
             }
-            return true;
+            return NVisitResult.CONTINUE;
         }, session);
         return classes.stream().map(x -> NVersion.of(x).get(session)).toArray(NVersion[]::new);
     }
@@ -221,7 +185,7 @@ public class JavaJarUtils {
                     }
                 }
             }
-            return true;
+            return NVisitResult.CONTINUE;
         }, session);
 
         Map<String, NExecutionEntry> found = new LinkedHashMap<>();
@@ -331,15 +295,15 @@ public class JavaJarUtils {
                         Attributes.Name attrName = (Attributes.Name) o;
                         if ("Automatic-Module-Name".equals(attrName.toString())) {
                             automaticModuleName.setNonNull(NStringUtils.trimToNull(attrs.getValue(attrName)));
-                            return false;
+                            return NVisitResult.TERMINATE;
                         }
                     }
                 } finally {
                     inputStream.close();
                 }
-                return false;
+                return NVisitResult.TERMINATE;
             }
-            return true;
+            return NVisitResult.CONTINUE;
         }, session);
         return automaticModuleName.get();
     }
@@ -361,14 +325,14 @@ public class JavaJarUtils {
             if (path.equals("module-info.class")) {
                 JavaClassByteCode s = new JavaClassByteCode(inputStream, new JavaClassByteCode.Visitor() {
                     @Override
-                    public boolean visitClassAttributeModule(JavaClassByteCode.ModuleInfo mi) {
+                    public NVisitResult visitClassAttributeModule(JavaClassByteCode.ModuleInfo mi) {
                         ref.set(mi);
-                        return true;
+                        return NVisitResult.CONTINUE;
                     }
                 }, session);
-                return false;
+                return NVisitResult.TERMINATE;
             }
-            return true;
+            return NVisitResult.CONTINUE;
         }, session);
         return ref.get();
     }

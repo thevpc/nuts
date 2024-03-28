@@ -45,7 +45,7 @@ import java.util.logging.Level;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
-import net.thevpc.nuts.security.NDigest;
+import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.web.*;
@@ -83,7 +83,7 @@ public class NHttpSrvRepository extends NCachedRepository {
     }
 
     @Override
-    public void pushImpl(NPushRepositoryCommand command) {
+    public void pushImpl(NPushRepositoryCmd command) {
         NSession session = command.getSession();
         NPath content = lib.fetchContentImpl(command.getId(), session);
         NDescriptor desc = lib.fetchDescriptorImpl(command.getId(), session);

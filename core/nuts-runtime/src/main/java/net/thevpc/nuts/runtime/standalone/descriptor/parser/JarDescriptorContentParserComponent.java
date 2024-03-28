@@ -29,6 +29,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.DefaultNArtifactCall;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.format.NVisitResult;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NRef;
@@ -127,7 +128,10 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
                 }
             }
             //continue
-            return !nutsjson.isSet() || (!metainf.isSet() && !maven.isSet());
+            if(!nutsjson.isSet() || (!metainf.isSet() && !maven.isSet())){
+                return NVisitResult.CONTINUE;
+            }
+            return NVisitResult.TERMINATE;
         }, session);
 
         if (nutsjson.isSet()) {

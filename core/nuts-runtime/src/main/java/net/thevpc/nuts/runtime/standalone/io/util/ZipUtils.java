@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.format.NVisitResult;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLogOp;
@@ -360,7 +361,8 @@ public class ZipUtils {
                     fileName = fileName.substring(1);
                 }
                 if (!fileName.endsWith("/")) {
-                    if (!visitor.visit(fileName, entryInputStream)) {
+                    NVisitResult v = visitor.visit(fileName, entryInputStream);
+                    if(v== NVisitResult.TERMINATE) {
                         break;
                     }
                 }

@@ -21,7 +21,7 @@ import java.util.logging.Level;
 public class DefaultCustomCommandsModel {
 
     private final ConfigNWorkspaceCommandFactory defaultCommandFactory;
-    private final List<NWorkspaceCommandFactory> commandFactories = new ArrayList<>();
+    private final List<NWorkspaceCmdFactory> commandFactories = new ArrayList<>();
     public NLog LOG;
     private NWorkspace workspace;
 
@@ -46,12 +46,12 @@ public class DefaultCustomCommandsModel {
         if (commandFactoryConfig == null || commandFactoryConfig.getFactoryId() == null || commandFactoryConfig.getFactoryId().isEmpty() || !commandFactoryConfig.getFactoryId().trim().equals(commandFactoryConfig.getFactoryId())) {
             throw new NIllegalArgumentException(session, NMsg.ofC("invalid WorkspaceCommandFactory %s", commandFactoryConfig));
         }
-        for (NWorkspaceCommandFactory factory : commandFactories) {
+        for (NWorkspaceCmdFactory factory : commandFactories) {
             if (commandFactoryConfig.getFactoryId().equals(factory.getFactoryId())) {
                 throw new NIllegalArgumentException(session, NMsg.ofC("factory already registered : %s", factory.getFactoryId()));
             }
         }
-        NWorkspaceCommandFactory f = null;
+        NWorkspaceCmdFactory f = null;
         if (NBlankable.isBlank(commandFactoryConfig.getFactoryType()) || "command".equals(commandFactoryConfig.getFactoryType().trim())) {
             f = new CommandNWorkspaceCommandFactory(session);
         }
@@ -59,9 +59,9 @@ public class DefaultCustomCommandsModel {
             f.configure(commandFactoryConfig);
             commandFactories.add(f);
         }
-        Collections.sort(commandFactories, new Comparator<NWorkspaceCommandFactory>() {
+        Collections.sort(commandFactories, new Comparator<NWorkspaceCmdFactory>() {
             @Override
-            public int compare(NWorkspaceCommandFactory o1, NWorkspaceCommandFactory o2) {
+            public int compare(NWorkspaceCmdFactory o1, NWorkspaceCmdFactory o2) {
                 return Integer.compare(o2.getPriority(), o1.getPriority());
             }
         });
@@ -100,10 +100,10 @@ public class DefaultCustomCommandsModel {
         if (factoryId == null || factoryId.isEmpty()) {
             return false;
         }
-        NWorkspaceCommandFactory removeMe = null;
+        NWorkspaceCmdFactory removeMe = null;
         NCommandFactoryConfig removeMeConfig = null;
-        for (Iterator<NWorkspaceCommandFactory> iterator = commandFactories.iterator(); iterator.hasNext(); ) {
-            NWorkspaceCommandFactory factory = iterator.next();
+        for (Iterator<NWorkspaceCmdFactory> iterator = commandFactories.iterator(); iterator.hasNext(); ) {
+            NWorkspaceCmdFactory factory = iterator.next();
             if (factoryId.equals(factory.getFactoryId())) {
                 return true;
             }
@@ -128,10 +128,10 @@ public class DefaultCustomCommandsModel {
             }
             throw new NIllegalArgumentException(session, NMsg.ofC("invalid WorkspaceCommandFactory %s", factoryId));
         }
-        NWorkspaceCommandFactory removeMe = null;
+        NWorkspaceCmdFactory removeMe = null;
         NCommandFactoryConfig removeMeConfig = null;
-        for (Iterator<NWorkspaceCommandFactory> iterator = commandFactories.iterator(); iterator.hasNext(); ) {
-            NWorkspaceCommandFactory factory = iterator.next();
+        for (Iterator<NWorkspaceCmdFactory> iterator = commandFactories.iterator(); iterator.hasNext(); ) {
+            NWorkspaceCmdFactory factory = iterator.next();
             if (factoryId.equals(factory.getFactoryId())) {
                 removeMe = factory;
                 iterator.remove();
@@ -263,10 +263,10 @@ public class DefaultCustomCommandsModel {
         return ((DefaultNWorkspace) workspace).getConfigModel().getStoreModelMain();
     }
 
-    public NCustomCommand find(String name, NSession session) {
+    public NCustomCmd find(String name, NSession session) {
         NCommandConfig c = defaultCommandFactory.findCommand(name, session);
         if (c == null) {
-            for (NWorkspaceCommandFactory commandFactory : commandFactories) {
+            for (NWorkspaceCmdFactory commandFactory : commandFactories) {
                 c = commandFactory.findCommand(name, session);
                 if (c != null) {
                     break;
@@ -279,12 +279,12 @@ public class DefaultCustomCommandsModel {
         return toDefaultNWorkspaceCommand(c, session);
     }
 
-    public List<NCustomCommand> findAll(NSession session) {
-        HashMap<String, NCustomCommand> all = new HashMap<>();
+    public List<NCustomCmd> findAll(NSession session) {
+        HashMap<String, NCustomCmd> all = new HashMap<>();
         for (NCommandConfig command : defaultCommandFactory.findCommands(session)) {
             all.put(command.getName(), toDefaultNWorkspaceCommand(command, session));
         }
-        for (NWorkspaceCommandFactory commandFactory : commandFactories) {
+        for (NWorkspaceCmdFactory commandFactory : commandFactories) {
             for (NCommandConfig command : commandFactory.findCommands(session)) {
                 if (!all.containsKey(command.getName())) {
                     all.put(command.getName(), toDefaultNWorkspaceCommand(command, session));
@@ -294,15 +294,15 @@ public class DefaultCustomCommandsModel {
         return new ArrayList<>(all.values());
     }
 
-    public List<NCustomCommand> findByOwner(NId id, NSession session) {
-        HashMap<String, NCustomCommand> all = new HashMap<>();
+    public List<NCustomCmd> findByOwner(NId id, NSession session) {
+        HashMap<String, NCustomCmd> all = new HashMap<>();
         for (NCommandConfig command : defaultCommandFactory.findCommands(id, session)) {
             all.put(command.getName(), toDefaultNWorkspaceCommand(command, session));
         }
         return new ArrayList<>(all.values());
     }
 
-    private NCustomCommand toDefaultNWorkspaceCommand(NCommandConfig c, NSession session) {
+    private NCustomCmd toDefaultNWorkspaceCommand(NCommandConfig c, NSession session) {
         if (c.getCommand() == null || c.getCommand().size() == 0) {
 
             _LOGOP(session).level(Level.WARNING).verb(NLogVerb.FAIL)
@@ -330,8 +330,8 @@ public class DefaultCustomCommandsModel {
         return new NCommandFactoryConfig[0];
     }
 
-    public NCustomCommand find(String name, NId forId, NId forOwner, NSession session) {
-        NCustomCommand a = find(name, session);
+    public NCustomCmd find(String name, NId forId, NId forOwner, NSession session) {
+        NCustomCmd a = find(name, session);
         if (a != null && a.getCommand() != null && a.getCommand().size() > 0) {
             NId i = NId.of(a.getCommand().get(0)).orNull();
             if (i != null

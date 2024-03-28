@@ -529,26 +529,48 @@ public class DefaultNWorkspaceConfigModel {
         NDescriptor d = wsModel.bootModel.getBootEffectiveOptions().getRuntimeBootDescriptor().get(session);
         NId iruntimeId = NId.of(d.getId().toString()).get(session);
         wsModel.configModel.prepareBootClassPathConf(NIdType.API, ws.getApiId(), null, iruntimeId, false, false, session);
-        NBootDef nBootNutsApi = wsModel.configModel.prepareBootClassPathJar(ws.getApiId(), null, iruntimeId, false, session);
-        wsModel.configModel.prepareBootClassPathConf(NIdType.RUNTIME, iruntimeId, ws.getApiId(), null, false, true, session);
-        NBootDef nBootNutsRuntime = wsModel.configModel.prepareBootClassPathJar(iruntimeId, ws.getApiId(), null, true, session);
+        NBootDef nBootNutsApi=null;
+        try {
+            nBootNutsApi = wsModel.configModel.prepareBootClassPathJar(ws.getApiId(), null, iruntimeId, false, session);
+        } catch (Exception ex) {
+            _LOGOP(session).level(Level.SEVERE).log(NMsg.ofC("unable to install boot id (api) %s", ws.getApiId()));
+        }
+        if(nBootNutsApi==null){
+            //no need to install runtime if api is not there
+            return;
+        }
 
+        NBootDef nBootNutsRuntime=null;
+        try {
+            wsModel.configModel.prepareBootClassPathConf(NIdType.RUNTIME, iruntimeId, ws.getApiId(), null, false, true, session);
+            nBootNutsRuntime = wsModel.configModel.prepareBootClassPathJar(iruntimeId, ws.getApiId(), null, true, session);
+        } catch (Exception ex) {
+            LOG.with().level(Level.SEVERE).log(NMsg.ofC("unable to install boot id (runtime) %s", iruntimeId));
+        }
+        if(nBootNutsRuntime==null){
+            //no need to install extensions if runtime is not there
+            return;
+        }
         List<NWorkspaceConfigBoot.ExtensionConfig> extensions = getStoredConfigBoot().getExtensions();
         if (extensions != null) {
             for (NWorkspaceConfigBoot.ExtensionConfig extension : extensions) {
                 if (extension.isEnabled()) {
-                    wsModel.configModel.prepareBootClassPathConf(NIdType.EXTENSION,
-                            extension.getId(),
-                            ws.getApiId(),
-                            null, false,
-                            true,
-                            session);
-                    wsModel.configModel.prepareBootClassPathJar(
-                            extension.getId(),
-                            ws.getApiId(),
-                            null,
-                            true,
-                            session);
+                    try {
+                        wsModel.configModel.prepareBootClassPathConf(NIdType.EXTENSION,
+                                extension.getId(),
+                                ws.getApiId(),
+                                null, false,
+                                true,
+                                session);
+                        wsModel.configModel.prepareBootClassPathJar(
+                                extension.getId(),
+                                ws.getApiId(),
+                                null,
+                                true,
+                                session);
+                    } catch (Exception ex) {
+                        LOG.with().level(Level.SEVERE).log(NMsg.ofC("unable to install boot id (extension) %s", extension.getId()));
+                    }
                 }
             }
         }
@@ -1103,7 +1125,7 @@ public class DefaultNWorkspaceConfigModel {
     }
 
     public NBootDef fetchBootDef(NId id, boolean content, NSession session) {
-        NDefinition nd = NFetchCommand.of(id, session)
+        NDefinition nd = NFetchCmd.of(id, session)
                 .setDependencies(true).setContent(content)
                 .setDependencyFilter(NDependencyFilters.of(session).byRunnable())
                 .setFailFast(false).getResultDefinition();
@@ -1304,7 +1326,7 @@ public class DefaultNWorkspaceConfigModel {
             o.println(NLocations.of(session).getWorkspaceLocation());
             o.println("workspace.options:");
             o.println(wconfig.getBootUserOptions(session)
-                    .toCommandLine(
+                    .toCmdLine(
                             new NWorkspaceOptionsConfig()
                                     .setCompact(false)
                     )

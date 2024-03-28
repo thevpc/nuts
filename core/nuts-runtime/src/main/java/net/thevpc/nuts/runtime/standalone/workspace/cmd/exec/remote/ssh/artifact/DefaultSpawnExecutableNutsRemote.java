@@ -12,8 +12,8 @@ import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableCommand;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCommandExtensionContext;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmdExtensionContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * @author thevpc
  */
-public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableCommand {
+public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInformationExt {
 
     NDefinition def;
     String[] cmd;
@@ -37,14 +37,14 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableCommand
     List<String> executorOptions;
     NConnexionString connexionString;
     private boolean showCommand = false;
-    private NExecCommandExtension commExec;
+    private NExecCmdExtension commExec;
     NExecInput in;
     NExecOutput out;
     NExecOutput err;
 
 
-    public DefaultSpawnExecutableNutsRemote(NExecCommandExtension commExec, NDefinition def, String[] cmd,
-                                            List<String> executorOptions, NExecCommand execCommand,
+    public DefaultSpawnExecutableNutsRemote(NExecCmdExtension commExec, NDefinition def, String[] cmd,
+                                            List<String> executorOptions, NExecCmd execCommand,
                                             NExecInput in,
                                             NExecOutput out,
                                             NExecOutput err
@@ -98,7 +98,7 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableCommand
 
     private int runOnce(String[] cmd, NSession session) {
         int e;
-        try (DefaultNExecCommandExtensionContext d = new DefaultNExecCommandExtensionContext(
+        try (DefaultNExecCmdExtensionContext d = new DefaultNExecCmdExtensionContext(
                 getExecCommand().getTarget(),
                 cmd, getSession(),
                 in,

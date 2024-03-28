@@ -140,7 +140,7 @@ public final class Nuts {
             nutsArgs.addAll(Arrays.asList(overriddenNutsArgs));
         }
         NWorkspaceOptionsBuilder options = new DefaultNWorkspaceOptionsBuilder();
-        options.setCommandLine(nutsArgs.toArray(new String[0]), null);
+        options.setCmdLine(nutsArgs.toArray(new String[0]), null);
         if (options.getApplicationArguments().isNotPresent()) {
             options.setApplicationArguments(new ArrayList<>());
         }

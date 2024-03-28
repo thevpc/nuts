@@ -77,18 +77,24 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
             try {
                 try (InputStream is = path.getInputStream()) {
                     startParsing = true;
-                    return parse(is, true);
+                    NOptional<NDescriptor> r = parse(is, true);
+                    if (r.isError()) {
+                        return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor from %s : %s", path,
+                                r.getMessage().apply(session)
+                        ));
+                    }
+                    return r;
                 } catch (RuntimeException ex) {
-                    return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor from %s : %s", path,ex),ex);
+                    return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor from %s : %s", path, ex), ex);
                 }
             } catch (IOException ex) {
                 if (!startParsing) {
-                    return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor from %s : file not found", path),ex);
+                    return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor from %s : file not found", path), ex);
                 }
-                return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor from %s : %s", path,ex),ex);
+                return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor from %s : %s", path, ex), ex);
             }
         } catch (Exception ex) {
-            return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor from %s : %s", path, ex),ex);
+            return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor from %s : %s", path, ex), ex);
         }
     }
 
@@ -132,7 +138,9 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
         try {
             return NOptional.of(parseNonLenient(in, closeStream));
         } catch (Exception ex) {
-            return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor : %s", ex),ex);
+            return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor from %s : %s",
+                    in,
+                    ex), ex);
         }
     }
 

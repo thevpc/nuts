@@ -24,15 +24,20 @@
 package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.NException;
-import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.format.NVisitResult;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.URLPart;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.URLParts;
+import net.thevpc.nuts.util.NMsg;
 
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author thevpc
@@ -42,61 +47,74 @@ public final class CoreServiceUtils {
     private CoreServiceUtils() {
     }
 
+    private static Set<String> loadZipServiceClassNamesFromJarStream(InputStream jarStream, Class service, NSession session) {
+        LinkedHashSet<String> found = new LinkedHashSet<>();
+        if (jarStream != null) {
+            ZipUtils.visitZipStream(jarStream, (path, inputStream) -> {
+                if (path.equals("META-INF/services/" + service.getName())) {
+                    try (Reader reader = new InputStreamReader(inputStream)) {
+                        found.addAll(CoreIOUtils.confLines(reader, session).map(String::trim).collect(Collectors.toSet()));
+                    } catch (IOException ex) {
+                        throw new NIOException(session, ex);
+                    }
+                    return NVisitResult.TERMINATE;
+                }
+                return NVisitResult.CONTINUE;
+            }, session);
+        }
+        return found;
+    }
+
+    private static Set<String> loadZipServiceClassNamesFromFolder(File file, Class service, NSession session) {
+        LinkedHashSet<String> found = new LinkedHashSet<>();
+        File dir = new File(file, "META-INF/services/");
+        File[] files = dir.listFiles();
+        if (files != null) {
+            for (File f : files) {
+                if (f.getName().equals(service.getName())) {
+                    try (Reader reader = new FileReader(f)) {
+                        return CoreIOUtils.confLines(reader, session).map(String::trim).collect(Collectors.toSet());
+                    } catch (IOException ex) {
+                        throw new NIOException(session, ex);
+                    }
+                }
+            }
+        }
+        return found;
+    }
+
     public static Set<String> loadZipServiceClassNames(URL url, Class service, NSession session) {
         LinkedHashSet<String> found = new LinkedHashSet<>();
-        try (final InputStream jarStream = url.openStream()) {
-            if (jarStream != null) {
-                ZipUtils.visitZipStream(jarStream, (path, inputStream) -> {
-                    if(path.equals("META-INF/services/" + service.getName())) {
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-                        String line = null;
-                        while ((line = reader.readLine()) != null) {
-                            line = line.trim();
-                            if (line.length() > 0 && !line.startsWith("#")) {
-                                found.add(line);
-                            }
-                        }
-                        return false;
-                    }
-                    return true;
-                },session);
+        URLParts up = new URLParts(url);
+        URLPart lastPart = up.getLastPart();
+        if (lastPart.getType() == URLPart.Type.FS_FILE || lastPart.getType() == URLPart.Type.URL_FILE) {
+            File file = lastPart.getFile();
+            if (file.isDirectory()) {
+                return loadZipServiceClassNamesFromFolder(file, service, session);
+            } else if (file.isFile()) {
+                try (final InputStream jarStream = new FileInputStream(file)) {
+                    return loadZipServiceClassNamesFromJarStream(jarStream, service, session);
+                } catch (IOException ex) {
+                    throw new NIOException(session, ex);
+                }
             }
-        } catch (IOException ex) {
-            throw new NIOException(session, ex);
+        } else {
+            try (final InputStream jarStream = url.openStream()) {
+                return loadZipServiceClassNamesFromJarStream(jarStream, service, session);
+            } catch (IOException ex) {
+                throw new NIOException(session, ex);
+            }
         }
         return found;
     }
 
     public static List<String> loadServiceClassNames(URL u, Class<?> service, NSession session) {
-        InputStream in = null;
-        BufferedReader r = null;
-        List<String> names = new ArrayList<>();
-        try {
-            in = u.openStream();
-            r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-            int lc = 1;
-            String line;
-            while ((line = r.readLine()) != null) {
-                line = line.trim();
-                if (!line.isEmpty() && line.charAt(0) != '#') {
-                    names.add(line);
-                }
-            }
+
+        try (InputStreamReader ir = new InputStreamReader(CoreIOUtils.openStream(u).get(), StandardCharsets.UTF_8)) {
+            return CoreIOUtils.confLines(ir, session).map(String::trim).collect(Collectors.toList());
         } catch (IOException ex) {
-            throw new NIOException(session,ex);
-        } finally {
-            try {
-                if (r != null) {
-                    r.close();
-                }
-                if (in != null) {
-                    in.close();
-                }
-            } catch (IOException ex2) {
-                throw new NIOException(session, ex2);
-            }
+            throw new NIOException(session, ex);
         }
-        return names;
     }
 
     public static List<Class> loadServiceClasses(Class service, ClassLoader classLoader, NSession session) {
@@ -110,10 +128,10 @@ public final class CoreServiceUtils {
                 configs = classLoader.getResources(fullName);
             }
         } catch (IOException ex) {
-            throw new NIOException(session,ex);
+            throw new NIOException(session, ex);
         }
         while (configs.hasMoreElements()) {
-            names.addAll(loadServiceClassNames(configs.nextElement(), service,session));
+            names.addAll(loadServiceClassNames(configs.nextElement(), service, session));
         }
         List<Class> classes = new ArrayList<>();
         for (String n : names) {

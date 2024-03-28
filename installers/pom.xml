@@ -15,6 +15,7 @@
 <!--        <module>nuts-installer-panels</module>-->
         <module>nuts-builder-tool</module>
         <module>nuts-installer</module>
+        <module>nuts-full</module>
         <module>nuts-bundle-template</module>
     </modules>
 </project>

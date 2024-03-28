@@ -22,7 +22,7 @@ import java.util.Set;
  * @param <T> Type
  * @author thevpc
  */
-public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCommand> extends NWorkspaceCommandBase<T> {
+public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends NWorkspaceCmdBase<T> {
 
     //    private final List<String> repos = new ArrayList<>();
     protected NDependencyFilter dependencyFilter;

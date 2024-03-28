@@ -28,7 +28,7 @@ import java.util.*;
 public class DefaultNShellContext extends AbstractNShellContext {
 
     private static final NShellResult OK_RESULT = new NShellResult(0, null, null);
-    public String oldCommandLine = null;
+    public String oldCmdLine = null;
     public NShellResult lastResult = OK_RESULT;
     public NShellContext parentContext;
     public int commandLineIndex = -1;

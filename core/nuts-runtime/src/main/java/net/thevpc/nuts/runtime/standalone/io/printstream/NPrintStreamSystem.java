@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
-import net.thevpc.nuts.text.NTerminalCommand;
+import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.NMsg;
 
@@ -163,9 +163,9 @@ public class NPrintStreamSystem extends NPrintStreamBase {
     }
 
     @Override
-    public NPrintStream run(NTerminalCommand command, NSession session) {
+    public NPrintStream run(NTerminalCmd command, NSession session) {
         switch (command.getName()) {
-            case NTerminalCommand.Ids.GET_SIZE: {
+            case NTerminalCmd.Ids.GET_SIZE: {
                 break;
             }
         }

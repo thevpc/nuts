@@ -5,9 +5,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.undeploy;
 
-import net.thevpc.nuts.NExecCommand;
+import net.thevpc.nuts.NExecCmd;
 import net.thevpc.nuts.NExecutionException;
-import net.thevpc.nuts.NUndeployCommand;
+import net.thevpc.nuts.NUndeployCmd;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 
@@ -17,7 +17,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
  */
 public class DefaultNUndeployInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNUndeployInternalExecutable(String[] args, NExecCommand execCommand) {
+    public DefaultNUndeployInternalExecutable(String[] args, NExecCmd execCommand) {
         super("undeploy", args, execCommand);
     }
 
@@ -31,7 +31,7 @@ public class DefaultNUndeployInternalExecutable extends DefaultInternalNExecutab
             showDefaultHelp();
             return NExecutionException.SUCCESS;
         }
-        NUndeployCommand.of(getSession()).configure(false, args).run();
+        NUndeployCmd.of(getSession()).configure(false, args).run();
         return NExecutionException.SUCCESS;
     }
 

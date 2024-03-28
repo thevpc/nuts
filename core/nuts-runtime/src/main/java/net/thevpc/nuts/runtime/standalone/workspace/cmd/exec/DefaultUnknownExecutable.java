@@ -13,10 +13,10 @@ import net.thevpc.nuts.util.NMsg;
  * @author bacali95
  * @since 0.8.3
  */
-public class DefaultUnknownExecutable extends AbstractNExecutableCommand {
+public class DefaultUnknownExecutable extends AbstractNExecutableInformationExt {
 
 
-    public DefaultUnknownExecutable(String[] cmd, NExecCommand execCommand) {
+    public DefaultUnknownExecutable(String[] cmd, NExecCmd execCommand) {
         super(cmd[0], NCmdLine.of(cmd).toString(), NExecutableType.UNKNOWN,execCommand);
     }
 

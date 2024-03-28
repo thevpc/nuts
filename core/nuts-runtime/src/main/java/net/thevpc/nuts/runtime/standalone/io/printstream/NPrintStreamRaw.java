@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
-import net.thevpc.nuts.text.NTerminalCommand;
+import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
@@ -134,7 +134,7 @@ public class NPrintStreamRaw extends NPrintStreamBase {
     }
 
     @Override
-    public NPrintStream run(NTerminalCommand command, NSession session) {
+    public NPrintStream run(NTerminalCmd command, NSession session) {
         return this;
     }
 

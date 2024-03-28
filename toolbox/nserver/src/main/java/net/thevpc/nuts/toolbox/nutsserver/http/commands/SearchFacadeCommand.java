@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.NSearchCommand;
+import net.thevpc.nuts.NSearchCmd;
 import net.thevpc.nuts.toolbox.nutsserver.AbstractFacadeCommand;
 import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;
 import net.thevpc.nuts.toolbox.nutsserver.bundled._IOUtils;
@@ -53,7 +53,7 @@ public class SearchFacadeCommand extends AbstractFacadeCommand {
                     break;
             }
         }
-        Iterator<NId> it = NSearchCommand.of(context.getSession().setTransitive(transitive))
+        Iterator<NId> it = NSearchCmd.of(context.getSession().setTransitive(transitive))
                 .addScripts(js).addId(pattern).getResultIds().iterator();
 //                    Writer ps = new OutputStreamWriter(context.getResponseBody());
         context.sendResponseText(200, NServerUtils.iteratorNutsIdToString(it));

@@ -28,7 +28,7 @@ public class GetBootFacadeCommand extends AbstractFacadeCommand {
             }
         }
         if (version == null) {
-            NDefinition def = NSearchCommand.of(context.getSession()).addId(NConstants.Ids.NUTS_API).setLatest(true).setContent(true).getResultDefinitions()
+            NDefinition def = NSearchCmd.of(context.getSession()).addId(NConstants.Ids.NUTS_API).setLatest(true).setContent(true).getResultDefinitions()
                     .findFirst().orNull();
             if (def != null && def.getContent().isPresent()) {
                 context.addResponseHeader("content-disposition", "attachment; filename=\"nuts-" + def.getId().getVersion().toString() + ".jar\"");
@@ -37,7 +37,7 @@ public class GetBootFacadeCommand extends AbstractFacadeCommand {
                 context.sendError(404, "File Note Found");
             }
         } else {
-            NDefinition def = NFetchCommand.of(NId.of(NConstants.Ids.NUTS_API).get().builder().setVersion(version).build(),context.getSession())
+            NDefinition def = NFetchCmd.of(NId.of(NConstants.Ids.NUTS_API).get().builder().setVersion(version).build(),context.getSession())
                     .setContent(true).getResultDefinition();
             if (def != null && def.getContent().isPresent()) {
                 context.addResponseHeader("content-disposition", "attachment; filename=\"nuts-" + def.getId().getVersion().toString() + ".jar\"");

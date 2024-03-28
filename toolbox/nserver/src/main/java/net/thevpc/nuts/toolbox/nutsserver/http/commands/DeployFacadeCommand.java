@@ -2,7 +2,7 @@ package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NCp;
-import net.thevpc.nuts.security.NDigest;
+import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.nutsserver.AbstractFacadeCommand;
 import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;
@@ -70,7 +70,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
         if (contentFile == null) {
             context.sendError(400, "invalid NShellCommandNode arguments : " + getName() + " : missing file");
         }
-        NId id = NDeployCommand.of(session.copy()).setContent(NPath.of(contentFile,session))
+        NId id = NDeployCmd.of(session.copy()).setContent(NPath.of(contentFile,session))
                 .setSha1(receivedContentHash)
                 .setDescriptor(descriptor)
                 .getResult().get(0);

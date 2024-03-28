@@ -73,7 +73,7 @@ public class ArtifactExecutorComponent implements NExecutorComponent {
         app.addAll(appArgs);
 
 //        File directory = NutsBlankable.isBlank(dir) ? null : new File(executionContext.getWorkspace().io().expandPath(dir));
-        return NExecCommand.of(executionContext.getSession().setDry(dry))
+        return NExecCmd.of(executionContext.getSession().setDry(dry))
                 .addCommand(app)
                 .setEnv(executionContext.getEnv())
                 .setDirectory(executionContext.getDirectory())

@@ -75,11 +75,167 @@ public class NStringUtils {
      * @param value value
      * @return trimmed value (never null)
      */
+    public static CharSequence trim(CharSequence value) {
+        if (value == null) {
+            return "";
+        }
+        if (value instanceof String) {
+            return value.toString().trim();
+        }
+        int len0 = value.length();
+        int len = len0;
+        int st = 0;
+        while ((st < len) && (value.charAt(st) <= ' ')) {
+            st++;
+        }
+        while ((st < len) && (value.charAt(len - 1) <= ' ')) {
+            len--;
+        }
+        return ((st > 0) || (len < len0)) ? value.subSequence(st, len) : value.toString();
+    }
+
+    /**
+     * @param value value
+     * @return trimmed value (never null)
+     */
+    public static CharSequence trimLeft(CharSequence value) {
+        if (value == null) {
+            return "";
+        }
+        int len = value.length();
+        if (len == 0) {
+            return value.toString();
+        }
+        int st = 0;
+        while ((st < len) && (value.charAt(st) <= ' ')) {
+            st++;
+        }
+        if (st > 0) {
+            return value.subSequence(st, len);
+        }
+        return value.toString();
+    }
+
+    /**
+     * @param value value
+     * @return trimmed value (never null)
+     */
+    public static CharSequence trimRight(CharSequence value) {
+        if (value == null) {
+            return "";
+        }
+        int len = value.length();
+        if (len == 0) {
+            return value.toString();
+        }
+        int st = len;
+        while ((st > 0) && (value.charAt(st - 1) <= ' ')) {
+            st--;
+        }
+        if (st < len) {
+            return value.subSequence(0, st);
+        }
+        return value.toString();
+    }
+
+    /**
+     * @param value value
+     * @return trimmed value (never null)
+     */
+    public static String trimLeft(String value) {
+        if (value == null) {
+            return "";
+        }
+        int len = value.length();
+        if (len == 0) {
+            return value;
+        }
+        int st = 0;
+        while ((st < len) && (value.charAt(st) <= ' ')) {
+            st++;
+        }
+        if (st > 0) {
+            return value.substring(st, len);
+        }
+        return value;
+    }
+
+    /**
+     * @param value value
+     * @return trimmed value (never null)
+     */
+    public static String trimRight(String value) {
+        if (value == null) {
+            return "";
+        }
+        int len = value.length();
+        if (len == 0) {
+            return value;
+        }
+        int st = len;
+        while ((st > 0) && (value.charAt(st - 1) <= ' ')) {
+            st--;
+        }
+        if (st < len) {
+            return value.substring(0, st);
+        }
+        return value;
+    }
+
+    /**
+     * @param value value
+     * @return trimmed value (never null)
+     */
     public static String trimToNull(String value) {
         if (value == null) {
             return null;
         }
         String t = value.trim();
+        if (t.isEmpty()) {
+            return null;
+        }
+        return t;
+    }
+
+    /**
+     * @param value value
+     * @return trimmed value (never null)
+     */
+    public static String trimToNull(CharSequence value) {
+        if (value == null) {
+            return null;
+        }
+        String t = trim(value).toString();
+        if (t.isEmpty()) {
+            return null;
+        }
+        return t;
+    }
+
+    /**
+     * @param value value
+     * @return trimmed value (never null)
+     */
+    public static String trimLeftToNull(CharSequence value) {
+        if (value == null) {
+            return null;
+        }
+        String t = trimLeft(value).toString();
+        if (t.isEmpty()) {
+            return null;
+        }
+        return t;
+    }
+
+    /**
+     * @param value value
+     * @return trimmed value (never null)
+     */
+    public static String trimRightToNull(CharSequence value) {
+        if (value == null) {
+            return null;
+        }
+        String t = trimRight(value).toString();
         if (t.isEmpty()) {
             return null;
         }

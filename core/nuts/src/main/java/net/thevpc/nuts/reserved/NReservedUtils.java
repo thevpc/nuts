@@ -923,7 +923,7 @@ public final class NReservedUtils {
                             + " " + NStringUtils.trim(System.getProperty("nuts.args"))
             );
             try {
-                options.setCommandLine(NCmdLine.parseDefault(nutsArgs).get().toStringArray(), null);
+                options.setCmdLine(NCmdLine.parseDefault(nutsArgs).get().toStringArray(), null);
             } catch (Exception e) {
                 //any, ignore...
             }

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 
 import net.thevpc.nuts.NDefinition;
-import net.thevpc.nuts.NFetchCommand;
+import net.thevpc.nuts.NFetchCmd;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.nutsserver.AbstractFacadeCommand;
 import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;
@@ -23,7 +23,7 @@ public class FetchFacadeCommand extends AbstractFacadeCommand {
         boolean transitive = parameters.containsKey("transitive");
         NDefinition fetch = null;
         try {
-            fetch = NFetchCommand.of(id,context.getSession().copy().setTransitive(transitive))
+            fetch = NFetchCmd.of(id,context.getSession().copy().setTransitive(transitive))
                     .getResultDefinition();
         } catch (Exception exc) {
             //

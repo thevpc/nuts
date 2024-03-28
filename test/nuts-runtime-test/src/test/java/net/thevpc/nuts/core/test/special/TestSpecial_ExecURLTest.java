@@ -6,13 +6,9 @@
 package net.thevpc.nuts.core.test.special;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 
 /**
@@ -39,7 +35,7 @@ public class TestSpecial_ExecURLTest {
 
     public void testNtf2() {
         TestUtils.println(NVersionFormat.of(session));
-        String result = NExecCommand.of(session.copy()
+        String result = NExecCmd.of(session.copy()
                         .setBot(true).json())
                 .setTarget("ssh://vpc:a@192.168.1.36")
                 //.addCommand("ls","-l")

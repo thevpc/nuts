@@ -108,7 +108,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
     public String buildString() {
         try {
             //Path script = getScriptFile(name);
-            NDefinition anyIdDef = NSearchCommand.of(getSession()).addId(getAnyId()).setLatest(true)
+            NDefinition anyIdDef = NSearchCmd.of(getSession()).addId(getAnyId()).setLatest(true)
                     .setDistinct(true)
                     .getResultDefinitions()
                     .findSingleton().get();

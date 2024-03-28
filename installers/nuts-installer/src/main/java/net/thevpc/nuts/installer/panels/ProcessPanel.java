@@ -52,9 +52,13 @@ public class ProcessPanel extends AbstractInstallPanel {
                     try {
                         processImpl();
                         processed = true;
-                        getInstallerContext().setInstallFailed(false);
-                        getInstallerContext().getCancelButton().setEnabled(false);
-                        getInstallerContext().getExitButton().setEnabled(false);
+                        if(getInstallerContext().isInstallFailed()){
+
+                        }else {
+                            getInstallerContext().setInstallFailed(false);
+                            getInstallerContext().getCancelButton().setEnabled(false);
+                            getInstallerContext().getExitButton().setEnabled(false);
+                        }
                     } catch (Exception ex) {
                         getInstallerContext().setInstallFailed(true);
                         ex.printStackTrace();
@@ -110,30 +114,36 @@ public class ProcessPanel extends AbstractInstallPanel {
         }
 
         printStdOut("Start installation...\n");
-        printStdOut("Download " + id.getInstallVersion().location + "\n");
-        nutsJar = Utils.downloadFile(id.getInstallVersion().location, "nuts-" + (id.getInstallVersion().stable ? "stable-" : "preview-"), ".jar", null);
-        boolean someError=false;
         try {
-            if (runNutsCommand(command.toArray(new String[0])) != 0) {
-                someError=true;
-                return;
-            }
+            printStdOut("Download " + id.getInstallVersion().location + "\n");
+            nutsJar = Utils.downloadFile(id.getInstallVersion().location, "nuts-" + (id.getInstallVersion().stable ? "stable-" : "preview-"), ".jar", null);
+            boolean someError = false;
+            try {
+                if (runNutsCommand(command.toArray(new String[0])) != 0) {
+                    someError = true;
+                    return;
+                }
 
-            if (!id.recommendedIds.isEmpty()) {
-                for (App recommendedId : id.recommendedIds) {
-                    printStdOut("Install " + recommendedId.getId() + "...\n");
-                    if (runNutsCommand("install", recommendedId.getId()) != 0) {
-                        someError=true;
-                        return;
+                if (!id.recommendedIds.isEmpty()) {
+                    for (App recommendedId : id.recommendedIds) {
+                        printStdOut("Install " + recommendedId.getId() + "...\n");
+                        if (runNutsCommand("install", recommendedId.getId()) != 0) {
+                            someError = true;
+                            return;
+                        }
                     }
                 }
+            } finally {
+                if (someError) {
+                    printStdOut("Installation cancelled.");
+                } else {
+                    printStdOut("Installation complete.");
+                }
             }
-        }finally {
-            if(someError) {
-                printStdOut("Installation cancelled.");
-            }else{
-                printStdOut("Installation complete.");
-            }
+        } catch (Exception ex) {
+            printStdOut("Installation failed : " + ex);
+            printStdErr("Installation failed : " + ex);
+            getInstallerContext().setInstallFailed(true);
         }
     }
 

@@ -29,7 +29,7 @@ package net.thevpc.nuts.io;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NString;
-import net.thevpc.nuts.text.NTerminalCommand;
+import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.util.NMsg;
@@ -197,7 +197,7 @@ public interface NPrintStream extends NOutputTarget, NSessionProvider {
      */
     NPrintStream setTerminalMode(NTerminalMode other);
 
-    NPrintStream run(NTerminalCommand command, NSession session);
+    NPrintStream run(NTerminalCmd command, NSession session);
 
     OutputStream asOutputStream();
 

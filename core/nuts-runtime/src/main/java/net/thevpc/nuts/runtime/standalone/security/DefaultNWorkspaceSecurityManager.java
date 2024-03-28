@@ -116,19 +116,19 @@ public class DefaultNWorkspaceSecurityManager implements NWorkspaceSecurityManag
     }
 
     @Override
-    public NAddUserCommand addUser(String name) {
+    public NAddUserCmd addUser(String name) {
         checkSession();
         return model.addUser(name, session);
     }
 
     @Override
-    public NUpdateUserCommand updateUser(String name) {
+    public NUpdateUserCmd updateUser(String name) {
         checkSession();
         return model.updateUser(name, session);
     }
 
     @Override
-    public NRemoveUserCommand removeUser(String name) {
+    public NRemoveUserCmd removeUser(String name) {
         checkSession();
         return model.removeUser(name, session);
     }

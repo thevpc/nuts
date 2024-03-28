@@ -35,14 +35,14 @@ import net.thevpc.nuts.runtime.standalone.definition.DefaultNInstallInfo;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.FolderObjectIterator;
 import net.thevpc.nuts.runtime.standalone.io.util.NInstallStatusIdFilter;
-import net.thevpc.nuts.runtime.standalone.repository.cmd.deploy.AbstractNDeployRepositoryCommand;
-import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.AbstractNFetchContentRepositoryCommand;
-import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.AbstractNFetchDescriptorRepositoryCommand;
-import net.thevpc.nuts.runtime.standalone.repository.cmd.push.AbstractNPushRepositoryCommand;
-import net.thevpc.nuts.runtime.standalone.repository.cmd.search.AbstractNSearchRepositoryCommand;
-import net.thevpc.nuts.runtime.standalone.repository.cmd.search.AbstractNSearchVersionsRepositoryCommand;
-import net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy.AbstractNRepositoryUndeployCommand;
-import net.thevpc.nuts.runtime.standalone.repository.cmd.updatestats.AbstractNUpdateRepositoryStatisticsCommand;
+import net.thevpc.nuts.runtime.standalone.repository.cmd.deploy.AbstractNDeployRepositoryCmd;
+import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.AbstractNFetchContentRepositoryCmd;
+import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.AbstractNFetchDescriptorRepositoryCmd;
+import net.thevpc.nuts.runtime.standalone.repository.cmd.push.AbstractNPushRepositoryCmd;
+import net.thevpc.nuts.runtime.standalone.repository.cmd.search.AbstractNSearchRepositoryCmd;
+import net.thevpc.nuts.runtime.standalone.repository.cmd.search.AbstractNSearchVersionsRepositoryCmd;
+import net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy.AbstractNRepositoryUndeployCmd;
+import net.thevpc.nuts.runtime.standalone.repository.cmd.updatestats.AbstractNUpdateRepositoryStatsCmd;
 import net.thevpc.nuts.runtime.standalone.repository.impl.AbstractNRepository;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt0;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryFolderHelper;
@@ -692,10 +692,10 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     @Override
-    public NDeployRepositoryCommand deploy() {
-        return new AbstractNDeployRepositoryCommand(this) {
+    public NDeployRepositoryCmd deploy() {
+        return new AbstractNDeployRepositoryCmd(this) {
             @Override
-            public NDeployRepositoryCommand run() {
+            public NDeployRepositoryCmd run() {
                 invalidateInstallationDigest(getSession());
                 boolean succeeded = false;
                 try {
@@ -712,10 +712,10 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     @Override
-    public NRepositoryUndeployCommand undeploy() {
-        return new AbstractNRepositoryUndeployCommand(this) {
+    public NRepositoryUndeployCmd undeploy() {
+        return new AbstractNRepositoryUndeployCmd(this) {
             @Override
-            public NRepositoryUndeployCommand run() {
+            public NRepositoryUndeployCmd run() {
                 invalidateInstallationDigest(getSession());
                 boolean succeeded = false;
                 try {
@@ -735,10 +735,10 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     @Override
-    public NPushRepositoryCommand push() {
-        return new AbstractNPushRepositoryCommand(this) {
+    public NPushRepositoryCmd push() {
+        return new AbstractNPushRepositoryCmd(this) {
             @Override
-            public NPushRepositoryCommand run() {
+            public NPushRepositoryCmd run() {
                 throw new NIllegalArgumentException(getSession(),
                         NMsg.ofC("unsupported push() for %s repository", getName())
                 );
@@ -747,10 +747,10 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     @Override
-    public NFetchDescriptorRepositoryCommand fetchDescriptor() {
-        return new AbstractNFetchDescriptorRepositoryCommand(this) {
+    public NFetchDescriptorRepositoryCmd fetchDescriptor() {
+        return new AbstractNFetchDescriptorRepositoryCmd(this) {
             @Override
-            public NFetchDescriptorRepositoryCommand run() {
+            public NFetchDescriptorRepositoryCmd run() {
                 result = deployments.fetchDescriptorImpl(getId(), getSession());
                 return this;
             }
@@ -758,10 +758,10 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     @Override
-    public NFetchContentRepositoryCommand fetchContent() {
-        return new AbstractNFetchContentRepositoryCommand(this) {
+    public NFetchContentRepositoryCmd fetchContent() {
+        return new AbstractNFetchContentRepositoryCmd(this) {
             @Override
-            public NFetchContentRepositoryCommand run() {
+            public NFetchContentRepositoryCmd run() {
                 result = deployments.fetchContentImpl(getId(), getSession());
                 return this;
             }
@@ -769,10 +769,10 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     @Override
-    public NSearchRepositoryCommand search() {
-        return new AbstractNSearchRepositoryCommand(this) {
+    public NSearchRepositoryCmd search() {
+        return new AbstractNSearchRepositoryCmd(this) {
             @Override
-            public NSearchRepositoryCommand run() {
+            public NSearchRepositoryCmd run() {
                 NIterator<InstallInfoConfig> installIter = searchInstallConfig(getSession());
                 NIterator<NId> idIter = IteratorBuilder.of(installIter, getSession()).map(NFunction.of(InstallInfoConfig::getId, "NutsInstallInformation->Id"))
                         .build();
@@ -791,10 +791,10 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     @Override
-    public NSearchVersionsRepositoryCommand searchVersions() {
-        return new AbstractNSearchVersionsRepositoryCommand(this) {
+    public NSearchVersionsRepositoryCmd searchVersions() {
+        return new AbstractNSearchVersionsRepositoryCmd(this) {
             @Override
-            public NSearchVersionsRepositoryCommand run() {
+            public NSearchVersionsRepositoryCmd run() {
                 if (getFilter() instanceof NInstallStatusIdFilter) {
                     NPath installFolder
                             = NLocations.of(getSession()).getStoreLocation(getId()
@@ -837,10 +837,10 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     @Override
-    public NUpdateRepositoryStatisticsCommand updateStatistics() {
-        return new AbstractNUpdateRepositoryStatisticsCommand(this) {
+    public NUpdateRepositoryStatsCmd updateStatistics() {
+        return new AbstractNUpdateRepositoryStatsCmd(this) {
             @Override
-            public NUpdateRepositoryStatisticsCommand run() {
+            public NUpdateRepositoryStatsCmd run() {
                 invalidateInstallationDigest(getSession());
                 deployments.reindexFolder(getSession());
                 return this;

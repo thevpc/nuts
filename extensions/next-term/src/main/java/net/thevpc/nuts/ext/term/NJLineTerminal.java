@@ -354,9 +354,9 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public Object run(NTerminalCommand command, NPrintStream printStream, NSession session) {
+    public Object run(NTerminalCmd command, NPrintStream printStream, NSession session) {
         switch (command.getName()) {
-            case NTerminalCommand.Ids.GET_CURSOR: {
+            case NTerminalCmd.Ids.GET_CURSOR: {
                 org.jline.terminal.Cursor c = terminal.getCursorPosition(new IntConsumer() {
                     @Override
                     public void accept(int value) {
@@ -370,7 +370,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
                 }
                 return null;
             }
-            case NTerminalCommand.Ids.GET_SIZE: {
+            case NTerminalCmd.Ids.GET_SIZE: {
                 org.jline.terminal.Size c = terminal.getSize();
                 if (c != null) {
                     return new NSystemTerminalBase.Size(

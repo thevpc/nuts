@@ -48,7 +48,7 @@ public abstract class DefaultSearchFormatBase implements NIterableFormat {
         this.session = session;
         displayOptions = new NFetchDisplayOptions(session);
         if(options!=null){
-            displayOptions.configure(true, options.toCommandLineOptions());
+            displayOptions.configure(true, options.toCmdLineOptions());
         }
     }
 

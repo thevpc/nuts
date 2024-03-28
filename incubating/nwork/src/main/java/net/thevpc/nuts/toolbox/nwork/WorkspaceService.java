@@ -298,7 +298,7 @@ public class WorkspaceService {
             if (id.getVersion() != null) {
                 p += "/" + id.getVersion();
             }
-            NExecCommand.of(session).addCommand(
+            NExecCmd.of(session).addCommand(
                             "rsync")
                     .addCommand(NPath.ofUserHome(session).resolve(".m2/repository")
                             .resolve(p).stream().map(NPath::toString).toList())

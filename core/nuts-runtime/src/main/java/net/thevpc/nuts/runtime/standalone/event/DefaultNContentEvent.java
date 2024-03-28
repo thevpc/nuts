@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.standalone.event;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.spi.NRepositoryCommand;
+import net.thevpc.nuts.spi.NRepositoryCmd;
 
 /**
  *
@@ -37,7 +37,7 @@ import net.thevpc.nuts.spi.NRepositoryCommand;
  */
 public class DefaultNContentEvent implements NContentEvent {
 
-    private final NRepositoryCommand command;
+    private final NRepositoryCmd command;
     /**
      * stored deployment Path, this is Repository dependent
      */
@@ -45,7 +45,7 @@ public class DefaultNContentEvent implements NContentEvent {
     private final NSession session;
     private final NRepository repository;
 
-    public DefaultNContentEvent(NPath location, NRepositoryCommand command, NSession session, NRepository repository) {
+    public DefaultNContentEvent(NPath location, NRepositoryCmd command, NSession session, NRepository repository) {
         this.location = location;
         this.command = command;
         this.session = session;
@@ -63,7 +63,7 @@ public class DefaultNContentEvent implements NContentEvent {
     }
 
 //    @Override
-    public NRepositoryCommand getCommand() {
+    public NRepositoryCmd getCommand() {
         return command;
     }
 

@@ -68,11 +68,11 @@ public class SqlRestoreCmd<C extends NdbConfig> extends RestoreCmd<C> {
             if (file.get().getName().toLowerCase().endsWith(".sql")) {
                 sqlFile = file.get();
                 CmdRedirect restoreCommand = getSupport().createRestoreCommand(sqlFile, options, session);
-                NExecCommand nExecCommand = sysCmd(session).addCommand(restoreCommand.getCmd().toStringArray());
+                NExecCmd nExecCmd = sysCmd(session).addCommand(restoreCommand.getCmd().toStringArray());
                 if (restoreCommand.getPath() != null) {
-                    nExecCommand.setIn(NExecInput.ofPath(restoreCommand.getPath()));
+                    nExecCmd.setIn(NExecInput.ofPath(restoreCommand.getPath()));
                 }
-                run(nExecCommand);
+                run(nExecCmd);
             } else if (file.get().getName().toLowerCase().endsWith(".zip")) {
                 try (ZipInputStream zis = new ZipInputStream(file.get().getInputStream())) {
                     //get the zipped file list entry
@@ -95,11 +95,11 @@ public class SqlRestoreCmd<C extends NdbConfig> extends RestoreCmd<C> {
                                 }
 
                                 CmdRedirect restoreCommand = getSupport().createRestoreCommand(newFile, options, session);
-                                NExecCommand nExecCommand = sysCmd(session).addCommand(restoreCommand.getCmd().toStringArray());
+                                NExecCmd nExecCmd = sysCmd(session).addCommand(restoreCommand.getCmd().toStringArray());
                                 if (restoreCommand.getPath() != null) {
-                                    nExecCommand.setIn(NExecInput.ofPath(restoreCommand.getPath()));
+                                    nExecCmd.setIn(NExecInput.ofPath(restoreCommand.getPath()));
                                 }
-                                run(nExecCommand);
+                                run(nExecCmd);
                                 newFile.delete();
                             }
                         }

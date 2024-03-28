@@ -55,7 +55,7 @@ public class RefreshDataService {
                     .getAllData(NIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()))
                     .stream()
                     .collect(Collectors.toMap(map -> map.get("stringId"), map -> NIndexerUtils.mapToNutsId(map, session), (v1, v2) -> v1));
-            Iterator<NDefinition> definitions = NSearchCommand.of(session)
+            Iterator<NDefinition> definitions = NSearchCmd.of(session)
                     .setRepositoryFilter(NRepositories.of(session).filter().byUuid(subscriber.getUuid()))
                     .setFailFast(false)
                     .setContent(false)

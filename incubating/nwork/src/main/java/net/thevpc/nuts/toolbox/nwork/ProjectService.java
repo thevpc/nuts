@@ -205,7 +205,7 @@ public class ProjectService {
                 } else {
                     s = session;
                 }
-                List<NDefinition> found = NSearchCommand.of(s)
+                List<NDefinition> found = NSearchCmd.of(s)
                         .addId(sid)
                         .addRepositoryFilter(NRepositoryFilters.of(s).byName(nutsRepository))
                         .setLatest(true).setContent(true).getResultDefinitions().toList();
@@ -255,7 +255,7 @@ public class ProjectService {
                         } else {
                             s = session;
                         }
-                        List<NId> found = NSearchCommand.of(s)
+                        List<NId> found = NSearchCmd.of(s)
                                 .addId(g.getId().getGroupId() + ":" + g.getId().getArtifactId())
                                 .addRepositoryFilter(NRepositoryFilters.of(s).byName(nutsRepository))
                                 .setLatest(true).getResultIds().toList();

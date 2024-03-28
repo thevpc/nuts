@@ -30,15 +30,15 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
-import net.thevpc.nuts.spi.NDeployRepositoryCommand;
-import net.thevpc.nuts.spi.NFetchContentRepositoryCommand;
-import net.thevpc.nuts.spi.NFetchDescriptorRepositoryCommand;
-import net.thevpc.nuts.spi.NPushRepositoryCommand;
+import net.thevpc.nuts.spi.NDeployRepositoryCmd;
+import net.thevpc.nuts.spi.NFetchContentRepositoryCmd;
+import net.thevpc.nuts.spi.NFetchDescriptorRepositoryCmd;
+import net.thevpc.nuts.spi.NPushRepositoryCmd;
 import net.thevpc.nuts.spi.NRepositorySPI;
-import net.thevpc.nuts.spi.NRepositoryUndeployCommand;
-import net.thevpc.nuts.spi.NSearchRepositoryCommand;
-import net.thevpc.nuts.spi.NSearchVersionsRepositoryCommand;
-import net.thevpc.nuts.spi.NUpdateRepositoryStatisticsCommand;
+import net.thevpc.nuts.spi.NRepositoryUndeployCmd;
+import net.thevpc.nuts.spi.NSearchRepositoryCmd;
+import net.thevpc.nuts.spi.NSearchVersionsRepositoryCmd;
+import net.thevpc.nuts.spi.NUpdateRepositoryStatsCmd;
 import net.thevpc.nuts.util.NIterator;
 import net.thevpc.nuts.util.NMapListener;
 
@@ -180,42 +180,42 @@ public class NRepositorySessionAwareImpl implements NRepository, NRepositorySPI,
     }
 
     @Override
-    public NDeployRepositoryCommand deploy() {
+    public NDeployRepositoryCmd deploy() {
         return repoSPI().deploy().setSession(getSession());
     }
 
     @Override
-    public NRepositoryUndeployCommand undeploy() {
+    public NRepositoryUndeployCmd undeploy() {
         return repoSPI().undeploy().setSession(getSession());
     }
 
     @Override
-    public NPushRepositoryCommand push() {
+    public NPushRepositoryCmd push() {
         return repoSPI().push().setSession(getSession());
     }
 
     @Override
-    public NFetchDescriptorRepositoryCommand fetchDescriptor() {
+    public NFetchDescriptorRepositoryCmd fetchDescriptor() {
         return repoSPI().fetchDescriptor().setSession(getSession());
     }
 
     @Override
-    public NFetchContentRepositoryCommand fetchContent() {
+    public NFetchContentRepositoryCmd fetchContent() {
         return repoSPI().fetchContent().setSession(getSession());
     }
 
     @Override
-    public NSearchRepositoryCommand search() {
+    public NSearchRepositoryCmd search() {
         return repoSPI().search().setSession(getSession());
     }
 
     @Override
-    public NSearchVersionsRepositoryCommand searchVersions() {
+    public NSearchVersionsRepositoryCmd searchVersions() {
         return repoSPI().searchVersions().setSession(getSession());
     }
 
     @Override
-    public NUpdateRepositoryStatisticsCommand updateStatistics() {
+    public NUpdateRepositoryStatsCmd updateStatistics() {
         return repoSPI().updateStatistics().setSession(getSession());
     }
 
@@ -244,17 +244,17 @@ public class NRepositorySessionAwareImpl implements NRepository, NRepositorySPI,
     }
 
     @Override
-    public void pushImpl(NPushRepositoryCommand command) {
+    public void pushImpl(NPushRepositoryCmd command) {
         repoExt().pushImpl(command);
     }
 
     @Override
-    public NDescriptor deployImpl(NDeployRepositoryCommand command) {
+    public NDescriptor deployImpl(NDeployRepositoryCmd command) {
         return repoExt().deployImpl(command);
     }
 
     @Override
-    public void undeployImpl(NRepositoryUndeployCommand command) {
+    public void undeployImpl(NRepositoryUndeployCmd command) {
         repoExt().undeployImpl(command);
     }
 

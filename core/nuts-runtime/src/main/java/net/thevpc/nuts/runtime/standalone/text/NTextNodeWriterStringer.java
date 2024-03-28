@@ -87,7 +87,7 @@ public class NTextNodeWriterStringer extends AbstractNTextNodeWriter {
                 break;
             }
             case COMMAND: {
-                NTextCommand s = (NTextCommand) node;
+                NTextCmd s = (NTextCmd) node;
                 writeRaw("```!");
                 NCmdLine cmd = new DefaultNCmdLine().setSession(session);
                 cmd.add(s.getCommand().getName());

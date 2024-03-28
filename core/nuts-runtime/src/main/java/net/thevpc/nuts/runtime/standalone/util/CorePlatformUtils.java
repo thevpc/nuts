@@ -169,7 +169,7 @@ public class CorePlatformUtils {
             CoreStringUtils.clear(osVersion);
             try {
                 osVersion.append(
-                        NExecCommand.of(session).system()
+                        NExecCmd.of(session).system()
                                 .setCommand("uname", "-r")
                                 .setSleepMillis(50)
                                 .getGrabbedAllString()

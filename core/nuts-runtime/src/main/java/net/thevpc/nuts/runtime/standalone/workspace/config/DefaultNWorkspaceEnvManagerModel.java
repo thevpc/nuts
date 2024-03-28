@@ -125,7 +125,7 @@ public class DefaultNWorkspaceEnvManagerModel {
                         hostName = computername;
                     } else {
                         try {
-                            String hostname = NExecCommand.of(
+                            String hostname = NExecCmd.of(
                                             NSessionUtils.defaultSession(workspace)
                                     ).addCommand("hostname")
                                     .failFast()
@@ -152,7 +152,7 @@ public class DefaultNWorkspaceEnvManagerModel {
                         //ignore
                     }
                     if (NBlankable.isBlank(h)) {
-                        h = NExecCommand.of(NSessionUtils.defaultSession(workspace))
+                        h = NExecCmd.of(NSessionUtils.defaultSession(workspace))
                                 .system()
                                 .addCommand("/bin/hostname")
                                 .getGrabbedOutOnlyString();

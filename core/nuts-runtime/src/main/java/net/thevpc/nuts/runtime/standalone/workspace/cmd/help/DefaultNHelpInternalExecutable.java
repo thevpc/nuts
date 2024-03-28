@@ -30,7 +30,7 @@ import java.util.logging.Level;
 public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCommand {
     private final NLog LOG;
 
-    public DefaultNHelpInternalExecutable(String[] args, NExecCommand execCommand) {
+    public DefaultNHelpInternalExecutable(String[] args, NExecCmd execCommand) {
         super("help", args, execCommand);
         LOG = NLog.of(DefaultNHelpInternalExecutable.class, execCommand.getSession());
     }
@@ -99,7 +99,7 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
             } else {
                 try {
                     try {
-                        w = NExecCommand.of(session).addCommand(arg).which();
+                        w = NExecCmd.of(session).addCommand(arg).which();
                     } catch (Exception ex) {
                         LOG.with().session(session).level(Level.FINE).error(ex).log(NMsg.ofC("failed to execute : %s", arg));
                         //ignore

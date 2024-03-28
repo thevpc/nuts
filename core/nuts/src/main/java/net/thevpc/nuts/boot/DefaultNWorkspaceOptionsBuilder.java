@@ -1677,13 +1677,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setCommandLine(String cmdLine, NSession session) {
-        setCommandLine(NCmdLine.parseDefault(cmdLine).get(session).toStringArray(), session);
+    public NWorkspaceOptionsBuilder setCmdLine(String cmdLine, NSession session) {
+        setCmdLine(NCmdLine.parseDefault(cmdLine).get(session).toStringArray(), session);
         return this;
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setCommandLine(String[] args, NSession session) {
+    public NWorkspaceOptionsBuilder setCmdLine(String[] args, NSession session) {
         NWorkspaceCmdLineParser.parseNutsArguments(args, this, session);
         return this;
     }
@@ -1782,7 +1782,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public String toString() {
-        return toCommandLine().toString();
+        return toCmdLine().toString();
     }
 
     @Override
@@ -1821,13 +1821,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
-    public NCmdLine toCommandLine() {
-        return build().toCommandLine();
+    public NCmdLine toCmdLine() {
+        return build().toCmdLine();
     }
 
     @Override
-    public NCmdLine toCommandLine(NWorkspaceOptionsConfig config) {
-        return build().toCommandLine(config);
+    public NCmdLine toCmdLine(NWorkspaceOptionsConfig config) {
+        return build().toCmdLine(config);
     }
 
     @Override

@@ -36,12 +36,12 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.util.CommonRootsByIdHe
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
-import net.thevpc.nuts.runtime.standalone.repository.cmd.updatestats.AbstractNUpdateRepositoryStatisticsCommand;
+import net.thevpc.nuts.runtime.standalone.repository.cmd.updatestats.AbstractNUpdateRepositoryStatsCmd;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.spi.NDeployRepositoryCommand;
-import net.thevpc.nuts.spi.NPushRepositoryCommand;
-import net.thevpc.nuts.spi.NRepositoryUndeployCommand;
-import net.thevpc.nuts.spi.NUpdateRepositoryStatisticsCommand;
+import net.thevpc.nuts.spi.NDeployRepositoryCmd;
+import net.thevpc.nuts.spi.NPushRepositoryCmd;
+import net.thevpc.nuts.spi.NRepositoryUndeployCmd;
+import net.thevpc.nuts.spi.NUpdateRepositoryStatsCmd;
 import net.thevpc.nuts.util.*;
 
 import java.util.ArrayList;
@@ -100,17 +100,17 @@ public class NCachedRepository extends AbstractNRepositoryBase {
     }
 
     @Override
-    public void pushImpl(NPushRepositoryCommand command) {
+    public void pushImpl(NPushRepositoryCmd command) {
         mirroring.push(command);
     }
 
     @Override
-    public NDescriptor deployImpl(NDeployRepositoryCommand command) {
+    public NDescriptor deployImpl(NDeployRepositoryCmd command) {
         return lib.deploy(command, command.getSession().getConfirm());
     }
 
     @Override
-    public final void undeployImpl(NRepositoryUndeployCommand options) {
+    public final void undeployImpl(NRepositoryUndeployCmd options) {
         lib.undeploy(options);
     }
 
@@ -431,10 +431,10 @@ public class NCachedRepository extends AbstractNRepositoryBase {
     }
 
     @Override
-    public final NUpdateRepositoryStatisticsCommand updateStatistics() {
-        return new AbstractNUpdateRepositoryStatisticsCommand(this) {
+    public final NUpdateRepositoryStatsCmd updateStatistics() {
+        return new AbstractNUpdateRepositoryStatsCmd(this) {
             @Override
-            public NUpdateRepositoryStatisticsCommand run() {
+            public NUpdateRepositoryStatsCmd run() {
                 lib.reindexFolder(getSession());
                 if (cache.isWriteEnabled()) {
                     cache.reindexFolder(getSession());

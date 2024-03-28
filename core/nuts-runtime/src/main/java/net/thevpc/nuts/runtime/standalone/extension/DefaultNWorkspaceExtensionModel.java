@@ -18,6 +18,7 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NClassLoaderUtils;
+import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NFormattedPrintStream;
 import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNSessionTerminalFromSystem;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
@@ -50,6 +51,15 @@ import java.util.zip.ZipFile;
  */
 public class DefaultNWorkspaceExtensionModel {
 
+    private static Set<String> JRE_JAR_FILE_NAMES=new HashSet<>(Arrays.asList(
+            "rt.jar",
+            "charsets.jar",
+            "jce.jar",
+            "jfr.jar",
+            "jsse.jar",
+            "management-agent.jar",
+            "resources.jar"
+    ));
     private NLog LOG;
     private final Set<Class> SUPPORTED_EXTENSION_TYPES = new HashSet<>(
             Arrays.asList(//order is important!!because auto-wiring should follow this very order
@@ -177,12 +187,37 @@ public class DefaultNWorkspaceExtensionModel {
         return a;
     }
 
+    private boolean isJRELib(NPath path){
+        if(JRE_JAR_FILE_NAMES.contains(path.getName())){
+            if(path.getParent().getName().equals("lib")){
+                return true;
+            }
+        }
+        return false;
+    }
     public void onInitializeWorkspace(NBootOptions bOptions, ClassLoader bootClassLoader, NSession session) {
-        objectFactory.discoverTypes(
-                NId.of(bOptions.getRuntimeBootDependencyNode().get().getId()).get(session),
-                bOptions.getRuntimeBootDependencyNode().get().getURL(),
-                bootClassLoader,
-                session);
+        // add discover classpath
+        URL[] urls = NClassLoaderUtils.resolveClasspathURLs(Thread.currentThread().getContextClassLoader());
+        for (URL url : urls) {
+            NPath path = NPath.of(url, session);
+            if(!isJRELib(path)) {
+                objectFactory.discoverTypes(
+                        CoreNIdUtils.resolveOrGenerateIdFromFileName(path, session),
+                        url,
+                        bootClassLoader,
+                        session);
+            }
+        }
+        // discover runtime path
+        if (!bOptions.getRuntimeBootDependencyNode().isEmpty()) {
+            objectFactory.discoverTypes(
+                    NId.of(bOptions.getRuntimeBootDependencyNode().get().getId()).get(session),
+                    bOptions.getRuntimeBootDependencyNode().get().getURL(),
+                    bootClassLoader,
+                    session);
+        }
+
+        // discover extensions path
         for (NClassLoaderNode idurl : bOptions.getExtensionBootDependencyNodes().orElseGet(Collections::emptyList)) {
             objectFactory.discoverTypes(
                     NId.of(idurl.getId()).get(session),
@@ -240,7 +275,7 @@ public class DefaultNWorkspaceExtensionModel {
 //        }
 //    }
     public Set<Class> discoverTypes(NId id, ClassLoader classLoader, NSession session) {
-        URL url = NFetchCommand.of(id, session).setContent(true).getResultContent().toURL().get();
+        URL url = NFetchCmd.of(id, session).setContent(true).getResultContent().toURL().get();
         return objectFactory.discoverTypes(id, url, classLoader, session);
     }
 
@@ -369,7 +404,7 @@ public class DefaultNWorkspaceExtensionModel {
                     someUpdates = true;
                 } else {
                     //load extension
-                    NDefinition def = NSearchCommand.of(session)
+                    NDefinition def = NSearchCmd.of(session)
                             .addId(extension).setTargetApiVersion(ws.getApiVersion())
                             .setContent(true)
                             .setDependencies(true)
@@ -405,7 +440,7 @@ public class DefaultNWorkspaceExtensionModel {
 
     private void updateLoadedExtensionURLs(NSession session) {
         loadedExtensionURLs.clear();
-        for (NDefinition def : NSearchCommand.of(session).addIds(loadedExtensionIds.toArray(new NId[0]))
+        for (NDefinition def : NSearchCmd.of(session).addIds(loadedExtensionIds.toArray(new NId[0]))
                 .setTargetApiVersion(ws.getApiVersion())
                 .setContent(true)
                 .setDependencies(true)
@@ -441,7 +476,7 @@ public class DefaultNWorkspaceExtensionModel {
         return extensions.values().toArray(new NWorkspaceExtension[0]);
     }
 
-    public NWorkspaceExtension wireExtension(NId id, NFetchCommand options) {
+    public NWorkspaceExtension wireExtension(NId id, NFetchCmd options) {
         NSession session = options.getSession();
         NSessionUtils.checkSession(ws, session);
         NAssert.requireNonNull(id, "extension id", session);
@@ -451,7 +486,7 @@ public class DefaultNWorkspaceExtensionModel {
         }
 
         _LOGOP(session).level(Level.FINE).verb(NLogVerb.ADD).log(NMsg.ofJ("installing extension {0}", id));
-        NDefinition nDefinitions = NSearchCommand.of(session)
+        NDefinition nDefinitions = NSearchCmd.of(session)
                 .setAll(options)
                 .addId(id)
                 .setOptional(false)

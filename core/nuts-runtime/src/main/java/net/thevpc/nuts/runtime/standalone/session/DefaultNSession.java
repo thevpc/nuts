@@ -569,7 +569,7 @@ public class DefaultNSession implements Cloneable, NSession {
                     cmdLine.skip();
                     if (enabled) {
                         if (cmdLine.isExecMode()) {
-                            out().println(NIdResolver.of(this).resolveId(getClass()).getVersion());
+                            out().println(NId.ofClass(getClass(),this).get().getVersion());
                             cmdLine.skipAll();
                         }
                         throw new NExecutionException(this, NMsg.ofPlain("version"), NExecutionException.SUCCESS);
@@ -1922,7 +1922,7 @@ public class DefaultNSession implements Cloneable, NSession {
         if (_appId != null) {
             //("=== Inherited "+_appId);
         } else {
-            _appId = NIdResolver.of(this).resolveId(appClass);
+            _appId = NId.ofClass(appClass,this).orNull();
         }
         if (_appId == null) {
             throw new NExecutionException(this, NMsg.ofC("invalid Nuts Application (%s). Id cannot be resolved", appClass.getName()), NExecutionException.ERROR_255);
@@ -2130,7 +2130,7 @@ public class DefaultNSession implements Cloneable, NSession {
     }
 
     @Override
-    public NCmdLine getAppCommandLine() {
+    public NCmdLine getAppCmdLine() {
         NId appId = getAppId();
         if (appId == null) {
             return null;
@@ -2146,8 +2146,8 @@ public class DefaultNSession implements Cloneable, NSession {
     }
 
     @Override
-    public void processAppCommandLine(NCmdLineProcessor commandLineProcessor) {
-        getAppCommandLine().process(commandLineProcessor, new DefaultNCmdLineContext(this));
+    public void processAppCmdLine(NCmdLineProcessor commandLineProcessor) {
+        getAppCmdLine().process(commandLineProcessor, new DefaultNCmdLineContext(this));
     }
 
     @Override

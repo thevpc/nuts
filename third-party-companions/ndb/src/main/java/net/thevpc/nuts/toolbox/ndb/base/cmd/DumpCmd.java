@@ -285,16 +285,16 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
             }
         } else {
             CmdRedirect dumpCommand = getSupport().createDumpCommand(plainFolderPath, options, session);
-            NExecCommand nExecCommand = sysCmd(session).addCommand(dumpCommand.getCmd().toStringArray());
+            NExecCmd nExecCmd = sysCmd(session).addCommand(dumpCommand.getCmd().toStringArray());
             if (dumpCommand.getPath() != null) {
-                nExecCommand.setIn(NExecInput.ofPath(dumpCommand.getPath()));
+                nExecCmd.setIn(NExecInput.ofPath(dumpCommand.getPath()));
             }
-            run(nExecCommand);
+            run(nExecCmd);
             if (zip) {
                 if (getSupport().isFolderArchive(options)) {
                     String sf = getSupport().getZipSubFolder(options);
                     if (NBlankable.isBlank(sf)) {
-                        NExecCommand zipExec = sysCmd(session)
+                        NExecCmd zipExec = sysCmd(session)
                                 .addCommand("zip")
                                 .addCommand("-q");
                         if (plainFolderPath.isDirectory()) {
@@ -309,7 +309,7 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
                         run(zipExec);
                     } else {
 
-                        NExecCommand zipExec = sysCmd(session)
+                        NExecCmd zipExec = sysCmd(session)
                                 .addCommand("zip")
                                 .addCommand("-q");
                         if (plainFolderPath.isDirectory()) {
@@ -324,7 +324,7 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
                         run(zipExec);
                     }
                 } else {
-                    NExecCommand zipExec = sysCmd(session)
+                    NExecCmd zipExec = sysCmd(session)
                             .addCommand("zip")
                             .addCommand("-q");
                     if (plainFolderPath.isDirectory()) {

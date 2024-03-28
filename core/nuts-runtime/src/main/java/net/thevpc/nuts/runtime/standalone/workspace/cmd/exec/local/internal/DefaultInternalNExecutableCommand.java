@@ -9,7 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableCommand;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextTransformConfig;
@@ -19,10 +19,10 @@ import net.thevpc.nuts.util.NMsg;
 /**
  * @author thevpc
  */
-public abstract class DefaultInternalNExecutableCommand extends AbstractNExecutableCommand {
+public abstract class DefaultInternalNExecutableCommand extends AbstractNExecutableInformationExt {
 
     protected String[] args;
-    public DefaultInternalNExecutableCommand(String name, String[] args,NExecCommand execCommand) {
+    public DefaultInternalNExecutableCommand(String name, String[] args, NExecCmd execCommand) {
         super(name, name, NExecutableType.INTERNAL,execCommand);
         this.args = args;
     }

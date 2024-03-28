@@ -41,7 +41,7 @@ import java.util.stream.*;
  * @param <T> Result Type
  * @author thevpc
  * @app.category Base
- * @see NSearchCommand#getResultIds()
+ * @see NSearchCmd#getResultIds()
  * @since 0.5.4
  */
 public interface NStream<T> extends NIterable<T> {

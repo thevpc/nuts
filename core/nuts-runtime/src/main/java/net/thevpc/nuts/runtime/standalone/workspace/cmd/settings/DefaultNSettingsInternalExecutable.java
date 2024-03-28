@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNSettingsInternalExecutable(String[] args, NExecCommand execCommand) {
+    public DefaultNSettingsInternalExecutable(String[] args, NExecCmd execCommand) {
         super("fetch", args, execCommand);
     }
 

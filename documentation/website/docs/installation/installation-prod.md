@@ -54,14 +54,14 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.211-b12, mixed mode)
 }>
 <TabItem value="windows">
 
-download [nuts-0.8.4.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.0.8.4/nuts-0.8.4.jar)
+download [nuts-net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@4c163e3.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@4c163e3/nuts-net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@4c163e3.jar)
 ```
-java -jar nuts-0.8.4.jar  -Zy
+java -jar nuts-net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@4c163e3.jar  -Zy
 ```
 
 On Windows systems, first launch will create a new **```nuts```** Menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal.
-- **nuts-cmd-0.8.4** : this shortcut will open a configured command terminal. **```nuts```** command will be available as well as several nuts companion tools installed by **nadmin** by default
-- **nuts-cmd**       : this shortcut will point to the last installed **nuts** version, here 0.8.4  
+- **nuts-cmd-net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@4c163e3** : this shortcut will open a configured command terminal. **```nuts```** command will be available as well as several nuts companion tools installed by **nadmin** by default
+- **nuts-cmd**       : this shortcut will point to the last installed **nuts** version, here net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@4c163e3  
 
 Any of these shortcuts will launch a nuts-aware terminal.
 

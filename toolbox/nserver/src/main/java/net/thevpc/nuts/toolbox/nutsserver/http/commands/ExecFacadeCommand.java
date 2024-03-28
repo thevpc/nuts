@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 
-import net.thevpc.nuts.NExecCommand;
+import net.thevpc.nuts.NExecCmd;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NSessionTerminal;
@@ -62,7 +62,7 @@ public class ExecFacadeCommand extends AbstractFacadeCommand {
                 NPrintStream.ofInMemory(session),
                 session
         ));
-        int result = NExecCommand.of(session)
+        int result = NExecCmd.of(session)
                 .addCommand(cmd)
                 .getResultCode();
         context.sendResponseText(200, result + "\n" + session.out().toString());

@@ -95,25 +95,25 @@ public class DefaultCommands implements NCommands {
     }
 
     @Override
-    public NCustomCommand findCommand(String name, NId forId, NId forOwner) {
+    public NCustomCmd findCommand(String name, NId forId, NId forOwner) {
         checkSession();
         return model.find(name, forId, forOwner, session);
     }
 
     @Override
-    public NCustomCommand findCommand(String name) {
+    public NCustomCmd findCommand(String name) {
         checkSession();
         return model.find(name, session);
     }
 
     @Override
-    public List<NCustomCommand> findAllCommands() {
+    public List<NCustomCmd> findAllCommands() {
         checkSession();
         return model.findAll(session);
     }
 
     @Override
-    public List<NCustomCommand> findCommandsByOwner(NId id) {
+    public List<NCustomCmd> findCommandsByOwner(NId id) {
         checkSession();
         return model.findByOwner(id, session);
     }

@@ -10,7 +10,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableCommand;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * @author thevpc
  */
-public class DefaultNSystemExecutable extends AbstractNExecutableCommand {
+public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt {
 
     String[] cmd;
     List<String> executorOptions;
@@ -30,7 +30,7 @@ public class DefaultNSystemExecutable extends AbstractNExecutableCommand {
 
     public DefaultNSystemExecutable(String[] cmd,
                                     List<String> executorOptions,
-                                    NExecCommand execCommand) {
+                                    NExecCmd execCommand) {
         super(cmd[0],
                 NCmdLine.of(cmd).toString(),
                 NExecutableType.SYSTEM, execCommand);
@@ -58,7 +58,7 @@ public class DefaultNSystemExecutable extends AbstractNExecutableCommand {
 
     private ProcessExecHelper resolveExecHelper() {
         Map<String, String> e2 = null;
-        NExecCommand execCommand = getExecCommand();
+        NExecCmd execCommand = getExecCommand();
         Map<String, String> env1 = execCommand.getEnv();
         if (env1 != null) {
             e2 = new HashMap<>((Map) env1);

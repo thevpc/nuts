@@ -210,7 +210,7 @@ public final class JavaExecutorOptions {
         appArgs.addAll(appendArgs);
 
         List<NDefinition> nDefinitions = new ArrayList<>();
-        NSearchCommand se = NSearchCommand.of(session);
+        NSearchCmd se = NSearchCmd.of(session);
         if (tempId) {
             for (NDependency dependency : descriptor.getDependencies()) {
                 se.addId(dependency.toId());
@@ -294,7 +294,7 @@ public final class JavaExecutorOptions {
             if (mainClass == null) {
                 if (path != null) {
                     //check manifest!
-                    List<NExecutionEntry> classes = NExecutionEntries.of(session).parse(path);
+                    List<NExecutionEntry> classes = NLibPaths.of(session).parseExecutionEntries(path);
                     NExecutionEntry[] primary = classes.stream().filter(NExecutionEntry::isDefaultEntry).toArray(NExecutionEntry[]::new);
                     if (primary.length > 0) {
                         mainClass = Arrays.stream(primary).map(NExecutionEntry::getName)
@@ -305,7 +305,7 @@ public final class JavaExecutorOptions {
                     }
                 }
             } else if (!mainClass.contains(".")) {
-                List<NExecutionEntry> classes = NExecutionEntries.of(session).parse(path);
+                List<NExecutionEntry> classes = NLibPaths.of(session).parseExecutionEntries(path);
                 List<String> possibleClasses = classes.stream().map(NExecutionEntry::getName)
                         .collect(Collectors.toList());
                 String r = resolveMainClass(mainClass, possibleClasses);
@@ -602,7 +602,7 @@ public final class JavaExecutorOptions {
 
     private void addNp(List<NClassLoaderNode> classPath, String value) {
         NSession searchSession = this.session;
-        NSearchCommand ns = NSearchCommand.of(searchSession).setLatest(true);
+        NSearchCmd ns = NSearchCmd.of(searchSession).setLatest(true);
         NRepositoryFilters nRepositoryFilters = NRepositoryFilters.of(session);
         for (String n : StringTokenizerUtils.splitDefault(value)) {
             if (!NBlankable.isBlank(n)) {
@@ -610,7 +610,7 @@ public final class JavaExecutorOptions {
             }
         }
         for (NId nutsId : ns.getResultIds()) {
-            NDefinition f = NSearchCommand.of(searchSession).addId(nutsId)
+            NDefinition f = NSearchCmd.of(searchSession).addId(nutsId)
                     .setLatest(true).getResultDefinitions().findFirst().get();
             classPath.add(NClassLoaderUtils.definitionToClassLoaderNode(f, nRepositoryFilters.installedRepo(),session));
         }

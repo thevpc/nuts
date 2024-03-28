@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
-import net.thevpc.nuts.text.NTerminalCommand;
+import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NQuoteType;
@@ -218,7 +218,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                     );
                 }
             }
-            NTerminalCommand ntc = NTerminalCommand.of(cmd0, value);
+            NTerminalCmd ntc = NTerminalCmd.of(cmd0, value);
             return factory0.createCommand(
                     start2,
                     ntc,

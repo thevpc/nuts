@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 
 public class ProcessUtils {
 
-    public static String[] parseCommandLine(String commandLineString) {
+    public static String[] parseCmdLine(String commandLineString) {
         if (commandLineString == null) {
             return new String[0];
         }

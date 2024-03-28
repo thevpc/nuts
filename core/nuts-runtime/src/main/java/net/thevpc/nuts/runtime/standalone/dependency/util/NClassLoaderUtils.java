@@ -68,7 +68,7 @@ public final class NClassLoaderUtils {
         }
         NId id = d.toId();
         try {
-            cc = NFetchCommand.of(id, session)
+            cc = NFetchCmd.of(id, session)
                     .setRepositoryFilter(repositoryFilter)
                     .getResultContent();
         } catch (NNotFoundException ex) {
@@ -98,7 +98,7 @@ public final class NClassLoaderUtils {
             }
         }
         try {
-            cc = NFetchCommand.of(d.getDependency().toId(), session)
+            cc = NFetchCmd.of(d.getDependency().toId(), session)
                     .setRepositoryFilter(repositoryFilter)
                     .getResultContent();
         } catch (NNotFoundException ex) {

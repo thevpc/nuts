@@ -82,7 +82,7 @@ public class LocalMysqlDatabaseConfigService {
                 session.out().println(NMsg.ofC("%s create archive %s", getDatabaseName(), path));
             }
 
-            NExecCommand cmd = NExecCommand.of(session)
+            NExecCmd cmd = NExecCmd.of(session)
                     .system()
                     .setCommand("sh", "-c",
                             "\"" + mysql.getMysqldumpCommand() + "\" -u \"$CMD_USER\" -p\"$CMD_PWD\" --databases \"$CMD_DB\" > \"$CMD_FILE\""
@@ -108,7 +108,7 @@ public class LocalMysqlDatabaseConfigService {
                         NTexts.of(session)
                         .ofStyled(path, NTextStyle.path())));
             }
-            NExecCommand cmd = NExecCommand.of(session)
+            NExecCmd cmd = NExecCmd.of(session)
                     .system()
                     .setCommand("sh", "-c",
                             "set -o pipefail && \"" + mysql.getMysqldumpCommand() + "\" -u \"$CMD_USER\" -p" + password + " --databases \"$CMD_DB\" | gzip > \"$CMD_FILE\""
@@ -151,7 +151,7 @@ public class LocalMysqlDatabaseConfigService {
             if (session.isPlainTrace()) {
                 session.out().println(NMsg.ofC("%s restore archive %s", getBracketsPrefix(getDatabaseName()), path));
             }
-            int result = NExecCommand.of(session)
+            int result = NExecCmd.of(session)
                     .system()
                     .setCommand("sh", "-c",
                             "cat \"$CMD_FILE\" | " + "\"" + mysql.getMysqlCommand() + "\" -h \"$CMD_HOST\" -u \"$CMD_USER\" \"-p$CMD_PWD\" \"$CMD_DB\""
@@ -170,7 +170,7 @@ public class LocalMysqlDatabaseConfigService {
                 session.out().println(NMsg.ofC("%s restore archive %s", getBracketsPrefix(getDatabaseName()), path));
             }
 
-            int result = NExecCommand.of(session)
+            int result = NExecCmd.of(session)
                     .system().setCommand("sh", "-c",
                             "gunzip -c \"$CMD_FILE\" | \"" + mysql.getMysqlCommand() + "\" -h \"$CMD_HOST\" -u \"$CMD_USER\" \"-p$CMD_PWD\" \"$CMD_DB\""
                     )

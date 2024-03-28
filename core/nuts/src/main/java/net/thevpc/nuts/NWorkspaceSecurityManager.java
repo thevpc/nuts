@@ -88,32 +88,32 @@ public interface NWorkspaceSecurityManager extends NComponent, NSessionProvider 
     /**
      * create a User Create command.
      * No user will be added when simply calling this method.
-     * You must fill in command parameters then call {@link NAddUserCommand#run()}.
+     * You must fill in command parameters then call {@link NAddUserCmd#run()}.
      *
      * @param name user name
      * @return create add user command.
      */
-    NAddUserCommand addUser(String name);
+    NAddUserCmd addUser(String name);
 
     /**
      * create a Update Create command.
      * No user will be updated when simply calling this method.
-     * You must fill in command parameters then call {@link NUpdateUserCommand#run()}.
+     * You must fill in command parameters then call {@link NUpdateUserCmd#run()}.
      *
      * @param name user name
      * @return create update user command.
      */
-    NUpdateUserCommand updateUser(String name);
+    NUpdateUserCmd updateUser(String name);
 
     /**
      * create a Remove Create command.
      * No user will be removed when simply calling this method.
-     * You must fill in command parameters then call {@link NRemoveUserCommand#run()}.
+     * You must fill in command parameters then call {@link NRemoveUserCmd#run()}.
      *
      * @param name user name
      * @return create remove user command.
      */
-    NRemoveUserCommand removeUser(String name);
+    NRemoveUserCmd removeUser(String name);
 
     /**
      * find all registered users

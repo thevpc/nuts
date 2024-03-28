@@ -61,7 +61,7 @@ public class DefaultNPs implements NPs {
     @Override
     public boolean killProcess(String processId) {
         checkSession();
-        return NExecCommand.of(getSession())
+        return NExecCmd.of(getSession())
                 .addCommand("kill", "-9", processId)
                 .getResultCode()==0;
     }
@@ -162,14 +162,14 @@ public class DefaultNPs implements NPs {
         checkSession();
         NIterator<NPsInfo> it = IteratorBuilder.ofSupplier(() -> {
             String cmd = "jps";
-            NExecCommand b = null;
+            NExecCmd b = null;
             boolean mainArgs = true;
             boolean vmArgs = true;
             String jdkHome = getJpsJavaHome(version, session);
             if (jdkHome != null) {
                 cmd = jdkHome + File.separator + "bin" + File.separator + cmd;
             }
-            b = NExecCommand.of(getSession())
+            b = NExecCmd.of(getSession())
                     .system()
                     .addCommand(cmd)
                     .addCommand("-l" + (mainArgs ? "m" : "") + (vmArgs ? "v" : ""))

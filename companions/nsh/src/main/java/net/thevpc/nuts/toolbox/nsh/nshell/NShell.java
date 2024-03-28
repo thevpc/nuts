@@ -116,7 +116,7 @@ public class NShell {
         if (this.appId == null && session != null) {
             this.appId = session.getAppId();
             if (this.appId == null) {
-                this.appId = NIdResolver.of(session).resolveId(NShell.class);
+                this.appId = NId.ofClass(NShell.class, session).orNull();
             }
         }
         if (this.appId == null && session != null) {
@@ -230,7 +230,7 @@ public class NShell {
     private static String resolveServiceName(NSession session, String serviceName, NId appId) {
         if ((serviceName == null || serviceName.trim().isEmpty())) {
             if (appId == null) {
-                appId = NIdResolver.of(session).resolveId(NShell.class);
+                appId = NId.ofClass(NShell.class, session).get();
             }
             serviceName = appId.getArtifactId();
         }
@@ -457,12 +457,15 @@ public class NShell {
         String cmdToken = command[0];
         NPath cmdPath = NPath.of(cmdToken, context.getSession());
         if (!cmdPath.isName()) {
-            final NShellExternalExecutor externalExec = getExternalExecutor();
-            if (externalExec == null) {
-                throw new NShellException(context.getSession(), NMsg.ofC("not found %s", cmdToken), 101);
+            if (isShellFile(cmdPath, session)) {
+                return executeServiceFile(createNewContext(context, cmdPath.toString(), command), false);
+            } else {
+                final NShellExternalExecutor externalExec = getExternalExecutor();
+                if (externalExec == null) {
+                    throw new NShellException(context.getSession(), NMsg.ofC("not found %s", cmdToken), 101);
+                }
+                return externalExec.execExternalCommand(command, context);
             }
-            return externalExec.execExternalCommand(command, context);
-            //this is a path!
         } else {
             List<String> cmds = new ArrayList<>(Arrays.asList(command));
             String a = considerAliases ? context.aliases().get(cmdToken) : null;
@@ -512,6 +515,30 @@ public class NShell {
             }
         }
         return 0;
+    }
+
+    private boolean isShellFile(NPath cmdPath, NSession session) {
+        if(cmdPath.getName().endsWith(".nsh")){
+            return true;
+        }
+        if(cmdPath.getName().endsWith(".sh")){
+            return true;
+        }
+        if(cmdPath.exists()){
+            String firstLine = cmdPath.getLines().findFirst().orElse(null);
+            if(firstLine!=null){
+                if(firstLine.startsWith("#!/bin/sh")){
+                    return true;
+                }
+                if(firstLine.startsWith("#!/bin/bash")){
+                    return true;
+                }
+                if(firstLine.startsWith("#!/bin/nsh")){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public void run() {
@@ -584,7 +611,7 @@ public class NShell {
             NDescriptor resultDescriptor = null;
             if (appId != null) {
                 try {
-                    resultDescriptor = NFetchCommand.of(appId, session).setEffective(true).getResultDescriptor();
+                    resultDescriptor = NFetchCmd.of(appId, session).setEffective(true).getResultDescriptor();
                 } catch (Exception ex) {
                     //just ignore
                 }
@@ -1147,7 +1174,7 @@ public class NShell {
     }
 
     public String getVersion() {
-        NId nutsId = NIdResolver.of(session).resolveId(getClass());
+        NId nutsId = NId.ofClass(getClass(), session).orNull();
         if (nutsId == null) {
             return "dev";
         }

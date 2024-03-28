@@ -31,7 +31,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.text.NTerminalCommand;
+import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 
@@ -64,7 +64,7 @@ public class ClearCommand extends NShellBuiltinDefault {
     @Override
     protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         //do nothing, return true
-        context.out().run(NTerminalCommand.CLEAR_SCREEN, context.getSession());
+        context.out().run(NTerminalCmd.CLEAR_SCREEN, context.getSession());
     }
 
 }

@@ -97,7 +97,7 @@ public class NWorkspaceVarExpansionFunction implements Function<String, String> 
                         : (NConstants.Ids.NUTS_RUNTIME + "#" + rt);
             }
             default: {
-                Object v = NInfoCommand.of(session).getPropertyValue(from);
+                Object v = NInfoCmd.of(session).getPropertyValue(from);
                 if (v != null) {
                     return NTexts.of(session).ofText(v).filteredText();
                 }

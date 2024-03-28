@@ -26,6 +26,8 @@
 */
 package net.thevpc.nuts.runtime.standalone.io.util;
 
+import net.thevpc.nuts.format.NVisitResult;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -38,5 +40,5 @@ public interface InputStreamVisitor {
      * @return true if we can proceed with next element or false if we need to exit the visit loop
      * @throws IOException IOException
      */
-    boolean visit(String path, InputStream inputStream) throws IOException;
+    NVisitResult visit(String path, InputStream inputStream) throws IOException;
 }

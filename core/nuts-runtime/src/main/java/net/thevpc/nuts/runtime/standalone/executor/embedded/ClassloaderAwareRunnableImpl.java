@@ -28,7 +28,7 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
     public Object runWithContext() throws Throwable {
         NClock now = NClock.now();
         if (cls.getName().equals("net.thevpc.nuts.Nuts")) {
-            NWorkspaceOptionsBuilder o = NWorkspaceOptionsBuilder.of().setCommandLine(
+            NWorkspaceOptionsBuilder o = NWorkspaceOptionsBuilder.of().setCmdLine(
                     joptions.getAppArgs().toArray(new String[0]),session
             );
             List<String> appArgs;
@@ -44,7 +44,7 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
             Object oldId = NApplications.getSharedMap().get("nuts.embedded.application.id");
             NApplications.getSharedMap().put("nuts.embedded.application.id", id);
             try {
-                NExecCommand.of(session)
+                NExecCmd.of(session)
                         .addCommand(appArgs)
                         .addExecutorOptions(o.getExecutorOptions().orNull())
                         .setExecutionType(o.getExecutionType().orNull())
@@ -80,7 +80,7 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
             NWorkspaceOptionsBuilder bootOptions = JavaExecutorComponent.createChildOptions(executionContext);
             System.setProperty("nuts.boot.args",
                     bootOptions
-                            .toCommandLine(new NWorkspaceOptionsConfig().setCompact(true))
+                            .toCmdLine(new NWorkspaceOptionsConfig().setCompact(true))
                             .add(id.getLongName())
                             .formatter(session).setShellFamily(NShellFamily.SH).toString()
             );

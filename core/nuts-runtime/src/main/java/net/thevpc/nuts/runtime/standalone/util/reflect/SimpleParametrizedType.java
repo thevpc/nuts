@@ -88,24 +88,24 @@ public class SimpleParametrizedType implements ParameterizedType {
             Type thatOwner = that.getOwnerType();
             Type thatRawType = that.getRawType();
 
-            if (false) { // Debugging
-                boolean ownerEquality = (ownerType == null ?
-                        thatOwner == null :
-                        ownerType.equals(thatOwner));
-                boolean rawEquality = (rawType == null ?
-                        thatRawType == null :
-                        rawType.equals(thatRawType));
-
-                boolean typeArgEquality = Arrays.equals(actualTypeArguments, // avoid clone
-                        that.getActualTypeArguments());
-                for (Type t : actualTypeArguments) {
-                    System.out.printf("\t\t%s%s%n", t, t.getClass());
-                }
-
-                System.out.printf("\towner %s\traw %s\ttypeArg %s%n",
-                        ownerEquality, rawEquality, typeArgEquality);
-                return ownerEquality && rawEquality && typeArgEquality;
-            }
+//            if (false) { // Debugging
+//                boolean ownerEquality = (ownerType == null ?
+//                        thatOwner == null :
+//                        ownerType.equals(thatOwner));
+//                boolean rawEquality = (rawType == null ?
+//                        thatRawType == null :
+//                        rawType.equals(thatRawType));
+//
+//                boolean typeArgEquality = Arrays.equals(actualTypeArguments, // avoid clone
+//                        that.getActualTypeArguments());
+//                for (Type t : actualTypeArguments) {
+//                    System.out.printf("\t\t%s%s%n", t, t.getClass());
+//                }
+//
+//                System.out.printf("\towner %s\traw %s\ttypeArg %s%n",
+//                        ownerEquality, rawEquality, typeArgEquality);
+//                return ownerEquality && rawEquality && typeArgEquality;
+//            }
 
             return
                     Objects.equals(ownerType, thatOwner) &&

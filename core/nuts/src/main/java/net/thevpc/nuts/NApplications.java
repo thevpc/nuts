@@ -198,7 +198,7 @@ public final class NApplications {
                                 "running application %s: %s %s",
                                 inherited ? "(inherited)" : "",
                                 applicationInstance.getClass().getName(),
-                                session.getAppCommandLine()
+                                session.getAppCmdLine()
                         )
                 );
         try {

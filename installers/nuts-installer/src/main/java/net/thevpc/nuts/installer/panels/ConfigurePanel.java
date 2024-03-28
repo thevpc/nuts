@@ -79,7 +79,7 @@ public class ConfigurePanel extends AbstractInstallPanel {
         if (optionWorkspace.getText().trim().length() > 0) {
             id.workspace = optionWorkspace.getText().trim();
         }
-        id.otherOptions.addAll(Arrays.asList(ProcessUtils.parseCommandLine(otherOptions.getText())));
+        id.otherOptions.addAll(Arrays.asList(ProcessUtils.parseCmdLine(otherOptions.getText())));
         super.onNext();
     }
 

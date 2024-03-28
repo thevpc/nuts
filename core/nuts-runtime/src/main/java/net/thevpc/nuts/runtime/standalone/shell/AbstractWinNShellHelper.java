@@ -18,7 +18,7 @@ public abstract class AbstractWinNShellHelper implements NShellHelper {
     }
 
 
-    public String[] parseCommandLineArr(String commandLineString, NSession session) {
+    public String[] parseCmdLineArr(String commandLineString, NSession session) {
         if (commandLineString == null) {
             return new String[0];
         }

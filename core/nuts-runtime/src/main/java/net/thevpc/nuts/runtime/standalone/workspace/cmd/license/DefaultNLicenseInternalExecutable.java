@@ -18,7 +18,7 @@ import net.thevpc.nuts.text.NText;
  */
 public class DefaultNLicenseInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNLicenseInternalExecutable(String[] args, NExecCommand execCommand) {
+    public DefaultNLicenseInternalExecutable(String[] args, NExecCmd execCommand) {
         super("license", args, execCommand);
     }
 

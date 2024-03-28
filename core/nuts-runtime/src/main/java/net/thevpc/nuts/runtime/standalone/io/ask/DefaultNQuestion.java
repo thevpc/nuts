@@ -267,7 +267,7 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
         NMsg title = NMsg.ofC("Nuts Package Manager - %s", getSession().getWorkspace().getApiId().getVersion());
         if (session.getAppId() != null) {
             try {
-                NDefinition def = NSearchCommand.of(session).setId(session.getAppId())
+                NDefinition def = NSearchCmd.of(session).setId(session.getAppId())
                         .setEffective(true).setLatest(true).getResultDefinitions()
                         .findFirst().orNull();
                 if (def != null) {

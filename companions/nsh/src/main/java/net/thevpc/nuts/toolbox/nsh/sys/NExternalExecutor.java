@@ -26,9 +26,13 @@
  */
 package net.thevpc.nuts.toolbox.nsh.sys;
 
-import net.thevpc.nuts.NExecCommand;
+import net.thevpc.nuts.NExecCmd;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellContext;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -38,7 +42,13 @@ public class NExternalExecutor implements NShellExternalExecutor {
 
     @Override
     public int execExternalCommand(String[] command, NShellContext context) {
-        return NExecCommand.of(context.getSession()).addCommand(command).failFast()
+        if(command.length>1 && command[0].equals("nuts")){
+            //just remove it
+            List<String> list = new ArrayList<>(Arrays.asList(command));
+            list.remove(0);
+            command=list.toArray(new String[0]);
+        }
+        return NExecCmd.of(context.getSession()).addCommand(command).failFast()
                 .setExecutionType(context.getSession().getExecutionType())
                 .setDirectory(NPath.of(context.getDirectory(), context.getSession()))
                 .run().getResultCode();

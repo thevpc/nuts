@@ -39,7 +39,7 @@ public class Nsh implements NApplication {
     public void onInstallApplication(NSession session) {
         NLogOp log = NLogOp.of(Nsh.class, session);
         log.level(Level.CONFIG).verb(NLogVerb.START).log(NMsg.ofPlain("[nsh] Installation..."));
-        session.processAppCommandLine(new NCmdLineProcessor() {
+        session.processAppCmdLine(new NCmdLineProcessor() {
             @Override
             public void onCmdInitParsing(NCmdLine cmdLine, NCmdLineContext context) {
                 cmdLine.setCommandName("nsh --nuts-exec-mode=install");
@@ -157,7 +157,7 @@ public class Nsh implements NApplication {
                 //ignore!
             }
             Set<String> uninstalled = new TreeSet<>();
-            for (NCustomCommand command : NCommands.of(session).findCommandsByOwner(session.getAppId())) {
+            for (NCustomCmd command : NCommands.of(session).findCommandsByOwner(session.getAppId())) {
                 try {
                     NCommands.of(
                             session.copy().setTrace(false)
@@ -187,7 +187,7 @@ public class Nsh implements NApplication {
 
         //before loading NShell check if we need to activate rich term
         DefaultNShellOptionsParser options = new DefaultNShellOptionsParser(session);
-        NShellOptions o = options.parse(session.getAppCommandLine().toStringArray());
+        NShellOptions o = options.parse(session.getAppCmdLine().toStringArray());
 
 //        if (o.isEffectiveInteractive()) {
 //            session.getWorkspace().io().term().enableRichTerm(session);

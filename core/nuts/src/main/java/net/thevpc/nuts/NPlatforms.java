@@ -82,4 +82,8 @@ public interface NPlatforms extends NComponent, NSessionProvider {
     NStream<NPlatformLocation> findPlatforms(NPlatformFamily type);
 
     NPlatforms setSession(NSession session);
+
+    void addDefaultPlatforms(NPlatformFamily type);
+
+    void addDefaultPlatform(NPlatformFamily type);
 }

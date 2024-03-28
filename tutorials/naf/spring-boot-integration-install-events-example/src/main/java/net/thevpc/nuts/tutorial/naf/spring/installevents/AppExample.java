@@ -40,7 +40,7 @@ public class AppExample implements NApplication {
      */
     @Override
     public void run(NSession session) {
-        NCmdLine cmd = session.getAppCommandLine();
+        NCmdLine cmd = session.getAppCmdLine();
         NArg a;
         String someStringOption = null;
         Boolean someBooleanOption = null;

@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
-public class DefaultNCustomCommand implements NCustomCommand {
+public class DefaultNCustomCommand implements NCustomCmd {
 
     private NLog LOG;
     private String name;
@@ -63,7 +63,7 @@ public class DefaultNCustomCommand implements NCustomCommand {
     }
 
     @Override
-    public int exec(String[] args, NCommandExecOptions options, NSession session) {
+    public int exec(String[] args, NCmdExecOptions options, NSession session) {
         if (session.isDry()) {
             List<String> executorOptions = new ArrayList<>(options.getExecutorOptions());
             executorOptions.addAll(this.getExecutorOptions());
@@ -71,7 +71,7 @@ public class DefaultNCustomCommand implements NCustomCommand {
             r.addAll(Arrays.asList(args));
             args = r.toArray(new String[0]);
 
-            return NExecCommand.of(session)
+            return NExecCmd.of(session)
                     .addCommand(args)
                     .addExecutorOptions(executorOptions)
                     .setDirectory(options.getDirectory())
@@ -90,7 +90,7 @@ public class DefaultNCustomCommand implements NCustomCommand {
             r.addAll(Arrays.asList(args));
             args = r.toArray(new String[0]);
 
-            return NExecCommand.of(session)
+            return NExecCmd.of(session)
                     .addCommand(args)
                     .addExecutorOptions(executorOptions)
                     .setDirectory(options.getDirectory())
@@ -114,7 +114,7 @@ public class DefaultNCustomCommand implements NCustomCommand {
         if (helpCommand != null && helpCommand.size() > 0) {
             try {
                 return NTexts.of(session).ofPlain(
-                        NExecCommand.of(session)
+                        NExecCmd.of(session)
                                 .addCommand(helpCommand)
                                 .setFailFast(false)
                                 .run()

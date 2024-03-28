@@ -26,6 +26,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.format.NFormattable;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.reserved.NReservedUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NOptional;
@@ -99,6 +100,22 @@ public interface NId extends Comparable<NId>, NFormattable, NBlankable {
 
     static NOptional<NId> of(String value) {
         return NReservedUtils.parseId(value);
+    }
+
+    static NOptional<NId> ofClass(Class<?> value, NSession session) {
+        return NLibPaths.of(session).resolveId(value);
+    }
+
+    static NOptional<NId> ofPath(NPath value, NSession session) {
+        return NLibPaths.of(session).resolveId(value);
+    }
+
+    static List<NId> findAllByClass(Class<?> value, NSession session) {
+        return NLibPaths.of(session).resolveIds(value);
+    }
+
+    static List<NId> findByPath(NPath value, NSession session) {
+        return NLibPaths.of(session).resolveIds(value);
     }
 
     /**

@@ -336,7 +336,7 @@ public class NJavaSdkUtils {
             //I do not know why but sometimes, the process exists before receiving stdout result!!
             final int MAX_ITER = 5;
             for (int i = 0; i < MAX_ITER; i++) {
-                NExecCommand cmd = NExecCommand.of(session)
+                NExecCmd cmd = NExecCmd.of(session)
                         .system()
                         .addCommand(javaExePath.toString(), "-version")
                         .grabAll().failFast().run();

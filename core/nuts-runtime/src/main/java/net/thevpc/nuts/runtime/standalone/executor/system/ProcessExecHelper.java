@@ -12,7 +12,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.NRecommendationPhase;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.RequestQueryInfo;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
-import net.thevpc.nuts.text.NTerminalCommand;
+import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.log.NLog;
@@ -96,7 +96,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         NPath storeFolder = nutMainFile.getInstallInformation().get(session).getInstallFolder();
         HashMap<String, String> map = new HashMap<>();
         HashMap<String, String> envmap = new HashMap<>();
-        NPath nutsJarFile = NFetchCommand.ofNutsApi(session).getResultPath();
+        NPath nutsJarFile = NFetchCmd.ofNutsApi(session).getResultPath();
         if (nutsJarFile != null) {
             map.put("nuts.jar", nutsJarFile.normalize().toString());
         }
@@ -147,7 +147,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                     return s;
                 } else if (skey.equals("nuts")) {
                     NDefinition nDefinition;
-                    nDefinition = NFetchCommand.ofNutsApi(session)
+                    nDefinition = NFetchCmd.ofNutsApi(session)
                             .getResultDefinition();
                     if (nDefinition.getContent().isPresent()) {
                         return ("<::expand::> " + apply("java") + " -jar " + nDefinition.getContent());
@@ -222,7 +222,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
     public Future<Integer> execAsync() {
         try {
             if (trace != null) {
-                trace.run(NTerminalCommand.MOVE_LINE_START, getSession());
+                trace.run(NTerminalCmd.MOVE_LINE_START, getSession());
             }
             ProcessBuilder2 p = pb.start();
             return new FutureTask<Integer>(() -> waitResult(p));

@@ -351,7 +351,7 @@ public class NWorkspaceUtils {
             );
         }
         try {
-            NInstallCommand.of(session.copy().setTrace(session.isTrace() && session.isPlainOut())).companions()
+            NInstallCmd.of(session.copy().setTrace(session.isTrace() && session.isPlainOut())).companions()
                     .run();
         } catch (Exception ex) {
             _LOG(session).with().session(session).level(Level.FINEST).verb(NLogVerb.WARNING).error(ex)

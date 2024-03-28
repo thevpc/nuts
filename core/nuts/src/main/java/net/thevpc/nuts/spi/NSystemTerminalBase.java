@@ -27,7 +27,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.text.NTerminalCommand;
+import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.util.NMsg;
 
@@ -97,7 +97,7 @@ public interface NSystemTerminalBase extends NComponent {
      */
     NSystemTerminalBase setCommandHighlighter(String commandHighlighter);
 
-    Object run(NTerminalCommand command, NPrintStream printStream, NSession session);
+    Object run(NTerminalCmd command, NPrintStream printStream, NSession session);
 
     Cursor getTerminalCursor(NSession session);
 

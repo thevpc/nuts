@@ -28,6 +28,10 @@ import net.thevpc.nuts.NIdLocation;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * @author thevpc
@@ -89,5 +93,36 @@ public class CoreCollectionUtils {
 
     public static <T> List<T> nonNullListFromArray(T[] other) {
         return nonNullList(Arrays.asList(other));
+    }
+
+    public static <T> Stream<T> finiteStream(Supplier<T> supplier){
+        return stream(supplier, null);
+    }
+    public static <T> Stream<T> stream(Supplier<T> supplier, Predicate<T> stopCondition){
+        if(stopCondition==null){
+            stopCondition= Objects::isNull;
+        }
+        Predicate<T> finalStopCondition = stopCondition;
+        return stream(new Iterator<T>() {
+            T value;
+            @Override
+            public boolean hasNext() {
+                value = supplier.get();
+                if(finalStopCondition.test(value)){
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            public T next() {
+                return value;
+            }
+        });
+    }
+    public static <T> Stream<T> stream(Iterator<T> iterator){
+        return StreamSupport.stream(
+                Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED),
+                false);
     }
 }

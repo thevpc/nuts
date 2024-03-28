@@ -169,7 +169,7 @@ public class DefaultNRepositoryModel {
     protected void addRepository(NRepository repo, NSession session, boolean temp, boolean enabled) {
         repositoryRegistryHelper.addRepository(repo, session);
         repo.config().setSession(session).setEnabled(enabled);
-        NConfigs.of(session).save();
+//        NConfigs.of(session).save();
         if (!temp) {
             NConfigsExt config = NConfigsExt.of(NConfigs.of(session));
             config.getModel().fireConfigurationChanged("config-main", session, ConfigEventType.MAIN);
@@ -390,7 +390,7 @@ public class DefaultNRepositoryModel {
         try (PrintStream o = new PrintStream(logError.resolve(fileName + ".error").getOutputStream())) {
             o.printf("workspace.path:%s%n", NLocations.of(session).getWorkspaceLocation());
             o.printf("repository.path:%s%n", file);
-            o.printf("workspace.options:%s%n", wboot.getBootOptions().toCommandLine(new NWorkspaceOptionsConfig().setCompact(false)));
+            o.printf("workspace.options:%s%n", wboot.getBootOptions().toCmdLine(new NWorkspaceOptionsConfig().setCompact(false)));
             for (NStoreType location : NStoreType.values()) {
                 o.printf("location." + location.id() + ":%s%n", NLocations.of(session).getStoreLocation(location));
             }

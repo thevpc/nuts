@@ -1,0 +1,137 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          $$SERVICE_NAME$$
+# Required-Start:    $local_fs $network $named $time $syslog
+# Required-Stop:     $local_fs $network $named $time $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Description:       $$SERVICE_DESCRIPTION$$
+### END INIT INFO
+
+RUNAS=$$USER$$
+NAME=$$SERVICE_NAME$$
+VAR_RUN=$$VAR_RUN$$
+VAR_LOG=$$VAR_LOG$$
+
+mkdir -p $VAR_RUN
+mkdir -p $VAR_LOG
+PIDFILE=$$PID_FILE$$
+
+waitForPid() {
+  echo "waiting for $NAME to start, waiting for 5 minutes..."
+  sleep 60
+    PID=$(cat $PIDFILE)
+    if (ps -ef | awk '{print $2}' | grep -e '^'$PID'$') > /dev/null
+    then
+      echo "$NAME is now running, the PID is $PID"
+    else
+      echo "$NAME has not started yet, waiting for 4 minutes..."
+      sleep 60
+      PID=$(cat $PIDFILE)
+      if (ps -ef | awk '{print $2}' | grep -e '^'$PID'$') > /dev/null
+      then
+        echo "$NAME is now running, the PID is $PID"
+      else
+        echo "$NAME has not started yet, waiting for 3 minutes..."
+        sleep 60
+        PID=$(cat $PIDFILE)
+        if (ps -ef | awk '{print $2}' | grep -e '^'$PID'$') > /dev/null
+        then
+          echo "$NAME is now running, the PID is $PID"
+        else
+          echo "$NAME has not started yet, waiting for 2 minutes..."
+          sleep 60
+          PID=$(cat $PIDFILE)
+          if (ps -ef | awk '{print $2}' | grep -e '^'$PID'$') > /dev/null
+          then
+            echo "$NAME is now running, the PID is $PID"
+          else
+            echo "$NAME has not started yet, waiting for 1 more minute..."
+            sleep 60
+            PID=$(cat $PIDFILE)
+            if (ps -ef | awk '{print $2}' | grep -e '^'$PID'$') > /dev/null
+            then
+              echo "$NAME is now running, the PID is $PID"
+            else
+              echo ''
+              echo "Error! Could not start $NAME!"
+            fi
+          fi
+        fi
+      fi
+    fi
+}
+
+start() {
+  if [ -f $PIDFILE ] && [ -s $PIDFILE ] && kill -0 $(cat $PIDFILE); then
+    echo 'Service already running' >&2
+    return 1
+  fi
+  echo 'Starting service…' >&2
+  local CMD="$$START_COMMANDLINE$$"
+ # su -c "$CMD" $RUNAS > "$PIDFILE"
+ # Try with this command line instead of above if not workable
+  echo running su -s /bin/sh $RUNAS -c "$CMD"
+  su -s /bin/sh $RUNAS -c "$CMD"
+  waitForPid
+}
+
+stop() {
+  if [ ! -f "$PIDFILE" ] || ! kill -0 $(cat "$PIDFILE"); then
+    echo 'Service not running' >&2
+    return 1
+  fi
+  echo 'Stopping service…' >&2
+  kill -15 $(cat "$PIDFILE") && rm -f "$PIDFILE"
+  echo 'Service stopped' >&2
+}
+
+uninstall() {
+  echo -n "Are you really sure you want to uninstall this service? That cannot be undone. [yes|No] "
+  local SURE
+  read SURE
+  if [ "$SURE" = "yes" ]; then
+    stop
+    rm -f "$PIDFILE"
+    update-rc.d -f $NAME remove
+    rm -fv "$0"
+  else
+    echo "Abort!"
+  fi
+}
+
+status() {
+    printf "%-50s" "Checking $NAME..."
+    if [ -f $PIDFILE ] && [ -s $PIDFILE ]; then
+        PID=$(cat $PIDFILE)
+            if [ -z "$(ps axf | grep ${PID} | grep -v grep)" ]; then
+                printf "%s\n" "The process appears to be dead but pidfile still exists"
+            else    
+                echo "Running, the PID is $PID"
+            fi
+    else
+        printf "%s\n" "Service not running"
+    fi
+}
+
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  status)
+    status
+    ;;
+  uninstall)
+    uninstall
+    ;;
+  restart)
+    stop
+    start
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|status|restart|uninstall}"
+esac

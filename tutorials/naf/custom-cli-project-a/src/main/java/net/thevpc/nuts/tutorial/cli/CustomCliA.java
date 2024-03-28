@@ -21,7 +21,7 @@ public class CustomCliA implements NApplication {
 
     @Override
     public void run(NSession session) {
-        session.processAppCommandLine(new NCmdLineProcessor() {
+        session.processAppCmdLine(new NCmdLineProcessor() {
             boolean noMoreOptions = false;
             boolean clean = false;
             List<String> params = new ArrayList<>();

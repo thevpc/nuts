@@ -26,10 +26,14 @@ public class NPomIdResolver {
         this.session = session;
     }
 
-    public NPomId[] resolvePomId(NPath baseUrl, String referenceResourcePath, NSession session) {
+    public NPomId[] resolvePomIds(NPath baseUrl, NSession session) {
+        return resolvePomIds(baseUrl, null,session);
+    }
+
+    public NPomId[] resolvePomIds(NPath baseUrl, String referenceResourcePath, NSession session) {
         List<NPomId> all = new ArrayList<NPomId>();
         final URLParts aa = new URLParts(baseUrl.toURL().get());
-        String basePath = aa.getLastPart().getPath().substring(0, aa.getLastPart().getPath().length() - referenceResourcePath.length());
+        String basePath = aa.getLastPart().getPath().substring(0, aa.getLastPart().getPath().length() - (referenceResourcePath == null ? 0 : referenceResourcePath.length()));
         if (!basePath.endsWith("/") && !basePath.endsWith("\\")) {
             basePath += "/";
         }
@@ -64,9 +68,9 @@ public class NPomIdResolver {
                 String s2 = basePath.substring(0, basePath.length() - "/target/classes".length()) + "pom.xml";
                 //this is most likely to be a maven project
                 try {
-                    all.add(new NPomXmlParser(session).parse(NPath.of(s2,session).toURL().get(), session).getPomId());
+                    all.add(new NPomXmlParser(session).parse(NPath.of(s2, session).toURL().get(), session).getPomId());
                 } catch (Exception ex) {
-                    NLogOp.of(NPomXmlParser.class,session)
+                    NLogOp.of(NPomXmlParser.class, session)
                             .verb(NLogVerb.WARNING)
                             .level(Level.FINEST)
                             .log(NMsg.ofC("failed to parse pom file %s : %s", s2, ex));
@@ -89,18 +93,18 @@ public class NPomIdResolver {
             final String n = clazz.getName().replace('.', '/').concat(".class");
             final Enumeration<URL> r = clazz.getClassLoader().getResources(n);
             for (URL url : Collections.list(r)) {
-                all.addAll(Arrays.asList(resolvePomId(
-                        NPath.of(url,session), n, session)));
+                all.addAll(Arrays.asList(resolvePomIds(
+                        NPath.of(url, session), n, session)));
             }
         } catch (IOException ex) {
-            NLogOp.of(NPomXmlParser.class,session)
+            NLogOp.of(NPomXmlParser.class, session)
                     .verb(NLogVerb.WARNING)
                     .level(Level.FINEST)
                     .log(NMsg.ofC("failed to parse class %s : %s", clazz.getName(), ex));
         }
-        if(all.isEmpty() && JavaClassUtils.isCGLib(clazz)){
+        if (all.isEmpty() && JavaClassUtils.isCGLib(clazz)) {
             Class s = JavaClassUtils.unwrapCGLib(clazz);
-            if(s!=null){
+            if (s != null) {
                 return resolvePomIds(s);
             }
         }
@@ -114,12 +118,12 @@ public class NPomIdResolver {
     public NPomId resolvePomId(Class clazz, NPomId defaultValue) {
         NPomId[] pomIds = resolvePomIds(clazz);
         if (pomIds.length > 1) {
-            NLogOp.of(NPomXmlParser.class,session)
+            NLogOp.of(NPomXmlParser.class, session)
                     .verb(NLogVerb.WARNING)
                     .level(Level.FINEST)
                     .log(NMsg.ofC(
                             "multiple ids found : %s for class %s and id %s",
-                            Arrays.asList(pomIds),clazz,defaultValue
+                            Arrays.asList(pomIds), clazz, defaultValue
                     ));
         }
         for (NPomId v : pomIds) {

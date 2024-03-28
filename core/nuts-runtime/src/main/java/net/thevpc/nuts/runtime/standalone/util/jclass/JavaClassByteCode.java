@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.jclass;
 
+import net.thevpc.nuts.format.NVisitResult;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.util.NMsg;
@@ -64,7 +65,7 @@ public class JavaClassByteCode {
             }
             int minorVersion = stream.readUnsignedShort();
             int majorVersion = stream.readUnsignedShort();
-            if (!visitVersion(majorVersion, minorVersion)) {
+            if (visitVersion(majorVersion, minorVersion)== NVisitResult.TERMINATE) {
                 return;
             }
             readConstantPool();
@@ -81,19 +82,19 @@ public class JavaClassByteCode {
                 int index = stream.readUnsignedShort();
                 interfaces[i] = JavaClassByteCode.this.getConstant(index).asString();
             }
-            if (!visitClassDeclaration(accessFlags, thisClass, superClass, interfaces)) {
+            if (visitClassDeclaration(accessFlags, thisClass, superClass, interfaces)== NVisitResult.TERMINATE) {
                 return;
             }
 
             int fieldsCount = stream.readUnsignedShort();
             for (int i = 0; i < fieldsCount; i++) {
-                if (!readField()) {
+                if (readField()== NVisitResult.TERMINATE) {
                     return;
                 }
             }
             int methodsCount = stream.readUnsignedShort();
             for (int i = 0; i < methodsCount; i++) {
-                if (!readMethod()) {
+                if (readMethod()== NVisitResult.TERMINATE) {
                     return;
                 }
             }
@@ -115,7 +116,7 @@ public class JavaClassByteCode {
                         rr.req_version = getConstantUTF(q.readUnsignedShort());
                         mi.required[j] = rr;
                     }
-                    if (!visitClassAttributeModule(mi)) {
+                    if (visitClassAttributeModule(mi)== NVisitResult.TERMINATE) {
                         return;
                     }
                 }
@@ -133,11 +134,11 @@ public class JavaClassByteCode {
         return true;
     }
 
-    private boolean visitClassAttributeModule(ModuleInfo mi) {
+    private NVisitResult visitClassAttributeModule(ModuleInfo mi) {
         if (visitor != null) {
             return visitor.visitClassAttributeModule(mi);
         }
-        return true;
+        return NVisitResult.CONTINUE;
     }
 
     protected void readConstantPool() {
@@ -158,7 +159,7 @@ public class JavaClassByteCode {
 
     }
 
-    protected boolean readField() {
+    protected NVisitResult readField() {
         try {
             int accessFlags = stream.readUnsignedShort();
             int nameIndex = stream.readUnsignedShort();
@@ -176,7 +177,7 @@ public class JavaClassByteCode {
         }
     }
 
-    protected boolean readMethod() {
+    protected NVisitResult readMethod() {
         try {
             int accessFlags = stream.readUnsignedShort();
             int nameIndex = stream.readUnsignedShort();
@@ -244,32 +245,32 @@ public class JavaClassByteCode {
     }
 
     ////////////////////////////
-    public boolean visitVersion(int major, int minor) {
+    public NVisitResult visitVersion(int major, int minor) {
         if (visitor != null) {
             return visitor.visitVersion(major, minor);
         }
-        return true;
+        return NVisitResult.CONTINUE;
     }
 
-    public boolean visitClassDeclaration(int accessFlags, String thisClass, String superClass, String[] interfaces) {
+    public NVisitResult visitClassDeclaration(int accessFlags, String thisClass, String superClass, String[] interfaces) {
         if (visitor != null) {
             return visitor.visitClassDeclaration(accessFlags, thisClass, superClass, interfaces);
         }
-        return true;
+        return NVisitResult.CONTINUE;
     }
 
-    public boolean visitField(int accessFlags, String name, String descriptor, FieldAttribute[] attributes) {
+    public NVisitResult visitField(int accessFlags, String name, String descriptor, FieldAttribute[] attributes) {
         if (visitor != null) {
             return visitor.visitField(accessFlags, name, descriptor);
         }
-        return true;
+        return NVisitResult.CONTINUE;
     }
 
-    public boolean visitMethod(int accessFlags, String name, String descriptor, MethodAttribute[] attributes) {
+    public NVisitResult visitMethod(int accessFlags, String name, String descriptor, MethodAttribute[] attributes) {
         if (visitor != null) {
             return visitor.visitMethod(accessFlags, name, descriptor);
         }
-        return true;
+        return NVisitResult.CONTINUE;
     }
 
     private void ensureConstants(int size) {
@@ -284,23 +285,23 @@ public class JavaClassByteCode {
 
     public interface Visitor {
 
-        default boolean visitVersion(int major, int minor) {
-            return true;
+        default NVisitResult visitVersion(int major, int minor) {
+            return NVisitResult.CONTINUE;
         }
 
-        default boolean visitClassDeclaration(int accessFlags, String thisClass, String superClass, String[] interfaces) {
-            return true;
+        default NVisitResult visitClassDeclaration(int accessFlags, String thisClass, String superClass, String[] interfaces) {
+            return NVisitResult.CONTINUE;
         }
 
-        default boolean visitField(int accessFlags, String name, String descriptor) {
-            return true;
+        default NVisitResult visitField(int accessFlags, String name, String descriptor) {
+            return NVisitResult.CONTINUE;
         }
 
-        default boolean visitMethod(int accessFlags, String name, String descriptor) {
-            return true;
+        default NVisitResult visitMethod(int accessFlags, String name, String descriptor) {
+            return NVisitResult.CONTINUE;
         }
 
-        default boolean visitClassAttributeModule(ModuleInfo mi){return true;}
+        default NVisitResult visitClassAttributeModule(ModuleInfo mi){return NVisitResult.CONTINUE;}
     }
 
     public static class Constant {

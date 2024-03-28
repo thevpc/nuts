@@ -8,7 +8,7 @@ import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineUtils;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.text.NTerminalCommand;
+import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.log.NLog;
@@ -24,10 +24,10 @@ import java.util.logging.Level;
 
 public class NExecHelper extends AbstractSyncIProcessExecHelper {
 
-    NExecCommand pb;
+    NExecCmd pb;
     NPrintStream out;
 
-    public NExecHelper(NExecCommand pb, NSession session, NPrintStream out) {
+    public NExecHelper(NExecCmd pb, NSession session, NPrintStream out) {
         super(session);
         this.pb = pb;
         this.out = out;
@@ -40,7 +40,7 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
                                      NExecOutput err,
                                      NRunAs runAs,
                                      NSession session) {
-        NExecCommand pb = NExecCommand.of(session);
+        NExecCmd pb = NExecCmd.of(session);
         NCmdLineUtils.OptionsAndArgs optionsAndArgs = NCmdLineUtils.parseOptionsFirst(args);
         pb.setCommand(optionsAndArgs.getArgs())
                 .addExecutorOptions(optionsAndArgs.getOptions())
@@ -114,7 +114,7 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
 
     public Future<Integer> execAsync() {
         if (out != null) {
-            out.run(NTerminalCommand.MOVE_LINE_START, getSession());
+            out.run(NTerminalCmd.MOVE_LINE_START, getSession());
         }
         return NScheduler.of(getSession()).executorService().submit(() -> pb.getResultCode());
     }

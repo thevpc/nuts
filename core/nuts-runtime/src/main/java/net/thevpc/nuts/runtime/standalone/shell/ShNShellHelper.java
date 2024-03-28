@@ -87,7 +87,7 @@ public class ShNShellHelper extends AbstractNixNShellHelper {
     }
 
     @Override
-    public String[] parseCommandLineArr(String commandLineString, NSession session) {
+    public String[] parseCmdLineArr(String commandLineString, NSession session) {
         if (commandLineString == null) {
             return new String[0];
         }

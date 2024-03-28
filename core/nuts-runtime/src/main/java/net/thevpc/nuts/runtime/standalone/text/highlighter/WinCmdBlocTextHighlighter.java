@@ -23,7 +23,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
         this.ws = ws;
     }
 
-    private static NText[] parseCommandLine_readAntiSlash(StringReaderExt ar, NSession session) {
+    private static NText[] parseCmdLine_readAntiSlash(StringReaderExt ar, NSession session) {
         StringBuilder sb2 = new StringBuilder();
         sb2.append(ar.nextChar());
         if (ar.hasNext()) {
@@ -182,7 +182,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
         return txt.ofPlain(text);
     }
 
-    private NText[] parseCommandLine_readSimpleQuotes(StringReaderExt ar, NTexts txt, NSession session) {
+    private NText[] parseCmdLine_readSimpleQuotes(StringReaderExt ar, NTexts txt, NSession session) {
         StringBuilder sb = new StringBuilder();
         sb.append(ar.nextChar()); //quote!
         List<NText> ret = new ArrayList<>();
@@ -215,7 +215,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
         return ret.toArray(new NText[0]);
     }
 
-    private NText[] parseCommandLine_readWord(StringReaderExt ar, NTexts txt, NSession session) {
+    private NText[] parseCmdLine_readWord(StringReaderExt ar, NTexts txt, NSession session) {
         StringBuilder sb = new StringBuilder();
         List<NText> ret = new ArrayList<>();
         boolean inLoop = true;
@@ -228,7 +228,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
 //                        ret.add(txt.ofPlain(sb.toString()));
 //                        sb.setLength(0);
 //                    }
-//                    ret.addAll(Arrays.asList(parseCommandLine_readAntiSlash(ar, session)));
+//                    ret.addAll(Arrays.asList(parseCmdLine_readAntiSlash(ar, session)));
 //                    break;
 //                }
                 case ';': {
@@ -287,18 +287,18 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
         return ret.toArray(new NText[0]);
     }
 
-    private NText[] parseCommandLine_readDollar(StringReaderExt ar, NTexts txt, NSession session) {
+    private NText[] parseCmdLine_readDollar(StringReaderExt ar, NTexts txt, NSession session) {
         if (ar.peekChars("$((")) {
-            return parseCommandLine_readDollarPar2(ar, txt, session);
+            return parseCmdLine_readDollarPar2(ar, txt, session);
         }
         StringBuilder sb2 = new StringBuilder();
         if (ar.hasNext(1)) {
             switch (ar.peekChar(1)) {
                 case '(': {
-                    return parseCommandLine_readDollarPar2(ar, txt, session);
+                    return parseCmdLine_readDollarPar2(ar, txt, session);
                 }
                 case '{': {
-                    return parseCommandLine_readDollarCurlyBrackets(ar, txt, session);
+                    return parseCmdLine_readDollarCurlyBrackets(ar, txt, session);
                 }
                 case '*':
                 case '?':
@@ -337,7 +337,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                 txt.ofStyled("$", NTextStyle.separator()),};
     }
 
-    private NText[] parseCommandLine_readDoubleQuotes(StringReaderExt ar, NTexts txt, NSession session) {
+    private NText[] parseCmdLine_readDoubleQuotes(StringReaderExt ar, NTexts txt, NSession session) {
         List<NText> ret = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
 
@@ -349,14 +349,14 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                     ret.add(txt.ofStyled(sb.toString(), NutsTextStyle.string()));
                     sb.setLength(0);
                 }
-                ret.addAll(Arrays.asList(parseCommandLine_readAntiSlash(ar, session)));
+                ret.addAll(Arrays.asList(parseCmdLine_readAntiSlash(ar, session)));
             } else */
             if (c == '$') {
                 if (sb.length() > 0) {
                     ret.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
                     sb.setLength(0);
                 }
-                ret.addAll(Arrays.asList(parseCommandLine_readDollar(ar, txt, session)));
+                ret.addAll(Arrays.asList(parseCmdLine_readDollar(ar, txt, session)));
             } else if (c == '\"') {
                 if (sb.length() > 0) {
                     ret.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
@@ -375,7 +375,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
         return ret.toArray(new NText[0]);
     }
 
-    private NText[] parseCommandLine_readAntiQuotes(StringReaderExt ar, NTexts txt, NSession session) {
+    private NText[] parseCmdLine_readAntiQuotes(StringReaderExt ar, NTexts txt, NSession session) {
         List<NText> all = new ArrayList<>();
         all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
         boolean inLoop = true;
@@ -390,14 +390,14 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                     break;
                 }
                 default: {
-                    wasSpace = parseCommandLineStep(ar, all, 1, wasSpace, txt, session);
+                    wasSpace = parseCmdLineStep(ar, all, 1, wasSpace, txt, session);
                 }
             }
         }
         return all.toArray(new NText[0]);
     }
 
-    private NText[] parseCommandLine_readDollarPar(NWorkspace ws, StringReaderExt ar, NTexts txt, NSession session) {
+    private NText[] parseCmdLine_readDollarPar(NWorkspace ws, StringReaderExt ar, NTexts txt, NSession session) {
         List<NText> all = new ArrayList<>();
         all.add(txt.ofStyled(String.valueOf(ar.nextChar()) + ar.nextChar(), NTextStyle.separator()));
         boolean inLoop = true;
@@ -411,14 +411,14 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                     break;
                 }
                 default: {
-                    wasSpace = parseCommandLineStep(ar, all, 2, wasSpace, txt, session);
+                    wasSpace = parseCmdLineStep(ar, all, 2, wasSpace, txt, session);
                 }
             }
         }
         return all.toArray(new NText[0]);
     }
 
-    private NText[] parseCommandLine_readDollarPar2(StringReaderExt ar, NTexts txt, NSession session) {
+    private NText[] parseCmdLine_readDollarPar2(StringReaderExt ar, NTexts txt, NSession session) {
         List<NText> all = new ArrayList<>();
         all.add(txt.ofStyled(String.valueOf(ar.nextChar()) + ar.nextChar() + ar.nextChar(), NTextStyle.separator()));
         boolean inLoop = true;
@@ -441,19 +441,19 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                         all.add(txt.ofStyled(String.valueOf(ar.nextChars(2)), NTextStyle.separator()));
                         inLoop = false;
                     } else {
-                        wasSpace = parseCommandLineStep(ar, all, 2, wasSpace, txt, session);
+                        wasSpace = parseCmdLineStep(ar, all, 2, wasSpace, txt, session);
                     }
                     break;
                 }
                 default: {
-                    wasSpace = parseCommandLineStep(ar, all, 2, wasSpace, txt, session);
+                    wasSpace = parseCmdLineStep(ar, all, 2, wasSpace, txt, session);
                 }
             }
         }
         return all.toArray(new NText[0]);
     }
 
-    private NText[] parseCommandLine_readDollarCurlyBrackets(StringReaderExt ar, NTexts txt, NSession session) {
+    private NText[] parseCmdLine_readDollarCurlyBrackets(StringReaderExt ar, NTexts txt, NSession session) {
         List<NText> all = new ArrayList<>();
         all.add(txt.ofStyled(String.valueOf(ar.nextChar()) + ar.nextChar(), NTextStyle.separator()));
         boolean inLoop = true;
@@ -470,7 +470,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                 }
                 default: {
                     startIndex = all.size();
-                    wasSpace = parseCommandLineStep(ar, all, -1, wasSpace, txt, session);
+                    wasSpace = parseCmdLineStep(ar, all, -1, wasSpace, txt, session);
                     if (expectedName) {
                         expectedName = false;
                         if (all.size() > startIndex) {
@@ -486,7 +486,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
         return all.toArray(new NText[0]);
     }
 
-    private NText[] parseCommandLine_readPar2(StringReaderExt ar, NTexts txt, NSession session) {
+    private NText[] parseCmdLine_readPar2(StringReaderExt ar, NTexts txt, NSession session) {
         List<NText> all = new ArrayList<>();
         all.add(txt.ofStyled(String.valueOf(ar.nextChar()) + ar.nextChar(), NTextStyle.separator()));
         boolean inLoop = true;
@@ -499,12 +499,12 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                         all.add(txt.ofStyled(String.valueOf(ar.nextChars(2)), NTextStyle.separator()));
                         inLoop = false;
                     } else {
-                        wasSpace = parseCommandLineStep(ar, all, 2, wasSpace, txt, session);
+                        wasSpace = parseCmdLineStep(ar, all, 2, wasSpace, txt, session);
                     }
                     break;
                 }
                 default: {
-                    wasSpace = parseCommandLineStep(ar, all, 2, wasSpace, txt, session);
+                    wasSpace = parseCmdLineStep(ar, all, 2, wasSpace, txt, session);
                 }
             }
         }
@@ -520,7 +520,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
      * @param wasSpace   wasSpace
      * @return is space
      */
-    private boolean parseCommandLineStep(StringReaderExt ar, List<NText> all, int startIndex, boolean wasSpace, NTexts txt, NSession session) {
+    private boolean parseCmdLineStep(StringReaderExt ar, List<NText> all, int startIndex, boolean wasSpace, NTexts txt, NSession session) {
         char c = ar.peekChar();
         if (c <= 32) {
             all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(session, ar)));
@@ -528,19 +528,19 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
         }
         switch (c) {
             case '\'': {
-                all.addAll(Arrays.asList(parseCommandLine_readSimpleQuotes(ar, txt, session)));
+                all.addAll(Arrays.asList(parseCmdLine_readSimpleQuotes(ar, txt, session)));
                 break;
             }
             case '`': {
-                all.addAll(Arrays.asList(parseCommandLine_readAntiQuotes(ar, txt, session)));
+                all.addAll(Arrays.asList(parseCmdLine_readAntiQuotes(ar, txt, session)));
                 break;
             }
             case '"': {
-                all.addAll(Arrays.asList(parseCommandLine_readDoubleQuotes(ar, txt, session)));
+                all.addAll(Arrays.asList(parseCmdLine_readDoubleQuotes(ar, txt, session)));
                 break;
             }
             case '$': {
-                all.addAll(Arrays.asList(parseCommandLine_readDollar(ar, txt, session)));
+                all.addAll(Arrays.asList(parseCmdLine_readDollar(ar, txt, session)));
                 break;
             }
             case ';': {
@@ -626,7 +626,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
             }
             case '(': {
                 if (ar.peekChars("((")) {
-                    all.addAll(Arrays.asList(parseCommandLine_readPar2(ar, txt, session)));
+                    all.addAll(Arrays.asList(parseCmdLine_readPar2(ar, txt, session)));
                 } else {
                     all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                 }
@@ -669,7 +669,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
             default: {
                 if (startIndex >= 0) {
                     boolean first = all.size() == startIndex;
-                    all.addAll(Arrays.asList(parseCommandLine_readWord(ar, txt, session)));
+                    all.addAll(Arrays.asList(parseCmdLine_readWord(ar, txt, session)));
                     if (first) {
                         int i = indexOfFirstWord(all, startIndex);
                         if (i >= 0) {
@@ -677,19 +677,19 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                         }
                     }
                 } else {
-                    all.addAll(Arrays.asList(parseCommandLine_readWord(ar, txt, session)));
+                    all.addAll(Arrays.asList(parseCmdLine_readWord(ar, txt, session)));
                 }
             }
         }
         return false;
     }
 
-    private NText[] parseCommandLine(String commandLineString, NTexts txt, NSession session) {
-        StringReaderExt ar = new StringReaderExt(commandLineString);
+    private NText[] parseCmdLine(String cmdLineString, NTexts txt, NSession session) {
+        StringReaderExt ar = new StringReaderExt(cmdLineString);
         List<NText> all = new ArrayList<>();
         boolean wasSpace = true;
         while (ar.hasNext()) {
-            wasSpace = parseCommandLineStep(ar, all, 0, wasSpace, txt, session);
+            wasSpace = parseCmdLineStep(ar, all, 0, wasSpace, txt, session);
         }
         return all.toArray(new NText[0]);
     }
@@ -1155,7 +1155,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
     }
 
     public NText commandToNode(String text, NTexts txt, NSession session) {
-        return txt.ofList(parseCommandLine(text, txt, session));
+        return txt.ofList(parseCmdLine(text, txt, session));
     }
 
 }

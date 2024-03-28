@@ -10,9 +10,9 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinition;
 import net.thevpc.nuts.runtime.standalone.io.util.*;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableCommand;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.CharacterizedExecFile;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCommand;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmd;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NMsg;
@@ -26,7 +26,7 @@ import java.util.logging.Level;
 /**
  * @author thevpc
  */
-public class DefaultNArtifactPathExecutable extends AbstractNExecutableCommand implements Closeable {
+public class DefaultNArtifactPathExecutable extends AbstractNExecutableInformationExt implements Closeable {
 
     private final NLog LOG;
     String cmdName;
@@ -35,18 +35,18 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableCommand i
     List<String> workspaceOptions;
     NExecutionType executionType;
     NRunAs runAs;
-    DefaultNExecCommand execCommand;
+    DefaultNExecCmd execCommand;
     DefaultNDefinition nutToRun;
     CharacterizedExecFile c;
     String tempFolder;
-    DefaultNExecCommand.NExecutorComponentAndContext executorComponentAndContext;
+    DefaultNExecCmd.NExecutorComponentAndContext executorComponentAndContext;
 
     public DefaultNArtifactPathExecutable(String cmdName, String[] args, List<String> executorOptions, List<String> workspaceOptions,
-                                          NExecutionType executionType, NRunAs runAs, DefaultNExecCommand execCommand,
+                                          NExecutionType executionType, NRunAs runAs, DefaultNExecCmd execCommand,
                                           DefaultNDefinition nutToRun,
                                           CharacterizedExecFile c,
                                           String tempFolder,
-                                          DefaultNExecCommand.NExecutorComponentAndContext executorComponentAndContext
+                                          DefaultNExecCmd.NExecutorComponentAndContext executorComponentAndContext
     ) {
         super(cmdName,
                 NCmdLine.of(args).toString(),

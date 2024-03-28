@@ -169,7 +169,7 @@ public abstract class NShellBuiltinBase implements NShellBuiltin {
             return;
         }
         if (context.isAskVersion()) {
-            session.out().println(NIdResolver.of(session).resolveId(getClass()).getVersion());
+            session.out().println(NId.ofClass(getClass(),session).get().getVersion());
             return;
         }
         onCmdExec(cmdLine, context);

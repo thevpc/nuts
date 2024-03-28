@@ -8,7 +8,7 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NAnsiTermHelper;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.spi.NSystemTerminalBaseImpl;
-import net.thevpc.nuts.text.NTerminalCommand;
+import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NTextStyles;
 
 import java.io.InputStream;
@@ -81,7 +81,7 @@ public class AnsiNPrintStreamTerminalBase extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public Object run(NTerminalCommand command, NPrintStream printStream, NSession session) {
+    public Object run(NTerminalCmd command, NPrintStream printStream, NSession session) {
         String s = NAnsiTermHelper.of(session).command(command, session);
         if (s != null) {
             byte[] bytes = s.getBytes();

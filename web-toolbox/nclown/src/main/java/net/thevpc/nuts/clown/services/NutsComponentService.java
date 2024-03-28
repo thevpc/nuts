@@ -57,7 +57,7 @@ public class NutsComponentService {
         if (session == null) {
             return ResponseEntity.ok(new ArrayList<Map<String, String>>());
         }
-        List<NutsId> ids = NSearchCommand.of(session)
+        List<NutsId> ids = NSearchCmd.of(session)
             .setRepositoryFilter(
                 NutsClownUtils.trim(repositoryUuid).isEmpty() ? null :
                     NutsRepositoryFilters.of(session).byUuid(repositoryUuid)

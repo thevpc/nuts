@@ -364,7 +364,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         return false;
     }
 
-    public NExecCommand invokeCatalina(String catalinaCommand) {
+    public NExecCmd invokeCatalina(String catalinaCommand) {
         buildCatalinaBase();
         NPath catalinaHome = getCatalinaHome();
         NPath catalinaBase = getCatalinaBase();
@@ -374,7 +374,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         //b.
 //        b.setOutput(context.getSession().out());
 //        b.setErr(context.getSession().err());
-        NExecCommand b = NExecCommand.of(session)
+        NExecCmd b = NExecCmd.of(session)
                 .system();
         b.addCommand(catalinaHome + "/bin/catalina." + ext);
         b.addCommand(catalinaCommand);
@@ -473,7 +473,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             deleteOutLog();
         }
 
-        NExecCommand b = invokeCatalina("start");
+        NExecCmd b = invokeCatalina("start");
 //        try {
 //            b.waitFor();
 //        } catch (IOException ex) {
@@ -522,7 +522,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                             .addPlatform(NEnvs.of(session).getPlatform().toString())
             ).toString();
 
-            NSearchCommand searchLatestCommand = NSearchCommand.of(session).addId(cid)
+            NSearchCmd searchLatestCommand = NSearchCmd.of(session).addId(cid)
                     .setLatest(true);
             NDefinition r = searchLatestCommand
                     .setInstallStatus(NInstallStatusFilters.of(session).byDeployed(true))
@@ -541,7 +541,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 return r;
             } else {
                 //TODO: FIX install return
-                catalinaNDefinition = NInstallCommand.of(session)
+                catalinaNDefinition = NInstallCmd.of(session)
                         .addId(r.getId())
                         .setSession(getSession().copy().addListener(new NInstallListener() {
                             @Override
@@ -585,7 +585,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             return false;
         }
         LocalTomcatConfig c = getConfig();
-        NExecCommand b = invokeCatalina("stop");
+        NExecCmd b = invokeCatalina("stop");
         return waitForStoppedStatus(c.getShutdownWaitTime(), c.isKill());
     }
 

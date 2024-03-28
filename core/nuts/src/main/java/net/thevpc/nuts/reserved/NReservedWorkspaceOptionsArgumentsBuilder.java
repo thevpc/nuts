@@ -354,7 +354,7 @@ public class NReservedWorkspaceOptionsArgumentsBuilder {
     }
 
 
-    public NCmdLine toCommandLine() {
+    public NCmdLine toCmdLine() {
         NVersion apiVersionObj = config.getApiVersion();
         List<String> arguments = new ArrayList<>();
 

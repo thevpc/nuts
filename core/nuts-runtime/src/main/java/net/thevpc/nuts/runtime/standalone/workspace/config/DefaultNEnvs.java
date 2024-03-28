@@ -6,6 +6,7 @@ import net.thevpc.nuts.env.NDesktopEnvironmentFamily;
 import net.thevpc.nuts.env.NDesktopIntegrationItem;
 import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;

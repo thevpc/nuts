@@ -1,0 +1,15 @@
+[Unit]
+Description=PRobot System Server
+
+[Service]
+User=$$USER$$
+WorkingDirectory=$$APP_INSTALL_DIR$$
+ExecStart=$$START_COMMANDLINE$$
+ExecStop=$$STOP_COMMANDLINE$$
+SuccessExitStatus=0
+TimeoutStopSec=10
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

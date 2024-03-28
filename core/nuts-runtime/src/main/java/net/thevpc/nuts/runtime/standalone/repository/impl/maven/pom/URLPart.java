@@ -26,6 +26,12 @@
 */
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom;
 
+import net.thevpc.nuts.runtime.standalone.io.path.spi.URLPath;
+
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 /**
  *
  * @author thevpc
@@ -53,16 +59,35 @@ public class URLPart {
         return type;
     }
 
+    public File getFile() {
+        String path = getPath();
+        if (getType() == URLPart.Type.FS_FILE) {
+            return new File(path);
+        } else if(getType() == Type.URL_FILE){
+            try {
+                if (path.startsWith("file:")) {
+                    return URLPath._toFile(new URL(path));
+                } else {
+                    return new File(path);
+                }
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        throw new RuntimeException("not a file : "+path);
+    }
+
     public String getPath() {
         return path;
     }
 
     @Override
     public String toString() {
-        return "PathItem{" + "type=" + type + ", path=" + path + '}';
+        return "URLPart{" + "type=" + type + ", path=" + path + '}';
     }
 
     public enum Type{
         WEB, FS_FILE,URL_FILE,URL,JAR
     }
+
 }

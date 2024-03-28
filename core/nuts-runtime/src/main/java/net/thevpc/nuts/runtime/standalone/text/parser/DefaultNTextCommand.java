@@ -27,8 +27,8 @@
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.text.NTerminalCommand;
-import net.thevpc.nuts.text.NTextCommand;
+import net.thevpc.nuts.text.NTerminalCmd;
+import net.thevpc.nuts.text.NTextCmd;
 import net.thevpc.nuts.text.NTextType;
 
 import java.util.Objects;
@@ -36,11 +36,11 @@ import java.util.Objects;
 /**
  * Created by vpc on 5/23/17.
  */
-public class DefaultNTextCommand extends NTextSpecialBase implements NTextCommand {
+public class DefaultNTextCommand extends NTextSpecialBase implements NTextCmd {
 
-    private final NTerminalCommand command;
+    private final NTerminalCmd command;
 
-    public DefaultNTextCommand(NSession session, String start, NTerminalCommand command, String separator, String end) {
+    public DefaultNTextCommand(NSession session, String start, NTerminalCmd command, String separator, String end) {
         super(session, start, command.getName(),
                 (command.getArgs() != null && command.getArgs().size() > 0 && (separator == null || separator.isEmpty())) ? " " : separator
                 , end);
@@ -57,7 +57,7 @@ public class DefaultNTextCommand extends NTextSpecialBase implements NTextComman
     }
 
     @Override
-    public NTerminalCommand getCommand() {
+    public NTerminalCmd getCommand() {
         return command;
     }
 

@@ -94,56 +94,56 @@ public interface NRepositorySPI {
      *
      * @return deploy command
      */
-    NDeployRepositoryCommand deploy();
+    NDeployRepositoryCmd deploy();
 
     /**
      * create undeploy command
      *
      * @return undeploy command
      */
-    NRepositoryUndeployCommand undeploy();
+    NRepositoryUndeployCmd undeploy();
 
     /**
      * create push command
      *
      * @return push command
      */
-    NPushRepositoryCommand push();
+    NPushRepositoryCmd push();
 
     /**
      * create fetchDescriptor command
      *
      * @return fetchDescriptor command
      */
-    NFetchDescriptorRepositoryCommand fetchDescriptor();
+    NFetchDescriptorRepositoryCmd fetchDescriptor();
 
     /**
      * create fetchContent command
      *
      * @return fetchContent command
      */
-    NFetchContentRepositoryCommand fetchContent();
+    NFetchContentRepositoryCmd fetchContent();
 
     /**
      * create search command
      *
      * @return search command
      */
-    NSearchRepositoryCommand search();
+    NSearchRepositoryCmd search();
 
     /**
      * create searchVersions command
      *
      * @return searchVersions command
      */
-    NSearchVersionsRepositoryCommand searchVersions();
+    NSearchVersionsRepositoryCmd searchVersions();
 
     /**
      * create update statistics command
      *
      * @return update statistics command
      */
-    NUpdateRepositoryStatisticsCommand updateStatistics();
+    NUpdateRepositoryStatsCmd updateStatistics();
 
 //    /**
 //     * remove repository listener

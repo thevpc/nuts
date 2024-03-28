@@ -10,7 +10,7 @@ public class ExamplesOfSearch {
 
     public void executeSearch(NSession session) {
         session.out().println("Example of ## Search ##");
-        for (NDefinition def : NSearchCommand.of(session)
+        for (NDefinition def : NSearchCmd.of(session)
                 .addId("net.thevpc.nuts:nuts")
                 .setInstallStatus(NInstallStatusFilters.of(session).byDeployed(true))
                 .getResultDefinitions()) {

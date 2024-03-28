@@ -12,8 +12,8 @@ import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableCommand;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCommandExtensionContext;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmdExtensionContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -25,19 +25,19 @@ import java.util.List;
 /**
  * @author thevpc
  */
-public class DefaultNSystemExecutableRemote extends AbstractNExecutableCommand {
+public class DefaultNSystemExecutableRemote extends AbstractNExecutableInformationExt {
 
     String[] cmd;
     List<String> executorOptions;
     private boolean showCommand = false;
-    private NExecCommandExtension commExec;
+    private NExecCmdExtension commExec;
     private NExecInput in;
     private NExecOutput out;
     private NExecOutput err;
 
-    public DefaultNSystemExecutableRemote(NExecCommandExtension commExec, String[] cmd,
+    public DefaultNSystemExecutableRemote(NExecCmdExtension commExec, String[] cmd,
                                           List<String> executorOptions,
-                                          NExecCommand execCommand,
+                                          NExecCmd execCommand,
                                           NExecInput in,
                                           NExecOutput out,
                                           NExecOutput err
@@ -94,8 +94,8 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableCommand {
             @Override
             public int exec() {
                 NSession session = getSession();
-                NExecCommand execCommand = getExecCommand();
-                try(DefaultNExecCommandExtensionContext d=new DefaultNExecCommandExtensionContext(
+                NExecCmd execCommand = getExecCommand();
+                try(DefaultNExecCmdExtensionContext d=new DefaultNExecCmdExtensionContext(
                         execCommand.getTarget(),
                         cmd,
                         session,

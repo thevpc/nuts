@@ -5,9 +5,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.fetch;
 
-import net.thevpc.nuts.NExecCommand;
+import net.thevpc.nuts.NExecCmd;
 import net.thevpc.nuts.NExecutionException;
-import net.thevpc.nuts.NFetchCommand;
+import net.thevpc.nuts.NFetchCmd;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 
@@ -17,7 +17,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
  */
 public class DefaultNFetchInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNFetchInternalExecutable(String[] args, NExecCommand execCommand) {
+    public DefaultNFetchInternalExecutable(String[] args, NExecCmd execCommand) {
         super("fetch", args, execCommand);
     }
 
@@ -31,7 +31,7 @@ public class DefaultNFetchInternalExecutable extends DefaultInternalNExecutableC
             showDefaultHelp();
             return NExecutionException.SUCCESS;
         }
-        NFetchCommand.of(getSession()).configure(false, args).run();
+        NFetchCmd.of(getSession()).configure(false, args).run();
         return NExecutionException.SUCCESS;
     }
 

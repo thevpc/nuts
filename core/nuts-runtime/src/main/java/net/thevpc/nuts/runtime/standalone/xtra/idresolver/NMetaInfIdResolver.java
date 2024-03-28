@@ -29,10 +29,14 @@ public class NMetaInfIdResolver {
         this.session = session;
     }
 
-    public NId[] resolvePomId(NPath baseUrl, String referenceResourcePath, NSession session) {
+    public NId[] resolvePomIds(NPath baseUrl, NSession session) {
+        return resolvePomIds(baseUrl, null, session);
+    }
+
+    public NId[] resolvePomIds(NPath baseUrl, String referenceResourcePath, NSession session) {
         List<NId> all = new ArrayList<>();
         final URLParts aa = new URLParts(baseUrl.toURL().get());
-        String basePath = aa.getLastPart().getPath().substring(0, aa.getLastPart().getPath().length() - referenceResourcePath.length());
+        String basePath = aa.getLastPart().getPath().substring(0, aa.getLastPart().getPath().length() - (referenceResourcePath == null ? 0 : referenceResourcePath.length()));
         if (!basePath.endsWith("/")) {
             basePath += "/";
         }
@@ -50,11 +54,11 @@ public class NMetaInfIdResolver {
                 try {
                     NDescriptor d = NDescriptorParser.of(session).parse(url).get(session);
                     NId id = d.getId();
-                    if(id!=null && id.getVersion()!=null && !id.getVersion().isBlank()){
+                    if (id != null && id.getVersion() != null && !id.getVersion().isBlank()) {
                         all.add(id);
                     }
                 } catch (Exception ex) {
-                    NLogOp.of(NPomXmlParser.class,session)
+                    NLogOp.of(NPomXmlParser.class, session)
                             .verb(NLogVerb.WARNING)
                             .level(Level.FINEST)
                             .log(NMsg.ofC("failed to parse pom file %s : %s", url, ex));
@@ -78,14 +82,14 @@ public class NMetaInfIdResolver {
                         //
                     }
                     String version = prop.getProperty("id");
-                    if(!NBlankable.isBlank(version)){
+                    if (!NBlankable.isBlank(version)) {
                         NId id = NId.of(version).orNull();
-                        if(id!=null && id.getVersion()!=null && !id.getVersion().isBlank()){
+                        if (id != null && id.getVersion() != null && !id.getVersion().isBlank()) {
                             all.add(id);
                         }
                     }
                 } catch (Exception ex) {
-                    NLogOp.of(NPomXmlParser.class,session)
+                    NLogOp.of(NPomXmlParser.class, session)
                             .verb(NLogVerb.WARNING)
                             .level(Level.FINEST)
                             .log(NMsg.ofC("failed to parse pom file %s : %s", url, ex));
@@ -117,18 +121,18 @@ public class NMetaInfIdResolver {
             final String n = clazz.getName().replace('.', '/').concat(".class");
             final Enumeration<URL> r = clazz.getClassLoader().getResources(n);
             for (URL url : Collections.list(r)) {
-                all.addAll(Arrays.asList(resolvePomId(
-                        NPath.of(url,session), n, session)));
+                all.addAll(Arrays.asList(resolvePomIds(
+                        NPath.of(url, session), n, session)));
             }
         } catch (IOException ex) {
-            NLogOp.of(NPomXmlParser.class,session)
+            NLogOp.of(NPomXmlParser.class, session)
                     .verb(NLogVerb.WARNING)
                     .level(Level.FINEST)
                     .log(NMsg.ofC("failed to parse class %s : %s", clazz.getName(), ex));
         }
-        if(all.isEmpty() && JavaClassUtils.isCGLib(clazz)){
+        if (all.isEmpty() && JavaClassUtils.isCGLib(clazz)) {
             Class s = JavaClassUtils.unwrapCGLib(clazz);
-            if(s!=null){
+            if (s != null) {
                 return resolvePomIds(s);
             }
         }
@@ -165,7 +169,6 @@ public class NMetaInfIdResolver {
         URL url = clazz.getClassLoader().getResource("META-INF/maven/" + groupId + "/" + artifactId + "/pom.properties");
 
         if (url != null) {
-//            System.out.println("== " + url);
             Properties p = new Properties();
             try {
                 p.load(url.openStream());
@@ -174,10 +177,8 @@ public class NMetaInfIdResolver {
             }
             String version = p.getProperty("version");
             if (version != null && version.trim().length() != 0) {
-//                System.out.println("\t found!!");
                 return version;
             }
-//            System.out.println("\t not found");
         }
         return defaultValue;
     }

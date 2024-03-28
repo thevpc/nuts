@@ -1,6 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.util.jclass;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.format.NVisitResult;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.NPomIdResolver;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.NPomXmlParser;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.URLParts;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NPomId;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNExecutionEntry;
 import net.thevpc.nuts.log.NLogOp;
@@ -9,8 +16,11 @@ import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NRef;
 
 import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Modifier;
+import java.net.URL;
+import java.util.*;
 import java.util.logging.Level;
 
 public class JavaClassUtils {
@@ -19,6 +29,32 @@ public class JavaClassUtils {
             return clazz.getSuperclass();
         }
         return clazz;
+    }
+
+    public static List<URL> resolveURLs(Class clazz) {
+        List<URL> all=new ArrayList<>();
+        try {
+            final String n = clazz.getName().replace('.', '/').concat(".class");
+            ClassLoader classLoader = clazz.getClassLoader();
+            if(classLoader==null){
+                return null;
+            }
+            final Enumeration<URL> r = classLoader.getResources(n);
+            ArrayList<URL> list = Collections.list(r);
+            for (URL url : list) {
+                String s = url.toString();
+                if(s.endsWith(n)){
+                    String substring = s.substring(0, s.length() - n.length());
+                    if(substring.startsWith("jar:") && substring.endsWith("!/")){
+                        substring=substring.substring("jar:".length(),substring.length()-"!/".length());
+                    }
+                    all.add(new URL(substring));
+                }
+            }
+        } catch (IOException ex) {
+            //
+        }
+        return all;
     }
 
     public static boolean isCGLib(Class clazz) {
@@ -43,7 +79,7 @@ public class JavaClassUtils {
         final NRef<String> className = new NRef<>();
         JavaClassByteCode.Visitor cl = new JavaClassByteCode.Visitor() {
             @Override
-            public boolean visitClassDeclaration(int access, String name, String superName, String[] interfaces) {
+            public NVisitResult visitClassDeclaration(int access, String name, String superName, String[] interfaces) {
                 //v0.8.0
                 //TODO remove me
                 if (superName != null && superName.equals("net/thevpc/nuts/NApplication")) {
@@ -69,17 +105,17 @@ public class JavaClassUtils {
                     }
                 }
                 className.set(name.replace('/', '.'));
-                return true;
+                return NVisitResult.CONTINUE;
             }
 
             @Override
-            public boolean visitMethod(int access, String name, String desc) {
+            public NVisitResult visitMethod(int access, String name, String desc) {
                 if (name.equals("main") && desc.equals("([Ljava/lang/String;)V")
                         && Modifier.isPublic(access)
                         && Modifier.isStatic(access)) {
                     mainClass.set(true);
                 }
-                return true;
+                return NVisitResult.CONTINUE;
             }
         };
         JavaClassByteCode classReader = new JavaClassByteCode(new BufferedInputStream(stream), cl, session);

@@ -137,7 +137,7 @@ public class SshCommand extends NShellBuiltinDefault {
                         nutsCommandFound = true;
                     }
                     if (!nutsCommandFound) {
-                        NPath from = NSearchCommand.of(session).addId(session.getWorkspace().getApiId()).getResultDefinitions().findFirst().get().getContent().orNull();
+                        NPath from = NSearchCmd.of(session).addId(session.getWorkspace().getApiId()).getResultDefinitions().findFirst().get().getContent().orNull();
                         NAssert.requireNonNull(from, "jar file", session);
                         context.out().println(NMsg.ofC("Detected nuts.jar location : %s", from));
                         String bootApiFileName = "nuts-" + session.getWorkspace().getApiId() + ".jar";

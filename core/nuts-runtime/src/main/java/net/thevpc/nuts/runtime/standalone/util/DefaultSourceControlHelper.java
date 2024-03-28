@@ -62,7 +62,7 @@ public class DefaultSourceControlHelper {
             String newVersion = NVersion.of(oldVersion).get(session).inc().getValue();
             NDefinition newVersionFound = null;
             try {
-                newVersionFound = NFetchCommand.of(d.getId().builder().setVersion(newVersion).build(), session).getResultDefinition();
+                newVersionFound = NFetchCmd.of(d.getId().builder().setVersion(newVersion).build(), session).getResultDefinition();
             } catch (NNotFoundException ex) {
                 _LOGOP(session).level(Level.FINE).error(ex)
                         .log(NMsg.ofJ("failed to fetch {0}", d.getId().builder().setVersion(newVersion).build()));
@@ -73,7 +73,7 @@ public class DefaultSourceControlHelper {
             } else {
                 d = d.builder().setId(d.getId().builder().setVersion(oldVersion + ".1").build()).build();
             }
-            NId newId = NDeployCommand.of(session).setContent(folder).setDescriptor(d).getResult().get(0);
+            NId newId = NDeployCmd.of(session).setContent(folder).setDescriptor(d).getResult().get(0);
             d.formatter(session).print(file);
             CoreIOUtils.delete(session, folder);
             return newId;
@@ -91,7 +91,7 @@ public class DefaultSourceControlHelper {
     public NDefinition checkout(NId id, Path folder, NSession session) {
         NSessionUtils.checkSession(ws, session);
         NWorkspaceSecurityManager.of(session).checkAllowed(NConstants.Permissions.INSTALL, "checkout");
-        NDefinition nutToInstall = NFetchCommand.of(id, session).setOptional(false).setDependencies(true).getResultDefinition();
+        NDefinition nutToInstall = NFetchCmd.of(id, session).setOptional(false).setDependencies(true).getResultDefinition();
         if ("zip".equals(nutToInstall.getDescriptor().getPackaging())) {
 
             try {

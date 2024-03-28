@@ -37,7 +37,7 @@ public class DefaultNTextNodeBuilder implements NTextBuilder {
     }
 
     @Override
-    public NTextBuilder appendCommand(NTerminalCommand command) {
+    public NTextBuilder appendCommand(NTerminalCmd command) {
         append(txt.ofCommand(command));
         return this;
     }

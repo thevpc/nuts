@@ -848,14 +848,17 @@ public final class NReservedMavenUtils {
 //        boolean devMode = false;
         String propValue = null;
         try {
-            switch (propName) {
-                case "groupId":
-                case "artifactId":
-                case "versionId": {
-                    propValue = NReservedIOUtils.loadURLProperties(
-                            Nuts.class.getResource("/META-INF/maven/net.thevpc.nuts/nuts/pom.properties"),
-                            null, false, bLog).getProperty(propName);
-                    break;
+            URL resource = Nuts.class.getResource("/META-INF/maven/net.thevpc.nuts/nuts/pom.properties");
+            if (resource != null) {
+                switch (propName) {
+                    case "groupId":
+                    case "artifactId":
+                    case "version": {
+                        propValue = NReservedIOUtils.loadURLProperties(
+                                resource,
+                                null, false, bLog).getProperty(propName);
+                        break;
+                    }
                 }
             }
         } catch (Exception ex) {
@@ -891,6 +894,40 @@ public final class NReservedMavenUtils {
                     }
                 }
             }
+        }
+        if (!NBlankable.isBlank(propValue)) {
+            return propValue;
+        }
+        try {
+            URL resource = Nuts.class.getResource("/META-INF/nuts/net.thevpc.nuts/nuts/nuts.properties");
+            if (resource != null) {
+                switch (propName) {
+                    case "groupId":
+                    case "artifactId":
+                    case "version": {
+                        String id = NReservedIOUtils.loadURLProperties(
+                                resource,
+                                null, false, bLog).getProperty("id");
+                        if(!NBlankable.isBlank(id)){
+                            NId nId = NId.of(id).orNull();
+                            switch (propName) {
+                                case "groupId":
+                                    propValue = nId.getGroupId();
+                                    break;
+                                case "artifactId":
+                                    propValue = nId.getArtifactId();
+                                    break;
+                                case "version":
+                                    propValue = nId.getVersion().toString();
+                                    break;
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            //
         }
         if (!NBlankable.isBlank(propValue)) {
             return propValue;

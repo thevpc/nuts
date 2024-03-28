@@ -5,9 +5,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.install;
 
-import net.thevpc.nuts.NExecCommand;
+import net.thevpc.nuts.NExecCmd;
 import net.thevpc.nuts.NExecutionException;
-import net.thevpc.nuts.NInstallCommand;
+import net.thevpc.nuts.NInstallCmd;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 
@@ -17,7 +17,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
  */
 public class DefaultNInstallInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNInstallInternalExecutable(String[] args, NExecCommand execCommand) {
+    public DefaultNInstallInternalExecutable(String[] args, NExecCmd execCommand) {
         super("install", args, execCommand);
     }
 
@@ -31,7 +31,7 @@ public class DefaultNInstallInternalExecutable extends DefaultInternalNExecutabl
             showDefaultHelp();
             return NExecutionException.SUCCESS;
         }
-        NInstallCommand.of(getSession()).configure(false, args).run();
+        NInstallCmd.of(getSession()).configure(false, args).run();
         return NExecutionException.SUCCESS;
     }
 }

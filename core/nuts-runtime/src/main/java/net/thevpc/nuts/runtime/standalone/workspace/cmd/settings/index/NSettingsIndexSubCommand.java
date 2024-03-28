@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.index;
 import net.thevpc.nuts.NConfigs;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NUpdateStatisticsCommand;
+import net.thevpc.nuts.NUpdateStatsCmd;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 
@@ -38,7 +38,7 @@ public class NSettingsIndexSubCommand extends AbstractNSettingsSubCommand {
 
     private void updateStatistics(NSession session, String[] repos) {
         NConfigs cfg = NConfigs.of(session);
-        NUpdateStatisticsCommand cmd = NUpdateStatisticsCommand.of(session);
+        NUpdateStatsCmd cmd = NUpdateStatsCmd.of(session);
         for (String repo : repos) {
             cmd.add(repo);
         }

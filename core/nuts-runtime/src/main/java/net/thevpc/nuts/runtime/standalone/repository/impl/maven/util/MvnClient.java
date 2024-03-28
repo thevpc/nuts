@@ -32,12 +32,12 @@ public class MvnClient {
             case INIT: {
                 status = Status.DIRTY;
                 try {
-                    NDefinition ff = NSearchCommand.of(session.copy().setFetchStrategy(NFetchStrategy.ONLINE))
+                    NDefinition ff = NSearchCmd.of(session.copy().setFetchStrategy(NFetchStrategy.ONLINE))
                             .addId(NET_VPC_APP_NUTS_MVN)
                             .setOptional(false)
                             .setInlineDependencies(true).setLatest(true).getResultDefinitions().findFirst().get();
-                    for (NId nutsId : NSearchCommand.of(this.session).addId(ff.getId()).setInlineDependencies(true).getResultIds()) {
-                        NFetchCommand.of(nutsId,session.copy().setFetchStrategy(NFetchStrategy.ONLINE))
+                    for (NId nutsId : NSearchCmd.of(this.session).addId(ff.getId()).setInlineDependencies(true).getResultIds()) {
+                        NFetchCmd.of(nutsId,session.copy().setFetchStrategy(NFetchStrategy.ONLINE))
                                 .setOptional(false)
                                 .setDependencies(true).getResultDefinition();
                     }
@@ -63,7 +63,7 @@ public class MvnClient {
             }
         }
         try {
-            NExecCommand b = NExecCommand.of(session)
+            NExecCmd b = NExecCmd.of(session)
                     .failFast()
                     .addCommand(
                             NET_VPC_APP_NUTS_MVN,

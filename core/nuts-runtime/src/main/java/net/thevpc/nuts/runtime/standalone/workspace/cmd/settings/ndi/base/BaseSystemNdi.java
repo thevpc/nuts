@@ -15,7 +15,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.*;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.script.FromTemplateScriptBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.script.SimpleScriptBuilder;
-import net.thevpc.nuts.security.NDigest;
+import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.*;
@@ -181,7 +181,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
             NDefinition fetched = null;
             if (nid.getVersion().isBlank()) {
-                fetched = NSearchCommand.of(session.copy())
+                fetched = NSearchCmd.of(session.copy())
                         .addId(options.getId()).setLatest(true).getResultDefinitions().findFirst().get();
                 nid = fetched.getId().getShortId();
                 //nutsId=fetched.getId().getLongNameId();
@@ -413,7 +413,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     private NDefinition loadIdDefinition(NId nid) {
-        return NSearchCommand.of(session).addId(nid).setLatest(true).setEffective(true).setDistinct(true).getResultDefinitions().findSingleton().get();
+        return NSearchCmd.of(session).addId(nid).setLatest(true).setEffective(true).setDistinct(true).getResultDefinitions().findSingleton().get();
     }
 
     public NSupportMode getDesktopIntegrationSupport(NDesktopIntegrationItem target) {
@@ -717,7 +717,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
             return getPreferredIconPath(rt);
         }
-        NDefinition appDef = NSearchCommand.of(session).addId(appId).setLatest(true).setEffective(true).setDistinct(true).getResultDefinitions()
+        NDefinition appDef = NSearchCmd.of(session).addId(appId).setLatest(true).setEffective(true).setDistinct(true).getResultDefinitions()
                 .findSingleton().get();
         String descAppIcon = resolveBestIcon(appDef.getId(),appDef.getDescriptor().getIcons());
         if (descAppIcon == null) {
@@ -779,7 +779,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     public Path getShortcutPath(NdiScriptOptions options) {
-        NDefinition appDef = NSearchCommand.of(options.getSession())
+        NDefinition appDef = NSearchCmd.of(options.getSession())
                 .addId(options.getId())
                 .setLatest(true)
                 .setEffective(true)
@@ -796,7 +796,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         String apiVersion = options.getNutsApiVersion().toString();
         NAssert.requireNonBlank(apiVersion, "nuts-api version to link to", session);
         NId apiId = session.getWorkspace().getApiId().builder().setVersion(apiVersion).build();
-        NDefinition apiDefinition = NSearchCommand.of(session).addId(apiId).failFast().latest()
+        NDefinition apiDefinition = NSearchCmd.of(session).addId(apiId).failFast().latest()
                 .content()
                 .distinct()
                 .getResultDefinitions()

@@ -127,7 +127,7 @@ public interface NCommands extends NComponent,NSessionProvider {
      * @param forOwner if not null, the alias name should resolve to the owner
      * @return alias definition or null
      */
-    NCustomCommand findCommand(String name, NId forId, NId forOwner);
+    NCustomCmd findCommand(String name, NId forId, NId forOwner);
 
     /**
      * return the first command for a given name, id and owner.
@@ -136,14 +136,14 @@ public interface NCommands extends NComponent,NSessionProvider {
      * @param name command name, not null
      * @return alias definition or null
      */
-    NCustomCommand findCommand(String name);
+    NCustomCmd findCommand(String name);
 
     /**
      * find all registered and factory defined commands
      *
      * @return find all registered and factory defined commands
      */
-    List<NCustomCommand> findAllCommands();
+    List<NCustomCmd> findAllCommands();
 
     /**
      * find all registered and factory defined commands by owner
@@ -151,7 +151,7 @@ public interface NCommands extends NComponent,NSessionProvider {
      * @param id owner
      * @return all registered and factory defined commands by owner
      */
-    List<NCustomCommand> findCommandsByOwner(NId id);
+    List<NCustomCmd> findCommandsByOwner(NId id);
 
     /**
      * update current session

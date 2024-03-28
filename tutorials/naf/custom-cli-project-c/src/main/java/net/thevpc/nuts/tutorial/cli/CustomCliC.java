@@ -21,7 +21,7 @@ public class CustomCliC implements NApplication {
 
     @Override
     public void run(NSession session) {
-        NCmdLine cmdLine = session.getAppCommandLine();
+        NCmdLine cmdLine = session.getAppCmdLine();
         NRef<Boolean> boolOption = NRef.of(false);
         NRef<String> stringOption = NRef.ofNull();
         List<String> others = new ArrayList<>();

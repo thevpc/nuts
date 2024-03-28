@@ -17,8 +17,8 @@ import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.spi.NDeployRepositoryCommand;
-import net.thevpc.nuts.spi.NPushRepositoryCommand;
+import net.thevpc.nuts.spi.NDeployRepositoryCmd;
+import net.thevpc.nuts.spi.NPushRepositoryCmd;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NIterator;
@@ -147,7 +147,7 @@ public class NRepositoryMirroringHelper {
 
     }
 
-    public void push(NPushRepositoryCommand cmd) {
+    public void push(NPushRepositoryCmd cmd) {
         NSession session = cmd.getSession();
         NSessionUtils.checkSession(getWorkspace(), session);
         NId id = cmd.getId();
@@ -190,7 +190,7 @@ public class NRepositoryMirroringHelper {
             NId effId = CoreNIdUtils.createContentFaceId(id.builder().setPropertiesQuery("").build(), desc,session)
 //                    .setAlternative(NutsUtilStrings.trim(desc.getAlternative()))
                     ;
-            NDeployRepositoryCommand dep = repoSPI.deploy()
+            NDeployRepositoryCmd dep = repoSPI.deploy()
                     .setId(effId)
                     .setContent(local)
                     .setDescriptor(desc)
