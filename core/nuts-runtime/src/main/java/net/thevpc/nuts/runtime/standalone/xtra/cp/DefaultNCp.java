@@ -348,7 +348,7 @@ public class DefaultNCp implements NCp {
     @Override
     public byte[] getByteArrayResult() {
         checkSession();
-        NMemoryPrintStream b = NPrintStream.ofInMemory(session);
+        NMemoryPrintStream b = NPrintStream.ofMem(session);
         to(b);
         removeOptions(NPathOption.SAFE);
         run();

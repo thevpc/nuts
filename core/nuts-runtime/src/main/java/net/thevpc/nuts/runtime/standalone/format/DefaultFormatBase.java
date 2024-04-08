@@ -80,7 +80,7 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
         checkSession();
         boolean ntf = isNtf();
         try {
-            NPrintStream out = NPrintStream.ofInMemory(NTerminalMode.INHERITED, getSession());
+            NPrintStream out = NPrintStream.ofMem(NTerminalMode.INHERITED, getSession());
             print(out);
             return out.toString();
         } finally {

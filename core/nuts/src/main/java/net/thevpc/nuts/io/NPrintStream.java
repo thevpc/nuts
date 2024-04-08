@@ -53,11 +53,11 @@ public interface NPrintStream extends NOutputTarget, NSessionProvider {
      * @param session session
      * @return new in-memory NutsPrintStream implementation
      */
-    static NMemoryPrintStream ofInMemory(NSession session) {
+    static NMemoryPrintStream ofMem(NSession session) {
         return NIO.of(session).ofInMemoryPrintStream();
     }
 
-    static NMemoryPrintStream ofInMemory(NTerminalMode mode, NSession session) {
+    static NMemoryPrintStream ofMem(NTerminalMode mode, NSession session) {
         return NIO.of(session).ofInMemoryPrintStream(mode);
     }
 

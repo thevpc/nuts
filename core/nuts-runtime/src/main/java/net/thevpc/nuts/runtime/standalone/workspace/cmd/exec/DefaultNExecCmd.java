@@ -54,6 +54,7 @@ import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.spi.NExecutorComponent;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.util.*;
 
 import java.io.File;
@@ -269,11 +270,61 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
 //        }
 //    }
 
-    @Override
-    public NExecCmd run() {
-        checkSession();
-        try (NExecutableInformationExt exec = (NExecutableInformationExt) which()) {
-            executed = true;
+    private void runLoop(NExecutableInformationExt exec) {
+        int count = 0;
+        NExecutionException err = null;
+        while (true) {
+            err = null;
+            try {
+                runOnce(exec);
+            } catch (NExecutionException e) {
+                err = e;
+            }
+            count++;
+            if (this.multipleRunsMaxCount >= 0) {
+                if (count >= this.multipleRunsMaxCount) {
+                    break;
+                }
+            }
+            if (executionTime.getTimeAsMillis() <= multipleRunsMinTimeMs) {
+                //exec exited too fast
+                break;
+            }
+            if (multipleRunsSafeTimeMs > 0) {
+                try {
+                    Thread.sleep(multipleRunsSafeTimeMs);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+        if (err != null) {
+            throw err;
+        }
+    }
+
+    private void runOnceOrMultiple(NExecutableInformationExt exec) {
+        if (this.multipleRuns || !NBlankable.isBlank(this.multipleRunsCron)) {
+            if (NBlankable.isBlank(this.multipleRunsCron)) {
+                runLoop(exec);
+            } else {
+                if (this.multipleRuns) {
+                    runLoop(exec);
+                } else {
+                    //cron not supported yet
+                    runOnce(exec);
+                }
+            }
+        } else {
+            runOnce(exec);
+        }
+    }
+
+    private void runOnce(NExecutableInformationExt exec) {
+        executed = true;
+        executionTime = null;
+        NChronometer chrono = NChronometer.startNow();
+        try {
             int exitCode = NExecutionException.SUCCESS;
             try {
                 exitCode = exec.execute();
@@ -312,6 +363,17 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                 throw resultException;
 //            checkFailFast(result.getExitCode());
             }
+        } finally {
+            chrono.stop();
+            executionTime = chrono.getDuration();
+        }
+    }
+
+    @Override
+    public NExecCmd run() {
+        checkSession();
+        try (NExecutableInformationExt exec = (NExecutableInformationExt) which()) {
+            runOnceOrMultiple(exec);
         }
         return this;
     }
@@ -760,7 +822,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
 
     protected NExecutableInformationExt ws_execId(NId goodId, String commandName, String[] appArgs, List<String> executorOptions,
                                                   List<String> workspaceOptions, NExecutionType executionType, NRunAs runAs) {
-        NDefinition def =null;
+        NDefinition def = null;
         try {
             def = NFetchCmd.of(goodId, session)
                     .dependencies()
@@ -774,10 +836,10 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                     .setRepositoryFilter(NRepositoryFilters.of(session).installedRepo())
                     //
                     .getResultDefinition();
-        }catch (Exception ex){
+        } catch (Exception ex) {
             //try to find locally
         }
-        if(def==null) {
+        if (def == null) {
             def = NFetchCmd.of(goodId, session)
                     .dependencies()
                     .failFast()

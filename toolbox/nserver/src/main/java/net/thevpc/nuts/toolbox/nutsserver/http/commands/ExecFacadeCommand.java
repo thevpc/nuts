@@ -58,8 +58,8 @@ public class ExecFacadeCommand extends AbstractFacadeCommand {
         NSession session = context.getSession().copy();
         session.setTerminal(NSessionTerminal.of(
                 new ByteArrayInputStream(new byte[0]),
-                NPrintStream.ofInMemory(session).setTerminalMode(NTerminalMode.FILTERED),
-                NPrintStream.ofInMemory(session),
+                NPrintStream.ofMem(session).setTerminalMode(NTerminalMode.FILTERED),
+                NPrintStream.ofMem(session),
                 session
         ));
         int result = NExecCmd.of(session)
