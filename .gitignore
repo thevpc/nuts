@@ -239,3 +239,7 @@
 /installers/nuts-builder-tool/target
 /tutorials/naf/nuts-spring-boot-integration-hello-world/nuts-spring-boot-integration-hello-world.iml
 /libraries/nlib-swing/target
+/test/nuts-runtime-test/runtime
+/test/nuts-runtime-test/maven-central
+/test/nuts-shaded-test/target
+/installers/nuts-full/target
