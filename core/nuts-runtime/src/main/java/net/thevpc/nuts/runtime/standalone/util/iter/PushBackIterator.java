@@ -25,8 +25,8 @@
 */
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.NSession;
 
 import java.util.Iterator;
@@ -47,7 +47,7 @@ public class PushBackIterator<T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe(NSession session) {
-        return NDescribables.resolveOrDestructAsObject(base, session)
+        return NEDesc.describeResolveOrDestructAsObject(base, session)
                 .builder()
                 .set("pushBack",true)
                 .build()

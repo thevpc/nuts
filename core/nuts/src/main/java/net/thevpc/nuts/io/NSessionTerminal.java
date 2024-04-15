@@ -26,9 +26,10 @@
 package net.thevpc.nuts.io;
 
 
+import net.thevpc.nuts.reserved.rpi.NIORPI;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.util.NQuestion;
+import net.thevpc.nuts.util.NAsk;
 
 import java.io.InputStream;
 
@@ -40,23 +41,23 @@ import java.io.InputStream;
  */
 public interface NSessionTerminal {
     static NSessionTerminal of(NSession session) {
-        return NIO.of(session).createTerminal();
+        return NIORPI.of(session).createTerminal();
     }
 
     static NSessionTerminal of(NSessionTerminal parent, NSession session) {
-        return NIO.of(session).createTerminal(parent);
+        return NIORPI.of(session).createTerminal(parent);
     }
 
     static NSessionTerminal of(InputStream in, NPrintStream out, NPrintStream err, NSession session) {
-        return NIO.of(session).createTerminal(in, out, err);
+        return NIORPI.of(session).createTerminal(in, out, err);
     }
 
     static NSessionTerminal ofMem(NSession session) {
-        return NIO.of(session).createInMemoryTerminal();
+        return NIORPI.of(session).createInMemoryTerminal();
     }
 
     static NSessionTerminal ofMem(boolean mergeError, NSession session) {
-        return NIO.of(session).createInMemoryTerminal(mergeError);
+        return NIORPI.of(session).createInMemoryTerminal(mergeError);
     }
 
     String readLine(NPrintStream out, NMsg message);
@@ -127,13 +128,13 @@ public interface NSessionTerminal {
 
 
     /**
-     * create a {@link NQuestion} to write a question to the terminal's
+     * create a {@link NAsk} to write a question to the terminal's
      * output stream and read a typed value from the terminal's input stream.
      *
      * @param <T> type of the value to read
-     * @return new instance of {@link NQuestion}
+     * @return new instance of {@link NAsk}
      */
-    <T> NQuestion<T> ask();
+    <T> NAsk<T> ask();
 
     /**
      * return terminal's input stream
@@ -173,4 +174,6 @@ public interface NSessionTerminal {
      * @return {@code this} instance
      */
     NSessionTerminal printProgress(NMsg message);
+
+    NSession getSession();
 }

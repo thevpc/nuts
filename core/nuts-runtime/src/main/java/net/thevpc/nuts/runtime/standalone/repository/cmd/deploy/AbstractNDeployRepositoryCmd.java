@@ -99,7 +99,7 @@ public abstract class AbstractNDeployRepositoryCmd extends NRepositoryCmdBase<ND
     @Override
     public NDeployRepositoryCmd setContent(InputStream content) {
         checkSession();
-        this.content = content == null ? null : NIO.of(getSession()).ofInputSource(content);
+        this.content = content == null ? null : NInputSource.of(content,getSession());
         return this;
     }
 

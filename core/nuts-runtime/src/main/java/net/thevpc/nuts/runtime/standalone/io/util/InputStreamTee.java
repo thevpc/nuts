@@ -18,7 +18,7 @@ import java.io.OutputStream;
 /**
  * @author thevpc
  */
-public class InputStreamTee extends InputStream implements NInterruptible, NFormattable, NContentMetadataProvider {
+public class InputStreamTee extends InputStream implements NInterruptible<InputStream>, NFormattable, NContentMetadataProvider {
 
     private final InputStream in;
     private final OutputStream out;
@@ -33,6 +33,11 @@ public class InputStreamTee extends InputStream implements NInterruptible, NForm
         this.onClose = onClose;
         this.metadata = CoreIOUtils.createContentMetadata(metadata, in);
         this.session = session;
+    }
+
+    @Override
+    public InputStream base() {
+        return this;
     }
 
     @Override

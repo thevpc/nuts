@@ -27,6 +27,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.env.NPlatformFamily;
@@ -50,7 +51,7 @@ public interface NPlatforms extends NComponent, NSessionProvider {
 
     NOptional<NPlatformLocation> findPlatformByName(NPlatformFamily platformType, String locationName);
 
-    NOptional<NPlatformLocation> findPlatformByPath(NPlatformFamily platformType, String path);
+    NOptional<NPlatformLocation> findPlatformByPath(NPlatformFamily platformType, NPath path);
 
     NOptional<NPlatformLocation> findPlatformByVersion(NPlatformFamily platformType, String version);
 
@@ -59,9 +60,9 @@ public interface NPlatforms extends NComponent, NSessionProvider {
     NOptional<NPlatformLocation> findPlatformByVersion(NPlatformFamily platformType, NVersionFilter requestedVersion);
 
 
-    NStream<NPlatformLocation> searchSystemPlatforms(NPlatformFamily platformType);
+    NStream<NPlatformLocation> searchSystemPlatforms(NPlatformFamily platformFamily);
 
-    NStream<NPlatformLocation> searchSystemPlatforms(NPlatformFamily platformType, String path);
+    NStream<NPlatformLocation> searchSystemPlatforms(NPlatformFamily platformFamily, NPath path);
 
     /**
      * verify if the path is a valid platform path and return null if not
@@ -71,7 +72,7 @@ public interface NPlatforms extends NComponent, NSessionProvider {
      * @param preferredName preferredName
      * @return null if not a valid jdk path
      */
-    NOptional<NPlatformLocation> resolvePlatform(NPlatformFamily platformType, String path, String preferredName);
+    NOptional<NPlatformLocation> resolvePlatform(NPlatformFamily platformType, NPath path, String preferredName);
 
     NOptional<NPlatformLocation> findPlatform(NPlatformFamily type, Predicate<NPlatformLocation> filter);
 

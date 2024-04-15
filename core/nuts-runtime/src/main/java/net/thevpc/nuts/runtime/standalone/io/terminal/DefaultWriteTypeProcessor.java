@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NAsk;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
@@ -73,7 +74,7 @@ public class DefaultWriteTypeProcessor {
                 throw getValidError().get();
             }
             case ASK: {
-                if (!session.getTerminal().ask()
+                if (!NAsk.of(session)
                         .setSession(session)
                         .forBoolean(getValidAskMessage())
                         .setDefaultValue(false).getBooleanValue()) {

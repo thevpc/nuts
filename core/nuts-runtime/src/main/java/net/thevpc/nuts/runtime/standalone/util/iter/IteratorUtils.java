@@ -194,7 +194,7 @@ public class IteratorUtils {
         if (isNullOrEmpty(it)) {
             return IteratorBuilder.emptyIterator();
         }
-        return new SortIterator<>(it, c, removeDuplicates);
+        return new NIteratorSorted<>(it, c, removeDuplicates);
     }
 
     public static <T> NIterator<T> distinct(NIterator<T> it) {
@@ -217,11 +217,11 @@ public class IteratorUtils {
         return new FilteredIterator<>(it, filter);
     }
 
-    public static <T> CollectorIterator<T> collector(Iterator<T> it) {
+    public static <T> NIteratorFromJavaIterator<T> collector(Iterator<T> it) {
         if (it == null) {
-            return new CollectorIterator<>(null, IteratorBuilder.emptyIterator());
+            return new NIteratorFromJavaIterator<>(null, IteratorBuilder.emptyIterator());
         }
-        return new CollectorIterator<>(null, it);
+        return new NIteratorFromJavaIterator<>(null, it);
     }
 
     public static <T> NIterator<T> nullifyIfEmpty(NIterator<T> other) {

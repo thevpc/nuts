@@ -21,7 +21,7 @@ import java.io.InputStream;
 /**
  * @author thevpc
  */
-public class InputStreamExt extends InputStream implements NInterruptible, NFormattable, NContentMetadataProvider {
+public class InputStreamExt extends InputStream implements NInterruptible<InputStream>, NFormattable, NContentMetadataProvider {
 
     private InputStream base;
     private NContentMetadata md;
@@ -84,6 +84,11 @@ public class InputStreamExt extends InputStream implements NInterruptible, NForm
             }
         }
         this.sourceName = sourceName;
+    }
+
+    @Override
+    public InputStream base() {
+        return this;
     }
 
     @Override

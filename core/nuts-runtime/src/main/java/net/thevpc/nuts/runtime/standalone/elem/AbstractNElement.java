@@ -303,4 +303,8 @@ public abstract class AbstractNElement implements NElement {
         return toString();
     }
 
+    @Override
+    public NElement withDesc(NEDesc description) {
+        return this;
+    }
 }

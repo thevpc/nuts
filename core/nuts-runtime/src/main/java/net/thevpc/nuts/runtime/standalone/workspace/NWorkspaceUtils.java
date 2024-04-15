@@ -7,6 +7,7 @@ package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.env.NPlatformFamily;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
@@ -285,7 +286,7 @@ public class NWorkspaceUtils {
             if (session.isPlainTrace()) {
                 session.out().resetLine().println("configuring current JVM...");
             }
-            NPlatformLocation found0 = platforms.resolvePlatform(NPlatformFamily.JAVA, System.getProperty("java.home"), null).orNull();
+            NPlatformLocation found0 = platforms.resolvePlatform(NPlatformFamily.JAVA, NPath.of(System.getProperty("java.home"),session), null).orNull();
             NPlatformLocation[] found = found0 == null ? new NPlatformLocation[0] : new NPlatformLocation[]{found0};
             int someAdded = 0;
             for (NPlatformLocation java : found) {

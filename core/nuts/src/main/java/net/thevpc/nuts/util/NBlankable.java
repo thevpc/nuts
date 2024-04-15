@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.reserved.NApiUtilsRPI;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -45,7 +47,7 @@ public interface NBlankable {
      * @return true if the value is null or blank
      */
     static boolean isBlank(String value) {
-        return NApiUtils.isBlank(value);
+        return NApiUtilsRPI.isBlank(value);
     }
 
     /**
@@ -55,7 +57,7 @@ public interface NBlankable {
      * @return true if the value is null or blank
      */
     static boolean isBlank(CharSequence value) {
-        return NApiUtils.isBlank(value);
+        return NApiUtilsRPI.isBlank(value);
     }
 
     /**
@@ -65,7 +67,7 @@ public interface NBlankable {
      * @return true if the value is null or blank
      */
     static boolean isBlank(char[] value) {
-        return NApiUtils.isBlank(value);
+        return NApiUtilsRPI.isBlank(value);
     }
 
     /**
@@ -85,11 +87,11 @@ public interface NBlankable {
      * @return true if null or, as a supported blankable object, is blankable
      */
     static boolean isBlank(Object value) {
-        return NApiUtils.isBlank(value);
+        return NApiUtilsRPI.isBlank(value);
     }
 
     static boolean isNonBlank(Object v) {
-        return !NApiUtils.isBlank(v);
+        return !NApiUtilsRPI.isBlank(v);
     }
 
     /**

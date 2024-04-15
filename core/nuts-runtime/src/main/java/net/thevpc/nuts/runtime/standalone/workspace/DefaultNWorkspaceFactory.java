@@ -28,11 +28,14 @@ import net.thevpc.nuts.elem.NElementNotFoundException;
 import net.thevpc.nuts.ext.NFactoryException;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.io.NContentTypes;
+import net.thevpc.nuts.reserved.rpi.NCollectionsRPI;
+import net.thevpc.nuts.reserved.rpi.NIORPI;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootManager;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NClassLoaderUtils;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElements;
 import net.thevpc.nuts.runtime.standalone.format.DefaultNObjectFormat;
 import net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIO;
+import net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIORPI;
 import net.thevpc.nuts.runtime.standalone.io.path.DefaultNPaths;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNLogs;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
@@ -41,6 +44,7 @@ import net.thevpc.nuts.runtime.standalone.util.collections.ClassClassMap;
 import net.thevpc.nuts.runtime.standalone.util.collections.ListMap;
 import net.thevpc.nuts.runtime.standalone.extension.CoreServiceUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.NPropertiesHolder;
+import net.thevpc.nuts.runtime.standalone.util.stream.DefaultNCollectionsRPI;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNEnvs;
 import net.thevpc.nuts.runtime.standalone.workspace.factorycache.CachedConstructor;
@@ -109,7 +113,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 ss -> NMsg.ofMissingValue(NMsg.ofC("extensions component %s", type).toString())
         );
         if (!s.isValid()) {
-            //fallback needed in botstrap or if the extensions are broken!
+            //fallback needed in bootstrap or if the extensions are broken!
             switch (type.getName()) {
                 case "net.thevpc.nuts.log.NLogs": {
                     DefaultNLogs p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, ss -> new DefaultNLogs(session));
@@ -157,6 +161,14 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 }
                 case "net.thevpc.nuts.io.NContentTypes": {
                     NContentTypes p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, ss -> new DefaultNContentTypes(session));
+                    return NOptional.of((T) p);
+                }
+                case "net.thevpc.nuts.reserved.rpi.NIORPI": {
+                    NIORPI p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, ss -> new DefaultNIORPI(session));
+                    return NOptional.of((T) p);
+                }
+                case "net.thevpc.nuts.reserved.rpi.NCollectionsRPI": {
+                    NCollectionsRPI p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, ss -> new DefaultNCollectionsRPI(session));
                     return NOptional.of((T) p);
                 }
                 default:{

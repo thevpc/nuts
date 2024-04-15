@@ -27,6 +27,7 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.format.NFormattable;
+import net.thevpc.nuts.reserved.rpi.NIORPI;
 
 import java.io.*;
 import java.net.URL;
@@ -57,11 +58,24 @@ public interface NInputSource extends NFormattable, NContentMetadataProvider, NI
     }
 
     static NInputSource of(byte[] bytes, NSession session) {
-        return bytes == null ? null :NIO.of(session).ofInputSource(new ByteArrayInputStream(bytes));
+        return bytes == null ? null : NIORPI.of(session).ofInputSource(bytes);
     }
 
     static NInputSource of(InputStream inputSource, NSession session) {
-        return inputSource == null ? null :NIO.of(session).ofInputSource(inputSource);
+        return inputSource == null ? null : NIORPI.of(session).ofInputSource(inputSource);
+    }
+
+    static NInputSource ofMultiRead(NInputSource source,NSession session) {
+        return source==null?null: NIORPI.of(session).ofMultiRead(source);
+    }
+
+    static NInputSource of(InputStream inputStream, NContentMetadata metadata,NSession session){
+        return inputStream==null?null: NIORPI.of(session).ofInputSource(inputStream,metadata);
+    }
+
+
+    static NInputSource of(byte[] bytes, NContentMetadata metadata,NSession session){
+        return bytes==null?null: NIORPI.of(session).ofInputSource(bytes,metadata);
     }
 
     byte[] readBytes();

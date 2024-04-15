@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.NSession;
 
@@ -26,8 +26,8 @@ public class FlatMapIterator<TT, RR> extends NIteratorBase<RR> {
         return NElements.of(session)
                 .ofObject()
                 .set("type","FlatMap")
-                .set("base", NDescribables.resolveOrDestruct(from, session))
-                .set("mapper", NDescribables.resolveOrDestruct(converter, session))
+                .set("base", NEDesc.describeResolveOrDestruct(from, session))
+                .set("mapper", NEDesc.describeResolveOrDestruct(converter, session))
                 .build()
                 ;
     }

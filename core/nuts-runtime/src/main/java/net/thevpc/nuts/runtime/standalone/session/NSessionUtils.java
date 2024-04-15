@@ -48,7 +48,7 @@ public class NSessionUtils {
                         copied = true;
                         session = session.copy();
                     }
-                    session.getTerminal().setOut(NIO.of(session).ofNullPrintStream());
+                    session.getTerminal().setOut(NPrintStream.ofNull(session));
                     break;
                 }
                 case PATH: {
@@ -56,9 +56,9 @@ public class NSessionUtils {
                         copied = true;
                         session = session.copy();
                     }
-                    session.getTerminal().setOut(NIO.of(session).ofPrintStream(out.getPath().getOutputStream(
+                    session.getTerminal().setOut(NPrintStream.of(out.getPath().getOutputStream(
                             out.getOptions()
-                    )));
+                    ), session));
                     break;
                 }
                 case STREAM: {
@@ -66,7 +66,7 @@ public class NSessionUtils {
                         copied = true;
                         session = session.copy();
                     }
-                    session.getTerminal().setOut(NIO.of(session).ofPrintStream(out.getStream()));
+                    session.getTerminal().setOut(NPrintStream.of(out.getStream(), session));
                     break;
                 }
                 case GRAB_STREAM: {
@@ -74,7 +74,7 @@ public class NSessionUtils {
                         copied = true;
                         session = session.copy();
                     }
-                    NMemoryPrintStream ps = NIO.of(session).ofInMemoryPrintStream();
+                    NMemoryPrintStream ps = NMemoryPrintStream.of(session);
                     out.setResult(ps.asInputSource());
                     session.getTerminal().setOut(ps);
                     break;
@@ -85,7 +85,7 @@ public class NSessionUtils {
                         session = session.copy();
                     }
                     NPath nPath = NPath.ofTempFile("grabbed-file", session);
-                    session.getTerminal().setOut(NIO.of(session).ofPrintStream(nPath));
+                    session.getTerminal().setOut(NPrintStream.of(nPath, session));
                     out.setResult(nPath.setUserTemporary(true));
                     break;
                 }
@@ -94,8 +94,8 @@ public class NSessionUtils {
                     //do nothing...
                     break;
                 }
-                case REDIRECT:{
-                    throw new NUnsupportedArgumentException(session, NMsg.ofC("unsupported out %s",in));
+                case REDIRECT: {
+                    throw new NUnsupportedArgumentException(session, NMsg.ofC("unsupported out %s", in));
                 }
             }
         }
@@ -106,7 +106,7 @@ public class NSessionUtils {
                         copied = true;
                         session = session.copy();
                     }
-                    session.getTerminal().setErr(NIO.of(session).ofNullPrintStream());
+                    session.getTerminal().setErr(NPrintStream.ofNull(session));
                     break;
                 }
                 case PATH: {
@@ -114,9 +114,9 @@ public class NSessionUtils {
                         copied = true;
                         session = session.copy();
                     }
-                    session.getTerminal().setErr(NIO.of(session).ofPrintStream(err.getPath().getOutputStream(
+                    session.getTerminal().setErr(NPrintStream.of(err.getPath().getOutputStream(
                             err.getOptions()
-                    )));
+                    ), session));
                     break;
                 }
                 case STREAM: {
@@ -124,7 +124,7 @@ public class NSessionUtils {
                         copied = true;
                         session = session.copy();
                     }
-                    session.getTerminal().setErr(NIO.of(session).ofPrintStream(err.getStream()));
+                    session.getTerminal().setErr(NPrintStream.of(err.getStream(), session));
                     break;
                 }
                 case GRAB_STREAM: {
@@ -132,7 +132,7 @@ public class NSessionUtils {
                         copied = true;
                         session = session.copy();
                     }
-                    session.getTerminal().setErr(NIO.of(session).ofInMemoryPrintStream());
+                    session.getTerminal().setErr(NMemoryPrintStream.of(session));
                     break;
                 }
                 case GRAB_FILE: {
@@ -141,7 +141,7 @@ public class NSessionUtils {
                         session = session.copy();
                     }
                     NPath nPath = NPath.ofTempFile("grabbed-file", session);
-                    session.getTerminal().setErr(NIO.of(session).ofPrintStream(nPath));
+                    session.getTerminal().setErr(NPrintStream.of(nPath, session));
                     err.setResult(nPath.setUserTemporary(true));
                     break;
                 }
@@ -160,7 +160,7 @@ public class NSessionUtils {
                 }
             }
         }
-        if(in!=null){
+        if (in != null) {
             switch (in.getType()) {
                 case NULL: {
                     if (!copied) {
@@ -188,7 +188,7 @@ public class NSessionUtils {
                 }
                 case GRAB_STREAM:
                 case GRAB_FILE: {
-                    throw new NUnsupportedArgumentException(session, NMsg.ofC("unsupported in %s",in));
+                    throw new NUnsupportedArgumentException(session, NMsg.ofC("unsupported in %s", in));
                 }
                 case PIPE:
                 case INHERIT: {

@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.definition.installstatus.filter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.base.AbstractInstallStatusFilter;
 import net.thevpc.nuts.runtime.standalone.id.filter.NExprIdFilter;
 import net.thevpc.nuts.util.NFilterOp;
 

@@ -27,27 +27,31 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NDescribable;
-import net.thevpc.nuts.elem.NDescribables;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
-
-import java.util.function.Function;
+import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.reserved.util.NRunnableFromJavaRunnable;
+import net.thevpc.nuts.reserved.util.NRunnableWithDescription;
 
 /**
  * Describable Runnable
  */
-public interface NRunnable extends Runnable, NDescribable {
-    static NRunnable of(Runnable o, String descr) {
-        return NDescribables.ofRunnable(o, session -> NElements.of(session).ofString(descr));
+public interface NRunnable extends NElementDescribable<NRunnable> {
+    static NRunnable of(Runnable o) {
+        if (o == null) {
+            return null;
+        }
+        if (o instanceof NRunnable) {
+            return (NRunnable) o;
+        }
+        return new NRunnableFromJavaRunnable(o);
     }
 
-    static NRunnable of(Runnable o, NElement descr) {
-        return NDescribables.ofRunnable(o, e -> descr);
+    @Override
+    default NRunnable withDesc(NEDesc description) {
+        if (description == null) {
+            return this;
+        }
+        return new NRunnableWithDescription(this, description);
     }
 
-    static NRunnable of(Runnable o, Function<NSession, NElement> descr) {
-        return NDescribables.ofRunnable(o, descr);
-    }
-
+    void run(NSession session);
 }

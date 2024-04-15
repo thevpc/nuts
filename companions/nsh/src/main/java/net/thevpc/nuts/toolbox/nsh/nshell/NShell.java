@@ -30,6 +30,7 @@ package net.thevpc.nuts.toolbox.nsh.nshell;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NDefaultSupportLevelContext;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -56,9 +57,7 @@ import net.thevpc.nuts.toolbox.nsh.util.ByteArrayPrintStream;
 import net.thevpc.nuts.toolbox.nsh.util.MemResult;
 import net.thevpc.nuts.time.NClock;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -284,14 +283,14 @@ public class NShell {
     public List<String> findFiles(final String namePattern, boolean exact, String parent, NSession session) {
         if (exact) {
             String[] all = NPath.of(parent, session).stream()
-                    .filter(x -> namePattern.equals(x.getName()), "name='" + namePattern + "'")
-                    .map(NPath::toString, "toString").toArray(String[]::new);
+                    .filter(NPredicate.of((NPath x) -> namePattern.equals(x.getName())).withDesc(NEDesc.of("name='" + namePattern + "'")))
+                    .map(NFunction.of(NPath::toString).withDesc(NEDesc.of("toString"))).toArray(String[]::new);
             return Arrays.asList(all);
         } else {
             final Pattern o = Pattern.compile(namePattern);
             String[] all = NPath.of(parent, session).stream()
-                    .filter(x -> o.matcher(x.getName()).matches(), "name~~'" + namePattern + "'")
-                    .map(NPath::toString, "toString").toArray(String[]::new);
+                    .filter(NPredicate.of((NPath x) -> o.matcher(x.getName()).matches()).withDesc(NEDesc.of("name~~'" + namePattern + "'")))
+                    .map(NFunction.of(NPath::toString).withDesc(NEDesc.of("toString"))).toArray(String[]::new);
             return Arrays.asList(all);
         }
     }

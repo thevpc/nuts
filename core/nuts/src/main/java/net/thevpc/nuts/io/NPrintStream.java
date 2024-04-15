@@ -32,6 +32,7 @@ import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextStyles;
+import net.thevpc.nuts.reserved.rpi.NIORPI;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.OutputStream;
@@ -43,7 +44,7 @@ import java.util.Date;
 public interface NPrintStream extends NOutputTarget, NSessionProvider {
 
     static NPrintStream ofNull(NSession session) {
-        return NIO.of(session).ofNullPrintStream();
+        return NIORPI.of(session).ofNullPrintStream();
     }
 
     /**
@@ -54,15 +55,15 @@ public interface NPrintStream extends NOutputTarget, NSessionProvider {
      * @return new in-memory NutsPrintStream implementation
      */
     static NMemoryPrintStream ofMem(NSession session) {
-        return NIO.of(session).ofInMemoryPrintStream();
+        return NIORPI.of(session).ofInMemoryPrintStream();
     }
 
     static NMemoryPrintStream ofMem(NTerminalMode mode, NSession session) {
-        return NIO.of(session).ofInMemoryPrintStream(mode);
+        return NIORPI.of(session).ofInMemoryPrintStream(mode);
     }
 
     static NPrintStream of(OutputStream out, NSession session) {
-        return NIO.of(session).ofPrintStream(out);
+        return NIORPI.of(session).ofPrintStream(out);
     }
 
     /**
@@ -77,15 +78,18 @@ public interface NPrintStream extends NOutputTarget, NSessionProvider {
      * @return {@code mode} supporting PrintStream
      */
     static NPrintStream of(OutputStream out, NTerminalMode mode, NSystemTerminalBase terminal, NSession session) {
-        return NIO.of(session).ofPrintStream(out, mode, terminal);
+        return NIORPI.of(session).ofPrintStream(out, mode, terminal);
     }
 
     static NPrintStream of(OutputStream out, NTerminalMode mode, NSession session) {
-        return NIO.of(session).ofPrintStream(out, mode);
+        return NIORPI.of(session).ofPrintStream(out, mode);
     }
 
     static NPrintStream of(Writer out, NSession session) {
-        return NIO.of(session).ofPrintStream(out);
+        return NIORPI.of(session).ofPrintStream(out);
+    }
+    static NPrintStream of(NPath path, NSession session) {
+        return NIORPI.of(session).ofPrintStream(path);
     }
 
 

@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import java.util.function.Predicate;
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
@@ -71,7 +72,7 @@ public class DefaultNPlatforms implements NPlatforms {
     }
 
     @Override
-    public NOptional<NPlatformLocation> findPlatformByPath(NPlatformFamily platformType, String path) {
+    public NOptional<NPlatformLocation> findPlatformByPath(NPlatformFamily platformType, NPath path) {
         checkSession();
         return model.findPlatformByPath(platformType, path, session);
     }
@@ -95,33 +96,33 @@ public class DefaultNPlatforms implements NPlatforms {
     }
 
     @Override
-    public NStream<NPlatformLocation> searchSystemPlatforms(NPlatformFamily platformType) {
+    public NStream<NPlatformLocation> searchSystemPlatforms(NPlatformFamily platformFamily) {
         checkSession();
-        return model.searchSystemPlatforms(platformType, session);
+        return model.searchSystemPlatforms(platformFamily, session);
     }
 
     @Override
-    public NStream<NPlatformLocation> searchSystemPlatforms(NPlatformFamily platformType, String path) {
+    public NStream<NPlatformLocation> searchSystemPlatforms(NPlatformFamily platformFamily, NPath path) {
         checkSession();
-        return model.searchSystemPlatforms(platformType, path, session);
+        return model.searchSystemPlatforms(platformFamily, path, session);
     }
 
     @Override
-    public NOptional<NPlatformLocation> resolvePlatform(NPlatformFamily platformType, String path, String preferredName) {
+    public NOptional<NPlatformLocation> resolvePlatform(NPlatformFamily platformFamily, NPath path, String preferredName) {
         checkSession();
-        return model.resolvePlatform(platformType, path, preferredName, session);
+        return model.resolvePlatform(platformFamily, path, preferredName, session);
     }
 
     @Override
-    public NOptional<NPlatformLocation> findPlatform(NPlatformFamily type, Predicate<NPlatformLocation> filter) {
+    public NOptional<NPlatformLocation> findPlatform(NPlatformFamily platformFamily, Predicate<NPlatformLocation> filter) {
         checkSession();
-        return model.findOnePlatform(type, filter, session);
+        return model.findOnePlatform(platformFamily, filter, session);
     }
 
     @Override
-    public NStream<NPlatformLocation> findPlatforms(NPlatformFamily type, Predicate<NPlatformLocation> filter) {
+    public NStream<NPlatformLocation> findPlatforms(NPlatformFamily platformFamily, Predicate<NPlatformLocation> filter) {
         checkSession();
-        return model.findPlatforms(type, filter, session);
+        return model.findPlatforms(platformFamily, filter, session);
     }
 
     @Override

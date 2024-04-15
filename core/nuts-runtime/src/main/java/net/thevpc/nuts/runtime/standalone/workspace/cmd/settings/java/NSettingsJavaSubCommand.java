@@ -9,6 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NMutableTableModel;
 import net.thevpc.nuts.format.NTableFormat;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.util.NLiteral;
@@ -44,7 +45,7 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
                     }
                 } else {
                     for (String extraLocation : extraLocations) {
-                        for (NPlatformLocation loc : platforms.searchSystemPlatforms(NPlatformFamily.JAVA, extraLocation)) {
+                        for (NPlatformLocation loc : platforms.searchSystemPlatforms(NPlatformFamily.JAVA, NPath.of(extraLocation,session))) {
                             platforms.addPlatform(loc);
                         }
                     }
@@ -55,8 +56,8 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
                 }
             } else {
                 while (cmdLine.hasNext()) {
-                    NPlatformLocation loc = platforms.resolvePlatform(NPlatformFamily.JAVA, cmdLine.next()
-                            .flatMap(NLiteral::asString).get(session), null).orNull();
+                    NPlatformLocation loc = platforms.resolvePlatform(NPlatformFamily.JAVA,
+                            NPath.of(cmdLine.next().flatMap(NLiteral::asString).get(session),session), null).orNull();
                     if (loc != null) {
                         platforms.addPlatform(loc);
                     }
@@ -72,7 +73,7 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
                         .flatMap(NLiteral::asString).get(session);
                 NPlatformLocation loc = platforms.findPlatformByName(NPlatformFamily.JAVA, name).orNull();
                 if (loc == null) {
-                    loc = platforms.findPlatformByPath(NPlatformFamily.JAVA, name).orNull();
+                    loc = platforms.findPlatformByName(NPlatformFamily.JAVA, name).orNull();
                     if (loc == null) {
                         loc = platforms.findPlatformByVersion(NPlatformFamily.JAVA, name).orNull();
                     }

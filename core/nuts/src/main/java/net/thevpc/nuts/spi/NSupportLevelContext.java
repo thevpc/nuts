@@ -25,17 +25,13 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NSessionProvider;
-import net.thevpc.nuts.NWorkspace;
 
 /**
  * @author thevpc
  * @app.category SPI Base
  */
 public interface NSupportLevelContext extends NSessionProvider {
-
-    NWorkspace getWorkspace();
 
     /**
      * return constraints casted to T, throws CCE if not compatible

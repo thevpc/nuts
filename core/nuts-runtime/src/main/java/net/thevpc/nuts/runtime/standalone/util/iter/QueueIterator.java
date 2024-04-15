@@ -27,9 +27,9 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.util.NIterator;
 
 import java.util.*;
@@ -54,7 +54,7 @@ public class QueueIterator<T> extends NIteratorBase<T> {
                                 .addAll(
                                         new ArrayList<>(children)
                                                 .stream().map(
-                                                        x-> NDescribables.resolveOrDestruct(x, session)
+                                                        x-> NEDesc.describeResolveOrDestruct(x, session)
                                                 ).collect(Collectors.toList())
                                 )
                                 .build()

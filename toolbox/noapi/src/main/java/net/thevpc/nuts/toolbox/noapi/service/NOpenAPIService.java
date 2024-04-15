@@ -75,7 +75,7 @@ public class NOpenAPIService {
         NPath targetParent = targetPathObj.getParent();
 
         List<NPath> allConfigFiles = sourceFolder.stream().filter(
-                x ->
+                (NPath x) ->
                 {
                     return x.getName().endsWith(".config.json")
                             && (
@@ -84,7 +84,7 @@ public class NOpenAPIService {
                                     || x.getName().startsWith(sourceBaseName + "_")
                     );
                 }
-                , s -> NElements.of(s).toElement("config files")).toList();
+                ).withDesc(NEDesc.of("config files")).toList();
         for (NPath cf : allConfigFiles) {
             NElement z = NElements.of(session).parse(cf);
             //remove version, will be added later

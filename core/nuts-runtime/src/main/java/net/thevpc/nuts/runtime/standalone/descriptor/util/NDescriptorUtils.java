@@ -53,14 +53,14 @@ public class NDescriptorUtils {
                 case ASK:
                 case ERROR: {
                     if (groupId == null) {
-                        groupId = session.getTerminal().ask()
+                        groupId = NAsk.of(session)
                                 .forString(NMsg.ofPlain("group id"))
                                 .setDefaultValue(groupId)
                                 .setHintMessage(NBlankable.isBlank(groupId) ? null : NMsg.ofPlain(groupId))
                                 .getValue();
                     }
                     if (artifactId == null) {
-                        artifactId = session.getTerminal().ask()
+                        artifactId = NAsk.of(session)
                                 .forString(NMsg.ofPlain("artifact id"))
                                 .setDefaultValue(artifactId)
                                 .setHintMessage(NBlankable.isBlank(artifactId) ? null : NMsg.ofPlain(artifactId))
@@ -68,7 +68,7 @@ public class NDescriptorUtils {
                     }
                     if (NBlankable.isBlank(version)) {
                         String ov = version == null ? null : version.getValue();
-                        String v = session.getTerminal().ask()
+                        String v = NAsk.of(session)
                                 .forString(NMsg.ofPlain("version"))
                                 .setDefaultValue(ov)
                                 .setHintMessage(NBlankable.isBlank(ov) ? null : NMsg.ofPlain(ov))

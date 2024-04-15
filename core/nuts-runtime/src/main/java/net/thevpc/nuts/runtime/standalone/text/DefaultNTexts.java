@@ -2,13 +2,12 @@ package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.format.NFormat;
 import net.thevpc.nuts.format.NFormattable;
 import net.thevpc.nuts.format.NMsgFormattable;
 import net.thevpc.nuts.format.NStringFormattable;
-import net.thevpc.nuts.io.NIO;
+import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
@@ -65,7 +64,7 @@ public class DefaultNTexts implements NTexts {
         register(NMsgFormattable.class, (o, t, s) -> _NMsg_toString((((NMsgFormattable) o).toMsg())));
         register(NMsg.class, (o, t, s) -> _NMsg_toString((NMsg) o));
         register(NString.class, (o, t, s) -> ((NString) o).toText());
-        register(InputStream.class, (o, t, s) -> t.ofStyled(NIO.of(s).ofInputSource((InputStream) o).getMetaData().getName().orElse(o.toString()), NTextStyle.path()));
+        register(InputStream.class, (o, t, s) -> t.ofStyled(NInputSource.of((InputStream) o,s).getMetaData().getName().orElse(o.toString()), NTextStyle.path()));
         register(OutputStream.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
         register(NPrintStream.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
         register(Writer.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
@@ -914,7 +913,7 @@ public class DefaultNTexts implements NTexts {
         config.setFlatten(true);
         config.setNormalize(true);
         NText z = transform(text, transformer, config);
-        return NStream.of(new NIterator<NText>() {
+        return NStream.of(new Iterator<NText>() {
             Deque<NText> queue = new ArrayDeque<>();
 
             {
@@ -969,12 +968,7 @@ public class DefaultNTexts implements NTexts {
                 refactorNext();
                 return queue.remove();
             }
-
-            @Override
-            public NElement describe(NSession session) {
-                return NElements.of(session).ofString("flattened text");
-            }
-        }, getSession());
+        },session).withDesc(NEDesc.of("flattened text"));
     }
 
     @Override

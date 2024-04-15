@@ -29,6 +29,7 @@ import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.log.NLogOp;
@@ -236,7 +237,7 @@ public final class NBootWorkspace {
     }
 
     private static final class ApiDigestHolder {
-        static final String apiDigest = NApiUtils.resolveNutsIdDigest();
+        static final String apiDigest = NApiUtilsRPI.resolveNutsIdDigest();
     }
 
     /**

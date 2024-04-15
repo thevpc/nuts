@@ -6,8 +6,8 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NMsg;
@@ -34,7 +34,7 @@ public class ErrorHandlerIterator<T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe(NSession session) {
-        return NDescribables.resolveOrDestructAsObject(base, session)
+        return NEDesc.describeResolveOrDestructAsObject(base, session)
                 .builder()
                 .set("onError",type.toString().toLowerCase())
                 .build();

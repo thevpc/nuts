@@ -592,7 +592,7 @@ public class ProcessBuilder2 {
             }
             case GRAB_STREAM: {
                 out.tempStream.close();
-                out.base.setResult(NIO.of(session).ofInputSource(((ByteArrayOutputStream) out.tempStream).toByteArray()));
+                out.base.setResult(NInputSource.of(((ByteArrayOutputStream) out.tempStream).toByteArray(),session));
                 break;
             }
             case GRAB_FILE: {
@@ -614,7 +614,7 @@ public class ProcessBuilder2 {
             }
             case GRAB_STREAM: {
                 err.tempStream.close();
-                err.base.setResult(NIO.of(session).ofInputSource(((ByteArrayOutputStream) err.tempStream).toByteArray()));
+                err.base.setResult(NInputSource.of(((ByteArrayOutputStream) err.tempStream).toByteArray(),session));
                 break;
             }
             case GRAB_FILE: {
@@ -659,8 +659,7 @@ public class ProcessBuilder2 {
     }
 
     private NNonBlockingInputStream createNonBlockingInput(InputStream proc, String pname) {
-        return NIO.of(session)
-                .ofInputStreamBuilder(proc)
+        return NInputSourceBuilder.of(proc,session)
                 .setMetadata(new DefaultNContentMetadata().setMessage(NMsg.ofPlain(pname)))
                 .createNonBlockingInputStream()
                 ;

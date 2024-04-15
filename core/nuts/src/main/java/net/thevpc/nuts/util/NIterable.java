@@ -26,28 +26,26 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NDescribable;
-import net.thevpc.nuts.elem.NDescribables;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
-
-import java.util.function.Function;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.reserved.rpi.NCollectionsRPI;
+import net.thevpc.nuts.reserved.util.NIterableWithDescription;
 
 /**
  * Describable Iterable
  * @param <T> Type
  */
-public interface NIterable<T> extends Iterable<T>, NDescribable {
-    static <T> NIterable<T> of(Iterable<T> o, String descr){
-        return NDescribables.ofIterable(o, session-> NElements.of(session).ofString(descr));
+public interface NIterable<T> extends Iterable<T>, NElementDescribable<NIterable<T>> {
+    static <T> NIterable<T> of(Iterable<T> o, NSession session){
+        return NCollectionsRPI.of(session).toIterable(o);
     }
-    static <T> NIterable<T> of(Iterable<T> o, NElement descr){
-        return NDescribables.ofIterable(o, e->descr);
+
+    default NIterable<T> withDesc(NEDesc description) {
+        if(description==null) {
+            return this;
+        }
+        return new NIterableWithDescription<>(this, description);
     }
-    static <T> NIterable<T> of(Iterable<T> o, Function<NSession, NElement> descr){
-        return NDescribables.ofIterable(o,descr);
-    }
-    
+
     NIterator<T> iterator();
 }

@@ -5,15 +5,14 @@
  */
 package net.thevpc.nuts.core.test;
 
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 
 import java.io.IOException;
 
-import net.thevpc.nuts.NWorkspace;
 import org.junit.jupiter.api.*;
 
 /**
- *
  * @author thevpc
  */
 public class Test02_LoadTest {
@@ -21,13 +20,13 @@ public class Test02_LoadTest {
     @Test
     public void load1() throws Exception {
 
-        NWorkspace w1 = TestUtils.openNewTestWorkspace("--install-companions=false").getWorkspace();
-        NWorkspace w2 = TestUtils.openNewTestWorkspace("--install-companions=false").getWorkspace();
+        NSession w1 = TestUtils.openNewTestWorkspace("--install-companions=false");
+        NSession w2 = TestUtils.openNewTestWorkspace("--install-companions=false");
     }
 
     @BeforeAll
     public static void setUpClass() throws IOException {
-        TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
+        TestUtils.println("####### RUNNING TEST @ " + TestUtils.getCallerClassSimpleName());
     }
 
     @AfterAll

@@ -59,4 +59,11 @@ public interface NPsInfo {
      * @return Process command line
      */
     String getCmdLine();
+    
+    /**
+     * Process parsed command line (when applicable)
+     *
+     * @return parsed Process command line
+     */
+    String[] getCmdLineArgs();
 }

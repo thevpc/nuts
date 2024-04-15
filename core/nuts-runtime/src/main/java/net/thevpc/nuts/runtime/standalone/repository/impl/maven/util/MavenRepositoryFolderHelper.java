@@ -40,6 +40,7 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
@@ -155,7 +156,8 @@ public class MavenRepositoryFolderHelper {
         NId bestId = null;
         NPath file = getLocalGroupAndArtifactFile(id, session);
         if (file.exists()) {
-            NPath[] versionFolders = file.stream().filter(NPath::isDirectory,"isDirectory").toArray(NPath[]::new);
+            NPath[] versionFolders = file.stream().filter(NPath::isDirectory).withDesc(NEDesc.of("isDirectory"))
+                    .toArray(NPath[]::new);
             for (NPath versionFolder : versionFolders) {
                 NId id2 = id.builder().setVersion(versionFolder.getName()).build();
                 if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {

@@ -113,7 +113,7 @@ public class DefaultNCp implements NCp {
     @Override
     public NCp setSource(InputStream source) {
         checkSession();
-        this.source = source == null ? null : NIO.of(session).ofInputSource(source);
+        this.source = source == null ? null : NInputSource.of(source, session);
         return this;
     }
 
@@ -145,7 +145,7 @@ public class DefaultNCp implements NCp {
     @Override
     public NCp setSource(byte[] source) {
         checkSession();
-        this.source = source == null ? null : NIO.of(session).ofInputSource(new ByteArrayInputStream(source));
+        this.source = source == null ? null : NInputSource.of(source, session);
         return this;
     }
 
@@ -200,7 +200,7 @@ public class DefaultNCp implements NCp {
     @Override
     public NCp setTarget(OutputStream target) {
         checkSession();
-        this.target = target == null ? null : NIO.of(session).ofOutputTarget(target);
+        this.target = target == null ? null : NOutputTarget.of(target,session);
         return this;
     }
 
@@ -581,7 +581,7 @@ public class DefaultNCp implements NCp {
                     return null;
                 }
             }
-            try (InputStream in = NIO.of(session).ofInputStreamBuilder(Files.newInputStream(source)).setInterruptible(true).createInputStream()) {
+            try (InputStream in = NInputSourceBuilder.of(Files.newInputStream(source),session).setInterruptible(true).createInputStream()) {
                 interruptibleInstance = (NInterruptible) in;
                 try (OutputStream out = Files.newOutputStream(target)) {
                     transferTo(in, out);
@@ -595,7 +595,7 @@ public class DefaultNCp implements NCp {
     public long copy(InputStream in, Path target, Set<NPathOption> options)
             throws IOException {
         if (options.contains(NPathOption.INTERRUPTIBLE)) {
-            in = NIO.of(session).ofInputStreamBuilder(in).setInterruptible(true).createInputStream();
+            in = NInputSourceBuilder.of(in,session).setInterruptible(true).createInputStream();
             interruptibleInstance = (NInterruptible) in;
             try (OutputStream out = Files.newOutputStream(target)) {
                 return transferTo(in, out);
@@ -607,7 +607,7 @@ public class DefaultNCp implements NCp {
     public long copy(InputStream in, OutputStream out, Set<NPathOption> options)
             throws IOException {
         if (options.contains(NPathOption.INTERRUPTIBLE)) {
-            in = NIO.of(session).ofInputStreamBuilder(in).setInterruptible(true).createInputStream();
+            in = NInputSourceBuilder.of(in,session).setInterruptible(true).createInputStream();
             interruptibleInstance = (NInterruptible) in;
             return transferTo(in, out);
         }
@@ -616,7 +616,7 @@ public class DefaultNCp implements NCp {
 
     public long copy(Path source, OutputStream out) throws IOException {
         if (options.contains(NPathOption.INTERRUPTIBLE)) {
-            try (InputStream in = NIO.of(session).ofInputStreamBuilder(Files.newInputStream(source)).setInterruptible(true).createInputStream()) {
+            try (InputStream in = NInputSourceBuilder.of(Files.newInputStream(source),session).setInterruptible(true).createInputStream()) {
                 interruptibleInstance = (NInterruptible) in;
                 try {
                     return transferTo(in, out);
@@ -782,11 +782,11 @@ public class DefaultNCp implements NCp {
             monitor.setTraceProgress(options.contains(NPathOption.TRACE));
             monitor.setOrigin(getSourceOrigin());
             monitor.setSourceTypeName(getSourceTypeName());
-            _source2.source = NIO.of(session).ofInputSource(
+            _source2.source = NInputSource.of(
                     monitor.setProgressFactory(getProgressFactory())
                             .setLength(_source2.source.getMetaData().getContentLength().orElse(-1L))
                             .setLogProgress(options.contains(NPathOption.LOG))
-                            .create());
+                            .create(), session);
         }
         NLogOp lop = _LOGOP(session);
         if (lop.isLoggable(Level.FINEST)) {

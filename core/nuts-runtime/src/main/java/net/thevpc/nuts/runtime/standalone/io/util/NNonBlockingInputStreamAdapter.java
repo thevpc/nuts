@@ -37,7 +37,7 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class NNonBlockingInputStreamAdapter extends FilterInputStream implements NNonBlockingInputStream, NInterruptible, NFormattable, NContentMetadataProvider {
+public class NNonBlockingInputStreamAdapter extends FilterInputStream implements NNonBlockingInputStream, NInterruptible<InputStream>, NFormattable, NContentMetadataProvider {
 
     private boolean hasMoreBytes = true;
     private boolean closed = false;
@@ -73,6 +73,10 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
         }
     }
 
+    @Override
+    public InputStream base() {
+        return this;
+    }
 
     @Override
     public void interrupt() throws NInterruptException {

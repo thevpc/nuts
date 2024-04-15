@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
-import net.thevpc.nuts.elem.NDescribables;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.NSession;
@@ -33,7 +33,7 @@ public class NIteratorAdapter<T> extends NIteratorBase<T> {
         if(!a.isObject()){
             a= NElements.of(session).ofObject().set("name",a).build();
         }
-        return NDescribables.resolveOrDestructAsObject(base, session)
+        return NEDesc.describeResolveOrDestructAsObject(base, session)
                 .builder()
                         .addAll(a.asObject().get(session)).build();
     }

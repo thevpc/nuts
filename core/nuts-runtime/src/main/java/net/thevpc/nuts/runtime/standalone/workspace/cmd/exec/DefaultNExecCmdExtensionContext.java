@@ -1,10 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NExecInput;
-import net.thevpc.nuts.io.NExecOutput;
-import net.thevpc.nuts.io.NIO;
-import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.*;
 
 import java.io.*;
 
@@ -68,7 +65,7 @@ public class DefaultNExecCmdExtensionContext implements NExecCmdExtensionContext
             case GRAB_STREAM: {
                 ByteArrayOutputStream grabbed = new ByteArrayOutputStream();
                 hout = new MyOutHolder(session, grabbed, false, () -> {
-                    out.setResult(NIO.of(session).ofInputSource(grabbed.toByteArray()));
+                    out.setResult(NInputSource.of(grabbed.toByteArray(),session));
                 });
                 break;
             }
@@ -103,7 +100,7 @@ public class DefaultNExecCmdExtensionContext implements NExecCmdExtensionContext
             case GRAB_STREAM: {
                 ByteArrayOutputStream grabbed = new ByteArrayOutputStream();
                 herr = new MyOutHolder(session, grabbed, false, () -> {
-                    err.setResult(NIO.of(session).ofInputSource(grabbed.toByteArray()));
+                    err.setResult(NInputSource.of(grabbed.toByteArray(),session));
                 });
                 break;
             }

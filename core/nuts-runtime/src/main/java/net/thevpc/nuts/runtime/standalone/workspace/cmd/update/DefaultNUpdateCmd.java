@@ -9,6 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NPositionType;
@@ -26,6 +27,7 @@ import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NComparator;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NAsk;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.time.Instant;
@@ -464,8 +466,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         NSession session = getSession();
         NVersion version = id.getVersion();
         if (!updateEvenIfExisting && version.isSingleValue()) {
-            updateEvenIfExisting = session.getTerminal().ask()
-                    .resetLine()
+            updateEvenIfExisting = NAsk.of(session)
                     .setDefaultValue(true).setSession(session)
                     .forBoolean(NMsg.ofC("version is too restrictive. Do you intend to force update of %s ?", id))
                     .getBooleanValue();
@@ -582,7 +583,6 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         NSession validWorkspaceSession = getSession();
         final NPrintStream out = validWorkspaceSession.out();
         boolean accept = NIO.of(getSession()).getDefaultTerminal().ask()
-                .resetLine()
                 .forBoolean(NMsg.ofPlain("would you like to apply updates?")).setDefaultValue(true)
                 .setSession(validWorkspaceSession).getValue();
         if (validWorkspaceSession.isAsk() && !accept) {
@@ -814,7 +814,10 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         NId cnewId = toCanonicalForm(newId);
         NId coldId = toCanonicalForm(oldId);
         DefaultNUpdateResult defaultNutsUpdateResult = new DefaultNUpdateResult(id, oldFile, newFile,
-                newFile == null ? null : newFile.getDependencies().get(session).transitive().map(NDependency::toId, "toId").toList(),
+                newFile == null ? null : newFile.getDependencies().get(session).transitive()
+                        .map(NDependency::toId)
+                        .withDesc(NEDesc.of("toId"))
+                        .toList(),
                 false);
         if (cnewId != null && newFile != null && coldId != null && cnewId.getVersion().compareTo(coldId.getVersion()) > 0) {
             defaultNutsUpdateResult.setUpdateVersionAvailable(true);

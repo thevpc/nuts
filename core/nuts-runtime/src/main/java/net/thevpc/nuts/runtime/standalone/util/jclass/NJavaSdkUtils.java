@@ -66,7 +66,7 @@ public class NJavaSdkUtils {
     private static void fillNodes(NClassLoaderNode n, List<NClassLoaderNodeExt> list, boolean java9, NSession session) {
         NClassLoaderNodeExt k = new NClassLoaderNodeExt();
         k.node = n;
-        k.id = NId.of(n.getId()).get( session);
+        k.id = NId.of(n.getId()).get(session);
         k.path = NPath.of(n.getURL(), session);
         if (java9) {
             k.moduleInfo = JavaJarUtils.parseModuleInfo(k.path, session);
@@ -106,9 +106,9 @@ public class NJavaSdkUtils {
     public NPlatformLocation resolveJdkLocation(String requestedJavaVersion, NSession session) {
         String _requestedJavaVersion = requestedJavaVersion;
         requestedJavaVersion = NStringUtils.trim(requestedJavaVersion);
-        NVersion vv = NVersion.of(requestedJavaVersion).get( session);
+        NVersion vv = NVersion.of(requestedJavaVersion).get(session);
         String singleVersion = vv.asSingleValue().orNull();
-        if (singleVersion!=null) {
+        if (singleVersion != null) {
             requestedJavaVersion = "[" + singleVersion + ",[";
         }
         NVersionFilter requestedVersionFilter = NVersionFilters.of(session).byValue(requestedJavaVersion).get();
@@ -133,7 +133,7 @@ public class NJavaSdkUtils {
             );
             current.setConfigVersion(DefaultNWorkspace.VERSION_SDK_LOCATION);
             NVersionFilter requestedJavaVersionFilter = vv.filter(session);
-            if (requestedJavaVersionFilter == null || requestedJavaVersionFilter.acceptVersion(NVersion.of(current.getVersion()).get( session), session)) {
+            if (requestedJavaVersionFilter == null || requestedJavaVersionFilter.acceptVersion(NVersion.of(current.getVersion()).get(session), session)) {
                 bestJava = current;
             }
             if (bestJava == null) {
@@ -148,7 +148,7 @@ public class NJavaSdkUtils {
             }
         }
         String sVersion = bestJava.getVersion();
-        if (requestedVersionFilter.acceptVersion(NVersion.of(sVersion).get( session), session)) {
+        if (requestedVersionFilter.acceptVersion(NVersion.of(sVersion).get(session), session)) {
             return bestJava;
         }
         // replace 1.6 by 6, and 1.8 by 8
@@ -191,22 +191,16 @@ public class NJavaSdkUtils {
         }
         List<NPlatformLocation> all = new ArrayList<>();
         for (String s : conf) {
-            all.addAll(Arrays.asList(searchJdkLocations(s, session)));
+            all.addAll(Arrays.asList(searchJdkLocations(NPath.of(s, session), session)));
         }
         return all.toArray(new NPlatformLocation[0]);
     }
 
     public Future<NPlatformLocation[]> searchJdkLocationsFuture(NSession session) {
         LinkedHashSet<String> conf = new LinkedHashSet<>();
-        File file = new File(System.getProperty("java.home"));
-        try {
-            file = file.getCanonicalFile();
-        } catch (IOException ex) {
-            //
-        }
-
+        NPath file = NPath.of(System.getProperty("java.home"), session).normalize();
         List<Future<NPlatformLocation[]>> all = new ArrayList<>();
-        NPlatformLocation base = resolveJdkLocation(file.getPath(), null, session);
+        NPlatformLocation base = resolveJdkLocation(file, null, session);
         if (base != null) {
             all.add(CompletableFuture.completedFuture(new NPlatformLocation[]{base}));
         }
@@ -230,7 +224,7 @@ public class NJavaSdkUtils {
             }
         }
         for (String s : conf) {
-            all.add(searchJdkLocationsFuture(Paths.get(s), session));
+            all.add(searchJdkLocationsFuture(NPath.of(s, session), session));
         }
         return NScheduler.of(session).executorService().submit(() -> {
             List<NPlatformLocation> locs = new ArrayList<>();
@@ -245,63 +239,54 @@ public class NJavaSdkUtils {
         });
     }
 
-    public NPlatformLocation[] searchJdkLocations(String loc, NSession session) {
-        Path s = Paths.get(loc);
+    public NPlatformLocation[] searchJdkLocations(NPath loc, NSession session) {
         List<NPlatformLocation> all = new ArrayList<>();
-        if (Files.isDirectory(s)) {
-            try (final DirectoryStream<Path> it = Files.newDirectoryStream(s)) {
-                for (Path d : it) {
-                    NPlatformLocation r = resolveJdkLocation(d.toString(), null, session);
-                    if (r != null) {
-                        all.add(r);
-                        if (session != null && session.isPlainTrace()) {
+        if (loc.isDirectory()) {
+            for (NPath d : loc.list()) {
+                NPlatformLocation r = resolveJdkLocation(d, null, session);
+                if (r != null) {
+                    all.add(r);
+                    if (session != null && session.isPlainTrace()) {
 //                            NTexts factory = NTexts.of(session);
 //                            session.out().println(NMsg.ofC("detected java %s %s at %s", r.getPackaging(),
 //                                    factory.ofStyled(r.getVersion(), NutsTextStyle.version()),
 //                                    factory.ofStyled(r.getPath(), NutsTextStyle.path())
 //                            );
-                        }
                     }
                 }
-            } catch (IOException ex) {
-                throw new NIOException(session, ex);
             }
         }
         all.sort(new NSdkLocationComparator(session));
         return all.toArray(new NPlatformLocation[0]);
     }
 
-    public Future<NPlatformLocation[]> searchJdkLocationsFuture(Path s, NSession session) {
+    public Future<NPlatformLocation[]> searchJdkLocationsFuture(NPath s, NSession session) {
         List<Future<NPlatformLocation>> all = new ArrayList<>();
         if (s == null) {
             return CompletableFuture.completedFuture(new NPlatformLocation[0]);
-        } else if (Files.isDirectory(s)) {
-            try (final DirectoryStream<Path> it = Files.newDirectoryStream(s)) {
-                for (Path d : it) {
-                    all.add(
-                            NScheduler.of(session).executorService().submit(() -> {
-                                NPlatformLocation r = null;
-                                try {
-                                    r = resolveJdkLocation(d.toString(), null, session);
-                                    if (r != null) {
-                                        synchronized (session.getWorkspace()) {
-                                            NTexts factory = NTexts.of(session);
-                                            session.getTerminal().printProgress(
-                                                    NMsg.ofC("detected java %s %s at %s", r.getPackaging(),
-                                                            factory.ofStyled(r.getVersion(), NTextStyle.version()),
-                                                            factory.ofStyled(r.getPath(), NTextStyle.path()))
-                                            );
-                                        }
+        } else if (s.isDirectory()) {
+            for (NPath d : s.list()) {
+                all.add(
+                        NScheduler.of(session).executorService().submit(() -> {
+                            NPlatformLocation r = null;
+                            try {
+                                r = resolveJdkLocation(d, null, session);
+                                if (r != null) {
+                                    synchronized (session.getWorkspace()) {
+                                        NTexts factory = NTexts.of(session);
+                                        session.getTerminal().printProgress(
+                                                NMsg.ofC("detected java %s %s at %s", r.getPackaging(),
+                                                        factory.ofStyled(r.getVersion(), NTextStyle.version()),
+                                                        factory.ofStyled(r.getPath(), NTextStyle.path()))
+                                        );
                                     }
-                                } catch (Exception ex) {
-                                    ex.printStackTrace();
                                 }
-                                return r;
-                            })
-                    );
-                }
-            } catch (IOException ex) {
-                throw new NIOException(session, ex);
+                            } catch (Exception ex) {
+                                LOG.with().error(ex).log(NMsg.ofC("error: %s", ex));
+                            }
+                            return r;
+                        })
+                );
             }
         }
         return NScheduler.of(session).executorService().submit(() -> {
@@ -318,13 +303,39 @@ public class NJavaSdkUtils {
         });
     }
 
-    public NPlatformLocation resolveJdkLocation(String path, String preferredName, NSession session) {
+    public String detectJdkProvider(String name, NSession session) {
+        for (String s : new String[]{
+                "bellsoft:Bellsoft",
+                "oracle:Oracle",
+                "openj9:Eclipse OpenJ9",
+                "liberica:Bellsoft Liberica",
+                "sap:SAP",
+                "graalvm:GraalVM",
+                "temurin:IBM Temurin",
+                "sapmachine:SAP MAchine",
+                "corretto:Amazon Corretto",
+                "jbr:Jetbrains",
+                "azul:Azul Zulu",
+                "zulu:Azul Zulu",
+                "semeru:IBM Semeru",
+
+
+        }) {
+            String[] t = s.split(":");
+            if (name.toLowerCase().matches(".*\\b" + t[0].toLowerCase() + "\\b.*")) {
+                return t[1];
+            }
+        }
+        return null;
+    }
+
+    public NPlatformLocation resolveJdkLocation(NPath path, String preferredName, NSession session) {
         NSessionUtils.checkSession(ws, session);
         NAssert.requireNonBlank(path, "path", session);
         String appSuffix = NEnvs.of(session).getOsFamily() == NOsFamily.WINDOWS ? ".exe" : "";
-        Path bin = Paths.get(path).resolve("bin");
-        Path javaExePath = bin.resolve("java" + appSuffix);
-        if (!Files.isRegularFile(javaExePath)) {
+        NPath bin = path.resolve("bin");
+        NPath javaExePath = bin.resolve("java" + appSuffix);
+        if (!javaExePath.isRegularFile()) {
             return null;
         }
         String product = null;
@@ -342,14 +353,14 @@ public class NJavaSdkUtils {
                         .grabAll().failFast().run();
                 cmdRresult = cmd.getResultCode();
                 cmdOutputString = cmd.getGrabbedOutString();
-                if (cmdOutputString.length() > 0) {
+                if (!cmdOutputString.isEmpty()) {
                     break;
                 } else {
                     _LOGOP(session).level(i == (MAX_ITER - 1) ? Level.WARNING : Level.FINER).verb(NLogVerb.WARNING)
                             .log(NMsg.ofJ("unable to execute {0}. returned empty string ({1}/{2})", javaExePath, i + 1, MAX_ITER));
                 }
             }
-            if (cmdOutputString.length() > 0) {
+            if (!cmdOutputString.isEmpty()) {
                 String prefix = "java version \"";
                 int i = cmdOutputString.indexOf(prefix);
                 if (i >= 0) {
@@ -361,7 +372,6 @@ public class NJavaSdkUtils {
                     }
                 }
                 if (jdkVersion == null) {
-
                     prefix = "openjdk version \"";
                     i = cmdOutputString.indexOf(prefix);
                     if (i >= 0) {
@@ -372,6 +382,10 @@ public class NJavaSdkUtils {
                             product = "OpenJDK";
                         }
                     }
+                }
+                String uu = detectJdkProvider(path.getName(), session);
+                if(uu!=null){
+                    product+=" "+uu.trim();
                 }
             }
         } catch (Exception ex) {
@@ -387,7 +401,7 @@ public class NJavaSdkUtils {
             return null;
         }
         String packaging = "jre";
-        if (Files.isRegularFile(bin.resolve("javac" + appSuffix)) && Files.isRegularFile(bin.resolve("jps" + appSuffix))) {
+        if (bin.resolve("javac" + appSuffix).isRegularFile() && bin.resolve("jps" + appSuffix).isRegularFile()) {
             packaging = "jdk";
         }
         if (NBlankable.isBlank(preferredName)) {
@@ -399,7 +413,7 @@ public class NJavaSdkUtils {
                 NWorkspaceUtils.of(session).createSdkId("java", jdkVersion),
                 product,
                 preferredName,
-                path,
+                path.toString(),
                 jdkVersion,
                 packaging,
                 0
@@ -410,7 +424,7 @@ public class NJavaSdkUtils {
 
     public NId createJdkId(String version, NSession session) {
         NAssert.requireNonBlank(version, "version", session);
-        NVersion jv = NVersion.of(version).get( session);
+        NVersion jv = NVersion.of(version).get(session);
         long n1 = jv.getNumber(0).flatMap(NLiteral::asLong).orElse(0L);
         long n2 = jv.getNumber(1).flatMap(NLiteral::asLong).orElse(0L);
         long classFileId = 0;

@@ -23,7 +23,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NApiUtils;
+import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.time.NClock;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
@@ -250,7 +250,7 @@ public final class NApplications {
      * @return exit code
      */
     public static int processThrowable(Throwable ex, NLog out) {
-        return NApiUtils.processThrowable(ex, out);
+        return NApiUtilsRPI.processThrowable(ex, out);
     }
 
 

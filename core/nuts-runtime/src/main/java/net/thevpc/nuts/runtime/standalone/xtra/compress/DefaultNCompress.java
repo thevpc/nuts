@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.compress;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.progress.SingletonNInputStreamProgressFactory;
@@ -113,7 +114,7 @@ public class DefaultNCompress implements NCompress {
         if (source == null) {
             throw new NIllegalArgumentException(session, NMsg.ofPlain("null source"));
         }
-        this.sources.add(NIO.of(session).ofInputSource(source));
+        this.sources.add(NInputSource.of(source,session));
         return this;
     }
 
@@ -166,7 +167,7 @@ public class DefaultNCompress implements NCompress {
             this.target = null;
         } else {
             checkSession();
-            this.target = NIO.of(session).ofOutputTarget(target);
+            this.target = NOutputTarget.of(target,session);
         }
         return this;
     }
@@ -252,7 +253,7 @@ public class DefaultNCompress implements NCompress {
     @Override
     public NCompress run() {
         checkSession();
-        if(packagingImpl==null){
+        if (packagingImpl == null) {
             this.packagingImpl = NExtensions.of(session).createComponent(NCompressPackaging.class, this).get();
         }
         packagingImpl.compressPackage(this);
@@ -350,9 +351,8 @@ public class DefaultNCompress implements NCompress {
                 NPath p = (NPath) inSource;
                 return p.stream().map(
                                 NFunction.of(
-                                        x -> new Item(x, c),
-                                        "NutsStreamOrPath::of"
-                                )
+                                        (NPath x) -> new Item(x, c)
+                                ).withDesc(NEDesc.of("NutsStreamOrPath::of"))
                         )
                         .toArray(Item[]::new);
             }

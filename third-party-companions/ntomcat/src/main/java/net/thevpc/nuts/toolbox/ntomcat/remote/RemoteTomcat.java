@@ -3,16 +3,14 @@ package net.thevpc.nuts.toolbox.ntomcat.remote;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.ntomcat.NTomcatConfigVersions;
 import net.thevpc.nuts.toolbox.ntomcat.remote.config.RemoteTomcatConfig;
 import net.thevpc.nuts.toolbox.ntomcat.util.TomcatUtils;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NUnsafeFunction;
+import net.thevpc.nuts.util.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -171,8 +169,7 @@ public class RemoteTomcat {
                 ok = true;
                 if (NBlankable.isBlank(c.getConfig().getServer())) {
                     ok = false;
-                    c.getConfig().setServer(session.getTerminal()
-                            .ask()
+                    c.getConfig().setServer(NAsk.of(session)
                             .forString(
                                     NMsg.ofC("[instance=%s] would you enter %s value ?"
                                             , text.ofStyled(c.getName(), NTextStyle.primary1())
@@ -186,8 +183,7 @@ public class RemoteTomcat {
                 if (NBlankable.isBlank(c.getConfig().getRemoteTempPath())) {
                     ok = false;
                     c.getConfig()
-                            .setRemoteTempPath(session.getTerminal().ask()
-                                    .resetLine()
+                            .setRemoteTempPath(NAsk.of(session)
                                     .forString(NMsg.ofC("[instance=%s] would you enter %s value ?"
                                             , text.ofStyled(c.getName(), NTextStyle.primary1())
                                             , text.ofStyled("--remote-temp-path", NTextStyle.option())
@@ -198,8 +194,7 @@ public class RemoteTomcat {
                 for (RemoteTomcatAppConfigService aa : c.getApps()) {
                     if (NBlankable.isBlank(aa.getConfig().getPath())) {
                         ok = false;
-                        aa.getConfig().setPath(session.getTerminal().ask()
-                                .resetLine()
+                        aa.getConfig().setPath(NAsk.of(session)
                                 .forString(NMsg.ofC("[instance=%s] [app=%s] would you enter %s value ?"
                                         , text.ofStyled(c.getName(), NTextStyle.primary1())
                                         , text.ofStyled(aa.getName(), NTextStyle.option())
@@ -351,12 +346,15 @@ public class RemoteTomcat {
     public RemoteTomcatConfigService[] listConfig() {
         return
                 sharedConfigFolder.stream().filter(
-                                pathname -> pathname.isRegularFile() && pathname.getName().endsWith(RemoteTomcatConfigService.REMOTE_CONFIG_EXT),
-                                "isRegularFile() && matches(*" + RemoteTomcatConfigService.REMOTE_CONFIG_EXT + ")"
+                                NPredicate.of((NPath pathname) -> pathname.isRegularFile() && pathname.getName().endsWith(RemoteTomcatConfigService.REMOTE_CONFIG_EXT))
+                                        .withDesc(
+                                                NEDesc.of("isRegularFile() && matches(*" + RemoteTomcatConfigService.REMOTE_CONFIG_EXT + ")")
+                                        )
+
                         )
                         .mapUnsafe(
-                                NUnsafeFunction.of(x -> loadTomcatConfig(x), "loadTomcatConfig")
-                                , null)
+                                NUnsafeFunction.of((NPath x) -> loadTomcatConfig(x)).withDesc(NEDesc.of("loadTomcatConfig"))
+                        )
                         .filterNonNull()
                         .toArray(RemoteTomcatConfigService[]::new);
     }
@@ -374,7 +372,7 @@ public class RemoteTomcat {
                 if (json) {
                     session.out().println(NMsg.ofC("%s :", NTexts.of(session).ofStyled(aa.getName(), NTextStyle.primary4())));
                     aa.println(session.out());
-                }else if (yaml) {
+                } else if (yaml) {
                     //TODO FIX ME, what to do in Yaml?
                     session.out().println(NMsg.ofC("%s :", NTexts.of(session).ofStyled(aa.getName(), NTextStyle.primary4())));
                     aa.println(session.out());
@@ -389,7 +387,7 @@ public class RemoteTomcat {
         while (args.hasNext()) {
             if ((a = args.nextFlag("--json").orNull()) != null) {
                 h.json = a.getBooleanValue().get(session);
-            }else if ((a = args.nextFlag("--yaml").orNull()) != null) {
+            } else if ((a = args.nextFlag("--yaml").orNull()) != null) {
                 h.yaml = a.getBooleanValue().get(session);
             } else if ((s = readBaseServiceArg(args)) != null) {
                 h.show(s);

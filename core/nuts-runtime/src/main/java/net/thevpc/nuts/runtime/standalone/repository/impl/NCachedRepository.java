@@ -25,6 +25,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.concurrent.NLocks;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
@@ -234,7 +235,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
             //ignore....
         }
         NIterator<NId> namedNutIdIterator = IteratorBuilder.ofConcat(all, session).distinct(
-                NFunction.of(NId::getLongName, "getLongName")).build();
+                NFunction.of(NId::getLongName).withDesc(NEDesc.of("getLongName"))).build();
 
         if (namedNutIdIterator == null) {
             namedNutIdIterator = IteratorBuilder.emptyIterator();
@@ -362,7 +363,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
             li.add(p);
         }
         return mirroring.search(IteratorBuilder.ofConcat(li, session).distinct(
-                NFunction.of(NId::getLongName, "getLongName")
+                NFunction.of(NId::getLongName).withDesc(NEDesc.of("getLongName"))
         ).build(), filter, fetchMode, session);
     }
 

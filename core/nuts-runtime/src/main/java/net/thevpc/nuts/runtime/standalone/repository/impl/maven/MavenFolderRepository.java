@@ -184,7 +184,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
             NId idDesc = id.builder().setFaceDescriptor().build();
             try {
                 stream = getStream(idDesc, "artifact descriptor", "retrieve", session);
-                name = NIO.of(session).ofInputSource(stream).getMetaData().getName().orElse("no-name");
+                name = NInputSource.of(stream,session).getMetaData().getName().orElse("no-name");
                 bytes = CoreIOUtils.loadByteArray(stream, true, session);
                 nutsDescriptor = MavenUtils.of(session).parsePomXmlAndResolveParents(
                         CoreIOUtils.createBytesStream(bytes, name == null ? null : NMsg.ofNtf(name), "text/xml", StandardCharsets.UTF_8.name(), "pom.xml", session)

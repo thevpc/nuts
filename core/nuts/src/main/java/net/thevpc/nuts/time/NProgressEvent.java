@@ -28,7 +28,6 @@ package net.thevpc.nuts.time;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NSessionProvider;
-import net.thevpc.nuts.NWorkspace;
 
 /**
  * Progress event
@@ -60,11 +59,11 @@ public interface NProgressEvent extends NSessionProvider {
     }
 
     /**
-     * Nuts Workspace
+     * Nuts Session
      *
-     * @return Nuts Workspace
+     * @return Nuts Session
      */
-    NWorkspace getWorkspace();
+    NSession getSession();
 
     /**
      * error or null

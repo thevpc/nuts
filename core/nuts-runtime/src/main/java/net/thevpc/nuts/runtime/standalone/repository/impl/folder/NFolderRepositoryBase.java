@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.folder;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NTreeVisitResult;
 import net.thevpc.nuts.format.NTreeVisitor;
@@ -192,23 +193,32 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                 () -> {
                     List<NId> ret = new ArrayList<>();
                     session.getTerminal().printProgress(NMsg.ofC("looking for versions of %s at %s", id, foldersFileUrl.toCompressedForm()));
-                    NPath[] all = foldersFileUrl.stream().filter(
-                            NPath::isDirectory, "isDirectory"
-                    ).toArray(NPath[]::new);
-                    for (NPath version : all) {
-                        final NId nutsId = id.builder().setVersion(version.getName()).build();
-                        if (idFilter != null && !idFilter.acceptId(nutsId, session)) {
-                            continue;
-                        }
-                        ret.add(NIdBuilder.of(groupId, artifactId).setVersion(version.getName()).build());
-                    }
-                    return NIterator.of(ret.iterator(), "findNonSingleVersion");
+                    return NIterator.of(
+                            foldersFileUrl.stream().filter(
+                                    NPath::isDirectory
+                            ).withDesc(NEDesc.of("isDirectory")).map(versionFolder -> {
+                                String versionName = versionFolder.getName();
+                                NId expectedId = NIdBuilder.of(groupId, artifactId).setVersion(versionName).build();
+                                if (isValidArtifactVersionFolder(expectedId, versionFolder, session)) {
+                                    final NId nutsId = id.builder().setVersion(versionFolder.getName()).build();
+                                    if (idFilter == null || idFilter.acceptId(nutsId, session)) {
+                                        return expectedId;
+                                    }
+                                }
+                                return null;
+                            }).filterNonNull().iterator()
+                            ,session).withDesc(NEDesc.of("findNonSingleVersion"));
                 }
                 , e -> NElements.of(e).ofObject()
                         .set("type", "NonSingleVersion")
                         .set("path", foldersFileUrl.toString())
                         .build(),
                 session).build();
+    }
+
+    private boolean isValidArtifactVersionFolder(NId expectedId, NPath versionFolder, NSession session) {
+        String expectedFileName = getIdFilename(expectedId.builder().setFaceDescriptor().build(), session);
+        return versionFolder.resolve(expectedFileName).isRegularFile();
     }
 
     public NIterator<NId> findSingleVersionImpl(final NId id, NIdFilter idFilter, NFetchMode fetchMode, final NSession session) {

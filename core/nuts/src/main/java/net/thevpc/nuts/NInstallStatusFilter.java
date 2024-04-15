@@ -24,7 +24,9 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.util.NFilter;
+import net.thevpc.nuts.reserved.util.InstallStatusFilterWithDescription;
 
 /**
  * SearchId Filter.
@@ -49,4 +51,13 @@ public interface NInstallStatusFilter extends NFilter {
     NInstallStatusFilter and(NInstallStatusFilter other);
 
     NInstallStatusFilter neg();
+
+    @Override
+    default NFilter withDesc(NEDesc description) {
+        if(description==null){
+            return this;
+        }
+        return new InstallStatusFilterWithDescription(this,description);
+    }
+
 }

@@ -32,6 +32,7 @@ import net.thevpc.nuts.util.NStream;
 
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -410,7 +411,7 @@ public interface NSearchCmd extends NWorkspaceCmd {
      * @param comparator result comparator
      * @return {@code this}
      */
-    NSearchCmd sort(NComparator comparator);
+    NSearchCmd sort(Comparator<?> comparator);
 
     /**
      * copy content from given {@code other}
@@ -590,7 +591,7 @@ public interface NSearchCmd extends NWorkspaceCmd {
      *
      * @return result comparator
      */
-    NComparator getComparator();
+    NComparator<?> getComparator();
 
     /**
      * true if duplicates are skipped

@@ -1,10 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.id.filter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
+import net.thevpc.nuts.spi.base.AbstractIdFilter;
+import net.thevpc.nuts.util.NSimplifiable;
 import net.thevpc.nuts.util.NFilterOp;
 
-public class NIdFilterTrue extends AbstractIdFilter implements NIdFilter, Simplifiable<NIdFilter>, NExprIdFilter {
+public class NIdFilterTrue extends AbstractIdFilter implements NIdFilter, NSimplifiable<NIdFilter>, NExprIdFilter {
 
     public NIdFilterTrue(NSession session) {
         super(session, NFilterOp.TRUE);

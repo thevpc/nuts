@@ -25,9 +25,7 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NSessionProvider;
-import net.thevpc.nuts.NWorkspace;
 
 import java.io.InputStream;
 import java.util.List;
@@ -90,13 +88,5 @@ public interface NDescriptorContentParserContext extends NSessionProvider {
      * @return content name (mostly content file name)
      */
     String getName();
-
-    /**
-     * return workspace
-     *
-     * @return workspace
-     */
-    NWorkspace getWorkspace();
-
 
 }

@@ -7,12 +7,14 @@ public class DefaultNPsInfo implements NPsInfo {
     private String name;
     private String title;
     private String cmdLine;
+    private String[] cmdLineArgs;
 
-    public DefaultNPsInfo(String id, String name, String title, String cmdLine) {
+    public DefaultNPsInfo(String id, String name, String title, String cmdLine, String[] cmdLineArgs) {
         this.id = id;
         this.name = name;
         this.title = title;
         this.cmdLine = cmdLine;
+        this.cmdLineArgs = cmdLineArgs;
     }
 
     @Override
@@ -34,4 +36,10 @@ public class DefaultNPsInfo implements NPsInfo {
     public String getCmdLine() {
         return cmdLine;
     }
+
+    @Override
+    public String[] getCmdLineArgs() {
+        return cmdLineArgs;
+    }
+    
 }

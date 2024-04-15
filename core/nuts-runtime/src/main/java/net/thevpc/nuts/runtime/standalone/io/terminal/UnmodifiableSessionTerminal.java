@@ -6,7 +6,7 @@ import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NQuestion;
+import net.thevpc.nuts.util.NAsk;
 
 import java.io.InputStream;
 
@@ -67,7 +67,7 @@ public class UnmodifiableSessionTerminal extends AbstractNSessionTerminal {
     }
 
     @Override
-    public <T> NQuestion<T> ask() {
+    public <T> NAsk<T> ask() {
         return getBase()
                 .<T>ask()
                 .setSession(session);

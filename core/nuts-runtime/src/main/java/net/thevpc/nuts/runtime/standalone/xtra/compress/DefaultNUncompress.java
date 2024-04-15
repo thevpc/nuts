@@ -105,7 +105,7 @@ public class DefaultNUncompress implements NUncompress {
     @Override
     public NUncompress setSource(InputStream source) {
         checkSession();
-        this.source = source == null ? null : NIO.of(session).ofInputSource(source);
+        this.source = source == null ? null : NInputSource.of(source,session);
         return this;
     }
 
@@ -239,7 +239,7 @@ public class DefaultNUncompress implements NUncompress {
             monitor.setTraceProgress(options.contains(NPathOption.TRACE));
             monitor.setProgressFactory(getProgressFactory());
             monitor.setSource(source);
-            _source = NIO.of(session).ofInputSource(monitor.create());
+            _source = NInputSource.of(monitor.create(),session);
         }
 
         if (visitor == null && target == null) {

@@ -437,9 +437,7 @@ public final class JavaExecutorOptions {
                                 .append(" to run it. type ").append("cancel!", NTextStyle.error())
                                 .append(" to cancel : ");
 
-                        mainClass = session.getTerminal()
-                                .ask()
-                                .resetLine()
+                        mainClass = NAsk.of(session)
                                 .setSession(session)
                                 .forString(NMsg.ofNtf(msgString))
                                 .setValidator((value, question) -> {

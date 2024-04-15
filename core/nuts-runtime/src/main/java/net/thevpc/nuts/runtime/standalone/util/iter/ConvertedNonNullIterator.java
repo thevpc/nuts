@@ -25,8 +25,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.NSession;
 
@@ -60,7 +60,7 @@ public class ConvertedNonNullIterator<F, T> extends NIteratorBase<T> {
         return NElements.of(session).ofObject()
                 .set("type", "Map")
                 .set("accept", "isNotNull")
-                .set("mapper", NDescribables.resolveOrDestructAsObject(converter, session)
+                .set("mapper", NEDesc.describeResolveOrDestructAsObject(converter, session)
                         .builder()
                         .set("name", convertName)
                         .build()

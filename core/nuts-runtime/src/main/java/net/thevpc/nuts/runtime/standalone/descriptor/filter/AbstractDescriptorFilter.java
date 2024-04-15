@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,17 +24,18 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.filter;
 
 import net.thevpc.nuts.NDescriptorFilter;
+import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.spi.base.AbstractNFilter;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.runtime.standalone.util.filters.AbstractNFilter;
-import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
+import net.thevpc.nuts.util.NSimplifiable;
 
 /**
  *
  * @author thevpc
  */
-public abstract class AbstractDescriptorFilter extends AbstractNFilter implements NDescriptorFilter, Simplifiable<NDescriptorFilter> {
+public abstract class AbstractDescriptorFilter extends AbstractNFilter implements NDescriptorFilter, NSimplifiable<NDescriptorFilter> {
 
     public AbstractDescriptorFilter(NSession session, NFilterOp op) {
         super(session, op);
@@ -53,5 +54,13 @@ public abstract class AbstractDescriptorFilter extends AbstractNFilter implement
     @Override
     public NDescriptorFilter neg() {
         return super.neg().to(NDescriptorFilter.class);
+    }
+
+    @Override
+    public NFilter withDesc(NEDesc description) {
+        if (description == null) {
+            return this;
+        }
+        return new NDescriptorFilterDelegateWithDescription(this, description);
     }
 }

@@ -46,35 +46,7 @@ public interface NIO extends NComponent {
 
     InputStream stdin();
 
-    NPrintStream ofNullPrintStream();
-
     OutputStream ofNullRawOutputStream();
-
-    NMemoryPrintStream ofInMemoryPrintStream();
-
-    NMemoryPrintStream ofInMemoryPrintStream(NTerminalMode mode);
-
-    /**
-     * create print stream that supports the given {@code mode}. If the given
-     * {@code out} is a PrintStream that supports {@code mode}, it should be
-     * returned without modification.
-     *
-     * @param out      stream to wrap
-     * @param mode     mode to support
-     * @param terminal terminal
-     * @return {@code mode} supporting PrintStream
-     */
-    NPrintStream ofPrintStream(OutputStream out, NTerminalMode mode, NSystemTerminalBase terminal);
-    NPrintStream ofPrintStream(OutputStream out, NTerminalMode mode);
-
-    NPrintStream ofPrintStream(OutputStream out);
-
-    NPrintStream ofPrintStream(Writer out, NTerminalMode mode, NSystemTerminalBase terminal);
-    NPrintStream ofPrintStream(Writer out, NTerminalMode mode);
-
-    NPrintStream ofPrintStream(NPath out);
-
-    NPrintStream ofPrintStream(Writer out);
 
     boolean isStdout(NPrintStream out);
 
@@ -83,74 +55,6 @@ public interface NIO extends NComponent {
     NPrintStream stdout();
 
     NPrintStream stderr();
-
-    NInputSource ofMultiRead(NInputSource source);
-
-    NInputSource ofInputSource(InputStream inputStream);
-
-    NInputSource ofInputSource(InputStream inputStream, NContentMetadata metadata);
-
-    NInputSource ofInputSource(byte[] inputStream);
-
-    NInputSource ofInputSource(byte[] inputStream, NContentMetadata metadata);
-
-    NOutputTarget ofOutputTarget(OutputStream outputStream);
-
-    NOutputTarget ofOutputTarget(OutputStream outputStream, NContentMetadata metadata);
-
-    /**
-     * Checks for the current system terminal and does best effort
-     * to enable a rich terminal. Rich terminals add somme features
-     * including 'auto-complete'. This Method may replace the system
-     * terminal and may even load a nuts extension to enable such features.
-     *
-     * @return {@code this} instance
-     */
-    NIO enableRichTerm();
-
-    /**
-     * return new terminal bound to the given session
-     *
-     * @return new terminal
-     */
-    NSessionTerminal createTerminal();
-
-    /**
-     * return new terminal
-     *
-     * @param in  in
-     * @param out out
-     * @param err err
-     * @return new terminal
-     */
-    NSessionTerminal createTerminal(InputStream in, NPrintStream out, NPrintStream err);
-
-    /**
-     * return new terminal bound to the given parent terminal and session.
-     *
-     * @param terminal parent terminal (or null)
-     * @return new terminal bound to the given parent terminal and session.
-     */
-    NSessionTerminal createTerminal(NSessionTerminal terminal);
-
-    /**
-     * return a new terminal with empty input and byte-array output/error.
-     * Using such terminals help capturing all output/error stream upon execution.
-     * This method is equivalent to createMemTerminal(false,session)
-     *
-     * @return a new terminal with empty input and byte-array output/error.
-     */
-    NSessionTerminal createInMemoryTerminal();
-
-    /**
-     * return a new terminal with empty input and byte-array output/error.
-     * Using such terminals help capturing all output/error stream upon execution.
-     *
-     * @param mergeErr when true out and err are merged into a single stream
-     * @return a new terminal with empty input and byte-array output/error.
-     */
-    NSessionTerminal createInMemoryTerminal(boolean mergeErr);
-
 
     /**
      * return workspace system terminal.
@@ -182,8 +86,5 @@ public interface NIO extends NComponent {
      */
     NIO setDefaultTerminal(NSessionTerminal terminal);
 
-
-    NInputStreamBuilder ofInputStreamBuilder(InputStream base);
-    NOutputStreamBuilder ofOutputStreamBuilder(OutputStream base);
 
 }

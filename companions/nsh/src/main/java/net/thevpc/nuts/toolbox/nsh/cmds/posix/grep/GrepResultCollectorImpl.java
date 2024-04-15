@@ -1,5 +1,6 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.posix.grep;
 
+import net.thevpc.nuts.util.NAsk;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
@@ -88,7 +89,7 @@ class GrepResultCollectorImpl implements GrepResultCollector {
                             first = false;
                         } else {
                             if (options.byLine) {
-                                String v = session.getTerminal().ask()
+                                String v = NAsk.of(session)
                                         .forString(NMsg.ofPlain("continue"))
                                         .setDefaultValue("y")
                                         .getValue();

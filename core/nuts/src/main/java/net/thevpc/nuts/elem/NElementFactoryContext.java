@@ -23,8 +23,8 @@
  */
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NSessionProvider;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.reflect.NReflectRepository;
 
 import java.lang.reflect.Type;
@@ -40,7 +40,7 @@ public interface NElementFactoryContext extends NSessionProvider {
 
     NReflectRepository getReflectRepository();
 
-    NWorkspace getWorkspace();
+    NSession getSession();
 
     NElements elem();
 

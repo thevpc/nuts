@@ -14,6 +14,7 @@ import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NAsk;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -180,8 +181,7 @@ public class DefaultCustomCommandsModel {
             if (oldCommand.equals(command)) {
                 return false;
             }
-            if (!session.getTerminal().ask()
-                    .resetLine()
+            if (!NAsk.of(session)
                     .setDefaultValue(false)
                     .forBoolean(NMsg.ofC("override existing command %s ?",
                             NTexts.of(session).ofStyled(

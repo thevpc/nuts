@@ -1,11 +1,13 @@
 package net.thevpc.nuts.runtime.remote;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElementBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.search.AbstractNSearchCmd;
 import net.thevpc.nuts.util.NIterator;
 
+import java.util.Iterator;
 import java.util.List;
 
 public class RemoteNSearchCmd extends AbstractNSearchCmd {
@@ -57,13 +59,15 @@ public class RemoteNSearchCmd extends AbstractNSearchCmd {
         }
 
         return NIterator.of(
+                (Iterator <NId>)
                 getWorkspace().remoteCall(
                         getWorkspace().createCall(
                                 "workspace.searchIds",
                                 eb.build(), getSession()
                         ),
                         List.class
-                ).iterator(), "searchRemoteIds");
+                ).iterator(),session
+        ).withDesc(NEDesc.of("searchRemoteIds"));
     }
 
 

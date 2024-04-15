@@ -6,17 +6,18 @@
 package net.thevpc.nuts.runtime.standalone.id.filter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.base.AbstractIdFilter;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import java.util.Objects;
 
-import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
+import net.thevpc.nuts.util.NSimplifiable;
 import net.thevpc.nuts.util.NFilterOp;
 
 /**
  *
  * @author thevpc
  */
-public class NDefaultVersionIdFilter extends AbstractIdFilter implements NIdFilter, Simplifiable<NIdFilter> {
+public class NDefaultVersionIdFilter extends AbstractIdFilter implements NIdFilter, NSimplifiable<NIdFilter> {
 
     private final Boolean defaultVersion;
 

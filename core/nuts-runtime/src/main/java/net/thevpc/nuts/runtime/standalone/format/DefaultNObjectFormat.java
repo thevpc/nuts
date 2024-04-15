@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.standalone.format;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.*;
 import net.thevpc.nuts.io.NPath;
@@ -207,14 +208,14 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
                     NTextBuilder builder = ((NString) value).builder();
                     Object[] r = builder.lines().map(
                             NFunction.of(
-                                    x -> {
+                                    (NTextBuilder x) -> {
                                         if (true) {
                                             return x.filteredText();
                                         }
                                         return (Object) x.filteredText();
-                                    },
-                                    "filteredText"
-                            )
+                                    }
+
+                            ).withDesc(NEDesc.of("filteredText"))
                     ).toArray(Object[]::new);
                     ee.setValue(r);
                 } else {

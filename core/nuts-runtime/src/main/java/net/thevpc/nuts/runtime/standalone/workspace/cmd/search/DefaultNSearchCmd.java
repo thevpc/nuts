@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.search;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NDescribables;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
@@ -610,10 +610,10 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                                                     elems.ofObject()
                                                             .set("description", "searchVersions")
                                                             .set("repository", repoAndMode.getRepository().getName())
-                                                            .set("filter", NDescribables.resolveOrDestruct(filter, session))
+                                                            .set("filter", NEDesc.describeResolveOrDestruct(filter, session))
                                                             .build()
                                             ).safeIgnore().iterator();
-                                    z = filterLatestAndDuplicatesThenSort(z, isLatest() || latestVersion || releaseVersion, isDistinct(),false);
+                                    z = filterLatestAndDuplicatesThenSort(z, isLatest() || latestVersion || releaseVersion, isDistinct(), false);
                                     idLookup.add(z);
                                 }
                             }
@@ -662,7 +662,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                                                 .set("description", "searchRepository")
                                                 .set("repository", repoAndMode.getRepository().getName())
                                                 .set("fetchMode", repoAndMode.getFetchMode().id())
-                                                .set("filter", NDescribables.resolveOrDestruct(filter, session))
+                                                .set("filter", NEDesc.describeResolveOrDestruct(filter, session))
                                                 .build()
                                 ).iterator()
                 );
@@ -677,20 +677,23 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
 
         if (inlineDependencies) {
             //optimize by applying latest and distinct when asking for dependencies
-            baseIterator = filterLatestAndDuplicatesThenSort(baseIterator, isLatest(), isDistinct(),false);
+            baseIterator = filterLatestAndDuplicatesThenSort(baseIterator, isLatest(), isDistinct(), false);
             //now include dependencies
             NIterator<NId> curr = baseIterator;
             baseIterator = IteratorBuilder.of(curr, session)
                     .flatMap(
                             NFunction.of(
-                                    x -> IteratorBuilder.of(
-                                            toFetch().setId(x).setContent(false)
-                                                    .setDependencies(true).getResultDefinition().getDependencies().get(session).transitiveWithSource().iterator(),
-                                            session).build(), "getDependencies")
-                    ).map(NFunction.of(NDependency::toId, "DependencyToId"))
+                                            (NId x) -> IteratorBuilder.of(
+                                                    toFetch().setId(x).setContent(false)
+                                                            .setDependencies(true).getResultDefinition().getDependencies().get(session).transitiveWithSource().iterator(),
+                                                    session).build())
+                                    .withDesc(NEDesc.of("getDependencies"))
+                    ).map(NFunction.of(NDependency::toId)
+                            .withDesc(NEDesc.of("DependencyToId"))
+                    )
                     .build();
         }
-        return filterLatestAndDuplicatesThenSort(baseIterator, isLatest(), isDistinct(),isSorted());
+        return filterLatestAndDuplicatesThenSort(baseIterator, isLatest(), isDistinct(), isSorted());
     }
 
 //    public NutsIterator<NutsDependency> findIterator2(DefaultNSearch search) {
@@ -828,7 +831,9 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
             r = IteratorBuilder.of(baseIterator, session).distinct(
                     NFunction.of(
                             (NId nutsId) -> nutsId.getLongId()
-                                    .toString(), "getLongId")).iterator();
+                                    .toString())
+                            .withDesc(NEDesc.of("getLongId"))
+            ).iterator();
         } else if (latest && distinct) {
             r = IteratorBuilder.ofSupplier(() -> {
                         Map<String, NId> visited = new LinkedHashMap<>();
@@ -841,7 +846,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                             }
                         }
                         return visited.values().iterator();
-                    }, e -> NDescribables.resolveOrDestructAsObject(baseIterator, session)
+                    }, e -> NEDesc.describeResolveOrDestructAsObject(baseIterator, session)
                             .builder()
                             .set("latest", true)
                             .set("distinct", true)
@@ -861,8 +866,8 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                                         oldList.add(nutsId);
                                     }
                                 }
-                                return IteratorBuilder.ofFlatMap(NIterator.of(visited.values().iterator(), "visited"), session).build();
-                            }, e -> NDescribables.resolveOrDestructAsObject(baseIterator, session)
+                                return IteratorBuilder.ofFlatMap(NIterator.of(visited.values().iterator(),session).withDesc(NEDesc.of("visited")), session).build();
+                            }, e -> NEDesc.describeResolveOrDestructAsObject(baseIterator, session)
                                     .builder()
                                     .set("latest", true)
                                     .set("duplicates", true)

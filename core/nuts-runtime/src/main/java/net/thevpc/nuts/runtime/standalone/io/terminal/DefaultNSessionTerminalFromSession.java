@@ -2,13 +2,13 @@ package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.runtime.standalone.io.ask.DefaultNQuestion;
+import net.thevpc.nuts.runtime.standalone.io.ask.DefaultNAsk;
 import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NQuestion;
+import net.thevpc.nuts.util.NAsk;
 
 import java.io.*;
 import java.util.Scanner;
@@ -195,9 +195,9 @@ public class DefaultNSessionTerminalFromSession extends AbstractNSessionTerminal
 
 
     @Override
-    public <T> NQuestion<T> ask() {
+    public <T> NAsk<T> ask() {
         return
-                new DefaultNQuestion<T>(ws, this, out())
+                new DefaultNAsk<T>(ws, this, out())
                         .setSession(session)
                 ;
     }

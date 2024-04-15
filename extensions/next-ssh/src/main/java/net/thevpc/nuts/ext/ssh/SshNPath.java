@@ -2,6 +2,7 @@ package net.thevpc.nuts.ext.ssh;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.format.NTreeVisitResult;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
@@ -67,9 +68,9 @@ class SshNPath implements NPathSPI {
                                     }
                                     cc += x;
                                     return NPath.of(path.setPath(cc).toString(), getSession());
-                                }, "NPath::of"
+                                }
 
-                        )
+                        ).withDesc(NEDesc.of("NPath::of"))
                 );
             }
         } catch (Exception e) {
@@ -597,9 +598,9 @@ class SshNPath implements NPathSPI {
                                     }
                                     cc += x;
                                     return NPath.of(path.setPath(cc).toString(), getSession());
-                                },
-                                "NPath::of"
-                        )
+                                }
+
+                        ).withDesc(NEDesc.of("NPath::of"))
                 );
             }
         } catch (Exception e) {

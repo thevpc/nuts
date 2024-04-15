@@ -28,14 +28,14 @@ package net.thevpc.nuts.runtime.standalone.util.filters;
 import java.util.Objects;
 import net.thevpc.nuts.NId;
 import net.thevpc.nuts.NIdFilter;
-import net.thevpc.nuts.util.NPredicates;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.spi.base.AbstractNPredicate;
 
 /**
  *
  * @author thevpc
  */
-public class NIdFilterToPredicate extends NPredicates.BasePredicate<NId> {
+public class NIdFilterToPredicate extends AbstractNPredicate<NId> {
     
     private final NIdFilter ff;
     private final NSession session;

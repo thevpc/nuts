@@ -2,6 +2,7 @@ package net.thevpc.nuts.toolbox.nsh.eval;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.*;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.toolbox.nsh.autocomplete.NShellAutoCompleteCandidate;
@@ -217,7 +218,7 @@ public abstract class AbstractNShellContext implements NShellContext {
 
     @Override
     public String[] expandPaths(String path) {
-        return NPath.of(path, getSession()).walkGlob().map(NFunction.of(NPath::toString, "toString")).toArray(String[]::new);
+        return NPath.of(path, getSession()).walkGlob().map(NFunction.of(NPath::toString).withDesc(NEDesc.of("toString"))).toArray(String[]::new);
     }
 
     @Override

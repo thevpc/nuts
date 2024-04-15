@@ -1,12 +1,14 @@
 package net.thevpc.nuts.toolbox.ndb.sql.nmysql;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.local.LocalMysqlConfigService;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.local.config.LocalMysqlConfig;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.remote.RemoteMysqlConfigService;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.remote.config.RemoteMysqlConfig;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NPredicate;
 import net.thevpc.nuts.util.NUnsafeFunction;
 
 import java.util.logging.Logger;
@@ -24,12 +26,13 @@ public class NMySqlService {
     public LocalMysqlConfigService[] listLocalConfig() {
         return
                 sharedConfigFolder.stream().filter(
-                                pathname -> pathname.isRegularFile() && pathname.getName().toString().endsWith(LocalMysqlConfigService.SERVER_CONFIG_EXT),
-                                "isRegularFile() && matches(*" + LocalMysqlConfigService.SERVER_CONFIG_EXT + ")"
+                                NPredicate.of((NPath pathname) -> pathname.isRegularFile() && pathname.getName().toString().endsWith(LocalMysqlConfigService.SERVER_CONFIG_EXT))
+                                        .withDesc(NEDesc.of("isRegularFile() && matches(*" + LocalMysqlConfigService.SERVER_CONFIG_EXT + ")"))
                         )
                         .mapUnsafe(
-                                NUnsafeFunction.of(this::loadLocalMysqlConfig, "loadLocalMysqlConfig")
-                                , null)
+                                NUnsafeFunction.of((NPath x) -> this.loadLocalMysqlConfig(x)).withDesc(NEDesc.of("loadLocalMysqlConfig")),
+                                null
+                        )
                         .filterNonNull()
                         .toArray(LocalMysqlConfigService[]::new);
     }
@@ -107,15 +110,15 @@ public class NMySqlService {
     public RemoteMysqlConfigService[] listRemoteConfig() {
         return
                 sharedConfigFolder.stream().filter(
-                                pathname -> pathname.isRegularFile() && pathname.getName().toString().endsWith(LocalMysqlConfigService.SERVER_CONFIG_EXT),
-                                "isRegularFile() && matches(*" + LocalMysqlConfigService.SERVER_CONFIG_EXT + ")"
+                                NPredicate.of((NPath pathname) -> pathname.isRegularFile() && pathname.getName().toString().endsWith(LocalMysqlConfigService.SERVER_CONFIG_EXT))
+                                        .withDesc(NEDesc.of("isRegularFile() && matches(*" + LocalMysqlConfigService.SERVER_CONFIG_EXT + ")"))
                         )
                         .mapUnsafe(
                                 NUnsafeFunction.of(
-                                        x -> {
+                                        (NPath x) -> {
                                             String nn = x.getName();
                                             return loadRemoteMysqlConfig(nn.substring(0, nn.length() - RemoteMysqlConfigService.CLIENT_CONFIG_EXT.length()));
-                                        }, "loadRemoteMysqlConfig")
+                                        }).withDesc(NEDesc.of("loadRemoteMysqlConfig"))
                                 , null)
                         .filterNonNull()
                         .toArray(RemoteMysqlConfigService[]::new);

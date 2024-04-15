@@ -1,7 +1,6 @@
 package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.util.NApiUtils;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
@@ -105,7 +104,7 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
         }
         Function<NSession, NMsg> finalMessage = message;
         NSession finalSession = session;
-        NMsg eMsg = NApiUtils.resolveValidErrorMessage(() -> finalMessage == null ? null : finalMessage.apply(finalSession));
+        NMsg eMsg = NApiUtilsRPI.resolveValidErrorMessage(() -> finalMessage == null ? null : finalMessage.apply(finalSession));
         NMsg m = prepareMessage(eMsg);
         if (session == null) {
             throw new NoSuchElementException(m.toString());

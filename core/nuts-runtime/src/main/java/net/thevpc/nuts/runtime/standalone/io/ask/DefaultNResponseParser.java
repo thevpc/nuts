@@ -5,10 +5,10 @@ import net.thevpc.nuts.cmdline.DefaultNArg;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NQuestion;
-import net.thevpc.nuts.util.NQuestionParser;
+import net.thevpc.nuts.util.NAsk;
+import net.thevpc.nuts.util.NAskParser;
 
-public class DefaultNResponseParser<T> implements NQuestionParser<T> {
+public class DefaultNResponseParser<T> implements NAskParser<T> {
 
     private final NSession session;
     private final Class<T> type;
@@ -19,7 +19,7 @@ public class DefaultNResponseParser<T> implements NQuestionParser<T> {
     }
 
     @Override
-    public T parse(Object response, T defaultValue, NQuestion<T> question) {
+    public T parse(Object response, T defaultValue, NAsk<T> question) {
         if (response == null || ((response instanceof String) && response.toString().length() == 0)) {
             response = defaultValue;
         }

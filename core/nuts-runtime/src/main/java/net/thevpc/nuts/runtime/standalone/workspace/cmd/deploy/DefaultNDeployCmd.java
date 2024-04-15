@@ -152,7 +152,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
         wu.checkReadOnly();
 
         Path tempFile = null;
-        NInputSource contentSource = NIO.of(session).ofMultiRead(content);
+        NInputSource contentSource = NInputSource.ofMultiRead(content,session);
         NDescriptor descriptor = buildDescriptor(descriptor0, descSHA1);
 
         CharacterizedDeployFile characterizedFile = null;
@@ -294,9 +294,9 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
             return mdescriptor;
         } else {
             InputStream inputStream = (InputStream) descriptor;
-            NInputSource nutsStreamOrPath = NIO.of(session).ofInputSource(inputStream);
+            NInputSource nutsStreamOrPath = NInputSource.of(inputStream,session);
             if (nutsStreamOrPath != null) {
-                NInputSource d = NIO.of(session).ofMultiRead(nutsStreamOrPath);
+                NInputSource d = NInputSource.ofMultiRead(nutsStreamOrPath,session);
                 try {
                     if (descSHA1 != null) {
                         try (InputStream is = d.getInputStream()) {

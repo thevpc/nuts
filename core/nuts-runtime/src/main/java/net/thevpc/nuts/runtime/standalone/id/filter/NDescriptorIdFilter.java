@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.base.AbstractIdFilter;
 import net.thevpc.nuts.runtime.standalone.descriptor.DelegateNDescriptor;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -16,7 +17,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenReposi
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
-import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
+import net.thevpc.nuts.util.NSimplifiable;
 import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.UncheckedException;
@@ -24,7 +25,7 @@ import net.thevpc.nuts.util.UncheckedException;
 /**
  * @author thevpc
  */
-public class NDescriptorIdFilter extends AbstractIdFilter implements NIdFilter, Simplifiable<NIdFilter> {
+public class NDescriptorIdFilter extends AbstractIdFilter implements NIdFilter, NSimplifiable<NIdFilter> {
 
     private NLog LOG;
     private final NDescriptorFilter filter;

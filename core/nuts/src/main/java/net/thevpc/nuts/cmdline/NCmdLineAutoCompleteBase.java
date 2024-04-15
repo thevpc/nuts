@@ -26,8 +26,6 @@
  */
 package net.thevpc.nuts.cmdline;
 
-import net.thevpc.nuts.NWorkspace;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -45,11 +43,6 @@ public abstract class NCmdLineAutoCompleteBase implements NCmdLineAutoComplete {
      * candidates map
      */
     private final LinkedHashMap<String, NArgCandidate> candidates = new LinkedHashMap<>();
-
-    @Override
-    public NWorkspace getWorkspace() {
-        return getSession().getWorkspace();
-    }
 
     @Override
     public <T> T get(Class<T> t) {

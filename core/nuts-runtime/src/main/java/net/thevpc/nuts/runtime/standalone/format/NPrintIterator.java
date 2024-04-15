@@ -8,12 +8,12 @@ package net.thevpc.nuts.runtime.standalone.format;
 import java.util.Iterator;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NIterableFormat;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.util.iter.NIteratorBase;
-import net.thevpc.nuts.elem.NDescribables;
 
 /**
  *
@@ -44,7 +44,7 @@ public class NPrintIterator<T> extends NIteratorBase<T> {
 
     @Override
     public NElement describe(NSession session) {
-        return NDescribables.resolveOrDestructAsObject(curr, session)
+        return NEDesc.describeResolveOrDestructAsObject(curr, session)
                 .builder()
                 .set("print", NElements.of(session).ofObject().set("format",listFormat.getOutputFormat().id()).build())
                 .build();

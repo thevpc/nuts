@@ -59,11 +59,6 @@ public class DefaultNDescriptorContentParserContext implements NDescriptorConten
     }
 
     @Override
-    public NWorkspace getWorkspace() {
-        return getSession().getWorkspace();
-    }
-
-    @Override
     public NSession getSession() {
         return session;
     }

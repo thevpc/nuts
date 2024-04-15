@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NApiUtils;
+import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
@@ -39,7 +39,7 @@ public class DefaultNCallableSupport<T> implements NCallableSupport<T> {
         if (isValid()) {
             return value.get();
         } else {
-            NMsg nMsg = NApiUtils.resolveValidErrorMessage(() -> emptyMessage.apply(session));
+            NMsg nMsg = NApiUtilsRPI.resolveValidErrorMessage(() -> emptyMessage.apply(session));
             if (session == null) {
                 throw new NoSuchElementException(nMsg.toString());
             } else {

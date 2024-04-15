@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.dependency.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.util.NFunction;
 import net.thevpc.nuts.util.NIterator;
@@ -42,7 +43,7 @@ public class NDependencyUtils {
         return NStringUtils.trimToNull(s1);
     }
 
-    public static String toExclusionListString(NId[] exclusions){
+    public static String toExclusionListString(NId[] exclusions) {
         TreeSet<String> ex = new TreeSet<>();
         for (NId exclusion : exclusions) {
             ex.add(exclusion.getShortName());
@@ -50,7 +51,7 @@ public class NDependencyUtils {
         return String.join(",", ex);
     }
 
-    public static boolean isRequiredDependency(NDependency d){
+    public static boolean isRequiredDependency(NDependency d) {
         if (d.isOptional()) {
             return false;
         }
@@ -65,14 +66,17 @@ public class NDependencyUtils {
     }
 
     public static Iterator<NDependency> itIdToDep(NIterator<NId> id, NSession session) {
-        return IteratorBuilder.of(id, session).map(NFunction.of(NId::toDependency, "IdToDependency")).build();
+        return IteratorBuilder.of(id, session).map(NFunction.of(NId::toDependency).withDesc(NEDesc.of("IdToDependency"))).build();
     }
 
     public static Iterator<NDependency> itIdToDep(NIterator<NId> id, NDependency copyFrom, NSession session) {
         String _optional = copyFrom.getOptional();
         String _scope = copyFrom.getScope();
         return IteratorBuilder.of(id, session).map(NFunction.of(
-                x -> x.toDependency().builder().setOptional(_optional).setScope(_scope).build(), "IdToDependency")).build();
+                        (NId x) -> x.toDependency().builder()
+                                .setOptional(_optional).setScope(_scope).build())
+                .withDesc(NEDesc.of("IdToDependency"))
+        ).build();
     }
 
     public static boolean isDefaultOptional(String s1) {

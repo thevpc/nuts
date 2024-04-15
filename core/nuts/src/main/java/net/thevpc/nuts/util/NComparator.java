@@ -23,27 +23,34 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NDescribable;
-import net.thevpc.nuts.elem.NDescribables;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.reserved.util.NComparatorFromJavaComparator;
+import net.thevpc.nuts.reserved.util.NComparatorWithDescription;
 
 import java.util.Comparator;
-import java.util.function.Function;
 
 /**
  * A Describable Comparator
+ *
  * @param <T> Type
  */
-public interface NComparator<T> extends Comparator<T>, NDescribable {
-    static <T> NComparator<T> of(Comparator<T> o, String value){
-        return NDescribables.ofComparator(o, session-> NElements.of(session).ofString(value));
+public interface NComparator<T> extends Comparator<T>, NElementDescribable<NComparator<T>> {
+    static <T> NComparator<T> of(Comparator<T> o) {
+        if (o == null) {
+            return null;
+        }
+        if (o instanceof NComparator) {
+            return (NComparator<T>) o;
+        }
+        return new NComparatorFromJavaComparator<>(o);
     }
-    static <T> NComparator<T> of(Comparator<T> o, NElement value){
-        return NDescribables.ofComparator(o, e->value);
+
+    @Override
+    default NComparator<T> withDesc(NEDesc description) {
+        if (description == null) {
+            return this;
+        }
+        return new NComparatorWithDescription<>(this, description);
     }
-    static <T> NComparator<T> of(Comparator<T> o, Function<NSession, NElement> descr){
-        return NDescribables.ofComparator(o,descr);
-    }
+
 }

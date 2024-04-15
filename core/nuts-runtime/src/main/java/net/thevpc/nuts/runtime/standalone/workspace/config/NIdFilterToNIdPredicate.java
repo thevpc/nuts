@@ -1,10 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.base.AbstractNPredicate;
 import net.thevpc.nuts.runtime.standalone.id.filter.NSearchIdById;
-import net.thevpc.nuts.util.NPredicates;
 
-class NIdFilterToNIdPredicate extends NPredicates.BasePredicate<NId> {
+class NIdFilterToNIdPredicate extends AbstractNPredicate<NId> {
     private final NIdFilter filter;
     private final NSession session;
 

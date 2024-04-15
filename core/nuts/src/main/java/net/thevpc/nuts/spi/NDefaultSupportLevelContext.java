@@ -26,7 +26,6 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NWorkspace;
 
 import java.util.Objects;
 
@@ -39,7 +38,6 @@ import java.util.Objects;
 public class NDefaultSupportLevelContext implements NSupportLevelContext {
 
     private final NSession session;
-    private final NWorkspace ws;
     private final Object constraints;
 
     /**
@@ -53,18 +51,12 @@ public class NDefaultSupportLevelContext implements NSupportLevelContext {
             throw new NullPointerException();
         }
         this.session = session;
-        this.ws = session.getWorkspace();
         this.constraints = constraints;
     }
 
     @Override
     public NSession getSession() {
         return session;
-    }
-
-    @Override
-    public NWorkspace getWorkspace() {
-        return ws;
     }
 
     @SuppressWarnings("unchecked")
@@ -87,7 +79,7 @@ public class NDefaultSupportLevelContext implements NSupportLevelContext {
 
     @Override
     public int hashCode() {
-        return Objects.hash(ws, constraints);
+        return Objects.hash(session, constraints);
     }
 
     @Override
@@ -95,7 +87,7 @@ public class NDefaultSupportLevelContext implements NSupportLevelContext {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         NDefaultSupportLevelContext that = (NDefaultSupportLevelContext) o;
-        return Objects.equals(ws, that.ws) &&
+        return Objects.equals(session, that.session) &&
                 Objects.equals(constraints, that.constraints);
     }
 

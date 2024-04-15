@@ -29,6 +29,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
@@ -155,10 +156,9 @@ public class LsCommand extends NShellBuiltinDefault {
             ResultGroup g = e.getValue();
             g.children = file.stream()
                     .sorted(FILE_SORTER)
-                    .map(this::build, "build")
+                    .map(NFunction.of(this::build).withDesc(NEDesc.of("build")))
                     .filter(
-                            b -> options.a || !b.hidden,
-                            "all || !hidden"
+                            NPredicate.of((ResultItem b) -> options.a || !b.hidden).withDesc(NEDesc.of("all || !hidden"))
                     )
                     .toList();
             success.result.add(g);

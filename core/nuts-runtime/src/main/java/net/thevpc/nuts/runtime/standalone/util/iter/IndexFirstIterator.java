@@ -6,9 +6,9 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NMsg;
@@ -39,8 +39,8 @@ public class IndexFirstIterator<T> extends NIteratorBase<T> {
         return NElements.of(session)
                 .ofObject()
                 .set("type","IndexFirst")
-                .set("index", NDescribables.resolveOrDestruct(index, session))
-                .set("nonIndex", NDescribables.resolveOrDestruct(other, session))
+                .set("index", NEDesc.describeResolveOrDestruct(index, session))
+                .set("nonIndex", NEDesc.describeResolveOrDestruct(other, session))
                 .build()
                 ;
     }

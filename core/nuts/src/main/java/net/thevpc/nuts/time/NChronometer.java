@@ -134,7 +134,7 @@ public class NChronometer implements Serializable, NFormattable {
     }
 
     public boolean isStopped() {
-        return endClock!=null;
+        return endClock != null;
     }
 
     public NChronometer reset() {
@@ -219,6 +219,9 @@ public class NChronometer implements Serializable, NFormattable {
         return NDuration.ofNanos(getDurationNanos(), getSmallestUnit(), getLargestUnit());
     }
 
+    public long getDurationMs() {
+        return getDurationNanos() / 1000000L;
+    }
 
     public long getDurationNanos() {
         if (startClock == null) {
@@ -240,7 +243,6 @@ public class NChronometer implements Serializable, NFormattable {
         return s + getDuration().toString(mode);
     }
 
-
     public ChronoUnit getSmallestUnit() {
         return smallestUnit;
     }
@@ -258,7 +260,6 @@ public class NChronometer implements Serializable, NFormattable {
         this.largestUnit = largestUnit;
         return this;
     }
-
 
     @Override
     public NFormat formatter(NSession session) {

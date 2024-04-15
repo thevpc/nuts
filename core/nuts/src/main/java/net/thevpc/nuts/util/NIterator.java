@@ -27,40 +27,32 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NDescribable;
-import net.thevpc.nuts.elem.NDescribables;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.reserved.rpi.NCollectionsRPI;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.function.Function;
+import java.util.*;
 
 /**
  * Describable Iterator
+ *
  * @param <T> T
  */
-public interface NIterator<T> extends Iterator<T>, NDescribable {
-    static <T> NIterator<T> of(Iterator<T> o, String descr) {
-        return NDescribables.ofIterator(o, session -> NElements.of(session).ofString(descr));
+public interface NIterator<T> extends Iterator<T>, NElementDescribable<NIterator<T>> {
+    static <T> NIterator<T> of(Iterator<T> o, NSession session) {
+        return NCollectionsRPI.of(session).toIterator(o);
     }
 
-    static <T> NIterator<T> of(Iterator<T> o, NElement descr) {
-        return NDescribables.ofIterator(o, e -> descr);
-    }
-
-    static <T> NIterator<T> of(Iterator<T> o, Function<NSession, NElement> descr) {
-        return NDescribables.ofIterator(o, descr);
-    }
-
-    @SuppressWarnings("unchecked")
     static <T> NIterator<T> ofEmpty(NSession session) {
-        return (NIterator<T>) NStream.ofEmpty(session).iterator();
+        return NCollectionsRPI.of(session).emptyIterator();
     }
+
+    static <T> NIterator<T> ofSingleton(T element, NSession session) {
+        return NCollectionsRPI.of(session).toIterator(Collections.singletonList(element).iterator());
+    }
+
     default List<T> toList() {
-        List<T> list=new ArrayList<>();
-        while(hasNext()){
+        List<T> list = new ArrayList<>();
+        while (hasNext()) {
             list.add(next());
         }
         return list;

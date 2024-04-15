@@ -27,7 +27,7 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.filter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
+import net.thevpc.nuts.util.NSimplifiable;
 import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.Objects;
@@ -55,8 +55,8 @@ public class NDescriptorFilterById extends AbstractDescriptorFilter  {
 
     @Override
     public NDescriptorFilter simplify() {
-        if (id != null && id instanceof Simplifiable) {
-            NIdFilter id2 = ((Simplifiable<NIdFilter>) id).simplify();
+        if (id != null && id instanceof NSimplifiable) {
+            NIdFilter id2 = ((NSimplifiable<NIdFilter>) id).simplify();
             if (id2 != id) {
                 if (id2 == null) {
                     return null;

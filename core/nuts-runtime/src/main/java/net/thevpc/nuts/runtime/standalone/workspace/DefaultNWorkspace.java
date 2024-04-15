@@ -28,6 +28,7 @@ import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLines;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElementNotFoundException;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.env.NDesktopIntegrationItem;
@@ -35,6 +36,7 @@ import net.thevpc.nuts.format.NTableFormat;
 import net.thevpc.nuts.format.NTableModel;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
@@ -661,7 +663,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
     private URL getApiURL() {
         NId nid = NId.ofApi(Nuts.getVersion()).get();
-        return NApiUtils.findClassLoaderJar(nid, NClassLoaderUtils.resolveClasspathURLs(Thread.currentThread().getContextClassLoader()));
+        return NApiUtilsRPI.findClassLoaderJar(nid, NClassLoaderUtils.resolveClasspathURLs(Thread.currentThread().getContextClassLoader()));
     }
 
     private String getApiDigest() {
@@ -1777,7 +1779,9 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         Map<String, String> a = new LinkedHashMap<>();
         a.put("configVersion", Nuts.getVersion().toString());
         a.put("id", id.getLongName());
-        a.put("dependencies", m.getDependencies().get(session).transitive().map(NDependency::getLongName, "getLongName")
+        a.put("dependencies", m.getDependencies().get(session).transitive()
+                .map(NDependency::getLongName)
+                        .withDesc(NEDesc.of("getLongName"))
                 .collect(Collectors.joining(";")));
         defs.put(m.getId().getLongId(), m);
         if (withDependencies) {
@@ -1815,10 +1819,10 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                             def.getDependencies().get(session).transitive()
                                     .filter(x -> !x.isOptional()
                                                     && NDependencyFilters.of(session).byRunnable()
-                                                    .acceptDependency(def.getId(), x, session),
-                                            "isOptional && runnable"
-                                    )
-                                    .map(x -> x.toId().getLongName(), "toId.getLongName")
+                                                    .acceptDependency(def.getId(), x, session)
+                                    ).withDesc(NEDesc.of("isOptional && runnable"))
+                                    .map(x -> x.toId().getLongName())
+                                    .withDesc(NEDesc.of("toId.getLongName"))
                                     .toList()
                     )
             );

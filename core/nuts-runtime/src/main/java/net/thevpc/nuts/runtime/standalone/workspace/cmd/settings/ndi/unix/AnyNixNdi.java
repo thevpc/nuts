@@ -12,8 +12,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base.BaseSy
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NQuestion;
-import net.thevpc.nuts.util.NQuestionParser;
+import net.thevpc.nuts.util.NAsk;
+import net.thevpc.nuts.util.NAskParser;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -68,8 +68,7 @@ public class AnyNixNdi extends BaseSystemNdi {
                 ));
             }
             final String sysRcName = NShellHelper.of(NEnvs.of(session).getShellFamily()).getSysRcName();
-            session.getTerminal().ask()
-                    .resetLine()
+            NAsk.of(session)
                     .forBoolean(NMsg.ofC(
                             "```error ATTENTION``` You may need to re-run terminal or issue \"%s\" in your current terminal for new environment to take effect.%n"
                                     + "Please type %s if you agree, %s if you need more explanation or %s to cancel updates.",
@@ -80,9 +79,9 @@ public class AnyNixNdi extends BaseSystemNdi {
                     ))
                     .setHintMessage(NMsg.ofPlain("you must enter your confirmation"))
                     .setSession(session)
-                    .setParser(new NQuestionParser<Boolean>() {
+                    .setParser(new NAskParser<Boolean>() {
                         @Override
-                        public Boolean parse(Object response, Boolean defaultValue, NQuestion<Boolean> question) {
+                        public Boolean parse(Object response, Boolean defaultValue, NAsk<Boolean> question) {
                             if (response instanceof Boolean) {
                                 return (Boolean) response;
                             }

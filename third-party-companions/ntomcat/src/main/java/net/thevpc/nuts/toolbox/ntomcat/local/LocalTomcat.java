@@ -3,6 +3,7 @@ package net.thevpc.nuts.toolbox.ntomcat.local;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NObjectFormat;
 import net.thevpc.nuts.io.NPath;
@@ -14,10 +15,7 @@ import net.thevpc.nuts.toolbox.ntomcat.NTomcatConfigVersions;
 import net.thevpc.nuts.toolbox.ntomcat.util.NamedItemNotFoundException;
 import net.thevpc.nuts.toolbox.ntomcat.util.RunningTomcat;
 import net.thevpc.nuts.toolbox.ntomcat.util.TomcatUtils;
-import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NRef;
-import net.thevpc.nuts.util.NUnsafeFunction;
+import net.thevpc.nuts.util.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -400,8 +398,7 @@ public class LocalTomcat {
             switch (a.asString().get(session)) {
                 case "instance": {
                     LocalTomcatConfigService s = nextLocalTomcatConfigService(args, NOpenMode.OPEN_OR_ERROR);
-                    if (session.getTerminal().ask()
-                            .resetLine()
+                    if (NAsk.of(session)
                             .forBoolean(NMsg.ofC("Confirm Deleting %s?", s.getName())).setDefaultValue(true).getBooleanValue()) {
                         s.remove();
                     }
@@ -409,8 +406,7 @@ public class LocalTomcat {
                 }
                 case "domain": {
                     LocalTomcatDomainConfigService s = nextLocalTomcatDomainConfigService(args, NOpenMode.OPEN_OR_ERROR);
-                    if (session.getTerminal().ask()
-                            .resetLine()
+                    if (NAsk.of(session)
                             .forBoolean(NMsg.ofC("Confirm Deleting %s?", s.getName())).setDefaultValue(true).getBooleanValue()) {
                         s.remove();
                         s.getTomcat().save();
@@ -419,8 +415,7 @@ public class LocalTomcat {
                 }
                 case "app": {
                     LocalTomcatAppConfigService s = nextLocalTomcatAppConfigService(args, NOpenMode.OPEN_OR_ERROR);
-                    if (session.getTerminal().ask()
-                            .resetLine()
+                    if (NAsk.of(session)
                             .forBoolean(NMsg.ofC("Confirm Deleting %s?", s.getName())).setDefaultValue(true).getBooleanValue()) {
                         s.remove();
                         s.getTomcat().save();
@@ -886,11 +881,11 @@ public class LocalTomcat {
     public LocalTomcatConfigService[] listConfig() {
         return
                 sharedConfigFolder.stream().filter(
-                                pathname -> pathname.isRegularFile() && pathname.getName().toString().endsWith(LocalTomcatConfigService.LOCAL_CONFIG_EXT),
-                                "isRegularFile() && matches(*" + LocalTomcatConfigService.LOCAL_CONFIG_EXT + ")"
+                                NPredicate.of((NPath pathname) -> pathname.isRegularFile() && pathname.getName().toString().endsWith(LocalTomcatConfigService.LOCAL_CONFIG_EXT))
+                                        .withDesc(NEDesc.of("isRegularFile() && matches(*" + LocalTomcatConfigService.LOCAL_CONFIG_EXT + ")"))
                         )
                         .mapUnsafe(
-                                NUnsafeFunction.of(x -> openTomcatConfig(x, NOpenMode.OPEN_OR_ERROR), "openTomcatConfig")
+                                NUnsafeFunction.of((NPath x) -> openTomcatConfig(x, NOpenMode.OPEN_OR_ERROR)).withDesc(NEDesc.of("openTomcatConfig"))
                                 , null)
                         .filterNonNull()
                         .toArray(LocalTomcatConfigService[]::new);
@@ -974,7 +969,6 @@ public class LocalTomcat {
     }
 
     public LocalTomcatServiceBase nextLocalTomcatServiceBase(NCmdLine args, NOpenMode autoCreate) {
-        NSession session = getSession();
         if (args.hasNext()) {
             NArg o = args.nextNonOption().orNull();
             if (o != null) {

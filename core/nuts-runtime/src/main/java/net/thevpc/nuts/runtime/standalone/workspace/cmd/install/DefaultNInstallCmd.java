@@ -24,13 +24,14 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.install;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NMemoryPrintStream;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
-import net.thevpc.nuts.runtime.standalone.stream.NListStream;
+import net.thevpc.nuts.runtime.standalone.util.stream.NStreamFromList;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.text.NText;
@@ -166,10 +167,10 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
         if (result == null) {
             run();
         }
-        return new NListStream<NDefinition>(getSession(),
+        return new NStreamFromList<NDefinition>(getSession(),
                 ids.isEmpty() ? null : ids.keySet().toArray()[0].toString(),
-                Arrays.asList(result), e -> NElements.of(e).ofString("InstallResult")
-        );
+                Arrays.asList(result)
+        ).withDesc(NEDesc.of("InstallResult"));
     }
 
     @Override
@@ -415,7 +416,6 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
                 mout.println("should we proceed installation?");
             }
             if (!NIO.of(getSession()).getDefaultTerminal().ask()
-                    .resetLine()
                     .setSession(session)
                     .forBoolean(NMsg.ofNtf(mout.toString()))
                     .setDefaultValue(true)
@@ -432,7 +432,6 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
             }
             mout.println("should we proceed?");
             if (!NIO.of(getSession()).getDefaultTerminal().ask()
-                    .resetLine()
                     .setSession(session)
                     .forBoolean(NMsg.ofNtf(mout.toString()))
                     .setDefaultValue(true)
@@ -474,7 +473,6 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
                         failedList.add(info.id);
                         if (session.isPlainTrace()) {
                             if (!NIO.of(getSession()).getDefaultTerminal().ask()
-                                    .resetLine()
                                     .setSession(session)
                                     .forBoolean(NMsg.ofC("%s %s and its dependencies... Continue installation?",
                                             NMsg.ofStyled("failed to install", NTextStyle.error()),

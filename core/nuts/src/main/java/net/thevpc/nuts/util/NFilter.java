@@ -24,8 +24,8 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NWorkspace;
-import net.thevpc.nuts.elem.NDescribable;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.elem.NElementDescribable;
 
 import java.util.List;
 
@@ -34,13 +34,13 @@ import java.util.List;
  *
  * @app.category Base
  */
-public interface NFilter extends NDescribable {
+public interface NFilter extends NElementDescribable<NFilter> {
 
     NFilterOp getFilterOp();
 
     Class<? extends NFilter> getFilterType();
 
-    NWorkspace getWorkspace();
+    NSession getSession();
 
     NFilter simplify();
 

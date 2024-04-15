@@ -33,7 +33,6 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
-import net.thevpc.nuts.util.NApiUtils;
 import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.boot.NBootOptionsBuilder;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
@@ -333,8 +332,7 @@ public final class NReservedUtils {
             if (!force && !refForceAll.isForce() && refForceAll.accept(directory)) {
                 String line = null;
                 if (session != null) {
-                    line = session.getTerminal().ask()
-                            .resetLine()
+                    line = NAsk.of(session)
                             .forString(
                                     NMsg.ofC(
                                             "do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory
@@ -929,7 +927,7 @@ public final class NReservedUtils {
             }
             bo = options;
             if (bo.getGui().orElse(false)) {
-                if (!NApiUtils.isGraphicalDesktopEnvironment()) {
+                if (!NApiUtilsRPI.isGraphicalDesktopEnvironment()) {
                     bo.setGui(false);
                 }
             }

@@ -3,12 +3,11 @@ package net.thevpc.nuts.runtime.standalone.util.iter;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.elem.NDescribable;
-import net.thevpc.nuts.util.NPredicates;
+import net.thevpc.nuts.spi.base.AbstractNPredicate;
 
 import java.util.HashSet;
 
-class DistinctPredicate<T> extends NPredicates.BasePredicate<T> implements NDescribable {
+class DistinctPredicate<T> extends AbstractNPredicate<T> {
     private HashSet<T> visited = new HashSet<>();
 
     @Override

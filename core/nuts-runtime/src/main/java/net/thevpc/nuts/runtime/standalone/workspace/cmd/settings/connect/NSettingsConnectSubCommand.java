@@ -12,6 +12,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.concurrent.NScheduler;
 import net.thevpc.nuts.io.DefaultNContentMetadata;
 import net.thevpc.nuts.io.NIO;
+import net.thevpc.nuts.io.NInputSourceBuilder;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
 import net.thevpc.nuts.runtime.standalone.executor.system.PipeRunnable;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
@@ -44,7 +45,7 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
                 } else if (cmdLine.isNextOption()) {
                     session.configureLast(cmdLine);
                 } else {
-                    server = cmdLine.nextNonOption(NArgName.of("ServerAddress",session)).flatMap(NLiteral::asString).get(session);
+                    server = cmdLine.nextNonOption(NArgName.of("ServerAddress", session)).flatMap(NLiteral::asString).get(session);
                     cmdLine.setCommandName("settings connect").throwUnexpectedArgument();
                 }
             }
@@ -59,7 +60,7 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
                 server = server.substring(server.indexOf("@") + 1);
             }
             if (server.contains(":")) {
-                port =  NLiteral.of(server.substring(server.indexOf(":") + 1)).asInt().orElse(-1);
+                port = NLiteral.of(server.substring(server.indexOf(":") + 1)).asInt().orElse(-1);
                 server = server.substring(0, server.indexOf(":"));
             }
             if (!NBlankable.isBlank(login) && NBlankable.isBlank(password)) {
@@ -72,8 +73,8 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
                     socket = new Socket(InetAddress.getByName(server), validPort);
                     PipeRunnable rr = NSysExecUtils.pipe("pipe-out-socket-" + server + ":" + validPort,
                             cmd0, "connect-socket",
-                            NIO.of(session).ofInputStreamBuilder(socket.getInputStream())
-                                    .setMetadata(new DefaultNContentMetadata().setMessage(NMsg.ofC("pipe-out-socket-%s:%s",server,validPort)))
+                            NInputSourceBuilder.of(socket.getInputStream(), session)
+                                    .setMetadata(new DefaultNContentMetadata().setMessage(NMsg.ofC("pipe-out-socket-%s:%s", server, validPort)))
                                     .createNonBlockingInputStream(), session.out().asPrintStream(), session);
                     NScheduler.of(session).executorService().submit(rr);
                     PrintStream out = new PrintStream(socket.getOutputStream());

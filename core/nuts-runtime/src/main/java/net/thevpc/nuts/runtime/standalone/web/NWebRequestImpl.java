@@ -452,8 +452,9 @@ public class NWebRequestImpl implements NWebRequest {
         if (body == null) {
             this.body = null;
         } else {
-            this.body = NIO.of(session).ofInputSource(NElements.of(session).json()
-                    .setValue(body).setNtf(false).formatPlain().getBytes());
+            this.body = NInputSource.of(NElements.of(session).json()
+                    .setValue(body).setNtf(false).formatPlain().getBytes(),session
+            );
         }
         setContentType("application/json");
         return this;
@@ -461,7 +462,7 @@ public class NWebRequestImpl implements NWebRequest {
 
     @Override
     public NWebRequest setBody(byte[] body) {
-        this.body = body == null ? null : NIO.of(session).ofInputSource(body);
+        this.body = body == null ? null : NInputSource.of(body,session);
         return this;
     }
 

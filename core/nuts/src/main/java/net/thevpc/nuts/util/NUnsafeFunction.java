@@ -27,29 +27,34 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NDescribable;
-import net.thevpc.nuts.elem.NDescribables;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
-
-import java.util.function.Function;
+import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.reserved.util.NUnsafeFunctionFromJavaUnsafeFunction;
+import net.thevpc.nuts.reserved.util.NUnsafeFunctionWithDescription;
 
 /**
  * Unsafe function is a function that can throw any arbitrary exception
  * @param <T> In
  * @param <R> Out
  */
-public interface NUnsafeFunction<T, R> extends NUnsafeFunctionBase<T, R>, NDescribable {
-    static <T, V> NUnsafeFunction<T, V> of(NUnsafeFunctionBase<T, V> o, String descr) {
-        return NDescribables.ofUnsafeFunction(o, session -> NElements.of(session).ofString(descr));
+public interface NUnsafeFunction<T, R> extends UnsafeFunction<T, R>, NElementDescribable<NUnsafeFunction<T, R>> {
+    static <T, V> NUnsafeFunction<T, V> of(UnsafeFunction<? super T, V> o) {
+        NAssert.requireNonNull(o, "function");
+        if (o instanceof NFunction) {
+            return (NUnsafeFunction<T, V>) o;
+        }
+        return new NUnsafeFunctionFromJavaUnsafeFunction<>(o);
     }
 
-    static <T, V> NUnsafeFunction<T, V> of(NUnsafeFunctionBase<T, V> o, NElement descr) {
-        return NDescribables.ofUnsafeFunction(o, e -> descr);
+    @Override
+    default NUnsafeFunction<T, R> withDesc(NEDesc description) {
+        if(description==null){
+            return this;
+        }
+        return new NUnsafeFunctionWithDescription<>(this,description);
     }
 
-    static <T, V> NUnsafeFunction<T, V> of(NUnsafeFunctionBase<T, V> o, Function<NSession, NElement> descr) {
-        return NDescribables.ofUnsafeFunction(o, descr);
+    @Override
+    default NElement describe(NSession session) {
+        return UnsafeFunction.super.describe(session);
     }
-
 }

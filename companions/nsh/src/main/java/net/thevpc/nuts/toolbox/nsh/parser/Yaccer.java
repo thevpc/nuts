@@ -1,6 +1,7 @@
 package net.thevpc.nuts.toolbox.nsh.parser;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.nsh.err.NShellUniformException;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellContext;
@@ -9,6 +10,7 @@ import net.thevpc.nuts.toolbox.nsh.nodes.NShellArgumentNode;
 import net.thevpc.nuts.toolbox.nsh.nodes.NShellCmdLineNode;
 import net.thevpc.nuts.toolbox.nsh.nodes.NShellCommandNode;
 import net.thevpc.nuts.toolbox.nsh.nodes.NShellNode;
+import net.thevpc.nuts.util.NFunction;
 import net.thevpc.nuts.util.NGlob;
 import net.thevpc.nuts.util.NMsg;
 
@@ -1254,7 +1256,7 @@ public class Yaccer {
                 if (!pp.isAbsolute()) {
                     pp = pp.toAbsolute(context.getDirectory());
                 }
-                String[] r = pp.walkGlob().map(NPath::toString, "toString").toArray(String[]::new);
+                String[] r = pp.walkGlob().map(NFunction.of(NPath::toString).withDesc(NEDesc.of("toString"))).toArray(String[]::new);
                 if (r.length > 0) {
                     return r;
                 }

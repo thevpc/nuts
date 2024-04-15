@@ -29,6 +29,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.format.NContentType;
+import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.reserved.NReservedStringUtils;
 import net.thevpc.nuts.reserved.NReservedUtils;
 import net.thevpc.nuts.util.*;
@@ -1647,7 +1648,7 @@ public final class NWorkspaceCmdLineParser {
                 a = cmdLine.nextEntry().get(session);
                 String v = a.getStringValue().get(session);
                 if (enabled) {
-                    Integer fileSize = NApiUtils.parseFileSizeInBytes(v, 1024 * 1024).orNull();
+                    Integer fileSize = NApiUtilsRPI.parseFileSizeInBytes(v, 1024 * 1024).orNull();
                     if (fileSize == null) {
                         if (NBlankable.isBlank(v)) {
                             throw new NBootException(NMsg.ofC("invalid file size : %s", v));

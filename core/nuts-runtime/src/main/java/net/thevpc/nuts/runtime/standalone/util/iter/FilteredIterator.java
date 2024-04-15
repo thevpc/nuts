@@ -26,8 +26,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.NSession;
 
@@ -50,7 +50,7 @@ public class FilteredIterator<T> extends NIteratorBase<T> {
             this.base = base;
         }
         //Predicate<? super T>
-        NDescribables.cast(filter);
+//        NDescribables.cast(filter);
         this.filter = filter;
     }
 
@@ -59,8 +59,8 @@ public class FilteredIterator<T> extends NIteratorBase<T> {
         return NElements.of(session)
                 .ofObject()
                 .set("type","Filter")
-                .set("base", NDescribables.resolveOrDestruct(base, session))
-                .set("accept", NDescribables.resolveOrToString(filter, session))
+                .set("base", NEDesc.describeResolveOrDestruct(base, session))
+                .set("accept", NEDesc.describeResolveOrToString(filter, session))
                 .build()
                 ;
     }

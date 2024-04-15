@@ -108,7 +108,8 @@ public class DefaultNPlatformModel {
         return findOnePlatform(type, location -> location.getName().equals(locationName), session);
     }
 
-    public NOptional<NPlatformLocation> findPlatformByPath(NPlatformFamily type, String path, NSession session) {
+    public NOptional<NPlatformLocation> findPlatformByPath(NPlatformFamily type, NPath path, NSession session) {
+        NAssert.requireNonNull(path,"path");
         return findOnePlatform(type, location -> location.getPath() != null && location.getPath().equals(path.toString()), session);
     }
 
@@ -182,7 +183,7 @@ public class DefaultNPlatformModel {
         return NStream.ofEmpty(session);
     }
 
-    public NStream<NPlatformLocation> searchSystemPlatforms(NPlatformFamily platformType, String path, NSession session) {
+    public NStream<NPlatformLocation> searchSystemPlatforms(NPlatformFamily platformType, NPath path, NSession session) {
         NSessionUtils.checkSession(workspace, session);
         if (platformType == NPlatformFamily.JAVA) {
             return NStream.of(NJavaSdkUtils.of(session).searchJdkLocations(path, session), session);
@@ -190,7 +191,7 @@ public class DefaultNPlatformModel {
         return NStream.ofEmpty(session);
     }
 
-    public NOptional<NPlatformLocation> resolvePlatform(NPlatformFamily platformType, String path, String preferredName, NSession session) {
+    public NOptional<NPlatformLocation> resolvePlatform(NPlatformFamily platformType, NPath path, String preferredName, NSession session) {
         NSessionUtils.checkSession(workspace, session);
         if (platformType == NPlatformFamily.JAVA) {
             NPlatformLocation z = NJavaSdkUtils.of(session).resolveJdkLocation(path, preferredName, session);

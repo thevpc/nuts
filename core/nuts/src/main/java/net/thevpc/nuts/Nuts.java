@@ -27,7 +27,7 @@ import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
 import net.thevpc.nuts.boot.NBootWorkspace;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.reserved.NReservedBootLog;
-import net.thevpc.nuts.util.NApiUtils;
+import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -66,7 +66,7 @@ public final class Nuts {
         if (version == null) {
             synchronized (Nuts.class) {
                 if (version == null) {
-                    String v = NApiUtils.resolveNutsVersionFromClassPath(new NReservedBootLog(null));
+                    String v = NApiUtilsRPI.resolveNutsVersionFromClassPath(new NReservedBootLog(null));
                     if (v == null) {
                         throw new NBootException(
                                 NMsg.ofPlain(
@@ -99,7 +99,7 @@ public final class Nuts {
                 System.exit(NApplicationExceptionHandler.of(session)
                         .processThrowable(args, ex));
             } else {
-                System.exit(NApiUtils.processThrowable(ex, args));
+                System.exit(NApiUtilsRPI.processThrowable(ex, args));
             }
         }
     }

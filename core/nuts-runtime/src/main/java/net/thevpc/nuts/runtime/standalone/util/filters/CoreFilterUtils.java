@@ -31,7 +31,8 @@ import net.thevpc.nuts.env.NDesktopEnvironmentFamily;
 import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.env.NPlatformFamily;
 import net.thevpc.nuts.ext.NExtensionInformation;
-import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
+import net.thevpc.nuts.spi.base.AbstractNPredicate;
+import net.thevpc.nuts.util.NSimplifiable;
 import net.thevpc.nuts.util.*;
 
 import java.lang.reflect.Array;
@@ -706,8 +707,8 @@ public class CoreFilterUtils {
         if (any == null) {
             return null;
         }
-        if (any instanceof Simplifiable) {
-            return ((Simplifiable<T>) any).simplify();
+        if (any instanceof NSimplifiable) {
+            return ((NSimplifiable<T>) any).simplify();
         }
         return any;
     }
@@ -756,7 +757,7 @@ public class CoreFilterUtils {
         return all.toArray((T[]) Array.newInstance(cls, 0));
     }
 
-    private static class NIdFilterToPredicate extends NPredicates.BasePredicate<NId> {
+    private static class NIdFilterToPredicate extends AbstractNPredicate<NId> {
         private final NIdFilter t;
         private final NSession session;
 

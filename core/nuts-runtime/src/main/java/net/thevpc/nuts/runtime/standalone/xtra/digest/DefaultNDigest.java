@@ -100,7 +100,7 @@ public class DefaultNDigest implements NDigest {
 
     @Override
     public NDigest setSource(InputStream source) {
-        this.setSource0((source == null ? null : NIO.of(session).ofInputSource(source)));
+        this.setSource0((source == null ? null : NInputSource.of(source,session)));
         return this;
     }
 
@@ -131,7 +131,7 @@ public class DefaultNDigest implements NDigest {
     @Override
     public NDigest setSource(byte[] source) {
         checkSession();
-        this.setSource0(source == null ? null : NIO.of(session).ofInputSource(new ByteArrayInputStream(source)));
+        this.setSource0(source == null ? null : NInputSource.of(source,session));
         return this;
     }
 

@@ -24,17 +24,18 @@
 package net.thevpc.nuts.runtime.standalone.repository.filter;
 
 import net.thevpc.nuts.NRepositoryFilter;
+import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.spi.base.AbstractNFilter;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.runtime.standalone.util.filters.AbstractNFilter;
-import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
+import net.thevpc.nuts.util.NSimplifiable;
 
 /**
  *
  * @author thevpc
  */
-public abstract class AbstractRepositoryFilter extends AbstractNFilter implements NRepositoryFilter, Simplifiable<NRepositoryFilter> {
+public abstract class AbstractRepositoryFilter extends AbstractNFilter implements NRepositoryFilter, NSimplifiable<NRepositoryFilter> {
 
     public AbstractRepositoryFilter(NSession session, NFilterOp op) {
         super(session, op);
@@ -53,5 +54,13 @@ public abstract class AbstractRepositoryFilter extends AbstractNFilter implement
     @Override
     public NRepositoryFilter neg() {
         return super.neg().to(NRepositoryFilter.class);
+    }
+
+    @Override
+    public NFilter withDesc(NEDesc description) {
+        if(description==null){
+            return this;
+        }
+        return new NRepositoryFilterWithDescription(this,description);
     }
 }

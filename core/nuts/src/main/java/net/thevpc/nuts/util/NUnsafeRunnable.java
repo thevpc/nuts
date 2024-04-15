@@ -27,33 +27,33 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.elem.NDescribable;
-import net.thevpc.nuts.elem.NDescribables;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
-
-import java.util.function.Function;
+import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.reserved.util.NUnsafeRunnableWithDescription;
 
 /**
  * Describable Runnable
  */
-public interface NUnsafeRunnable extends NDescribable {
-    static NUnsafeRunnable of(NUnsafeRunnable o, String descr) {
-        return NDescribables.ofUnsafeRunnable(o, session -> NElements.of(session).ofString(descr));
+public interface NUnsafeRunnable extends NElementDescribable<NUnsafeRunnable> {
+    static NUnsafeRunnable of(NUnsafeRunnable o) {
+        if(o==null){
+            return null;
+        }
+        return o;
     }
 
-    static NUnsafeRunnable of(NUnsafeRunnable o, NElement descr) {
-        return NDescribables.ofUnsafeRunnable(o, e -> descr);
+    @Override
+    default NUnsafeRunnable withDesc(NEDesc description) {
+        if (description == null) {
+            return this;
+        }
+        return new NUnsafeRunnableWithDescription(this, description);
     }
 
-    static NUnsafeRunnable of(NUnsafeRunnable o, Function<NSession, NElement> descr) {
-        return NDescribables.ofUnsafeRunnable(o, descr);
-    }
-
-    void run() throws Exception;
-
+    @Override
     default NElement describe(NSession session) {
-        return NElements.of(session).ofString(toString());
+        return NEDesc.ofLateToString(session).apply(session);
     }
+
+    void run(NSession session) throws Exception;
 
 }

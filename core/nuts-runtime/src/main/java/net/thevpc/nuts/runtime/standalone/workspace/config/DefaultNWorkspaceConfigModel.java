@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NClassLoaderNode;
 import net.thevpc.nuts.boot.NBootOptions;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.env.NOsFamily;
@@ -621,7 +622,7 @@ public class DefaultNWorkspaceConfigModel {
                     aconfig = compat.parseApiConfig(olderId, session);
                     if (aconfig != null) {
                         // ask
-                        if (session.getTerminal().ask().forBoolean(NMsg.ofC("import older config %s into %s", olderId, apiId))
+                        if (NAsk.of(session).forBoolean(NMsg.ofC("import older config %s into %s", olderId, apiId))
                                 .setDefaultValue(true)
                                 .getBooleanValue()
                         ) {
@@ -702,9 +703,12 @@ public class DefaultNWorkspaceConfigModel {
         NId apiId = session.getWorkspace().getApiId();
         NPath path = NLocations.of(session).getStoreLocation(apiId, NStoreType.CONF)
                 .getParent();
-        List<NId> olderIds = path.stream().filter(NPath::isDirectory, s -> NElements.of(s).ofString("isDirectory"))
-                .map(x -> NVersion.of(x.getName()).get(session), "toVersion")
-                .filter(x -> x.compareTo(apiId.getVersion()) < 0, s -> NElements.of(s).ofString("older"))
+        List<NId> olderIds = path.stream().filter(NPath::isDirectory)
+                .withDesc(NEDesc.of("isDirectory"))
+                .map(x -> NVersion.of(x.getName()).get(session))
+                .withDesc(NEDesc.of("toVersion"))
+                .filter(x -> x.compareTo(apiId.getVersion()) < 0)
+                .withDesc(NEDesc.of("older"))
                 .sorted(new NComparator<NVersion>() {
                     @Override
                     public int compare(NVersion o1, NVersion o2) {
@@ -715,7 +719,8 @@ public class DefaultNWorkspaceConfigModel {
                     public NElement describe(NSession session) {
                         return NElements.of(session).ofString("reverseOrder");
                     }
-                }).map(x -> apiId.builder().setVersion(x).build(), elems -> NElements.of(elems).ofString("toId"))
+                }).map(x -> apiId.builder().setVersion(x).build())
+                .withDesc(NEDesc.of("toId"))
                 .toList();
         return olderIds;
     }

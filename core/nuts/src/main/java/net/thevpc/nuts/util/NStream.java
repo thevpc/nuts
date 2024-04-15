@@ -27,9 +27,8 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.spi.NStreams;
+import net.thevpc.nuts.elem.NElementDescribable;
+import net.thevpc.nuts.reserved.rpi.NCollectionsRPI;
 
 import java.util.*;
 import java.util.function.*;
@@ -44,49 +43,25 @@ import java.util.stream.*;
  * @see NSearchCmd#getResultIds()
  * @since 0.5.4
  */
-public interface NStream<T> extends NIterable<T> {
-    static <T> NStream<T> of(T[] str, Function<NSession, NElement> name, NSession session) {
-        return NStreams.of(session).createStream(str, name);
-    }
-
-    static <T> NStream<T> of(Iterable<T> str, Function<NSession, NElement> name, NSession session) {
-        return NStreams.of(session).createStream(str, name);
-    }
-
-    static <T> NStream<T> of(Iterator<T> str, Function<NSession, NElement> name, NSession session) {
-        return NStreams.of(session).createStream(str, name);
-    }
-
-    static <T> NStream<T> of(Stream<T> str, Function<NSession, NElement> name, NSession session) {
-        return NStreams.of(session).createStream(str, name);
-    }
-
+public interface NStream<T> extends Iterable<T>, NElementDescribable<NStream<T>> {
     static <T> NStream<T> of(T[] str, NSession session) {
-        return NStreams.of(session).createStream(str, e-> NElements.of(e).ofString("array"));
+        return NCollectionsRPI.of(session).arrayToStream(str);
     }
 
     static <T> NStream<T> of(Iterable<T> str, NSession session) {
-        return NStreams.of(session).createStream(str, e-> NElements.of(e).ofString("iterable"));
+        return NCollectionsRPI.of(session).iterableToStream(str);
     }
 
     static <T> NStream<T> of(Iterator<T> str, NSession session) {
-        return NStreams.of(session).createStream(str, e-> NElements.of(e).ofString("iterator"));
+        return NCollectionsRPI.of(session).iteratorToStream(str);
     }
 
     static <T> NStream<T> of(Stream<T> str, NSession session) {
-        return NStreams.of(session).createStream(str, e-> NElements.of(e).ofString("stream"));
-    }
-
-    static <T> NStream<T> of(NIterable<T> str, NSession session) {
-        return NStreams.of(session).createStream(str);
-    }
-
-    static <T> NStream<T> of(NIterator<T> str, NSession session) {
-        return NStreams.of(session).createStream(str);
+        return NCollectionsRPI.of(session).toStream(str);
     }
 
     static <T> NStream<T> ofEmpty(NSession session) {
-        return NStreams.of(session).createEmptyStream();
+        return NCollectionsRPI.of(session).emptyStream();
     }
 
     static <T> NStream<T> ofSingleton(T element, NSession session) {
@@ -164,15 +139,10 @@ public interface NStream<T> extends NIterable<T> {
      * @param mapper mapper
      * @return NutsStream a stream consisting of the results of applying the given function to the elements of this stream.
      */
-    <R> NStream<R> map(NFunction<? super T, ? extends R> mapper);
+    <R> NStream<R> map(Function<? super T, ? extends R> mapper);
 
-    <R> NStream<R> map(Function<? super T, ? extends R> mapper, String name);
-
-    <R> NStream<R> map(Function<? super T, ? extends R> mapper, NElement name);
-
-    <R> NStream<R> map(Function<? super T, ? extends R> mapper, Function<NSession, NElement> name);
-
-    <R> NStream<R> mapUnsafe(NUnsafeFunction<? super T, ? extends R> mapper, NFunction<Exception, ? extends R> onError);
+    <R> NStream<R> mapUnsafe(UnsafeFunction<? super T, ? extends R> mapper);
+    <R> NStream<R> mapUnsafe(UnsafeFunction<? super T, ? extends R> mapper, Function<Exception, ? extends R> onError);
 
     NStream<T> sorted();
 
@@ -180,19 +150,13 @@ public interface NStream<T> extends NIterable<T> {
 
     NStream<T> distinct();
 
-    <R> NStream<T> distinctBy(NFunction<T, R> d);
+    <R> NStream<T> distinctBy(Function<T, R> d);
 
     NStream<T> nonNull();
 
     NStream<T> nonBlank();
 
-    NStream<T> filter(NPredicate<? super T> predicate);
-
-    NStream<T> filter(Predicate<? super T> predicate, String name);
-
-    NStream<T> filter(Predicate<? super T> predicate, NElement name);
-
-    NStream<T> filter(Predicate<? super T> predicate, Function<NSession, NElement> info);
+    NStream<T> filter(Predicate<? super T> predicate);
 
     NStream<T> filterNonNull();
 
@@ -211,29 +175,29 @@ public interface NStream<T> extends NIterable<T> {
     <K, U> Map<K, U> toSortedMap(Function<? super T, ? extends K> keyMapper,
                                  Function<? super T, ? extends U> valueMapper);
 
-    <R> NStream<R> flatMapIter(NFunction<? super T, ? extends Iterator<? extends R>> mapper);
+    <R> NStream<R> flatMapIter(Function<? super T, ? extends Iterator<? extends R>> mapper);
 
-    <R> NStream<R> flatMapList(NFunction<? super T, ? extends List<? extends R>> mapper);
+    <R> NStream<R> flatMapList(Function<? super T, ? extends List<? extends R>> mapper);
 
-    <R> NStream<R> flatMapArray(NFunction<? super T, ? extends R[]> mapper);
+    <R> NStream<R> flatMapArray(Function<? super T, ? extends R[]> mapper);
 
-    <R> NStream<R> flatMap(NFunction<? super T, ? extends Stream<? extends R>> mapper);
+    <R> NStream<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper);
 
-    <R> NStream<R> flatMapStream(NFunction<? super T, ? extends NStream<? extends R>> mapper);
+    <R> NStream<R> flatMapStream(Function<? super T, ? extends NStream<? extends R>> mapper);
 
-    <K> Map<K, List<T>> groupBy(NFunction<? super T, ? extends K> classifier);
+    <K> Map<K, List<T>> groupBy(Function<? super T, ? extends K> classifier);
 
-    <K> NStream<Map.Entry<K, List<T>>> groupedBy(NFunction<? super T, ? extends K> classifier);
+    <K> NStream<Map.Entry<K, List<T>>> groupedBy(Function<? super T, ? extends K> classifier);
 
     NOptional<T> findAny();
 
     NOptional<T> findFirst();
 
-    DoubleStream flatMapToDouble(NFunction<? super T, ? extends DoubleStream> mapper);
+    DoubleStream flatMapToDouble(Function<? super T, ? extends DoubleStream> mapper);
 
-    IntStream flatMapToInt(NFunction<? super T, ? extends IntStream> mapper);
+    IntStream flatMapToInt(Function<? super T, ? extends IntStream> mapper);
 
-    LongStream flatMapToLong(NFunction<? super T, ? extends LongStream> mapper);
+    LongStream flatMapToLong(Function<? super T, ? extends LongStream> mapper);
 
     boolean allMatch(Predicate<? super T> predicate);
 
@@ -252,5 +216,4 @@ public interface NStream<T> extends NIterable<T> {
     NOptional<T> min(Comparator<? super T> comparator);
 
     NOptional<T> max(Comparator<? super T> comparator);
-
 }

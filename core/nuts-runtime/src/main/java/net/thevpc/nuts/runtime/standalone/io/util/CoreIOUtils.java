@@ -105,7 +105,7 @@ public class CoreIOUtils {
     }
 
     public static Stream<String> lines(InputStream stream, NSession session) {
-        return lines(new InputStreamReader(stream),session);
+        return lines(new InputStreamReader(stream), session);
     }
 
     public static Stream<String> lines(Reader reader, NSession session) {
@@ -752,8 +752,7 @@ public class CoreIOUtils {
         OutputStream p = outPath.getOutputStream();
         long finalLastModified = lastModified;
         NIO io = NIO.of(session);
-        InputStream ist = io
-                .ofInputStreamBuilder(header.getInputStream())
+        InputStream ist = NInputSourceBuilder.of(header.getInputStream(), session)
                 .setTee(p)
                 .setCloseAction(() -> {
                     if (outPath.exists()) {
@@ -775,7 +774,7 @@ public class CoreIOUtils {
                     }
                 })
                 .createInputStream();
-        return io.ofInputStreamBuilder(ist)
+        return NInputSourceBuilder.of(ist,session)
                 .setMetadata(new DefaultNContentMetadata(
                         path,
                         NMsg.ofNtf(NTexts.of(session).ofStyled(path, NTextStyle.path())),
@@ -1085,7 +1084,7 @@ public class CoreIOUtils {
     }
 
     public static InputStream createBytesStream(byte[] bytes, NMsg message, String contentType, String encoding, String kind, NSession session) {
-        return NIO.of(session).ofInputStreamBuilder(new ByteArrayInputStream(bytes))
+        return NInputSourceBuilder.of(new ByteArrayInputStream(bytes),session)
                 .setMetadata(new DefaultNContentMetadata(
                                 message,
                                 (long) bytes.length,
@@ -1188,8 +1187,7 @@ public class CoreIOUtils {
                     return PathInfo.Status.CREATED;
                 }
                 case ASK: {
-                    if (session.getTerminal().ask()
-                            .resetLine()
+                    if (NAsk.of(session)
                             .setDefaultValue(true).setSession(session)
                             .forBoolean(NMsg.ofC("create %s ?",
                                     NTexts.of(session).ofStyled(
@@ -1226,8 +1224,7 @@ public class CoreIOUtils {
                     return PathInfo.Status.OVERRIDDEN;
                 }
                 case ASK: {
-                    if (session.getTerminal().ask()
-                            .resetLine()
+                    if (NAsk.of(session)
                             .setDefaultValue(true).setSession(session)
                             .forBoolean(NMsg.ofC("override %s ?",
                                     NTexts.of(session).ofStyled(
@@ -1346,17 +1343,17 @@ public class CoreIOUtils {
     }
 
     public static NOptional<InputStream> openStream(URL u) {
-        if(u==null){
+        if (u == null) {
             return NOptional.ofNamedEmpty("null url");
         }
         InputStream in = null;
         try {
             in = u.openStream();
         } catch (IOException e) {
-            return NOptional.ofNamedEmpty("error stream for "+u);
+            return NOptional.ofNamedEmpty("error stream for " + u);
         }
-        if(in==null){
-            return NOptional.ofNamedEmpty("null stream for "+u);
+        if (in == null) {
+            return NOptional.ofNamedEmpty("null stream for " + u);
         }
         return NOptional.of(in);
     }

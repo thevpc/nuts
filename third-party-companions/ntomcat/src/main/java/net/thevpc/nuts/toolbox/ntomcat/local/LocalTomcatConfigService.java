@@ -1,6 +1,7 @@
 package net.thevpc.nuts.toolbox.ntomcat.local;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NObjectFormat;
 import net.thevpc.nuts.io.*;
@@ -15,6 +16,7 @@ import net.thevpc.nuts.toolbox.ntomcat.util.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.env.NOsFamily;
+import net.thevpc.nuts.util.NPredicate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -210,7 +212,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         NPath u = f.getInstallInformation().get(session).getInstallFolder();
         NPath[] paths;
         try {
-            paths = u.stream().filter(NPath::isDirectory, "isDirectory").toArray(NPath[]::new);
+            paths = u.stream().filter(NPredicate.of(NPath::isDirectory).withDesc(NEDesc.of("isDirectory"))).toArray(NPath[]::new);
             if (paths.length == 1 && paths[0].getName().toLowerCase().startsWith("apache-tomcat")) {
                 return paths[0];
             }

@@ -7,6 +7,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.concurrent.NLocks;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.io.*;
@@ -334,7 +335,9 @@ public class NRepositoryFolderHelper {
         NId bestId = null;
         NPath file = getLocalGroupAndArtifactFile(id, session);
         if (file.exists()) {
-            NPath[] versionFolders = file.stream().filter(NPath::isDirectory, "idDirectory").toArray(NPath[]::new);
+            NPath[] versionFolders = file.stream().filter(NPath::isDirectory)
+                    .withDesc(NEDesc.of("idDirectory"))
+                    .toArray(NPath[]::new);
             if (versionFolders != null) {
                 for (NPath versionFolder : versionFolders) {
                     if (pathExists(versionFolder, session)) {
@@ -370,7 +373,7 @@ public class NRepositoryFolderHelper {
                 NAssert.requireNonNull(deployment.getContent(), () -> NMsg.ofC("invalid deployment; missing content for %s", deployment.getId()), session);
             }
         } else {
-            inputSource = NIO.of(session).ofMultiRead(deployment.getContent());
+            inputSource = NInputSource.ofMultiRead(deployment.getContent(),session);
             inputSource.getMetaData().setKind("package content");
             if (descriptor == null) {
                 try (final CharacterizedExecFile c = DefaultNExecCmd.characterizeForExec(inputSource, session, null)) {
@@ -440,14 +443,14 @@ public class NRepositoryFolderHelper {
             desc.formatter(session).setNtf(false).print(descFile);
             byte[] bytes = NDigest.of(session).sha1().setSource(desc).computeString().getBytes();
             NCp.of(session)
-                    .from(NIO.of(session).ofInputSource(
-                                    new ByteArrayInputStream(bytes)
+                    .from(NInputSource.of(
+                                    bytes
                                     , new DefaultNContentMetadata(
                                             NMsg.ofC("sha1://%s", desc.getId()),
                                             (long) bytes.length,
                                             CoreIOUtils.MIME_TYPE_SHA1,
                                     StandardCharsets.UTF_8.name(), "descriptor hash"
-                                    )
+                                    ),session
                             )
                     ).to(descFile.resolveSibling(descFile.getName() + ".sha1")).addOptions(NPathOption.SAFE).run();
             return descFile;

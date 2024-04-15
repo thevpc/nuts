@@ -17,6 +17,7 @@ import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NAsk;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,8 +69,7 @@ public class DefaultNUninstallCmd extends AbstractNUninstallCmd {
                 .map(NDefinition::getId)
                 .map(NId::getFullName)
                 .collect(Collectors.joining(", ")));
-        if (!defs.isEmpty() && !getSession().getTerminal().ask()
-                .resetLine()
+        if (!defs.isEmpty() && !NAsk.of(getSession())
                 .setSession(session)
                 .forBoolean(NMsg.ofNtf(mout.toString()))
                 .setDefaultValue(true)

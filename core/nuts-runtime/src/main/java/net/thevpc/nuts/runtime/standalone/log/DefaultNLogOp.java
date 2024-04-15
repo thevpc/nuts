@@ -12,7 +12,7 @@ import java.util.logging.Level;
 public class DefaultNLogOp implements NLogOp {
     private NSession session;
     private DefaultNLog logger;
-    private Level level = Level.FINE;
+    private Level level;
     private NLogVerb verb;
     private NMsg msg;
     private long time;
@@ -41,7 +41,7 @@ public class DefaultNLogOp implements NLogOp {
 
     @Override
     public NLogOp level(Level level) {
-        this.level = level == null ? Level.FINE : level;
+        this.level = level;
         return this;
     }
 
@@ -70,6 +70,13 @@ public class DefaultNLogOp implements NLogOp {
     }
 
     private void run() {
+        Level level = this.level;
+        if(level==null && msg!=null){
+            level=msg.getLevel();
+        }
+        if(level==null){
+            level=Level.FINE;
+        }
         if (logger.isLoggable(level)) {
             NMsg m = msg;
             if (msgSupplier != null) {

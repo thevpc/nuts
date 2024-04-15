@@ -5,6 +5,7 @@ import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NInputSource;
+import net.thevpc.nuts.io.NInputSourceBuilder;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -25,6 +26,7 @@ import java.util.function.Function;
 
 @NComponentScope(NScopeType.PROTOTYPE)
 public class NWebCliImpl implements NWebCli {
+
     private String prefix;
     private Function<NWebResponse, NWebResponse> responsePostProcessor;
     private Integer readTimeout;
@@ -39,7 +41,6 @@ public class NWebCliImpl implements NWebCli {
     public Function<NWebResponse, NWebResponse> getResponsePostProcessor() {
         return responsePostProcessor;
     }
-
 
     @Override
     public NWebCli setResponsePostProcessor(Function<NWebResponse, NWebResponse> responsePostProcessor) {
@@ -113,7 +114,7 @@ public class NWebCliImpl implements NWebCli {
         return null;
     }
 
-    public String formatURL(NWebRequest r,boolean safe){
+    public String formatURL(NWebRequest r, boolean safe) {
         String p = r.getUrl();
         StringBuilder u = new StringBuilder();
         if (prefix == null || p.startsWith("http:") || p.startsWith("https:")) {
@@ -131,15 +132,13 @@ public class NWebCliImpl implements NWebCli {
         }
         String bu = u.toString().trim();
         if (bu.isEmpty() || bu.equals("/")) {
-            if(!safe) {
+            if (!safe) {
                 throw new IllegalArgumentException("missing url : " + bu);
             }
         }
-        if (
-                !bu.startsWith("http://")
-                        && !bu.startsWith("https://")
-        ) {
-            if(!safe) {
+        if (!bu.startsWith("http://")
+                && !bu.startsWith("https://")) {
+            if (!safe) {
                 throw new IllegalArgumentException("unsupported url : " + bu);
             }
         }
@@ -156,8 +155,7 @@ public class NWebCliImpl implements NWebCli {
                         }
                         sb.append(NHttpUrlEncoder.encode(k))
                                 .append("=")
-                                .append(NHttpUrlEncoder.encode(v))
-                        ;
+                                .append(NHttpUrlEncoder.encode(v));
                     }
                 }
             }
@@ -171,11 +169,12 @@ public class NWebCliImpl implements NWebCli {
         }
         return u.toString();
     }
+
     public NWebResponse run(NWebRequest r) {
         NAssert.requireNonNull(r, "request");
         NAssert.requireNonNull(r.getMethod(), "method");
         NHttpMethod method = r.getMethod();
-        String spec=null;
+        String spec = null;
         try {
             spec = formatURL(r, false);
             URL h = new URL(spec);
@@ -230,8 +229,20 @@ public class NWebCliImpl implements NWebCli {
                 NInputSource bytes = null;
                 if (!r.isOneWay()) {
                     //TODO change me with a smart copy input source!
-                    byte[] byteArrayResult = NCp.of(session).from(uc.getInputStream()).getByteArrayResult();
-                    bytes = NIO.of(session).ofInputSource(byteArrayResult);
+                    HttpURLConnection uc2 = uc;
+                    bytes = NInputSourceBuilder.of(uc.getInputStream(),session).setCloseAction(() -> {
+                                // close connexion when fully read!
+                                if (uc2 != null) {
+                                    try {
+                                        uc2.disconnect();
+                                    } catch (Exception e) {
+                                        //
+                                    }
+                                }
+                            }
+                    ).createInputSource();
+//                    byte[] byteArrayResult = NCp.of(session).from(uc.getInputStream()).getByteArrayResult();
+//                    bytes = NIO.of(session).ofInputSource(byteArrayResult);
                     long contentLength = uc.getContentLengthLong();
                     if (contentLength >= 0) {
                         bytes.getMetaData().setContentLength(contentLength);
@@ -252,16 +263,19 @@ public class NWebCliImpl implements NWebCli {
                 }
                 return httpResponse;
             } finally {
-                if (uc != null) {
-                    try {
-                        uc.disconnect();
-                    } catch (Exception e) {
-                        //
+                if (r.isOneWay()) {
+                    // just close any connexion
+                    if (uc != null) {
+                        try {
+                            uc.disconnect();
+                        } catch (Exception e) {
+                            //
+                        }
                     }
                 }
             }
         } catch (IOException ex) {
-            throw new UncheckedIOException("error loading "+spec,ex);
+            throw new UncheckedIOException("error loading " + spec, ex);
         }
     }
 

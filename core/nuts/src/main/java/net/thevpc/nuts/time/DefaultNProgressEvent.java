@@ -27,7 +27,6 @@ package net.thevpc.nuts.time;
 
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NWorkspace;
 
 /**
  * @author thevpc
@@ -83,11 +82,6 @@ public class DefaultNProgressEvent implements NProgressEvent {
 
     public NSession getSession() {
         return session;
-    }
-
-    @Override
-    public NWorkspace getWorkspace() {
-        return session.getWorkspace();
     }
 
     public Throwable getError() {

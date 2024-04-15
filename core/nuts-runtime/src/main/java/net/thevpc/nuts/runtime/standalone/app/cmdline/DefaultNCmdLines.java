@@ -28,7 +28,7 @@ public class DefaultNCmdLines implements NCmdLines {
     }
 
     public NCmdLines setSession(NSession session) {
-       this.session = NWorkspaceUtils.bindSession(ws, session);
+        this.session = NWorkspaceUtils.bindSession(ws, session);
         return this;
     }
 
@@ -54,15 +54,17 @@ public class DefaultNCmdLines implements NCmdLines {
     private String[] parseCmdLineArr(String line) {
         NShellFamily f = getShellFamily();
         if (f == null) {
+            f = NEnvs.of(session).getShellFamily();
+        }
+        if (f == null) {
             f = NShellFamily.getCurrent();
         }
-        return NShellHelper.of(f).parseCmdLineArr(line,session);
+        return NShellHelper.of(f).parseCmdLineArr(line, session);
     }
 
     protected void checkSession() {
         NSessionUtils.checkSession(ws, session);
     }
-
 
     @Override
     public NArgName createName(String type, String label) {

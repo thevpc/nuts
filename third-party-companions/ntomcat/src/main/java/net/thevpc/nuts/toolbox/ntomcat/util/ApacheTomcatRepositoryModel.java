@@ -1,6 +1,7 @@
 package net.thevpc.nuts.toolbox.ntomcat.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
@@ -11,6 +12,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.logging.Logger;
 
 public class ApacheTomcatRepositoryModel implements NRepositoryModel {
@@ -117,7 +119,7 @@ public class ApacheTomcatRepositoryModel implements NRepositoryModel {
         }
         if ("org.apache.catalina:apache-tomcat".equals(id.getShortName())) {
             String r = getUrl(id.getVersion(), ".zip");
-            NPath localPath = NPath.of(getIdLocalFile(id.builder().setFaceContent().build(), fetchMode, repository, session),session);
+            NPath localPath = NPath.of(getIdLocalFile(id.builder().setFaceContent().build(), fetchMode, repository, session), session);
             NCp.of(session).from(NPath.of(r, session)).to(localPath)
                     .addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE).run();
             return localPath;
@@ -135,58 +137,66 @@ public class ApacheTomcatRepositoryModel implements NRepositoryModel {
         NIdBuilder idBuilder = NIdBuilder.of("org.apache.catalina", "apache-tomcat");
         return NPath.of("htmlfs:https://archive.apache.org/dist/tomcat/", session)
                 .stream()
-                .filter(x -> x.isDirectory() && x.getName().matches("tomcat-[0-9.]+"), "directory && tomcat")
+                .filter(NPredicate.of((NPath x) -> x.isDirectory() && x.getName().matches("tomcat-[0-9.]+")).withDesc(NEDesc.of("directory && tomcat")))
                 .flatMapStream(NFunction.of(
-                        s -> s.stream()
-                                .filter(x2 -> x2.isDirectory() && x2.getName().startsWith("v"), "isDirectory")
+                        (NPath s) -> s.stream()
+                                .filter(NPredicate.of((NPath x2) -> x2.isDirectory() && x2.getName().startsWith("v")).withDesc(NEDesc.of("isDirectory")))
                                 .flatMapStream(
                                         NFunction.of(
-                                                x3 -> {
-                                                    String s2n = x3.getName();
-                                                    String prefix = "apache-tomcat-";
-                                                    String bin = "bin";
-                                                    if (
-                                                            s2n.endsWith("-alpha/") || s2n.endsWith("-beta/")
-                                                                    || s2n.endsWith("-copyforpermissions/") || s2n.endsWith("-original/")
-                                                                    || s2n.matches(".*-RC[0-9]+/") || s2n.matches(".*-M[0-9]+/")
-                                                    ) {
-                                                        //will ignore all alpha versions
-                                                        return NStream.ofEmpty(session);
-                                                    }
-                                                    NVersion version = NVersion.of(s2n.substring(1, s2n.length() - 1)).get(session);
-                                                    if (version.compareTo("4.1.32") < 0) {
-                                                        prefix = "jakarta-tomcat-";
-                                                    }
-                                                    if (version.compareTo("4.1.27") == 0) {
-                                                        bin = "binaries";
-                                                    }
-                                                    boolean checkBin = false;
-                                                    if (checkBin) {
-                                                        String finalPrefix = prefix;
-                                                        return x3.resolve(bin)
-                                                                .stream()
-                                                                .filter(x4 -> x4.getName().matches(finalPrefix + "[0-9]+\\.[0-9]+\\.[0-9]+\\.zip"), "name.isZip")
-                                                                .map(x5 -> {
-                                                                    String s3 = x5.getName();
-                                                                    String v0 = s3.substring(finalPrefix.length(), s3.length() - 4);
-                                                                    NVersion v = NVersion.of(v0).get(session);
-                                                                    NId id2 = idBuilder.setVersion(v).build();
-                                                                    if (filter == null || filter.acceptId(id2, session)) {
-                                                                        return id2;
-                                                                    }
-                                                                    return null;
-                                                                }, "toZip")
-                                                                .nonNull();
-                                                    } else {
-                                                        NId id2 = idBuilder.setVersion(version).build();
-                                                        if (filter == null || filter.acceptId(id2, session)) {
-                                                            return NStream.ofSingleton(id2, session);
+                                                new Function<NPath, NStream<NId>>() {
+                                                    @Override
+                                                    public NStream<NId> apply(NPath x3) {
+                                                        String s2n = x3.getName();
+                                                        String prefix = "apache-tomcat-";
+                                                        String bin = "bin";
+                                                        if (
+                                                                s2n.endsWith("-alpha/") || s2n.endsWith("-beta/")
+                                                                        || s2n.endsWith("-copyforpermissions/") || s2n.endsWith("-original/")
+                                                                        || s2n.matches(".*-RC[0-9]+/") || s2n.matches(".*-M[0-9]+/")
+                                                        ) {
+                                                            //will ignore all alpha versions
+                                                            return NStream.ofEmpty(session);
                                                         }
-                                                        return NStream.ofEmpty(session);
+                                                        NVersion version = NVersion.of(s2n.substring(1, s2n.length() - 1)).get(session);
+                                                        if (version.compareTo("4.1.32") < 0) {
+                                                            prefix = "jakarta-tomcat-";
+                                                        }
+                                                        if (version.compareTo("4.1.27") == 0) {
+                                                            bin = "binaries";
+                                                        }
+                                                        boolean checkBin = false;
+                                                        if (checkBin) {
+                                                            String finalPrefix = prefix;
+                                                            return x3.resolve(bin)
+                                                                    .stream()
+                                                                    .filter(
+                                                                            NPredicate.<NPath>of((NPath x4) -> x4.getName().matches(finalPrefix + "[0-9]+\\.[0-9]+\\.[0-9]+\\.zip"))
+                                                                                    .withDesc(NEDesc.of("name.isZip"))
+
+                                                                    )
+                                                                    .map(NFunction.<NPath, NId>of(
+                                                                            (NPath x5) -> {
+                                                                                String s3 = x5.getName();
+                                                                                String v0 = s3.substring(finalPrefix.length(), s3.length() - 4);
+                                                                                NVersion v = NVersion.of(v0).get(session);
+                                                                                NId id2 = idBuilder.setVersion(v).build();
+                                                                                if (filter == null || filter.acceptId(id2, session)) {
+                                                                                    return id2;
+                                                                                }
+                                                                                return null;
+                                                                            }).<NId>withDesc(NEDesc.of("toZip")))
+                                                                    .<NId>nonNull();
+                                                        } else {
+                                                            NId id2 = idBuilder.setVersion(version).build();
+                                                            if (filter == null || filter.acceptId(id2, session)) {
+                                                                return NStream.ofSingleton(id2, session);
+                                                            }
+                                                            return NStream.ofEmpty(session);
+                                                        }
+
                                                     }
-                                                }
-                                                , "flatMap"))
-                        , "flatMap")).iterator();
+                                                }).withDesc(NEDesc.of("flatMap")))
+                ).withDesc(NEDesc.of("flatMap"))).iterator();
     }
 
     private String getUrl(NVersion version, String extension) {

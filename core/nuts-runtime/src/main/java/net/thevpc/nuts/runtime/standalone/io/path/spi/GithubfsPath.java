@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NTreeVisitor;
@@ -68,10 +69,10 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         if (q instanceof Info[]) {
             return NStream.of((Info[]) q, session)
                     .map(NFunction.of(
-                            x -> NPath.of(new GithubfsPath(
+                            (Info x) -> NPath.of(new GithubfsPath(
                                     PREFIX + ref.resolve(x.name).toString(),
                                     x, session), session)
-                            , "GithubfsPath::of")
+                            ).withDesc(NEDesc.of("GithubfsPath::of"))
                     );
         }
         return NStream.ofEmpty(session);

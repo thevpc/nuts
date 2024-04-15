@@ -38,7 +38,7 @@ import net.thevpc.nuts.util.NOptional;
  * @app.category Elements
  * @since 0.5.6
  */
-public interface NElement extends NDescribable, NBlankable, NLiteral {
+public interface NElement extends NElementDescribable<NElement>, NBlankable, NLiteral {
 
     /**
      * element type

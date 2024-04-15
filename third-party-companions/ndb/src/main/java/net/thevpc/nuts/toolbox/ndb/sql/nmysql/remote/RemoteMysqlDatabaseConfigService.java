@@ -27,6 +27,7 @@ import net.thevpc.nuts.toolbox.ndb.sql.nmysql.util.MysqlUtils;
 import net.thevpc.nuts.toolbox.ndb.util.NdbUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NAsk;
 
 public class RemoteMysqlDatabaseConfigService {
 
@@ -69,8 +70,7 @@ public class RemoteMysqlDatabaseConfigService {
     public String pull(String localPath, boolean restore, boolean deleteRemote) {
         CachedMapFile lastRun = new CachedMapFile(session, "pull-" + getName());
         if (lastRun.exists()) {
-            if (!session.getTerminal().ask()
-                    .resetLine()
+            if (!NAsk.of(session)
                     .forBoolean(
                             NMsg.ofPlain("a previous pull has failed. would you like to resume (yes) or ignore and re-run the pull (no).")
                     )

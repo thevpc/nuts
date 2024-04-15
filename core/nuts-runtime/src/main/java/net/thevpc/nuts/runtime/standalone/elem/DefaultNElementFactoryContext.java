@@ -68,11 +68,6 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
     }
 
     @Override
-    public NWorkspace getWorkspace() {
-        return base.getWorkspace();
-    }
-
-    @Override
     public NElements elem() {
         return base;
     }

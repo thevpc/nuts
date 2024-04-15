@@ -27,44 +27,34 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.elem.NDescribable;
-import net.thevpc.nuts.elem.NDescribables;
+import net.thevpc.nuts.elem.NElementDescribable;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.reserved.util.NUnsafeCallableBaseFromJavaCallable;
+import net.thevpc.nuts.reserved.util.NUnsafeCallableFromCallable;
 
 import java.util.concurrent.Callable;
-import java.util.function.Function;
 
 /**
  * Describable Runnable
  */
-public interface NUnsafeCallable<T> extends NDescribable {
+public interface NUnsafeCallable<T> extends NElementDescribable<NUnsafeCallable<T>> {
 
-    static <T> NUnsafeCallable<T> of(NUnsafeCallable<T> o, String descr) {
-        return NDescribables.ofUnsafeCallable(o, session -> NElements.of(session).ofString(descr));
+    static <T> NUnsafeCallable<T> of(NCallable<T> o) {
+        if (o == null) {
+            return null;
+        }
+        return new NUnsafeCallableFromCallable<>(o);
     }
 
-    static <T> NUnsafeCallable<T> of(NUnsafeCallable<T> o, NElement descr) {
-        return NDescribables.ofUnsafeCallable(o, e -> descr);
+    static <T> NUnsafeCallable<T> of(Callable<T> o) {
+        if (o == null) {
+            return null;
+        }
+        return new NUnsafeCallableBaseFromJavaCallable<T>(o);
     }
 
-    static <T> NUnsafeCallable<T> of(NUnsafeCallable<T> o, Function<NSession, NElement> descr) {
-        return NDescribables.ofUnsafeCallable(o, descr);
-    }
-
-    static <T> NUnsafeCallable<T> of(Callable<T> o, String descr) {
-        return NDescribables.ofUnsafeCallable(o, session -> NElements.of(session).ofString(descr));
-    }
-
-    static <T> NUnsafeCallable<T> of(Callable<T> o, NElement descr) {
-        return NDescribables.ofUnsafeCallable(o, e -> descr);
-    }
-
-    static <T> NUnsafeCallable<T> of(Callable<T> o, Function<NSession, NElement> descr) {
-        return NDescribables.ofUnsafeCallable(o, descr);
-    }
-
-    T call() throws Exception;
+    T call(NSession session) throws Exception;
 
     default NElement describe(NSession session) {
         return NElements.of(session).ofString(toString());

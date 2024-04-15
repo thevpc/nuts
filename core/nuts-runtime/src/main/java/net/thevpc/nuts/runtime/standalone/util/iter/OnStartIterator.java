@@ -1,27 +1,30 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.util.NRunnable;
 
 import java.util.Iterator;
 
 class OnStartIterator<T> extends NIteratorBase<T> {
 
     private final Iterator<T> base;
-    private final Runnable r;
+    private final NRunnable r;
+    private final NSession session;
     private boolean started=false;
 
-    public OnStartIterator(Iterator<T> base, Runnable r) {
+    public OnStartIterator(Iterator<T> base, NSession session, NRunnable r) {
         this.base = base;
         this.r = r;
+        this.session = session;
     }
 
     @Override
     public NElement describe(NSession session) {
-        return NDescribables.resolveOrDestructAsObject(base, session)
+        return NEDesc.describeResolveOrDestructAsObject(base, session)
                 .builder()
-                .set("onStart", NDescribables.resolveOrToString(r, session))
+                .set("onStart", NEDesc.describeResolveOrToString(r, session))
                 .build()
                 ;
     }
@@ -29,7 +32,7 @@ class OnStartIterator<T> extends NIteratorBase<T> {
     @Override
     public boolean hasNext() {
         if(!started){
-            r.run();
+            r.run(session);
             started=true;
         }
         return base.hasNext();

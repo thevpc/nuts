@@ -26,9 +26,7 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.spi.base.AbstractNPredicate;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -76,33 +74,11 @@ public class NPredicates {
         return sl;
     }
 
-    public static abstract class BaseOpPredicate<T> extends BasePredicate<T> {
+    public static abstract class BaseOpPredicate<T> extends AbstractNPredicate<T> {
 
     }
 
-    public static abstract class BasePredicate<T> implements NPredicate<T> {
-        @Override
-        public NPredicate<T> and(Predicate<? super T> other) {
-            return new And<T>(this, other);
-        }
-
-        @Override
-        public NPredicate<T> negate() {
-            return new Not<>(this);
-        }
-
-        @Override
-        public NPredicate<T> or(Predicate<? super T> other) {
-            return new Or<T>(this, other);
-        }
-
-        @Override
-        public NElement describe(NSession session) {
-            return NElements.of(session).ofString(toString());
-        }
-    }
-
-    private static class Never<T> extends BaseOpPredicate<T> {
+    public static class Never<T> extends BaseOpPredicate<T> {
         @Override
         public boolean test(T t) {
             return false;

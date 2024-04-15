@@ -9,7 +9,8 @@ import net.thevpc.nuts.*;
 
 import java.util.Objects;
 
-import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
+import net.thevpc.nuts.spi.base.AbstractIdFilter;
+import net.thevpc.nuts.util.NSimplifiable;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.util.NFilterOp;
 
@@ -17,7 +18,7 @@ import net.thevpc.nuts.util.NFilterOp;
  *
  * @author thevpc
  */
-public class NVersionIdFilter extends AbstractIdFilter implements NIdFilter, Simplifiable<NIdFilter> {
+public class NVersionIdFilter extends AbstractIdFilter implements NIdFilter, NSimplifiable<NIdFilter> {
 
     private final NVersionFilter filter;
 

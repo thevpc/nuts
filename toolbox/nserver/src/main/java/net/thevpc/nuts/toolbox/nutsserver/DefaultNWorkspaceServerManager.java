@@ -27,7 +27,6 @@
 package net.thevpc.nuts.toolbox.nutsserver;
 
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.toolbox.nutsserver.http.NHttpServerConfig;
 import net.thevpc.nuts.util.NAssert;
 
@@ -42,13 +41,11 @@ import java.util.Map;
  */
 public class DefaultNWorkspaceServerManager implements NWorkspaceServerManager {
 
-    private final NWorkspace ws;
     private final NSession session;
     private Map<String, NServer> servers = new HashMap<>();
 
     public DefaultNWorkspaceServerManager(final NSession session) {
         this.session = session;
-        this.ws = session.getWorkspace();
     }
 
     @Override

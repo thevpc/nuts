@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts.io;
 
+import net.thevpc.nuts.reserved.rpi.NIORPI;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
@@ -39,7 +40,7 @@ import java.io.InputStream;
  */
 public interface NSystemTerminal extends NSystemTerminalBase {
     static void enableRichTerm(NSession session) {
-        NIO.of(session).enableRichTerm();
+        NIORPI.of(session).enableRichTerm();
     }
 
     /**

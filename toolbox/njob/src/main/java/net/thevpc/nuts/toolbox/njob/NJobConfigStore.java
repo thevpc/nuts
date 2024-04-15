@@ -1,6 +1,7 @@
 package net.thevpc.nuts.toolbox.njob;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.njob.model.Id;
@@ -8,6 +9,7 @@ import net.thevpc.nuts.toolbox.njob.model.NJob;
 import net.thevpc.nuts.toolbox.njob.model.NProject;
 import net.thevpc.nuts.toolbox.njob.model.NTask;
 import net.thevpc.nuts.util.NFunction;
+import net.thevpc.nuts.util.NPredicate;
 
 import java.lang.reflect.Field;
 import java.util.UUID;
@@ -24,7 +26,7 @@ public class NJobConfigStore {
         json.setCompact(false);
         //ensure we always consider the latest config version
         dbPath = session.getAppVersionFolder(NStoreType.CONF, NJobConfigVersions.CURRENT)
-        .resolve("db");
+                .resolve("db");
     }
 
     private Field getKeyField(Class o) {
@@ -60,12 +62,12 @@ public class NJobConfigStore {
 
     public <T> Stream<T> search(Class<T> type) {
         NPath f = getFile(getEntityName(type), "any").getParent();
-        NFunction<NPath, T> parse = NFunction.of(x -> json.parse(x, type), "parse");
+        NFunction<NPath, T> parse = NFunction.of((NPath x) -> json.parse(x, type)).withDesc(NEDesc.of("parse"));
         return f.stream().filter(
-                x -> x.isRegularFile() && x.getName().endsWith(".json"),
-                        "isRegularFile() && matches(*.json"+")"
+                        NPredicate.of((NPath x) -> x.isRegularFile() && x.getName().endsWith(".json"))
+                                .withDesc(NEDesc.of("isRegularFile() && matches(*.json" + ")"))
                 )
-                .map(parse,session-> NElements.of(session).ofString("parse"))
+                .map(parse)
                 .filterNonNull().stream();
     }
 
@@ -78,22 +80,22 @@ public class NJobConfigStore {
     }
 
     public void store(Object o) {
-        if(o instanceof NJob) {
+        if (o instanceof NJob) {
             NJob j = (NJob) o;
-            String ii=j.getId();
-            if (ii==null){
+            String ii = j.getId();
+            if (ii == null) {
                 j.setId(generateId(NJob.class));
             }
-        }else if(o instanceof NTask){
+        } else if (o instanceof NTask) {
             NTask j = (NTask) o;
-            String ii=j.getId();
-            if (ii==null){
+            String ii = j.getId();
+            if (ii == null) {
                 j.setId(generateId(NTask.class));
             }
-        }else if(o instanceof NProject){
+        } else if (o instanceof NProject) {
             NProject j = (NProject) o;
-            String ii=j.getId();
-            if (ii==null){
+            String ii = j.getId();
+            if (ii == null) {
                 j.setId(generateId(NProject.class));
             }
         }
@@ -104,12 +106,12 @@ public class NJobConfigStore {
 
     public String generateId(Class clz) {
 //        SimpleDateFormat yyyyMMddHHmmssSSS = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        while(true){
+        while (true) {
             //test until we reach next millisecond
-            String nid= UUID.randomUUID().toString();
+            String nid = UUID.randomUUID().toString();
 //                    yyyyMMddHHmmssSSS.format(new Date());
             NPath f = getFile(getEntityName(clz), nid);
-            if(!f.exists()){
+            if (!f.exists()) {
                 return nid;
             }
         }

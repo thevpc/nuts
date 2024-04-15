@@ -3,26 +3,24 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  *
  * <br>
  * <p>
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
+ * <br> ====================================================================
  */
 package net.thevpc.nuts.cmdline;
 
@@ -41,7 +39,7 @@ public interface NArg extends NLiteral {
     /**
      * create instance for the given value and with the given session
      *
-     * @param value   value
+     * @param value value
      * @return new instance
      */
     static NArg of(String value) {
@@ -65,12 +63,14 @@ public interface NArg extends NLiteral {
 
     /**
      * equivalent to getStringKey().orElse("")
+     *
      * @return non null key as string
      */
     String key();
 
     /**
      * equivalent to getStringValue().orElse(null)
+     *
      * @return string as string
      */
     String value();
@@ -94,6 +94,7 @@ public interface NArg extends NLiteral {
 
     /**
      * true if not negated
+     *
      * @return true if not negated
      */
     boolean isEnabled();
@@ -137,9 +138,9 @@ public interface NArg extends NLiteral {
     boolean isKeyValue();
 
     /**
-     * return option prefix part  ('-' and '--')
+     * return option prefix part ('-' and '--')
      *
-     * @return option prefix part  ('-' and '--')
+     * @return option prefix part ('-' and '--')
      * @since 0.5.7
      */
     NLiteral getOptionPrefix();
@@ -163,8 +164,8 @@ public interface NArg extends NLiteral {
     /**
      * return new instance (never null) of the value part of the argument (after
      * =). However Argument's value may be null (
-     * {@code getArgumentValue().getString() == null}). Here are some examples of
-     * getArgumentValue() result for some common arguments
+     * {@code getArgumentValue().getString() == null}). Here are some examples
+     * of getArgumentValue() result for some common arguments
      * <ul>
      * <li>Argument("key").getArgumentValue() ==&gt; Argument(null) </li>
      * <li>Argument("key=value").getArgumentValue() ==&gt; Argument("value")
@@ -207,6 +208,7 @@ public interface NArg extends NLiteral {
      */
     NLiteral getKey();
 
+    String getImage();
 
     boolean isFlagOption();
 }

@@ -24,15 +24,12 @@
 package net.thevpc.nuts.runtime.standalone.repository;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.elem.NObjectElement;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.util.iter.NIteratorBase;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.elem.NDescribables;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.util.NMsg;
 
@@ -89,7 +86,7 @@ public class NIdPathIterator extends NIteratorBase<NId> {
         return NElements.of(session).ofObject()
                 .set("type", "ScanPath")
                 .set("repository", repository == null ? null : repository.getName())
-                .set("filter", NDescribables.resolveOrDestruct(filter, session))
+                .set("filter", NEDesc.describeResolveOrDestruct(filter, session))
                 .set("path", NElements.of(session).toElement(basePath))
                 .set("root", NElements.of(session).toElement(rootFolder))
                 .set("maxDepth", maxDepth)

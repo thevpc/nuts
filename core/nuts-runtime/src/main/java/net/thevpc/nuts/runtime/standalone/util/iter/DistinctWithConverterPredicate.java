@@ -1,16 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.elem.NDescribable;
-import net.thevpc.nuts.elem.NDescribables;
-import net.thevpc.nuts.util.NPredicates;
+import net.thevpc.nuts.spi.base.AbstractNPredicate;
 
 import java.util.HashSet;
 import java.util.function.Function;
 
-class DistinctWithConverterPredicate<F, T> extends NPredicates.BasePredicate<F> implements NDescribable {
+class DistinctWithConverterPredicate<F, T> extends AbstractNPredicate<F> {
     private final Function<F, T> converter;
     HashSet<T> visited;
 
@@ -37,7 +36,7 @@ class DistinctWithConverterPredicate<F, T> extends NPredicates.BasePredicate<F> 
     @Override
     public NElement describe(NSession session) {
         return NElements.of(session).ofObject()
-                .set("distinctBy", NDescribables.resolveOrDestruct(converter, session))
+                .set("distinctBy", NEDesc.describeResolveOrDestruct(converter, session))
                 .build()
                 ;
     }

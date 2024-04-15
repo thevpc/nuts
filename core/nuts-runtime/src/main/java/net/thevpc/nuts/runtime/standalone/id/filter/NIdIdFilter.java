@@ -6,7 +6,8 @@
 package net.thevpc.nuts.runtime.standalone.id.filter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
+import net.thevpc.nuts.spi.base.AbstractIdFilter;
+import net.thevpc.nuts.util.NSimplifiable;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.util.NFilterOp;
 
@@ -17,7 +18,7 @@ import java.util.Objects;
  *
  * @author thevpc
  */
-public class NIdIdFilter extends AbstractIdFilter implements NIdFilter, Simplifiable<NIdFilter> {
+public class NIdIdFilter extends AbstractIdFilter implements NIdFilter, NSimplifiable<NIdFilter> {
 
     private NLog LOG;
     private final NId filter;

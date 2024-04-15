@@ -1,10 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.elem.NObjectElement;
-import net.thevpc.nuts.elem.NDescribables;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NIterator;
 
 import java.util.function.Supplier;
@@ -25,7 +22,7 @@ public class SupplierIterator<T> extends NIteratorBase<T> {
         return NElements.of(session).ofObject()
                 .set("type","Supplier")
                 .set("template",
-                        NDescribables.resolveOr(from, session,()-> NElements.of(session).ofObject().set("type","compiled").addAll(name).build())
+                        NEDesc.describeResolveOr(from, session,()-> NElements.of(session).ofObject().set("type","compiled").addAll(name).build())
                 )
                 .build();
     }

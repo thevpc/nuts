@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
@@ -26,7 +27,7 @@ public class IteratorBuilder<T> {
 
     public static final NPredicate NON_NULL = NPredicates.isNull().negate();
     public static final NPredicate NON_BLANK = NPredicates.blank().negate();
-    static final EmptyIterator EMPTY_ITERATOR = new EmptyIterator<>();
+    static final NIteratorEmpty EMPTY_ITERATOR = new NIteratorEmpty<>();
     private final NIterator<T> it;
     private final NSession session;
 
@@ -60,20 +61,20 @@ public class IteratorBuilder<T> {
                 session).onStart(t);
     }
 
-    public static <T> IteratorBuilder<T> ofRunnable(Runnable t, NElement n, NSession session) {
-        return ofRunnable(NRunnable.of(t, n), session);
-    }
+//    public static <T> IteratorBuilder<T> ofRunnable(Runnable t, NElement n, NSession session) {
+//        return ofRunnable(NRunnable.of(t, n), session);
+//    }
 
     public static <T> IteratorBuilder<T> ofRunnable(Runnable t, String n, NSession session) {
-        return ofRunnable(NRunnable.of(t, n), session);
+        return ofRunnable(NRunnable.of(t).withDesc(NEDesc.of(n)), session);
     }
 //
 //    public static <T> IteratorBuilder<T> ofSupplier(Supplier<NutsIterator<T>> from) {
 //        return of(new SupplierIterator<T>(from, null));
 //    }
 
-    public static <T> IteratorBuilder<T> ofSupplier(Supplier<Iterator<T>> from, Function<NSession, NElement> name, NSession session) {
-        return of(new SupplierIterator2<T>(from, name), session);
+    public static <T> IteratorBuilder<T> ofSupplier(Supplier<Iterator<T>> from, NEDesc name, NSession session) {
+        return of(new SupplierIterator2<T>(from,name,session).withDesc(name), session);
     }
 
     public static <T> IteratorBuilder<T> ofArrayValues(T[] t, NElement n, NSession session) {
@@ -106,11 +107,11 @@ public class IteratorBuilder<T> {
         return of(new FlatMapIterator<>(from, Collection::iterator), session);
     }
 
-    public IteratorBuilder<T> filter(Predicate<? super T> t, Function<NSession, NElement> e) {
+    public IteratorBuilder<T> filter(Predicate<? super T> t, NEDesc e) {
         if (t == null) {
             return this;
         }
-        return of(new FilteredIterator<>(it, NPredicate.of(t, e)), session);
+        return of(new FilteredIterator<>(it, NPredicate.of(t).withDesc(e)), session);
     }
 
     public IteratorBuilder<T> filter(NPredicate<? super T> t) {
@@ -136,7 +137,7 @@ public class IteratorBuilder<T> {
     }
 
 
-    public <V> IteratorBuilder<V> flatMap(NFunction<? super T, ? extends Iterator<? extends V>> fun) {
+    public <V> IteratorBuilder<V> flatMap(Function<? super T, ? extends Iterator<? extends V>> fun) {
         return of(new FlatMapIterator<T, V>(it, fun), session);
     }
 
@@ -218,7 +219,7 @@ public class IteratorBuilder<T> {
         if (r == null) {
             return this;
         }
-        return of(new OnFinishIterator<>(it, r), session);
+        return of(new NIteratorOnFinish<>(it,session, r), session);
     }
 
 
@@ -226,6 +227,6 @@ public class IteratorBuilder<T> {
         if (r == null) {
             return this;
         }
-        return of(new OnStartIterator<>(it, r), session);
+        return of(new OnStartIterator<>(it,session, r), session);
     }
 }

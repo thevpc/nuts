@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.ps;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.env.NPlatformFamily;
@@ -11,9 +12,11 @@ import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 
 import java.io.File;
 import java.util.*;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.io.NPath;
 
-import net.thevpc.nuts.runtime.standalone.stream.NEmptyStream;
-import net.thevpc.nuts.runtime.standalone.stream.NIteratorStream;
+import net.thevpc.nuts.runtime.standalone.util.stream.NStreamEmpty;
+import net.thevpc.nuts.runtime.standalone.util.stream.NStreamFromNIterator;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.*;
@@ -51,19 +54,18 @@ public class DefaultNPs implements NPs {
     }
 
     @Override
-    public boolean isSupportedKillProcess(){
+    public boolean isSupportedKillProcess() {
         checkSession();
         NOsFamily f = NEnvs.of(getSession()).getOsFamily();
         return f == NOsFamily.LINUX || f == NOsFamily.MACOS || f == NOsFamily.UNIX;
     }
-
 
     @Override
     public boolean killProcess(String processId) {
         checkSession();
         return NExecCmd.of(getSession())
                 .addCommand("kill", "-9", processId)
-                .getResultCode()==0;
+                .getResultCode() == 0;
     }
 
     @Override
@@ -124,9 +126,9 @@ public class DefaultNPs implements NPs {
         }
         throw new NExecutionException(session,
                 NMsg.ofC("unable to resolve a valid jdk installation. "
-                + "Either run nuts with a valid JDK/SDK (not JRE) or register a valid one using 'nuts settings' command. "
-                + "All the followings are invalid : \n%s",
-                String.join("\n", detectedJavaHomes)
+                        + "Either run nuts with a valid JDK/SDK (not JRE) or register a valid one using 'nuts settings' command. "
+                        + "All the followings are invalid : \n%s",
+                        String.join("\n", detectedJavaHomes)
                 ),
                 NExecutionException.ERROR_2);
     }
@@ -152,14 +154,15 @@ public class DefaultNPs implements NPs {
             return getResultListJava("");
         } else {
             if (isFailFast()) {
-                throw new NIllegalArgumentException(getSession(), NMsg.ofC("unsupported list processes of type : %s" , processType));
+                throw new NIllegalArgumentException(getSession(), NMsg.ofC("unsupported list processes of type : %s", processType));
             }
-            return new NEmptyStream<>(getSession(), "process-" + processType);
+            return new NStreamEmpty<>(getSession(), "process-" + processType);
         }
     }
 
     private NStream<NPsInfo> getResultListJava(String version) {
         checkSession();
+        NEnvs envs = NEnvs.of(session);
         NIterator<NPsInfo> it = IteratorBuilder.ofSupplier(() -> {
             String cmd = "jps";
             NExecCmd b = null;
@@ -182,18 +185,41 @@ public class DefaultNPs implements NPs {
                 return Arrays.asList(split).iterator();
             }
             return IteratorBuilder.emptyIterator();
-        },e-> NElements.of(e).ofString("jps"), session).map(
+        }, e -> NElements.of(e).ofString("jps"), session).map(
                 NFunction.of(
-                line -> {
-            int s1 = line.indexOf(' ');
-            int s2 = line.indexOf(' ', s1 + 1);
-            String pid = line.substring(0, s1).trim();
-            String cls = line.substring(s1 + 1, s2 < 0 ? line.length() : s2).trim();
-            String args = s2 >= 0 ? line.substring(s2 + 1).trim() : "";
-            return (NPsInfo) new DefaultNPsInfo(
-                    pid, cls, null, args
-            );
-        },"processInfo")).build();
-        return new NIteratorStream<>(getSession(), "process-" + getType(), it);
+                        (String line) -> {
+                            int s1 = line.indexOf(' ');
+                            int s2 = line.indexOf(' ', s1 + 1);
+                            String pid = line.substring(0, s1).trim();
+                            String cls = line.substring(s1 + 1, s2 < 0 ? line.length() : s2).trim();
+                            String cmdLineString = s2 >= 0 ? line.substring(s2 + 1).trim() : "";
+                            String[] parsedCmdLine = betterArgs(envs, pid);
+                            if (parsedCmdLine == null) {
+                                parsedCmdLine= NCmdLine.of(cmdLineString,null,session).toStringArray();
+                            }
+                            return (NPsInfo) new DefaultNPsInfo(
+                                    pid, cls, null, cmdLineString,parsedCmdLine
+                            );
+                        }).withDesc(NEDesc.of("processInfo"))).build();
+        return new NStreamFromNIterator<>(getSession(), "process-" + getType(), it);
+    }
+
+    private String[] betterArgs(NEnvs envs, String pid) {
+        switch (envs.getOsFamily()) {
+            case LINUX:
+            case UNIX:
+            case MACOS: {
+                try {
+                    NPath procFile = NPath.of("/proc/" + pid + "/cmdline", session);
+                    if (procFile.exists()) {
+                        return procFile.readString().split("\0");
+                    }
+                } catch (Exception ex) {
+
+                }
+                break;
+            }
+        }
+        return null;
     }
 }

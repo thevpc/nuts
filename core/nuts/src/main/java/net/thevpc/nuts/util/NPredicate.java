@@ -26,29 +26,26 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NDescribable;
-import net.thevpc.nuts.elem.NDescribables;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.spi.base.NPredicateBase;
 
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
  * Describable Predicate
  * @param <T> Type
  */
-public interface NPredicate<T> extends Predicate<T>, NDescribable {
-    static <T> NPredicate<T> of(Predicate<T> o, String descr){
-        return NDescribables.ofPredicate(o, session-> NElements.of(session).ofString(descr));
+public interface NPredicate<T> extends Predicate<T>, NElementDescribable<NPredicate<T>> {
+    static <T> NPredicate<T> of(Predicate<T> o){
+        if(o==null){
+            return null;
+        }
+        if(o instanceof NPredicate<?>){
+            return (NPredicate<T>) o;
+        }
+        return new NPredicateBase<>(o);
     }
-    static <T> NPredicate<T> of(Predicate<T> o, NElement descr){
-        return NDescribables.ofPredicate(o, e->descr);
-    }
-    static <T> NPredicate<T> of(Predicate<T> o, Function<NSession, NElement> descr){
-        return NDescribables.ofPredicate(o,descr);
-    }
+
 
     NPredicate<T> and(Predicate<? super T> other);
 

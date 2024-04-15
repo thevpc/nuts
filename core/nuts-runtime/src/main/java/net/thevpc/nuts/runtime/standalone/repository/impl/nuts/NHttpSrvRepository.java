@@ -99,7 +99,8 @@ public class NHttpSrvRepository extends NCachedRepository {
                 .addPart("descriptor-hash", NDigest.of(session).sha1().setSource(desc).computeString())
                 .addPart("content-hash", NDigestUtils.evalSHA1Hex(content, session))
                 .addPart("force", NDigestUtils.evalSHA1Hex(content, session))
-                .addPart().setName("descriptor").setFileName("Project.nuts").setBody(NIO.of(session).ofInputSource(descStream.toByteArray())).end()
+                .addPart().setName("descriptor").setFileName("Project.nuts").setBody(
+                        NInputSource.of(descStream.toByteArray(),session)).end()
                 .run();
     }
 
@@ -166,7 +167,8 @@ public class NHttpSrvRepository extends NCachedRepository {
                         .addPart("root", "/")
                         .addPart("ul", ulp[0])
                         .addPart("up", ulp[1])
-                        .addPart("js").setFileName("search.js").setBody(NIO.of(session).ofInputSource(js.getBytes())).end()
+                        .addPart("js").setFileName("search.js").setBody(
+                                NInputSource.of(js.getBytes(),session)).end()
                         .run()
                         .getContent().getInputStream();
                 return IteratorBuilder.of(new NamedNIdFromStreamIterator(ret, session), session).filter(CoreFilterUtils.createFilter(filter, session)).iterator();

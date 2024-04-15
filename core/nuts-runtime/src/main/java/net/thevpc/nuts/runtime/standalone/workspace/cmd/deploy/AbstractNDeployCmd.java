@@ -68,7 +68,7 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
     @Override
     public NDeployCmd setContent(InputStream stream) {
         checkSession();
-        content = stream == null ? null : NIO.of(session).ofInputSource(stream);
+        content = stream == null ? null : NInputSource.of(stream,session);
         return this;
     }
 
@@ -80,7 +80,7 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
 
     @Override
     public NDeployCmd setContent(byte[] content) {
-        this.content = content == null ? null : NIO.of(session).ofInputSource(content);
+        this.content = content == null ? null : NInputSource.of(content,session);
         return this;
     }
 

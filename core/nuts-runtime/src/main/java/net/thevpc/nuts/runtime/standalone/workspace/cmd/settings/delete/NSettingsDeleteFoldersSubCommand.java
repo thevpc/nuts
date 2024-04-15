@@ -12,6 +12,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NAsk;
 import net.thevpc.nuts.util.NMsg;
 
 import java.util.HashSet;
@@ -30,8 +31,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
                         NTexts.of(session).ofStyled("cache", NTextStyle.primary1())
                         , s));
                 if (force
-                        || session.getTerminal().ask()
-                        .resetLine()
+                        || NAsk.of(session)
                         .forBoolean(NMsg.ofPlain("force delete?")).setDefaultValue(false)
                         .setSession(session).getBooleanValue()) {
                     s.delete();
@@ -90,8 +90,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
                         factory.ofStyled(session.getWorkspace().getName(), NTextStyle.primary1()),
                         factory.ofStyled(sstoreLocation.toString(), NTextStyle.path())));
                 if (force
-                        || session.getTerminal().ask()
-                        .resetLine()
+                        || NAsk.of(session)
                         .forBoolean(NMsg.ofPlain("force delete?")).setDefaultValue(false).setSession(session)
                         .getBooleanValue()) {
                     sstoreLocation.delete();
@@ -113,8 +112,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
                         factory.ofStyled(repository.getName(), NTextStyle.primary1()),
                         factory.ofStyled(sstoreLocation.toString(), NTextStyle.path())));
                 if (force
-                        || session.getTerminal().ask()
-                        .resetLine()
+                        || NAsk.of(session)
                         .forBoolean(NMsg.ofPlain("Force Delete?")).setDefaultValue(false).setSession(session)
                         .getBooleanValue()) {
                     sstoreLocation.delete();

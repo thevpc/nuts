@@ -24,6 +24,10 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.reserved.util.NVersionFilterWithDescription;
+import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
@@ -90,4 +94,17 @@ public interface NVersionFilter extends NArtifactFilter {
     NVersionFilter neg();
 
     NOptional<List<NVersionInterval>> intervals();
+
+    @Override
+    default NElement describe(NSession session) {
+        return NArtifactFilter.super.describe(session);
+    }
+
+    @Override
+    default NFilter withDesc(NEDesc description) {
+        if(description==null){
+            return this;
+        }
+        return new NVersionFilterWithDescription(this,description);
+    }
 }

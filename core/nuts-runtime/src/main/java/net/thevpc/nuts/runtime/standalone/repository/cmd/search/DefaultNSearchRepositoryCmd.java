@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.cmd.search;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
@@ -52,14 +53,13 @@ public class DefaultNSearchRepositoryCmd extends AbstractNSearchRepositoryCmd {
                     xrepo.checkAllowedFetch(null, session);
                     _LOGOP(session).level(Level.FINEST).verb(NLogVerb.START)
                             .log(NMsg.ofJ("{0} search packages", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST)));
-                }, "CheckAuthorizations"
-        );
+                }
+        ).withDesc(NEDesc.of("CheckAuthorizations"));
         NRunnable endRunnable =
                 NRunnable.of(
                         () -> _LOGOP(session).level(Level.FINEST).verb(NLogVerb.SUCCESS)
-                                .log(NMsg.ofJ("{0} search packages", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST))),
-                        "Log"
-                );
+                                .log(NMsg.ofJ("{0} search packages", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST)))
+                        ).withDesc(NEDesc.of("Log"));
         try {
             NRepositoryExt xrepo = NRepositoryExt.of(getRepo());
             boolean processIndexFirst =

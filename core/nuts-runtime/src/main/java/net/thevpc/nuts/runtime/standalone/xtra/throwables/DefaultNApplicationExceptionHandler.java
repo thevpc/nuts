@@ -13,7 +13,7 @@ import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NApiUtils;
+import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.log.NLogOp;
@@ -47,7 +47,7 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
                 logConfig.getLogTermLevel() != null
                 && logConfig.getLogTermLevel().intValue() < Level.INFO.intValue());
         if (!showTrace) {
-            showTrace = NApiUtils.getSysBoolNutsProperty("debug", false);
+            showTrace = NApiUtilsRPI.getSysBoolNutsProperty("debug", false);
         }
         if (bot) {
             showTrace = false;

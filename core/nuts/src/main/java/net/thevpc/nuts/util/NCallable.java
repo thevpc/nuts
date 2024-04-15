@@ -27,34 +27,20 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.elem.NDescribable;
-import net.thevpc.nuts.elem.NDescribables;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
-
-import java.util.function.Function;
+import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.reserved.util.NCallableWithDescription;
 
 /**
  * Describable Runnable
  */
-public interface NCallable<T> extends NDescribable {
-
-    static <T> NCallable<T> of(NCallable<T> o, String descr) {
-        return NDescribables.ofCallable(o, session -> NElements.of(session).ofString(descr));
-    }
-
-    static <T> NCallable<T> of(NCallable<T> o, NElement descr) {
-        return NDescribables.ofCallable(o, e -> descr);
-    }
-
-    static <T> NCallable<T> of(NCallable<T> o, Function<NSession, NElement> descr) {
-        return NDescribables.ofCallable(o, descr);
-    }
+public interface NCallable<T> extends NElementDescribable<NCallable<T>> {
 
     T call(NSession session);
 
-    default NElement describe(NSession session) {
-        return NElements.of(session).ofString(toString());
+    default NCallable<T> withDesc(NEDesc description) {
+        if (description == null) {
+            return this;
+        }
+        return new NCallableWithDescription<>(this, description);
     }
-
 }

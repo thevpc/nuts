@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.main;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.concurrent.NLocks;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
@@ -774,7 +775,8 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
             @Override
             public NSearchRepositoryCmd run() {
                 NIterator<InstallInfoConfig> installIter = searchInstallConfig(getSession());
-                NIterator<NId> idIter = IteratorBuilder.of(installIter, getSession()).map(NFunction.of(InstallInfoConfig::getId, "NutsInstallInformation->Id"))
+                NIterator<NId> idIter = IteratorBuilder.of(installIter, getSession())
+                        .map(NFunction.of(InstallInfoConfig::getId).withDesc(NEDesc.of("NutsInstallInformation->Id")))
                         .build();
                 NIdFilter ff = getFilter();
                 if (ff != null) {
@@ -819,7 +821,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                                                 }
                                                 return null;
                                             }
-                                        }, "FileToVersion"))
+                                        }).withDesc(NEDesc.of("FileToVersion")))
                                 .notNull().iterator();
                     } else {
                         //ok.sort((a, b) -> CoreVersionUtils.compareVersions(a, b));

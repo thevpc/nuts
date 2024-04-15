@@ -8,6 +8,7 @@ public class NutsBuildToolMain implements NApplication {
         new NutsBuildToolMain().runAndExit(args);
     }
 
+    @Override
     public void run(NSession session) {
         NutsBuildRunner nutsBuildRunner = new NutsBuildRunner(session);
         nutsBuildRunner.configure(session.getAppCmdLine());

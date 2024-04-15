@@ -3,25 +3,23 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
+ * <br> ====================================================================
  */
 package net.thevpc.nuts.cmdline;
 
@@ -41,6 +39,7 @@ import java.util.regex.Pattern;
  * @author thevpc
  */
 public class DefaultNArg implements NArg {
+
     public static final String KEY_PATTERN_STRING = "[a-zA-Z0-9_.@&^$%][a-zA-Z0-9_.@&^$%+!-]*";
     public static final Pattern PATTERN_OPTION_EQ = Pattern.compile("^((?<optp>[-]+|[+]+)(?<cmt>//)?(?<flg>[!~])?)?(?<optk>" + KEY_PATTERN_STRING + ")?(?<opts>[=](?<optv>.*))?(?<optr>.*)$");
     public static final Pattern PATTERN_OPTION_COL = Pattern.compile("^((?<optp>[-]+|[+]+)(?<cmt>//)?(?<flg>[!~])?)?(?<optk>" + KEY_PATTERN_STRING + ")?(?<opts>[:](?<optv>.*))?(?<optr>.*)$");
@@ -60,16 +59,14 @@ public class DefaultNArg implements NArg {
                 || c == '&'
                 || c == '^'
                 || c == '$'
-                || c == '%'
-                ;
+                || c == '%';
     }
 
     public static boolean isKeyPart(char c) {
         return isKeyStart(c)
                 || c == '-'
                 || c == '+'
-                || c == '!'
-                ;
+                || c == '!';
     }
 
     /**
@@ -83,22 +80,21 @@ public class DefaultNArg implements NArg {
     private final boolean enabled;
     private final boolean active;
     private final boolean option;
-    private final String expression;
+    private final String image;
 
     public DefaultNArg(String expression) {
         this(expression, '=');
     }
 
-
     /**
      * Constructor
      *
-     * @param expression expression
-     * @param eq         equals
+     * @param image image string
+     * @param eq equals
      */
-    public DefaultNArg(String expression, char eq) {
+    public DefaultNArg(String image, char eq) {
         this.eq = (eq == '\0' ? '=' : eq);
-        this.expression = expression;
+        this.image = image;
         Pattern currOptionsPattern;
         switch (this.eq) {
             case '=': {
@@ -113,7 +109,7 @@ public class DefaultNArg implements NArg {
                 currOptionsPattern = Pattern.compile("^((?<optp>[-]+|[+]+)(?<cmt>//)?(?<flg>[!~])?)?(?<optk>" + KEY_PATTERN_STRING + "*)?(?<opts>[" + eq + "](?<optv>.*))?(?<optr>.*)$");
             }
         }
-        Matcher matcher = currOptionsPattern.matcher(expression == null ? "" : expression);
+        Matcher matcher = currOptionsPattern.matcher(image == null ? "" : image);
         if (matcher.find()) {
             String optp = matcher.group("optp");
             String cmt = matcher.group("cmt");
@@ -148,10 +144,10 @@ public class DefaultNArg implements NArg {
                 optionPrefix = null;
                 optionName = null;
                 if (opts != null && opts.length() > 0) {
-                    key = expression == null ? null : (optk == null ? "" : optk);
+                    key = image == null ? null : (optk == null ? "" : optk);
                     value = optv;
                 } else {
-                    key = expression == null ? null : ((optk == null ? "" : optk) + optr);
+                    key = image == null ? null : ((optk == null ? "" : optk) + optr);
                     value = null;
                 }
             }
@@ -229,7 +225,7 @@ public class DefaultNArg implements NArg {
 
     @Override
     public NArg required() {
-        if (expression == null) {
+        if (image == null) {
             throw new NoSuchElementException("missing value");
         }
         return this;
@@ -281,7 +277,7 @@ public class DefaultNArg implements NArg {
 
     @Override
     public NLiteral getKey() {
-        return NLiteral.of(key == null ? expression : key);
+        return NLiteral.of(key == null ? image : key);
     }
 
     @Override
@@ -295,17 +291,22 @@ public class DefaultNArg implements NArg {
     }
 
     private NLiteral toValue() {
-        return NLiteral.of(expression);
+        return NLiteral.of(image);
     }
 
     @Override
     public String toString() {
-        return String.valueOf(expression);
+        return String.valueOf(image);
+    }
+
+    @Override
+    public String getImage() {
+        return image;
     }
 
     @Override
     public Object getRaw() {
-        return expression;
+        return image;
     }
 
     @Override
