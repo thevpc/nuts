@@ -1,0 +1,1 @@
+java -jar -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005 -Dnuts.args='-ZyS -w=t --verbose' target/nuts-shaded-test-0.8.4.0-shaded-small.jar
