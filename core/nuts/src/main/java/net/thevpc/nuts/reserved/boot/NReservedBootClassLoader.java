@@ -22,7 +22,7 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.reserved;
+package net.thevpc.nuts.reserved.boot;
 
 import net.thevpc.nuts.boot.NClassLoaderNode;
 import net.thevpc.nuts.NId;

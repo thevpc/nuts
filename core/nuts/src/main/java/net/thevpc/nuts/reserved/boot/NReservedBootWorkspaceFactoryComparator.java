@@ -24,17 +24,28 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts.reserved;
+package net.thevpc.nuts.reserved.boot;
 
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NNoSessionException;
+import net.thevpc.nuts.boot.NBootOptions;
+import net.thevpc.nuts.spi.NBootWorkspaceFactory;
+
+import java.util.Comparator;
 
 /**
- *
  * @author thevpc
+ * @app.category Internal
  */
-public class NNoSessionCancelException extends NNoSessionException {
-    public NNoSessionCancelException(NMsg message) {
-        super(message);
+public final class NReservedBootWorkspaceFactoryComparator implements Comparator<NBootWorkspaceFactory> {
+
+    private final NBootOptions options;
+
+    public NReservedBootWorkspaceFactoryComparator(NBootOptions options) {
+        this.options = options;
+    }
+
+    @Override
+    public int compare(NBootWorkspaceFactory o1, NBootWorkspaceFactory o2) {
+        //sort by reverse order!
+        return Integer.compare(o2.getBootSupportLevel(options), o1.getBootSupportLevel(options));
     }
 }

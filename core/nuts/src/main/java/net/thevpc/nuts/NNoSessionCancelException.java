@@ -24,20 +24,16 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts.reserved;
+package net.thevpc.nuts;
 
-import java.nio.file.Path;
+import net.thevpc.nuts.util.NMsg;
 
 /**
- * @app.category Internal
+ *
+ * @author thevpc
  */
-interface NReservedDeleteFilesContext {
-
-    boolean isForce();
-
-    void setForce(boolean value);
-
-    boolean accept(Path directory);
-
-    void ignore(Path directory);
+public class NNoSessionCancelException extends NNoSessionException {
+    public NNoSessionCancelException(NMsg message) {
+        super(message);
+    }
 }

@@ -26,7 +26,7 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
 import net.thevpc.nuts.boot.NBootWorkspace;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.reserved.NReservedBootLog;
+import net.thevpc.nuts.reserved.boot.NReservedBootLog;
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;

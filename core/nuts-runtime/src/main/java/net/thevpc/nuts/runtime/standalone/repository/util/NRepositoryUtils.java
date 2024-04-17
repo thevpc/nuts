@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.repository.util;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.reserved.NReservedJsonParser;
-import net.thevpc.nuts.reserved.NReservedPath;
+import net.thevpc.nuts.reserved.io.NReservedPath;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;

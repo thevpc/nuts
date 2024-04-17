@@ -27,11 +27,13 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElementDescribable;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.reserved.util.NUnsafeCallableBaseFromJavaCallable;
 import net.thevpc.nuts.reserved.util.NUnsafeCallableFromCallable;
+import net.thevpc.nuts.reserved.util.NUnsafeCallableWithDescription;
 
 import java.util.concurrent.Callable;
 
@@ -60,4 +62,11 @@ public interface NUnsafeCallable<T> extends NElementDescribable<NUnsafeCallable<
         return NElements.of(session).ofString(toString());
     }
 
+    @Override
+    default NUnsafeCallable<T> withDesc(NEDesc description) {
+        if (description == null) {
+            return this;
+        }
+        return new NUnsafeCallableWithDescription<>(this, description);
+    }
 }

@@ -30,6 +30,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.DefaultNBootOptionsBuilder;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogConfig;
+import net.thevpc.nuts.reserved.io.NReservedIOUtils;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.*;
 
@@ -114,7 +115,7 @@ public class NApiUtilsRPI {
     }
 
     public static int processThrowable(Throwable ex, NLog out) {
-        return NReservedUtils.processThrowable(ex, out);
+        return NReservedCollectionUtils.processThrowable(ex, out);
     }
 
     public static int processThrowable(Throwable ex, String[] args) {
@@ -144,7 +145,7 @@ public class NApiUtilsRPI {
     }
 
     public static int processThrowable(Throwable ex, NLog out, boolean showMessage, boolean showStackTrace, boolean showGui) {
-        return NReservedUtils.processThrowable(ex, out, showMessage, showStackTrace, showGui);
+        return NReservedCollectionUtils.processThrowable(ex, out, showMessage, showStackTrace, showGui);
     }
 
     public static boolean isGraphicalDesktopEnvironment() {

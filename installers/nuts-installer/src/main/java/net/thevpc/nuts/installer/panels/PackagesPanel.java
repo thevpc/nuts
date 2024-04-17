@@ -187,6 +187,15 @@ public class PackagesPanel extends AbstractInstallPanel {
         all.add(new PackageButtonInfo(new App("com.mucommander:mucommander"), "Mu-Commander", "File Explorer", true,
                 "https://raw.githubusercontent.com/thevpc/nuts-public/master/com/mucommander/mucommander/1.1.0-1/mucommander-icon.png"
                 , false));
+        all.add(new PackageButtonInfo(new App("net.thevpc.pnote:pnote"), "Pangaea Note", "Not Taking Application", true,
+                "https://raw.githubusercontent.com/thevpc/nuts-public/master/com/mucommander/mucommander/1.1.0-1/mucommander-icon.png"
+                , false));
+        all.add(new PackageButtonInfo(new App("net.thevpc.netbeans-launcher:netbeans-launcher"), "Netbeans Launcher", "Netbeans IDE Launcher", true,
+                "https://raw.githubusercontent.com/thevpc/nuts-public/master/com/mucommander/mucommander/1.1.0-1/mucommander-icon.png"
+                , false));
+        all.add(new PackageButtonInfo(new App("net.thevpc.kifkif:kifkif"), "Kifkif", "Files and Folders Duplicate Finder", true,
+                "https://raw.githubusercontent.com/thevpc/nuts-public/master/com/mucommander/mucommander/1.1.0-1/mucommander-icon.png"
+                , false));
 //        all.add(new PackageButtonInfo("<companions>", "Pangaea Note", "Note Taking Application", true, null, false));
         return all.toArray(new PackageButtonInfo[0]);
     }

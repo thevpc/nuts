@@ -24,28 +24,20 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts.reserved;
+package net.thevpc.nuts.reserved.io;
 
-import net.thevpc.nuts.boot.NBootOptions;
-import net.thevpc.nuts.spi.NBootWorkspaceFactory;
-
-import java.util.Comparator;
+import java.nio.file.Path;
 
 /**
- * @author thevpc
  * @app.category Internal
  */
-public final class NReservedBootWorkspaceFactoryComparator implements Comparator<NBootWorkspaceFactory> {
+public interface NReservedDeleteFilesContext {
 
-    private final NBootOptions options;
+    boolean isForce();
 
-    public NReservedBootWorkspaceFactoryComparator(NBootOptions options) {
-        this.options = options;
-    }
+    void setForce(boolean value);
 
-    @Override
-    public int compare(NBootWorkspaceFactory o1, NBootWorkspaceFactory o2) {
-        //sort by reverse order!
-        return Integer.compare(o2.getBootSupportLevel(options), o1.getBootSupportLevel(options));
-    }
+    boolean accept(Path directory);
+
+    void ignore(Path directory);
 }

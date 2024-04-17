@@ -24,49 +24,37 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts.reserved;
+package net.thevpc.nuts.reserved.exception;
 
-import java.io.File;
-import java.nio.file.Path;
+import net.thevpc.nuts.NId;
+
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @app.category Internal
- */
-class NReservedDeleteFilesContextImpl implements NReservedDeleteFilesContext {
+public class NReservedErrorInfoList {
+    private final List<NReservedErrorInfo> all = new ArrayList<>();
 
-    private final List<Path> ignoreDeletion = new ArrayList<>();
-    private boolean force;
+    public void removeErrorsFor(NId nutsId) {
+        all.removeIf(x -> x.getNutsId().equals(nutsId));
+    }
 
-    @Override
-    public boolean isForce() {
-        return force;
+    public void insert(int pos, NReservedErrorInfo e) {
+        all.add(pos,e);
+    }
+    public void add(NReservedErrorInfo e) {
+        all.add(e);
+    }
+
+    public List<NReservedErrorInfo> list() {
+        return all;
     }
 
     @Override
-    public void setForce(boolean value) {
-        this.force = value;
-    }
-
-    @Override
-    public boolean accept(Path directory) {
-        for (Path ignored : ignoreDeletion) {
-            String s = ignored.toString() + File.separatorChar;
-            if (s.startsWith(directory.toString() + File.separatorChar)) {
-                return false;
-            }
-            if (File.separatorChar != '/') {
-                s = ignored.toString() + '/';
-                if (s.startsWith(directory + "/")) {
-                    return false;
-                }
-            }
+    public String toString() {
+        StringBuilder errors = new StringBuilder();
+        for (NReservedErrorInfo errorInfo : list()) {
+            errors.append(errorInfo.toString()).append("\n");
         }
-        return true;
-    }
-
-    public void ignore(Path directory) {
-        ignoreDeletion.add(directory);
+        return errors.toString();
     }
 }

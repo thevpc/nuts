@@ -1,4 +1,4 @@
-package net.thevpc.nuts.reserved;
+package net.thevpc.nuts.reserved.optional;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.util.NBlankable;

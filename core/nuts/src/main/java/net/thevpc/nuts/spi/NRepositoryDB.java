@@ -2,7 +2,7 @@ package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.reserved.NReservedBootRepositoryDB;
+import net.thevpc.nuts.reserved.boot.NReservedBootRepositoryDB;
 
 import java.util.Set;
 

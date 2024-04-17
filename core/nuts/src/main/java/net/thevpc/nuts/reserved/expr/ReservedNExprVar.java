@@ -1,12 +1,12 @@
-package net.thevpc.nuts.reserved;
+package net.thevpc.nuts.reserved.expr;
 
 import net.thevpc.nuts.expr.NExprDeclarations;
 import net.thevpc.nuts.expr.NExprVar;
 
-public class ReservedNExprConst implements NExprVar {
-    private final Object value;
+public class ReservedNExprVar implements NExprVar {
+    private Object value;
 
-    public ReservedNExprConst(Object value) {
+    public ReservedNExprVar(Object value) {
         this.value = value;
     }
 
@@ -17,6 +17,8 @@ public class ReservedNExprConst implements NExprVar {
 
     @Override
     public Object set(String name, Object value, NExprDeclarations context) {
-        return value;
+        Object old = this.value;
+        this.value = value;
+        return old;
     }
 }

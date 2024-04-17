@@ -24,7 +24,7 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts.reserved;
+package net.thevpc.nuts.reserved.exception;
 
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.NId;

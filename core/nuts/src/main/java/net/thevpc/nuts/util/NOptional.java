@@ -1,10 +1,10 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.reserved.NReservedOptionalEmpty;
-import net.thevpc.nuts.reserved.NReservedOptionalError;
-import net.thevpc.nuts.reserved.NReservedOptionalValidCallable;
-import net.thevpc.nuts.reserved.NReservedOptionalValidValue;
+import net.thevpc.nuts.reserved.optional.NReservedOptionalEmpty;
+import net.thevpc.nuts.reserved.optional.NReservedOptionalError;
+import net.thevpc.nuts.reserved.optional.NReservedOptionalValidCallable;
+import net.thevpc.nuts.reserved.optional.NReservedOptionalValidValue;
 
 import java.util.Collection;
 import java.util.Optional;

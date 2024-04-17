@@ -1,6 +1,7 @@
-package net.thevpc.nuts.reserved;
+package net.thevpc.nuts.reserved.optional;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 

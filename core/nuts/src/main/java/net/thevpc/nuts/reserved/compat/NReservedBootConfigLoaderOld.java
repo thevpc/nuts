@@ -2,7 +2,7 @@ package net.thevpc.nuts.reserved.compat;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NBootOptionsBuilder;
-import net.thevpc.nuts.reserved.NReservedBootConfigLoader;
+import net.thevpc.nuts.reserved.boot.NReservedBootConfigLoader;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NMsg;

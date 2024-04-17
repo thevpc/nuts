@@ -2,7 +2,7 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.env.NOsFamily;
-import net.thevpc.nuts.reserved.NReservedIOUtils;
+import net.thevpc.nuts.reserved.io.NReservedIOUtils;
 
 import java.io.File;
 import java.nio.file.Path;

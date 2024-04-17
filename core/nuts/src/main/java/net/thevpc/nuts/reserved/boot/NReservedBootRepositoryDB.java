@@ -1,7 +1,8 @@
-package net.thevpc.nuts.reserved;
+package net.thevpc.nuts.reserved.boot;
 
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.reserved.io.NReservedIOUtils;
 import net.thevpc.nuts.spi.NRepositoryDB;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.spi.NSupportLevelContext;

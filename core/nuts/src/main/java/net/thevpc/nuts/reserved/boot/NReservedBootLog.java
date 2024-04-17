@@ -24,7 +24,7 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts.reserved;
+package net.thevpc.nuts.reserved.boot;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.log.*;

@@ -1,4 +1,4 @@
-package net.thevpc.nuts.reserved;
+package net.thevpc.nuts.reserved.io;
 
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.log.NLog;

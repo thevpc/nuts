@@ -35,6 +35,14 @@ import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.reserved.*;
+import net.thevpc.nuts.reserved.boot.NReservedBootClassLoader;
+import net.thevpc.nuts.reserved.boot.NReservedBootConfigLoader;
+import net.thevpc.nuts.reserved.boot.NReservedBootLog;
+import net.thevpc.nuts.reserved.boot.NReservedBootWorkspaceFactoryComparator;
+import net.thevpc.nuts.reserved.exception.NReservedErrorInfo;
+import net.thevpc.nuts.reserved.exception.NReservedErrorInfoList;
+import net.thevpc.nuts.reserved.io.NReservedIOUtils;
+import net.thevpc.nuts.reserved.io.NReservedPath;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.*;
 
@@ -643,7 +651,7 @@ public final class NBootWorkspace {
                     } else {
                         bLog.log(Level.CONFIG, NLogVerb.WARNING, NMsg.ofPlain("reset workspace"));
                         getFallbackCache(NId.RUNTIME_ID, true, true);
-                        countDeleted = NReservedUtils.deleteStoreLocations(lastWorkspaceOptions, getOptions(), true, bLog, NStoreType.values(), () -> scanner.nextLine());
+                        countDeleted = NReservedIOUtils.deleteStoreLocations(lastWorkspaceOptions, getOptions(), true, bLog, NStoreType.values(), () -> scanner.nextLine());
                         NReservedUtils.ndiUndo(bLog);
                     }
                 } else {
@@ -652,7 +660,7 @@ public final class NBootWorkspace {
                     } else {
                         bLog.log(Level.CONFIG, NLogVerb.WARNING, NMsg.ofPlain("reset workspace"));
                         getFallbackCache(NId.RUNTIME_ID, false, true);
-                        countDeleted = NReservedUtils.deleteStoreLocations(computedOptions, getOptions(), true, bLog, NStoreType.values(), () -> scanner.nextLine());
+                        countDeleted = NReservedIOUtils.deleteStoreLocations(computedOptions, getOptions(), true, bLog, NStoreType.values(), () -> scanner.nextLine());
                         NReservedUtils.ndiUndo(bLog);
                     }
                 }
@@ -665,12 +673,12 @@ public final class NBootWorkspace {
                     folders.add(NStoreType.CACHE);
                     folders.add(NStoreType.TEMP);
                     //delete nuts.jar and nuts-runtime.jar in the lib folder. They will be re-downloaded.
-                    String p = NReservedUtils.getStoreLocationPath(computedOptions, NStoreType.LIB);
+                    String p = NReservedIOUtils.getStoreLocationPath(computedOptions, NStoreType.LIB);
                     if (p != null) {
                         folders.add(Paths.get(p).resolve("id/net/thevpc/nuts/nuts"));
                         folders.add(Paths.get(p).resolve("id/net/thevpc/nuts/nuts-runtime"));
                     }
-                    countDeleted = NReservedUtils.deleteStoreLocations(computedOptions, getOptions(), false, bLog, folders.toArray(), () -> scanner.nextLine());
+                    countDeleted = NReservedIOUtils.deleteStoreLocations(computedOptions, getOptions(), false, bLog, folders.toArray(), () -> scanner.nextLine());
                 }
             }
             if (computedOptions.getExtensionsSet().isNotPresent()) {
@@ -1029,7 +1037,7 @@ public final class NBootWorkspace {
                 //should never happen
                 bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("unable to load Workspace \"%s\" from ClassPath :", computedOptions.getName().orNull()));
                 for (URL url : bootClassWorldURLs) {
-                    bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("\t %s", NReservedUtils.formatURL(url)));
+                    bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("\t %s", NReservedIOUtils.formatURL(url)));
                 }
                 for (Throwable exception : exceptions) {
                     bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("%s", exception), exception);
@@ -1333,9 +1341,9 @@ public final class NBootWorkspace {
             for (int i = 0; i < bootClassWorldURLs.length; i++) {
                 URL bootClassWorldURL = bootClassWorldURLs[i];
                 if (i == 0) {
-                    bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  nuts-runtime-classpath           : %s", NReservedUtils.formatURL(bootClassWorldURL)));
+                    bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("  nuts-runtime-classpath           : %s", NReservedIOUtils.formatURL(bootClassWorldURL)));
                 } else {
-                    bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("                                     %s", NReservedUtils.formatURL(bootClassWorldURL)));
+                    bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("                                     %s", NReservedIOUtils.formatURL(bootClassWorldURL)));
                 }
             }
         }
