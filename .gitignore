@@ -243,3 +243,4 @@
 /test/nuts-runtime-test/maven-central
 /test/nuts-shaded-test/target
 /installers/nuts-full/target
+/maven-central/temp
