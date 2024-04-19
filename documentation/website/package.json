@@ -1,6 +1,6 @@
 {
   "name": "nuts",
-  "version": "net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@4c163e3",
+  "version": "net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@32c90cbc",
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",

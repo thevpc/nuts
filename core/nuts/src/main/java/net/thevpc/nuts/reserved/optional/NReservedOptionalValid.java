@@ -78,7 +78,17 @@ public abstract class NReservedOptionalValid<T> extends NReservedOptionalImpl<T>
     }
 
     @Override
+    public NOptional<T> orDefaultOptional() {
+        return this;
+    }
+
+    @Override
     public NOptional<T> withDefault(Supplier<T> value) {
+        return this;
+    }
+
+    @Override
+    public NOptional<T> withDefaultOptional(Supplier<NOptional<T>> value) {
         return this;
     }
 

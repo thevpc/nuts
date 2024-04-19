@@ -144,7 +144,7 @@ public class CoreNIdUtils {
                 .setTargetApiVersion(NVersion.of(apiVersion).get(session))
                 .getResultIds().
                 findFirst().orNull();
-        if (foundRT == null && session.getFetchStrategy() != NFetchStrategy.OFFLINE) {
+        if (foundRT == null && session.getFetchStrategy().orDefault() != NFetchStrategy.OFFLINE) {
             foundRT = NSearchCmd.of(session).addId(NId.ofRuntime("").get())
                     .setLatest(true)
                     .setTargetApiVersion(NVersion.of(apiVersion).get(session))

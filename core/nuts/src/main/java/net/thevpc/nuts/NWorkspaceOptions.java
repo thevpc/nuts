@@ -146,6 +146,16 @@ public interface NWorkspaceOptions extends Serializable {
     NOptional<Boolean> getDry();
 
     /**
+     * if true, show exceptions when error.
+     * <br>
+     * <strong>option-type :</strong> runtime (available only for the current workspace instance)
+     *
+     * @return if true, show exceptions when error.
+     */
+
+    NOptional<Boolean> getShowException();
+
+    /**
      * workspace creation evaluated time.
      * <br>
      * <strong>option-type :</strong> runtime (available only for the current workspace instance)

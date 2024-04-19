@@ -93,7 +93,7 @@ public class JsonCommand extends NShellBuiltinDefault {
         NSession session = context.getSession();
         if (options.queries.isEmpty()) {
             NElement inputDocument = readJsonConvertElement(options.input, context.getShellContext());
-            if (session.getOutputFormat() == NContentType.PLAIN) {
+            if (session.getOutputFormat().orDefault() == NContentType.PLAIN) {
                 session.out().println(NElements.of(session).json().setValue(inputDocument).format());
             } else {
                 session.out().println(inputDocument);

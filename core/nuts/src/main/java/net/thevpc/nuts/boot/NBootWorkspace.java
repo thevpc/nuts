@@ -168,6 +168,7 @@ public final class NBootWorkspace {
         this.computedOptions.setUserOptions(this.userOptions);
         this.computedOptions.setBot(this.computedOptions.getBot().orElse(false));
         this.computedOptions.setDry(this.computedOptions.getDry().orElse(false));
+        this.computedOptions.setShowException(this.computedOptions.getShowException().orElse(false));
         this.computedOptions.setSystem(this.computedOptions.getSystem().orElse(false));
         this.computedOptions.setGui(this.computedOptions.getGui().orElse(false));
         this.computedOptions.setInherited(this.computedOptions.getInherited().orElse(false));

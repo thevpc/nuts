@@ -120,7 +120,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
         }
         NAssert.requireNonBlank(result, "package to deploy", session);
         if (getSession().isTrace()) {
-            switch (getSession().getOutputFormat()) {
+            switch (getSession().getOutputFormat().orDefault()) {
                 case PLAIN: {
                     for (Result nid : result) {
                         getSession().out().resetLine().println(NMsg.ofC(

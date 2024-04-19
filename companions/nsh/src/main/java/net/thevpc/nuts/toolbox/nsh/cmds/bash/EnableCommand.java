@@ -101,7 +101,7 @@ public class EnableCommand extends NShellBuiltinDefault {
             for (NShellBuiltin command : context.builtins().getAll()) {
                 result.put(command.getName(), command.isEnabled() ? "enabled" : "disabled");
             }
-            switch (context.getSession().getOutputFormat()) {
+            switch (context.getSession().getOutputFormat().orDefault()) {
                 case PLAIN: {
                     for (Map.Entry<String, String> entry : result.entrySet()) {
                         context.getSession().out().println(entry.getValue() + " " + entry.getKey());

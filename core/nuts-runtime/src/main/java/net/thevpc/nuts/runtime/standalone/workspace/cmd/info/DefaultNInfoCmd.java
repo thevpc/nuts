@@ -191,7 +191,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
             }
         }
         NSession session = getSession().copy();
-        if (session.getOutputFormat() == NContentType.PLAIN) {
+        if (session.getOutputFormat().orDefault() == NContentType.PLAIN) {
             session.setOutputFormat(NContentType.PROPS);
         }
         NObjectFormat.of(session).setValue(result).configure(true, args.toArray(new String[0])).print(w);

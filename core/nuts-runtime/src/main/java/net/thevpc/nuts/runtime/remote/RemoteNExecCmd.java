@@ -35,7 +35,7 @@ public class RemoteNExecCmd extends AbstractNExecCmd {
             int r = getWorkspace().remoteCall(
                     getWorkspace().createCall("workspace.exec",
                             e.ofObject()
-                                    .set("dry", session.isDry())
+                                    .set("dry", session.getDry().orDefault())
                                     .set("failFast", failFast)
                                     .build(),
                             getSession()

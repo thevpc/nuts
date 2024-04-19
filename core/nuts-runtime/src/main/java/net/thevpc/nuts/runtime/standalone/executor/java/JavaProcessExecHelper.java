@@ -39,7 +39,7 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
 
     @Override
     public int exec() {
-        if (getSession().isDry()) {
+        if (getSession().getDry().orDefault()) {
             NPrintStream out = executionContext.getSession().out();
             out.println("[dry] ==[nuts-exec]== ");
             for (int i = 0; i < xargs.size(); i++) {

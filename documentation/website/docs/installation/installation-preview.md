@@ -53,14 +53,14 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.211-b12, mixed mode)
 }>
 <TabItem value="windows">
 
-download [nuts-preview.jar](https://thevpc.net/nuts-preview.jar)
+download [nuts-preview.jar](https://thevpc.net/nuts/nuts-preview.jar)
 ```
 java -jar nuts-preview.jar -r=+preview -Zy
 ```
 
 On Windows systems, first launch will create a new **```nuts```** Menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal.
-- **nuts-cmd-net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@4c163e3** : this shortcut will open a configured command terminal. **```nuts```** command will be available as well as several nuts companion tools installed by **nadmin** by default
-- **nuts-cmd**       : this shortcut will point to the last installed **nuts** version, here net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@4c163e3  
+- **nuts-cmd-net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@32c90cbc** : this shortcut will open a configured command terminal. **```nuts```** command will be available as well as several nuts companion tools installed by **nadmin** by default
+- **nuts-cmd**       : this shortcut will point to the last installed **nuts** version, here net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@32c90cbc  
 
 Any of these shortcuts will launch a nuts-aware terminal.
 
@@ -80,7 +80,7 @@ This will reset/delete any previous nuts installation before installing the late
 Removing the `Z` modifier (replace `-Zy` by `-y`) flag if you do not want to reset the workspace.
 
 ```
-$ wget https://thevpc.net/nuts-preview.jar -qO nuts.jar
+$ wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
 $ java -jar nuts.jar -r=+preview -Zy
 $ exit
 ```
@@ -101,7 +101,7 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="macos">
 
 ```
-$ curl -sOL https://thevpc.net/nuts-preview.jar -o nuts.jar
+$ curl -sOL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 ```
@@ -119,7 +119,7 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="wget">
 
 ```
-$ wget https://thevpc.net/nuts-preview.jar -qO nuts.jar
+$ wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
 $ java -jar nuts.jar -r=+preview -Zy
 $ exit
 ```
@@ -135,7 +135,7 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="curl">
 
 ```
-$ curl -sOL https://thevpc.net/nuts-preview.jar -o nuts.jar
+$ curl -sOL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar
 $ java -jar nuts.jar -r=+preview -Zy
 $ exit
 ```
@@ -176,7 +176,7 @@ nuts --version
 It should show a result in the format : nuts-api-version/nuts-impl-version
 
 ```
-net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@4c163e3/net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@5745ca0e
+net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@32c90cbc/net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@a96eb16
 ```
 
 ## Run a command

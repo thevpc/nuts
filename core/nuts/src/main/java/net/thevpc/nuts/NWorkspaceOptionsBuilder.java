@@ -94,7 +94,8 @@ public interface NWorkspaceOptionsBuilder extends NWorkspaceOptions {
     NWorkspaceOptionsBuilder setConfirm(NConfirmationMode confirm);
 
     NWorkspaceOptionsBuilder setDry(Boolean dry);
-
+    
+    NWorkspaceOptionsBuilder setShowException(Boolean dry);
 
     NWorkspaceOptionsBuilder setCreationTime(Instant creationTime);
 

@@ -37,11 +37,11 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
             case SPAWN: {
                 NWorkspaceOptionsBuilder wOptions = new DefaultNWorkspaceOptionsBuilder();
                 wOptions.setBot(session.isBot());
-                wOptions.setConfirm(session.getConfirm());
-                wOptions.setDry(session.isDry());
+                wOptions.setConfirm(session.getConfirm().orDefault());
+                wOptions.setDry(session.getDry().orDefault());
                 wOptions.setExpireTime(session.getExpireTime());
                 wOptions.setGui(session.isGui());
-                wOptions.setLocale(session.getLocale());
+                wOptions.setLocale(session.getLocale().orDefault());
                 wOptions.setTerminalMode(session.getTerminal().getOut().getTerminalMode());
                 wOptions.setTrace(session.isTrace());
                 wOptions.setTransitive(session.isTransitive());
@@ -50,11 +50,11 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
                 //if(getExecCommand().getRunAs()!=null) {
                 //    wOptions.setRunAs(getExecCommand().getRunAs());
                 //}
-                wOptions.setFetchStrategy(session.getFetchStrategy());
-                wOptions.setExecutionType(session.getExecutionType());
+                wOptions.setFetchStrategy(session.getFetchStrategy().orDefault());
+                wOptions.setExecutionType(session.getExecutionType().orDefault());
                 wOptions.setExecutionType(executionType);
                 wOptions.setOutLinePrefix(session.getOutLinePrefix());
-                wOptions.setOutputFormat(session.getOutputFormat());
+                wOptions.setOutputFormat(session.getOutputFormat().orDefault());
                 wOptions.setOutputFormatOptions(session.getOutputFormatOptions());
 
                 String[] executorOptions = execCommand.getExecutorOptions().toArray(new String[0]);

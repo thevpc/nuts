@@ -64,7 +64,7 @@ public class DefaultNCustomCommand implements NCustomCmd {
 
     @Override
     public int exec(String[] args, NCmdExecOptions options, NSession session) {
-        if (session.isDry()) {
+        if (session.getDry().orDefault()) {
             List<String> executorOptions = new ArrayList<>(options.getExecutorOptions());
             executorOptions.addAll(this.getExecutorOptions());
             List<String> r = new ArrayList<>(this.getCommand());

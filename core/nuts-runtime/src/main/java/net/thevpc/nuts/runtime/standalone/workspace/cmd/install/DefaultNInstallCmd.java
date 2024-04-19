@@ -401,7 +401,7 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
         List<NId> installed_ignored = list.ids(x -> x.ignored);
 
         if (!nonIgnored.isEmpty()) {
-            if (getSession().isPlainTrace() || (!list.emptyCommand && getSession().getConfirm() == NConfirmationMode.ASK)) {
+            if (getSession().isPlainTrace() || (!list.emptyCommand && getSession().getConfirm().orDefault() == NConfirmationMode.ASK)) {
                 printList(mout, "new", "installed", list_new_installed);
                 printList(mout, "new", "required", list_new_required);
                 printList(mout, "required", "re-required", list_required_rerequired);
@@ -427,7 +427,7 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
             }
         } else if (!installed_ignored.isEmpty()) {
             //all packages are already installed, ask if we need to re-install!
-            if (getSession().isPlainTrace() || (!list.emptyCommand && getSession().getConfirm() == NConfirmationMode.ASK)) {
+            if (getSession().isPlainTrace() || (!list.emptyCommand && getSession().getConfirm().orDefault() == NConfirmationMode.ASK)) {
                 printList(mout, "installed", "re-reinstalled", installed_ignored);
             }
             mout.println("should we proceed?");

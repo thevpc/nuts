@@ -21,7 +21,7 @@ public class ProcessPanel extends AbstractInstallPanel {
 
     public ProcessPanel() {
         super(new BorderLayout());
-        add(UIHelper.titleLabel("Please wait unless the installation is complete"), BorderLayout.PAGE_START);
+        add(UIHelper.titleLabel("Please wait until the installation is complete"), BorderLayout.PAGE_START);
         ansiTermPane = new AnsiTermPane(false);
 //        ansiTermPane.setEditable(false);
         add(new JScrollPane(ansiTermPane), BorderLayout.CENTER);

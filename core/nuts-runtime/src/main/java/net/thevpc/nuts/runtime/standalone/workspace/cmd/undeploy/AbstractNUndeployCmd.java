@@ -101,8 +101,8 @@ public abstract class AbstractNUndeployCmd extends NWorkspaceCmdBase<NUndeployCm
         checkSession();
         NSession session = getSession();
         if (session.isTrace()) {
-            if (session.getOutputFormat() == null || session.getOutputFormat() == NContentType.PLAIN) {
-                if (session.getOutputFormat() == null || session.getOutputFormat() == NContentType.PLAIN) {
+            if (session.getOutputFormat() == null || session.getOutputFormat().orDefault() == NContentType.PLAIN) {
+                if (session.getOutputFormat() == null || session.getOutputFormat().orDefault() == NContentType.PLAIN) {
                     session.getTerminal().out().println(NMsg.ofC("Nuts %s undeployed successfully", id));
                 }
             }

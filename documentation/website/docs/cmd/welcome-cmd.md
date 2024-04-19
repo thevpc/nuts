@@ -12,7 +12,7 @@ This command does absolutely nothing but showing this message
   /  |/ / / / / __/ ___/   The Open Source Package Manager for Java (TM)
  / /|  / /_/ / /_(__  )    and other Things ... by vpc
 /_/ |_/\__,_/\__/____/     https://github.com/thevpc/nuts
-    version net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@5745ca0e
+    version net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@a96eb16
 
 
 SYNOPSIS:

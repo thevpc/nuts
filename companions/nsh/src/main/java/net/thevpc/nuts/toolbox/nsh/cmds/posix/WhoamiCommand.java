@@ -145,7 +145,7 @@ public class WhoamiCommand extends NShellBuiltinDefault {
                 result.repos = rr.isEmpty() ? null : rr.toArray(new RepoResult[0]);
             }
         }
-        switch (context.getSession().getOutputFormat()) {
+        switch (context.getSession().getOutputFormat().orDefault()) {
             case PLAIN: {
                 NPrintStream out = context.getSession().out();
                 out.println(NMsg.ofC("%s", result.login));

@@ -81,7 +81,7 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
             agent.setUserDigest(getLocalUserUUID(session));
         }
         if (agent.getUserLocale() == null) {
-            String loc = session.getLocale();
+            String loc = session.getLocale().orDefault();
             if (loc == null) {
                 loc = Locale.getDefault().toString();
             }

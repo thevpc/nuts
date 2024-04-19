@@ -27,7 +27,7 @@ Java(TM) SE Runtime Environment (build 1.8.0_211-b12)
 Java HotSpot(TM) 64-Bit Server VM (build 25.211-b12, mixed mode)
 </code></pre><h2 id="installation">Installation</h2><div><ul role="tablist" aria-orientation="horizontal" class="tabs"><li role="tab" tabindex="0" aria-selected="true" class="tabs__item tabItem_1w39 tabs__item--active" style="outline:none">Linux</li><li role="tab" tabindex="0" aria-selected="false" class="tabs__item tabItem_1w39" style="outline:none">MacOS</li><li role="tab" tabindex="0" aria-selected="false" class="tabs__item tabItem_1w39" style="outline:none">Windows</li><li role="tab" tabindex="0" aria-selected="false" class="tabs__item tabItem_1w39" style="outline:none">*NIX wget</li><li role="tab" tabindex="0" aria-selected="false" class="tabs__item tabItem_1w39" style="outline:none">*NIX curl</li></ul><div role="tabpanel" class="margin-vert--md"><div><p><strong>for testing or development (using wget):</strong>
 This will reset/delete any previous nuts installation before installing the latest version.
-Removing the <code>Z</code> modifier (replace <code>-Zy</code> by <code>-y</code>) flag if you do not want to reset the workspace.</p><pre><code>$ wget https://thevpc.net/nuts-preview.jar -qO nuts.jar
+Removing the <code>Z</code> modifier (replace <code>-Zy</code> by <code>-y</code>) flag if you do not want to reset the workspace.</p><pre><code>$ wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
 $ java -jar nuts.jar -r=+preview -Zy
 $ exit
 </code></pre><p>Linux Systems installation is based on bash shell. First launch will configure &quot;~/.bashrc&quot; so that <strong>nuts</strong> and other companion tool commands will be available in any future terminal instances.

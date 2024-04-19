@@ -24,7 +24,7 @@ A valid <img src="img/java.png" alt=""  width="16"/> java 1.8+ runtime is requir
                         'button button--secondary--lg b2 ',
                         styles.getStarted,
                         )}
-                    href={'https://thevpc.net/nuts-installer.jar'}
+                    href={'https://thevpc.net/nuts/nuts-installer.jar'}
                     target="_blank"
                     >
 Portable Installer (1Mb)
@@ -36,7 +36,7 @@ Portable Installer (1Mb)
                         'button button--secondary--lg b2 ',
                         styles.getStarted,
                         )}
-                    href={'https://thevpc.net/nuts-installer-linux-x64'}
+                    href={'https://thevpc.net/nuts/nuts-installer-linux-x64'}
                     target="_blank"
                     >
 Linux x64 Installer (56Mb)
@@ -48,7 +48,7 @@ Linux x64 Installer (56Mb)
                         'button button--secondary--lg b2 ',
                         styles.getStarted,
                         )}
-                    href={'https://thevpc.net/nuts-installer-linux-x64-with-java-zip'}
+                    href={'https://thevpc.net/nuts/nuts-installer-linux-x64-with-java-zip'}
                     target="_blank"
                     >
 Linux x64 Installer + JRE (39Mb)
@@ -60,7 +60,7 @@ Linux x64 Installer + JRE (39Mb)
                         'button button--secondary--lg b2 ',
                         styles.getStarted,
                         )}
-                    href={'https://thevpc.net/nuts-installer-windows-x64.exe'}
+                    href={'https://thevpc.net/nuts/nuts-installer-windows-x64.exe'}
                     target="_blank"
                     >
 Win x64 Installer (1Mb)
@@ -72,7 +72,7 @@ Win x64 Installer (1Mb)
                         'button button--secondary--lg b2 ',
                         styles.getStarted,
                         )}
-                    href={'https://thevpc.net/nuts-installer-windows-x64-with-java.zip'}
+                    href={'https://thevpc.net/nuts/nuts-installer-windows-x64-with-java.zip'}
                     target="_blank"
                     >
 Win x64 Installer + JRE  (45Mb)
@@ -84,7 +84,7 @@ Win x64 Installer + JRE  (45Mb)
                         'button button--secondary--lg b2 ',
                         styles.getStarted,
                         )}
-                    href={'https://thevpc.net/nuts-installer-mac64-bin.app.zip'}
+                    href={'https://thevpc.net/nuts/nuts-installer-mac64-bin.app.zip'}
                     target="_blank"
                     >
 MacOS x64 Installer (1Mb)
@@ -96,7 +96,7 @@ MacOS x64 Installer (1Mb)
                         'button button--secondary--lg b2 ',
                         styles.getStarted,
                         )}
-                    href={'https://thevpc.net/nuts-installer-mac64-bin.app.zip'}
+                    href={'https://thevpc.net/nuts/nuts-installer-mac64-bin.app.zip'}
                     target="_blank"
                     >
 MacOS x64 Installer + JRE (40Mb)
@@ -124,7 +124,7 @@ A valid <img src="img/java.png" alt=""  width="16"/> java 1.8+ runtime is requir
                         'button button--secondary--lg b2 ',
                         styles.getStarted,
                         )}
-                    href={'https://thevpc.net/nuts-stable.jar'}
+                    href={'https://thevpc.net/nuts/nuts-stable.jar'}
                     target="_blank"
                     >
 
@@ -138,7 +138,7 @@ Stable ${{stableApiVersion}} Jar
                             'button button--secondary b3',
                             styles.getStarted,
                             )}
-                        href={'https://thevpc.net/nuts-preview.jar'}
+                        href={'https://thevpc.net/nuts/nuts-preview.jar'}
                         target="_blank"
                         >
 
@@ -178,7 +178,7 @@ curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/${{stableApi
                         )}
                     >Preview</Link>
 <pre>
-curl -sOL https://thevpc.net/nuts-preview.jar -o nuts.jar && java -jar nuts.jar -Zy
+curl -sOL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar && java -jar nuts.jar -Zy
 </pre>
 
 </>

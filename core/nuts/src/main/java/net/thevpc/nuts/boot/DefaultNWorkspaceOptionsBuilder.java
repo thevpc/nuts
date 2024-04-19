@@ -212,10 +212,16 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     private Instant creationTime;
 
     /**
-     * if true no real execution, wil dry exec option-type : runtime (available
-     * only for the current workspace instance)
+     * if true no real execution, 
+     * option-type : runtime (available only for the current workspace instance)
      */
     private Boolean dry;
+
+    /**
+     * if true show exception 
+     * option-type : runtime (available only for the current workspace instance)
+     */
+    private Boolean showException;
 
     /**
      * option-type : runtime (available only for the current workspace instance)
@@ -551,6 +557,11 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         return NOptional.ofNamed(dry,"dry");
     }
 
+    @Override
+    public NOptional<Boolean> getShowException() {
+        return NOptional.ofNamed(showException,"showException");
+    }
+
     /**
      * set dry
      *
@@ -560,6 +571,19 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     @Override
     public NWorkspaceOptionsBuilder setDry(Boolean dry) {
         this.dry = dry;
+        return this;
+    }
+
+    /**
+     * set dry
+     *
+     * @param showException showException
+     * @return {@code this} instance
+     * @since 0.8.4
+     */
+    @Override
+    public NWorkspaceOptionsBuilder setShowException(Boolean showException) {
+        this.showException = showException;
         return this;
     }
 
@@ -1407,6 +1431,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         this.setOpenMode(other.getOpenMode().orNull());
         this.setCreationTime(other.getCreationTime().orNull());
         this.setDry(other.getDry().orNull());
+        this.setShowException(other.getShowException().orNull());
         this.setClassLoaderSupplier(other.getClassLoaderSupplier().orNull());
         this.setExecutorOptions(other.getExecutorOptions().orNull());
         this.setRecover(other.getRecover().orNull());
@@ -1535,6 +1560,9 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
             }
             if (other.getDry().isPresent()) {
                 this.setDry(other.getDry().orNull());
+            }
+            if (other.getShowException().isPresent()) {
+                this.setShowException(other.getShowException().orNull());
             }
             if (other.getClassLoaderSupplier().isPresent()) {
                 this.setClassLoaderSupplier(other.getClassLoaderSupplier().orNull());
@@ -1799,7 +1827,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
                 getRunAs().orNull(), getCreationTime().orNull(), getExpireTime().orNull(),
                 getInstallCompanions().orNull(), getSkipWelcome().orNull(), getSkipBoot().orNull(),
                 getSystem().orNull(), getGui().orNull(), getReadOnly().orNull(), getTrace().orNull(),
-                getDry().orNull(), getRecover().orNull(), getReset().orNull(), getCommandVersion().orNull(),
+                getDry().orNull(), getShowException().orNull(), getRecover().orNull(), getReset().orNull(), getCommandVersion().orNull(),
                 getCommandHelp().orNull(), getCommandHelp().orNull(), getSwitchWorkspace().orNull(), getCached().orNull(),
                 getIndexed().orNull(), getTransitive().orNull(), getBot().orNull(), getSkipErrors().orNull(),
                 getIsolationLevel().orNull(), getInitLaunchers().orNull(), getInitScripts().orNull(), getInitPlatforms().orNull(),
@@ -1865,6 +1893,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         setReset(null);
         setRecover(null);
         setDry(null);
+        setShowException(null);
         setExecutorOptions(null);
         setApplicationArguments(null);
         return this;

@@ -59,7 +59,7 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
 
     @Override
     public int exec(NExecutionContext executionContext) {
-        if(executionContext.getSession().isDry()){
+        if(executionContext.getSession().getDry().orDefault()){
             NDefinition nutMainFile = executionContext.getDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
             Path javaFile = nutMainFile.getContent().flatMap(NPath::toPath).orNull();
             String folder = "__temp_folder";

@@ -24,7 +24,7 @@ public class DefaultNLicenseInternalExecutable extends DefaultInternalNExecutabl
 
     @Override
     public int execute() {
-        if (getSession().isDry()) {
+        if (getSession().getDry().orDefault()) {
             dryExecute();
             return NExecutionException.SUCCESS;
         }

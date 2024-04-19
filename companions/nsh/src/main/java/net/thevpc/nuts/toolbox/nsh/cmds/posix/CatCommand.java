@@ -106,7 +106,7 @@ public class CatCommand extends NShellBuiltinDefault {
 
             OutputStream os = null;
             boolean plain = true;
-            if (context.getSession().getOutputFormat() == NContentType.PLAIN) {
+            if (context.getSession().getOutputFormat().orDefault() == NContentType.PLAIN) {
                 os = out.asOutputStream();
             } else {
                 plain = false;

@@ -49,7 +49,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
     private T execute() {
         checkSession();
         if (!traceConfirmation && (this.getValueType().equals(Boolean.class) || this.getValueType().equals(Boolean.TYPE))) {
-            switch (getSession().getConfirm()) {
+            switch (getSession().getConfirm().orDefault()) {
                 case YES: {
                     return (T) Boolean.TRUE;
                 }
@@ -152,7 +152,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
             }
 
             out.flush();
-            switch (getSession().getConfirm()) {
+            switch (getSession().getConfirm().orDefault()) {
                 case ERROR: {
                     out.flush();
                     out.println(" : cancel");
@@ -160,7 +160,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
                 }
             }
             if (this.getValueType().equals(Boolean.class) || this.getValueType().equals(Boolean.TYPE)) {
-                switch (getSession().getConfirm()) {
+                switch (getSession().getConfirm().orDefault()) {
                     case YES: {
                         out.flush();
                         out.println(" : yes");

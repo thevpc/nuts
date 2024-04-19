@@ -26,7 +26,7 @@ public class SimpleRecommendationConnector extends AbstractRecommendationConnect
             http.setDoOutput(true);
             http.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
             http.setRequestProperty("Accept", "*/*");
-            String loc = session.getLocale();
+            String loc = session.getLocale().orDefault();
             if(loc==null){
                 loc=Locale.getDefault().toString();
             }

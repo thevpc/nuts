@@ -51,8 +51,9 @@ import java.util.function.Supplier;
  * @since 0.5.4
  */
 public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions {
+
     public static NWorkspaceOptions BLANK = new DefaultNWorkspaceOptions(
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
             null, null,
             null,
             null, null, null,
@@ -222,10 +223,16 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
     private final Instant creationTime;
 
     /**
-     * if true no real execution, wil dry exec option-type : runtime (available
-     * only for the current workspace instance)
+     * if true no real execution, option-type : runtime (available only for the
+     * current workspace instance)
      */
     private final Boolean dry;
+
+    /**
+     * if true show exception, option-type : runtime (available only for the
+     * current workspace instance)
+     */
+    private final Boolean showException;
 
     /**
      * option-type : runtime (available only for the current workspace instance)
@@ -398,24 +405,24 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
     private final NSupportMode userLauncher;
 
     public DefaultNWorkspaceOptions(NVersion apiVersion, NId runtimeId, String workspace, String name, String javaCommand,
-                                    String javaOptions, String outLinePrefix, String errLinePrefix, String userName,
-                                    char[] credentials, String progressOptions, String dependencySolver,
-                                    String debug, String archetype, String locale, String theme, NLogConfig logConfig,
-                                    NConfirmationMode confirm, NContentType outputFormat, NOpenMode openMode,
-                                    NExecutionType executionType, NStoreStrategy storeStrategy,
-                                    NStoreStrategy repositoryStoreStrategy, NOsFamily storeLayout,
-                                    NTerminalMode terminalMode, NFetchStrategy fetchStrategy, NRunAs runAs,
-                                    Instant creationTime, Instant expireTime, Boolean installCompanions, Boolean skipWelcome,
-                                    Boolean skipBoot, Boolean system, Boolean gui, Boolean readOnly,
-                                    Boolean trace, Boolean dry, Boolean recover, Boolean reset, Boolean commandVersion,
-                                    Boolean commandHelp, Boolean inherited, Boolean switchWorkspace, Boolean cached,
-                                    Boolean indexed, Boolean transitive, Boolean bot, Boolean skipErrors,
-                                    NIsolationLevel isolationLevel, Boolean initLaunchers, Boolean initScripts, Boolean initPlatforms, Boolean initJava, InputStream stdin, PrintStream stdout, PrintStream stderr,
-                                    ExecutorService executorService, Supplier<ClassLoader> classLoaderSupplier,
-                                    List<String> applicationArguments, List<String> outputFormatOptions,
-                                    List<String> customOptions, List<String> excludedExtensions, List<String> repositories,
-                                    List<String> executorOptions, List<NMsg> errors, Map<NStoreType, String> storeLocations,
-                                    Map<NHomeLocation, String> homeLocations, NSupportMode desktopLauncher, NSupportMode menuLauncher, NSupportMode userLauncher) {
+            String javaOptions, String outLinePrefix, String errLinePrefix, String userName,
+            char[] credentials, String progressOptions, String dependencySolver,
+            String debug, String archetype, String locale, String theme, NLogConfig logConfig,
+            NConfirmationMode confirm, NContentType outputFormat, NOpenMode openMode,
+            NExecutionType executionType, NStoreStrategy storeStrategy,
+            NStoreStrategy repositoryStoreStrategy, NOsFamily storeLayout,
+            NTerminalMode terminalMode, NFetchStrategy fetchStrategy, NRunAs runAs,
+            Instant creationTime, Instant expireTime, Boolean installCompanions, Boolean skipWelcome,
+            Boolean skipBoot, Boolean system, Boolean gui, Boolean readOnly,
+            Boolean trace, Boolean dry, Boolean showException, Boolean recover, Boolean reset, Boolean commandVersion,
+            Boolean commandHelp, Boolean inherited, Boolean switchWorkspace, Boolean cached,
+            Boolean indexed, Boolean transitive, Boolean bot, Boolean skipErrors,
+            NIsolationLevel isolationLevel, Boolean initLaunchers, Boolean initScripts, Boolean initPlatforms, Boolean initJava, InputStream stdin, PrintStream stdout, PrintStream stderr,
+            ExecutorService executorService, Supplier<ClassLoader> classLoaderSupplier,
+            List<String> applicationArguments, List<String> outputFormatOptions,
+            List<String> customOptions, List<String> excludedExtensions, List<String> repositories,
+            List<String> executorOptions, List<NMsg> errors, Map<NStoreType, String> storeLocations,
+            Map<NHomeLocation, String> homeLocations, NSupportMode desktopLauncher, NSupportMode menuLauncher, NSupportMode userLauncher) {
         this.outputFormatOptions = NReservedCollectionUtils.unmodifiableOrNullList(outputFormatOptions);
         this.customOptions = NReservedCollectionUtils.unmodifiableOrNullList(customOptions);
         this.excludedExtensions = NReservedCollectionUtils.unmodifiableOrNullList(excludedExtensions);
@@ -453,6 +460,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
         this.openMode = openMode;
         this.creationTime = creationTime;
         this.dry = dry;
+        this.showException = showException;
         this.classLoaderSupplier = classLoaderSupplier;
         this.recover = recover;
         this.reset = reset;
@@ -481,409 +489,377 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
         this.locale = locale;
         this.theme = theme;
         this.isolationLevel = isolationLevel;
-        this.initLaunchers=initLaunchers;
-        this.initScripts=initScripts;
-        this.initPlatforms=initPlatforms;
-        this.initJava=initJava;
-        this.desktopLauncher=desktopLauncher;
-        this.menuLauncher=menuLauncher;
-        this.userLauncher=userLauncher;
+        this.initLaunchers = initLaunchers;
+        this.initScripts = initScripts;
+        this.initPlatforms = initPlatforms;
+        this.initJava = initJava;
+        this.desktopLauncher = desktopLauncher;
+        this.menuLauncher = menuLauncher;
+        this.userLauncher = userLauncher;
     }
 
     @Override
     public NOptional<NSupportMode> getDesktopLauncher() {
-        return NOptional.ofNamed(desktopLauncher,"desktopLauncher");
+        return NOptional.ofNamed(desktopLauncher, "desktopLauncher");
     }
 
     @Override
     public NOptional<NSupportMode> getMenuLauncher() {
-        return NOptional.ofNamed(menuLauncher,"menuLauncher");
+        return NOptional.ofNamed(menuLauncher, "menuLauncher");
     }
 
     @Override
     public NOptional<NSupportMode> getUserLauncher() {
-        return NOptional.ofNamed(userLauncher,"userLauncher");
+        return NOptional.ofNamed(userLauncher, "userLauncher");
     }
 
     @Override
     public NOptional<NIsolationLevel> getIsolationLevel() {
-        return NOptional.ofNamed(isolationLevel,"isolationLevel");
+        return NOptional.ofNamed(isolationLevel, "isolationLevel");
     }
 
     @Override
     public NOptional<Boolean> getInitLaunchers() {
-        return NOptional.ofNamed(initLaunchers,"initLaunchers");
+        return NOptional.ofNamed(initLaunchers, "initLaunchers");
     }
 
     @Override
     public NOptional<Boolean> getInitScripts() {
-        return NOptional.ofNamed(initScripts,"initScripts");
+        return NOptional.ofNamed(initScripts, "initScripts");
     }
 
     @Override
     public NOptional<Boolean> getInitPlatforms() {
-        return NOptional.ofNamed(initPlatforms,"initPlatforms");
+        return NOptional.ofNamed(initPlatforms, "initPlatforms");
     }
 
     @Override
     public NOptional<Boolean> getInitJava() {
-        return NOptional.ofNamed(initJava,"initJava");
+        return NOptional.ofNamed(initJava, "initJava");
     }
 
     @Override
     public NOptional<NVersion> getApiVersion() {
-        return NOptional.ofNamed(apiVersion,"apiVersion");
+        return NOptional.ofNamed(apiVersion, "apiVersion");
     }
 
     @Override
     public NOptional<List<String>> getApplicationArguments() {
-        return NOptional.ofNamed(applicationArguments,"applicationArguments");
+        return NOptional.ofNamed(applicationArguments, "applicationArguments");
     }
-
 
     @Override
     public NOptional<String> getArchetype() {
-        return NOptional.ofNamed(archetype,"archetype");
+        return NOptional.ofNamed(archetype, "archetype");
     }
-
 
     @Override
     public NOptional<Supplier<ClassLoader>> getClassLoaderSupplier() {
-        return NOptional.ofNamed(classLoaderSupplier,"classLoaderSupplier");
+        return NOptional.ofNamed(classLoaderSupplier, "classLoaderSupplier");
     }
-
 
     @Override
     public NOptional<NConfirmationMode> getConfirm() {
-        return NOptional.ofNamed(confirm,"confirm");
+        return NOptional.ofNamed(confirm, "confirm");
     }
-
 
     @Override
     public NOptional<Boolean> getDry() {
-        return NOptional.ofNamed(dry,"dry");
+        return NOptional.ofNamed(dry, "dry");
     }
 
+    @Override
+    public NOptional<Boolean> getShowException() {
+        return NOptional.ofNamed(showException, "showException");
+    }
 
     @Override
     public NOptional<Instant> getCreationTime() {
-        return NOptional.ofNamed(creationTime,"creationTime");
+        return NOptional.ofNamed(creationTime, "creationTime");
     }
-
 
     @Override
     public NOptional<List<String>> getExcludedExtensions() {
-        return NOptional.ofNamed(excludedExtensions,"excludedExtensions");
+        return NOptional.ofNamed(excludedExtensions, "excludedExtensions");
     }
-
 
     @Override
     public NOptional<NExecutionType> getExecutionType() {
-        return NOptional.ofNamed(executionType,"executionType");
+        return NOptional.ofNamed(executionType, "executionType");
     }
-
 
     @Override
     public NOptional<NRunAs> getRunAs() {
-        return NOptional.ofNamed(runAs,"runAs");
+        return NOptional.ofNamed(runAs, "runAs");
     }
-
 
     @Override
     public NOptional<List<String>> getExecutorOptions() {
-        return NOptional.ofNamed(executorOptions,"executorOptions");
+        return NOptional.ofNamed(executorOptions, "executorOptions");
     }
-
 
     @Override
     public NOptional<String> getHomeLocation(NHomeLocation location) {
-        return NOptional.ofNamed(homeLocations==null?null:homeLocations.get(location),"HomeLocation["+location+"]");
+        return NOptional.ofNamed(homeLocations == null ? null : homeLocations.get(location), "HomeLocation[" + location + "]");
     }
 
     @Override
     public NOptional<Map<NHomeLocation, String>> getHomeLocations() {
-        return NOptional.ofNamed(homeLocations,"homeLocations");
+        return NOptional.ofNamed(homeLocations, "homeLocations");
     }
-
 
     @Override
     public NOptional<String> getJavaCommand() {
-        return NOptional.ofNamed(javaCommand,"javaCommand");
+        return NOptional.ofNamed(javaCommand, "javaCommand");
     }
-
 
     @Override
     public NOptional<String> getJavaOptions() {
-        return NOptional.ofNamed(javaOptions,"javaOptions");
+        return NOptional.ofNamed(javaOptions, "javaOptions");
     }
-
 
     @Override
     public NOptional<NLogConfig> getLogConfig() {
-        return NOptional.ofNamed(logConfig,"logConfig");
+        return NOptional.ofNamed(logConfig, "logConfig");
     }
-
 
     @Override
     public NOptional<String> getName() {
-        return NOptional.ofNamed(name,"name");
+        return NOptional.ofNamed(name, "name");
     }
-
 
     @Override
     public NOptional<NOpenMode> getOpenMode() {
-        return NOptional.ofNamed(openMode,"openMode");
+        return NOptional.ofNamed(openMode, "openMode");
     }
-
 
     @Override
     public NOptional<NContentType> getOutputFormat() {
-        return NOptional.ofNamed(outputFormat,"outputFormat");
+        return NOptional.ofNamed(outputFormat, "outputFormat");
     }
-
 
     @Override
     public NOptional<List<String>> getOutputFormatOptions() {
-        return NOptional.ofNamed(outputFormatOptions,"outputFormatOptions");
+        return NOptional.ofNamed(outputFormatOptions, "outputFormatOptions");
     }
-
 
     @Override
     public NOptional<char[]> getCredentials() {
-        return NOptional.ofNamed(credentials == null ? null : Arrays.copyOf(credentials, credentials.length),"credentials");
+        return NOptional.ofNamed(credentials == null ? null : Arrays.copyOf(credentials, credentials.length), "credentials");
     }
-
 
     @Override
     public NOptional<NStoreStrategy> getRepositoryStoreStrategy() {
-        return NOptional.ofNamed(repositoryStoreStrategy,"repositoryStoreStrategy");
+        return NOptional.ofNamed(repositoryStoreStrategy, "repositoryStoreStrategy");
     }
 
     @Override
     public NOptional<NId> getRuntimeId() {
-        return NOptional.ofNamed(runtimeId,"runtimeId");
+        return NOptional.ofNamed(runtimeId, "runtimeId");
     }
-
 
     @Override
     public NOptional<String> getStoreType(NStoreType folder) {
-        return NOptional.ofNamed(storeLocations==null ?null:storeLocations.get(folder),"storeLocations["+folder+"]");
+        return NOptional.ofNamed(storeLocations == null ? null : storeLocations.get(folder), "storeLocations[" + folder + "]");
     }
 
     @Override
     public NOptional<NOsFamily> getStoreLayout() {
-        return NOptional.ofNamed(storeLayout,"storeLayout");
+        return NOptional.ofNamed(storeLayout, "storeLayout");
     }
-
 
     @Override
     public NOptional<NStoreStrategy> getStoreStrategy() {
-        return NOptional.ofNamed(storeStrategy,"storeStrategy");
+        return NOptional.ofNamed(storeStrategy, "storeStrategy");
     }
-
 
     @Override
     public NOptional<Map<NStoreType, String>> getStoreLocations() {
-        return NOptional.ofNamed(storeLocations,"storeLocations");
+        return NOptional.ofNamed(storeLocations, "storeLocations");
     }
-
 
     @Override
     public NOptional<NTerminalMode> getTerminalMode() {
-        return NOptional.ofNamed(terminalMode,"terminalMode");
+        return NOptional.ofNamed(terminalMode, "terminalMode");
     }
-
 
     @Override
     public NOptional<List<String>> getRepositories() {
-        return NOptional.ofNamed(repositories,"repositories");
+        return NOptional.ofNamed(repositories, "repositories");
     }
-
 
     @Override
     public NOptional<String> getUserName() {
-        return NOptional.ofNamed(userName,"userName");
+        return NOptional.ofNamed(userName, "userName");
     }
 
     @Override
     public NOptional<String> getWorkspace() {
-        return NOptional.ofNamed(workspace,"workspace");
+        return NOptional.ofNamed(workspace, "workspace");
     }
 
     @Override
     public NOptional<String> getDebug() {
-        return NOptional.ofNamed(debug,"debug");
+        return NOptional.ofNamed(debug, "debug");
     }
-
 
     @Override
     public NOptional<Boolean> getSystem() {
-        return NOptional.ofNamed(system,"system");
+        return NOptional.ofNamed(system, "system");
     }
-
 
     @Override
     public NOptional<Boolean> getGui() {
-        return NOptional.ofNamed(gui,"gui");
+        return NOptional.ofNamed(gui, "gui");
     }
-
 
     @Override
     public NOptional<Boolean> getInherited() {
-        return NOptional.ofNamed(inherited,"inherited");
+        return NOptional.ofNamed(inherited, "inherited");
     }
-
-
 
     @Override
     public NOptional<Boolean> getReadOnly() {
-        return NOptional.ofNamed(readOnly,"readOnly");
+        return NOptional.ofNamed(readOnly, "readOnly");
     }
-
 
     @Override
     public NOptional<Boolean> getRecover() {
-        return NOptional.ofNamed(recover,"recover");
+        return NOptional.ofNamed(recover, "recover");
     }
-
 
     @Override
     public NOptional<Boolean> getReset() {
-        return NOptional.ofNamed(reset,"reset");
+        return NOptional.ofNamed(reset, "reset");
     }
-
 
     @Override
     public NOptional<Boolean> getCommandVersion() {
-        return NOptional.ofNamed(commandVersion,"commandVersion");
+        return NOptional.ofNamed(commandVersion, "commandVersion");
     }
 
     @Override
     public NOptional<Boolean> getCommandHelp() {
-        return NOptional.ofNamed(commandHelp,"commandHelp");
+        return NOptional.ofNamed(commandHelp, "commandHelp");
     }
 
     @Override
     public NOptional<Boolean> getInstallCompanions() {
-        return NOptional.ofNamed(installCompanions,"installCompanions");
+        return NOptional.ofNamed(installCompanions, "installCompanions");
     }
-
 
     @Override
     public NOptional<Boolean> getSkipWelcome() {
-        return NOptional.ofNamed(skipWelcome,"skipWelcome");
+        return NOptional.ofNamed(skipWelcome, "skipWelcome");
     }
 
     @Override
     public NOptional<String> getOutLinePrefix() {
-        return NOptional.ofNamed(outLinePrefix,"outLinePrefix");
+        return NOptional.ofNamed(outLinePrefix, "outLinePrefix");
     }
-
 
     @Override
     public NOptional<String> getErrLinePrefix() {
-        return NOptional.ofNamed(errLinePrefix,"errLinePrefix");
+        return NOptional.ofNamed(errLinePrefix, "errLinePrefix");
     }
 
     @Override
     public NOptional<Boolean> getSkipBoot() {
-        return NOptional.ofNamed(skipBoot,"skipBoot");
+        return NOptional.ofNamed(skipBoot, "skipBoot");
     }
-
 
     @Override
     public NOptional<Boolean> getTrace() {
-        return NOptional.ofNamed(trace,"trace");
+        return NOptional.ofNamed(trace, "trace");
     }
 
     public NOptional<String> getProgressOptions() {
-        return NOptional.ofNamed(progressOptions,"progressOptions");
+        return NOptional.ofNamed(progressOptions, "progressOptions");
     }
 
     @Override
     public NOptional<Boolean> getCached() {
-        return NOptional.ofNamed(cached,"cached");
+        return NOptional.ofNamed(cached, "cached");
     }
 
     @Override
     public NOptional<Boolean> getIndexed() {
-        return NOptional.ofNamed(indexed,"indexed");
+        return NOptional.ofNamed(indexed, "indexed");
     }
 
     @Override
     public NOptional<Boolean> getTransitive() {
-        return NOptional.ofNamed(transitive,"transitive");
+        return NOptional.ofNamed(transitive, "transitive");
     }
 
     @Override
     public NOptional<Boolean> getBot() {
-        return NOptional.ofNamed(bot,"bot");
+        return NOptional.ofNamed(bot, "bot");
     }
 
     @Override
     public NOptional<NFetchStrategy> getFetchStrategy() {
-        return NOptional.ofNamed(fetchStrategy,"fetchStrategy");
+        return NOptional.ofNamed(fetchStrategy, "fetchStrategy");
     }
 
     @Override
     public NOptional<InputStream> getStdin() {
-        return NOptional.ofNamed(stdin,"stdin");
+        return NOptional.ofNamed(stdin, "stdin");
     }
 
     @Override
     public NOptional<PrintStream> getStdout() {
-        return NOptional.ofNamed(stdout,"stdout");
+        return NOptional.ofNamed(stdout, "stdout");
     }
 
     @Override
     public NOptional<PrintStream> getStderr() {
-        return NOptional.ofNamed(stderr,"stderr");
+        return NOptional.ofNamed(stderr, "stderr");
     }
 
     @Override
     public NOptional<ExecutorService> getExecutorService() {
-        return NOptional.ofNamed(executorService,"executorService");
+        return NOptional.ofNamed(executorService, "executorService");
     }
 
     @Override
     public NOptional<Instant> getExpireTime() {
-        return NOptional.ofNamed(expireTime,"expireTime");
+        return NOptional.ofNamed(expireTime, "expireTime");
     }
 
     @Override
     public NOptional<Boolean> getSkipErrors() {
-        return NOptional.ofNamed(skipErrors,"skipErrors");
+        return NOptional.ofNamed(skipErrors, "skipErrors");
     }
 
     @Override
     public NOptional<Boolean> getSwitchWorkspace() {
-        return NOptional.ofNamed(switchWorkspace,"switchWorkspace");
+        return NOptional.ofNamed(switchWorkspace, "switchWorkspace");
     }
 
     @Override
     public NOptional<List<NMsg>> getErrors() {
-        return NOptional.ofNamed(errors,"errors");
+        return NOptional.ofNamed(errors, "errors");
     }
 
     @Override
     public NOptional<List<String>> getCustomOptions() {
-        return NOptional.ofNamed(customOptions,"customOptions");
+        return NOptional.ofNamed(customOptions, "customOptions");
     }
 
     @Override
     public NOptional<String> getLocale() {
-        return NOptional.ofNamed(locale,"locale");
+        return NOptional.ofNamed(locale, "locale");
     }
 
     @Override
     public NOptional<String> getTheme() {
-        return NOptional.ofNamed(theme,"theme");
+        return NOptional.ofNamed(theme, "theme");
     }
-
 
     @Override
     public NOptional<String> getDependencySolver() {
-        return NOptional.ofNamed(dependencySolver,"dependencySolver");
+        return NOptional.ofNamed(dependencySolver, "dependencySolver");
     }
 
     @Override

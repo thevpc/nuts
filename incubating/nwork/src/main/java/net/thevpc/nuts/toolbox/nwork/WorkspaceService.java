@@ -645,7 +645,7 @@ public class WorkspaceService {
             stack.push(folder);
         }
         int scanned = 0;
-        boolean structuredOutContentType = session.isTrace() && session.getOutputFormat() != NContentType.PLAIN;
+        boolean structuredOutContentType = session.isTrace() && session.getOutputFormat().orDefault() != NContentType.PLAIN;
         while (!stack.isEmpty()) {
             File folder = stack.pop();
             if (folder.isDirectory()) {

@@ -9,6 +9,6 @@ This command will show **nuts** version. It is helpful to note that **nuts** has
 api is the **nuts** bootstrap jar (actually nuts-*.jar, ~500Ko of size) that contains only the minimum code to use nuts and to download the full implementation (3Mo of size) : impl component. Usually, the implementation version starts with the api version but this should be no rule.
 ```
 me@linux:~> nuts version
-net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@4c163e3/net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@5745ca0e
+net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@32c90cbc/net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@a96eb16
 ```
-Here the **version** command show api version (net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@4c163e3) and the impl version (net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@5745ca0e)
+Here the **version** command show api version (net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@32c90cbc) and the impl version (net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@a96eb16)

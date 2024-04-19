@@ -224,7 +224,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
             if (cmdLine.isExecMode()) {
                 List<NRepository> r = parent.isNull() ? NRepositories.of(session).getRepositories() : NRepositories.of(session).findRepository(parent.get())
                         .get().config().getMirrors();
-                out.println(r.stream().map(x -> repoInfo(x, session.getOutputFormat() != NContentType.TABLE && session.getOutputFormat() != NContentType.PLAIN, session)).toArray());
+                out.println(r.stream().map(x -> repoInfo(x, session.getOutputFormat().orDefault() != NContentType.TABLE && session.getOutputFormat().orDefault() != NContentType.PLAIN, session)).toArray());
             }
             return true;
 

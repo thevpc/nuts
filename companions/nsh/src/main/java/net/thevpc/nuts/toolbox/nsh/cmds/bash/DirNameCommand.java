@@ -105,7 +105,7 @@ public class DirNameCommand extends NShellBuiltinDefault {
                 results.add(sb.toString());
             }
         }
-        switch (session.getOutputFormat()) {
+        switch (session.getOutputFormat().orDefault()) {
             case PLAIN: {
                 for (int i = 0; i < results.size(); i++) {
                     String name = results.get(i);

@@ -195,7 +195,7 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
                 break;
             }
         }
-        switch (getSession().getOutputFormat()) {
+        switch (getSession().getOutputFormat().orDefault()) {
             //structured formats!
             case XML:
             case JSON:
@@ -203,7 +203,7 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
             case YAML: {
                 NElements ee = NElements.of(session).setNtf(isNtf())
                         .setCompact(isCompact())
-                        .setContentType(getSession().getOutputFormat());
+                        .setContentType(getSession().getOutputFormat().orDefault());
                 if (value instanceof NString) {
                     NTextBuilder builder = ((NString) value).builder();
                     Object[] r = builder.lines().map(
@@ -262,7 +262,7 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
                 return ee;
             }
         }
-        throw new NUnsupportedEnumException(getSession(), getSession().getOutputFormat());
+        throw new NUnsupportedEnumException(getSession(), getSession().getOutputFormat().orDefault());
     }
 
 //    @Override

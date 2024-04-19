@@ -96,7 +96,7 @@ public class UnameCommand extends NShellBuiltinDefault {
         if (!config.fdist && rr.osDist != null) {
             rr.osDist = null;
         }
-        switch (context.getSession().getOutputFormat()) {
+        switch (context.getSession().getOutputFormat().orDefault()) {
             case PLAIN: {
                 List<String> sb = new ArrayList<>();
                 if (rr.arch != null) {

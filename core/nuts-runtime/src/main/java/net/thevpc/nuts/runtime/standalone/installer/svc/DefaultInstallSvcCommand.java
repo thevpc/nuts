@@ -249,7 +249,7 @@ public class DefaultInstallSvcCommand implements InstallSvcCommand {
                         .printlnEcho("systemctl start " + serviceName)
                         .printlnEcho("systemctl status " + serviceName);
             }
-            if (session.isDry()) {
+            if (session.getDry().orDefault()) {
                 new File(serviceFilePath).getParentFile().mkdirs();
                 Files.copy(tempFile.toPath(), new File(serviceFilePath).toPath(), StandardCopyOption.REPLACE_EXISTING);
                 logInfo("[DRY] run script: ");
@@ -304,7 +304,7 @@ public class DefaultInstallSvcCommand implements InstallSvcCommand {
                         .printlnEcho(serviceFilePath + " start ")
                         .printlnEcho(serviceFilePath + " status ");
             }
-            if (session.isDry()) {
+            if (session.getDry().orDefault()) {
                 new File(serviceFilePath).getParentFile().mkdirs();
                 Files.copy(tempFile.toPath(), new File(serviceFilePath).toPath(), StandardCopyOption.REPLACE_EXISTING);
                 logInfo("[DRY] run script: ");

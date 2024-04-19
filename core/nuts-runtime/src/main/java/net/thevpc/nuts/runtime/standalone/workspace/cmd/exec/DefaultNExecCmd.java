@@ -128,7 +128,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
         NExecutionType executionType = this.getExecutionType();
         NRunAs runAs = this.getRunAs();
         if (executionType == null) {
-            executionType = session.getExecutionType();
+            executionType = session.getExecutionType().orDefault();
         }
         if (executionType == null) {
             executionType = NExecutionType.SPAWN;
@@ -386,7 +386,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
         //resolve internal commands!
         NExecutionType executionType = getExecutionType();
         if (executionType == null) {
-            executionType = session.getExecutionType();
+            executionType = session.getExecutionType().orDefault();
         }
         if (executionType == null) {
             executionType = NExecutionType.SPAWN;

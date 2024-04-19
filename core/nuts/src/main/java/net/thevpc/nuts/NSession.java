@@ -56,8 +56,10 @@ import java.util.logging.Level;
  * @since 0.5.4
  */
 public interface NSession extends NCmdLineConfigurable {
+
     String AUTO_COMPLETE_CANDIDATE_PREFIX = "```error Candidate```: ";
 
+    NOptional<Boolean> getTrace();
     Boolean getTrace(boolean inherit);
 
     /**
@@ -142,7 +144,7 @@ public interface NSession extends NCmdLineConfigurable {
      */
     boolean isPlainOut();
 
-    Boolean getBot(boolean withDefaults);
+    NOptional<Boolean> getBot();
 
     boolean isBot();
 
@@ -179,19 +181,17 @@ public interface NSession extends NCmdLineConfigurable {
      */
     boolean isAsk();
 
-    NContentType getOutputFormat(boolean withDefaults);
-
     /**
      * return effective trace output format. The effective trace output format
      * is the value of {@code getIterableFormat().getOutputFormat()} whenever {@code getIterableFormat()!=null
      * } otherwise it returns simply the value defined by calling
-     * {@link #setOutputFormat(NContentType)}. If none of null null null     {@link #setIterableOut(boolean)}
-     * {@link #setOutputFormat(NContentType)} has been called (or called
-     * with null values) {@link NContentType#PLAIN} should be returned.
+     * {@link #setOutputFormat(NContentType)}. If none of null {@link #setIterableOut(boolean)}
+     * {@link #setOutputFormat(NContentType)} has been called (or called with
+     * null values) {@link NContentType#PLAIN} should be returned.
      *
      * @return effective trace output format
      */
-    NContentType getOutputFormat();
+    NOptional<NContentType> getOutputFormat();
 
     /**
      * set output format
@@ -268,7 +268,7 @@ public interface NSession extends NCmdLineConfigurable {
 
     NId getAppId();
 
-    NSession prepareApplication(String[] args, Class appClass, String storeId, NClock startTime);
+    NSession prepareApplication(String[] args, Class<?> appClass, String storeId, NClock startTime);
 
     NApplicationMode getAppMode();
 
@@ -280,7 +280,7 @@ public interface NSession extends NCmdLineConfigurable {
 
     void printAppHelp();
 
-    Class getAppClass();
+    Class<?> getAppClass();
 
     NPath getAppBinFolder();
 
@@ -346,8 +346,6 @@ public interface NSession extends NCmdLineConfigurable {
 
     NSession setAppId(NId appId);
 
-    NFetchStrategy getFetchStrategy(boolean withDefaults);
-
     /**
      * return current fetch strategy. When no strategy (or null strategy) was
      * set, return workspace strategy default strategy. When none defines use
@@ -355,7 +353,7 @@ public interface NSession extends NCmdLineConfigurable {
      *
      * @return {@code this} instance
      */
-    NFetchStrategy getFetchStrategy();
+    NOptional<NFetchStrategy> getFetchStrategy();
 
     /**
      * change fetch strategy
@@ -402,7 +400,7 @@ public interface NSession extends NCmdLineConfigurable {
      * <li>{@link NRepositoryListener}</li>
      * </ul>
      *
-     * @param <T>  listener type
+     * @param <T> listener type
      * @param type listener type class
      * @return registered listeners
      */
@@ -418,7 +416,7 @@ public interface NSession extends NCmdLineConfigurable {
     /**
      * set session property
      *
-     * @param key   property key
+     * @param key property key
      * @param value property value
      * @return {@code this} instance
      */
@@ -429,7 +427,7 @@ public interface NSession extends NCmdLineConfigurable {
      *
      * @return defined properties
      */
-    Map<String, Object> getProperties(NScopeType scope,boolean withDefaults);
+    Map<String, Object> getProperties(NScopeType scope, boolean withDefaults);
 
     Map<String, Object> getProperties(NScopeType scope);
 
@@ -439,7 +437,7 @@ public interface NSession extends NCmdLineConfigurable {
      * @param properties properties
      * @return {@code this} instance
      */
-    NSession setProperties(NScopeType scope,Map<String, Object> properties);
+    NSession setProperties(NScopeType scope, Map<String, Object> properties);
 
     /**
      * return property value or null
@@ -449,14 +447,13 @@ public interface NSession extends NCmdLineConfigurable {
      */
     Object getProperty(String key);
 
-    NConfirmationMode getConfirm(boolean withDefaults);
-
     /**
      * return confirmation mode or {@link NConfirmationMode#ASK}
      *
      * @return confirmation mode
      */
-    NConfirmationMode getConfirm();
+//    NConfirmationMode getConfirm();
+    NOptional<NConfirmationMode> getConfirm();
 
     /**
      * set confirm mode.
@@ -536,7 +533,7 @@ public interface NSession extends NCmdLineConfigurable {
      */
     NWorkspace getWorkspace();
 
-    Boolean getTransitive(boolean withDefaults);
+    NOptional<Boolean> getTransitive();
 
     /**
      * true when considering transitive repositories.
@@ -553,7 +550,7 @@ public interface NSession extends NCmdLineConfigurable {
      */
     NSession setTransitive(Boolean value);
 
-    Boolean getCached(boolean withDefaults);
+    NOptional<Boolean> getCached();
 
     /**
      * true when using cache
@@ -570,7 +567,7 @@ public interface NSession extends NCmdLineConfigurable {
      */
     NSession setCached(Boolean value);
 
-    Boolean getIndexed(boolean withDefaults);
+    NOptional<Boolean> getIndexed();
 
     /**
      * true when using indexes
@@ -623,7 +620,7 @@ public interface NSession extends NCmdLineConfigurable {
      */
     NSession setProgressOptions(String progressOptions);
 
-    Boolean getGui(boolean withDefaults);
+    NOptional<Boolean> getGui();
 
     boolean isGui();
 
@@ -637,11 +634,17 @@ public interface NSession extends NCmdLineConfigurable {
 
     NSession setOutLinePrefix(String outLinePrefix);
 
-    Boolean getDry(boolean withDefaults);
+    NOptional<Boolean> getDry();
 
-    boolean isDry();
+    NOptional<Boolean> getShowException();
 
     NSession setDry(Boolean dry);
+
+    /**
+     * equivalent to getDry().orDefault();
+     * @return true if dry mode
+     */
+    boolean isDry();
 
     Level getLogTermLevel();
 
@@ -672,9 +675,7 @@ public interface NSession extends NCmdLineConfigurable {
 
     NSession flush();
 
-    NExecutionType getExecutionType(boolean withDefaults);
-
-    NExecutionType getExecutionType();
+    NOptional<NExecutionType> getExecutionType();
 
     NSession embedded();
 
@@ -684,32 +685,23 @@ public interface NSession extends NCmdLineConfigurable {
 
     NSession setExecutionType(NExecutionType executionType);
 
-    String getDebug(boolean withDefaults);
-
-    String getDebug();
+    NOptional<String> getDebug();
 
     NSession setDebug(String debug);
 
-    String getLocale(boolean withDefaults);
-
-    String getLocale();
+    NOptional<String> getLocale();
 
     NSession setLocale(String locale);
 
-    NRunAs getRunAs(boolean withDefaults);
-
-    NRunAs getRunAs();
+    NOptional<NRunAs> getRunAs();
 
     NSession setRunAs(NRunAs runAs);
 
     ////////////////////////////////////////
-
     //COMMANDS
-
     ////////////////////////////////////
     /// CONFIG
     ////////////////////////////////////
-
     NSession sudo();
 
     NSession root();
@@ -744,8 +736,6 @@ public interface NSession extends NCmdLineConfigurable {
     <T> T setProperty(String name, NScopeType scope, T value);
 
     <T> NOptional<T> getProperty(String name, NScopeType scope);
-
-    <T> NOptional<T> getProperty(String name, NScopeType scope, boolean withDefaults);
 
     NSession setAppArguments(List<String> args);
 

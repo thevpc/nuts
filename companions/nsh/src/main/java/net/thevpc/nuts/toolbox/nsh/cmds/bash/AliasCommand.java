@@ -96,7 +96,7 @@ public class AliasCommand extends NShellBuiltinDefault {
                 outRes.add(new ResultItem(a, v));
             }
         }
-        switch (context.getSession().getOutputFormat()) {
+        switch (context.getSession().getOutputFormat().orDefault()) {
             case PLAIN: {
                 for (ResultItem resultItem : outRes) {
                     if (resultItem.value == null) {

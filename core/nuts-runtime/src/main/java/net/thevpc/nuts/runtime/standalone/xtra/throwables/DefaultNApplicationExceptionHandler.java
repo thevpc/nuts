@@ -21,13 +21,50 @@ import net.thevpc.nuts.util.NMsg;
 
 import java.io.PrintStream;
 import java.util.logging.Level;
+import net.thevpc.nuts.util.NBlankable;
 
 @NComponentScope(NScopeType.SESSION)
 public class DefaultNApplicationExceptionHandler implements NApplicationExceptionHandler {
+
     private NSession session;
 
     public DefaultNApplicationExceptionHandler(NSession session) {
         this.session = session;
+    }
+
+    private static boolean resolveShowStackTrace(NWorkspaceOptions bo) {
+        if (bo.getShowException().isPresent()) {
+            return bo.getShowException().get();
+        } else if (bo.getBot().orElse(false)) {
+            return false;
+        } else {
+            if (NApiUtilsRPI.getSysBoolNutsProperty("show-exception", false)) {
+                return true;
+            }
+            if (bo.getDebug().isPresent() && !NBlankable.isBlank(bo.getDebug().get())) {
+                return true;
+            }
+            NLogConfig nLogConfig = bo.getLogConfig().orElseGet(NLogConfig::new);
+            if ((nLogConfig.getLogTermLevel() != null
+                    && nLogConfig.getLogTermLevel().intValue() < Level.INFO.intValue())) {
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public static boolean resolveGui(NWorkspaceOptions bo) {
+        if (bo.getBot().orElse(false)) {
+            return false;
+        }
+        if (bo.getGui().orElse(false)) {
+            if (!NApiUtilsRPI.isGraphicalDesktopEnvironment()) {
+                return false;
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -39,21 +76,8 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
             bo.setGui(false);
         }
 
-        boolean bot = bo.getBot().orElse(false);
-        boolean showGui = !bot && bo.getGui().orElse(false);
-        boolean showTrace = bo.getDebug()!=null;
-        NLogConfig logConfig = bo.getLogConfig().orElseGet(NLogConfig::new);
-        showTrace |= (
-                logConfig.getLogTermLevel() != null
-                && logConfig.getLogTermLevel().intValue() < Level.INFO.intValue());
-        if (!showTrace) {
-            showTrace = NApiUtilsRPI.getSysBoolNutsProperty("debug", false);
-        }
-        if (bot) {
-            showTrace = false;
-            showGui = false;
-        }
-
+        boolean showGui = resolveGui(bo);
+        boolean showTrace = resolveShowStackTrace(bo);
         int errorCode = NExceptionWithExitCodeBase.resolveExitCode(throwable).orElse(204);
         NMsg fm = NSessionAwareExceptionBase.resolveSessionAwareExceptionBase(throwable)
                 .map(NSessionAwareExceptionBase::getFormattedMessage).orNull();
@@ -75,9 +99,9 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
                     NMsg.ofPlain("unable to get system terminal")
             );
         }
-        boolean showMessage=true;
+        boolean showMessage = true;
         if (fout != null) {
-            if (session.getOutputFormat() == NContentType.PLAIN) {
+            if (session.getOutputFormat().orDefault() == NContentType.PLAIN) {
                 if (fm != null) {
                     fout.println(fm);
                 } else {
@@ -125,7 +149,7 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
                 fout.flush();
             }
         } else {
-            PrintStream out=System.err;
+            PrintStream out = System.err;
             if (fm != null) {
                 out.println(fm);
             } else {
@@ -158,7 +182,7 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
             }
         }
         return (errorCode);
-   }
+    }
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {

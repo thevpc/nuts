@@ -14,7 +14,6 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
     private Throwable error;
 
     public NReservedOptionalError(Function<NSession, NMsg> message, Throwable error) {
-        super(null);
         if (message == null) {
             message = (s) -> NMsg.ofInvalidValue(error, null);
         }

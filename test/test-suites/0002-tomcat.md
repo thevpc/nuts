@@ -3,7 +3,7 @@
 
 
 ```sh
-wget https://thevpc.net/nuts-preview.jar -O nuts.jar
+wget https://thevpc.net/nuts/nuts-preview.jar -O nuts.jar
 nuts -ZyS -r=+preview --verbose
 ```
 
@@ -15,7 +15,7 @@ nuts -ZyS -r=+preview --verbose
 
 
 ```sh
-wget https://thevpc.net/nuts-preview.jar -O nuts.jar
+wget https://thevpc.net/nuts/nuts-preview.jar -O nuts.jar
 nuts -ZyS -r=+preview
 ```
 

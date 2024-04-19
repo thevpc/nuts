@@ -531,7 +531,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
         NRepositoryFilter sRepositoryFilter = search.getRepositoryFilter();
         NDescriptorFilter sDescriptorFilter = search.getDescriptorFilter();
         String[] regularIds = search.getRegularIds();
-        NFetchStrategy fetchMode = NWorkspaceHelper.validate(session.getFetchStrategy());
+        NFetchStrategy fetchMode = NWorkspaceHelper.validate(session.getFetchStrategy().orDefault());
 //        InstalledVsNonInstalledSearch installedVsNonInstalledSearch = new InstalledVsNonInstalledSearch(
 //                search.isSearchInInstalled(),
 //                search.isSearchInOtherRepositories()

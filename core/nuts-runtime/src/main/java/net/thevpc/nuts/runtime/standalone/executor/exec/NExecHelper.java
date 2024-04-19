@@ -96,7 +96,7 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
 
 
     public int exec() {
-        if (getSession().isDry()) {
+        if (getSession().getDry().orDefault()) {
             if (out.getTerminalMode() == NTerminalMode.FORMATTED) {
                 out.print("[dry] ==[exec]== ");
                 out.println(pb.format());

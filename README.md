@@ -4,7 +4,7 @@ Network Updatable Things Services
      __        __    
   /\ \ \ _  __/ /______
  /  \/ / / / / __/ ___/
-/ /\  / /_/ / /_(__  )   dev version 0.8.4.0 (accessible on thevpc.net)
+/ /\  / /_/ / /_(__  )   dev version net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@10e9eb08 (accessible on thevpc.net)
 \_\ \/\__,_/\__/____/    production version 0.8.3.1 (accessible on maven central)
 </pre>
 
@@ -34,7 +34,7 @@ nuts --version
 It should show a result in the format : nuts-api-version/nuts-runtime-version
 
 ```
-0.8.4/0.8.4.0
+net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@62c85564/net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@10e9eb08
 ```
 
 ## Installing Nuts Preview (Development, recommended for testing)
@@ -46,7 +46,7 @@ Please note that ```nuts``` rolling version (which is the most recent version) i
 First you need to download nuts-preview.jar
 
 ```
-wget https://thevpc.net/nuts-preview.jar -O nuts.jar
+wget https://thevpc.net/nuts/nuts-preview.jar -O nuts.jar
 ```
 
 Then you must run, in a terminal, the following command
@@ -77,7 +77,7 @@ wget wget https://repo1.maven.org/maven2/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.j
 If you want a shorter link, use this one!
 
 ```
-wget https://thevpc.net/nuts-stable.jar -O nuts.jar
+wget https://thevpc.net/nuts/nuts-stable.jar -O nuts.jar
 ```
 
 Then you must run, in a terminal, one of the the following commands:

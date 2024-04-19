@@ -83,7 +83,7 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
     @Override
     public int execute() {
         NSession session = getSession();
-        if (session.isDry()) {
+        if (session.getDry().orDefault()) {
             if (autoInstall && !def.getInstallInformation().get(session).getInstallStatus().isInstalled()) {
                 NWorkspaceSecurityManager.of(session).checkAllowed(NConstants.Permissions.AUTO_INSTALL, commandName);
                 NPrintStream out = session.out();

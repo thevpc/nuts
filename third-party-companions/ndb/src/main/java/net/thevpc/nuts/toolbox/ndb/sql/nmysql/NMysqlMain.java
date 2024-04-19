@@ -1058,7 +1058,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                 session.getIterableOutput().complete(index);
             }
         } else {
-            switch (session.getOutputFormat()) {
+            switch (session.getOutputFormat().orDefault()) {
                 case PLAIN: {
                     for (LocaleOrRemote cnf : result) {
                         if (cnf.local != null) {

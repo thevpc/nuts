@@ -26,7 +26,14 @@ public class PackagesPanel extends AbstractInstallPanel {
     JComponent panelScroll;
     JEditorPane jep;
     int w = 160;
-    java.util.List<JToggleButton> buttons = new ArrayList<>();
+    java.util.List<ButtonComponent> buttons = new ArrayList<>();
+
+    private static class ButtonComponent {
+        JToggleButton button;
+        PackageButtonInfo bi;
+        String title;
+        JLabel label;
+    }
 
     public PackagesPanel() {
         super(new BorderLayout());
@@ -64,9 +71,9 @@ public class PackagesPanel extends AbstractInstallPanel {
     private void updateJep() {
         java.util.List<String> selection = new ArrayList<>();
         boolean companionsSelected = false;
-        for (JToggleButton a : buttons) {
-            PackageButtonInfo button = (PackageButtonInfo) a.getClientProperty("buttonInfo");
-            if (a.isSelected()) {
+        for (ButtonComponent a : buttons) {
+            PackageButtonInfo button = a.bi;
+            if (a.button.isSelected()) {
                 if (button.app.getId().equals("<companions>")) {
                     companionsSelected = true;
                 }
@@ -187,14 +194,35 @@ public class PackagesPanel extends AbstractInstallPanel {
         all.add(new PackageButtonInfo(new App("com.mucommander:mucommander"), "Mu-Commander", "File Explorer", true,
                 "https://raw.githubusercontent.com/thevpc/nuts-public/master/com/mucommander/mucommander/1.1.0-1/mucommander-icon.png"
                 , false));
-        all.add(new PackageButtonInfo(new App("net.thevpc.pnote:pnote"), "Pangaea Note", "Not Taking Application", true,
-                "https://raw.githubusercontent.com/thevpc/nuts-public/master/com/mucommander/mucommander/1.1.0-1/mucommander-icon.png"
+        all.add(new PackageButtonInfo(new App("net.thevpc.pnote:pnote"), "Pangaea Note", "Note Taking Application", true,
+                "https://raw.githubusercontent.com/thevpc/pangaea-note/master/docs/img/icon.png"
                 , false));
         all.add(new PackageButtonInfo(new App("net.thevpc.netbeans-launcher:netbeans-launcher"), "Netbeans Launcher", "Netbeans IDE Launcher", true,
-                "https://raw.githubusercontent.com/thevpc/nuts-public/master/com/mucommander/mucommander/1.1.0-1/mucommander-icon.png"
+                "https://raw.githubusercontent.com/thevpc/netbeans-launcher/master/docs/img/icon.png"
                 , false));
         all.add(new PackageButtonInfo(new App("net.thevpc.kifkif:kifkif"), "Kifkif", "Files and Folders Duplicate Finder", true,
-                "https://raw.githubusercontent.com/thevpc/nuts-public/master/com/mucommander/mucommander/1.1.0-1/mucommander-icon.png"
+                "https://raw.githubusercontent.com/thevpc/kifkif/master/docs/img/icon.png"
+                , false));
+        all.add(new PackageButtonInfo(new App("io.github.jiashunx:masker-flappybird"), "Flappy Bird", "Flappy Bird Game", true,
+                "https://upload.wikimedia.org/wikipedia/en/0/0a/Flappy_Bird_icon.png"
+                , false));
+        all.add(new PackageButtonInfo(new App("org.jmeld:jmeld"), "JMeld", "A visual diff and merge tool", true,
+                "https://raw.githubusercontent.com/albfan/jmeld/master/res/jmeld-component.png"
+                , false));
+        all.add(new PackageButtonInfo(new App("com.jgoodies:jdiskreport"), "JDisk Report", "A visual Disk Analyzer", true,
+                "https://www.jgoodies.com/wp-content/uploads/2012/04/o1960.jpg"
+                , false));
+        all.add(new PackageButtonInfo(new App("org.jd:jd-gui"), "Java Decompiler", "A visual Java Decompiler", true,
+                "https://raw.githubusercontent.com/java-decompiler/jd-gui/master/app/src/main/resources/org/jd/gui/images/jd_icon_128.png"
+                , false));
+        all.add(new PackageButtonInfo(new App("jpass:jpass"), "JPass", "Password Manager", true,
+                "https://raw.githubusercontent.com/gaborbata/jpass/master/resources/bannerReadMe.png"
+                , false));
+        all.add(new PackageButtonInfo(new App("org.omegat:omegat"), "OmegaT", "The free translation memory tool", true,
+                "https://lingenio.de/wp-content/uploads/2016/08/2016-CAT-tool-CAT-tools-OmegaT.jpg"
+                , false));
+        all.add(new PackageButtonInfo(new App("eu.binjr:binjr-core"), "Bonjour", "Time Series Dashboard", true,
+                "https://binjr.eu/assets/images/binjr_title.png"
                 , false));
 //        all.add(new PackageButtonInfo("<companions>", "Pangaea Note", "Note Taking Application", true, null, false));
         return all.toArray(new PackageButtonInfo[0]);
@@ -210,11 +238,15 @@ public class PackagesPanel extends AbstractInstallPanel {
             if (u != null) {
                 for (PackageButtonInfo b : u) {
                     if (b != null) {
-                        JToggleButton a = new JToggleButton(b.name);
-                        b.imageIcon=gelAppUi(b.icon, b.gui, false);
-                        b.selectedImageIcon=gelAppUi(b.icon, b.gui, true);
+                        JToggleButton a = new JToggleButton();
+                        b.imageIcon = gelAppUi(b.icon, b.gui, false);
+                        b.selectedImageIcon = gelAppUi(b.icon, b.gui, true);
                         a.putClientProperty("buttonInfo", b);
-                        buttons.add(a);
+                        ButtonComponent bc = new ButtonComponent();
+                        bc.button = a;
+                        bc.bi = b;
+                        bc.title = b.name;
+                        buttons.add(bc);
                     }
                 }
             }
@@ -227,27 +259,43 @@ public class PackagesPanel extends AbstractInstallPanel {
             removeAllComponents2();
             int row = 0;
             int col = 0;
+            int maxCols = 3;
+//            if(buttons.size()>4){
+//                maxCols = 3;
+//            }
             GridBagConstraints c = new GridBagConstraints();
-            for (JToggleButton a : buttons) {
-                PackageButtonInfo button = (PackageButtonInfo) a.getClientProperty("buttonInfo");
-                a.setIcon(button.imageIcon);
-                a.setSelectedIcon(button.selectedImageIcon);
-                a.setToolTipText(button.desc);
-                a.setSelected(button.selected);
-                a.addItemListener(buttonInfoItemListener);
+            for (ButtonComponent a : buttons) {
+                PackageButtonInfo button = a.bi;
+                a.button.setIcon(button.imageIcon);
+                a.button.setSelectedIcon(button.selectedImageIcon);
+                a.button.setToolTipText(button.desc);
+                a.button.setSelected(button.selected);
+                a.button.addItemListener(buttonInfoItemListener);
 //                a.addMouseListener(buttonInfoMouseListener);
-                a.setMinimumSize(new Dimension(40, 40));
+                a.button.setMinimumSize(new Dimension(20, 20));
 //                a.setPreferredSize(new Dimension(40,40));
                 c.fill = GridBagConstraints.BOTH;
-                c.insets = new Insets(5, 10, 5, 10);
+//                c.insets = new Insets(5, 10, 5, 10);
+                c.insets = new Insets(2, 2, 2, 2);
                 c.anchor = GridBagConstraints.CENTER;
+                c.weightx = 0;
+                c.weighty = 1;
+                c.gridx = col;
+                c.gridy = row;
+                panel.add(a.button, c);
+                col++;
                 c.weightx = 1;
                 c.weighty = 1;
                 c.gridx = col;
                 c.gridy = row;
-                panel.add(a, c);
+                a.label=new JLabel(a.title);
+                a.label.setFont(new Font("arial", Font.PLAIN, 10));
+                a.label.setToolTipText(button.desc);
+                panel.add(a.label, c);
+
+
                 col++;
-                if (col >= 2) {
+                if (col >= maxCols * 2) {
                     col = 0;
                     row++;
                 }
@@ -288,19 +336,19 @@ public class PackagesPanel extends AbstractInstallPanel {
             imageOk = Toolkit.getDefaultToolkit().getImage(r);
         }
         imageOk = UIHelper.getFixedSizeImage(imageOk, 32, 32, false);
-        return new ImageIcon(UIHelper.getCheckedImage(imageOk,checked,12));
+        return new ImageIcon(UIHelper.getCheckedImage(imageOk, checked, 12));
     }
 
     @Override
     public void onNext() {
         super.onNext();
         InstallData u = InstallData.of(getInstallerContext());
-        for (JToggleButton button : buttons) {
-            PackageButtonInfo bi = (PackageButtonInfo) button.getClientProperty("buttonInfo");
+        for (ButtonComponent button : buttons) {
+            PackageButtonInfo bi = button.bi;
             if ("<companions>".equals(bi.app.getId())) {
-                u.optionk = !button.isSelected();
+                u.optionk = !button.button.isSelected();
             } else {
-                if (button.isSelected()) {
+                if (button.button.isSelected()) {
                     u.recommendedIds.add(bi.app);
                 }
             }

@@ -26,9 +26,7 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
 import net.thevpc.nuts.boot.NBootWorkspace;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.reserved.boot.NReservedBootLog;
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
-import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.time.Instant;
@@ -49,7 +47,8 @@ public final class Nuts {
     /**
      * current Nuts version
      */
-    public static NVersion version;
+    private static final NVersion version = NVersion.of("0.8.4").get();
+    private static final NId id = NId.of(NConstants.Ids.NUTS_GROUP_ID, NConstants.Ids.NUTS_ARTIFACT_ID, version).get();
 
     /**
      * private constructor
@@ -58,27 +57,17 @@ public final class Nuts {
     }
 
     /**
-     * current nuts version, loaded from pom file
+     * current nuts version. This is no more loaded from pom file. It is faster
+     * and safer to get it as a code constant!
      *
      * @return current nuts version
      */
     public static NVersion getVersion() {
-        if (version == null) {
-            synchronized (Nuts.class) {
-                if (version == null) {
-                    String v = NApiUtilsRPI.resolveNutsVersionFromClassPath(new NReservedBootLog(null));
-                    if (v == null) {
-                        throw new NBootException(
-                                NMsg.ofPlain(
-                                        "unable to detect nuts version. Most likely you are missing valid compilation of nuts. pom.properties could not be resolved and hence, we are unable to resolve nuts version."
-                                )
-                        );
-                    }
-                    version = NVersion.of(v).get();
-                }
-            }
-        }
         return version;
+    }
+
+    public static NId getApiId() {
+        return id;
     }
 
     /**
@@ -89,7 +78,7 @@ public final class Nuts {
      * @param args main arguments
      */
     @SuppressWarnings("UseSpecificCatch")
-    public static void main(String[] args)  throws Throwable{
+    public static void main(String[] args) throws Throwable {
         try {
             runWorkspace(args);
             System.exit(0);
@@ -105,14 +94,14 @@ public final class Nuts {
     }
 
     /**
-     * open a workspace using "nuts.boot.args" and "nut.args" system
-     * properties. "nuts.boot.args" is to be passed by nuts parent process.
-     * "nuts.args" is an optional property that can be 'exec' method. This
-     * method is to be called by child processes of nuts in order to inherit
-     * workspace configuration.
+     * open a workspace using "nuts.boot.args" and "nut.args" system properties.
+     * "nuts.boot.args" is to be passed by nuts parent process. "nuts.args" is
+     * an optional property that can be 'exec' method. This method is to be
+     * called by child processes of nuts in order to inherit workspace
+     * configuration.
      *
      * @param overriddenNutsArgs nuts arguments to override inherited arguments
-     * @param appArgs            application arguments
+     * @param appArgs application arguments
      * @return NutsSession instance
      */
     public static NSession openInheritedWorkspace(String[] overriddenNutsArgs, String... appArgs) throws NUnsatisfiedRequirementsException {
@@ -120,15 +109,15 @@ public final class Nuts {
     }
 
     /**
-     * open a workspace using "nuts.boot.args" and "nut.args" system
-     * properties. "nuts.boot.args" is to be passed by nuts parent process.
-     * "nuts.args" is an optional property that can be 'exec' method. This
-     * method is to be called by child processes of nuts in order to inherit
-     * workspace configuration.
+     * open a workspace using "nuts.boot.args" and "nut.args" system properties.
+     * "nuts.boot.args" is to be passed by nuts parent process. "nuts.args" is
+     * an optional property that can be 'exec' method. This method is to be
+     * called by child processes of nuts in order to inherit workspace
+     * configuration.
      *
-     * @param term               boot terminal or null for defaults
+     * @param term boot terminal or null for defaults
      * @param overriddenNutsArgs nuts arguments to override inherited arguments
-     * @param appArgs            arguments
+     * @param appArgs arguments
      * @return NutsSession instance
      */
     public static NSession openInheritedWorkspace(NWorkspaceTerminalOptions term, String[] overriddenNutsArgs, String... appArgs) throws NUnsatisfiedRequirementsException {
@@ -141,10 +130,6 @@ public final class Nuts {
         }
         NWorkspaceOptionsBuilder options = new DefaultNWorkspaceOptionsBuilder();
         options.setCmdLine(nutsArgs.toArray(new String[0]), null);
-        if (options.getApplicationArguments().isNotPresent()) {
-            options.setApplicationArguments(new ArrayList<>());
-        }
-        options.getApplicationArguments().get().addAll(Arrays.asList(appArgs));
         options.setApplicationArguments(Arrays.asList(appArgs));
         options.setInherited(true);
         options.setCreationTime(startTime);
@@ -197,11 +182,12 @@ public final class Nuts {
     }
 
     /**
-     * open then run Nuts application with the provided arguments. This Main
-     * will <strong>NEVER</strong> call {@link System#exit(int)}.
-     * Not that if --help or --version are detected in the command line arguments
-     * the workspace will not be opened and a null session is returned after displaying
-     * help/version information on the standard
+     * <strong>open</strong> then <strong>run</strong> Nuts application with the
+     * provided arguments. This Main will <strong>NOT</strong> call
+     * {@link System#exit(int)}. Note that if --help or --version are detected
+     * in the command line arguments the workspace will not be opened and a null
+     * session is returned after displaying help/version information on the
+     * standard
      *
      * @param term boot terminal or null for defaults
      * @param args boot arguments
@@ -212,16 +198,17 @@ public final class Nuts {
     }
 
     /**
-     * open then run Nuts application with the provided arguments. This Main
-     * will <strong>NEVER</strong> call {@link System#exit(int)}.
-     * Not that if --help or --version are detected in the command line arguments
-     * the workspace will not be opened and a null session is returned after displaying
-     * help/version information on the standard
+     * <strong>open</strong> then <strong>run</strong> Nuts application with the
+     * provided arguments. This Main will <strong>NOT</strong> call
+     * {@link System#exit(int)}. Not that if --help or --version are detected in
+     * the command line arguments the workspace will not be opened and a null
+     * session is returned after displaying help/version information on the
+     * standard
      *
      * @param args boot arguments
      * @return session
      */
     public static NSession runWorkspace(String... args) throws NExecutionException {
-        return new NBootWorkspace(null, args).runWorkspace();
+        return runWorkspace(null, args);
     }
 }

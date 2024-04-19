@@ -55,7 +55,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.211-b12, mixed mode)
 }>
 <TabItem value="windows">
 
-download [nuts-preview.jar](https://thevpc.net/nuts-preview.jar)
+download [nuts-preview.jar](https://thevpc.net/nuts/nuts-preview.jar)
 ```
 java -jar nuts-preview.jar -r=+preview -Zy
 ```
@@ -82,7 +82,7 @@ This will reset/delete any previous nuts installation before installing the late
 Removing the `Z` modifier (replace `-Zy` by `-y`) flag if you do not want to reset the workspace.
 
 ```
-$ wget https://thevpc.net/nuts-preview.jar -qO nuts.jar
+$ wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
 $ java -jar nuts.jar -r=+preview -Zy
 $ exit
 ```
@@ -103,7 +103,7 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="macos">
 
 ```
-$ curl -sOL https://thevpc.net/nuts-preview.jar -o nuts.jar
+$ curl -sOL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 ```
@@ -121,7 +121,7 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="wget">
 
 ```
-$ wget https://thevpc.net/nuts-preview.jar -qO nuts.jar
+$ wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
 $ java -jar nuts.jar -r=+preview -Zy
 $ exit
 ```
@@ -137,7 +137,7 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="curl">
 
 ```
-$ curl -sOL https://thevpc.net/nuts-preview.jar -o nuts.jar
+$ curl -sOL https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar
 $ java -jar nuts.jar -r=+preview -Zy
 $ exit
 ```

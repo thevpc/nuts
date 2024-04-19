@@ -110,7 +110,7 @@ public class TypeCommand extends NShellBuiltinDefault {
                 }
             }
         }
-        switch (context.getSession().getOutputFormat()) {
+        switch (context.getSession().getOutputFormat().orDefault()) {
             case PLAIN: {
                 for (ResultItem resultItem : result) {
                     context.getSession().out().println(resultItem.message);

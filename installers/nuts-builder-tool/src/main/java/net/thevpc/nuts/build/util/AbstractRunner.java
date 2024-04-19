@@ -16,8 +16,12 @@ import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import net.thevpc.nuts.build.NutsBuildRunnerContext;
+import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
+import net.thevpc.nuts.spi.NScopeType;
 
-public class AbstractRunner {
+public abstract class AbstractRunner implements NCmdLineConfigurable {
+
     protected NSession session;
     protected NPrintStream out;
     protected NPath INIT_FOLDER;
@@ -32,16 +36,44 @@ public class AbstractRunner {
         CURRENT_FOLDER = INIT_FOLDER;
     }
 
+    public void configureDefaults() {
+
+    }
+
+    public void buildConfiguration() {
+
+    }
+
+    public NutsBuildRunnerContext context() {
+        NutsBuildRunnerContext s = (NutsBuildRunnerContext) session.getProperty(NutsBuildRunnerContext.class.getName(), NScopeType.SESSION).orNull();
+        if (s == null) {
+            s = new NutsBuildRunnerContext();
+            session.setProperty(NutsBuildRunnerContext.class.getName(), NScopeType.SESSION, s);
+        }
+        return s;
+    }
+
+    @Override
+    public Object configure(boolean skipUnsupported, String... args) {
+        configure(skipUnsupported, NCmdLine.of(args, session));
+        return this;
+    }
+
+    public void configure(NCmdLine args) {
+
+    }
+
+    public abstract void run();
 
     public String readString(NPath path) {
         return new String(path.readBytes());
     }
 
     public void writeString(NPath path, String str) {
-        if (session.isDry() || session.isTrace()) {
+        if (session.getDry().orDefault() || session.isTrace()) {
             traceCmd("write", String.valueOf(path), str);
         }
-        if (session.isDry()) {
+        if (session.getDry().orDefault()) {
             return;
         }
         path.writeString(str);
@@ -92,43 +124,43 @@ public class AbstractRunner {
     }
 
     public void mkdir(NPath path) {
-        if (session.isDry() || session.isTrace()) {
+        if (session.getDry().orDefault() || session.isTrace()) {
             traceCmd("mkdir", "-p", path.toString());
         }
-        if (!session.isDry()) {
+        if (!session.getDry().orDefault()) {
             path.mkdirs();
         }
     }
 
     public void rmDir(NPath path) {
-        if (session.isDry() || session.isTrace()) {
+        if (session.getDry().orDefault() || session.isTrace()) {
             traceCmd("rm", "-r", path.toString());
         }
-        if (!session.isDry()) {
+        if (!session.getDry().orDefault()) {
             path.deleteTree();
         }
     }
 
     public void rm(NPath path) {
-        if (session.isDry() || session.isTrace()) {
+        if (session.getDry().orDefault() || session.isTrace()) {
             traceCmd("rm", path.toString());
         }
-        if (!session.isDry()) {
+        if (!session.getDry().orDefault()) {
             path.delete();
         }
     }
 
     public void cp(NPath from, NPath to) {
-        if (session.isDry() || session.isTrace()) {
+        if (session.getDry().orDefault() || session.isTrace()) {
             traceCmd("cp", from.toString(), to.toString());
         }
-        if (!session.isDry()) {
+        if (!session.getDry().orDefault()) {
             from.copyTo(to, NPathOption.REPLACE_EXISTING);
         }
     }
 
     public void exec(String... cmd) {
-        if (session.isDry() || session.isTrace()) {
+        if (session.getDry().orDefault() || session.isTrace()) {
             traceCmd(cmd);
         }
 //        String out =
@@ -137,16 +169,15 @@ public class AbstractRunner {
                 .failFast()
                 .system()
                 .setDirectory(CURRENT_FOLDER)
-                .run()
-//                .setRedirectErrorStream()
-//                .grabOutputString()
-//                .getOutputString()
-        ;
+                .run() //                .setRedirectErrorStream()
+                //                .grabOutputString()
+                //                .getOutputString()
+                ;
 //        session.out().println(out.trim());
     }
 
     public String execAsString(String... cmd) {
-        if (session.isDry() || session.isTrace()) {
+        if (session.getDry().orDefault() || session.isTrace()) {
             traceCmd(cmd);
         }
         return NExecCmd.of(session)
@@ -159,7 +190,7 @@ public class AbstractRunner {
     }
 
     public void copyWithHeader(NPath from, NPath to, String header) {
-        if (session.isDry() || session.isTrace()) {
+        if (session.getDry().orDefault() || session.isTrace()) {
             traceCmd("copy-with-header", from.toString(), to.toString(), "**header...**");
         }
         try (PrintStream out = to.getPrintStream()) {
@@ -171,10 +202,10 @@ public class AbstractRunner {
     }
 
     public void sed(String fromExpr, String to, NPath path) {
-        if (session.isDry() || session.isTrace()) {
+        if (session.getDry().orDefault() || session.isTrace()) {
             traceCmd("sed", fromExpr, to, path.toString());
         }
-        NPath p = NPath.ofTempFile("temp",session);
+        NPath p = NPath.ofTempFile("temp", session);
         try (PrintStream out = p.getPrintStream()) {
             try (BufferedReader br = path.getBufferedReader()) {
                 String line;
@@ -203,7 +234,7 @@ public class AbstractRunner {
     }
 
     public void trace(NCmdLine cmdLine) {
-        if (session.isDry()) {
+        if (session.getDry().orDefault()) {
             out.print("[dry] ");
         } else {
             out.print("[trace] ");
@@ -222,14 +253,12 @@ public class AbstractRunner {
         out.println(NMsg.ofV(message, vars));
     }
 
-
     public void echo(String message) {
         out.println(NMsg.ofV(message, new HashMap<>()));
     }
 
-
     public void sleep(int seconds) {
-        if (session.isDry() || session.isTrace()) {
+        if (session.getDry().orDefault() || session.isTrace()) {
             traceCmd("sleep", String.valueOf(seconds));
         }
         try {
@@ -248,7 +277,7 @@ public class AbstractRunner {
     }
 
     public void cd(NPath p) {
-        if (session.isDry() || session.isTrace()) {
+        if (session.getDry().orDefault() || session.isTrace()) {
             traceCmd("cd", String.valueOf(p));
         }
         CURRENT_FOLDER = p;
@@ -263,17 +292,25 @@ public class AbstractRunner {
         return this;
     }
 
-
     public void scpPushFile(String fromLocal, String toRemote) {
         scp(fromLocal, getRemoteSshConnexion().get() + ":" + toRemote);
     }
 
     public void pushFolder(NPath fromLocal, String toRemote) {
-        scp("-r", fromLocal.toString(), getRemoteSshConnexion().get() + ":" + toRemote);
+        scp("-r", fromLocal.toString(), getRemoteSshConnexion().get() + ":" + _parentPath(toRemote));
+    }
+
+    public void pushFolder(NPath fromLocal, NPath toRemote) {
+        scp("-r", fromLocal.toString(), getRemoteSshConnexion().get() + ":" + _parentPath(toRemote.toString()));
+    }
+
+    private String _parentPath(String toRemote) {
+        int i = toRemote.lastIndexOf('/');
+        return toRemote.substring(0, i + 1);
     }
 
     public void pushFolder(String fromLocal, String toRemote) {
-        scp("-r", fromLocal, getRemoteSshConnexion().get() + ":" + toRemote);
+        scp("-r", fromLocal, getRemoteSshConnexion().get() + ":" + _parentPath(toRemote));
     }
 
     public void pushFile(NPath fromLocal, String toRemote) {
@@ -284,7 +321,6 @@ public class AbstractRunner {
         scp(fromLocal, getRemoteSshConnexion().get() + ":" + toRemote);
     }
 
-
     public void remoteDeleteFolder(String path) {
         remoteExec("rm -R " + path);
     }
@@ -294,11 +330,21 @@ public class AbstractRunner {
     }
 
     public void remoteCopyFolder(String fromRemote, String toRemote) {
-        remoteExec("cp -r " + fromRemote + " " + toRemote);
+        remoteExec("cp -r " + fromRemote + " " + _parentPath(toRemote));
+        //scp("-r", getRemoteSshConnexion().get() + ":" + fromRemote, getRemoteSshConnexion().get() + ":" + toRemote);
+    }
+
+    public void remoteCopyFolder(NPath fromRemote, NPath toRemote) {
+        remoteExec("cp -r " + fromRemote + " " + _parentPath(toRemote.toString()));
         //scp("-r", getRemoteSshConnexion().get() + ":" + fromRemote, getRemoteSshConnexion().get() + ":" + toRemote);
     }
 
     public void remoteCopyFile(String fromRemote, String toRemote) {
+        remoteExec("cp " + fromRemote + " " + toRemote);
+        //scp(getRemoteSshConnexion().get() + ":" + fromRemote, getRemoteSshConnexion().get() + ":" + toRemote);
+    }
+
+    public void remoteCopyFile(NPath fromRemote, NPath toRemote) {
         remoteExec("cp " + fromRemote + " " + toRemote);
         //scp(getRemoteSshConnexion().get() + ":" + fromRemote, getRemoteSshConnexion().get() + ":" + toRemote);
     }
@@ -341,4 +387,66 @@ public class AbstractRunner {
         return results.toArray(new JpsResult[0]);
     }
 
+    protected NPath removeMavenThevpc() {
+        return NPath.of(context().home + "/srv/maven-thevpc/", session);
+    }
+
+    protected NPath remoteNutsInstall() {
+        return NPath.of(context().home + "/srv/tomcat/webapps-thevpc/ROOT/nuts/", session);
+    }
+
+    protected NPath localMvn() {
+        return NPath.of(Mvn.localMaven(), session);
+    }
+
+    protected NPath removeMvn() {
+        String remoteUser = "vpc";
+        return NPath.of("/home/" + remoteUser + "/.m2/repository", session);
+    }
+
+    public NSession session() {
+        return session;
+    }
+
+    public void pushIdFiles(String... ids) {
+        NPath m2Path = localMvn();
+        NPath mavenThevpc = removeMavenThevpc();
+        class PathWithPrio {
+
+            String p;
+            NPath path;
+            int prio;
+
+            public PathWithPrio(String p, NPath path, int prio) {
+                this.p = p;
+                this.path = path;
+                this.prio = prio;
+            }
+        }
+        List<PathWithPrio> todo = new ArrayList<>();
+        for (String sid : ids) {
+            NId id = NId.of(sid).get();
+            NPath folder = localMvn().resolve(Mvn.folder(id));
+            for (NPath sub : folder.list()) {
+                if (sub.isRegularFile()) {
+                    String name = sub.getName();
+                    todo.add(new PathWithPrio(
+                            Mvn.folder(id),
+                            sub,
+                            MvnArtifactType.byFile(name).get().uploadPrio()
+                    )
+                    );
+                }
+            }
+        }
+        todo.sort(Comparator.comparing(x -> x.prio));
+        for (PathWithPrio pathWithPrio : todo) {
+            pushFile(pathWithPrio.path, m2Path.resolve(pathWithPrio.p).toString());
+            remoteCopyFile(
+                    m2Path.resolve(pathWithPrio.p).toString(),
+                    mavenThevpc.resolve(pathWithPrio.p).toString()
+            );
+        }
+
+    }
 }

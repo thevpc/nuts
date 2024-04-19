@@ -63,7 +63,6 @@ public interface NExecCmd extends NWorkspaceCmd {
      */
     NString format();
 
-
     /**
      * if true, an exception is thrown whenever the command returns non zero
      * value.
@@ -73,18 +72,19 @@ public interface NExecCmd extends NWorkspaceCmd {
     boolean isFailFast();
 
     /**
-     * when the execution returns a non zero result, an exception is
-     * thrown. Particularly, if <code>grabOut</code> is used, error exception will
-     * be stated in the output message
+     * when the execution returns a non zero result, an exception is thrown.
+     * Particularly, if <code>grabOut</code> is used, error exception will be
+     * stated in the output message
      *
      * @param failFast failFast if true an exception will be thrown if exit code
-     *                 is not zero
+     * is not zero
      * @return {@code this} instance
      */
     NExecCmd setFailFast(boolean failFast);
 
     /**
      * equivalent to <code>failFast(true)</code>
+     *
      * @return {@code this} instance
      */
     NExecCmd failFast();
@@ -131,6 +131,8 @@ public interface NExecCmd extends NWorkspaceCmd {
      * @return {@code this} instance
      */
     NExecCmd addCommand(String... command);
+
+    NExecCmd addCommand(NPath path);
 
     /**
      * append command arguments
@@ -214,7 +216,7 @@ public interface NExecCmd extends NWorkspaceCmd {
     /**
      * set or unset env property. the property is unset if the value is null.
      *
-     * @param key   env key
+     * @param key env key
      * @param value env value
      * @return {@code this} instance
      */
@@ -272,17 +274,18 @@ public interface NExecCmd extends NWorkspaceCmd {
      */
     NExecCmd setOut(NExecOutput out);
 
-
     /**
-     * grub output stream while redirecting error stream to the grabbed output stream.
-     * equivalent to <code>grabOut().redirectErr()</code>
+     * grub output stream while redirecting error stream to the grabbed output
+     * stream. equivalent to <code>grabOut().redirectErr()</code>
      *
      * @return
      */
     NExecCmd grabAll();
 
     /**
-     * grub output stream to be retrieved later using <code>getGrabbedOutString</code>.
+     * grub output stream to be retrieved later using
+     * <code>getGrabbedOutString</code>.
+     *
      * @return
      */
     NExecCmd grabOut();
@@ -295,32 +298,37 @@ public interface NExecCmd extends NWorkspaceCmd {
     NExecCmd grabOutOnly();
 
     /**
-     * grub error stream to be retrieved later using <code>getGrabbedErrString</code>.
+     * grub error stream to be retrieved later using
+     * <code>getGrabbedErrString</code>.
+     *
      * @return
      */
     NExecCmd grabErr();
 
     /**
      * redirects error to out, runs the command and returns out string
-     * equivalent to
-     * <code>grabAll().getGrabbedOutString()</code>
-     * if the command is already run, has no effect, and may fail if the out stream is not configured to bed grabbed.
+     * equivalent to <code>grabAll().getGrabbedOutString()</code> if the command
+     * is already run, has no effect, and may fail if the out stream is not
+     * configured to bed grabbed.
+     *
      * @return output stream, ignoring error stream
      */
     String getGrabbedAllString();
 
     /**
-     * silences error, runs the command and return out string
-     * equivalent to
-     * <code>grabOutOnly().getGrabbedOutString()</code>
-     * if the command is already run, has no effect, and may fail if the out stream is not configured to bed grabbed.
+     * silences error, runs the command and return out string equivalent to
+     * <code>grabOutOnly().getGrabbedOutString()</code> if the command is
+     * already run, has no effect, and may fail if the out stream is not
+     * configured to bed grabbed.
+     *
      * @return output stream, ignoring error stream
      */
     String getGrabbedOutOnlyString();
 
     /**
-     * return grabbed output after command execution
-     * Also runs the command if not yet run.
+     * return grabbed output after command execution Also runs the command if
+     * not yet run.
+     *
      * @return grabbed output after command execution
      */
     String getGrabbedOutString();
@@ -447,7 +455,7 @@ public interface NExecCmd extends NWorkspaceCmd {
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args            argument to configure with
+     * @param args argument to configure with
      * @return {@code this} instance
      */
     @Override
@@ -465,10 +473,9 @@ public interface NExecCmd extends NWorkspaceCmd {
 
     NExecCmd setSleepMillis(long sleepMillis);
 
-
     /**
-     * return host connexion string.
-     * when host is not blank, this connexion string will be used to connect to a remote host for execution
+     * return host connexion string. when host is not blank, this connexion
+     * string will be used to connect to a remote host for execution
      *
      * @return host
      * @since 0.8.4
@@ -476,14 +483,13 @@ public interface NExecCmd extends NWorkspaceCmd {
     String getTarget();
 
     /**
-     * update host connexion string.
-     * when host is not blank, this connexion string will be used to connect to a remote host for execution
+     * update host connexion string. when host is not blank, this connexion
+     * string will be used to connect to a remote host for execution
      *
      * @param host host
      * @return {@code this} instance
      */
     NExecCmd setTarget(String host);
-
 
     NExecCmd redirectErr();
 }

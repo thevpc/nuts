@@ -102,7 +102,7 @@ public class AutocompleteCommand extends NShellBuiltinDefault {
             }
             p.setProperty(value == null ? "" : value, dvalue == null ? "" : dvalue);
         }
-        switch (session.getOutputFormat()) {
+        switch (session.getOutputFormat().orDefault()) {
             case PLAIN: {
                 NTexts text = NTexts.of(session);
                 for (String o : new TreeSet<String>((Set) p.keySet())) {

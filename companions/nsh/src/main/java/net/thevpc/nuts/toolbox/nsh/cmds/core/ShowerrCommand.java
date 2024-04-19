@@ -89,7 +89,7 @@ public class ShowerrCommand extends NShellBuiltinCore {
     protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         NShellResult r = context.getShellContext().getLastResult();
         NPrintStream out = context.getSession().out();
-        switch (context.getSession().getOutputFormat()) {
+        switch (context.getSession().getOutputFormat().orDefault()) {
             case PLAIN: {
                 if (r.getCode() == 0) {
                     out.println(

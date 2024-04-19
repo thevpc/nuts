@@ -171,6 +171,8 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
 
     NOptional<T> withDefault(Supplier<T> value);
 
+    NOptional<T> withDefaultOptional(Supplier<NOptional<T>> value);
+
     NOptional<T> withDefault(T value);
 
     NOptional<T> withoutDefault();
@@ -240,6 +242,7 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
     T orNull();
 
     T orDefault();
+    NOptional<T> orDefaultOptional();
 
     NOptional<T> ifEmptyNull();
 

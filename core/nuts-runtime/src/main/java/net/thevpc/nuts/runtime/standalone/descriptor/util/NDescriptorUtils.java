@@ -49,7 +49,7 @@ public class NDescriptorUtils {
         String artifactId = id == null ? null : id.getArtifactId();
         NVersion version = id == null ? null : id.getVersion();
         if (groupId == null || artifactId == null || NBlankable.isBlank(version)) {
-            switch (session.getConfirm()) {
+            switch (session.getConfirm().orDefault()) {
                 case ASK:
                 case ERROR: {
                     if (groupId == null) {

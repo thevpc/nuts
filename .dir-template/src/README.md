@@ -46,7 +46,7 @@ Please note that ```nuts``` rolling version (which is the most recent version) i
 First you need to download nuts-preview.jar
 
 ```
-wget https://thevpc.net/nuts-preview.jar -O nuts.jar
+wget https://thevpc.net/nuts/nuts-preview.jar -O nuts.jar
 ```
 
 Then you must run, in a terminal, the following command
@@ -77,7 +77,7 @@ wget wget https://repo1.maven.org/maven2/net/thevpc/nuts/nuts/${{stableApiVersio
 If you want a shorter link, use this one!
 
 ```
-wget https://thevpc.net/nuts-stable.jar -O nuts.jar
+wget https://thevpc.net/nuts/nuts-stable.jar -O nuts.jar
 ```
 
 Then you must run, in a terminal, one of the the following commands:

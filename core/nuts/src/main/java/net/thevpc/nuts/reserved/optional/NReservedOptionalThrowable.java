@@ -15,14 +15,32 @@ public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImp
     }
 
     private Throwable rootStack = DEBUG ? new Throwable() : null;
-    private Supplier<T> defaultValue;
+    private Supplier<NOptional<T>> defaultValue;
 
-    public NReservedOptionalThrowable(Supplier<T> defaultValue) {
-        this.defaultValue = defaultValue;
+    public NReservedOptionalThrowable() {
     }
 
     public T orDefault() {
-        return defaultValue == null ? null : defaultValue.get();
+        if(defaultValue == null){
+            return null;
+        }
+        NOptional<T> o = defaultValue.get();
+        if(o==null){
+            return null;
+        }
+        return o.orDefault();
+    }
+
+    @Override
+    public NOptional<T> orDefaultOptional() {
+        if(defaultValue == null){
+            return null;
+        }
+        NOptional<T> o = defaultValue.get();
+        if(o==null){
+            return NOptional.ofEmpty(getMessage());
+        }
+        return o.orDefaultOptional();
     }
 
     protected NMsg prepareMessage(NMsg m) {
@@ -46,14 +64,26 @@ public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImp
     @Override
     public NOptional<T> withDefault(Supplier<T> value) {
         NReservedOptionalThrowable<T> c = (NReservedOptionalThrowable<T>) clone();
-        c.defaultValue = value;
+        c.defaultValue = value==null?null:()->NOptional.of(value.get());
+        return c;
+    }
+    @Override
+    public NOptional<T> withDefaultOptional(Supplier<NOptional<T>> value) {
+        NReservedOptionalThrowable<T> c = (NReservedOptionalThrowable<T>) clone();
+        c.defaultValue = value==null?null:()->{
+            NOptional<T> i = value.get();
+            if(i==null){
+                return NOptional.ofEmpty(getMessage());
+            }
+            return this;
+        };
         return c;
     }
 
     @Override
     public NOptional<T> withDefault(T value) {
         NReservedOptionalThrowable<T> c = (NReservedOptionalThrowable<T>) clone();
-        c.defaultValue = () -> value;
+        c.defaultValue = value==null?null:() -> NOptional.of(value);
         return c;
     }
 

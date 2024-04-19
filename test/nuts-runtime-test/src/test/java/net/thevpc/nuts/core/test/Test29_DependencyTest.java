@@ -8,14 +8,10 @@ package net.thevpc.nuts.core.test;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.DefaultNBootOptionsBuilder;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NStringMapFormat;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-import java.util.Map;
 
 /**
  *

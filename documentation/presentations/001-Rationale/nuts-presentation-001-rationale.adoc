@@ -380,7 +380,7 @@ Is Not:
 * Install for Preview/Evaluation, most `recent`
 
 ```sh
-$ wget https://thevpc.net/nuts-preview.jar -o nuts.jar
+$ wget https://thevpc.net/nuts/nuts-preview.jar -o nuts.jar
 $ java -jar nuts.jar -Zy -r=+preview
 $ exit
 ```

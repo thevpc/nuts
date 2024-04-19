@@ -77,23 +77,23 @@ $> nuts search
 
 $> nuts search 'net.thevpc.nuts.toolbox:*' --anywhere
  
-        net.thevpc.nuts.toolbox:nsh#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@5745ca0e
-        net.thevpc.nuts.toolbox:ndoc#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@5745ca0e
-        net.thevpc.nuts.toolbox:ndexer#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@5745ca0e
-        net.thevpc.nuts.toolbox:njob#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@5745ca0e
-        net.thevpc.nuts.toolbox:nmvn#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@5745ca0e
-        net.thevpc.nuts.toolbox:nwork#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@5745ca0e
-        net.thevpc.nuts.toolbox:nsh#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@5745ca0e
-        net.thevpc.nuts.toolbox:ntomcat#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@5745ca0e
-        net.thevpc.nuts.toolbox:ntalk-agent#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@5745ca0e
-        net.thevpc.nuts.toolbox:ndiff#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@5745ca0e
-        net.thevpc.nuts.toolbox:nserver#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@5745ca0e
-        net.thevpc.nuts.toolbox:ndb#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@5745ca0e
-        net.thevpc.nuts.toolbox:nversion#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@5745ca0e
-        net.thevpc.nuts.toolbox:ntemplate#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@5745ca0e
-        net.thevpc.nuts.toolbox:ncode#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@5745ca0e
-        net.thevpc.nuts.toolbox:ndocusaurus#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@5745ca0e
-        net.thevpc.nuts.toolbox:noapi#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@5745ca0e
+        net.thevpc.nuts.toolbox:nsh#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@a96eb16
+        net.thevpc.nuts.toolbox:ndoc#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@a96eb16
+        net.thevpc.nuts.toolbox:ndexer#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@a96eb16
+        net.thevpc.nuts.toolbox:njob#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@a96eb16
+        net.thevpc.nuts.toolbox:nmvn#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@a96eb16
+        net.thevpc.nuts.toolbox:nwork#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@a96eb16
+        net.thevpc.nuts.toolbox:nsh#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@a96eb16
+        net.thevpc.nuts.toolbox:ntomcat#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@a96eb16
+        net.thevpc.nuts.toolbox:ntalk-agent#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@a96eb16
+        net.thevpc.nuts.toolbox:ndiff#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@a96eb16
+        net.thevpc.nuts.toolbox:nserver#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@a96eb16
+        net.thevpc.nuts.toolbox:ndb#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@a96eb16
+        net.thevpc.nuts.toolbox:nversion#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@a96eb16
+        net.thevpc.nuts.toolbox:ntemplate#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@a96eb16
+        net.thevpc.nuts.toolbox:ncode#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@a96eb16
+        net.thevpc.nuts.toolbox:ndocusaurus#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@a96eb16
+        net.thevpc.nuts.toolbox:noapi#net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@a96eb16
 
 $> nuts install org.jedit:jedit
 

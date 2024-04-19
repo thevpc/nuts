@@ -114,18 +114,18 @@ public class JavaExecutorComponent implements NExecutorComponent {
         NWorkspaceOptionsBuilder options = NBootManager.of(session).getBootOptions().builder();
 
         //copy session parameters to the newly created workspace
-        options.setDry(session.isDry());
+        options.setDry(session.getDry().orDefault());
         options.setGui(session.isGui());
         options.setOutLinePrefix(session.getOutLinePrefix());
         options.setErrLinePrefix(session.getErrLinePrefix());
-        options.setDebug(session.getDebug());
+        options.setDebug(session.getDebug().orDefault());
         options.setTrace(session.isTrace());
         options.setBot(session.isBot());
         options.setCached(session.isCached());
         options.setIndexed(session.isIndexed());
-        options.setConfirm(session.getConfirm());
+        options.setConfirm(session.getConfirm().orDefault());
         options.setTransitive(session.isTransitive());
-        options.setOutputFormat(session.getOutputFormat());
+        options.setOutputFormat(session.getOutputFormat().orDefault());
         switch (options.getTerminalMode().orElse(NTerminalMode.DEFAULT)) {
             //retain filtered
             case DEFAULT:
@@ -312,7 +312,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
 //                    xargs.add(Dnuts_boot_args);
 //                    args.add(Dnuts_boot_args);
 //                }
-                NDebugString jdb = NDebugString.of(session.getDebug(), session);
+                NDebugString jdb = NDebugString.of(session.getDebug().orDefault(), session);
                 if (jdb.isEnabled()) {
                     int port = jdb.getPort();
                     if (port <= 0) {
@@ -411,7 +411,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
 
         @Override
         public int exec() {
-            if (getSession().isDry()) {
+            if (getSession().getDry().orDefault()) {
                 NSession session = getSession();
                 NTexts text = NTexts.of(session);
                 List<String> cmdLine = new ArrayList<>();

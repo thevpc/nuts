@@ -165,7 +165,7 @@ public class LsCommand extends NShellBuiltinDefault {
         }
         if (success != null) {
             NPrintStream out = session.out();
-            switch (session.getOutputFormat()) {
+            switch (session.getOutputFormat().orDefault()) {
                 case XML:
                 case JSON:
                 case YAML:

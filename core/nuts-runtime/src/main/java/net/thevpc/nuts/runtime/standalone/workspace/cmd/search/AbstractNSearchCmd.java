@@ -1098,7 +1098,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
         NDisplayProperty[] a = getDisplayOptions().getDisplayProperties();
         NStream r = null;
         if (isDependencies() && !isInlineDependencies()) {
-            NContentType of = getSearchSession().getOutputFormat();
+            NContentType of = getSearchSession().getOutputFormat().orDefault();
             if (of == null) {
                 of = NContentType.TREE;
             }
@@ -1265,7 +1265,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     @Override
     public NSearchCmd run() {
         NIterator<Object> it = runIterator();
-        if (session.isDry()) {
+        if (session.getDry().orDefault()) {
             displayDryQueryPlan(it);
         } else {
             it = NWorkspaceUtils.of(getSearchSession()).decoratePrint(it, getSearchSession(), getDisplayOptions());
@@ -1287,7 +1287,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     private void displayDryQueryPlan(NIterator it) {
         NElement n = toQueryPlan(it);
-        NContentType f = session.getOutputFormat();
+        NContentType f = session.getOutputFormat().orDefault();
         if (f == NContentType.PLAIN) {
             f = NContentType.TREE;
         }
@@ -1299,8 +1299,8 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     public NIterator<NDefinition> getResultDefinitionIteratorBase(boolean content, boolean effective) {
         NFetchCmd fetch = toFetch().setContent(content).setEffective(effective);
         NFetchCmd ofetch = toFetch().setContent(content).setEffective(effective).setSession(getSession().copy().setFetchStrategy(NFetchStrategy.OFFLINE));
-        final boolean hasRemote = getSession().getFetchStrategy() == null
-                || getSession().getFetchStrategy().modes().stream()
+        final boolean hasRemote = getSession().getFetchStrategy().orDefault() == null
+                || getSession().getFetchStrategy().orDefault().modes().stream()
                 .anyMatch(x -> x == NFetchMode.REMOTE);
         return IteratorBuilder.of(getResultIdIteratorBase(null), session)
                 .map(NFunction.of((NId next) -> {

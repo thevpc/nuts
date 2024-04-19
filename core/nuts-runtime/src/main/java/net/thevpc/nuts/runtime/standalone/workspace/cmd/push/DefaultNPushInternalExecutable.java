@@ -23,7 +23,7 @@ public class DefaultNPushInternalExecutable extends DefaultInternalNExecutableCo
 
     @Override
     public int execute() {
-        if(getSession().isDry()){
+        if(getSession().getDry().orDefault()){
             dryExecute();
             return NExecutionException.SUCCESS;
         }

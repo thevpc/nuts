@@ -263,7 +263,7 @@ public class DefaultNTexts implements NTexts {
             params = new Object[0];
         }
         Object msg = m.getMessage();
-        String sLocale = getSession() == null ? null : getSession().getLocale();
+        String sLocale = getSession() == null ? null : getSession().getLocale().orDefault();
         Locale locale = NBlankable.isBlank(sLocale) ? null : new Locale(sLocale);
         NTexts txt = NTexts.of(getSession());
         switch (format) {

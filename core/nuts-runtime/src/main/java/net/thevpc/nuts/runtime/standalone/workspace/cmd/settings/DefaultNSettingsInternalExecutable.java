@@ -29,7 +29,7 @@ public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutab
     private List<NSettingsSubCommand> subCommands;
     @Override
     public int execute() {
-        if(getSession().isDry()){
+        if(getSession().getDry().orDefault()){
             dryExecute();
             return NExecutionException.SUCCESS;
         }

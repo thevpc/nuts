@@ -3,26 +3,24 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  *
  * <br>
  * <p>
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
+ * <br> ====================================================================
  */
 package net.thevpc.nuts.reserved;
 
@@ -43,13 +41,27 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.thevpc.nuts.boot.NBootOptionsBuilder;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.elem.NArrayElementBuilder;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.format.NContentType;
+import net.thevpc.nuts.io.NIO;
+import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.log.NLogOp;
+import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.reserved.boot.NReservedBootLog;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
 
 /**
- * this class implements several utility methods to be used by Nuts API interfaces
+ * this class implements several utility methods to be used by Nuts API
+ * interfaces
  *
  * @author thevpc
  */
 public class NApiUtilsRPI {
+
     private static Logger LOG = Logger.getLogger(NApiUtilsRPI.class.getName());
 
     private NApiUtilsRPI() {
@@ -114,38 +126,219 @@ public class NApiUtilsRPI {
         return true;
     }
 
-    public static int processThrowable(Throwable ex, NLog out) {
-        return NReservedCollectionUtils.processThrowable(ex, out);
+    private static boolean resolveShowStackTrace(NWorkspaceOptions bo) {
+        if (bo.getShowException().isPresent()) {
+            return bo.getShowException().get();
+        } else if (bo.getBot().orElse(false)) {
+            return false;
+        } else {
+            if (NApiUtilsRPI.getSysBoolNutsProperty("show-exception", false)) {
+                return true;
+            }
+            if (bo.getDebug().isPresent() && !NBlankable.isBlank(bo.getDebug().get())) {
+                return true;
+            }
+            NLogConfig nLogConfig = bo.getLogConfig().orElseGet(NLogConfig::new);
+            if ((nLogConfig.getLogTermLevel() != null
+                    && nLogConfig.getLogTermLevel().intValue() < Level.INFO.intValue())) {
+                return true;
+            }
+            return false;
+        }
     }
 
     public static int processThrowable(Throwable ex, String[] args) {
         DefaultNBootOptionsBuilder bo = new DefaultNBootOptionsBuilder();
         bo.setCmdLine(args, null);
-        try {
-            if (NApiUtilsRPI.isGraphicalDesktopEnvironment()) {
-                bo.setGui(false);
+        return processThrowable(ex, null, true, resolveShowStackTrace(bo), resolveGui(bo));
+    }
+
+    /**
+     * process Throwable and return exit code
+     *
+     * @param ex exception
+     * @param out out stream
+     * @return exit code
+     */
+    public static int processThrowable(Throwable ex, NLog out) {
+        if (ex == null) {
+            return 0;
+        }
+
+        NSession session = NSessionAwareExceptionBase.resolveSession(ex).orNull();
+        NBootOptionsBuilder bo = null;
+        if (session != null) {
+            bo = NBootManager.of(session).getBootOptions().builder();
+        } else {
+            NBootOptionsBuilder options = new DefaultNBootOptionsBuilder();
+            //load inherited
+            String nutsArgs = NStringUtils.trim(
+                    NStringUtils.trim(System.getProperty("nuts.boot.args"))
+                    + " " + NStringUtils.trim(System.getProperty("nuts.args"))
+            );
+            try {
+                options.setCmdLine(NCmdLine.parseDefault(nutsArgs).get().toStringArray(), null);
+            } catch (Exception e) {
+                //any, ignore...
             }
-        } catch (Exception e) {
-            //exception may occur if the sdk is built without awt package for instance!
-            bo.setGui(false);
+            bo = options;
         }
-        boolean bot = bo.getBot().orElse(false);
-        boolean gui = !bot && bo.getGui().orElse(false);
-        boolean showStackTrace = bo.getDebug().isPresent();
-        NLogConfig nLogConfig = bo.getLogConfig().orElseGet(NLogConfig::new);
-        showStackTrace |= (nLogConfig.getLogTermLevel() != null
-                && nLogConfig.getLogTermLevel().intValue() < Level.INFO.intValue());
-        if (!showStackTrace) {
-            showStackTrace = NApiUtilsRPI.getSysBoolNutsProperty("debug", false);
+        return processThrowable(ex, out, true, resolveShowStackTrace(bo), resolveGui(bo));
+    }
+
+    public static boolean resolveGui(NWorkspaceOptions bo) {
+        if (bo.getBot().orElse(false)) {
+            return false;
         }
-        if (bot) {
-            showStackTrace = false;
+        if (bo.getGui().orElse(false)) {
+            if (!NApiUtilsRPI.isGraphicalDesktopEnvironment()) {
+                return false;
+            }
+            return true;
+        } else {
+            return false;
         }
-        return processThrowable(ex, null, true, showStackTrace, gui);
     }
 
     public static int processThrowable(Throwable ex, NLog out, boolean showMessage, boolean showStackTrace, boolean showGui) {
-        return NReservedCollectionUtils.processThrowable(ex, out, showMessage, showStackTrace, showGui);
+        if (ex == null) {
+            return 0;
+        }
+        int errorCode = NExceptionWithExitCodeBase.resolveExitCode(ex).orElse(204);
+        if (errorCode == 0) {
+            return 0;
+        }
+        NSession session = NSessionAwareExceptionBase.resolveSession(ex).orNull();
+        NMsg fm = NSessionAwareExceptionBase.resolveSessionAwareExceptionBase(ex).map(NSessionAwareExceptionBase::getFormattedMessage)
+                .orNull();
+        String m = NReservedLangUtils.getErrorMessage(ex);
+        NPrintStream sout = null;
+        if (out == null) {
+            if (session != null) {
+                try {
+                    sout = NIO.of(session).getSystemTerminal().getErr();
+                    if (fm != null) {
+                        fm = NMsg.ofNtf(NTexts.of(session).ofBuilder().append(fm, NTextStyle.error()).build());
+                    } else {
+                        fm = NMsg.ofStyled(m, NTextStyle.error());
+                    }
+                } catch (Exception ex2) {
+                    NLogOp.of(NApplications.class, session).level(Level.FINE).error(ex2).log(
+                            NMsg.ofPlain("unable to get system terminal")
+                    );
+                    //
+                }
+            } else {
+                if (fm != null) {
+                    // session is null but the exception is of NutsException type
+                    // This is kind of odd, so will ignore message fm
+                    fm = null;
+                } else {
+                    out = new NReservedBootLog();
+                }
+            }
+        } else {
+            if (session != null) {
+//                fout = NutsPrintStream.of(out, NutsTerminalMode.FORMATTED, null, session);
+                sout = session.err();
+            } else {
+                sout = null;
+            }
+        }
+        if (showMessage) {
+
+            if (sout != null) {
+                if (session.getOutputFormat().orDefault() == NContentType.PLAIN) {
+                    if (fm != null) {
+                        sout.println(fm);
+                    } else {
+                        sout.println(m);
+                    }
+                    if (showStackTrace) {
+                        ex.printStackTrace(sout.asPrintStream());
+                    }
+                    sout.flush();
+                } else {
+                    if (fm != null) {
+                        session.eout().add(NElements.of(session).ofObject()
+                                .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
+                                .set("error", NTexts.of(session).ofText(fm).filteredText())
+                                .build()
+                        );
+                        if (showStackTrace) {
+                            session.eout().add(NElements.of(session).ofObject().set("errorTrace",
+                                    NElements.of(session).ofArray().addAll(NReservedLangUtils.stacktraceToArray(ex)).build()
+                            ).build());
+                        }
+                        NArrayElementBuilder e = session.eout();
+                        if (e.size() > 0) {
+                            sout.println(e.build());
+                            e.clear();
+                        }
+                        sout.flush();
+                    } else {
+                        session.eout().add(NElements.of(session).ofObject()
+                                .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
+                                .set("error", m)
+                                .build());
+                        if (showStackTrace) {
+                            session.eout().add(NElements.of(session).ofObject().set("errorTrace",
+                                    NElements.of(session).ofArray().addAll(NReservedLangUtils.stacktraceToArray(ex)).build()
+                            ).build());
+                        }
+                        NArrayElementBuilder e = session.eout();
+                        if (e.size() > 0) {
+                            sout.println(e.build());
+                            e.clear();
+                        }
+                        sout.flush();
+                    }
+                    sout.flush();
+                }
+            } else {
+                if (out == null) {
+                    out = new NReservedBootLog();
+                }
+                if (fm != null) {
+                    out.with().level(Level.OFF).verb(NLogVerb.FAIL).log(fm);
+                } else {
+                    out.with().level(Level.OFF).verb(NLogVerb.FAIL).log(NMsg.ofPlain(m));
+                }
+                if (showStackTrace) {
+                    out.with().level(Level.OFF).verb(NLogVerb.FAIL).log(NMsg.ofPlain("---------------"));
+                    out.with().level(Level.OFF).verb(NLogVerb.FAIL).log(NMsg.ofPlain(">  STACKTRACE :"));
+                    out.with().level(Level.OFF).verb(NLogVerb.FAIL).log(NMsg.ofPlain("---------------"));
+                    out.with().level(Level.OFF).verb(NLogVerb.FAIL).log(NMsg.ofPlain(
+                            NReservedLangUtils.stacktrace(ex)
+                    ));
+                }
+            }
+        }
+        if (showGui) {
+            StringBuilder sb = new StringBuilder();
+            if (fm != null) {
+                if (session != null) {
+                    sb.append(NTexts.of(session).ofText(fm).filteredText());
+                } else {
+                    sb.append(fm);
+                }
+            } else {
+                sb.append(m);
+            }
+            if (showStackTrace) {
+                if (sb.length() > 0) {
+                    sb.append("\n");
+                    sb.append(NReservedLangUtils.stacktrace(ex));
+                }
+            }
+            if (session != null) {
+                //TODO should we delegate to the workspace implementation?
+                NReservedGuiUtils.showMessage(NMsg.ofPlain(sb.toString()).toString(), "Nuts Package Manager - Error", out);
+            } else {
+                NReservedGuiUtils.showMessage(NMsg.ofPlain(sb.toString()).toString(), "Nuts Package Manager - Error", out);
+            }
+        }
+        return (errorCode);
     }
 
     public static boolean isGraphicalDesktopEnvironment() {
@@ -189,7 +382,6 @@ public class NApiUtilsRPI {
     }
 
     @SuppressWarnings("unchecked")
-
 
     public static <T> T getOrCreateRefProperty(String name, Class<T> type, NSession session, Supplier<T> sup) {
         NAssert.requireSession(session);

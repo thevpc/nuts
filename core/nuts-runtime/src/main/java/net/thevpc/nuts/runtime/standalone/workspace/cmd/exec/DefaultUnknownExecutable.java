@@ -22,7 +22,7 @@ public class DefaultUnknownExecutable extends AbstractNExecutableInformationExt 
 
     @Override
     public int execute() {
-        if(getSession().isDry()){
+        if(getSession().getDry().orDefault()){
             throw new NExecutionException(getSession(), NMsg.ofC("cannot execute an unknown command : %s", name), NExecutionException.ERROR_1);
         }else {
             throw new NExecutionException(getSession(), NMsg.ofC("cannot execute an unknown command : %s", name), NExecutionException.ERROR_1);

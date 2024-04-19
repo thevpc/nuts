@@ -119,6 +119,17 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
     }
 
     @Override
+    public NExecCmd addCommand(NPath path) {
+        if (this.command == null) {
+            this.command = new ArrayList<>();
+        }
+        if (path != null) {
+            this.command.add(path.toString());
+        }
+        return this;
+    }
+
+    @Override
     public NExecCmd addCommand(String... command) {
         if (this.command == null) {
             this.command = new ArrayList<>();
@@ -325,7 +336,6 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
         this.out = NExecOutput.ofGrabMem();
         return this;
     }
-
 
     @Override
     public NExecCmd grabAll() {
@@ -547,27 +557,21 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
 
     protected String getExtraErrorMessage() {
         if (getErr().getType() == NRedirectType.REDIRECT) {
-            if (
-                    getOut().getType() == NRedirectType.GRAB_FILE
-                            || getOut().getType() == NRedirectType.GRAB_STREAM
-            ) {
+            if (getOut().getType() == NRedirectType.GRAB_FILE
+                    || getOut().getType() == NRedirectType.GRAB_STREAM) {
                 if (getOut() != null && getOut().getResultSource().isPresent()) {
                     return getGrabbedOutString();
                 }
             }
         } else {
-            if (
-                    getErr().getType() == NRedirectType.GRAB_FILE
-                            || getErr().getType() == NRedirectType.GRAB_STREAM
-            ) {
+            if (getErr().getType() == NRedirectType.GRAB_FILE
+                    || getErr().getType() == NRedirectType.GRAB_STREAM) {
                 if (getErr() != null && getErr().getResultSource().isPresent()) {
                     return getGrabbedErrString();
                 }
             }
-            if (
-                    getOut().getType() == NRedirectType.GRAB_FILE
-                            || getOut().getType() == NRedirectType.GRAB_STREAM
-            ) {
+            if (getOut().getType() == NRedirectType.GRAB_FILE
+                    || getOut().getType() == NRedirectType.GRAB_STREAM) {
                 if (getOut() != null && getOut().getResultSource().isPresent()) {
                     return getGrabbedOutString();
                 }
@@ -810,7 +814,6 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
     public String toString() {
         return getCommandString();
     }
-
 
     @Override
     public NFormat formatter(NSession session) {
