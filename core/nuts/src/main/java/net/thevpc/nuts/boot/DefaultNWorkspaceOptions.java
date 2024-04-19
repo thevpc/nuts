@@ -27,7 +27,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.reserved.NReservedCollectionUtils;
-import net.thevpc.nuts.reserved.NReservedWorkspaceOptionsArgumentsBuilder;
+import net.thevpc.nuts.reserved.NReservedWorkspaceOptionsToCmdLineBuilder;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.util.NMsg;
@@ -879,7 +879,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
 
     @Override
     public NCmdLine toCmdLine(NWorkspaceOptionsConfig config) {
-        return new NReservedWorkspaceOptionsArgumentsBuilder(config, this).toCmdLine();
+        return new NReservedWorkspaceOptionsToCmdLineBuilder(config, this).toCmdLine();
     }
 
     @Override

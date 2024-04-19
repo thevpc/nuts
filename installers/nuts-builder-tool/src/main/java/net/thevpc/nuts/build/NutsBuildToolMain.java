@@ -13,9 +13,6 @@ public class NutsBuildToolMain implements NApplication {
 
     @Override
     public void run(NSession session) {
-        if (true) {
-            throw new RuntimeException("some error");
-        }
         NutsBuildRunner nutsBuildRunner = new NutsBuildRunner(
                 new NutsBaseRunner(session),
                 new NutsExecRunner(session)

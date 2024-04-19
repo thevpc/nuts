@@ -62,29 +62,33 @@ public interface NWorkspaceOptions extends Serializable {
 
     /**
      * init launcher
-     * @since 0.8.4
+     *
      * @return init launcher
+     * @since 0.8.4
      */
     NOptional<Boolean> getInitLaunchers();
 
     /**
      * init scripts
-     * @since 0.8.4
+     *
      * @return init scripts
+     * @since 0.8.4
      */
     NOptional<Boolean> getInitScripts();
 
     /**
      * init platforms
-     * @since 0.8.4
+     *
      * @return init platforms
+     * @since 0.8.4
      */
     NOptional<Boolean> getInitPlatforms();
 
     /**
      * init java
-     * @since 0.8.4
+     *
      * @return init java
+     * @since 0.8.4
      */
     NOptional<Boolean> getInitJava();
 
@@ -675,9 +679,11 @@ public interface NWorkspaceOptions extends Serializable {
     NOptional<String> getTheme();
 
     NWorkspaceOptionsBuilder builder();
+
     NWorkspaceOptions readOnly();
 
     NCmdLine toCmdLine();
+
     NCmdLine toCmdLine(NWorkspaceOptionsConfig config);
 
 

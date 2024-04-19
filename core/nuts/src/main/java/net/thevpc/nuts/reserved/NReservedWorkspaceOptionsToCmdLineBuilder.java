@@ -10,11 +10,15 @@ import net.thevpc.nuts.log.NLogConfig;
 import java.io.File;
 import java.util.*;
 
-public class NReservedWorkspaceOptionsArgumentsBuilder {
+public class NReservedWorkspaceOptionsToCmdLineBuilder {
+    private static final String V080="0.8.0";
+    private static final String V081="0.8.1";
+    private static final String V083="0.8.3";
+    private static final String V084="0.8.4";
     private NWorkspaceOptionsConfig config;
     private NWorkspaceOptions options;
 
-    public NReservedWorkspaceOptionsArgumentsBuilder(NWorkspaceOptionsConfig config, NWorkspaceOptions options) {
+    public NReservedWorkspaceOptionsToCmdLineBuilder(NWorkspaceOptionsConfig config, NWorkspaceOptions options) {
         this.config = config;
         this.options = options;
     }
@@ -134,15 +138,17 @@ public class NReservedWorkspaceOptionsArgumentsBuilder {
                 }
             }
             NVersion apiVersionObj = config.getApiVersion();
-            if (value instanceof NSupportMode && (apiVersionObj == null || apiVersionObj.compareTo("0.8.4") < 0)) {
-                switch ((NSupportMode) value) {
-                    case ALWAYS: {
-                        fillOption0(selectOptionName(longName, shortName), "preferred", arguments, forceSingle);
-                        return;
-                    }
-                    case NEVER: {
-                        fillOption0(selectOptionName(longName, shortName), "unsupported", arguments, forceSingle);
-                        return;
+            if (value instanceof NSupportMode) {
+                if(!isApiVersionOrAfter(V084)) {
+                    switch ((NSupportMode) value) {
+                        case ALWAYS: {
+                            fillOption0(selectOptionName(longName, shortName), "preferred", arguments, forceSingle);
+                            return;
+                        }
+                        case NEVER: {
+                            fillOption0(selectOptionName(longName, shortName), "unsupported", arguments, forceSingle);
+                            return;
+                        }
                     }
                 }
             }
@@ -161,43 +167,31 @@ public class NReservedWorkspaceOptionsArgumentsBuilder {
         NVersion apiVersion = options.getApiVersion().orNull();
         switch (value.getMode()) {
             case CURRENT_USER: {
-                if (!NBlankable.isBlank(apiVersion) &&
-                        apiVersion.compareTo(NVersion.of("0.8.1").get())
-                                < 0) {
-                    arguments.add("--user-cmd");
-                } else {
+                if(isApiVersionOrAfter(V081)){
                     if (!config.isOmitDefaults()) {
                         arguments.add("--current-user");
                     }
+                }else{
+                    arguments.add("--user-cmd");
                 }
                 return true;
             }
             case ROOT: {
-                if (!NBlankable.isBlank(apiVersion) &&
-                        apiVersion.compareTo(NVersion.of("0.8.1").get())
-                                < 0) {
-                    arguments.add("--root-cmd");
-                } else {
+                if(isApiVersionOrAfter(V081)){
                     arguments.add("--as-root");
+                }else{
+                    arguments.add("--root-cmd");
                 }
                 return true;
             }
             case SUDO: {
-                if (!NBlankable.isBlank(apiVersion) &&
-                        apiVersion.compareTo(NVersion.of("0.8.1").get())
-                                < 0) {
-                    //ignore
-                } else {
+                if(isApiVersionOrAfter(V081)){
                     arguments.add("--sudo");
                 }
                 return true;
             }
             case USER: {
-                if (!NBlankable.isBlank(apiVersion) &&
-                        apiVersion.compareTo(NVersion.of("0.8.1").get())
-                                < 0) {
-                    //ignore
-                } else {
+                if(isApiVersionOrAfter(V081)){
                     arguments.add("--run-as=" + value.getUser());
                 }
                 return true;
@@ -237,12 +231,10 @@ public class NReservedWorkspaceOptionsArgumentsBuilder {
                 if (value instanceof NExecutionType) {
                     switch ((NExecutionType) value) {
                         case SYSTEM: {
-                            if (!NBlankable.isBlank(apiVersion) &&
-                                    apiVersion.compareTo(NVersion.of("0.8.1").get())
-                                            < 0) {
-                                arguments.add("--user-cmd");
-                            } else {
+                            if(isApiVersionOrAfter(V081)){
                                 arguments.add("--system");
+                            }else{
+                                arguments.add("--user-cmd");
                             }
                             return true;
                         }
@@ -289,10 +281,10 @@ public class NReservedWorkspaceOptionsArgumentsBuilder {
                     NVersion apiVersionObj = config.getApiVersion();
                     switch ((NTerminalMode) value) {
                         case FILTERED: {
-                            if (apiVersionObj == null || apiVersionObj.compareTo("0.8.4") >= 0) {
-                                arguments.add(selectOptionName("--!color", "-!c"));
-                            } else {
+                            if(isApiVersionOrAfter(V084)){
                                 arguments.add("--color=filtered");
+                            }else{
+                                arguments.add(selectOptionName("--!color", "-!c"));
                             }
                             return true;
                         }
@@ -378,9 +370,9 @@ public class NReservedWorkspaceOptionsArgumentsBuilder {
 
         {
             NTerminalMode nTerminalMode = options.getTerminalMode().orNull();
-            if (apiVersionObj != null && apiVersionObj.compareTo("0.8.4") < 0) {
+            if (!isApiVersionOrAfter(V084)) {
                 if (options.getBot().orElse(false)) {
-                    //force
+                    //force filtered for older nuts
                     nTerminalMode = NTerminalMode.FILTERED;
                 }
             }
@@ -409,7 +401,7 @@ public class NReservedWorkspaceOptionsArgumentsBuilder {
         }
         fillOption("--exclude-extension", "-X", options.getExcludedExtensions().orElseGet(Collections::emptyList), ";", arguments, false);
 
-        if (apiVersionObj == null || apiVersionObj.compareTo("0.8.1") >= 0) {
+        if (isApiVersionOrAfter(V081)) {
             fillOption("--repositories", "-r", options.getRepositories().orElseGet(Collections::emptyList), ";", arguments, false);
         } else {
             fillOption("--repository", "-r", options.getRepositories().orElseGet(Collections::emptyList), ";", arguments, false);
@@ -421,7 +413,7 @@ public class NReservedWorkspaceOptionsArgumentsBuilder {
         fillOption("--trace", "-t", options.getTrace().orNull(), true, arguments, false);
         fillOption("--progress", "-P", options.getProgressOptions().orNull(), arguments, true);
         fillOption("--solver", null, options.getDependencySolver().orNull(), arguments, false);
-        if (apiVersionObj == null || apiVersionObj.compareTo("0.8.3") >= 0) {
+        if (isApiVersionOrAfter(V083)) {
             fillOption("--debug", null, options.getDebug().orNull(), arguments, true);
         } else {
             fillOption("--debug", null, options.getDebug().isPresent(), false, arguments, true);
@@ -433,7 +425,7 @@ public class NReservedWorkspaceOptionsArgumentsBuilder {
         fillOption("--cached", null, options.getCached().orNull(), true, arguments, false);
         fillOption("--indexed", null, options.getIndexed().orNull(), true, arguments, false);
         fillOption("--transitive", null, options.getTransitive().orNull(), true, arguments, false);
-        if (apiVersionObj == null || apiVersionObj.compareTo("0.8.1") >= 0) {
+        if (isApiVersionOrAfter(V081)) {
             fillOption("--bot", "-B", options.getBot().orNull(), false, arguments, false);
         }
         if (options.getFetchStrategy().isPresent() && options.getFetchStrategy().orNull() != NFetchStrategy.ONLINE) {
@@ -444,7 +436,7 @@ public class NReservedWorkspaceOptionsArgumentsBuilder {
         for (String outputFormatOption : options.getOutputFormatOptions().orElseGet(Collections::emptyList)) {
             fillOption("--output-format-option", "-T", outputFormatOption, arguments, false);
         }
-        if (apiVersionObj == null || apiVersionObj.compareTo("0.8.0") >= 0) {
+        if (isApiVersionOrAfter(V080)) {
             fillOption("--expire", "-N",
                     options.getExpireTime().map(Object::toString).orNull(),
                     arguments, false);
@@ -461,13 +453,13 @@ public class NReservedWorkspaceOptionsArgumentsBuilder {
                 }
             }
         }
-        if (apiVersionObj == null || apiVersionObj.compareTo("0.8.1") >= 0) {
+        if (isApiVersionOrAfter(V081)) {
             fillOption("--theme", null, options.getTheme().orNull(), arguments, false);
         }
-        if (apiVersionObj == null || apiVersionObj.compareTo("0.8.1") >= 0) {
+        if (isApiVersionOrAfter(V081)) {
             fillOption("--locale", "-L", options.getLocale().orNull(), arguments, false);
         }
-        if (apiVersionObj == null || apiVersionObj.compareTo("0.8.4") >= 0) {
+        if (isApiVersionOrAfter(V084)) {
             fillOption("--init-launchers", null, options.getInitLaunchers().orNull(), true, arguments, false);
             fillOption("--init-platforms", null, options.getInitLaunchers().orNull(), true, arguments, false);
             fillOption("--init-java", null, options.getInitLaunchers().orNull(), true, arguments, false);
@@ -476,7 +468,7 @@ public class NReservedWorkspaceOptionsArgumentsBuilder {
             fillOption("--menu-launcher", null, options.getDesktopLauncher().orNull(), NSupportMode.class, arguments, false);
             fillOption("--user-launcher", null, options.getDesktopLauncher().orNull(), NSupportMode.class, arguments, false);
             fillOption("--isolation-level", null, options.getIsolationLevel().orNull(), NIsolationLevel.class, arguments, false);
-        } else if (apiVersionObj.compareTo("0.8.1") >= 0) {
+        } else if (isApiVersionOrAfter(V081)) {
             fillOption("---init-launchers", null, options.getInitLaunchers().orNull(), true, arguments, false);
             fillOption("---init-platforms", null, options.getInitLaunchers().orNull(), true, arguments, false);
             fillOption("---init-java", null, options.getInitLaunchers().orNull(), true, arguments, false);
@@ -516,7 +508,7 @@ public class NReservedWorkspaceOptionsArgumentsBuilder {
                 }
             }
         }
-        if (apiVersionObj == null || apiVersionObj.compareTo("0.8.0") >= 0) {
+        if (isApiVersionOrAfter(V080)) {
             if (options.getSwitchWorkspace().isPresent()) {
                 fillOption("--switch", null, options.getSwitchWorkspace().orNull(), false, arguments, false);
             }
@@ -534,19 +526,23 @@ public class NReservedWorkspaceOptionsArgumentsBuilder {
         fillOption("--recover", "-z", options.getRecover().orNull(), false, arguments, false);
         fillOption("--dry", "-D", options.getDry().orNull(), false, arguments, false);
 
-        if (apiVersionObj == null || apiVersionObj.compareTo("0.8.1") >= 0) {
+        if (isApiVersionOrAfter(V081)) {
             if (options.getCustomOptions() != null) {
                 arguments.addAll(options.getCustomOptions().orElseGet(Collections::emptyList));
             }
         }
         //final options for execution
         if ((!config.isOmitDefaults() && options.getApplicationArguments().isPresent() && !options.getApplicationArguments().get().isEmpty())
-                || options.getExecutorOptions().orElseGet(Collections::emptyList).size() > 0) {
+                || !options.getExecutorOptions().orElseGet(Collections::emptyList).isEmpty()) {
             arguments.add(selectOptionName("--exec", "-e"));
         }
         arguments.addAll(options.getExecutorOptions().orElseGet(Collections::emptyList));
         arguments.addAll(options.getApplicationArguments().orElseGet(Collections::emptyList));
         return NCmdLine.of(arguments);
+    }
+    private boolean isApiVersionOrAfter(String version){
+        NVersion apiVersionObj = config.getApiVersion();
+        return apiVersionObj == null || apiVersionObj.compareTo(version) >= 0;
     }
 
 }
