@@ -11,10 +11,10 @@ import java.io.File;
 import java.util.*;
 
 public class NReservedWorkspaceOptionsToCmdLineBuilder {
-    private static final String V080="0.8.0";
-    private static final String V081="0.8.1";
-    private static final String V083="0.8.3";
-    private static final String V084="0.8.4";
+    private static final String V080 = "0.8.0";
+    private static final String V081 = "0.8.1";
+    private static final String V083 = "0.8.3";
+    private static final String V084 = "0.8.4";
     private NWorkspaceOptionsConfig config;
     private NWorkspaceOptions options;
 
@@ -139,7 +139,7 @@ public class NReservedWorkspaceOptionsToCmdLineBuilder {
             }
             NVersion apiVersionObj = config.getApiVersion();
             if (value instanceof NSupportMode) {
-                if(!isApiVersionOrAfter(V084)) {
+                if (!isApiVersionOrAfter(V084)) {
                     switch ((NSupportMode) value) {
                         case ALWAYS: {
                             fillOption0(selectOptionName(longName, shortName), "preferred", arguments, forceSingle);
@@ -167,31 +167,31 @@ public class NReservedWorkspaceOptionsToCmdLineBuilder {
         NVersion apiVersion = options.getApiVersion().orNull();
         switch (value.getMode()) {
             case CURRENT_USER: {
-                if(isApiVersionOrAfter(V081)){
+                if (isApiVersionOrAfter(V081)) {
                     if (!config.isOmitDefaults()) {
                         arguments.add("--current-user");
                     }
-                }else{
+                } else {
                     arguments.add("--user-cmd");
                 }
                 return true;
             }
             case ROOT: {
-                if(isApiVersionOrAfter(V081)){
+                if (isApiVersionOrAfter(V081)) {
                     arguments.add("--as-root");
-                }else{
+                } else {
                     arguments.add("--root-cmd");
                 }
                 return true;
             }
             case SUDO: {
-                if(isApiVersionOrAfter(V081)){
+                if (isApiVersionOrAfter(V081)) {
                     arguments.add("--sudo");
                 }
                 return true;
             }
             case USER: {
-                if(isApiVersionOrAfter(V081)){
+                if (isApiVersionOrAfter(V081)) {
                     arguments.add("--run-as=" + value.getUser());
                 }
                 return true;
@@ -231,9 +231,9 @@ public class NReservedWorkspaceOptionsToCmdLineBuilder {
                 if (value instanceof NExecutionType) {
                     switch ((NExecutionType) value) {
                         case SYSTEM: {
-                            if(isApiVersionOrAfter(V081)){
+                            if (isApiVersionOrAfter(V081)) {
                                 arguments.add("--system");
-                            }else{
+                            } else {
                                 arguments.add("--user-cmd");
                             }
                             return true;
@@ -281,9 +281,9 @@ public class NReservedWorkspaceOptionsToCmdLineBuilder {
                     NVersion apiVersionObj = config.getApiVersion();
                     switch ((NTerminalMode) value) {
                         case FILTERED: {
-                            if(isApiVersionOrAfter(V084)){
+                            if (isApiVersionOrAfter(V084)) {
                                 arguments.add("--color=filtered");
-                            }else{
+                            } else {
                                 arguments.add(selectOptionName("--!color", "-!c"));
                             }
                             return true;
@@ -525,7 +525,9 @@ public class NReservedWorkspaceOptionsToCmdLineBuilder {
         fillOption("--reset", "-Z", options.getReset().orNull(), false, arguments, false);
         fillOption("--recover", "-z", options.getRecover().orNull(), false, arguments, false);
         fillOption("--dry", "-D", options.getDry().orNull(), false, arguments, false);
-
+        if (isApiVersionOrAfter(V084)) {
+            fillOption("--stacktrace", null, options.getShowStacktrace().orNull(), false, arguments, false);
+        }
         if (isApiVersionOrAfter(V081)) {
             if (options.getCustomOptions() != null) {
                 arguments.addAll(options.getCustomOptions().orElseGet(Collections::emptyList));
@@ -540,7 +542,8 @@ public class NReservedWorkspaceOptionsToCmdLineBuilder {
         arguments.addAll(options.getApplicationArguments().orElseGet(Collections::emptyList));
         return NCmdLine.of(arguments);
     }
-    private boolean isApiVersionOrAfter(String version){
+
+    private boolean isApiVersionOrAfter(String version) {
         NVersion apiVersionObj = config.getApiVersion();
         return apiVersionObj == null || apiVersionObj.compareTo(version) >= 0;
     }

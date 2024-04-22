@@ -26,8 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.reserved.NReservedCollectionUtils;
 
 import java.util.*;
 import java.util.function.Function;
@@ -102,7 +102,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
     }
 
     public NDescriptorBuilder setParents(List<NId> parents) {
-        this.parents = NReservedCollectionUtils.uniqueNonBlankList(parents);
+        this.parents = NReservedLangUtils.uniqueNonBlankList(parents);
         return this;
     }
 
@@ -201,7 +201,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
 
     @Override
     public NDescriptorBuilder setLocations(List<NIdLocation> locations) {
-        this.locations = NReservedCollectionUtils.uniqueList(locations);
+        this.locations = NReservedLangUtils.uniqueList(locations);
         return this;
     }
 
@@ -212,7 +212,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
 
     @Override
     public NDescriptorBuilder setStandardDependencies(List<NDependency> dependencies) {
-        this.standardDependencies = NReservedCollectionUtils.uniqueNonBlankList(dependencies);
+        this.standardDependencies = NReservedLangUtils.uniqueNonBlankList(dependencies);
         return this;
     }
 
@@ -223,7 +223,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
 
     @Override
     public NDescriptorBuilder setDependencies(List<NDependency> dependencies) {
-        this.dependencies = NReservedCollectionUtils.uniqueNonBlankList(dependencies);
+        this.dependencies = NReservedLangUtils.uniqueNonBlankList(dependencies);
         return this;
     }
 
@@ -402,7 +402,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
 
     @Override
     public NDescriptorBuilder addDependencies(List<NDependency> dependencies) {
-        NReservedCollectionUtils.addUniqueNonBlankList(this.dependencies, dependencies);
+        NReservedLangUtils.addUniqueNonBlankList(this.dependencies, dependencies);
         return this;
     }
 
@@ -422,7 +422,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
 
     @Override
     public NDescriptorBuilder addStandardDependencies(List<NDependency> dependencies) {
-        NReservedCollectionUtils.addUniqueNonBlankList(this.standardDependencies, dependencies);
+        NReservedLangUtils.addUniqueNonBlankList(this.standardDependencies, dependencies);
         return this;
     }
 
@@ -761,13 +761,13 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
 
     @Override
     public NDescriptorBuilder setContributors(List<NDescriptorContributor> contributors) {
-        this.contributors = NReservedCollectionUtils.uniqueList(contributors);
+        this.contributors = NReservedLangUtils.uniqueList(contributors);
         return this;
     }
 
     @Override
     public NDescriptorBuilder setDevelopers(List<NDescriptorContributor> developers) {
-        this.developers = NReservedCollectionUtils.uniqueList(developers);
+        this.developers = NReservedLangUtils.uniqueList(developers);
         return this;
     }
 
@@ -778,7 +778,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
 
     @Override
     public NDescriptorBuilder setLicenses(List<NDescriptorLicense> licenses) {
-        this.licenses = NReservedCollectionUtils.uniqueList(licenses);
+        this.licenses = NReservedLangUtils.uniqueList(licenses);
         return this;
     }
 
@@ -789,7 +789,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
 
     @Override
     public NDescriptorBuilder setMailingLists(List<NDescriptorMailingList> mailingLists) {
-        this.mailingLists = NReservedCollectionUtils.uniqueList(mailingLists);
+        this.mailingLists = NReservedLangUtils.uniqueList(mailingLists);
         return this;
     }
 

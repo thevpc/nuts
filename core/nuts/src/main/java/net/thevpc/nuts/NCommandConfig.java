@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.NReservedCollectionUtils;
+import net.thevpc.nuts.reserved.NReservedLangUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -133,11 +133,11 @@ public class NCommandConfig extends NConfigItem {
      * @return {@code this} instance
      */
     public NCommandConfig setCommand(String... value) {
-        this.command = NReservedCollectionUtils.nonNullList(Arrays.asList(value));
+        this.command = NReservedLangUtils.nonNullList(Arrays.asList(value));
         return this;
     }
     public NCommandConfig setCommand(List<String> value) {
-        this.command = NReservedCollectionUtils.nonNullList(value);
+        this.command = NReservedLangUtils.nonNullList(value);
         return this;
     }
 
@@ -197,11 +197,11 @@ public class NCommandConfig extends NConfigItem {
      * @return {@code this} instance
      */
     public NCommandConfig setHelpCommand(String... value) {
-        this.helpCommand = NReservedCollectionUtils.nonNullList(Arrays.asList(value));
+        this.helpCommand = NReservedLangUtils.nonNullList(Arrays.asList(value));
         return this;
     }
     public NCommandConfig setHelpCommand(List<String> value) {
-        this.helpCommand = NReservedCollectionUtils.nonNullList(value);
+        this.helpCommand = NReservedLangUtils.nonNullList(value);
         return this;
     }
 

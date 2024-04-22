@@ -32,40 +32,7 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
         this.session = session;
     }
 
-    private static boolean resolveShowStackTrace(NWorkspaceOptions bo) {
-        if (bo.getShowException().isPresent()) {
-            return bo.getShowException().get();
-        } else if (bo.getBot().orElse(false)) {
-            return false;
-        } else {
-            if (NApiUtilsRPI.getSysBoolNutsProperty("show-exception", false)) {
-                return true;
-            }
-            if (bo.getDebug().isPresent() && !NBlankable.isBlank(bo.getDebug().get())) {
-                return true;
-            }
-            NLogConfig nLogConfig = bo.getLogConfig().orElseGet(NLogConfig::new);
-            if ((nLogConfig.getLogTermLevel() != null
-                    && nLogConfig.getLogTermLevel().intValue() < Level.INFO.intValue())) {
-                return true;
-            }
-            return false;
-        }
-    }
 
-    public static boolean resolveGui(NWorkspaceOptions bo) {
-        if (bo.getBot().orElse(false)) {
-            return false;
-        }
-        if (bo.getGui().orElse(false)) {
-            if (!NApiUtilsRPI.isGraphicalDesktopEnvironment()) {
-                return false;
-            }
-            return true;
-        } else {
-            return false;
-        }
-    }
 
     @Override
     public int processThrowable(String[] args, Throwable throwable) {
@@ -76,8 +43,8 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
             bo.setGui(false);
         }
 
-        boolean showGui = resolveGui(bo);
-        boolean showTrace = resolveShowStackTrace(bo);
+        boolean showGui = NApiUtilsRPI.resolveGui(bo);
+        boolean showTrace = NApiUtilsRPI.resolveShowStackTrace(bo);
         int errorCode = NExceptionWithExitCodeBase.resolveExitCode(throwable).orElse(204);
         NMsg fm = NSessionAwareExceptionBase.resolveSessionAwareExceptionBase(throwable)
                 .map(NSessionAwareExceptionBase::getFormattedMessage).orNull();

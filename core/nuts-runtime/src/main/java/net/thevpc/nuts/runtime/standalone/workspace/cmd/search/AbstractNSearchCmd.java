@@ -1265,7 +1265,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     @Override
     public NSearchCmd run() {
         NIterator<Object> it = runIterator();
-        if (session.getDry().orDefault()) {
+        if (session.isDry()) {
             displayDryQueryPlan(it);
         } else {
             it = NWorkspaceUtils.of(getSearchSession()).decoratePrint(it, getSearchSession(), getDisplayOptions());

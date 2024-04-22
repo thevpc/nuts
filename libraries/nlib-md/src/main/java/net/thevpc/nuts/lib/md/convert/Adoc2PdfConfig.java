@@ -5,6 +5,8 @@
  */
 package net.thevpc.nuts.lib.md.convert;
 
+import net.thevpc.nuts.NSession;
+
 import java.util.function.Function;
 
 /**
@@ -19,7 +21,16 @@ public class Adoc2PdfConfig {
     private String baseDir;
     private String outputPdf;
     private String inputAdoc;
+    private NSession session;
     private Function<String, String> placeHolderReplacer;
+
+    public NSession getSession() {
+        return session;
+    }
+
+    public void setSession(NSession session) {
+        this.session = session;
+    }
 
     public String getOutputPdf() {
         return outputPdf;

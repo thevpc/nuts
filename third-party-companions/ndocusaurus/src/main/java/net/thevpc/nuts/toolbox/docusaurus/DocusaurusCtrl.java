@@ -80,13 +80,13 @@ public class DocusaurusCtrl {
         NSession session = project.getSession();
         Path base = null;
         try {
-            base = Paths.get(project.getDocusaurusBaseFolder()).normalize().toRealPath();
+            base = Paths.get(project.getDocusaurusBaseFolder()).toAbsolutePath().normalize().toRealPath();
         } catch (IOException e) {
             throw new UncheckedIOException("invalid Docusaurus Base Folder: " + project.getDocusaurusBaseFolder(), e);
         }
-        boolean genSidebarMenu = project.getConfig()
+        boolean genSidebarMenu = project.getConfigDocusaurusExtra()
                 .asObject().orElse(NObjectElement.ofEmpty(session))
-                .getBooleanByPath("customFields", "docusaurus", "generateSidebarMenu")
+                .getBooleanByPath("generateSidebarMenu")
                 .orElse(false);
         Path basePath = base;
         Path preProcessor = getPreProcessorBaseDir();
@@ -135,8 +135,7 @@ public class DocusaurusCtrl {
             }
 //            System.out.println(s);
         }
-        if (isBuildPdf() && !project.getConfig().getStringByPath("customFields", "asciidoctor", "path")
-                .isEmpty()) {
+        if (isBuildPdf() && !project.getConfigAsciiDoctor().getStringByPath("path").isEmpty()) {
             Docusaurus2Asciidoctor d2a = new Docusaurus2Asciidoctor(project);
             session.out().print(NMsg.ofC("build adoc file : %s%n", d2a.getAdocFile()));
             d2a.createAdocFile();
@@ -146,7 +145,7 @@ public class DocusaurusCtrl {
         if (isBuildWebSite()) {
             session.out().print(NMsg.ofC("build website%n"));
             runNativeCommand(base, getEffectiveNpmCommandPath(), "run-script", "build");
-            String copyBuildPath = project.getConfig().getStringByPath("customFields", "copyBuildPath")
+            String copyBuildPath = project.getConfigCustom().getStringByPath("copyBuildPath")
                     .get(session);
             if (copyBuildPath != null && copyBuildPath.length() > 0) {
                 String fromPath = null;

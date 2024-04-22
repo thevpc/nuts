@@ -44,11 +44,9 @@ public class Docusaurus2Adoc {
 
     public Docusaurus2Adoc(DocusaurusProject project) {
         session = project.getSession();
-        NObjectElement asciidoctorConfig = project.getConfig()
-                .getObject("customFields").orElse(NObjectElement.ofEmpty(session))
-                .getObject("asciidoctor").orElse(NObjectElement.ofEmpty(session));
+        NObjectElement asciidoctorConfig = project.getConfigAsciiDoctor();
         if (asciidoctorConfig == null) {
-            throw new IllegalArgumentException("missing customFields.asciidoctor in docusaurus.config.js file");
+            throw new IllegalArgumentException("missing asciidoctor condig");
         }
         NArrayElement headersJson = asciidoctorConfig.getObject("pdf")
                 .orElse(NObjectElement.ofEmpty(session))

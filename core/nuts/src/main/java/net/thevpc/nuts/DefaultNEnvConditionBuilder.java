@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.NReservedCollectionUtils;
+import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.reserved.NReservedUtils;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -63,7 +63,7 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
 
     @Override
     public NEnvConditionBuilder setArch(List<String> arch) {
-        this.arch = NReservedCollectionUtils.uniqueNonBlankList(arch);
+        this.arch = NReservedLangUtils.uniqueNonBlankList(arch);
         return this;
     }
 
@@ -73,7 +73,7 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
 
     @Override
     public NEnvConditionBuilder setOs(List<String> os) {
-        this.os = NReservedCollectionUtils.uniqueNonBlankList(os);
+        this.os = NReservedLangUtils.uniqueNonBlankList(os);
         return this;
     }
 
@@ -83,7 +83,7 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
 
     @Override
     public NEnvConditionBuilder setOsDist(List<String> osDist) {
-        this.osDist = NReservedCollectionUtils.uniqueNonBlankList(osDist);
+        this.osDist = NReservedLangUtils.uniqueNonBlankList(osDist);
         return this;
     }
 
@@ -93,7 +93,7 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
 
     @Override
     public NEnvConditionBuilder setPlatform(List<String> platform) {
-        this.platform = NReservedCollectionUtils.uniqueNonBlankList(platform);
+        this.platform = NReservedLangUtils.uniqueNonBlankList(platform);
         return this;
     }
 
@@ -103,7 +103,7 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
 
     @Override
     public NEnvConditionBuilder setDesktopEnvironment(List<String> desktopEnvironment) {
-        this.desktopEnvironment = NReservedCollectionUtils.uniqueNonBlankList(desktopEnvironment);
+        this.desktopEnvironment = NReservedLangUtils.uniqueNonBlankList(desktopEnvironment);
         return this;
     }
 
@@ -265,73 +265,73 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
 
     @Override
     public NEnvConditionBuilder addDesktopEnvironment(String value) {
-        this.desktopEnvironment= NReservedCollectionUtils.addUniqueNonBlankList(this.desktopEnvironment,value);
+        this.desktopEnvironment= NReservedLangUtils.addUniqueNonBlankList(this.desktopEnvironment,value);
         return this;
     }
 
     @Override
     public NEnvConditionBuilder addDesktopEnvironments(String... values) {
-        this.desktopEnvironment= NReservedCollectionUtils.addUniqueNonBlankList(this.desktopEnvironment,values);
+        this.desktopEnvironment= NReservedLangUtils.addUniqueNonBlankList(this.desktopEnvironment,values);
         return this;
     }
 
     @Override
     public NEnvConditionBuilder addArchs(String value) {
-        this.arch= NReservedCollectionUtils.addUniqueNonBlankList(this.arch,value);
+        this.arch= NReservedLangUtils.addUniqueNonBlankList(this.arch,value);
         return this;
     }
 
     @Override
     public NEnvConditionBuilder addArchs(String... values) {
-        this.arch= NReservedCollectionUtils.addUniqueNonBlankList(this.arch,values);
+        this.arch= NReservedLangUtils.addUniqueNonBlankList(this.arch,values);
         return this;
     }
 
     @Override
     public NEnvConditionBuilder addOs(String value) {
-        this.os= NReservedCollectionUtils.addUniqueNonBlankList(this.os,value);
+        this.os= NReservedLangUtils.addUniqueNonBlankList(this.os,value);
         return this;
     }
 
     @Override
     public NEnvConditionBuilder addOses(String... values) {
-        this.os= NReservedCollectionUtils.addUniqueNonBlankList(this.os,values);
+        this.os= NReservedLangUtils.addUniqueNonBlankList(this.os,values);
         return this;
     }
 
     @Override
     public NEnvConditionBuilder addOsDist(String value) {
-        this.osDist= NReservedCollectionUtils.addUniqueNonBlankList(this.osDist,value);
+        this.osDist= NReservedLangUtils.addUniqueNonBlankList(this.osDist,value);
         return this;
     }
 
     @Override
     public NEnvConditionBuilder addOsDists(String... values) {
-        this.osDist= NReservedCollectionUtils.addUniqueNonBlankList(this.osDist,values);
+        this.osDist= NReservedLangUtils.addUniqueNonBlankList(this.osDist,values);
         return this;
     }
 
     @Override
     public NEnvConditionBuilder addPlatform(String value) {
-        this.platform= NReservedCollectionUtils.addUniqueNonBlankList(this.platform,value);
+        this.platform= NReservedLangUtils.addUniqueNonBlankList(this.platform,value);
         return this;
     }
 
     @Override
     public NEnvConditionBuilder addPlatforms(String... values) {
-        this.platform= NReservedCollectionUtils.addUniqueNonBlankList(this.platform,values);
+        this.platform= NReservedLangUtils.addUniqueNonBlankList(this.platform,values);
         return this;
     }
 
     @Override
     public NEnvConditionBuilder addProfile(String value) {
-        this.profiles= NReservedCollectionUtils.addUniqueNonBlankList(this.profiles,value);
+        this.profiles= NReservedLangUtils.addUniqueNonBlankList(this.profiles,value);
         return this;
     }
 
     @Override
     public NEnvConditionBuilder addProfiles(String... values) {
-        this.profiles= NReservedCollectionUtils.addUniqueNonBlankList(this.profiles,values);
+        this.profiles= NReservedLangUtils.addUniqueNonBlankList(this.profiles,values);
         return this;
     }
 

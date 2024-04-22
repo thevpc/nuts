@@ -26,7 +26,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.format.NFormat;
-import net.thevpc.nuts.reserved.NReservedStringUtils;
+import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.reserved.NReservedUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringMapFormat;
@@ -314,7 +314,7 @@ public class DefaultNId implements NId {
             exc = "";
         }
         List<NId> a = new ArrayList<>();
-        for (String s : NReservedStringUtils.splitDefault(exc)) {
+        for (String s : NReservedLangUtils.splitDefault(exc)) {
             NId n = NId.of(s).get();
             if (n != null) {
                 a.add(n);

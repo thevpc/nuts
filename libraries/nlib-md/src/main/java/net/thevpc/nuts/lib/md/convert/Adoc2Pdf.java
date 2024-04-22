@@ -5,6 +5,9 @@
  */
 package net.thevpc.nuts.lib.md.convert;
 
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.util.NAssert;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -33,6 +36,7 @@ public class Adoc2Pdf {
     }
 
     public Path generatePdf(Adoc2PdfConfig config) {
+        NAssert.requireNonNull(config.getSession(),"session");
         String bin = config.getBin();
         String[] args = config.getArgs();
         File workDir = toCanonicalFile(new File(config.getWorkDir()));
@@ -45,7 +49,10 @@ public class Adoc2Pdf {
             bin = "asciidoctor-pdf";
         }
         List<String> cmdList = new ArrayList<>();
-        cmdList.add(StringUtils.replace(bin, config.getPlaceHolderReplacer()));
+        cmdList.addAll(
+                NCmdLine.parseSystem(StringUtils.replace(bin, config.getPlaceHolderReplacer()),config.getSession())
+                        .get().toStringList()
+        );
         cmdList.addAll(Arrays.asList(args).stream().map(x -> StringUtils.replace(x, config.getPlaceHolderReplacer())).collect(Collectors.toList()));
         String pdfFileName = config.getOutputPdf();
         if (!pdfFileName.endsWith(".pdf")) {
@@ -69,7 +76,7 @@ public class Adoc2Pdf {
                 .directory(workDir);
         int result = 0;
         System.out.println(cmdList.stream().map(x->{
-            if(x.indexOf(' ')>=0){
+            if(x.indexOf(' ')>=0 || x.indexOf(';')>=0){
                 return "\""+x+"\"";
             }
             return x;

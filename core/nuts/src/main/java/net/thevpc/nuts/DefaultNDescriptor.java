@@ -25,8 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.reserved.NReservedCollectionUtils;
 
 import java.util.*;
 
@@ -113,18 +113,18 @@ public class DefaultNDescriptor implements NDescriptor {
         this.id = id;
         this.idType = idType == null ? NIdType.REGULAR : idType;
         this.packaging = NStringUtils.trimToNull(packaging);
-        this.parents = NReservedCollectionUtils.uniqueList(parents);
+        this.parents = NReservedLangUtils.uniqueList(parents);
         this.description = NStringUtils.trimToNull(description);
         this.name = NStringUtils.trimToNull(name);
         this.genericName = NStringUtils.trimToNull(genericName);
-        this.icons = NReservedCollectionUtils.uniqueNonBlankList(icons);
-        this.categories = NReservedCollectionUtils.uniqueNonBlankList(categories);
+        this.icons = NReservedLangUtils.uniqueNonBlankList(icons);
+        this.categories = NReservedLangUtils.uniqueNonBlankList(categories);
         this.executor = executor;
         this.installer = installer;
         this.condition = condition == null ? NEnvCondition.BLANK : condition;
-        this.locations = NReservedCollectionUtils.uniqueNonBlankList(locations);
-        this.dependencies = NReservedCollectionUtils.uniqueNonBlankList(dependencies);
-        this.standardDependencies = NReservedCollectionUtils.uniqueNonBlankList(standardDependencies);
+        this.locations = NReservedLangUtils.uniqueNonBlankList(locations);
+        this.dependencies = NReservedLangUtils.uniqueNonBlankList(dependencies);
+        this.standardDependencies = NReservedLangUtils.uniqueNonBlankList(standardDependencies);
         if (properties == null || properties.size() == 0) {
             this.properties = null;
         } else {
@@ -132,12 +132,12 @@ public class DefaultNDescriptor implements NDescriptor {
             p.addAll(properties);
             this.properties = p.toList();
         }
-        this.flags = NReservedCollectionUtils.nonBlankSet(flags);
+        this.flags = NReservedLangUtils.nonBlankSet(flags);
         this.solver = NStringUtils.trimToNull(solver);
-        this.contributors = NReservedCollectionUtils.unmodifiableUniqueList(contributors);
-        this.developers = NReservedCollectionUtils.unmodifiableUniqueList(developers);
-        this.licenses = NReservedCollectionUtils.unmodifiableUniqueList(licenses);
-        this.mailingLists = NReservedCollectionUtils.unmodifiableUniqueList(mailingLists);
+        this.contributors = NReservedLangUtils.unmodifiableUniqueList(contributors);
+        this.developers = NReservedLangUtils.unmodifiableUniqueList(developers);
+        this.licenses = NReservedLangUtils.unmodifiableUniqueList(licenses);
+        this.mailingLists = NReservedLangUtils.unmodifiableUniqueList(mailingLists);
         this.organization = organization;
     }
 

@@ -1,46 +1,59 @@
 {
   "resources":{
-  "includes":[
-    {
-      "pattern":"\\Qcom/formdev/flatlaf/FlatDarkLaf.properties\\E"
-    }, 
-    {
-      "pattern":"\\Qcom/formdev/flatlaf/FlatLaf.properties\\E"
-    }, 
-    {
-      "pattern":"\\Qcom/formdev/flatlaf/FlatLightLaf.properties\\E"
-    }, 
-    {
-      "pattern":"\\Qnet/thevpc/nuts/installer/introduction.html\\E"
-    }, 
-    {
-      "pattern":"\\Qnet/thevpc/nuts/installer/keyboard.png\\E"
-    }, 
-    {
-      "pattern":"\\Qnet/thevpc/nuts/installer/license.txt\\E"
-    }, 
-    {
-      "pattern":"\\Qnet/thevpc/nuts/installer/nuts-icon.png\\E"
-    }, 
-    {
-      "pattern":"\\Qnet/thevpc/nuts/installer/nuts-logo.png\\E"
-    }, 
-    {
-      "pattern":"\\Qnet/thevpc/nuts/installer/package-companions.html\\E"
-    }, 
-    {
-      "pattern":"\\Qnet/thevpc/nuts/installer/summary-success.html\\E"
-    }
-  ]},
-  "bundles":[
-    {
-      "name":"com.formdev.flatlaf.resources.Bundle"
-    }, 
-    {
-      "name":"com.sun.swing.internal.plaf.basic.resources.basic"
-    }, 
-    {
-      "name":"sun.awt.resources.awt"
-    }
-  ]
+  "includes":[{
+    "pattern":"\\QMETA-INF/services/com.formdev.flatlaf.FlatDefaultsAddon\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/java.awt.im.spi.InputMethodDescriptor\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/java.lang.System$LoggerFinder\\E"
+  }, {
+    "pattern":"\\QMETA-INF/services/java.net.spi.InetAddressResolverProvider\\E"
+  }, {
+    "pattern":"\\Qcom/formdev/flatlaf/FlatLaf.properties\\E"
+  }, {
+    "pattern":"\\Qcom/formdev/flatlaf/FlatLightLaf.properties\\E"
+  }, {
+    "pattern":"\\Qcom/formdev/flatlaf/resources/Bundle.properties\\E"
+  }, {
+    "pattern":"\\Qcom/formdev/flatlaf/resources/Bundle_en.properties\\E"
+  }, {
+    "pattern":"\\Qcom/formdev/flatlaf/resources/Bundle_en_US.properties\\E"
+  }, {
+    "pattern":"\\Qnet/thevpc/nuts/installer/checked.png\\E"
+  }, {
+    "pattern":"\\Qnet/thevpc/nuts/installer/license.txt\\E"
+  }, {
+    "pattern":"\\Qnet/thevpc/nuts/installer/nuts-icon.png\\E"
+  }, {
+    "pattern":"\\Qnet/thevpc/nuts/installer/nuts-logo.png\\E"
+  }, {
+    "pattern":"\\Qnet/thevpc/nuts/installer/stop.png\\E"
+  }, {
+    "pattern":"java.desktop:\\Qcom/formdev/flatlaf/resources/Bundle.properties\\E"
+  }, {
+    "pattern":"java.desktop:\\Qcom/sun/swing/internal/plaf/basic/resources/basic_en.properties\\E"
+  }, {
+    "pattern":"java.desktop:\\Qcom/sun/swing/internal/plaf/basic/resources/basic_en_US.properties\\E"
+  }, {
+    "pattern":"java.desktop:\\Qjavax/swing/text/html/default.css\\E"
+  }, {
+    "pattern":"java.desktop:\\Qjavax/swing/text/html/parser/html32.bdtd\\E"
+  }, {
+    "pattern":"java.desktop:\\Qsun/awt/resources/awt_en.properties\\E"
+  }, {
+    "pattern":"java.desktop:\\Qsun/awt/resources/awt_en_US.properties\\E"
+  }]},
+  "bundles":[{
+    "name":"com.formdev.flatlaf.resources.Bundle",
+    "locales":["en-US"]
+  }, {
+    "name":"com.sun.swing.internal.plaf.basic.resources.basic",
+    "locales":["en-US"]
+  }, {
+    "name":"sun.awt.resources.awt",
+    "locales":["en-US"]
+  }, {
+    "name":"sun.util.resources.cldr.CalendarData",
+    "locales":["und"]
+  }]
 }

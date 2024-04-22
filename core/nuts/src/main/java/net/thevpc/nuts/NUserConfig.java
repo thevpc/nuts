@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.NReservedCollectionUtils;
+import net.thevpc.nuts.reserved.NReservedLangUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -101,7 +101,7 @@ public final class NUserConfig extends NConfigItem {
     }
 
     public void setPermissions(List<String> permissions) {
-        this.permissions = NReservedCollectionUtils.nonNullList(permissions);
+        this.permissions = NReservedLangUtils.nonNullList(permissions);
     }
 
     public List<String> getGroups() {
@@ -109,7 +109,7 @@ public final class NUserConfig extends NConfigItem {
     }
 
     public void setGroups(List<String> groups) {
-        this.groups = NReservedCollectionUtils.nonNullList(groups);
+        this.groups = NReservedLangUtils.nonNullList(groups);
     }
 
     @Override

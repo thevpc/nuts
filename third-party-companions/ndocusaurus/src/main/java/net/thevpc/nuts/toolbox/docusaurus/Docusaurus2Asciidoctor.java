@@ -42,7 +42,7 @@ public class Docusaurus2Asciidoctor {
     public Path getAdocFile() {
         NSession session = project.getSession();
         String asciiDoctorBaseFolder = getAsciiDoctorBaseFolder();
-        String pdfOutput = getAsciiDoctorConfig()
+        String pdfOutput = project.getConfigAsciiDoctor()
                 .getObject("pdf")
                 .orElse(NObjectElement.ofEmpty(session))
                 .getString("output").orNull();
@@ -100,7 +100,8 @@ public class Docusaurus2Asciidoctor {
     public Adoc2PdfConfig getAdoc2PdfConfig() {
         NSession session = project.getSession();
         Adoc2PdfConfig config = new Adoc2PdfConfig();
-        NObjectElement asciiDoctorConfig = getAsciiDoctorConfig();
+        config.setSession(session);
+        NObjectElement asciiDoctorConfig = project.getConfigAsciiDoctor();
         config.setBin(asciiDoctorConfig.getStringByPath("pdf","command","bin").get(session));
         config.setArgs(asciiDoctorConfig.getArrayByPath("pdf","command","args").get(session)
                 .stream().map(x->x.asString().get(session)).toArray(String[]::new));
@@ -126,14 +127,14 @@ public class Docusaurus2Asciidoctor {
             if (varName.equals("asciidoctor.baseDir")) {
                 String r = getAsciiDoctorBaseFolder();
                 if(r!=null){
-                    r=Paths.get(r).normalize().toAbsolutePath().toString();
+                    r=Paths.get(r).toAbsolutePath().normalize().toString();
                 }
                 return r;
             }
             if (varName.equals("docusaurus.baseDir")) {
                 String r = project.getDocusaurusBaseFolder();
                 if(r!=null){
-                    r=Paths.get(r).normalize().toAbsolutePath().toString();
+                    r=Paths.get(r).toAbsolutePath().normalize().toString();
                 }
                 return r;
             }
@@ -153,16 +154,10 @@ public class Docusaurus2Asciidoctor {
 
     private String getAsciiDoctorBaseFolder() {
         NSession session = project.getSession();
-        String s = getAsciiDoctorConfig().getString("path").get(session);
+        String s = project.getConfigAsciiDoctor().getString("path").get(session);
         if (!new File(s).isAbsolute()) {
             s = project.getDocusaurusBaseFolder() + "/" + s;
         }
         return s;
     }
-
-    private NObjectElement getAsciiDoctorConfig() {
-        NSession session = project.getSession();
-        return project.getConfig().getObjectByPath("customFields","asciidoctor").get(session);
-    }
-
 }

@@ -38,7 +38,8 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
                 NWorkspaceOptionsBuilder wOptions = new DefaultNWorkspaceOptionsBuilder();
                 wOptions.setBot(session.isBot());
                 wOptions.setConfirm(session.getConfirm().orDefault());
-                wOptions.setDry(session.getDry().orDefault());
+                wOptions.setDry(session.isDry());
+                wOptions.setShowStacktrace(session.getShowStacktrace().orDefault());
                 wOptions.setExpireTime(session.getExpireTime());
                 wOptions.setGui(session.isGui());
                 wOptions.setLocale(session.getLocale().orDefault());

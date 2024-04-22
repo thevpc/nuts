@@ -23,7 +23,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.*;
+import net.thevpc.nuts.reserved.NReservedLangUtils;
+import net.thevpc.nuts.reserved.NReservedUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringMapFormat;
 import net.thevpc.nuts.util.NStringUtils;
@@ -297,7 +298,7 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
 
     @Override
     public NDependencyBuilder setExclusions(List<NId> exclusions) {
-        this.exclusions = NReservedCollectionUtils.nonNullList(exclusions);
+        this.exclusions = NReservedLangUtils.nonNullList(exclusions);
         return this;
     }
 
@@ -442,7 +443,7 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
             exclusions = "";
         }
         List<NId> ids = new ArrayList<>();
-        for (String s : NReservedStringUtils.splitDefault(exclusions)) {
+        for (String s : NReservedLangUtils.splitDefault(exclusions)) {
             NId ii = NId.of(s).orNull();
             if (ii != null) {
                 ids.add(ii);

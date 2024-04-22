@@ -88,6 +88,10 @@ module.exports = {
       'javadocs': [
          'javadocs/API-Documentation',
       ],
+      'tutorial-basics': [],
+      'tutorial-extras': {
+         'img': [],
+      },
 'Document': [      'root'],
    }
 };

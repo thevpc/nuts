@@ -25,8 +25,8 @@ package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NContentType;
-import net.thevpc.nuts.reserved.NReservedCollectionUtils;
 import net.thevpc.nuts.io.NTerminalMode;
+import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.spi.NBootWorkspaceFactory;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.util.NMsg;
@@ -107,7 +107,7 @@ public class DefaultNBootOptions extends DefaultNWorkspaceOptions implements NBo
             NId runtimeId, String javaCommand, String javaOptions, String workspace,
             String outLinePrefix, String errLinePrefix, String name, Boolean installCompanions,
             Boolean skipWelcome, Boolean skipBoot, Boolean system, Boolean gui,
-            Boolean dry, Boolean showException, Boolean recover, Boolean reset, Boolean commandVersion, Boolean commandHelp, Boolean inherited, Boolean switchWorkspace, Boolean cached, Boolean indexed, Boolean transitive, Boolean bot, NIsolationLevel isolation, Boolean initLaunchers, Boolean initScripts, Boolean initPlatforms, Boolean initJava, List<String> excludedExtensions, List<String> repositories, String userName,
+            Boolean dry, Boolean showStacktrace, Boolean recover, Boolean reset, Boolean commandVersion, Boolean commandHelp, Boolean inherited, Boolean switchWorkspace, Boolean cached, Boolean indexed, Boolean transitive, Boolean bot, NIsolationLevel isolation, Boolean initLaunchers, Boolean initScripts, Boolean initPlatforms, Boolean initJava, List<String> excludedExtensions, List<String> repositories, String userName,
             char[] credentials, NTerminalMode terminalMode, Boolean readOnly,
             Boolean trace, String progressOptions, String dependencySolver,
             NLogConfig logConfig, NConfirmationMode confirm, NContentType outputFormat,
@@ -130,7 +130,7 @@ public class DefaultNBootOptions extends DefaultNWorkspaceOptions implements NBo
                 errLinePrefix, userName, credentials, progressOptions, dependencySolver, debug, archetype,
                 locale, theme, logConfig, confirm, outputFormat, openMode, executionType, storeStrategy,
                 repositoryStoreStrategy, storeLayout, terminalMode, fetchStrategy, runAs, creationTime,
-                expireTime, installCompanions, skipWelcome, skipBoot, system, gui, readOnly, trace, dry, showException, recover, reset,
+                expireTime, installCompanions, skipWelcome, skipBoot, system, gui, readOnly, trace, dry, showStacktrace, recover, reset,
                 commandVersion, commandHelp, inherited, switchWorkspace, cached, indexed, transitive, bot, skipErrors,
                 isolation, initLaunchers, initScripts, initPlatforms, initJava, stdin, stdout, stderr, executorService,
                 classLoaderSupplier, applicationArguments, outputFormatOptions, customOptions,
@@ -141,13 +141,13 @@ public class DefaultNBootOptions extends DefaultNWorkspaceOptions implements NBo
                 desktopLauncher, menuLauncher, userLauncher);
         this.bootRepositories = bootRepositories;
         this.runtimeBootDependencyNode = runtimeBootDependencyNode;
-        this.extensionBootDescriptors = NReservedCollectionUtils.unmodifiableOrNullList(extensionBootDescriptors);
-        this.extensionBootDependencyNodes = NReservedCollectionUtils.unmodifiableOrNullList(extensionBootDependencyNodes);
+        this.extensionBootDescriptors = NReservedLangUtils.unmodifiableOrNullList(extensionBootDescriptors);
+        this.extensionBootDependencyNodes = NReservedLangUtils.unmodifiableOrNullList(extensionBootDependencyNodes);
         this.bootWorkspaceFactory = bootWorkspaceFactory;
-        this.classWorldURLs = NReservedCollectionUtils.unmodifiableOrNullList(classWorldURLs);
+        this.classWorldURLs = NReservedLangUtils.unmodifiableOrNullList(classWorldURLs);
         this.classWorldLoader = classWorldLoader;
         this.uuid = uuid;
-        this.extensionsSet = NReservedCollectionUtils.unmodifiableOrNullSet(extensionsSet);
+        this.extensionsSet = NReservedLangUtils.unmodifiableOrNullSet(extensionsSet);
         this.runtimeBootDescriptor = runtimeBootDescriptor;
         this.userOptions = userOptions == null ? null : userOptions.readOnly();
     }

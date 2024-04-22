@@ -24,7 +24,7 @@ public class DefaultNInfoInternalExecutable extends DefaultInternalNExecutableCo
     @Override
     public int execute() {
         NSession session = NSessionUtils.configureCopyOfSession(getSession(), getExecCommand().getIn(), getExecCommand().getOut(),getExecCommand().getErr());
-        if(session.getDry().orDefault()){
+        if(session.isDry()){
             dryExecute();
             return NExecutionException.SUCCESS;
         }

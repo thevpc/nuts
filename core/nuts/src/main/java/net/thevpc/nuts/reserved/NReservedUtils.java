@@ -24,6 +24,7 @@
 package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
@@ -218,8 +219,8 @@ public final class NReservedUtils {
     }
 
     public static boolean isAcceptCondition(NEnvCondition cond) {
-        List<String> oss = NReservedCollectionUtils.uniqueNonBlankList(cond.getOs());
-        List<String> archs = NReservedCollectionUtils.uniqueNonBlankList(cond.getArch());
+        List<String> oss = NReservedLangUtils.uniqueNonBlankList(cond.getOs());
+        List<String> archs = NReservedLangUtils.uniqueNonBlankList(cond.getArch());
         if (!oss.isEmpty()) {
             NOsFamily eos = NOsFamily.getCurrent();
             boolean osOk = false;
@@ -255,11 +256,11 @@ public final class NReservedUtils {
     }
 
     public static boolean isAcceptDependency(NDependency s, NBootOptions bOptions) {
-        boolean bootOptionals = NReservedNUtilWorkspaceOptions.isBootOptional(bOptions);
+        boolean bootOptionals = isBootOptional(bOptions);
         //by default ignore optionals
         String o = s.getOptional();
         if (NBlankable.isBlank(o) || Boolean.parseBoolean(o)) {
-            if (!bootOptionals && !NReservedNUtilWorkspaceOptions.isBootOptional(s.getArtifactId(), bOptions)) {
+            if (!bootOptionals && !isBootOptional(s.getArtifactId(), bOptions)) {
                 return false;
             }
         }
@@ -377,7 +378,7 @@ public final class NReservedUtils {
                 break;
             }
             case NConstants.IdProperties.PROFILE: {
-                sb.setProfile(NReservedStringUtils.splitDefault(value));
+                sb.setProfile(NReservedLangUtils.splitDefault(value));
                 break;
             }
             case NConstants.IdProperties.PLATFORM: {
@@ -700,5 +701,25 @@ public final class NReservedUtils {
             }
         }
         return m;
+    }
+
+    static boolean isBootOptional(String name, NBootOptions bOptions) {
+        for (String property : bOptions.getCustomOptions().orElseGet(Collections::emptyList)) {
+            NArg a = NArg.of(property);
+            if (a.getKey().asString().orElse("").equals("boot-" + name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static boolean isBootOptional(NBootOptions bOptions) {
+        for (String property : bOptions.getCustomOptions().orElseGet(Collections::emptyList)) {
+            NArg a = NArg.of(property);
+            if (a.getKey().asString().orElse("").equals("boot-optional")) {
+                return a.getValue().asBoolean().orElse(true);
+            }
+        }
+        return true;
     }
 }

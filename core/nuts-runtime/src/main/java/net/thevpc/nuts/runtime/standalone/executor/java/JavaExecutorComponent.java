@@ -114,7 +114,8 @@ public class JavaExecutorComponent implements NExecutorComponent {
         NWorkspaceOptionsBuilder options = NBootManager.of(session).getBootOptions().builder();
 
         //copy session parameters to the newly created workspace
-        options.setDry(session.getDry().orDefault());
+        options.setDry(session.isDry());
+        options.setShowStacktrace(session.getShowStacktrace().orDefault());
         options.setGui(session.isGui());
         options.setOutLinePrefix(session.getOutLinePrefix());
         options.setErrLinePrefix(session.getErrLinePrefix());
@@ -411,7 +412,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
 
         @Override
         public int exec() {
-            if (getSession().getDry().orDefault()) {
+            if (getSession().isDry()) {
                 NSession session = getSession();
                 NTexts text = NTexts.of(session);
                 List<String> cmdLine = new ArrayList<>();

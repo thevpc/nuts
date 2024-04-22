@@ -60,6 +60,7 @@ public interface NSession extends NCmdLineConfigurable {
     String AUTO_COMPLETE_CANDIDATE_PREFIX = "```error Candidate```: ";
 
     NOptional<Boolean> getTrace();
+
     Boolean getTrace(boolean inherit);
 
     /**
@@ -400,7 +401,7 @@ public interface NSession extends NCmdLineConfigurable {
      * <li>{@link NRepositoryListener}</li>
      * </ul>
      *
-     * @param <T> listener type
+     * @param <T>  listener type
      * @param type listener type class
      * @return registered listeners
      */
@@ -416,7 +417,7 @@ public interface NSession extends NCmdLineConfigurable {
     /**
      * set session property
      *
-     * @param key property key
+     * @param key   property key
      * @param value property value
      * @return {@code this} instance
      */
@@ -636,12 +637,15 @@ public interface NSession extends NCmdLineConfigurable {
 
     NOptional<Boolean> getDry();
 
-    NOptional<Boolean> getShowException();
+    NOptional<Boolean> getShowStacktrace();
 
     NSession setDry(Boolean dry);
 
+    NSession setShowStacktrace(Boolean showStacktrace);
+
     /**
      * equivalent to getDry().orDefault();
+     *
      * @return true if dry mode
      */
     boolean isDry();

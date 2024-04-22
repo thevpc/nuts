@@ -183,7 +183,7 @@ public class NBackup implements NApplication {
                 localPath += remotePath;
                 String[] cmd = {
                         "rsync",
-                        "-azP" + (session.getDry().orDefault() ? "nv" : ""),
+                        "-azP" + (session.isDry() ? "nv" : ""),
                         "--delete",
                         config.getRemoteUser() + "@" + config.getRemoteServer() + ":" + remotePath,
                         localPath};

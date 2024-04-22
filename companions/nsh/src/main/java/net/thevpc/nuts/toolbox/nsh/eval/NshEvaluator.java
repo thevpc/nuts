@@ -107,9 +107,10 @@ public class NshEvaluator extends DefaultNShellEvaluator {
         newCtx.setSession(session);
         session.setLogTermLevel(Level.OFF);
 
-        session.setTerminal(NSessionTerminal.ofMem(session));
+        NSessionTerminal out = NSessionTerminal.ofMem(session);
+        session.setTerminal(out);
         context.getShell().evalNode(command, newCtx);
-        String str = evalFieldSubstitutionAfterCommandSubstitution(session.out().toString(), context);
+        String str = evalFieldSubstitutionAfterCommandSubstitution(out.out().toString(), context);
         String s = context.getShell().escapeString(str);
         context.err().print(session.err().toString());
         return s;

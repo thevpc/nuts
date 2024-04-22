@@ -26,8 +26,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.format.NFormat;
+import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.reserved.NReservedUtils;
-import net.thevpc.nuts.reserved.NReservedStringUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringMapFormat;
 import net.thevpc.nuts.util.NStringUtils;
@@ -217,12 +217,12 @@ public class DefaultNIdBuilder implements NIdBuilder {
             setProperty(NConstants.IdProperties.PROFILE, null);
             condition.setProperties(null);
         } else {
-            setProperty(NConstants.IdProperties.OS, NReservedStringUtils.joinAndTrimToNull(c.getOs()));
-            setProperty(NConstants.IdProperties.OS_DIST, NReservedStringUtils.joinAndTrimToNull(c.getOsDist()));
-            setProperty(NConstants.IdProperties.ARCH, NReservedStringUtils.joinAndTrimToNull(c.getArch()));
+            setProperty(NConstants.IdProperties.OS, NReservedLangUtils.joinAndTrimToNull(c.getOs()));
+            setProperty(NConstants.IdProperties.OS_DIST, NReservedLangUtils.joinAndTrimToNull(c.getOsDist()));
+            setProperty(NConstants.IdProperties.ARCH, NReservedLangUtils.joinAndTrimToNull(c.getArch()));
             setProperty(NConstants.IdProperties.PLATFORM, NReservedUtils.formatStringIdList(c.getPlatform()));
-            setProperty(NConstants.IdProperties.DESKTOP, NReservedStringUtils.joinAndTrimToNull(c.getDesktopEnvironment()));
-            setProperty(NConstants.IdProperties.PROFILE, NReservedStringUtils.joinAndTrimToNull(c.getProfile()));
+            setProperty(NConstants.IdProperties.DESKTOP, NReservedLangUtils.joinAndTrimToNull(c.getDesktopEnvironment()));
+            setProperty(NConstants.IdProperties.PROFILE, NReservedLangUtils.joinAndTrimToNull(c.getProfile()));
             condition.setProperties(c.getProperties());
 
         }

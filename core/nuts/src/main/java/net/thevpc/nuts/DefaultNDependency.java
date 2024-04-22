@@ -23,7 +23,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.*;
+import net.thevpc.nuts.reserved.NReservedLangUtils;
+import net.thevpc.nuts.reserved.NReservedUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringMapFormat;
 import net.thevpc.nuts.util.NStringUtils;
@@ -72,7 +73,7 @@ public class DefaultNDependency implements NDependency {
             o = "true";//remove case and formatting
         }
         this.optional = o;
-        this.exclusions = NReservedCollectionUtils.unmodifiableList(exclusions);
+        this.exclusions = NReservedLangUtils.unmodifiableList(exclusions);
         for (NId exclusion : this.exclusions) {
             if (exclusion == null) {
                 throw new NullPointerException();

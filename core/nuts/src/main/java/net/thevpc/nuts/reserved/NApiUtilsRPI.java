@@ -126,13 +126,13 @@ public class NApiUtilsRPI {
         return true;
     }
 
-    private static boolean resolveShowStackTrace(NWorkspaceOptions bo) {
-        if (bo.getShowException().isPresent()) {
-            return bo.getShowException().get();
+    public static boolean resolveShowStackTrace(NWorkspaceOptions bo) {
+        if (bo.getShowStacktrace().isPresent()) {
+            return bo.getShowStacktrace().get();
         } else if (bo.getBot().orElse(false)) {
             return false;
         } else {
-            if (NApiUtilsRPI.getSysBoolNutsProperty("show-exception", false)) {
+            if (NApiUtilsRPI.getSysBoolNutsProperty("stacktrace", false)) {
                 return true;
             }
             if (bo.getDebug().isPresent() && !NBlankable.isBlank(bo.getDebug().get())) {
@@ -333,16 +333,16 @@ public class NApiUtilsRPI {
             }
             if (session != null) {
                 //TODO should we delegate to the workspace implementation?
-                NReservedGuiUtils.showMessage(NMsg.ofPlain(sb.toString()).toString(), "Nuts Package Manager - Error", out);
+                NReservedLangUtils.showMessage(NMsg.ofPlain(sb.toString()).toString(), "Nuts Package Manager - Error", out);
             } else {
-                NReservedGuiUtils.showMessage(NMsg.ofPlain(sb.toString()).toString(), "Nuts Package Manager - Error", out);
+                NReservedLangUtils.showMessage(NMsg.ofPlain(sb.toString()).toString(), "Nuts Package Manager - Error", out);
             }
         }
         return (errorCode);
     }
 
     public static boolean isGraphicalDesktopEnvironment() {
-        return NReservedGuiUtils.isGraphicalDesktopEnvironment();
+        return NReservedLangUtils.isGraphicalDesktopEnvironment();
     }
 
     public static boolean getSysBoolNutsProperty(String property, boolean defaultValue) {
@@ -357,7 +357,7 @@ public class NApiUtilsRPI {
         String d = resolveNutsIdDigest();
         if (d == null) {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            URL[] urls = NReservedClassLoaderUtils.resolveClasspathURLs(cl, true);
+            URL[] urls = NReservedLangUtils.resolveClasspathURLs(cl, true);
             throw new NBootException(NMsg.ofPlain("unable to detect nuts digest. Most likely you are missing valid compilation of nuts." + "\n\t 'pom.properties' could not be resolved and hence, we are unable to resolve nuts version." + "\n\t java=" + System.getProperty("java.home") + " as " + System.getProperty("java.version") + "\n\t class-path=" + System.getProperty("java.class.path") + "\n\t urls=" + Arrays.toString(urls) + "\n\t class-loader=" + cl.getClass().getName() + " as " + cl));
         }
         return d;
@@ -366,19 +366,19 @@ public class NApiUtilsRPI {
 
     public static String resolveNutsIdDigest() {
         //TODO COMMIT TO 0.8.4
-        return resolveNutsIdDigest(NId.ofApi(Nuts.getVersion()).get(), NReservedClassLoaderUtils.resolveClasspathURLs(Nuts.class.getClassLoader(), true));
+        return resolveNutsIdDigest(NId.ofApi(Nuts.getVersion()).get(), NReservedLangUtils.resolveClasspathURLs(Nuts.class.getClassLoader(), true));
     }
 
     public static String resolveNutsIdDigest(NId id, URL[] urls) {
-        return NReservedIOUtils.getURLDigest(NReservedClassLoaderUtils.findClassLoaderJar(id, urls), null);
+        return NReservedIOUtils.getURLDigest(NReservedLangUtils.findClassLoaderJar(id, urls), null);
     }
 
     public static URL findClassLoaderJar(NId id, URL[] urls) {
-        return NReservedClassLoaderUtils.findClassLoaderJar(id, urls);
+        return NReservedLangUtils.findClassLoaderJar(id, urls);
     }
 
     public static NOptional<Integer> parseFileSizeInBytes(String value, Integer defaultMultiplier) {
-        return NReservedStringUtils.parseFileSizeInBytes(value, defaultMultiplier);
+        return NReservedLangUtils.parseFileSizeInBytes(value, defaultMultiplier);
     }
 
     @SuppressWarnings("unchecked")

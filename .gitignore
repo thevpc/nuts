@@ -244,3 +244,4 @@
 /test/nuts-shaded-test/target
 /installers/nuts-full/target
 /maven-central/temp
+/installers/nuts-release-tool/target

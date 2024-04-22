@@ -23,7 +23,7 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.reserved.NReservedCollectionUtils;
+import net.thevpc.nuts.reserved.NReservedLangUtils;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -49,7 +49,7 @@ public class NClassLoaderNode {
         this.url = url;
         this.enabled = enabled;
         this.includedInClasspath = includedInClasspath;
-        this.dependencies = NReservedCollectionUtils.nonNullList(Arrays.asList(dependencies));
+        this.dependencies = NReservedLangUtils.nonNullList(Arrays.asList(dependencies));
     }
 
     public boolean isIncludedInClasspath() {

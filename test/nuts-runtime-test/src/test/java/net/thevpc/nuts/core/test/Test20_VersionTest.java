@@ -26,7 +26,7 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.reserved.NReservedVersionIntervalParser;
+import net.thevpc.nuts.reserved.parser.NReservedVersionIntervalParser;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import org.junit.jupiter.api.*;
 

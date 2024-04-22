@@ -197,7 +197,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
     }
 
     public int exec() {
-        if (getSession().getDry().orDefault()) {
+        if (getSession().isDry()) {
             if (trace.getTerminalMode() == NTerminalMode.FORMATTED) {
                 trace.print("[dry] ==[exec]== ");
                 trace.println(pb.getFormattedCommandString(getSession()));

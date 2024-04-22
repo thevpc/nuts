@@ -115,38 +115,5 @@ module.exports = {
         },
       },
     ],
-  ],
-    customFields: {
-        copyBuildPath:'../../docs',
-        docusaurus: {
-            generateSidebarMenu: true
-        },
-        asciidoctor: {
-            path: 'asciidoctor',
-            pdf: {
-                headers: [
-                    ':source-highlighter: pygments',
-                    ':icons: font',
-                    ':icon-set: pf',
-                    ':doctype: book',
-                    ':revnumber: v${{apiVersion}}',
-                    ':revdate: ${{buildTime}}',
-                    ':toc:',
-                    ':toclevels: 4',
-                    ':appendix-caption: Appx',
-                    ':sectnums:',
-                    ':sectnumlevels: 6'
-                ],
-                command: {
-                    bin: 'asciidoctor-pdf',
-                    args: [
-                        '-a', 'pdf-themesdir=${asciidoctor.baseDir}/resources/themes',
-                        '-a', 'pdf-theme=custom',
-                        '-a', 'pdf-fontsdir=${asciidoctor.baseDir}/resources/fonts/;GEM_FONTS_DIR',
-                    ]
-                },
-                output:'static/pdf/nuts-documentation.pdf',
-            }
-        }
-    },
+  ]
 };

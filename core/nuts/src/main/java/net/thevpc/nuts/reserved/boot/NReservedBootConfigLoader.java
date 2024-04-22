@@ -29,7 +29,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.DefaultNBootOptionsBuilder;
 import net.thevpc.nuts.boot.NBootOptionsBuilder;
 import net.thevpc.nuts.reserved.io.NReservedIOUtils;
-import net.thevpc.nuts.reserved.NReservedJsonParser;
+import net.thevpc.nuts.reserved.parser.NReservedJsonParser;
 import net.thevpc.nuts.reserved.compat.NReservedBootConfigLoaderOld;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;

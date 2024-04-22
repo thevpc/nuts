@@ -131,7 +131,7 @@ wire where things resolve here to any piece of software depending (or not) on ot
 we start by opening a new terminal (termm, konsole or whatever you prefer) then download **```nuts```** using this command : 
 On linux/MacOS system we issue :
 ```
-wget https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@32c90cbc/nuts-net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@32c90cbc.jar
+wget https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts//nuts-.jar
 ```
 
 Let's check that java is installed :
@@ -141,7 +141,7 @@ java --version
 
 Now we run **```nuts```**
 ```
-java -jar nuts-net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamFiltered@32c90cbc.jar -zy
+java -jar nuts-.jar -zy
 ```
 We used the flags ```-y``` to auto-confirm and ```-z``` to ignore cached binaries (combined here as ```-zy```). 
 These flags are not required. We use them here to make installation work in all cases.

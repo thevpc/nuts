@@ -28,7 +28,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
-import net.thevpc.nuts.reserved.NReservedStringUtils;
+import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.reserved.NReservedUtils;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.cmdline.NArg;
@@ -512,10 +512,10 @@ public final class NWorkspaceCmdLineParser {
                         return NOptional.of(Collections.singletonList(a));
                     }
 
-                    case "--show-exception": {
+                    case "--stacktrace": {
                         a = cmdLine.nextFlag().get(session);
                         if (active && options != null) {
-                            options.setShowException(a.getBooleanValue().get(session));
+                            options.setShowStacktrace(a.getBooleanValue().get(session));
                         }
                         return NOptional.of(Collections.singletonList(a));
                     }
@@ -654,7 +654,7 @@ public final class NWorkspaceCmdLineParser {
                         if (active) {
                             if (options != null) {
                                 String t = a.getStringValue().orElse("");
-                                int i = NReservedStringUtils.firstIndexOf(t, new char[]{' ', ';', ':', '='});
+                                int i = NReservedLangUtils.firstIndexOf(t, new char[]{' ', ';', ':', '='});
                                 if (i > 0) {
                                     options.setOutputFormat(NContentType.valueOf(t.substring(0, i).toUpperCase()));
                                     options.addOutputFormatOptions(t.substring(i + 1).toUpperCase());

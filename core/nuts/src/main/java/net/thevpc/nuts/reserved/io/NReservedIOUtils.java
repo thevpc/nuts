@@ -31,8 +31,7 @@ import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.boot.NBootOptionsBuilder;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.NNoSessionCancelException;
-import net.thevpc.nuts.reserved.NReservedGuiUtils;
-import net.thevpc.nuts.reserved.NReservedMonitoredURLInputStream;
+import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
@@ -544,7 +543,7 @@ public class NReservedIOUtils {
                         }
                     } else {
                         if (bOptions.getGui().orElse(false)) {
-                            line = NReservedGuiUtils.inputString(
+                            line = NReservedLangUtils.inputString(
                                     NMsg.ofC("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory).toString(),
                                     null, readline, bLog
                             );
@@ -706,7 +705,7 @@ public class NReservedIOUtils {
             }
         }
         NBootOptionsBuilder optionsCopy = o.builder();
-        if (optionsCopy.getBot().orElse(false) || !NReservedGuiUtils.isGraphicalDesktopEnvironment()) {
+        if (optionsCopy.getBot().orElse(false) || !NReservedLangUtils.isGraphicalDesktopEnvironment()) {
             optionsCopy.setGui(false);
         }
         return deleteAndConfirmAll(folders.toArray(new Path[0]), force, DELETE_FOLDERS_HEADER, null, bLog, optionsCopy, readline);

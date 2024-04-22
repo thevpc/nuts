@@ -83,7 +83,7 @@ public class DefaultNSession implements Cloneable, NSession {
     private NExecutionType executionType;
     //    private Boolean force;
     private Boolean dry;
-    private Boolean showException;
+    private Boolean showStacktrace;
     private Level logTermLevel;
     private Filter logTermFilter;
     private Level logFileLevel;
@@ -1317,10 +1317,11 @@ public class DefaultNSession implements Cloneable, NSession {
     }
 
     @Override
-    public NOptional<Boolean> getShowException() {
-        return NOptional.ofNamed(showException, "showException")
-                .withDefault(() -> NBootManager.of(this).getBootOptions().getShowException().orElse(false));
+    public NOptional<Boolean> getShowStacktrace() {
+        return NOptional.ofNamed(showStacktrace, "showStacktrace")
+                .withDefault(() -> NBootManager.of(this).getBootOptions().getShowStacktrace().orElse(false));
     }
+
 
 
     @Override
@@ -1331,6 +1332,12 @@ public class DefaultNSession implements Cloneable, NSession {
     @Override
     public NSession setDry(Boolean dry) {
         this.dry = dry;
+        return this;
+    }
+
+    @Override
+    public NSession setShowStacktrace(Boolean showStacktrace) {
+        this.showStacktrace = showStacktrace;
         return this;
     }
 

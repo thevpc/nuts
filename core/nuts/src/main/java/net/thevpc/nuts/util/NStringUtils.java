@@ -27,8 +27,8 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.format.NPositionType;
+import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.reserved.NReservedUtils;
-import net.thevpc.nuts.reserved.NReservedStringUtils;
 
 import java.text.Normalizer;
 import java.util.*;
@@ -493,7 +493,7 @@ public class NStringUtils {
     }
 
     public static List<String> parsePropertyStringList(String s) {
-        return NReservedStringUtils.parseAndTrimToDistinctList(s);
+        return NReservedLangUtils.parseAndTrimToDistinctList(s);
     }
 
 

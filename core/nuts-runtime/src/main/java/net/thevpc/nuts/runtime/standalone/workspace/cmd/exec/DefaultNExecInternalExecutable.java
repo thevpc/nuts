@@ -22,7 +22,7 @@ public class DefaultNExecInternalExecutable extends DefaultInternalNExecutableCo
 
     @Override
     public int execute() {
-        if(getSession().getDry().orDefault()){
+        if(getSession().isDry()){
             dryExecute();
             return NExecutionException.SUCCESS;
         }

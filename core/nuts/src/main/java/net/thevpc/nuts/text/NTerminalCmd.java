@@ -23,8 +23,8 @@
  */
 package net.thevpc.nuts.text;
 
+import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.reserved.NReservedCollectionUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -60,7 +60,7 @@ public final class NTerminalCmd {
 
     public NTerminalCmd(String name, List<String> args) {
         this.name = name;
-        this.args = NReservedCollectionUtils.unmodifiableList(args);
+        this.args = NReservedLangUtils.unmodifiableList(args);
     }
 
     public static NTerminalCmd MOVE_TO(int row, int col) {

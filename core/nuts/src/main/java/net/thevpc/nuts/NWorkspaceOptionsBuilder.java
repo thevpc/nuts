@@ -95,7 +95,7 @@ public interface NWorkspaceOptionsBuilder extends NWorkspaceOptions {
 
     NWorkspaceOptionsBuilder setDry(Boolean dry);
     
-    NWorkspaceOptionsBuilder setShowException(Boolean dry);
+    NWorkspaceOptionsBuilder setShowStacktrace(Boolean showStacktrace);
 
     NWorkspaceOptionsBuilder setCreationTime(Instant creationTime);
 

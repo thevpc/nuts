@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.NReservedVersionIntervalParser;
+import net.thevpc.nuts.reserved.parser.NReservedVersionIntervalParser;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 

@@ -26,7 +26,7 @@ package net.thevpc.nuts.boot;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NContentType;
-import net.thevpc.nuts.reserved.NReservedCollectionUtils;
+import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.reserved.NReservedWorkspaceOptionsToCmdLineBuilder;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.log.NLogConfig;
@@ -229,10 +229,10 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
     private final Boolean dry;
 
     /**
-     * if true show exception, option-type : runtime (available only for the
+     * if true show exception stacktrace, option-type : runtime (available only for the
      * current workspace instance)
      */
-    private final Boolean showException;
+    private final Boolean showStacktrace;
 
     /**
      * option-type : runtime (available only for the current workspace instance)
@@ -405,34 +405,34 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
     private final NSupportMode userLauncher;
 
     public DefaultNWorkspaceOptions(NVersion apiVersion, NId runtimeId, String workspace, String name, String javaCommand,
-            String javaOptions, String outLinePrefix, String errLinePrefix, String userName,
-            char[] credentials, String progressOptions, String dependencySolver,
-            String debug, String archetype, String locale, String theme, NLogConfig logConfig,
-            NConfirmationMode confirm, NContentType outputFormat, NOpenMode openMode,
-            NExecutionType executionType, NStoreStrategy storeStrategy,
-            NStoreStrategy repositoryStoreStrategy, NOsFamily storeLayout,
-            NTerminalMode terminalMode, NFetchStrategy fetchStrategy, NRunAs runAs,
-            Instant creationTime, Instant expireTime, Boolean installCompanions, Boolean skipWelcome,
-            Boolean skipBoot, Boolean system, Boolean gui, Boolean readOnly,
-            Boolean trace, Boolean dry, Boolean showException, Boolean recover, Boolean reset, Boolean commandVersion,
-            Boolean commandHelp, Boolean inherited, Boolean switchWorkspace, Boolean cached,
-            Boolean indexed, Boolean transitive, Boolean bot, Boolean skipErrors,
-            NIsolationLevel isolationLevel, Boolean initLaunchers, Boolean initScripts, Boolean initPlatforms, Boolean initJava, InputStream stdin, PrintStream stdout, PrintStream stderr,
-            ExecutorService executorService, Supplier<ClassLoader> classLoaderSupplier,
-            List<String> applicationArguments, List<String> outputFormatOptions,
-            List<String> customOptions, List<String> excludedExtensions, List<String> repositories,
-            List<String> executorOptions, List<NMsg> errors, Map<NStoreType, String> storeLocations,
-            Map<NHomeLocation, String> homeLocations, NSupportMode desktopLauncher, NSupportMode menuLauncher, NSupportMode userLauncher) {
-        this.outputFormatOptions = NReservedCollectionUtils.unmodifiableOrNullList(outputFormatOptions);
-        this.customOptions = NReservedCollectionUtils.unmodifiableOrNullList(customOptions);
-        this.excludedExtensions = NReservedCollectionUtils.unmodifiableOrNullList(excludedExtensions);
-        this.repositories = NReservedCollectionUtils.unmodifiableOrNullList(repositories);
-        this.applicationArguments = NReservedCollectionUtils.unmodifiableOrNullList(applicationArguments);
-        this.errors = NReservedCollectionUtils.unmodifiableOrNullList(errors);
-        this.executorOptions = NReservedCollectionUtils.unmodifiableOrNullList(executorOptions);
+                                    String javaOptions, String outLinePrefix, String errLinePrefix, String userName,
+                                    char[] credentials, String progressOptions, String dependencySolver,
+                                    String debug, String archetype, String locale, String theme, NLogConfig logConfig,
+                                    NConfirmationMode confirm, NContentType outputFormat, NOpenMode openMode,
+                                    NExecutionType executionType, NStoreStrategy storeStrategy,
+                                    NStoreStrategy repositoryStoreStrategy, NOsFamily storeLayout,
+                                    NTerminalMode terminalMode, NFetchStrategy fetchStrategy, NRunAs runAs,
+                                    Instant creationTime, Instant expireTime, Boolean installCompanions, Boolean skipWelcome,
+                                    Boolean skipBoot, Boolean system, Boolean gui, Boolean readOnly,
+                                    Boolean trace, Boolean dry, Boolean showStacktrace, Boolean recover, Boolean reset, Boolean commandVersion,
+                                    Boolean commandHelp, Boolean inherited, Boolean switchWorkspace, Boolean cached,
+                                    Boolean indexed, Boolean transitive, Boolean bot, Boolean skipErrors,
+                                    NIsolationLevel isolationLevel, Boolean initLaunchers, Boolean initScripts, Boolean initPlatforms, Boolean initJava, InputStream stdin, PrintStream stdout, PrintStream stderr,
+                                    ExecutorService executorService, Supplier<ClassLoader> classLoaderSupplier,
+                                    List<String> applicationArguments, List<String> outputFormatOptions,
+                                    List<String> customOptions, List<String> excludedExtensions, List<String> repositories,
+                                    List<String> executorOptions, List<NMsg> errors, Map<NStoreType, String> storeLocations,
+                                    Map<NHomeLocation, String> homeLocations, NSupportMode desktopLauncher, NSupportMode menuLauncher, NSupportMode userLauncher) {
+        this.outputFormatOptions = NReservedLangUtils.unmodifiableOrNullList(outputFormatOptions);
+        this.customOptions = NReservedLangUtils.unmodifiableOrNullList(customOptions);
+        this.excludedExtensions = NReservedLangUtils.unmodifiableOrNullList(excludedExtensions);
+        this.repositories = NReservedLangUtils.unmodifiableOrNullList(repositories);
+        this.applicationArguments = NReservedLangUtils.unmodifiableOrNullList(applicationArguments);
+        this.errors = NReservedLangUtils.unmodifiableOrNullList(errors);
+        this.executorOptions = NReservedLangUtils.unmodifiableOrNullList(executorOptions);
 
-        this.storeLocations = NReservedCollectionUtils.unmodifiableOrNullMap(storeLocations);
-        this.homeLocations = NReservedCollectionUtils.unmodifiableOrNullMap(homeLocations);
+        this.storeLocations = NReservedLangUtils.unmodifiableOrNullMap(storeLocations);
+        this.homeLocations = NReservedLangUtils.unmodifiableOrNullMap(homeLocations);
 
         this.apiVersion = apiVersion;
         this.runtimeId = runtimeId;
@@ -460,7 +460,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
         this.openMode = openMode;
         this.creationTime = creationTime;
         this.dry = dry;
-        this.showException = showException;
+        this.showStacktrace = showStacktrace;
         this.classLoaderSupplier = classLoaderSupplier;
         this.recover = recover;
         this.reset = reset;
@@ -569,8 +569,8 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
     }
 
     @Override
-    public NOptional<Boolean> getShowException() {
-        return NOptional.ofNamed(showException, "showException");
+    public NOptional<Boolean> getShowStacktrace() {
+        return NOptional.ofNamed(showStacktrace, "showStacktrace");
     }
 
     @Override

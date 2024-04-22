@@ -42,6 +42,7 @@ import net.thevpc.nuts.reserved.boot.NReservedBootWorkspaceFactoryComparator;
 import net.thevpc.nuts.reserved.exception.NReservedErrorInfo;
 import net.thevpc.nuts.reserved.exception.NReservedErrorInfoList;
 import net.thevpc.nuts.reserved.io.NReservedIOUtils;
+import net.thevpc.nuts.reserved.parser.NReservedJsonParser;
 import net.thevpc.nuts.reserved.io.NReservedPath;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.*;
@@ -168,7 +169,7 @@ public final class NBootWorkspace {
         this.computedOptions.setUserOptions(this.userOptions);
         this.computedOptions.setBot(this.computedOptions.getBot().orElse(false));
         this.computedOptions.setDry(this.computedOptions.getDry().orElse(false));
-        this.computedOptions.setShowException(this.computedOptions.getShowException().orElse(false));
+        this.computedOptions.setShowStacktrace(this.computedOptions.getShowStacktrace().orElse(false));
         this.computedOptions.setSystem(this.computedOptions.getSystem().orElse(false));
         this.computedOptions.setGui(this.computedOptions.getGui().orElse(false));
         this.computedOptions.setInherited(this.computedOptions.getInherited().orElse(false));
@@ -522,20 +523,20 @@ public final class NBootWorkspace {
                 }
                 ClassLoader thisClassClassLoader = getClass().getClassLoader();
                 bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofC("class-loader: %s", thisClassClassLoader));
-                for (URL url : NReservedClassLoaderUtils.resolveClasspathURLs(thisClassClassLoader, false)) {
+                for (URL url : NReservedLangUtils.resolveClasspathURLs(thisClassClassLoader, false)) {
                     bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofC("                 %s", url));
                 }
                 ClassLoader tctxloader = Thread.currentThread().getContextClassLoader();
                 if (tctxloader != thisClassClassLoader) {
                     bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofC("thread-class-loader: %s", tctxloader));
-                    for (URL url : NReservedClassLoaderUtils.resolveClasspathURLs(tctxloader, false)) {
+                    for (URL url : NReservedLangUtils.resolveClasspathURLs(tctxloader, false)) {
                         bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofC("                 %s", url));
                     }
                 }
                 ClassLoader contextClassLoader = getContextClassLoader();
                 bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofC("ctx-class-loader: %s", contextClassLoader));
                 if (contextClassLoader != null) {
-                    for (URL url : NReservedClassLoaderUtils.resolveClasspathURLs(contextClassLoader, false)) {
+                    for (URL url : NReservedLangUtils.resolveClasspathURLs(contextClassLoader, false)) {
                         bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofC("                 %s", url));
                     }
                 }
@@ -632,12 +633,12 @@ public final class NBootWorkspace {
                 curr.setBootRepositories(lastConfigLoaded.getBootRepositories().orNull());
                 curr.setJavaCommand(lastConfigLoaded.getJavaCommand().orNull());
                 curr.setJavaOptions(lastConfigLoaded.getJavaOptions().orNull());
-                curr.setExtensionsSet(NReservedCollectionUtils.nonNullSet(lastConfigLoaded.getExtensionsSet().orNull()));
+                curr.setExtensionsSet(NReservedLangUtils.nonNullSet(lastConfigLoaded.getExtensionsSet().orNull()));
                 curr.setStoreStrategy(lastConfigLoaded.getStoreStrategy().orNull());
                 curr.setRepositoryStoreStrategy(lastConfigLoaded.getRepositoryStoreStrategy().orNull());
                 curr.setStoreLayout(lastConfigLoaded.getStoreLayout().orNull());
-                curr.setStoreLocations(NReservedCollectionUtils.nonNullMap(lastConfigLoaded.getStoreLocations().orNull()));
-                curr.setHomeLocations(NReservedCollectionUtils.nonNullMap(lastConfigLoaded.getHomeLocations().orNull()));
+                curr.setStoreLocations(NReservedLangUtils.nonNullMap(lastConfigLoaded.getStoreLocations().orNull()));
+                curr.setHomeLocations(NReservedLangUtils.nonNullMap(lastConfigLoaded.getHomeLocations().orNull()));
             }
             revalidateLocations(computedOptions, workspaceName, immediateLocation, isolationMode);
             long countDeleted = 0;
@@ -972,7 +973,7 @@ public final class NBootWorkspace {
             computedOptions.setExtensionBootDependencyNodes(deps);
             deps.add(0, computedOptions.getRuntimeBootDependencyNode().orNull());
 
-            bootClassWorldURLs = NReservedClassLoaderUtils.resolveClassWorldURLs(deps.toArray(new NClassLoaderNode[0]), getContextClassLoader(), bLog);
+            bootClassWorldURLs = NReservedLangUtils.resolveClassWorldURLs(deps.toArray(new NClassLoaderNode[0]), getContextClassLoader(), bLog);
             workspaceClassLoader = /*bootClassWorldURLs.length == 0 ? getContextClassLoader() : */ new NReservedBootClassLoader(deps.toArray(new NClassLoaderNode[0]), getContextClassLoader());
             computedOptions.setClassWorldLoader(workspaceClassLoader);
             if (bLog.isLoggable(Level.CONFIG)) {
@@ -1467,7 +1468,7 @@ public final class NBootWorkspace {
         File file = NReservedMavenUtils.getBootCacheJar(computedOptions.getRuntimeId().get(), repositories, workspaceBootLibFolder, !recover, name, computedOptions.getExpireTime().orNull(), errorList, computedOptions, pathExpansionConverter, bLog, cache);
         rt.setId(id.toString());
         rt.setUrl(file.toURI().toURL());
-        rt.setIncludedInClasspath(NReservedClassLoaderUtils.isLoadedClassPath(rt.getURL(), getContextClassLoader(), bLog));
+        rt.setIncludedInClasspath(NReservedLangUtils.isLoadedClassPath(rt.getURL(), getContextClassLoader(), bLog));
 
         if (bLog.isLoggable(Level.CONFIG)) {
             String rtHash = "";
@@ -1484,7 +1485,7 @@ public final class NBootWorkspace {
             NClassLoaderNodeBuilder x = new NClassLoaderNodeBuilder();
             if (NReservedUtils.isAcceptDependency(s, computedOptions)) {
                 x.setId(s.toString()).setUrl(NReservedMavenUtils.getBootCacheJar(s.toId(), repositories, workspaceBootLibFolder, !recover, name + " dependency", computedOptions.getExpireTime().orNull(), errorList, computedOptions, pathExpansionConverter, bLog, cache).toURI().toURL());
-                x.setIncludedInClasspath(NReservedClassLoaderUtils.isLoadedClassPath(x.getURL(), getContextClassLoader(), bLog));
+                x.setIncludedInClasspath(NReservedLangUtils.isLoadedClassPath(x.getURL(), getContextClassLoader(), bLog));
                 rt.addDependency(x.build());
             }
         }

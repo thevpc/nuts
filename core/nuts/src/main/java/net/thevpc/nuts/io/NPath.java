@@ -3,26 +3,24 @@
  * Nuts : Network Updatable Things Service
  * (universal package manager)
  * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
  *
  * <br>
  * <p>
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
+ * <br> ====================================================================
  */
 package net.thevpc.nuts.io;
 
@@ -46,12 +44,14 @@ import java.util.Set;
 import java.util.function.Function;
 
 /**
- * this interface describes any local or remote resource path. It includes simple file path (ex. '/home/here' and 'c:\\here')
- * as well as urls and uri ('ssh://here'), etc.
+ * this interface describes any local or remote resource path. It includes
+ * simple file path (ex. '/home/here' and 'c:\\here') as well as urls and uri
+ * ('ssh://here'), etc.
  *
  * @app.category Input Output
  */
 public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessionProvider {
+
     static NPath of(URL path, NSession session) {
         return NPaths.of(session).createPath(path);
     }
@@ -176,15 +176,17 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
      * content encoding if explicitly defined (from HTTP headers for instance).
      * return null when unknown.
      *
-     * @return content encoding if explicitly defined (from HTTP headers for instance)
+     * @return content encoding if explicitly defined (from HTTP headers for
+     * instance)
      */
     String getContentEncoding();
 
     /**
-     * content type if explicitly defined (from HTTP headers for instance) or probe for content type.
-     * return null when unknown.
+     * content type if explicitly defined (from HTTP headers for instance) or
+     * probe for content type. return null when unknown.
      *
-     * @return content type if explicitly defined (from HTTP headers for instance) or probe for content type.
+     * @return content type if explicitly defined (from HTTP headers for
+     * instance) or probe for content type.
      */
     String getContentType();
 
@@ -239,7 +241,6 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
      */
     String readString(Charset cs, NPathOption... options);
 
-
     NPath writeBytes(byte[] bytes, NPathOption... options);
 
     NPath writeString(String string, Charset cs, NPathOption... options);
@@ -247,8 +248,8 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
     NPath writeString(String string, NPathOption... options);
 
     /**
-     * path protocol or null if undefined. This is somehow similar to url protocol
-     * Particularly file system paths have an empty (aka "") protocol
+     * path protocol or null if undefined. This is somehow similar to url
+     * protocol Particularly file system paths have an empty (aka "") protocol
      *
      * @return path protocol or null if undefined
      */
@@ -276,7 +277,6 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
 
     NOptional<File> toFile();
 
-
     String toString();
 
     NStream<NPath> stream();
@@ -300,7 +300,6 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
     BufferedReader getBufferedReader(Charset cs, NPathOption... options);
 
     Reader getReader(Charset cs, NPathOption... options);
-
 
     Writer getWriter();
 
@@ -384,9 +383,11 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
     NPath removePermissions(NPathPermission... permissions);
 
     /**
-     * return true if this path is a simple name that do not contain '/' or equivalent
+     * return true if this path is a simple name that do not contain '/' or
+     * equivalent
      *
-     * @return true if this path is a simple name that do not contain '/' or equivalent
+     * @return true if this path is a simple name that do not contain '/' or
+     * equivalent
      */
     boolean isName();
 
@@ -398,48 +399,58 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
     int getLocationItemsCount();
 
     /**
-     * true if this is the root of the path file system.
-     * good examples are:
-     * '/' , 'C:\' and 'http://myserver/'
+     * true if this is the root of the path file system. good examples are: '/'
+     * , 'C:\' and 'http://myserver/'
      *
      * @return true if this is the root of the path file system
      */
     boolean isRoot();
 
-
     /**
-     * Return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file.
-     * The file tree is traversed depth-first, the elements in the stream are Path objects that are obtained as if by resolving the relative path against start.
+     * Return a Stream that is lazily populated with Path by walking the file
+     * tree rooted at a given starting file. The file tree is traversed
+     * depth-first, the elements in the stream are Path objects that are
+     * obtained as if by resolving the relative path against start.
      *
-     * @param options  options
+     * @param options options
      * @param maxDepth max depth
-     * @return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file
+     * @return a Stream that is lazily populated with Path by walking the file
+     * tree rooted at a given starting file
      */
     NStream<NPath> walk(int maxDepth, NPathOption[] options);
 
     /**
-     * Return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file.
-     * The file tree is traversed depth-first, the elements in the stream are Path objects that are obtained as if by resolving the relative path against start.
+     * Return a Stream that is lazily populated with Path by walking the file
+     * tree rooted at a given starting file. The file tree is traversed
+     * depth-first, the elements in the stream are Path objects that are
+     * obtained as if by resolving the relative path against start.
      *
      * @param options options
-     * @return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file
+     * @return a Stream that is lazily populated with Path by walking the file
+     * tree rooted at a given starting file
      */
     NStream<NPath> walk(NPathOption... options);
 
     /**
-     * Return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file.
-     * The file tree is traversed depth-first, the elements in the stream are Path objects that are obtained as if by resolving the relative path against start.
+     * Return a Stream that is lazily populated with Path by walking the file
+     * tree rooted at a given starting file. The file tree is traversed
+     * depth-first, the elements in the stream are Path objects that are
+     * obtained as if by resolving the relative path against start.
      *
      * @param maxDepth max depth
-     * @return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file
+     * @return a Stream that is lazily populated with Path by walking the file
+     * tree rooted at a given starting file
      */
     NStream<NPath> walk(int maxDepth);
 
     /**
-     * Return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file.
-     * The file tree is traversed depth-first, the elements in the stream are Path objects that are obtained as if by resolving the relative path against start.
+     * Return a Stream that is lazily populated with Path by walking the file
+     * tree rooted at a given starting file. The file tree is traversed
+     * depth-first, the elements in the stream are Path objects that are
+     * obtained as if by resolving the relative path against start.
      *
-     * @return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file
+     * @return a Stream that is lazily populated with Path by walking the file
+     * tree rooted at a given starting file
      */
     NStream<NPath> walk();
 
@@ -452,6 +463,14 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
     void moveTo(NPath other, NPathOption... options);
 
     void copyTo(NPath other, NPathOption... options);
+
+    void copyFrom(NPath other, NPathOption... options);
+
+    void copyFromInputStream(InputStream other);
+
+    void copyFromReader(Reader other);
+    
+    void copyFromReader(Reader other,Charset charset, NPathOption... options);
 
     void copyToOutputStream(OutputStream other);
 

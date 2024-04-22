@@ -92,7 +92,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>net.thevpc.nuts.installer.NutsInstaller</mainClass>
+                                    <mainClass>net.thevpc.nuts.Nuts</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>

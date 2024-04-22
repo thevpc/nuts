@@ -24,7 +24,7 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.reserved.NReservedCollectionUtils;
+import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.spi.NBootWorkspaceFactory;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
@@ -124,7 +124,7 @@ public final class DefaultNBootOptionsBuilder extends DefaultNWorkspaceOptionsBu
                 getOutputFormatOptions().orNull(), getCustomOptions().orNull(), getApiVersion().orNull(), getRuntimeId().orNull(), getJavaCommand().orNull(),
                  getJavaOptions().orNull(), getWorkspace().orNull(), getOutLinePrefix().orNull(), getErrLinePrefix().orNull(),
                  getName().orNull(), getInstallCompanions().orNull(), getSkipWelcome().orNull(), getSkipBoot().orNull(),
-                 getSystem().orNull(), getGui().orNull(), getDry().orNull(), getShowException().orNull(), getRecover().orNull(), getReset().orNull(), getCommandVersion().orNull(), getCommandHelp().orNull(), getCommandHelp().orNull(), getSwitchWorkspace().orNull(), getCached().orNull(), getCached().orNull(), getTransitive().orNull(), getBot().orNull(),
+                 getSystem().orNull(), getGui().orNull(), getDry().orNull(), getShowStacktrace().orNull(), getRecover().orNull(), getReset().orNull(), getCommandVersion().orNull(), getCommandHelp().orNull(), getCommandHelp().orNull(), getSwitchWorkspace().orNull(), getCached().orNull(), getCached().orNull(), getTransitive().orNull(), getBot().orNull(),
                  getIsolationLevel().orNull(), getInitLaunchers().orNull(), getInitScripts().orNull(), getInitPlatforms().orNull(),
                  getInitJava().orNull(), getExcludedExtensions().orNull(), getRepositories().orNull(), getUserName().orNull(),
                  getCredentials().orNull(), getTerminalMode().orNull(), getReadOnly().orNull(), getTrace().orNull(), getProgressOptions().orNull(),
@@ -188,7 +188,7 @@ public final class DefaultNBootOptionsBuilder extends DefaultNWorkspaceOptionsBu
 
     @Override
     public DefaultNBootOptionsBuilder setExtensionBootDescriptors(List<NDescriptor> extensionBootDescriptors) {
-        this.extensionBootDescriptors = NReservedCollectionUtils.nonNullList(extensionBootDescriptors);
+        this.extensionBootDescriptors = NReservedLangUtils.nonNullList(extensionBootDescriptors);
         return this;
     }
 
@@ -198,7 +198,7 @@ public final class DefaultNBootOptionsBuilder extends DefaultNWorkspaceOptionsBu
 
     @Override
     public DefaultNBootOptionsBuilder setExtensionBootDependencyNodes(List<NClassLoaderNode> extensionBootDependencyNodes) {
-        this.extensionBootDependencyNodes = NReservedCollectionUtils.nonNullList(extensionBootDependencyNodes);
+        this.extensionBootDependencyNodes = NReservedLangUtils.nonNullList(extensionBootDependencyNodes);
         return this;
     }
 
@@ -218,7 +218,7 @@ public final class DefaultNBootOptionsBuilder extends DefaultNWorkspaceOptionsBu
 
     @Override
     public DefaultNBootOptionsBuilder setClassWorldURLs(List<URL> classWorldURLs) {
-        this.classWorldURLs = NReservedCollectionUtils.nonNullList(classWorldURLs);
+        this.classWorldURLs = NReservedLangUtils.nonNullList(classWorldURLs);
         return this;
     }
 
@@ -248,7 +248,7 @@ public final class DefaultNBootOptionsBuilder extends DefaultNWorkspaceOptionsBu
 
     @Override
     public DefaultNBootOptionsBuilder setExtensionsSet(Set<String> extensionsSet) {
-        this.extensionsSet = NReservedCollectionUtils.nonNullSet(extensionsSet);
+        this.extensionsSet = NReservedLangUtils.nonNullSet(extensionsSet);
         return this;
     }
 

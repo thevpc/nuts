@@ -24,7 +24,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.NReservedCollectionUtils;
+import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.util.NBlankable;
 
 import java.io.Serializable;
@@ -51,7 +51,7 @@ public class DefaultNArtifactCall implements NArtifactCall, Serializable {
 
     public DefaultNArtifactCall(NArtifactCall other) {
         this.id = other.getId();
-        this.arguments = NReservedCollectionUtils.nonNullList(other.getArguments());
+        this.arguments = NReservedLangUtils.nonNullList(other.getArguments());
     }
 
     @Override
@@ -79,7 +79,7 @@ public class DefaultNArtifactCall implements NArtifactCall, Serializable {
 
     public DefaultNArtifactCall(NId id, List<String> options, Map<String, String> properties) {
         this.id = id;
-        this.arguments = NReservedCollectionUtils.nonNullList(options);
+        this.arguments = NReservedLangUtils.nonNullList(options);
     }
 
     public NId getId() {
@@ -87,7 +87,7 @@ public class DefaultNArtifactCall implements NArtifactCall, Serializable {
     }
 
     public List<String> getArguments() {
-        return NReservedCollectionUtils.unmodifiableList(arguments);
+        return NReservedLangUtils.unmodifiableList(arguments);
     }
 
     @Override

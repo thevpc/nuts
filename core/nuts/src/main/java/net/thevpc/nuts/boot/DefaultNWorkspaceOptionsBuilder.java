@@ -27,9 +27,9 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.format.NContentType;
-import net.thevpc.nuts.reserved.NReservedCollectionUtils;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.log.NLogConfig;
+import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.util.*;
 
 import java.io.InputStream;
@@ -218,10 +218,10 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     private Boolean dry;
 
     /**
-     * if true show exception 
+     * if true show exception stacktrace
      * option-type : runtime (available only for the current workspace instance)
      */
-    private Boolean showException;
+    private Boolean showStacktrace;
 
     /**
      * option-type : runtime (available only for the current workspace instance)
@@ -558,8 +558,8 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
-    public NOptional<Boolean> getShowException() {
-        return NOptional.ofNamed(showException,"showException");
+    public NOptional<Boolean> getShowStacktrace() {
+        return NOptional.ofNamed(showStacktrace,"showStacktrace");
     }
 
     /**
@@ -577,13 +577,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     /**
      * set dry
      *
-     * @param showException showException
+     * @param showStacktrace showStacktrace
      * @return {@code this} instance
      * @since 0.8.4
      */
     @Override
-    public NWorkspaceOptionsBuilder setShowException(Boolean showException) {
-        this.showException = showException;
+    public NWorkspaceOptionsBuilder setShowStacktrace(Boolean showStacktrace) {
+        this.showStacktrace = showStacktrace;
         return this;
     }
 
@@ -808,7 +808,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
                 outputFormatOptions = new ArrayList<>();
             }
             this.outputFormatOptions.clear();
-            return addOutputFormatOptions(NReservedCollectionUtils.nonNullList(options).toArray(new String[0]));
+            return addOutputFormatOptions(NReservedLangUtils.nonNullList(options).toArray(new String[0]));
         } else {
             this.outputFormatOptions = null;
         }
@@ -925,7 +925,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
                 this.storeLocations = new HashMap<>();
             }
             this.storeLocations.clear();
-            this.storeLocations.putAll(NReservedCollectionUtils.nonNullMap(storeLocations));
+            this.storeLocations.putAll(NReservedLangUtils.nonNullMap(storeLocations));
         } else {
             this.storeLocations = null;
         }
@@ -1431,7 +1431,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         this.setOpenMode(other.getOpenMode().orNull());
         this.setCreationTime(other.getCreationTime().orNull());
         this.setDry(other.getDry().orNull());
-        this.setShowException(other.getShowException().orNull());
+        this.setShowStacktrace(other.getShowStacktrace().orNull());
         this.setClassLoaderSupplier(other.getClassLoaderSupplier().orNull());
         this.setExecutorOptions(other.getExecutorOptions().orNull());
         this.setRecover(other.getRecover().orNull());
@@ -1561,8 +1561,8 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
             if (other.getDry().isPresent()) {
                 this.setDry(other.getDry().orNull());
             }
-            if (other.getShowException().isPresent()) {
-                this.setShowException(other.getShowException().orNull());
+            if (other.getShowStacktrace().isPresent()) {
+                this.setShowStacktrace(other.getShowStacktrace().orNull());
             }
             if (other.getClassLoaderSupplier().isPresent()) {
                 this.setClassLoaderSupplier(other.getClassLoaderSupplier().orNull());
@@ -1827,7 +1827,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
                 getRunAs().orNull(), getCreationTime().orNull(), getExpireTime().orNull(),
                 getInstallCompanions().orNull(), getSkipWelcome().orNull(), getSkipBoot().orNull(),
                 getSystem().orNull(), getGui().orNull(), getReadOnly().orNull(), getTrace().orNull(),
-                getDry().orNull(), getShowException().orNull(), getRecover().orNull(), getReset().orNull(), getCommandVersion().orNull(),
+                getDry().orNull(), getShowStacktrace().orNull(), getRecover().orNull(), getReset().orNull(), getCommandVersion().orNull(),
                 getCommandHelp().orNull(), getCommandHelp().orNull(), getSwitchWorkspace().orNull(), getCached().orNull(),
                 getIndexed().orNull(), getTransitive().orNull(), getBot().orNull(), getSkipErrors().orNull(),
                 getIsolationLevel().orNull(), getInitLaunchers().orNull(), getInitScripts().orNull(), getInitPlatforms().orNull(),
@@ -1893,7 +1893,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         setReset(null);
         setRecover(null);
         setDry(null);
-        setShowException(null);
+        setShowStacktrace(null);
         setExecutorOptions(null);
         setApplicationArguments(null);
         return this;

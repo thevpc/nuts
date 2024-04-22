@@ -24,7 +24,7 @@
 package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.reserved.ReservedSimpleCharQueue;
+import net.thevpc.nuts.reserved.util.NReservedSimpleCharQueue;
 import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
@@ -1052,7 +1052,7 @@ public class DefaultNCmdLine implements NCmdLine {
             // -!abc=true
             String v = args.removeFirst();
             if (expandSimpleOptions && v.length() > 2 && !isSpecialSimpleOption(v) && ((v.charAt(0) == '-' && v.charAt(1) != '-') || (v.charAt(0) == '+' && v.charAt(1) != '+')) && (v.charAt(1) != '/' || v.charAt(2) == '/')) {
-                ReservedSimpleCharQueue vv = new ReservedSimpleCharQueue(v.toCharArray());
+                NReservedSimpleCharQueue vv = new NReservedSimpleCharQueue(v.toCharArray());
                 char start = vv.read();
                 char negChar = '\0';
                 boolean negate = false;

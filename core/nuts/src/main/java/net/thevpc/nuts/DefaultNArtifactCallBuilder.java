@@ -25,7 +25,7 @@
 */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.NReservedCollectionUtils;
+import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -64,13 +64,13 @@ public class DefaultNArtifactCallBuilder implements NArtifactCallBuilder, Serial
 
     @Override
     public DefaultNArtifactCallBuilder setArguments(String... arguments) {
-        this.arguments = NReservedCollectionUtils.unmodifiableList(Arrays.asList(arguments));
+        this.arguments = NReservedLangUtils.unmodifiableList(Arrays.asList(arguments));
         return this;
     }
 
     @Override
     public NArtifactCallBuilder setArguments(List<String> value) {
-        this.arguments = NReservedCollectionUtils.unmodifiableList(value);
+        this.arguments = NReservedLangUtils.unmodifiableList(value);
         return this;
     }
 

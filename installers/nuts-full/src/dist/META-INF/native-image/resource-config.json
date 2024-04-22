@@ -1,46 +1,11 @@
 {
   "resources":{
-  "includes":[
-    {
-      "pattern":"\\Qcom/formdev/flatlaf/FlatDarkLaf.properties\\E"
-    }, 
-    {
-      "pattern":"\\Qcom/formdev/flatlaf/FlatLaf.properties\\E"
-    }, 
-    {
-      "pattern":"\\Qcom/formdev/flatlaf/FlatLightLaf.properties\\E"
-    }, 
-    {
-      "pattern":"\\Qnet/thevpc/nuts/installer/introduction.html\\E"
-    }, 
-    {
-      "pattern":"\\Qnet/thevpc/nuts/installer/keyboard.png\\E"
-    }, 
-    {
-      "pattern":"\\Qnet/thevpc/nuts/installer/license.txt\\E"
-    }, 
-    {
-      "pattern":"\\Qnet/thevpc/nuts/installer/nuts-icon.png\\E"
-    }, 
-    {
-      "pattern":"\\Qnet/thevpc/nuts/installer/nuts-logo.png\\E"
-    }, 
-    {
-      "pattern":"\\Qnet/thevpc/nuts/installer/package-companions.html\\E"
-    }, 
-    {
-      "pattern":"\\Qnet/thevpc/nuts/installer/summary-success.html\\E"
-    }
-  ]},
-  "bundles":[
-    {
-      "name":"com.formdev.flatlaf.resources.Bundle"
-    }, 
-    {
-      "name":"com.sun.swing.internal.plaf.basic.resources.basic"
-    }, 
-    {
-      "name":"sun.awt.resources.awt"
-    }
-  ]
+  "includes":[{
+    "pattern":"\\QMETA-INF/services/java.lang.System$LoggerFinder\\E"
+  }, {
+    "pattern":"java.base:\\Qsun/launcher/resources/launcher_en.properties\\E"
+  }, {
+    "pattern":"java.base:\\Qsun/launcher/resources/launcher_en_US.properties\\E"
+  }]},
+  "bundles":[]
 }

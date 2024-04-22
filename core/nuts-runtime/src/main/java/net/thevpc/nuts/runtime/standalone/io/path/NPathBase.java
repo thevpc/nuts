@@ -20,8 +20,10 @@ import java.nio.charset.CharsetDecoder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import net.thevpc.nuts.util.NAssert;
 
 public abstract class NPathBase extends AbstractMultiReadNInputSource implements NPath {
+
     public static final int BUFFER_SIZE = 8192;
     private DefaultNPathMetadata omd = new DefaultNPathMetadata(this);
     private boolean deleteOnDispose;
@@ -92,7 +94,6 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
         return getBufferedReader(null, options);
     }
 
-
     @Override
     public BufferedReader getBufferedReader(Charset cs, NPathOption... options) {
         Reader r = getReader(cs, options);
@@ -131,6 +132,51 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
         } catch (IOException ex) {
             throw new NIOException(getSession(), ex);
         }
+    }
+
+    @Override
+    public void copyFromInputStream(InputStream other) {
+        try (OutputStream out = getOutputStream()) {
+            byte[] buffer = new byte[BUFFER_SIZE];
+            int count;
+            while ((count = other.read(buffer)) > 0) {
+                out.write(buffer, 0, count);
+            }
+        } catch (IOException ex) {
+            throw new NIOException(getSession(), ex);
+        }
+    }
+
+    @Override
+    public void copyFromReader(Reader other) {
+        try (Writer writer = getWriter()) {
+            char[] buffer = new char[BUFFER_SIZE];
+            int count;
+            while ((count = other.read(buffer)) > 0) {
+                writer.write(buffer, 0, count);
+            }
+        } catch (IOException ex) {
+            throw new NIOException(getSession(), ex);
+        }
+    }
+
+    @Override
+    public void copyFromReader(Reader other, Charset charset, NPathOption... options) {
+        try (Writer writer = getWriter(charset, options)) {
+            char[] buffer = new char[BUFFER_SIZE];
+            int count;
+            while ((count = other.read(buffer)) > 0) {
+                writer.write(buffer, 0, count);
+            }
+        } catch (IOException ex) {
+            throw new NIOException(getSession(), ex);
+        }
+    }
+
+    @Override
+    public void copyFrom(NPath other, NPathOption... options) {
+        NAssert.requireNonNull(other, "other");
+        other.copyTo(this, options);
     }
 
     @Override
@@ -225,9 +271,8 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
     private String[] rebuildSmartParts(NLiteral[] vals, int split) {
         return new String[]{
-                concatSmartParts(vals, 0, split),
-                concatSmartParts(vals, split + 1, vals.length),
-        };
+            concatSmartParts(vals, 0, split),
+            concatSmartParts(vals, split + 1, vals.length),};
     }
 
     private String concatSmartParts(NLiteral[] vals, int from, int to) {
@@ -237,7 +282,6 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
         }
         return sb.toString();
     }
-
 
     @Override
     public String getSmartBaseName() {
@@ -289,14 +333,13 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
     @Override
     public boolean isFile() {
-        return toFile().orNull()!=null;
+        return toFile().orNull() != null;
     }
 
     @Override
     public NPath delete() {
         return delete(false);
     }
-
 
     public NString toNutsString() {
         return NTexts.of(getSession()).ofPlain(toString());
@@ -305,8 +348,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
     @Override
     public NFormat formatter(NSession session) {
         return new PathFormat(this)
-                .setSession(session != null ? session : getSession())
-                ;
+                .setSession(session != null ? session : getSession());
     }
 
     @Override
@@ -316,14 +358,18 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         NPathBase that = (NPathBase) o;
-        return Objects.equals(toString(), that.toString())
-                ;
+        return Objects.equals(toString(), that.toString());
     }
 
     private static class PathFormat extends DefaultFormatBase<NFormat> {
+
         private final NPathBase p;
 
         public PathFormat(NPathBase p) {
@@ -412,7 +458,6 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
         return new BufferedReader(reader);
     }
 
-
     @Override
     public boolean isHttp() {
         if (!isURL()) {
@@ -421,7 +466,6 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
         String s = toString();
         return s.startsWith("http://") || s.startsWith("https://");
     }
-
 
     @Override
     public NContentMetadata getMetaData() {
@@ -473,7 +517,6 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
         }
         return sb.toString();
     }
-
 
     @Override
     public List<NPath> list() {
