@@ -5,20 +5,10 @@ import net.thevpc.nuts.cmdline.NCmdLineContext;
 import net.thevpc.nuts.cmdline.NCmdLineProcessor;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.io.NSessionTerminal;
-import net.thevpc.nuts.toolbox.nsh.eval.NShellContext;
-import net.thevpc.nuts.toolbox.nsh.nshell.*;
-import net.thevpc.nuts.toolbox.nsh.nodes.NShellVar;
-import net.thevpc.nuts.toolbox.nsh.nodes.NShellVarListener;
-import net.thevpc.nuts.toolbox.nsh.nodes.NShellVariables;
-import net.thevpc.nuts.toolbox.ntemplate.filetemplate.ExprEvaluator;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.FileTemplater;
-import net.thevpc.nuts.toolbox.ntemplate.filetemplate.ProcessCmd;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.TemplateConfig;
-import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.StringUtils;
+import net.thevpc.nuts.toolbox.ntemplate.project.NTemplateProject;
 import net.thevpc.nuts.util.NLiteral;
-
-import java.nio.file.Path;
 
 public class NTemplateMain implements NApplication {
     TemplateConfig config = new TemplateConfig();
@@ -67,87 +57,13 @@ public class NTemplateMain implements NApplication {
                 return false;
             }
 
-            @Override
-            public void onCmdFinishParsing(NCmdLine cmdLine, NCmdLineContext context) {
-                fileTemplater = new NFileTemplater(session);
-            }
 
             @Override
             public void onCmdExec(NCmdLine cmdLine, NCmdLineContext context) {
-                fileTemplater.processProject(config);
+                new NTemplateProject(config,session);
             }
         });
     }
 
-
-    private static class NshEvaluator implements ExprEvaluator {
-        private final NSession session;
-        private final NShell shell;
-        private final FileTemplater fileTemplater;
-
-        public NshEvaluator(NSession session, FileTemplater fileTemplater) {
-            this.session = session;
-            this.fileTemplater = fileTemplater;
-            shell = new NShell(new NShellConfiguration().setSession(session)
-                    .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)
-                    .setArgs()
-            );
-            NShellContext rootContext = shell.getRootContext();
-            rootContext.setSession(rootContext.getSession().copy());
-            rootContext.vars().addVarListener(
-                    new NShellVarListener() {
-                        @Override
-                        public void varAdded(NShellVar nShellVar, NShellVariables vars, NShellContext context) {
-                            setVar(nShellVar.getName(), nShellVar.getValue());
-                        }
-
-                        @Override
-                        public void varValueUpdated(NShellVar nShellVar, String oldValue, NShellVariables vars, NShellContext context) {
-                            setVar(nShellVar.getName(), nShellVar.getValue());
-                        }
-
-                        @Override
-                        public void varRemoved(NShellVar nShellVar, NShellVariables vars, NShellContext context) {
-                            setVar(nShellVar.getName(), null);
-                        }
-                    }
-            );
-            rootContext
-                    .builtins()
-                    .set(new ProcessCmd(fileTemplater));
-        }
-
-        public void setVar(String varName, String newValue) {
-            fileTemplater.getLog().debug("eval", varName + "=" + StringUtils.toLiteralString(newValue));
-            fileTemplater.setVar(varName, newValue);
-        }
-
-        @Override
-        public Object eval(String content, FileTemplater context) {
-            NShellContext ctx = shell.createInlineContext(shell.getRootContext(), context.getSourcePath().orElse("nsh"), new String[0]);
-            NSession session = context.getSession().copy();
-            session.setTerminal(NSessionTerminal.ofMem(session));
-            ctx.setSession(session);
-            shell.executeScript(content, ctx);
-            return session.out().toString();
-        }
-
-        @Override
-        public String toString() {
-            return "nsh";
-        }
-    }
-
-    private static class NFileTemplater extends FileTemplater {
-        public NFileTemplater(NSession session) {
-            super(session);
-            this.setDefaultExecutor("text/ntemplate-nsh-project", new NshEvaluator(session, this));
-            setProjectFileName("project.nsh");
-        }
-
-        public void executeProjectFile(Path path, String mimeTypesString) {
-            executeRegularFile(path, "text/ntemplate-nsh-project");
-        }
-    }
 
 }

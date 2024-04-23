@@ -29,7 +29,7 @@ public class InstallerRunner extends AbstractRunner {
     NamedStringParam INSTALLER_JRE8_MAC64 = NParams.ofString("INSTALLER_JRE8_MAC64", null);
     boolean buildNative = false;
     boolean buildInstaller = false;
-    boolean buildNuts = false;
+    boolean buildBin = false;
 
     @Override
     public void configureAfterOptions() {
@@ -50,7 +50,12 @@ public class InstallerRunner extends AbstractRunner {
             case "build-installer": {
                 cmdLine.withNextFlag((v, a, s) -> {
                     buildInstaller = v;
-                    buildNuts = v;
+                });
+                return true;
+            }
+            case "build-bin": {
+                cmdLine.withNextFlag((v, a, s) -> {
+                    buildBin = v;
                 });
                 return true;
             }
@@ -99,7 +104,7 @@ public class InstallerRunner extends AbstractRunner {
             }
         }
 
-        if (buildNuts) {
+        if (buildBin) {
             r.setSupported(NativeBuilder.PackageType.PORTABLE);
             if(buildNative){
                 r.addSupported(NativeBuilder.PackageType.NATIVE,NativeBuilder.PackageType.BIN,NativeBuilder.PackageType.JRE_BUNDLE);

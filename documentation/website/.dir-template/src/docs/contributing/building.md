@@ -39,7 +39,8 @@ To do so we will need to install locally ```nuts``` and ```nsh```.
 Assuming you are always under `nuts` repo root folder, issue the following command (its a bash command, so you need to be on linux or MacOS for it to work)
 
 ```bash
-./nuts-build-release
+cd installers/nuts-release-tool
+java -jar target/nuts-release-tool-$version.jar
 ```
 
 You can now play with your development version of nuts using the generated `nuts-dev` script.

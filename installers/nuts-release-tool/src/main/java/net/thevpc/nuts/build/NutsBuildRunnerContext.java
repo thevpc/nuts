@@ -27,6 +27,7 @@ public class NutsBuildRunnerContext {
     public NPath NUTS_WEBSITE_BASE;
     public String NUTS_DEBUG_ARG = null;
     public String nutsStableVersion = null;
+    public String runtimeStableVersion = null;
     public boolean verbose = false;
     public boolean trace = false;
 

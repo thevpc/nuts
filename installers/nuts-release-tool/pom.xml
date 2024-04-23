@@ -63,6 +63,11 @@
             <artifactId>nuts</artifactId>
             <version>0.8.4</version>
         </dependency>
+        <dependency>
+            <groupId>net.thevpc.nuts.toolbox</groupId>
+            <artifactId>ntemplate</artifactId>
+            <version>0.8.4.0</version>
+        </dependency>
     </dependencies>
 
     <build>

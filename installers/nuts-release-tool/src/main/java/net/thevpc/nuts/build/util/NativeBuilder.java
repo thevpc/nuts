@@ -159,6 +159,7 @@ public class NativeBuilder {
         ensureRegularFile(graalvmHome + "/bin/java", "graalvmHome");
         ensureRegularFile(graalvmHome + "/bin/native-image", "graalvmHome");
         NExecCmd.of(session).system()
+                .setEnv("JAVA_HOME",graalvmHome)
                 .setDirectory(evalSrcDist())
                 .addCommand(graalvmHome + "/bin/java")
                 .addCommand("-agentlib:native-image-agent=config-output-dir=" + srcDistMetaInfNativeImage)
@@ -171,6 +172,7 @@ public class NativeBuilder {
 
         NPath f = rootDistLinux64Bin.resolve(evalName(platform, null, null));
         NExecCmd.of(session).system()
+                .setEnv("JAVA_HOME",graalvmHome)
                 .setDirectory(evalSrcDist())
                 .addCommand(graalvmHome + "/bin/native-image")
                 .addCommand("--enable-http")

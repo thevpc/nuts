@@ -22,6 +22,16 @@ public class TemplateConfig {
     private String scriptType;
     private String projectPath;
     private Predicate<Path> pathFilter;
+    private String contextName;
+
+    public String getContextName() {
+        return contextName;
+    }
+
+    public TemplateConfig setContextName(String contextName) {
+        this.contextName = contextName;
+        return this;
+    }
 
     public TemplateConfig addSource(String script) {
         paths.add(script);

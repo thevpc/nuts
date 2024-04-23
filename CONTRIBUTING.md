@@ -40,7 +40,8 @@ mvn clean install
 and here is how to compile/generate the website and documentation (assuming you are under `nuts` repo root folder)
 
 ```bash
-./nuts-build-release
+cd installers/nuts-release-tool
+java -jar target/nuts-release-tool-0.8.4.0.jar
 ```
 
 You can now play with your development version of nuts using the generated `nuts-dev` script.

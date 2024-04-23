@@ -9,6 +9,8 @@
   }, {
     "pattern":"\\QMETA-INF/services/java.net.spi.InetAddressResolverProvider\\E"
   }, {
+    "pattern":"\\QMETA-INF/services/java.net.spi.URLStreamHandlerProvider\\E"
+  }, {
     "pattern":"\\Qcom/formdev/flatlaf/FlatLaf.properties\\E"
   }, {
     "pattern":"\\Qcom/formdev/flatlaf/FlatLightLaf.properties\\E"
@@ -21,13 +23,31 @@
   }, {
     "pattern":"\\Qnet/thevpc/nuts/installer/checked.png\\E"
   }, {
+    "pattern":"\\Qnet/thevpc/nuts/installer/introduction.html\\E"
+  }, {
+    "pattern":"\\Qnet/thevpc/nuts/installer/keyboard.png\\E"
+  }, {
     "pattern":"\\Qnet/thevpc/nuts/installer/license.txt\\E"
+  }, {
+    "pattern":"\\Qnet/thevpc/nuts/installer/mouse.png\\E"
   }, {
     "pattern":"\\Qnet/thevpc/nuts/installer/nuts-icon.png\\E"
   }, {
     "pattern":"\\Qnet/thevpc/nuts/installer/nuts-logo.png\\E"
   }, {
+    "pattern":"\\Qnet/thevpc/nuts/installer/package-companions.html\\E"
+  }, {
     "pattern":"\\Qnet/thevpc/nuts/installer/stop.png\\E"
+  }, {
+    "pattern":"\\Qnet/thevpc/nuts/installer/summary-error.html\\E"
+  }, {
+    "pattern":"java.base:\\Qjdk/internal/icu/impl/data/icudt74b/nfkc.nrm\\E"
+  }, {
+    "pattern":"java.base:\\Qjdk/internal/icu/impl/data/icudt74b/uprops.icu\\E"
+  }, {
+    "pattern":"java.base:\\Qsun/net/idn/uidna.spp\\E"
+  }, {
+    "pattern":"java.base:\\Qsun/text/resources/LineBreakIteratorData\\E"
   }, {
     "pattern":"java.desktop:\\Qcom/formdev/flatlaf/resources/Bundle.properties\\E"
   }, {
@@ -53,7 +73,16 @@
     "name":"sun.awt.resources.awt",
     "locales":["en-US"]
   }, {
+    "name":"sun.text.resources.BreakIteratorInfo",
+    "locales":["und"]
+  }, {
+    "name":"sun.text.resources.BreakIteratorResources",
+    "locales":["en", "en-US", "und"]
+  }, {
     "name":"sun.util.resources.cldr.CalendarData",
     "locales":["und"]
+  }, {
+    "name":"sun.util.resources.cldr.TimeZoneNames",
+    "locales":["en", "en-US", "und"]
   }]
 }

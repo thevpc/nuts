@@ -38,7 +38,7 @@ public class StreamToTemplateProcessor implements TemplateProcessor {
             FileProcessorUtils.mkdirs(targetPath.getParent());
             try (InputStream in = Files.newInputStream(source);
                     OutputStream out = Files.newOutputStream(targetPath);) {
-
+//                context.getLog().debug(context.getContextName(), "update "+p+" (from "+source+") using "+streamProcessor);
                 streamProcessor.processStream(in, out, context);
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);

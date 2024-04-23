@@ -16,6 +16,7 @@ import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -81,6 +82,7 @@ public class FileTemplater {
     private PathTranslator pathTranslator;
     private String projectFileName = PROJECT_FILENAME;
     private NSession session;
+    private String contextName;
 
     public FileTemplater(NSession session) {
         this.session = session;
@@ -171,6 +173,16 @@ public class FileTemplater {
 
     public FileTemplater newChild() {
         return new FileTemplater(this);
+    }
+
+    public String getContextName() {
+        if (contextName != null) {
+            return contextName;
+        }
+        if (parent != null) {
+            return parent.getContextName();
+        }
+        return null;
     }
 
     public TemplateProcessor getProcessor(String mimetype) {
@@ -658,20 +670,21 @@ public class FileTemplater {
         }
         String[] mimeTypes = mimeType == null ? FileProcessorUtils.splitMimeTypes(getMimeTypeResolver().resolveMimetype(path.toString()))
                 : FileProcessorUtils.splitMimeTypes(mimeType);
+        String contextName1 = NStringUtils.firstNonBlank(getContextName(), "file");
         for (String mimeType0 : mimeTypes) {
             TemplateProcessor proc = null;
             try {
                 proc = getProcessor(mimeType0);
             } catch (Exception ex) {
-                getLog().error("file", "error resolving processor for mimetype " + mimeType0 + " and file : " + path.toString() + ". " + ex.toString());
+                getLog().error(contextName1, "error resolving processor for mimetype " + mimeType0 + " and file : " + path.toString() + ". " + ex.toString());
             }
             if (proc != null) {
                 String s1 = path.toString();
                 String s2 = absolutePath.toString();
                 if (s1.equals(s2)) {
-                    getLog().debug("file", "[" + proc + "] [" + mimeType + "] process path : " + s1);
+                    getLog().debug(contextName1, "[" + proc + "] [" + NStringUtils.firstNonBlank(mimeType, "no-mimetype") + "] process path : " + s1);
                 } else {
-                    getLog().debug("file", "[" + proc + "] [" + mimeType + "] process path : " + s1 + " = " + s2);
+                    getLog().debug(contextName1, "[" + proc + "] [" + NStringUtils.firstNonBlank(mimeType, "no-mimetype") + "] process path : " + s1 + " = " + s2);
                 }
                 proc.processPath(path, mimeType0,
                         newChild()
@@ -787,6 +800,7 @@ public class FileTemplater {
         String projectPath = config.getProjectPath();
         String scriptType = config.getScriptType();
         String targetFolder = config.getTargetFolder();
+        this.contextName = NStringUtils.trimToNull(config.getContextName());
         if (projectPath == null) {
             if (config.getPaths().isEmpty()) {
                 throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("missing path to process"));

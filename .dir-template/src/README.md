@@ -80,7 +80,7 @@ If you want a shorter link, use this one!
 wget https://thevpc.net/nuts/nuts-stable.jar -O nuts.jar
 ```
 
-Then you must run, in a terminal, one of the the following commands:
+Then you must run, in a terminal, one of the following commands:
 
 Run this command to reset the configuration or when you are installing the very first time
 

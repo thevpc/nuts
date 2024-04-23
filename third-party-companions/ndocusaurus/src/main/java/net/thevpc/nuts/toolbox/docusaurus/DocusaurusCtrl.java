@@ -101,7 +101,9 @@ public class DocusaurusCtrl {
             session.out().print(NMsg.ofC("process template %s -> %s%n", preProcessor, getTargetBaseDir()));
             TemplateConfig config = new TemplateConfig()
                     .setProjectPath(preProcessor.toString())
-                    .setTargetFolder(getTargetBaseDir().toString());
+                    .setTargetFolder(getTargetBaseDir().toString())
+                    .setContextName("ndocusaurus")
+                    ;
             new NFileTemplater(session)
                     .setWorkingDir(base.toString())
                     .setMimeTypeResolver(
