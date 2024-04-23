@@ -81,6 +81,7 @@ public class InstallerRunner extends AbstractRunner {
         r.setCopyright("(c) 2024 thevpc");
         r.setIcons(Arrays.asList(context().root.resolve("documentation/media/nuts-icon.icns")));
 
+        NPath sharedDistFolder = context().root.resolve("installers/nuts-release-tool").resolve("dist");
         if (buildInstaller) {
             r.setSupported(NativeBuilder.PackageType.PORTABLE);
             if(buildNative){
@@ -88,11 +89,12 @@ public class InstallerRunner extends AbstractRunner {
             }
             r.setMainClass("net.thevpc.nuts.installer.NutsInstaller");
             r.setProjectFolder(context().root.resolve("installers/nuts-installer"), null, null);
+            r.setDist(sharedDistFolder);
             r.setProfilingArgs(new String[0]);
             r.build();
             if (context().publish) {
                 for (NPath nPath : r.getGeneratedFiles()) {
-                    System.out.println("publish " + nPath + (nPath.isDirectory() ? " [DIR]" : ""));
+                    upload(nPath,remoteTheVpcNuts().resolve(nPath.getName()).toString());
                 }
             }
         }
@@ -103,12 +105,13 @@ public class InstallerRunner extends AbstractRunner {
                 r.addSupported(NativeBuilder.PackageType.NATIVE,NativeBuilder.PackageType.BIN,NativeBuilder.PackageType.JRE_BUNDLE);
             }
             r.setMainClass("net.thevpc.nuts.Nuts");
-            r.setProjectFolder(context().root.resolve("installers/nuts-full"), NId.of("nuts").get(), "nuts-$version-shaded.jar");
-            r.setProfilingArgs(new String[]{"--sandbox"});
+            r.setProjectFolder(context().root.resolve("installers/nuts-portable"), null, "nuts-portable-$version-shaded.jar");
+            r.setDist(sharedDistFolder);
+            r.setProfilingArgs(new String[]{"--sandbox","--verbose"});
             r.build();
             if (context().publish) {
                 for (NPath nPath : r.getGeneratedFiles()) {
-                    System.out.println("publish " + nPath + (nPath.isDirectory() ? " [DIR]" : ""));
+                    upload(nPath,remoteTheVpcNuts().resolve(nPath.getName()).toString());
                 }
             }
         }

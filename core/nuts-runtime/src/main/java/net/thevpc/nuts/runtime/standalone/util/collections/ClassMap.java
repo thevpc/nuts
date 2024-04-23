@@ -99,6 +99,22 @@ public class ClassMap<V> {
         return result.toArray(new Class[result.size()]);
     }
 
+    public Set<Class<?>> cacheKeySet() {
+        HashSet<Class<?>> r = new HashSet<>();
+        r.addAll((Collection) this.values.keySet());
+        r.addAll((Collection) cachedValues.keySet());
+        return r;
+    }
+
+    public Set<V> allKeySet() {
+        Set<Class> ks0 = values.keySet();
+        HashSet u = new HashSet(ks0);
+        for (Class a : ks0) {
+            u.addAll(Arrays.asList(getKeys(a)));
+        }
+        return u;
+    }
+
     public Set<V> keySet() {
         return new HashSet(values.keySet());
     }
@@ -222,5 +238,11 @@ public class ClassMap<V> {
 
     public int size() {
         return values.size();
+    }
+
+    public void expand() {
+        for (Class k : values.keySet()) {
+            getKeys(k);
+        }
     }
 }

@@ -20,6 +20,7 @@ public class NativeBuilder {
     private String jre8Mac64;
     private NPath dist;
     private NPath projectFolder;
+    private NId projectId;
     private NPath jarPath;
     private List<NPath> icons;
     private List<NPath> generatedFiles;
@@ -122,23 +123,22 @@ public class NativeBuilder {
 
 
     private List<NPath> createDistPortableJar() {
-        echo("**** create $v...", NMaps.of("v", NMsg.ofStyled("portable-jar", NTextStyle.keyword())));
-        NPath targetFolder = dist.resolve(evalNameNoVersion(null, "portable-jar", null));
+        echo("**** [$id] create $v...", NMaps.of("id",appId,"v", NMsg.ofStyled("jar", NTextStyle.keyword())));
+        NPath targetFolder = dist.resolve(evalNameNoVersion(null, "jar", null));
         if (targetFolder.isDirectory()) {
             targetFolder.deleteTree();
         }
         targetFolder.mkdirs();
-        NPath NUTS_INSTALLER_JAR = evalSrcDistJar();
-        String installerJarName = NUTS_INSTALLER_JAR.getName();
-        NPath installerJarPath = projectFolder.resolve("target").resolve(installerJarName);
-        NPath f = targetFolder.resolve(installerJarName);
+        NPath distJar = evalSrcDistJar();
+        NPath installerJarPath = projectFolder.resolve("target").resolve(projectId.getArtifactId()+"-"+projectId.getVersion()+".jar");
+        NPath f = targetFolder.resolve(distJar.getName());
         installerJarPath.copyTo(f);
-        installerJarPath.copyTo(NUTS_INSTALLER_JAR);
+        installerJarPath.copyTo(distJar);
         return Arrays.asList(f);
     }
 
     private List<NPath> createDistNativeGraalVMBin() {
-        echo("**** create $v (GraalVM)...", NMaps.of("v", NMsg.ofStyled("native-image", NTextStyle.keyword())));
+        echo("**** [$id] create $v (GraalVM)...", NMaps.of("id",appId,"v", NMsg.ofStyled("native-image", NTextStyle.keyword())));
         List<NPath> ret = new ArrayList<>();
 
         BinPlatform platform = currentPlatform();
@@ -162,6 +162,7 @@ public class NativeBuilder {
                 .setDirectory(evalSrcDist())
                 .addCommand(graalvmHome + "/bin/java")
                 .addCommand("-agentlib:native-image-agent=config-output-dir=" + srcDistMetaInfNativeImage)
+                .addCommand("-DEnableGraalVM=true")
                 .addCommand("-jar")
                 .addCommand(newJarPath)
                 .addCommand(profilingArgs)
@@ -176,8 +177,15 @@ public class NativeBuilder {
                 .addCommand("--enable-https")
                 .addCommand("--enable-https")
                 .addCommand("--no-fallback")
+                .addCommand("-H:+UnlockExperimentalVMOptions")
                 .addCommand("-H:ConfigurationFileDirectories=" + srcDistMetaInfNativeImage)
+                .addCommand(
+                        (srcDistMetaInfNativeImage.resolve("my-reflect-config.json")).isRegularFile()?
+                        "-H:ReflectionConfigurationFiles=" + srcDistMetaInfNativeImage.resolve("my-reflect-config.json")
+                                :null
+                )
                 .addCommand("-Djava.awt.headless=false")
+                .addCommand("-DEnableGraalVM=true")
                 .addCommand("-jar")
                 .addCommand(newJarPath)
                 .addCommand(f)
@@ -267,7 +275,7 @@ public class NativeBuilder {
     }
 
     private List<NPath> createDistJPackageRPM() {
-        echo("**** create $v (JPackage)...", NMaps.of("v", NMsg.ofStyled("rpm", NTextStyle.keyword())));
+        echo("**** [$id] create $v (JPackage)...", NMaps.of("id",appId,"v", NMsg.ofStyled("rpm", NTextStyle.keyword())));
         NPath targetFolder = dist.resolve(evalNameNoVersion(evalCurrentBinPlatform(), "rpm", null)
         );
         BinPlatform platform = currentPlatform();
@@ -327,8 +335,8 @@ public class NativeBuilder {
     }
 
     private List<NPath> createDistNativeJar2app(BinPlatform platform) {
-        echo("**** create $v $p (Jar2App)...",
-                NMaps.of(
+        echo("**** [$id] create $v $p (Jar2App)...",
+                NMaps.of("id",appId,
                         "v", NMsg.ofStyled("bin", NTextStyle.keyword())
                         , "p", platform
                 )
@@ -389,8 +397,8 @@ public class NativeBuilder {
     }
 
     private List<NPath> createDistNativePackrWithJava(BinPlatform platform) {
-        echo("**** create $v $p (Packr)...",
-                NMaps.of(
+        echo("**** [$id] create $v $p (Packr)...",
+                NMaps.of("id",appId,
                         "v", NMsg.ofStyled("bin-with-java", NTextStyle.keyword())
                         , "p", platform
                 )
@@ -576,17 +584,21 @@ public class NativeBuilder {
         this.projectFolder = projectFolder;
         //setProjectFolder(projectFolder);
         NDescriptor nDescriptor = NDescriptorParser.of(session).setDescriptorStyle(NDescriptorStyle.MAVEN).parse(getProjectFolder().resolve("pom.xml")).get();
-        NId appId = nDescriptor.getId();
+        this.projectId = nDescriptor.getId();
         if (preferredId != null && preferredId.getVersion().isBlank()) {
-            preferredId.builder().setVersion(appId.getVersion()).builder();
+            preferredId=preferredId.builder().setVersion(projectId.getVersion()).builder();
         }
         if (preferredId != null && NBlankable.isBlank(preferredId.getGroupId())) {
-            preferredId.builder().setGroupId(appId.getGroupId()).builder();
+            preferredId=preferredId.builder().setGroupId(projectId.getGroupId()).builder();
         }
-        setAppName(appId.getArtifactId());
+        if (preferredId != null && !NBlankable.isBlank(preferredId.getArtifactId())) {
+            setAppName(preferredId.getArtifactId());
+        }else{
+            setAppName(projectId.getArtifactId());
+        }
         setDisplayName(nDescriptor.getName());
-        setAppId(appId.getGroupId() + "." + appId.getArtifactId());
-        setVersion(appId.getVersion());
+        setAppId(projectId.getGroupId() + "." + projectId.getArtifactId());
+        setVersion(projectId.getVersion());
         setJarPath(getProjectFolder().resolve("target").resolve(
                 NBlankable.isBlank(jarName) ?
                         evalName(null, null, ".jar")

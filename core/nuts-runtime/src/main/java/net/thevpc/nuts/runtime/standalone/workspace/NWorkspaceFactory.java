@@ -42,30 +42,30 @@ import java.util.Set;
  */
 public interface NWorkspaceFactory {
 
-    Set<Class> discoverTypes(NId id, URL url, ClassLoader bootClassLoader, NSession session);
+    Set<Class<? extends NComponent>> discoverTypes(NId id, URL url, ClassLoader bootClassLoader, NSession session);
 
-    Set<Class> discoverTypes(NId id, URL url, ClassLoader bootClassLoader, Class[] extensionPoints, NSession session);
+    Set<Class<? extends NComponent>> discoverTypes(NId id, URL url, ClassLoader bootClassLoader, Class<? extends NComponent>[] extensionPoints, NSession session);
 
     <T extends NComponent> NOptional<T> createComponent(Class<T> type, Object supportCriteria, NSession session);
 
     <T extends NComponent> List<T> createComponents(Class<T> type, Object supportCriteria, NSession session);
 
-    <T> List<T> createAll(Class<T> type, NSession session);
+    <T extends NComponent> List<T> createAll(Class<T> type, NSession session);
 
-    <T> T createFirst(Class<T> type, NSession session);
+    <T extends NComponent> T createFirst(Class<T> type, NSession session);
 
-    Set<Class> getExtensionTypes(Class extensionPoint, NSession session);
+    <T extends NComponent> Set<Class<? extends T>> getExtensionTypes(Class<T> extensionPoint, NSession session);
 
-    List<Object> getExtensionObjects(Class extensionPoint);
+    <T extends NComponent> List<T> getExtensionObjects(Class<T> extensionPoint);
 
-    boolean isRegisteredType(Class extensionPointType, String name, NSession session);
+    <T extends NComponent> boolean isRegisteredType(Class<T> extensionPointType, String name, NSession session);
 
-    boolean isRegisteredInstance(Class extensionPointType, Object extensionImpl, NSession session);
+    <T extends NComponent> boolean isRegisteredInstance(Class<T> extensionPointType, T extensionImpl, NSession session);
 
-    <T> void registerInstance(Class<T> extensionPoint, T implementation, NSession session);
+    <T extends NComponent> void registerInstance(Class<T> extensionPoint, T implementation, NSession session);
 
-    void registerType(Class extensionPointType, Class extensionType, NId source, NSession session);
+    <T extends NComponent> void registerType(Class<T> extensionPointType, Class<? extends T> implementationType, NId source, NSession session);
 
-    boolean isRegisteredType(Class extensionPointType, Class extensionType, NSession session);
+    <T extends NComponent> boolean isRegisteredType(Class<T> extensionPointType, Class<? extends T> implementationType, NSession session);
 
 }

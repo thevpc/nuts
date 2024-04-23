@@ -41,10 +41,10 @@ class SilentStartNProgressListenerAdapter implements NProgressListener {
                 boolean b=delegate.onProgress(event);
                 if (event.getError() != null) {
                     _LOGOP(event.getSession()).level(Level.FINEST).verb(NLogVerb.FAIL)
-                            .log(NMsg.ofJ("download failed    : {0}", path));
+                            .log(NMsg.ofC("download failed    : %s", path));
                 } else {
                     _LOGOP(event.getSession()).level(Level.FINEST).verb(NLogVerb.SUCCESS)
-                            .log(NMsg.ofJ( "download succeeded : {0}", path));
+                            .log(NMsg.ofC( "download succeeded : %s", path));
                 }
                 return b;
             }

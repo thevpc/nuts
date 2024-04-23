@@ -50,9 +50,9 @@ public interface NExtensions extends NComponent , NSessionProvider {
 
     Set<NId> getCompanionIds();
 
-    boolean installWorkspaceExtensionComponent(Class extensionPointType, Object extensionImpl);
+    <T extends NComponent> boolean installWorkspaceExtensionComponent(Class<T> extensionPointType, T extensionImpl);
 
-    Set<Class> discoverTypes(NId id, ClassLoader classLoader);
+    Set<Class<? extends NComponent>> discoverTypes(NId id, ClassLoader classLoader);
 
     <T extends NComponent, B> NServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType);
 
@@ -73,7 +73,6 @@ public interface NExtensions extends NComponent , NSessionProvider {
      * @param <T>             extension type class
      * @param <V>             extension context type
      * @param type            extension type
-     * @param required        required
      * @param supportCriteria context
      * @return valid instance or null if no extension implementation was found
      */
@@ -81,24 +80,24 @@ public interface NExtensions extends NComponent , NSessionProvider {
 
     <T extends NComponent, V> List<T> createComponents(Class<T> type, V supportCriteria);
 
-    <T> List<T> createAll(Class<T> type);
+    <T extends NComponent> List<T> createAll(Class<T> type);
 
 //    Set<Class> getExtensionPoints(NutsSession session);
 
 
-    Set<Class> getExtensionTypes(Class extensionPoint);
+    <T extends NComponent> Set<Class<? extends T>> getExtensionTypes(Class<T> extensionPoint);
 
-    List<Object> getExtensionObjects(Class extensionPoint);
+    <T extends NComponent> List<T> getExtensionObjects(Class<T> extensionPoint);
 
-    boolean isRegisteredType(Class extensionPointType, String name);
+    <T extends NComponent> boolean isRegisteredType(Class<T> extensionPointType, String name);
 
-    boolean isRegisteredInstance(Class extensionPointType, Object extensionImpl);
+    <T extends NComponent> boolean isRegisteredInstance(Class<T> extensionPointType, T extensionImpl);
 
-    <T> boolean registerInstance(Class<T> extensionPoint, T implementation);
+    <T extends NComponent> boolean registerInstance(Class<T> extensionPoint, T implementation);
 
-    boolean registerType(Class extensionPointType, Class extensionType, NId source);
+    <T extends NComponent> boolean registerType(Class<T> extensionPointType, Class<? extends T> implementation, NId source);
 
-    boolean isRegisteredType(Class extensionPointType, Class extensionType);
+    <T extends NComponent> boolean isRegisteredType(Class<T> extensionPointType, Class<? extends T> implementation);
 
     boolean isLoadedId(NId id);
 

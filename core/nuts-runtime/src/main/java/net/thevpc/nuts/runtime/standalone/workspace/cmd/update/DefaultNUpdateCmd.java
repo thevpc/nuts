@@ -732,7 +732,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
                             .findFirst().orNull();
                     newFile = newId == null ? null : latestOnlineDependencies(fetch0()).setFailFast(false).setSession(session).setId(newId).getResultDefinition();
                 } catch (NNotFoundException ex) {
-                    _LOGOP(session).level(Level.SEVERE).error(ex).log(NMsg.ofJ("error : {0}", ex));
+                    _LOGOP(session).level(Level.SEVERE).error(ex).log(NMsg.ofC("error : %s", ex));
                     //ignore
                 }
                 break;
@@ -747,7 +747,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
                     try {
                         oldFile = fetch0().setId(oldId).setSession(session.copy().setFetchStrategy(NFetchStrategy.ONLINE)).getResultDefinition();
                     } catch (NNotFoundException ex) {
-                        _LOGOP(session).level(Level.SEVERE).error(ex).log(NMsg.ofJ("error : {0}", ex));
+                        _LOGOP(session).level(Level.SEVERE).error(ex).log(NMsg.ofC("error : %s", ex));
                         //ignore
                     }
                 }
@@ -766,7 +766,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
                             .setFailFast(false)
                             .getResultDefinition();
                 } catch (NNotFoundException ex) {
-                    _LOGOP(session).level(Level.SEVERE).error(ex).log(NMsg.ofJ("error : {0}", ex));
+                    _LOGOP(session).level(Level.SEVERE).error(ex).log(NMsg.ofC("error : %s", ex));
                     //ignore
                 }
                 break;

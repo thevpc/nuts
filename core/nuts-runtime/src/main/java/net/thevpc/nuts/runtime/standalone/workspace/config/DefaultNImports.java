@@ -8,12 +8,12 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
-public class DefaultImports implements NImports {
+public class DefaultNImports implements NImports {
 
     private DefaultImportModel model;
     private NSession session;
 
-    public DefaultImports(NSession session) {
+    public DefaultNImports(NSession session) {
         this.session = session;
         NWorkspace w = this.session.getWorkspace();
         NWorkspaceExt e = (NWorkspaceExt) w;
@@ -75,7 +75,7 @@ public class DefaultImports implements NImports {
     }
 
     @Override
-    public DefaultImports setSession(NSession session) {
+    public DefaultNImports setSession(NSession session) {
         this.session = NWorkspaceUtils.bindSession(model.getWorkspace(), session);
         return this;
     }

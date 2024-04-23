@@ -611,7 +611,7 @@ public class NIdFormatHelper {
             } catch (Exception ex) {
                 LOG.with().session(session).level(Level.FINE).error(ex)
                         .log(
-                                NMsg.ofJ("failed to build id format for {0}", id));
+                                NMsg.ofC("failed to build id format for %s", id));
             }
 
             if (def != null) {

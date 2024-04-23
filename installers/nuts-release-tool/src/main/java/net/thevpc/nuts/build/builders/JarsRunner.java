@@ -76,7 +76,7 @@ public class JarsRunner extends AbstractRunner {
         echo("**** publish $nuts maven...", NMaps.of("nuts", NMsg.ofStyled("nuts", NTextStyle.keyword())));
         NId nid = session.getWorkspace().getApiId();
         String nutsFolder = Mvn.folder(NId.of("net.thevpc:nuts").get());
-        uploadFolder(localMvn().resolve(nutsFolder), removeMvn().resolve(nutsFolder));
+        upload(localMvn().resolve(nutsFolder), removeMvn().resolve(nutsFolder));
         remoteCopyFolder(removeMvn().resolve(nutsFolder), removeThevpcMaven().resolve(nutsFolder));
     }
     private void runNutsPublishPreview() {
@@ -89,7 +89,7 @@ public class JarsRunner extends AbstractRunner {
     private void runNutsPublishStable() {
         echo("**** publish $nuts stable...", NMaps.of("nuts", NMsg.ofStyled("nuts", NTextStyle.keyword())));
         NAssert.requireNonBlank(context().nutsStableVersion,"nutsStableVersion");
-        uploadFile(
+        upload(
                 context().root.resolve("installers/nuts-release-tool/dist").resolve("nuts-"+context().nutsStableVersion+".jar")
                 , remoteTheVpcNuts().resolve("nuts-stable.jar")
         );

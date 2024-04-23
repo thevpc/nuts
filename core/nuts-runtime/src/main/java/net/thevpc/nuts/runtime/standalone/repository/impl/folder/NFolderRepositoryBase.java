@@ -284,7 +284,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
             }
             default: {
                 _LOGOP(session).level(Level.SEVERE).error(new NIllegalArgumentException(session, NMsg.ofC("unsupported Hash Type %s", id.getFace())))
-                        .log(NMsg.ofJ("[BUG] unsupported Hash Type {0}", id.getFace()));
+                        .log(NMsg.ofC("[BUG] unsupported Hash Type %s", id.getFace()));
                 throw new IOException("unsupported hash type " + id.getFace());
             }
         }

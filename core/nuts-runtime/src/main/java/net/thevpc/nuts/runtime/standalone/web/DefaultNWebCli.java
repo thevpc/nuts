@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.web;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NCp;
-import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NInputSourceBuilder;
 import net.thevpc.nuts.spi.NComponentScope;
@@ -25,7 +24,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 @NComponentScope(NScopeType.PROTOTYPE)
-public class NWebCliImpl implements NWebCli {
+public class DefaultNWebCli implements NWebCli {
 
     private String prefix;
     private Function<NWebResponse, NWebResponse> responsePostProcessor;
@@ -33,7 +32,7 @@ public class NWebCliImpl implements NWebCli {
     private Integer connectTimeout;
     private NSession session;
 
-    public NWebCliImpl(NSession session) {
+    public DefaultNWebCli(NSession session) {
         this.session = session;
     }
 

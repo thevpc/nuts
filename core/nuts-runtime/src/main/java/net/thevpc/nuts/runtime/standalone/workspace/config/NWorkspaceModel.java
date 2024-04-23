@@ -60,6 +60,11 @@ public class NWorkspaceModel {
     public NWorkspaceModel(NWorkspace ws, NBootOptions bOption0) {
         this.ws = ws;
         this.bOption0 = bOption0;
+        // initialized here because they just do nothing...
+        this.aliasesModel = new DefaultCustomCommandsModel(ws);
+        this.importModel = new DefaultImportModel(ws);
+        this.eventsModel = new DefaultNWorkspaceEventModel(ws);
+        this.repositoryModel = new DefaultNRepositoryModel(ws);
     }
 
     public void init(){

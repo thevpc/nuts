@@ -709,7 +709,7 @@ public class DefaultNCp implements NCp {
             try {
                 NLogOp lop = _LOGOP(session);
                 if (i > 1 && lop.isLoggable(Level.FINEST)) {
-                    lop.level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofJ("repeat download #{0} {1}",
+                    lop.level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofC("repeat download #%s %s",
                             i,
                             source));
                 }
@@ -790,7 +790,7 @@ public class DefaultNCp implements NCp {
         }
         NLogOp lop = _LOGOP(session);
         if (lop.isLoggable(Level.FINEST)) {
-            lop.level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofJ("{0} {1} to {2}",
+            lop.level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofC("%s %s to %s",
                     m,
                     loggedSrc,
                     loggedTarget));
@@ -881,7 +881,7 @@ public class DefaultNCp implements NCp {
             }
         } catch (IOException ex) {
             lop.level(Level.CONFIG).verb(NLogVerb.FAIL)
-                    .log(NMsg.ofJ("error copying {0} to {1} : {2}", _source2.source, target, ex));
+                    .log(NMsg.ofC("error copying %s to %s : %s", _source2.source, target, ex));
             throw new NIOException(session, ex);
         }
     }

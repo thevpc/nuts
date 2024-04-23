@@ -121,7 +121,7 @@ public class DefaultNCustomCommand implements NCustomCmd {
                                 .getGrabbedAllString()
                 );
             } catch (Exception ex) {
-                _LOGOP(session).level(Level.FINE).error(ex).log(NMsg.ofJ("failed to retrieve help for {0}", getName()));
+                _LOGOP(session).level(Level.FINE).error(ex).log(NMsg.ofC("failed to retrieve help for %s", getName()));
                 return NTexts.of(session).ofStyled("failed to retrieve help for " + getName(), NTextStyle.error());
             }
         }

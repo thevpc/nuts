@@ -104,7 +104,7 @@ public class PipeRunnable implements Runnable, StopMonitor {
                         .error(ex)
                         .level(Level.FINEST)
                         .verb(NLogVerb.WARNING)
-                        .log(NMsg.ofJ("pipe-thread exits with error: {0}", ex));
+                        .log(NMsg.ofC("pipe-thread exits with error: %s", ex));
                 markAsEffectivelyStopped();
             }
         } else {

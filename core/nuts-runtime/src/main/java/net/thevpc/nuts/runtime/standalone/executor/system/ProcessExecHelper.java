@@ -67,7 +67,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         NLog _LL = NLog.of(NWorkspaceUtils.class, session);
         if (_LL.isLoggable(Level.FINEST)) {
             _LL.with().level(Level.FINE).verb(NLogVerb.START).log(
-                    NMsg.ofJ("[exec] {0}",
+                    NMsg.ofC("[exec] %s",
                             NTexts.of(session).ofCode("system",
                                     pb.getCommandString()
                             )));

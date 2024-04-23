@@ -48,7 +48,7 @@ public class Nsh implements NApplication {
             @Override
             public void onCmdExec(NCmdLine cmdLine, NCmdLineContext context) {
                 if (session.isTrace() || session.isYes()) {
-                    log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofJ("[nsh] activating options trace={0} yes={1}", session.isTrace(), session.isYes()));
+                    log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofC("[nsh] activating options trace=%s yes=%s", session.isTrace(), session.isYes()));
                 }
                 //id will not include version or
                 String nshIdStr = session.getAppId().getShortName();
@@ -95,11 +95,11 @@ public class Nsh implements NApplication {
                 }
 
                 if (!firstInstalled.isEmpty()) {
-                    log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofJ("[nsh] registered {0} nsh commands : {1}", firstInstalled.size(),
+                    log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofC("[nsh] registered %s nsh commands : %s", firstInstalled.size(),
                             String.join(", ", firstInstalled)));
                 }
                 if (!reinstalled.isEmpty()) {
-                    log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofJ("[nsh] re-registered {0} nsh commands : {1}", reinstalled.size(),
+                    log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofC("[nsh] re-registered %s nsh commands : %s", reinstalled.size(),
                             String.join(", ", reinstalled)));
                 }
                 if (session.isPlainTrace()) {
@@ -174,7 +174,7 @@ public class Nsh implements NApplication {
                 }
             }
             if (!uninstalled.isEmpty()) {
-                log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofJ("[nsh] unregistered {0} nsh commands : {1}", uninstalled.size(),
+                log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofC("[nsh] unregistered %s nsh commands : %s", uninstalled.size(),
                         String.join(", ", uninstalled)));
             }
         } catch (Exception ex) {

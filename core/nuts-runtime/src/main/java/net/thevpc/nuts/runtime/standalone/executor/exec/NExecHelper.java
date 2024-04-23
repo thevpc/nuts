@@ -57,7 +57,7 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
         NCmdLine commandOut = NCmdLine.of(pb.getCommand());
         if (_LL.isLoggable(Level.FINEST)) {
             _LL.with().level(Level.FINE).verb(NLogVerb.START).log(
-                    NMsg.ofJ("[exec] {0}",
+                    NMsg.ofC("[exec] %s",
                             commandOut
                     ));
         }

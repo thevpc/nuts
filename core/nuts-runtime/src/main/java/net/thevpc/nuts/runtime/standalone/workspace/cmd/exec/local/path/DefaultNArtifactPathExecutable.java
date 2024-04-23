@@ -95,7 +95,7 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableInformati
                 CoreIOUtils.delete(session, Paths.get(tempFolder));
             } catch (UncheckedIOException | NIOException e) {
                 LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.FAIL)
-                        .log(NMsg.ofJ("unable to delete temp folder created for execution : {0}", tempFolder));
+                        .log(NMsg.ofC("unable to delete temp folder created for execution : %s", tempFolder));
             }
         }
         c.close();

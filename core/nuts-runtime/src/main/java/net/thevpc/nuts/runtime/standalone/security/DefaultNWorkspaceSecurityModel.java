@@ -121,7 +121,7 @@ public class DefaultNWorkspaceSecurityModel {
         if (adminSecurity == null || !adminSecurity.hasCredentials()) {
             if (_LOG(session).isLoggable(Level.CONFIG)) {
                 _LOGOP(session).level(Level.CONFIG).verb(NLogVerb.WARNING)
-                        .log(NMsg.ofJ("{0} user has no credentials. reset to default", NConstants.Users.ADMIN));
+                        .log(NMsg.ofC("%s user has no credentials. reset to default", NConstants.Users.ADMIN));
             }
             NUserConfig u = NConfigsExt.of(NConfigs.of(session)).getModel().getUser(NConstants.Users.ADMIN, session);
             u.setCredentials(CoreStringUtils.chrToStr(createCredentials("admin".toCharArray(), false, null, session)));

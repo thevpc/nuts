@@ -31,7 +31,10 @@ import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.URLPart;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.URLParts;
+import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
+import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.util.NMsg;
+import sun.misc.URLClassPath;
 
 import java.io.*;
 import java.net.URL;
@@ -61,6 +64,25 @@ public final class CoreServiceUtils {
                 }
                 return NVisitResult.CONTINUE;
             }, session);
+        }
+        return found;
+    }
+
+    public static Set<String> loadZipServiceClassNamesFromClassLoader(ClassLoader classLoader, Class service, NSession session) {
+        LinkedHashSet<String> found = new LinkedHashSet<>();
+        try {
+            List<URL> found2 = NCollections.list(classLoader.getResources("META-INF/services/" + service.getName()));
+            for (URL url : found2) {
+                try (Reader reader = new InputStreamReader(url.openStream())) {
+                    found.addAll(
+                            CoreIOUtils.confLines(reader, session).map(String::trim).collect(Collectors.toSet())
+                    );
+                } catch (IOException ex) {
+                    throw new NIOException(session, ex);
+                }
+            }
+        }catch (IOException ex){
+            throw new NIOException(session, ex);
         }
         return found;
     }

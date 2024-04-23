@@ -31,20 +31,24 @@ import net.thevpc.nuts.io.NContentTypes;
 import net.thevpc.nuts.reserved.rpi.NCollectionsRPI;
 import net.thevpc.nuts.reserved.rpi.NIORPI;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootManager;
-import net.thevpc.nuts.runtime.standalone.dependency.util.NClassLoaderUtils;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElements;
 import net.thevpc.nuts.runtime.standalone.format.DefaultNObjectFormat;
+import net.thevpc.nuts.runtime.standalone.id.format.DefaultNIdFormat;
 import net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIO;
 import net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIORPI;
 import net.thevpc.nuts.runtime.standalone.io.path.DefaultNPaths;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNLogs;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
+import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.ClassClassMap;
 import net.thevpc.nuts.runtime.standalone.util.collections.ListMap;
-import net.thevpc.nuts.runtime.standalone.extension.CoreServiceUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.NPropertiesHolder;
 import net.thevpc.nuts.runtime.standalone.util.stream.DefaultNCollectionsRPI;
+import net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionFormat;
+import net.thevpc.nuts.runtime.standalone.web.DefaultNWebCli;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmd;
+import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNImports;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNEnvs;
 import net.thevpc.nuts.runtime.standalone.workspace.factorycache.CachedConstructor;
@@ -56,10 +60,10 @@ import net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNLibPaths;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
-import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.web.NWebCli;
 
 import java.io.PrintStream;
 import java.net.URL;
@@ -73,7 +77,7 @@ import java.util.stream.Collectors;
 public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
 
     private final NLog LOG;
-    private final ListMap<Class, Object> instances = new ListMap<>();
+    private final ListMap<Class<?>, Object> instances = new ListMap<>();
     private final Map<NId, IdCache> discoveredCacheById = new HashMap<>();
     private final HashMap<String, String> _alreadyLogger = new HashMap<>();
     private final NWorkspace workspace;
@@ -82,22 +86,22 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     public DefaultNWorkspaceFactory(NWorkspace ws) {
         this.workspace = ws;
         LOG = ((DefaultNWorkspace) ws).LOG;
-        cache = new NBeanCache(LOG);
+        cache = new NBeanCache(LOG, CoreNUtils.isDevVerbose()?System.err:null);
     }
 
     @Override
-    public Set<Class> discoverTypes(NId id, URL url, ClassLoader bootClassLoader, NSession session) {
+    public Set<Class<? extends NComponent>> discoverTypes(NId id, URL url, ClassLoader bootClassLoader, NSession session) {
         return discoverTypes(id, url, bootClassLoader, new Class[]{NComponent.class}, session);
     }
 
     @Override
-    public Set<Class> discoverTypes(NId id, URL url, ClassLoader bootClassLoader, Class[] extensionPoints, NSession session) {
+    public Set<Class<? extends NComponent>> discoverTypes(NId id, URL url, ClassLoader bootClassLoader, Class<? extends NComponent>[] extensionPoints, NSession session) {
         if (!discoveredCacheById.containsKey(id)) {
             IdCache value = new IdCache(id, url, bootClassLoader, LOG, extensionPoints, session, workspace);
             discoveredCacheById.put(id, value);
-            Set<Class> all = new HashSet<>();
+            Set<Class<? extends NComponent>> all = new HashSet<>();
             for (ClassClassMap m : value.classes.values()) {
-                Collection<Class> values = m.values();
+                Collection<Class<? extends NComponent>> values = (Collection) m.values();
                 all.addAll(values);
             }
             return all;
@@ -171,12 +175,38 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                     NCollectionsRPI p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, ss -> new DefaultNCollectionsRPI(session));
                     return NOptional.of((T) p);
                 }
-                default:{
+                case "net.thevpc.nuts.NIdFormat": {
+                    NIdFormat p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, ss -> new DefaultNIdFormat(session));
+                    return NOptional.of((T) p);
+                }
+                case "net.thevpc.nuts.NVersionFormat": {
+                    NVersionFormat p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, ss -> new DefaultNVersionFormat(session));
+                    return NOptional.of((T) p);
+                }
+                case "net.thevpc.nuts.NImports": {
+                    NImports p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, ss -> new DefaultNImports(session));
+                    return NOptional.of((T) p);
+                }
+                case "net.thevpc.nuts.NExecCmd": {
+                    NExecCmd p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, ss -> new DefaultNExecCmd(session));
+                    return NOptional.of((T) p);
+                }
+                case "net.thevpc.nuts.web.NWebCli": {
+                    NWebCli p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, ss -> new DefaultNWebCli(session));
+                    return NOptional.of((T) p);
+                }
+                default: {
                     //wont use NLog because not yet initialized!
-//                    System.err.println("[Nuts] createComponent failed for :"+type.getName());
+                    System.err.println("[Nuts] createComponent failed for :" + type.getName());
                 }
             }
-
+        }
+        if (all.isEmpty()) {
+            System.err.println("unable to resolve " + type);
+            Set<Class<? extends T>> extensionTypes = getExtensionTypes(type, session);
+            System.err.println("extensionTypes =  " + extensionTypes);
+            dump(type,session);
+            new Throwable().printStackTrace();
         }
         return s.toOptional();
     }
@@ -208,18 +238,18 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     }
 
     @Override
-    public <T> List<T> createAll(Class<T> type, NSession session) {
+    public <T extends NComponent> List<T> createAll(Class<T> type, NSession session) {
         List<T> all = new ArrayList<T>();
         for (Object obj : instances.getAll(type)) {
             all.add((T) obj);
         }
-        for (Class c : getExtensionTypes(type, session)) {
+        for (Class<? extends T> c : getExtensionTypes(type, session)) {
             T obj = null;
             try {
                 obj = (T) resolveInstance(c, type, session);
             } catch (Exception e) {
                 LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.FAIL).error(e)
-                        .log(NMsg.ofJ("unable to instantiate {0} for {1} : {2}", c, type, e));
+                        .log(NMsg.ofJ("error while instantiating {0} for {1} : {2}", c, type, e));
             }
             if (obj != null) {
                 all.add(obj);
@@ -229,7 +259,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     }
 
     @Override
-    public <T> T createFirst(Class<T> type, NSession session) {
+    public <T extends NComponent> T createFirst(Class<T> type, NSession session) {
         for (Object obj : instances.getAll(type)) {
             return (T) obj;
         }
@@ -240,31 +270,46 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     }
 
     @Override
-    public Set<Class> getExtensionTypes(Class type, NSession session) {
-        LinkedHashSet<Class> all = new LinkedHashSet<>();
+    public <T extends NComponent> Set<Class<? extends T>> getExtensionTypes(Class<T> type, NSession session) {
+        LinkedHashSet<Class<? extends T>> all = new LinkedHashSet<>();
         for (IdCache v : discoveredCacheById.values()) {
             all.addAll(v.getExtensionTypes(type));
         }
         return all;
     }
 
-    @Override
-    public List<Object> getExtensionObjects(Class extensionPoint) {
-        return new ArrayList<>(instances.getAll(extensionPoint));
+    private <T extends NComponent> Set<Class<? extends T>> getExtensionTypesNoCache(Class<T> type, NSession session) {
+        LinkedHashSet<Class<? extends T>> all = new LinkedHashSet<>();
+        for (IdCache v : discoveredCacheById.values()) {
+            all.addAll(v.getExtensionTypesNoCache(type));
+        }
+        return all;
+    }
+    private <T extends NComponent> Set<Class<? extends T>> getExtensionTypesNoCache2(Class<T> type, NSession session) {
+        LinkedHashSet<Class<? extends T>> all = new LinkedHashSet<>();
+        for (IdCache v : discoveredCacheById.values()) {
+            all.addAll(v.getExtensionTypesNoCache2(type));
+        }
+        return all;
     }
 
     @Override
-    public boolean isRegisteredType(Class extensionPoint, String implementation, NSession session) {
+    public <T extends NComponent> List<T> getExtensionObjects(Class<T> extensionPoint) {
+        return new ArrayList<T>((List) instances.getAll(extensionPoint));
+    }
+
+    @Override
+    public <T extends NComponent> boolean isRegisteredType(Class<T> extensionPoint, String implementation, NSession session) {
         return findRegisteredType(extensionPoint, implementation, session) != null;
     }
 
     @Override
-    public boolean isRegisteredInstance(Class extensionPoint, Object implementation, NSession session) {
+    public <T extends NComponent> boolean isRegisteredInstance(Class<T> extensionPoint, T implementation, NSession session) {
         return instances.contains(extensionPoint, implementation);
     }
 
     @Override
-    public <T> void registerInstance(Class<T> extensionPoint, T implementation, NSession session) {
+    public <T extends NComponent> void registerInstance(Class<T> extensionPoint, T implementation, NSession session) {
         checkSession(session);
         if (isRegisteredInstance(extensionPoint, implementation, session)) {
             throw new NIllegalArgumentException(session, NMsg.ofC("already registered Extension %s for %s", implementation, extensionPoint.getName()));
@@ -278,31 +323,31 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     }
 
     @Override
-    public void registerType(Class extensionPoint, Class implementation, NId source, NSession session) {
+    public <T extends NComponent> void registerType(Class<T> extensionPoint, Class<? extends T> implementationType, NId source, NSession session) {
         checkSession(session);
-        if (isRegisteredType(extensionPoint, implementation.getName(), session)) {
-            throw new NIllegalArgumentException(session, NMsg.ofC("already registered Extension %s for %s", implementation.getName(), extensionPoint.getName()));
+        if (isRegisteredType(extensionPoint, implementationType.getName(), session)) {
+            throw new NIllegalArgumentException(session, NMsg.ofC("already registered Extension %s for %s", implementationType.getName(), extensionPoint.getName()));
         }
         if (LOG.isLoggable(Level.CONFIG)) {
             LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.ADD)
                     .log(NMsg.ofJ("bind    {0} for impl type {1}", NStringUtils.formatAlign(extensionPoint.getSimpleName(), 40, NPositionType.FIRST),
-                            implementation.getName()));
+                            implementationType.getName()));
         }
         IdCache t = discoveredCacheById.get(source);
         if (t == null) {
             t = new IdCache(source, workspace);
             discoveredCacheById.put(source, t);
         }
-        t.add(NComponent.class, implementation);
+        t.add(NComponent.class, implementationType);
     }
 
     @Override
-    public boolean isRegisteredType(Class extensionPoint, Class implementation, NSession session) {
-        return getExtensionTypes(extensionPoint, session).contains(implementation);
+    public <T extends NComponent> boolean isRegisteredType(Class<T> extensionPoint, Class<? extends T> implementationType, NSession session) {
+        return getExtensionTypes(extensionPoint, session).contains(implementationType);
     }
 
-    public Class findRegisteredType(Class extensionPoint, String implementation, NSession session) {
-        for (Class cls : getExtensionTypes(extensionPoint, session)) {
+    public <T extends NComponent> Class<? extends T> findRegisteredType(Class<T> extensionPoint, String implementation, NSession session) {
+        for (Class<? extends T> cls : getExtensionTypes(extensionPoint, session)) {
             if (cls.getName().equals(implementation)) {
                 return cls;
             }
@@ -314,18 +359,18 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         NSessionUtils.checkSession(workspace, session);
     }
 
-    private Object resolveClassSource(Class implementation) {
-        return null;
-    }
+//    private Object resolveClassSource(Class implementation) {
+//        return null;
+//    }
 
 
-    public <T> T newInstance(Class<T> t, Class apiType, NSession session) {
+    public <T extends NComponent> T newInstance(Class<T> t, Class<? super T> apiType, NSession session) {
         checkSession(session);
         return newInstance(t, new Class[0], new Object[0], apiType, session);
     }
 
-    protected <T> T newInstanceAndLog(Class<T> type, Class[] argTypes, Object[] args, Class apiType, NSession session, NScopeType scope) {
-        T o = newInstance(type, apiType, session);
+    protected <T extends NComponent> T newInstanceAndLog(Class<? extends T> implementation, Class<?>[] argTypes, Object[] args, Class<T> apiType, NSession session, NScopeType scope) {
+        T o = newInstance(implementation, apiType, session);
 //        if (LOG.isLoggable(Level.CONFIG)) {
 //            LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.READ)
 //                    .log(NMsg.ofJ("resolve {0} to  ```underlined {1}``` {2}",
@@ -339,13 +384,13 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             //
         } else if (LOG.isLoggable(Level.CONFIG)) {
             String old = _alreadyLogger.get(apiType.getName());
-            if (old == null || !old.equals(type.getName())) {
-                _alreadyLogger.put(apiType.getName(), type.getName());
+            if (old == null || !old.equals(implementation.getName())) {
+                _alreadyLogger.put(apiType.getName(), implementation.getName());
                 LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.READ)
                         .log(NMsg.ofC("resolve %s to  %s %s",
                                 NStringUtils.formatAlign(apiType.getSimpleName(), 40, NPositionType.FIRST),
                                 scope,
-                                type.getName()
+                                implementation.getName()
                         ));
             }
         }
@@ -356,30 +401,39 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     protected <T> T newInstance(Class<T> t, Class[] argTypes, Object[] args, Class apiType, NSession session) {
         checkSession(session);
         T t1 = null;
-        CachedConstructor<T> ctrl0 = cache.getCtrl0(t, argTypes, session);
+        CachedConstructor<T> ctrl0 = cache.findConstructor(t, argTypes, session);
         if (ctrl0 == null) {
             if (isBootstrapLogType(apiType)) {
                 //do not use log. this is a bug that must be resolved fast!
-                safeLog(NMsg.ofC("unable to instantiate %s as %s", apiType, t), null, session);
+                safeLog(NMsg.ofC("error when instantiating %s as %s : no constructor found", apiType, t), null, session);
             } else {
                 if (LOG.isLoggable(Level.FINEST)) {
                     LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.FAIL).error(null)
-                            .log(NMsg.ofJ("unable to instantiate {0}", t));
+                            .log(NMsg.ofC("error when instantiating %s as %s : no constructor found", apiType, t));
                 }
             }
-            throw new NFactoryException(session, NMsg.ofC("instantiate '%s' failed", t), new NoSuchElementException("No constructor was found for " + t.getName()));
+            NBeanCache cache2 = new NBeanCache(LOG,CoreNUtils.isDevVerbose()?System.err:null);
+            cache2.findConstructor(t, argTypes, session);
+            throw new NFactoryException(session, NMsg.ofC("instantiate '%s' failed", t), new NoSuchElementException(
+                    NMsg.ofC("No constructor was found %s(%s). All %s available constructors are : %s",
+                            t.getName(),
+                            Arrays.stream(argTypes).map(Class::getSimpleName).collect(Collectors.joining(",")),
+                            t.getDeclaredConstructors().length,
+                            Arrays.stream(t.getDeclaredConstructors()).map(x->toString()).collect(Collectors.joining(" ; "))
+                    ).toString()
+            ));
         }
         try {
             t1 = ctrl0.newInstance(args, session);
         } catch (Exception e) {
             if (isBootstrapLogType(apiType)) {
                 //do not use log. this is a bug that must be resolved fast!
-                safeLog(NMsg.ofC("unable to instantiate %s as %s", apiType, t), e, session);
+                safeLog(NMsg.ofC("error when instantiating %s as %s : %s", apiType, t, e), e, session);
             } else {
 
                 if (LOG.isLoggable(Level.FINEST)) {
                     LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.FAIL).error(e)
-                            .log(NMsg.ofJ("unable to instantiate {0}", t));
+                            .log(NMsg.ofC("error when instantiating %s as %s : %s", apiType, t, e));
                 }
             }
             Throwable cause = e.getCause();
@@ -389,17 +443,17 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             if (cause instanceof RuntimeException) {
                 throw (RuntimeException) cause;
             }
-            throw new NFactoryException(session, NMsg.ofC("instantiate '%s' failed", t), cause);
+            throw new NFactoryException(session, NMsg.ofC("error when instantiating %s as %s : %s", apiType, t, e), cause);
         }
         //initialize?
         return t1;
     }
 
-    protected <T> T resolveInstance(Class<T> implType, Class<T> apiType, NSession session) {
+    protected <T extends NComponent> T resolveInstance(Class<? extends T> implType, Class<T> apiType, NSession session) {
         return resolveInstance(implType, apiType, new Class[0], new Object[0], session);
     }
 
-    private <T> NScopeType computeScope(Class<T> implType, Class<T> apiType, NSession session) {
+    private <T extends NComponent> NScopeType computeScope(Class<? extends T> implType, Class<T> apiType, NSession session) {
         NComponentScope apiScope = apiType.getAnnotation(NComponentScope.class);
         NComponentScope implScope = implType.getAnnotation(NComponentScope.class);
         NScopeType scope = NScopeType.PROTOTYPE;
@@ -472,12 +526,12 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         return session;
     }
 
-    protected <T> T resolveInstance(Class<T> type, Class<T> apiType, Class[] argTypes, Object[] args, NSession session) {
+    protected <T extends NComponent> T resolveInstance(Class<? extends T> implementation, Class<T> apiType, Class<?>[] argTypes, Object[] args, NSession session) {
         checkSession(session);
-        if (type == null) {
+        if (implementation == null) {
             return null;
         }
-        NScopeType scope = computeScope(type, apiType, session);
+        NScopeType scope = computeScope(implementation, apiType, session);
         if (apiType.getAnnotation(NComponentScope.class) != null) {
             scope = apiType.getAnnotation(NComponentScope.class).value();
         }
@@ -486,11 +540,11 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         }
         NScopeType finalScope = scope;
         if (scope == NScopeType.PROTOTYPE) {
-            return newInstanceAndLog(type, argTypes, args, apiType, session, finalScope);
+            return newInstanceAndLog(implementation, argTypes, args, apiType, session, finalScope);
         }
         NPropertiesHolder beans = resolveBeansHolder(session, scope);
-        return (T) beans.getOrComputeProperty(type.getName(), session, k -> {
-            return newInstanceAndLog(type, argTypes, args, apiType, session, finalScope);
+        return (T) beans.getOrComputeProperty(implementation.getName(), session, k -> {
+            return newInstanceAndLog(implementation, argTypes, args, apiType, session, finalScope);
         });
     }
 
@@ -499,7 +553,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     }
 
     //    @Override
-    public <T> T create(Class<T> type, NSession session) {
+    public <T extends NComponent> T create(Class<T> type, NSession session) {
         checkSession(session);
         Object one = instances.getOne(type);
         if (one != null) {
@@ -510,25 +564,25 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             }
             return (T) one;
         }
-        Set<Class> extensionTypes = getExtensionTypes(type, session);
-        for (Class e : extensionTypes) {
+        Set<Class<? extends T>> extensionTypes = this.getExtensionTypes(type, session);
+        for (Class<? extends T> e : extensionTypes) {
             return (T) resolveInstance(e, type, session);
         }
-        for (Class<T> t : extensionTypes) {
+        for (Class<? extends T> t : extensionTypes) {
             return newInstance(t, type, session);
         }
         throw new NElementNotFoundException(session, NMsg.ofC("type %s not found", type));
     }
 
-    public <T> List<T> createAll(Class<T> type, Class[] argTypes, Object[] args, NSession session) {
+    public <T extends NComponent> List<T> createAll(Class<T> type, Class<?>[] argTypes, Object[] args, NSession session) {
         List<T> all = new ArrayList<T>();
-        for (Class c : getExtensionTypes(type, session)) {
+        for (Class<? extends T> c : getExtensionTypes(type, session)) {
             T obj = null;
             try {
                 obj = (T) resolveInstance(c, type, argTypes, args, session);
             } catch (Exception e) {
                 LOG.with().session(validLogSession(session)).level(Level.WARNING).verb(NLogVerb.FAIL).error(e)
-                        .log(NMsg.ofJ("unable to instantiate {0} for {1} : {2}", c, type, e));
+                        .log(NMsg.ofC("error when instantiating %s : %s", type, e));
             }
             if (obj != null) {
                 all.add(obj);
@@ -551,108 +605,51 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         }
     }
 
-    private static class IdCache {
-
-        private final NId id;
-        private final Map<Class, ClassClassMap> classes = new HashMap<>();
-        private final Map<Class, Set<Class>> cacheExtensionTypes = new HashMap<>();
-        private final NWorkspace workspace;
-        private URL url;
-
-        public IdCache(NId id, NWorkspace workspace) {
-            this.id = id;
-            this.workspace = workspace;
-        }
-
-        public IdCache(NId id, URL url, ClassLoader bootClassLoader, NLog LOG, Class[] extensionPoints, NSession session, NWorkspace workspace) {
-            NAssert.requireNonBlank(url,"url");
-            this.id = id;
-            this.url = url;
-            this.workspace = workspace;
-            for (Class extensionPoint : extensionPoints) {
-                ClassClassMap cc = classes.computeIfAbsent(extensionPoint, r->new ClassClassMap());
-                Class<NComponent> serviceClass = NComponent.class;
-                for (String n : CoreServiceUtils.loadZipServiceClassNames(url, serviceClass, session)) {
-                    Class<?> c = null;
-                    try {
-                        c = Class.forName(n, false, bootClassLoader);
-                    } catch (ClassNotFoundException x) {
-                        LOG.with().session(validLogSession(session)).verb(NLogVerb.WARNING).level(Level.FINE).error(x)
-                                .log(NMsg.ofJ("not a valid type {0}", c));
-                    }
-                    if (c != null) {
-                        if (!serviceClass.isAssignableFrom(c)) {
-                            LOG.with().session(validLogSession(session)).verb(NLogVerb.WARNING).level(Level.FINE)
-                                    .log(NMsg.ofJ("not a valid type {0} <> {1}, ignore...", c, serviceClass));
+    public void dump(Class<?> type,NSession session) {
+        System.err.println("Start Extensions Factory Dump");
+        String tname = type.getName();
+        for (Map.Entry<NId, IdCache> e : discoveredCacheById.entrySet()) {
+            IdCache idCache = e.getValue();
+            System.err.println("\t" + e.getKey() + " :: " + idCache.url);
+            for (Map.Entry<Class<?>, ClassClassMap> v : idCache.classes.entrySet()) {
+                ClassClassMap vv = v.getValue();
+                Set<Class> classes = vv.allKeySet();
+                for (Class k : classes) {
+                    if (k.isInterface()) {
+                        if (k.getName().equals(tname)) {
+                            if (k.equals(type)) {
+                                System.err.println("\t\t --->  " + k + "->" + vv.get(k));
+                            } else {
+                                System.err.println("\t\t --->  " + k + "->" + vv.get(k) + " ::: class loader : found " + k.getClassLoader() + " __VS__ expected " + type.getClassLoader());
+                            }
+                            System.err.println("\t\t\t --->  " + type + "->" + vv.get(type) + " ::: class loader : found " + k.getClassLoader() + " __VS__ expected " + type.getClassLoader());
+                            System.err.println("\t\t\t\t --->  getAll => " + type + "->" + Arrays.asList(vv.getAll(type)));
+                            System.err.println("\t\t\t\t --->  getExtensionTypes => " + getExtensionTypes((Class)type,session));
+                            System.err.println("\t\t\t\t --->  getExtensionTypesNoCache => " + getExtensionTypesNoCache((Class)type,session));
+                            System.err.println("\t\t\t\t --->  getExtensionTypesNoCache2 => " + getExtensionTypesNoCache2((Class)type,session));
                         } else {
-                            cc.add(c);
+                            System.err.println("\t\t" + k + "->" + vv.get(k));
                         }
                     }
                 }
-//                int size=cc.size();
-            }
-        }
-
-        private NSession validLogSession(NSession session) {
-            if (session == null) {
-                //this is a bug
-                return NSessionUtils.defaultSession(workspace);
-            }
-            if (session.getTerminal() == null) {
-                //chances are that we are creating the session or the session's Terminal
-                return NSessionUtils.defaultSession(workspace);
-            }
-            return session;
-        }
-
-
-        private void add(Class extensionPoint, Class implementation) {
-            ClassClassMap y = getClassClassMap(extensionPoint, true);
-            if (!y.containsExactKey(implementation)) {
-                y.add(implementation);
-                invalidateCache();
-            }
-        }
-
-        private void invalidateCache() {
-            cacheExtensionTypes.clear();
-        }
-
-        private ClassClassMap getClassClassMap(Class extensionPoint, boolean create) {
-            ClassClassMap r = classes.get(extensionPoint);
-            if (r == null && create) {
-                r = new ClassClassMap();
-                classes.put(extensionPoint, r);
-            }
-            return r;
-        }
-
-        public NId getId() {
-            return id;
-        }
-
-        public URL getUrl() {
-            return url;
-        }
-
-        public Set<Class> getExtensionPoints() {
-            return new LinkedHashSet<>(classes.keySet());
-        }
-
-        public Set<Class> getExtensionTypes(Class extensionPoint) {
-            Set<Class> r = cacheExtensionTypes.get(extensionPoint);
-            if (r != null) {
-                return r;
-            }
-            LinkedHashSet<Class> all = new LinkedHashSet<>();
-            for (Map.Entry<Class, ClassClassMap> rr : this.classes.entrySet()) {
-                if (rr.getKey().isAssignableFrom(extensionPoint)) {
-                    all.addAll(Arrays.asList(rr.getValue().getAll(extensionPoint)));
+                for (Class k : classes) {
+                    if (!k.isInterface()) {
+                        if (k.getName().equals(tname)) {
+                            if (k.equals(type)) {
+                                System.err.println("\t\t --->  " + k + "->" + vv.get(k));
+                            } else {
+                                System.err.println("\t\t --->  " + k + "->" + vv.get(k) + " ::: class loader : found " + k.getClassLoader() + " __VS__ expected " + type.getClassLoader());
+                            }
+                            System.err.println("\t\t\t --->  " + type + "->" + vv.get(type) + " ::: class loader : found " + k.getClassLoader() + " __VS__ expected " + type.getClassLoader());
+                        } else {
+                            System.err.println("\t\t" + k + "->" + vv.get(k));
+                        }
+                    }
                 }
             }
-            cacheExtensionTypes.put(extensionPoint, r = Collections.unmodifiableSet(all));
-            return r;
         }
+        System.err.println("Finish Extensions Factory Dump");
     }
+
 
 }

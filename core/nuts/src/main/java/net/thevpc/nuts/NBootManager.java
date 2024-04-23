@@ -69,7 +69,6 @@ public interface NBootManager extends NComponent, NSessionProvider {
 
     Duration getCreationDuration();
 
-
     NClassLoaderNode getBootRuntimeClassLoaderNode();
 
     List<NClassLoaderNode> getBootExtensionClassLoaderNode();

@@ -81,7 +81,7 @@ public class NPathParts {
                 } else {
                     this.type = type;
                     this.protocol = p;
-                    this.authority = ensureNonNull(authority, "authority");
+                    this.authority = ensureOk(authority, "authority");
                     this.location = ensureOk(location, "location");
                     this.query = ensureOk(query, "query");
                     this.ref = ensureOk(ref, "ref");

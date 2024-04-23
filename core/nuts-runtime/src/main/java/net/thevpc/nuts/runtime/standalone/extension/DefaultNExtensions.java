@@ -54,13 +54,13 @@ public class DefaultNExtensions implements NExtensions {
 
 
     @Override
-    public boolean installWorkspaceExtensionComponent(Class extensionPointType, Object extensionImpl) {
+    public <T extends NComponent> boolean installWorkspaceExtensionComponent(Class<T> extensionPointType, T extensionImpl) {
         checkSession();
         return model.installWorkspaceExtensionComponent(extensionPointType, extensionImpl, session);
     }
 
     @Override
-    public Set<Class> discoverTypes(NId id, ClassLoader classLoader) {
+    public Set<Class<? extends NComponent>> discoverTypes(NId id, ClassLoader classLoader) {
         checkSession();
         return model.discoverTypes(id, classLoader, session);
     }
@@ -105,51 +105,51 @@ public class DefaultNExtensions implements NExtensions {
     }
 
     @Override
-    public <T> List<T> createAll(Class<T> serviceType) {
+    public <T extends NComponent> List<T> createAll(Class<T> serviceType) {
         checkSession();
         return model.createAll(serviceType, session);
     }
 
     @Override
-    public Set<Class> getExtensionTypes(Class extensionPoint) {
+    public <T extends NComponent> Set<Class<? extends T>> getExtensionTypes(Class<T> extensionPoint) {
         checkSession();
         return model.getExtensionTypes(extensionPoint, session);
     }
 
     @Override
-    public List<Object> getExtensionObjects(Class extensionPoint) {
+    public <T extends NComponent> List<T> getExtensionObjects(Class<T> extensionPoint) {
         checkSession();
         return model.getExtensionObjects(extensionPoint, session);
     }
 
     @Override
-    public boolean isRegisteredType(Class extensionPointType, String name) {
+    public <T extends NComponent> boolean isRegisteredType(Class<T> extensionPointType, String name) {
         checkSession();
         return model.isRegisteredType(extensionPointType, name, session);
     }
 
     @Override
-    public boolean isRegisteredInstance(Class extensionPointType, Object extensionImpl) {
+    public <T extends NComponent> boolean isRegisteredInstance(Class<T> extensionPointType, T extensionImpl) {
         checkSession();
         return model.isRegisteredInstance(extensionPointType, extensionImpl, session);
     }
 
     @Override
-    public boolean registerInstance(Class extensionPointType, Object extensionImpl) {
+    public <T extends NComponent> boolean registerInstance(Class<T> extensionPointType, T extensionImpl) {
         checkSession();
         return model.registerInstance(extensionPointType, extensionImpl, session);
     }
 
     @Override
-    public boolean registerType(Class extensionPointType, Class extensionType, NId source) {
+    public <T extends NComponent> boolean registerType(Class<T> extensionPointType, Class<? extends T> implementation, NId source) {
         checkSession();
-        return model.registerType(extensionPointType, extensionType, source, session);
+        return model.registerType(extensionPointType, implementation, source, session);
     }
 
     @Override
-    public boolean isRegisteredType(Class extensionPointType, Class extensionType) {
+    public <T extends NComponent> boolean isRegisteredType(Class<T> extensionPointType, Class<? extends T> implementation) {
         checkSession();
-        return model.isRegisteredType(extensionPointType, extensionType, session);
+        return model.isRegisteredType(extensionPointType, implementation, session);
     }
 
     @Override

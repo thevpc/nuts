@@ -65,7 +65,7 @@ public class CoreNApplications {
             if (c instanceof Error) {
                 throw (Error) c;
             }
-            throw new NBootException(NMsg.ofC("unable to instantiate %s", appType.getName()), ex);
+            throw new NBootException(NMsg.ofC("unable to instantiate application %s", appType.getName()), ex);
         } catch (IllegalAccessException ex) {
             throw new NBootException(NMsg.ofC("illegal access to default constructor for %s", appType.getName()), ex);
         } catch (InvocationTargetException ex) {

@@ -128,7 +128,8 @@ public final class NBootWorkspace {
     private NSession nLogSession;
     private Scanner scanner;
     private NBootCache cache = new NBootCache();
-    boolean runtimeLoaded = false;
+    Boolean runtimeLoaded;
+    NId runtimeLoadedId;
 
     public NBootWorkspace(NWorkspaceTerminalOptions bootTerminal, String... args) {
         this.bLog = new NReservedBootLog(bootTerminal);
@@ -509,6 +510,20 @@ public final class NBootWorkspace {
         return fid;
     }
 
+    private boolean isRuntimeLoaded() {
+        if (runtimeLoaded == null) {
+            runtimeLoaded = false;
+            try {
+                Class<?> c = Class.forName("net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace");
+                runtimeLoadedId = (NId) c.getField("RUNTIME_ID").get(null);
+                runtimeLoaded = true;
+            } catch (Exception ex) {
+                //
+            }
+        }
+        return runtimeLoaded;
+    }
+
     @SuppressWarnings("unchecked")
     private boolean prepareWorkspace() {
         if (!preparedWorkspace) {
@@ -527,7 +542,7 @@ public final class NBootWorkspace {
                     bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofC("                 %s", url));
                 }
                 ClassLoader tctxloader = Thread.currentThread().getContextClassLoader();
-                if (tctxloader != thisClassClassLoader) {
+                if (tctxloader != null && tctxloader != thisClassClassLoader) {
                     bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofC("thread-class-loader: %s", tctxloader));
                     for (URL url : NReservedLangUtils.resolveClasspathURLs(tctxloader, false)) {
                         bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofC("                 %s", url));
@@ -535,7 +550,7 @@ public final class NBootWorkspace {
                 }
                 ClassLoader contextClassLoader = getContextClassLoader();
                 bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofC("ctx-class-loader: %s", contextClassLoader));
-                if (contextClassLoader != null) {
+                if (contextClassLoader != null && contextClassLoader != thisClassClassLoader) {
                     for (URL url : NReservedLangUtils.resolveClasspathURLs(contextClassLoader, false)) {
                         bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofC("                 %s", url));
                     }
@@ -766,9 +781,15 @@ public final class NBootWorkspace {
             }
             if (!loadedApiConfig || computedOptions.getRuntimeId().isNotPresent() || computedOptions.getRuntimeBootDescriptor().isNotPresent() || computedOptions.getExtensionBootDescriptors().isNotPresent() || computedOptions.getBootRepositories().isNotPresent()) {
 
+                NVersion apiVersion = computedOptions.getApiVersion().orNull();
+                if (isRuntimeLoaded() && (NBlankable.isBlank(apiVersion) || Nuts.getVersion().equals(apiVersion))) {
+                    if (computedOptions.getRuntimeId().isNotPresent()) {
+                        computedOptions.setRuntimeId(runtimeLoadedId);
+                        computedOptions.setRuntimeBootDescriptor(null);
+                    }
+                }
                 //resolve runtime id
                 if (computedOptions.getRuntimeId().isNotPresent()) {
-                    NVersion apiVersion = computedOptions.getApiVersion().orNull();
                     //load from local lib folder
                     NId runtimeId = null;
                     if (!resetFlag && !computedOptions.getRecover().orElse(false)) {
@@ -796,7 +817,7 @@ public final class NBootWorkspace {
                 }
 
                 //resolve runtime libraries
-                if (computedOptions.getRuntimeBootDescriptor().isNotPresent()) {
+                if (computedOptions.getRuntimeBootDescriptor().isNotPresent() && !isRuntimeLoaded()) {
                     Set<NId> loadedDeps = null;
                     NId rid = computedOptions.getRuntimeId().get();
                     Path nutsRuntimeCacheConfigPath = Paths.get(computedOptions.getStoreType(NStoreType.CONF).get() + File.separator + NConstants.Folders.ID).resolve(NIdUtils.resolveIdPath(bootApiId)).resolve(NConstants.Files.RUNTIME_BOOT_CONFIG_FILE_NAME);
@@ -826,16 +847,7 @@ public final class NBootWorkspace {
                         NIdCache r = getFallbackCache(NId.RUNTIME_ID, false, false);
                         loadedDeps = r.deps;
                     }
-                    if (loadedDeps == null) {
-                        runtimeLoaded = false;
-                        try {
-                            Class.forName("net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace");
-                            runtimeLoaded = true;
-                            loadedDeps = new HashSet<>();
-                        } catch (Exception ex) {
-                            //
-                        }
-                    }
+
                     if (loadedDeps == null) {
                         throw new NBootException(NMsg.ofC("unable to load dependencies for %s", rid));
                     }
@@ -947,7 +959,7 @@ public final class NBootWorkspace {
             }
             if (computedOptions.getApiVersion().isBlank()
                     || computedOptions.getRuntimeId().isBlank()
-                    || computedOptions.getRuntimeBootDescriptor().isNotPresent()
+                    || (!isRuntimeLoaded() && computedOptions.getRuntimeBootDescriptor().isNotPresent())
                     || computedOptions.getExtensionBootDescriptors().isNotPresent()
 //                    || (!runtimeLoaded && (computedOptions.getBootRepositories().isBlank()))
             ) {
@@ -963,7 +975,7 @@ public final class NBootWorkspace {
 
             NRepositoryLocation workspaceBootLibFolderRepo = NRepositoryLocation.of("nuts@" + workspaceBootLibFolder);
             computedOptions.setRuntimeBootDependencyNode(
-                    runtimeLoaded ? null :
+                    isRuntimeLoaded() ? null :
                             createClassLoaderNode(computedOptions.getRuntimeBootDescriptor().orNull(), repositories, workspaceBootLibFolderRepo, recover, errorList, true)
             );
 
@@ -982,7 +994,7 @@ public final class NBootWorkspace {
                 } else if (bootClassWorldURLs.length == 1) {
                     bLog.log(Level.CONFIG, NLogVerb.SUCCESS, NMsg.ofC("resolve nuts class world to : %s %s", NReservedIOUtils.getURLDigest(bootClassWorldURLs[0], bLog), bootClassWorldURLs[0]));
                 } else {
-                    bLog.log(Level.CONFIG, NLogVerb.SUCCESS, NMsg.ofPlain("resolve nuts class world is to : "));
+                    bLog.log(Level.CONFIG, NLogVerb.SUCCESS, NMsg.ofPlain("resolve nuts class world to : "));
                     for (URL u : bootClassWorldURLs) {
                         bLog.log(Level.CONFIG, NLogVerb.SUCCESS, NMsg.ofC("    %s : %s", NReservedIOUtils.getURLDigest(u, bLog), u));
                     }

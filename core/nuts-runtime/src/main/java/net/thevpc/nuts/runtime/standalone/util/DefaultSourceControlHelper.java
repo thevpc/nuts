@@ -65,7 +65,7 @@ public class DefaultSourceControlHelper {
                 newVersionFound = NFetchCmd.of(d.getId().builder().setVersion(newVersion).build(), session).getResultDefinition();
             } catch (NNotFoundException ex) {
                 _LOGOP(session).level(Level.FINE).error(ex)
-                        .log(NMsg.ofJ("failed to fetch {0}", d.getId().builder().setVersion(newVersion).build()));
+                        .log(NMsg.ofC("failed to fetch %s", d.getId().builder().setVersion(newVersion).build()));
                 //ignore
             }
             if (newVersionFound == null) {

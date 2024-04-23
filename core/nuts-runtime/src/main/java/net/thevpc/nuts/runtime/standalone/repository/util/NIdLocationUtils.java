@@ -29,7 +29,7 @@ public class NIdLocationUtils {
                 } catch (Exception ex) {
                     NLogOp.of(NIdLocationUtils.class, session)
                             .level(Level.SEVERE).error(ex)
-                            .log(NMsg.ofJ("unable to download location for id {0} in location {1} : {2}", id, location.getUrl(), ex));
+                            .log(NMsg.ofC("unable to download location for id %s in location %s : %s", id, location.getUrl(), ex));
                 }
             }
         }

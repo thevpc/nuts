@@ -16,7 +16,7 @@ public class NutsReleaseToolMain implements NApplication {
                 new BaseConfRunner(session),
                 new JarsRunner(session),
                 new ReposRunner(session),
-                new WebSiteRunner(session),
+                new SiteRunner(session),
                 new InstallerRunner(session)
         );
         nutsBuildRunner.run(

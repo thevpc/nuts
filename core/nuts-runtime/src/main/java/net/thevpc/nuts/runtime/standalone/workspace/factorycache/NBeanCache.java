@@ -3,175 +3,176 @@ package net.thevpc.nuts.runtime.standalone.workspace.factorycache;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.util.NArrays;
+import net.thevpc.nuts.util.NMsg;
 
+import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class NBeanCache {
-    private final Map<TypeAndArgTypes, CachedConstructor> cachedCtrls = new HashMap<>();
+    private final Map<TypeAndArgTypes, CachedConstructor> cachedConstructors = new HashMap<>();
     private final NLog LOG;
+    private final PrintStream log;
 
-    public NBeanCache(NLog LOG) {
+    public NBeanCache(NLog LOG, PrintStream log) {
         this.LOG = LOG;
+        this.log = log;
     }
 
-    private <T> Constructor<T> findConstructor(Class<T> t, Class[] argTypes) {
+    private <T> Constructor<T> resolveExactConstructor(Class<T> t, Class[] argTypes) {
         Constructor<T> ctrl = null;
         try {
             ctrl = t.getDeclaredConstructor(argTypes);
         } catch (NoSuchMethodException e) {
+            if (log != null) {
+                log.println(NMsg.ofC("constructor not found %s(%s)", t.getName(), Arrays.stream(argTypes).map(x -> x.getName()).collect(Collectors.toList())));
+            }
             return null;
         }
         ctrl.setAccessible(true);
+        if (log != null) {
+            log.println(NMsg.ofC("constructor found %s(%s)", t.getName(), Arrays.stream(argTypes).map(x -> x.getName()).collect(Collectors.toList())));
+        }
         return ctrl;
     }
 
-    public <T> CachedConstructor<T> getCtrl0(Class<T> t, Class[] argTypes, NSession session) {
+    public <T> CachedConstructor<T> findConstructor(Class<T> t, Class[] argTypes, NSession session) {
         TypeAndArgTypes tt = new TypeAndArgTypes(t, argTypes);
-        CachedConstructor<T> o = cachedCtrls.get(tt);
-        if (o != null) {
-            return o;
+        synchronized (cachedConstructors) {
+            CachedConstructor<T> o = cachedConstructors.get(tt);
+            if (o != null) {
+                return o;
+            }
+            if (cachedConstructors.containsKey(tt)) {
+                return null;
+            }
+            CachedConstructor<T> c = createConstructor(tt, session);
+            cachedConstructors.put(tt, c);
+            return c;
         }
-        if(cachedCtrls.containsKey(tt)){
-            return null;
-        }
-        CachedConstructor<T> c = createCtrl0(tt, session);
-        cachedCtrls.put(tt, c);
-        return c;
     }
 
-    private  <T> CachedConstructor<T> createCtrl0(TypeAndArgTypes tt, NSession session) {
-        {
+    public <T> CachedConstructor<T> createConstructor(TypeAndArgTypes tt, NSession session) {
+        Class<?>[] baseArgTypes = tt.getArgTypes();
+        Constructor<T> c;
+        Class<T> typeToInstantiate = tt.getType();
+        if (baseArgTypes.length > 0) {
             //session is the last argument?
-            List<Class> argTypes2 = new ArrayList<>();
-            argTypes2.addAll(Arrays.asList(tt.getArgTypes()));
-            argTypes2.add(NSession.class);
-            Constructor<T> c = findConstructor(tt.getType(), argTypes2.toArray(new Class[0]));
+            c = resolveExactConstructor(typeToInstantiate, NArrays.append(baseArgTypes, NSession.class));
             if (c != null) {
                 return new AbstractCachedConstructor<T>(c) {
                     @Override
                     public T newInstanceUnsafe(Object[] args, NSession session) throws InvocationTargetException, InstantiationException, IllegalAccessException {
-                        List<Object> all = new ArrayList<>();
-                        all.addAll(Arrays.asList(args));
-                        all.add(session);
-                        return c.newInstance(all.toArray());
+                        return c.newInstance(NArrays.append(args, session));
                     }
                 };
             }
-        }
-        {
             //session is the first argument?
-            List<Class> argTypes2 = new ArrayList<>();
-            argTypes2.add(NSession.class);
-            argTypes2.addAll(Arrays.asList(tt.getArgTypes()));
-            Constructor<T> c = findConstructor(tt.getType(), argTypes2.toArray(new Class[0]));
+            c = resolveExactConstructor(typeToInstantiate, NArrays.prepend(NSession.class, baseArgTypes));
             if (c != null) {
                 return new AbstractCachedConstructor<T>(c) {
                     @Override
                     public T newInstanceUnsafe(Object[] args, NSession session) throws InvocationTargetException, InstantiationException, IllegalAccessException {
-                        List<Object> all = new ArrayList<>();
-                        all.add(session);
-                        all.addAll(Arrays.asList(args));
-                        return c.newInstance(all.toArray());
+                        return c.newInstance(NArrays.prepend(session, args));
                     }
                 };
             }
-        }
-      {
             //Workspace is the last argument?
-            List<Class> argTypes2 = new ArrayList<>();
-            argTypes2.addAll(Arrays.asList(tt.getArgTypes()));
-            argTypes2.add(NWorkspace.class);
-            Constructor<T> c = findConstructor(tt.getType(), argTypes2.toArray(new Class[0]));
+            c = resolveExactConstructor(typeToInstantiate, NArrays.append(baseArgTypes, NWorkspace.class));
             if (c != null) {
                 return new AbstractCachedConstructor<T>(c) {
                     @Override
                     public T newInstanceUnsafe(Object[] args, NSession session) throws InvocationTargetException, InstantiationException, IllegalAccessException {
-                        List<Object> all = new ArrayList<>();
-                        all.addAll(Arrays.asList(args));
-                        all.add(session.getWorkspace());
-                        return c.newInstance(all.toArray());
+                        return c.newInstance(NArrays.append(args, session.getWorkspace()));
                     }
                 };
             }
-        }
-        {
             //Workspace is the first argument?
-            List<Class> argTypes2 = new ArrayList<>();
-            argTypes2.add(NWorkspace.class);
-            argTypes2.addAll(Arrays.asList(tt.getArgTypes()));
-            Constructor<T> c = findConstructor(tt.getType(), argTypes2.toArray(new Class[0]));
+            c = resolveExactConstructor(typeToInstantiate, NArrays.prepend(NWorkspace.class, baseArgTypes));
             if (c != null) {
                 return new AbstractCachedConstructor<T>(c) {
                     @Override
                     public T newInstanceUnsafe(Object[] args, NSession session) throws InvocationTargetException, InstantiationException, IllegalAccessException {
-                        List<Object> all = new ArrayList<>();
-                        all.add(session.getWorkspace());
-                        all.addAll(Arrays.asList(args));
-                        return c.newInstance(all.toArray());
+                        return c.newInstance(NArrays.prepend(session.getWorkspace(), args));
                     }
                 };
             }
-        }
-        {
+
             //exact params
-            List<Class> argTypes2 = new ArrayList<>();
-            argTypes2.addAll(Arrays.asList(tt.getArgTypes()));
-            Constructor<T> c = findConstructor(tt.getType(), argTypes2.toArray(new Class[0]));
+            c = resolveExactConstructor(typeToInstantiate, baseArgTypes);
             if (c != null) {
                 return new AbstractCachedConstructor<T>(c) {
                     @Override
                     public T newInstanceUnsafe(Object[] args, NSession session) throws InvocationTargetException, InstantiationException, IllegalAccessException {
-                        List<Object> all = new ArrayList<>();
-                        all.addAll(Arrays.asList(args));
-                        return c.newInstance(all.toArray());
+                        return c.newInstance(args);
                     }
                 };
             }
-        }
-        {
+
             //session only
-            List<Class> argTypes2 = new ArrayList<>();
-            argTypes2.add(NSession.class);
-            Constructor<T> c = findConstructor(tt.getType(), argTypes2.toArray(new Class[0]));
+            c = resolveExactConstructor(typeToInstantiate, new Class[]{NSession.class});
             if (c != null) {
                 return new AbstractCachedConstructor<T>(c) {
                     @Override
                     public T newInstanceUnsafe(Object[] args, NSession session) throws InvocationTargetException, InstantiationException, IllegalAccessException {
-                        List<Object> all = new ArrayList<>();
-                        all.add(session);
-                        return c.newInstance(all.toArray());
+                        return c.newInstance(session);
                     }
                 };
             }
-        }
-        {
+
             //Workspace only
-            List<Class> argTypes2 = new ArrayList<>();
-            argTypes2.add(NWorkspace.class);
-            Constructor<T> c = findConstructor(tt.getType(), argTypes2.toArray(new Class[0]));
+            c = resolveExactConstructor(typeToInstantiate, new Class[]{NWorkspace.class});
             if (c != null) {
                 return new AbstractCachedConstructor<T>(c) {
                     @Override
                     public T newInstanceUnsafe(Object[] args, NSession session) throws InvocationTargetException, InstantiationException, IllegalAccessException {
-                        List<Object> all = new ArrayList<>();
-                        all.add(session.getWorkspace());
-                        return c.newInstance(all.toArray());
+                        return c.newInstance(session.getWorkspace());
                     }
                 };
             }
-        }
-        {
+
+
             //no args
-            List<Class> argTypes2 = new ArrayList<>();
-            Constructor<T> c = findConstructor(tt.getType(), argTypes2.toArray(new Class[0]));
+            c = resolveExactConstructor(typeToInstantiate, new Class[0]);
             if (c != null) {
                 return new AbstractCachedConstructor<T>(c) {
                     @Override
                     public T newInstanceUnsafe(Object[] args, NSession session) throws InvocationTargetException, InstantiationException, IllegalAccessException {
-                        List<Object> all = new ArrayList<>();
-                        return c.newInstance(all.toArray());
+                        return c.newInstance();
+                    }
+                };
+            }
+        }else{
+            //not args, so first try with session
+            c = resolveExactConstructor(typeToInstantiate, new Class[]{NSession.class});
+            if (c != null) {
+                return new AbstractCachedConstructor<T>(c) {
+                    @Override
+                    public T newInstanceUnsafe(Object[] args, NSession session) throws InvocationTargetException, InstantiationException, IllegalAccessException {
+                        return c.newInstance(session);
+                    }
+                };
+            }
+            //then try with workspace
+            c = resolveExactConstructor(typeToInstantiate, new Class[]{NWorkspace.class});
+            if (c != null) {
+                return new AbstractCachedConstructor<T>(c) {
+                    @Override
+                    public T newInstanceUnsafe(Object[] args, NSession session) throws InvocationTargetException, InstantiationException, IllegalAccessException {
+                        return c.newInstance(NArrays.append(args, session.getWorkspace()));
+                    }
+                };
+            }
+            //finally try with no args
+            c = resolveExactConstructor(typeToInstantiate, new Class[0]);
+            if (c != null) {
+                return new AbstractCachedConstructor<T>(c) {
+                    @Override
+                    public T newInstanceUnsafe(Object[] args, NSession session) throws InvocationTargetException, InstantiationException, IllegalAccessException {
+                        return c.newInstance();
                     }
                 };
             }

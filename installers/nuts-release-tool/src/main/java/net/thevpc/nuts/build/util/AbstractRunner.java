@@ -295,41 +295,18 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
         return this;
     }
 
-//    public void scpPushFile(String fromLocal, String toRemote) {
-//        scp(fromLocal, getRemoteSshConnexion().get() + ":" + toRemote);
-//    }
-
-    public void uploadFolder(NPath fromLocal, String toRemote) {
-//        scp("-r", fromLocal.toString(), getRemoteSshConnexion().get() + ":" + _parentPath(toRemote));
-        upload(fromLocal.toString(), toRemote);
-    }
-
-    public void uploadFolder(NPath fromLocal, NPath toRemote) {
-//        scp("-r", fromLocal.toString(), getRemoteSshConnexion().get() + ":" + _parentPath(toRemote.toString()));
-        upload(fromLocal.toString(), toRemote.toString());
-    }
 
     private String _parentPath(String toRemote) {
         int i = toRemote.lastIndexOf('/');
         return toRemote.substring(0, i + 1);
     }
 
-    public void uploadFolder(String fromLocal, String toRemote) {
-        upload(fromLocal,toRemote);
-//        scp("-r", fromLocal, getRemoteSshConnexion().get() + ":" + _parentPath(toRemote));
-    }
-
-    public void uploadFile(NPath fromLocal, String toRemote) {
+    public void upload(NPath fromLocal, String toRemote) {
         upload(fromLocal.toString(), toRemote);
     }
 
-    public void uploadFile(NPath fromLocal, NPath toRemote) {
+    public void upload(NPath fromLocal, NPath toRemote) {
         upload(fromLocal.toString(), toRemote.toString());
-    }
-
-    public void uploadFile(String fromLocal, String toRemote) {
-        upload(fromLocal,toRemote);
-//        scp(fromLocal, getRemoteSshConnexion().get() + ":" + toRemote);
     }
 
     public void remoteDeleteFolder(String path) {
@@ -453,7 +430,7 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
         }
         todo.sort(Comparator.comparing(x -> x.prio));
         for (PathWithPrio pathWithPrio : todo) {
-            uploadFile(pathWithPrio.path, m2Path.resolve(pathWithPrio.p).toString());
+            upload(pathWithPrio.path, m2Path.resolve(pathWithPrio.p).toString());
             remoteCopyFile(
                     m2Path.resolve(pathWithPrio.p).toString(),
                     mavenThevpc.resolve(pathWithPrio.p).toString()

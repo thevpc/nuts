@@ -118,7 +118,7 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
             }
         } else {
             _LOGOP(session).verb(NLogVerb.WARNING).level(Level.FINE)
-                    .log(NMsg.ofJ("failed to retrieve {0}", def.id));
+                    .log(NMsg.ofC("failed to retrieve %s", def.id));
         }
         return def.definition;
     }
@@ -469,7 +469,7 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
                         }
                     } catch (RuntimeException ex) {
                         _LOGOP(session).error(ex).verb(NLogVerb.WARNING).level(Level.FINE)
-                                .log(NMsg.ofJ("failed to install {0}", info.id));
+                                .log(NMsg.ofC("failed to install %s", info.id));
                         failedList.add(info.id);
                         if (session.isPlainTrace()) {
                             if (!NIO.of(getSession()).getDefaultTerminal().ask()

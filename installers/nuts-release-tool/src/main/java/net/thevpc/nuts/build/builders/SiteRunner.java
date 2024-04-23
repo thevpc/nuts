@@ -18,7 +18,7 @@ import net.thevpc.nuts.util.NMsg;
 /**
  * @author vpc
  */
-public class WebSiteRunner extends AbstractRunner {
+public class SiteRunner extends AbstractRunner {
 
     boolean NUTS_FLAG_SITE = false;
 
@@ -39,7 +39,7 @@ public class WebSiteRunner extends AbstractRunner {
         return false;
     }
 
-    public WebSiteRunner(NSession session) {
+    public SiteRunner(NSession session) {
         super(session);
     }
 

@@ -35,6 +35,7 @@ import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.web.NWebCli;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -51,7 +52,7 @@ import java.util.zip.ZipFile;
  */
 public class DefaultNWorkspaceExtensionModel {
 
-    private static Set<String> JRE_JAR_FILE_NAMES=new HashSet<>(Arrays.asList(
+    private static Set<String> JRE_JAR_FILE_NAMES = new HashSet<>(Arrays.asList(
             "rt.jar",
             "charsets.jar",
             "jce.jar",
@@ -178,36 +179,79 @@ public class DefaultNWorkspaceExtensionModel {
 
     public List<RegInfo> buildRegInfos(NSession session) {
         List<RegInfo> a = new ArrayList<>();
-        Set<Class> loadedExtensions = getExtensionTypes(NComponent.class, session);
-        for (Class extensionImpl : loadedExtensions) {
-            for (Class extensionPointType : resolveComponentTypes(extensionImpl)) {
+        Set<Class<? extends NComponent>> loadedExtensions = getExtensionTypes(NComponent.class, session);
+        for (Class<? extends NComponent> extensionImpl : loadedExtensions) {
+            for (Class<? extends NComponent> extensionPointType : resolveComponentTypes(extensionImpl)) {
                 a.add(new RegInfo(extensionPointType, extensionImpl, null));
             }
         }
         return a;
     }
 
-    private boolean isJRELib(NPath path){
-        if(JRE_JAR_FILE_NAMES.contains(path.getName())){
-            if(path.getParent().getName().equals("lib")){
-                return true;
+    private boolean isJRELib(NPath path) {
+        String jh = System.getProperty("java.home");
+        try {
+            if (path.isFile()) {
+                File f = path.toFile().orNull();
+                if (f != null) {
+                    String p = f.getPath();
+                    if (
+                            p.startsWith(jh + "/")
+                                    || p.startsWith(jh + "\\")
+                    ) {
+                        return true;
+                    }
+
+                }
             }
+        } catch (Exception e) {
+            //
         }
         return false;
     }
+
     public void onInitializeWorkspace(NBootOptions bOptions, ClassLoader bootClassLoader, NSession session) {
         // add discover classpath
-        URL[] urls = NClassLoaderUtils.resolveClasspathURLs(Thread.currentThread().getContextClassLoader());
-        for (URL url : urls) {
-            NPath path = NPath.of(url, session);
-            if(!isJRELib(path)) {
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        boolean resolveClassPathUrls=false;
+        if(resolveClassPathUrls) {
+            URL[] urls = NClassLoaderUtils.resolveClasspathURLs(contextClassLoader);
+            class PathAndUrl {
+                URL url;
+                NPath path;
+
+                public PathAndUrl(URL url, NPath path) {
+                    this.url = url;
+                    this.path = path;
+                }
+            }
+            PathAndUrl[] valid = Arrays.stream(urls).map(url -> {
+                try {
+                    NPath path = NPath.of(url, session);
+                    if (!isJRELib(path)) {
+                        return new PathAndUrl(url, path);
+                    }
+                } catch (Exception ex) {
+                    //
+                }
+                return null;
+            }).filter(Objects::nonNull).toArray(PathAndUrl[]::new);
+            _LOG(session).with().session(session).verb(NLogVerb.INFO).level(Level.FINE)
+                    .log(NMsg.ofC("initialize workspace extensions from %s/%s urls : %s", valid.length, urls.length, Arrays.asList(urls)));
+            for (PathAndUrl v : valid) {
                 objectFactory.discoverTypes(
-                        CoreNIdUtils.resolveOrGenerateIdFromFileName(path, session),
-                        url,
+                        CoreNIdUtils.resolveOrGenerateIdFromFileName(v.path, session),
+                        v.url,
                         bootClassLoader,
                         session);
             }
         }
+        objectFactory.discoverTypes(
+                null,
+                null,
+                bootClassLoader,
+                session);
+
         // discover runtime path
         if (!bOptions.getRuntimeBootDependencyNode().isEmpty()) {
             objectFactory.discoverTypes(
@@ -238,7 +282,7 @@ public class DefaultNWorkspaceExtensionModel {
 //            registerType(regInfo, session);
 //        }
 //    }
-    public boolean installWorkspaceExtensionComponent(Class extensionPointType, Object extensionImpl, NSession session) {
+    public <T extends NComponent> boolean installWorkspaceExtensionComponent(Class<T> extensionPointType, T extensionImpl, NSession session) {
         if (NComponent.class.isAssignableFrom(extensionPointType)) {
             if (extensionPointType.isInstance(extensionImpl)) {
                 return registerInstance(extensionPointType, extensionImpl, session);
@@ -274,7 +318,7 @@ public class DefaultNWorkspaceExtensionModel {
 //            return old;
 //        }
 //    }
-    public Set<Class> discoverTypes(NId id, ClassLoader classLoader, NSession session) {
+    public Set<Class<? extends NComponent>> discoverTypes(NId id, ClassLoader classLoader, NSession session) {
         URL url = NFetchCmd.of(id, session).setContent(true).getResultContent().toURL().get();
         return objectFactory.discoverTypes(id, url, classLoader, session);
     }
@@ -314,7 +358,7 @@ public class DefaultNWorkspaceExtensionModel {
 //        return a;
 //    }
 
-    public <T> List<T> createAll(Class<T> type, NSession session) {
+    public <T extends NComponent> List<T> createAll(Class<T> type, NSession session) {
         return objectFactory.createAll(type, session);
     }
 
@@ -322,23 +366,23 @@ public class DefaultNWorkspaceExtensionModel {
 //    public Set<Class> getExtensionPoints(NutsSession session) {
 //        return objectFactory.getExtensionPoints();
 //    }
-    public Set<Class> getExtensionTypes(Class extensionPoint, NSession session) {
+    public <T extends NComponent> Set<Class<? extends T>> getExtensionTypes(Class<T> extensionPoint, NSession session) {
         return objectFactory.getExtensionTypes(extensionPoint, session);
     }
 
-    public List<Object> getExtensionObjects(Class extensionPoint, NSession session) {
+    public <T extends NComponent> List<T> getExtensionObjects(Class<T> extensionPoint, NSession session) {
         return objectFactory.getExtensionObjects(extensionPoint);
     }
 
-    public boolean isRegisteredType(Class extensionPointType, String name, NSession session) {
+    public <T extends NComponent> boolean isRegisteredType(Class<T> extensionPointType, String name, NSession session) {
         return objectFactory.isRegisteredType(extensionPointType, name, session);
     }
 
-    public boolean isRegisteredInstance(Class extensionPointType, Object extensionImpl, NSession session) {
+    public <T extends NComponent> boolean isRegisteredInstance(Class<T> extensionPointType, T extensionImpl, NSession session) {
         return objectFactory.isRegisteredInstance(extensionPointType, extensionImpl, session);
     }
 
-    public boolean registerInstance(Class extensionPointType, Object extensionImpl, NSession session) {
+    public <T extends NComponent> boolean registerInstance(Class<T> extensionPointType, T extensionImpl, NSession session) {
         if (!isRegisteredType(extensionPointType, extensionImpl.getClass().getName(), session) && !isRegisteredInstance(extensionPointType, extensionImpl, session)) {
             objectFactory.registerInstance(extensionPointType, extensionImpl, session);
             return true;
@@ -419,8 +463,8 @@ public class DefaultNWorkspaceExtensionModel {
                     }
 //                    ws.install().setSession(session).id(def.getId());
                     workspaceExtensionsClassLoader.add(NClassLoaderUtils.definitionToClassLoaderNode(def, null, session));
-                    Set<Class> classes = objectFactory.discoverTypes(def.getId(), def.getContent().flatMap(NPath::toURL).orNull(), workspaceExtensionsClassLoader, session);
-                    for (Class aClass : classes) {
+                    Set<Class<? extends NComponent>> classes = objectFactory.discoverTypes(def.getId(), def.getContent().flatMap(NPath::toURL).orNull(), workspaceExtensionsClassLoader, session);
+                    for (Class<? extends NComponent> aClass : classes) {
                         ((NWorkspaceExt) ws).getModel().configModel.onNewComponent(aClass, session);
                     }
                     //should check current classpath
@@ -502,7 +546,7 @@ public class DefaultNWorkspaceExtensionModel {
         }
         DefaultNWorkspaceExtension workspaceExtension = new DefaultNWorkspaceExtension(id, nDefinitions.getId(), this.workspaceExtensionsClassLoader);
         //now will iterate over Extension classes to wire them ...
-        Set<Class> discoveredTypes = objectFactory.discoverTypes(nDefinitions.getId(), nDefinitions.getContent().flatMap(NPath::toURL).orNull(), workspaceExtension.getClassLoader(), session);
+        Set<Class<? extends NComponent>> discoveredTypes = objectFactory.discoverTypes(nDefinitions.getId(), nDefinitions.getContent().flatMap(NPath::toURL).orNull(), workspaceExtension.getClassLoader(), session);
 //        for (Class extensionImpl : getExtensionTypes(NutsComponent.class, session)) {
 //            for (Class extensionPointType : resolveComponentTypes(extensionImpl)) {
 //                if (registerType(extensionPointType, extensionImpl, session)) {
@@ -522,7 +566,7 @@ public class DefaultNWorkspaceExtensionModel {
                     .log(NMsg.ofJ("extension {0} changed Terminal configuration. Reloading Session Terminal", id));
             session.setTerminal(newTerminal);
         }
-        for (Class discoveredType : discoveredTypes) {
+        for (Class<? extends NComponent> discoveredType : discoveredTypes) {
             if (NExtensionLifeCycle.class.isAssignableFrom(discoveredType)) {
                 workspaceExtension.getEvents().add(
                         (NExtensionLifeCycle) objectFactory.createComponent(discoveredType, null, session).get()
@@ -579,24 +623,24 @@ public class DefaultNWorkspaceExtensionModel {
         return false;
     }
 
-    public List<Class> resolveComponentTypes(Class o) {
-        List<Class> a = new ArrayList<>();
+    public List<Class<? extends NComponent>> resolveComponentTypes(Class<?> o) {
+        List<Class<? extends NComponent>> a = new ArrayList<>();
         if (o != null) {
-            HashSet<Class> v = new HashSet<>();
-            Stack<Class> s = new Stack<>();
+            HashSet<Class<?>> v = new HashSet<>();
+            Stack<Class<?>> s = new Stack<>();
             s.push(o);
             while (!s.isEmpty()) {
-                Class c = s.pop();
+                Class<?> c = s.pop();
                 v.add(c);
                 if (SUPPORTED_EXTENSION_TYPES.contains(c)) {
-                    a.add(c);
+                    a.add((Class<? extends NComponent>) c);
                 }
-                for (Class aa : c.getInterfaces()) {
+                for (Class<?> aa : c.getInterfaces()) {
                     if (!v.contains(aa)) {
                         s.push(aa);
                     }
                 }
-                Class sc = c.getSuperclass();
+                Class<?> sc = c.getSuperclass();
                 if (sc != null && !v.contains(sc)) {
                     s.push(sc);
                 }
@@ -807,7 +851,7 @@ public class DefaultNWorkspaceExtensionModel {
 
 
     //TODO fix me!
-    public <T> T createFirst(Class<T> type, NSession session) {
+    public <T extends NComponent> T createFirst(Class<T> type, NSession session) {
         return objectFactory.createFirst(type, session);
     }
 

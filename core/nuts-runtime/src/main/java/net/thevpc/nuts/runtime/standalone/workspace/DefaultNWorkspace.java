@@ -43,6 +43,7 @@ import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.runtime.standalone.NLocationKey;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNLog;
 import net.thevpc.nuts.text.*;
+import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.DefaultNProperties;
 import net.thevpc.nuts.runtime.standalone.boot.NBootConfig;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NClassLoaderUtils;
@@ -198,7 +199,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             this.wsModel.logModel.setDefaultSession(defaultSession());
             this.wsModel.filtersModel = new DefaultNFilterModel(this);
             this.wsModel.installedRepository = new DefaultNInstalledRepository(this, bootOptions);
-            this.wsModel.repositoryModel = new DefaultNRepositoryModel(this);
             this.wsModel.envModel = new DefaultNWorkspaceEnvManagerModel(this, defaultSession());
             this.wsModel.sdkModel = new DefaultNPlatformModel(this.wsModel.envModel);
             this.wsModel.locationsModel = new DefaultNWorkspaceLocationModel(this,
@@ -215,9 +215,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             cfg.setRuntimeBootDescriptor(bootOptions.getRuntimeBootDescriptor().orNull());
             cfg.setExtensionBootDescriptors(bootOptions.getExtensionBootDescriptors().orNull());
 
-            this.wsModel.aliasesModel = new DefaultCustomCommandsModel(this);
-            this.wsModel.importModel = new DefaultImportModel(this);
-            this.wsModel.eventsModel = new DefaultNWorkspaceEventModel(this);
             this.wsModel.location = bootOptions.getWorkspace().orNull();
 
             this.wsModel.bootModel.onInitializeWorkspace();
@@ -280,13 +277,15 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 LOGCRF.log(NMsg.ofJ("   nuts-runtime-digest            : {0}",
                         text.ofStyled(new CoreDigestHelper(defaultSession()).append(bootOptions.getClassWorldURLs().orNull()).getDigest(), NTextStyle.version())
                 ));
-                LOGCRF.log(NMsg.ofJ("   nuts-runtime-dependencies      : {0}",
-                        text.ofBuilder().appendJoined(text.ofStyled(";", NTextStyle.separator()),
-                                bootOptions.getRuntimeBootDescriptor().get().getDependencies().stream()
-                                        .map(x -> NId.of(x.toString()).get())
-                                        .collect(Collectors.toList())
-                        )
-                ));
+                if(bootOptions.getRuntimeBootDescriptor().isPresent()) {
+                    LOGCRF.log(NMsg.ofJ("   nuts-runtime-dependencies      : {0}",
+                            text.ofBuilder().appendJoined(text.ofStyled(";", NTextStyle.separator()),
+                                    bootOptions.getRuntimeBootDescriptor().get().getDependencies().stream()
+                                            .map(x -> NId.of(x.toString()).get())
+                                            .collect(Collectors.toList())
+                            )
+                    ));
+                }
                 LOGCRF.log(NMsg.ofJ("   nuts-runtime-urls              : {0}",
                         text.ofBuilder().appendJoined(text.ofStyled(";", NTextStyle.separator()),
                                 bootOptions.getClassWorldURLs().get().stream()
@@ -432,6 +431,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
                 NWorkspaceConfigRuntime rconfig = new NWorkspaceConfigRuntime();
                 rconfig.setDependencies(
+                        bootOptions.getRuntimeBootDescriptor().isEmpty()?"":
                         bootOptions.getRuntimeBootDescriptor().get().getDependencies().stream()
                                 .map(NDependency::toString)
                                 .collect(Collectors.joining(";"))
@@ -538,6 +538,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 if (bootOptions.getRecover().orElse(false)) {
                     wsModel.configModel.setBootApiVersion(cfg.getApiVersion(), defaultSession());
                     wsModel.configModel.setBootRuntimeId(cfg.getRuntimeId(),
+                            bootOptions.getRuntimeBootDescriptor().isEmpty()?"":
                             bootOptions.getRuntimeBootDescriptor().get().getDependencies().stream()
                                     .map(NDependency::toString)
                                     .collect(Collectors.joining(";")),
@@ -612,7 +613,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     .log(
                             NMsg.ofC("%s workspace loaded in %s",
                                     NMsg.ofCode("nuts"),
-                                    _boot.getCreationDuration()
+                                    NDuration.ofDuration(_boot.getCreationDuration())
                             )
                     );
             if (CoreNUtils.isCustomFalse("---perf", defaultSession())) {
@@ -1408,9 +1409,9 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                             .log(NMsg.ofJ("unable to instantiate Command Factory {0}", commandFactory));
                 }
             }
-            DefaultNWorkspaceEvent worksppaeReloadedEvent = new DefaultNWorkspaceEvent(session, null, null, null, null);
+            DefaultNWorkspaceEvent workspaceReloadedEvent = new DefaultNWorkspaceEvent(session, null, null, null, null);
             for (NWorkspaceListener listener : NEvents.of(defaultSession()).getWorkspaceListeners()) {
-                listener.onReloadWorkspace(worksppaeReloadedEvent);
+                listener.onReloadWorkspace(workspaceReloadedEvent);
             }
             //if save is needed, will be applied
             //config().save(false, session);

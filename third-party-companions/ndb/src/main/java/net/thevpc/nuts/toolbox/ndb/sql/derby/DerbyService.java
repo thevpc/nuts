@@ -141,10 +141,10 @@ public class DerbyService {
             NPath r = NFetchCmd.of(id,session).setFailFast(!optional).getResultPath();
             if (r != null) {
                 r.copyTo(targetPath);
-                LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.READ).log(NMsg.ofJ("downloading {0} to {1}", id, targetFile));
+                LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.READ).log(NMsg.ofC("downloading %s to %s", id, targetFile));
             }
         } else {
-            LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.READ).log(NMsg.ofJ("using {0} form {1}", id, targetFile));
+            LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.READ).log(NMsg.ofC("using %s form %s", id, targetFile));
         }
         return targetFile;
     }

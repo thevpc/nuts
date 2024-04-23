@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.web;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.*;
@@ -24,9 +23,9 @@ public class NWebRequestImpl implements NWebRequest {
     private Integer connectTimeout;
     private NSession session;
     private List<NWebRequestBody> parts = new ArrayList<>();
-    private NWebCliImpl cli;
+    private DefaultNWebCli cli;
 
-    public NWebRequestImpl(NWebCliImpl cli, NSession session, NHttpMethod method) {
+    public NWebRequestImpl(DefaultNWebCli cli, NSession session, NHttpMethod method) {
         this.cli = cli;
         this.session = session;
         this.method = method == null ? NHttpMethod.GET : method;

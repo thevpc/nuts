@@ -303,10 +303,10 @@ public class DefaultCustomCommandsModel {
     }
 
     private NCustomCmd toDefaultNWorkspaceCommand(NCommandConfig c, NSession session) {
-        if (c.getCommand() == null || c.getCommand().size() == 0) {
+        if (c.getCommand() == null || c.getCommand().isEmpty()) {
 
             _LOGOP(session).level(Level.WARNING).verb(NLogVerb.FAIL)
-                    .log(NMsg.ofJ("invalid command definition ''{0}''. Missing command . Ignored", c.getName()));
+                    .log(NMsg.ofC("invalid command definition '%s'. Missing command . Ignored", c.getName()));
             return null;
         }
 //        if (c.getOwner() == null) {

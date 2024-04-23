@@ -252,21 +252,21 @@ public class XmlUtils {
             public void warning(SAXParseException exception) throws SAXException {
                 NLogOp.of(XmlUtils.class,session)
                         .level(Level.FINEST).verb(NLogVerb.WARNING)
-                        .log(NMsg.ofJ("{0}",exception));
+                        .log(NMsg.ofC("%s",exception));
             }
 
             @Override
             public void error(SAXParseException exception) throws SAXException {
                 NLogOp.of(XmlUtils.class,session)
                         .level(Level.FINEST).verb(NLogVerb.WARNING)
-                        .log(NMsg.ofJ("{0}",exception));
+                        .log(NMsg.ofC("%s",exception));
             }
 
             @Override
             public void fatalError(SAXParseException exception) throws SAXException {
                 NLogOp.of(XmlUtils.class,session)
                         .level(Level.FINEST).verb(NLogVerb.WARNING)
-                        .log(NMsg.ofJ("{0}",exception));
+                        .log(NMsg.ofC("%s",exception));
             }
         });
         return b;

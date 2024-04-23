@@ -208,7 +208,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                 } catch (Exception ex) {
                     //ignore
                     _LOGOP(getSession()).error(ex).level(Level.SEVERE)
-                            .log(NMsg.ofJ("unexpected error while fetching descriptor for {0}", id));
+                            .log(NMsg.ofC("unexpected error while fetching descriptor for %s", id));
                     if (_LOG(getSession()).isLoggable(Level.FINEST)) {
                         NLogUtils.traceMessage(_LOG(getSession()), nutsFetchModes, id.getLongId(), NLogVerb.FAIL, "fetch def", startTime);
                     }
@@ -223,7 +223,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                     } catch (NNotFoundException ex) {
                         //ignore
                         _LOGOP(getSession()).level(Level.WARNING).verb(NLogVerb.WARNING)
-                                .log(NMsg.ofJ("artifact descriptor found, but one of its parents or dependencies is not: {0} : missing {1}", id,
+                                .log(NMsg.ofC("artifact descriptor found, but one of its parents or dependencies is not: %s : missing %s", id,
                                         ex.getId()));
                         foundDefinition = null;
                     }

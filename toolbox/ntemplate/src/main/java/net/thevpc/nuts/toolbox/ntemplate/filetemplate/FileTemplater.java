@@ -90,19 +90,19 @@ public class FileTemplater {
             @Override
             public void info(String title, String message) {
                 log().verb(NLogVerb.INFO).level(Level.FINER)
-                        .log(NMsg.ofJ("{0} : {1}", title, message));
+                        .log(NMsg.ofC("%s : %s", title, message));
             }
 
             @Override
             public void debug(String title, String message) {
                 log().verb(NLogVerb.DEBUG).level(Level.FINER)
-                        .log(NMsg.ofJ("{0} : {1}", title, message));
+                        .log(NMsg.ofC("%s : %s", title, message));
             }
 
             @Override
             public void error(String title, String message) {
                 log().verb(NLogVerb.FAIL).level(Level.FINER)
-                        .log(NMsg.ofJ("{0} : {1}", title, message));
+                        .log(NMsg.ofC("%s : %s", title, message));
             }
 
             private NLogOp log() {

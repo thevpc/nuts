@@ -36,6 +36,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.NullOutputStream;
 import net.thevpc.nuts.runtime.standalone.session.DefaultNSession;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.NativeImageHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
 import net.thevpc.nuts.spi.NDefaultTerminalSpec;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
@@ -81,6 +82,7 @@ public class DefaultNBootModel implements NBootModel {
     public void init(NBootOptions bOption0) {
         this.initializing = true;
         this.bootSession = new DefaultNSession(workspace, bOption0);
+        NativeImageHelper.prepare(this.bootSession);
         this.bOptions = bOption0.readOnly();
         this.bootTerminal = detectAnsiTerminalSupport(NOsFamily.getCurrent(), bOptions, true, bootSession);
         workspaceModel.uuid = bOptions.getUuid().orNull();
@@ -246,7 +248,7 @@ public class DefaultNBootModel implements NBootModel {
                 //NSessionUtils.setSession(syst, session);
             } catch (Exception ex) {
                 _LOGOP(session).level(Level.FINEST).verb(NLogVerb.WARNING)
-                        .log(NMsg.ofJ("unable to create system terminal : {0}", ex));
+                        .log(NMsg.ofC("unable to create system terminal : %s", ex));
                 DefaultNSystemTerminalBase b = new DefaultNSystemTerminalBase();
                 NSessionUtils.setSession(b, session);
                 syst = new DefaultSystemTerminal(b);

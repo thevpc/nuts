@@ -65,6 +65,11 @@ public class CoreNUtils {
     public static final NDefaultThreadFactory N_DEFAULT_THREAD_FACTORY = new NDefaultThreadFactory("nuts-pool", true);
     private static final Map<String, String> _QUERY_EMPTY_ENV = new HashMap<>();
     public static final Map<String, String> QUERY_EMPTY_ENV = Collections.unmodifiableMap(_QUERY_EMPTY_ENV);
+
+    public static final boolean isDevVerbose(){
+        return Boolean.getBoolean("nuts.dev.verbose");
+    }
+
     public static Comparator<NId> NUTS_ID_COMPARATOR = new Comparator<NId>() {
         @Override
         public int compare(NId o1, NId o2) {
