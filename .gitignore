@@ -245,3 +245,8 @@
 /installers/nuts-full/target
 /maven-central/temp
 /installers/nuts-release-tool/target
+/installers/nuts-portable/target/archive-tmp/nuts-portable-0.8.4.0.jar
+/installers/nuts-portable/target/maven-archiver/pom.properties
+/installers/nuts-portable/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+/installers/nuts-portable/target/nuts-portable-0.8.4.0.jar
+/installers/nuts-portable/target/nuts-portable-0.8.4.0-shaded.jar

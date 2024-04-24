@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-info/changelog" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.2.1">
+<title data-rh="true">Change Log | Nuts</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://thevpc.github.io/nuts/img/nuts-icon.png"><meta data-rh="true" name="twitter:image" content="https://thevpc.github.io/nuts/img/nuts-icon.png"><meta data-rh="true" property="og:url" content="https://thevpc.github.io/nuts/docs/info/changelog"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Change Log | Nuts"><meta data-rh="true" name="description" content="View Official releases here :"><meta data-rh="true" property="og:description" content="View Official releases here :"><link data-rh="true" rel="icon" href="/nuts/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://thevpc.github.io/nuts/docs/info/changelog"><link data-rh="true" rel="alternate" href="https://thevpc.github.io/nuts/docs/info/changelog" hreflang="en"><link data-rh="true" rel="alternate" href="https://thevpc.github.io/nuts/docs/info/changelog" hreflang="x-default"><link rel="alternate" type="application/rss+xml" href="/nuts/blog/rss.xml" title="Nuts RSS Feed">
+<link rel="alternate" type="application/atom+xml" href="/nuts/blog/atom.xml" title="Nuts Atom Feed"><link rel="stylesheet" href="/nuts/assets/css/styles.aeb228a8.css">
+<script src="/nuts/assets/js/runtime~main.67a5f568.js" defer="defer"></script>
+<script src="/nuts/assets/js/main.d0e67774.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<script>!function(){function t(t){document.documentElement.setAttribute("data-theme",t)}var e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return localStorage.getItem("theme")}catch(t){}}();t(null!==e?e:"light")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="navbar navbar--fixed-top"><div class="navbar__inner"><div class="navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/nuts/"><div class="navbar__logo"><img src="/nuts/img/nuts-icon.png" alt="Nuts Package Manager" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/nuts/img/nuts-icon.png" alt="Nuts Package Manager" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">Nuts Package Manager</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/nuts/docs/intro">Tutorial</a><a class="navbar__item navbar__link" href="/nuts/blog">Blog</a></div><div class="navbar__items navbar__items--right"><a href="https://github.com/thevpc/nuts" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="Switch between dark and light mode (currently light mode)" aria-label="Switch between dark and light mode (currently light mode)" aria-live="polite"><svg viewBox="0 0 24 24" width="24" height="24" class="lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" class="darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/nuts/docs/intro">Tutorial Intro</a></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" href="/nuts/docs/category/introduction">Introduction</a><button aria-label="Expand sidebar category &#x27;Introduction&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" href="/nuts/docs/category/tutorial---basics">Tutorial - Basics</a><button aria-label="Expand sidebar category &#x27;Tutorial - Basics&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" href="/nuts/docs/category/installation">Installation</a><button aria-label="Expand sidebar category &#x27;Installation&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" href="/nuts/docs/category/tutorial---extras">Tutorial - Extras</a><button aria-label="Expand sidebar category &#x27;Tutorial - Extras&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" href="/nuts/docs/category/commands">Commands</a><button aria-label="Expand sidebar category &#x27;Commands&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" href="/nuts/docs/category/apps">Apps</a><button aria-label="Expand sidebar category &#x27;Apps&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" href="/nuts/docs/category/features">Features</a><button aria-label="Expand sidebar category &#x27;Features&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" href="/nuts/docs/category/framework">Framework</a><button aria-label="Expand sidebar category &#x27;Framework&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--active" href="/nuts/docs/category/miscellaneous">Miscellaneous</a><button aria-label="Collapse sidebar category &#x27;Miscellaneous&#x27;" aria-expanded="true" type="button" class="clean-btn menu__caret"></button></div><ul style="display:block;overflow:visible;height:auto" class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/nuts/docs/info/changelog">Change Log</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/nuts/docs/info/faq">Frequently Asked Questions</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/nuts/docs/info/running">Running Nuts</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/nuts/docs/info/troubleshooting">Troubleshooting</a></li></ul></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" href="/nuts/docs/category/contributing">Contributing</a><button aria-label="Expand sidebar category &#x27;Contributing&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs" itemscope="" itemtype="https://schema.org/BreadcrumbList"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/nuts/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li itemscope="" itemprop="itemListElement" itemtype="https://schema.org/ListItem" class="breadcrumbs__item"><a class="breadcrumbs__link" itemprop="item" href="/nuts/docs/category/miscellaneous"><span itemprop="name">Miscellaneous</span></a><meta itemprop="position" content="1"></li><li itemscope="" itemprop="itemListElement" itemtype="https://schema.org/ListItem" class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link" itemprop="name">Change Log</span><meta itemprop="position" content="2"></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>Change Log</h1></header><p>View Official releases <a href="https://github.com/thevpc/nuts/releases" target="_blank" rel="noopener noreferrer">here</a> :
+Starred releases are most stable ones.</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="nuts-0840-development-version">nuts 0.8.4.0 (DEVELOPMENT VERSION)<a href="#nuts-0840-development-version" class="hash-link" aria-label="Direct link to nuts 0.8.4.0 (DEVELOPMENT VERSION)" title="Direct link to nuts 0.8.4.0 (DEVELOPMENT VERSION)">​</a></h2>
+<ul>
+<li><code>2022/XX/XX 	nuts 0.8.4.0</code> not released yet nuts-runtime-0.8.4.2-alpha1.jar</li>
+<li>WARNING : <code>api</code>  API has evolved with incompatibilities with previous versions</li>
+<li>CHANGED: renamed nlib-ssh to next-ssh et is promoted as extension</li>
+<li>FIXED: Fixed maven url parsing on Windows platforms that prevented nsh from being installed</li>
+<li>CHANGED: Prefix is now &#x27;N&#x27; instead of &#x27;Nuts&#x27;</li>
+<li>ADDED: Add native installers for windows, linux and macOS</li>
+<li>ADDED: Add links to pdf docs in website and offline documentation</li>
+<li>ADDED: Add new nuts LOGO</li>
+<li>ADDED: Add NOptional a feature riche replacement of java&#x27;s Optional</li>
+<li>ADDED: Add NEnvCondition/NEnvConditionBuilder::setProperties/getProperties</li>
+<li>ADDED: Add NDescriptor/NDescriptorBuilder::setLicenses</li>
+<li>ADDED: Add NDescriptor/NDescriptorBuilder::setDevelopers</li>
+<li>ADDED: Add    NConstants.IdProperties.DESKTOP_ENVIRONMENT -&gt; NConstants.IdProperties.PROPERTIES</li>
+<li>ADDED: Add NPath::getLongBaseName // longest file name before last &#x27;.&#x27;</li>
+<li>ADDED: Add NMessageFormattable</li>
+<li>ADDED: Add NDescribable now takes a Session instead of NElements</li>
+<li>ADDED: Add cmdline arguments : --isolation,--confined, --sandbox</li>
+<li>ADDED: promote cmdline arguments : --init-platforms,--init-launchers,--init-scripts, --init-java</li>
+<li>ADDED: promote cmdline arguments : --desktop-launcher,--menu-launcher,--user-launcher</li>
+<li>ADDED: Add 30+ unit tests</li>
+<li>ADDED: NSession::isProgress</li>
+<li>ADDED: NCommandline now extends NBlankable</li>
+<li>ADDED: Added/Exposed Bean Reflection API : NReflectRepository,NReflectType,NReflectProperty</li>
+<li>ADDED: Added NChronometer, NDuration</li>
+<li>ADDED: Added Var Style (dollar based placeholder) in NMessage</li>
+<li>ADDED: added NProgressMonitor and monitoring api</li>
+<li>ADDED: NMemorySize and memory size api</li>
+<li>ADDED: --progress=log now prints progress to log instead of stderr</li>
+<li>CHANGED: Enum.parseLenient replaced by NOptional</li>
+<li>CHANGED: Rename NConstants.IdProperties.DESKTOP_ENVIRONMENT -&gt; NConstants.IdProperties.DESKTOP</li>
+<li>CHANGED: Now NWorkspaceOptionsBuilder extends NWorkspaceOptions</li>
+<li>CHANGED: Rename NRepositoryDB::getRepositoryNameByURL -&gt; NRepositoryDB::getRepositoryNameByLocation</li>
+<li>CHANGED: Rename NRepositoryDB::getRepositoryURLByName -&gt; NRepositoryDB::getRepositoryLocationByName</li>
+<li>CHANGED: Change type to long in NExecCmd::getSleepMillis()/setSleepMillis(int sleepMillis);</li>
+<li>CHANGED: complete rewrite of NTF parser</li>
+<li>CHANGED: classes refactored to be repackaged in inner packages</li>
+<li>REMOVED: Remove session dependency from NVersion,NId and NDescriptor</li>
+<li>REMOVED: Remove NBootOptions</li>
+<li>REMOVED: removed CoreNumberUtils</li>
+<li>REMOVED: NMessageFormatted</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="nuts-0831-published-version">nuts 0.8.3.1 (PUBLISHED VERSION)<a href="#nuts-0831-published-version" class="hash-link" aria-label="Direct link to nuts 0.8.3.1 (PUBLISHED VERSION)" title="Direct link to nuts 0.8.3.1 (PUBLISHED VERSION)">​</a></h2>
+<ul>
+<li><code>2022/02/01 	nuts 0.8.3.1</code> released nuts-runtime-0.8.3.1.jar</li>
+<li>UPDATED   : move support to repositories &quot;nuts-public&quot; and &quot;nuts-preview&quot;</li>
+<li>FIXED   : Updated README</li>
+<li>FIXED   : <code>runtime</code> Fixed problem with dependency resolution whit maven&#x27;s &quot;import&quot; scope</li>
+<li>ROLLBACK : Rolled back test on maven-local</li>
+<li>FIXED : Fixed nuts api without changing the version and without breaking the API, changes will be promoted to next version later</li>
+<li>UPDATED : Updated NEXT API CHANGES</li>
+<li>UPDATED : Updated .gitignore</li>
+<li>FIXED : Fixed Help files</li>
+<li>FIXED : Changed $* by $@</li>
+<li>FIXED : Fixed NAF support in ncode</li>
+<li>UPDATED : Updated TEST</li>
+<li>FIXED : Fixed display of URL paths</li>
+<li>PERF : Optimize Maven Dependency Resolver</li>
+<li>FIXED : Fix reinstall so that it calls uninstaller component</li>
+<li>FIXED : Fix recommendation connector API</li>
+<li>FIXED : Fix Class Name resolution when using CGLIB</li>
+<li>FIXED : Call clearLine before Progress</li>
+<li>FIXED : Call resetLine before Log</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="nuts-0830-published-version">nuts 0.8.3.0 (PUBLISHED VERSION)<a href="#nuts-0830-published-version" class="hash-link" aria-label="Direct link to nuts 0.8.3.0 (PUBLISHED VERSION)" title="Direct link to nuts 0.8.3.0 (PUBLISHED VERSION)">​</a></h2>
+<ul>
+<li><code>2021/01/05 	nuts 0.8.3.0 (*)</code> released <a href="https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar" target="_blank" rel="noopener noreferrer">download nuts-0.8.3.jar</a></li>
+<li>WARNING : <code>api</code>  API has evolved with incompatibilities with previous versions</li>
+<li>ADDED   : <code>runtime</code>  now search --dry displays the search query plan</li>
+<li>ADDED   : <code>api</code>  added command &quot;settings install-log&quot; to display installation logs</li>
+<li>ADDED   : <code>api</code>  added NutsExpr to help parsing simple expressions (used or will be used in almost all commands)</li>
+<li>CHANGED : <code>api</code>  Simplified API</li>
+<li>ADDED   : <code>api</code>  added NutsDescriptorFlag to match multiple descriptor info such as app, executable etc.</li>
+<li>ADDED   : <code>api</code>  added NutsIOCopyAction.setSource(byte[]) and NutsIOHashAction.setSource(byte[])</li>
+<li>ADDED   : <code>api</code>  removed NutsId.compatFilter and NutsVersion.compatFilter and replaced by compatNewer/compatOlder</li>
+<li>ADDED   : <code>api</code>  replaced string messages with NutsMessage in NutsLogger</li>
+<li>ADDED   : <code>api</code>  removed &#x27;NutsInput&#x27; and &#x27;NutsOutput&#x27;</li>
+<li>ADDED   : <code>api</code>  removed &#x27;NutsCommandlineFamily&#x27; and replaced by &#x27;NutsShellFamily&#x27;</li>
+<li>ADDED   : <code>api</code>  added &#x27;NutsBootTerminal&#x27; to help nuts bootstrap using custom stdin/out end err</li>
+<li>CHANGED : <code>api</code>  added &#x27;NutsHomeLocation&#x27; to replace compound key NutsOSFamily and NutsStoreLocation</li>
+<li>ADDED   : <code>api</code>  added &#x27;NutsPath.isDirectory&#x27; and &#x27;NutsPath.isRegularFile&#x27;</li>
+<li>CHANGED : <code>api</code>  removed commandline options &#x27;-C&#x27; and &#x27;--no-color&#x27;, you can use &#x27;--!color&#x27; instead</li>
+<li>CHANGED : <code>api</code>  removed commandline options &#x27;--no-switch&#x27; and &#x27;--no-progress&#x27;, you can use &#x27;--!switch&#x27; and &#x27;--!progress&#x27; instead</li>
+<li>CHANGED : <code>api</code>  NutsResultList renamed to NutsStream and revamped with handy stream features and added ws.util.streamOf(...)</li>
+<li>CHANGED : <code>api</code>  ws.io.expandPath replaced by NutsPath.builder.setExpanded(true)</li>
+<li>REMOVED : <code>api</code>  removed deprecated ClassifierMapping</li>
+<li>REMOVED : <code>api</code>  removed NutsTokenFilter (little to no interest)</li>
+<li>REMOVED : <code>api</code>  removed deprecated feature inheritedLog</li>
+<li>ADDED   : <code>api</code>  NutsVal, a simple wrapper for strings and objects with helpful converters used in args, env, options and properties.</li>
+<li>CHANGED : <code>api</code>  changed descriptor to add maven profiles support, mainly added platform for dependency and added os/platform etc to property</li>
+<li>ADDED   : <code>api</code>  added NutsShellFamily to support bash, csh, and other shell families</li>
+<li>ADDED   : <code>pom</code> add Manifest Entry &#x27;Automatic-Module-Name&#x27; in all projects to support j9+ module technology</li>
+<li>FIXED   : <code>impl</code> NutsFormat now creates any missing parent folder when calling print(Path/File) or println(Path/File)</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="nuts-0820-published-version">nuts 0.8.2.0 (PUBLISHED VERSION)<a href="#nuts-0820-published-version" class="hash-link" aria-label="Direct link to nuts 0.8.2.0 (PUBLISHED VERSION)" title="Direct link to nuts 0.8.2.0 (PUBLISHED VERSION)">​</a></h2>
+<ul>
+<li><code>2021/09/04 	nuts 0.8.2.0 (*)</code> released <a href="https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.2/nuts-0.8.2.jar" target="_blank" rel="noopener noreferrer">download nuts-0.8.2.jar</a></li>
+<li>WARNING: API has evolved with multiple incompatibilities with previous versions</li>
+<li>FIXED: Fixed problem that requires reinstalling nuts each time we have a new version</li>
+<li>FIXED: Fixed some Documentation issues (still fixing)</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="nuts-0810-published-version">nuts 0.8.1.0 (PUBLISHED VERSION)<a href="#nuts-0810-published-version" class="hash-link" aria-label="Direct link to nuts 0.8.1.0 (PUBLISHED VERSION)" title="Direct link to nuts 0.8.1.0 (PUBLISHED VERSION)">​</a></h2>
+<ul>
+<li><code>2021/08/24 	nuts 0.8.1.0 (*)</code> released <a href="https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.1/nuts-0.8.1.jar" target="_blank" rel="noopener noreferrer">download nuts-0.8.1.jar</a></li>
+<li>WARNING: API has evolved with multiple incompatibilities with previous versions</li>
+<li>ADDED: <code>api</code> added static methods of() in interfaces to simplify instantiation</li>
+<li>ADDED: <code>api</code> parseLenient to all NutsEnum classes</li>
+<li>CHANGED: <code>nadmin</code> removed nadmin and merged into runtime (tight coupling!!)</li>
+<li>REMOVED: <code>api</code>   removed session.formatObject() as the session is now propagated silently</li>
+<li>CHANGED: <code>api</code>   removed NutsApplicationLifeCycle and replaced with NutsApplication (an interface instead of a class)</li>
+<li>ADDED  : <code>api</code>   added support for parsing pom.xml (MAVEN) along with *.nuts (nuts descriptors)</li>
+<li>ADDED  : <code>api</code>   added io killProcess support</li>
+<li>CHANGED: <code>api</code>   added path API, implemented via nlib-ssh to add ssh support for paths</li>
+<li>CHANGED: <code>all</code>   remove dependencies, runtime has no dependencies, and others have the bare minimum</li>
+<li>CHANGED: <code>api</code>   session is from now on mandatory to perform any operation. A simple way to make it simple to use is to get a &quot;session aware&quot; workspace with session.getWorkspace()</li>
+<li>ADDED  : <code>api</code>  added support for Yaml with minimal implementation</li>
+<li>ADDED  : <code>api</code>  element now supports complex keys in Map Entries (Objects)</li>
+<li>ADDED  : <code>api</code> <code>cmdline</code> added support for History and implemented in JLine extension</li>
+<li>ADDED  : <code>api</code> <code>cmdline</code> added support for readline syntax coloring (using jline)</li>
+<li>ADDED  : <code>api</code> <code>cmdline</code> added --locale option to support multi languages. The option is reflected to Session as well</li>
+<li>ADDED  : <code>api</code> <code>cmdline</code> added ---key=value options to support extra properties</li>
+<li>ADDED  : <code>api</code> <code>cmdline</code> added -S short option, equivalent to --standalone</li>
+<li>ADDED  : <code>api</code> <code>cmdline</code> added NutsFormattedMessage to support formatted messages in a uniform manner (C-style, positional)</li>
+<li>CHANGED: <code>api</code> <code>cmdline</code> both list and tree dependencies are now accessible as NutsDependencies</li>
+<li>ADDED  : <code>runtime</code> added support to community maven repositories : jcenter, jboss, spring, clojars, atlassian, atlassian-snapshot, google, oracle
+to use the repository you can add it as a permanent repository or temporary. here are some examples:<!-- -->
+<ul>
+<li>nuts nadmin add repository jcenter // add permanently the repository</li>
+<li>nuts -r jcenter my-command // use temporarily the repository top run my-command</li>
+</ul>
+</li>
+<li>FIXED  : <code>runtime</code> extension support (for JLine)</li>
+<li>ADDED  : <code>runtime</code> added minimal implementation for YAM</li>
+<li>ADDED  : <code>runtime</code> added fast implementation for JSON and removed gson dependency</li>
+<li>CHANGED: <code>runtime</code> revamped Nuts Text Format to support simplified syntax but more verbose styles.
+Now supports #), ##), ###) and so on as Title Nodes.
+It supports as well the common markdown &#x27;code&#x27; format with anti-quotes such as
+<code>java code goes here...</code>
+Other supported examples are:
+<code>sh some command...</code>
+<code>error error message...</code>
+<code>kw someKeyword</code></li>
+<li>CHANGED: <code>runtime</code> help files now have extensions &quot;.ntf&quot; (for nuts text format) instead of &quot;.help&quot;</li>
+<li>ADDED  : <code>njob</code> added --help sub-command</li>
+<li>FIXED  : <code>nsh</code>  fixed multiple inconsistencies and implemented a brand new parser</li>
+<li>REMOVED: <code>docusaurus-to-ascidoctor</code> tool fully removed as replaced by a more mature ndocusaurus</li>
+<li>REMOVED: <code>ndi</code>, removed project, merged into nadmin</li>
+<li>REMOVED: <code>nded</code>, removed project, temporarily code added to nadmin, needs to be refactored</li>
+<li>ADDED  : <code>ntalk-agent</code> new modules nlib-talk-agent (library) and ntalk-agent (application using the library) that enable client to client communication.
+nlib-talk-agent is a broker that helps communication between nuts components with minimum overhead.
+nlib-talk-agent enables one workspace to talk with any other workspace without having to create one server socket for each workspace.
+It also enables singleton per location implementation</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="nuts-0800-published-version">nuts 0.8.0.0 (PUBLISHED VERSION)<a href="#nuts-0800-published-version" class="hash-link" aria-label="Direct link to nuts 0.8.0.0 (PUBLISHED VERSION)" title="Direct link to nuts 0.8.0.0 (PUBLISHED VERSION)">​</a></h2>
+<ul>
+<li><code>2020/11/8? 	nuts 0.8.0.0 (*)</code> released <a href="https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.0/nuts-0.8.0.jar" target="_blank" rel="noopener noreferrer">download nuts-0.8.0.jar</a></li>
+<li>WARNING: this is the first version to be deployed to maven central. previous versions will no longer be supported</li>
+<li>WARNING: this is a <strong>major version</strong>, API has evolved with multiple incompatibilities with previous versions</li>
+<li>WARNING: The OSS License has changed from GPL3 to the more permessive Apache Licence v2.0</li>
+<li>CHANGED: changed packages from net.vpc to net.thevpc (required for central to be aligned with website)</li>
+<li>CHANGED: removed support for vpc-public-maven and vpc-public-nuts</li>
+<li>CHANGED: <code>nuts -Z</code> will update <code>.bashrc</code> file and switch back to default workspace</li>
+<li>ADDED  : when a dependency is missing it will be shown in the error message</li>
+<li>ADDED  : nuts commandline argument --N (--expire) to force reloading invoked artifacts (expire fetched jars). a related NutsSession.expireTime is introduced to force reinstall of any launched application and it dependencies, example: <code>nuts -N ndi</code></li>
+<li>ADDED  : install --strategy=install|reinstall|require|repair introduced to select install strategy (or sub command)</li>
+<li>ADDED  : NutsInput &amp; NutsOutput to help considering reusable sources/targets</li>
+<li>ADDED  : nuts commandline argument --skip-errors  to ignore unsupported commandline args</li>
+<li>ADDED  : new toolbox njob, to track service jobs (how many hours you are working on each service project)</li>
+<li>ADDED  : new next-term, to support jline console extension into nuts</li>
+<li>ADDED  : workspace.str() to create NutsStringBuilder</li>
+<li>ADDED  : &#x27;switch&#x27; command in ndi to support switching from one workspace to another. example : <code>ndi switch -w other-workspace -a 0.8.0</code></li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="nuts-0720">nuts 0.7.2.0<a href="#nuts-0720" class="hash-link" aria-label="Direct link to nuts 0.7.2.0" title="Direct link to nuts 0.7.2.0">​</a></h2>
+<p>WARNING: this version is not deployed to maven-central</p>
+<ul>
+<li><code>2020/09/23 	nuts 0.7.2.0 (*)</code> released <a href="https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.7.2/nuts-0.7.2.jar" target="_blank" rel="noopener noreferrer">download nuts-0.7.2.jar</a></li>
+<li>FIXED  : execute non installed artifacts sometimes do not ask for confirmation</li>
+<li>ADDED  : NutsCommandLineProcessor.prepare/exec/autoComplete</li>
+<li>ADDED  : NutsApplicationContext.processCommandLine(cmdLine)</li>
+<li>ADDED  : NutsApplicationContext.configureLast(cmdLine)</li>
+<li>RENAMED: feenoo renamed to ncode</li>
+<li>ADDED  : Docusaurus Website</li>
+<li>ADDED  : new toolbox ndocusaurus : Docusaurus Website templating</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="nuts-0710">nuts 0.7.1.0<a href="#nuts-0710" class="hash-link" aria-label="Direct link to nuts 0.7.1.0" title="Direct link to nuts 0.7.1.0">​</a></h2>
+<p>WARNING: this version is not deployed to maven-central</p>
+<ul>
+<li><code>2020/09/14 	nuts 0.7.1.0 (*)</code> released <a href="https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.7.1/nuts-0.7.1.jar" target="_blank" rel="noopener noreferrer">download nuts-0.7.1.jar</a></li>
+<li>FIXED  : reset stdout line when calling external processes</li>
+<li>FIXED  : fixed several display issues.</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="nuts-0700">nuts 0.7.0.0<a href="#nuts-0700" class="hash-link" aria-label="Direct link to nuts 0.7.0.0" title="Direct link to nuts 0.7.0.0">​</a></h2>
+<p>WARNING: this version is not deployed to maven-central</p>
+<ul>
+<li><code>2020/07/26 	nuts 0.7.0.0 (*)</code> released <a href="https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.7.0/nuts-0.7.0.jar" target="_blank" rel="noopener noreferrer">download nuts-0.7.0.jar</a></li>
+<li>ADDED  : NutsApplicationContext.processCommandLine(c)</li>
+<li>ADDED  : NutsWorkspaceCommand.copySession()</li>
+<li>RENAMED: derby renamed to nderby</li>
+<li>RENAMED: mysql renamed to nmysql</li>
+<li>RENAMED: tomcat renamed to ntomcat</li>
+<li>RENAMED: mvn renamed to nmvn</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="nuts-0600">nuts 0.6.0.0<a href="#nuts-0600" class="hash-link" aria-label="Direct link to nuts 0.6.0.0" title="Direct link to nuts 0.6.0.0">​</a></h2>
+<p>WARNING: this version is not deployed to maven-central</p>
+<ul>
+<li><code>2020/01/15 	nuts 0.6.0.0 (*)</code> released <a href="https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.6.0/nuts-0.6.0.jar" target="_blank" rel="noopener noreferrer">download nuts-0.6.0.jar</a></li>
+<li>CHANGED  : config file format changed</li>
+<li>CHANGED  : now installed packages are stored in &#x27;installed&#x27; meta repository</li>
+<li>CHANGED  : alias files have extension changed form *.njc to *.cmd-alias.json</li>
+<li>CHANGED  : now nuts looks for system env variable NUTS_WORKSPACE for default workspace location</li>
+<li>CHANGED  : api and runtime are installed by default</li>
+<li>CHANGED  : now distinguishes between installed primary and installed dependencies packages.</li>
+<li>ADDED    : support for ROOT_CMD execution (SYSCALL was renamed USER_CMD)</li>
+<li>ADDED    : support for Interrupting Copy</li>
+<li>ADDED    : support to ps (list processes)</li>
+<li>ADDED    : support progress options</li>
+<li>CHANGED  : worky, searches now for modified deployments with same version but different content</li>
+<li>FIXED    : encoding problem with json/xml</li>
+<li>REMOVED  : NutsRepositorySession</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="nuts-0580">nuts 0.5.8.0<a href="#nuts-0580" class="hash-link" aria-label="Direct link to nuts 0.5.8.0" title="Direct link to nuts 0.5.8.0">​</a></h2>
+<p>WARNING: this version is not deployed to maven-central</p>
+<ul>
+<li><code>2019/09/02 	nuts 0.5.8.0 (*)</code> released <a href="https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.7/nuts-0.5.7.jar" target="_blank" rel="noopener noreferrer">download nuts-0.5.8.jar</a></li>
+<li>ADDED    : support for Custom Monitor in Copy Command</li>
+<li>ADDED    : support to javaw for windows (exec  command supports --javaw or --win flag)</li>
+<li>ADDED    : support to workspace custom logging (with support for colouring)</li>
+<li>ADDED    : support to userProperties per repository</li>
+<li>ADDED    : NutsString and NutsStringFormat to support &#x27;Nuts Stream Format&#x27;</li>
+<li>ADDED    : NutsWarkspaceAware to support initialize/dispose of NutsComponents</li>
+<li>ADDED    : I/O Delete action</li>
+<li>ADDED    : I/O Lock action</li>
+<li>ADDED    : I/O Compress and Uncompress actions</li>
+<li>CHANGE   : now if a command to execute ends with &#x27;!&#x27;, we will force searching in installed only.</li>
+<li>CHANGE   : removed install/uninstall in Terminal, replaced by NutsWorkspaceAware</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="nuts-0570">nuts 0.5.7.0<a href="#nuts-0570" class="hash-link" aria-label="Direct link to nuts 0.5.7.0" title="Direct link to nuts 0.5.7.0">​</a></h2>
+<p>WARNING: this version is not deployed to maven-central</p>
+<ul>
+<li><code>2019/07/23 	nuts 0.5.7.0 (*)</code> released <a href="https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.7/nuts-0.5.7.jar" target="_blank" rel="noopener noreferrer">download nuts-0.5.7.jar</a></li>
+<li>ADDED    : support to Windows (Tested on Win 7) and MacOS(Not Tested) ofr Desktop Integration</li>
+<li>ADDED    : added session and Nuts(Add/Update/Remove)Options where applicable</li>
+<li>ADDED    : Initial support for uri based workspaces</li>
+<li>ADDED    : --dry option to help dry-run commands (test execution without side effects)</li>
+<li>ADDED    : NutsApplication getShared*Folder() method for configuration shared between versions</li>
+<li>ADDED    : flags (in Definition and search) : api,runtime,extension,companion</li>
+<li>CHANGED  : Improved compatibility with Maven</li>
+<li>CHANGED  : Improved Documentation (still to much to go though)</li>
+<li>CHANGED  : Changed NutsCommandLine main api to simplify boot time implementations</li>
+<li>CHANGED  : Renamed NutsEffectiveUser-&gt;NutsUser</li>
+<li>CHANGED  : Renamed NutsRight-&gt;NutsPermission (and all subsequent methods)</li>
+<li>CHANGED  : NutsExtensionInfo-&gt;NutsExtensionInformation</li>
+<li>CHANGED  : NutsHttpConnectionFacade-&gt;NutsHttpConnection</li>
+<li>CHANGED  : Added java.io.Serializable anchor when applicable</li>
+<li>REMOVED  : NutsDefaultRepositoriesProvider,NutsSingletonClassLoaderProvider,NutsDefaultClassLoaderProvider,NutsWorkspaceSPI</li>
+<li>REMOVED  : NutsRepositoryListener.onInstall(...)</li>
+<li>REMOVED  : &#x27;alternative&#x27; concept, and added NutsClassifierMapping so that classifier can be resolved according to env</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="nuts-0560">nuts 0.5.6.0<a href="#nuts-0560" class="hash-link" aria-label="Direct link to nuts 0.5.6.0" title="Direct link to nuts 0.5.6.0">​</a></h2>
+<p>WARNING: this version is not deployed to maven-central</p>
+<ul>
+<li><code>2019/06/23 	nuts 0.5.6.0</code> released <a href="https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.6/nuts-0.5.6.jar" target="_blank" rel="noopener noreferrer">download nuts-0.5.6.jar</a></li>
+<li>ADDED    : Implements XDG Base Directory Specification</li>
+<li>ADDED    : Added Json Path support</li>
+<li>ADDED    : Added NutsQuestionParser and NutsQuestionFormat</li>
+<li>CHANGED  : Extensions are loaded by boot instead of impl so that one can change default impl behavour</li>
+<li>CHANGED  : All repositories are now cache aware.</li>
+<li>CHANGED  : Refactored *Format to extends the very same interface.</li>
+<li>CHANGED  : Using to java.time package instead of older Date class</li>
+<li>CHANGED  : Improved Documentation (still to much to go though)</li>
+<li>CHANGED  : Prefer https repository urls</li>
+<li>FIXED    : Fixed several issues</li>
+<li>REMOVED  : [CommandLine] IMMEDIATE</li>
+<li>REMOVED  : [Options] --term</li>
+<li>REMOVED  : [Extensions] add/remove extensions from extension manager (should use install/uninstall commands)</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="nuts-0550">nuts 0.5.5.0<a href="#nuts-0550" class="hash-link" aria-label="Direct link to nuts 0.5.5.0" title="Direct link to nuts 0.5.5.0">​</a></h2>
+<p>WARNING: this version is not deployed to maven-central</p>
+<ul>
+<li><code>2019/06/08 	nuts 0.5.5.0</code> released <a href="https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.5/nuts-0.5.5.jar" target="_blank" rel="noopener noreferrer">download nuts-0.5.5.jar</a></li>
+<li>REMOVED  : Removed Nsh commands Console Deploy Info Install Fetch Uninstall,Push Update Exec Which</li>
+<li>REMOVED  : Removed maven-github repository type support (web API)</li>
+<li>REMOVED  : Removed nuts-cmd-app project dependency. A built-in NutsApplication is included in the api the help simplify extension.</li>
+<li>ADDED    : Added support for XML,TABLE and TREE (along with JSON, PROPS and PLAIN) printing format to help automate result parsing</li>
+<li>ADDED    : Added Better api in Nuts IO to handle SHA and MD5</li>
+<li>ADDED    : json and xml nsh commands to help manipulating json and xml in commands outputs</li>
+<li>FIXED    : Fixed fprint issue with &quot;&quot; (empty string)</li>
+<li>FIXED    : Fixed Update indexes/stats command</li>
+<li>FIXED    : When installing nuts, lookup latest core implementation</li>
+<li>CHANGED  : Renamed FindCommand to SearchCommand (and some of their methods too)</li>
+<li>CHANGED  : NutsIdFilter.accept accepts workspace as a second argument</li>
+<li>CHANGED  : Improved Help text</li>
+<li>CHANGED  : Improved Documentation (still to much to go through)</li>
+<li>ADDED    : (nsh) Builtin nsh commands basename and dirname</li>
+<li>CHANGED  : (nsh) Builtin nsh command who renamed to whoami</li>
+<li>REMOVED  : (nfind) Removed nfind companion (the built-in search command is a better replacement)</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="nuts-0540-change-log">nuts 0.5.4.0 Change Log<a href="#nuts-0540-change-log" class="hash-link" aria-label="Direct link to nuts 0.5.4.0 Change Log" title="Direct link to nuts 0.5.4.0 Change Log">​</a></h2>
+<p>WARNING: this version is not deployed to maven-central</p>
+<ul>
+<li><code>2019/04/21 	nuts 0.5.4.0 (*)</code> released <a href="https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.4/nuts-0.5.4.jar" target="_blank" rel="noopener noreferrer">download nuts-0.5.4.jar</a>
+-Added lucene indexing facility (thanks to the excellent work of nasreddine bac ali)</li>
+<li>Removed dependencies to common,strings, io and utils (utility classes).</li>
+<li>Removed dependencies to asm (bytecode manipulation).</li>
+<li>From Now on only gson and jansi are retained.</li>
+<li>Layout changes<!-- -->
+<ul>
+<li>from now on configuration will be version specific. some migration should be done to import previous configs</li>
+<li>system (global) repo is no more created under the workspace. Only a link to is is registered in nuts-workspace.json</li>
+<li>added MacOs Layout. Help is needed for testing this !</li>
+</ul>
+</li>
+<li>Better support for JDK 8+ (New IO,Predicates, Streams, ...)</li>
+<li>Added Comprehensive implementation of Iterator (Stream Like) to better handle result iteration while search is in progress</li>
+<li>Speed improvements</li>
+<li>Added JUnit test battery</li>
+<li>Added support to JSON,PROPS and PLAIN result, implemented in version and info. Should continue implementing in other commands.</li>
+<li>Removed --license, --update, --install, ... options, replaced by workspace &quot;internal&quot; commands new concept.</li>
+<li>Workspaces handle several type of executables that will be resolved in that order : &quot;internal command&quot;,&quot;aliases : aka workspace command aliases&quot;, &quot;components&quot;,
+&quot;path/unmanaged components&quot; and system/native commands.</li>
+<li>Several Fixes<!-- -->
+<ul>
+<li>Fixed Problem with Layout</li>
+<li>Fixed Problem coloring (fprint embedded library)</li>
+<li>All System properties now start with &quot;nuts.&quot;</li>
+<li>System properties starting with &quot;nuts.export.&quot; are exported to children processes</li>
+<li>Added watch dog agains infinite child process creation</li>
+</ul>
+</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="nuts-0530-change-log">nuts 0.5.3.0 Change Log<a href="#nuts-0530-change-log" class="hash-link" aria-label="Direct link to nuts 0.5.3.0 Change Log" title="Direct link to nuts 0.5.3.0 Change Log">​</a></h2>
+<p>WARNING: this version is not deployed to maven-central</p>
+<ul>
+<li><code>2019/01/05 	nuts 0.5.3.0</code> released <a href="https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.3/nuts-0.5.3.jar" target="_blank" rel="noopener noreferrer">download nuts-0.5.3.jar</a></li>
+<li>(WINDOWS) First support to Windows platform<!-- -->
+<ul>
+<li>Support for Console coloring on windows</li>
+<li>Storing to AppData\Local and AppData\Roaming folders</li>
+<li>ndi is not yet supported!</li>
+</ul>
+</li>
+<li>(LINUX,UNIX) ndi no more stores to ~/bin but instead it updates .bashrc to point to current workspace added a confirmation question.</li>
+<li>API Change<!-- -->
+<ul>
+<li>Moved getStoreRoot from NutsWorkspace to NutsWorkspaceConfigManager</li>
+<li>Added StoreType : CACHE,LIB</li>
+<li>Introduced NutsDeploymentBuilder,NutsIoManager,NutsParseManager,NutsFormatManager,DescriptorFormat</li>
+<li>Introduced NutsSessionTerminal,NutsSystemTerminal</li>
+<li>Added description, alternative (to support multi architecture nuts) descriptor properties</li>
+<li>Removed descriptor/id &#x27;ext&#x27; and &#x27;file&#x27; parameters. &#x27;packaging&#x27; should be more than enough</li>
+<li>Removed Maps from config. Replaced by plain arrays</li>
+<li>Removed workspace.cwd</li>
+<li>Removed Temp File/Folder support</li>
+</ul>
+</li>
+<li>Added Archetype &quot;standalone&quot; to help bundling and application with all its dependencies</li>
+<li>Several fixes<!-- -->
+<ul>
+<li>Fixed Log configuration, introduced --log-inherited to enable inherited log-handlers</li>
+<li>Fixed support for install/uninstall hooks</li>
+<li>Fixed Repository Layout where ref repo folder is created twice</li>
+<li>Fixed Multiple pom download issue</li>
+<li>Fixed Gson parsing issue</li>
+<li>Fixed autocomplete support</li>
+<li>Fixed bad json format recovery</li>
+</ul>
+</li>
+<li>nsh<!-- -->
+<ul>
+<li>introduced pwd,set unset,alias,unalias,autocomplete commands</li>
+<li>fixed support to autocomplete</li>
+</ul>
+</li>
+<li>TODO<!-- -->
+<ul>
+<li>Code Comments</li>
+<li>Help files</li>
+</ul>
+</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="nuts-0520-change-log">nuts 0.5.2.0 Change Log<a href="#nuts-0520-change-log" class="hash-link" aria-label="Direct link to nuts 0.5.2.0 Change Log" title="Direct link to nuts 0.5.2.0 Change Log">​</a></h2>
+<p>WARNING: this version is not deployed to maven-central</p>
+<ul>
+<li><code>2018/12/28 	nuts 0.5.2.0</code> released <a href="https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.2/nuts-0.5.2.jar" target="_blank" rel="noopener noreferrer">download nuts-0.5.2.jar</a></li>
+<li>Global refactoring<!-- -->
+<ul>
+<li>Introduced NutsCommandExecBuilder, NutsDependencyBuilder, NutsDeploymentBuilder, NutsIdBuilder, NutsClassLoaderBuilder</li>
+</ul>
+</li>
+<li>Extracted nsh commands as regular nuts package (nadmin, nfind)
+WORKING-ON : Fixing &quot;mvn&quot; start from nuts (handling, exclude, pom import and classifiers from maven)</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="nuts-0510-change-log">nuts 0.5.1.0 Change Log<a href="#nuts-0510-change-log" class="hash-link" aria-label="Direct link to nuts 0.5.1.0 Change Log" title="Direct link to nuts 0.5.1.0 Change Log">​</a></h2>
+<p>WARNING: this version is not deployed to maven-central</p>
+<ul>
+<li><code>2018/12/18 	nuts 0.5.1.0 released</code> <a href="https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.1/nuts-0.5.1.jar" target="_blank" rel="noopener noreferrer">download nuts-0.5.1.jar</a></li>
+<li>FIXED : Fixed problem with inheritIO from child process (added InputStreamTransparentAdapter and OutputStreamTransparentAdapter interfaces)</li>
+<li>FIXED : Added distinction  between workspace config and runtime boot api/runtime values</li>
+<li>FIXED : Do not read workspace version and dependency config from child process (because it may require distinct version of nuts)</li>
+<li>FIXED : Mkdir,cp, etc... used incorrectly cwd. Fixed.</li>
+<li>CHANGED : Optimized pom.xml parse execution time (using DOM instead of SAX)</li>
+<li>CHANGED : moved cache from bootstrap folder to default-workspace/cache</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="nuts-0500-change-log">nuts 0.5.0.0 Change Log<a href="#nuts-0500-change-log" class="hash-link" aria-label="Direct link to nuts 0.5.0.0 Change Log" title="Direct link to nuts 0.5.0.0 Change Log">​</a></h2>
+<p>WARNING: this version is not deployed to maven-central</p>
+<ul>
+<li><code>2018/11/25 	nuts 0.5.0.0 released</code> <a href="https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.5.0/nuts-0.5.0.jar" target="_blank" rel="noopener noreferrer">download nuts-0.5.0.jar</a></li>
+<li>Very first published version. older ones were used internally for internal projects only.</li>
+</ul></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col"><a href="https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/info/changelog.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="pagination-nav docusaurus-mt-lg" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/nuts/docs/category/miscellaneous"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Miscellaneous</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/nuts/docs/info/faq"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Frequently Asked Questions</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#nuts-0840-development-version" class="table-of-contents__link toc-highlight">nuts 0.8.4.0 (DEVELOPMENT VERSION)</a></li><li><a href="#nuts-0831-published-version" class="table-of-contents__link toc-highlight">nuts 0.8.3.1 (PUBLISHED VERSION)</a></li><li><a href="#nuts-0830-published-version" class="table-of-contents__link toc-highlight">nuts 0.8.3.0 (PUBLISHED VERSION)</a></li><li><a href="#nuts-0820-published-version" class="table-of-contents__link toc-highlight">nuts 0.8.2.0 (PUBLISHED VERSION)</a></li><li><a href="#nuts-0810-published-version" class="table-of-contents__link toc-highlight">nuts 0.8.1.0 (PUBLISHED VERSION)</a></li><li><a href="#nuts-0800-published-version" class="table-of-contents__link toc-highlight">nuts 0.8.0.0 (PUBLISHED VERSION)</a></li><li><a href="#nuts-0720" class="table-of-contents__link toc-highlight">nuts 0.7.2.0</a></li><li><a href="#nuts-0710" class="table-of-contents__link toc-highlight">nuts 0.7.1.0</a></li><li><a href="#nuts-0700" class="table-of-contents__link toc-highlight">nuts 0.7.0.0</a></li><li><a href="#nuts-0600" class="table-of-contents__link toc-highlight">nuts 0.6.0.0</a></li><li><a href="#nuts-0580" class="table-of-contents__link toc-highlight">nuts 0.5.8.0</a></li><li><a href="#nuts-0570" class="table-of-contents__link toc-highlight">nuts 0.5.7.0</a></li><li><a href="#nuts-0560" class="table-of-contents__link toc-highlight">nuts 0.5.6.0</a></li><li><a href="#nuts-0550" class="table-of-contents__link toc-highlight">nuts 0.5.5.0</a></li><li><a href="#nuts-0540-change-log" class="table-of-contents__link toc-highlight">nuts 0.5.4.0 Change Log</a></li><li><a href="#nuts-0530-change-log" class="table-of-contents__link toc-highlight">nuts 0.5.3.0 Change Log</a></li><li><a href="#nuts-0520-change-log" class="table-of-contents__link toc-highlight">nuts 0.5.2.0 Change Log</a></li><li><a href="#nuts-0510-change-log" class="table-of-contents__link toc-highlight">nuts 0.5.1.0 Change Log</a></li><li><a href="#nuts-0500-change-log" class="table-of-contents__link toc-highlight">nuts 0.5.0.0 Change Log</a></li></ul></div></div></div></div></main></div></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="col footer__col"><div class="footer__title">Docs</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/nuts/docs/intro">Documentation</a></li></ul></div><div class="col footer__col"><div class="footer__title">Community</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://stackoverflow.com/questions/tagged/nuts" target="_blank" rel="noopener noreferrer" class="footer__link-item">Stack Overflow<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a></li><li class="footer__item"><a href="https://github.com/thevpc/nuts/issues" target="_blank" rel="noopener noreferrer" class="footer__link-item">Issues Tracker<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a></li><li class="footer__item"><a href="https://twitter.com/nuts" target="_blank" rel="noopener noreferrer" class="footer__link-item">Twitter<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a></li></ul></div><div class="col footer__col"><div class="footer__title">More</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/nuts/blog">Blog</a></li><li class="footer__item"><a href="https://github.com/thevpc/nuts" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2024 Nuts Package Manager Team.</div></div></div></footer></div>
+</body>
+</html>
