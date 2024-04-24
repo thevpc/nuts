@@ -94,7 +94,7 @@ class IdCache {
                     ClassClassMap cc = classes.computeIfAbsent(extensionPoint, r -> new ClassClassMap());
                     cc.add(c);
                     lop.verb(NLogVerb.INFO).level(Level.FINE)
-                            .log(NMsg.ofC("discovered %s as %s in %s", c, extensionPoint, url));
+                            .log(NMsg.ofC("discovered %s as %s in %s", c, extensionPoint, url==null?"default classloader":url));
                     count++;
                 }
             }

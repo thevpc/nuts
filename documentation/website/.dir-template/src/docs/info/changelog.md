@@ -10,7 +10,7 @@ View Official releases [here](https://github.com/thevpc/nuts/releases) :
 Starred releases are most stable ones.
 
 ## nuts 0.8.4.0 (DEVELOPMENT VERSION)
-- ```2022/XX/XX 	nuts 0.8.4.0``` not released yet nuts-runtime-0.8.4.2-alpha1.jar
+- ```2024/04/25 	nuts 0.8.4.0``` not released yet nuts-runtime-0.8.4.0-rc1.jar
 - WARNING : ```api```  API has evolved with incompatibilities with previous versions
 - CHANGED: renamed nlib-ssh to next-ssh et is promoted as extension
 - FIXED: Fixed maven url parsing on Windows platforms that prevented nsh from being installed

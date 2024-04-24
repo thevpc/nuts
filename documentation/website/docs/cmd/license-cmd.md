@@ -13,7 +13,7 @@ me@linux:~> nuts license
   /  |/ / / / / __/ ___/   The Open Source Package Manager for Java (TM)
  / /|  / /_/ / /_(__  )    and other Things ... by vpc
 /_/ |_/\__,_/\__/____/     https://github.com/thevpc/nuts
-    version 
+    version 0.8.4.0
 
 
 

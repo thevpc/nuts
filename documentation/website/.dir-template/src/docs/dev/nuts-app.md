@@ -192,12 +192,12 @@ public class App implements NApplication {
 
     @Override
     public void run(NSession session) {
-        NCmdLine cmd = session.getAppCommandLine();
+        NCmdLine cmd = session.getAppCmdLine();
         File file = new File("file.xls");
         while (cmd.hasNext()) {
             switch (cmd.getKey().getString()) {
                 case "--file": {
-                    NutsArgument a = cmd.nextString();
+                    NArg a = cmd.nextEntry().get();
                     file = new File(a.getStringValue());
                     break;
                 }
@@ -219,21 +219,18 @@ public class App implements NApplication {
     }
 
     @Override
-    public void onInstallApplication(NutsApplicationContext applicationContext) {
-        NutsSession s = applicationContext.getSession();
-        s.out().printf("we are installing My Application : %s%n", applicationContext.getId());
+    public void onInstallApplication(NSession s) {
+        s.out().printf("we are installing My Application : %s%n", s.getAppId());
     }
 
     @Override
-    public void onUninstallApplication(NutsApplicationContext applicationContext) {
-        NutsSession s = applicationContext.getSession();
-        s.out().printf("we are uninstalling My Application : %s%n", applicationContext.getId());
+    public void onUninstallApplication(NSession s) {
+        s.out().printf("we are uninstalling My Application : %s%n", s.getAppId());
     }
 
     @Override
-    public void onUpdateApplication(NutsApplicationContext applicationContext) {
-        NutsSession s = applicationContext.getSession();
-        s.out().printf("we are updating My Application : %s%n", applicationContext.getId());
+    public void onUpdateApplication(NSession s) {
+        s.out().printf("we are updating My Application : %s%n", s.getAppId());
     }
 }
 

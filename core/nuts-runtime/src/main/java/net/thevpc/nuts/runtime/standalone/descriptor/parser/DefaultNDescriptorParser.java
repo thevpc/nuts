@@ -48,7 +48,7 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
 
     @Override
     public NOptional<NDescriptor> parse(byte[] bytes) {
-        return parse(new ByteArrayInputStream(bytes), true);
+        return parse(new ByteArrayInputStream(bytes), null, true);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
     @Override
     public NOptional<NDescriptor> parse(InputStream stream) {
         checkSession();
-        return parse(stream, false);
+        return parse(stream, null, false);
     }
 
     @Override
@@ -77,7 +77,30 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
             try {
                 try (InputStream is = path.getInputStream()) {
                     startParsing = true;
-                    NOptional<NDescriptor> r = parse(is, true);
+                    NDescriptorStyle defaultDescriptorStyle=null;
+                    String canonicalPathName = path.getName().toLowerCase();
+                    switch (canonicalPathName){
+                        case "pom.xml":{
+                            defaultDescriptorStyle=NDescriptorStyle.MAVEN;
+                            break;
+                        }
+                        case "manifest.mf":{
+                            defaultDescriptorStyle=NDescriptorStyle.MANIFEST;
+                            break;
+                        }
+                        case "nuts.json":{
+                            defaultDescriptorStyle=NDescriptorStyle.NUTS;
+                            break;
+                        }
+                        default:{
+                            if(canonicalPathName.endsWith(".pom")){
+                                defaultDescriptorStyle=NDescriptorStyle.MAVEN;
+                            }else if(canonicalPathName.endsWith(".nuts")){
+                                defaultDescriptorStyle=NDescriptorStyle.NUTS;
+                            }
+                        }
+                    }
+                    NOptional<NDescriptor> r = parse(is, defaultDescriptorStyle, true);
                     if (r.isError()) {
                         return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor from %s : %s", path,
                                 r.getMessage().apply(session)
@@ -104,7 +127,7 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
         if (NBlankable.isBlank(str)) {
             return null;
         }
-        return parse(new ByteArrayInputStream(str.getBytes()), true);
+        return parse(new ByteArrayInputStream(str.getBytes()), null, true);
     }
 
     @Override
@@ -134,9 +157,9 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
         NSessionUtils.checkSession(getWorkspace(), getSession());
     }
 
-    private NOptional<NDescriptor> parse(InputStream in, boolean closeStream) {
+    private NOptional<NDescriptor> parse(InputStream in, NDescriptorStyle defaultDescriptorStyle, boolean closeStream) {
         try {
-            return NOptional.of(parseNonLenient(in, closeStream));
+            return NOptional.of(parseNonLenient(in, defaultDescriptorStyle, closeStream));
         } catch (Exception ex) {
             return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor from %s : %s",
                     in,
@@ -144,9 +167,12 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
         }
     }
 
-    private NDescriptor parseNonLenient(InputStream in, boolean closeStream) {
+    private NDescriptor parseNonLenient(InputStream in, NDescriptorStyle defaultDescriptorStyle, boolean closeStream) {
         checkSession();
         NDescriptorStyle style = getDescriptorStyle();
+        if (style == null) {
+            style = defaultDescriptorStyle;
+        }
         if (style == null) {
             style = NDescriptorStyle.NUTS;
         }

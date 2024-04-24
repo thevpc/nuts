@@ -6,8 +6,8 @@ sidebar_label: Nuts Stream
 
 ${{include($"${resources}/header.md")}}
 
-**nuts** introduces a concept very similar to java's Stream but with better extension builtin mechanisms and helper methods : ```NutsStream```
+**nuts** introduces a concept very similar to java's Stream but with better extension builtin mechanisms and helper methods : ```NStream```
 
-```NutsStream``` is actually a wrapper to java's Stream, Iterator and Iterable and you can create a stream using ```NutsStream.of(...)``` methods.
+```NStream``` is actually a wrapper to java's Stream, Iterator and Iterable and you can create a stream using ```NStream.of(...)``` methods.
 
-```NutsStream``` is extensively used in Search Command.
+```NStream``` is extensively used in Search Command.

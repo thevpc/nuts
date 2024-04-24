@@ -8,6 +8,7 @@ package net.thevpc.nuts.toolbox.ntemplate.filetemplate;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 /**
@@ -19,10 +20,20 @@ public class TemplateConfig {
     private List<String> paths = new ArrayList<String>();
     private String targetFolder;
     private List<String> initScripts = new ArrayList<>();
+    private Map<String,Object> vars;
     private String scriptType;
     private String projectPath;
     private Predicate<Path> pathFilter;
     private String contextName;
+
+    public Map<String, Object> getVars() {
+        return vars;
+    }
+
+    public TemplateConfig setVars(Map<String, Object> vars) {
+        this.vars = vars;
+        return this;
+    }
 
     public String getContextName() {
         return contextName;

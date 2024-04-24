@@ -460,6 +460,13 @@ public class FileTemplater {
         return vars.containsKey(name);
     }
 
+    public void setVars(Map<String,Object> vars) {
+        if(vars!=null){
+            for (Map.Entry<String, Object> e : vars.entrySet()) {
+                setVar(e.getKey(),e.getValue());
+            }
+        }
+    }
     public FileTemplater setVar(String name, Object value) {
         switch (name) {
             case SOURCE_PATH: {
@@ -800,6 +807,7 @@ public class FileTemplater {
         String projectPath = config.getProjectPath();
         String scriptType = config.getScriptType();
         String targetFolder = config.getTargetFolder();
+        setVars(config.getVars());
         this.contextName = NStringUtils.trimToNull(config.getContextName());
         if (projectPath == null) {
             if (config.getPaths().isEmpty()) {

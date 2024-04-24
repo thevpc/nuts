@@ -11,14 +11,17 @@ The repository is organized in several folders described here after:
 
 * **[.dir-template]** : contains template files for generating `README.md` and `METADATA` (among other) files according to the current `nuts` development version
 * **[core]**          : contains the core of `nuts` package manager (and the only required pieces for `nuts` to work). Practically this contains the Bootstrap (and API) project (called `nuts`) and the Runtime (Implementation) project (called `nuts-runtime`)
-* **[docs]**          : contains a generated (using docusaurus) web site that is deployed to github pages (https://thevpc.github.io/nuts/)
-* **[ext]**           : contains some `nuts` extensions/plugins. as an example it includes and extension for nuts terminal features implemented using `jline` library
+* **[docs]**          : contains a generated (using docusaurus) website that is deployed to github pages (https://thevpc.github.io/nuts/)
+* **[extensions]**           : contains some `nuts` extensions/plugins. as an example it includes and extension for nuts terminal features implemented using `jline` library
 * **[incubating]**    : ignore this for the moment :), it is a work in progress and an attempt to simplify `nuts` installation process and other frozen features. Still very embryonic.
-* **[lib]**           : contains a suite of libraries that are based on `nuts` and that can be used by other applications. This includes markdown parsers, ssh support, etc...
+* **[installers]**    : native image generators, gui installers and repository website generator goes here. 
+* **[libraries]**           : contains a suite of libraries that are based on `nuts` and that can be used by other applications. This includes markdown parsers, ssh support, etc...
 * **[test]**          : contains unit test projects
-* **[toolbox]**       : contains a suite of applications that are based on `nuts` and that complement `nuts` features. This includes `nsh` the shell companion
+* **[companions]**    : contains a suite of applications that are tightly coupled with `nuts`. This includes `nsh` the shell companion
+* **[third-party-companions]**    : contains a suite of third party wrapper applications. This includes `ndocusaurus` documentation generator
+* **[toolbox]**       : contains a suite of applications that are based on `nuts` and that complement `nuts` features.
 * **[web-toolbox]**   : contains a suite of web applications that are based on `nuts` and that complement `nuts` features. This includes `nwar`, a servlet implementation to serve `nuts` workspaces.
-* **[website]**       : contains the sources of `nuts`'s docusaurus based website.
+* **[documentation]** : contains the sources of `nuts`'s docusaurus based website and documentation files
     * **[website/.dir-template]**       : contains the effective sources of `nuts`'s documentation (used to create the website as well). To be more precise, the website is built using a two steps process: first we pre-process the markdown files with template processing (using `ntemplate`) that will handle things like `nuts` version variables, documentation structure etc and hence prepare the `docusaurus` base folder. And then, we run `docusaurus` to generate the effective `html`/`js` for the statically compiled website.
 
 
@@ -163,9 +166,9 @@ this tool supports installation and launch of multiple netbeans instances in par
 ### **pnote**
 this tool is a multi purpose, developer oriented, Note taking application. See [Pangaea Note](https://github.com/thevpc/pangaea-note)
 
-### **upa-box**
-this tool supports creation of UPA aware projects. UPA is a non structured ORM for the Java Language. See [Netbeans Launcher GitHub Repository](https://github.com/thevpc/upa)
+### **upa-box** (deprecated)
+this tool supports creation of UPA aware projects. UPA is a non structured ORM for the Java Language. See [UPA GitHub Repository](https://github.com/thevpc/upa)
 
-### **vr-box**
-this tool supports creation of VR aware projects. VR is a web portal framework. See [Netbeans Launcher GitHub Repository](https://github.com/thevpc/vr)
+### **vr-box** (deprecated)
+this tool supports creation of VR aware projects. VR is a web portal framework. See [VR GitHub Repository](https://github.com/thevpc/vr)
 

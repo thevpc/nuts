@@ -54,14 +54,14 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.211-b12, mixed mode)
 }>
 <TabItem value="windows">
 
-download [nuts-.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0./nuts-.jar)
+download [nuts-0.8.4.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.0.8.4/nuts-0.8.4.jar)
 ```
-java -jar nuts-.jar  -Zy
+java -jar nuts-0.8.4.jar  -Zy
 ```
 
 On Windows systems, first launch will create a new **```nuts```** Menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal.
-- **nuts-cmd-** : this shortcut will open a configured command terminal. **```nuts```** command will be available as well as several nuts companion tools installed by **nadmin** by default
-- **nuts-cmd**       : this shortcut will point to the last installed **nuts** version, here   
+- **nuts-cmd-0.8.4** : this shortcut will open a configured command terminal. **```nuts```** command will be available as well as several nuts companion tools installed by **nadmin** by default
+- **nuts-cmd**       : this shortcut will point to the last installed **nuts** version, here 0.8.4  
 
 Any of these shortcuts will launch a nuts-aware terminal.
 
@@ -81,7 +81,7 @@ This will reset/delete any previous nuts installation before installing the late
 Removing the `Z` modifier (replace `-Zy` by `-y`) flag if you do not want to reset the workspace.
 ```
 $ wget https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
-    /nuts-.jar -qO nuts.jar
+    0.8.3/nuts-0.8.3.jar -qO nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 ```
@@ -91,7 +91,7 @@ This will reset/delete any previous nuts installation before installing the late
 Removing the `Z` modifier (replace `-Zy` by `-y`) flag if you do not want to reset the workspace.
 ```
 $ curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
-    /nuts-.jar -o nuts.jar
+    0.8.3/nuts-0.8.3.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 ```
@@ -113,7 +113,7 @@ Any bash terminal application is a nuts-aware terminal.
 
 ```
 $ curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
-    /nuts-.jar -o nuts.jar
+    0.8.3/nuts-0.8.3.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 ```
@@ -132,7 +132,7 @@ Any bash terminal application is a nuts-aware terminal.
 
 ```
   $ wget https://github.com/thevpc/vpc-public-maven/raw/master/\
-     net/vpc/app/nuts/nuts//nuts-.jar \
+     net/vpc/app/nuts/nuts/0.8.3/nuts-0.8.3.jar \
      -O nuts.jar
   $  java -jar nuts.jar -y
 ```
@@ -149,7 +149,7 @@ Any bash terminal application is a nuts-aware terminal.
 
 ```
 $ curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
-    /nuts-.jar -o nuts.jar
+    0.8.3/nuts-0.8.3.jar -o nuts.jar
 $ java -jar nuts.jar -Zy
 $ exit
 ```
@@ -190,7 +190,7 @@ nuts --version
 It should show a result in the format : nuts-api-version/nuts-impl-version
 
 ```
-/
+0.8.3/0.8.3.1
 ```
 
 ## Run a command

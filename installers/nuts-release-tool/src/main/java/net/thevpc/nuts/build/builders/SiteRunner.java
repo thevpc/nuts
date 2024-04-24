@@ -12,6 +12,9 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.toolbox.docusaurus.DocusaurusCtrl;
+import net.thevpc.nuts.toolbox.docusaurus.DocusaurusProject;
+import net.thevpc.nuts.toolbox.docusaurus.NDocusaurusMain;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.TemplateConfig;
 import net.thevpc.nuts.toolbox.ntemplate.project.NTemplateProject;
 import net.thevpc.nuts.util.NAssert;
@@ -19,8 +22,11 @@ import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.util.NMsg;
 
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author vpc
@@ -28,6 +34,10 @@ import java.util.Date;
 public class SiteRunner extends AbstractRunner {
 
     boolean NUTS_FLAG_SITE = false;
+
+    public SiteRunner(NSession session) {
+        super(session);
+    }
 
     @Override
     public void configureAfterOptions() {
@@ -46,10 +56,6 @@ public class SiteRunner extends AbstractRunner {
         return false;
     }
 
-    public SiteRunner(NSession session) {
-        super(session);
-    }
-
     @Override
     public void configureBeforeOptions(NCmdLine cmdLine) {
     }
@@ -63,50 +69,47 @@ public class SiteRunner extends AbstractRunner {
 
     private void runSite() {
         echo("**** $v (nuts)...", NMaps.of("v", NMsg.ofStyled("build-nuts-site", NTextStyle.keyword())));
-
         runSiteGithubRepo();
         runSiteGithubDocumentation();
     }
 
 
+    private Map<String, Object> prepareVars() {
+        Map<String, Object> vars = new HashMap<>();
+        String latestApiVersion = Nuts.getVersion().toString();
+        String stableApiVersion = NAssert.requireNonBlank(context().nutsStableVersion, "nutsStableVersion");
+        String stableRuntimeVersion = NAssert.requireNonBlank(context().runtimeStableVersion, "runtimeStableVersion");
+        String latestJarLocation = "https://raw.githubusercontent.com/thevpc/nuts-preview/master/net/thevpc/nuts/nuts/" + latestApiVersion + "/nuts-" + latestApiVersion + ".jar";
+        String stableJarLocation = "https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/" + stableApiVersion + "/nuts-" + stableApiVersion + ".jar";
+
+        vars.put("buildTime", new SimpleDateFormat("yyyy-MM-dd-HHmmss").format(new Date()));
+        vars.put("latestApiVersion", latestApiVersion);
+        String latestRuntimeVersion = NDescriptorParser.of(session)
+                .setDescriptorStyle(NDescriptorStyle.MAVEN)
+                .parse(context().root.resolve("core/nuts-runtime/pom.xml")).get().getId().getVersion().toString();
+        vars.put("latestRuntimeVersion", latestRuntimeVersion);
+        vars.put("latestJarLocation", latestJarLocation);
+        vars.put("stableApiVersion", stableApiVersion);
+        vars.put("stableRuntimeVersion", stableRuntimeVersion);
+        vars.put("stableJarLocation", stableJarLocation);
+        vars.put("jarLocation", latestJarLocation);
+        vars.put("apiVersion", latestApiVersion);
+        vars.put("runtimeVersion", latestRuntimeVersion);
+        return vars;
+    }
+
     private void runSiteGithubRepo() {
         echo("**** $v (nuts)...", NMaps.of("v", NMsg.ofStyled("ntemplate", NTextStyle.keyword())));
-//        NExecCmd.of(session).embedded()
-//                .addCommand(
-//                        "ntemplate",
-//                        "-p",
-//                        context().root.resolve(".dir-template").toString(),
-//                        "-t",
-//                        context().root.toString()
-//                ).failFast()
-//                .run();
-        NTemplateProject templateProject=new NTemplateProject(
+        NTemplateProject templateProject = new NTemplateProject(
                 new TemplateConfig()
                         .setContextName("nuts-release-tool")
                         .setProjectPath(context().root.resolve(".dir-template").toString())
                         .setTargetFolder(context().root.toString())
-                ,
-                session
+                ,session
         );
-        String apiVersion = Nuts.getVersion().toString();
-
-        String latestJarLocation = "https://raw.githubusercontent.com/thevpc/nuts-preview/master/net/thevpc/nuts/nuts/" +apiVersion + "/nuts-" + apiVersion + ".jar";
-
-        templateProject.setVar("buildTime",new SimpleDateFormat("yyyy-MM-dd-HHmmss").format(new Date()));
-        templateProject.setVar("latestApiVersion", apiVersion);
-        String latestRuntimeVersion = NDescriptorParser.of(session)
-                .setDescriptorStyle(NDescriptorStyle.MAVEN)
-                .parse(context().root.resolve("core/nuts-runtime/pom.xml")).get().getId().getVersion().toString();
-        templateProject.setVar("latestRuntimeVersion", latestRuntimeVersion);
-        templateProject.setVar("latestJarLocation", latestJarLocation);
-        templateProject.setVar("stableApiVersion", NAssert.requireNonBlank(context().nutsStableVersion,"nutsStableVersion"));
-        templateProject.setVar("stableRuntimeVersion", NAssert.requireNonBlank(context().runtimeStableVersion,"runtimeStableVersion"));
-        templateProject.setVar("stableJarLocation", "https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/"+context().nutsStableVersion+"/nuts-"+context().nutsStableVersion+".jar");
-        templateProject.setVar("jarLocation", latestJarLocation);
-        templateProject.setVar("apiVersion", apiVersion);
-        templateProject.setVar("runtimeVersion", latestRuntimeVersion);
-        templateProject.run();
-
+        for (Map.Entry<String, Object> e : prepareVars().entrySet()) {
+            templateProject.setVar(e.getKey(), e.getValue());
+        }
         NPath.of(Mvn.localMaven() + "/" + Mvn.file(Nuts.getApiId(), MvnArtifactType.JAR), session)
                 .copyTo(context().NUTS_WEBSITE_BASE.resolve("static/nuts-preview.jar")
                 );
@@ -115,14 +118,19 @@ public class SiteRunner extends AbstractRunner {
     private void runSiteGithubDocumentation() {
         NInstallCmd.of(session.copy().yes()).addIds("ndocusaurus").run();
         echo("**** $v (nuts)...", NMaps.of("v", NMsg.ofStyled("ndocusaurus", NTextStyle.keyword())));
-        NExecCmd.of(session).embedded()
-                .addCommand(
-                        "ndocusaurus",
-                        "-d",
-                        context().NUTS_WEBSITE_BASE.toString(),
-                        "pdf",
-                        "build"
-                ).failFast()
-                .run();
+        String workdir = context().NUTS_WEBSITE_BASE.toString();
+        DocusaurusProject docusaurusProject = new DocusaurusProject(workdir,
+                Paths.get(workdir).resolve(".dir-template").resolve("src").toString(),
+                session());
+        DocusaurusCtrl docusaurusCtrl = new DocusaurusCtrl(docusaurusProject, session)
+                .setBuildWebSite(true)
+                .setStartWebSite(false)
+                .setBuildPdf(true)
+                .setAutoInstallNutsPackages(NBootManager.of(session())
+                        .getBootOptions().getConfirm().orElse(NConfirmationMode.ASK) == NConfirmationMode.YES)
+                .setVars(prepareVars());
+
+        docusaurusCtrl.run();
+
     }
 }

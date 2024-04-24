@@ -128,7 +128,7 @@ A valid <img src="img/java.png" alt=""  width="16"/> java 1.8+ runtime is requir
                     target="_blank"
                     >
 
-Stable  Jar
+Stable 0.8.3 Jar
 </Link>
 </li>
 <li><img src="img/java.png" alt=""  width="32"/> &nbsp;
@@ -142,7 +142,7 @@ Stable  Jar
                         target="_blank"
                         >
 
-                    Preview  Jar
+                    Preview 0.8.4 Jar
                     </Link>
 
 </li>
@@ -168,7 +168,7 @@ A valid <img src="img/java.png" alt=""  width="16"/> java 1.8+ runtime is requir
                         )}
                     >Stable</Link>
 <pre>
-curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts//nuts-.jar -o nuts.jar && java -jar nuts.jar -Zy
+curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar -o nuts.jar && java -jar nuts.jar -Zy
 </pre>
 
 <Link

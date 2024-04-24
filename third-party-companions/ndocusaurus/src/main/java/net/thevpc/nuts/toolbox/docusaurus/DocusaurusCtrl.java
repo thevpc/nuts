@@ -43,6 +43,7 @@ public class DocusaurusCtrl {
     private String ndocVersion;
     private String npmCommandPath;
     private NSession session;
+    private Map<String,Object> vars=new HashMap<>();
 
     public DocusaurusCtrl(DocusaurusProject project, NSession session) {
         this.project = project;
@@ -90,10 +91,11 @@ public class DocusaurusCtrl {
                 .orElse(false);
         Path basePath = base;
         Path preProcessor = getPreProcessorBaseDir();
-        if (Files.isDirectory(preProcessor) && Files.isRegularFile(preProcessor.resolve("project.nsh"))) {
+        if (preProcessor!=null && Files.isDirectory(preProcessor)) {
 //            Files.walk(base).filter(x->Files.isDirectory(base))
             Path docs = basePath.resolve("docs");
-            if (Files.isDirectory(basePath.resolve("node_modules")) && Files.isRegularFile(basePath.resolve("docusaurus.config.js"))) {
+            if (Files.isDirectory(basePath.resolve("node_modules"))
+                    && Files.isRegularFile(basePath.resolve("docusaurus.config.js"))) {
                 session.out().print(NMsg.ofC("clear folder %s%n", docs));
                 deletePathChildren(docs);
             }
@@ -103,8 +105,9 @@ public class DocusaurusCtrl {
                     .setProjectPath(preProcessor.toString())
                     .setTargetFolder(getTargetBaseDir().toString())
                     .setContextName("ndocusaurus")
+                    .setVars(vars)
                     ;
-            new NFileTemplater(session)
+            FileTemplater ftex = new NFileTemplater(session)
                     .setWorkingDir(base.toString())
                     .setMimeTypeResolver(
                             new DefaultMimeTypeResolver()
@@ -112,8 +115,8 @@ public class DocusaurusCtrl {
                                     .setNameMimeType(DocusaurusProject.DOCUSAURUS_FOLDER_CONFIG, DocusaurusProject.DOCUSAURUS_FOLDER_CONFIG_MIMETYPE)
                     )
                     .setDefaultProcessor(DocusaurusProject.DOCUSAURUS_FOLDER_CONFIG_MIMETYPE, new FolderConfigProcessor())
-                    .setCustomVarEvaluator(new DocusaurusCustomVarEvaluator(project))
-                    .processProject(config);
+                    .setCustomVarEvaluator(new DocusaurusCustomVarEvaluator(project));
+            ftex.processProject(config);
         }
         if (genSidebarMenu) {
             DocusaurusFolder root = project.getPhysicalDocsFolder();
@@ -456,6 +459,20 @@ public class DocusaurusCtrl {
         public String toString() {
             return "DocusaurusFolderConfig";
         }
+    }
+
+    public DocusaurusCtrl setVar(String name, Object value) {
+        vars.put(name,value);
+        return this;
+    }
+
+    public DocusaurusCtrl setVars(Map<String,Object> vars) {
+        if(vars!=null){
+            for (Map.Entry<String, Object> e : vars.entrySet()) {
+                setVar(e.getKey(),e.getValue());
+            }
+        }
+        return this;
     }
 
 }

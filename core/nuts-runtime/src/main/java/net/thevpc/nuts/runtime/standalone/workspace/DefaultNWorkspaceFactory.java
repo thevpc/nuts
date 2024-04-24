@@ -197,16 +197,18 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 }
                 default: {
                     //wont use NLog because not yet initialized!
-                    System.err.println("[Nuts] createComponent failed for :" + type.getName());
+                    //System.err.println("[Nuts] createComponent failed for :" + type.getName());
                 }
             }
         }
         if (all.isEmpty()) {
-            System.err.println("unable to resolve " + type);
-            Set<Class<? extends T>> extensionTypes = getExtensionTypes(type, session);
-            System.err.println("extensionTypes =  " + extensionTypes);
-            dump(type,session);
-            new Throwable().printStackTrace();
+            if(!session.isBot()) {
+                System.err.println("[Nuts] unable to resolve " + type);
+                Set<Class<? extends T>> extensionTypes = getExtensionTypes(type, session);
+                System.err.println("[Nuts] extensionTypes =  " + extensionTypes);
+                dump(type, session);
+                new Throwable().printStackTrace();
+            }
         }
         return s.toOptional();
     }
