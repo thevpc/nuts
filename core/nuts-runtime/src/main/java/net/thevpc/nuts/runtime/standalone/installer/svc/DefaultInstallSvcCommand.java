@@ -500,15 +500,9 @@ public class DefaultInstallSvcCommand implements InstallSvcCommand {
                     return System.getProperty("user.name");
                 case "START_COMMANDLINE": {
                     return base.formatCommand(base.startCommand);
-//                    return base.getInstallDir() + "/" + base.serviceStartName + " start";
-                    //String line = "$$JAVA$$ -jar $$NUTS_JAR$$ -y --bot --~color com.cts.probots.server:probots-server";
-                    //return replaceVars(line);
                 }
                 case "STOP_COMMANDLINE": {
                     return base.formatCommand(base.stopCommand);
-//                    return base.getInstallDir() + "/" + base.serviceCtrlName + " stop";
-                    //String line = "$$JAVA$$ -jar $$NUTS_JAR$$ -y --bot --~color com.cts.probots.server:probots-server";
-                    //return replaceVars(line);
                 }
                 case "VAR_RUN": {
                     return base.rootFile("/var/run").toString();
