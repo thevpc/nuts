@@ -152,6 +152,7 @@ public class DefaultInstallSvcCommand implements InstallSvcCommand {
                 logInfo("service-file       : " + serviceFilePath);
                 logInfo("trying to remove service file: " + serviceFilePath);
                 logInfo("ATTENTION: please ensure that the service is not running (sudo systemctl status " + serviceName + ")");
+                logInfo("We need root privileges to run de-installation script. Please enter your root password.");
                 runAsRoot(
                         new ScriptBuilder("uninstall-" + serviceName, "uninstall-" + serviceName)
                                 .printlnEcho("systemctl stop " + serviceName)
@@ -172,6 +173,7 @@ public class DefaultInstallSvcCommand implements InstallSvcCommand {
                 logInfo("service-file       : " + serviceFilePath);
                 logInfo("trying to remove service file: " + serviceFilePath);
                 logInfo("ATTENTION: please ensure that the service is not running (" + "sudo " + serviceFilePath + " stop " + ")");
+                logInfo("We need root privileges to run de-installation script. Please enter your root password.");
                 runAsRoot(
                         new ScriptBuilder("uninstall-" + serviceName, "uninstall-" + serviceName)
                                 .printlnEcho("sudo " + serviceFilePath + " stop")
@@ -230,6 +232,7 @@ public class DefaultInstallSvcCommand implements InstallSvcCommand {
         String javaHome = System.getProperty("java.home");
         logInfo("");
         logInfo("== INSTALLING SERVICE SCRIPT ==");
+        logInfo("service type       : " + NOsServiceType.SYSTEMD.name().toLowerCase());
         logInfo("install service    : " + serviceName);
         logInfo("working-dir        : " + dir);
         logInfo("java-home          : " + javaHome);
@@ -239,7 +242,7 @@ public class DefaultInstallSvcCommand implements InstallSvcCommand {
         try {
             logInfoStart("Creating systemd service file : " + serviceFilePath);
             tempFile = File.createTempFile("srv-" + serviceName, ".service");
-            createFileFromTemplate("/service-systemd", tempFile.toString());
+            createFileFromTemplate("service-systemd", tempFile.toString());
             ScriptBuilder script = new ScriptBuilder(serviceName, "systemctl enable/start " + serviceName + " script")
                     .printlnEcho("cp " + tempFile.getPath() + " " + serviceFilePath);
             if (!isRootOverridden()) {
@@ -255,6 +258,7 @@ public class DefaultInstallSvcCommand implements InstallSvcCommand {
                 logInfo("[DRY] run script: ");
                 logInfo(script.toString());
             } else {
+                logInfo("We need root privileges to run installation script. Please enter your root password.");
                 runAsRoot(script);
             }
         } catch (IOException ex) {
@@ -277,11 +281,12 @@ public class DefaultInstallSvcCommand implements InstallSvcCommand {
     }
 
     private boolean installServiceInitd() {
-        String serviceFilePath = rootFile("/etc/init.d/" + serviceName).toString();
+        NPath serviceFilePath = rootFile("/etc/init.d/" + serviceName);
         String dir = getCurrentWorkingDir().toString();
         String javaHome = System.getProperty("java.home");
         logInfo("");
         logInfo("== INSTALLING SERVICE SCRIPT ==");
+        logInfo("service type       : " + NOsServiceType.INITD.name().toLowerCase());
         logInfo("install service    : " + serviceName);
         logInfo("working-dir        : " + dir);
         logInfo("java-home          : " + javaHome);
@@ -291,9 +296,11 @@ public class DefaultInstallSvcCommand implements InstallSvcCommand {
         try {
             logInfoStart("Creating initd service file : " + serviceFilePath);
             tempFile = File.createTempFile("srv-" + serviceName, ".service");
-            createFileFromTemplate("/service-initd", tempFile.toString());
-            String rcFile = "/etc/rc.d/S99z_" + serviceName;
+            createFileFromTemplate("service-initd", tempFile.toString());
+            NPath rcFile = rootFile("/etc/rc.d/S99z_" + serviceName);
             ScriptBuilder script = new ScriptBuilder(serviceName, "initd service enable/start " + serviceName + " script")
+                    .printlnEcho("mkdir -p " + rcFile.getParent())
+                    .printlnEcho("mkdir -p " + serviceFilePath.getParent())
                     .printlnEcho("cp " + tempFile.getPath() + " " + serviceFilePath)
                     .printlnEcho("rm -Rf " + rcFile)
                     .printlnEcho("ln -s " + serviceFilePath + " " + rcFile);
@@ -301,15 +308,19 @@ public class DefaultInstallSvcCommand implements InstallSvcCommand {
 //                    .printlnEcho("systemctl daemon-reload")
             if (!isRootOverridden()) {
                 script.printlnEcho(serviceFilePath + " stop ")
-                        .printlnEcho(serviceFilePath + " start ")
-                        .printlnEcho(serviceFilePath + " status ");
+//                        .printlnEcho(serviceFilePath + " start ")
+//                        .printlnEcho(serviceFilePath + " status ")
+                ;
             }
+            // added to always return 0 code
+            script.printlnEcho("echo 'end of script'");
             if (session.isDry()) {
-                new File(serviceFilePath).getParentFile().mkdirs();
-                Files.copy(tempFile.toPath(), new File(serviceFilePath).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                serviceFilePath.getParent().mkdirs();
+                Files.copy(tempFile.toPath(), serviceFilePath.toPath().get(), StandardCopyOption.REPLACE_EXISTING);
                 logInfo("[DRY] run script: ");
                 logInfo(script.toString());
             } else {
+                logInfo("We need root privileges to run installation script. Please enter your root password.");
                 runAsRoot(
                         script
                 );
@@ -551,7 +562,7 @@ public class DefaultInstallSvcCommand implements InstallSvcCommand {
 
     private NPath rootFile(String path) {
         NPath rootFolder = isRootOverridden() ? this.root : NPath.of("/", session);
-        rootFolder = rootFolder.normalize();
+        rootFolder = rootFolder.toAbsolute().normalize();
         if (path.startsWith("/")) {
             path = path.substring(1);
         }

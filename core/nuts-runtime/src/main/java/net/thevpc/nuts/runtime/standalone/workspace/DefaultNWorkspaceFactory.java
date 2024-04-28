@@ -200,6 +200,15 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                     //System.err.println("[Nuts] createComponent failed for :" + type.getName());
                 }
             }
+            if (all.isEmpty()) {
+                if(!session.isBot()) {
+                    System.err.println("[Nuts] unable to resolve " + type);
+                    Set<Class<? extends T>> extensionTypes = getExtensionTypes(type, session);
+                    System.err.println("[Nuts] extensionTypes =  " + extensionTypes);
+                    dump(type, session);
+                    new Throwable().printStackTrace();
+                }
+            }
         }
         if (all.isEmpty()) {
             if(!session.isBot()) {

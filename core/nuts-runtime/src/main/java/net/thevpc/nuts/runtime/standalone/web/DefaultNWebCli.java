@@ -14,9 +14,12 @@ import net.thevpc.nuts.util.NStringUtils;
 import net.thevpc.nuts.web.*;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.io.UncheckedIOException;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.nio.channels.InterruptedByTimeoutException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -273,6 +276,12 @@ public class DefaultNWebCli implements NWebCli {
                     }
                 }
             }
+        } catch (SocketTimeoutException ex) {
+            throw new UncheckedIOException("timed out loading " + spec, ex);
+        } catch (InterruptedByTimeoutException ex) {
+            throw new UncheckedIOException("interrupt loading " + spec, ex);
+        } catch (InterruptedIOException ex) {
+            throw new UncheckedIOException("interrupt loading " + spec, ex);
         } catch (IOException ex) {
             throw new UncheckedIOException("error loading " + spec, ex);
         }

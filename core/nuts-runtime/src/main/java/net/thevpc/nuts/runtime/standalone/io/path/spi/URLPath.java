@@ -665,7 +665,7 @@ public class URLPath implements NPathSPI {
 
     @Override
     public void copyTo(NPath basePath, NPath other, NPathOption... options) {
-        NCp.of(session).from(basePath).to(other).run();
+        NCp.of(session).from(basePath).to(other).addOptions(options).run();
     }
 
     @Override
