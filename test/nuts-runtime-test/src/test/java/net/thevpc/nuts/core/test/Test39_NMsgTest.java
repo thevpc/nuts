@@ -4,12 +4,14 @@ import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NMsgParam;
 import net.thevpc.nuts.util.NMsgTemplate;
-import net.thevpc.nuts.util.NMsgVarTextParser;
+import net.thevpc.nuts.util.NStringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Test39_NMsgTest {
 
@@ -46,18 +48,18 @@ public class Test39_NMsgTest {
 
     @Test
     public void test03() {
-        List<NToken> textTokens = NMsgVarTextParser.parseDollarString("a${b}c");
+        List<NToken> textTokens = NStringUtils.parseDollarPlaceHolder("a${b}c").collect(Collectors.toList());
         System.out.println(textTokens);
         //Assertions.assertEquals(Arrays.asList("0", "1", "2", "3", "4"), Arrays.asList(paramNames));
     }
 
     @Test
     public void test04() {
-        List<NToken> textTokens = NMsgVarTextParser.parseDollarString("<a href=\"https://protos-erp.com\" style=\"color:#00a4bd\" target=\"_blank\">\n" +
+        List<NToken> textTokens = NStringUtils.parseDollarPlaceHolder("<a href=\"https://protos-erp.com\" style=\"color:#00a4bd\" target=\"_blank\">\n" +
                 "        <img src=\"https://protos-erp.com/assets/crm/protos-banner-fr.png\"\n" +
                 "        trackerFolder=\"prospect\" trackerName=\"protos-banner-fr.png\" trackerSecretEmail=\"${email}\" trackerSecretCompany=\"${company}\"\n" +
                 "        alt=\"Banner 2024\" style=\"outline:none;text-decoration:none;border:none;max-width:100%;font-size:16px;border-radius: 25px;\" width=\"560\" align=\"middle\"/>\n" +
-                "        </a>");
+                "        </a>").collect(Collectors.toList());
         System.out.println(textTokens);
         //Assertions.assertEquals(Arrays.asList("0", "1", "2", "3", "4"), Arrays.asList(paramNames));
     }
@@ -74,6 +76,27 @@ public class Test39_NMsgTest {
                 }).toString();
         System.out.println(r);
         Assertions.assertEquals("A/B",r);
+        //Assertions.assertEquals(Arrays.asList("0", "1", "2", "3", "4"), Arrays.asList(paramNames));
+    }
+
+    @Test
+    public void test06() {
+        List<NToken> textTokens = NStringUtils.parsePlaceHolder("s$${{example1}}$$\n$${{example2}}$$e",
+                Pattern.compile("(?s)(?m)\\$\\$\\{\\{(?<var>[^}]+)}}\\$\\$"),
+                "var")
+                .collect(Collectors.toList());
+        for (NToken textToken : textTokens) {
+            System.out.println(textToken);
+        }
+        Assertions.assertEquals(5,textTokens.size());
+
+        Assertions.assertEquals(NToken.TT_VAR,textTokens.get(1).ttype);
+        Assertions.assertEquals(NToken.TT_VAR,textTokens.get(1).ttype);
+        Assertions.assertEquals("example1",textTokens.get(1).sval);
+        Assertions.assertEquals("$${{example1}}$$",textTokens.get(1).image);
+
+        Assertions.assertEquals("example2",textTokens.get(3).sval);
+        Assertions.assertEquals("$${{example2}}$$",textTokens.get(3).image);
         //Assertions.assertEquals(Arrays.asList("0", "1", "2", "3", "4"), Arrays.asList(paramNames));
     }
 

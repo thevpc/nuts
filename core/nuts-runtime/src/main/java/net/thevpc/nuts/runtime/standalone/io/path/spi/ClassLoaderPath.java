@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
-import net.thevpc.nuts.spi.NPathFactory;
+import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NMsg;
@@ -80,7 +80,7 @@ public class ClassLoaderPath extends URLPath {
         return Objects.hash(effectivePath, loader);
     }
 
-    public static class ClasspathFactory implements NPathFactory {
+    public static class ClasspathFactory implements NPathFactorySPI {
         NWorkspace ws;
 
         public ClasspathFactory(NWorkspace ws) {

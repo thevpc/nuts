@@ -1016,7 +1016,7 @@ public class StreamTokenizerExt {
      * <p>The precise string returned is unspecified, although the following
      * example can be considered typical:
      *
-     * <blockquote><pre>NutsToken['a'], line 10</pre></blockquote>
+     * <blockquote><pre>NToken['a'], line 10</pre></blockquote>
      *
      * @return a string representation of the token
      */
@@ -1073,7 +1073,7 @@ public class StreamTokenizerExt {
                 break;
             }
         }
-        return "NutsToken[" + ret + "], line " + LINENO;
+        return "NToken[" + ret + "], line " + LINENO;
     }
 
 }

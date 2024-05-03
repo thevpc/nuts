@@ -30,12 +30,8 @@ public class NMsgTemplate {
     }
 
     public NMsgTemplate(String message, NTextFormatType format) {
-        if (message == null) {
-            throw new IllegalArgumentException("missing message");
-        }
-        if (format == null) {
-            throw new IllegalArgumentException("missing format");
-        }
+        NAssert.requireNonNull(message,"message");
+        NAssert.requireNonNull(format,"format");
         switch (format) {
             case CFORMAT:
             case JFORMAT:
@@ -185,6 +181,7 @@ public class NMsgTemplate {
                                     }
                                 } else {
                                     StringBuilder n = new StringBuilder();
+                                    boolean start=true;
                                     while (true) {
                                         r.mark(1);
                                         i = r.read();
@@ -192,11 +189,21 @@ public class NMsgTemplate {
                                             break;
                                         }
                                         c = (char) i;
-                                        if (NMsgVarTextParser.isValidMessageVar(c)) {
-                                            n.append(c);
-                                        } else {
-                                            r.reset();
-                                            break;
+                                        if(start){
+                                            if (NStringUtils.isValidVarStart(c)) {
+                                                n.append(c);
+                                                start=false;
+                                            } else {
+                                                r.reset();
+                                                break;
+                                            }
+                                        }else {
+                                            if (NStringUtils.isValidVarPart(c)) {
+                                                n.append(c);
+                                            } else {
+                                                r.reset();
+                                                break;
+                                            }
                                         }
                                     }
                                     String ns = n.toString();

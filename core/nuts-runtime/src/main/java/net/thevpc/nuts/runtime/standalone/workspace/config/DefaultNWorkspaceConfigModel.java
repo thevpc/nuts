@@ -101,8 +101,8 @@ public class DefaultNWorkspaceConfigModel {
     private final List<URL> bootClassWorldURLs;
     private final Function<String, String> pathExpansionConverter;
     private final WorkspaceSystemTerminalAdapter workspaceSystemTerminalAdapter;
-    private final List<NPathFactory> pathFactories = new ArrayList<>();
-    private final NPathFactory invalidPathFactory;
+    private final List<NPathFactorySPI> pathFactories = new ArrayList<>();
+    private final NPathFactorySPI invalidPathFactory;
     private final DefaultNBootModel bootModel;
     protected NWorkspaceConfigBoot storeModelBoot = new NWorkspaceConfigBoot();
     protected NWorkspaceConfigApi storeModelApi = new NWorkspaceConfigApi();
@@ -156,10 +156,10 @@ public class DefaultNWorkspaceConfigModel {
 
 
     public void onNewComponent(Class componentType, NSession session) {
-        if (NPathFactory.class.isAssignableFrom(componentType)) {
+        if (NPathFactorySPI.class.isAssignableFrom(componentType)) {
             DefaultNWorkspaceFactory aa = (DefaultNWorkspaceFactory) (((NWorkspaceExt) ws).getModel().extensionModel.getObjectFactory());
             addPathFactory(
-                    (NPathFactory) aa.newInstance(componentType, NPathFactory.class, session)
+                    (NPathFactorySPI) aa.newInstance(componentType, NPathFactorySPI.class, session)
             );
         }
     }
@@ -1513,13 +1513,13 @@ public class DefaultNWorkspaceConfigModel {
 //        return createTerminal(null, session);
     }
 
-    public void addPathFactory(NPathFactory f) {
+    public void addPathFactory(NPathFactorySPI f) {
         if (f != null && !pathFactories.contains(f)) {
             pathFactories.add(f);
         }
     }
 
-    public void removePathFactory(NPathFactory f) {
+    public void removePathFactory(NPathFactorySPI f) {
         pathFactories.remove(f);
     }
 
@@ -1560,11 +1560,11 @@ public class DefaultNWorkspaceConfigModel {
         return null;
     }
 
-    public NPathFactory[] getPathFactories() {
-        List<NPathFactory> all = new ArrayList<>(pathFactories.size() + 1);
+    public NPathFactorySPI[] getPathFactories() {
+        List<NPathFactorySPI> all = new ArrayList<>(pathFactories.size() + 1);
         all.addAll(pathFactories);
         all.add(invalidPathFactory);
-        return all.toArray(new NPathFactory[0]);
+        return all.toArray(new NPathFactorySPI[0]);
     }
 
     public DefaultNBootModel getBootModel() {
@@ -1729,7 +1729,7 @@ public class DefaultNWorkspaceConfigModel {
 
     }
 
-    private class InvalidFilePathFactory implements NPathFactory {
+    private class InvalidFilePathFactory implements NPathFactorySPI {
         @Override
         public NCallableSupport<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
             NSessionUtils.checkSession(getWorkspace(), session);

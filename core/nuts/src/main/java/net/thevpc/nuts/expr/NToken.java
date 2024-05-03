@@ -59,6 +59,7 @@ public class NToken {
     public static final int TT_LIKE3 = -63;
     public static final int TT_DOLLAR = -64;
     public static final int TT_DOLLAR_BRACE = -65;
+    public static final int TT_VAR = -66;
     public static final int TT_DEFAULT = Integer.MIN_VALUE;
 
 
@@ -224,6 +225,12 @@ public class NToken {
                 return "OPEN_PAR";
             case TT_CLOSE_PAR:
                 return "CLOSE_PAR";
+            case TT_DOLLAR:
+                return "TT_DOLLAR";
+            case TT_DOLLAR_BRACE:
+                return "TT_DOLLAR_BRACE";
+            case TT_VAR:
+                return "TT_VAR";
             case '\t':
                 return "'\\t'";
             case '\f':
@@ -237,7 +244,7 @@ public class NToken {
 
     public String toString() {
         String ts=ttypeString==null?typeString(ttype):ttypeString;
-        return "NutsToken{" +
+        return "NToken{" +
                 "ttype=" + typeString(ttype) +
                 ", lineno=" + lineno +
                 ", sval=" + (sval == null ? "null" : NStringUtils.formatStringLiteral(sval, NQuoteType.SIMPLE)) +

@@ -32,6 +32,6 @@ import net.thevpc.nuts.NCallableSupport;
 /**
  * @app.category Input Output
  */
-public interface NPathFactory extends NComponent{
+public interface NPathFactorySPI extends NComponent{
     NCallableSupport<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader);
 }

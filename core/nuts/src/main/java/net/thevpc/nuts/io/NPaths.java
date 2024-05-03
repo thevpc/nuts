@@ -4,7 +4,7 @@ import net.thevpc.nuts.NRepository;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponent;
-import net.thevpc.nuts.spi.NPathFactory;
+import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
 
 import java.io.File;
@@ -33,9 +33,9 @@ public interface NPaths extends NComponent {
     NPath createPath(String path, ClassLoader classLoader);
     NPath createPath(NPathSPI path);
 
-    NPaths addPathFactory(NPathFactory pathFactory);
+    NPaths addPathFactory(NPathFactorySPI pathFactory);
 
-    NPaths removePathFactory(NPathFactory pathFactory);
+    NPaths removePathFactory(NPathFactorySPI pathFactory);
 
     /**
      * create temp file in the repositoryId's temp folder

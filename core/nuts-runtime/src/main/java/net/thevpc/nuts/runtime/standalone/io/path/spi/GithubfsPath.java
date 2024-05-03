@@ -336,7 +336,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         return ref.isLocal();
     }
 
-    public static class GithubfsFactory implements NPathFactory {
+    public static class GithubfsFactory implements NPathFactorySPI {
         private final NWorkspace ws;
 
         public GithubfsFactory(NWorkspace ws) {

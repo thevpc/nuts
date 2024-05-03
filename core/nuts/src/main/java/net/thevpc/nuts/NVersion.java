@@ -47,7 +47,7 @@ import java.util.regex.Pattern;
  * @app.category Descriptor
  * @since 0.5.4
  */
-public interface NVersion extends Serializable, /*NutsTokenFilter, */NFormattable, Comparable<NVersion>, NBlankable {
+public interface NVersion extends Serializable, /*NTokenFilter, */NFormattable, Comparable<NVersion>, NBlankable {
     Pattern PATTERN = Pattern.compile("[A-Za-z0-9._*,()\\[\\] ${}+-]+");
     NVersion BLANK = new DefaultNVersion("");
 

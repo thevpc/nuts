@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
 import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.time.*;
@@ -452,9 +453,7 @@ public class DefaultProgressMonitor implements NProgressMonitor {
     @Override
     public final NProgressMonitor inc(NMsg message) {
         NProgressMonitorInc incrementor = this.incrementor;
-        if (incrementor == null) {
-            throw new IllegalArgumentException("missing incrementor");
-        }
+        NAssert.requireNonNull(incrementor,"incrementor");
         double oldProgress = getProgress();
         double newProgress = incrementor.inc(oldProgress);
         setProgress(newProgress, message);
@@ -519,9 +518,7 @@ public class DefaultProgressMonitor implements NProgressMonitor {
     @Override
     public NProgressMonitor stepInto(NMsg message) {
         final NProgressMonitorInc incrementor = getIncrementor();
-        if (incrementor == null) {
-            throw new IllegalArgumentException("missing incrementor");
-        }
+        NAssert.requireNonNull(incrementor,"incrementor");
         double a = getProgress();
         double b = incrementor.inc(a);
         if (message != null) {

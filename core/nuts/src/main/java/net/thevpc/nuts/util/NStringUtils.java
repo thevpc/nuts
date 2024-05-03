@@ -26,13 +26,18 @@
  */
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.reserved.NReservedUtils;
 
 import java.text.Normalizer;
 import java.util.*;
+import java.util.function.Function;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author thevpc
@@ -40,7 +45,9 @@ import java.util.regex.Pattern;
  * @since 0.8.1
  */
 public class NStringUtils {
-    private static final char[] BASE16_CHARS = "0123456789ABCDEF".toCharArray();
+
+    public static final String DEFAULT_VAR_NAME = "var";
+    private static final char[] BASE16_CHARS = new char[]{'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 
     private NStringUtils() {
     }
@@ -601,5 +608,275 @@ public class NStringUtils {
                     + Character.digit(c2, 16));
         }
         return data;
+    }
+
+    /**
+     * replace all placeholders in a text string with values from a given mapper.
+     * Here is an example :
+     * <pre>
+     *     String result=NMsgVarTextParser.replacePlaceholder("a${b}ad","${(?&lt;var&gt;[a-z]+)}",x->x+x);
+     *     // result is abbad
+     * </pre>
+     *
+     * @param text text to replace the placeholders in
+     * @param regexp regular expression of the placeholder. The regexp MUST define the 'var' group
+     * @param mapper mapper function that replaces each placeholder. When it returns null, no changes are made
+     * @return text with all placeholders replaces with values from <code>mapper</code>
+     */
+    public static String replacePlaceholder(String text, String regexp, Function<String, String> mapper) {
+        return replacePlaceholder(text, Pattern.compile(regexp), null, mapper);
+    }
+
+    /**
+     * replace all placeholders in a text string with values from a given mapper.
+     * Here is an example :
+     * <pre>
+     *     String result=NMsgVarTextParser.replacePlaceholder("a${b}ad","${(?&lt;var&gt;[a-z]+)}","var",x->x+x);
+     *     // result is abbad
+     * </pre>
+     *
+     * @param text text to replace the placeholders in
+     * @param regexp regular expression of the placeholder. The regexp MUST define the varName
+     * @param varName the varName in the regex, defaults to <code>NMsgVarTextParser.DEFAULT_VAR_NAME</code> aka <code>"var"</code>
+     * @param mapper mapper function that replaces each placeholder. When it returns null, no changes are made
+     * @return text with all placeholders replaces with values from <code>mapper</code>
+     */
+    public static String replacePlaceholder(String text, String regexp, String varName, Function<String, String> mapper) {
+        return replacePlaceholder(text, Pattern.compile(regexp), varName, mapper);
+    }
+
+    /**
+     * replace all placeholders in a text string with values from a given mapper.
+     * Here is an example :
+     * <pre>
+     *     String result=NMsgVarTextParser.replacePlaceholder("a${b}ad",Pattern.compile("${(?&lt;var&gt;[a-z]+)}"),"var",x->x+x);
+     *     // result is abbad
+     * </pre>
+     *
+     * @param text text to replace the placeholders in
+     * @param regexp regular expression of the placeholder. The regexp MUST define the varName
+     * @param varName the varName in the regex, defaults to <code>NMsgVarTextParser.DEFAULT_VAR_NAME</code> aka <code>"var"</code>
+     * @param mapper mapper function that replaces each placeholder. When it returns null, no changes are made
+     * @return text with all placeholders replaces with values from <code>mapper</code>
+     */
+    public static String replacePlaceholder(String text, Pattern regexp, String varName, Function<String, String> mapper) {
+        if (text == null) {
+            return "";
+        }
+        if (mapper == null) {
+            return "";
+        }
+//        NAssert.requireNonNull(regexp, "regexp");
+//        if (NBlankable.isBlank(patternVarName)) {
+//            patternVarName = DEFAULT_VAR_NAME;
+//        }
+//        Matcher matcher = regexp.matcher(text);
+//        StringBuffer sb = new StringBuffer();
+//        while (matcher.find()) {
+//            String name = matcher.group(patternVarName);
+//            String all = matcher.group();
+//            String v = mapper.apply(name);
+//            if (v == null) {
+//                v = all;
+//            }
+//            matcher.appendReplacement(sb, Matcher.quoteReplacement(v));
+//        }
+//        matcher.appendTail(sb);
+//        return sb.toString();
+
+        return parsePlaceHolder(text,regexp,varName)
+                .map(t -> {
+                    switch (t.ttype) {
+                        case NToken.TT_VAR: {
+                            String x = mapper.apply(t.sval);
+                            if (x == null) {
+                                return t.image;
+                            }
+                            return x;
+                        }
+                    }
+                    return t.sval;
+                }).collect(Collectors.joining());
+    }
+
+    public static Stream<NToken> parsePlaceHolder(String text, Pattern pattern, String patternVarName) {
+        NAssert.requireNonNull(pattern, "pattern");
+        if (text == null) {
+            return Stream.empty();
+        }
+        final String TT_DEFAULT_STR = NToken.typeString(NToken.TT_DEFAULT);
+        final String TT_VAR_STR = NToken.typeString(NToken.TT_VAR);
+        return NCollections.stream(new Iterator<NToken>() {
+            final String vn;
+            final Matcher matcher;
+            int last;
+            final List<NToken> buffer = new ArrayList<>(2);
+
+            {
+                if (NBlankable.isBlank(patternVarName)) {
+                    vn = DEFAULT_VAR_NAME;
+                } else {
+                    vn = patternVarName;
+                }
+                matcher = pattern.matcher(text);
+            }
+
+            private boolean ready() {
+                return !buffer.isEmpty();
+            }
+
+            @Override
+            public boolean hasNext() {
+                if (ready()) {
+                    return true;
+                }
+                if (matcher.find()) {
+                    String name = matcher.group(patternVarName);
+                    String all = matcher.group();
+                    int start = matcher.start();
+                    if (start > last) {
+                        String t = text.substring(last, start);
+                        buffer.add(NToken.of(NToken.TT_DEFAULT, t, 0, 0, t, TT_DEFAULT_STR));
+                    }
+                    last = start + all.length();
+                    buffer.add(NToken.of(NToken.TT_VAR, name, 0, 0, all, TT_VAR_STR));
+                    return true;
+                }
+                if (last < text.length()) {
+                    String t = text.substring(last);
+                    buffer.add(NToken.of(NToken.TT_DEFAULT, t, 0, 0, t, TT_DEFAULT_STR));
+                    last = text.length();
+                }
+                return ready();
+            }
+
+            @Override
+            public NToken next() {
+                NAssert.requireTrue(ready(), "token ready");
+                return buffer.remove(0);
+            }
+        });
+    }
+
+    public static String replaceDollarPlaceHolder(String text, Function<String, String> mapper) {
+        if (mapper == null) {
+            return "";
+        }
+        return parseDollarPlaceHolder(text)
+                .map(t -> {
+                    switch (t.ttype) {
+                        case NToken.TT_DOLLAR:
+                        case NToken.TT_DOLLAR_BRACE: {
+                            String x = mapper.apply(t.sval);
+                            if (x == null) {
+                                throw new IllegalArgumentException("var not found " + t.sval);
+                            }
+                            return x;
+                        }
+                    }
+                    return t.sval;
+                }).collect(Collectors.joining());
+    }
+
+    public static Stream<NToken> parseDollarPlaceHolder(String text) {
+        final String TT_DEFAULT_STR = NToken.typeString(NToken.TT_DEFAULT);
+        final String TT_DOLLAR_BRACE_STR = NToken.typeString(NToken.TT_DOLLAR_BRACE);
+        final String TT_DOLLAR_STR = NToken.typeString(NToken.TT_DOLLAR);
+        return NCollections.stream(new Iterator<NToken>() {
+            final char[] t = (text == null ? new char[0] : text.toCharArray());
+            int p = 0;
+            final int length = t.length;
+            final StringBuilder sb = new StringBuilder(length);
+            final StringBuilder n = new StringBuilder(length);
+            final StringBuilder ni = new StringBuilder(length);
+            final List<NToken> buffer = new ArrayList<>(2);
+
+            private boolean ready() {
+                return !buffer.isEmpty();
+            }
+
+            @Override
+            public boolean hasNext() {
+                if (ready()) {
+                    return true;
+                }
+                while (p < length) {
+                    fillOnce();
+                    if (ready()) {
+                        return true;
+                    }
+                }
+                if (sb.length() > 0) {
+                    buffer.add(NToken.of(NToken.TT_DEFAULT, sb.toString(), 0, 0, sb.toString(), TT_DEFAULT_STR));
+                    sb.setLength(0);
+                }
+                return ready();
+            }
+
+            private void fillOnce() {
+                char c = t[p];
+                if (c == '$' && p + 1 < length && t[p + 1] == '{') {
+                    p += 2;
+                    n.setLength(0);
+                    ni.setLength(0);
+                    ni.append(c).append('{');
+                    while (p < length) {
+                        c = t[p];
+                        if (c != '}') {
+                            n.append(c);
+                            ni.append(c);
+                            p++;
+                        } else {
+                            ni.append(c);
+                            break;
+                        }
+                    }
+                    if (sb.length() > 0) {
+                        buffer.add(NToken.of(NToken.TT_DEFAULT, sb.toString(), 0, 0, sb.toString(), TT_DEFAULT_STR));
+                        sb.setLength(0);
+                    }
+                    buffer.add(NToken.of(NToken.TT_DOLLAR_BRACE, n.toString(), 0, 0, ni.toString(), TT_DOLLAR_BRACE_STR));
+                } else if (c == '$' && p + 1 < length && isValidVarStart(t[p + 1])) {
+                    p++;
+                    n.setLength(0);
+                    ni.setLength(0);
+                    ni.append(c);
+                    while (p < length) {
+                        c = t[p];
+                        if (isValidVarPart(c)) {
+                            n.append(c);
+                            ni.append(c);
+                            p++;
+                        } else {
+                            p--;
+                            break;
+                        }
+                    }
+                    if (sb.length() > 0) {
+                        buffer.add(NToken.of(NToken.TT_DEFAULT, sb.toString(), 0, 0, sb.toString(), TT_DEFAULT_STR));
+                        sb.setLength(0);
+                    }
+                    buffer.add(NToken.of(NToken.TT_DOLLAR, n.toString(), 0, 0, ni.toString(), TT_DOLLAR_STR));
+                } else {
+                    sb.append(c);
+                }
+                p++;
+            }
+
+            @Override
+            public NToken next() {
+                NAssert.requireTrue(ready(), "token ready");
+                return buffer.remove(0);
+            }
+        });
+
+    }
+
+    public static boolean isValidVarPart(char c) {
+        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_';
+    }
+
+    public static boolean isValidVarStart(char c) {
+        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
     }
 }

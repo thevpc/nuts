@@ -15,10 +15,12 @@ import java.io.Writer;
  * Input/Output Internal Programming Interface
  */
 public interface NIORPI extends NComponent {
-    static NIORPI of(NSession session){
+    static NIORPI of(NSession session) {
         return NExtensions.of(session).createComponent(NIORPI.class).get();
     }
+
     <T> NAsk<T> createQuestion(NSession session);
+
     <T> NAsk<T> createQuestion(NSessionTerminal terminal);
 
     NMemoryPrintStream ofInMemoryPrintStream();
@@ -49,7 +51,7 @@ public interface NIORPI extends NComponent {
 
     NPrintStream ofPrintStream(Writer out);
 
-    NPrintStream ofNullPrintStream() ;
+    NPrintStream ofNullPrintStream();
 
     NInputSource ofMultiRead(NInputSource source);
 
@@ -69,9 +71,9 @@ public interface NIORPI extends NComponent {
 
     NNonBlockingInputStream ofNonBlockingInputStream(InputStream base);
 
-    NInterruptible<InputStream> ofInterruptible(InputStream base) ;
+    NInterruptible<InputStream> ofInterruptible(InputStream base);
 
-    NInputSourceBuilder ofInputSourceBuilder(InputStream inputStream) ;
+    NInputSourceBuilder ofInputSourceBuilder(InputStream inputStream);
 
     /**
      * return new terminal bound to the given session
@@ -121,7 +123,6 @@ public interface NIORPI extends NComponent {
      * to enable a rich terminal. Rich terminals add somme features
      * including 'auto-complete'. This Method may replace the system
      * terminal and may even load a nuts extension to enable such features.
-     *
      */
     void enableRichTerm();
 }

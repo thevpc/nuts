@@ -1,4 +1,4 @@
-package net.thevpc.nuts.runtime.standalone.installer.svc;
+package net.thevpc.nuts.env;
 
 public enum NOsServiceType {
     INITD,

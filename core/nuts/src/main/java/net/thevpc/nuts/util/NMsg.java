@@ -26,9 +26,6 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NIllegalArgumentException;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NUnsupportedEnumException;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
 
@@ -105,13 +102,9 @@ public class NMsg {
             }
         }
         if (format == NTextFormatType.STYLED) {
-            if (styles == null) {
-                throw new IllegalArgumentException("missing style for " + format);
-            }
+            NAssert.requireNonNull(styles,"styles for "+format);
         } else {
-            if (styles != null) {
-                throw new IllegalArgumentException("styles not supported for " + format);
-            }
+            NAssert.requireNull(styles,"styles for "+format+" (not supported)");
         }
         this.codeLang = NStringUtils.trimToNull(codeLang);
         this.message = message;
@@ -338,7 +331,7 @@ public class NMsg {
     }
 
     private String formatAsV() {
-        return NMsgVarTextParser.replaceDollarString((String) message,
+        return NStringUtils.replaceDollarPlaceHolder((String) message,
                 s -> {
                     Object param = params[0];
                     Function<String, ?> m = null;

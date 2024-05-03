@@ -1,11 +1,17 @@
 package net.thevpc.nuts.runtime.standalone.installer.svc;
 
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NExecutionException;
+import net.thevpc.nuts.NInstallSvcCmd;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.env.NOsServiceType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathPermission;
+import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -18,7 +24,7 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DefaultInstallSvcCommand implements InstallSvcCommand {
+public class DefaultInstallSvcCommand implements NInstallSvcCmd {
     private NOsServiceType systemServiceType;
     private NOsServiceType serviceType;
     private String serviceName;
@@ -52,7 +58,7 @@ public class DefaultInstallSvcCommand implements InstallSvcCommand {
         return serviceName;
     }
 
-    public DefaultInstallSvcCommand setServiceName(String serviceName) {
+    public NInstallSvcCmd setServiceName(String serviceName) {
         this.serviceName = serviceName;
         return this;
     }
@@ -61,16 +67,17 @@ public class DefaultInstallSvcCommand implements InstallSvcCommand {
         return root;
     }
 
-    public DefaultInstallSvcCommand setRoot(NPath root) {
+    public NInstallSvcCmd setRootDirectory(NPath root) {
         this.root = root;
         return this;
     }
 
+    @Override
     public NPath getWorkingDirectory() {
         return workingDirectory;
     }
 
-    public DefaultInstallSvcCommand setWorkingDirectory(NPath workingDirectory) {
+    public NInstallSvcCmd setWorkingDirectory(NPath workingDirectory) {
         this.workingDirectory = workingDirectory;
         return this;
     }
@@ -79,12 +86,12 @@ public class DefaultInstallSvcCommand implements InstallSvcCommand {
         return verbose;
     }
 
-    public DefaultInstallSvcCommand setVerbose(boolean verbose) {
+    public NInstallSvcCmd setVerbose(boolean verbose) {
         this.verbose = verbose;
         return this;
     }
 
-    public DefaultInstallSvcCommand setControlCommand(String[] startCommand) {
+    public NInstallSvcCmd setControlCommand(String[] startCommand) {
         List<String> base0 = new ArrayList<>(Arrays.asList(startCommand));
 
         List<String> base = new ArrayList<>(base0);
@@ -102,37 +109,44 @@ public class DefaultInstallSvcCommand implements InstallSvcCommand {
         return this;
     }
 
+    @Override
     public Map<String, String> getEnv() {
         return env;
     }
 
-    public DefaultInstallSvcCommand setEnv(Map<String, String> env) {
+    public NInstallSvcCmd setEnv(Map<String, String> env) {
         this.env = env;
         return this;
     }
 
+    @Override
     public String[] getStartCommand() {
         return startCommand;
     }
 
+    @Override
     public DefaultInstallSvcCommand setStartCommand(String[] startCommand) {
         this.startCommand = startCommand;
         return this;
     }
 
+    @Override
     public String[] getStopCommand() {
         return stopCommand;
     }
 
+    @Override
     public DefaultInstallSvcCommand setStopCommand(String[] stopCommand) {
         this.stopCommand = stopCommand;
         return this;
     }
 
+    @Override
     public String[] getStatusCommand() {
         return statusCommand;
     }
 
+    @Override
     public DefaultInstallSvcCommand setStatusCommand(String[] statusCommand) {
         this.statusCommand = statusCommand;
         return this;
@@ -396,6 +410,7 @@ public class DefaultInstallSvcCommand implements InstallSvcCommand {
         return getSystemServiceType();
     }
 
+    @Override
     public NOsServiceType getSystemServiceType() {
         if (systemServiceType == null) {
             logVerbose("Checking if systemctl is available...");
@@ -586,57 +601,12 @@ public class DefaultInstallSvcCommand implements InstallSvcCommand {
     }
 
     private static String replaceDollarString(String text, Map<String, String> m, boolean err, int max) {
-        char[] t = (text == null ? new char[0] : text.toCharArray());
-        int p = 0;
-        int length = t.length;
-        StringBuilder sb = new StringBuilder(length);
-        StringBuilder n = new StringBuilder(length);
-        StringBuilder img = new StringBuilder(length);
-        while (p < length) {
-            char c = t[p];
-            if (c == '$') {
-                img.setLength(0);
-                img.append(c);
-                if (p + 1 < length && t[p + 1] == '{') {
-                    img.append(t[p + 1]);
-                    p += 2;
-                    n.setLength(0);
-                    while (p < length) {
-                        c = t[p];
-                        if (c != '}') {
-                            img.append(c);
-                            n.append(c);
-                            p++;
-                        } else {
-                            img.append(c);
-                            break;
-                        }
-                    }
-                    sb.append(getProp(n.toString(), img.toString(), m, err, max - 1));
-                } else if (p + 1 < length && _isValidMessageVar(t[p + 1])) {
-                    p++;
-                    n.setLength(0);
-                    while (p < length) {
-                        c = t[p];
-                        if (_isValidMessageVar(c)) {
-                            img.append(c);
-                            n.append(c);
-                            p++;
-                        } else {
-                            p--;
-                            break;
-                        }
-                    }
-                    sb.append(getProp(n.toString(), img.toString(), m, err, max - 1));
-                } else {
-                    sb.append(c);
-                }
-            } else {
-                sb.append(c);
+        return NStringUtils.replaceDollarPlaceHolder(text, new Function<String, String>() {
+            @Override
+            public String apply(String s) {
+                return getProp(s, "${"+s+"}", m, err, max - 1);
             }
-            p++;
-        }
-        return sb.toString();
+        });
     }
 
 
@@ -705,9 +675,20 @@ public class DefaultInstallSvcCommand implements InstallSvcCommand {
         return x;
     }
 
-    static boolean _isValidMessageVar(char c) {
-        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_';
+
+    @Override
+    public int getSupportLevel(NSupportLevelContext context) {
+        return NConstants.Support.DEFAULT_SUPPORT;
     }
 
+    @Override
+    public NSession getSession() {
+        return session;
+    }
+
+    @Override
+    public boolean configureFirst(NCmdLine cmdLine) {
+        return false;
+    }
 
 }

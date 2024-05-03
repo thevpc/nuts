@@ -29,7 +29,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
     public static final String PROTOCOL = "dotfilefs";
     public static final String PREFIX = PROTOCOL + ":";
 
-    public static class DotfilefsFactory implements NPathFactory {
+    public static class DotfilefsFactory implements NPathFactorySPI {
         private NWorkspace ws;
 
         public DotfilefsFactory(NWorkspace ws) {

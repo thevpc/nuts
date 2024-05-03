@@ -9,7 +9,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
-import net.thevpc.nuts.spi.NPathFactory;
+import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.io.NPaths;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -84,13 +84,13 @@ public class DefaultNPaths implements NPaths {
     }
 
     @Override
-    public NPaths addPathFactory(NPathFactory pathFactory) {
+    public NPaths addPathFactory(NPathFactorySPI pathFactory) {
         getModel().addPathFactory(pathFactory);
         return this;
     }
 
     @Override
-    public NPaths removePathFactory(NPathFactory pathFactory) {
+    public NPaths removePathFactory(NPathFactorySPI pathFactory) {
         getModel().removePathFactory(pathFactory);
         return this;
     }

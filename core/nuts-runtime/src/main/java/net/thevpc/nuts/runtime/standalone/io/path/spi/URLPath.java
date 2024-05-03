@@ -10,7 +10,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.NPathParts;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.NCachedValue;
 import net.thevpc.nuts.spi.NFormatSPI;
-import net.thevpc.nuts.spi.NPathFactory;
+import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NString;
@@ -847,7 +847,7 @@ public class URLPath implements NPathSPI {
         }
     }
 
-    public static class URLPathFactory implements NPathFactory {
+    public static class URLPathFactory implements NPathFactorySPI {
         NWorkspace ws;
 
         public URLPathFactory(NWorkspace ws) {

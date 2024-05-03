@@ -265,7 +265,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
 //        }
 //    }
 
-    public static class HtmlfsFactory implements NPathFactory {
+    public static class HtmlfsFactory implements NPathFactorySPI {
         private final NWorkspace ws;
 
         public HtmlfsFactory(NWorkspace ws) {
