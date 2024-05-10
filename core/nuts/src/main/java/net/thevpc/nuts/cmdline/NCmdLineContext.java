@@ -41,11 +41,20 @@ import net.thevpc.nuts.NSessionProvider;
  * @app.category Command Line
  */
 public interface NCmdLineContext extends NSessionProvider {
-    Object getSource();
+    default Object getSource() {
+        return null;
+    }
+
+    default boolean isSafe() {
+        return false;
+    }
 
     /**
      * configurable or null
+     *
      * @return configurable or null
      */
-    NCmdLineConfigurable getConfigurable();
+    default NCmdLineConfigurable getConfigurable() {
+        return null;
+    }
 }

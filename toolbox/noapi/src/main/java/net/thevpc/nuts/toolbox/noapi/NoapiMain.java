@@ -3,7 +3,7 @@ package net.thevpc.nuts.toolbox.noapi;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineContext;
-import net.thevpc.nuts.cmdline.NCmdLineProcessor;
+import net.thevpc.nuts.cmdline.NCmdLineRunner;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.toolbox.noapi.model.NoapiCmdData;
 import net.thevpc.nuts.toolbox.noapi.service.NOpenAPIService;
@@ -29,9 +29,9 @@ public class NoapiMain implements NApplication {
     public void run(NSession session) {
         this.service = new NOpenAPIService(session);
         ref.setCommand("pdf");
-        session.processAppCmdLine(new NCmdLineProcessor() {
+        session.runAppCmdLine(new NCmdLineRunner() {
             @Override
-            public boolean onCmdNextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
+            public boolean nextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
                 NSession session = cmdLine.getSession();
                 switch (option.asString().get(session)) {
                     case "--yaml": {
@@ -117,7 +117,7 @@ public class NoapiMain implements NApplication {
             }
 
             @Override
-            public boolean onCmdNextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
+            public boolean nextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
                 NSession session = cmdLine.getSession();
                 NoapiCmdData c = new NoapiCmdData();
                 c.setCommand(ref.getCommand());
@@ -133,7 +133,7 @@ public class NoapiMain implements NApplication {
             }
 
             @Override
-            public void onCmdFinishParsing(NCmdLine cmdLine, NCmdLineContext context) {
+            public void validate(NCmdLine cmdLine, NCmdLineContext context) {
                 NSession session = cmdLine.getSession();
                 if (data.isEmpty()) {
                     cmdLine.throwMissingArgument();
@@ -147,7 +147,7 @@ public class NoapiMain implements NApplication {
             }
 
             @Override
-            public void onCmdExec(NCmdLine cmdLine, NCmdLineContext context) {
+            public void run(NCmdLine cmdLine, NCmdLineContext context) {
                 for (NoapiCmdData d : data) {
                     switch (d.getCommand()) {
                         case "pdf": {

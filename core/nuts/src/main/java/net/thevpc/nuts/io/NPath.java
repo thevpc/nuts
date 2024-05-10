@@ -503,4 +503,6 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
 
     boolean isDeleteOnDispose();
 
+    // changes the path session
+    NPath setSession(NSession session);
 }

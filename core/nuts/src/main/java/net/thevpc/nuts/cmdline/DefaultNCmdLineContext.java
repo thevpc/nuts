@@ -5,6 +5,7 @@ import net.thevpc.nuts.NSessionProvider;
 
 public class DefaultNCmdLineContext implements NCmdLineContext {
     private Object source;
+    private boolean safe;
 
     public DefaultNCmdLineContext(Object source) {
         this.source = source;
@@ -33,5 +34,15 @@ public class DefaultNCmdLineContext implements NCmdLineContext {
             return ((NSessionProvider) source).getSession();
         }
         return null;
+    }
+
+    @Override
+    public boolean isSafe() {
+        return safe;
+    }
+
+    public DefaultNCmdLineContext setSafe(boolean safe) {
+        this.safe = safe;
+        return this;
     }
 }

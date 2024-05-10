@@ -33,7 +33,9 @@ import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Simple Command line parser implementation. The command line supports
@@ -127,11 +129,11 @@ public interface NCmdLine extends Iterable<NArg>, NFormattable, NBlankable, NSes
                 .map(DefaultNCmdLine::new);
     }
 
-    static NOptional<NCmdLine> parseSystem(String line, NSession session) {
+    static NOptional<NCmdLine> parse(String line, NSession session) {
         return NOptional.of(NCmdLines.of(session).parseCmdLine(line));
     }
 
-    static NOptional<NCmdLine> parseSystem(String line, NShellFamily shellFamily, NSession session) {
+    static NOptional<NCmdLine> parse(String line, NShellFamily shellFamily, NSession session) {
         return NOptional.of(NCmdLines.of(session)
                 .setShellFamily(shellFamily)
                 .parseCmdLine(line));
@@ -649,11 +651,36 @@ public interface NCmdLine extends Iterable<NArg>, NFormattable, NBlankable, NSes
 
     NCmdLine setSession(NSession session);
 
-    void process(NCmdLineProcessor processor, NCmdLineContext context);
+    void forEachPeek(NCmdLineRunner processor);
+    void forEachPeek(NCmdLineRunner processor, NCmdLineContext context);
 
     NCmdLine pushBack(NArg... args);
 
     NCmdLine pushBack(String... args);
 
     NCmdLine append(String... args);
+
+    /**
+     * creates an iterator from a snapshot of the current CmdLine.
+     * Will not consume any argument in the current NCmdLine instance. use forEachPeek instead.
+     * @return Iterator<NArg>
+     */
+    @Override
+    Iterator<NArg> iterator();
+
+    /**
+     * Performs the given action for each element of the Iterable until all elements have been processed or the action throws an exception.
+     * Will not consume any argument in the current NCmdLine instance. use forEachPeek instead.
+     *
+     * @param action The action to be performed for each element
+     */
+    @Override
+    default void forEach(Consumer<? super NArg> action) {
+        Iterable.super.forEach(action);
+    }
+
+    NCmdLine forEachPeek(NCmdLineConsumer action, NCmdLineContext context);
+
+    NCmdLine forEachPeek(NCmdLineConsumer action);
+
 }

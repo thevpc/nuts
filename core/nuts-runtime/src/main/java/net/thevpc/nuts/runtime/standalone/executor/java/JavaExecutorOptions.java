@@ -294,7 +294,7 @@ public final class JavaExecutorOptions {
             if (mainClass == null) {
                 if (path != null) {
                     //check manifest!
-                    List<NExecutionEntry> classes = NLibPaths.of(session).parseExecutionEntries(path);
+                    List<NExecutionEntry> classes = NExecutionEntry.parse(NPath.of(path,session));
                     NExecutionEntry[] primary = classes.stream().filter(NExecutionEntry::isDefaultEntry).toArray(NExecutionEntry[]::new);
                     if (primary.length > 0) {
                         mainClass = Arrays.stream(primary).map(NExecutionEntry::getName)
@@ -305,7 +305,7 @@ public final class JavaExecutorOptions {
                     }
                 }
             } else if (!mainClass.contains(".")) {
-                List<NExecutionEntry> classes = NLibPaths.of(session).parseExecutionEntries(path);
+                List<NExecutionEntry> classes = NExecutionEntry.parse(NPath.of(path,session));
                 List<String> possibleClasses = classes.stream().map(NExecutionEntry::getName)
                         .collect(Collectors.toList());
                 String r = resolveMainClass(mainClass, possibleClasses);

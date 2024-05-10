@@ -3,7 +3,7 @@ package net.thevpc.nuts.toolbox.ncode;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineContext;
-import net.thevpc.nuts.cmdline.NCmdLineProcessor;
+import net.thevpc.nuts.cmdline.NCmdLineRunner;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.toolbox.ncode.bundles.strings.StringComparator;
 import net.thevpc.nuts.toolbox.ncode.bundles.strings.StringComparators;
@@ -20,7 +20,7 @@ import java.util.List;
 
 import static net.thevpc.nuts.toolbox.ncode.SourceNavigator.navigate;
 
-class NCodeMainCmdProcessor implements NCmdLineProcessor {
+class NCodeMainCmdProcessor implements NCmdLineRunner {
     private List<String> paths = new ArrayList<>();
     private List<StringComparator> typeComparators = new ArrayList<>();
     private List<StringComparator> fileComparators = new ArrayList<>();
@@ -32,12 +32,12 @@ class NCodeMainCmdProcessor implements NCmdLineProcessor {
     }
 
     @Override
-    public void onCmdInitParsing(NCmdLine cmdLine, NCmdLineContext context) {
+    public void init(NCmdLine cmdLine, NCmdLineContext context) {
         cmdLine.setExpandSimpleOptions(true);
     }
 
     @Override
-    public boolean onCmdNextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
+    public boolean nextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
         switch (option.getStringKey().get(session)) {
             case "-i": {
                 option = cmdLine.nextFlag().get(session);
@@ -76,13 +76,13 @@ class NCodeMainCmdProcessor implements NCmdLineProcessor {
     }
 
     @Override
-    public boolean onCmdNextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
+    public boolean nextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
         paths.add(cmdLine.next().flatMap(NLiteral::asString).get(session));
         return true;
     }
 
     @Override
-    public void onCmdExec(NCmdLine cmdLine, NCmdLineContext context) {
+    public void run(NCmdLine cmdLine, NCmdLineContext context) {
         if (paths.isEmpty()) {
             paths.add(".");
         }

@@ -49,7 +49,7 @@ public class UnsetCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+    protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         NArg aa = cmdLine.peek().get(session);
@@ -69,7 +69,7 @@ public class UnsetCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
+    protected void main(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.fct) {
             for (String k : options.list) {
@@ -88,7 +88,7 @@ public class UnsetCommand extends NShellBuiltinDefault {
         Set<String> list = new HashSet<>();
     }
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, cmdLine, context);
+    protected boolean nextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return nextOption(arg, cmdLine, context);
     }
 }

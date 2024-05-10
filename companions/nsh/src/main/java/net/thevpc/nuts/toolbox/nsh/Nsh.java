@@ -2,7 +2,7 @@ package net.thevpc.nuts.toolbox.nsh;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.cmdline.NCmdLineProcessor;
+import net.thevpc.nuts.cmdline.NCmdLineRunner;
 import net.thevpc.nuts.cmdline.NCmdLineContext;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -39,14 +39,14 @@ public class Nsh implements NApplication {
     public void onInstallApplication(NSession session) {
         NLogOp log = NLogOp.of(Nsh.class, session);
         log.level(Level.CONFIG).verb(NLogVerb.START).log(NMsg.ofPlain("[nsh] Installation..."));
-        session.processAppCmdLine(new NCmdLineProcessor() {
+        session.runAppCmdLine(new NCmdLineRunner() {
             @Override
-            public void onCmdInitParsing(NCmdLine cmdLine, NCmdLineContext context) {
+            public void init(NCmdLine cmdLine, NCmdLineContext context) {
                 cmdLine.setCommandName("nsh --nuts-exec-mode=install");
             }
 
             @Override
-            public void onCmdExec(NCmdLine cmdLine, NCmdLineContext context) {
+            public void run(NCmdLine cmdLine, NCmdLineContext context) {
                 if (session.isTrace() || session.isYes()) {
                     log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofC("[nsh] activating options trace=%s yes=%s", session.isTrace(), session.isYes()));
                 }

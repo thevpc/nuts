@@ -61,7 +61,7 @@ public class CatCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+    protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         NArg a;
@@ -86,7 +86,7 @@ public class CatCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+    protected boolean nextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         String path = cmdLine.next().flatMap(NLiteral::asString).get(session);
@@ -95,7 +95,7 @@ public class CatCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
+    protected void main(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.files.isEmpty()) {
             options.files.add(null);

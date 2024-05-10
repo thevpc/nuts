@@ -1,5 +1,6 @@
 package net.thevpc.nuts.reserved.optional;
 
+import java.util.Objects;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.util.NMsg;
@@ -8,8 +9,13 @@ import net.thevpc.nuts.util.NOptionalErrorException;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
+import net.thevpc.nuts.util.NOptionalType;
+import static net.thevpc.nuts.util.NOptionalType.EMPTY;
+import static net.thevpc.nuts.util.NOptionalType.ERROR;
+import static net.thevpc.nuts.util.NOptionalType.PRESENT;
 
 public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> implements Cloneable {
+
     private Function<NSession, NMsg> message;
     private Throwable error;
 
@@ -19,6 +25,17 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
         }
         this.message = message;
         this.error = error;
+    }
+
+    @Override
+    public <V> NOptional<V> then(Function<T, V> mapper) {
+        Objects.requireNonNull(mapper);
+        return NOptional.ofError(getMessage(), getError());
+    }
+
+    @Override
+    public NOptionalType getType() {
+        return NOptionalType.ERROR;
     }
 
     @Override
@@ -36,10 +53,9 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
         return get(s -> message.get(), null);
     }
 
-
     @Override
     public T get(Function<NSession, NMsg> message, NSession session) {
-        throwError(message, session,this.message);
+        throwError(message, session, this.message);
         //never reached!
         return null;
     }

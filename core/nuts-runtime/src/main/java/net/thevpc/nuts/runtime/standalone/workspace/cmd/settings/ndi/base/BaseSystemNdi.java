@@ -702,7 +702,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             return iconPath;
         }
         if (iconPath.startsWith("classpath://")) {
-            return "nuts-resource://" + appId.getLongName() + "" + iconPath.substring("classpath://".length() - 1);
+            return "resource://" + appId.getLongName() + "" + iconPath.substring("classpath://".length() - 1);
         }
         return iconPath;
     }
@@ -729,9 +729,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 descAppIcon =
                         resolveBestIcon(rid,
                                 Arrays.asList(
-                                "nuts-resource://" + rid.getLongName() + "/net/thevpc/nuts/runtime/nuts.svg",
-                                "nuts-resource://" + rid.getLongName() + "/net/thevpc/nuts/runtime/nuts.png",
-                                "nuts-resource://" + rid.getLongName() + "/net/thevpc/nuts/runtime/nuts.ico"
+                                "resource://" + rid.getLongName() + "/net/thevpc/nuts/runtime/nuts.svg",
+                                "resource://" + rid.getLongName() + "/net/thevpc/nuts/runtime/nuts.png",
+                                "resource://" + rid.getLongName() + "/net/thevpc/nuts/runtime/nuts.ico"
                                 )
                         );
             } else if (appDef.getId().getGroupId().startsWith("net.thevpc.nuts")) {
@@ -740,9 +740,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 descAppIcon =
                         resolveBestIcon(rid,
                                 Arrays.asList(
-                                "nuts-resource://" + rid.getLongName() + "/net/thevpc/nuts/runtime/nuts-app.svg",
-                                "nuts-resource://" + rid.getLongName() + "/net/thevpc/nuts/runtime/nuts-app.png",
-                                "nuts-resource://" + rid.getLongName() + "/net/thevpc/nuts/runtime/nuts-app.ico"
+                                "resource://" + rid.getLongName() + "/net/thevpc/nuts/runtime/nuts-app.svg",
+                                "resource://" + rid.getLongName() + "/net/thevpc/nuts/runtime/nuts-app.png",
+                                "resource://" + rid.getLongName() + "/net/thevpc/nuts/runtime/nuts-app.ico"
                                 )
                         );
             }

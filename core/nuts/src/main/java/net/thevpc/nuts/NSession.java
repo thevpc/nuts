@@ -26,7 +26,7 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
-import net.thevpc.nuts.cmdline.NCmdLineProcessor;
+import net.thevpc.nuts.cmdline.NCmdLineRunner;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.format.NContentType;
@@ -327,7 +327,7 @@ public interface NSession extends NCmdLineConfigurable {
 
     NCmdLine getAppCmdLine();
 
-    void processAppCmdLine(NCmdLineProcessor commandLineProcessor);
+    void runAppCmdLine(NCmdLineRunner commandLineProcessor);
 
     NPath getAppFolder(NStoreType location);
 

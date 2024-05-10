@@ -46,6 +46,11 @@ public abstract class AbstractNInputSource implements NInputSource {
         return session;
     }
 
+    public NInputSource setSession(NSession session) {
+        this.session = NAssert.requireSession(session);
+        return this;
+    }
+
     @Override
     public Stream<String> getLines() {
         return getLines(null);

@@ -41,23 +41,24 @@ public class NResourcePath implements NPathSPI {
     private URL[] urls = null;
     private NPath urlPath = null;
     private NSession session;
+    private static String nResourceProtocol = "resource://";
 
     public NResourcePath(String path, NSession session) {
         this.path = path;
         this.session = session;
         String idsStr;
-        if (path.startsWith("nuts-resource://(")) {
+        if (path.startsWith(nResourceProtocol +"(")) {
             int x = path.indexOf(')');
             if (x > 0) {
-                idsStr = path.substring("nuts-resource://(".length(), x);
+                idsStr = path.substring((nResourceProtocol+"(").length(), x);
                 location = path.substring(x + 1);
             } else {
                 throw new NIllegalArgumentException(session, NMsg.ofC("invalid path %s", path));
             }
-        } else if (path.startsWith("nuts-resource://")) {
-            int x = path.indexOf('/', "nuts-resource://".length());
+        } else if (path.startsWith(nResourceProtocol)) {
+            int x = path.indexOf('/', nResourceProtocol.length());
             if (x > 0) {
-                idsStr = path.substring("nuts-resource://".length(), x);
+                idsStr = path.substring(nResourceProtocol.length(), x);
                 location = path.substring(x);
             } else {
                 throw new NIllegalArgumentException(session, NMsg.ofC("invalid path %s", path));
@@ -76,7 +77,7 @@ public class NResourcePath implements NPathSPI {
 
 
     protected static String rebuildURL(String location, NId[] ids) {
-        StringBuilder sb = new StringBuilder("nuts-resource://");
+        StringBuilder sb = new StringBuilder(nResourceProtocol);
         boolean complex = Arrays.stream(ids).map(Object::toString).anyMatch(x -> x.contains(";") || x.contains("/"));
         if (complex) {
             sb.append("(");
@@ -94,7 +95,7 @@ public class NResourcePath implements NPathSPI {
     protected static NString rebuildURL2(NString location, NId[] ids, NSession session) {
         NTexts txt = NTexts.of(session);
         NTextBuilder sb = txt.ofBuilder();
-        sb.append("nuts-resource://", NTextStyle.path());
+        sb.append(nResourceProtocol, NTextStyle.path());
         boolean complex = Arrays.stream(ids).map(Object::toString).anyMatch(x -> x.contains(";") || x.contains("/"));
         if (complex) {
             sb.append("(", NTextStyle.separator());
@@ -164,7 +165,7 @@ public class NResourcePath implements NPathSPI {
 
     @Override
     public String getProtocol(NPath basePath) {
-        return "nuts-resource";
+        return "resource";
     }
 
     @Override
@@ -533,17 +534,17 @@ public class NResourcePath implements NPathSPI {
             String path = p.path;
             NTexts text = NTexts.of(p.getSession());
             NTextBuilder tb = text.ofBuilder();
-            tb.append("nuts-resource://", NTextStyle.primary1());
-            if (path.startsWith("nuts-resource://(")) {
+            tb.append("resource://", NTextStyle.primary1());
+            if (path.startsWith("resource://(")) {
                 tb.append("(", NTextStyle.separator());
                 int x = path.indexOf(')');
                 if (x > 0) {
-                    String idsStr = path.substring("nuts-resource://(".length(), x);
+                    String idsStr = path.substring("resource://(".length(), x);
                     tb.appendJoined(
                             NTexts.of(p.getSession()).ofStyled(";", NTextStyle.separator()),
                             StringTokenizerUtils.splitSemiColon(idsStr).stream().map(xi -> {
                                 xi = xi.trim();
-                                if (xi.length() > 0) {
+                                if (!xi.isEmpty()) {
                                     NId pp = NId.of(xi).get(p.getSession());
                                     if (pp == null) {
                                         return xi;
@@ -557,10 +558,10 @@ public class NResourcePath implements NPathSPI {
                 } else {
                     return text.ofText(path);
                 }
-            } else if (path.startsWith("nuts-resource://")) {
-                int x = path.indexOf('/', "nuts-resource://".length());
+            } else if (path.startsWith("resource://")) {
+                int x = path.indexOf('/', "resource://".length());
                 if (x > 0) {
-                    String sid = path.substring("nuts-resource://".length(), x);
+                    String sid = path.substring("resource://".length(), x);
                     NId ii = NId.of(sid).get(p.getSession());
                     if (ii == null) {
                         tb.append(sid);
@@ -599,7 +600,7 @@ public class NResourcePath implements NPathSPI {
         public NCallableSupport<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
             NSessionUtils.checkSession(ws, session);
             try {
-                if (path.startsWith("nuts-resource:")) {
+                if (path.startsWith("resource:")) {
                     return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, () -> new NResourcePath(path, session));
                 }
             } catch (Exception ex) {
@@ -611,7 +612,7 @@ public class NResourcePath implements NPathSPI {
         @Override
         public int getSupportLevel(NSupportLevelContext context) {
             String path= context.getConstraints();
-            if (path.startsWith("nuts-resource:")) {
+            if (path.startsWith("resource:")) {
                 return NConstants.Support.DEFAULT_SUPPORT;
             }
             return NConstants.Support.NO_SUPPORT;

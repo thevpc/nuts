@@ -2,7 +2,7 @@ package net.thevpc.nuts.toolbox.ndoc;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLineContext;
-import net.thevpc.nuts.cmdline.NCmdLineProcessor;
+import net.thevpc.nuts.cmdline.NCmdLineRunner;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.toolbox.ndoc.doc.MdDoclet;
@@ -11,7 +11,7 @@ import net.thevpc.nuts.toolbox.ndoc.doc.MdDocletConfig;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NDocMain implements NApplication, NCmdLineProcessor {
+public class NDocMain implements NApplication, NCmdLineRunner {
     private List<String> src = new ArrayList<>();
     private List<String> pck = new ArrayList<>();
     private String target;
@@ -23,11 +23,11 @@ public class NDocMain implements NApplication, NCmdLineProcessor {
 
     @Override
     public void run(NSession session) {
-        session.processAppCmdLine(this);
+        session.runAppCmdLine(this);
     }
 
     @Override
-    public boolean onCmdNextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
+    public boolean nextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
         NSession session = cmdLine.getSession();
         switch (option.key()) {
             case "-s":
@@ -55,12 +55,12 @@ public class NDocMain implements NApplication, NCmdLineProcessor {
     }
 
     @Override
-    public boolean onCmdNextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
+    public boolean nextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
         return false;
     }
 
     @Override
-    public void onCmdExec(NCmdLine cmdLine, NCmdLineContext context) {
+    public void run(NCmdLine cmdLine, NCmdLineContext context) {
         if (src.isEmpty()) {
             src.add(".");
         }

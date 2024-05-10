@@ -10,6 +10,7 @@ import net.thevpc.nuts.web.NWebResponseException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -75,6 +76,16 @@ public class NWebResponseImpl implements NWebResponse {
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
+    }
+
+    @Override
+    public Map<?, ?> getContentAsJsonMap() {
+        return getContentAsJson(Map.class);
+    }
+
+    @Override
+    public List<?> getContentAsJsonList() {
+        return getContentAsJson(List.class);
     }
 
     @Override

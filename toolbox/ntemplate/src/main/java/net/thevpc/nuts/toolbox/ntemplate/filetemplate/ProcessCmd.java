@@ -23,7 +23,7 @@ public class ProcessCmd extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+    protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options o = context.getOptions();
         NSession session = context.getSession();
         if (cmdLine.isNonOption(0)) {
@@ -37,7 +37,7 @@ public class ProcessCmd extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
+    protected void main(NCmdLine cmdLine, NShellExecutionContext context) {
         Options o = context.getOptions();
         if (o.args.size() == 0) {
             throw new NExecutionException(context.getSession(), NMsg.ofC("%s : invalid arguments count", getName()), NExecutionException.ERROR_1);
@@ -53,7 +53,7 @@ public class ProcessCmd extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, cmdLine, context);
+    protected boolean nextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return nextOption(arg, cmdLine, context);
     }
 }

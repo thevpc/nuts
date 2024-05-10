@@ -54,6 +54,12 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
     }
 
     @Override
+    public NPath setSession(NSession session) {
+        super.setSession(session);
+        return this;
+    }
+
+    @Override
     public boolean isKnownContentLength() {
         return true;
     }

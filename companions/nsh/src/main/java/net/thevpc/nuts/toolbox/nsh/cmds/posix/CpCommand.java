@@ -50,14 +50,14 @@ public class CpCommand extends NShellBuiltinDefault {
 
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+    protected boolean nextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         options.files.add(cmdLine.next().get().toString());
         return true;
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+    protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         switch (cmdLine.peek().get(session).key()) {
@@ -76,7 +76,7 @@ public class CpCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
+    protected void main(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         for (String value : options.files) {

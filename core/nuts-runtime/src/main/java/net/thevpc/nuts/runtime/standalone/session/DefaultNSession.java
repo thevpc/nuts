@@ -2069,8 +2069,8 @@ public class DefaultNSession implements Cloneable, NSession {
     }
 
     @Override
-    public void processAppCmdLine(NCmdLineProcessor commandLineProcessor) {
-        getAppCmdLine().process(commandLineProcessor, new DefaultNCmdLineContext(this));
+    public void runAppCmdLine(NCmdLineRunner commandLineProcessor) {
+        getAppCmdLine().forEachPeek(commandLineProcessor, new DefaultNCmdLineContext(this));
     }
 
     @Override

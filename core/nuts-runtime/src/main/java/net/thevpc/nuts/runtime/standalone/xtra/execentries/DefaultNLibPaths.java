@@ -36,11 +36,6 @@ public class DefaultNLibPaths implements NLibPaths {
     }
 
     @Override
-    public List<NExecutionEntry> parseExecutionEntries(File file) {
-        return parseExecutionEntries(file.toPath());
-    }
-
-    @Override
     public List<NExecutionEntry> parseExecutionEntries(NPath file) {
         if (file.getName().toLowerCase().endsWith(".jar")) {
             try {
@@ -54,29 +49,6 @@ public class DefaultNLibPaths implements NLibPaths {
             try {
                 try (InputStream in = file.getInputStream()) {
                     return parseExecutionEntries(in, "class", file.toAbsolute().normalize().toString());
-                }
-            } catch (IOException ex) {
-                throw new NIOException(session, ex);
-            }
-        } else {
-            return Collections.emptyList();
-        }
-    }
-
-    @Override
-    public List<NExecutionEntry> parseExecutionEntries(Path file) {
-        if (file.getFileName().toString().toLowerCase().endsWith(".jar")) {
-            try {
-                try (InputStream in = Files.newInputStream(file)) {
-                    return parseExecutionEntries(in, "jar", file.toAbsolutePath().normalize().toString());
-                }
-            } catch (IOException ex) {
-                throw new NIOException(session, ex);
-            }
-        } else if (file.getFileName().toString().toLowerCase().endsWith(".class")) {
-            try {
-                try (InputStream in = Files.newInputStream(file)) {
-                    return parseExecutionEntries(in, "class", file.toAbsolutePath().normalize().toString());
                 }
             } catch (IOException ex) {
                 throw new NIOException(session, ex);
@@ -178,7 +150,7 @@ public class DefaultNLibPaths implements NLibPaths {
     }
 
     @Override
-    public List<NId> resolveIds(Class clazz) {
+    public List<NId> resolveIds(Class<?> clazz) {
         LinkedHashSet<NId> all = new LinkedHashSet<>();
         NApplicationInfo annotation = (NApplicationInfo) clazz.getAnnotation(NApplicationInfo.class);
         if (annotation != null) {

@@ -7,7 +7,7 @@ import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineContext;
-import net.thevpc.nuts.cmdline.NCmdLineProcessor;
+import net.thevpc.nuts.cmdline.NCmdLineRunner;
 
 /**
  * Event Based Command line processing
@@ -21,13 +21,13 @@ public class CustomCliA implements NApplication {
 
     @Override
     public void run(NSession session) {
-        session.processAppCmdLine(new NCmdLineProcessor() {
+        session.runAppCmdLine(new NCmdLineRunner() {
             boolean noMoreOptions = false;
             boolean clean = false;
             List<String> params = new ArrayList<>();
 
             @Override
-            public boolean onCmdNextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
+            public boolean nextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
                 if (!noMoreOptions) {
                     return false;
                 }
@@ -45,13 +45,13 @@ public class CustomCliA implements NApplication {
             }
 
             @Override
-            public boolean onCmdNextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
+            public boolean nextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
                 params.add(cmdLine.next().get().toString());
                 return true;
             }
 
             @Override
-            public void onCmdExec(NCmdLine cmdLine, NCmdLineContext context) {
+            public void run(NCmdLine cmdLine, NCmdLineContext context) {
                 if (clean) {
                     cmdLine.getSession().out().println("cleaned!");
                 }

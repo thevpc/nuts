@@ -266,7 +266,7 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
                                     factory.ofPlain("HOME:"),
                                     factory.ofStyled(jpsResult.getHome(), NTextStyle.path()),
                                     factory.ofPlain("CMD:"),
-                                    NCmdLine.parseSystem(jpsResult.getArgsLine(), session))
+                                    NCmdLine.parse(jpsResult.getArgsLine(), session))
                             );
                             break;
                         }

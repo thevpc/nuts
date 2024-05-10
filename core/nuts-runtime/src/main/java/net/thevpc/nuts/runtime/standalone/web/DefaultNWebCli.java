@@ -232,7 +232,7 @@ public class DefaultNWebCli implements NWebCli {
                 if (!r.isOneWay()) {
                     //TODO change me with a smart copy input source!
                     HttpURLConnection uc2 = uc;
-                    bytes = NInputSourceBuilder.of(uc.getInputStream(),session).setCloseAction(() -> {
+                    bytes = NInputSourceBuilder.of(uc.getInputStream(), session).setCloseAction(() -> {
                                 // close connexion when fully read!
                                 if (uc2 != null) {
                                     try {
@@ -277,13 +277,13 @@ public class DefaultNWebCli implements NWebCli {
                 }
             }
         } catch (SocketTimeoutException ex) {
-            throw new UncheckedIOException("timed out loading " + spec, ex);
+            throw new UncheckedIOException("timed out loading " + spec + " (" + ex.getMessage() + ")", ex);
         } catch (InterruptedByTimeoutException ex) {
-            throw new UncheckedIOException("interrupt loading " + spec, ex);
+            throw new UncheckedIOException("interrupt loading " + spec + " (" + ex.getMessage() + ")", ex);
         } catch (InterruptedIOException ex) {
-            throw new UncheckedIOException("interrupt loading " + spec, ex);
+            throw new UncheckedIOException("interrupt loading " + spec + " (" + ex.getMessage() + ")", ex);
         } catch (IOException ex) {
-            throw new UncheckedIOException("error loading " + spec, ex);
+            throw new UncheckedIOException("error loading " + spec + " (" + ex.getMessage() + ")", ex);
         }
     }
 

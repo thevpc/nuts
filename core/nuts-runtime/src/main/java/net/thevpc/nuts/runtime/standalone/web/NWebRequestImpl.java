@@ -5,6 +5,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.web.*;
 
@@ -618,6 +619,14 @@ public class NWebRequestImpl implements NWebRequest {
     @Override
     public String toString() {
         return getEffectiveUrl();
+    }
+
+    @Override
+    public NMsg toMsg() {
+        return NMsg.ofC("%s %s",
+                method == null ? NHttpMethod.GET : method,
+                NMsg.ofStyled(getEffectiveUrl(), NTextStyle.path())
+                );
     }
 }
 

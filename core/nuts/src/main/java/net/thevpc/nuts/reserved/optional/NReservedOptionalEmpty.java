@@ -6,10 +6,16 @@ import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import net.thevpc.nuts.util.NOptionalType;
+import static net.thevpc.nuts.util.NOptionalType.EMPTY;
+import static net.thevpc.nuts.util.NOptionalType.ERROR;
+import static net.thevpc.nuts.util.NOptionalType.PRESENT;
 
 public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> implements Cloneable {
+
     private Function<NSession, NMsg> message;
 
     public NReservedOptionalEmpty(Function<NSession, NMsg> message) {
@@ -31,9 +37,14 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
 
     @Override
     public T get(Function<NSession, NMsg> message, NSession session) {
-        throwError(message, session,this.message);
+        throwError(message, session, this.message);
         //never reached!
         return null;
+    }
+
+    public <V> NOptional<V> then(Function<T, V> mapper) {
+        Objects.requireNonNull(mapper);
+        return NOptional.ofEmpty(getMessage());
     }
 
     @Override
@@ -41,6 +52,10 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
         return null;
     }
 
+    @Override
+    public NOptionalType getType() {
+        return NOptionalType.EMPTY;
+    }
 
     @Override
     public NOptional<T> ifBlankEmpty() {

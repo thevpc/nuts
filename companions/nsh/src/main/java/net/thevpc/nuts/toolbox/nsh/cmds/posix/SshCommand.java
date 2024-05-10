@@ -52,7 +52,7 @@ public class SshCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+    protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options o = context.getOptions();
         NArg a;
         NSession session = context.getSession();
@@ -90,7 +90,7 @@ public class SshCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
+    protected void main(NCmdLine cmdLine, NShellExecutionContext context) {
         Options o = context.getOptions();
         // address --nuts [nuts options] args
         NSession session = context.getSession();
@@ -167,7 +167,7 @@ public class SshCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, cmdLine, context);
+    protected boolean nextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return nextOption(arg, cmdLine, context);
     }
 }

@@ -11,7 +11,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public abstract class NReservedOptionalImpl<T> implements NOptional<T> {
+public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneable {
+
     private NSession session;
 
     public NReservedOptionalImpl() {
@@ -129,6 +130,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T> {
         return map(mapper);
     }
 
+    @Override
     public <V> NOptional<V> map(Function<T, V> mapper) {
         Objects.requireNonNull(mapper);
         if (isPresent()) {
@@ -137,6 +139,37 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T> {
         return (NOptional<V>) this;
     }
 
+    public <V> NOptional<V> then(Function<T, V> mapper) {
+        Objects.requireNonNull(mapper);
+        switch (getType()) {
+            case PRESENT: {
+                try {
+                    T y = get();
+                    if (y != null) {
+                        try {
+                            return NOptional.of(mapper.apply(y));
+                        } catch (Exception ex) {
+                            return NOptional.ofError(getMessage(), ex);
+                        }
+                    } else {
+                        return NOptional.ofEmpty(getMessage());
+                    }
+                } catch (Exception ex) {
+                    return NOptional.ofError(getMessage(), ex);
+                }
+            }
+            case EMPTY: {
+                return NOptional.ofEmpty(getMessage());
+            }
+            case ERROR: {
+                return NOptional.ofError(getMessage(), getError());
+            }
+        }
+        //never
+        return NOptional.ofEmpty(getMessage());
+    }
+
+    @Override
     public NOptional<T> filter(NMessagedPredicate<T> predicate) {
         Objects.requireNonNull(predicate);
         Predicate<T> filter = predicate.filter();
@@ -147,6 +180,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T> {
         return this;
     }
 
+    @Override
     public NOptional<T> filter(Predicate<T> predicate, Function<NSession, NMsg> message) {
         Objects.requireNonNull(predicate);
         if (isPresent()) {
@@ -160,6 +194,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T> {
         return filter(predicate, (Function<NSession, NMsg>) null);
     }
 
+    @Override
     public NOptional<T> ifPresent(Consumer<T> t) {
         if (isPresent()) {
             Objects.requireNonNull(t);
@@ -168,6 +203,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T> {
         return this;
     }
 
+    @Override
     public <R extends Throwable> T orElseThrow(Supplier<? extends R> exceptionSupplier) throws R {
         if (isPresent()) {
             return get();
@@ -175,7 +211,6 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T> {
             throw Objects.requireNonNull(Objects.requireNonNull(exceptionSupplier).get());
         }
     }
-
 
     @Override
     public NOptional<T> orElseUse(Supplier<NOptional<T>> other) {
@@ -192,7 +227,6 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T> {
         }
         return get();
     }
-
 
     @Override
     public T orElseGet(Supplier<? extends T> other) {
@@ -241,7 +275,6 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T> {
         }
         return this;
     }
-
 
     @Override
     public NOptional<T> ifBlankEmpty(Function<NSession, NMsg> emptyMessage) {

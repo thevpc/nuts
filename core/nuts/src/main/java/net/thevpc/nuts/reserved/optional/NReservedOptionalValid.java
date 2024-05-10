@@ -7,12 +7,27 @@ import net.thevpc.nuts.NSession;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
+import net.thevpc.nuts.util.NOptionalType;
 
-public abstract class NReservedOptionalValid<T> extends NReservedOptionalImpl<T> {
+public abstract class NReservedOptionalValid<T> extends NReservedOptionalImpl<T> implements Cloneable {
 
     @Override
     public T get(Function<NSession, NMsg> message, NSession session) {
         return get(session);
+    }
+
+    @Override
+    public <V> NOptional<V> then(Function<T, V> mapper) {
+        T y = get();
+        if (y != null) {
+            try {
+                return NOptional.of(mapper.apply(y));
+            } catch (Exception ex) {
+                return NOptional.ofError(getMessage(), ex);
+            }
+        } else {
+            return NOptional.ofEmpty(getMessage());
+        }
     }
 
     @Override
@@ -94,7 +109,12 @@ public abstract class NReservedOptionalValid<T> extends NReservedOptionalImpl<T>
 
     @Override
     public boolean isNull() {
-        return get()==null;
+        return get() == null;
+    }
+
+    @Override
+    public NOptionalType getType() {
+        return NOptionalType.PRESENT;
     }
 
 }

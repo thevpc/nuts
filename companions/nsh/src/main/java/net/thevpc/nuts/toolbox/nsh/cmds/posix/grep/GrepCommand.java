@@ -55,7 +55,7 @@ public class GrepCommand extends NShellBuiltinDefault {
 
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+    protected boolean nextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         GrepOptions options = context.getOptions();
         if (!options.withNutsOptions && options.expressions.isEmpty()) {
@@ -74,7 +74,7 @@ public class GrepCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+    protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         GrepOptions options = context.getOptions();
         NArg a;
@@ -208,7 +208,7 @@ public class GrepCommand extends NShellBuiltinDefault {
                 s = s.trim();
                 if (!s.isEmpty()) {
                     if (!s.startsWith("#")) {
-                        String[] found = NCmdLine.parseSystem(s, session).get().toStringArray();
+                        String[] found = NCmdLine.parse(s, session).get().toStringArray();
                         cmdLine.pushBack(found);
                     }
                 }
@@ -280,7 +280,7 @@ public class GrepCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
+    protected void main(NCmdLine cmdLine, NShellExecutionContext context) {
         GrepOptions options = context.getOptions();
         GrepService service = new GrepService();
         service.run(options, context.getSession());

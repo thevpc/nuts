@@ -10,6 +10,8 @@ import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNSessionTerminalFro
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.NInputStreamSource;
 import net.thevpc.nuts.runtime.standalone.text.SimpleWriterOutputStream;
+import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
+import net.thevpc.nuts.runtime.standalone.util.jclass.JavaJarUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
@@ -22,6 +24,9 @@ import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NAsk;
 
 import java.io.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class DefaultNIORPI implements NIORPI {
     private final NSession session;
@@ -271,4 +276,38 @@ public class DefaultNIORPI implements NIORPI {
         bootModel.enableRichTerm(session);
     }
 
+
+    @Override
+    public List<NExecutionEntry> parseExecutionEntries(NPath file) {
+        if (file.getName().toLowerCase().endsWith(".jar")) {
+            try {
+                try (InputStream in = file.getInputStream()) {
+                    return parseExecutionEntries(in, "jar", file.toAbsolute().normalize().toString());
+                }
+            } catch (IOException ex) {
+                throw new NIOException(session, ex);
+            }
+        } else if (file.getName().toLowerCase().endsWith(".class")) {
+            try {
+                try (InputStream in = file.getInputStream()) {
+                    return parseExecutionEntries(in, "class", file.toAbsolute().normalize().toString());
+                }
+            } catch (IOException ex) {
+                throw new NIOException(session, ex);
+            }
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public List<NExecutionEntry> parseExecutionEntries(InputStream inputStream, String type, String sourceName) {
+        if ("jar".equals(type)) {
+            return JavaJarUtils.parseJarExecutionEntries(inputStream, session);
+        } else if ("class".equals(type)) {
+            NExecutionEntry u = JavaClassUtils.parseClassExecutionEntry(inputStream, sourceName, session);
+            return u == null ? Collections.emptyList() : Arrays.asList(u);
+        }
+        return Collections.emptyList();
+    }
 }

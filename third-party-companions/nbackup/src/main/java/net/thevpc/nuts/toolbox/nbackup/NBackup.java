@@ -27,10 +27,10 @@ public class NBackup implements NApplication {
     @Override
     public void run(NSession session) {
         session.out().println(NMsg.ofC("%s Backup Tool.", NMsg.ofStyled("Nuts", NTextStyle.keyword())));
-        session.processAppCmdLine(new NCmdLineProcessor() {
+        session.runAppCmdLine(new NCmdLineRunner() {
 
             @Override
-            public boolean onCmdNextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
+            public boolean nextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
                 NArg a = cmdLine.next().get();
                 switch (a.toString()) {
                     case "pull": {
@@ -42,18 +42,18 @@ public class NBackup implements NApplication {
             }
 
             @Override
-            public void onCmdExec(NCmdLine cmdLine, NCmdLineContext context) {
+            public void run(NCmdLine cmdLine, NCmdLineContext context) {
                 //
             }
         });
     }
 
     public void runPull(NCmdLine cmdLine, NSession session) {
-        cmdLine.process(new NCmdLineProcessor() {
+        cmdLine.forEachPeek(new NCmdLineRunner() {
             private Options options = new Options();
 
             @Override
-            public void onCmdInitParsing(NCmdLine cmdLine, NCmdLineContext context) {
+            public void init(NCmdLine cmdLine, NCmdLineContext context) {
                 NPath configFile = getConfigFile();
                 Config config = null;
                 if (configFile.isRegularFile()) {
@@ -75,7 +75,7 @@ public class NBackup implements NApplication {
             }
 
             @Override
-            public boolean onCmdNextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
+            public boolean nextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
                 if (cmdLine.withNextEntry((v, a, s) -> {
                     options.config.setRemoteServer(v);
                 }, "--server")) {
@@ -114,7 +114,7 @@ public class NBackup implements NApplication {
             }
 
             @Override
-            public boolean onCmdNextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
+            public boolean nextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
                 NArg a = cmdLine.next().get();
                 addPath(a.toString());
                 return true;
@@ -131,7 +131,7 @@ public class NBackup implements NApplication {
             }
 
             @Override
-            public void onCmdExec(NCmdLine cmdLine, NCmdLineContext context) {
+            public void run(NCmdLine cmdLine, NCmdLineContext context) {
                 Config config = options.config;
                 if (config == null) {
                     config = new Config();

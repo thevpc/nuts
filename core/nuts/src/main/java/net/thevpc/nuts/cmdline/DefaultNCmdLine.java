@@ -1321,53 +1321,76 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public void process(NCmdLineProcessor processor, NCmdLineContext context) {
+    public void forEachPeek(NCmdLineRunner processor) {
+        forEachPeek(processor,null);
+    }
+
+    @Override
+    public void forEachPeek(NCmdLineRunner processor, NCmdLineContext context) {
         if (context == null) {
             context = new DefaultNCmdLineContext(null);
         }
         NCmdLineConfigurable configurable = context.getConfigurable();
         NCmdLine cmd = this;
         NArg a;
-        processor.onCmdInitParsing(cmd, context);
-        while (cmd.hasNext()) {
-            a = cmd.peek().get(session);
-            boolean consumed;
-            if (a.isOption()) {
-                consumed = processor.onCmdNextOption(a, cmd, context);
-            } else {
-                consumed = processor.onCmdNextNonOption(a, cmd, context);
+        processor.init(cmd, context);
+        if(context.isSafe()){
+            while ((a = peek().orNull()) != null) {
+                boolean consumed;
+                if (a.isOption()) {
+                    consumed = processor.nextOption(a, cmd, context);
+                } else {
+                    consumed = processor.nextNonOption(a, cmd, context);
+                }
+                if (consumed) {
+                    // safe
+                } else if (configurable != null && configurable.configureFirst(this)) {
+                    // safe
+                } else {
+                    this.throwUnexpectedArgument();
+                }
             }
-            if (consumed) {
-                NArg next = cmd.peek().orNull();
-                //reference equality!
-                if (next == a) {
-                    //was not consumed!
-                    throwError(NMsg.ofC("%s must consume the option: %s",
-                            (a.isOption() ? "nextOption" : "nextNonOption"),
-                            a));
+        }else{
+            while (cmd.hasNext()) {
+                a = cmd.peek().get(session);
+                boolean consumed;
+                if (a.isOption()) {
+                    consumed = processor.nextOption(a, cmd, context);
+                } else {
+                    consumed = processor.nextNonOption(a, cmd, context);
                 }
-            } else if (configurable != null && configurable.configureFirst(cmd)) {
-                NArg next = cmd.peek().orNull();
-                //reference equality!
-                if (next == a) {
-                    //was not consumed!
-                    throwError(NMsg.ofC("%s must consume the option: %s",
-                            ("configurable.configureFirst(...)"),
-                            a));
+                if (consumed) {
+                    NArg next = cmd.peek().orNull();
+                    //reference equality!
+                    if (next == a) {
+                        //was not consumed!
+                        throwError(NMsg.ofC("%s must consume the option: %s",
+                                (a.isOption() ? "nextOption" : "nextNonOption"),
+                                a));
+                    }
+                } else if (configurable != null && configurable.configureFirst(cmd)) {
+                    NArg next = cmd.peek().orNull();
+                    //reference equality!
+                    if (next == a) {
+                        //was not consumed!
+                        throwError(NMsg.ofC("%s must consume the option: %s",
+                                ("configurable.configureFirst(...)"),
+                                a));
+                    }
+                } else {
+                    cmd.throwUnexpectedArgument();
                 }
-            } else {
-                cmd.throwUnexpectedArgument();
             }
         }
-        processor.onCmdFinishParsing(cmd, context);
+        processor.validate(cmd, context);
 
         // test if application is running in exec mode
         // (and not in autoComplete mode)
         if (this.isExecMode()) {
             //do the good staff here
-            processor.onCmdExec(cmd, context);
+            processor.run(cmd, context);
         } else if (this.getAutoComplete() != null) {
-            processor.onCmdAutoComplete(this.getAutoComplete(), context);
+            processor.autoComplete(this.getAutoComplete(), context);
         }
     }
 
@@ -1391,4 +1414,55 @@ public class DefaultNCmdLine implements NCmdLine {
         }
         return this;
     }
+
+    @Override
+    public NCmdLine forEachPeek(NCmdLineConsumer action) {
+        return forEachPeek(action,null);
+    }
+
+    @Override
+    public NCmdLine forEachPeek(NCmdLineConsumer action, NCmdLineContext context) {
+        NAssert.requireNonNull(action, "action");
+        if(context==null) {
+            context = new DefaultNCmdLineContext(null);
+        }
+        NCmdLineConfigurable configurable = context.getConfigurable();
+        if(context.isSafe()){
+            NArg a;
+            while ((a = peek().orNull()) != null) {
+                boolean consumed=action.next(a, this, context);
+                if (consumed) {
+                    // safe
+                } else if (configurable != null && configurable.configureFirst(this)) {
+                    // safe
+                } else {
+                    this.throwUnexpectedArgument();
+                }
+            }
+        }else {
+            NArg a;
+            while ((a = peek().orNull()) != null) {
+                boolean consumed=action.next(a, this, context);
+                if (consumed) {
+                    NArg next = this.peek().orNull();
+                    //reference equality!
+                    if (next == a) {
+                        //was not consumed!
+                        throwError(NMsg.ofC("%s must consume the argument: next",a));
+                    }
+                } else if (configurable != null && configurable.configureFirst(this)) {
+                    NArg next = this.peek().orNull();
+                    //reference equality!
+                    if (next == a) {
+                        //was not consumed!
+                        throwError(NMsg.ofC("%s must consume the argument: %s",("configurable.configureFirst(...)"),a));
+                    }
+                } else {
+                    this.throwUnexpectedArgument();
+                }
+            }
+        }
+        return this;
+    }
+
 }

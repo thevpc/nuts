@@ -44,23 +44,9 @@ public interface NLibPaths extends NComponent,NSessionProvider {
        return NExtensions.of(session).createComponent(NLibPaths.class).get();
     }
 
-    /**
-     * parse Execution Entries
-     *
-     * @param file jar file
-     * @return execution entries (class names with main method)
-     */
-    List<NExecutionEntry> parseExecutionEntries(File file);
 
     List<NExecutionEntry> parseExecutionEntries(NPath file);
 
-    /**
-     * parse Execution Entries
-     *
-     * @param file jar file
-     * @return execution entries (class names with main method)
-     */
-    List<NExecutionEntry> parseExecutionEntries(Path file);
 
 //    NutsExecutionEntry[] parse(NPath file);
 

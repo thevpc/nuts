@@ -57,7 +57,7 @@ public class Hello extends NShellBuiltinBase {
      * @return true if the option is processed
      */
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext ctx) {
+    protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext ctx) {
         //get an instance of the current options object we are filling.
         Options o = ctx.getOptions();
         //get the next option (without consuming it)
@@ -93,12 +93,12 @@ public class Hello extends NShellBuiltinBase {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+    protected boolean nextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         return false;
     }
 
     @Override
-    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext ctx) {
+    protected void main(NCmdLine cmdLine, NShellExecutionContext ctx) {
         Options o = ctx.getOptions();
         NSession session = ctx.getSession();
         if (o.complex) {

@@ -25,6 +25,13 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.reserved.rpi.NIORPI;
+import net.thevpc.nuts.util.NAssert;
+
+import java.io.InputStream;
+import java.util.List;
+
 /**
  * Execution entry is a class that can be executed.
  *
@@ -33,6 +40,15 @@ package net.thevpc.nuts;
  * @since 0.5.4
  */
 public interface NExecutionEntry extends Comparable<NExecutionEntry> {
+
+    static List<NExecutionEntry> parse(NPath path) {
+        NAssert.requireNonNull(path, "path");
+        return NIORPI.of(path.getSession()).parseExecutionEntries(path);
+    }
+
+    static List<NExecutionEntry> parse(InputStream inputStream, String type, String sourceName, NSession session) {
+        return NIORPI.of(session).parseExecutionEntries(inputStream, type, sourceName);
+    }
 
     /**
      * true if the entry resolved to a valid nuts application

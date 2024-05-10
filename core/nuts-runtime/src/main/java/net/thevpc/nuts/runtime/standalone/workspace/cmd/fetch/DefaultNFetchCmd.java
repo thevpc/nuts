@@ -421,7 +421,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                 nutsApp = "true".equals(map.get("nutsApplication"));
             } else {
                 try {
-                    List<NExecutionEntry> t = NLibPaths.of(session).setSession(getSession()).parseExecutionEntries(jar);
+                    List<NExecutionEntry> t = NExecutionEntry.parse(jar);
                     if (t.size() > 0) {
                         executable = true;
                         if (t.get(0).isApp()) {

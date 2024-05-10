@@ -601,7 +601,7 @@ public class DefaultNWorkspaceConfigModel {
                 cConfig.setRuntimeId(bOptions.getRuntimeId().orNull(), session);
             }
             if (cConfig.getRuntimeBootDescriptor() == null) {
-                cConfig.setRuntimeBootDescriptor(bOptions.getRuntimeBootDescriptor().get());
+                cConfig.setRuntimeBootDescriptor(bOptions.getRuntimeBootDescriptor().orNull());
             }
             if (cConfig.getExtensionBootDescriptors() == null) {
                 cConfig.setExtensionBootDescriptors(bOptions.getExtensionBootDescriptors().orNull());
@@ -666,7 +666,7 @@ public class DefaultNWorkspaceConfigModel {
                 //always reload boot resolved versions!
                 cConfig.setApiId(NId.ofApi(bOptions.getApiVersion().orNull()).get(session));
                 cConfig.setRuntimeId(bOptions.getRuntimeId().orNull(), session);
-                cConfig.setRuntimeBootDescriptor(bOptions.getRuntimeBootDescriptor().get());
+                cConfig.setRuntimeBootDescriptor(bOptions.getRuntimeBootDescriptor().orNull());
                 cConfig.setExtensionBootDescriptors(bOptions.getExtensionBootDescriptors().orNull());
                 cConfig.setBootRepositories(bOptions.getBootRepositories().orNull());
             }

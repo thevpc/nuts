@@ -50,7 +50,7 @@ public class EnableCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+    protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         final NArg a = cmdLine.peek().get(session);
@@ -94,7 +94,7 @@ public class EnableCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
+    protected void main(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.p || options.names.isEmpty()) {
             Map<String, String> result = new LinkedHashMap<>();
@@ -151,7 +151,7 @@ public class EnableCommand extends NShellBuiltinDefault {
 
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, cmdLine, context);
+    protected boolean nextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return nextOption(arg, cmdLine, context);
     }
 }

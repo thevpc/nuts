@@ -23,6 +23,10 @@ public interface NWebResponse {
 
     <T> T getContentAsJson(Class<T> clz);
 
+    Map<?,?> getContentAsJsonMap();
+
+    List<?> getContentAsJsonList();
+
     String getContentAsString();
 
     byte[] getContentAsBytes();

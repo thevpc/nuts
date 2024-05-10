@@ -515,7 +515,7 @@ public class NIdFormatHelper {
             case EXEC_ENTRY: {
                 if (def != null && def.getContent().isPresent()) {
                     List<NString> results = new ArrayList<>();
-                    for (NExecutionEntry entry : NLibPaths.of(this.session).parseExecutionEntries(def.getContent().get())) {
+                    for (NExecutionEntry entry : NExecutionEntry.parse(def.getContent().get())) {
                         if (entry.isDefaultEntry()) {
                             //should all mark?
                             results.add(text.ofPlain(entry.getName()));

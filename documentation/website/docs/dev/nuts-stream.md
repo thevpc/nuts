@@ -1,7 +1,7 @@
 ---
-id: nutsStream
-title: Nuts Stream
-sidebar_label: Nuts Stream
+id: NStream
+title: NStream
+sidebar_label: NStream
 ---
 
 

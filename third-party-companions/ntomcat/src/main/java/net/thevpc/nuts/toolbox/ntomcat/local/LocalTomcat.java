@@ -198,7 +198,7 @@ public class LocalTomcat {
                 for (RunningTomcat jpsResult : TomcatUtils.getRunningInstances(session)) {
                     switch (format.get()) {
                         case "long": {
-                            NCmdLine jcmd = NCmdLine.parseSystem(jpsResult.getArgsLine(), session).orNull();
+                            NCmdLine jcmd = NCmdLine.parse(jpsResult.getArgsLine(), session).orNull();
                             out.println(NMsg.ofC("%s: %s %s: v%s %s: %s %s: %s %s: %s",
                                     NMsg.ofStyled("pid", NTextStyle.comments()),
                                     factory.ofStyled(jpsResult.getPid(), NTextStyle.primary1()),

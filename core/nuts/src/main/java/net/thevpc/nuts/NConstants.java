@@ -67,6 +67,7 @@ public final class NConstants {
          */
         public static final int NO_SUPPORT = -1;
     }
+
     /**
      * name constants
      *
@@ -281,6 +282,7 @@ public final class NConstants {
 
         /**
          * condition properties
+         *
          * @since 0.8.4
          */
         public static final String CONDITIONAL_PROPERTIES = "cond-properties";

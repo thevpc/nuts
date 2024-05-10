@@ -50,7 +50,7 @@ public class ShowerrCommand extends NShellBuiltinCore {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+    protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         NArg a = cmdLine.peek().get(session);
@@ -68,7 +68,7 @@ public class ShowerrCommand extends NShellBuiltinCore {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+    protected boolean nextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         NArg a = cmdLine.peek().get(session);
@@ -86,7 +86,7 @@ public class ShowerrCommand extends NShellBuiltinCore {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
+    protected void main(NCmdLine cmdLine, NShellExecutionContext context) {
         NShellResult r = context.getShellContext().getLastResult();
         NPrintStream out = context.getSession().out();
         switch (context.getSession().getOutputFormat().orDefault()) {

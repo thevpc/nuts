@@ -1,12 +1,13 @@
 package net.thevpc.nuts.web;
 
+import net.thevpc.nuts.format.NMsgFormattable;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
 
 import java.util.List;
 import java.util.Map;
 
-public interface NWebRequest {
+public interface NWebRequest extends NMsgFormattable {
     boolean isOneWay();
 
     NWebRequest setOneWay(boolean oneWay);

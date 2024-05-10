@@ -2,7 +2,7 @@ package net.thevpc.nuts.toolbox.docusaurus;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLineContext;
-import net.thevpc.nuts.cmdline.NCmdLineProcessor;
+import net.thevpc.nuts.cmdline.NCmdLineRunner;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.util.NMsg;
@@ -22,9 +22,9 @@ public class NDocusaurusMain implements NApplication {
 
     @Override
     public void run(NSession session) {
-        session.processAppCmdLine(new NCmdLineProcessor() {
+        session.runAppCmdLine(new NCmdLineRunner() {
             @Override
-            public boolean onCmdNextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
+            public boolean nextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
                 NSession session = cmdLine.getSession();
                 switch (option.key()) {
                     case "-d":
@@ -39,7 +39,7 @@ public class NDocusaurusMain implements NApplication {
             }
 
             @Override
-            public boolean onCmdNextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
+            public boolean nextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
                 NSession session = cmdLine.getSession();
                 switch (nonOption.asString().get(session)) {
                     case "start": {
@@ -59,7 +59,7 @@ public class NDocusaurusMain implements NApplication {
             }
 
             @Override
-            public void onCmdFinishParsing(NCmdLine cmdLine, NCmdLineContext context) {
+            public void validate(NCmdLine cmdLine, NCmdLineContext context) {
                 NSession session = cmdLine.getSession();
                 if (!start && !build && !buildPdf) {
                     cmdLine.throwMissingArgument(
@@ -69,7 +69,7 @@ public class NDocusaurusMain implements NApplication {
             }
 
             @Override
-            public void onCmdExec(NCmdLine cmdLine, NCmdLineContext context) {
+            public void run(NCmdLine cmdLine, NCmdLineContext context) {
                 if (workdir == null) {
                     workdir = ".";
                 }

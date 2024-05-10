@@ -258,7 +258,7 @@ public class Main implements NApplication {
     }
     @Override
     public void run(NSession session) {
-        NCmdLine cmd=session.getAppCommandLine();
+        NCmdLine cmd=session.getAppCmdLine();
         ...
     }
 }
@@ -273,7 +273,7 @@ public class Main implements NApplication {
     public static void main(String[] args) {new Main().runAndExit(args);}
     @Override
     public void run(NSession session) {
-        NCmdLine cmd=session.getAppCommandLine();
+        NCmdLine cmd=session.getAppCmdLine();
         ...
     }
     @Override

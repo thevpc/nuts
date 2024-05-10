@@ -152,15 +152,7 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
-  "name":"com.sun.crypto.provider.TlsKeyMaterialGenerator",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
   "name":"com.sun.crypto.provider.TlsMasterSecretGenerator",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"com.sun.crypto.provider.TlsPrfGenerator$V12",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -191,12 +183,6 @@
   "name":"java.security.SecureRandomParameters"
 },
 {
-  "name":"java.security.interfaces.ECPrivateKey"
-},
-{
-  "name":"java.security.interfaces.ECPublicKey"
-},
-{
   "name":"java.security.interfaces.RSAPrivateKey"
 },
 {
@@ -211,10 +197,6 @@
 {
   "name":"java.util.Map",
   "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"java.util.concurrent.ForkJoinTask",
-  "fields":[{"name":"aux"}, {"name":"status"}]
 },
 {
   "name":"java.util.concurrent.atomic.AtomicBoolean",
@@ -236,9 +218,6 @@
 {
   "name":"javax.swing.text.html.HTMLEditorKit",
   "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"jdk.internal.misc.Unsafe"
 },
 {
   "name":"net.miginfocom.swing.MigLayout"
@@ -387,10 +366,6 @@
 },
 {
   "name":"sun.security.rsa.RSASignature$SHA256withRSA",
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"sun.security.rsa.RSASignature$SHA384withRSA",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {

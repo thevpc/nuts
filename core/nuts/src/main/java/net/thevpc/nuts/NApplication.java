@@ -47,7 +47,7 @@ package net.thevpc.nuts;
  * import net.thevpc.nuts.cmdline.NArg;
  * import net.thevpc.nuts.cmdline.NCmdLine;
  * import net.thevpc.nuts.cmdline.NCmdLineContext;
- * import net.thevpc.nuts.cmdline.NCmdLineProcessor;
+ * import net.thevpc.nuts.cmdline.NCmdLineRunner;
  *
  * import java.util.ArrayList;
  * import java.util.List;
@@ -59,12 +59,12 @@ package net.thevpc.nuts;
  *     }
  *
  *     public void run(NSession session) {
- *         session.processAppCommandLine(new NCmdLineProcessor() {
+ *         session.runAppCmdLine(new NCmdLineRunner() {
  *             boolean noMoreOptions = false;
  *             boolean clean = false;
  *             List<String> params = new ArrayList<>();
  *
- *             public boolean onCmdNextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
+ *             public boolean nextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
  *                 if (!noMoreOptions) {
  *                     return false;
  *                 }
@@ -81,7 +81,7 @@ package net.thevpc.nuts;
  *                 return false;
  *             }
  *
- *             public boolean onCmdNextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
+ *             public boolean nextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
  *                 params.add(cmdLine.next().get().toString());
  *                 return true;
  *             }

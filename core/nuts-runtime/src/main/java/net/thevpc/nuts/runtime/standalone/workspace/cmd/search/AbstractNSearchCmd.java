@@ -790,7 +790,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
         return postProcessResult(defIter
                 .mapMulti(
                         NFunction.of(
-                                (NDefinition x) -> x.getContent().map(y -> NLibPaths.of(getSession()).parseExecutionEntries(y)).orElse(Collections.emptyList())
+                                (NDefinition x) -> x.getContent().map(NExecutionEntry::parse).orElse(Collections.emptyList())
                         ).withDesc(NEDesc.of("getFile"))
                 ));
     }

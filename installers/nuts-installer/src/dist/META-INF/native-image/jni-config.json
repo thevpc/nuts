@@ -1,8 +1,5 @@
 [
 {
-  "name":"[Lsun.font.FontConfigManager$FontConfigFont;"
-},
-{
   "name":"[Lsun.java2d.loops.GraphicsPrimitive;"
 },
 {
@@ -88,16 +85,16 @@
   "fields":[{"name":"bitMasks"}, {"name":"bitOffsets"}, {"name":"bitSizes"}, {"name":"maxBitSize"}]
 },
 {
-  "name":"java.io.InputStream",
-  "methods":[{"name":"available","parameterTypes":[] }, {"name":"read","parameterTypes":["byte[]","int","int"] }]
-},
-{
   "name":"java.lang.Boolean",
   "methods":[{"name":"getBoolean","parameterTypes":["java.lang.String"] }]
 },
 {
   "name":"java.lang.System",
   "methods":[{"name":"load","parameterTypes":["java.lang.String"] }]
+},
+{
+  "name":"java.lang.Thread",
+  "methods":[{"name":"yield","parameterTypes":[] }]
 },
 {
   "name":"sun.awt.SunHints",
@@ -156,29 +153,12 @@
   "fields":[{"name":"data"}, {"name":"dataOffsets"}, {"name":"pixelStride"}, {"name":"scanlineStride"}, {"name":"type"}]
 },
 {
-  "name":"sun.awt.image.JPEGImageDecoder",
-  "methods":[{"name":"sendHeaderInfo","parameterTypes":["int","int","boolean","boolean","boolean"] }, {"name":"sendPixels","parameterTypes":["byte[]","int"] }, {"name":"sendPixels","parameterTypes":["int[]","int"] }]
-},
-{
   "name":"sun.font.CharToGlyphMapper",
   "methods":[{"name":"charToGlyph","parameterTypes":["int"] }]
 },
 {
   "name":"sun.font.Font2D",
   "methods":[{"name":"canDisplay","parameterTypes":["char"] }, {"name":"charToGlyph","parameterTypes":["int"] }, {"name":"charToVariationGlyph","parameterTypes":["int","int"] }, {"name":"getMapper","parameterTypes":[] }, {"name":"getTableBytes","parameterTypes":["int"] }]
-},
-{
-  "name":"sun.font.FontConfigManager$FcCompFont",
-  "fields":[{"name":"allFonts"}, {"name":"fcName"}, {"name":"firstFont"}]
-},
-{
-  "name":"sun.font.FontConfigManager$FontConfigFont",
-  "fields":[{"name":"familyName"}, {"name":"fontFile"}, {"name":"fullName"}, {"name":"styleStr"}],
-  "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"sun.font.FontConfigManager$FontConfigInfo",
-  "fields":[{"name":"cacheDirs"}, {"name":"fcVersion"}]
 },
 {
   "name":"sun.font.FontStrike",

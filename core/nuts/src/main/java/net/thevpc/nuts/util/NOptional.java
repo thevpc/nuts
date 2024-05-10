@@ -55,7 +55,6 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
         return new NReservedOptionalError<>(errorMessage, throwable);
     }
 
-
     static <T> NOptional<T> of(T value) {
         return of(value, null);
     }
@@ -118,9 +117,8 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
             return ofSingleton(collection, null, null);
         }
         return ofSingleton(collection,
-                s -> NMsg.ofC("missing %s", NStringUtils.firstNonBlank(name, "value"))
-                ,
-                s -> NMsg.ofC("too many elements %s>1 for %s", collection == null ? 0 : collection.size(), NStringUtils.firstNonBlank(name, "value")));
+                s -> NMsg.ofC("missing %s", NStringUtils.firstNonBlank(name, "value")),
+                 s -> NMsg.ofC("too many elements %s>1 for %s", collection == null ? 0 : collection.size(), NStringUtils.firstNonBlank(name, "value")));
     }
 
     static <T> NOptional<T> ofSingleton(Collection<T> collection, Function<NSession, NMsg> emptyMessage, Function<NSession, NMsg> errorMessage) {
@@ -196,6 +194,19 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
     <V> NOptional<V> mapIfNotError(Function<T, V> mapper);
 
     <V> NOptional<V> map(Function<T, V> mapper);
+    
+    /**
+     * handy method to 'denull' expressions and handle things like <code>a?.b()?.c</code>
+     * That is not possible in the Java Programming Language.
+     * the equivalent code would be :
+     * <pre>
+     * NOptional.of(a).then(x->x.b()).then(x->x.c).get()
+     * </pre>
+     * @param <V> final result
+     * @param mapper function to apply
+     * @return null if this optional is null or empty otherwise, maps using mapper
+     */
+    <V> NOptional<V> then(Function<T, V> mapper);
 
     NOptional<T> filter(NMessagedPredicate<T> predicate);
 
@@ -219,7 +230,6 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
 
     public NOptional<T> ifEmptyOfNullable(Supplier<T> other);
 
-
     NOptional<T> orElseUse(Supplier<NOptional<T>> other);
 
     <R extends Throwable> T orElseThrow(Supplier<? extends R> exceptionSupplier) throws R;
@@ -238,10 +248,10 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
 
     T get(NSession session);
 
-
     T orNull();
 
     T orDefault();
+
     NOptional<T> orDefaultOptional();
 
     NOptional<T> ifEmptyNull();
@@ -251,7 +261,6 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
     NOptional<T> ifBlankEmpty(Function<NSession, NMsg> emptyMessage);
 
     NOptional<T> ifBlankEmpty();
-
 
     NOptional<T> ifErrorNull();
 
@@ -265,23 +274,25 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
 
     NOptional<T> ifErrorUse(Supplier<NOptional<T>> other);
 
-
     /**
-     * return true when not an error and has no content. {@code isPresent()} would return false as well.
+     * return true when not an error and has no content. {@code isPresent()}
+     * would return false as well.
      *
      * @return true when not an error and has no content
      */
     boolean isEmpty();
 
     /**
-     * return true if this is valid null value. {@code isPresent()} would return true as well.
+     * return true if this is valid null value. {@code isPresent()} would return
+     * true as well.
      *
      * @return true if this is valid null value
      */
     boolean isNull();
 
     /**
-     * return true if this is an error value. {@code isPresent()} would return false as well. {@code isEmpty()} would return false.
+     * return true if this is an error value. {@code isPresent()} would return
+     * false as well. {@code isEmpty()} would return false.
      *
      * @return true if this is an error value
      */
@@ -300,6 +311,8 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
      * @return true if this is either error or empty value
      */
     boolean isNotPresent();
+    
+    NOptionalType getType();
 
     Function<NSession, NMsg> getMessage();
 

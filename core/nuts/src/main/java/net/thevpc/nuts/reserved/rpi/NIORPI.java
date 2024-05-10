@@ -1,5 +1,6 @@
 package net.thevpc.nuts.reserved.rpi;
 
+import net.thevpc.nuts.NExecutionEntry;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
@@ -10,6 +11,7 @@ import net.thevpc.nuts.util.NAsk;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.util.List;
 
 /**
  * Input/Output Internal Programming Interface
@@ -125,4 +127,22 @@ public interface NIORPI extends NComponent {
      * terminal and may even load a nuts extension to enable such features.
      */
     void enableRichTerm();
+
+
+
+    List<NExecutionEntry> parseExecutionEntries(NPath file);
+
+
+//    NutsExecutionEntry[] parse(NPath file);
+
+    /**
+     * parse Execution Entries
+     *
+     * @param inputStream stream
+     * @param type        stream type
+     * @param sourceName  stream source name (optional)
+     * @return execution entries (class names with main method)
+     */
+    List<NExecutionEntry> parseExecutionEntries(InputStream inputStream, String type, String sourceName);
+
 }

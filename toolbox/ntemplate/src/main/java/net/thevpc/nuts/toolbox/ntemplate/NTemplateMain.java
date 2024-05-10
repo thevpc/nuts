@@ -2,7 +2,7 @@ package net.thevpc.nuts.toolbox.ntemplate;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLineContext;
-import net.thevpc.nuts.cmdline.NCmdLineProcessor;
+import net.thevpc.nuts.cmdline.NCmdLineRunner;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.FileTemplater;
@@ -20,10 +20,10 @@ public class NTemplateMain implements NApplication {
 
     @Override
     public void run(NSession session) {
-        session.processAppCmdLine(new NCmdLineProcessor() {
+        session.runAppCmdLine(new NCmdLineRunner() {
 
             @Override
-            public boolean onCmdNextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
+            public boolean nextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
                 switch (option.key()) {
                     case "-i":
                     case "--init": {
@@ -51,7 +51,7 @@ public class NTemplateMain implements NApplication {
             }
 
             @Override
-            public boolean onCmdNextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
+            public boolean nextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
                 NSession session = cmdLine.getSession();
                 config.addSource(cmdLine.next().flatMap(NLiteral::asString).get(session));
                 return false;
@@ -59,7 +59,7 @@ public class NTemplateMain implements NApplication {
 
 
             @Override
-            public void onCmdExec(NCmdLine cmdLine, NCmdLineContext context) {
+            public void run(NCmdLine cmdLine, NCmdLineContext context) {
                 new NTemplateProject(config,session);
             }
         });
