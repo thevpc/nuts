@@ -1425,6 +1425,7 @@ public final class NWorkspaceCmdLineParser {
                                 List<NMsg> showError = options.getErrors().orNull();
                                 if (showError == null) {
                                     showError = new ArrayList<>();
+                                    options.setErrors(showError);
                                 }
                                 showError.add(NMsg.ofC("nuts: invalid option %s", a.asString().orNull()));
                             }

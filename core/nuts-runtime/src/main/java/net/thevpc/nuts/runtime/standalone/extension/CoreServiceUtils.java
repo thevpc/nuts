@@ -31,10 +31,9 @@ import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.URLPart;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.URLParts;
-import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.util.NMsg;
-import sun.misc.URLClassPath;
+
 
 import java.io.*;
 import java.net.URL;
