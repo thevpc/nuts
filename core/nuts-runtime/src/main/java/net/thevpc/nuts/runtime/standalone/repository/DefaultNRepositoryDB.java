@@ -31,8 +31,8 @@ public class DefaultNRepositoryDB implements NRepositoryDB {
         reg("google", "maven@https://maven.google.com");
         reg("spring", "maven@https://repo.spring.io/release", "spring-framework");
         reg("maven-thevpc-git", "maven@https://raw.githubusercontent.com/thevpc/vpc-public-maven/master", "vpc-public-maven");
-        reg("nuts-public", "maven@dotfilefs:https://raw.githubusercontent.com/thevpc/nuts-public/master", "vpc-public-nuts","nuts-thevpc-git");
-        reg("nuts-preview", "maven@dotfilefs://raw.githubusercontent.com/thevpc/nuts-preview/master", "preview");
+        reg("nuts-public",  "maven@dotfilefs:https://raw.githubusercontent.com/thevpc/nuts-public/master", "vpc-public-nuts","nuts-thevpc-git");
+        reg("nuts-preview", "maven@dotfilefs:https://raw.githubusercontent.com/thevpc/nuts-preview/master", "preview");
         reg("thevpc", "maven@htmlfs:https://thevpc.net/maven", "dev");
         reg("thevpc-goodies", "nuts@htmlfs:https://thevpc.net/maven-goodies", "goodies");
         reg("local", "nuts@local");

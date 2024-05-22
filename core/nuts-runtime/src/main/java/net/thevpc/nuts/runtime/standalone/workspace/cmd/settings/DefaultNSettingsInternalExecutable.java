@@ -23,7 +23,7 @@ import java.util.List;
 public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutableCommand {
 
     public DefaultNSettingsInternalExecutable(String[] args, NExecCmd execCommand) {
-        super("fetch", args, execCommand);
+        super("settings", args, execCommand);
     }
 
     private List<NSettingsSubCommand> subCommands;

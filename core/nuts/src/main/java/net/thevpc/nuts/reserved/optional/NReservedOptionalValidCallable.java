@@ -13,6 +13,8 @@ import static net.thevpc.nuts.util.NOptionalType.PRESENT;
 public class NReservedOptionalValidCallable<T> extends NReservedOptionalValid<T> implements Cloneable {
 
     private final NCallable<T> value;
+    private T result;
+    private boolean evaluated;
 
     public NReservedOptionalValidCallable(NCallable<T> value) {
         NAssert.requireNonNull(value, "callable");
@@ -40,6 +42,10 @@ public class NReservedOptionalValidCallable<T> extends NReservedOptionalValid<T>
 
     @Override
     public T get(NSession session) {
-        return value.call(session);
+        if(!evaluated){
+            result=value.call(session);
+            evaluated=true;
+        }
+        return result;
     }
 }

@@ -171,7 +171,7 @@ public class NoApiUtils {
                         type += ("(" + o.getMinLength().trim() + "..." + o.getMaxLength().trim() + ")");
                     } else if (!NBlankable.isBlank(o.getMinLength())) {
                         type += (">=" + o.getMinLength().trim());
-                    } else if (!NBlankable.isBlank(o.getMaxLength())) {
+                    } else if (!NBlankable.isBlank(o.getMinLength())) {
                         type += ("<=" + o.getMinLength().trim());
                     }
                     if (o.getEnumValues() != null && o.getEnumValues().size() > 0) {
@@ -187,7 +187,7 @@ public class NoApiUtils {
                         type += ("(" + o.getMinLength().trim() + "..." + o.getMaxLength().trim() + ")");
                     } else if (!NBlankable.isBlank(o.getMinLength())) {
                         type += (">=" + o.getMinLength().trim());
-                    } else if (!NBlankable.isBlank(o.getMaxLength())) {
+                    } else if (!NBlankable.isBlank(o.getMinLength())) {
                         type += ("<=" + o.getMinLength().trim());
                     }
                     if (o.getEnumValues() != null && o.getEnumValues().size() > 0) {
