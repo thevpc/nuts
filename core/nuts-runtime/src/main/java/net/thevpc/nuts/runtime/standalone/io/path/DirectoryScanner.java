@@ -120,7 +120,7 @@ public class DirectoryScanner {
                 } else {
                     int i0 = i;
                     NFunction<NPath, NStream<NPath>> f = NFunction.of((NPath x) -> stream(x, parts, i0 + 1)).withDesc(NEDesc.of("subStream"));
-                    return t.flatMap((NFunction) f);
+                    return t.flatMapStream((NFunction) f);
                 }
             } else if (parts[i] instanceof SubPathWildCardPathPart) {
                 SubPathWildCardPathPart w = (SubPathWildCardPathPart) parts[i];
@@ -135,7 +135,7 @@ public class DirectoryScanner {
                     int i0 = i;
 
                     NFunction<NPath, NStream<NPath>> f = NFunction.of((NPath x) -> stream(x, parts, i0 + 1)).withDesc(NEDesc.of("subStream"));
-                    return t.flatMap((NFunction) f).distinct();
+                    return t.flatMapStream((NFunction) f).distinct();
                 }
             } else {
                 throw new NIllegalArgumentException(session, NMsg.ofC("unsupported %s",parts[i]));
@@ -193,7 +193,7 @@ public class DirectoryScanner {
         }
 
         public boolean matchesSubPath(NPath subPath) {
-            return pattern.matcher(subPath.toString()).matches();
+            return pattern.matcher((subPath==null?"":subPath.toString())).matches();
         }
 
         @Override
