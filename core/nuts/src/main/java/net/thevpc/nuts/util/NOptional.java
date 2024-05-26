@@ -40,15 +40,23 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
     }
 
     static <T> NOptional<T> ofEmpty() {
-        return ofEmpty(null);
+        return ofEmpty((Function<NSession, NMsg>)null);
     }
 
     static <T> NOptional<T> ofEmpty(Function<NSession, NMsg> emptyMessage) {
         return new NReservedOptionalEmpty<>(emptyMessage);
     }
 
+    static <T> NOptional<T> ofEmpty(NMsg emptyMessage) {
+        return new NReservedOptionalEmpty<>(s->emptyMessage);
+    }
+
     static <T> NOptional<T> ofError(Function<NSession, NMsg> errorMessage) {
         return ofError(errorMessage, null);
+    }
+
+    static <T> NOptional<T> ofError(NMsg errorMessage) {
+        return ofError(errorMessage==null?null:q->errorMessage, null);
     }
 
     static <T> NOptional<T> ofError(Function<NSession, NMsg> errorMessage, Throwable throwable) {
