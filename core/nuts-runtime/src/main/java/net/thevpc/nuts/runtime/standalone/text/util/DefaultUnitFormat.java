@@ -188,16 +188,6 @@ public class DefaultUnitFormat {
 
         return sb.toString();
     }
-//    public static void main(String[] args) {
-//        MetricFormat frt = new MetricFormat();
-////        System.out.println(frt.format(0));
-//        double f = 10E-6;
-//        for (int i = 0; i < 10; i++) {
-//            String s = frt.format(f);
-//            System.out.println(s + " <== " + f);
-//            f = f * 10;
-//        }
-//    }
 
 
     private String formatLeftPow(double number, int pow) {
@@ -208,7 +198,6 @@ public class DefaultUnitFormat {
         String s = (decimal) ?
                 formatLeft(number, integerDigits + 1 + fractionDigits)
                 : formatLeft(number, integerDigits);
-//        System.out.println("formatLeft " + s + " <= " + number);
         return s;
     }
 

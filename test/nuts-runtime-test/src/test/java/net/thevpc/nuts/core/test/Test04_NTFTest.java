@@ -1321,4 +1321,15 @@ public class Test04_NTFTest {
         Assertions.assertEquals(NTextType.TITLE, ((NTextList) parsed).get(0).getType());
         Assertions.assertEquals(NTextType.TITLE, ((NTextList) parsed).get(1).getType());
     }
+    @Test
+    public void test42() {
+        String str = "##{pale:2024-06-07 23:28:39.328}##\u001E ##{config:CONFIG}##\u001E ##{info:START  }##\u001E : start ```sh nuts``` ```primary3 ##{version:0.8.4}##\u001E``` at 2024-06-07 23:28:28.660";
+        session.out().println(str);
+        NText parsed = NString.of(str, session).toText();
+        TestUtils.println(parsed);
+//        Assertions.assertEquals(NTextType.LIST, parsed.getType());
+//        Assertions.assertEquals(2, ((NTextList) parsed).size());
+//        Assertions.assertEquals(NTextType.TITLE, ((NTextList) parsed).get(0).getType());
+//        Assertions.assertEquals(NTextType.TITLE, ((NTextList) parsed).get(1).getType());
+    }
 }

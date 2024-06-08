@@ -39,7 +39,7 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
                 bo.getStdin().orElse(System.in),
                 bo.getStdout().orElse(System.out),
                 bo.getStderr().orElse(System.err),
-                "boot"
+                bootModel.getBootTerminal().getFlags().toArray(new String[0])
         );
         NBootOptions bOptions = bootModel.getBootEffectiveOptions();
         NTerminalMode terminalMode = bOptions.getUserOptions().get().getTerminalMode().orElse(NTerminalMode.DEFAULT);

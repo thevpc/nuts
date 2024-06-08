@@ -94,9 +94,6 @@ public class MavenNDependencySolver implements NDependencySolver {
                     immediates.addAll(immediate);
                     for (NDependency dependency : currentNode.def.getEffectiveDescriptor().get(session).getDependencies()) {
                         dependency = dependency.builder().setProperty("provided-by", currentNode.id.toString()).build();
-//                        if(dependency.toId().contains("jai_imageio")){
-//                            System.out.print("");
-//                        }
                         NDependency effDependency = dependency.builder()
                                 .setScope(combineScopes(currentNode.effDependency.getScope(), dependency.getScope()))
                                 .build();
@@ -141,9 +138,6 @@ public class MavenNDependencySolver implements NDependencySolver {
                 if (effectiveDescriptor != null) {
                     for (NDependency dependency : effectiveDescriptor.getDependencies()) {
                         dependency = dependency.builder().setProperty("provided-by", currentNode.id.toString()).build();
-//                        if(dependency.toId().contains("jai_imageio")){
-//                            System.out.print("");
-//                        }
                         NDependency effDependency = dependency.builder()
                                 .setScope(combineScopes(currentNode.effDependency.getScope(), dependency.getScope()))
                                 .build();

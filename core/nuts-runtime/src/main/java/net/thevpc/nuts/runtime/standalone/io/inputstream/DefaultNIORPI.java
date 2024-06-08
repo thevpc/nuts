@@ -47,7 +47,7 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public <T> NAsk<T> createQuestion(NSessionTerminal terminal) {
-        return new DefaultNAsk<>(session.getWorkspace(),terminal,terminal.out());
+        return new DefaultNAsk<>(session.getWorkspace(), terminal, terminal.out());
     }
 
     @Override
@@ -86,10 +86,24 @@ public class DefaultNIORPI implements NIORPI {
         if (out instanceof NPrintStreamAdapter) {
             return ((NPrintStreamAdapter) out).getBasePrintStream().setTerminalMode(expectedMode);
         }
-        return
-                new NPrintStreamRaw(out,expectedMode, null, null, session, new NPrintStreamBase.Bindings(), term)
-//                        .setTerminalMode(expectedMode)
-                ;
+        switch (expectedMode) {
+            case DEFAULT:
+            case ANSI:
+            case INHERITED: {
+                return new NPrintStreamRaw(out, expectedMode,
+                        null, null, session,
+                        new NPrintStreamBase.Bindings(), term
+                );
+            }
+            case FILTERED:
+            case FORMATTED: {
+                return new NPrintStreamRaw(out, NTerminalMode.INHERITED,
+                        null, null, session,
+                        new NPrintStreamBase.Bindings(), term
+                ).setTerminalMode(expectedMode);
+            }
+        }
+        throw new NIllegalArgumentException(session, NMsg.ofC("unsupported mode %s", expectedMode));
     }
 
     @Override
@@ -103,12 +117,12 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public NPrintStream ofPrintStream(Writer out, NTerminalMode mode) {
-        return ofPrintStream(out,mode,null);
+        return ofPrintStream(out, mode, null);
     }
 
     @Override
     public NPrintStream ofPrintStream(OutputStream out, NTerminalMode mode) {
-        return ofPrintStream(out,mode,null);
+        return ofPrintStream(out, mode, null);
     }
 
     public NPrintStream ofPrintStream(Writer out, NTerminalMode mode, NSystemTerminalBase terminal) {
@@ -159,7 +173,7 @@ public class DefaultNIORPI implements NIORPI {
             NString str = null;
             Long contentLength = null;
             try {
-                contentLength = (long)inputStream.available();
+                contentLength = (long) inputStream.available();
             } catch (IOException e) {
                 //just ignore error
                 //throw new UncheckedIOException(e);
@@ -211,7 +225,7 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public NOutputTarget ofOutputTarget(OutputStream outputStream, NContentMetadata metadata) {
-        return new OutputTargetExt(NOutputStreamBuilder.of(outputStream,session)
+        return new OutputTargetExt(NOutputStreamBuilder.of(outputStream, session)
                 .setMetadata(metadata).createOutputStream(), null, session);
     }
 

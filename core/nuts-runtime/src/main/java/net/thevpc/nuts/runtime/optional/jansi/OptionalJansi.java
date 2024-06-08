@@ -25,8 +25,10 @@ package net.thevpc.nuts.runtime.optional.jansi;
 
 import net.thevpc.nuts.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.env.NOsFamily;
-import net.thevpc.nuts.NSession;
 
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -34,6 +36,18 @@ import java.util.List;
  * @author thevpc
  */
 public class OptionalJansi {
+
+    public static boolean isatty(int fd) {
+        try {
+            Class<?> cc = Class.forName("org.fusesource.jansi.internal.CLibrary");
+            Method m = cc.getDeclaredMethod("isatty", int.class);
+            int b = (Integer)m.invoke(null, fd);
+            return b!=0;
+        } catch (Exception e) {
+            //
+        }
+        return false;
+    }
 
     public static boolean isAvailable() {
         if (NOsFamily.getCurrent() == NOsFamily.WINDOWS) {
@@ -47,7 +61,7 @@ public class OptionalJansi {
         return false;
     }
 
-    public static NWorkspaceTerminalOptions resolveStdFd(NSession session, List<String> flags) {
+    public static NWorkspaceTerminalOptions resolveStdFd(InputStream in, PrintStream out, PrintStream err, List<String> flags) {
         boolean tty=flags.contains("tty");
         if(isAvailable()) {
             flags.add("jansi");
@@ -65,6 +79,23 @@ public class OptionalJansi {
             }
         }
         return null;
+    }
+
+    public static void fillAnsiFlags(List<String> flags) {
+        boolean tty=flags.contains("tty");
+        if(isAvailable()) {
+            flags.add("jansi");
+            if(System.console()!=null) {
+                org.fusesource.jansi.AnsiConsole.systemInstall();
+                flags.add("ansi");
+            }else{
+                if(tty){
+                    flags.add("ansi");
+                }else{
+                    flags.add("raw");
+                }
+            }
+        }
     }
 
 //

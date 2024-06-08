@@ -256,15 +256,6 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         return ref.isLocal();
     }
 
-//    public static void main(String[] args) {
-//        try {
-//            System.out.println(new WebHtmlListParser().parse(new URL("https://raw.githubusercontent.com/thevpc/nuts-preview/master/net/thevpc/nuts/nuts/").openStream()));
-////            System.out.println(new WebHtmlListParser().parse(new URL("https://raw.githubusercontent.com/thevpc/nuts-preview/master/net/thevpc/nuts/nuts/0.8.1/").openStream()));
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-
     public static class HtmlfsFactory implements NPathFactorySPI {
         private final NWorkspace ws;
 

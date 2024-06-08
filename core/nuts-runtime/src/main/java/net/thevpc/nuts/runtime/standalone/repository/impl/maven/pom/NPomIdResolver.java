@@ -10,6 +10,7 @@ import net.thevpc.nuts.util.NMsg;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import java.util.function.Predicate;
@@ -27,24 +28,48 @@ public class NPomIdResolver {
     }
 
     public NPomId[] resolvePomIds(NPath baseUrl, NSession session) {
-        return resolvePomIds(baseUrl, null,session);
+        return resolvePomIds(baseUrl, null, session);
     }
 
-    public NPomId[] resolvePomIds(NPath baseUrl, String referenceResourcePath, NSession session) {
-        List<NPomId> all = new ArrayList<NPomId>();
-        final URLParts aa = new URLParts(baseUrl.toURL().get());
+    private NPomId[] resolvePomIdsFromTargetClasses(URLParts aa, String referenceResourcePath, NSession session) {
         String basePath = aa.getLastPart().getPath().substring(0, aa.getLastPart().getPath().length() - (referenceResourcePath == null ? 0 : referenceResourcePath.length()));
         if (!basePath.endsWith("/") && !basePath.endsWith("\\")) {
             basePath += "/";
         }
 
+        List<NPomId> all = new ArrayList<NPomId>();
+        if (basePath.matches(".*[/\\\\]target[/\\\\]classes[/\\\\]")) {
+            String s2 = basePath.substring(0, basePath.length() - "/target/classes".length()) + "pom.xml";
+            //this is most likely to be a maven project
+            try {
+                all.add(new NPomXmlParser(session).parse(NPath.of(s2, session).toURL().get(), session).getPomId());
+            } catch (Exception ex) {
+                NLogOp.of(NPomXmlParser.class, session)
+                        .verb(NLogVerb.WARNING)
+                        .level(Level.FINEST)
+                        .log(NMsg.ofC("failed to parse pom file %s : %s", s2, ex));
+            }
+        }
+        return all.toArray(new NPomId[0]);
+    }
+
+
+    private NPomId[] resolvePomIdsFromMetaInfMavenByRef(URLParts aa, String referenceResourcePath, NSession session) {
+        String basePath = aa.getLastPart().getPath().substring(0, aa.getLastPart().getPath().length() - (referenceResourcePath == null ? 0 : referenceResourcePath.length()));
+        if (!basePath.endsWith("/") && !basePath.endsWith("\\")) {
+            basePath += "/";
+        }
         final URLParts p = aa.getParent().append(basePath + "META-INF/maven");
-        int beforeSize = all.size();
+        return resolvePomIdsFromMetaInfMaven0(p, session);
+    }
+
+    private NPomId[] resolvePomIdsFromMetaInfMaven0(URLParts p, NSession session) {
+        List<NPomId> all = new ArrayList<NPomId>();
         URL[] children = new URL[0];
         try {
             children = p.getChildren(false, true, new MvnPomPropsURLFilter());
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
         for (URL url : children) {
             if (url != null) {
@@ -62,22 +87,37 @@ public class NPomIdResolver {
                 }
             }
         }
-        if (beforeSize == all.size()) {
-            //no found !
-            if (basePath.matches(".*[/\\\\]target[/\\\\]classes[/\\\\]")) {
-                String s2 = basePath.substring(0, basePath.length() - "/target/classes".length()) + "pom.xml";
-                //this is most likely to be a maven project
-                try {
-                    all.add(new NPomXmlParser(session).parse(NPath.of(s2, session).toURL().get(), session).getPomId());
-                } catch (Exception ex) {
-                    NLogOp.of(NPomXmlParser.class, session)
-                            .verb(NLogVerb.WARNING)
-                            .level(Level.FINEST)
-                            .log(NMsg.ofC("failed to parse pom file %s : %s", s2, ex));
-                }
-            }
-        }
         return all.toArray(new NPomId[0]);
+    }
+
+    private NPomId[] resolvePomIdsFromMetaInfMavenAsRoot(URLParts aa, NSession session) {
+        if (aa.getParts().length == 2
+                && aa.getParts()[0].getType() == URLPart.Type.JAR
+                && aa.getParts()[1].getType() == URLPart.Type.FS_FILE
+        ) {
+            URLParts p = aa.getParent().append("/META-INF/maven");
+            return resolvePomIdsFromMetaInfMaven0(p, session);
+        }
+        return new NPomId[0];
+    }
+
+    public NPomId[] resolvePomIds(NPath baseUrl, String referenceResourcePath, NSession session) {
+        final URLParts aa = new URLParts(baseUrl.toURL().get());
+        NPomId[] result;
+
+        result = resolvePomIdsFromMetaInfMavenByRef(aa, referenceResourcePath, session);
+        if (result.length > 0) {
+            return result;
+        }
+        result = resolvePomIdsFromMetaInfMavenAsRoot(aa, session);
+        if (result.length > 0) {
+            return result;
+        }
+        result = resolvePomIdsFromTargetClasses(aa, referenceResourcePath, session);
+        if (result.length > 0) {
+            return result;
+        }
+        return result;
     }
 
     /**
@@ -85,16 +125,16 @@ public class NPomIdResolver {
      * loaded <code>clazz</code>
      *
      * @param clazz class
-     * @return artifacts array in the form groupId:artfcatId#version
+     * @return artifacts array in the form groupId:artifactId#version
      */
     public NPomId[] resolvePomIds(Class clazz) {
         List<NPomId> all = new ArrayList<NPomId>();
         try {
             final String n = clazz.getName().replace('.', '/').concat(".class");
             final Enumeration<URL> r = clazz.getClassLoader().getResources(n);
-            for (URL url : Collections.list(r)) {
-                all.addAll(Arrays.asList(resolvePomIds(
-                        NPath.of(url, session), n, session)));
+            ArrayList<URL> list = Collections.list(r);
+            for (URL url : list) {
+                all.addAll(Arrays.asList(resolvePomIds(NPath.of(url, session), n, session)));
             }
         } catch (IOException ex) {
             NLogOp.of(NPomXmlParser.class, session)
@@ -161,7 +201,6 @@ public class NPomIdResolver {
         URL url = clazz.getClassLoader().getResource("META-INF/maven/" + groupId + "/" + artifactId + "/pom.properties");
 
         if (url != null) {
-//            System.out.println("== " + url);
             Properties p = new Properties();
             try {
                 p.load(url.openStream());
@@ -170,10 +209,8 @@ public class NPomIdResolver {
             }
             String version = p.getProperty("version");
             if (version != null && version.trim().length() != 0) {
-//                System.out.println("\t found!!");
                 return version;
             }
-//            System.out.println("\t not found");
         }
         return defaultValue;
     }

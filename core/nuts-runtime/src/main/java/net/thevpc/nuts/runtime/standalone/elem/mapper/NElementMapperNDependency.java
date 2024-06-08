@@ -32,9 +32,6 @@ public class NElementMapperNDependency implements NElementMapper<NDependency> {
 
     @Override
     public NElement createElement(NDependency o, Type typeOfSrc, NElementFactoryContext context) {
-//            if (o.toString().contains("jai_imageio")) {
-//                System.out.print("");
-//            }
 //            if (o.getExclusions().length == 0) {
         //use compact form
 //                if (context.element().isNtf()) {

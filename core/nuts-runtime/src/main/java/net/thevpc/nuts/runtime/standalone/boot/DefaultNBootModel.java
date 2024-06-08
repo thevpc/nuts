@@ -74,7 +74,7 @@ public class DefaultNBootModel implements NBootModel {
     private NSystemTerminalRef systemTerminal;
     private NWorkspaceModel workspaceModel;
 
-    public DefaultNBootModel(NWorkspace workspace,NWorkspaceModel workspaceModel) {
+    public DefaultNBootModel(NWorkspace workspace, NWorkspaceModel workspaceModel) {
         this.workspace = workspace;
         this.workspaceModel = workspaceModel;
     }
@@ -100,10 +100,10 @@ public class DefaultNBootModel implements NBootModel {
         boolean customOut = false;
         boolean customErr = false;
         boolean customIn = false;
-        if (!boot && CoreAnsiTermHelper.isXTerm(session)) {
-            flags.add("tty");
-            tty = true;
-        }
+//        if (/*!boot &&*/ CoreAnsiTermHelper.isXTerm(session)) {
+//            flags.add("tty");
+//            tty = true;
+//        }
         InputStream stdIn = System.in;
         PrintStream stdOut = System.out;
         PrintStream stdErr = System.err;
@@ -125,60 +125,93 @@ public class DefaultNBootModel implements NBootModel {
         if (System.console() != null) {
             flags.add("console");
         }
+        if (!customOut) {
+            if (System.console() != null) {
+                flags.add("tty");
+                tty = true;
+            } else {
+                if (OptionalJansi.isAvailable()) {
+                    if (OptionalJansi.isatty(1)) {
+                        flags.add("tty");
+                        tty = true;
+                    }
+                }
+            }
+        }
+        boolean supportsAnsi = false;
+        boolean acceptAnsi = false;
+        boolean denyAnsi = false;
+        if (bOption.getTerminalMode().isPresent()) {
+            switch (bOption.getTerminalMode().get()) {
+                case FORMATTED:
+                case ANSI: {
+                    acceptAnsi = true;
+                    break;
+                }
+                case FILTERED: {
+                    denyAnsi = true;
+                    break;
+                }
+            }
+        }
         switch (os) {
             case LINUX:
             case MACOS:
             case UNIX: {
-                flags.add(ansiFlag(tty, bOption));
-                return new NWorkspaceTerminalOptions(stdIn, stdOut, stdErr, flags.toArray(flags.toArray(new String[0])));
+                if (tty) {
+                    supportsAnsi = true;
+                }
+                break;
             }
             case WINDOWS: {
                 if (CorePlatformUtils.IS_CYGWIN || CorePlatformUtils.IS_MINGW_XTERM) {
                     if (CorePlatformUtils.IS_CYGWIN) {
+                        if (tty) {
+                            supportsAnsi = true;
+                        }
                         flags.add("cygwin");
                     }
                     if (CorePlatformUtils.IS_MINGW_XTERM) {
+                        if (tty) {
+                            supportsAnsi = true;
+                        }
                         flags.add("mingw");
                     }
-                    flags.add(ansiFlag((!customOut && !customErr), bOption));
-                    return new NWorkspaceTerminalOptions(stdIn, stdOut, stdErr, flags.toArray(new String[0]));
                 }
-                if (OptionalJansi.isAvailable()) {
-                    NWorkspaceTerminalOptions t = OptionalJansi.resolveStdFd(session, flags);
-                    if (t != null) {
-                        return t;
-                    }
-                }
-                flags.add(ansiFlag(tty, bOption));
-                return new NWorkspaceTerminalOptions(stdIn, stdOut, stdErr, flags.toArray(new String[0]));
-            }
-            default: {
-                if (OptionalJansi.isAvailable()) {
-                    NWorkspaceTerminalOptions t = OptionalJansi.resolveStdFd(session, flags);
-                    if (t != null) {
-                        return t;
-                    }
-                }
-                flags.add(ansiFlag(tty, bOption));
-                return new NWorkspaceTerminalOptions(stdIn, stdOut, stdErr, flags.toArray(new String[0]));
+                break;
             }
         }
+        if (!denyAnsi) {
+            OptionalJansi.fillAnsiFlags(flags);
+            if (!flags.contains("ansi") && !flags.contains("raw")) {
+                if (supportsAnsi) {
+                    flags.add("ansi");
+                } else {
+                    flags.add("raw");
+                }
+            }
+        } else {
+            if (!flags.contains("ansi") && !flags.contains("raw")) {
+                flags.add("raw");
+            }
+        }
+        return new NWorkspaceTerminalOptions(stdIn, stdOut, stdErr, flags.toArray(new String[0]));
     }
 
-    private static String ansiFlag(boolean defaultValue, NWorkspaceOptions bOption) {
-        if (bOption.getTerminalMode().isPresent()) {
-            switch (bOption.getTerminalMode().get()) {
-                case FORMATTED:
-                case ANSI:
-                    return "ansi";
-                case FILTERED:
-                    return "raw";
-                case INHERITED:
-                    return defaultValue ? "ansi" : "raw";
-            }
-        }
-        return defaultValue ? "ansi" : "raw";
-    }
+//    private static String ansiFlag(boolean defaultValue, NWorkspaceOptions bOption) {
+//        if (bOption.getTerminalMode().isPresent()) {
+//            switch (bOption.getTerminalMode().get()) {
+//                case FORMATTED:
+//                case ANSI:
+//                    return "ansi";
+//                case FILTERED:
+//                    return "raw";
+//                case INHERITED:
+//                    return defaultValue ? "ansi" : "raw";
+//            }
+//        }
+//        return defaultValue ? "ansi" : "raw";
+//    }
 
     public void onInitializeWorkspace() {
         this.bootTerminal = detectAnsiTerminalSupport(NOsFamily.getCurrent(), bOptions.getUserOptions().get(), false, bootSession);

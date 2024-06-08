@@ -135,7 +135,7 @@ public final class DefaultNBootOptionsBuilder extends DefaultNWorkspaceOptionsBu
                 getExecutionType().orNull(), getRunAs().orNull(), getArchetype().orNull(),
                 getStoreLocations().orNull(), getHomeLocations().orNull(), getStoreLayout().orNull(), getStoreStrategy().orNull(),
                  getRepositoryStoreStrategy().orNull(), getFetchStrategy().orNull(),
-                getStdin().orNull(), getStdout().orNull(), getStdout().orNull(),
+                getStdin().orNull(), getStdout().orNull(), getStderr().orNull(),
                  getExecutorService().orNull(), getExpireTime().orNull(), getErrors().orNull(), getSkipErrors().orNull(), getLocale().orNull(),
                  getTheme().orNull(), getUuid().orNull(), getBootRepositories().orNull(), getRuntimeBootDependencyNode().orNull(), getExtensionBootDescriptors().orNull(),
                  getExtensionBootDependencyNodes().orNull(), getClassWorldURLs().orNull(), getExtensionsSet().orNull(), getBootWorkspaceFactory().orNull(), getRuntimeBootDescriptor().orNull(), getClassWorldLoader().orNull(),

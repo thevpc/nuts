@@ -254,12 +254,12 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 String s = CoreIOUtils.loadString(getClass().getResourceAsStream("/net/thevpc/nuts/runtime/includes/standard-header.ntf"), true, defaultSession());
                 s = s.replace("${nuts.workspace-runtime.version}", Nuts.getVersion().toString());
                 for (String s1 : s.split("\n")) {
-                    LOGCSF.log(NMsg.ofPlain(s1));
+                    LOGCSF.log(NMsg.ofNtf(s1));
                 }
                 LOGCSF.log(NMsg.ofPlain(" "));
                 LOGCSF.log(NMsg.ofPlain(" = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = ="));
                 LOGCSF.log(NMsg.ofPlain(" "));
-                LOGCSF.log(NMsg.ofJ("start ```sh nuts``` ```primary3 {0}``` at {1}", Nuts.getVersion(), CoreNUtils.DEFAULT_DATE_TIME_FORMATTER.format(bOption0.getCreationTime().get())));
+                LOGCSF.log(NMsg.ofJ("start ```sh nuts``` {0} at {1}", Nuts.getVersion(), CoreNUtils.DEFAULT_DATE_TIME_FORMATTER.format(bOption0.getCreationTime().get())));
                 LOGCRF.log(NMsg.ofJ("open Nuts Workspace               : {0}",
                         bootOptions.toCmdLine()
                 ));

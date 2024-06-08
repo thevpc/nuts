@@ -751,7 +751,6 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         if (descAppIcon != null) {
             String descAppIcon0 = descAppIcon;
             String descAppIconDigest = NDigest.of(session).md5().setSource(new ByteArrayInputStream(descAppIcon0.getBytes())).computeString();
-//            System.out.println(">>>>>>> "+descAppIconDigest+" :: "+descAppIcon0);
             NPath p0 = NPath.of(descAppIcon, session);
             descAppIcon=toAbsoluteIconPath(appId, descAppIcon);
             String bestName = descAppIconDigest + "." + p0.getLastExtension();

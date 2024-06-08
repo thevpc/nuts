@@ -26,20 +26,6 @@ class IntermediateNodeMem<K extends Comparable<K>, V> extends NodeMem<K, V> impl
     @Override
     public K key(int i) {
         return children[i].firstKey();
-//        return (K) keys[i];
-//        NodeMem<K, V> u = (NodeMem<K, V>) children[i];
-//        return u.keyCond;
-////            K expected=null;
-////            if(u instanceof InternalNodeMem<?, ?>){
-////                expected = ((InternalNodeMem<K, Object>) u).firstKey;
-////            }else if( u instanceof LeafNodeMem<?, ?> ){
-////                expected=((LeafNodeMem<K, V>) u).dictionary[0].key;
-////            }
-//        K found = (K) keys[i];
-////            if(!Objects.equals(found,expected)){
-////                System.out.println("why");
-////            }
-//        return found;
     }
 
     @Override

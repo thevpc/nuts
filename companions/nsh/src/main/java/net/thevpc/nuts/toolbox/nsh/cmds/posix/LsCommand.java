@@ -191,6 +191,15 @@ public class LsCommand extends NShellBuiltinDefault {
                 }
                 case PLAIN: {
                     boolean first = true;
+                    Map<String, Integer> sizes = new HashMap<>();
+                    for (ResultGroup resultGroup : success.result) {
+                        if (resultGroup.children != null) {
+                            for (ResultItem resultItem : resultGroup.children) {
+                                sizes.put("owner", Math.max(4, Math.max((String.valueOf(resultItem.owner)).length(), NUtils.firstNonNull(sizes.get("owner"), 0))));
+                                sizes.put("group", Math.max(4, Math.max((String.valueOf(resultItem.group)).length(), NUtils.firstNonNull(sizes.get("group"), 0))));
+                            }
+                        }
+                    }
                     for (ResultGroup resultGroup : success.result) {
                         boolean wasFirst = first;
                         first = false;
@@ -202,10 +211,10 @@ public class LsCommand extends NShellBuiltinDefault {
                                 out.println(NMsg.ofC("%s:", resultGroup.name));
                             }
                             for (ResultItem resultItem : resultGroup.children) {
-                                printPlain(resultItem, options, out, session);
+                                printPlain(resultItem, options, out, sizes, session);
                             }
                         } else {
-                            printPlain(resultGroup.file, options, out, session);
+                            printPlain(resultGroup.file, options, out, sizes, session);
                         }
                     }
                     break;
@@ -227,10 +236,14 @@ public class LsCommand extends NShellBuiltinDefault {
         }
     }
 
-    private void printPlain(ResultItem item, Options options, NPrintStream out, NSession session) {
+    private void printPlain(ResultItem item, Options options, NPrintStream out, Map<String, Integer> sizes, NSession session) {
         if (options.l) {
+            String owner = String.format("%-" + (Math.max(4, Math.max(NUtils.firstNonNull(sizes.get("owner"), 0), NStringUtils.trim(item.owner).length()))) + "s", NStringUtils.trim(item.owner));
+            String group = String.format("%-" + (Math.max(4, Math.max(NUtils.firstNonNull(sizes.get("group"), 0), NStringUtils.trim(item.group).length()))) + "s", NStringUtils.trim(item.group));
             out.print(NMsg.ofC("%s%s  %s %s %s %s ",
-                    item.type, item.uperms != null ? item.uperms : item.jperms, NStringUtils.trim(item.owner), NStringUtils.trim(item.group),
+                    item.type, item.uperms != null ? item.uperms : item.jperms,
+                    owner,
+                    group   ,
                     options.h ? options.byteFormat.format(item.length) : String.format("%9d", item.length),
                     item.modified == null ? "" : SIMPLE_DATE_FORMAT.format(item.modified)
             ));
