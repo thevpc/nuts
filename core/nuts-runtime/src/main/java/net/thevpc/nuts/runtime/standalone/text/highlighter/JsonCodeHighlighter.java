@@ -53,6 +53,8 @@ public class JsonCodeHighlighter implements NCodeHighlighter {
             switch (ar.peekChar()) {
                 case '{':
                 case '}':
+                case '[':
+                case ']':
                 case ':': {
                     all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                     break;

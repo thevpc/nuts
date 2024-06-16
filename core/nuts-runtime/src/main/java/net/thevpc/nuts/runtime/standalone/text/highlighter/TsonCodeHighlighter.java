@@ -29,14 +29,13 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
         String s = context.getConstraints();
-        if(s==null){
+        if (s == null) {
             return NConstants.Support.DEFAULT_SUPPORT;
         }
-        switch (s){
+        switch (s) {
             case "tson":
             case "application/tson":
-            case "text/tson":
-            {
+            case "text/tson": {
                 return NConstants.Support.DEFAULT_SUPPORT;
             }
         }
@@ -51,6 +50,12 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
             switch (ar.peekChar()) {
                 case '{':
                 case '}':
+                case '[':
+                case ']':
+                case '(':
+                case ')':
+                case '@':
+                case '^':
                 case ':': {
                     all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                     break;
@@ -77,39 +82,36 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
                     break;
                 }
                 case '.':
-                case '-':{
+                case '-': {
                     NText[] d = StringReaderExtUtils.readNumber(session, ar);
-                    if(d!=null) {
+                    if (d != null) {
                         all.addAll(Arrays.asList(d));
-                    }else{
+                    } else {
                         all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                     }
                     break;
                 }
-                case '/':{
-                    if(ar.peekChars("//")) {
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashSlashComments(session,ar)));
-                    }else if(ar.peekChars("/*")){
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashStarComments(session,ar)));
-                    }else{
+                case '/': {
+                    if (ar.peekChars("//")) {
+                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashSlashComments(session, ar)));
+                    } else if (ar.peekChars("/*")) {
+                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashStarComments(session, ar)));
+                    } else {
                         all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                     }
                     break;
                 }
                 default: {
-                    if(Character.isWhitespace(ar.peekChar())){
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(session,ar)));
-                    }else {
-                        NText[] d = StringReaderExtUtils.readJSIdentifier(session, ar);
+                    if (Character.isWhitespace(ar.peekChar())) {
+                        all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(session, ar)));
+                    } else {
+                        NText[] d = readIdentifier(session, ar);
                         if (d != null) {
                             if (d.length == 1 && d[0].getType() == NTextType.PLAIN) {
                                 String txt2 = ((NTextPlain) d[0]).getText();
-                                switch (txt2) {
-                                    case "true":
-                                    case "false": {
-                                        d[0] = txt.ofStyled(d[0], NTextStyle.bool());
-                                        break;
-                                    }
+                                NTextStyle t = resolveTokenStyle(txt2);
+                                if (t != null) {
+                                    d[0] = txt.ofStyled(d[0], t);
                                 }
                             }
                             all.addAll(Arrays.asList(d));
@@ -122,5 +124,62 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
             }
         }
         return txt.ofList(all.toArray(new NText[0]));
+    }
+
+    protected NTextStyle resolveTokenStyle(String txt2) {
+        switch (txt2) {
+            case "true":
+            case "false": {
+                return NTextStyle.bool();
+            }
+        }
+        return null;
+    }
+
+    protected boolean isIdentifierStart(char c) {
+        switch (c) {
+            case '$': {
+                return true;
+            }
+        }
+        return Character.isJavaIdentifierStart(c);
+    }
+
+    protected boolean isJavaIdentifierPart(char c) {
+        switch (c) {
+            case '$':
+            case '-': {
+                return true;
+            }
+        }
+        return Character.isJavaIdentifierStart(c);
+    }
+
+    private NText[] readIdentifier(NSession session, StringReaderExt ar) {
+        NTexts factory = NTexts.of(session);
+        List<NText> all = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        if (!ar.hasNext() || !isIdentifierStart(ar.peekChar())) {
+            return null;
+        }
+        sb.append(ar.nextChar());
+        while (ar.hasNext()) {
+            char c = ar.peekChar();
+            if (c == '-') {
+                String cc = ar.peekChars(2);
+                if (cc.length() > 1 && isJavaIdentifierPart(cc.charAt(0))) {
+                    sb.append(ar.nextChar());
+                } else {
+                    break;
+                }
+            }
+            if (isJavaIdentifierPart(c)) {
+                sb.append(ar.nextChar());
+            } else {
+                break;
+            }
+        }
+        all.add(factory.ofPlain(sb.toString()));
+        return all.toArray(new NText[0]);
     }
 }

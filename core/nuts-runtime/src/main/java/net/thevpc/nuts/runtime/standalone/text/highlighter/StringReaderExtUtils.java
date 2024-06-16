@@ -197,8 +197,8 @@ public class StringReaderExtUtils {
         }
         all.add(factory.ofPlain(sb.toString()));
         return all.toArray(new NText[0]);
-
     }
+
 
     public static NText[] readNumber(NSession session, StringReaderExt ar) {
         NTexts factory = NTexts.of(session);
