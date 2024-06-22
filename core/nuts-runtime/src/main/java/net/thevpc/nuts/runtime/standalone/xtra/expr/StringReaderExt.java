@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.expr;
 public class StringReaderExt {
     String content;
     int pos = 0;
+    int savedPos = 0;
 
     public StringReaderExt(String content) {
         this.content = content == null ? "" : content;
@@ -23,7 +24,7 @@ public class StringReaderExt {
         return pos + count < content.length();
     }
 
-    public char nextChar() {
+    public char readChar() {
         char c = content.charAt(pos);
         pos++;
         return c;
@@ -55,7 +56,7 @@ public class StringReaderExt {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < max; i++) {
             if (hasNext()) {
-                sb.append(nextChar());
+                sb.append(readChar());
             } else {
                 break;
             }
@@ -67,8 +68,28 @@ public class StringReaderExt {
         return content.length() - (pos + count) > 0;
     }
 
+    public String readWhile(CharPosPredicate filter) {
+        StringBuilder sb=new StringBuilder();
+        while(hasNext()){
+            char c = peekChar();
+            if(!filter.test(c, pos)){
+                break;
+            }
+            sb.append(readChar());
+        }
+        return sb.toString();
+    }
+
     public boolean hasNext() {
         return content.length() - pos > 0;
+    }
+
+    public void mark() {
+        this.savedPos=pos;
+    }
+
+    public void reset() {
+        pos=this.savedPos;
     }
 
     public interface CharPosPredicate{

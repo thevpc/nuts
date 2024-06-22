@@ -29,7 +29,7 @@ public class StyledParserStepCmdParser {
         StringReaderExt r = new StringReaderExt(atStr);
         List<NTextStyle> parsedStyles = new ArrayList<>();
         if (r.hasNext() && r.peekChar() == ':') {
-            r.nextChar();//skip '!'
+            r.readChar();//skip '!'
             while (true) {
                 if (readEnd(r)) {
                     break;
@@ -154,7 +154,7 @@ public class StyledParserStepCmdParser {
             all.add(s);
             while (s!=null && r.hasNext()) {
                 if (',' == r.peekChar()) {
-                    r.nextChar();
+                    r.readChar();
                 }
                 s = readNextStyle(r);
             }
@@ -210,27 +210,27 @@ public class StyledParserStepCmdParser {
                     break;
                 }
                 case '/': {
-                    r.nextChar();//skip
+                    r.readChar();//skip
                     return NTextStyle.italic();
                 }
                 case '+': {
-                    r.nextChar();//skip
+                    r.readChar();//skip
                     return NTextStyle.bold();
                 }
                 case '%': {
-                    r.nextChar();//skip
+                    r.readChar();//skip
                     return NTextStyle.blink();
                 }
                 case '_': {
-                    r.nextChar();//skip
+                    r.readChar();//skip
                     return NTextStyle.underlined();
                 }
                 case '-': {
-                    r.nextChar();//skip
+                    r.readChar();//skip
                     return NTextStyle.striked();
                 }
                 case '!': {
-                    r.nextChar();//skip
+                    r.readChar();//skip
                     return NTextStyle.reversed();
                 }
                 case '0':

@@ -101,19 +101,19 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
             while (r.hasNext()) {
                 if (r.peekChar() == '*') {
                     if (r.hasNext(1) && r.peekChar(1) == '%') {
-                        r.nextChar();
-                        r.nextChar();
+                        r.readChar();
+                        r.readChar();
                         StringBuilder mod = new StringBuilder();
                         while (r.hasNext() && r.peekChar() >= '0' && r.peekChar() <= '9') {
-                            mod.append(r.nextChar());
+                            mod.append(r.readChar());
                         }
                         sb.append(variant % (NLiteral.of(mod.toString()).asInt().orElse(1)));
                     } else {
-                        r.nextChar();
+                        r.readChar();
                         sb.append(variant);
                     }
                 } else {
-                    sb.append(r.nextChar());
+                    sb.append(r.readChar());
                 }
             }
             return sb.toString();

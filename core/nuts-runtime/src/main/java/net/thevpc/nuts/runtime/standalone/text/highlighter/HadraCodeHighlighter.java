@@ -84,7 +84,7 @@ public class HadraCodeHighlighter implements NCodeHighlighter {
                 case '>':
                 case '!':
                 case ';': {
-                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
+                    all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                     break;
                 }
                 case '\'': {
@@ -114,7 +114,7 @@ public class HadraCodeHighlighter implements NCodeHighlighter {
                     if (d != null) {
                         all.addAll(Arrays.asList(d));
                     } else {
-                        all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
+                        all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                     }
                     break;
                 }
@@ -124,7 +124,7 @@ public class HadraCodeHighlighter implements NCodeHighlighter {
                     } else if (ar.peekChars("/*")) {
                         all.addAll(Arrays.asList(StringReaderExtUtils.readSlashStarComments(session, ar)));
                     } else {
-                        all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
+                        all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                     }
                     break;
                 }
@@ -142,7 +142,7 @@ public class HadraCodeHighlighter implements NCodeHighlighter {
                             }
                             all.addAll(Arrays.asList(d));
                         } else {
-                            all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
+                            all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                         }
                     }
                     break;

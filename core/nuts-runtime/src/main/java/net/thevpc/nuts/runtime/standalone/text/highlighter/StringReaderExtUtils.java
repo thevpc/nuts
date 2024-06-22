@@ -15,7 +15,7 @@ public class StringReaderExtUtils {
         NTexts factory = NTexts.of(session);
         StringBuilder sb = new StringBuilder();
         while (ar.hasNext() && ar.peekChar() <= 32) {
-            sb.append(ar.nextChar());
+            sb.append(ar.readChar());
         }
         return new NText[]{
             factory.ofPlain(sb.toString())
@@ -34,15 +34,15 @@ public class StringReaderExtUtils {
             switch (ar.peekChar()) {
                 case '\n':
                 case '\r': {
-                    sb.append(ar.nextChar());
+                    sb.append(ar.readChar());
                     if (ar.hasNext() && ar.peekChar() == '\n') {
-                        sb.append(ar.nextChar());
+                        sb.append(ar.readChar());
                     }
                     inLoop = false;
                     break;
                 }
                 default: {
-                    sb.append(ar.nextChar());
+                    sb.append(ar.readChar());
                 }
             }
         }
@@ -66,12 +66,12 @@ public class StringReaderExtUtils {
                         sb.append(ar.nextChars(2));
                         inLoop = false;
                     } else {
-                        sb.append(ar.nextChar());
+                        sb.append(ar.readChar());
                     }
                     break;
                 }
                 default: {
-                    sb.append(ar.nextChar());
+                    sb.append(ar.readChar());
                 }
             }
         }
@@ -86,7 +86,7 @@ public class StringReaderExtUtils {
         boolean inLoop = true;
         StringBuilder sb = new StringBuilder();
         if (ar.hasNext() && ar.peekChars("\"")) {
-            sb.append(ar.nextChar());
+            sb.append(ar.readChar());
             while (inLoop && ar.hasNext()) {
                 switch (ar.peekChar()) {
                     case '\\': {
@@ -95,14 +95,14 @@ public class StringReaderExtUtils {
                             sb.setLength(0);
                         }
                         StringBuilder sb2 = new StringBuilder();
-                        sb2.append(ar.nextChar());
+                        sb2.append(ar.readChar());
                         if (ar.hasNext()) {
-                            sb2.append(ar.nextChar());
+                            sb2.append(ar.readChar());
                             if (ar.peekChar() == 'u') {
                                 for (int i = 0; i < 4; i++) {
                                     char c2 = ar.peekChar();
                                     if (Character.isDigit(c2) || (Character.toUpperCase(c2) >= 'A' && Character.toUpperCase(c2) <= 'F')) {
-                                        sb2.append(ar.nextChar());
+                                        sb2.append(ar.readChar());
                                     }
                                 }
                             }
@@ -111,12 +111,12 @@ public class StringReaderExtUtils {
                         break;
                     }
                     case '\"': {
-                        sb.append(ar.nextChar());
+                        sb.append(ar.readChar());
                         inLoop = false;
                         break;
                     }
                     default: {
-                        sb.append(ar.nextChar());
+                        sb.append(ar.readChar());
                     }
                 }
             }
@@ -136,7 +136,7 @@ public class StringReaderExtUtils {
         boolean inLoop = true;
         StringBuilder sb = new StringBuilder();
         if (ar.hasNext() && ar.peekChars("\'")) {
-            sb.append(ar.nextChar());
+            sb.append(ar.readChar());
             while (inLoop && ar.hasNext()) {
                 switch (ar.peekChar()) {
                     case '\\': {
@@ -145,14 +145,14 @@ public class StringReaderExtUtils {
                             sb.setLength(0);
                         }
                         StringBuilder sb2 = new StringBuilder();
-                        sb2.append(ar.nextChar());
+                        sb2.append(ar.readChar());
                         if (ar.hasNext()) {
-                            sb2.append(ar.nextChar());
+                            sb2.append(ar.readChar());
                             if (ar.peekChar() == 'u') {
                                 for (int i = 0; i < 4; i++) {
                                     char c2 = ar.peekChar();
                                     if (Character.isDigit(c2) || (Character.toUpperCase(c2) >= 'A' && Character.toUpperCase(c2) <= 'F')) {
-                                        sb2.append(ar.nextChar());
+                                        sb2.append(ar.readChar());
                                     }
                                 }
                             }
@@ -161,12 +161,12 @@ public class StringReaderExtUtils {
                         break;
                     }
                     case '\'': {
-                        sb.append(ar.nextChar());
+                        sb.append(ar.readChar());
                         inLoop = false;
                         break;
                     }
                     default: {
-                        sb.append(ar.nextChar());
+                        sb.append(ar.readChar());
                     }
                 }
             }
@@ -187,10 +187,10 @@ public class StringReaderExtUtils {
         if (!ar.hasNext() || !Character.isJavaIdentifierStart(ar.peekChar())) {
             return null;
         }
-        sb.append(ar.nextChar());
+        sb.append(ar.readChar());
         while (ar.hasNext()) {
             if (Character.isJavaIdentifierPart(ar.peekChar())) {
-                sb.append(ar.nextChar());
+                sb.append(ar.readChar());
             } else {
                 break;
             }

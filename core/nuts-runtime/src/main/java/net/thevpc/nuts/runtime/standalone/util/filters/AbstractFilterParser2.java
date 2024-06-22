@@ -28,7 +28,7 @@ public abstract class AbstractFilterParser2<T> {
 
     protected void skipWhites(){
         while(str.hasNext() && Character.isWhitespace(str.peekChar())){
-            str.nextChar();
+            str.readChar();
         }
     }
 
@@ -128,7 +128,7 @@ public abstract class AbstractFilterParser2<T> {
         if(str.hasNext() && Character.isLetterOrDigit(str.peekChar())){
            StringBuilder sb=new StringBuilder();
            while(str.hasNext() && (Character.isLetterOrDigit(str.peekChar()) || str.peekChar()=='_')){
-               sb.append(str.nextChar());
+               sb.append(str.readChar());
            }
            return sb.toString();
         }
