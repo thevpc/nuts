@@ -5,6 +5,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineContext;
 import net.thevpc.nuts.cmdline.NCmdLineRunner;
 import net.thevpc.nuts.cmdline.NArg;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.noapi.model.NoapiCmdData;
 import net.thevpc.nuts.toolbox.noapi.service.NOpenAPIService;
 import net.thevpc.nuts.util.NAssert;
@@ -136,7 +137,15 @@ public class NoapiMain implements NApplication {
             public void validate(NCmdLine cmdLine, NCmdLineContext context) {
                 NSession session = cmdLine.getSession();
                 if (data.isEmpty()) {
-                    cmdLine.throwMissingArgument();
+                    NoapiCmdData c = new NoapiCmdData();
+                    c.setCommand(ref.getCommand());
+                    c.setKeep(ref.isKeep());
+                    c.setOpenAPI(ref.isOpenAPI());
+                    c.setTarget(ref.getTarget());
+                    c.setVars(ref.getVars());
+                    c.setVarsMap(new HashMap<>(ref.getVarsMap()));
+                    c.setPath(NPath.ofUserDirectory(session).toString());
+                    data.add(c);
                 }
                 for (NoapiCmdData d : data) {
                     NAssert.requireNonBlank(d.getPath(), "path", session);
@@ -148,6 +157,7 @@ public class NoapiMain implements NApplication {
 
             @Override
             public void run(NCmdLine cmdLine, NCmdLineContext context) {
+
                 for (NoapiCmdData d : data) {
                     switch (d.getCommand()) {
                         case "pdf": {
