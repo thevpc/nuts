@@ -192,13 +192,26 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
                 }
             }
         } else if (ar.readString("0x")) {
+            sb.append("0x");
             sb.append(ar.readWhile((cc, p) -> (cc >= '0' && cc <= '9') || (cc >= 'a' && cc <= 'f') || (cc >= 'A' && cc <= 'F') || cc == '_'));
         } else if (ar.readString("0b")) {
+            sb.append("0b");
             sb.append(ar.readWhile((cc, p) -> (cc >= '0' && cc <= '1') || cc == '_'));
         } else if (ar.readString("0")) {
+            sb.append("0");
             sb.append(ar.readWhile((cc, p) -> (cc >= '0' && cc <= '7') || cc == '_'));
         } else {
             sb.append(ar.readWhile((cc, p) -> (cc >= '0' && cc <= '9') || cc == '_' || cc == '-' || cc == '+' || cc == 'e' || cc == 'E' || cc == 'i' || cc == '^' || cc == '.'));
+        }
+
+        if (ar.readString("LL")) {
+            sb.append("LL");
+        }else if (ar.readString("L")) {
+            sb.append("L");
+        }else if(ar.readString("f")){
+            sb.append("f");
+        }else if(ar.readString("F")){
+            sb.append("F");
         }
         if (ar.readString("%")) {
             sb.append("%");
@@ -206,6 +219,10 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
         } else if (ar.readString("_")) {
             sb.append("_");
             sb.append(ar.readWhile((cc, p) -> Character.isLetter(cc)));
+        }else{
+            if(sb.toString().matches(".*_[a-zA-Z]+")){
+                sb.append(ar.readWhile((cc, p) -> Character.isLetter(cc)));
+            }
         }
         return sb.toString();
     }
