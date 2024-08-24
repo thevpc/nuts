@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.*;
@@ -116,5 +117,13 @@ public class DefaultNObjectElement extends AbstractNObjectElement {
     @Override
     public boolean isBlank() {
         return values.isEmpty();
+    }
+
+    @Override
+    public NOptional<Object> asObjectAt(int index) {
+        if(index>=0 && index<values.size()) {
+            return NOptional.of(values.get(index));
+        }
+        return NOptional.ofEmpty(ss-> NMsg.ofC("invalid object at %s",index));
     }
 }

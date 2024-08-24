@@ -764,9 +764,10 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                 //now search online
                 // this helps recover from "invalid default parseVersion" issue
                 if (traceSession.isPlainTrace()) {
-                    traceSession.out().resetLine().println(NMsg.ofC("%s is %s, will search for it online. Type ```error CTRL^C``` to stop...",
+                    traceSession.out().resetLine().println(NMsg.ofC("%s is %s, will search for it online. Type %s to stop...",
                             nid,
-                            NTexts.of(session).ofStyled("not installed", NTextStyle.error())
+                            NTexts.of(session).ofStyled("not installed", NTextStyle.error()),
+                            NTexts.of(session).ofStyled("CTRL^C", NTextStyle.error())
                     ));
                     traceSession.out().flush();
                 }

@@ -26,6 +26,8 @@ package net.thevpc.nuts.runtime.standalone.elem;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NCustomElement;
 import net.thevpc.nuts.elem.NElementType;
+import net.thevpc.nuts.util.NLiteral;
+import net.thevpc.nuts.util.NOptional;
 
 import java.util.Objects;
 
@@ -82,6 +84,11 @@ class DefaultNCustomElement extends AbstractNElement implements NCustomElement {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public NOptional<Object> asObjectAt(int index) {
+        return NLiteral.of(value).asObjectAt(index);
     }
 
     @Override

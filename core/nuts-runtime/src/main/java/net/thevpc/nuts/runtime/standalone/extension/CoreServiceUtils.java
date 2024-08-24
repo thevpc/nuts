@@ -27,10 +27,9 @@ import net.thevpc.nuts.NException;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.format.NVisitResult;
 import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.runtime.standalone.io.urlpart.URLPart;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.URLPart;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.URLParts;
 import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.util.NMsg;
 
@@ -106,10 +105,9 @@ public final class CoreServiceUtils {
 
     public static Set<String> loadZipServiceClassNames(URL url, Class service, NSession session) {
         LinkedHashSet<String> found = new LinkedHashSet<>();
-        URLParts up = new URLParts(url);
-        URLPart lastPart = up.getLastPart();
-        if (lastPart.getType() == URLPart.Type.FS_FILE || lastPart.getType() == URLPart.Type.URL_FILE) {
-            File file = lastPart.getFile();
+        URLPart lastPart = URLPart.of(url);
+        File file = lastPart.getFile().orNull();
+        if (file!=null) {
             if (file.isDirectory()) {
                 return loadZipServiceClassNamesFromFolder(file, service, session);
             } else if (file.isFile()) {

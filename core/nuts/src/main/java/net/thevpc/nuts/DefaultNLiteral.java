@@ -1,9 +1,11 @@
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementType;
 import net.thevpc.nuts.reflect.NReflectUtils;
 import net.thevpc.nuts.util.*;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -12,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 public class DefaultNLiteral implements NLiteral {
@@ -572,6 +575,65 @@ public class DefaultNLiteral implements NLiteral {
             }
         }
         return false;
+    }
+
+    @Override
+    public NOptional<String> asStringAt(int index) {
+        return asLiteralAt(index).asString();
+    }
+
+    @Override
+    public NOptional<Long> asLongAt(int index) {
+        return asLiteralAt(index).asLong();
+    }
+
+    @Override
+    public NOptional<Integer> asIntAt(int index) {
+        return asLiteralAt(index).asInt();
+    }
+
+    @Override
+    public NOptional<Double> asDoubleAt(int index) {
+        return asLiteralAt(index).asDouble();
+    }
+
+    @Override
+    public boolean isNullAt(int index) {
+        return asLiteralAt(index).isNull();
+    }
+
+    @Override
+    public NLiteral asLiteralAt(int index) {
+        return of(asObjectAt(index).orNull());
+    }
+
+    @Override
+    public NOptional<Object> asObjectAt(int index) {
+        if (value != null) {
+            if (value instanceof Object[]) {
+                Object[] e = (Object[]) value;
+                if (index >= 0 && index < e.length) {
+                    return NOptional.ofNamed(e[index], "object at " + index);
+                }
+            }
+            if (value.getClass().isArray()) {
+                int len = Array.getLength(value);
+                if (index >= 0 && index < len) {
+                    return NOptional.ofNamed(Array.get(value, index), "object at " + index);
+                }
+            }
+            if (value instanceof List) {
+                List li = (List) value;
+                int len = li.size();
+                if (index >= 0 && index < len) {
+                    return NOptional.ofNamed(li.get(index), "object at " + index);
+                }
+            }
+            if (value instanceof NElement) {
+                return ((NElement)value).asObjectAt(index);
+            }
+        }
+        return NOptional.ofEmpty(ss-> NMsg.ofC("invalid object at %s",index));
     }
 
     @Override

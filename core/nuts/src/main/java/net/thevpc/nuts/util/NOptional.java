@@ -20,7 +20,7 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
     }
 
     static <T> NOptional<T> ofNamedEmpty(NMsg message) {
-        return ofEmpty(message == null ? null : s -> message);
+        return ofEmpty(NMsg.ofC("missing %s", message==null?"value":message));
     }
 
     static <T> NOptional<T> ofNamedError(NMsg message) {
@@ -98,6 +98,10 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
 
     static <T> NOptional<T> ofNamedOptional(Optional<T> optional, String name) {
         return ofOptional(optional, s -> NMsg.ofC("missing %s", NStringUtils.firstNonBlank(name, "value")));
+    }
+
+    static <T> NOptional<T> ofOptional(Optional<T> optional, NMsg name) {
+        return ofOptional(optional, s -> name);
     }
 
     static <T> NOptional<T> ofOptional(Optional<T> optional, Function<NSession, NMsg> errorMessage) {

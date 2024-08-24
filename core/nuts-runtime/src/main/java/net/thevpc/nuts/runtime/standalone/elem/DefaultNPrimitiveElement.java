@@ -199,4 +199,9 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
         return value.toStringLiteral();
     }
 
+
+    @Override
+    public NOptional<Object> asObjectAt(int index) {
+        return value.asObjectAt(index);
+    }
 }

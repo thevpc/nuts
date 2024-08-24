@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import net.thevpc.nuts.elem.NArrayElement;
 import net.thevpc.nuts.elem.NElementType;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.util.NOptional;
 
 /**
  *
@@ -43,5 +44,10 @@ public abstract class AbstractNArrayElement
     @Override
     public String toString() {
         return "[" + items().stream().map(Object::toString).collect(Collectors.joining(", ")) + "]";
+    }
+
+    @Override
+    public NOptional<Object> asObjectAt(int index) {
+        return get(index).map(x->x);
     }
 }

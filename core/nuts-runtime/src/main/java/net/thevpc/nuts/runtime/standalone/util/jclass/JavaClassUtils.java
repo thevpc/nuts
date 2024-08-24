@@ -2,12 +2,6 @@ package net.thevpc.nuts.runtime.standalone.util.jclass;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NVisitResult;
-import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.log.NLogVerb;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.NPomIdResolver;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.NPomXmlParser;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.URLParts;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NPomId;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNExecutionEntry;
 import net.thevpc.nuts.log.NLogOp;

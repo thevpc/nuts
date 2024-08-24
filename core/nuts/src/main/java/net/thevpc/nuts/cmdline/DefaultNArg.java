@@ -458,4 +458,39 @@ public class DefaultNArg implements NArg {
     public <ET> NOptional<ET> asType(Type expectedType) {
         return toValue().asType(expectedType);
     }
+
+    @Override
+    public NOptional<String> asStringAt(int index) {
+        return toValue().asStringAt(index);
+    }
+
+    @Override
+    public NOptional<Long> asLongAt(int index) {
+        return toValue().asLongAt(index);
+    }
+
+    @Override
+    public NOptional<Integer> asIntAt(int index) {
+        return toValue().asIntAt(index);
+    }
+
+    @Override
+    public NOptional<Double> asDoubleAt(int index) {
+        return toValue().asDoubleAt(index);
+    }
+
+    @Override
+    public boolean isNullAt(int index) {
+        return toValue().isNullAt(index);
+    }
+
+    @Override
+    public NLiteral asLiteralAt(int index) {
+        return toValue().asLiteralAt(index);
+    }
+
+    @Override
+    public NOptional<Object> asObjectAt(int index) {
+        return toValue().asObjectAt(index);
+    }
 }

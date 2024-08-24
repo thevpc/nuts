@@ -1491,4 +1491,41 @@ public class CoreIOUtils {
         return false;
     }
 
+    public static String concatPath(String ...all) {
+        StringBuilder sb=new StringBuilder();
+        if(all!=null){
+            for (String s : all) {
+                if(s!=null){
+                    s=s.trim();
+                }
+                if(s.length()>0) {
+
+                    boolean newSlash = s.length() > 0 && s.charAt(0) == '/';
+                    boolean wasSlash = sb.length() > 0 && sb.charAt(sb.length() - 1) == '/';
+                    if (sb.length() > 0) {
+                        if (!wasSlash && !newSlash) {
+                            sb.append("/");
+                            sb.append(s);
+                        }else{
+                            sb.append(s);
+                        }
+                    } else {
+                        sb.append(s);
+                    }
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    public static String ensureLeadingSlash(String s) {
+        if(s.length()>0){
+            if(!s.startsWith("/")){
+                return "/"+s;
+            }
+            return s;
+        }
+        return "/";
+    }
+
 }

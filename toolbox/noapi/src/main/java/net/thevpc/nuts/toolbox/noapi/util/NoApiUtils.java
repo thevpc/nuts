@@ -30,23 +30,25 @@ public class NoApiUtils {
     public static MdElement asText(String text) {
         List<MdElement> all = new ArrayList<>();
         int i = 0;
-        while (i < text.length()) {
-            int j = text.indexOf("##", i);
-            if (j < 0) {
-                all.add(MdFactory.text(text.substring(i)));
-                break;
-            }
-            String a = text.substring(i, j);
-            if (a.length() > 0) {
-                all.add(MdFactory.text(a));
-            }
-            int j2 = text.indexOf("##", j + 2);
-            if (j2 < 0) {
-                all.add(MdFactory.codeBacktick3("", text.substring(j + 2)));
-                break;
-            } else {
-                all.add(MdFactory.codeBacktick3("", text.substring(j + 2, j2)));
-                i = j2 + 2;
+        if(text!=null) {
+            while (i < text.length()) {
+                int j = text.indexOf("##", i);
+                if (j < 0) {
+                    all.add(MdFactory.text(text.substring(i)));
+                    break;
+                }
+                String a = text.substring(i, j);
+                if (a.length() > 0) {
+                    all.add(MdFactory.text(a));
+                }
+                int j2 = text.indexOf("##", j + 2);
+                if (j2 < 0) {
+                    all.add(MdFactory.codeBacktick3("", text.substring(j + 2)));
+                    break;
+                } else {
+                    all.add(MdFactory.codeBacktick3("", text.substring(j + 2, j2)));
+                    i = j2 + 2;
+                }
             }
         }
         return MdFactory.ofListOrEmpty(all.toArray(new MdElement[0]));

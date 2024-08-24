@@ -2,10 +2,12 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.runtime.standalone.io.urlpart.URLPart;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NPomId;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.IOException;
@@ -31,8 +33,8 @@ public class NPomIdResolver {
         return resolvePomIds(baseUrl, null, session);
     }
 
-    private NPomId[] resolvePomIdsFromTargetClasses(URLParts aa, String referenceResourcePath, NSession session) {
-        String basePath = aa.getLastPart().getPath().substring(0, aa.getLastPart().getPath().length() - (referenceResourcePath == null ? 0 : referenceResourcePath.length()));
+    private NPomId[] resolvePomIdsFromTargetClasses(URLPart aa, String referenceResourcePath, NSession session) {
+        String basePath = aa.getPath().substring(0, aa.getPath().length() - (referenceResourcePath == null ? 0 : referenceResourcePath.length()));
         if (!basePath.endsWith("/") && !basePath.endsWith("\\")) {
             basePath += "/";
         }
@@ -54,28 +56,23 @@ public class NPomIdResolver {
     }
 
 
-    private NPomId[] resolvePomIdsFromMetaInfMavenByRef(URLParts aa, String referenceResourcePath, NSession session) {
-        String basePath = aa.getLastPart().getPath().substring(0, aa.getLastPart().getPath().length() - (referenceResourcePath == null ? 0 : referenceResourcePath.length()));
+    private NPomId[] resolvePomIdsFromMetaInfMavenByRef(URLPart aa, String referenceResourcePath, NSession session) {
+        String basePath = aa.getPath().substring(0, aa.getPath().length() - (referenceResourcePath == null ? 0 : referenceResourcePath.length()));
         if (!basePath.endsWith("/") && !basePath.endsWith("\\")) {
             basePath += "/";
         }
-        final URLParts p = aa.getParent().append(basePath + "META-INF/maven");
+        final URLPart p = aa.rootSibling(basePath +"META-INF/maven");
         return resolvePomIdsFromMetaInfMaven0(p, session);
     }
 
-    private NPomId[] resolvePomIdsFromMetaInfMaven0(URLParts p, NSession session) {
+    private NPomId[] resolvePomIdsFromMetaInfMaven0(URLPart p, NSession session) {
         List<NPomId> all = new ArrayList<NPomId>();
-        URL[] children = new URL[0];
-        try {
-            children = p.getChildren(false, true, new MvnPomPropsURLFilter());
-        } catch (IOException e) {
-            //e.printStackTrace();
-        }
-        for (URL url : children) {
+        URLPart[] children = p.getChildren(false, true, new MvnPomPropsURLFilter(),session);
+        for (URLPart url : children) {
             if (url != null) {
                 Properties prop = new Properties();
-                try {
-                    prop.load(url.openStream());
+                try (InputStream is=url.getInputStream(session)){
+                    prop.load(is);
                 } catch (IOException e) {
                     //
                 }
@@ -90,21 +87,21 @@ public class NPomIdResolver {
         return all.toArray(new NPomId[0]);
     }
 
-    private NPomId[] resolvePomIdsFromMetaInfMavenAsRoot(URLParts aa, NSession session) {
-        if (aa.getParts().length == 2
-                && aa.getParts()[0].getType() == URLPart.Type.JAR
-                && aa.getParts()[1].getType() == URLPart.Type.FS_FILE
-        ) {
-            URLParts p = aa.getParent().append("/META-INF/maven");
+    private NPomId[] resolvePomIdsFromMetaInfMavenAsRoot(URLPart aa, NSession session) {
+//        if (aa.len() == 2
+//                && aa.parent().getType() == URLPart.Type.JAR
+//                && aa.getType() == URLPart.Type.FS_FILE
+//        ) {
+            URLPart p = aa.rootSibling("/META-INF/maven");
             return resolvePomIdsFromMetaInfMaven0(p, session);
-        }
-        return new NPomId[0];
+//        }
+//        return new NPomId[0];
     }
 
     public NPomId[] resolvePomIds(NPath baseUrl, String referenceResourcePath, NSession session) {
-        final URLParts aa = new URLParts(baseUrl.toURL().get());
+        final URLPart aa = URLPart.of(baseUrl.toURL().get());
         NPomId[] result;
-
+        //List<URL> pomProperties = NCollections.list(Thread.currentThread().getContextClassLoader().getResources("META-INF/maven./pom.properties"));
         result = resolvePomIdsFromMetaInfMavenByRef(aa, referenceResourcePath, session);
         if (result.length > 0) {
             return result;
@@ -321,14 +318,14 @@ public class NPomIdResolver {
         boolean visit(String path, InputStream inputStream) throws IOException;
     }
 
-    private static class MvnPomPropsURLFilter implements Predicate<URL> {
+    private static class MvnPomPropsURLFilter implements Predicate<URLPart> {
 
         public MvnPomPropsURLFilter() {
         }
 
         @Override
-        public boolean test(URL path) {
-            String name = new URLParts(path).getName();
+        public boolean test(URLPart path) {
+            String name = path.getName();
             return name.equals("pom.properties");
         }
     }

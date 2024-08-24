@@ -71,6 +71,20 @@ public interface NLiteral extends NBlankable {
 
     boolean isEmpty();
 
+    NOptional<String> asStringAt(int index);
+
+    NOptional<Long> asLongAt(int index);
+
+    NOptional<Integer> asIntAt(int index);
+
+    NOptional<Double> asDoubleAt(int index);
+
+    boolean isNullAt(int index);
+
+    NLiteral asLiteralAt(int index);
+
+    NOptional<Object> asObjectAt(int index);
+
     boolean isBlank();
 
     boolean isNumber();

@@ -2,9 +2,9 @@ package net.thevpc.nuts.runtime.standalone.xtra.idresolver;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.runtime.standalone.io.urlpart.URLPart;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NPomId;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.NPomXmlParser;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.URLParts;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
@@ -35,24 +35,19 @@ public class NMetaInfIdResolver {
 
     public NId[] resolvePomIds(NPath baseUrl, String referenceResourcePath, NSession session) {
         List<NId> all = new ArrayList<>();
-        final URLParts aa = new URLParts(baseUrl.toURL().get());
-        String basePath = aa.getLastPart().getPath().substring(0, aa.getLastPart().getPath().length() - (referenceResourcePath == null ? 0 : referenceResourcePath.length()));
+        final URLPart aa = URLPart.of(baseUrl.toURL().get());
+        String basePath = aa.getPath().substring(0, aa.getPath().length() - (referenceResourcePath == null ? 0 : referenceResourcePath.length()));
         if (!basePath.endsWith("/")) {
             basePath += "/";
         }
 
-        final URLParts p = aa.getParent().append(basePath + "META-INF/nuts");
+        final URLPart p = aa.rootSibling(basePath + "META-INF/nuts");
         int beforeSize = all.size();
-        URL[] children = new URL[0];
-        try {
-            children = p.getChildren(false, true, new NJsonURLFilter());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        for (URL url : children) {
+        URLPart[] children = p.getChildren(false, true, new NJsonURLFilter(),session);
+        for (URLPart url : children) {
             if (url != null) {
-                try {
-                    NDescriptor d = NDescriptorParser.of(session).parse(url).get(session);
+                try (InputStream is=url.getInputStream(session)){
+                    NDescriptor d = NDescriptorParser.of(session).parse(is).get(session);
                     NId id = d.getId();
                     if (id != null && id.getVersion() != null && !id.getVersion().isBlank()) {
                         all.add(id);
@@ -66,18 +61,14 @@ public class NMetaInfIdResolver {
             }
         }
 
-        try {
-            children = p.getChildren(false, true, new NPropsURLFilter());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        for (URL url : children) {
+        children = p.getChildren(false, true, new NPropsURLFilter(),session);
+        for (URLPart url : children) {
             if (url != null) {
                 try {
 
                     Properties prop = new Properties();
-                    try {
-                        prop.load(url.openStream());
+                    try (InputStream is=url.getInputStream(session)){
+                        prop.load(is);
                     } catch (IOException e) {
                         //
                     }
@@ -289,25 +280,25 @@ public class NMetaInfIdResolver {
         boolean visit(String path, InputStream inputStream) throws IOException;
     }
 
-    private static class NJsonURLFilter implements Predicate<URL> {
+    private static class NJsonURLFilter implements Predicate<URLPart> {
 
         public NJsonURLFilter() {
         }
 
         @Override
-        public boolean test(URL path) {
-            return new URLParts(path).getName().equals("nuts.json");
+        public boolean test(URLPart path) {
+            return path.getName().equals("nuts.json");
         }
     }
 
-    private static class NPropsURLFilter implements Predicate<URL> {
+    private static class NPropsURLFilter implements Predicate<URLPart> {
 
         public NPropsURLFilter() {
         }
 
         @Override
-        public boolean test(URL path) {
-            return new URLParts(path).getName().equals("nuts.properties");
+        public boolean test(URLPart path) {
+            return path.getName().equals("nuts.properties");
         }
     }
 

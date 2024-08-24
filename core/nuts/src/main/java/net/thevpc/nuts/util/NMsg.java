@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.format.NMsgFormattable;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
 
@@ -251,13 +252,34 @@ public class NMsg {
         return level;
     }
 
+    private Object _preFormatOne(Object o){
+        if(o==null){
+            return null;
+        }
+        if(o instanceof NMsgFormattable){
+            return ((NMsgFormattable) o).toMsg();
+        }
+        return o;
+    }
+
+    private Object[] _preFormatArr(Object[] o){
+        if(o==null){
+            return o;
+        }
+        Object[] r=new Object[o.length];
+        for (int i = 0; i < r.length; i++) {
+            r[i]=_preFormatOne(o[i]);
+        }
+        return r;
+    }
+
     @Override
     public String toString() {
         try {
             switch (format) {
                 case CFORMAT: {
                     StringBuilder sb = new StringBuilder();
-                    new Formatter(sb).format((String) message, params);
+                    new Formatter(sb).format((String) message, _preFormatArr(params));
                     return sb.toString();
                 }
                 case JFORMAT: {
@@ -307,7 +329,7 @@ public class NMsg {
                         }
                         sMsg = sb.toString();
                     }
-                    return MessageFormat.format(sMsg, params);
+                    return MessageFormat.format(sMsg, _preFormatArr(params));
                 }
                 case VFORMAT: {
                     return formatAsV();

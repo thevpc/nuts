@@ -532,7 +532,9 @@ public class NRepositoryFolderHelper {
             return false;
         }
         try {
-            Files.walkFileTree(path.toPath().get(), new FileVisitor<Path>() {
+            Path start = path.toPath().get();
+
+            Files.walkFileTree(start, new FileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                     return FileVisitResult.CONTINUE;
@@ -550,6 +552,11 @@ public class NRepositoryFolderHelper {
 
                 @Override
                 public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    if(dir.toString().startsWith(start.resolve(".git").toString()+"/")
+                            ||dir.toString().equals(start.resolve(".git").toString())
+                    ){
+                        return FileVisitResult.CONTINUE;
+                    }
                     File folder = dir.toFile();
                     File[] children = folder.listFiles();
                     TreeSet<String> files = new TreeSet<>();

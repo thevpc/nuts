@@ -270,7 +270,7 @@ public class DefaultNTexts implements NTexts {
             case CFORMAT: {
                 String smsg = (String) msg;
                 NFormattedTextParts r = NFormattedTextParts.parseCFormat(smsg);
-                StringBuilder sb = new StringBuilder();
+                NTextBuilder sb = NTextBuilder.of(session);
                 int paramIndex = 0;
                 for (NFormattedTextPart part : r.getParts()) {
                     if (part.isFormat()) {
@@ -290,9 +290,10 @@ public class DefaultNTexts implements NTexts {
                                 new Formatter(sb2, locale).format(part.getValue(), a);
                                 sb.append(txt.ofStyled(sb2.toString(), getSpecialLiteralType(a)));
                             } else {
-                                StringBuilder sb2 = new StringBuilder();
-                                new Formatter(sb2, locale).format(part.getValue(), txt.ofText(a));
-                                sb.append(sb2);
+//                                StringBuilder sb2 = new StringBuilder();
+//                                new Formatter(sb2, locale).format(part.getValue(), txt.ofText(a));
+//                                sb.append(sb2);
+                                sb.append(txt.ofText(a));
                             }
                             paramIndex++;
                         }
@@ -300,7 +301,7 @@ public class DefaultNTexts implements NTexts {
                         sb.append(part.getValue());
                     }
                 }
-                return txt.parse(sb.toString());
+                return sb.build();
             }
             case JFORMAT: {
                 String smsg = (String) msg;

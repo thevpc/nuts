@@ -307,4 +307,35 @@ public abstract class AbstractNElement implements NElement {
     public NElement withDesc(NEDesc description) {
         return this;
     }
+
+    @Override
+    public NOptional<String> asStringAt(int index) {
+        return asLiteralAt(index).asString();
+    }
+
+    @Override
+    public NOptional<Long> asLongAt(int index) {
+        return asLiteralAt(index).asLong();
+    }
+
+    @Override
+    public NOptional<Integer> asIntAt(int index) {
+        return asLiteralAt(index).asInt();
+    }
+
+    @Override
+    public NOptional<Double> asDoubleAt(int index) {
+        return asLiteralAt(index).asDouble();
+    }
+
+    @Override
+    public boolean isNullAt(int index) {
+        return asLiteralAt(index).isNull();
+    }
+
+    @Override
+    public NLiteral asLiteralAt(int index) {
+        return NLiteral.of(asObjectAt(index).orNull());
+    }
+
 }
