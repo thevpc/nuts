@@ -47,8 +47,9 @@
 
     <licenses>
         <license>
-            <name>Apache License, Version 2.0</name>
-            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+            <name>GNU LESSER GENERAL PUBLIC LICENSE Version </name>
+<url>https://www.gnu.org/licenses/lgpl-3.0.en.html</url>
+
         </license>
     </licenses>
 
