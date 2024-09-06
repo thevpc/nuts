@@ -28,7 +28,7 @@ groupId:artifactId#version
 for instance, to install ```netbeans-launcher``` (which is a simple UI helping launch of multiple instances of netbeans), you can issue
 
 ```bash
-  nuts net.vpc.app:netbeans-launcher#1.2.2
+  nuts net.thevpc.app:netbeans-launcher#1.2.2
 ```
 
 You do agree that this can be of some cumbersome to type. So you can simplify it to :
@@ -88,8 +88,8 @@ This will list all installed artifacts. We can get a better listing using long f
 you will see something like
 
 ```
-I-X 2019-08-21 04:54:22.951 anonymous vpc-public-maven net.vpc.app:netbeans-launcher#1.2.0
-i-X 2019-08-21 04:54:05.196 anonymous vpc-public-maven net.vpc.app:netbeans-launcher#1.2.2
+I-X 2019-08-21 04:54:22.951 anonymous vpc-public-maven net.thevpc.app:netbeans-launcher#1.2.0
+i-X 2019-08-21 04:54:05.196 anonymous vpc-public-maven net.thevpc.app:netbeans-launcher#1.2.2
 ```
 
 The first column here is a the artifact status that helps getting zipped information of the artifact. the 'I' stands for 'installed and default' whereas, 'i' is simply 'installed'. The 'X' stands for 'executable application', where 'x' is simply 'executable'. Roughly said, executable applications are executables aware of (or depends on) **nuts**, as they provide a special api that helps nuts to get more information and more features for the application. As an example, executable applications have special OnInstall and OnUninstall hooks called by nuts.

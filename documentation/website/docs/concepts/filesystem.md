@@ -43,7 +43,7 @@ On Linux, Unix, MacOS and any POSIX System the default locations are :
         * temp     : "$java.io.tmpdir/$username/nuts"
         * run      : "/run/user/$USER_ID/nuts"
 
-As an example, the configuration folder for the artifact net.vpc.app:netbeans-launcher#1.2.4 in the default workspace in a Linux environment is
+As an example, the configuration folder for the artifact net.thevpc.app:netbeans-launcher#1.2.4 in the default workspace in a Linux environment is
 
 ```
 home/me/.config/nuts/default-workspace/config/id/net/vpc/app/netbeans-launcher/1.2.4/
@@ -63,7 +63,7 @@ In **Exploded strategy**  **```nuts```** defines top level folders (in linux ~/.
 
 The **Standalone strategy**   is indeed provided mainly for Roaming workspaces that can be shared, copied, moved to other locations. A single root folder will contain all of the Store Locations.
 
-As an example, in "Standalone Strategy", the configuration folder for the artifact net.vpc.app:netbeans-launcher#1.2.4 in the default workspace in a Linux environment is
+As an example, in "Standalone Strategy", the configuration folder for the artifact net.thevpc.app:netbeans-launcher#1.2.4 in the default workspace in a Linux environment is
 
 ```
 home/me/.config/nuts/default-workspace/config/id/net/vpc/app/netbeans-launcher/1.2.4/

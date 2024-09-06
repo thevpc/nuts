@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts.lib</groupId>
     <artifactId>nlib-servlet</artifactId>
-    <version>0.8.4.0</version>
+    <version>0.8.5.0</version>
     <packaging>jar</packaging>
     <name>Nuts Community Library for Servlet support</name>
     <url>https://github.com/thevpc/nuts/wiki</url>
@@ -61,13 +61,13 @@
         </dependency>
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
-            <artifactId>nuts</artifactId>
-            <version>0.8.4</version>
+            <artifactId>nuts-api</artifactId>
+            <version>0.8.5</version>
         </dependency>
         <dependency>
             <groupId>net.thevpc.nuts.toolbox</groupId>
             <artifactId>nserver</artifactId>
-            <version>0.8.4.0</version>
+            <version>0.8.5.0</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

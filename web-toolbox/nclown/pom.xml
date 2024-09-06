@@ -6,7 +6,7 @@
     <groupId>net.thevpc.nuts.toolbox</groupId>
     <artifactId>nclown</artifactId>
     <name>net.thevpc.nuts.toolbox.nuts-clown</name>
-    <version>0.8.4.0</version>
+    <version>0.8.5.0</version>
     <packaging>war</packaging>
 
     <parent>
@@ -36,8 +36,8 @@
 
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
-            <artifactId>nuts</artifactId>
-            <version>0.8.4</version>
+            <artifactId>nuts-api</artifactId>
+            <version>0.8.5</version>
         </dependency>
     </dependencies>
 

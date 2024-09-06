@@ -10,8 +10,8 @@ sidebar_label: Info Command
 me@linux:~> nuts info
 name                     = default-workspace
 nuts-api-version         = 0.8.4
-nuts-api-id              = net.vpc.app.nuts:nuts#0.8.4
-nuts-runtime-id          = net.vpc.app.nuts:nuts-core#0.8.4.0
+nuts-api-id              = net.thevpc.app.nuts:nuts#0.8.4
+nuts-runtime-id          = net.thevpc.app.nuts:nuts-core#0.8.4.0
 nuts-runtime-path        = ~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts-core/0.8.4.0/nuts-core-0.8.4.0.jar;~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts/0.8.4/nuts-0.8.4.jar;~/.cache/nuts/default-workspace/boot/com/google/code/gson/gson/2.8.5/gson-2.8.5.jar;~/.cache/nuts/default-workspace/boot/org/fusesource/jansi/jansi/1.17.1/jansi-1.17.1.jar
 nuts-workspace-id        = 99b73002-804d-4e4c-9a13-f57ac1f40b3d
 nuts-store-layout        = linux

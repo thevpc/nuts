@@ -673,7 +673,7 @@ public class NShell {
         NPath appVarFolder = session.getAppVarFolder();
         if (appVarFolder == null) {
             appVarFolder = NLocations.of(session).getStoreLocation(
-                    NId.of("net.vpc.app.nuts.toolbox:nsh").get()
+                    NId.of("net.thevpc.app.nuts.toolbox:nsh").get()
                     , NStoreType.VAR);
         }
         NIO.of(session).getSystemTerminal()

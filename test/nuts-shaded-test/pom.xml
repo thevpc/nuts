@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts.test</groupId>
     <artifactId>nuts-shaded-test</artifactId>
-    <version>0.8.4.0</version>
+    <version>0.8.5.0</version>
     <packaging>jar</packaging>
     <name>Nuts Community Testing Project</name>
     <url>https://github.com/thevpc/nuts</url>
@@ -47,22 +47,21 @@
 
     <licenses>
         <license>
-            <name>GNU LESSER GENERAL PUBLIC LICENSE Version </name>
-<url>https://www.gnu.org/licenses/lgpl-3.0.en.html</url>
-
+            <name>GNU LESSER GENERAL PUBLIC LICENSE Version</name>
+            <url>https://www.gnu.org/licenses/lgpl-3.0.en.html</url>
         </license>
     </licenses>
 
     <dependencies>
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
-            <artifactId>nuts</artifactId>
-            <version>0.8.4</version>
+            <artifactId>nuts-api</artifactId>
+            <version>0.8.5</version>
         </dependency>
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts-runtime</artifactId>
-            <version>0.8.4.0</version>
+            <version>0.8.5.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>

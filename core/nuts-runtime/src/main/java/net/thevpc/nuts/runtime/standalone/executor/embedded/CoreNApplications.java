@@ -92,7 +92,7 @@ public class CoreNApplications {
 
     private static String getNutsAppVersion0(Class cls) {
         switch (cls.getName()) {
-            case "net.vpc.app.nuts.NutsApplication": {
+            case "net.thevpc.app.nuts.NutsApplication": {
                 return "0.8.0";
             }
             case "net.thevpc.nuts.NutsApplication": {

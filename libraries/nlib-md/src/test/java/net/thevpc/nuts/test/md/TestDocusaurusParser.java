@@ -200,7 +200,7 @@ public class TestDocusaurusParser {
                 "        * temp     : \"$java.io.tmpdir/$username/nuts\"\n" +
                 "        * run      : \"/run/user/$USER_ID/nuts\"\n" +
                 "\n" +
-                "As an example, the configuration folder for the artifact net.vpc.app:netbeans-launcher#1.2.4 in the default workspace in a Linux environment is\n" +
+                "As an example, the configuration folder for the artifact net.thevpc.app:netbeans-launcher#1.2.4 in the default workspace in a Linux environment is\n" +
                 "```\n" +
                 "home/me/.config/nuts/default-workspace/config/id/net/vpc/app/netbeans-launcher/1.2.4/\n" +
                 "```\n" +
@@ -217,7 +217,7 @@ public class TestDocusaurusParser {
                 "\n" +
                 "The **Standalone strategy**   is indeed provided mainly for Roaming workspaces that can be shared, copied, moved to other locations. A single root folder will contain all of the Store Locations.\n" +
                 "\n" +
-                "As an example, in \"Standalone Strategy\", the configuration folder for the artifact net.vpc.app:netbeans-launcher#1.2.4 in the default workspace in a Linux environment is\n" +
+                "As an example, in \"Standalone Strategy\", the configuration folder for the artifact net.thevpc.app:netbeans-launcher#1.2.4 in the default workspace in a Linux environment is\n" +
                 "```\n" +
                 "home/me/.config/nuts/default-workspace/config/id/net/vpc/app/netbeans-launcher/1.2.4/\n" +
                 "```\n" +

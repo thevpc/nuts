@@ -4,7 +4,7 @@
 
     <groupId>net.thevpc.nuts.installer</groupId>
     <artifactId>nuts-installer</artifactId>
-    <version>0.8.4</version>
+    <version>0.8.5</version>
     <name>Nuts Installer</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -27,7 +27,7 @@
         <dependency>
             <groupId>net.thevpc.nuts.installer</groupId>
             <artifactId>nuts-installer-panels</artifactId>
-            <version>0.8.4</version>
+            <version>0.8.5</version>
         </dependency>
     </dependencies>
 
@@ -153,7 +153,7 @@
                     <dependency>
                         <groupId>net.thevpc.nuts.installer</groupId>
                         <artifactId>nuts-installer-panels</artifactId>
-                        <version>0.8.4</version>
+                        <version>0.8.5</version>
                     </dependency>
                 </dependencies>
             </plugin>

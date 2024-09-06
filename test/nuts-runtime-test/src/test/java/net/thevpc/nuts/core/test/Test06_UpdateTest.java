@@ -63,8 +63,8 @@ public class Test06_UpdateTest {
         FromTo apiFromTo;
 
         FromTo rtFromTo;
-        String api = "net.thevpc.nuts:nuts";
-        String rt = "net.thevpc.nuts:nuts-runtime";
+        String api = NConstants.Ids.NUTS_API;
+        String rt = NConstants.Ids.NUTS_RUNTIME;
     }
 
     private void prepareCustomUpdateRepository(boolean implOnly, Data data, NSession session) {
@@ -109,8 +109,6 @@ public class Test06_UpdateTest {
                     .print(NPath.of(data.updateRepoPath, session).resolve(NIdUtils.resolveNutsDescriptorPath(data.rtId2)));
 
         }
-//        String api = "net.thevpc.nuts:nuts";
-//        String rt = "net.thevpc.nuts:nuts-runtime";
     }
 
     private NSession prepareWorkspaceToUpdate(boolean implOnly, Data data) {
@@ -274,7 +272,7 @@ public class Test06_UpdateTest {
                     String ss = xml
                             .replace("project.version=" + rt.from, "project.version=" + rt.to);
                     if (!api.isIdentity()) {
-                        ss = ss.replace("net.thevpc.nuts:nuts:" + api.from, "net.thevpc.nuts:nuts:" + api.to);
+                        ss = ss.replace(NConstants.Ids.NUTS_API+":" + api.from, NConstants.Ids.NUTS_API+":" + api.to);
                     }
 //                    Files.write(fileInsideZipPath, ss.getBytes());
                     Files.copy(new ByteArrayInputStream(ss.getBytes()), fileInsideZipPath, StandardCopyOption.REPLACE_EXISTING);

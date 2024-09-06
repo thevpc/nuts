@@ -107,8 +107,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     public static final String VERSION_COMMAND_ALIAS_CONFIG = "0.8.0";
     public static final String VERSION_COMMAND_ALIAS_CONFIG_FACTORY = "0.8.0";
     public static final String VERSION_USER_CONFIG = "0.8.0";
-    public static final String RUNTIME_VERSION = "0.8.4.0";
-    public static final NId RUNTIME_ID = NId.of("net.thevpc.nuts:nuts-runtime#"+RUNTIME_VERSION).get();
+    public static final String RUNTIME_VERSION = "0.8.5.0";
+    public static final NId RUNTIME_ID = NId.of(NConstants.Ids.NUTS_RUNTIME+"#"+RUNTIME_VERSION).get();
     public NLog LOG;
     private NWorkspaceModel wsModel;
 

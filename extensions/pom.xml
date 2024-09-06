@@ -6,7 +6,7 @@
     <groupId>net.thevpc.nuts.builders</groupId>
     <artifactId>nuts-extensions-builder</artifactId>
     <name>Nuts Community Extensions Build Project</name>
-    <version>0.8.4.0</version>
+    <version>0.8.5.0</version>
     <packaging>pom</packaging>
     <modules>
         <module>next-term</module>

@@ -25,7 +25,7 @@
         <dependency>
             <groupId>net.thevpc.nuts.toolbox</groupId>
             <artifactId>nsh</artifactId>
-            <version>0.8.4.0</version>
+            <version>0.8.5.0</version>
         </dependency>
     </dependencies>
 </project>

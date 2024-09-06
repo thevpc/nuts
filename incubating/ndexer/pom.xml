@@ -7,7 +7,7 @@
     <groupId>net.thevpc.nuts.toolbox</groupId>
     <artifactId>ndexer</artifactId>
     <name>Nuts Community Toolbox NDexer</name>
-    <version>0.8.4.0</version>
+    <version>0.8.5.0</version>
     <packaging>war</packaging>
     <url>https://github.com/thevpc/nuts</url>
 
@@ -80,8 +80,8 @@
 
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
-            <artifactId>nuts</artifactId>
-            <version>0.8.4</version>
+            <artifactId>nuts-api</artifactId>
+            <version>0.8.5</version>
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>

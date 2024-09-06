@@ -1,4 +1,4 @@
-package net.vpc.app.nuts:nuts-installer#0.7.0;
+package net.thevpc.app.nuts:nuts-installer#0.7.0;
 import java.net.*;
 import java.nio.file.*;
 

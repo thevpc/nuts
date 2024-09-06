@@ -19,13 +19,13 @@
 	<dependencies>
 		<dependency>
 			<groupId>net.thevpc.nuts</groupId>
-			<artifactId>nuts</artifactId>
-			<version>0.8.4</version>
+			<artifactId>nuts-api</artifactId>
+			<version>0.8.5</version>
 		</dependency>
 		<dependency>
 			<groupId>net.thevpc.nuts.lib</groupId>
 			<artifactId>nlib-spring-boot</artifactId>
-			<version>0.8.4.0</version>
+			<version>0.8.5.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

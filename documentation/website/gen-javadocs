@@ -1,2 +1,2 @@
-/usr/java/jdk1.8.0_211-amd64/bin/javadoc -doclet net.vpc.common.docusaurusdoclet.DocusaurusDoclet -docletpath /data/public/git/docusaurus-docklet/target/docusaurus-docklet-0.1.jar:/usr/java/jdk1.8.0_211-amd64/lib/tools.jar -sourcepath /data/public/git/nuts/nuts/src/main/java -classpath /usr/java/jdk1.8.0_211-amd64/lib/tools.jar net.vpc.app.nuts
+/usr/java/jdk1.8.0_211-amd64/bin/javadoc -doclet net.thevpc.common.docusaurusdoclet.DocusaurusDoclet -docletpath /data/public/git/docusaurus-docklet/target/docusaurus-docklet-0.1.jar:/usr/java/jdk1.8.0_211-amd64/lib/tools.jar -sourcepath /data/public/git/nuts/nuts/src/main/java -classpath /usr/java/jdk1.8.0_211-amd64/lib/tools.jar net.thevpc.app.nuts
 

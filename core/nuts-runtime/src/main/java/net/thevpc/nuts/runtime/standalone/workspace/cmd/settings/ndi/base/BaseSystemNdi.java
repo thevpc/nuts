@@ -261,7 +261,15 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     @Override
     public boolean isNutsBootId(NId nid) {
-        return "nuts".equals(nid.getShortName()) || "net.thevpc.nuts:nuts".equals(nid.getShortName());
+        return
+                NConstants.Ids.NUTS_API_ARTIFACT_ID.equals(nid.getShortName())
+                ||
+                NConstants.Ids.NUTS_APP_ARTIFACT_ID.equals(nid.getShortName())
+                ||
+                NConstants.Ids.NUTS_API.equals(nid.getShortName())
+                ||
+                NConstants.Ids.NUTS_APP.equals(nid.getShortName())
+                ;
     }
 
     @Override

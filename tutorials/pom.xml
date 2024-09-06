@@ -6,7 +6,7 @@
     <groupId>net.thevpc.nuts.builders</groupId>
     <artifactId>nuts-tutorials-builder</artifactId>
     <name>Nuts Community Tutorials Builder</name>
-    <version>0.8.4.0</version>
+    <version>0.8.5.0</version>
     <packaging>pom</packaging>
     <modules>
         <module>ugly-jar-projects/simple-project</module>

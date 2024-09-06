@@ -12,28 +12,28 @@ nuts install <your-artifact-query-here>
 ```
 For example
 ```
-nuts install net.vpc.app:netbeans-launcher#1.2.2
+nuts install net.thevpc.app:netbeans-launcher#1.2.2
 ```
 you may use any artifact query (see search command section) to install a command.
 ```
-nuts install net.vpc.app:netbeans-*
+nuts install net.thevpc.app:netbeans-*
 ```
 if the artifact is already installed, you should use the force flag (--force)
 ```
-nuts install net.vpc.app:netbeans-launcher#1.2.2
+nuts install net.thevpc.app:netbeans-launcher#1.2.2
 #this second time we have to force install
-nuts install -- force net.vpc.app:netbeans-launcher#1.2.2
+nuts install -- force net.thevpc.app:netbeans-launcher#1.2.2
 ```
 One exception is when you want to switch between multiple versions installed to set the default one, you can omit the --force flag. Actually, when multiple version of the same artifact are installed all of them are executable directly by specifying the right version. When you specify no version, the default one is selected for you. And to make is simple, the default one is the last one you ran an install command for it.
 
 ```
-me@linux:~> nuts install net.vpc.app:netbeans-launcher#1.2.2
+me@linux:~> nuts install net.thevpc.app:netbeans-launcher#1.2.2
 me@linux:~> nuts netbeans-launcher
 1.2.2
-me@linux:~> nuts install net.vpc.app:netbeans-launcher#1.2.1
+me@linux:~> nuts install net.thevpc.app:netbeans-launcher#1.2.1
 me@linux:~> nuts netbeans-launcher
 1.2.1
-me@linux:~> nuts install net.vpc.app:netbeans-launcher#1.2.2
+me@linux:~> nuts install net.thevpc.app:netbeans-launcher#1.2.2
 1.2.2
 ```
 You can find all installed artifacts using 'nuts search --installed' command

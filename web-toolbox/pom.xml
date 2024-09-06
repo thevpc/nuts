@@ -6,7 +6,7 @@
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-web-toolbox-build</artifactId>
     <name>Nuts Community Web Toolbox Build Project</name>
-    <version>0.8.4.0</version>
+    <version>0.8.5.0</version>
     <packaging>pom</packaging>
     <modules>
         <module>nwar</module>

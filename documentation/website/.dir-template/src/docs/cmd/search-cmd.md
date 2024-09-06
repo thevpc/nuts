@@ -23,11 +23,11 @@ These are some examples of artifact queries.
 # all artifacts that start with netbeans, whatever groupId they belong to. same as the latter.
 # nuts search *:netbeans*
 
-# all artifacts in the net.vpc.app groupId
-# nuts search net.vpc.*:*
+# all artifacts in the net.thevpc.app groupId
+# nuts search net.thevpc.*:*
 
-# all artifacts in the net.vpc.* groupId which includes all of net.vpc.app and net.vpc.app.example for instance.
-# nuts search net.vpc.*:*
+# all artifacts in the net.thevpc.* groupId which includes all of net.thevpc.app and net.thevpc.app.example for instance.
+# nuts search net.thevpc.*:*
 
 # all artifacts that start with netbeans and is available for windows operating system in x86_64 architecture
 # nuts search netbeans*?os=windows&arch=x86_64
@@ -49,9 +49,9 @@ You can then use the these flags to tighten your search :
 You can also change the output layout using --long (or -l) flag
 ```
 me@linux:~> nuts search -i -l
-I-X 2019-08-26 09:53:53.141 anonymous vpc-public-maven net.vpc.app:netbeans-launcher#1.2.1
-IcX 2019-08-24 11:05:49.591 admin     maven-local      net.vpc.app.nuts.toolbox:nsh#${{latestRuntimeVersion}}
-I-x 2019-08-26 09:50:03.423 anonymous vpc-public-maven net.vpc.app:kifkif#1.3.3
+I-X 2019-08-26 09:53:53.141 anonymous vpc-public-maven net.thevpc.app:netbeans-launcher#1.2.1
+IcX 2019-08-24 11:05:49.591 admin     maven-local      net.thevpc.app.nuts.toolbox:nsh#${{latestRuntimeVersion}}
+I-x 2019-08-26 09:50:03.423 anonymous vpc-public-maven net.thevpc.app:kifkif#1.3.3
 ```
 you can even change the output format
 ```
@@ -60,9 +60,9 @@ me@linux:~> nuts search -i -l --json
 ```json
 [
 {
-  "id": "vpc-public-maven://net.vpc.app:netbeans-launcher#1.2.1",
+  "id": "vpc-public-maven://net.thevpc.app:netbeans-launcher#1.2.1",
   "descriptor": {
-    "id": "net.vpc.app:netbeans-launcher#1.2.1",
+    "id": "net.thevpc.app:netbeans-launcher#1.2.1",
     "parents": [],
     "packaging": "jar",
     "executable": true,

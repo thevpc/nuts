@@ -6,7 +6,7 @@
     <groupId>net.thevpc.nuts.builders</groupId>
     <artifactId>nuts-third-party-companions-builder</artifactId>
     <name>Nuts Community Third Party Apps Companions Build Project</name>
-    <version>0.8.4.0</version>
+    <version>0.8.5.0</version>
     <packaging>pom</packaging>
     <modules>
         <module>ndb</module>

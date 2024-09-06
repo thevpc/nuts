@@ -3,7 +3,7 @@
 -Zy --!init-java --verbose -r==/home/vpc/.nuts/boot/,maven-central install ndb
 -ZyS
 -ZyS /bin/ls
--ZyS --!init-java --json --bot net.thevpc.nuts:nuts#0.8.4 info
+-ZyS --!init-java --json --bot net.thevpc.nuts:nuts#0.8.5 info
 -ZyS --bot --verbose info
 -ZyS exec --bot=false --target=ssh://godlinglory:aa@192.168.1.18 com.cts.pgpool:npgpool pgpool get --configDir=/home/godlinglory/Desktop
 -ZySb - cat -H /home/vpc/work/cts/projects/nuts/nuts-community/test/nuts-runtime-test/src/test/resources/net/thevpc/nuts/core/test/highlight/test.ntf
