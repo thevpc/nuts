@@ -151,8 +151,8 @@ To create your first ```NAF``` application, you will need to add nuts as a depen
     <dependencies>
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
-            <artifactId>nuts</artifactId>
-            <version>0.8.4</version>
+            <artifactId>nuts-api</artifactId>
+            <version>0.8.5</version>
         </dependency>
         <dependency>
             <groupId>jexcelapi</groupId>

@@ -50,5 +50,5 @@ After invoking reset mode, nuts shell launchers (installed by nuts settings) wil
 PATH environment will point (temporarily) to a non existing folder. You should use the jar based invocation at least once to reinstall these commands.
 
 ```
-java -jar nuts-0.8.4.jar
+java -jar nuts-0.8.5.jar
 ```

@@ -23,7 +23,7 @@ docker pull openjdk:8
 docker run -it -v $(pwd):/workspace openjdk:8 sh
 cd /workspace
 wget https://thevpc.net/nuts/nuts-preview.jar -qO nuts.jar
-java -jar nuts.jar -P=no -ZyS -r=+thevpc net.thevpc.nuts.toolbox:noapi#0.8.4.0 buat-insurance-connector.json
+java -jar nuts.jar -P=no -ZyS -r=+thevpc net.thevpc.nuts.toolbox:noapi#0.8.5.0 buat-insurance-connector.json
 #############
 
 ```
