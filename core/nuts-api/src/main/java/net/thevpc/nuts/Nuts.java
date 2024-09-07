@@ -48,7 +48,7 @@ public final class Nuts {
     /**
      * current Nuts version
      */
-    private static final NVersion version = NVersion.of("0.8.4").get();
+    private static final NVersion version = NVersion.of("0.8.5").get();
     private static final NId id = NId.of(NConstants.Ids.NUTS_GROUP_ID, NConstants.Ids.NUTS_API_ARTIFACT_ID, version).get();
 
     /**
@@ -69,29 +69,6 @@ public final class Nuts {
 
     public static NId getApiId() {
         return id;
-    }
-
-    /**
-     * main method. This Main will call
-     * {@link Nuts#runWorkspace(java.lang.String...)} then
-     * {@link System#exit(int)} at completion
-     *
-     * @param args main arguments
-     */
-    @SuppressWarnings("UseSpecificCatch")
-    public static void main(String[] args) throws Throwable {
-        try {
-            runWorkspace(args);
-            System.exit(0);
-        } catch (Exception ex) {
-            NSession session = NSessionAwareExceptionBase.resolveSession(ex).orNull();
-            if (session != null) {
-                System.exit(NApplicationExceptionHandler.of(session)
-                        .processThrowable(args, ex));
-            } else {
-                System.exit(NApiUtilsRPI.processThrowable(ex, args));
-            }
-        }
     }
 
     /**

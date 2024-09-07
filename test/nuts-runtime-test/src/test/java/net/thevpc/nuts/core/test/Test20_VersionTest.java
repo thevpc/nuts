@@ -215,8 +215,8 @@ public class Test20_VersionTest {
 
     @Test
     public void test21() {
-        NVersion r = NVersion.of("0.8.4.0").get().inc(-1, 10);
-        Assertions.assertEquals(r.toString(),"0.8.4.10");
+        NVersion r = NVersion.of("0.8.5.0").get().inc(-1, 10);
+        Assertions.assertEquals(r.toString(),"0.8.5.10");
     }
 
 
