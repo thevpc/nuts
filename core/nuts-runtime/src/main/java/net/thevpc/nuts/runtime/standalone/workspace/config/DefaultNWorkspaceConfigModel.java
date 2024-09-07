@@ -529,31 +529,31 @@ public class DefaultNWorkspaceConfigModel {
     public void installBootIds(NSession session) {
         NWorkspaceModel wsModel = NWorkspaceExt.of(ws).getModel();
         NId iruntimeId = wsModel.bootModel.getBootEffectiveOptions().getRuntimeId().orNull();
-        if(wsModel.bootModel.getBootEffectiveOptions().getRuntimeBootDescriptor().isPresent()){
+        if (wsModel.bootModel.getBootEffectiveOptions().getRuntimeBootDescriptor().isPresent()) {
             //not present in shaded jar mode
             NDescriptor d = wsModel.bootModel.getBootEffectiveOptions().getRuntimeBootDescriptor().get(session);
             iruntimeId = NId.of(d.getId().toString()).get(session);
         }
         wsModel.configModel.prepareBootClassPathConf(NIdType.API, ws.getApiId(), null, iruntimeId, false, false, session);
-        NBootDef nBootNutsApi=null;
+        NBootDef nBootNutsApi = null;
         try {
             nBootNutsApi = wsModel.configModel.prepareBootClassPathJar(ws.getApiId(), null, iruntimeId, false, session);
         } catch (Exception ex) {
             _LOGOP(session).level(Level.SEVERE).log(NMsg.ofC("unable to install boot id (api) %s", ws.getApiId()));
         }
-        if(nBootNutsApi==null){
+        if (nBootNutsApi == null) {
             //no need to install runtime if api is not there
             return;
         }
 
-        NBootDef nBootNutsRuntime=null;
+        NBootDef nBootNutsRuntime = null;
         try {
             wsModel.configModel.prepareBootClassPathConf(NIdType.RUNTIME, iruntimeId, ws.getApiId(), null, false, true, session);
             nBootNutsRuntime = wsModel.configModel.prepareBootClassPathJar(iruntimeId, ws.getApiId(), null, true, session);
         } catch (Exception ex) {
             LOG.with().level(Level.SEVERE).log(NMsg.ofC("unable to install boot id (runtime) %s", iruntimeId));
         }
-        if(nBootNutsRuntime==null){
+        if (nBootNutsRuntime == null) {
             //no need to install extensions if runtime is not there
             return;
         }
@@ -588,6 +588,12 @@ public class DefaultNWorkspaceConfigModel {
 
     public boolean loadWorkspace(NSession session) {
         try {
+            boolean _storeModelBootChanged = false;
+            boolean _storeModelApiChanged = false;
+            boolean _storeModelRuntimeChanged = false;
+            boolean _storeModelSecurityChanged = false;
+            boolean _storeModelMainChanged = false;
+
             NSessionUtils.checkSession(ws, session);
             NWorkspaceConfigBoot _config = parseBootConfig(session);
             if (_config == null) {
@@ -635,6 +641,7 @@ public class DefaultNWorkspaceConfigModel {
                             aconfig.setRuntimeId(null);
                             aconfig.setApiVersion(null);
                             cConfig.merge(aconfig, session);
+                            _storeModelApiChanged = true;
                         }
                         break;
                     }
@@ -688,11 +695,11 @@ public class DefaultNWorkspaceConfigModel {
             setConfigRuntime(rconfig, session, false);
             setConfigSecurity(sconfig, session, false);
             setConfigMain(mconfig, session, false);
-            storeModelBootChanged = false;
-            storeModelApiChanged = false;
-            storeModelRuntimeChanged = false;
-            storeModelSecurityChanged = false;
-            storeModelMainChanged = false;
+            storeModelBootChanged = _storeModelBootChanged;
+            storeModelApiChanged = _storeModelApiChanged;
+            storeModelRuntimeChanged = _storeModelRuntimeChanged;
+            storeModelSecurityChanged = _storeModelSecurityChanged;
+            storeModelMainChanged = _storeModelMainChanged;
             return true;
         } catch (RuntimeException ex) {
             if (NBootManager.of(session).getBootOptions().getRecover().orElse(false)) {

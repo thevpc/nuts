@@ -196,10 +196,7 @@ public class DefaultNSessionTerminalFromSession extends AbstractNSessionTerminal
 
     @Override
     public <T> NAsk<T> ask() {
-        return
-                new DefaultNAsk<T>(ws, this, out())
-                        .setSession(session)
-                ;
+        return new DefaultNAsk<T>(session, this, out());
     }
 
     @Override

@@ -40,8 +40,9 @@ public class DefaultNAsk<T> implements NAsk<T> {
     private boolean password = false;
     private Object lastResult = null;
 
-    public DefaultNAsk(NWorkspace ws, NSessionTerminal terminal, NPrintStream out) {
-        this.ws = ws;
+    public DefaultNAsk(NSession session, NSessionTerminal terminal, NPrintStream out) {
+        this.session = session;
+        this.ws = session.getWorkspace();
         this.terminal = terminal;
         this.out = out;
     }

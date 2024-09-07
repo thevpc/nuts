@@ -47,7 +47,7 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public <T> NAsk<T> createQuestion(NSessionTerminal terminal) {
-        return new DefaultNAsk<>(session.getWorkspace(), terminal, terminal.out());
+        return new DefaultNAsk<>(session, terminal, terminal.out());
     }
 
     @Override
