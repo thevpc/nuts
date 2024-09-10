@@ -592,6 +592,12 @@ public interface NWorkspaceOptions extends Serializable {
     NOptional<Boolean> getBot();
 
     /**
+     * @since 0.8.5
+     * @return application is running in preview mode (using preview repositories)
+     */
+    NOptional<Boolean> getPreviewRepo();
+
+    /**
      * default fetch strategy
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)

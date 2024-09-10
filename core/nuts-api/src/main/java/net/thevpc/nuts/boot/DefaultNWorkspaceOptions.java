@@ -58,7 +58,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
             null, null,
             null,
             null, null, null,
-            null, null, null);
+            null, null, null, null);
 
     private static final long serialVersionUID = 1;
     /**
@@ -356,6 +356,11 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
     private final Boolean bot;
 
     /**
+     * option-type : exported (inherited in child workspaces)
+     */
+    private final Boolean previewRepo;
+
+    /**
      * not parsed option-type : runtime (available only for the current
      * workspace instance)
      */
@@ -423,7 +428,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
                                     List<String> applicationArguments, List<String> outputFormatOptions,
                                     List<String> customOptions, List<String> excludedExtensions, List<String> repositories,
                                     List<String> executorOptions, List<NMsg> errors, Map<NStoreType, String> storeLocations,
-                                    Map<NHomeLocation, String> homeLocations, NSupportMode desktopLauncher, NSupportMode menuLauncher, NSupportMode userLauncher) {
+                                    Map<NHomeLocation, String> homeLocations, NSupportMode desktopLauncher, NSupportMode menuLauncher, NSupportMode userLauncher, Boolean previewRepo) {
         this.outputFormatOptions = NReservedLangUtils.unmodifiableOrNullList(outputFormatOptions);
         this.customOptions = NReservedLangUtils.unmodifiableOrNullList(customOptions);
         this.excludedExtensions = NReservedLangUtils.unmodifiableOrNullList(excludedExtensions);
@@ -497,6 +502,12 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
         this.desktopLauncher = desktopLauncher;
         this.menuLauncher = menuLauncher;
         this.userLauncher = userLauncher;
+        this.previewRepo = previewRepo;
+    }
+
+    @Override
+    public NOptional<Boolean> getPreviewRepo() {
+        return NOptional.ofNamed(previewRepo, "previewRepo");
     }
 
     @Override

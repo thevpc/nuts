@@ -20,5 +20,12 @@ public interface NRepositoryDB extends NComponent {
 
     boolean isDefaultRepositoryName(String name);
 
+    /**
+     * @since  0.8.5
+     * @param nameOrUrl nameOrUrl
+     * @return true if preview
+     */
+    boolean isPreviewRepository(String nameOrUrl);
+
     String getRepositoryLocationByName(String name);
 }

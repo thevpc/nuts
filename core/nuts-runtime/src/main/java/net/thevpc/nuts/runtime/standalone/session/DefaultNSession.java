@@ -78,6 +78,7 @@ public class DefaultNSession implements Cloneable, NSession {
     private String dependencySolver;
     private Boolean trace;
     private Boolean bot;
+    private Boolean previewRepo;
     private String debug;
     private NRunAs runAs;
 
@@ -409,6 +410,15 @@ public class DefaultNSession implements Cloneable, NSession {
                     }
                     return true;
                 }
+                case "-U":
+                case "--preview-repo":
+                {
+                    a = cmdLine.nextFlag().get(this);
+                    if (active) {
+                        setPreviewRepo(a.getBooleanValue().get(this));
+                    }
+                    return true;
+                }
                 case "--dry":
                 case "-D": {
                     a = cmdLine.nextFlag().get(this);
@@ -675,6 +685,18 @@ public class DefaultNSession implements Cloneable, NSession {
         );
     }
 
+    @Override
+    public NOptional<Boolean> getPreviewRepo() {
+        return NOptional.ofNamed(previewRepo, "previewRepo").withDefault(
+                () -> NBootManager.of(this).getBootOptions().getPreviewRepo()
+                        .orElse(NWorkspaceExt.of(ws).getModel().configModel.getStoredConfigMain().isEnablePreviewRepositories())
+        );
+    }
+
+    public boolean isPreviewRepo() {
+        return getPreviewRepo().orDefault();
+    }
+
     public boolean isBot() {
         return getBot().orDefault();
     }
@@ -682,6 +704,12 @@ public class DefaultNSession implements Cloneable, NSession {
     @Override
     public NSession setBot(Boolean bot) {
         this.bot = bot;
+        return this;
+    }
+
+    @Override
+    public NSession setPreviewRepo(Boolean bot) {
+        this.previewRepo = bot;
         return this;
     }
 
@@ -1324,7 +1352,6 @@ public class DefaultNSession implements Cloneable, NSession {
     }
 
 
-
     @Override
     public boolean isDry() {
         return getDry().orDefault();
@@ -1518,8 +1545,8 @@ public class DefaultNSession implements Cloneable, NSession {
 
     @Override
     public NOptional<String> getLocale() {
-        return NOptional.ofNamed(locale,"locale")
-                .withDefault(()->NBootManager.of(this).getBootOptions().getLocale().orNull());
+        return NOptional.ofNamed(locale, "locale")
+                .withDefault(() -> NBootManager.of(this).getBootOptions().getLocale().orNull());
     }
 
     @Override
@@ -1529,8 +1556,8 @@ public class DefaultNSession implements Cloneable, NSession {
     }
 
     public NOptional<NRunAs> getRunAs() {
-        return NOptional.ofNamed(runAs,"runAs")
-                .withDefault(()->{
+        return NOptional.ofNamed(runAs, "runAs")
+                .withDefault(() -> {
                     NRunAs r = NBootManager.of(this).getBootOptions().getRunAs().orNull();
                     if (r != null) {
                         return r;
@@ -1758,12 +1785,12 @@ public class DefaultNSession implements Cloneable, NSession {
         switch (scope) {
             case SESSION: {
                 return refProperties.<T>getOptional(name)
-                        .withDefault(()->this.<T>getProperty(name, NScopeType.SHARED_SESSION).orDefault())
+                        .withDefault(() -> this.<T>getProperty(name, NScopeType.SHARED_SESSION).orDefault())
                         ;
             }
             case SHARED_SESSION: {
                 return sharedProperties.<T>getOptional(name)
-                        .withDefault(()->this.<T>getProperty(name, NScopeType.WORKSPACE).orDefault())
+                        .withDefault(() -> this.<T>getProperty(name, NScopeType.WORKSPACE).orDefault())
                         ;
             }
             case WORKSPACE: {
@@ -1771,7 +1798,7 @@ public class DefaultNSession implements Cloneable, NSession {
             }
             case PROTOTYPE: {
                 return NOptional.<T>ofNamedEmpty(name)
-                        .withDefault(()->this.<T>getProperty(name, NScopeType.SESSION).orDefault());
+                        .withDefault(() -> this.<T>getProperty(name, NScopeType.SESSION).orDefault());
             }
             default: {
                 return NOptional.<T>ofNamedEmpty(name);

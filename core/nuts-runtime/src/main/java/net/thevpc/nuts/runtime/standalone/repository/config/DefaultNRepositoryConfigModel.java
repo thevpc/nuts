@@ -333,6 +333,11 @@ public class DefaultNRepositoryConfigModel implements NRepositoryConfigModel {
     }
 
     @Override
+    public boolean isPreview(NSession session) {
+        return config.isPreview();
+    }
+
+    @Override
     public void setUser(NUserConfig user, NSession session) {
 //        options = CoreNutsUtils.validate(options, repository.getWorkspace());
         configUsers.put(user.getUser(), user);

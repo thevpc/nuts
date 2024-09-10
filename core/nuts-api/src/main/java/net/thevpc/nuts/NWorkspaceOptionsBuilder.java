@@ -353,4 +353,10 @@ public interface NWorkspaceOptionsBuilder extends NWorkspaceOptions {
     NWorkspaceOptionsBuilder unsetCreationOptions();
     NWorkspaceOptionsBuilder unsetExportedOptions();
 
+
+    /**
+     * @since 0.8.5
+     * @return this
+     */
+    NWorkspaceOptionsBuilder setPreviewRepo(Boolean bot);
 }

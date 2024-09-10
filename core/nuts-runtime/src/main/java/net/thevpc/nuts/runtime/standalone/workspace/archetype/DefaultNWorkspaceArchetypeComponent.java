@@ -28,6 +28,7 @@ import java.util.*;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
@@ -62,6 +63,8 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
             }
             defaults.add(NRepositoryLocation.of(d.getName(), null));
         }
+        NWorkspaceExt.of(session).getModel().configModel.getStoredConfigMain().setEnablePreviewRepositories(session.isPreviewRepo());
+        NWorkspaceExt.of(session).getModel().configModel.invalidateStoreModelMain();
         defaults.add(NRepositoryLocation.of(NConstants.Names.DEFAULT_REPOSITORY_NAME, null));
         NRepositoryLocation[] br = rm.getModel().resolveBootRepositoriesList(session).resolve(defaults.toArray(new NRepositoryLocation[0]), NRepositoryDB.of(session));
         for (NRepositoryLocation s : br) {

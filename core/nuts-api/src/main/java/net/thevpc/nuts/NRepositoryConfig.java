@@ -12,13 +12,13 @@
  * <br>
  * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
@@ -49,9 +49,18 @@ public class NRepositoryConfig extends NConfigItem {
     private List<NRepositoryRef> mirrors;
     private List<NUserConfig> users;
     private boolean indexEnabled;
+    private boolean preview;
     private String authenticationAgent;
 
     public NRepositoryConfig() {
+    }
+
+    public boolean isPreview() {
+        return preview;
+    }
+
+    public void setPreview(boolean preview) {
+        this.preview = preview;
     }
 
     public String getName() {
@@ -175,6 +184,7 @@ public class NRepositoryConfig extends NConfigItem {
         hash = 53 * hash + Objects.hashCode(this.env);
         hash = 53 * hash + Objects.hashCode(this.mirrors);
         hash = 53 * hash + Objects.hashCode(this.users);
+        hash = 53 * hash + Objects.hashCode(this.preview);
         hash = 53 * hash + (this.indexEnabled ? 1 : 0);
         hash = 53 * hash + Objects.hashCode(this.authenticationAgent);
         return hash;
@@ -193,6 +203,9 @@ public class NRepositoryConfig extends NConfigItem {
         }
         final NRepositoryConfig other = (NRepositoryConfig) obj;
         if (this.indexEnabled != other.indexEnabled) {
+            return false;
+        }
+        if (this.preview != other.preview) {
             return false;
         }
         if (!Objects.equals(this.uuid, other.uuid)) {
@@ -232,7 +245,11 @@ public class NRepositoryConfig extends NConfigItem {
     public String toString() {
         return "NutsRepositoryConfig{" + ", uuid=" + uuid + ", name=" + name
 //                + ", type=" + type
-                + ", location=" + location + ", storeLocations=" + (storeLocations == null ? "null" : storeLocations.toString()) + ", storeStrategy=" + storeStrategy + ", groups=" + groups + ", env=" + env + ", mirrors=" + mirrors + ", users=" + users + ", indexEnabled=" + indexEnabled + ", authenticationAgent=" + authenticationAgent + '}';
+                + ", location=" + location + ", storeLocations=" + (storeLocations == null ? "null" : storeLocations.toString()) + ", storeStrategy=" + storeStrategy + ", groups=" + groups + ", env=" + env + ", mirrors=" + mirrors + ", users="
+                + users + ", indexEnabled=" + indexEnabled
+                + ", authenticationAgent=" + authenticationAgent
+                + ", preview=" + preview
+                + '}';
     }
 
 }

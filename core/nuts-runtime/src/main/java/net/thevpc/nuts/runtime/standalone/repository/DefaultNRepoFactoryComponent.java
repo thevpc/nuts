@@ -78,6 +78,14 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
         all.add(NRepositorySelectorHelper.createRepositoryOptions(
                 NRepositoryLocation.of("nuts-public", NRepositoryDB.of(session), session).get(),
                 true, session));
+        if(session.isPreviewRepo()){
+            all.add(NRepositorySelectorHelper.createRepositoryOptions(
+                    NRepositoryLocation.of("preview", NRepositoryDB.of(session), session).get(),
+                    true, session));
+            all.add(NRepositorySelectorHelper.createRepositoryOptions(
+                    NRepositoryLocation.of("dev", NRepositoryDB.of(session), session).get(),
+                    true, session));
+        }
         return all;
     }
 

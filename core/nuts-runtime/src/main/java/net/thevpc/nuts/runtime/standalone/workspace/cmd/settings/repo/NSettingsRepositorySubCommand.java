@@ -32,7 +32,12 @@ import java.util.*;
 public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
 
     public static RepoInfo repoInfo(NRepository x, boolean tree, NSession session) {
-        return new RepoInfo(x.getName(), x.config().getType(), x.config().getLocationPath(), x.config().isEnabled() ? RepoStatus.enabled : RepoStatus.disabled, tree ? x.config().setSession(session).getMirrors().stream().map(e -> repoInfo(e, tree, session)).toArray(RepoInfo[]::new) : null);
+        return new RepoInfo(x.getName(), x.config().getType(), x.config().getLocationPath(),
+                x.config().isEnabled() ? RepoStatus.enabled : RepoStatus.disabled,
+                (tree ? x.config().setSession(session).getMirrors().stream().map(e -> repoInfo(e, tree, session)).toArray(RepoInfo[]::new) : null),
+                x.config().isTemporary(),
+                x.config().isPreview()
+        );
     }
 
     @Override
@@ -203,7 +208,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                     boolean enabled = aa.isActive();
                     switch (aa.key()) {
                         case "--parent": {
-                            cmdLine.withNextEntry((v, a, s)->parent.set(v));
+                            cmdLine.withNextEntry((v, a, s) -> parent.set(v));
                             break;
                         }
                         default: {
@@ -337,18 +342,30 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
         String name;
         String type;
         NPath location;
+        boolean temporary;
+        boolean preview;
         RepoStatus enabled;
         RepoInfo[] mirrors;
 
-        public RepoInfo(String name, String type, NPath location, RepoStatus enabled, RepoInfo[] mirrors) {
+        public RepoInfo(String name, String type, NPath location, RepoStatus enabled, RepoInfo[] mirrors, boolean temporary, boolean preview) {
             this.name = name;
             this.type = type;
             this.location = location;
             this.enabled = enabled;
             this.mirrors = mirrors;
+            this.preview = preview;
+            this.temporary = temporary;
         }
 
         public RepoInfo() {
+        }
+
+        public boolean isTemporary() {
+            return temporary;
+        }
+
+        public boolean isPreview() {
+            return preview;
         }
 
         public RepoInfo[] getMirrors() {

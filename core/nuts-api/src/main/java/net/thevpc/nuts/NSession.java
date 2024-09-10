@@ -148,9 +148,18 @@ public interface NSession extends NCmdLineConfigurable {
 
     NOptional<Boolean> getBot();
 
+    /**
+     * @since 0.8.5
+     * @return preview repo
+     */
+    NOptional<Boolean> getPreviewRepo();
+
+    boolean isPreviewRepo();
+
     boolean isBot();
 
     NSession setBot(Boolean bot);
+    NSession setPreviewRepo(Boolean bot);
 
     NSession bot();
 

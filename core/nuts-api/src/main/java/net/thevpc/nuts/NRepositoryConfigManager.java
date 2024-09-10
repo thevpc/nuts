@@ -56,6 +56,8 @@ public interface NRepositoryConfigManager extends NSessionProvider {
 
     boolean isTemporary();
 
+    boolean isPreview();
+
     NRepositoryConfigManager setTemporary(boolean enabled);
 
     boolean isIndexSubscribed();

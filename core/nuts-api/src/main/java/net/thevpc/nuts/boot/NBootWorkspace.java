@@ -170,6 +170,7 @@ public final class NBootWorkspace {
         this.computedOptions.setAll(userOptions);
         this.computedOptions.setUserOptions(this.userOptions);
         this.computedOptions.setBot(this.computedOptions.getBot().orElse(false));
+        this.computedOptions.setPreviewRepo(this.computedOptions.getPreviewRepo().orElse(false));
         this.computedOptions.setDry(this.computedOptions.getDry().orElse(false));
         this.computedOptions.setShowStacktrace(this.computedOptions.getShowStacktrace().orElse(false));
         this.computedOptions.setSystem(this.computedOptions.getSystem().orElse(false));

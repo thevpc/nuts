@@ -141,7 +141,7 @@ public final class DefaultNBootOptionsBuilder extends DefaultNWorkspaceOptionsBu
                  getTheme().orNull(), getUuid().orNull(), getBootRepositories().orNull(), getRuntimeBootDependencyNode().orNull(), getExtensionBootDescriptors().orNull(),
                  getExtensionBootDependencyNodes().orNull(), getClassWorldURLs().orNull(), getExtensionsSet().orNull(), getBootWorkspaceFactory().orNull(), getRuntimeBootDescriptor().orNull(), getClassWorldLoader().orNull(),
                  getUserOptions().orNull(),
-                getDesktopLauncher().orNull(), getMenuLauncher().orNull(), getUserLauncher().orNull());
+                getDesktopLauncher().orNull(), getMenuLauncher().orNull(), getUserLauncher().orNull(), getPreviewRepo().orNull());
     }
 
     public DefaultNBootOptionsBuilder setAll(DefaultNWorkspaceOptionsBuilder other) {

@@ -446,6 +446,18 @@ public final class NWorkspaceCmdLineParser {
                             return NOptional.of(Collections.singletonList(a));
                         }
                     }
+                    case "-U":
+                    case "--preview-repo": {
+                        a = cmdLine.nextFlag().get(session);
+                        if (active) {
+                            if (options != null) {
+                                options.setPreviewRepo(a.getBooleanValue().get(session));
+                            }
+                            return NOptional.of(Collections.singletonList(a));
+                        } else {
+                            return NOptional.of(Collections.singletonList(a));
+                        }
+                    }
                     case "-R":
                     case "--read-only": {
                         a = cmdLine.nextFlag().get(session);
@@ -1398,7 +1410,6 @@ public final class NWorkspaceCmdLineParser {
                     //ERRORS
                     case "-C":
                     case "-I":
-                    case "-U":
                     case "-G":
                     case "-H":
                     case "-M":

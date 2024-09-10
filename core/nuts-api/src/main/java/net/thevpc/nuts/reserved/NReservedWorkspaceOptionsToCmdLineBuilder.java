@@ -15,6 +15,7 @@ public class NReservedWorkspaceOptionsToCmdLineBuilder {
     private static final String V081 = "0.8.1";
     private static final String V083 = "0.8.3";
     private static final String V084 = "0.8.4";
+    private static final String V085 = "0.8.5";
     private NWorkspaceOptionsConfig config;
     private NWorkspaceOptions options;
 
@@ -427,6 +428,9 @@ public class NReservedWorkspaceOptionsToCmdLineBuilder {
         fillOption("--transitive", null, options.getTransitive().orNull(), true, arguments, false);
         if (isApiVersionOrAfter(V081)) {
             fillOption("--bot", "-B", options.getBot().orNull(), false, arguments, false);
+        }
+        if (isApiVersionOrAfter(V085)) {
+            fillOption("--preview-repo", "-U", options.getPreviewRepo().orNull(), false, arguments, false);
         }
         if (options.getFetchStrategy().isPresent() && options.getFetchStrategy().orNull() != NFetchStrategy.ONLINE) {
             fillOption("--fetch", "-f", options.getFetchStrategy().orNull(), NFetchStrategy.class, arguments, false);

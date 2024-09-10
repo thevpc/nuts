@@ -42,12 +42,24 @@ public final class NWorkspaceConfigMain extends NConfigItem {
     private static final long serialVersionUID = 4;
 
     private List<NRepositoryRef> repositories;
+    /**
+     * @since 0.8.5
+     */
+    private boolean enablePreviewRepositories;
     private List<NCommandFactoryConfig> commandFactories;
     private Map<String,String> env = new LinkedHashMap<>();
     private List<NPlatformLocation> platforms = new ArrayList<>();
     private List<String> imports = new ArrayList<>();
 
     public NWorkspaceConfigMain() {
+    }
+
+    public boolean isEnablePreviewRepositories() {
+        return enablePreviewRepositories;
+    }
+
+    public void setEnablePreviewRepositories(boolean enablePreviewRepositories) {
+        this.enablePreviewRepositories = enablePreviewRepositories;
     }
 
     public List<NRepositoryRef> getRepositories() {

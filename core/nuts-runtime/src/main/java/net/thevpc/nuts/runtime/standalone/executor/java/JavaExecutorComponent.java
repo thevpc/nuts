@@ -123,6 +123,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
         options.setDebug(session.getDebug().orDefault());
         options.setTrace(session.isTrace());
         options.setBot(session.isBot());
+        options.setPreviewRepo(session.isPreviewRepo());
         options.setCached(session.isCached());
         options.setIndexed(session.isIndexed());
         options.setConfirm(session.getConfirm().orDefault());

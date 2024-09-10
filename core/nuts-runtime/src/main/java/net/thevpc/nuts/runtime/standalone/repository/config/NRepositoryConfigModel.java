@@ -91,6 +91,8 @@ public interface NRepositoryConfigModel {
 
     boolean isIndexEnabled(NSession session);
 
+    boolean isPreview(NSession session);
+
     boolean isIndexSubscribed(NSession session);
 
     boolean isSupportedMirroring(NSession session);

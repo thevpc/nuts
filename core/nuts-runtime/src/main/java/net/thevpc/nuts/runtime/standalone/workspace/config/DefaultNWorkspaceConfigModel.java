@@ -1756,4 +1756,7 @@ public class DefaultNWorkspaceConfigModel {
         }
     }
 
+    public void invalidateStoreModelMain(){
+        this.storeModelMainChanged=true;
+    }
 }

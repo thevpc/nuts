@@ -155,6 +155,11 @@ class InstalledRepositoryConfigModel implements NRepositoryConfigModel {
     }
 
     @Override
+    public boolean isPreview(NSession session) {
+        return false;
+    }
+
+    @Override
     public boolean isIndexSubscribed(NSession session) {
         return false;
     }

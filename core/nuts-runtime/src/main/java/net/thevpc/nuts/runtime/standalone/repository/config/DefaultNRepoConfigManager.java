@@ -104,6 +104,12 @@ public class DefaultNRepoConfigManager implements NRepositoryConfigManager, NRep
     }
 
     @Override
+    public boolean isPreview() {
+        checkSession();
+        return getModel().isPreview(session);
+    }
+
+    @Override
     public NRepositoryConfigManager setIndexEnabled(boolean enabled) {
         checkSession();
         getModel().setIndexEnabled(enabled, session);

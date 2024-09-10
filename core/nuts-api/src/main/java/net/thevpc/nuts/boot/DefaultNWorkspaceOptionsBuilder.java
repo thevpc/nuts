@@ -345,6 +345,11 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     private Boolean bot;
 
     /**
+     * option-type : exported (inherited in child workspaces)
+     */
+    private Boolean previewRepo;
+
+    /**
      * not parsed option-type : runtime (available only for the current
      * workspace instance)
      */
@@ -1275,6 +1280,17 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
+    public NOptional<Boolean> getPreviewRepo() {
+        return NOptional.ofNamed(previewRepo,"previewRepo");
+    }
+
+    @Override
+    public NWorkspaceOptionsBuilder setPreviewRepo(Boolean bot) {
+        this.previewRepo = bot;
+        return this;
+    }
+
+    @Override
     public NOptional<NFetchStrategy> getFetchStrategy() {
         return NOptional.ofNamed(fetchStrategy,"fetchStrategy");
     }
@@ -1836,7 +1852,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
                 getClassLoaderSupplier().orNull(), getApplicationArguments().orNull(), getOutputFormatOptions().orNull(),
                 getCustomOptions().orNull(), getExcludedExtensions().orNull(), getRepositories().orNull(),
                 getExecutorOptions().orNull(), getErrors().orNull(), getStoreLocations().orNull(), getHomeLocations().orNull(),
-                getDesktopLauncher().orNull(), getMenuLauncher().orNull(), getUserLauncher().orNull());
+                getDesktopLauncher().orNull(), getMenuLauncher().orNull(), getUserLauncher().orNull(), getPreviewRepo().orNull());
     }
 
     @Override
