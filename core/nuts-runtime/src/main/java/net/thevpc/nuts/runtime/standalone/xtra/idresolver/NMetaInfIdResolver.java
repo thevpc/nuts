@@ -40,6 +40,8 @@ public class NMetaInfIdResolver {
         if (!basePath.endsWith("/")) {
             basePath += "/";
         }
+//        final URLPart p2 = aa.rootSibling(basePath + "META-INF/nuts/nuts.properties");
+//        InputStream inputStream = p2.getInputStream(session);
 
         final URLPart p = aa.rootSibling(basePath + "META-INF/nuts");
         int beforeSize = all.size();

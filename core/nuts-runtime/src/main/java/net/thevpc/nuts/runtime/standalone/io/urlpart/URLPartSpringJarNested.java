@@ -29,7 +29,15 @@ class URLPartSpringJarNested extends URLPart {
     }
 
     public URLPart rootSibling(String path) {
-        return new URLPartSpringJarNested(path, null, base0, base1);
+        if(path.startsWith("/META-INF/") || path.equals("/META-INF")) {
+            return new URLPartJar(path, null, base0);
+        }
+        if(path.startsWith("META-INF/") || path.equals("META-INF")) {
+            return new URLPartJar(path, null, base0);
+            //return new URLPartSpringJarNested(path, null, base0, path);
+        }
+        //remove leading
+        return new URLPartSpringJarNested(path, null, base0, path.substring(1));
     }
 
     public InputStream getInputStream(NSession session) {
