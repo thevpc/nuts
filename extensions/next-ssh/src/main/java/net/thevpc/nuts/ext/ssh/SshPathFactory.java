@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.NConnexionString;
+import net.thevpc.nuts.lib.common.str.NConnexionString;
 
 public class SshPathFactory implements NPathFactorySPI {
     @Override

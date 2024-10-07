@@ -3,15 +3,15 @@ package net.thevpc.nuts.runtime.standalone.util.stream;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.reserved.rpi.NCollectionsRPI;
-import net.thevpc.nuts.runtime.standalone.util.iter.NIteratorEmpty;
+import net.thevpc.nuts.lib.common.iter.NIteratorEmpty;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NIterable;
 import net.thevpc.nuts.util.NIterator;
 import net.thevpc.nuts.util.NStream;
-import net.thevpc.nuts.runtime.standalone.util.iter.NIteratorBaseFromJavaIterator;
-import net.thevpc.nuts.runtime.standalone.util.iter.NIterableFromJavaIterable;
+import net.thevpc.nuts.lib.common.iter.NIteratorBaseFromJavaIterator;
+import net.thevpc.nuts.lib.common.iter.NIterableFromJavaIterable;
 
 import java.util.Arrays;
 import java.util.Collection;

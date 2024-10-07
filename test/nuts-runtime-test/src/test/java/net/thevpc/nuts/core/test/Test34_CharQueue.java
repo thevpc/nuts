@@ -5,8 +5,8 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.runtime.standalone.util.collections.CharQueue;
-import net.thevpc.nuts.runtime.standalone.util.collections.NMatchType;
+import net.thevpc.nuts.lib.common.collections.CharQueue;
+import net.thevpc.nuts.lib.common.collections.NMatchType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

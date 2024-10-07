@@ -5,7 +5,7 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NPomId;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.PomIdFilter;
-import net.thevpc.nuts.runtime.standalone.util.iter.NIteratorBase;
+import net.thevpc.nuts.lib.common.iter.NIteratorBase;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;

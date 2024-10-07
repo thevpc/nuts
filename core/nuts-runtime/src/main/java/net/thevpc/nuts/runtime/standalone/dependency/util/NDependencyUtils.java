@@ -26,7 +26,7 @@ package net.thevpc.nuts.runtime.standalone.dependency.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NEDesc;
-import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
+import net.thevpc.nuts.lib.common.iter.IteratorBuilder;
 import net.thevpc.nuts.util.NFunction;
 import net.thevpc.nuts.util.NIterator;
 import net.thevpc.nuts.util.NStringUtils;

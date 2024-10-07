@@ -75,6 +75,9 @@
             <artifactId>nuts-api</artifactId>
             <version>0.8.5</version>
         </dependency>
+        <dependency><groupId>net.thevpc.nuts.lib</groupId><artifactId>nlib-common-collections</artifactId><version>0.8.5.0</version></dependency>
+        <dependency><groupId>net.thevpc.nuts.lib</groupId><artifactId>nlib-common-strings</artifactId><version>0.8.5.0</version></dependency>
+        <dependency><groupId>net.thevpc.nuts.lib</groupId><artifactId>nlib-common-utils</artifactId><version>0.8.5.0</version></dependency>
         <dependency>
             <groupId>org.fusesource.jansi</groupId>
             <artifactId>jansi</artifactId>

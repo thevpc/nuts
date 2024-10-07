@@ -2,7 +2,7 @@ package net.thevpc.nuts.toolbox.ndb.util;
 
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NConnexionString;
+import net.thevpc.nuts.lib.common.str.NConnexionString;
 
 import java.util.Objects;
 import java.util.regex.Pattern;

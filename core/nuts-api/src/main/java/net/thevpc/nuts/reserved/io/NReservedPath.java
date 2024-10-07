@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -206,5 +207,103 @@ public class NReservedPath {
 
     public String getPath() {
         return path;
+    }
+
+    private static class NRef<T> {
+
+        private T value;
+        private boolean set;
+
+        public static <T> NRef<T> of(T t) {
+            return new NRef<>(t);
+        }
+
+        public static <T> NRef<T> of(T t, Class<T> type) {
+            return new NRef<>(t);
+        }
+
+        public static <T> NRef<T> ofNull(Class<T> t) {
+            return new NRef<>(null);
+        }
+
+        public static <T> NRef<T> ofNull() {
+            return of(null);
+        }
+
+        public NRef() {
+        }
+
+        public NRef(T value) {
+            this.value = value;
+        }
+
+        public T get() {
+            return value;
+        }
+
+        public T orElse(T other) {
+            if (value == null) {
+                return other;
+            }
+            return value;
+        }
+
+        public void setNonNull(T value) {
+            if (value != null) {
+                set(value);
+            }
+        }
+
+        public void set(T value) {
+            this.value = value;
+            this.set = true;
+        }
+
+        public void unset() {
+            this.value = null;
+            this.set = false;
+        }
+
+        public boolean isNotNull() {
+            return value != null;
+        }
+
+        public boolean isBlank() {
+            return NBlankable.isBlank(value);
+        }
+
+        public boolean isEmpty() {
+            return value == null || String.valueOf(value).isEmpty();
+        }
+
+        public boolean isNull() {
+            return value == null;
+        }
+
+        public boolean isSet() {
+            return set;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+
+        public boolean isValue(Object o) {
+            return Objects.equals(value, o);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            NRef<?> nRef = (NRef<?>) o;
+            return set == nRef.set && Objects.equals(value, nRef.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(value, set);
+        }
     }
 }

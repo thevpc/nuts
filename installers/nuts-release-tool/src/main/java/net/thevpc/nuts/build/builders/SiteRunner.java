@@ -11,15 +11,13 @@ import net.thevpc.nuts.build.util.MvnArtifactType;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.lib.common.collections.NMaps;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.toolbox.docusaurus.DocusaurusCtrl;
 import net.thevpc.nuts.toolbox.docusaurus.DocusaurusProject;
-import net.thevpc.nuts.toolbox.docusaurus.NDocusaurusMain;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.TemplateConfig;
 import net.thevpc.nuts.toolbox.ntemplate.project.NTemplateProject;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.util.NMsg;
 
 import java.nio.file.Paths;

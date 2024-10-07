@@ -24,11 +24,12 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.reflect;
 
+import net.thevpc.nuts.lib.common.collections.NArrays;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.reflect.*;
-import net.thevpc.nuts.util.*;
+
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.Function;

@@ -50,6 +50,14 @@ public interface NExecCmd extends NWorkspaceCmd {
         return NExtensions.of(session).createComponent(NExecCmd.class).get();
     }
 
+    static NExecCmd of(NSession session,String ...cmd) {
+        return of(session).addCommand(cmd);
+    }
+
+    static NExecCmd ofSystem(NSession session,String ...cmd) {
+        return of(session).addCommand(cmd).system();
+    }
+
     /**
      * create a prefilled command format
      *

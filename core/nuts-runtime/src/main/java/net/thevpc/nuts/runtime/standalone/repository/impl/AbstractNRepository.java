@@ -30,8 +30,8 @@ import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepoConfigMa
 import net.thevpc.nuts.runtime.standalone.repository.config.NRepositoryConfigModel;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.NCachedValue;
-import net.thevpc.nuts.runtime.standalone.util.collections.DefaultObservableMap;
-import net.thevpc.nuts.runtime.standalone.util.collections.ObservableMap;
+import net.thevpc.nuts.lib.common.collections.DefaultObservableMap;
+import net.thevpc.nuts.lib.common.collections.ObservableMap;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.spi.NRepositorySPI;
 

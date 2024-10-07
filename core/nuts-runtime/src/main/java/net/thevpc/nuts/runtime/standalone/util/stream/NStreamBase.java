@@ -30,8 +30,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
-import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
+import net.thevpc.nuts.lib.common.iter.IteratorBuilder;
+import net.thevpc.nuts.lib.common.iter.IteratorUtils;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;

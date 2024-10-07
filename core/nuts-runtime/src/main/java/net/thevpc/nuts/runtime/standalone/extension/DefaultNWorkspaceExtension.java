@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.NId;
 import net.thevpc.nuts.NWorkspaceExtension;
-import net.thevpc.nuts.runtime.standalone.util.collections.ListMap;
+import net.thevpc.nuts.lib.common.collections.ListMap;
 import net.thevpc.nuts.spi.NExtensionLifeCycle;
 
 import java.util.ArrayList;

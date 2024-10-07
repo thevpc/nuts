@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.util.NMemorySize;
+import net.thevpc.nuts.lib.common.str.NMemorySize;
 
 public class MemoryUtils {
     public static NMemorySize inUseMemory() {

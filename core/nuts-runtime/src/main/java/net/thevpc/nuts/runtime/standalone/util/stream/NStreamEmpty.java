@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.util.stream;
 
 import net.thevpc.nuts.util.NIterator;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
+import net.thevpc.nuts.lib.common.iter.IteratorBuilder;
 
 import java.util.*;
 import java.util.stream.Stream;

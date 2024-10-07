@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 
 public interface NProgressMonitors extends NComponent {
     static NProgressMonitors of(NSession session) {
-       return NExtensions.of(session).createComponent(NProgressMonitors.class).get();
+        return NExtensions.of(session).createComponent(NProgressMonitors.class).get();
     }
 
 
@@ -62,5 +62,6 @@ public interface NProgressMonitors extends NComponent {
     NProgressMonitor ofOut(NMsgTemplate message, long freq, PrintStream out);
 
     NProgressMonitor of(NProgressMonitor monitor);
+
     NProgressMonitor of(NProgressHandler monitor);
 }

@@ -7,6 +7,8 @@ import net.thevpc.nuts.env.NDesktopEnvironmentFamily;
 import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.lib.common.str.NConnexionString;
+import net.thevpc.nuts.util.NRef;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.spi.NScopeType;

@@ -8,7 +8,7 @@ import net.thevpc.nuts.env.NPlatformFamily;
 import net.thevpc.nuts.io.NPsInfo;
 import net.thevpc.nuts.io.NPs;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
-import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
+import net.thevpc.nuts.lib.common.iter.IteratorBuilder;
 
 import java.io.File;
 import java.util.*;

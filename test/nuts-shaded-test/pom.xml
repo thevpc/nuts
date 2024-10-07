@@ -6,7 +6,7 @@
     <artifactId>nuts-shaded-test</artifactId>
     <version>0.8.5.0</version>
     <packaging>jar</packaging>
-    <name>Nuts Community Testing Project</name>
+    <name>Nuts Community Test Shaded Project</name>
     <url>https://github.com/thevpc/nuts</url>
     <description>Nuts Reference Implementation Test</description>
     <properties>
@@ -100,6 +100,26 @@
                 <configuration>
                     <showDeprecation>true</showDeprecation>
                     <debug>true</debug>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-toolchains-plugin</artifactId>
+                <version>1.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>toolchain</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <toolchains>
+                        <jdk>
+                            <version>1.8</version>
+                            <vendor>openjdk</vendor>
+                        </jdk>
+                    </toolchains>
                 </configuration>
             </plugin>
             <plugin>

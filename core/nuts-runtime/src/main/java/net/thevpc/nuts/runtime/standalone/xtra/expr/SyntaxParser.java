@@ -12,17 +12,17 @@ import java.io.StringReader;
 import java.util.*;
 
 public class SyntaxParser {
-    TokenIterator tokens;
+    NTokenIterator tokens;
     NSession session;
     //    NutsExpr evaluator;
     NExprWithCache withCache;
 
     public SyntaxParser(String anyStr, NExprWithCache withCache, NSession session) {
-        this(new TokenIterator(new StringReader(anyStr == null ? "" : anyStr), session), withCache, session);
+        this(new NTokenIterator(new StringReader(anyStr == null ? "" : anyStr), session), withCache, session);
     }
 
 
-    public SyntaxParser(TokenIterator tokens, NExprWithCache withCache, NSession session) {
+    public SyntaxParser(NTokenIterator tokens, NExprWithCache withCache, NSession session) {
         this.tokens = tokens;
         this.session = session;
         this.withCache = withCache;

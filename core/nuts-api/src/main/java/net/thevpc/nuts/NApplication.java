@@ -167,7 +167,7 @@ package net.thevpc.nuts;
  * import net.thevpc.nuts.NSession;
  * import net.thevpc.nuts.cmdline.NArg;
  * import net.thevpc.nuts.cmdline.NCmdLine;
- * import net.thevpc.nuts.util.NRef;
+ * import net.thevpc.nuts.lib.common.utils.NRef;
  *
  * import java.util.ArrayList;
  * import java.util.List;
@@ -226,7 +226,7 @@ package net.thevpc.nuts;
  * import net.thevpc.nuts.NSession;
  * import net.thevpc.nuts.cmdline.NArg;
  * import net.thevpc.nuts.cmdline.NCmdLine;
- * import net.thevpc.nuts.util.NRef;
+ * import net.thevpc.nuts.lib.common.utils.NRef;
  *
  * import java.util.ArrayList;
  * import java.util.List;

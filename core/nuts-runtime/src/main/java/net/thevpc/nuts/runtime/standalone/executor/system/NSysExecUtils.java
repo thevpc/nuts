@@ -6,6 +6,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.env.NDesktopEnvironmentFamily;
 import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.io.NNonBlockingInputStream;
+import net.thevpc.nuts.util.NRef;
 import net.thevpc.nuts.util.*;
 
 import java.io.File;

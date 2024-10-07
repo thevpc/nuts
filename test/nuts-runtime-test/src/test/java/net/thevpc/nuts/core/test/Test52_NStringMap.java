@@ -1,7 +1,7 @@
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.util.NMaps;
-import net.thevpc.nuts.util.NStringMap;
+import net.thevpc.nuts.lib.common.collections.NMaps;
+import net.thevpc.nuts.lib.common.collections.NStringMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

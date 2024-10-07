@@ -19,8 +19,8 @@ import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
-import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
-import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
+import net.thevpc.nuts.lib.common.iter.IteratorBuilder;
+import net.thevpc.nuts.lib.common.iter.IteratorUtils;
 import net.thevpc.nuts.spi.NSearchVersionsRepositoryCmd;
 
 /**

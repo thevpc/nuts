@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.collections.EvictingQueue;
-import net.thevpc.nuts.runtime.standalone.xtra.expr.StreamTokenizerExt;
+import net.thevpc.nuts.lib.common.collections.EvictingQueue;
+import net.thevpc.nuts.lib.common.str.NStreamTokenizer;
 import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
@@ -50,9 +50,9 @@ public class XmlCodeHighlighter implements NCodeHighlighter {
 
     @Override
     public NText stringToText(String text, NTexts txt, NSession session) {
-        StreamTokenizerExt st = new StreamTokenizerExt(new StringReader(text),session);
+        NStreamTokenizer st = new NStreamTokenizer(new StringReader(text),session);
         st.xmlComments(true);
-        st.doNotParseNumbers();
+        st.parseNumbers(false);
         st.wordChars('0', '9');
         st.wordChars('.', '.');
         st.wordChars('-', '-');
@@ -60,13 +60,13 @@ public class XmlCodeHighlighter implements NCodeHighlighter {
         List<NText> nodes = new ArrayList<>();
         int s;
         EvictingQueue<String> last = new EvictingQueue<>(3);
-        while ((s = st.nextToken()) != StreamTokenizerExt.TT_EOF) {
+        while ((s = st.nextToken()) != NStreamTokenizer.TT_EOF) {
             switch (s) {
-                case StreamTokenizerExt.TT_SPACES: {
+                case NStreamTokenizer.TT_SPACES: {
                     nodes.add(txt.ofPlain(st.image));
                     break;
                 }
-                case StreamTokenizerExt.TT_COMMENTS: {
+                case NStreamTokenizer.TT_COMMENTS: {
                     nodes.add(txt.ofStyled(st.image, NTextStyle.comments()));
                     break;
                 }
@@ -79,7 +79,7 @@ public class XmlCodeHighlighter implements NCodeHighlighter {
                     nodes.add(txt.ofStyled(st.image, NTextStyle.number()));
                     break;
                 }
-                case StreamTokenizerExt.TT_WORD: {
+                case NStreamTokenizer.TT_WORD: {
                     if (last.size() > 0 && last.get(last.size() - 1).equals("<")) {
                         nodes.add(formatNodeName(st.image, txt));
                     } else if (last.size() > 1 && last.get(last.size() - 2).equals("<") && last.get(last.size() - 1).equals("/")) {

@@ -8,7 +8,7 @@ import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.MapToFunction;
-import net.thevpc.nuts.runtime.standalone.util.collections.CoreArrayUtils;
+import net.thevpc.nuts.lib.common.collections.CoreArrayUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 
 import java.util.*;

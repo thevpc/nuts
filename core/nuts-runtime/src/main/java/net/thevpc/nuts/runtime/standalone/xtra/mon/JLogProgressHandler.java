@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
+import net.thevpc.nuts.lib.common.str.NMemorySizeFormat;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NMsgParam;
 import net.thevpc.nuts.util.NMsgTemplate;
@@ -7,7 +8,6 @@ import net.thevpc.nuts.runtime.standalone.util.MemoryUtils;
 import net.thevpc.nuts.time.NProgressHandler;
 import net.thevpc.nuts.time.NProgressHandlerEvent;
 import net.thevpc.nuts.time.NProgressMonitorModel;
-import net.thevpc.nuts.util.*;
 
 import java.text.DecimalFormat;
 import java.util.Date;

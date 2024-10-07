@@ -25,10 +25,12 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementType;
 import net.thevpc.nuts.elem.NPrimitiveElement;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -46,6 +48,14 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
         this.value = NLiteral.of(value);
     }
 
+    @Override
+    public NOptional<NElement> resolve(String pattern) {
+        pattern = NStringUtils.trimToNull(pattern);
+        if (pattern == null || pattern.equals(".")) {
+            return NOptional.of(this);
+        }
+        return NOptional.ofNamedEmpty(pattern);
+    }
 
     @Override
     public Object getRaw() {

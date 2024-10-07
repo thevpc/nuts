@@ -1,5 +1,6 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.posix.grep;
 
+import net.thevpc.nuts.lib.common.collections.NMaps;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.NExecutionException;
 import net.thevpc.nuts.util.NMsg;
@@ -14,7 +15,6 @@ import net.thevpc.nuts.toolbox.nsh.cmds.util.WindowFilterIterator;
 import net.thevpc.nuts.toolbox.nsh.cmds.util.WindowObject;
 import net.thevpc.nuts.toolbox.nsh.util.FileInfo;
 import net.thevpc.nuts.util.NGlob;
-import net.thevpc.nuts.util.NMaps;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

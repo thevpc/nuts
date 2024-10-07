@@ -28,7 +28,7 @@ import net.thevpc.nuts.expr.*;
 import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.runtime.standalone.xtra.expr.StreamTokenizerExt;
+import net.thevpc.nuts.lib.common.str.NStreamTokenizer;
 import org.junit.jupiter.api.*;
 
 import java.io.StringReader;
@@ -138,22 +138,22 @@ public class Test19_ExprTest {
 
     @Test
     public void testTokenized() {
-        StreamTokenizerExt st = new StreamTokenizerExt(new StringReader("8.0.0"), session);
+        NStreamTokenizer st = new NStreamTokenizer(new StringReader("8.0.0"), session);
         st.xmlComments(true);
-        st.doNotParseNumbers();
+        st.parseNumbers(false);
         st.wordChars('0', '9');
         st.wordChars('.', '.');
         st.wordChars('-', '-');
 
         int s;
-        while ((s = st.nextToken()) != StreamTokenizerExt.TT_EOF) {
+        while ((s = st.nextToken()) != NStreamTokenizer.TT_EOF) {
             TestUtils.println(st.image);
         }
     }
 
     @Test
     public void testTokenize2() {
-        StreamTokenizerExt st = new StreamTokenizerExt(new StringReader("<<"), session);
+        NStreamTokenizer st = new NStreamTokenizer(new StringReader("<<"), session);
         int i = st.nextToken();
         Assertions.assertEquals(NToken.TT_LEFT_SHIFT, i);
         System.out.println(i);

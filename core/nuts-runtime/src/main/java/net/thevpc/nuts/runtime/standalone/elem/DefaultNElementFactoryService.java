@@ -49,7 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import net.thevpc.nuts.runtime.standalone.util.collections.ClassMap;
+import net.thevpc.nuts.lib.common.collections.ClassMap;
 import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.reflect.NReflectRepository;

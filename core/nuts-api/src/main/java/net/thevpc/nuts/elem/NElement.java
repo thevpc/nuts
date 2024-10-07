@@ -28,6 +28,8 @@ import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NOptional;
 
+import java.util.List;
+
 /**
  * Nuts Element types are generic JSON like parsable objects. elements are a superset of JSON actually
  * that support multiple structured elements including json, xml, etc...
@@ -55,6 +57,10 @@ public interface NElement extends NElementDescribable<NElement>, NBlankable, NLi
      * @return {@link NPrimitiveElement}
      */
     NOptional<NPrimitiveElement> asPrimitive();
+
+    NOptional<NElement> resolve(String pattern);
+
+    List<NElement> resolveAll(String pattern);
 
     /**
      * cast this element to {@link NObjectElement} or throw

@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.stream;
 
-import net.thevpc.nuts.util.NCollections;
+import net.thevpc.nuts.lib.common.collections.NCollections;
 import net.thevpc.nuts.util.NIterator;
 import net.thevpc.nuts.NSession;
 

@@ -1,12 +1,12 @@
 package net.thevpc.nuts.ext.ssh;
 
 import com.jcraft.jsch.*;
+import net.thevpc.nuts.lib.common.collections.NMaps;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.util.NConnexionString;
-import net.thevpc.nuts.util.NMaps;
+import net.thevpc.nuts.lib.common.str.NConnexionString;
 import net.thevpc.nuts.util.NStringMapFormat;
 
 import java.io.*;

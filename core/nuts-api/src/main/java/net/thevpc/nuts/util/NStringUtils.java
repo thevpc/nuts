@@ -38,6 +38,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * @author thevpc
@@ -706,7 +707,7 @@ public class NStringUtils {
         }
         final String TT_DEFAULT_STR = NToken.typeString(NToken.TT_DEFAULT);
         final String TT_VAR_STR = NToken.typeString(NToken.TT_VAR);
-        return NCollections.stream(new Iterator<NToken>() {
+        return iterToStream(new Iterator<NToken>() {
             final String vn;
             final Matcher matcher;
             int last;
@@ -782,7 +783,7 @@ public class NStringUtils {
         final String TT_DEFAULT_STR = NToken.typeString(NToken.TT_DEFAULT);
         final String TT_DOLLAR_BRACE_STR = NToken.typeString(NToken.TT_DOLLAR_BRACE);
         final String TT_DOLLAR_STR = NToken.typeString(NToken.TT_DOLLAR);
-        return NCollections.stream(new Iterator<NToken>() {
+        return iterToStream(new Iterator<NToken>() {
             final char[] t = (text == null ? new char[0] : text.toCharArray());
             int p = 0;
             final int length = t.length;
@@ -879,4 +880,9 @@ public class NStringUtils {
     public static boolean isValidVarStart(char c) {
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
     }
+
+    private static <T> Stream<T> iterToStream(Iterator<T> it) {
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, 0), false);
+    }
+
 }

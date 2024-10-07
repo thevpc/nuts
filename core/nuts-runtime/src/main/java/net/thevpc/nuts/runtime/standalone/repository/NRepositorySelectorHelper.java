@@ -7,7 +7,7 @@ import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.spi.NRepositorySelectorList;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMaps;
+import net.thevpc.nuts.lib.common.collections.NMaps;
 import net.thevpc.nuts.util.NPlatformHome;
 
 import java.util.Objects;

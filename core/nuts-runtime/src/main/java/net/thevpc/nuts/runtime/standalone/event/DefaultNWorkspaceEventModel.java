@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.event;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
-import net.thevpc.nuts.runtime.standalone.util.collections.ObservableMap;
+import net.thevpc.nuts.lib.common.collections.ObservableMap;
 import net.thevpc.nuts.util.NMapListener;
 
 import java.util.ArrayList;

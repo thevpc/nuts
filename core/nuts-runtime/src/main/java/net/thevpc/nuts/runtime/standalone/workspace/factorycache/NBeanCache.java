@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.factorycache;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.log.NLog;
-import net.thevpc.nuts.util.NArrays;
+import net.thevpc.nuts.lib.common.collections.NArrays;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.PrintStream;

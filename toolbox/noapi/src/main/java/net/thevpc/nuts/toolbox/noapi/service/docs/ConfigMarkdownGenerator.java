@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.lib.common.collections.NMaps;
 import net.thevpc.nuts.lib.md.*;
 import net.thevpc.nuts.toolbox.noapi.util.AppMessages;
 import net.thevpc.nuts.toolbox.noapi.util.NoApiUtils;
@@ -11,7 +12,6 @@ import net.thevpc.nuts.toolbox.noapi.service.OpenApiParser;
 import net.thevpc.nuts.toolbox.noapi.model.ConfigVar;
 import net.thevpc.nuts.toolbox.noapi.model.Vars;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.util.NMsg;
 
 import java.time.LocalDate;

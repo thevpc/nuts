@@ -4,8 +4,8 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.runtime.standalone.util.collections.EvictingIntQueue;
-import net.thevpc.nuts.runtime.standalone.util.iter.NIteratorBase;
+import net.thevpc.nuts.lib.common.collections.EvictingIntQueue;
+import net.thevpc.nuts.lib.common.iter.NIteratorBase;
 
 import java.io.*;
 

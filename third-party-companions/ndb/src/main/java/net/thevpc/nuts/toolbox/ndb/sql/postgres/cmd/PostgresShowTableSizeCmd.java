@@ -10,7 +10,7 @@ import net.thevpc.nuts.toolbox.ndb.sql.postgres.NPostgresConfig;
 import net.thevpc.nuts.toolbox.ndb.sql.postgres.NPostgresSupport;
 import net.thevpc.nuts.toolbox.ndb.sql.sqlbase.SqlSupport;
 import net.thevpc.nuts.toolbox.ndb.sql.util.*;
-import net.thevpc.nuts.util.NMemorySize;
+import net.thevpc.nuts.lib.common.str.NMemorySize;
 import net.thevpc.nuts.util.NRef;
 
 import java.util.ArrayList;

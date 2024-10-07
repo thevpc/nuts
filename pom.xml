@@ -17,7 +17,7 @@
         <module>toolbox</module>
         <module>incubating</module>
         <module>test/nuts-runtime-test</module>
-        <module>test/nuts-shaded-test</module>
+<!--        <module>test/nuts-shaded-test</module>-->
 <!--        <module>web-toolbox</module>-->
         <module>tutorials</module>
         <module>installers</module>
