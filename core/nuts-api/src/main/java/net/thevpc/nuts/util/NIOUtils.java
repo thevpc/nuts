@@ -1,6 +1,9 @@
 package net.thevpc.nuts.util;
 
 import java.io.*;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class NIOUtils {
 
@@ -81,8 +84,48 @@ public class NIOUtils {
         }
         return new String(chars).trim();
     }
+    public static void copy(InputStream in, Path file) {
+        Path p = file.getParent();
+        if (p != null) {
+            p.toFile().mkdirs();
+        }
+        try (OutputStream out = Files.newOutputStream(file)) {
+            copy(in, out);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
 
+    public static void copy(Reader in, Path file) {
+        Path p = file.getParent();
+        if (p != null) {
+            p.toFile().mkdirs();
+        }
+        try (Writer out = Files.newBufferedWriter(file)) {
+            copy(in, out);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+    public static void copy(Reader in, Writer out) {
+        char[] buffer = new char[4096 * 2];
+        int c = 0;
+        try {
+            while ((c = in.read(buffer)) > 0) {
+                out.write(buffer, 0, c);
+            }
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
 
+    public static byte[] readBytes(URL url) {
+        try(InputStream in=url.openStream()){
+            return readBytes(in);
+        }catch (IOException ex){
+            throw new UncheckedIOException(ex);
+        }
+    }
     public static byte[] readBytes(InputStream from) {
         return readBytes(from, -1);
     }
