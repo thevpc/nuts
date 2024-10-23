@@ -35,6 +35,9 @@ import net.thevpc.nuts.util.NStringUtils;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -49,12 +52,12 @@ class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveEle
     }
 
     @Override
-    public NOptional<NElement> resolve(String pattern) {
+    public List<NElement> resolveAll(String pattern) {
         pattern = NStringUtils.trimToNull(pattern);
         if (pattern == null || pattern.equals(".")) {
-            return NOptional.of(this);
+            return new ArrayList<>(Arrays.asList(this));
         }
-        return NOptional.ofNamedEmpty(pattern);
+        return new ArrayList<>();
     }
 
     @Override

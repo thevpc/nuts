@@ -54,6 +54,11 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
+    public NOptional<NElement> resolve(String pattern) {
+        return NOptional.ofNamedSingleton(resolveAll(pattern),"resolvable "+pattern);
+    }
+
+    @Override
     public NOptional<NPrimitiveElement> asPrimitive() {
         if (this instanceof NPrimitiveElement) {
             return NOptional.of((NPrimitiveElement) this);
