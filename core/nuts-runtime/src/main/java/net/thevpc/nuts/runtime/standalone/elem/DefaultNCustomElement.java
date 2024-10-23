@@ -32,7 +32,7 @@ import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStringUtils;
 
-import java.util.Objects;
+import java.util.*;
 
 /**
  *
@@ -54,6 +54,15 @@ class DefaultNCustomElement extends AbstractNElement implements NCustomElement {
             return NOptional.of(this);
         }
         return NOptional.ofNamedEmpty(pattern);
+    }
+
+    @Override
+    public List<NElement> resolveAll(String pattern) {
+        pattern = NStringUtils.trimToNull(pattern);
+        if (pattern == null || pattern.equals(".")) {
+            return new ArrayList<>(Arrays.asList(this));
+        }
+        return new ArrayList<>();
     }
 
     @Override

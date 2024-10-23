@@ -57,13 +57,6 @@ public abstract class AbstractNArrayElement
         return get(index).map(x -> x);
     }
 
-    @Override
-    public NOptional<NElement> resolve(String pattern) {
-        pattern = NStringUtils.trimToNull(pattern);
-        NElementPathImpl pp = new NElementPathImpl(pattern, session);
-        NElement[] nElements = pp.resolveReversed(this);
-        return NOptional.ofNamedSingleton(Arrays.asList(nElements), pattern);
-    }
 
     @Override
     public List<NElement> resolveAll(String pattern) {
