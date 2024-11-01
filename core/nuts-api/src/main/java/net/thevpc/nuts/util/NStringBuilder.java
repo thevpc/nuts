@@ -2,6 +2,7 @@ package net.thevpc.nuts.util;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.security.SecureRandom;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -707,6 +708,20 @@ public class NStringBuilder implements CharSequence, NBlankable {
 
     public NStringBuilder newLine() {
         data.append("\n");
+        return this;
+    }
+
+    public NStringBuilder appendRandom(int count, String patternChars) {
+        if (count > 0) {
+            NAssert.requireNonNull(patternChars, "patternChars");
+            NAssert.requireTrue(!patternChars.isEmpty(), "patternChars.length>0");
+            SecureRandom random = new SecureRandom();
+            for (int i = 0; i < count; i++) {
+                int randomIndex = random.nextInt(patternChars.length());
+                char randomChar = patternChars.charAt(randomIndex);
+                this.append(randomChar);
+            }
+        }
         return this;
     }
 
