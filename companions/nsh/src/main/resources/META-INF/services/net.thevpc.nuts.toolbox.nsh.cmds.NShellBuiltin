@@ -25,6 +25,7 @@ net.thevpc.nuts.toolbox.nsh.cmds.bash.UnameCommand
 net.thevpc.nuts.toolbox.nsh.cmds.posix.UnzipCommand
 net.thevpc.nuts.toolbox.nsh.cmds.posix.ZipCommand
 net.thevpc.nuts.toolbox.nsh.cmds.posix.TailCommand
+net.thevpc.nuts.toolbox.nsh.cmds.posix.extra.HostsCommand
 net.thevpc.nuts.toolbox.nsh.cmds.posix.HeadCommand
 net.thevpc.nuts.toolbox.nsh.cmds.posix.ChmodCommand
 net.thevpc.nuts.toolbox.nsh.cmds.posix.WgetCommand

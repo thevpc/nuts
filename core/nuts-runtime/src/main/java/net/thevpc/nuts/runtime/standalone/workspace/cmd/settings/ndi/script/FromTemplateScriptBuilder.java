@@ -147,7 +147,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                     case "SCRIPT_NUTS_ENV":
                                         return sndi.getIncludeNutsEnv(options,getShellFamily()).path().toString();
                                     case "NUTS_JAR":
-                                        return options.resolveNutsApiJarPath().toString();
+                                        return options.resolveNutsAppJarPath().toString();
                                     case "BIN_FOLDER":
                                         return options.resolveBinFolder().toString();
                                     case "INC_FOLDER":
@@ -177,7 +177,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                     case "NUTS_WORKSPACE_VAR":
                                         return str(NLocations.of(getSession()).getStoreLocation(NStoreType.VAR));
                                     case "NUTS_JAR_EXPR": {
-                                        String NUTS_JAR_PATH = options.resolveNutsApiJarPath().toString();
+                                        String NUTS_JAR_PATH = options.resolveNutsAppJarPath().toString();
                                         if (NUTS_JAR_PATH.startsWith(NLocations.of(getSession()).getStoreLocation(NStoreType.LIB).toString())) {
                                             String pp = NUTS_JAR_PATH.substring(NLocations.of(getSession()).getStoreLocation(NStoreType.LIB).toString().length());
                                             return NShellHelper.of(getShellFamily()).varRef("NUTS_WORKSPACE_LIB") + pp;

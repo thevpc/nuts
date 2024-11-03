@@ -29,6 +29,7 @@ public class NdiScriptOptions implements Cloneable {
 
     private NId nutsApiId;
     private NPath nutsApiJarPath;
+    private NPath nutsAppJarPath;
     private NWorkspaceBootConfig workspaceBootConfig;
 
     public NdiScriptOptions() {
@@ -141,6 +142,21 @@ public class NdiScriptOptions implements Cloneable {
         }
         return nutsApiJarPath;
     }
+    public NPath resolveNutsAppJarPath() {
+        if (nutsAppJarPath == null) {
+            NId nid = resolveNutsAppId();
+            if (getLauncher().getSwitchWorkspaceLocation() == null) {
+                NDefinition appDef = NSearchCmd.of(session)
+                        .addId(nid).setOptional(false).setLatest(true).setContent(true).getResultDefinitions().findFirst().get();
+                nutsAppJarPath = appDef.getContent().orNull();
+            } else {
+                NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
+                nutsAppJarPath = NPath.of(bootConfig.getStoreLocation(nid, NStoreType.LIB),session);
+                NLocations.of(session).getDefaultIdFilename(nid);
+            }
+        }
+        return nutsAppJarPath;
+    }
 
     public NPath resolveBinFolder() {
         return resolveNutsBinFolder().resolve("bin");
@@ -186,6 +202,11 @@ public class NdiScriptOptions implements Cloneable {
                 .distinct()
                 .getResultDefinitions()
                 .findSingleton().get();
+    }
+
+    public NId resolveNutsAppId() {
+        NId r = resolveNutsApiId();
+        return r.builder().setArtifactId("nuts").build();
     }
 
     public NId resolveNutsApiId() {
