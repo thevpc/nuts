@@ -37,8 +37,8 @@ public class ConfigMarkdownGenerator {
             NPath targetFolder,
             NPath sourceFolder, String apiDocumentFileName,
             Map<String, String> vars0, List<String> defaultAdocHeaders) {
-        NObjectElement openApiEntries = apiElement.asObject().get(session);
-        NElements prv = NElements.of(session);
+        NObjectElement openApiEntries = apiElement.asObject().get();
+        NElements prv = NElements.of();
         NObjectElement infoObj = openApiEntries.getObject("info").orElse(prv.ofEmptyObject());
         String apiDocumentTitle = infoObj.getString("title").orNull();
         String apiDocumentVersion = infoObj.getString("version").orNull();
@@ -47,13 +47,13 @@ public class ConfigMarkdownGenerator {
             configDocumentVersion = apiDocumentVersion;
         }
         MdDocumentBuilder doc = new MdDocumentBuilder();
-        String targetName = configElement.getString("target-name").get(session);
-        String targetId = configElement.getString("target-id").get(session);
-        String apiDocumentIdFromConfig = configElement.getString("openapi-document-id").get(session);
-        String apiDocumentIdFromApi = apiElement.getStringByPath("custom", "openapi-document-id").get(session);
+        String targetName = configElement.getString("target-name").get();
+        String targetId = configElement.getString("target-id").get();
+        String apiDocumentIdFromConfig = configElement.getString("openapi-document-id").get();
+        String apiDocumentIdFromApi = apiElement.getStringByPath("custom", "openapi-document-id").get();
         if (!NBlankable.isBlank(apiDocumentIdFromConfig)) {
             if (!Objects.equals(apiDocumentIdFromConfig, apiDocumentIdFromApi)) {
-                throw new NIllegalArgumentException(session, NMsg.ofC("invalid api version %s <> %s", apiDocumentIdFromConfig, apiDocumentIdFromApi));
+                throw new NIllegalArgumentException(NMsg.ofC("invalid api version %s <> %s", apiDocumentIdFromConfig, apiDocumentIdFromApi));
             }
         }
         List<String> options = new ArrayList<>(defaultAdocHeaders);
@@ -89,10 +89,10 @@ public class ConfigMarkdownGenerator {
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(2, msg.get("INTRODUCTION").get()));
         all.add(MdFactory.endParagraph());
-        NObjectElement info = apiElement.getObject("info").orElse(NObjectElement.ofEmpty(session));
+        NObjectElement info = apiElement.getObject("info").orElse(NObjectElement.ofEmpty());
         all.add(NoApiUtils.asText(apiElement.getStringByPath("custom", "config", "description").orElse("").trim()));
         all.add(MdFactory.endParagraph());
-        String targetName = configElement.getString("target-name").get(session);
+        String targetName = configElement.getString("target-name").get();
         all.add(NoApiUtils.asText(
                 NMsg.ofV(msg.get("section.config.introduction.body").get(), NMaps.of("name", targetName)
                 ).toString()));
@@ -103,7 +103,7 @@ public class ConfigMarkdownGenerator {
                 msg.get("section.contact.body").get()
         ));
         all.add(MdFactory.endParagraph());
-        NObjectElement contact = info.getObject("contact").orElse(NObjectElement.ofEmpty(session));
+        NObjectElement contact = info.getObject("contact").orElse(NObjectElement.ofEmpty());
         all.add(MdFactory.table()
                 .addColumns(
                         MdFactory.column().setName(msg.get("NAME").get()),
@@ -124,7 +124,7 @@ public class ConfigMarkdownGenerator {
                 msg.get("section.reference-document.body").get()
         ));
 
-        NObjectElement infoObj = apiElement.getObject("info").orElse(NObjectElement.ofEmpty(session));
+        NObjectElement infoObj = apiElement.getObject("info").orElse(NObjectElement.ofEmpty());
         String apiDocumentTitle = infoObj.getString("title").orNull();
         String apiDocumentVersion = infoObj.getString("version").orNull();
 
@@ -147,7 +147,7 @@ public class ConfigMarkdownGenerator {
 
 
     private void _fillConfigVars(NObjectElement entries, List<MdElement> all, Vars vars, List<ConfigVar> configVars) {
-        String targetName = entries.getString("target-name").get(session);
+        String targetName = entries.getString("target-name").get();
         String observations = entries.getString("observations").orElse("");
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(2, msg.get("CONFIGURATION").get()));

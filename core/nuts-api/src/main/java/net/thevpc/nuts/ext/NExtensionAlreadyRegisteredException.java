@@ -27,7 +27,6 @@
 package net.thevpc.nuts.ext;
 
 import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NMsg;
 
 /**
@@ -46,12 +45,11 @@ public class NExtensionAlreadyRegisteredException extends NExtensionException {
     /**
      * Constructs a new NutsExtensionAlreadyRegisteredException exception
      *
-     * @param session   workspace
      * @param id        artifact id
      * @param installed installed id
      */
-    public NExtensionAlreadyRegisteredException(NSession session, NId id, String installed) {
-        super(session, id,
+    public NExtensionAlreadyRegisteredException(NId id, String installed) {
+        super(id,
                 NMsg.ofC("extension already registered %s  as %s", (id == null ? "<null>" : id), installed)
                 , null);
         this.installed = installed;
@@ -60,13 +58,12 @@ public class NExtensionAlreadyRegisteredException extends NExtensionException {
     /**
      * Constructs a new NutsExtensionAlreadyRegisteredException exception
      *
-     * @param session   workspace
      * @param id        artifact id
      * @param installed installed id
      * @param cause     cause
      */
-    public NExtensionAlreadyRegisteredException(NSession session, NId id, String installed, Throwable cause) {
-        super(session, id, NMsg.ofC("extension already registered %s  as %s", (id == null ? "<null>" : id), installed), cause);
+    public NExtensionAlreadyRegisteredException(NId id, String installed, Throwable cause) {
+        super(id, NMsg.ofC("extension already registered %s  as %s", (id == null ? "<null>" : id), installed), cause);
         this.installed = installed;
     }
 

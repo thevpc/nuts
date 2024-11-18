@@ -54,7 +54,7 @@ public class PomAndUnsupportedJavaExecutorComponent implements NExecutorComponen
     public int getSupportLevel(NSupportLevelContext context) {
         this.session =context.getSession();
         if(ID==null){
-            ID = NId.of("net.thevpc.nuts.exec:java-unsupported").get(session);
+            ID = NId.of("net.thevpc.nuts.exec:java-unsupported").get();
         }
         if(true){
             return NConstants.Support.NO_SUPPORT;
@@ -82,11 +82,11 @@ public class PomAndUnsupportedJavaExecutorComponent implements NExecutorComponen
 
 
     public IProcessExecHelper execHelper(NExecutionContext executionContext) {
-        return new AbstractSyncIProcessExecHelper(executionContext.getSession()) {
+        return new AbstractSyncIProcessExecHelper(executionContext.getWorkspace()) {
 
             @Override
             public int exec() {
-                throw new NIOException(getSession(), NMsg.ofC("unsupported execution of %s with packaging %s",
+                throw new NIOException(NMsg.ofC("unsupported execution of %s with packaging %s",
                         executionContext.getDefinition().getId(),
                         executionContext.getDefinition().getDescriptor().getPackaging()
                 ));

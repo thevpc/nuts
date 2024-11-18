@@ -3,16 +3,17 @@ package net.thevpc.nuts.runtime.standalone.definition.installstatus.filter;
 import net.thevpc.nuts.NInstallStatusFilter;
 import net.thevpc.nuts.NInstallStatusFilters;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.util.filters.NTypedFiltersParser;
 
 public class NInstallStatusFilterParser extends NTypedFiltersParser<NInstallStatusFilter> {
-    public NInstallStatusFilterParser(String str, NSession session) {
-        super(str,session);
+    public NInstallStatusFilterParser(String str, NWorkspace workspace) {
+        super(str,workspace);
     }
 
     @Override
     protected NInstallStatusFilters getTManager() {
-        return NInstallStatusFilters.of(getSession());
+        return NInstallStatusFilters.of();
     }
 
     protected NInstallStatusFilter wordToPredicate(String word){

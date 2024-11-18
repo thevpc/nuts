@@ -7,12 +7,12 @@ import net.thevpc.nuts.util.NFilterOp;
 
 public class NInstallStatusFilterFalse extends AbstractInstallStatusFilter implements NExprIdFilter {
 
-    public NInstallStatusFilterFalse(NSession session) {
-        super(session, NFilterOp.FALSE);
+    public NInstallStatusFilterFalse(NWorkspace workspace) {
+        super(workspace, NFilterOp.FALSE);
     }
 
     @Override
-    public boolean acceptInstallStatus(NInstallStatus status, NSession session) {
+    public boolean acceptInstallStatus(NInstallStatus status) {
         return false;
     }
 

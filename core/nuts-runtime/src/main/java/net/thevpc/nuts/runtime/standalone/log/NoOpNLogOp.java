@@ -44,11 +44,6 @@ public class NoOpNLogOp implements NLogOp {
     }
 
     @Override
-    public NLogOp session(NSession session) {
-        return this;
-    }
-
-    @Override
     public boolean isLoggable(Level level) {
         return false;
     }

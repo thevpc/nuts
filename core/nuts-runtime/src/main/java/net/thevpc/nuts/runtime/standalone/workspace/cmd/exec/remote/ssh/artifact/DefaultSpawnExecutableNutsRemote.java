@@ -41,16 +41,17 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
     NExecInput in;
     NExecOutput out;
     NExecOutput err;
+    NWorkspace workspace;
 
 
-    public DefaultSpawnExecutableNutsRemote(NExecCmdExtension commExec, NDefinition def, String[] cmd,
+    public DefaultSpawnExecutableNutsRemote(NWorkspace workspace,NExecCmdExtension commExec, NDefinition def, String[] cmd,
                                             List<String> executorOptions, NExecCmd execCommand,
                                             NExecInput in,
                                             NExecOutput out,
                                             NExecOutput err
 
     ) {
-        super(def.getId().toString(),
+        super(workspace,def.getId().toString(),
                 NCmdLine.of(cmd).toString(),
                 NExecutableType.SYSTEM, execCommand);
         this.def = def;
@@ -67,11 +68,12 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
         this.executorOptions = CoreCollectionUtils.nonNullList(executorOptions);
         this.commExec = commExec;
         NCmdLine cmdLine = NCmdLine.of(this.executorOptions);
+        NSession session = workspace.currentSession();
         while (cmdLine.hasNext()) {
-            NArg aa = cmdLine.peek().get(getSession());
+            NArg aa = cmdLine.peek().get();
             switch (aa.key()) {
                 case "--show-command": {
-                    cmdLine.withNextFlag((v, a, s) -> this.showCommand = (v));
+                    cmdLine.withNextFlag((v, a) -> this.showCommand = (v));
                     break;
                 }
                 default: {
@@ -87,10 +89,11 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
     }
 
     private AbstractSyncIProcessExecHelper resolveExecHelper() {
-        return new AbstractSyncIProcessExecHelper(getSession()) {
+        NSession session = workspace.currentSession();
+        return new AbstractSyncIProcessExecHelper(workspace) {
             @Override
             public int exec() {
-                return runOnce(ecmd, getSession());
+                return runOnce(ecmd, session);
             }
         };
     }
@@ -100,7 +103,7 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
         int e;
         try (DefaultNExecCmdExtensionContext d = new DefaultNExecCmdExtensionContext(
                 getExecCommand().getTarget(),
-                cmd, getSession(),
+                cmd, session,
                 in,
                 out,
                 err,
@@ -108,7 +111,7 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
         )) {
             return commExec.exec(d);
         } catch (IOException ex) {
-            throw new NExecutionException(session, NMsg.ofC("command failed :%s", ex), ex);
+            throw new NExecutionException(NMsg.ofC("command failed :%s", ex), ex);
         }
     }
 
@@ -121,16 +124,17 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
 
     @Override
     public NText getHelpText() {
-        switch (NEnvs.of(getSession()).getOsFamily()) {
+        NSession session = workspace.currentSession();
+        switch (NEnvs.of().getOsFamily()) {
             case WINDOWS: {
-                return NTexts.of(getSession()).ofStyled(
+                return NTexts.of().ofStyled(
                         "No help available. Try " + getName() + " /help",
                         NTextStyle.error()
                 );
             }
             default: {
                 return
-                        NTexts.of(getSession()).ofStyled(
+                        NTexts.of().ofStyled(
                                 "No help available. Try 'man " + getName() + "' or '" + getName() + " --help'",
                                 NTextStyle.error()
                         );

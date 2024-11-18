@@ -44,11 +44,11 @@ public class NFetchDisplayOptions {
 
     private NIdFormat idFormat;
     private List<NDisplayProperty> displays = new ArrayList<>();
-    private NSession session;
+    private NWorkspace workspace;
 
-    public NFetchDisplayOptions(NSession session) {
-        this.session = session;
-        this.idFormat = NIdFormat.of(session);
+    public NFetchDisplayOptions(NWorkspace workspace) {
+        this.workspace = workspace;
+        this.idFormat = NIdFormat.of();
         this.idFormat.setHighlightImportedGroupId(true);
         this.idFormat.setOmitOtherProperties(true);
         this.idFormat.setOmitFace(true);
@@ -145,16 +145,17 @@ public class NFetchDisplayOptions {
         if (idFormat.configureFirst(cmdLine)) {
             return true;
         }
-        NArg a = cmdLine.peek().get(session);
+        NSession session = workspace.currentSession();
+        NArg a = cmdLine.peek().get();
         if (a == null) {
             return false;
         }
         switch(a.key()) {
             case "-l":
             case "--long": {
-                a = cmdLine.nextFlag().get(session);
+                a = cmdLine.nextFlag().get();
                 if(a.isActive()) {
-                    if(a.getBooleanValue().get(session)){
+                    if(a.getBooleanValue().get()){
                         setDisplay(DISPLAY_LONG);
                     }else {
                         setDisplay(DISPLAY_MIN);
@@ -164,9 +165,9 @@ public class NFetchDisplayOptions {
             }
             case "--ll":
             case "--long-long": {
-                a = cmdLine.nextFlag().get(session);
+                a = cmdLine.nextFlag().get();
                 if(a.isActive()) {
-                    if(a.getBooleanValue().get(session)){
+                    if(a.getBooleanValue().get()){
                         setDisplay(DISPLAY_LONG_LONG);
                     }else {
                         setDisplay(DISPLAY_MIN);
@@ -175,9 +176,9 @@ public class NFetchDisplayOptions {
                 return true;
             }
             case "--display": {
-                a = cmdLine.nextEntry().get(session);
+                a = cmdLine.nextEntry().get();
                 if(a.isActive()) {
-                    setDisplay(parseNutsDisplayProperty(a.getStringValue().get(session)));
+                    setDisplay(parseNutsDisplayProperty(a.getStringValue().get()));
                 }
                 return true;
             }

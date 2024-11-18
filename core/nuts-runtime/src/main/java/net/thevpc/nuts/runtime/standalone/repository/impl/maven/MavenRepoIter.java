@@ -16,26 +16,31 @@ class MavenRepoIter extends NIdPathIteratorBase {
         this.r = r;
     }
 
+
     @Override
-    public void undeploy(NId id, NSession session) throws NExecutionException {
-        r.undeploy().setId(id).setSession(session)
+    public void undeploy(NId id) throws NExecutionException {
+        r.undeploy().setId(id)
                 //.setFetchMode(NutsFetchMode.LOCAL)
                 .run();
     }
-
+    @Override
+    public NWorkspace getWorkspace() {
+        return r.getWorkspace();
+    }
     @Override
     public boolean isDescFile(NPath pathname) {
         return pathname.getName().endsWith(".pom");
     }
 
     @Override
-    public NDescriptor parseDescriptor(NPath pathname, InputStream in, NFetchMode fetchMode, NRepository repository, NSession session, NPath rootURL) throws IOException {
+    public NDescriptor parseDescriptor(NPath pathname, InputStream in, NFetchMode fetchMode, NRepository repository, NPath rootURL) {
+        NSession session = getWorkspace().currentSession();
         session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "parse", pathname.toCompressedForm()));
-        return MavenUtils.of(session).parsePomXmlAndResolveParents(in, fetchMode, pathname.toString(), repository);
+        return MavenUtils.of().parsePomXmlAndResolveParents(in, fetchMode, pathname.toString(), repository);
     }
 
     @Override
-    public NId parseId(NPath pomFile, NPath rootPath, NIdFilter filter, NRepository repository, NSession session) throws IOException {
+    public NId parseId(NPath pomFile, NPath rootPath, NIdFilter filter, NRepository repository) throws IOException {
         String fn = pomFile.getName();
         if (fn.endsWith(".pom")) {
             NPath versionFolder = pomFile.getParent();
@@ -60,7 +65,7 @@ class MavenRepoIter extends NIdPathIteratorBase {
                                     NIdBuilder.of(gn.toString(),an)
                                             .setVersion(vn)
                                             .build(),
-                                    null, pomFile, rootPath, filter, repository, session);
+                                    null, pomFile, rootPath, filter, repository);
                         }
                     }
                 }

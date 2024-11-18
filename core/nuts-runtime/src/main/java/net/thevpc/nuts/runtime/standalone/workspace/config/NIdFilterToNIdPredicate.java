@@ -15,7 +15,7 @@ class NIdFilterToNIdPredicate extends AbstractNPredicate<NId> {
 
     @Override
     public boolean test(NId t) {
-        return filter.acceptSearchId(new NSearchIdById(t), session);
+        return filter.acceptSearchId(new NSearchIdById(t));
     }
 
     @Override

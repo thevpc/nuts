@@ -50,7 +50,7 @@ class DefaultNWorkspaceBootConfig implements NWorkspaceBootConfig {
         if (storeStrategy == null) {
             storeStrategy = NStoreStrategy.EXPLODED;
         }
-        this.storeLocations= NPlatformHome.of(null,system).buildLocations(storeStrategy, storeLocations, homeLocations, effectiveWorkspace,session);
+        this.storeLocations= NPlatformHome.of(null,system).buildLocations(storeStrategy, storeLocations, homeLocations, effectiveWorkspace);
         List<NWorkspaceConfigBoot.ExtensionConfig> extensions = bootModel.getExtensions();
         if (extensions == null) {
             this.extensions= Collections.emptyList();

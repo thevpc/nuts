@@ -17,10 +17,10 @@ import java.util.List;
 
 public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
 
-    private final NWorkspace ws;
+    private final NWorkspace workspace;
 
-    public WinCmdBlocTextHighlighter(NWorkspace ws) {
-        this.ws = ws;
+    public WinCmdBlocTextHighlighter(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
     private static NText[] parseCmdLine_readAntiSlash(StringReaderExt ar, NSession session) {
@@ -29,7 +29,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
         if (ar.hasNext()) {
             sb2.append(ar.readChar());
         }
-        NTexts txt = NTexts.of(session);
+        NTexts txt = NTexts.of();
         return new NText[]{txt.ofStyled(sb2.toString(), NTextStyle.separator())};
     }
 
@@ -154,7 +154,8 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText stringToText(String text, NTexts txt, NSession session) {
+    public NText stringToText(String text, NTexts txt) {
+        NSession session=workspace.currentSession();
         List<NText> all = new ArrayList<>();
         BufferedReader reader = new BufferedReader(new StringReader(text));
         String line = null;
@@ -165,7 +166,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
                     break;
                 }
             } catch (IOException ex) {
-                throw new NIOException(session, ex);
+                throw new NIOException(ex);
             }
             if (first) {
                 first = false;
@@ -178,7 +179,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText tokenToText(String text, String nodeType, NTexts txt, NSession session) {
+    public NText tokenToText(String text, String nodeType, NTexts txt) {
         return txt.ofPlain(text);
     }
 
@@ -1104,7 +1105,7 @@ public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
 
     public NText nextDoubleQuotes(StringReaderExt reader, NSession session) {
         List<NText> all = new ArrayList<>();
-        NTexts txt = NTexts.of(session);
+        NTexts txt = NTexts.of();
         boolean exit = false;
         StringBuilder sb = new StringBuilder();
         sb.append(reader.readChar());

@@ -26,7 +26,6 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.reserved.util.NCallableWithDescription;
 
@@ -35,7 +34,7 @@ import net.thevpc.nuts.reserved.util.NCallableWithDescription;
  */
 public interface NCallable<T> extends NElementDescribable<NCallable<T>> {
 
-    T call(NSession session);
+    T call();
 
     default NCallable<T> withDesc(NEDesc description) {
         if (description == null) {

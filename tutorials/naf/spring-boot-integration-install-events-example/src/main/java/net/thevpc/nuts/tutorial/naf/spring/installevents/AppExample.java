@@ -19,27 +19,29 @@ public class AppExample implements NApplication {
     }
 
     @Override
-    public void onInstallApplication(NSession session) {
+    public void onInstallApplication() {
+        NSession session = NSession.get();
         session.out().println("write your business logic that will be processed when the application is being installed here...");
     }
 
     @Override
-    public void onUpdateApplication(NSession session) {
+    public void onUpdateApplication() {
+        NSession session = NSession.get();
         session.out().println("write your business logic that will be processed when the application is being updated/upgraded here...");
     }
 
     @Override
-    public void onUninstallApplication(NSession session) {
+    public void onUninstallApplication() {
+        NSession session = NSession.get();
         session.out().println("write your business logic that will be processed when the application is being uninstalled/removed here...");
     }
 
     /**
      * This method will be called to run you application or to process auto-complete arguments
-     *
-     * @param session nuts application context
      */
     @Override
-    public void run(NSession session) {
+    public void run() {
+        NSession session = NSession.get();
         NCmdLine cmd = session.getAppCmdLine();
         NArg a;
         String someStringOption = null;
@@ -52,9 +54,9 @@ public class AppExample implements NApplication {
                     // your-app --some-string-option=yourValue
                     // your-app --some-string-option yourValue
 
-                    a = cmd.nextEntry().get(session);
+                    a = cmd.nextEntry().get();
                     if (a.isActive()) {
-                        someStringOption = a.getStringValue().get(session);
+                        someStringOption = a.getStringValue().get();
                     }
                     break;
                 }
@@ -63,15 +65,15 @@ public class AppExample implements NApplication {
                     // your-app --some-boolean-option=true
                     // your-app --some-boolean-option
                     // your-app --!some-string-option
-                    a = cmd.nextFlag().get(session);
+                    a = cmd.nextFlag().get();
                     if (a.isActive()) {
-                        someBooleanOption = a.getBooleanValue().get(session);
+                        someBooleanOption = a.getBooleanValue().get();
                     }
                     break;
                 }
                 default: {
                     if (a.isNonOption()) {
-                        nonOptions.add(cmd.next().flatMap(NLiteral::asString).get(session));
+                        nonOptions.add(cmd.next().flatMap(NLiteral::asString).get());
                     } else {
                         // this is an unsupported options!
                         cmd.throwUnexpectedArgument();

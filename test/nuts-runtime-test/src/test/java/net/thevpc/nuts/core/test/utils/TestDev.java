@@ -12,7 +12,7 @@ public class TestDev {
         NSession session = TestUtils.openNewTestWorkspace();
 
 
-        NString s = NTexts.of(session).ofText(
+        NString s = NTexts.of().ofText(
                 NMsg.ofC("%s", "Hello")
         );
 

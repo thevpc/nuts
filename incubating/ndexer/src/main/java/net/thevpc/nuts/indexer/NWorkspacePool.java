@@ -20,7 +20,7 @@ public class NWorkspacePool {
     public NSession openWorkspace(String ws) {
         NSession o = pool.get(ws);
         if (o == null) {
-            if (NLocations.of(app.getSession()).getWorkspaceLocation().toString().equals(ws)) {
+            if (NLocations.of().getWorkspaceLocation().toString().equals(ws)) {
                 o = app.getSession();
             } else {
                 o = Nuts.openWorkspace(new DefaultNWorkspaceOptionsBuilder()

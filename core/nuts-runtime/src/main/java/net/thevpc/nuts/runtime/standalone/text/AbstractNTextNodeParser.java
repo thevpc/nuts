@@ -10,17 +10,13 @@ import java.nio.file.Path;
 
 public abstract class AbstractNTextNodeParser implements NTextParser {
     protected int bufferSize = 4096;
-    protected NSession session;
-    public AbstractNTextNodeParser(NSession session) {
-        this.session = session;
+    protected NWorkspace workspace;
+    public AbstractNTextNodeParser(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
     public NWorkspace getWorkspace() {
-        return session.getWorkspace();
-    }
-
-    public NSession getSession() {
-        return session;
+        return workspace;
     }
 
     @Override
@@ -41,7 +37,7 @@ public abstract class AbstractNTextNodeParser implements NTextParser {
             try {
                 if (!((r = in.read(buffer)) > 0)) break;
             } catch (IOException ex) {
-                throw new NIOException(session, ex);
+                throw new NIOException(ex);
             }
             parseIncremental(buffer, 0, r, visitor);
         }
@@ -51,36 +47,36 @@ public abstract class AbstractNTextNodeParser implements NTextParser {
 
     @Override
     public NText parse(InputStream in) {
-        NTextNodeCollector doc = new NTextNodeCollector(session);
+        NTextNodeCollector doc = new NTextNodeCollector(workspace);
         parse(in, doc);
         return doc.getRootOrEmpty();
     }
 
     @Override
     public NText parse(Reader in) {
-        NTextNodeCollector doc = new NTextNodeCollector(session);
+        NTextNodeCollector doc = new NTextNodeCollector(workspace);
         parse(in, doc);
         return doc.getRootOrEmpty();
     }
 
     @Override
     public NText parse(File in) {
-        return parse(NPath.of(in, getSession()));
+        return parse(NPath.of(in));
     }
 
     @Override
     public NText parse(Path in) {
-        return parse(NPath.of(in, getSession()));
+        return parse(NPath.of(in));
     }
 
     @Override
     public NText parse(URL in) {
-        return parse(NPath.of(in, getSession()));
+        return parse(NPath.of(in));
     }
 
     @Override
     public NText parse(NInputSource in) {
-        NTextNodeCollector doc = new NTextNodeCollector(session);
+        NTextNodeCollector doc = new NTextNodeCollector(workspace);
         try (InputStream is = in.getInputStream()) {
             parse(is, doc);
         } catch (IOException ex) {
@@ -106,49 +102,49 @@ public abstract class AbstractNTextNodeParser implements NTextParser {
 
     @Override
     public NText parseIncremental(byte[] buf) {
-        NTextNodeCollector doc = new NTextNodeCollector(session);
+        NTextNodeCollector doc = new NTextNodeCollector(workspace);
         parseIncremental(buf, 0, buf.length, doc);
         return doc.getRootOrEmpty();
     }
 
     @Override
     public NText parseIncremental(char[] buf) {
-        NTextNodeCollector doc = new NTextNodeCollector(session);
+        NTextNodeCollector doc = new NTextNodeCollector(workspace);
         parseIncremental(new String(buf), doc);
         return doc.getRootOrEmpty();
     }
 
     @Override
     public NText parseIncremental(String buf) {
-        NTextNodeCollector doc = new NTextNodeCollector(session);
+        NTextNodeCollector doc = new NTextNodeCollector(workspace);
         parseIncremental(buf.getBytes(), doc);
         return doc.getRootOrEmpty();
     }
 
     @Override
     public NText parseIncremental(char buf) {
-        NTextNodeCollector doc = new NTextNodeCollector(session);
+        NTextNodeCollector doc = new NTextNodeCollector(workspace);
         parseIncremental(buf, doc);
         return doc.getRootOrEmpty();
     }
 
     @Override
     public NText parseIncremental(byte[] buf, int off, int len) {
-        NTextNodeCollector doc = new NTextNodeCollector(session);
+        NTextNodeCollector doc = new NTextNodeCollector(workspace);
         parseIncremental(buf, off, len, doc);
         return doc.getRootOrEmpty();
     }
 
     @Override
     public NText parseIncremental(char[] buf, int off, int len) {
-        NTextNodeCollector doc = new NTextNodeCollector(session);
+        NTextNodeCollector doc = new NTextNodeCollector(workspace);
         parseIncremental(buf, off, len, doc);
         return doc.getRootOrEmpty();
     }
 
     @Override
     public NText parseRemaining() {
-        NTextNodeCollector doc = new NTextNodeCollector(session);
+        NTextNodeCollector doc = new NTextNodeCollector(workspace);
         parseRemaining(doc);
         return doc.getRootOrNull();
     }

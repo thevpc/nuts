@@ -8,6 +8,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
@@ -22,24 +23,24 @@ import java.util.List;
  */
 public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNSettingsInternalExecutable(String[] args, NExecCmd execCommand) {
-        super("settings", args, execCommand);
+    public DefaultNSettingsInternalExecutable(NWorkspace workspace,String[] args, NExecCmd execCommand) {
+        super(workspace,"settings", args, execCommand);
     }
 
     private List<NSettingsSubCommand> subCommands;
     @Override
     public int execute() {
-        if(getSession().isDry()){
+        NSession session = workspace.currentSession();
+        if(session.isDry()){
             dryExecute();
             return NExecutionException.SUCCESS;
         }
-        NSession session = getSession();
         if (NAppUtils.processHelpOptions(args, session)) {
             showDefaultHelp();
             return NExecutionException.SUCCESS;
         }
-//        getSession().getWorkspace().extensions().discoverTypes(
-//                getSession().getAppId(),
+//        session.getWorkspace().extensions().discoverTypes(
+//                session.getAppId(),
 //                Thread.currentThread().getContextClassLoader());
 
         Boolean autoSave = true;
@@ -47,7 +48,7 @@ public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutab
         boolean empty = true;
         NArg a;
         do {
-            a = cmd.peek().get(session);
+            a = cmd.peek().get();
             if(a==null){
                 break;
             }
@@ -65,13 +66,13 @@ public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutab
                             showDefaultHelp();
                         }
                         cmd.skipAll();
-                        throw new NExecutionException(session, NMsg.ofPlain("help"), NExecutionException.SUCCESS);
+                        throw new NExecutionException(NMsg.ofPlain("help"), NExecutionException.SUCCESS);
                     }
                     break;
                 } else{
                     NSettingsSubCommand selectedSubCommand = null;
                     for (NSettingsSubCommand subCommand : getSubCommands()) {
-                        if (subCommand.exec(cmd, autoSave, session)) {
+                        if (subCommand.exec(cmd, autoSave)) {
                             selectedSubCommand = subCommand;
                             empty = false;
                             break;
@@ -87,7 +88,7 @@ public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutab
                             NPrintStream out = session.err();
                             out.println(NMsg.ofC("unexpected %s", cmd.peek()));
                             out.println("type for more help : nuts settings -h");
-                            throw new NExecutionException(session, NMsg.ofC("unexpected %s", cmd.peek()), NExecutionException.ERROR_1);
+                            throw new NExecutionException(NMsg.ofC("unexpected %s", cmd.peek()), NExecutionException.ERROR_1);
                         }
                         break;
                     }
@@ -97,15 +98,16 @@ public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutab
             NPrintStream out = session.err();
             out.println("missing settings command");
             out.println("type for more help : nuts settings -h");
-            throw new NExecutionException(session, NMsg.ofPlain("missing settings command"), NExecutionException.ERROR_1);
+            throw new NExecutionException(NMsg.ofPlain("missing settings command"), NExecutionException.ERROR_1);
         }
         return NExecutionException.SUCCESS;
     }
 
     public List<NSettingsSubCommand> getSubCommands() {
         if (subCommands == null) {
+            NSession session = workspace.currentSession();
             subCommands = new ArrayList<>(
-                    getSession().extensions().createComponents(NSettingsSubCommand.class, this)
+                    NExtensions.of().createComponents(NSettingsSubCommand.class, this)
             );
         }
         return subCommands;

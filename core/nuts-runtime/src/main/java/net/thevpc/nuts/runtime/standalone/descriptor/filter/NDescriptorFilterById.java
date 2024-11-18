@@ -40,15 +40,15 @@ public class NDescriptorFilterById extends AbstractDescriptorFilter  {
 
     private NIdFilter id;
 
-    public NDescriptorFilterById(NIdFilter id, NSession session) {
-        super(session, NFilterOp.CONVERT);
+    public NDescriptorFilterById(NIdFilter id, NWorkspace workspace) {
+        super(workspace, NFilterOp.CONVERT);
         this.id = id;
     }
 
     @Override
-    public boolean acceptDescriptor(NDescriptor descriptor, NSession session) {
+    public boolean acceptDescriptor(NDescriptor descriptor) {
         if (id != null) {
-            return id.acceptId(descriptor.getId(), session);
+            return id.acceptId(descriptor.getId());
         }
         return true;
     }
@@ -61,7 +61,7 @@ public class NDescriptorFilterById extends AbstractDescriptorFilter  {
                 if (id2 == null) {
                     return null;
                 }
-                return new NDescriptorFilterById(id2,getSession());
+                return new NDescriptorFilterById(id2,workspace);
             }
         }
         return this;

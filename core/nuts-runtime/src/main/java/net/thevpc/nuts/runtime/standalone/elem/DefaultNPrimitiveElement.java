@@ -46,8 +46,8 @@ import java.util.Objects;
 class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveElement {
     private final NLiteral value;
 
-    DefaultNPrimitiveElement(NElementType type, Object value, NSession session) {
-        super(type, session);
+    DefaultNPrimitiveElement(NElementType type, Object value, NWorkspace workspace) {
+        super(type, workspace);
         this.value = NLiteral.of(value);
     }
 

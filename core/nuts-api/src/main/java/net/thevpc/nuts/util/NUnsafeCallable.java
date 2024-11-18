@@ -26,7 +26,6 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElementDescribable;
 import net.thevpc.nuts.elem.NElement;
@@ -56,10 +55,10 @@ public interface NUnsafeCallable<T> extends NElementDescribable<NUnsafeCallable<
         return new NUnsafeCallableBaseFromJavaCallable<T>(o);
     }
 
-    T call(NSession session) throws Exception;
+    T call() throws Exception;
 
-    default NElement describe(NSession session) {
-        return NElements.of(session).ofString(toString());
+    default NElement describe() {
+        return NElements.of().ofString(toString());
     }
 
     @Override

@@ -25,7 +25,7 @@ public class Extra {
                     JavaClassByteCode.Visitor cl = new JavaClassByteCode.Visitor() {
                         @Override
                         public NVisitResult visitVersion(int major, int minor) {
-                            String v = JavaClassUtils.classVersionToSourceVersion(major, minor, null);
+                            String v = JavaClassUtils.classVersionToSourceVersion(major, minor);
                             Set<String> r = classes.get(v);
                             if (r == null) {
                                 r = new HashSet<>();
@@ -39,7 +39,7 @@ public class Extra {
 
                 }
                 return NVisitResult.CONTINUE;
-            }, null);
+            });
         } catch (IOException ex) {
             ex.printStackTrace();
         }

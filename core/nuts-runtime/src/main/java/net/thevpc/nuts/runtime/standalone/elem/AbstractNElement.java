@@ -40,12 +40,12 @@ import java.time.Instant;
  */
 public abstract class AbstractNElement implements NElement {
 
-    protected transient NSession session;
+    protected transient NWorkspace workspace;
     private NElementType type;
 
-    public AbstractNElement(NElementType type, NSession session) {
+    public AbstractNElement(NElementType type, NWorkspace workspace) {
         this.type = type;
-        this.session = session;
+        this.workspace = workspace;
     }
 
     @Override
@@ -63,7 +63,7 @@ public abstract class AbstractNElement implements NElement {
         if (this instanceof NPrimitiveElement) {
             return NOptional.of((NPrimitiveElement) this);
         }
-        return NOptional.ofError(s -> NMsg.ofC("unable to cast % to primitive: %s", type().id(), this));
+        return NOptional.ofError(() -> NMsg.ofC("unable to cast % to primitive: %s", type().id(), this));
     }
 
     @Override
@@ -71,7 +71,7 @@ public abstract class AbstractNElement implements NElement {
         if (this instanceof NObjectElement) {
             return NOptional.of((NObjectElement) this);
         }
-        return NOptional.ofError(s -> NMsg.ofC("unable to cast %s to object: %s", type().id(), this));
+        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to object: %s", type().id(), this));
     }
 
     @Override
@@ -79,14 +79,14 @@ public abstract class AbstractNElement implements NElement {
         if (this instanceof NNavigatableElement) {
             return NOptional.of((NNavigatableElement) this);
         }
-        return NOptional.ofError(s -> NMsg.ofC("unable to cast % sto object/array: %s", type().id(), this));
+        return NOptional.ofError(() -> NMsg.ofC("unable to cast % sto object/array: %s", type().id(), this));
     }
 
     public NOptional<NCustomElement> asCustom() {
         if (this instanceof NCustomElement) {
             return NOptional.of((NCustomElement) this);
         }
-        return NOptional.ofError(s -> NMsg.ofC("unable to cast %s to custom: %s", type().id(), this));
+        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to custom: %s", type().id(), this));
     }
 
     @Override
@@ -94,7 +94,7 @@ public abstract class AbstractNElement implements NElement {
         if (this instanceof NArrayElement) {
             return NOptional.of((NArrayElement) this);
         }
-        return NOptional.ofError(s -> NMsg.ofC("unable to cast %s to array: %s", type().id(), this));
+        return NOptional.ofError(() -> NMsg.ofC("unable to cast %s to array: %s", type().id(), this));
     }
 
     @Override
@@ -300,7 +300,7 @@ public abstract class AbstractNElement implements NElement {
     }
 
     @Override
-    public NElement describe(NSession session) {
+    public NElement describe() {
         return this;
     }
 

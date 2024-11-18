@@ -16,7 +16,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 
 import net.thevpc.nuts.NExecutionEntry;
-import net.thevpc.nuts.NLibPaths;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.format.NVisitResult;
 import net.thevpc.nuts.time.NDuration;
@@ -101,7 +100,7 @@ public class Test24_ClassParserTest {
         TestUtils.println("parse jar " + file + " ... ");
         try (InputStream in = Files.newInputStream(file)) {
             TestUtils.println("parse jar " + file + " :: " + Arrays.asList(
-                    NExecutionEntry.parse(in, "jar", file.toString(),session)
+                    NExecutionEntry.parse(in, "jar", file.toString())
             ));
         }
     }
@@ -133,7 +132,7 @@ public class Test24_ClassParserTest {
                 return NVisitResult.CONTINUE;
             }
 
-        }, session
+        }, session.getWorkspace()
         );
     }
 }

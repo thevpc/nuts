@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.session.NRepositorySessionAwareImpl;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
@@ -17,12 +15,11 @@ import net.thevpc.nuts.util.NOptional;
 public class DefaultNRepositories implements NRepositories {
 
     private DefaultNRepositoryModel model;
-    private NSession session;
+    private NWorkspace workspace;
 
-    public DefaultNRepositories(NSession session) {
-        this.session = session;
-        NWorkspace w = this.session.getWorkspace();
-        NWorkspaceExt e = (NWorkspaceExt) w;
+    public DefaultNRepositories(NWorkspace workspace) {
+        this.workspace = workspace;
+        NWorkspaceExt e = NWorkspaceExt.of(workspace);
         this.model = e.getModel().repositoryModel;
     }
 
@@ -32,78 +29,61 @@ public class DefaultNRepositories implements NRepositories {
     }
 
     @Override
-    public NSession getSession() {
-        return session;
-    }
-
-    @Override
     public NRepositoryFilters filter() {
-        return NRepositoryFilters.of(getSession());
+        return NRepositoryFilters.of();
     }
 
-    private NRepository toSessionAwareRepo(NRepository x) {
-        return NRepositorySessionAwareImpl.of(x, model.getWorkspace(), session);
-    }
+//    private NRepository toSessionAwareRepo(NRepository x) {
+//        return NRepositorySessionAwareImpl.of(x, model.getWorkspace(), workspace);
+//    }
 
-    private NOptional<NRepository> toSessionAwareRepoOptional(NOptional<NRepository> x) {
-        return x.map(r->NRepositorySessionAwareImpl.of(r, model.getWorkspace(), session));
-    }
+//    private NOptional<NRepository> toSessionAwareRepoOptional(NOptional<NRepository> x) {
+//        return x.map(r->NRepositorySessionAwareImpl.of(r, model.getWorkspace(), workspace));
+//    }
 
     @Override
     public List<NRepository> getRepositories() {
-        return Arrays.stream(model.getRepositories(session)).map(x -> toSessionAwareRepo(x))
+        return Arrays.stream(model.getRepositories())
                 .collect(Collectors.toList());
     }
 
     @Override
     public NOptional<NRepository> findRepositoryById(String repositoryNameOrId) {
-        checkSession();
-        return toSessionAwareRepoOptional(model.findRepositoryById(repositoryNameOrId, session));
+        return model.findRepositoryById(repositoryNameOrId);
     }
 
     @Override
     public NOptional<NRepository> findRepositoryByName(String repositoryNameOrId) {
-        checkSession();
-        return toSessionAwareRepoOptional(model.findRepositoryByName(repositoryNameOrId, session));
+        return model.findRepositoryByName(repositoryNameOrId);
     }
 
     @Override
     public NOptional<NRepository> findRepository(String repositoryNameOrId) {
-        checkSession();
-        return toSessionAwareRepoOptional(model.findRepository(repositoryNameOrId, session));
+        return model.findRepository(repositoryNameOrId);
     }
 
     @Override
     public NRepositories removeRepository(String repositoryId) {
-        checkSession();
-        model.removeRepository(repositoryId, session);
+        model.removeRepository(repositoryId);
         return this;
     }
 
     @Override
     public NRepositories removeAllRepositories() {
-        checkSession();
-        model.removeAllRepositories(session);
+        model.removeAllRepositories();
         return this;
     }
 
     @Override
     public NRepository addRepository(NAddRepositoryOptions options) {
-        checkSession();
-        NRepository r = model.addRepository(options, session);
-        return r == null ? null : toSessionAwareRepo(r);
+        return model.addRepository(options);
     }
 
     @Override
     public NRepository addRepository(String repositoryNamedUrl) {
-        checkSession();
-        NRepository r = model.addRepository(repositoryNamedUrl, session);
-        return r == null ? null : toSessionAwareRepo(r);
+        return model.addRepository(repositoryNamedUrl);
     }
 
-    private void checkSession() {
-        NSessionUtils.checkSession(model.getWorkspace(), session);
-    }
 
     public DefaultNRepositoryModel getModel() {
         return model;

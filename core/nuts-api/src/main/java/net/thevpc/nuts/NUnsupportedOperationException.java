@@ -37,44 +37,39 @@ public class NUnsupportedOperationException extends NException {
 
     /**
      * Constructs a new NutsUnsupportedOperationException exception
-     *
-     * @param session workspace
      */
-    public NUnsupportedOperationException(NSession session) {
-        super(session, NMsg.ofPlain("unsupported operation"));
+    public NUnsupportedOperationException() {
+        super(NMsg.ofPlain("unsupported operation"));
     }
 
     /**
      * Constructs a new NutsUnsupportedOperationException exception
      *
-     * @param session workspace
      * @param message message
      */
-    public NUnsupportedOperationException(NSession session, NMsg message) {
-        super(session, message);
+    public NUnsupportedOperationException(NMsg message) {
+        super(message);
     }
 
     /**
      * Constructs a new NutsUnsupportedOperationException exception
      *
-     * @param session workspace
      * @param message message
      * @param cause   cause
      */
-    public NUnsupportedOperationException(NSession session, NMsg message, Throwable cause) {
-        super(session, message, cause);
+    public NUnsupportedOperationException(NMsg message, Throwable cause) {
+        super(message, cause);
     }
 
     /**
      * Constructs a new NutsUnsupportedOperationException exception
      *
-     * @param session            workspace
      * @param message            message
      * @param cause              cause
      * @param enableSuppression  whether or not suppression is enabled or disabled
      * @param writableStackTrace whether or not the stack trace should be writable
      */
-    public NUnsupportedOperationException(NSession session, NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(session, message, cause, enableSuppression, writableStackTrace);
+    public NUnsupportedOperationException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
     }
 }

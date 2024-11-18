@@ -23,7 +23,8 @@ public class FetchFacadeCommand extends AbstractFacadeCommand {
         boolean transitive = parameters.containsKey("transitive");
         NDefinition fetch = null;
         try {
-            fetch = NFetchCmd.of(id,context.getSession().copy().setTransitive(transitive))
+            fetch = NFetchCmd.of(id)
+                    .setTransitive(transitive)
                     .getResultDefinition();
         } catch (Exception exc) {
             //

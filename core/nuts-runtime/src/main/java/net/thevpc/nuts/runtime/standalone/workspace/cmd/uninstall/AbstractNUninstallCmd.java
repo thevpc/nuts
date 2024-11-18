@@ -28,8 +28,8 @@ public abstract class AbstractNUninstallCmd extends NWorkspaceCmdBase<NUninstall
     private List<String> args;
     private final List<NId> ids = new ArrayList<>();
 
-    public AbstractNUninstallCmd(NSession session) {
-        super(session, "uninstall");
+    public AbstractNUninstallCmd(NWorkspace workspace) {
+        super(workspace, "uninstall");
     }
 
     @Override
@@ -39,16 +39,15 @@ public abstract class AbstractNUninstallCmd extends NWorkspaceCmdBase<NUninstall
 
     @Override
     public NUninstallCmd addId(String id) {
-        checkSession();
-        NSession session = getSession();
-        return addId(id == null ? null : NId.of(id).get(session));
+        NSession session=workspace.currentSession();
+        return addId(id == null ? null : NId.of(id).get());
     }
 
     @Override
     public NUninstallCmd addId(NId id) {
         if (id == null) {
-            checkSession();
-            throw new NNotFoundException(getSession(), id);
+            NSession session=workspace.currentSession();
+            throw new NNotFoundException(id);
         } else {
             ids.add(id);
         }
@@ -81,9 +80,8 @@ public abstract class AbstractNUninstallCmd extends NWorkspaceCmdBase<NUninstall
 
     @Override
     public NUninstallCmd removeId(String id) {
-        checkSession();
-        NSession session = getSession();
-        return removeId(NId.of(id).get(session));
+        NSession session=workspace.currentSession();
+        return removeId(NId.of(id).get());
     }
 
     @Override
@@ -152,19 +150,20 @@ public abstract class AbstractNUninstallCmd extends NWorkspaceCmdBase<NUninstall
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NArg aa = cmdLine.peek().get(session);
+        NSession session=workspace.currentSession();
+        NArg aa = cmdLine.peek().get();
         if (aa == null) {
             return false;
         }
         switch (aa.key()) {
             case "-e":
             case "--erase": {
-                cmdLine.withNextFlag((v, a, s) -> this.setErase(v));
+                cmdLine.withNextFlag((v, a) -> this.setErase(v));
                 return true;
             }
             case "-g":
             case "--args": {
-                cmdLine.withNextFlag((v, a, s) -> {
+                cmdLine.withNextFlag((v, a) -> {
                     this.addArgs(cmdLine.toStringArray());
                     cmdLine.skipAll();
                 });
@@ -178,7 +177,7 @@ public abstract class AbstractNUninstallCmd extends NWorkspaceCmdBase<NUninstall
                     return false;
                 } else {
                     cmdLine.skip();
-                    addId(aa.asString().get(session));
+                    addId(aa.asString().get());
                     return true;
                 }
             }

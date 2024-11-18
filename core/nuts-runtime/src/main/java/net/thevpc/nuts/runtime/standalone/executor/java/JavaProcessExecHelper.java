@@ -28,7 +28,7 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
     private final HashMap<String, String> osEnv;
 
     public JavaProcessExecHelper(List<NString> xargs, JavaExecutorOptions joptions, NExecutionContext executionContext, NDefinition def, List<String> args, HashMap<String, String> osEnv) {
-        super(executionContext.getSession());
+        super(executionContext.getWorkspace());
         this.xargs = xargs;
         this.joptions = joptions;
         this.executionContext = executionContext;
@@ -39,7 +39,9 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
 
     @Override
     public int exec() {
-        if (getSession().isDry()) {
+        NSession session = workspace.currentSession();
+
+        if (session.isDry()) {
             NPrintStream out = executionContext.getSession().out();
             out.println("[dry] ==[nuts-exec]== ");
             for (int i = 0; i < xargs.size(); i++) {
@@ -69,16 +71,17 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
     }
 
     private ProcessExecHelper preExec() {
-        if (joptions.isShowCommand() || CoreNUtils.isShowCommand(getSession())) {
+        if (joptions.isShowCommand() || CoreNUtils.isShowCommand()) {
             NPrintStream out = executionContext.getSession().out();
-            out.println(NMsg.ofC("%s ", NTexts.of(executionContext.getSession()).ofStyled("nuts-exec", NTextStyle.primary1())));
+            out.println(NMsg.ofC("%s ", NTexts.of().ofStyled("nuts-exec", NTextStyle.primary1())));
             for (int i = 0; i < xargs.size(); i++) {
                 NString xarg = xargs.get(i);
                 out.println(NMsg.ofC("\t\t %s", xarg));
             }
         }
         String directory = NBlankable.isBlank(joptions.getDir()) ? null : joptions.getDir().toAbsolute().toString();
-        NWorkspaceExt.of(getSession()).getModel().recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(), ""), NRecommendationPhase.EXEC, false, getSession());
+        NSession session = workspace.currentSession();
+        NWorkspaceExt.of(session).getModel().recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(), ""), NRecommendationPhase.EXEC, false);
         return ProcessExecHelper.ofDefinition(def,
                 args.toArray(new String[0]), osEnv, directory,
                 joptions.isShowCommand(),

@@ -2,8 +2,8 @@ package net.thevpc.nuts.toolbox.ndb.nosql.mongodb.cmd;
 
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCursor;
-import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
 import net.thevpc.nuts.toolbox.ndb.base.NdbCmd;
@@ -27,7 +27,7 @@ public class MongoAggregateCmd extends NdbCmd<NMongoConfig> {
     }
 
     @Override
-    public void run(NSession session, NCmdLine cmdLine) {
+    public void run(NCmdLine cmdLine) {
         NRef<AtName> name = NRef.ofNull(AtName.class);
         ExtendedQuery eq = new ExtendedQuery(getName());
         NMongoConfig otherOptions = createConfigInstance();
@@ -36,34 +36,34 @@ public class MongoAggregateCmd extends NdbCmd<NMongoConfig> {
         while (cmdLine.hasNext()) {
             switch (status) {
                 case "": {
-                    switch (cmdLine.peek().get(session).key()) {
+                    switch (cmdLine.peek().get().key()) {
                         case "--config": {
-                            readConfigNameOption(cmdLine, session, name);
+                            readConfigNameOption(cmdLine, name);
                             break;
                         }
                         case "--entity":
                         case "--table":
                         case "--collection": {
-                            cmdLine.withNextEntry((v, a, s) -> eq.setTable(v));
+                            cmdLine.withNextEntry((v, a) -> eq.setTable(v));
                             break;
                         }
                         case "--where": {
                             status = "--where";
-                            cmdLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a) -> {
                             });
                             break;
                         }
                         case "--limit": {
-                            cmdLine.withNextValue((v, a, s) -> eq.setLimit(v.asLong().get()));
+                            cmdLine.withNextValue((v, a) -> eq.setLimit(v.asLong().get()));
                             break;
                         }
                         case "--skip": {
-                            cmdLine.withNextValue((v, a, s) -> eq.setSkip(v.asLong().get()));
+                            cmdLine.withNextValue((v, a) -> eq.setSkip(v.asLong().get()));
                             break;
                         }
                         case "--sort": {
                             status = "--sort";
-                            cmdLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a) -> {
                             });
                             break;
                         }
@@ -74,10 +74,10 @@ public class MongoAggregateCmd extends NdbCmd<NMongoConfig> {
                     break;
                 }
                 case "--where": {
-                    switch (cmdLine.peek().get(session).key()) {
+                    switch (cmdLine.peek().get().key()) {
                         case "--sort": {
                             status = "--sort";
-                            cmdLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a) -> {
                             });
                             break;
                         }
@@ -88,10 +88,10 @@ public class MongoAggregateCmd extends NdbCmd<NMongoConfig> {
                     break;
                 }
                 case "--sort": {
-                    switch (cmdLine.peek().get(session).key()) {
+                    switch (cmdLine.peek().get().key()) {
                         case "--where": {
                             status = "--where";
-                            cmdLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a) -> {
                             });
                             break;
                         }
@@ -111,11 +111,11 @@ public class MongoAggregateCmd extends NdbCmd<NMongoConfig> {
         if (NBlankable.isBlank(otherOptions.getDatabaseName())) {
             cmdLine.throwMissingArgument("--dbname");
         }
-        run(eq, options, session);
+        run(eq, options);
     }
 
 
-    protected void run(ExtendedQuery eq, NMongoConfig options, NSession session) {
+    protected void run(ExtendedQuery eq, NMongoConfig options) {
         getSupport().doWithMongoCollection(options, eq.getTable(), mongoCollection -> {
             List<Bson> pipline = new ArrayList<>();
             for (String s : eq.getWhere()) {
@@ -144,6 +144,7 @@ public class MongoAggregateCmd extends NdbCmd<NMongoConfig> {
                     }
                 }
             }
+            NSession session = NSession.of().get();
             session.out().println(values);
         });
     }

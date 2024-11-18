@@ -42,7 +42,7 @@ public interface NSessionAwareExceptionBase extends NExceptionBase, NSessionProv
     }
 
     static NOptional<NSession> resolveSession(Throwable th) {
-        return resolveSessionAwareExceptionBase(th).map(NSessionAwareExceptionBase::getSession);
+        return resolveSessionAwareExceptionBase(th).map(NSessionAwareExceptionBase::getSession).orElseUse(()->NSession.of());
     }
 
     /**

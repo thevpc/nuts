@@ -83,7 +83,7 @@ public class DefaultNShellEvaluator implements NShellEvaluator {
                 return evalSuffixAndOperation(node, context);
             }
         }
-        throw new NShellException(context.getSession(), NMsg.ofC("unsupported suffix operator %s", opString), 1);
+        throw new NShellException(NMsg.ofC("unsupported suffix operator %s", opString), 1);
     }
 
     @Override
@@ -116,7 +116,7 @@ public class DefaultNShellEvaluator implements NShellEvaluator {
         } else if ("|".equals(opString)) {
             return evalBinaryPipeOperation(left, right, context);
         } else {
-            throw new NShellException(context.getSession(), NMsg.ofC("unsupported operator %s", opString),1);
+            throw new NShellException(NMsg.ofC("unsupported operator %s", opString),1);
         }
     }
 
@@ -146,7 +146,7 @@ public class DefaultNShellEvaluator implements NShellEvaluator {
             in2 = (in instanceof JavaShellNonBlockingInputStream) ? (JavaShellNonBlockingInputStream) in : new JavaShellNonBlockingInputStreamAdapter("jpipe-" + right.toString(), in);
         } catch (IOException ex) {
 //            Logger.getLogger(BinoOp.class.getName()).log(Level.SEVERE, null, ex);
-            throw new NShellException(context.getSession(), ex, 1);
+            throw new NShellException(ex, 1);
         }
         final NShellUniformException[] a = new NShellUniformException[2];
         final PrintStream out1 = new PrintStream(out);

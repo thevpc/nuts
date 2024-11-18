@@ -68,7 +68,7 @@ public class DefaultNPathMetadata {
 
     public NOptional<NMsg> getMessage() {
         return NOptional.ofNamed(message, "message")
-                .orElseOf(() -> NMsg.ofNtf(path.format(path.getSession())))
+                .orElseOf(() -> NMsg.ofNtf(path.format()))
                 ;
     }
 

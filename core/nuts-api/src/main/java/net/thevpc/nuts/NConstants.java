@@ -121,6 +121,24 @@ public final class NConstants {
     }
 
     /**
+     * @app.category Constants
+     */
+    public static final class RepoTags {
+
+        /**
+         * repo preview tag is used to help switching on or off dev/alpha/beta repositories
+         */
+        public static final String PREVIEW = "preview";
+
+
+        /**
+         * private constructor
+         */
+        private RepoTags() {
+        }
+    }
+
+    /**
      * Nuts Id query parameter names. Nuts id has the following form
      * group:name#version?query where query is in the form
      * key=value{@literal @}key=value...

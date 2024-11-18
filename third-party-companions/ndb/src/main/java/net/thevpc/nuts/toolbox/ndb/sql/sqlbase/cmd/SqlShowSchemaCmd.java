@@ -23,24 +23,24 @@ public class SqlShowSchemaCmd<C extends NdbConfig> extends NdbCmd<C> {
     }
 
     @Override
-    public void run(NSession session, NCmdLine cmdLine) {
+    public void run(NCmdLine cmdLine) {
         NRef<AtName> name = NRef.ofNull(AtName.class);
         C otherOptions = createConfigInstance();
         ExtendedQuery eq = new ExtendedQuery(getName());
         NRef<NPath> file = NRef.ofNull();
         while (cmdLine.hasNext()) {
             if (cmdLine.isNextOption()) {
-                switch (cmdLine.peek().get(session).key()) {
+                switch (cmdLine.peek().get().key()) {
                     case "--config": {
-                        readConfigNameOption(cmdLine, session, name);
+                        readConfigNameOption(cmdLine, name);
                         break;
                     }
                     case "--long": {
-                        cmdLine.withNextFlag((v, a, s) -> eq.setLongMode(v));
+                        cmdLine.withNextFlag((v, a) -> eq.setLongMode(v));
                         break;
                     }
                     case "--file": {
-                        cmdLine.withNextEntryValue((v, a, s) -> file.set(NPath.of(v.toString(), session)));
+                        cmdLine.withNextEntryValue((v, a) -> file.set(NPath.of(v.toString())));
                         break;
                     }
                     default: {
@@ -56,16 +56,17 @@ public class SqlShowSchemaCmd<C extends NdbConfig> extends NdbCmd<C> {
         //}
         C options = loadFromName(name, otherOptions);
         support.revalidateOptions(options);
-        runShowSchema(eq, options, file.get(), session);
+        runShowSchema(eq, options, file.get());
     }
 
 
-    protected void runShowSchema(ExtendedQuery eq, C options, NPath path, NSession session) {
-        SqlDB sqlDB = SqlHelper.computeSchema(eq, (SqlSupport<C>) getSupport(), options, session);
+    protected void runShowSchema(ExtendedQuery eq, C options, NPath path) {
+        SqlDB sqlDB = SqlHelper.computeSchema(eq, (SqlSupport<C>) getSupport(), options);
+        NSession session = NSession.of().get();
         if (path == null) {
             session.out().println(sqlDB);
         } else {
-            NElements.of(session).setContentType(session.getOutputFormat().orDefault()).setNtf(false).print(path);
+            NElements.of().setContentType(session.getOutputFormat().orDefault()).setNtf(false).print(path);
         }
     }
 

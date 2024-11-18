@@ -28,7 +28,7 @@ public class CachedMapFile {
         if (enabled) {
             if (path.isRegularFile()) {
                 try {
-                    map = NElements.of(session)
+                    map = NElements.of()
                             .json()
                             .parse(path, Map.class);
                     loaded = true;
@@ -87,7 +87,7 @@ public class CachedMapFile {
             }
             map.put(k, v);
             try {
-                NElements.of(session).setValue(map)
+                NElements.of().setValue(map)
                         .json()
                         .setNtf(false)
                         .print(path);

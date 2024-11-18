@@ -118,7 +118,7 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
                 }
             }
             if (config == null) {
-                config = NElements.of(session).ofObject().build();
+                config = NElements.of().ofObject().build();
             }
             if (title == null || title.trim().isEmpty()) {
                 title = path.getFileName().toString();
@@ -144,7 +144,7 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
                         longId,
                         title,
                         order,
-                        config.asObject().get(session),
+                        config.asObject().get(),
                         children.toArray(new DocusaurusFileOrFolder[0]),
                         baseContent == null ? null : baseContent.getContent(session),
                         path.toString()
@@ -158,7 +158,7 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
     }
 
     public static DocusaurusFolder ofRoot(NSession session, DocusaurusFileOrFolder[] children, MdElement tree, String path) {
-        return new DocusaurusFolder("/", "/", 0, NElements.of(session).ofObject().build(), children, tree, path);
+        return new DocusaurusFolder("/", "/", 0, NElements.of().ofObject().build(), children, tree, path);
     }
 
     public static DocusaurusFolder of(String longId, String title, int order, NObjectElement config, DocusaurusFileOrFolder[] children, String path) {

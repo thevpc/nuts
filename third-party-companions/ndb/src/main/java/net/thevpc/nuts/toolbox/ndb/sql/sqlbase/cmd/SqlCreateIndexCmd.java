@@ -2,7 +2,6 @@ package net.thevpc.nuts.toolbox.ndb.sql.sqlbase.cmd;
 
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;
@@ -22,7 +21,7 @@ public class SqlCreateIndexCmd<C extends NdbConfig> extends CreateIndexCmd<C> {
     }
 
     @Override
-    protected void runCreateIndex(ExtendedQuery eq, C options, NSession session) {
+    protected void runCreateIndex(ExtendedQuery eq, C options) {
         StringBuilder sql = new StringBuilder();
 
         StringBuilder setKeys = new StringBuilder();
@@ -31,7 +30,7 @@ public class SqlCreateIndexCmd<C extends NdbConfig> extends CreateIndexCmd<C> {
             s = s.trim();
             if (s.length() > 0) {
                 if (s.startsWith("{")) {
-                    Map<String, Object> row = NElements.of(session).parse(s, Map.class);
+                    Map<String, Object> row = NElements.of().parse(s, Map.class);
                     for (Map.Entry<String, Object> e : row.entrySet()) {
                         if (setKeys.length() > 0) {
                             setKeys.append(",");
@@ -46,7 +45,7 @@ public class SqlCreateIndexCmd<C extends NdbConfig> extends CreateIndexCmd<C> {
                     }
                     int i = s.indexOf('=');
                     if (i < 0) {
-                        throw new NIllegalArgumentException(session, NMsg.ofC("invalid %s", s));
+                        throw new NIllegalArgumentException(NMsg.ofC("invalid %s", s));
                     }
                     setKeys.append(s, 0, i);
                     setVals.append(s, i + 1, s.length());
@@ -54,7 +53,7 @@ public class SqlCreateIndexCmd<C extends NdbConfig> extends CreateIndexCmd<C> {
             }
         }
         if (setKeys.length() == 0) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("missing set"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("missing set"));
         }
 
 
@@ -63,6 +62,6 @@ public class SqlCreateIndexCmd<C extends NdbConfig> extends CreateIndexCmd<C> {
         sql.append(") values (");
         sql.append(setVals);
         sql.append(")");
-        ((SqlSupport<C>) support).runSQL(Arrays.asList(sql.toString()), options, session);
+        ((SqlSupport<C>) support).runSQL(Arrays.asList(sql.toString()), options);
     }
 }

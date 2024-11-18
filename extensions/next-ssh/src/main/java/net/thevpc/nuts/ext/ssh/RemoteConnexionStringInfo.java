@@ -40,7 +40,6 @@ public class RemoteConnexionStringInfo {
     private String target;
     private String suPath;
     private String sudoPath;
-    private NLog log;
 
     private long loadedUserHome;
     private long loadedWorkspaceJson;
@@ -50,10 +49,10 @@ public class RemoteConnexionStringInfo {
 
 
     public static RemoteConnexionStringInfo of(String target, NSession session) {
-        NAssert.requireNonBlank(target,"target");
+        NAssert.requireNonBlank(target, "target");
         Map<String, RemoteConnexionStringInfo> m = session.getOrComputeProperty(RemoteConnexionStringInfo.class.getName() + "Map",
                 NScopeType.WORKSPACE,
-                s -> new HashMap<>()
+                () -> new HashMap<>()
         );
         RemoteConnexionStringInfo k = m.computeIfAbsent(target, v -> new RemoteConnexionStringInfo(v));
         return k;
@@ -65,7 +64,7 @@ public class RemoteConnexionStringInfo {
     }
 
     public boolean copyId(NId id, NPath remoteRepo, NSession session, NRef<NPath> remoteJar) {
-        NDefinition def = NFetchCmd.of(session)
+        NDefinition def = NFetchCmd.of()
                 .setId(id)
                 .setContent(true)
                 .getResultDefinition();
@@ -75,7 +74,7 @@ public class RemoteConnexionStringInfo {
             remoteJar.set(remoteJarPath);
         }
         if (copy(apiLocalPath, remoteJarPath, session)) {
-            def.getDescriptor().formatter(session).setNtf(false).print(
+            def.getDescriptor().formatter().setNtf(false).print(
                     remoteRepo.resolve(NIdUtils.resolveDescPath(id)).mkParentDirs()
             );
             return true;
@@ -84,7 +83,7 @@ public class RemoteConnexionStringInfo {
     }
 
     public boolean copy(NPath local, NPath remote, NSession session) {
-        NLog log = log(session);
+        NLog log = LOG(session);
         log.with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("try copy %s %s", local, remote));
         long localContentLength = local.getContentLength();
         long remoteContentLength = remote.getContentLength();
@@ -118,16 +117,16 @@ public class RemoteConnexionStringInfo {
         OutputStream err = new ByteArrayOutputStream();
         int e;
         try (MyNExecCmdExtensionContext d = new MyNExecCmdExtensionContext(
-                NExecCmd.of(session).setTarget(target).system(),
+                NExecCmd.of().setTarget(target).system(),
                 commExec, target, session, cmd, out, err)) {
             e = commExec.exec(d);
         } catch (RuntimeException ex) {
-            throw new NExecutionException(session, NMsg.ofC("command failed :%s", ex), ex);
+            throw new NExecutionException(NMsg.ofC("command failed :%s", ex), ex);
         }
         if (e != NExecutionException.SUCCESS) {
             session.err().println(out.toString());
             session.err().println(err.toString());
-            throw new NExecutionException(session, NMsg.ofC("command exit with code :%s", e), e);
+            throw new NExecutionException(NMsg.ofC("command exit with code :%s", e), e);
         }
         return out.toString();
     }
@@ -139,7 +138,7 @@ public class RemoteConnexionStringInfo {
     public String getNutsJar(NExecCmdExtension commExec, NSession session) {
         if (isUpdatable(loadedNutsJar)) {
             loadedNutsJar = System.currentTimeMillis();
-            log(session).with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("[%s] resolve remote jar", target));
+            LOG(session).with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("[%s] resolve remote jar", target));
             NRef<NPath> remoteApiJar = NRef.ofNull();
             copyId(session.getWorkspace().getApiId(), getStoreLocationLibRepo(commExec, session), session, remoteApiJar);
             copyId(session.getWorkspace().getRuntimeId(), getStoreLocationLibRepo(commExec, session), session, null);
@@ -169,7 +168,7 @@ public class RemoteConnexionStringInfo {
         if (isUpdatable(loadedUserHome)) {
             loadedUserHome = System.currentTimeMillis();
             // echo -e "$USER\\n$HOME\n$OSTYPE\n$PATH"
-            log(session).with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("[%s] resolve remote env", target));
+            LOG(session).with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("[%s] resolve remote env", target));
             String[] echoes = NStringUtils.trim(runOnceSystemGrab(
                     commExec, target, session,
                     "echo", "-e", "$USER\\\\n$HOME\\\\n$OSTYPE\\\\n$PATH")).split("\n");
@@ -219,11 +218,8 @@ public class RemoteConnexionStringInfo {
         return target;
     }
 
-    private NLog log(NSession session) {
-        if (log == null) {
-            log = NLog.of(RemoteConnexionStringInfo.class, session);
-        }
-        return log;
+    private NLog LOG(NSession session) {
+        return NLog.of(RemoteConnexionStringInfo.class);
     }
 
     public NElement getWorkspaceJson(NExecCmdExtension commExec, NSession session) {
@@ -247,9 +243,9 @@ public class RemoteConnexionStringInfo {
                 workspaceJson = null;
                 NPath rpath = NPath.of(targetConnexion.copy()
                         .setPath(pHome.getHome() + "/ws/" + workspaceName + "/nuts-workspace.json")
-                        .toString(), session);
+                        .toString());
                 if (rpath.isRegularFile()) {
-                    workspaceJson = NElements.of(session)
+                    workspaceJson = NElements.of()
                             .parse(
                                     rpath
                             );
@@ -271,10 +267,10 @@ public class RemoteConnexionStringInfo {
 
             storeLocationLibRepo = NPath.of(targetConnexion.copy()
                     .setPath(storeLocationLib)
-                    .toString(), session).resolve(NConstants.Folders.ID);
+                    .toString()).resolve(NConstants.Folders.ID);
             storeLocationCacheRepo = NPath.of(targetConnexion.copy()
                     .setPath(storeLocationCache)
-                    .toString(), session).resolve(NConstants.Folders.ID);
+                    .toString()).resolve(NConstants.Folders.ID);
             NId appId = session.getAppId();
             if (appId == null) {
                 appId = session.getWorkspace().getApiId();
@@ -310,7 +306,7 @@ public class RemoteConnexionStringInfo {
     }
 
     public String[] buildEffectiveCommand(String[] cmd, NRunAs runAs, String[] executionOptions, NExecCmdExtension commExec, NSession session) {
-        return NEnvs.of(session).buildEffectiveCommand(cmd, runAs,
+        return NEnvs.of().buildEffectiveCommand(cmd, runAs,
                 new HashSet<NDesktopEnvironmentFamily>(),
                 s -> {
                     if (s == null) {
@@ -350,7 +346,7 @@ public class RemoteConnexionStringInfo {
             this.cmd = cmd;
             this.out = out;
             this.err = err;
-            nullInput = NIO.of(session).ofNullRawInputStream();
+            nullInput = NIO.of().ofNullRawInputStream();
         }
 
         @Override

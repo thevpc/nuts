@@ -1,8 +1,10 @@
 package net.thevpc.nuts.reserved.optional;
 
+import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NOptionalErrorException;
 
 import java.util.function.Supplier;
 
@@ -54,6 +56,18 @@ public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImp
             m = NMsg.ofMissingValue();
         }
         return m;
+    }
+    protected void throwError(Supplier<NMsg> message, Supplier<NMsg> message0) {
+        if (message == null) {
+            message = message0;
+        }
+        if (message == null) {
+            message = () -> NMsg.ofMissingValue();
+        }
+        Supplier<NMsg> finalMessage = message;
+        NMsg eMsg = NApiUtilsRPI.resolveValidErrorMessage(() -> finalMessage == null ? null : finalMessage.get());
+        NMsg m = prepareMessage(eMsg);
+        throw new NOptionalErrorException(m);
     }
 
     @Override

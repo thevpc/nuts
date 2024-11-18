@@ -21,14 +21,14 @@ import net.thevpc.nuts.util.NFilterOp;
 public class NExecCompanionFilter extends AbstractDescriptorFilter {
     private NId apiId;
     private Set<String> companions;
-    public NExecCompanionFilter(NSession session, NId apiId, String[] shortIds) {
-        super(session, NFilterOp.CUSTOM);
+    public NExecCompanionFilter(NWorkspace workspace, NId apiId, String[] shortIds) {
+        super(workspace, NFilterOp.CUSTOM);
         this.apiId=apiId;
         this.companions=new HashSet<>(Arrays.asList(shortIds));
     }
 
     @Override
-    public boolean acceptDescriptor(NDescriptor other, NSession session) {
+    public boolean acceptDescriptor(NDescriptor other) {
         if(companions.contains(other.getId().getShortName())){
             for (NDependency dependency : other.getDependencies()) {
                 if(dependency.toId().getShortName().equals(NConstants.Ids.NUTS_API)){

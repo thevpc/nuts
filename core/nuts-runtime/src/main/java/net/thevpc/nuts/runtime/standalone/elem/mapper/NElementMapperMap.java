@@ -45,26 +45,26 @@ public class NElementMapperMap implements NElementMapper<Map> {
                 m.add(new DefaultNElementEntry(k, v));
             }
         }
-        return new DefaultNObjectElement(m, context.getSession());
+        return new DefaultNObjectElement(m, context.getWorkspace());
     }
 
     public Map fillObject(NElement o, Map all, Type elemType1, Type elemType2, Type to, NElementFactoryContext context) {
         NSession session = context.getSession();
         if (o.type() == NElementType.OBJECT) {
-            for (NElementEntry kv : o.asObject().get(session).entries()) {
+            for (NElementEntry kv : o.asObject().get().entries()) {
                 NElement k = kv.getKey();
                 NElement v = kv.getValue();
                 all.put(context.elementToObject(k, elemType1), context.elementToObject(v, elemType2));
             }
         } else if (o.type() == NElementType.ARRAY) {
-            for (NElement ee : o.asArray().get(session).items()) {
-                NObjectElement kv = ee.asObject().get(session);
+            for (NElement ee : o.asArray().get().items()) {
+                NObjectElement kv = ee.asObject().get();
                 NElement k = kv.get("key").orNull();
                 NElement v = kv.get("value").orNull();
                 all.put(context.elementToObject(k, elemType1), context.elementToObject(v, elemType2));
             }
         } else {
-            throw new NUnsupportedEnumException(session, o.type());
+            throw new NUnsupportedEnumException(o.type());
         }
 
         return all;
@@ -86,15 +86,15 @@ public class NElementMapperMap implements NElementMapper<Map> {
             elemType2 = pt.getActualTypeArguments()[1];
         }
         if (cls == null) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("class is null"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("class is null"));
         }
         switch (cls.getName()) {
             case "java.util.Map":
             case "java.util.LinkedHashMap": {
-                return fillObject(o, new LinkedHashMap(o.asObject().get(session).size()), elemType1, elemType2, to, context);
+                return fillObject(o, new LinkedHashMap(o.asObject().get().size()), elemType1, elemType2, to, context);
             }
             case "java.util.HashMap": {
-                return fillObject(o, new HashMap(o.asObject().get(session).size()), elemType1, elemType2, to, context);
+                return fillObject(o, new HashMap(o.asObject().get().size()), elemType1, elemType2, to, context);
             }
             case "java.util.SortedMap":
             case "java.util.NavigableMap": {

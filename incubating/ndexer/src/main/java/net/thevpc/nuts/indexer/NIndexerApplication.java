@@ -17,7 +17,8 @@ public class NIndexerApplication implements NApplication {
     }
 
     @Override
-    public void run(NSession session) {
+    public void run() {
+        NSession session = NSession.of().get();
         __bootSession =session;
         ConfigurableApplicationContext c = SpringApplication.run(Config.class, new String[0]);
         final Config cc = c.getBean(Config.class);

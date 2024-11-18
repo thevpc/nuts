@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.util.stream;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.*;
@@ -234,8 +233,8 @@ public abstract class NStreamDelegate<T> implements NStream<T> {
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return baseStream().describe(session);
+    public NElement describe() {
+        return baseStream().describe();
     }
 
     @Override

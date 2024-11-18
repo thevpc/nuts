@@ -11,19 +11,9 @@ public abstract class AbstractNSessionTerminal implements NSessionTerminal {
         return readPassword(out(), prompt);
     }
 
-    @Override
-    public char[] readPassword(NPrintStream out, NMsg prompt) {
-        return readPassword((out == null ? out() : out), prompt, getSession());
-    }
-
-    public String readLine(NPrintStream out, NMsg message) {
-        return readLine((out == null ? out() : out), message, getSession());
-    }
-
     public String readLine(NMsg message) {
-        return readLine(out(), message, getSession());
+        return readLine(out(), message);
     }
-
 
     @Override
     public NSessionTerminal printProgress(NMsg message) {
@@ -31,5 +21,4 @@ public abstract class AbstractNSessionTerminal implements NSessionTerminal {
         return this;
     }
 
-    public abstract NSession getSession();
 }

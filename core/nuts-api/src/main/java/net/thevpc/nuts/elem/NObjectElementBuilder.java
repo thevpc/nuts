@@ -26,7 +26,6 @@
 package net.thevpc.nuts.elem;
 
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.NSession;
 
 import java.util.Collection;
 import java.util.List;
@@ -40,8 +39,8 @@ import java.util.Map;
  */
 public interface NObjectElementBuilder extends NElementBuilder {
 
-    static NObjectElementBuilder of(NSession session) {
-        return NElements.of(session).ofObject();
+    static NObjectElementBuilder of() {
+        return NElements.of().ofObject();
     }
 
     /**

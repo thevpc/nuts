@@ -1,7 +1,7 @@
 package net.thevpc.nuts.reserved.util;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NVersionFilter;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.spi.base.NVersionFilterDelegate;
@@ -11,8 +11,8 @@ public class NVersionFilterWithDescription extends NVersionFilterDelegate {
     private NVersionFilter baseVersionFilter;
     private NEDesc description;
 
-    public NVersionFilterWithDescription(NVersionFilter baseVersionFilter, NEDesc description) {
-        super(baseVersionFilter.getSession());
+    public NVersionFilterWithDescription(NWorkspace workspace, NVersionFilter baseVersionFilter, NEDesc description) {
+        super(workspace);
         this.baseVersionFilter = baseVersionFilter;
         this.description = description;
     }
@@ -29,7 +29,7 @@ public class NVersionFilterWithDescription extends NVersionFilterDelegate {
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return NEDesc.safeDescribeOfBase(session, description, baseVersionFilter);
+    public NElement describe() {
+        return NEDesc.safeDescribeOfBase(description, baseVersionFilter);
     }
 }

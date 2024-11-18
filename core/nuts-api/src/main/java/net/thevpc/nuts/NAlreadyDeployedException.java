@@ -41,24 +41,22 @@ public class NAlreadyDeployedException extends NInstallationException {
     /**
      * Custom Constructor
      *
-     * @param session workspace
-     * @param id      nuts id
+     * @param id nuts id
      */
-    public NAlreadyDeployedException(NSession session, NId id) {
-        this(session, id, null, null);
+    public NAlreadyDeployedException(NId id) {
+        this(id, null, null);
     }
 
 
     /**
      * Custom Constructor
      *
-     * @param session workspace
-     * @param id      nuts id
-     * @param msg     message
-     * @param cause   cuse
+     * @param id    nuts id
+     * @param msg   message
+     * @param cause cuse
      */
-    public NAlreadyDeployedException(NSession session, NId id, NMsg msg, Throwable cause) {
-        super(session, id, msg == null ? NMsg.ofC("already deployed %s", (id == null ? "<null>" : id)) : msg, cause);
+    public NAlreadyDeployedException(NId id, NMsg msg, Throwable cause) {
+        super(id, msg == null ? NMsg.ofC("already deployed %s", (id == null ? "<null>" : id)) : msg, cause);
     }
 
 }

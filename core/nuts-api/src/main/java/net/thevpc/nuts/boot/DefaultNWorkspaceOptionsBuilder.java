@@ -153,6 +153,11 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     private String userName;
 
     /**
+     * option-type : runtime
+     */
+    private Boolean mainInstance;
+
+    /**
      * option-type : exported (inherited in child workspaces)
      */
     private char[] credentials;
@@ -1722,14 +1727,23 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setCmdLine(String cmdLine, NSession session) {
-        setCmdLine(NCmdLine.parseDefault(cmdLine).get(session).toStringArray(), session);
+    public NWorkspaceOptionsBuilder setCmdLine(String cmdLine) {
+        setCmdLine(NCmdLine.parseDefault(cmdLine).get().toStringArray());
         return this;
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setCmdLine(String[] args, NSession session) {
-        NWorkspaceCmdLineParser.parseNutsArguments(args, this, session);
+    public NWorkspaceOptionsBuilder setCmdLine(String[] args) {
+        NWorkspaceCmdLineParser.parseNutsArguments(args, this);
+        return this;
+    }
+    public NOptional<Boolean> getMainInstance() {
+        return NOptional.ofNamed(mainInstance, "mainInstance");
+    }
+
+    @Override
+    public NWorkspaceOptionsBuilder setMainInstance(Boolean mainInstance) {
+        this.mainInstance = mainInstance;
         return this;
     }
 
@@ -1852,7 +1866,10 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
                 getClassLoaderSupplier().orNull(), getApplicationArguments().orNull(), getOutputFormatOptions().orNull(),
                 getCustomOptions().orNull(), getExcludedExtensions().orNull(), getRepositories().orNull(),
                 getExecutorOptions().orNull(), getErrors().orNull(), getStoreLocations().orNull(), getHomeLocations().orNull(),
-                getDesktopLauncher().orNull(), getMenuLauncher().orNull(), getUserLauncher().orNull(), getPreviewRepo().orNull());
+                getDesktopLauncher().orNull(), getMenuLauncher().orNull(), getUserLauncher().orNull()
+                , getPreviewRepo().orNull()
+                , getMainInstance().orNull()
+        );
     }
 
     @Override

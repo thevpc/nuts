@@ -459,8 +459,8 @@ public class DefaultNDescriptor implements NDescriptor {
     }
 
     @Override
-    public NDescriptorFormat formatter(NSession session) {
-        return NDescriptorFormat.of(session).setValue(this);
+    public NDescriptorFormat formatter() {
+        return NDescriptorFormat.of().setValue(this);
     }
 
     @Override

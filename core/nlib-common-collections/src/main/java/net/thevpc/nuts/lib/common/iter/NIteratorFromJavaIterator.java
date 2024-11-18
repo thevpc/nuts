@@ -3,7 +3,6 @@ package net.thevpc.nuts.lib.common.iter;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.NSession;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -21,11 +20,11 @@ public class NIteratorFromJavaIterator<T> extends NIteratorBase<T> {
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return NElements.of(session).ofObject()
+    public NElement describe() {
+        return NElements.of().ofObject()
                 .set("type", "Collector")
                 .set("name", name)
-                .set("base", NEDesc.describeResolveOrDestruct(base, session))
+                .set("base", NEDesc.describeResolveOrDestruct(base))
                 .build();
     }
 

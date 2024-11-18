@@ -5,13 +5,7 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NCallableSupport;
-import net.thevpc.nuts.NNoSuchElementException;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.reserved.NApiUtilsRPI;
-
 import java.util.NoSuchElementException;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -55,8 +49,8 @@ public class DefaultCallableSupport<T> implements CallableSupport<T> {
     @Override
     public NOptional<T> toOptional() {
         if (isValid()) {
-            return NOptional.ofCallable(s -> value.get());
+            return NOptional.ofCallable(() -> value.get());
         }
-        return NOptional.ofEmpty(s->NMsg.ofPlain(emptyMessage.get()));
+        return NOptional.ofEmpty(()->NMsg.ofPlain(emptyMessage.get()));
     }
 }

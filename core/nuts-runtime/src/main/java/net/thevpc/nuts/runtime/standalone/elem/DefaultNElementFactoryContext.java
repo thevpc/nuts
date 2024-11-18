@@ -46,11 +46,23 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
     private final DefaultNElements base;
     private final NReflectRepository repository;
     private boolean ntf;
+    private NWorkspace workspace;
 
-    public DefaultNElementFactoryContext(DefaultNElements base, NReflectRepository repository) {
+    public DefaultNElementFactoryContext(NWorkspace workspace,DefaultNElements base, NReflectRepository repository) {
         this.base = base;
         this.repository = repository;
         this.ntf = base.isNtf();
+        this.workspace = workspace;
+    }
+
+    @Override
+    public NSession getSession() {
+        return getWorkspace().currentSession();
+    }
+
+    @Override
+    public NWorkspace getWorkspace() {
+        return workspace;
     }
 
     @Override
@@ -58,13 +70,13 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
         return repository;
     }
 
-    @Override
-    public NSession getSession() {
-        return base.getSession();
-    }
+//    @Override
+//    public NSession getSession() {
+//        return repository.getSession();
+//    }
 
     @Override
-    public Predicate<Class> getIndestructibleObjects() {
+    public Predicate<Class<?>> getIndestructibleObjects() {
         return base.getIndestructibleObjects();
     }
 
@@ -96,10 +108,11 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
 
     @Override
     public NElement defaultObjectToElement(Object o, Type expectedType) {
+        NSession session=workspace.currentSession();
         if (o != null) {
             RefItem ro = new RefItem(o, "defaultObjectToElement");
             if (visited.contains(ro)) {
-                throw new NIllegalArgumentException(getSession(), NMsg.ofC("unable to serialize object of type %s because of cyclic references: %s", o.getClass().getName(), stacktrace()));
+                throw new NIllegalArgumentException(NMsg.ofC("unable to serialize object of type %s because of cyclic references: %s", o.getClass().getName(), stacktrace()));
             }
             visited.add(ro);
             try {
@@ -113,10 +126,11 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
 
     @Override
     public Object defaultDestruct(Object o, Type expectedType) {
+        NSession session=workspace.currentSession();
         if (o != null) {
             RefItem ro = new RefItem(o, "defaultDestruct");
             if (visited.contains(ro)) {
-                throw new NIllegalArgumentException(getSession(), NMsg.ofC("unable to destruct object of type %s because of cyclic references: %s", o.getClass().getName(), stacktrace()));
+                throw new NIllegalArgumentException(NMsg.ofC("unable to destruct object of type %s because of cyclic references: %s", o.getClass().getName(), stacktrace()));
             }
             visited.add(ro);
             try {
@@ -130,10 +144,11 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
 
     @Override
     public NElement objectToElement(Object o, Type expectedType) {
+        NSession session=workspace.currentSession();
         if (o != null) {
             RefItem ro = new RefItem(o, "objectToElement");
             if (visited.contains(ro)) {
-                throw new NIllegalArgumentException(getSession(), NMsg.ofC("unable to serialize object of type %s because of cyclic references: %s", o.getClass().getName(), stacktrace()));
+                throw new NIllegalArgumentException(NMsg.ofC("unable to serialize object of type %s because of cyclic references: %s", o.getClass().getName(), stacktrace()));
             }
             visited.add(ro);
             try {
@@ -148,10 +163,11 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
 
     @Override
     public Object destruct(Object o, Type expectedType) {
+        NSession session=workspace.currentSession();
         if (o != null) {
             RefItem ro = new RefItem(o, "destruct");
             if (visited.contains(ro)) {
-                throw new NIllegalArgumentException(getSession(), NMsg.ofC("unable to destruct object of type %s because of cyclic references.", o.getClass().getName()));
+                throw new NIllegalArgumentException(NMsg.ofC("unable to destruct object of type %s because of cyclic references.", o.getClass().getName()));
             }
             visited.add(ro);
             try {

@@ -66,14 +66,14 @@ public class NDependencyUtils {
         return true;
     }
 
-    public static Iterator<NDependency> itIdToDep(NIterator<NId> id, NSession session) {
-        return IteratorBuilder.of(id, session).map(NFunction.of(NId::toDependency).withDesc(NEDesc.of("IdToDependency"))).build();
+    public static Iterator<NDependency> itIdToDep(NIterator<NId> id) {
+        return IteratorBuilder.of(id).map(NFunction.of(NId::toDependency).withDesc(NEDesc.of("IdToDependency"))).build();
     }
 
-    public static Iterator<NDependency> itIdToDep(NIterator<NId> id, NDependency copyFrom, NSession session) {
+    public static Iterator<NDependency> itIdToDep(NIterator<NId> id, NDependency copyFrom) {
         String _optional = copyFrom.getOptional();
         String _scope = copyFrom.getScope();
-        return IteratorBuilder.of(id, session).map(NFunction.of(
+        return IteratorBuilder.of(id).map(NFunction.of(
                         (NId x) -> x.toDependency().builder()
                                 .setOptional(_optional).setScope(_scope).build())
                 .withDesc(NEDesc.of("IdToDependency"))

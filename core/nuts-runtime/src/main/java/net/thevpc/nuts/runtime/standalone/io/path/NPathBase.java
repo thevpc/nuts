@@ -28,8 +28,8 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
     private DefaultNPathMetadata omd = new DefaultNPathMetadata(this);
     private boolean deleteOnDispose;
 
-    public NPathBase(NSession session) {
-        super(session);
+    public NPathBase(NWorkspace workspace) {
+        super(workspace);
     }
 
     @Override
@@ -54,12 +54,6 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
     }
 
     @Override
-    public NPath setSession(NSession session) {
-        super.setSession(session);
-        return this;
-    }
-
-    @Override
     public boolean isKnownContentLength() {
         return true;
     }
@@ -73,7 +67,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
         try {
             return new PrintStream(out, false, nonNullCharset(cs).name());
         } catch (UnsupportedEncodingException e) {
-            throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("unsupported encoding"), e);
+            throw new NIllegalArgumentException(NMsg.ofPlain("unsupported encoding"), e);
         }
     }
 
@@ -123,7 +117,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
                 other.print(Arrays.copyOf(buffer, count));
             }
         } catch (IOException ex) {
-            throw new NIOException(getSession(), ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -136,7 +130,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
                 other.write(buffer, 0, count);
             }
         } catch (IOException ex) {
-            throw new NIOException(getSession(), ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -149,7 +143,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
                 out.write(buffer, 0, count);
             }
         } catch (IOException ex) {
-            throw new NIOException(getSession(), ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -162,7 +156,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
                 writer.write(buffer, 0, count);
             }
         } catch (IOException ex) {
-            throw new NIOException(getSession(), ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -175,7 +169,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
                 writer.write(buffer, 0, count);
             }
         } catch (IOException ex) {
-            throw new NIOException(getSession(), ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -199,7 +193,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
                 other.write(buffer, 0, count);
             }
         } catch (IOException ex) {
-            throw new NIOException(getSession(), ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -348,13 +342,12 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
     }
 
     public NString toNutsString() {
-        return NTexts.of(getSession()).ofPlain(toString());
+        return NTexts.of().ofPlain(toString());
     }
 
     @Override
-    public NFormat formatter(NSession session) {
-        return new PathFormat(this)
-                .setSession(session != null ? session : getSession());
+    public NFormat formatter() {
+        return new PathFormat(this);
     }
 
     @Override
@@ -379,13 +372,13 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
         private final NPathBase p;
 
         public PathFormat(NPathBase p) {
-            super(p.getSession(), "path");
+            super(p.workspace, "path");
             this.p = p;
         }
 
         @Override
         public void print(NPrintStream out) {
-            out.print(NTexts.of(p.getSession()).ofStyled(p.toNutsString(), NTextStyle.path()));
+            out.print(NTexts.of().ofStyled(p.toNutsString(), NTextStyle.path()));
         }
 
         @Override
@@ -519,7 +512,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
                 }
             }
         } catch (IOException ex) {
-            throw new NIOException(getSession(), ex);
+            throw new NIOException(ex);
         }
         return sb.toString();
     }

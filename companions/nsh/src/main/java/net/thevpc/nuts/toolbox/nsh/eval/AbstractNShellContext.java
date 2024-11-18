@@ -102,7 +102,7 @@ public abstract class AbstractNShellContext implements NShellContext {
     @Override
     public NShellContext setOut(PrintStream out) {
         getSession().getTerminal().setOut(
-                NPrintStream.of(out, getSession())
+                NPrintStream.of(out)
         );
 //        commandContext.getTerminal().setOut(workspace.createPrintStream(out,
 //                true//formatted
@@ -112,7 +112,7 @@ public abstract class AbstractNShellContext implements NShellContext {
 
     public NShellContext setErr(PrintStream err) {
         getSession().getTerminal().setErr(
-                NPrintStream.of(err, getSession())
+                NPrintStream.of(err)
         );
         return this;
     }
@@ -134,13 +134,14 @@ public abstract class AbstractNShellContext implements NShellContext {
     public List<NShellAutoCompleteCandidate> resolveAutoCompleteCandidates(String commandName, List<String> autoCompleteWords, int wordIndex, String autoCompleteLine) {
         NShellBuiltin command = this.builtins().find(commandName);
         NCmdLineAutoComplete autoComplete = new DefaultNCmdLineAutoComplete()
-                .setSession(getSession()).setLine(autoCompleteLine).setWords(autoCompleteWords).setCurrentWordIndex(wordIndex);
+                .setLine(autoCompleteLine).setWords(autoCompleteWords).setCurrentWordIndex(wordIndex);
 
         if (command != null) {
             command.autoComplete(new DefaultNShellExecutionContext(this, command), autoComplete);
         } else {
             NSession session = this.getSession();
-            List<NId> nutsIds = NSearchCmd.of(this.getSession().copy().setFetchStrategy(NFetchStrategy.OFFLINE))
+            List<NId> nutsIds = NSearchCmd.of()
+                    .setFetchStrategy(NFetchStrategy.OFFLINE)
                     .addId(commandName)
                     .setLatest(true)
                     .addScope(NDependencyScopePattern.RUN)
@@ -148,14 +149,16 @@ public abstract class AbstractNShellContext implements NShellContext {
                     .getResultIds().toList();
             if (nutsIds.size() == 1) {
                 NId selectedId = nutsIds.get(0);
-                NDefinition def = NSearchCmd.of(this.getSession().copy().setFetchStrategy(NFetchStrategy.OFFLINE)).addId(selectedId).setEffective(true)
+                NDefinition def = NSearchCmd.of()
+                        .setFetchStrategy(NFetchStrategy.OFFLINE)
+                        .addId(selectedId).setEffective(true)
                         .getResultDefinitions().findFirst().get();
                 NDescriptor d = def.getDescriptor();
-                String nuts_autocomplete_support = NStringUtils.trim(d.getPropertyValue("nuts.autocomplete").flatMap(NLiteral::asString).get(session));
+                String nuts_autocomplete_support = NStringUtils.trim(d.getPropertyValue("nuts.autocomplete").flatMap(NLiteral::asString).get());
                 if (d.isApplication()
                         || "true".equalsIgnoreCase(nuts_autocomplete_support)
                         || "supported".equalsIgnoreCase(nuts_autocomplete_support)) {
-                    NExecCmd t = NExecCmd.of(session)
+                    NExecCmd t = NExecCmd.of()
                             .grabAll()
                             .addCommand(
                                     selectedId
@@ -171,13 +174,13 @@ public abstract class AbstractNShellContext implements NShellContext {
                             if (s.length() > 0) {
                                 if (s.startsWith(NSession.AUTO_COMPLETE_CANDIDATE_PREFIX)) {
                                     s = s.substring(NSession.AUTO_COMPLETE_CANDIDATE_PREFIX.length()).trim();
-                                    NCmdLine args = NCmdLine.of(s, NShellFamily.BASH, session).setExpandSimpleOptions(false);
+                                    NCmdLine args = NCmdLine.of(s, NShellFamily.BASH).setExpandSimpleOptions(false);
                                     String value = null;
                                     String display = null;
                                     if (args.hasNext()) {
-                                        value = args.next().flatMap(NLiteral::asString).get(session);
+                                        value = args.next().flatMap(NLiteral::asString).get();
                                         if (args.hasNext()) {
-                                            display = args.next().flatMap(NLiteral::asString).get(session);
+                                            display = args.next().flatMap(NLiteral::asString).get();
                                         }
                                     }
                                     if (value != null) {
@@ -210,7 +213,7 @@ public abstract class AbstractNShellContext implements NShellContext {
 
     @Override
     public String getAbsolutePath(String path) {
-        if (NPath.of(path, getSession()).isAbsolute()) {
+        if (NPath.of(path).isAbsolute()) {
             return getFileSystem().getAbsolutePath(path, getSession());
         }
         return getFileSystem().getAbsolutePath(getDirectory() + "/" + path, getSession());
@@ -218,7 +221,7 @@ public abstract class AbstractNShellContext implements NShellContext {
 
     @Override
     public String[] expandPaths(String path) {
-        return NPath.of(path, getSession()).walkGlob().map(NFunction.of(NPath::toString).withDesc(NEDesc.of("toString"))).toArray(String[]::new);
+        return NPath.of(path).walkGlob().map(NFunction.of(NPath::toString).withDesc(NEDesc.of("toString"))).toArray(String[]::new);
     }
 
     @Override

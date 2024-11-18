@@ -49,12 +49,12 @@ public class Docusaurus2Adoc {
             throw new IllegalArgumentException("missing asciidoctor condig");
         }
         NArrayElement headersJson = asciidoctorConfig.getObject("pdf")
-                .orElse(NObjectElement.ofEmpty(session))
+                .orElse(NObjectElement.ofEmpty())
                 .getArray("headers")
-                .orElse(NArrayElement.ofEmpty(session));
+                .orElse(NArrayElement.ofEmpty());
         List<String> headersList = new ArrayList<>();
         for (NElement jsonItem : headersJson) {
-            headersList.add(jsonItem.asString().get(session));
+            headersList.add(jsonItem.asString().get());
         }
         this.projectName = project.getProjectName();
         this.projectTitle = project.getTitle();

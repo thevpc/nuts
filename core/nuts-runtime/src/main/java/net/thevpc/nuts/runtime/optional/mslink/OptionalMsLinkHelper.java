@@ -17,14 +17,14 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 public class OptionalMsLinkHelper {
-    private final NSession session;
+    private final NWorkspace workspace;
     private final String command;
     private final String wd;
     private final String icon;
     private final String filePath;
 
-    public OptionalMsLinkHelper(String command, String wd, String icon, String filePath, NSession session) {
-        this.session = session;
+    public OptionalMsLinkHelper(String command, String wd, String icon, String filePath, NWorkspace workspace) {
+        this.workspace = workspace;
         this.command = command;
         this.wd = wd;
         this.icon = icon;
@@ -60,7 +60,7 @@ public class OptionalMsLinkHelper {
             //
         }
         byte[] oldContent=CoreIOUtils.loadFileContentLenient(outputFile);
-        String[] cmd = NCmdLine.parseDefault(command).get(session).setExpandSimpleOptions(false).toStringArray();
+        String[] cmd = NCmdLine.parseDefault(command).get().setExpandSimpleOptions(false).toStringArray();
         mslinks.ShellLink se = mslinks.ShellLink.createLink(cmd[0])
                 .setWorkingDir(wd)
                 .setCMDArgs(NCmdLine.of(
@@ -78,10 +78,10 @@ public class OptionalMsLinkHelper {
         try {
             //.setFontSize(16)
             //.setTextColor(5)
-            NPath.of(outputFile,session).mkParentDirs();
+            NPath.of(outputFile).mkParentDirs();
             se.saveTo(filePath);
         } catch (IOException ex) {
-            throw new NIOException(session,ex);
+            throw new NIOException(ex);
         }
         if(alreadyExists) {
             byte[] newContent = CoreIOUtils.loadFileContentLenient(outputFile);

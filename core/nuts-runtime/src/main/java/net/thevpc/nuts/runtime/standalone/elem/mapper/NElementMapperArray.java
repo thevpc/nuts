@@ -25,56 +25,56 @@ public class NElementMapperArray implements NElementMapper<Object> {
             case "boolean": {
                 boolean[] x = new boolean[e.size()];
                 for (int i = 0; i < e.size(); i++) {
-                    x[i] = e.get(i).get(session).asBoolean().get(session);
+                    x[i] = e.get(i).get().asBoolean().get();
                 }
                 return x;
             }
             case "byte": {
                 byte[] x = new byte[e.size()];
                 for (int i = 0; i < e.size(); i++) {
-                    x[i] = e.get(i).get(session).asByte().get(session);
+                    x[i] = e.get(i).get().asByte().get();
                 }
                 return x;
             }
             case "short": {
                 short[] x = new short[e.size()];
                 for (int i = 0; i < e.size(); i++) {
-                    x[i] = e.get(i).get(session).asShort().get(session);
+                    x[i] = e.get(i).get().asShort().get();
                 }
                 return x;
             }
             case "int": {
                 int[] x = new int[e.size()];
                 for (int i = 0; i < e.size(); i++) {
-                    x[i] = e.get(i).get(session).asInt().get(session);
+                    x[i] = e.get(i).get().asInt().get();
                 }
                 return x;
             }
             case "long": {
                 long[] x = new long[e.size()];
                 for (int i = 0; i < e.size(); i++) {
-                    x[i] = e.get(i).get(session).asLong().get(session);
+                    x[i] = e.get(i).get().asLong().get();
                 }
                 return x;
             }
             case "float": {
                 float[] x = new float[e.size()];
                 for (int i = 0; i < e.size(); i++) {
-                    x[i] = e.get(i).get(session).asFloat().get(session);
+                    x[i] = e.get(i).get().asFloat().get();
                 }
                 return x;
             }
             case "double": {
                 double[] x = new double[e.size()];
                 for (int i = 0; i < e.size(); i++) {
-                    x[i] = e.get(i).get(session).asDouble().get(session);
+                    x[i] = e.get(i).get().asDouble().get();
                 }
                 return x;
             }
             default: {
                 Object[] x = (Object[]) Array.newInstance(componentType, e.size());
                 for (int i = 0; i < e.size(); i++) {
-                    x[i] = context.elementToObject(e.get(i).get(session), componentType);
+                    x[i] = context.elementToObject(e.get(i).get(), componentType);
                 }
                 return x;
             }

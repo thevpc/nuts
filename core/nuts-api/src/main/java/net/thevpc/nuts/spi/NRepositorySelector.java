@@ -26,7 +26,6 @@ package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -38,11 +37,11 @@ public class NRepositorySelector {
     private final NRepositoryLocation location;
     private NSelectorOp op;
 
-    public static NOptional<NRepositorySelector> of(String location, NRepositoryDB db, NSession session) {
-        return of(null,location,db,session);
+    public static NOptional<NRepositorySelector> of(String location, NRepositoryDB db) {
+        return of(null,location,db);
     }
 
-    public static NOptional<NRepositorySelector> of(NSelectorOp op, String location, NRepositoryDB db, NSession session) {
+    public static NOptional<NRepositorySelector> of(NSelectorOp op, String location, NRepositoryDB db) {
         location = NStringUtils.trim(location);
         if (op == null) {
             op = NSelectorOp.INCLUDE;
@@ -58,13 +57,13 @@ public class NRepositorySelector {
                 op = NSelectorOp.EXACT;
                 location = location.substring(1).trim();
             }
-            NOptional<NRepositoryLocation> z = NRepositoryLocation.of(location, db, session);
+            NOptional<NRepositoryLocation> z = NRepositoryLocation.of(location, db);
             if (z.isPresent()) {
-                return NOptional.of(new NRepositorySelector(op, z.get(session)));
+                return NOptional.of(new NRepositorySelector(op, z.get()));
             }
         }
         String finalLocation = location;
-        return NOptional.<NRepositorySelector>ofEmpty(ss -> NMsg.ofC("repository %s", finalLocation)).setSession(session);
+        return NOptional.<NRepositorySelector>ofEmpty(() -> NMsg.ofC("repository %s", finalLocation));
     }
 
     public NRepositorySelector(NSelectorOp op, NRepositoryLocation location) {

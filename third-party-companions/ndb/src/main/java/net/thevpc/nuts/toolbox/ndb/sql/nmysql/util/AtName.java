@@ -41,8 +41,8 @@ public class AtName {
     private String name;
 
     public static AtName nextConfigOption(NCmdLine cmd, NSession session) {
-        NArg a = cmd.nextEntry().get(session);
-        AtName name2 = new AtName(a.getStringValue().get(session));
+        NArg a = cmd.nextEntry().get();
+        AtName name2 = new AtName(a.getStringValue().get());
         if (!name2.getConfigName().isEmpty() && !name2.getDatabaseName().isEmpty()) {
             cmd.pushBack(a);
             cmd.throwUnexpectedArgument(NMsg.ofPlain("should be valid a config name"));
@@ -59,18 +59,18 @@ public class AtName {
     }
 
     public static AtName nextAppOption(NCmdLine cmd, NSession session) {
-        NArg a = cmd.nextEntry().get(session);
-        return a==null?null:new AtName(a.getStringValue().get(session));
+        NArg a = cmd.nextEntry().get();
+        return a==null?null:new AtName(a.getStringValue().get());
     }
 
     public static AtName nextAppNonOption(NCmdLine cmd, NSession session) {
-        NArg a = cmd.nextEntry().get(session);
-        return a==null?null:new AtName(a.asString().get(session));
+        NArg a = cmd.nextEntry().get();
+        return a==null?null:new AtName(a.asString().get());
     }
 
     public static AtName nextConfigNonOption(NCmdLine cmd, NSession session) {
-        NArg a = cmd.peek().get(session);
-        AtName name2 = new AtName(a.asString().get(session));
+        NArg a = cmd.peek().get();
+        AtName name2 = new AtName(a.asString().get());
         if (!name2.getConfigName().isEmpty() && !name2.getDatabaseName().isEmpty()) {
             cmd.throwUnexpectedArgument(NMsg.ofPlain("should be valid a config name"));
         } else {

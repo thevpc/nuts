@@ -1,19 +1,17 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
-import net.thevpc.nuts.NSession;
-
 class NanoDBSerializerForBoolean extends NanoDBNonNullSerializer<Boolean> {
     public NanoDBSerializerForBoolean() {
         super(Boolean.class);
     }
 
     @Override
-    public void write(Boolean obj, NanoDBOutputStream out, NSession session) {
+    public void write(Boolean obj, NanoDBOutputStream out) {
         out.writeBoolean((Boolean) obj);
     }
 
     @Override
-    public Boolean read(NanoDBInputStream in, Class expectedType, NSession session) {
+    public Boolean read(NanoDBInputStream in, Class expectedType) {
         return in.readBoolean();
     }
 }

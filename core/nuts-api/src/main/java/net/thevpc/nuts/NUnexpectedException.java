@@ -37,45 +37,40 @@ public class NUnexpectedException extends NException {
 
     /**
      * Constructs a new NutsUnexpectedException exception
-     *
-     * @param session workspace
      */
-    public NUnexpectedException(NSession session) {
-        this(session, null);
+    public NUnexpectedException() {
+        this(null);
     }
 
     /**
      * Constructs a new NutsUnexpectedException exception
      *
-     * @param session workspace
      * @param message message
      */
-    public NUnexpectedException(NSession session, NMsg message) {
-        super(session, message == null ? NMsg.ofPlain("unexpected behaviour") : message);
+    public NUnexpectedException(NMsg message) {
+        super(message == null ? NMsg.ofPlain("unexpected behaviour") : message);
     }
 
     /**
      * Constructs a new NutsUnexpectedException exception
      *
-     * @param session workspace
      * @param message message
      * @param cause   cause
      */
-    public NUnexpectedException(NSession session, NMsg message, Throwable cause) {
-        super(session, message == null ? NMsg.ofPlain("unexpected behaviour") : message, cause);
+    public NUnexpectedException(NMsg message, Throwable cause) {
+        super(message == null ? NMsg.ofPlain("unexpected behaviour") : message, cause);
     }
 
     /**
      * Constructs a new NutsUnexpectedException exception
      *
-     * @param session            workspace
      * @param message            message
      * @param cause              cause
      * @param enableSuppression  whether or not suppression is enabled or disabled
      * @param writableStackTrace whether or not the stack trace should be writable
      */
-    public NUnexpectedException(NSession session, NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(session, message == null ? NMsg.ofPlain("unexpected behaviour") : message, cause, enableSuppression, writableStackTrace);
+    public NUnexpectedException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message == null ? NMsg.ofPlain("unexpected behaviour") : message, cause, enableSuppression, writableStackTrace);
     }
 
 }

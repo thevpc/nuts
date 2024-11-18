@@ -9,14 +9,14 @@ public class NameBuilder {
     private NDescriptor descriptor;
     private String preferredName;
     private String defaultName;
-    private NSession session;
+    private NWorkspace workspace;
     private boolean preferId;
 
-    public NameBuilder(NId id, String preferredName, String defaultName, NDescriptor descriptor, NSession session, boolean preferId) {
+    public NameBuilder(NId id, String preferredName, String defaultName, NDescriptor descriptor, NWorkspace workspace, boolean preferId) {
         this.id = id;
         this.preferredName = preferredName;
         this.descriptor = descriptor;
-        this.session = session;
+        this.workspace = workspace;
         this.preferId = preferId;
         if (defaultName == null) {
             defaultName = "";
@@ -32,12 +32,12 @@ public class NameBuilder {
         this.defaultName = defaultName;
     }
 
-    public static NameBuilder id(NId id, String preferredName, String defaultName, NDescriptor descriptor, NSession session) {
-        return new NameBuilder(id, preferredName, defaultName, descriptor, session, true);
+    public static NameBuilder id(NId id, String preferredName, String defaultName, NDescriptor descriptor, NWorkspace workspace) {
+        return new NameBuilder(id, preferredName, defaultName, descriptor, workspace, true);
     }
 
-    public static NameBuilder label(NId id, String preferredName, String defaultName, NDescriptor descriptor, NSession session) {
-        return new NameBuilder(id, preferredName, defaultName, descriptor, session, false);
+    public static NameBuilder label(NId id, String preferredName, String defaultName, NDescriptor descriptor, NWorkspace workspace) {
+        return new NameBuilder(id, preferredName, defaultName, descriptor, workspace, false);
     }
 
     public static String extractPathName(String s) {
@@ -143,8 +143,9 @@ public class NameBuilder {
                         break;
                     }
                     case 'h': {
+                        NSession session = workspace.currentSession();
                         if (!NWorkspaceUtils.isUserDefaultWorkspace(session)) {
-                            h.append(session.getWorkspace().getHashName());
+                            h.append(workspace.getHashName());
                         }
                         break;
                     }

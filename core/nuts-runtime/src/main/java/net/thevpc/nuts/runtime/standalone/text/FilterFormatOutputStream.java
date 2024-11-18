@@ -1,15 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NUnsupportedEnumException;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOp;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 
 import java.io.OutputStream;
 
 public class FilterFormatOutputStream extends RenderedOutputStream implements ExtendedFormatAware {
-    public FilterFormatOutputStream(OutputStream out, NSystemTerminalBase term, NSession session) {
-        super(out, term, true, session);
+    public FilterFormatOutputStream(OutputStream out, NSystemTerminalBase term, NWorkspace workspace) {
+        super(out, term, true, workspace);
     }
 
 
@@ -29,22 +29,22 @@ public class FilterFormatOutputStream extends RenderedOutputStream implements Ex
                     NTerminalModeOp m = ((ExtendedFormatAware) out).getModeOp();
                     return (ExtendedFormatAware) out;
                 }
-                return new RawOutputStream(out, getTerminal(), session);
+                return new RawOutputStream(out, getTerminal(), workspace);
             }
             case FORMAT: {
-                return new FormatOutputStream(out, getTerminal(), session);
+                return new FormatOutputStream(out, getTerminal(), workspace);
             }
             case FILTER: {
                 return this;//new FilterFormatOutputStream(out);
             }
             case ESCAPE: {
-                return new EscapeOutputStream(this, getTerminal(), session);
+                return new EscapeOutputStream(this, getTerminal(), workspace);
             }
             case UNESCAPE: {
-                return new UnescapeOutputStream(this, getTerminal(), session);
+                return new UnescapeOutputStream(this, getTerminal(), workspace);
             }
         }
-        throw new NUnsupportedEnumException(session, other);
+        throw new NUnsupportedEnumException(other);
     }
 
 }

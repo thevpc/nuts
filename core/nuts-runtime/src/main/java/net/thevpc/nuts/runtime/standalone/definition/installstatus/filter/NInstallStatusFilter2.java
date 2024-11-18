@@ -71,8 +71,8 @@ public class NInstallStatusFilter2 extends AbstractInstallStatusFilter {
 //    }
 
 
-    public NInstallStatusFilter2(NSession session, int installed, int required, int obsolete, int defaultVersion) {
-        super(session, NFilterOp.CUSTOM);
+    public NInstallStatusFilter2(NWorkspace workspace, int installed, int required, int obsolete, int defaultVersion) {
+        super(workspace, NFilterOp.CUSTOM);
         this.installed = installed;
         this.required = required;
         this.obsolete = obsolete;
@@ -128,7 +128,7 @@ public class NInstallStatusFilter2 extends AbstractInstallStatusFilter {
     }
 
     @Override
-    public boolean acceptInstallStatus(NInstallStatus status, NSession session) {
+    public boolean acceptInstallStatus(NInstallStatus status) {
         if (status == null) {
             return false;
         }

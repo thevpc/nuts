@@ -1,12 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
-import net.thevpc.nuts.NSession;
-
 public interface NanoDBSerializer<T> {
 
-    void write(T obj, NanoDBOutputStream out, NSession session);
+    void write(T obj, NanoDBOutputStream out);
 
-    T read(NanoDBInputStream in, Class expectedType, NSession session);
+    T read(NanoDBInputStream in, Class expectedType);
 
     Class<T> getSupportedType();
 }

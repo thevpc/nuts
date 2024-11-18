@@ -35,7 +35,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.lib.common.collections.DefaultObservableMap;
-import net.thevpc.nuts.lib.common.collections.ObservableMap;
+import net.thevpc.nuts.util.NObservableMap;
 import net.thevpc.nuts.runtime.standalone.app.gui.CoreNUtilGui;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NJavaSdkUtils;
 import net.thevpc.nuts.util.*;
@@ -56,7 +56,7 @@ public class DefaultNWorkspaceEnvManagerModel {
 
     private final Map<NPlatformFamily, List<NPlatformLocation>> configPlatforms = new LinkedHashMap<>();
     //    private Map<String, String> options = new LinkedHashMap<>();
-    protected ObservableMap<String, Object> userProperties;
+    protected NObservableMap<String, Object> userProperties;
     private final NWorkspace workspace;
     private final NId platform;
     private final NId os;
@@ -71,7 +71,7 @@ public class DefaultNWorkspaceEnvManagerModel {
     private final NId osDist;
     private final NArchFamily archFamily = NArchFamily.getCurrent();
 
-    public DefaultNWorkspaceEnvManagerModel(NWorkspace ws, NSession session) {
+    public DefaultNWorkspaceEnvManagerModel(NWorkspace ws) {
         this.workspace = ws;
         userProperties = new DefaultObservableMap<>();
         os = NId.of(CorePlatformUtils.getPlatformOs(NSessionUtils.defaultSession(workspace))).get();
@@ -80,7 +80,7 @@ public class DefaultNWorkspaceEnvManagerModel {
             platformOsDist = "default";
         }
         osDist = NId.of(platformOsDist).get();
-        platform = NJavaSdkUtils.of(session).createJdkId(System.getProperty("java.version"), session);
+        platform = NJavaSdkUtils.of(ws).createJdkId(System.getProperty("java.version"));
         arch = NId.of(System.getProperty("os.arch")).get();
 
     }
@@ -127,7 +127,6 @@ public class DefaultNWorkspaceEnvManagerModel {
                     } else {
                         try {
                             String hostname = NExecCmd.of(
-                                            NSessionUtils.defaultSession(workspace)
                                     ).addCommand("hostname")
                                     .failFast()
                                     .getGrabbedOutOnlyString();
@@ -147,13 +146,13 @@ public class DefaultNWorkspaceEnvManagerModel {
                 default: {
                     String h = null;
                     try {
-                        h = NStringUtils.trim(NPath.of("/etc/hostname", NSessionUtils.defaultSession(workspace))
+                        h = NStringUtils.trim(NPath.of("/etc/hostname")
                                 .readString());
                     } catch (Exception e) {
                         //ignore
                     }
                     if (NBlankable.isBlank(h)) {
-                        h = NExecCmd.of(NSessionUtils.defaultSession(workspace))
+                        h = NExecCmd.of()
                                 .system()
                                 .addCommand("/bin/hostname")
                                 .getGrabbedOutOnlyString();
@@ -235,9 +234,9 @@ public class DefaultNWorkspaceEnvManagerModel {
         return new LinkedHashSet<>(shellFamilies);
     }
 
-    public Set<NId> getDesktopEnvironments(NSession session) {
+    public Set<NId> getDesktopEnvironments() {
         if (desktopEnvironments == null) {
-            desktopEnvironments = getDesktopEnvironments0(session);
+            desktopEnvironments = getDesktopEnvironments0();
         }
         return desktopEnvironments;
     }
@@ -246,7 +245,7 @@ public class DefaultNWorkspaceEnvManagerModel {
         return CoreNUtilGui.isGraphicalDesktopEnvironment();
     }
 
-    protected NId[] getDesktopEnvironmentsXDGOrEmpty(NSession session) {
+    protected NId[] getDesktopEnvironmentsXDGOrEmpty() {
         String _XDG_SESSION_DESKTOP = System.getenv("XDG_SESSION_DESKTOP");
         String _XDG_CURRENT_DESKTOP = System.getenv("XDG_CURRENT_DESKTOP");
         List<NId> a = new ArrayList<>();
@@ -284,12 +283,12 @@ public class DefaultNWorkspaceEnvManagerModel {
         return a.toArray(new NId[0]);
     }
 
-    protected Set<NId> getDesktopEnvironments0(NSession session) {
+    protected Set<NId> getDesktopEnvironments0() {
         if (!isGraphicalDesktopEnvironment()) {
             return Collections.singleton(
                     NIdBuilder.of().setArtifactId(NDesktopEnvironmentFamily.HEADLESS.id()).build());
         }
-        switch (NEnvs.of(session).getOsFamily()) {
+        switch (NEnvs.of().getOsFamily()) {
             case WINDOWS: {
                 return Collections.singleton(NIdBuilder.of().setArtifactId(NDesktopEnvironmentFamily.WINDOWS_SHELL.id()).build());
             }
@@ -298,7 +297,7 @@ public class DefaultNWorkspaceEnvManagerModel {
             }
             case UNIX:
             case LINUX: {
-                NId[] all = getDesktopEnvironmentsXDGOrEmpty(session);
+                NId[] all = getDesktopEnvironmentsXDGOrEmpty();
                 if (all.length == 0) {
                     return Collections.singleton(NIdBuilder.of().setArtifactId(NDesktopEnvironmentFamily.UNKNOWN.id()).build());
                 }
@@ -310,15 +309,15 @@ public class DefaultNWorkspaceEnvManagerModel {
         }
     }
 
-    public Set<NDesktopEnvironmentFamily> getDesktopEnvironmentFamilies(NSession session) {
+    public Set<NDesktopEnvironmentFamily> getDesktopEnvironmentFamilies() {
         if (osDesktopEnvironmentFamilies == null) {
-            osDesktopEnvironmentFamilies = getDesktopEnvironmentFamilies0(session);
+            osDesktopEnvironmentFamilies = getDesktopEnvironmentFamilies0();
         }
         return osDesktopEnvironmentFamilies;
     }
 
-    public Set<NDesktopEnvironmentFamily> getDesktopEnvironmentFamilies0(NSession session) {
-        Set<NId> desktopEnvironments = getDesktopEnvironments(session);
+    public Set<NDesktopEnvironmentFamily> getDesktopEnvironmentFamilies0() {
+        Set<NId> desktopEnvironments = getDesktopEnvironments();
         LinkedHashSet<NDesktopEnvironmentFamily> all = new LinkedHashSet<>();
         for (NId desktopEnvironment : desktopEnvironments) {
             all.add(NDesktopEnvironmentFamily.parse(desktopEnvironment.getShortName()).orNull());
@@ -326,15 +325,15 @@ public class DefaultNWorkspaceEnvManagerModel {
         return new LinkedHashSet<>(all);
     }
 
-    public NDesktopEnvironmentFamily getDesktopEnvironmentFamily(NSession session) {
+    public NDesktopEnvironmentFamily getDesktopEnvironmentFamily() {
         if (osDesktopEnvironmentFamily == null) {
-            osDesktopEnvironmentFamily = getDesktopEnvironmentFamily0(session);
+            osDesktopEnvironmentFamily = getDesktopEnvironmentFamily0();
         }
         return osDesktopEnvironmentFamily;
     }
 
-    public NDesktopEnvironmentFamily getDesktopEnvironmentFamily0(NSession session) {
-        Set<NDesktopEnvironmentFamily> all = getDesktopEnvironmentFamilies(session);
+    public NDesktopEnvironmentFamily getDesktopEnvironmentFamily0() {
+        Set<NDesktopEnvironmentFamily> all = getDesktopEnvironmentFamilies();
         if (all.size() == 0) {
             return NDesktopEnvironmentFamily.UNKNOWN;
         }
@@ -376,7 +375,7 @@ public class DefaultNWorkspaceEnvManagerModel {
         return os;
     }
 
-    public NId getPlatform(NSession session) {
+    public NId getPlatform() {
 //        if (platform == null) {
 //            platform = NutsWorkspaceConfigManagerExt.of(workspace.config())
 //                    .getModel()
@@ -393,30 +392,30 @@ public class DefaultNWorkspaceEnvManagerModel {
         return userProperties;
     }
 
-    public NOptional<NLiteral> getProperty(String property, NSession session) {
+    public NOptional<NLiteral> getProperty(String property) {
         Object v = userProperties.get(property);
         return NOptional.of(
                 v == null ? null : NLiteral.of(v)
         );
     }
 
-    public NElement getPropertyElement(String property, NSession session) {
-        return NElements.of(session)
+    public NElement getPropertyElement(String property) {
+        return NElements.of()
                 .setIndestructibleObjects(x -> !x.isPrimitive()
                         && !Number.class.isAssignableFrom(x)
                         && !Boolean.class.isAssignableFrom(x)
                         && !String.class.isAssignableFrom(x)
                         && !Instant.class.isAssignableFrom(x))
-                .toElement(getProperty(property, session));
+                .toElement(getProperty(property));
     }
 
-    public <T> T getOrCreateProperty(Class<T> property, Supplier<T> supplier, NSession session) {
-        return getOrCreateProperty(property.getName(), supplier, session);
+    public <T> T getOrCreateProperty(Class<T> property, Supplier<T> supplier) {
+        return getOrCreateProperty(property.getName(), supplier);
     }
 
-    public <T> T getOrCreateProperty(String property, Supplier<T> supplier, NSession session) {
-        NElement a = getPropertyElement(property, session);
-        T o = a.isCustom() ? (T) a.asCustom().get(session).getValue() : (T) a.asPrimitive().get(session).getRaw();
+    public <T> T getOrCreateProperty(String property, Supplier<T> supplier) {
+        NElement a = getPropertyElement(property);
+        T o = a.isCustom() ? (T) a.asCustom().get().getValue() : (T) a.asPrimitive().get().getRaw();
         if (o != null) {
             return o;
         }

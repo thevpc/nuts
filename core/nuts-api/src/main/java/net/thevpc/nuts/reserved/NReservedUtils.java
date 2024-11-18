@@ -47,7 +47,6 @@ import java.util.stream.Collectors;
  */
 public final class NReservedUtils {
 
-
     public static boolean isValidWorkspaceName(String workspace) {
         if (NBlankable.isBlank(workspace)) {
             return true;
@@ -366,7 +365,7 @@ public final class NReservedUtils {
             return NOptional.of(idBuilder.setCondition(conditionBuilder)
                     .setProperties(idProperties).build());
         }
-        return NOptional.ofError(session -> NMsg.ofC("invalid id format : %s", nutsId));
+        return NOptional.ofError(() -> NMsg.ofC("invalid id format : %s", nutsId));
     }
 
     private static void setIdProperty(String key, String value, NIdBuilder builder, NEnvConditionBuilder sb, Map<String, String> props) {

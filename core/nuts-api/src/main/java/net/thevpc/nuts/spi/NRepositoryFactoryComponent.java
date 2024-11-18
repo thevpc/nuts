@@ -28,7 +28,6 @@ package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NAddRepositoryOptions;
 import net.thevpc.nuts.NRepository;
-import net.thevpc.nuts.NSession;
 
 import java.util.List;
 
@@ -40,8 +39,8 @@ import java.util.List;
  */
 public interface NRepositoryFactoryComponent extends NComponent {
 
-    List<NAddRepositoryOptions> getDefaultRepositories(NSession session);
+    List<NAddRepositoryOptions> getDefaultRepositories();
 
-    NRepository create(NAddRepositoryOptions options, NSession session, NRepository parentRepository);
+    NRepository create(NAddRepositoryOptions options, NRepository parentRepository);
 
 }

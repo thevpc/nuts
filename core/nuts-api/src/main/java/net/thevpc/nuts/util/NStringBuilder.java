@@ -1,5 +1,7 @@
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.text.NTextBuilder;
+
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.security.SecureRandom;
@@ -758,4 +760,34 @@ public class NStringBuilder implements CharSequence, NBlankable {
         }
         return this;
     }
+
+    public NStream<String> lines() {
+        return null;
+    }
+
+    public String readLine() {
+        return readLine(data);
+    }
+
+    private String readLine(StringBuilder data) {
+        int i=0;
+        while(i<data.length()) {
+            char c = data.charAt(i);
+            if(c=='\n'){
+                if(i+1<data.length() && data.charAt(i+1)=='\r'){
+                    i++;
+                    String l=data.substring(0,i-2);
+                    data.delete(0,i);
+                    return l;
+                }
+                String l=data.substring(0,i-1);
+                data.delete(0,i);
+                return l;
+            }
+        }
+        String l=data.toString();
+        data.setLength(0);
+        return l;
+    }
+
 }

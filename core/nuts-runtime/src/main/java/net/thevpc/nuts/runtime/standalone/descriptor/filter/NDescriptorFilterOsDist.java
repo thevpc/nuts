@@ -39,8 +39,8 @@ public class NDescriptorFilterOsDist extends AbstractDescriptorFilter  {
 
     private final String osDist;
 
-    public NDescriptorFilterOsDist(NSession session, String osDist) {
-        super(session, NFilterOp.CUSTOM);
+    public NDescriptorFilterOsDist(NWorkspace workspace, String osDist) {
+        super(workspace, NFilterOp.CUSTOM);
         this.osDist = osDist;
     }
 
@@ -49,8 +49,8 @@ public class NDescriptorFilterOsDist extends AbstractDescriptorFilter  {
     }
 
     @Override
-    public boolean acceptDescriptor(NDescriptor descriptor, NSession session) {
-        return CoreFilterUtils.matchesOsDist(osDist, descriptor.getCondition().getOsDist(), session);
+    public boolean acceptDescriptor(NDescriptor descriptor) {
+        return CoreFilterUtils.matchesOsDist(osDist, descriptor.getCondition().getOsDist());
     }
 
     /**

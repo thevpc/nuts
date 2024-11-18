@@ -130,7 +130,7 @@ public class DocusaurusTreeTransform extends MdElementTransformBase {
         switch (e.getTag()) {
             case "Tabs": {
                 String props = DocusaurusUtils.skipJsonJSXBrackets(e.getProperties().get("values"));
-                NArrayElement rows = NElements.of(session).parse(props).asArray().orElse(NArrayElement.ofEmpty(session));
+                NArrayElement rows = NElements.of().parse(props).asArray().orElse(NArrayElement.ofEmpty());
                 Map<String,MdElement> sub=new HashMap<>();
                 for (MdElement item : MdFactory.asBody(e.getContent()).getChildren()) {
                     if (item.isXml()) {
@@ -138,9 +138,9 @@ public class DocusaurusTreeTransform extends MdElementTransformBase {
                         String t = tabItem.getTag();
                         if (t.equals("TabItem")) {
                             String tt = "Unknown";
-                            NElement v = NElements.of(session).parse(tabItem.getProperties().get("value"));
+                            NElement v = NElements.of().parse(tabItem.getProperties().get("value"));
                             if (v != null) {
-                                tt = v.asString().get(session);
+                                tt = v.asString().get();
                             }
                             MdElement u = transformXml(path.append(tabItem));
                             sub.put(tt, u);
@@ -155,7 +155,7 @@ public class DocusaurusTreeTransform extends MdElementTransformBase {
                 }
                 List<MdElement> res=new ArrayList<>();
                 for (NElement row : rows) {
-                    MdElement r = sub.get(row.asObject().orElse(NObjectElement.ofEmpty(session)).getString("value").orElse(""));
+                    MdElement r = sub.get(row.asObject().orElse(NObjectElement.ofEmpty()).getString("value").orElse(""));
                     if(r!=null){
                         res.add(r);
                     }
@@ -165,14 +165,14 @@ public class DocusaurusTreeTransform extends MdElementTransformBase {
 
             case "TabItem": {
                 String tt = "Unknown";
-                NElement v = NElements.of(session).parse(e.getProperties().get("value"));
+                NElement v = NElements.of().parse(e.getProperties().get("value"));
                 if (v != null) {
-                    tt = v.asString().get(session);
+                    tt = v.asString().get();
                 }
                 String props = DocusaurusUtils.skipJsonJSXBrackets(path.getParentPath().getElement().asXml().getProperties().get("values"));
-                for (NElement a : NElements.of(session).parse(props).asArray().orElse(NArrayElement.ofEmpty(session))) {
-                    if (tt.equals(a.asObject().orElse(NObjectElement.ofEmpty(session)).getString("value").orNull())) {
-                        tt = a.asObject().orElse(NObjectElement.ofEmpty(session)).getString("label").orNull();
+                for (NElement a : NElements.of().parse(props).asArray().orElse(NArrayElement.ofEmpty())) {
+                    if (tt.equals(a.asObject().orElse(NObjectElement.ofEmpty()).getString("value").orNull())) {
+                        tt = a.asObject().orElse(NObjectElement.ofEmpty()).getString("label").orNull();
                         break;
                     }
                 }

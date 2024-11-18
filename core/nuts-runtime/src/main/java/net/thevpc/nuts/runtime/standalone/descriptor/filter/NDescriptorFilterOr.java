@@ -16,8 +16,8 @@ public class NDescriptorFilterOr extends AbstractDescriptorFilter implements NCo
 
     private NDescriptorFilter[] all;
 
-    public NDescriptorFilterOr(NSession session, NDescriptorFilter... all) {
-        super(session, NFilterOp.OR);
+    public NDescriptorFilterOr(NWorkspace workspace, NDescriptorFilter... all) {
+        super(workspace, NFilterOp.OR);
         List<NDescriptorFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NDescriptorFilter filter : all) {
@@ -30,12 +30,12 @@ public class NDescriptorFilterOr extends AbstractDescriptorFilter implements NCo
     }
 
     @Override
-    public boolean acceptDescriptor(NDescriptor id, NSession session) {
+    public boolean acceptDescriptor(NDescriptor id) {
         if (all.length == 0) {
             return true;
         }
         for (NDescriptorFilter filter : all) {
-            if (filter.acceptDescriptor(id, session)) {
+            if (filter.acceptDescriptor(id)) {
                 return true;
             }
         }
@@ -44,7 +44,7 @@ public class NDescriptorFilterOr extends AbstractDescriptorFilter implements NCo
 
     @Override
     public NDescriptorFilter simplify() {
-        return CoreFilterUtils.simplifyFilterOr(getSession(), NDescriptorFilter.class,this,all);
+        return CoreFilterUtils.simplifyFilterOr(NDescriptorFilter.class,this,all);
     }
 
     @Override

@@ -18,7 +18,7 @@ public class NElementMapperNArrayElement extends NElementMapperNElement {
         NSession session = context.getSession();
         o = super.createObject(o, typeOfResult, context);
         if (o.type() == NElementType.ARRAY) {
-            return o.asArray().get(session);
+            return o.asArray().get();
         }
         return context.elem().ofArray().add(o).build();
     }

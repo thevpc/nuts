@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.io.NServiceLoader;
 
@@ -17,10 +18,10 @@ public class DefaultNServiceLoader<T extends NComponent, B> implements NServiceL
     private final Class<T> serviceType;
     private final Class<B> criteriaType;
     private final ServiceLoader<T> loader;
-    private final NSession session;
+    private final NWorkspace workspace;
 
-    public DefaultNServiceLoader(NSession session, Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader) {
-        this.session = session;
+    public DefaultNServiceLoader(NWorkspace workspace, Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader) {
+        this.workspace = workspace;
         this.classLoader = classLoader;
         this.serviceType = serviceType;
         this.criteriaType = criteriaType;
@@ -32,6 +33,7 @@ public class DefaultNServiceLoader<T extends NComponent, B> implements NServiceL
     @Override
     public List<T> loadAll(Object criteria) {
         List<T> all = new ArrayList<>();
+        NSession session = workspace.currentSession();
         NSupportLevelContext c=new NDefaultSupportLevelContext(session,criteria);
         for (T t : loader) {
             int p = t.getSupportLevel(c);
@@ -46,6 +48,7 @@ public class DefaultNServiceLoader<T extends NComponent, B> implements NServiceL
     public T loadBest(Object criteria) {
         T best = null;
         int bestVal = NConstants.Support.NO_SUPPORT;
+        NSession session = workspace.currentSession();
         NSupportLevelContext c=new NDefaultSupportLevelContext(session,criteria);
         for (T t : loader) {
             int p = t.getSupportLevel(c);

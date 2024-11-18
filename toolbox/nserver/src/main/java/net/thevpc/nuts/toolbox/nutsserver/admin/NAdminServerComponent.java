@@ -92,9 +92,9 @@ public class NAdminServerComponent implements NServerComponent {
         }
         InetSocketAddress inetSocketAddress = new InetSocketAddress(address, port);
         NPrintStream out = session.out();
-        NTexts factory = NTexts.of(session);
+        NTexts factory = NTexts.of();
         out.println((NMsg.ofC("Nuts Admin Service '%s' running %s at %s", serverId, factory.ofStyled("telnet nsh", NTextStyle.primary1()), inetSocketAddress)));
-        out.println((NMsg.ofC("Serving workspace : %s", NLocations.of(session).getWorkspaceLocation())));
+        out.println((NMsg.ofC("Serving workspace : %s", NLocations.of().getWorkspaceLocation())));
         AdminServerRunnable myNutsServer = new AdminServerRunnable(serverId, port, backlog, address, executor, session, session);
 
         executor.execute(myNutsServer);

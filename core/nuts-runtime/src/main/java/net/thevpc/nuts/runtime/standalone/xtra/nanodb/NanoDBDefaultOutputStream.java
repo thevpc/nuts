@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.NSession;
 
@@ -8,12 +9,12 @@ import java.io.*;
 public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
     private DataOutputStream dos;
     private NanoDBOutputStreamCounter counter;
-    private NSession session;
+    private NWorkspace workspace;
 
-    public NanoDBDefaultOutputStream(OutputStream out, NSession session) {
+    public NanoDBDefaultOutputStream(OutputStream out, NWorkspace workspace) {
         counter = new NanoDBOutputStreamCounter(out);
         dos = new DataOutputStream(counter);
-        this.session=session;
+        this.workspace = workspace;
     }
 
     @Override
@@ -31,7 +32,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
                 }
             }
         } catch (IOException ex) {
-            throw new NIOException(session,ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -45,7 +46,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
         try {
             dos.writeBoolean(val);
         } catch (IOException ex) {
-            throw new NIOException(session,ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -54,7 +55,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
         try {
             dos.writeByte(val);
         } catch (IOException ex) {
-            throw new NIOException(session,ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -63,7 +64,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
         try {
             dos.writeShort(val);
         } catch (IOException ex) {
-            throw new NIOException(session,ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -72,7 +73,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
         try {
             dos.writeChar(val);
         } catch (IOException ex) {
-            throw new NIOException(session,ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -81,7 +82,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
         try {
             dos.writeInt(val);
         } catch (IOException ex) {
-            throw new NIOException(session,ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -90,7 +91,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
         try {
             dos.writeLong(val);
         } catch (IOException ex) {
-            throw new NIOException(session,ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -99,7 +100,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
         try {
             dos.writeFloat(val);
         } catch (IOException ex) {
-            throw new NIOException(session,ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -108,7 +109,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
         try {
             dos.writeDouble(val);
         } catch (IOException ex) {
-            throw new NIOException(session,ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -117,7 +118,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
         try {
             dos.writeBytes(str);
         } catch (IOException ex) {
-            throw new NIOException(session,ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -126,7 +127,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
         try {
             dos.writeChars(str);
         } catch (IOException ex) {
-            throw new NIOException(session,ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -135,7 +136,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
         try {
             dos.writeUTF(str);
         } catch (IOException ex) {
-            throw new NIOException(session,ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -144,7 +145,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
         try {
             dos.close();
         } catch (IOException ex) {
-            throw new NIOException(session,ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -153,7 +154,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
         try {
             dos.flush();
         } catch (IOException ex) {
-            throw new NIOException(session,ex);
+            throw new NIOException(ex);
         }
     }
 

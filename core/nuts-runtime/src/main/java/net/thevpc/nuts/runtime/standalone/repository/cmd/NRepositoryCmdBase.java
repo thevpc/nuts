@@ -9,8 +9,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NRepositoryCmd;
 
 /**
@@ -20,7 +18,6 @@ import net.thevpc.nuts.spi.NRepositoryCmd;
 public abstract class NRepositoryCmdBase<T extends NRepositoryCmd> implements NRepositoryCmd {
 
     protected NRepository repo;
-    private NSession session;
     private NFetchMode fetchMode = NFetchMode.LOCAL;
     private String commandName;
 
@@ -29,32 +26,17 @@ public abstract class NRepositoryCmdBase<T extends NRepositoryCmd> implements NR
         this.commandName = commandName;
     }
 
-    protected void checkSession() {
-        NSessionUtils.checkSession(repo.getWorkspace(), getSession());
-    }
-
     public String getCommandName() {
         return commandName;
     }
 
     //@Override
-    protected T copyFromWorkspaceCommandBase(NRepositoryCmdBase other) {
-        if (other != null) {
-            this.session = other.getSession();
-        }
-        return (T) this;
-    }
-
-    @Override
-    public NSession getSession() {
-        return session;
-    }
-
-    @Override
-    public T setSession(NSession session) {
-        this.session = NWorkspaceUtils.bindSession(repo.getWorkspace(), session);
-        return (T) this;
-    }
+//    protected T copyFromWorkspaceCommandBase(NRepositoryCmdBase other) {
+//        if (other != null) {
+//            this.session = other.getSession();
+//        }
+//        return (T) this;
+//    }
 
     protected void invalidateResult() {
 
@@ -85,21 +67,19 @@ public abstract class NRepositoryCmdBase<T extends NRepositoryCmd> implements NR
      */
     @Override
     public T configure(boolean skipUnsupported, String... args) {
-        checkSession();
-        return NCmdLineConfigurable.configure(this, skipUnsupported, args,getCommandName(),getSession());
+        return NCmdLineConfigurable.configure(this, skipUnsupported, args,getCommandName());
     }
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        checkSession();
         NArg a = cmdLine.peek().orNull();
         if (a == null) {
             return false;
         }
 //        switch(a.key()) {
 //        }
-
-        if (getSession().configureFirst(cmdLine)) {
+        NSession session = repo.getWorkspace().currentSession();
+        if (configureFirst(cmdLine)) {
             return true;
         }
         return false;

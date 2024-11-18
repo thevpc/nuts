@@ -28,42 +28,42 @@ public class DefaultWriteTypeProcessor {
     }
 
     public DefaultWriteTypeProcessor ask(NMsg m) {
-        NAssert.requireNonNull(m, "message", session);
+        NAssert.requireNonNull(m, "message");
         this.askMessage = m;
         return this;
     }
 
     public DefaultWriteTypeProcessor withLog(NLog log, NMsg m) {
-        NAssert.requireNonNull(log, "log", session);
-        NAssert.requireNonNull(m, "message", session);
+        NAssert.requireNonNull(log, "log");
+        NAssert.requireNonNull(m, "message");
         this.log = log;
         this.logMessage = m;
         return this;
     }
 
     public DefaultWriteTypeProcessor onError(Supplier<RuntimeException> error) {
-        NAssert.requireNonNull(error, "error handler", session);
+        NAssert.requireNonNull(error, "error handler");
         this.error = error;
         return this;
     }
 
     private NMsg getValidAskMessage() {
-        NAssert.requireNonNull(askMessage, "message", session);
+        NAssert.requireNonNull(askMessage, "message");
         return askMessage;
     }
 
     private NMsg getValidLogMessage() {
-        NAssert.requireNonNull(logMessage, "log message", session);
+        NAssert.requireNonNull(logMessage, "log message");
         return logMessage;
     }
 
     private Supplier<RuntimeException> getValidError() {
-        NAssert.requireNonNull(error, "error handler", session);
+        NAssert.requireNonNull(error, "error handler");
         return error;
     }
 
     private NLog getValidLog() {
-        NAssert.requireNonNull(log, "log", session);
+        NAssert.requireNonNull(log, "log");
         return log;
     }
 
@@ -74,8 +74,7 @@ public class DefaultWriteTypeProcessor {
                 throw getValidError().get();
             }
             case ASK: {
-                if (!NAsk.of(session)
-                        .setSession(session)
+                if (!NAsk.of()
                         .forBoolean(getValidAskMessage())
                         .setDefaultValue(false).getBooleanValue()) {
                     return false;
@@ -83,12 +82,12 @@ public class DefaultWriteTypeProcessor {
                 break;
             }
             case NO: {
-                getValidLog().with().session(session).level(Level.FINE).verb(NLogVerb.WARNING)
+                getValidLog().with().level(Level.FINE).verb(NLogVerb.WARNING)
                         .log(getValidLogMessage());
                 return false;
             }
         }
-        getValidLog().with().session(session).level(Level.FINE).verb(NLogVerb.WARNING)
+        getValidLog().with().level(Level.FINE).verb(NLogVerb.WARNING)
                 .log(getValidLogMessage());
         return true;
     }

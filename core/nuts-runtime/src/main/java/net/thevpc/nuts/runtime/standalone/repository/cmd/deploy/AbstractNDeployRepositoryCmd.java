@@ -26,7 +26,6 @@ package net.thevpc.nuts.runtime.standalone.repository.cmd.deploy;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
@@ -71,36 +70,35 @@ public abstract class AbstractNDeployRepositoryCmd extends NRepositoryCmdBase<ND
 
     @Override
     public NDeployRepositoryCmd setContent(NPath content) {
-        checkSession();
         this.content = content;
         return this;
     }
 
     @Override
     public NDeployRepositoryCmd setContent(Path content) {
-        checkSession();
-        this.content = content == null ? null : NPath.of(content, getSession());
+        NSession session = getRepo().getWorkspace().currentSession();
+        this.content = content == null ? null : NPath.of(content);
         return this;
     }
 
     @Override
     public NDeployRepositoryCmd setContent(URL content) {
-        checkSession();
-        this.content = content == null ? null : NPath.of(content, getSession());
+        NSession session = getRepo().getWorkspace().currentSession();
+        this.content = content == null ? null : NPath.of(content);
         return this;
     }
 
     @Override
     public NDeployRepositoryCmd setContent(File content) {
-        checkSession();
-        this.content = content == null ? null : NPath.of(content, getSession());
+        NSession session = getRepo().getWorkspace().currentSession();
+        this.content = content == null ? null : NPath.of(content);
         return this;
     }
 
     @Override
     public NDeployRepositoryCmd setContent(InputStream content) {
-        checkSession();
-        this.content = content == null ? null : NInputSource.of(content,getSession());
+        NSession session = getRepo().getWorkspace().currentSession();
+        this.content = content == null ? null : NInputSource.of(content);
         return this;
     }
 
@@ -127,16 +125,15 @@ public abstract class AbstractNDeployRepositoryCmd extends NRepositoryCmdBase<ND
     }
 
     protected void checkParameters() {
-        checkSession();
-        NSession session = getSession();
-        getRepo().security().setSession(session).checkAllowed(NConstants.Permissions.DEPLOY, "deploy");
+        NSession session = getRepo().getWorkspace().currentSession();
+        getRepo().security().checkAllowed(NConstants.Permissions.DEPLOY, "deploy");
         CoreNIdUtils.checkLongId(getId(), session);
-        NAssert.requireNonNull(this.getContent(), "content", getSession());
-        NAssert.requireNonNull(this.getDescriptor(), "descriptor", getSession());
+        NAssert.requireNonNull(this.getContent(), "content");
+        NAssert.requireNonNull(this.getDescriptor(), "descriptor");
         if (this.getId().getVersion().isReleaseVersion()
                 || this.getId().getVersion().isLatestVersion()
         ) {
-            throw new NIllegalArgumentException(session, NMsg.ofC("invalid version %s", this.getId().getVersion()));
+            throw new NIllegalArgumentException(NMsg.ofC("invalid version %s", this.getId().getVersion()));
         }
     }
 

@@ -32,8 +32,8 @@ import net.thevpc.nuts.ext.NExtensions;
  * @app.category Base
  */
 public interface NIdFilters extends NTypedFilters<NIdFilter> {
-    static NIdFilters of(NSession session) {
-       return NExtensions.of(session).createComponent(NIdFilters.class).get();
+    static NIdFilters of() {
+       return NExtensions.of().createComponent(NIdFilters.class).get();
     }
 
     NIdFilter byValue(NId id);

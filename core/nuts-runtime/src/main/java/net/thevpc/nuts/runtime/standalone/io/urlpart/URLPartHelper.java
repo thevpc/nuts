@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.io.urlpart;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.format.NVisitResult;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.io.util.InputStreamVisitor;
@@ -21,7 +20,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class URLPartHelper {
-    static URLPart[] searchStream(InputStream root, Function<String,URLPart> factory, boolean includeFolders, boolean deep, final Predicate<URLPart> filter, NSession session)  {
+    static URLPart[] searchStream(InputStream root, Function<String,URLPart> factory, boolean includeFolders, boolean deep, final Predicate<URLPart> filter)  {
 //        String pv = base.getPath();
 //        if (pv.startsWith("/")) {
 //            // zip entries does not start with '/'
@@ -59,7 +58,7 @@ public class URLPartHelper {
                 }
                 return NVisitResult.CONTINUE;
             }
-        }, null);
+        });
         return ff.toArray(new URLPart[0]);
     }
 //    static URLPart[] searchURL(URL root, URLPart base, boolean includeFolders, boolean deep, final Predicate<URLPart> filter) throws IOException {
@@ -110,7 +109,7 @@ public class URLPartHelper {
 //        }
 //    }
 
-    static URLPart[] searchFile(File root, boolean includeFolders, boolean deep, final Predicate<URLPart> filter,NSession session) {
+    static URLPart[] searchFile(File root, boolean includeFolders, boolean deep, final Predicate<URLPart> filter) {
         if (deep) {
             List<URLPart> found = new ArrayList<>();
             try {
@@ -157,7 +156,7 @@ public class URLPartHelper {
                         }
                 );
             } catch (IOException e) {
-                throw new NIOException(session, e);
+                throw new NIOException(e);
             }
             return found.toArray(new URLPart[0]);
         } else {

@@ -64,7 +64,7 @@ public class ClearCommand extends NShellBuiltinDefault {
     @Override
     protected void main(NCmdLine cmdLine, NShellExecutionContext context) {
         //do nothing, return true
-        context.out().run(NTerminalCmd.CLEAR_SCREEN, context.getSession());
+        context.out().run(NTerminalCmd.CLEAR_SCREEN);
     }
 
 }

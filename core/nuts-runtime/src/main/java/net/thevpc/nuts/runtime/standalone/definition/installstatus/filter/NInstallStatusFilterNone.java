@@ -17,8 +17,8 @@ public class NInstallStatusFilterNone extends AbstractInstallStatusFilter {
 
     private NInstallStatusFilter[] all;
 
-    public NInstallStatusFilterNone(NSession session, NInstallStatusFilter... all) {
-        super(session, NFilterOp.NOT);
+    public NInstallStatusFilterNone(NWorkspace workspace, NInstallStatusFilter... all) {
+        super(workspace, NFilterOp.NOT);
         List<NInstallStatusFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NInstallStatusFilter filter : all) {
@@ -31,12 +31,12 @@ public class NInstallStatusFilterNone extends AbstractInstallStatusFilter {
     }
 
     @Override
-    public boolean acceptInstallStatus(NInstallStatus id, NSession session) {
+    public boolean acceptInstallStatus(NInstallStatus id) {
         if (all.length == 0) {
             return true;
         }
         for (NInstallStatusFilter filter : all) {
-            if (filter.acceptInstallStatus(id, session)) {
+            if (filter.acceptInstallStatus(id)) {
                 return false;
             }
         }
@@ -45,7 +45,7 @@ public class NInstallStatusFilterNone extends AbstractInstallStatusFilter {
 
     @Override
     public NInstallStatusFilter simplify() {
-        return CoreFilterUtils.simplifyFilterNone(getSession(), NInstallStatusFilter.class,this,all);
+        return CoreFilterUtils.simplifyFilterNone( NInstallStatusFilter.class,this,all);
     }
 
     @Override

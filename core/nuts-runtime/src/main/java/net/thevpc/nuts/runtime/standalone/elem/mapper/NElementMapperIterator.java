@@ -31,13 +31,13 @@ public class NElementMapperIterator implements NElementMapper<Iterator> {
         while (nl.hasNext()) {
             values.add(context.objectToElement(nl.next(), null));
         }
-        return new DefaultNArrayElement(values, context.getSession());
+        return new DefaultNArrayElement(values, context.getWorkspace());
     }
 
     @Override
     public Iterator createObject(NElement o, Type to, NElementFactoryContext context) {
         NSession session = context.getSession();
-        return o.asArray().get(session).items().stream().map(x -> context.elementToObject(x, Object.class)).collect(
+        return o.asArray().get().items().stream().map(x -> context.elementToObject(x, Object.class)).collect(
                 Collectors.toList()).iterator();
     }
 

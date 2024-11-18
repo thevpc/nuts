@@ -43,15 +43,14 @@ public class NFetchModeNotSupportedException extends NException {
     /**
      * Constructs a new NutsFetchModeNotSupportedException exception
      *
-     * @param session   workspace
      * @param repo      repository
      * @param fetchMode fetch mode
      * @param id        artifact id
      * @param message   message
      * @param cause     cause
      */
-    public NFetchModeNotSupportedException(NSession session, NRepository repo, NFetchMode fetchMode, String id, NMsg message, Exception cause) {
-        super(session, message == null ? NMsg.ofC("unsupported fetch mode %s", fetchMode) : message, cause);
+    public NFetchModeNotSupportedException(NRepository repo, NFetchMode fetchMode, String id, NMsg message, Exception cause) {
+        super(message == null ? NMsg.ofC("unsupported fetch mode %s", fetchMode) : message, cause);
         this.id = id;
         this.repositoryName = repo == null ? null : repo.getName();
         this.repositoryUuid = repo == null ? null : repo.getUuid();
@@ -61,14 +60,13 @@ public class NFetchModeNotSupportedException extends NException {
     /**
      * Constructs a new NutsFetchModeNotSupportedException exception
      *
-     * @param session   workspace
      * @param repo      repository
      * @param fetchMode fetch mode
      * @param id        artifact id
      * @param message   message
      */
-    public NFetchModeNotSupportedException(NSession session, NRepository repo, NFetchMode fetchMode, String id, NMsg message) {
-        super(session, message == null ? NMsg.ofC("unsupported fetch mode %s", fetchMode) : message);
+    public NFetchModeNotSupportedException(NRepository repo, NFetchMode fetchMode, String id, NMsg message) {
+        super(message == null ? NMsg.ofC("unsupported fetch mode %s", fetchMode) : message);
         this.id = id;
         this.repositoryName = repo == null ? null : repo.getName();
         this.repositoryUuid = repo == null ? null : repo.getUuid();

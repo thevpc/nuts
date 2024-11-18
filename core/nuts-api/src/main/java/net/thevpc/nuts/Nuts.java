@@ -27,7 +27,6 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
 import net.thevpc.nuts.boot.NBootWorkspace;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.time.Instant;
@@ -82,7 +81,7 @@ public final class Nuts {
      * @param appArgs application arguments
      * @return NutsSession instance
      */
-    public static NSession openInheritedWorkspace(String[] overriddenNutsArgs, String... appArgs) throws NUnsatisfiedRequirementsException {
+    public static NWorkspace openInheritedWorkspace(String[] overriddenNutsArgs, String... appArgs) throws NUnsatisfiedRequirementsException {
         return openInheritedWorkspace(null, overriddenNutsArgs, appArgs);
     }
 
@@ -98,7 +97,7 @@ public final class Nuts {
      * @param appArgs arguments
      * @return NutsSession instance
      */
-    public static NSession openInheritedWorkspace(NWorkspaceTerminalOptions term, String[] overriddenNutsArgs, String... appArgs) throws NUnsatisfiedRequirementsException {
+    public static NWorkspace openInheritedWorkspace(NWorkspaceTerminalOptions term, String[] overriddenNutsArgs, String... appArgs) throws NUnsatisfiedRequirementsException {
         Instant startTime = Instant.now();
         List<String> nutsArgs = new ArrayList<>();
         nutsArgs.addAll(NCmdLine.parseDefault(NStringUtils.trim(System.getProperty("nuts.boot.args"))).get().toStringList());
@@ -107,7 +106,7 @@ public final class Nuts {
             nutsArgs.addAll(Arrays.asList(overriddenNutsArgs));
         }
         NWorkspaceOptionsBuilder options = new DefaultNWorkspaceOptionsBuilder();
-        options.setCmdLine(nutsArgs.toArray(new String[0]), null);
+        options.setCmdLine(nutsArgs.toArray(new String[0]));
         options.setApplicationArguments(Arrays.asList(appArgs));
         options.setInherited(true);
         options.setCreationTime(startTime);
@@ -125,7 +124,7 @@ public final class Nuts {
      * @param args nuts boot arguments
      * @return new NutsSession instance
      */
-    public static NSession openWorkspace(String... args) throws NUnsatisfiedRequirementsException {
+    public static NWorkspace openWorkspace(String... args) throws NUnsatisfiedRequirementsException {
         return new NBootWorkspace(null, args).openWorkspace();
     }
 
@@ -136,7 +135,7 @@ public final class Nuts {
      * @param args nuts boot arguments
      * @return new NutsSession instance
      */
-    public static NSession openWorkspace(NWorkspaceTerminalOptions term, String... args) throws NUnsatisfiedRequirementsException {
+    public static NWorkspace openWorkspace(NWorkspaceTerminalOptions term, String... args) throws NUnsatisfiedRequirementsException {
         return new NBootWorkspace(term, args).openWorkspace();
     }
 
@@ -145,7 +144,7 @@ public final class Nuts {
      *
      * @return new NutsSession instance
      */
-    public static NSession openWorkspace() {
+    public static NWorkspace openWorkspace() {
         return openWorkspace((NWorkspaceOptions) null);
     }
 
@@ -155,7 +154,7 @@ public final class Nuts {
      * @param options boot options
      * @return new NutsSession instance
      */
-    public static NSession openWorkspace(NWorkspaceOptions options) {
+    public static NWorkspace openWorkspace(NWorkspaceOptions options) {
         return new NBootWorkspace(options).openWorkspace();
     }
 
@@ -169,9 +168,9 @@ public final class Nuts {
      *
      * @param term boot terminal or null for defaults
      * @param args boot arguments
-     * @return session
+     * @return workspace
      */
-    public static NSession runWorkspace(NWorkspaceTerminalOptions term, String... args) throws NExecutionException {
+    public static NWorkspace runWorkspace(NWorkspaceTerminalOptions term, String... args) throws NExecutionException {
         return new NBootWorkspace(term, args).runWorkspace();
     }
 
@@ -186,7 +185,7 @@ public final class Nuts {
      * @param args boot arguments
      * @return session
      */
-    public static NSession runWorkspace(String... args) throws NExecutionException {
+    public static NWorkspace runWorkspace(String... args) throws NExecutionException {
         return runWorkspace(null, args);
     }
 }

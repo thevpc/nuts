@@ -38,21 +38,19 @@ public class NIndexerNotAccessibleException extends NException {
      * Constructs a new Validation Exception
      *
      * @param message message
-     * @param session workspace
      */
-    public NIndexerNotAccessibleException(NSession session, NMsg message) {
-        super(session, message);
+    public NIndexerNotAccessibleException(NMsg message) {
+        super(message);
     }
 
     /**
      * Constructs a new Validation Exception
      *
-     * @param session workspace
      * @param message message
      * @param cause   cause
      */
-    public NIndexerNotAccessibleException(NSession session, NMsg message, Throwable cause) {
-        super(session, message, cause);
+    public NIndexerNotAccessibleException(NMsg message, Throwable cause) {
+        super(message, cause);
     }
 
 }

@@ -20,14 +20,14 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
         switch (src.type()) {
             case ARRAY: {
                 return src.build().asArray()
-                        .get(session)
+                        .get()
                         .items().stream().map(x -> context.destruct(x, null)).collect(Collectors.toList());
             }
             case OBJECT: {
                 Set<Object> visited = new HashSet<>();
                 boolean map = true;
                 List<Map.Entry<Object, Object>> all = new ArrayList<>();
-                for (NElementEntry nElementEntry : src.build().asObject().get(session).entries()) {
+                for (NElementEntry nElementEntry : src.build().asObject().get().entries()) {
                     Object k = context.destruct(nElementEntry.getKey(), null);
                     Object v = context.destruct(nElementEntry.getValue(), null);
                     if (map && visited.contains(k)) {
@@ -63,7 +63,7 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
         }
         switch (src.type()){
             case ARRAY:{
-                NArrayElement arr = src.build().asArray().get(session);
+                NArrayElement arr = src.build().asArray().get();
                 List<NElement> children=new ArrayList<>(arr.size());
                 boolean someChange=false;
                 for (NElement c : arr) {
@@ -79,7 +79,7 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
                 return src.build();
             }
             case OBJECT:{
-                NObjectElement obj = src.build().asObject().get(session);
+                NObjectElement obj = src.build().asObject().get();
                 List<NElementEntry> children=new ArrayList<>(obj.size());
                 boolean someChange=false;
                 for (NElementEntry e : obj) {
@@ -107,7 +107,7 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
                 return src.build();
             }
             case CUSTOM:{
-                Object v1 = src.build().asCustom().get(session).getValue();
+                Object v1 = src.build().asCustom().get().getValue();
                 if(context.getIndestructibleObjects()!=null && context.getIndestructibleObjects().test(v1.getClass())){
                     return src.build();
                 }
@@ -121,13 +121,13 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
     public NElementBuilder createObject(NElement src, Type typeOfResult, NElementFactoryContext context) {
         NSession session = context.getSession();
         if(src.type().isPrimitive()){
-            return NElements.of(session)
+            return NElements.of()
                     .ofObject()
                     .set("value",src);
         }
         switch (src.type()){
             case ARRAY:{
-                NArrayElement arr = src.asArray().get(session);
+                NArrayElement arr = src.asArray().get();
                 List<NElement> children=new ArrayList<>(arr.size());
                 boolean someChange=false;
                 for (NElement c : arr) {
@@ -140,10 +140,10 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
                 if(someChange){
                     return context.elem().ofArray().addAll(children.toArray(new NElement[0]));
                 }
-                return src.asArray().get(session).builder();
+                return src.asArray().get().builder();
             }
             case OBJECT:{
-                NObjectElement obj = src.asObject().get(session);
+                NObjectElement obj = src.asObject().get();
                 List<NElementEntry> children=new ArrayList<>(obj.size());
                 boolean someChange=false;
                 for (NElementEntry e : obj) {
@@ -168,12 +168,12 @@ public class NElementMapperNElementBuilder implements NElementMapper<NElementBui
                     obj2.addAll(children.toArray(new NElementEntry[0]));
                     return obj2;
                 }
-                return src.asObject().get(session).builder();
+                return src.asObject().get().builder();
             }
             case CUSTOM:{
-                throw new NIllegalArgumentException(context.getSession(), NMsg.ofPlain("unsupported"));
+                throw new NIllegalArgumentException(NMsg.ofPlain("unsupported"));
             }
         }
-        throw new NIllegalArgumentException(context.getSession(), NMsg.ofPlain("unsupported"));
+        throw new NIllegalArgumentException(NMsg.ofPlain("unsupported"));
     }
 }

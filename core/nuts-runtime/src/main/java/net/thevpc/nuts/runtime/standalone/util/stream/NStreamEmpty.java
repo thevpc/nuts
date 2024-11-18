@@ -6,7 +6,6 @@
 package net.thevpc.nuts.runtime.standalone.util.stream;
 
 import net.thevpc.nuts.util.NIterator;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.lib.common.iter.IteratorBuilder;
 
 import java.util.*;
@@ -18,8 +17,8 @@ import java.util.stream.Stream;
  */
 public class NStreamEmpty<T> extends NStreamBase<T> {
 
-    public NStreamEmpty(NSession session, String nutsBase) {
-        super(session, nutsBase);
+    public NStreamEmpty(String nutsBase) {
+        super(nutsBase);
     }
 
     @Override

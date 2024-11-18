@@ -19,27 +19,27 @@ import net.thevpc.nuts.util.NFilterOp;
  */
 public class NLockedIdExtensionFilter extends AbstractDescriptorFilter {
     private NId[] lockedIds;
-    public NLockedIdExtensionFilter(NSession session, NId[] lockedIds) {
-        super(session, NFilterOp.CUSTOM);
+    public NLockedIdExtensionFilter(NWorkspace workspace, NId[] lockedIds) {
+        super(workspace, NFilterOp.CUSTOM);
         this.lockedIds =lockedIds;
     }
 
-    public boolean acceptId(NId id, NSession session) {
+    public boolean acceptId(NId id) {
         for (NId nutsId : lockedIds) {
             if(nutsId.getShortId().equalsShortId(id.getShortId())){
-                return (id.getVersion().filter(session).acceptVersion(nutsId.getVersion(),session));
+                return (id.getVersion().filter().acceptVersion(nutsId.getVersion()));
             }
         }
         return true;
     }
 
     @Override
-    public boolean acceptDescriptor(NDescriptor other, NSession session) {
-        if(!acceptId(other.getId(),session)){
+    public boolean acceptDescriptor(NDescriptor other) {
+        if(!acceptId(other.getId())){
             return false;
         }
         for (NDependency dependency : other.getDependencies()) {
-            if(!acceptId(dependency.toId(),session)){
+            if(!acceptId(dependency.toId())){
                 return false;
             }
         }

@@ -86,7 +86,7 @@ public class DocusaurusCtrl {
             throw new UncheckedIOException("invalid Docusaurus Base Folder: " + project.getDocusaurusBaseFolder(), e);
         }
         boolean genSidebarMenu = project.getConfigDocusaurusExtra()
-                .asObject().orElse(NObjectElement.ofEmpty(session))
+                .asObject().orElse(NObjectElement.ofEmpty())
                 .getBooleanByPath("generateSidebarMenu")
                 .orElse(false);
         Path basePath = base;
@@ -121,7 +121,7 @@ public class DocusaurusCtrl {
         if (genSidebarMenu) {
             DocusaurusFolder root = project.getPhysicalDocsFolder();
             root = new DocusaurusFolder(
-                    "someSidebar", "someSidebar", 0, NElements.of(session).ofObject().build(), root.getChildren(),
+                    "someSidebar", "someSidebar", 0, NElements.of().ofObject().build(), root.getChildren(),
                     root.getContent(session),
                     project.getPhysicalDocsFolderBasePath().toString()
             );
@@ -136,7 +136,7 @@ public class DocusaurusCtrl {
             try {
                 Files.write(base.resolve("sidebars.js"), s.getBytes());
             } catch (IOException e) {
-                throw new NIOException(session, NMsg.ofC("%s", e));
+                throw new NIOException(NMsg.ofC("%s", e));
             }
 //            System.out.println(s);
         }
@@ -151,7 +151,7 @@ public class DocusaurusCtrl {
             session.out().print(NMsg.ofC("build website%n"));
             runNativeCommand(base, getEffectiveNpmCommandPath(), "run-script", "build");
             String copyBuildPath = project.getConfigCustom().getStringByPath("copyBuildPath")
-                    .get(session);
+                    .get();
             if (copyBuildPath != null && copyBuildPath.length() > 0) {
                 String fromPath = null;
                 try {
@@ -200,9 +200,9 @@ public class DocusaurusCtrl {
     }
 
     private void runNativeCommand(Path workFolder, String... cmd) {
-        NExecCmd.of(session)
+        NExecCmd.of()
                 .setExecutionType(NExecutionType.EMBEDDED)
-                .addCommand(cmd).setDirectory(NPath.of(workFolder, session))
+                .addCommand(cmd).setDirectory(NPath.of(workFolder))
                 .failFast().getResultCode();
     }
 
@@ -213,7 +213,7 @@ public class DocusaurusCtrl {
         } else {
             s = s.setConfirm(NConfirmationMode.ERROR);
         }
-        NExecCmd.of(s).addCommand(cmd).setDirectory(NPath.of(workFolder, session))
+        NExecCmd.of().addCommand(cmd).setDirectory(NPath.of(workFolder))
                 .setExecutionType(NExecutionType.EMBEDDED)
                 .failFast().getResultCode();
     }
@@ -318,7 +318,7 @@ public class DocusaurusCtrl {
         @Override
         public Object eval(String content, FileTemplater context) {
             NSession session = context.getSession().copy();
-            session.setTerminal(NSessionTerminal.ofMem(session));
+            session.setTerminal(NSessionTerminal.ofMem());
             NShellContext ctx = shell.createInlineContext(
                     shell.getRootContext(),
                     context.getSourcePath().orElseGet(() -> "nsh"), new String[0]
@@ -376,7 +376,7 @@ public class DocusaurusCtrl {
                     NElement config=this.config;
                     if(config!=null) {
                         for (String s : a) {
-                            config = config.asObject().orElse(NObjectElement.ofEmpty(session)).get(s).orNull();
+                            config = config.asObject().orElse(NObjectElement.ofEmpty()).get(s).orNull();
                             if (config == null) {
                                 return null;
                             }
@@ -389,12 +389,12 @@ public class DocusaurusCtrl {
                         return null;
                     }
                     if (config.isString()) {
-                        return config.asString().get(session);
+                        return config.asString().get();
                     }
                     if (config.isArray()) {
-                        return config.asArray().get(session).stream().map(Object::toString).toArray(String[]::new);
+                        return config.asArray().get().stream().map(Object::toString).toArray(String[]::new);
                     }
-                    return config.asString().get(session);
+                    return config.asString().get();
                 }
             }
         }
@@ -416,18 +416,18 @@ public class DocusaurusCtrl {
                             Paths.get(context.getRootDirRequired()).resolve("docs"),
                             getPreProcessorBaseDir().resolve("src"),
                             0)
-                    .getConfig().getObject("type").get(session);
+                    .getConfig().getObject("type").get();
             if (
                     "javadoc".equals(config.getString("name").orNull())
                             || "doc".equals(config.getString("name").orNull())
             ) {
-                String[] sources = config.getArray("sources").orElse(NArrayElement.ofEmpty(session))
+                String[] sources = config.getArray("sources").orElse(NArrayElement.ofEmpty())
                         .stream().map(x -> x.asString().orElse(null))
                         .filter(Objects::nonNull).toArray(String[]::new);
                 if (sources.length == 0) {
                     throw new IllegalArgumentException("missing doc sources in " + source);
                 }
-                String[] packages = config.getArray("packages").orElse(NArrayElement.ofEmpty(session))
+                String[] packages = config.getArray("packages").orElse(NArrayElement.ofEmpty())
                         .stream().map(x -> x.asString().orNull()).filter(Objects::nonNull).toArray(String[]::new);
                 String target = context.getPathTranslator().translatePath(source.getParent().toString());
                 if (target == null) {

@@ -19,7 +19,6 @@ import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
 public class NRepositoryHelper {
-    private NLog LOG;
 
     private final NRepository repo;
 
@@ -44,7 +43,7 @@ public class NRepositoryHelper {
         }
         NRepositoryExt xrepo = NRepositoryExt.of(repository);
         List<NSpeedQualifier> speeds = new ArrayList<>();
-        if (xrepo.acceptAction(id, supportedAction, mode, session)) {
+        if (xrepo.acceptAction(id, supportedAction, mode)) {
             NSpeedQualifier r = repository.config().getSpeed();
             if (r != NSpeedQualifier.UNAVAILABLE) {
                 speeds.add(r);
@@ -52,7 +51,6 @@ public class NRepositoryHelper {
         }
         if (transitive) {
             for (NRepository remote : repository.config()
-                    .setSession(session)
                     .getMirrors()) {
                 NSpeedQualifier r = getSupportSpeedLevel(remote, supportedAction, id, mode, transitive, session);
                 if (r != NSpeedQualifier.UNAVAILABLE) {
@@ -72,7 +70,7 @@ public class NRepositoryHelper {
         }
         NRepositoryExt xrepo = NRepositoryExt.of(repository);
         int result = 0;
-        if (xrepo.acceptAction(id, supportedAction, mode, session)) {
+        if (xrepo.acceptAction(id, supportedAction, mode)) {
             int r = repository.config().getDeployWeight();
             if (r > 0 && r > result) {
                 result = r;
@@ -80,7 +78,6 @@ public class NRepositoryHelper {
         }
         if (transitive) {
             for (NRepository remote : repository.config()
-                    .setSession(session)
                     .getMirrors()) {
                 int r = getSupportDeployLevel(remote, supportedAction, id, mode, transitive, session);
                 if (r > 0 && r > result) {
@@ -91,15 +88,12 @@ public class NRepositoryHelper {
         return result;
     }
 
-    protected NLogOp _LOGOP(NSession session) {
-        return _LOG(session).with().session(session);
+    protected NLogOp _LOGOP() {
+        return _LOG().with();
     }
 
-    protected NLog _LOG(NSession session) {
-        if (LOG == null) {
-            LOG = NLog.of(NRepositoryHelper.class,session);
-        }
-        return LOG;
+    protected NLog _LOG() {
+        return NLog.of(NRepositoryHelper.class);
     }
 
     public Events events() {
@@ -118,7 +112,7 @@ public class NRepositoryHelper {
             for (NRepositoryListener listener : u.repo.getRepositoryListeners()) {
                 listener.onUndeploy(evt);
             }
-            for (NRepositoryListener listener : NEvents.of(evt.getSession()).getRepositoryListeners()) {
+            for (NRepositoryListener listener : NEvents.of().getRepositoryListeners()) {
                 listener.onUndeploy(evt);
             }
         }
@@ -127,7 +121,7 @@ public class NRepositoryHelper {
             for (NRepositoryListener listener : u.repo.getRepositoryListeners()) {
                 listener.onDeploy(event);
             }
-            for (NRepositoryListener listener : NEvents.of(event.getSession()).getRepositoryListeners()) {
+            for (NRepositoryListener listener : NEvents.of().getRepositoryListeners()) {
                 listener.onDeploy(event);
             }
         }
@@ -136,7 +130,7 @@ public class NRepositoryHelper {
             for (NRepositoryListener listener : u.repo.getRepositoryListeners()) {
                 listener.onPush(event);
             }
-            for (NRepositoryListener listener : NEvents.of(event.getSession()).getRepositoryListeners()) {
+            for (NRepositoryListener listener : NEvents.of().getRepositoryListeners()) {
                 listener.onPush(event);
             }
             for (NRepositoryListener listener : event.getSession().getListeners(NRepositoryListener.class)) {
@@ -145,8 +139,8 @@ public class NRepositoryHelper {
         }
 
         public void fireOnAddRepository(NRepositoryEvent event) {
-            if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
-                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NLogVerb.ADD)
+            if (u._LOG().isLoggable(Level.FINEST)) {
+                u._LOGOP().level(Level.FINEST).verb(NLogVerb.ADD)
                         .log(NMsg.ofJ("{0} add    repo {1}", NStringUtils.formatAlign(u.repo.getName(), 20, NPositionType.FIRST), event
                                 .getRepository().getName())
                         );
@@ -154,7 +148,7 @@ public class NRepositoryHelper {
             for (NRepositoryListener listener : u.repo.getRepositoryListeners()) {
                 listener.onAddRepository(event);
             }
-            for (NRepositoryListener listener : NEvents.of(event.getSession()).getRepositoryListeners()) {
+            for (NRepositoryListener listener : NEvents.of().getRepositoryListeners()) {
                 listener.onAddRepository(event);
             }
             for (NRepositoryListener listener : event.getSession().getListeners(NRepositoryListener.class)) {
@@ -163,8 +157,8 @@ public class NRepositoryHelper {
         }
 
         public void fireOnRemoveRepository(NRepositoryEvent event) {
-            if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
-                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NLogVerb.REMOVE).log(
+            if (u._LOG().isLoggable(Level.FINEST)) {
+                u._LOGOP().level(Level.FINEST).verb(NLogVerb.REMOVE).log(
                         NMsg.ofJ("{0} remove repo {1}", NStringUtils.formatAlign(u.repo.getName(), 20, NPositionType.FIRST), event
                                 .getRepository().getName()));
             }
@@ -174,7 +168,7 @@ public class NRepositoryHelper {
 //            }
                 listener.onRemoveRepository(event);
             }
-            for (NRepositoryListener listener : NEvents.of(event.getSession()).getRepositoryListeners()) {
+            for (NRepositoryListener listener : NEvents.of().getRepositoryListeners()) {
 //            if (event == null) {
 //                event = new DefaultNRepositoryEvent(getWorkspace(), this, event, "mirror", event, null);
 //            }

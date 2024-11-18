@@ -72,7 +72,7 @@ public abstract class AbstractNHttpServletFacadeContext implements NHttpServletF
     public void sendResponseFile(int code, NPath file) throws IOException {
         if (file != null && file.isRegularFile()) {
             sendResponseHeaders(code, file.getContentLength());
-            NCp.of(file.getSession()).from(file).to(getResponseBody()).run();
+            NCp.of().from(file).to(getResponseBody()).run();
         } else {
             sendError(404, "File not found");
         }

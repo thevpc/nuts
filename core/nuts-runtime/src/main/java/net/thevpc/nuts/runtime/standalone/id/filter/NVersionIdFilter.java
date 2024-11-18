@@ -22,22 +22,22 @@ public class NVersionIdFilter extends AbstractIdFilter implements NIdFilter, NSi
 
     private final NVersionFilter filter;
 
-    public NVersionIdFilter(NVersionFilter filter, NSession session) {
-        super(session, NFilterOp.CONVERT);
+    public NVersionIdFilter(NVersionFilter filter, NWorkspace workspace) {
+        super(workspace, NFilterOp.CONVERT);
         this.filter = filter;
     }
 
     @Override
-    public boolean acceptSearchId(NSearchId sid, NSession session) {
-        return filter == null ? true : filter.acceptSearchId(sid, session);
+    public boolean acceptSearchId(NSearchId sid) {
+        return filter == null ? true : filter.acceptSearchId(sid);
     }
 
     @Override
-    public boolean acceptId(NId other, NSession session) {
+    public boolean acceptId(NId other) {
         if (filter == null) {
             return true;
         }
-        return filter.acceptVersion(other.getVersion(), session);
+        return filter.acceptVersion(other.getVersion());
     }
 
     @Override
@@ -74,7 +74,7 @@ public class NVersionIdFilter extends AbstractIdFilter implements NIdFilter, NSi
         if (f2 == filter) {
             return this;
         }
-        return new NVersionIdFilter(f2,getSession());
+        return new NVersionIdFilter(f2,workspace);
     }
 
     @Override

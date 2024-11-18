@@ -41,13 +41,12 @@ public abstract class NRepositoryException extends NException {
     /**
      * Constructs a new NutsRepositoryException exception
      *
-     * @param session    workspace
      * @param repository repository
      * @param message    message
      * @param ex         exception
      */
-    public NRepositoryException(NSession session, String repository, NMsg message, Throwable ex) {
-        super(session,
+    public NRepositoryException(String repository, NMsg message, Throwable ex) {
+        super(
                 message == null ? NMsg.ofC("repository %s has encountered problem", (repository == null ? "<null>" : repository)) : message, ex);
         this.repository = repository;
     }

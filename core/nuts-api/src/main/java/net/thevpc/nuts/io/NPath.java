@@ -26,10 +26,9 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.NRepository;
+import net.thevpc.nuts.NWorkspaceProvider;
 import net.thevpc.nuts.format.NFormattable;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NSessionProvider;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.util.NStream;
@@ -51,50 +50,48 @@ import java.util.function.Function;
  *
  * @app.category Input Output
  */
-public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessionProvider {
+public interface NPath extends NFormattable, NInputSource, NOutputTarget, NWorkspaceProvider {
 
-    static NPath of(URL path, NSession session) {
-        return NPaths.of(session).createPath(path);
+    static NPath of(URL path) {
+        return NPaths.of().createPath(path);
     }
 
-    static NPath of(String path, ClassLoader classLoader, NSession session) {
-        return NPaths.of(session).createPath(path, classLoader);
+    static NPath of(String path, ClassLoader classLoader) {
+        return NPaths.of().createPath(path, classLoader);
     }
 
-    static NPath of(File path, NSession session) {
-        return NPaths.of(session).createPath(path);
+    static NPath of(File path) {
+        return NPaths.of().createPath(path);
     }
 
-    static NPath of(Path path, NSession session) {
-        return NPaths.of(session).createPath(path);
+    static NPath of(Path path) {
+        return NPaths.of().createPath(path);
     }
 
-    static NPath of(String path, NSession session) {
-        return NPaths.of(session).createPath(path);
+    static NPath of(String path) {
+        return NPaths.of().createPath(path);
     }
 
-    static NPath of(NPathSPI path, NSession session) {
-        return NPaths.of(session).createPath(path);
+    static NPath of(NPathSPI path) {
+        return NPaths.of().createPath(path);
     }
 
     /**
      * return user home path
      *
-     * @param session session
      * @return user home path
      */
-    static NPath ofUserHome(NSession session) {
-        return NPath.of(Paths.get(System.getProperty("user.home")), session);
+    static NPath ofUserHome() {
+        return NPath.of(Paths.get(System.getProperty("user.home")));
     }
 
     /**
      * return user current directory
      *
-     * @param session session
      * @return return user current directory
      */
-    static NPath ofUserDirectory(NSession session) {
-        return NPath.of(Paths.get(System.getProperty("user.dir")), session);
+    static NPath ofUserDirectory() {
+        return NPath.of(Paths.get(System.getProperty("user.dir")));
     }
 
     /**
@@ -103,8 +100,8 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
      * @param name file name
      * @return newly created file path
      */
-    static NPath ofTempFile(String name, NSession session) {
-        return NPaths.of(session).ofTempFile(name);
+    static NPath ofTempFile(String name) {
+        return NPaths.of().ofTempFile(name);
     }
 
     /**
@@ -112,8 +109,8 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
      *
      * @return newly created file path
      */
-    static NPath ofTempFile(NSession session) {
-        return NPaths.of(session).ofTempFile();
+    static NPath ofTempFile() {
+        return NPaths.of().ofTempFile();
     }
 
     /**
@@ -122,8 +119,8 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
      * @param name folder name
      * @return newly created temp folder
      */
-    static NPath ofTempFolder(String name, NSession session) {
-        return NPaths.of(session).ofTempFolder(name);
+    static NPath ofTempFolder(String name) {
+        return NPaths.of().ofTempFolder(name);
     }
 
     /**
@@ -131,8 +128,8 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
      *
      * @return newly created temp folder
      */
-    static NPath ofTempFolder(NSession session) {
-        return NPaths.of(session).ofTempFolder();
+    static NPath ofTempFolder() {
+        return NPaths.of().ofTempFolder();
     }
 
     /**
@@ -141,8 +138,8 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
      * @param name file name
      * @return newly created file path
      */
-    static NPath ofTempRepositoryFile(String name, NRepository repository, NSession session) {
-        return NPaths.of(session).ofTempRepositoryFile(name, repository);
+    static NPath ofTempRepositoryFile(String name, NRepository repository) {
+        return NPaths.of().ofTempRepositoryFile(name, repository);
     }
 
     /**
@@ -150,8 +147,8 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
      *
      * @return newly created file path
      */
-    static NPath ofTempRepositoryFile(NRepository repository, NSession session) {
-        return NPaths.of(session).ofTempRepositoryFile(repository);
+    static NPath ofTempRepositoryFile(NRepository repository) {
+        return NPaths.of().ofTempRepositoryFile(repository);
     }
 
     /**
@@ -160,8 +157,8 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
      * @param name folder name
      * @return newly created temp folder
      */
-    static NPath ofTempRepositoryFolder(String name, NRepository repository, NSession session) {
-        return NPaths.of(session).ofTempRepositoryFolder(name, repository);
+    static NPath ofTempRepositoryFolder(String name, NRepository repository) {
+        return NPaths.of().ofTempRepositoryFolder(name, repository);
     }
 
     /**
@@ -169,8 +166,8 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
      *
      * @return newly created temp folder
      */
-    static NPath ofTempRepositoryFolder(NRepository repository, NSession session) {
-        return NPaths.of(session).ofTempRepositoryFolder(repository);
+    static NPath ofTempRepositoryFolder(NRepository repository) {
+        return NPaths.of().ofTempRepositoryFolder(repository);
     }
 
     /**
@@ -504,6 +501,4 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessi
 
     boolean isDeleteOnDispose();
 
-    // changes the path session
-    NPath setSession(NSession session);
 }

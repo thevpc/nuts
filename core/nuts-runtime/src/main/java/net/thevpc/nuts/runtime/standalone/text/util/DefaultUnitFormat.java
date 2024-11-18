@@ -291,7 +291,7 @@ public class DefaultUnitFormat {
     }
 
     public NText format(double value, NSession session) {
-        NTextBuilder sb = NTextBuilder.of(session);
+        NTextBuilder sb = NTextBuilder.of();
         boolean neg = value < 0;
         int sign = neg ? -1 : 1;
         double v = value < 0 ? -value : value;
@@ -326,7 +326,7 @@ public class DefaultUnitFormat {
             }
             return sb.toText();
         } else {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("Not supported yet"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("Not supported yet"));
         }
 
     }

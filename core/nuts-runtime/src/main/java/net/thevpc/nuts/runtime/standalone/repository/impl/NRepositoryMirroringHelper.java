@@ -12,7 +12,6 @@ import net.thevpc.nuts.runtime.standalone.id.filter.NSearchIdByDescriptor;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositoryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.lib.common.iter.IteratorBuilder;
 import net.thevpc.nuts.lib.common.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -41,14 +40,15 @@ public class NRepositoryMirroringHelper {
         this.cache = cache;
     }
 
-    protected NIterator<NId> searchVersionsImpl_appendMirrors(NIterator<NId> namedNutIdIterator, NId id, NIdFilter idFilter, NFetchMode fetchMode, NSession session) {
+    protected NIterator<NId> searchVersionsImpl_appendMirrors(NIterator<NId> namedNutIdIterator, NId id, NIdFilter idFilter, NFetchMode fetchMode) {
+        NSession session = repo.getWorkspace().currentSession();
         if (!session.isTransitive()) {
             return namedNutIdIterator;
         }
         List<NIterator<? extends NId>> list = new ArrayList<>();
         list.add(namedNutIdIterator);
-        if (repo.config().setSession(session).isSupportedMirroring()) {
-            for (NRepository repo : repo.config().setSession(session).getMirrors()) {
+        if (repo.config().isSupportedMirroring()) {
+            for (NRepository repo : repo.config().getMirrors()) {
                 NSpeedQualifier sup = NSpeedQualifier.UNAVAILABLE;
                 try {
                     sup = NRepositoryHelper.getSupportSpeedLevel(repo, NRepositorySupportedAction.SEARCH, id, fetchMode, session.isTransitive(), session);
@@ -56,11 +56,11 @@ public class NRepositoryMirroringHelper {
                     //                errors.append(CoreStringUtils.exceptionToString(ex)).append("\n");
                 }
                 if (sup != NSpeedQualifier.UNAVAILABLE) {
-                    NRepositorySPI repoSPI = NWorkspaceUtils.of(session).repoSPI(repo);
+                    NRepositorySPI repoSPI = NWorkspaceUtils.of(getWorkspace()).repoSPI(repo);
                     list.add(
-                            IteratorBuilder.of(repoSPI.searchVersions().setId(id).setFilter(idFilter).setSession(session)
+                            IteratorBuilder.of(repoSPI.searchVersions().setId(id).setFilter(idFilter)
                                             .setFetchMode(fetchMode)
-                                            .getResult(), session)
+                                            .getResult())
                                     .named("searchInMirror(" + repo.getName() + ")")
                                     .safeIgnore()
                                     .build()
@@ -71,14 +71,16 @@ public class NRepositoryMirroringHelper {
         return IteratorUtils.concat(list);
     }
 
-    protected NPath fetchContent(NId id, NDescriptor descriptor, NFetchMode fetchMode, NSession session) {
-        NPath cacheContent = cache.getLongIdLocalFile(id, session);
-        NRepositoryConfigManager rconfig = repo.config().setSession(session);
+    protected NPath fetchContent(NId id, NDescriptor descriptor, NFetchMode fetchMode) {
+        NPath cacheContent = cache.getLongIdLocalFile(id);
+        NRepositoryConfigManager rconfig = repo.config();
+        NWorkspace workspace = repo.getWorkspace();
+        NSession session = workspace.currentSession();
         if (session.isTransitive() && rconfig.isSupportedMirroring()) {
-            for (NRepository mirror : rconfig.setSession(session).getMirrors()) {
+            for (NRepository mirror : rconfig.getMirrors()) {
                 try {
-                    NRepositorySPI repoSPI = NWorkspaceUtils.of(session).repoSPI(mirror);
-                    NPath c = repoSPI.fetchContent().setId(id).setDescriptor(descriptor).setSession(session)
+                    NRepositorySPI repoSPI = NWorkspaceUtils.of(workspace).repoSPI(mirror);
+                    NPath c = repoSPI.fetchContent().setId(id).setDescriptor(descriptor)
                             .setFetchMode(fetchMode)
                             .getResult();
                     if (c != null) {
@@ -96,20 +98,22 @@ public class NRepositoryMirroringHelper {
         return repo.getWorkspace();
     }
 
-    protected String getIdFilename(NId id, NSession session) {
-        return NRepositoryExt.of(repo).getIdFilename(id, session);
+    protected String getIdFilename(NId id) {
+        return NRepositoryExt.of(repo).getIdFilename(id);
     }
 
-    protected NDescriptor fetchDescriptorImplInMirrors(NId id, NFetchMode fetchMode, NSession session) {
-        String idFilename = getIdFilename(id, session);
+    protected NDescriptor fetchDescriptorImplInMirrors(NId id, NFetchMode fetchMode) {
+        String idFilename = getIdFilename(id);
+        NWorkspace workspace = repo.getWorkspace();
+        NSession session = workspace.currentSession();
         NPath versionFolder = cache.getLongIdLocalFolder(id, session);
-        NRepositoryConfigManager rconf = repo.config().setSession(session);
+        NRepositoryConfigManager rconf = repo.config();
         if (session.isTransitive() && rconf.isSupportedMirroring()) {
             for (NRepository remote : rconf.getMirrors()) {
                 NDescriptor nutsDescriptor = null;
                 try {
-                    NRepositorySPI repoSPI = NWorkspaceUtils.of(session).repoSPI(remote);
-                    nutsDescriptor = repoSPI.fetchDescriptor().setId(id).setSession(session).setFetchMode(fetchMode).getResult();
+                    NRepositorySPI repoSPI = NWorkspaceUtils.of(workspace).repoSPI(remote);
+                    nutsDescriptor = repoSPI.fetchDescriptor().setId(id).setFetchMode(fetchMode).getResult();
                 } catch (Exception ex) {
                     //ignore
                 }
@@ -122,7 +126,7 @@ public class NRepositoryMirroringHelper {
 //                    } else {
 //                        goodFile = versionFolder.resolve(NutsUtilStrings.trim(a)).resolve(idFilename);
 //                    }
-                    nutsDescriptor.formatter(session).print(goodFile);
+                    nutsDescriptor.formatter().print(goodFile);
                     return nutsDescriptor;
                 }
             }
@@ -130,17 +134,18 @@ public class NRepositoryMirroringHelper {
         return null;
     }
 
-    public NIterator<NId> search(NIterator<NId> li, NIdFilter filter, NFetchMode fetchMode, NSession session) {
-        NRepositoryConfigManager rconfig = repo.config().setSession(session);
+    public NIterator<NId> search(NIterator<NId> li, NIdFilter filter, NFetchMode fetchMode) {
+        NRepositoryConfigManager rconfig = repo.config();
+        NSession session = repo.getWorkspace().currentSession();
         if (!session.isTransitive() || !rconfig.isSupportedMirroring()) {
             return li;
         }
         List<NIterator<? extends NId>> all = new ArrayList<>();
         all.add(li);
-        for (NRepository remote : rconfig.setSession(session).getMirrors()) {
-            NRepositorySPI repoSPI = NWorkspaceUtils.of(session).repoSPI(remote);
+        for (NRepository remote : rconfig.getMirrors()) {
+            NRepositorySPI repoSPI = NWorkspaceUtils.of(getWorkspace()).repoSPI(remote);
             all.add(IteratorUtils.safeIgnore(
-                    repoSPI.search().setFilter(filter).setSession(session).setFetchMode(fetchMode).getResult(), session
+                    repoSPI.search().setFilter(filter).setFetchMode(fetchMode).getResult(), session
             ));
         }
         return IteratorUtils.concat(all);
@@ -148,33 +153,32 @@ public class NRepositoryMirroringHelper {
     }
 
     public void push(NPushRepositoryCmd cmd) {
-        NSession session = cmd.getSession();
-        NSessionUtils.checkSession(getWorkspace(), session);
         NId id = cmd.getId();
         String repository = cmd.getRepository();
+        NSession session = getWorkspace().currentSession();
         NSession nonTransitiveSession = session.copy().setTransitive(false);
-        NRepositorySPI repoSPI = NWorkspaceUtils.of(session).repoSPI(repo);
-        NDescriptor desc = repoSPI.fetchDescriptor().setId(id).setSession(nonTransitiveSession).setFetchMode(NFetchMode.LOCAL).getResult();
-        NPath local = repoSPI.fetchContent().setId(id).setSession(nonTransitiveSession).setFetchMode(NFetchMode.LOCAL).getResult();
+
+        NDescriptor desc = nonTransitiveSession.callWith(() -> NWorkspaceUtils.of(getWorkspace()).repoSPI(repo).fetchDescriptor().setId(id).setFetchMode(NFetchMode.LOCAL).getResult());
+        NPath local = nonTransitiveSession.callWith(() -> NWorkspaceUtils.of(getWorkspace()).repoSPI(repo).fetchContent().setId(id).setFetchMode(NFetchMode.LOCAL).getResult());
         if (local == null) {
-            throw new NNotFoundException(session, id);
+            throw new NNotFoundException(id);
         }
-        if (!repo.config().setSession(session).isSupportedMirroring()) {
-            throw new NPushException(session, id, NMsg.ofC("unable to push %s. no repository found.", id == null ? "<null>" : id));
+        if (!repo.config().isSupportedMirroring()) {
+            throw new NPushException(id, NMsg.ofC("unable to push %s. no repository found.", id == null ? "<null>" : id));
         }
         NRepository repo = this.repo;
         if (NBlankable.isBlank(repository)) {
             List<NRepository> all = new ArrayList<>();
-            for (NRepository remote : repo.config().setSession(session).getMirrors()) {
+            for (NRepository remote : repo.config().getMirrors()) {
                 NSpeedQualifier lvl = NRepositoryHelper.getSupportSpeedLevel(remote, NRepositorySupportedAction.DEPLOY, id, NFetchMode.LOCAL, false, session);
                 if (lvl != NSpeedQualifier.UNAVAILABLE) {
                     all.add(remote);
                 }
             }
             if (all.isEmpty()) {
-                throw new NPushException(session, id, NMsg.ofC("unable to push %s. no repository found.", id == null ? "<null>" : id));
+                throw new NPushException(id, NMsg.ofC("unable to push %s. no repository found.", id == null ? "<null>" : id));
             } else if (all.size() > 1) {
-                throw new NPushException(session, id,
+                throw new NPushException(id,
                         NMsg.ofC("unable to perform push for %s. at least two Repositories (%s) provides the same nuts %s",
                                 id,
                                 all.stream().map(NRepository::getName).collect(Collectors.joining(",")),
@@ -184,45 +188,46 @@ public class NRepositoryMirroringHelper {
             }
             repo = all.get(0);
         } else {
-            repo = this.repo.config().setSession(session.copy().setTransitive(false)).getMirror(repository);
+            repo = nonTransitiveSession.callWith(() -> {
+                return this.repo.config().getMirror(repository);
+            });
         }
         if (repo != null) {
-            NId effId = CoreNIdUtils.createContentFaceId(id.builder().setPropertiesQuery("").build(), desc,session)
+            NId effId = CoreNIdUtils.createContentFaceId(id.builder().setPropertiesQuery("").build(), desc, session)
 //                    .setAlternative(NutsUtilStrings.trim(desc.getAlternative()))
                     ;
-            NDeployRepositoryCmd dep = repoSPI.deploy()
+            NDeployRepositoryCmd dep = NWorkspaceUtils.of(getWorkspace()).repoSPI(repo).deploy()
                     .setId(effId)
                     .setContent(local)
                     .setDescriptor(desc)
 //                    .setOffline(cmd.isOffline())
                     //.setFetchMode(NutsFetchMode.LOCAL)
-                    .setSession(session)
                     .run();
-            NRepositoryHelper.of(repo).events().fireOnPush(new DefaultNContentEvent(
-                    local, dep, session, repo));
+            NRepositoryHelper.of(repo).events().fireOnPush(new DefaultNContentEvent(local, dep, session, repo));
         } else {
-            throw new NRepositoryNotFoundException(session, repository);
+            throw new NRepositoryNotFoundException(repository);
         }
     }
 
-    public NId searchLatestVersion(NId bestId, NId id, NIdFilter filter, NFetchMode fetchMode, NSession session) {
-        NRepositoryConfigManager rconfig = repo.config().setSession(session);
+    public NId searchLatestVersion(NId bestId, NId id, NIdFilter filter, NFetchMode fetchMode) {
+        NRepositoryConfigManager rconfig = repo.config();
+        NSession session = repo.getWorkspace().currentSession();
         if (session.isTransitive() && rconfig.isSupportedMirroring()) {
-            for (NRepository remote : rconfig.setSession(session).getMirrors()) {
+            for (NRepository remote : rconfig.getMirrors()) {
                 NDescriptor nutsDescriptor = null;
                 try {
-                    NRepositorySPI repoSPI = NWorkspaceUtils.of(session).repoSPI(remote);
-                    nutsDescriptor = repoSPI.fetchDescriptor().setId(id).setSession(session).setFetchMode(fetchMode).getResult();
+                    NRepositorySPI repoSPI = NWorkspaceUtils.of(getWorkspace()).repoSPI(remote);
+                    nutsDescriptor = repoSPI.fetchDescriptor().setId(id).setFetchMode(fetchMode).getResult();
                 } catch (Exception ex) {
                     //ignore
                 }
                 if (nutsDescriptor != null) {
-                    if (filter == null || filter.acceptSearchId(new NSearchIdByDescriptor(nutsDescriptor), session)) {
+                    if (filter == null || filter.acceptSearchId(new NSearchIdByDescriptor(nutsDescriptor))) {
 //                        NutsId id2 = C                                oreNutsUtils.createComponentFaceId(getWorkspace().resolveEffectiveId(nutsDescriptor,session),nutsDescriptor,null);
                         NWorkspaceExt dws = NWorkspaceExt.of(getWorkspace());
-                        NId id2 = dws.resolveEffectiveId(nutsDescriptor, session).builder().setFaceDescriptor().build();
-                        NPath localNutFile = cache.getLongIdLocalFile(id2, session);
-                        nutsDescriptor.formatter(session).print(localNutFile);
+                        NId id2 = dws.resolveEffectiveId(nutsDescriptor).builder().setFaceDescriptor().build();
+                        NPath localNutFile = cache.getLongIdLocalFile(id2);
+                        nutsDescriptor.formatter().print(localNutFile);
                         if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
                             bestId = id2;
                         }

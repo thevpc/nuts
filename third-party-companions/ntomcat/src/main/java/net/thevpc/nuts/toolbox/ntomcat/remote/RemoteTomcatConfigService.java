@@ -60,7 +60,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
 
     @Override
     public RemoteTomcatConfigService print(NPrintStream out) {
-        NElements.of(session).json().setValue(getConfig()).print(out);
+        NElements.of().json().setValue(getConfig()).print(out);
         out.flush();
         return this;
     }
@@ -83,7 +83,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
 
     public RemoteTomcatConfigService save() {
         NPath f = getConfigPath();
-        NElements.of(session).json().setValue(config).print(f);
+        NElements.of().json().setValue(config).print(f);
         return this;
     }
 
@@ -162,11 +162,11 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
 
     public RemoteTomcatConfigService loadConfig() {
         if (name == null) {
-            throw new NExecutionException(session, NMsg.ofPlain("missing instance name"), NExecutionException.ERROR_2);
+            throw new NExecutionException(NMsg.ofPlain("missing instance name"), NExecutionException.ERROR_2);
         }
         NPath f = getConfigPath();
         if (f.exists()) {
-            config = NElements.of(session).json().parse(f, RemoteTomcatConfig.class);
+            config = NElements.of().json().parse(f, RemoteTomcatConfig.class);
             return this;
         }
         throw new NamedItemNotFoundException("instance not found : " + getName(), getName());
@@ -187,7 +187,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     public RemoteTomcatAppConfigService getAppOrError(String appName) {
         RemoteTomcatAppConfig a = getConfig().getApps().get(appName);
         if (a == null) {
-            throw new NExecutionException(session, NMsg.ofC("app not found :%s", appName), NExecutionException.ERROR_2);
+            throw new NExecutionException(NMsg.ofC("app not found :%s", appName), NExecutionException.ERROR_2);
         }
         return new RemoteTomcatAppConfigService(appName, a, this);
     }
@@ -228,7 +228,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
         cmdList.add("nuts");
         cmdList.add("--bot");
         cmdList.addAll(Arrays.asList(cmd));
-        NExecCmd.of(session)
+        NExecCmd.of()
                 .addCommand(cmdList)
                 .failFast()
                 .run();

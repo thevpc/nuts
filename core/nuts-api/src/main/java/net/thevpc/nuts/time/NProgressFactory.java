@@ -25,8 +25,6 @@
  */
 package net.thevpc.nuts.time;
 
-import net.thevpc.nuts.NSession;
-
 /**
  * NutsProgressFactory is responsible of creating instances of {@link NProgressListener}
  *
@@ -41,9 +39,8 @@ public interface NProgressFactory {
      *
      * @param source       source object of the progress. This may be the File for instance
      * @param sourceOrigin source origin object of the progress. This may be the NutsId for instance
-     * @param session      workspace session
      * @return new instance of {@link NProgressListener}
      */
-    NProgressListener createProgressListener(Object source, Object sourceOrigin, NSession session);
+    NProgressListener createProgressListener(Object source, Object sourceOrigin);
 
 }

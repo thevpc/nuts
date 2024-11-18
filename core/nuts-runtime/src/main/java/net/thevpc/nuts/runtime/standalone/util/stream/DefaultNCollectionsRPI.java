@@ -37,9 +37,9 @@ public class DefaultNCollectionsRPI implements NCollectionsRPI {
         checkSession();
         String name = null;
         if (str == null) {
-            return new NStreamEmpty<T>(getSession(), name);
+            return new NStreamEmpty<T>(name);
         }
-        return iterableToStream((Iterable<T>) Arrays.asList(str)).withDesc(e -> NElements.of(e).ofString("array"));
+        return iterableToStream((Iterable<T>) Arrays.asList(str)).withDesc(() -> NElements.of().ofString("array"));
     }
 
     @Override
@@ -47,7 +47,7 @@ public class DefaultNCollectionsRPI implements NCollectionsRPI {
         checkSession();
         String name = null;
         if (str == null) {
-            return new NStreamEmpty<T>(getSession(), name);
+            return new NStreamEmpty<T>(name);
         }
         if (str instanceof List) {
             return new NStreamFromList<T>(getSession(), name, (List<T>) str);
@@ -56,13 +56,13 @@ public class DefaultNCollectionsRPI implements NCollectionsRPI {
             return new NStreamFromCollection<T>(getSession(), name, (Collection<T>) str);
         }
 
-        return new NStreamFromNIterable<>(getSession(), name, NIterable.of(str,session));
+        return new NStreamFromNIterable<>(getSession(), name, NIterable.of(str));
     }
 
     @Override
     public <T> NStream<T> iteratorToStream(Iterator<T> str) {
-        return new NStreamFromNIterator<T>(session, null,
-                NIterator.of(str, session)
+        return new NStreamFromNIterator<T>(null,
+                NIterator.of(str)
         );
     }
 
@@ -74,7 +74,7 @@ public class DefaultNCollectionsRPI implements NCollectionsRPI {
 
     @Override
     public <T> NStream<T> emptyStream() {
-        return new NStreamEmpty<T>(getSession(), null);
+        return new NStreamEmpty<T>(null);
     }
 
     @Override

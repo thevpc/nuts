@@ -7,19 +7,19 @@ public class NEnumUtils {
     }
     public static <T extends Enum> NOptional<T> parseEnum(String value, Class<T> type) {
         if (NBlankable.isBlank(value)) {
-            return NOptional.ofEmpty(s -> NMsg.ofC("%s is empty", type.getSimpleName()));
+            return NOptional.ofEmpty(() -> NMsg.ofC("%s is empty", type.getSimpleName()));
         }
         String normalizedValue = NNameFormat.CONST_NAME.format(value);
         try {
             return NOptional.of((T) Enum.valueOf(type, normalizedValue));
         } catch (Exception notFound) {
-            return NOptional.ofError(s -> NMsg.ofC(type.getSimpleName() + " invalid value : %s", value));
+            return NOptional.ofError(() -> NMsg.ofC(type.getSimpleName() + " invalid value : %s", value));
         }
     }
 
     public static <T extends Enum> NOptional<T> parseEnum(String value, Class<T> type, Function<EnumValue, NOptional<T>> mapper) {
         if (NBlankable.isBlank(value)) {
-            return NOptional.ofEmpty(s -> NMsg.ofC("%s is empty", type.getSimpleName()));
+            return NOptional.ofEmpty(() -> NMsg.ofC("%s is empty", type.getSimpleName()));
         }
         String[] parsedValue = NNameFormat.parse(value);
         String normalizedValue = NNameFormat.CONST_NAME.format(parsedValue);
@@ -40,7 +40,7 @@ public class NEnumUtils {
         try {
             return NOptional.of((T) Enum.valueOf(type, normalizedValue));
         } catch (Exception notFound) {
-            return NOptional.ofError(s -> NMsg.ofC("%s invalid value : %s", type.getSimpleName(), value), notFound);
+            return NOptional.ofError(() -> NMsg.ofC("%s invalid value : %s", type.getSimpleName(), value), notFound);
         }
     }
 

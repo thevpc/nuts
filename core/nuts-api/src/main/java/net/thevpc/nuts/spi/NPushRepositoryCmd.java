@@ -55,15 +55,6 @@ public interface NPushRepositoryCmd extends NRepositoryCmd {
     NPushRepositoryCmd setId(NId id);
 
     /**
-     * set session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
-    NPushRepositoryCmd setSession(NSession session);
-
-    /**
      * run this command and return {@code this} instance
      *
      * @return {@code this} instance

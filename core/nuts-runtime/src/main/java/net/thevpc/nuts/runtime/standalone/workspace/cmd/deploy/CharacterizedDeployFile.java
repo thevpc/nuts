@@ -80,7 +80,7 @@ class CharacterizedDeployFile implements AutoCloseable {
             try {
                 Files.delete(temp);
             } catch (IOException ex) {
-                throw new NIOException(session, ex);
+                throw new NIOException(ex);
             }
             it.remove();
         }

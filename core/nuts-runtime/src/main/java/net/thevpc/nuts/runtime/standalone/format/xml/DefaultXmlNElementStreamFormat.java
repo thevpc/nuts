@@ -55,11 +55,11 @@ public class DefaultXmlNElementStreamFormat implements NElementStreamFormat {
         NSession session = context.getSession();
         Document doc = null;
         try {
-            doc = XmlUtils.createDocumentBuilder(false, session).parse(new InputSource(reader));
+            doc = XmlUtils.createDocumentBuilder(false).parse(new InputSource(reader));
         } catch (SAXException ex) {
-            throw new NIOException(session, new IOException(ex));
+            throw new NIOException(new IOException(ex));
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
         return context.objectToElement(doc, Document.class);
     }
@@ -69,11 +69,11 @@ public class DefaultXmlNElementStreamFormat implements NElementStreamFormat {
         NSession session = context.getSession();
         Document doc = (Document) context.elementToObject(value, Document.class);
         if (out.isNtf()) {
-            NPrintStream bos = NMemoryPrintStream.of(context.getSession());
-            XmlUtils.writeDocument(doc, new StreamResult(bos.asPrintStream()), compact, true, session);
-            out.print(NTexts.of(context.getSession()).ofCode("xml", bos.toString()));
+            NPrintStream bos = NMemoryPrintStream.of();
+            XmlUtils.writeDocument(doc, new StreamResult(bos.asPrintStream()), compact, true);
+            out.print(NTexts.of().ofCode("xml", bos.toString()));
         } else {
-            XmlUtils.writeDocument(doc, new StreamResult(out.asPrintStream()), compact, true, session);
+            XmlUtils.writeDocument(doc, new StreamResult(out.asPrintStream()), compact, true);
         }
     }
 

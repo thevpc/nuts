@@ -60,11 +60,12 @@ public class NRepositoryRegistryHelper {
                 .toArray(NRepositoryRef[]::new);
     }
 
-    public void addRepository(NRepository repository, NSession session) {
+    public void addRepository(NRepository repository) {
         if (repository == null) {
             return;
         }
-        NRepositoryRef repositoryRef = repository.config().setSession(session).getRepositoryRef();
+        NSession session=ws.currentSession();
+        NRepositoryRef repositoryRef = repository.config().getRepositoryRef();
         String uuid = repository.getUuid();
         String name = repository.getName();
         if (name == null) {
@@ -74,17 +75,17 @@ public class NRepositoryRegistryHelper {
         if (uuid != null) {
             ii = repositoriesByUuid.get(uuid);
             if (ii != null) {
-                throw new NIllegalArgumentException(session,
+                throw new NIllegalArgumentException(
                         NMsg.ofC("repository with the same uuid already exists % / %s", ii.repo.getUuid(), ii.repo.getName())
                 );
             }
         }
         ii = repositoriesByName.get(name);
         if (ii != null) {
-            throw new NIllegalArgumentException(session, NMsg.ofC("repository with the same name already exists %s / %s", ii.repo.getUuid(), ii.repo.getName()));
+            throw new NIllegalArgumentException(NMsg.ofC("repository with the same name already exists %s / %s", ii.repo.getUuid(), ii.repo.getName()));
         }
         if (!name.matches("[a-zA-Z][.a-zA-Z0-9_-]*")) {
-            throw new NIllegalArgumentException(session, NMsg.ofC("invalid repository name %s", name));
+            throw new NIllegalArgumentException(NMsg.ofC("invalid repository name %s", name));
         }
         RepoAndRef rr = new RepoAndRef(repository);
         rr.ref = repositoryRef;
@@ -135,7 +136,8 @@ public class NRepositoryRegistryHelper {
 //            repositoriesByUuid.put(repository.config().uuid(), rr);
 //        }
 //    }
-    public NRepository removeRepository(String repository, NSession session) {
+    public NRepository removeRepository(String repository) {
+        NSession session=ws.currentSession();
         final NRepository r = findRepository(repository);
         if (r != null) {
             repositoriesByName.remove(r.getName());

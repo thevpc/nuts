@@ -19,7 +19,7 @@ public class CreateIndexCmd<C extends NdbConfig> extends NdbCmd<C> {
         this.names.addAll(Arrays.asList(names));
     }
 
-    public void run(NSession session, NCmdLine cmdLine) {
+    public void run(NCmdLine cmdLine) {
         NRef<AtName> name = NRef.ofNull(AtName.class);
         ExtendedQuery eq = new ExtendedQuery(getName());
         C otherOptions = createConfigInstance();
@@ -28,24 +28,24 @@ public class CreateIndexCmd<C extends NdbConfig> extends NdbCmd<C> {
         while (cmdLine.hasNext()) {
             switch (status) {
                 case "": {
-                    switch (cmdLine.peek().get(session).key()) {
+                    switch (cmdLine.peek().get().key()) {
                         case "--config": {
-                            readConfigNameOption(cmdLine, session, name);
+                            readConfigNameOption(cmdLine, name);
                             break;
                         }
                         case "--entity":
                         case "--table":
                         case "--collection": {
-                            cmdLine.withNextEntry((v, a, s) -> eq.setTable(v));
+                            cmdLine.withNextEntry((v, a) -> eq.setTable(v));
                             break;
                         }
                         case "--one": {
-                            cmdLine.withNextFlag((v, a, s) -> eq.setOne(v));
+                            cmdLine.withNextFlag((v, a) -> eq.setOne(v));
                             break;
                         }
                         case "--set": {
                             status = "--set";
-                            cmdLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a) -> {
                             });
                             break;
                         }
@@ -56,7 +56,7 @@ public class CreateIndexCmd<C extends NdbConfig> extends NdbCmd<C> {
                     break;
                 }
                 case "--set": {
-                    switch (cmdLine.peek().get(session).key()) {
+                    switch (cmdLine.peek().get().key()) {
                         default: {
                             eq.getSet().add(cmdLine.next().get().toString());
                         }
@@ -77,11 +77,11 @@ public class CreateIndexCmd<C extends NdbConfig> extends NdbCmd<C> {
         if (NBlankable.isBlank(otherOptions.getDatabaseName())) {
             cmdLine.throwMissingArgument("--dbname");
         }
-        runCreateIndex(eq, options, session);
+        runCreateIndex(eq, options);
     }
 
-    protected void runCreateIndex(ExtendedQuery eq, C options, NSession session) {
-        throw new NIllegalArgumentException(session, NMsg.ofPlain("invalid"));
+    protected void runCreateIndex(ExtendedQuery eq, C options) {
+        throw new NIllegalArgumentException(NMsg.ofPlain("invalid"));
     }
 
 }

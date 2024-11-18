@@ -51,7 +51,7 @@ public class UnameCommand extends NShellBuiltinDefault {
     protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options config = context.getOptions();
-        switch (cmdLine.peek().get(session).key()) {
+        switch (cmdLine.peek().get().key()) {
             case "-m": {
                 config.farch = true;
                 return true;
@@ -80,9 +80,9 @@ public class UnameCommand extends NShellBuiltinDefault {
         NSession session = context.getSession();
 
         Result rr = new Result();
-        rr.osDist = NEnvs.of(session).getOsDist();
-        rr.os = NEnvs.of(session).getOs();
-        rr.arch = NEnvs.of(session).getArchFamily();
+        rr.osDist = NEnvs.of().getOsDist();
+        rr.os = NEnvs.of().getOs();
+        rr.arch = NEnvs.of().getArchFamily();
         if (!config.farch && !config.fos && !config.fdist) {
             config.farch = true;
             config.fos = true;

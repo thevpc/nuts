@@ -1,19 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.io.urlpart;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.format.NVisitResult;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.util.NIOUtils;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 class URLPartJar extends URLPart {
@@ -28,29 +24,29 @@ class URLPartJar extends URLPart {
         return new URLPartJar(path, obj, base0);
     }
 
-    public InputStream getInputStream(NSession session) {
+    public InputStream getInputStream() {
         List<InputStream> found = new ArrayList<>();
         URLPart pp = (URLPart) obj;
-        ZipUtils.visitZipStream(pp.getInputStream(session), (path, inputStream) -> {
+        ZipUtils.visitZipStream(pp.getInputStream(), (path, inputStream) -> {
             if (path.equals(URLPartJar.this.path)) {
                 found.add(new ByteArrayInputStream(NIOUtils.readBytes(inputStream)));
                 return NVisitResult.TERMINATE;
             }
             return NVisitResult.CONTINUE;
-        }, session);
+        });
         if (found.isEmpty()) {
             return null;
         }
         return found.get(0);
     }
 
-    public URLPart[] getChildren(boolean includeFolders, boolean deep, final Predicate<URLPart> filter, NSession session) {
-        try(InputStream is=base0.getInputStream(session)) {
+    public URLPart[] getChildren(boolean includeFolders, boolean deep, final Predicate<URLPart> filter) {
+        try(InputStream is=base0.getInputStream()) {
             return URLPartHelper.searchStream(is,
                     s -> new URLPartJar(s, base0, base0)
-                    , includeFolders, deep, filter,session);
+                    , includeFolders, deep, filter);
         } catch (IOException e) {
-            throw new NIOException(session, e);
+            throw new NIOException(e);
         }
     }
 }

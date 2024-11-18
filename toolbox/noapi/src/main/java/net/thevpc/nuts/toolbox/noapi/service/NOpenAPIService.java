@@ -38,9 +38,9 @@ public class NOpenAPIService {
     }
 
     public NPath resolvePath(String source) {
-        NPath sourcePath = NPath.of(source, session).normalize().toAbsolute();
+        NPath sourcePath = NPath.of(source).normalize().toAbsolute();
         if (!sourcePath.exists()) {
-            throw new NNoSuchElementException(session, NMsg.ofC("file not found %s", sourcePath));
+            throw new NNoSuchElementException(NMsg.ofC("file not found %s", sourcePath));
         }
         if (sourcePath.isDirectory()) {
             List<NPath> found = sourcePath.list().stream().filter(x -> x.getName().endsWith(".json") && !x.getName().endsWith(".config.json")).collect(Collectors.toList());
@@ -48,9 +48,9 @@ public class NOpenAPIService {
                 return found.get(0);
             }
             if (found.isEmpty()) {
-                throw new NNoSuchElementException(session, NMsg.ofC("missing json files in folder %s", sourcePath));
+                throw new NNoSuchElementException(NMsg.ofC("missing json files in folder %s", sourcePath));
             }
-            throw new NNoSuchElementException(session, NMsg.ofC("too many json files in folder %s", sourcePath));
+            throw new NNoSuchElementException(NMsg.ofC("too many json files in folder %s", sourcePath));
         }
         return sourcePath;
     }
@@ -58,7 +58,7 @@ public class NOpenAPIService {
     public void run(String source, String target, String varsPath, Map<String, String> varsMap, boolean keep) {
         Map<String, String> vars = new HashMap<>();
         if (!NBlankable.isBlank(varsPath)) {
-            Map<Object, Object> m = NElements.of(session).parse(NPath.of(varsPath, session), Map.class);
+            Map<Object, Object> m = NElements.of().parse(NPath.of(varsPath), Map.class);
             for (Map.Entry<Object, Object> o : m.entrySet()) {
                 vars.put(String.valueOf(o.getKey()), String.valueOf(o.getValue()));
             }
@@ -72,14 +72,14 @@ public class NOpenAPIService {
         }
         String sourceBaseName = sourcePath.getSmartBaseName();
         NElement apiElement = NoApiUtils.loadElement(sourcePath, session);
-        NObjectElement infoObj = apiElement.asObject().get(session).getObject("info").orElse(NElements.of(session).ofEmptyObject());
+        NObjectElement infoObj = apiElement.asObject().get().getObject("info").orElse(NElements.of().ofEmptyObject());
         String documentVersion = infoObj.getString("version").orNull();
 
 //        Path path = Paths.get("/data/from-git/RapiPdf/docs/specs/maghrebia-api-1.1.2.yml");
         SupportedTargetType targetType = NoApiUtils.resolveTarget(target, SupportedTargetType.PDF);
         NPath sourceFolder = sourcePath.getParent();
         NPath parentPath = sourceFolder.resolve("dist-version-" + documentVersion);
-        NPath targetPathObj = NoApiUtils.addExtension(sourcePath, parentPath, NPath.of(target, session), targetType, documentVersion, session);
+        NPath targetPathObj = NoApiUtils.addExtension(sourcePath, parentPath, NPath.of(target), targetType, documentVersion, session);
 
         //start copying json file
         NPath openApiFileCopy = targetPathObj.resolveSibling(targetPathObj.getSmartBaseName() + "." + sourcePath.getLastExtension());
@@ -102,14 +102,14 @@ public class NOpenAPIService {
                 }
         ).withDesc(NEDesc.of("config files")).toList();
         for (NPath cf : allConfigFiles) {
-            NElement z = NElements.of(session).parse(cf);
+            NElement z = NElements.of().parse(cf);
             //remove version, will be added later
             NPath configFileCopy = targetPathObj.resolveSibling(cf.getSmartBaseName() + "-" + documentVersion + "." + cf.getSmartExtension());
             cf.copyTo(configFileCopy);
             if (session.isPlainTrace()) {
                 session.out().println(NMsg.ofC("copy  config  file %s", configFileCopy));
             }
-            NPath targetPathObj2 = NoApiUtils.addExtension(sourcePath, parentPath, NPath.of(target, session), targetType, "", session);
+            NPath targetPathObj2 = NoApiUtils.addExtension(sourcePath, parentPath, NPath.of(target), targetType, "", session);
             generateConfigDocument(z, apiElement, parentPath, sourceFolder, targetPathObj2.getSmartBaseName(), targetPathObj.getName(), targetType, keep, vars);
         }
 
@@ -119,19 +119,19 @@ public class NOpenAPIService {
     }
 
     private void generateConfigDocument(NElement configElements, NElement apiElement, NPath parentPath, NPath sourceFolder, String baseName, String apiFileName, SupportedTargetType targetType, boolean keep, Map<String, String> vars) {
-        NObjectElement obj = configElements.asObject().get(session);
-        String targetName = obj.getString("target-name").get(session);
-        String targetId = obj.getString("target-id").get(session);
+        NObjectElement obj = configElements.asObject().get();
+        String targetName = obj.getString("target-name").get();
+        String targetId = obj.getString("target-id").get();
         if (NBlankable.isBlank(targetId)) {
             targetId = targetName;
         }
         vars.put("config.target", targetName);
-        NObjectElement infoObj = apiElement.asObject().get(session).getObject("info").orElse(NElements.of(session).ofEmptyObject());
+        NObjectElement infoObj = apiElement.asObject().get().getObject("info").orElse(NElements.of().ofEmptyObject());
         String documentVersion = infoObj.getString("version").orNull();
 
         NPath newFile = parentPath.resolve(baseName + "-" + NoApiUtils.toValidFileName(targetId) + "-" + documentVersion + ".pdf");
         ConfigMarkdownGenerator mg = new ConfigMarkdownGenerator(session, msg);
-        MdDocument md = mg.createMarkdown(obj, apiElement.asObject().get(session), newFile.getParent(), sourceFolder, apiFileName, vars, defaultAdocHeaders);
+        MdDocument md = mg.createMarkdown(obj, apiElement.asObject().get(), newFile.getParent(), sourceFolder, apiFileName, vars, defaultAdocHeaders);
         NoApiUtils.writeAdoc(md, newFile, keep, targetType, session);
     }
 

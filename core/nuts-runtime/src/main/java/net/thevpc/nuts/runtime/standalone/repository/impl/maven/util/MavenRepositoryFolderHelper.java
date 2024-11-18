@@ -61,7 +61,6 @@ import net.thevpc.nuts.util.NMsg;
  */
 public class MavenRepositoryFolderHelper {
 
-    private NLog LOG;
     private NRepository repo;
     private NWorkspace ws;
     private NPath rootPath;
@@ -70,25 +69,22 @@ public class MavenRepositoryFolderHelper {
         this.repo = repo;
         this.ws = session != null ? session.getWorkspace() : repo == null ? null : repo.getWorkspace();
         if (repo == null && session == null) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("both workspace and repo are null"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("both workspace and repo are null"));
         }
         this.rootPath = rootPath;
     }
 
-    protected NLogOp _LOGOP(NSession session) {
-        return _LOG(session).with().session(session);
+    protected NLogOp _LOGOP() {
+        return _LOG().with();
     }
 
-    protected NLog _LOG(NSession session) {
-        if (LOG == null) {
-            LOG = NLog.of(MavenRepositoryFolderHelper.class,session);
-        }
-        return LOG;
+    protected NLog _LOG() {
+        return NLog.of(MavenRepositoryFolderHelper.class);
     }
 
     public NPath getIdLocalFile(NId id, NSession session) {
-        return getStoreLocation().resolve(NRepositoryExt.of(repo).getIdBasedir(id, session))
-                .resolve(NLocations.of(session).getDefaultIdFilename(id));
+        return getStoreLocation().resolve(NRepositoryExt.of(repo).getIdBasedir(id))
+                .resolve(NLocations.of().getDefaultIdFilename(id));
     }
 
     public NPath fetchContentImpl(NId id, Path localPath, NSession session) {
@@ -105,19 +101,19 @@ public class MavenRepositoryFolderHelper {
 
     protected String getIdFilename(NId id, NSession session) {
         if (repo == null) {
-            return NLocations.of(session).getDefaultIdFilename(id);
+            return NLocations.of().getDefaultIdFilename(id);
         }
-        return NRepositoryExt.of(repo).getIdFilename(id, session);
+        return NRepositoryExt.of(repo).getIdFilename(id);
     }
 
     public NPath getLocalGroupAndArtifactFile(NId id, NSession session) {
-        CoreNIdUtils.checkShortId(id,session);
+        CoreNIdUtils.checkShortId(id, session);
         return getStoreLocation().resolve(net.thevpc.nuts.util.NIdUtils.resolveIdPath(id.getShortId()));
     }
 
     public Iterator<NId> searchVersions(NId id, final NIdFilter filter, boolean deep, NSession session) {
-        String singleVersion=id.getVersion().asSingleValue().orNull();
-        if (singleVersion!=null) {
+        String singleVersion = id.getVersion().asSingleValue().orNull();
+        if (singleVersion != null) {
             NId id1 = id.builder().setVersion(singleVersion).setFaceDescriptor().build();
             NPath localFile = getIdLocalFile(id1, session);
             if (localFile != null && localFile.isRegularFile()) {
@@ -131,10 +127,15 @@ public class MavenRepositoryFolderHelper {
     }
 
     public Iterator<NId> searchInFolder(NPath folder, final NIdFilter filter, int maxDepth, NSession session) {
-        return new NIdPathIterator(repo, rootPath.normalize(), folder, filter, session, new NIdPathIteratorBase() {
+        return new NIdPathIterator(repo, rootPath.normalize(), folder, filter, new NIdPathIteratorBase() {
             @Override
-            public void undeploy(NId id, NSession session) {
-                throw new NIllegalArgumentException(session, NMsg.ofPlain("unsupported undeploy"));
+            public NWorkspace getWorkspace() {
+                return repo.getWorkspace();
+            }
+
+            @Override
+            public void undeploy(NId id) {
+                throw new NIllegalArgumentException(NMsg.ofPlain("unsupported undeploy"));
             }
 
             @Override
@@ -143,10 +144,10 @@ public class MavenRepositoryFolderHelper {
             }
 
             @Override
-            public NDescriptor parseDescriptor(NPath pathname, InputStream in, NFetchMode fetchMode, NRepository repository, NSession session, NPath rootURL) throws IOException {
-                return MavenUtils.of(session).parsePomXmlAndResolveParents(pathname, NFetchMode.LOCAL, repo);
+            public NDescriptor parseDescriptor(NPath pathname, InputStream in, NFetchMode fetchMode, NRepository repository, NPath rootURL) throws IOException {
+                return MavenUtils.of().parsePomXmlAndResolveParents(pathname, NFetchMode.LOCAL, repo);
             }
-        }, maxDepth,"core",null,true);
+        }, maxDepth, "core", null, true);
     }
 
     public NPath getStoreLocation() {
@@ -226,7 +227,7 @@ public class MavenRepositoryFolderHelper {
                                     old = new MavenMetadataParser(session).parseMavenMetaData(metadataxml);
                                 }
                             } catch (Exception ex) {
-                                _LOGOP(session).level(Level.SEVERE).error(ex)
+                                _LOGOP().level(Level.SEVERE).error(ex)
                                         .log(NMsg.ofJ("failed to parse metadata xml for {0} : {1}", metadataxml, ex));
                                 //ignore any error!
                             }
@@ -258,9 +259,9 @@ public class MavenRepositoryFolderHelper {
                             }
 //                            println(MavenMetadataParser.toXmlString(m));
                             new MavenMetadataParser(session).writeMavenMetaData(m, metadataxml);
-                            String md5 = NDigestUtils.evalMD5Hex(metadataxml,session).toLowerCase();
+                            String md5 = NDigestUtils.evalMD5Hex(metadataxml).toLowerCase();
                             Files.write(metadataxml.resolveSibling("maven-metadata.xml.md5"), md5.getBytes());
-                            String sha1 = NDigestUtils.evalSHA1Hex(NPath.of(metadataxml,session),session).toLowerCase();
+                            String sha1 = NDigestUtils.evalSHA1Hex(NPath.of(metadataxml)).toLowerCase();
                             Files.write(metadataxml.resolveSibling("maven-metadata.xml.sha1"), sha1.getBytes());
                         }
                         if (applyRawNavigation) {
@@ -293,14 +294,14 @@ public class MavenRepositoryFolderHelper {
                                 p.println(file);
                             }
                         } catch (FileNotFoundException e) {
-                            throw new NIOException(session, e);
+                            throw new NIOException(e);
                         }
                     }
                     return FileVisitResult.CONTINUE;
                 }
             });
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
 
     }

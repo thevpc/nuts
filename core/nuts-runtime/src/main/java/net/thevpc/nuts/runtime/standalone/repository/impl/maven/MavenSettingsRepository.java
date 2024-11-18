@@ -43,30 +43,31 @@ public class MavenSettingsRepository extends NRepositoryList {
 
     private NMavenSettings settings;
 
-    public MavenSettingsRepository(NAddRepositoryOptions options, NSession session, NRepository parentRepository) {
-        super(options, new NRepository[0], session, parentRepository, null, false, NConstants.RepoTypes.MAVEN, false);
-        this.LOG = NLog.of(MavenSettingsRepository.class, session);
+    public MavenSettingsRepository(NAddRepositoryOptions options, NWorkspace workspace, NRepository parentRepository) {
+        super(options, new NRepository[0], workspace, parentRepository, null, false, NConstants.RepoTypes.MAVEN, false);
+        NLog LOG = NLog.of(MavenSettingsRepository.class);
         this.settings = new NMavenSettingsLoader(LOG).loadSettingsRepos();
         List<NRepository> base = new ArrayList<>();
 
-        base.add(createChild(options, "maven-local", "maven-local", settings.getLocalRepository(), session));
-        base.add(createChild(options, "maven-central", "maven-central", settings.getRemoteRepository(), session));
+        base.add(createChild(options, "maven-local", "maven-local", settings.getLocalRepository()));
+        base.add(createChild(options, "maven-central", "maven-central", settings.getRemoteRepository()));
         for (NRepositoryLocation activeRepository : settings.getActiveRepositories()) {
-            base.add(createChild(options, "extra", activeRepository.getName(), activeRepository.getPath(), session));
+            base.add(createChild(options, "extra", activeRepository.getName(), activeRepository.getPath()));
         }
         this.repoItems = base.toArray(base.toArray(new NRepository[0]));
     }
 
     @Override
-    public boolean isEnabled(NSession session) {
+    public boolean isEnabled() {
         if(Boolean.getBoolean("nomaven")){
             return false;
         }
-        return super.isEnabled(session);
+        return super.isEnabled();
     }
 
-    private MavenFolderRepository createChild(NAddRepositoryOptions options0, String type, String id, String url, NSession session) {
-        NPath p = NPath.of(url, session);
+    private MavenFolderRepository createChild(NAddRepositoryOptions options0, String type, String id, String url) {
+        NSession session = getWorkspace().currentSession();
+        NPath p = NPath.of(url);
         String pr = NStringUtils.trim(p.getProtocol());
         MavenFolderRepository mavenChild = null;
         NAddRepositoryOptions options = new NAddRepositoryOptions();
@@ -84,11 +85,11 @@ public class MavenSettingsRepository extends NRepositoryList {
             //non traversable!
             case "http":
             case "https": {
-                mavenChild = new MavenRemoteXmlRepository(options, session, null);
+                mavenChild = new MavenRemoteXmlRepository(options, getWorkspace(), null);
                 break;
             }
             default: {
-                mavenChild = new MavenFolderRepository(options, session, null);
+                mavenChild = new MavenFolderRepository(options, getWorkspace(), null);
             }
         }
         mavenChild.getCache().setReadEnabled(false);

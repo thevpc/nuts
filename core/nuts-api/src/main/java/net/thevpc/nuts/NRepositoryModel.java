@@ -69,8 +69,8 @@ public interface NRepositoryModel {
         return "custom";
     }
 
-    default NId searchLatestVersion(NId id, NIdFilter filter, NFetchMode fetchMode, NRepository repository, NSession session) {
-        Iterator<NId> allVersions = searchVersions(id, filter, fetchMode, repository, session);
+    default NId searchLatestVersion(NId id, NIdFilter filter, NFetchMode fetchMode, NRepository repository) {
+        Iterator<NId> allVersions = searchVersions(id, filter, fetchMode, repository);
         NId a = null;
         while (allVersions != null && allVersions.hasNext()) {
             NId next = allVersions.next();
@@ -81,31 +81,31 @@ public interface NRepositoryModel {
         return a;
     }
 
-    default NIterator<NId> searchVersions(NId id, NIdFilter idFilter, NFetchMode fetchMode, NRepository repository, NSession session) {
+    default NIterator<NId> searchVersions(NId id, NIdFilter idFilter, NFetchMode fetchMode, NRepository repository) {
         return null;
     }
 
-    default NDescriptor fetchDescriptor(NId id, NFetchMode fetchMode, NRepository repository, NSession session) {
+    default NDescriptor fetchDescriptor(NId id, NFetchMode fetchMode, NRepository repository) {
         return null;
     }
 
-    default NPath fetchContent(NId id, NDescriptor descriptor, NFetchMode fetchMode, NRepository repository, NSession session) {
+    default NPath fetchContent(NId id, NDescriptor descriptor, NFetchMode fetchMode, NRepository repository) {
         return null;
     }
 
-    default NIterator<NId> search(NIdFilter filter, NPath[] basePaths, NFetchMode fetchMode, NRepository repository, NSession session) {
+    default NIterator<NId> search(NIdFilter filter, NPath[] basePaths, NFetchMode fetchMode, NRepository repository) {
         return null;
     }
 
-    default void updateStatistics(NRepository repository, NSession session) {
+    default void updateStatistics(NRepository repository) {
 
     }
 
-    default boolean acceptFetch(NId id, NFetchMode mode, NRepository repository, NSession session) {
+    default boolean acceptFetch(NId id, NFetchMode mode, NRepository repository) {
         return true;
     }
 
-    default boolean acceptDeploy(NId id, NFetchMode mode, NRepository repository, NSession session) {
+    default boolean acceptDeploy(NId id, NFetchMode mode, NRepository repository) {
         return true;
     }
 

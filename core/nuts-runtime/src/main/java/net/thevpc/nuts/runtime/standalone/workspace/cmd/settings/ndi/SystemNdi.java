@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi;
 
 import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 
 public interface SystemNdi {
@@ -11,7 +10,7 @@ public interface SystemNdi {
 
     PathInfo[] createArtifactScript(NdiScriptOptions options);
 
-    void removeNutsScript(String id, String switchWorkspaceLocation, NSession session);
+    void removeNutsScript(String id, String switchWorkspaceLocation);
 
 //    void addNutsWorkspaceScript(String preferredScriptName, NutsEnvInfo env);
 

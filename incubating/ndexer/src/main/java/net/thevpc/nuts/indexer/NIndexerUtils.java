@@ -19,19 +19,19 @@ import java.util.stream.Collectors;
 
 public class NIndexerUtils {
 
-    public static Path getCacheDir(NSession session, String entity) {
+    public static Path getCacheDir(String entity) {
         String k = "NutsIndexerUtils.CACHE." + entity;
-        String m = NEnvs.of(session).getProperty(k).flatMap(NLiteral::asString).orNull();
+        String m = NEnvs.of().getProperty(k).flatMap(NLiteral::asString).orNull();
         if (m == null) {
-            m = NLocations.of(session)
-                    .getStoreLocation(NId.ofClass(NIndexerUtils.class,session).get(),
+            m = NLocations.of()
+                    .getStoreLocation(NId.ofClass(NIndexerUtils.class).get(),
                             NStoreType.CACHE) + File.separator + entity;
-            NEnvs.of(session).setProperty(k, m);
+            NEnvs.of().setProperty(k, m);
         }
         return new File(m).toPath();
     }
 
-    public static Map<String, String> nutsRepositoryToMap(NRepository repository, int level, NSession session) {
+    public static Map<String, String> nutsRepositoryToMap(NRepository repository, int level) {
         if (repository == null) {
             return new HashMap<>();
         }
@@ -44,23 +44,23 @@ public class NIndexerUtils {
         NWorkspace ws = repository.getWorkspace();
         if (level == 0) {
             entity.put("mirrors", Arrays.toString(
-                    repository.config().setSession(session).getMirrors().stream()
-                            .map(nutsRepository -> mapToJson(nutsRepositoryToMap(nutsRepository, level + 1, session), session))
+                    repository.config().getMirrors().stream()
+                            .map(nutsRepository -> mapToJson(nutsRepositoryToMap(nutsRepository, level + 1)))
                             .toArray()));
-            entity.put("parents", mapToJson(nutsRepositoryToMap(repository.getParentRepository(), level + 1, session), session));
+            entity.put("parents", mapToJson(nutsRepositoryToMap(repository.getParentRepository(), level + 1)));
         }
         return entity;
     }
 
-    public static String mapToJson(Map<String, String> map, NSession session) {
+    public static String mapToJson(Map<String, String> map) {
         StringWriter s = new StringWriter();
-        NElements.of(session).json().setValue(map)
+        NElements.of().json().setValue(map)
                 .setNtf(false).print(s);
         return s.toString();
     }
 
-    public static Map<String, String> nutsRepositoryToMap(NRepository repository, NSession session) {
-        return nutsRepositoryToMap(repository, 0, session);
+    public static Map<String, String> nutsRepositoryToMap(NRepository repository) {
+        return nutsRepositoryToMap(repository, 0);
     }
 
     public static Map<String, String> nutsIdToMap(NId id) {
@@ -142,7 +142,7 @@ public class NIndexerUtils {
                 .build();
     }
 
-    public static NId mapToNutsId(Map<String, String> map, NSession session) {
+    public static NId mapToNutsId(Map<String, String> map) {
         return NIdBuilder.of()
                 .setArtifactId(NStringUtils.trim(map.get("name")))
                 .setRepository(NStringUtils.trim(map.get("namespace")))

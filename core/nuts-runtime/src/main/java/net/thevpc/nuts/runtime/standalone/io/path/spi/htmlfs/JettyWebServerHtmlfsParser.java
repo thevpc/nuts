@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NCallableSupport;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.util.XmlEscaper;
 
 import java.io.BufferedReader;
@@ -13,8 +13,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class JettyWebServerHtmlfsParser extends AbstractHtmlfsParser {
+    public JettyWebServerHtmlfsParser(NWorkspace workspace) {
+        super(workspace);
+    }
+
     @Override
-    public NCallableSupport<List<String>> parseHtmlTomcat(byte[] bytes, NSession session) {
+    public NCallableSupport<List<String>> parseHtmlTomcat(byte[] bytes) {
         List<String> found = new ArrayList<>();
         Pattern pattern = Pattern.compile("tr><td class=\"name\"><a href=\"(?<href>[^\"]+)\">(?<title>[^\"]+)</a></td><td class=\"lastmodified\">(?<date>[^\"]+)</td><td class=\"size\">(?<size>[^\"]+)</td></tr>");
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)))) {
@@ -30,7 +34,7 @@ public class JettyWebServerHtmlfsParser extends AbstractHtmlfsParser {
                 }
                 Matcher m = pattern.matcher(line);
                 if(m.find()){
-                    found.add(XmlEscaper.escapeToUnicode(m.group("title").trim(),session).trim());
+                    found.add(XmlEscaper.escapeToUnicode(m.group("title").trim()).trim());
                 }
             }
         } catch (Exception e) {

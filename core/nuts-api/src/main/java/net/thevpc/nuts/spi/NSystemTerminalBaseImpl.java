@@ -1,32 +1,41 @@
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.text.NTerminalCmd;
 
 public abstract class NSystemTerminalBaseImpl implements NSystemTerminalBase {
+    private NWorkspace workspace;
+
+    public NSystemTerminalBaseImpl(NWorkspace workspace) {
+        this.workspace = workspace;
+    }
 
     @Override
-    public NSystemTerminalBase resetLine(NSession session) {
-        run(NTerminalCmd.CLEAR_LINE, getOut(), session);
-        run(NTerminalCmd.MOVE_LINE_START, getOut(), session);
+    public NSystemTerminalBase resetLine() {
+        run(NTerminalCmd.CLEAR_LINE, getOut());
+        run(NTerminalCmd.MOVE_LINE_START, getOut());
+        return this;
+    }
+
+    public NWorkspace getWorkspace() {
+        return workspace;
+    }
+
+    @Override
+    public NSystemTerminalBase clearScreen() {
+        run(NTerminalCmd.CLEAR_SCREEN, getOut());
         return this;
     }
 
     @Override
-    public NSystemTerminalBase clearScreen(NSession session) {
-        run(NTerminalCmd.CLEAR_SCREEN, getOut(), session);
-        return this;
+    public Cursor getTerminalCursor() {
+        //NutsWorkspaceUtils.checkSession(session.getWorkspace(), session);
+        return (Cursor) run(NTerminalCmd.GET_CURSOR, getOut());
     }
 
     @Override
-    public Cursor getTerminalCursor(NSession session) {
+    public Size getTerminalSize() {
         //NutsWorkspaceUtils.checkSession(session.getWorkspace(), session);
-        return (Cursor) run(NTerminalCmd.GET_CURSOR, getOut(), session);
-    }
-
-    @Override
-    public Size getTerminalSize(NSession session) {
-        //NutsWorkspaceUtils.checkSession(session.getWorkspace(), session);
-        return (Size) run(NTerminalCmd.GET_SIZE, getOut(), session);
+        return (Size) run(NTerminalCmd.GET_SIZE, getOut());
     }
 }

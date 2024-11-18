@@ -26,8 +26,6 @@
  */
 package net.thevpc.nuts.format;
 
-import net.thevpc.nuts.NSession;
-
 /**
  * @author thevpc
  * @app.category Format
@@ -35,15 +33,15 @@ import net.thevpc.nuts.NSession;
  */
 public interface NTableCellFormat {
 
-    default String format(int row, int col, Object value, NSession session) {
+    default String format(int row, int col, Object value) {
         return String.valueOf(value);
     }
 
-    default NPositionType getHorizontalAlign(int row, int col, Object value, NSession session) {
+    default NPositionType getHorizontalAlign(int row, int col, Object value) {
         return NPositionType.FIRST;
     }
 
-    default NPositionType getVerticalAlign(int row, int col, Object value, NSession session) {
+    default NPositionType getVerticalAlign(int row, int col, Object value) {
         return NPositionType.FIRST;
     }
 

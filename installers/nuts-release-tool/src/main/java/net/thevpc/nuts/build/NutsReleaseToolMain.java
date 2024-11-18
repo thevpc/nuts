@@ -11,7 +11,8 @@ public class NutsReleaseToolMain implements NApplication {
     }
 
     @Override
-    public void run(NSession session) {
+    public void run() {
+        NSession session = NSession.get();
         NutsReleaseToolRunner nutsBuildRunner = new NutsReleaseToolRunner(
                 new BaseConfRunner(session),
                 new JarsRunner(session),

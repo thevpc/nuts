@@ -26,16 +26,14 @@
  */
 package net.thevpc.nuts.text;
 
-import net.thevpc.nuts.NSession;
-
 /**
  * Created by vpc on 5/23/17.
  *
  * @app.category Format
  */
 public interface NText extends NString {
-    static NString parse(String str, NSession session) {
-        return NTexts.of(session).parse(str);
+    static NString parse(String str) {
+        return NTexts.of().parse(str);
     }
 
     NTextType getType();

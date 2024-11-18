@@ -12,10 +12,10 @@ import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.*;
 
 public class JsonCodeHighlighter implements NCodeHighlighter {
-    private NWorkspace ws;
+    private NWorkspace workspace;
 
-    public JsonCodeHighlighter(NWorkspace ws) {
-        this.ws = ws;
+    public JsonCodeHighlighter(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
     @Override
@@ -24,7 +24,7 @@ public class JsonCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText tokenToText(String text, String nodeType, NTexts txt, NSession session) {
+    public NText tokenToText(String text, String nodeType, NTexts txt) {
         return txt.ofPlain(text);
     }
 
@@ -46,7 +46,8 @@ public class JsonCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText stringToText(String text, NTexts txt, NSession session) {
+    public NText stringToText(String text, NTexts txt) {
+        NSession session=workspace.currentSession();
         List<NText> all = new ArrayList<>();
         StringReaderExt ar = new StringReaderExt(text);
         while (ar.hasNext()) {

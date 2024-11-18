@@ -57,14 +57,14 @@ public class Test17_JsonTest {
 //        TestUtils.println(NutsTexts.of(session).forPlain("a@@@"));
 //        TestUtils.println(NutsTexts.of(session).forPlain("a@@@").filteredText());
 
-        TestUtils.println(NTexts.of(session).ofPlain("a##@"));
-        TestUtils.println(NTexts.of(session).ofPlain("a##@").filteredText());
+        TestUtils.println(NTexts.of().ofPlain("a##@"));
+        TestUtils.println(NTexts.of().ofPlain("a##@").filteredText());
 
     }
 
     @Test
     public void test2()  {
-        NElement a = NElements.of(session).json()
+        NElement a = NElements.of().json()
                 .parse(
                         "{\n" +
                                 "    title: 'Some Title',\n" +
@@ -218,8 +218,8 @@ public class Test17_JsonTest {
 //        TestUtils.println(NutsTexts.of(session).forPlain("a@@@"));
 //        TestUtils.println(NutsTexts.of(session).forPlain("a@@@").filteredText());
 
-        TestUtils.println(NTexts.of(session).ofPlain("a##@"));
-        TestUtils.println(NTexts.of(session).ofPlain("a##@").filteredText());
+        TestUtils.println(NTexts.of().ofPlain("a##@"));
+        TestUtils.println(NTexts.of().ofPlain("a##@").filteredText());
 
     }
 

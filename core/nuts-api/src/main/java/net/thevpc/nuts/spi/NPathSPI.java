@@ -42,7 +42,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Set;
 
-public interface NPathSPI extends NSessionProvider {
+public interface NPathSPI {
 
     NStream<NPath> list(NPath basePath);
 

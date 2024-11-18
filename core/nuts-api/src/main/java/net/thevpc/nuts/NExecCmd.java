@@ -46,16 +46,16 @@ import java.util.Map;
  */
 public interface NExecCmd extends NWorkspaceCmd {
 
-    static NExecCmd of(NSession session) {
-        return NExtensions.of(session).createComponent(NExecCmd.class).get();
+    static NExecCmd of() {
+        return NExtensions.of().createComponent(NExecCmd.class).get();
     }
 
-    static NExecCmd of(NSession session,String ...cmd) {
-        return of(session).addCommand(cmd);
+    static NExecCmd of(String ...cmd) {
+        return of().addCommand(cmd);
     }
 
-    static NExecCmd ofSystem(NSession session,String ...cmd) {
-        return of(session).addCommand(cmd).system();
+    static NExecCmd ofSystem(String ...cmd) {
+        return of().addCommand(cmd).system();
     }
 
     /**
@@ -440,22 +440,14 @@ public interface NExecCmd extends NWorkspaceCmd {
      */
     NOptional<NExecutionException> getResultException();
 
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
-    NExecCmd setSession(NSession session);
 
-    /**
-     * copy session
-     *
-     * @return {@code this} instance
-     */
-    @Override
-    NExecCmd copySession();
+//    /**
+//     * copy session
+//     *
+//     * @return {@code this} instance
+//     */
+//    @Override
+//    NExecCmd copySession();
 
     /**
      * configure the current command with the given arguments. This is an

@@ -40,8 +40,8 @@ public class NDescriptorFilterArch extends AbstractDescriptorFilter {
 
     private final String arch;
 
-    public NDescriptorFilterArch(NSession session, String packaging) {
-        super(session, NFilterOp.CUSTOM);
+    public NDescriptorFilterArch(NWorkspace workspace, String packaging) {
+        super(workspace, NFilterOp.CUSTOM);
         this.arch = packaging;
     }
 
@@ -50,8 +50,8 @@ public class NDescriptorFilterArch extends AbstractDescriptorFilter {
     }
 
     @Override
-    public boolean acceptDescriptor(NDescriptor descriptor, NSession session) {
-        return CoreFilterUtils.matchesArch(arch, descriptor.getCondition().getArch(), session);
+    public boolean acceptDescriptor(NDescriptor descriptor) {
+        return CoreFilterUtils.matchesArch(arch, descriptor.getCondition().getArch());
     }
 
     /**

@@ -27,7 +27,7 @@ public class DefaultNExecCmdExtensionContext implements NExecCmdExtensionContext
         this.execCommand = execCommand;
         switch (in.getType()) {
             case NULL: {
-                hin = new MyInHolder(session, NIO.of(session).ofNullRawInputStream(), false, null);
+                hin = new MyInHolder(session, NIO.of().ofNullRawInputStream(), false, null);
                 break;
             }
             case PATH: {
@@ -46,7 +46,7 @@ public class DefaultNExecCmdExtensionContext implements NExecCmdExtensionContext
         }
         switch (out.getType()) {
             case NULL: {
-                hout = new MyOutHolder(session, NIO.of(session).ofNullRawOutputStream(), false, null);
+                hout = new MyOutHolder(session, NIO.of().ofNullRawOutputStream(), false, null);
                 break;
             }
             case PATH: {
@@ -65,12 +65,12 @@ public class DefaultNExecCmdExtensionContext implements NExecCmdExtensionContext
             case GRAB_STREAM: {
                 ByteArrayOutputStream grabbed = new ByteArrayOutputStream();
                 hout = new MyOutHolder(session, grabbed, false, () -> {
-                    out.setResult(NInputSource.of(grabbed.toByteArray(),session));
+                    out.setResult(NInputSource.of(grabbed.toByteArray()));
                 });
                 break;
             }
             case GRAB_FILE: {
-                NPath temp = NPath.ofTempFile(session);
+                NPath temp = NPath.ofTempFile();
                 temp.setDeleteOnDispose(true);
                 temp.setUserTemporary(true);
                 hout = new MyOutHolder(session, temp.getOutputStream(), true, () -> {
@@ -81,7 +81,7 @@ public class DefaultNExecCmdExtensionContext implements NExecCmdExtensionContext
         }
         switch (err.getType()) {
             case NULL: {
-                herr = new MyOutHolder(session, NIO.of(session).ofNullRawOutputStream(), false, null);
+                herr = new MyOutHolder(session, NIO.of().ofNullRawOutputStream(), false, null);
                 break;
             }
             case PATH: {
@@ -100,12 +100,12 @@ public class DefaultNExecCmdExtensionContext implements NExecCmdExtensionContext
             case GRAB_STREAM: {
                 ByteArrayOutputStream grabbed = new ByteArrayOutputStream();
                 herr = new MyOutHolder(session, grabbed, false, () -> {
-                    err.setResult(NInputSource.of(grabbed.toByteArray(),session));
+                    err.setResult(NInputSource.of(grabbed.toByteArray()));
                 });
                 break;
             }
             case GRAB_FILE: {
-                NPath temp = NPath.ofTempFile(session);
+                NPath temp = NPath.ofTempFile();
                 temp.setDeleteOnDispose(true);
                 temp.setUserTemporary(true);
                 herr = new MyOutHolder(session, temp.getOutputStream(), true, () -> {

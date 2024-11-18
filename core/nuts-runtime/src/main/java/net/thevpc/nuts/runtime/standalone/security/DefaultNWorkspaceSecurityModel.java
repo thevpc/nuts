@@ -26,7 +26,6 @@
 package net.thevpc.nuts.runtime.standalone.security;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.lib.common.collections.CoreCollectionUtils;
@@ -62,29 +61,26 @@ import java.util.logging.Level;
 public class DefaultNWorkspaceSecurityModel {
 
     private final ThreadLocal<Stack<LoginContext>> loginContextStack = new ThreadLocal<>();
-    private final DefaultNWorkspace ws;
+    private final DefaultNWorkspace workspace;
     private final WrapperNAuthenticationAgent agent;
     private final Map<String, NAuthorizations> authorizations = new HashMap<>();
     private NLog LOG;
 
     public DefaultNWorkspaceSecurityModel(final DefaultNWorkspace ws) {
-        this.ws = ws;
-        this.agent = new WrapperNAuthenticationAgent(ws, (session) -> NConfigs.of(session).getConfigMap(), (x, s) -> getAuthenticationAgent(x, s));
-        NEvents.of(NSessionUtils.defaultSession(ws)).addWorkspaceListener(new ClearAuthOnWorkspaceChange());
+        this.workspace = ws;
+        this.agent = new WrapperNAuthenticationAgent(ws, (session) -> NConfigs.of().getConfigMap(), (x, s) -> getAuthenticationAgent(x));
+        NEvents.of().addWorkspaceListener(new ClearAuthOnWorkspaceChange());
     }
 
-    protected NLogOp _LOGOP(NSession session) {
-        return _LOG(session).with().session(session);
+    protected NLogOp _LOGOP() {
+        return _LOG().with();
     }
 
-    protected NLog _LOG(NSession session) {
-        if (LOG == null) {
-            LOG = NLog.of(DefaultNWorkspaceSecurityModel.class, session);
-        }
-        return LOG;
+    protected NLog _LOG() {
+        return NLog.of(DefaultNWorkspaceSecurityModel.class);
     }
 
-    public void login(final String username, final char[] password, NSession session) {
+    public void login(final String username, final char[] password) {
         login(new CallbackHandler() {
 
             @Override
@@ -101,87 +97,91 @@ public class DefaultNWorkspaceSecurityModel {
                     }
                 }
             }
-        }, session);
+        });
     }
 
 
-    public boolean setSecureMode(boolean secure, char[] adminPassword, NSession session) {
+    public boolean setSecureMode(boolean secure, char[] adminPassword) {
         if (secure) {
-            return switchSecureMode(adminPassword, session);
+            return switchSecureMode(adminPassword);
         } else {
-            return switchUnsecureMode(adminPassword, session);
+            return switchUnsecureMode(adminPassword);
         }
     }
 
-    public boolean switchUnsecureMode(char[] adminPassword, NSession session) {
+    public boolean switchUnsecureMode(char[] adminPassword) {
         if (adminPassword == null) {
             adminPassword = new char[0];
         }
-        NUser adminSecurity = findUser(NConstants.Users.ADMIN, session);
+        NUser adminSecurity = findUser(NConstants.Users.ADMIN);
+        NSession session=workspace.currentSession();
         if (adminSecurity == null || !adminSecurity.hasCredentials()) {
-            if (_LOG(session).isLoggable(Level.CONFIG)) {
-                _LOGOP(session).level(Level.CONFIG).verb(NLogVerb.WARNING)
+            if (_LOG().isLoggable(Level.CONFIG)) {
+                _LOGOP().level(Level.CONFIG).verb(NLogVerb.WARNING)
                         .log(NMsg.ofC("%s user has no credentials. reset to default", NConstants.Users.ADMIN));
             }
-            NUserConfig u = NConfigsExt.of(NConfigs.of(session)).getModel().getUser(NConstants.Users.ADMIN, session);
-            u.setCredentials(CoreStringUtils.chrToStr(createCredentials("admin".toCharArray(), false, null, session)));
-            NConfigsExt.of(NConfigs.of(session)).getModel().setUser(u, session);
+            NUserConfig u = NConfigsExt.of(NConfigs.of()).getModel().getUser(NConstants.Users.ADMIN);
+            u.setCredentials(CoreStringUtils.chrToStr(createCredentials("admin".toCharArray(), false, null)));
+            NConfigsExt.of(NConfigs.of()).getModel().setUser(u);
         }
 
-        char[] credentials = NDigestUtils.evalSHA1(adminPassword, session);
+        char[] credentials = NDigestUtils.evalSHA1(adminPassword);
         if (Arrays.equals(credentials, adminPassword)) {
             Arrays.fill(credentials, '\0');
-            throw new NSecurityException(session, NMsg.ofPlain("invalid credentials"));
+            throw new NSecurityException(NMsg.ofPlain("invalid credentials"));
         }
         Arrays.fill(credentials, '\0');
         boolean activated = false;
-        if (isSecure(session)) {
-            NConfigsExt.of(NConfigs.of(session)).getModel().setSecure(false, session);
+        if (isSecure()) {
+            NConfigsExt.of(NConfigs.of()).getModel().setSecure(false);
             activated = true;
         }
         return activated;
     }
 
-    public boolean switchSecureMode(char[] adminPassword, NSession session) {
+    public boolean switchSecureMode(char[] adminPassword) {
         if (adminPassword == null) {
             adminPassword = new char[0];
         }
         boolean deactivated = false;
-        char[] credentials = NDigestUtils.evalSHA1(adminPassword, session);
+        NSession session=workspace.currentSession();
+        char[] credentials = NDigestUtils.evalSHA1(adminPassword);
         if (Arrays.equals(credentials, adminPassword)) {
             Arrays.fill(credentials, '\0');
-            throw new NSecurityException(session, NMsg.ofPlain("invalid credentials"));
+            throw new NSecurityException(NMsg.ofPlain("invalid credentials"));
         }
         Arrays.fill(credentials, '\0');
-        if (!isSecure(session)) {
-            NConfigsExt.of(NConfigs.of(session)).getModel().setSecure(true, session);
+        if (!isSecure()) {
+            NConfigsExt.of(NConfigs.of()).getModel().setSecure(true);
             deactivated = true;
         }
         return deactivated;
     }
 
 
-    public boolean isAdmin(NSession session) {
-        return NConstants.Users.ADMIN.equals(getCurrentUsername(session));
+    public boolean isAdmin() {
+        return NConstants.Users.ADMIN.equals(getCurrentUsername());
     }
 
 
-    public void logout(NSession session) {
+    public void logout() {
         Stack<LoginContext> r = loginContextStack.get();
+        NSession session=workspace.currentSession();
         if (r == null || r.isEmpty()) {
-            throw new NLoginException(session, NMsg.ofPlain("not logged in"));
+            throw new NLoginException(NMsg.ofPlain("not logged in"));
         }
         try {
             LoginContext loginContext = r.pop();
             loginContext.logout();
         } catch (LoginException ex) {
-            throw new NLoginException(session, NMsg.ofPlain("login failed"), ex);
+            throw new NLoginException(NMsg.ofPlain("login failed"), ex);
         }
     }
 
 
-    public NUser findUser(String username, NSession session) {
-        NUserConfig security = NConfigsExt.of(NConfigs.of(session)).getModel().getUser(username, session);
+    public NUser findUser(String username) {
+        NSession session=workspace.currentSession();
+        NUserConfig security = NConfigsExt.of(NConfigs.of()).getModel().getUser(username);
         Stack<String> inherited = new Stack<>();
         if (security != null) {
             Stack<String> visited = new Stack<>();
@@ -191,7 +191,7 @@ public class DefaultNWorkspaceSecurityModel {
             while (!curr.empty()) {
                 String s = curr.pop();
                 visited.add(s);
-                NUserConfig ss = NConfigsExt.of(NConfigs.of(session)).getModel().getUser(s, session);
+                NUserConfig ss = NConfigsExt.of(NConfigs.of()).getModel().getUser(s);
                 if (ss != null) {
                     inherited.addAll(ss.getPermissions());
                     for (String group : ss.getGroups()) {
@@ -206,46 +206,52 @@ public class DefaultNWorkspaceSecurityModel {
     }
 
 
-    public List<NUser> findUsers(NSession session) {
+    public List<NUser> findUsers() {
+        NSession session=workspace.currentSession();
         List<NUser> all = new ArrayList<>();
-        for (NUserConfig secu : NConfigsExt.of(NConfigs.of(session)).getModel().getUsers(session)) {
-            all.add(findUser(secu.getUser(), session));
+        for (NUserConfig secu : NConfigsExt.of(NConfigs.of()).getModel().getUsers()) {
+            all.add(findUser(secu.getUser()));
         }
         return all;
     }
 
 
-    public NAddUserCmd addUser(String name, NSession session) {
-        return NAddUserCmd.of(session).setUsername(name);
+    public NAddUserCmd addUser(String name) {
+        NSession session=workspace.currentSession();
+        return NAddUserCmd.of().setUsername(name);
     }
 
 
-    public NUpdateUserCmd updateUser(String name, NSession session) {
-        return NUpdateUserCmd.of(session).setUsername(name);
+    public NUpdateUserCmd updateUser(String name) {
+        NSession session=workspace.currentSession();
+        return NUpdateUserCmd.of().setUsername(name);
     }
 
 
-    public NRemoveUserCmd removeUser(String name, NSession session) {
-        return NRemoveUserCmd.of(session).setUsername(name);
+    public NRemoveUserCmd removeUser(String name) {
+        NSession session=workspace.currentSession();
+        return NRemoveUserCmd.of().setUsername(name);
     }
 
 
-    public void checkAllowed(String permission, String operationName, NSession session) {
-        if (!isAllowed(permission, session)) {
+    public void checkAllowed(String permission, String operationName) {
+        NSession session=workspace.currentSession();
+        if (!isAllowed(permission)) {
             if (NBlankable.isBlank(operationName)) {
-                throw new NSecurityException(session, NMsg.ofC("%s not allowed!", permission));
+                throw new NSecurityException(NMsg.ofC("%s not allowed!", permission));
             } else {
-                throw new NSecurityException(session, NMsg.ofC("%s : %s not allowed!", operationName, permission));
+                throw new NSecurityException(NMsg.ofC("%s : %s not allowed!", operationName, permission));
             }
         }
     }
 
-    private NAuthorizations getAuthorizations(String n, NSession session) {
+    private NAuthorizations getAuthorizations(String n) {
+        NSession session=workspace.currentSession();
         NAuthorizations aa = authorizations.get(n);
         if (aa != null) {
             return aa;
         }
-        NUserConfig s = NConfigsExt.of(NConfigs.of(session)).getModel().getUser(n, session);
+        NUserConfig s = NConfigsExt.of(NConfigs.of()).getModel().getUser(n);
         if (s != null) {
             List<String> rr = s.getPermissions();
             aa = new NAuthorizations(CoreCollectionUtils.nonNullList(rr));
@@ -257,11 +263,11 @@ public class DefaultNWorkspaceSecurityModel {
     }
 
 
-    public boolean isAllowed(String permission, NSession session) {
-        if (!isSecure(session)) {
+    public boolean isAllowed(String permission) {
+        if (!isSecure()) {
             return true;
         }
-        String name = getCurrentUsername(session);
+        String name = getCurrentUsername();
         if (NBlankable.isBlank(name)) {
             return false;
         }
@@ -272,14 +278,15 @@ public class DefaultNWorkspaceSecurityModel {
         Set<String> visitedGroups = new HashSet<>();
         visitedGroups.add(name);
         items.push(name);
+        NSession session=workspace.currentSession();
         while (!items.isEmpty()) {
             String n = items.pop();
-            NAuthorizations s = getAuthorizations(n, session);
+            NAuthorizations s = getAuthorizations(n);
             Boolean ea = s.explicitAccept(permission);
             if (ea != null) {
                 return ea;
             }
-            NUserConfig uc = NConfigsExt.of(NConfigs.of(session)).getModel().getUser(n, session);
+            NUserConfig uc = NConfigsExt.of(NConfigs.of()).getModel().getUser(n);
             if (uc != null) {
                 for (String g : uc.getGroups()) {
                     if (!visitedGroups.contains(g)) {
@@ -293,7 +300,7 @@ public class DefaultNWorkspaceSecurityModel {
     }
 
 
-    public String[] getCurrentLoginStack(NSession session) {
+    public String[] getCurrentLoginStack() {
         List<String> logins = new ArrayList<String>();
         Stack<LoginContext> c = loginContextStack.get();
         if (c != null) {
@@ -318,11 +325,11 @@ public class DefaultNWorkspaceSecurityModel {
     }
 
     private boolean isInitializing() {
-        return ((NWorkspaceExt) ws).getModel().bootModel.isInitializing();
+        return ((NWorkspaceExt) workspace).getModel().bootModel.isInitializing();
     }
 
 
-    public String getCurrentUsername(NSession session) {
+    public String getCurrentUsername() {
         if (isInitializing()) {
             return NConstants.Users.ADMIN;
         }
@@ -350,7 +357,8 @@ public class DefaultNWorkspaceSecurityModel {
     }
 
 
-    public void login(CallbackHandler handler, NSession session) {
+    public void login(CallbackHandler handler) {
+        NSession session=workspace.currentSession();
         NWorkspaceLoginModule.configure(session); //initialize it
         //        if (!NutsConstants.Misc.USER_ANONYMOUS.equals(getCurrentLogin())) {
         //            throw new NutsLoginException("Already logged in");
@@ -365,7 +373,7 @@ public class DefaultNWorkspaceSecurityModel {
             }, NWorkspaceLoginModule.class.getClassLoader(), session);
             login.login();
         } catch (LoginException ex) {
-            throw new NLoginException(session, NMsg.ofPlain("login failed"), ex);
+            throw new NLoginException(NMsg.ofPlain("login failed"), ex);
         }
         Stack<LoginContext> r = loginContextStack.get();
         if (r == null) {
@@ -387,24 +395,26 @@ public class DefaultNWorkspaceSecurityModel {
     }
 
 
-    public NAuthenticationAgent getAuthenticationAgent(String authenticationAgentId, NSession session) {
+    public NAuthenticationAgent getAuthenticationAgent(String authenticationAgentId) {
+        NSession session=workspace.currentSession();
         authenticationAgentId = NStringUtils.trim(authenticationAgentId);
         if (NBlankable.isBlank(authenticationAgentId)) {
-            authenticationAgentId = NConfigsExt.of(NConfigs.of(session))
+            authenticationAgentId = NConfigsExt.of(NConfigs.of())
                     .getModel().getStoredConfigSecurity().getAuthenticationAgent();
         }
-        NAuthenticationAgent a = NConfigsExt.of(NConfigs.of(session))
-                .getModel().createAuthenticationAgent(authenticationAgentId, session);
+        NAuthenticationAgent a = NConfigsExt.of(NConfigs.of())
+                .getModel().createAuthenticationAgent(authenticationAgentId);
         return a;
     }
 
 
-    public void setAuthenticationAgent(String authenticationAgentId, NSession session) {
+    public void setAuthenticationAgent(String authenticationAgentId) {
 
-        DefaultNWorkspaceConfigModel cc = NConfigsExt.of(NConfigs.of(session)).getModel();
+        NSession session=workspace.currentSession();
+        DefaultNWorkspaceConfigModel cc = NConfigsExt.of(NConfigs.of()).getModel();
 
-        if (cc.createAuthenticationAgent(authenticationAgentId, session) == null) {
-            throw new NIllegalArgumentException(session,
+        if (cc.createAuthenticationAgent(authenticationAgentId) == null) {
+            throw new NIllegalArgumentException(
                     NMsg.ofC("unsupported Authentication Agent %s", authenticationAgentId)
             );
         }
@@ -412,37 +422,42 @@ public class DefaultNWorkspaceSecurityModel {
         NWorkspaceConfigSecurity conf = cc.getStoredConfigSecurity();
         if (!Objects.equals(conf.getAuthenticationAgent(), authenticationAgentId)) {
             conf.setAuthenticationAgent(authenticationAgentId);
-            cc.fireConfigurationChanged("authentication-agent", session, ConfigEventType.SECURITY);
+            cc.fireConfigurationChanged("authentication-agent", ConfigEventType.SECURITY);
         }
     }
 
 
-    public boolean isSecure(NSession session) {
-        return NConfigsExt.of(NConfigs.of(session)).getModel().getStoredConfigSecurity().isSecure();
+    public boolean isSecure() {
+        NSession session=workspace.currentSession();
+        return NConfigsExt.of(NConfigs.of()).getModel().getStoredConfigSecurity().isSecure();
     }
 
 
-    public void checkCredentials(char[] credentialsId, char[] password, NSession session) throws NSecurityException {
+    public void checkCredentials(char[] credentialsId, char[] password) throws NSecurityException {
+        NSession session=workspace.currentSession();
         agent.checkCredentials(credentialsId, password, session);
     }
 
 
-    public char[] getCredentials(char[] credentialsId, NSession session) {
+    public char[] getCredentials(char[] credentialsId) {
+        NSession session=workspace.currentSession();
         return agent.getCredentials(credentialsId, session);
     }
 
 
-    public boolean removeCredentials(char[] credentialsId, NSession session) {
+    public boolean removeCredentials(char[] credentialsId) {
+        NSession session=workspace.currentSession();
         return agent.removeCredentials(credentialsId, session);
     }
 
 
-    public char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId, NSession session) {
+    public char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId) {
+        NSession session=workspace.currentSession();
         return agent.createCredentials(credentials, allowRetrieve, credentialId, session);
     }
 
     public NWorkspace getWorkspace() {
-        return ws;
+        return workspace;
     }
 
     private class ClearAuthOnWorkspaceChange implements NWorkspaceListener {

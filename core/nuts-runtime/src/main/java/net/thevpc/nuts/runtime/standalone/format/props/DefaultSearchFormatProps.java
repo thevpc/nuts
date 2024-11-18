@@ -24,8 +24,8 @@ import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
  */
 public class DefaultSearchFormatProps extends DefaultSearchFormatBase {
 
-    public DefaultSearchFormatProps(NSession session, NPrintStream writer, NFetchDisplayOptions options) {
-        super(session, writer, NContentType.PROPS,options);
+    public DefaultSearchFormatProps(NWorkspace workspace, NPrintStream writer, NFetchDisplayOptions options) {
+        super(workspace, writer, NContentType.PROPS,options);
     }
 
     @Override
@@ -48,12 +48,11 @@ public class DefaultSearchFormatProps extends DefaultSearchFormatBase {
     @Override
     public void next(Object object, long index) {
         Map<String, String> p = new LinkedHashMap<>();
-        NSession session = getSession();
         NFormatUtils.putAllInProps(String.valueOf(index + 1), p,
-                NElements.of(session)
-                        .toElement(object),
-                session);
-        CoreIOUtils.storeProperties(p, getWriter().asPrintStream(), false, session);
+                NElements.of()
+                        .toElement(object)
+        );
+        CoreIOUtils.storeProperties(p, getWriter().asPrintStream(), false);
         getWriter().flush();
     }
 

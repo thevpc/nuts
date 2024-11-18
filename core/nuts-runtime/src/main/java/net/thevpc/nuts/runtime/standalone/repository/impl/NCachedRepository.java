@@ -59,16 +59,16 @@ public class NCachedRepository extends AbstractNRepositoryBase {
     protected final NRepositoryFolderHelper lib;
     protected final NRepositoryFolderHelper cache;
     private final NRepositoryMirroringHelper mirroring;
-    public NLog LOG;
     private boolean lockEnabled = true;
 
-    public NCachedRepository(NAddRepositoryOptions options, NSession session, NRepository parent, NSpeedQualifier speed, boolean supportedMirroring, String repositoryType, boolean supportsDeploy) {
-        super(options, session, parent, speed, supportedMirroring, repositoryType, supportsDeploy);
-        cache = new NRepositoryFolderHelper(this, session, config().setSession(session).getStoreLocation(NStoreType.CACHE).resolve(NConstants.Folders.ID), true,
-                "cache", NElements.of(session).ofObject().set("repoKind", "cache").build()
+    public NCachedRepository(NAddRepositoryOptions options, NWorkspace workspace, NRepository parent, NSpeedQualifier speed, boolean supportedMirroring, String repositoryType, boolean supportsDeploy) {
+        super(options, workspace, parent, speed, supportedMirroring, repositoryType, supportsDeploy);
+        NSession session = this.workspace.currentSession();
+        cache = new NRepositoryFolderHelper(this, this.workspace, config().getStoreLocation(NStoreType.CACHE).resolve(NConstants.Folders.ID), true,
+                "cache", NElements.of().ofObject().set("repoKind", "cache").build()
         );
-        lib = new NRepositoryFolderHelper(this, session, config().setSession(session).getStoreLocation(NStoreType.LIB).resolve(NConstants.Folders.ID), false,
-                "lib", NElements.of(session).ofObject().set("repoKind", "lib").build()
+        lib = new NRepositoryFolderHelper(this, this.workspace, config().getStoreLocation(NStoreType.LIB).resolve(NConstants.Folders.ID), false,
+                "lib", NElements.of().ofObject().set("repoKind", "lib").build()
         );
         mirroring = new NRepositoryMirroringHelper(this, cache);
     }
@@ -90,15 +90,12 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         return cache;
     }
 
-    protected NLogOp _LOGOP(NSession session) {
-        return _LOG(session).with().session(session);
+    protected NLogOp _LOGOP() {
+        return _LOG().with();
     }
 
-    protected NLog _LOG(NSession session) {
-        if (LOG == null) {
-            LOG = NLog.of(NCachedRepository.class, session);
-        }
-        return LOG;
+    protected NLog _LOG() {
+        return NLog.of(NCachedRepository.class);
     }
 
     @Override
@@ -108,7 +105,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
 
     @Override
     public NDescriptor deployImpl(NDeployRepositoryCmd command) {
-        return lib.deploy(command, command.getSession().getConfirm().orDefault());
+        return lib.deploy(command, getWorkspace().currentSession().getConfirm().orDefault());
     }
 
     @Override
@@ -117,17 +114,18 @@ public class NCachedRepository extends AbstractNRepositoryBase {
     }
 
     @Override
-    public NDescriptor fetchDescriptorImpl(NId id, NFetchMode fetchMode, NSession session) {
+    public NDescriptor fetchDescriptorImpl(NId id, NFetchMode fetchMode) {
+        NSession session = getWorkspace().currentSession();
         if (fetchMode != NFetchMode.REMOTE) {
             if (lib.isReadEnabled()) {
-                NDescriptor libDesc = lib.fetchDescriptorImpl(id, session);
+                NDescriptor libDesc = lib.fetchDescriptorImpl(id);
                 if (libDesc != null) {
                     return libDesc;
                 }
             }
             if (cache.isReadEnabled()) {
                 if (session.isCached()) {
-                    NDescriptor cacheDesc = cache.fetchDescriptorImpl(id, session);
+                    NDescriptor cacheDesc = cache.fetchDescriptorImpl(id);
                     if (cacheDesc != null) {
                         return cacheDesc;
                     }
@@ -138,38 +136,38 @@ public class NCachedRepository extends AbstractNRepositoryBase {
 
         Callable<NOptional<NDescriptor>> nOptionalCallable = () -> {
             try {
-                NDescriptor success = fetchDescriptorCore(id, fetchMode, session);
+                NDescriptor success = fetchDescriptorCore(id, fetchMode);
                 if (success != null) {
                     if (cache.isWriteEnabled()) {
-                        NId id0 = NWorkspaceExt.of(getWorkspace()).resolveEffectiveId(success, session);
+                        NId id0 = NWorkspaceExt.of(getWorkspace()).resolveEffectiveId(success);
                         if (!id0.getLongName().equals(success.getId().getLongName())) {
                             success = success.builder().setId(id0).build();
                         }
-                        cache.deployDescriptor(success.getId(), success, NConfirmationMode.YES, session.copy().setConfirm(NConfirmationMode.YES));
+                        cache.deployDescriptor(success.getId(), success, NConfirmationMode.YES);
                     }
                     return NOptional.of(success);
                 } else {
-                    return NOptional.ofError(session1 -> NMsg.ofC("nuts descriptor not found %s", id), new NNotFoundException(session, id));
+                    return NOptional.ofError(() -> NMsg.ofC("nuts descriptor not found %s", id), new NNotFoundException(id));
                 }
             } catch (RuntimeException ex) {
-                return NOptional.ofError(session1 -> NMsg.ofC("nuts descriptor not found %s", id), ex);
+                return NOptional.ofError(() -> NMsg.ofC("nuts descriptor not found %s", id), ex);
             }
         };
         NOptional<NDescriptor> res = null;
         try {
             boolean lockEnabled = isLockEnabled();
             res = lockEnabled ?
-                    NLocks.of(session).setSource(id.builder().setFaceDescriptor().build()).call(nOptionalCallable)
+                    NLocks.of().setSource(id.builder().setFaceDescriptor().build()).call(nOptionalCallable)
                     : nOptionalCallable.call();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         if (res.isPresent()) {
-            return res.get(session);
+            return res.get();
         }
         NDescriptor m = null;
         try {
-            m = mirroring.fetchDescriptorImplInMirrors(id, fetchMode, session);
+            m = mirroring.fetchDescriptorImplInMirrors(id, fetchMode);
         } catch (RuntimeException ex) {
             mirrorsEx = ex;
         }
@@ -186,14 +184,15 @@ public class NCachedRepository extends AbstractNRepositoryBase {
     }
 
     @Override
-    public final NIterator<NId> searchVersionsImpl(NId id, NIdFilter idFilter, NFetchMode fetchMode, NSession session) {
+    public final NIterator<NId> searchVersionsImpl(NId id, NIdFilter idFilter, NFetchMode fetchMode) {
 
         List<NIterator<? extends NId>> all = new ArrayList<>();
+        NSession session = getWorkspace().currentSession();
         if (fetchMode != NFetchMode.REMOTE) {
             if (lib.isReadEnabled()) {
                 all.add(IteratorBuilder.of(
-                                lib.searchVersions(id, idFilter, true, session),
-                                session).named("searchVersionInLib(" + getName() + ")")
+                                lib.searchVersions(id, idFilter, true)
+                                ).named("searchVersionInLib(" + getName() + ")")
                         .build()
 
                 );
@@ -204,8 +203,8 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                 if (cache.isReadEnabled()) {
                     all.add(
                             IteratorBuilder.of(
-                                    cache.searchVersions(id, idFilter, true, session),
-                                    session).named("searchVersionInCache(" + getName() + ")").build());
+                                    cache.searchVersions(id, idFilter, true)
+                            ).named("searchVersionInCache(" + getName() + ")").build());
                 }
 //                Iterator<NutsId> p = null;
 //                try {
@@ -223,40 +222,41 @@ public class NCachedRepository extends AbstractNRepositoryBase {
 
         try {
             NIterator<NId> p = null;
-            p = searchVersionsCore(id, idFilter, fetchMode, session);
+            p = searchVersionsCore(id, idFilter, fetchMode);
             if (p != null) {
                 all.add(
-                        IteratorBuilder.of(p, session).named("searchVersionInCore(" + getName() + ")").build());
+                        IteratorBuilder.of(p).named("searchVersionInCore(" + getName() + ")").build());
             }
         } catch (NNotFoundException ex) {
             //ignore error
         } catch (Exception ex) {
-            _LOGOP(session).level(Level.FINEST).verb(NLogVerb.FAIL).error(ex)
+            _LOGOP().level(Level.FINEST).verb(NLogVerb.FAIL).error(ex)
                     .log(NMsg.ofJ("search versions error : {0}", ex));
             //ignore....
         }
-        NIterator<NId> namedNutIdIterator = IteratorBuilder.ofConcat(all, session).distinct(
+        NIterator<NId> namedNutIdIterator = IteratorBuilder.ofConcat(all).distinct(
                 NFunction.of(NId::getLongName).withDesc(NEDesc.of("getLongName"))).build();
 
         if (namedNutIdIterator == null) {
             namedNutIdIterator = IteratorBuilder.emptyIterator();
         }
         return IteratorBuilder.of(
-                mirroring.searchVersionsImpl_appendMirrors(namedNutIdIterator, id, idFilter, fetchMode, session),
-                session).named("searchVersion(" + getName() + ")").build();
+                mirroring.searchVersionsImpl_appendMirrors(namedNutIdIterator, id, idFilter, fetchMode)
+        ).named("searchVersion(" + getName() + ")").build();
 
     }
 
     @Override
-    public final NPath fetchContentImpl(NId id, NDescriptor descriptor, NFetchMode fetchMode, NSession session) {
+    public final NPath fetchContentImpl(NId id, NDescriptor descriptor, NFetchMode fetchMode) {
         if (fetchMode != NFetchMode.REMOTE) {
-            NPath c = lib.fetchContentImpl(id, session);
+            NPath c = lib.fetchContentImpl(id);
             if (c != null) {
                 return c;
             }
         }
+        NSession session = getWorkspace().currentSession();
         if (cache.isReadEnabled() && session.isCached()) {
-            NPath c = cache.fetchContentImpl(id, session);
+            NPath c = cache.fetchContentImpl(id);
             if (c != null) {
                 return c;
             }
@@ -266,28 +266,28 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         NPath c = null;
         Callable<NOptional<NPath>> nOptionalCallable = () -> {
             if (cache.isWriteEnabled()) {
-                NPath cachePath = cache.getLongIdLocalFile(id, session);
-                NPath c2 = fetchContentCore(id, descriptor, fetchMode, session);
+                NPath cachePath = cache.getLongIdLocalFile(id);
+                NPath c2 = fetchContentCore(id, descriptor, fetchMode);
                 if (c2 != null) {
-                    NCp.of(session).from(c2).to(cachePath).run();
+                    NCp.of().from(c2).to(cachePath).run();
                     return NOptional.of(cachePath.setUserCache(true).setUserTemporary(false));
                 } else {
-                    return NOptional.ofError(session1 -> NMsg.ofC("nuts content not found %s", id), new NNotFoundException(session, id));
+                    return NOptional.ofError(() -> NMsg.ofC("nuts content not found %s", id), new NNotFoundException(id));
                 }
             } else {
                 NPath c2 = null;
                 RuntimeException impl2Ex = null;
                 try {
-                    c2 = fetchContentCore(id, descriptor, fetchMode, session);
+                    c2 = fetchContentCore(id, descriptor, fetchMode);
                 } catch (RuntimeException ex) {
                     impl2Ex = ex;
                 }
                 if (c2 != null) {
                     return NOptional.of(c2);
                 } else if (impl2Ex != null) {
-                    return NOptional.ofError(session1 -> NMsg.ofC("nuts content not found %s", id), impl2Ex);
+                    return NOptional.ofError(() -> NMsg.ofC("nuts content not found %s", id), impl2Ex);
                 } else {
-                    return NOptional.ofError(session1 -> NMsg.ofC("nuts content not found %s", id), new NNotFoundException(session, id));
+                    return NOptional.ofError(() -> NMsg.ofC("nuts content not found %s", id), new NNotFoundException(id));
                 }
             }
         };
@@ -295,7 +295,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         try {
             boolean lockEnabled = isLockEnabled();
             res = lockEnabled ?
-                    NLocks.of(session).setSource(id.builder().setFaceContent().build()).call(nOptionalCallable)
+                    NLocks.of().setSource(id.builder().setFaceContent().build()).call(nOptionalCallable)
                     : nOptionalCallable.call();
         } catch (RuntimeException e) {
             throw e;
@@ -304,10 +304,10 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         }
 
         if (res.isPresent()) {
-            return res.get(session);
+            return res.get();
         }
         try {
-            c = mirroring.fetchContent(id, descriptor, fetchMode, session);
+            c = mirroring.fetchContent(id, descriptor, fetchMode);
         } catch (RuntimeException ex) {
             mirrorsEx = ex;
         }
@@ -318,19 +318,20 @@ public class NCachedRepository extends AbstractNRepositoryBase {
             if (res.getError() instanceof NNotFoundException) {
                 throw (RuntimeException) res.getError();
             }
-            throw new NNotFoundException(session, id, res.getError());
+            throw new NNotFoundException(id, res.getError());
         }
         if (mirrorsEx != null) {
             if (mirrorsEx instanceof NNotFoundException) {
                 throw mirrorsEx;
             }
-            throw new NNotFoundException(session, id, mirrorsEx);
+            throw new NNotFoundException(id, mirrorsEx);
         }
-        throw new NNotFoundException(session, id);
+        throw new NNotFoundException(id);
     }
 
     @Override
-    public final NIterator<NId> searchImpl(final NIdFilter filter, NFetchMode fetchMode, NSession session) {
+    public final NIterator<NId> searchImpl(final NIdFilter filter, NFetchMode fetchMode) {
+        NSession session = getWorkspace().currentSession();
         List<NPath> basePaths = CommonRootsByPathHelper.resolveRootPaths(filter, session);
         List<NId> baseIds = CommonRootsByIdHelper.resolveRootPaths(filter, session);
         List<NIterator<? extends NId>> li = new ArrayList<>();
@@ -352,52 +353,52 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         }
         NIterator<NId> p = null;
         try {
-            p = searchCore(filter, basePaths.toArray(new NPath[0]), baseIds.toArray(new NId[0]), fetchMode, session);
+            p = searchCore(filter, basePaths.toArray(new NPath[0]), baseIds.toArray(new NId[0]), fetchMode);
         } catch (NNotFoundException ex) {
             //ignore....
         } catch (Exception ex) {
             //ignore....
-            _LOGOP(session).level(Level.SEVERE).error(ex)
+            _LOGOP().level(Level.SEVERE).error(ex)
                     .log(NMsg.ofJ("search latest versions error : {0}", ex));
         }
         if (p != null) {
             li.add(p);
         }
-        return mirroring.search(IteratorBuilder.ofConcat(li, session).distinct(
+        return mirroring.search(IteratorBuilder.ofConcat(li).distinct(
                 NFunction.of(NId::getLongName).withDesc(NEDesc.of("getLongName"))
-        ).build(), filter, fetchMode, session);
+        ).build(), filter, fetchMode);
     }
 
     protected boolean isAllowedOverrideArtifact(NId id) {
         return true;
     }
 
-    public NIterator<NId> searchVersionsCore(NId id, NIdFilter idFilter, NFetchMode fetchMode, NSession session) {
+    public NIterator<NId> searchVersionsCore(NId id, NIdFilter idFilter, NFetchMode fetchMode) {
         return null;
     }
 
-    public NId searchLatestVersionCore(NId id, NIdFilter filter, NFetchMode fetchMode, NSession session) {
+    public NId searchLatestVersionCore(NId id, NIdFilter filter, NFetchMode fetchMode) {
         return null;
     }
 
-    public NDescriptor fetchDescriptorCore(NId id, NFetchMode fetchMode, NSession session) {
+    public NDescriptor fetchDescriptorCore(NId id, NFetchMode fetchMode) {
         return null;
     }
 
-    public NPath fetchContentCore(NId id, NDescriptor descriptor, NFetchMode fetchMode, NSession session) {
+    public NPath fetchContentCore(NId id, NDescriptor descriptor, NFetchMode fetchMode) {
         return null;
     }
 
-    public NIterator<NId> searchCore(final NIdFilter filter, NPath[] basePaths, NId[] baseIds, NFetchMode fetchMode, NSession session) {
+    public NIterator<NId> searchCore(final NIdFilter filter, NPath[] basePaths, NId[] baseIds, NFetchMode fetchMode) {
         return null;
     }
 
-    public void updateStatisticsImpl(NSession session) {
+    public void updateStatisticsImpl() {
 
     }
 
-    public boolean acceptAction(NId id, NRepositorySupportedAction supportedAction, NFetchMode mode, NSession session) {
-        String groups = config().setSession(session).getGroups();
+    public boolean acceptAction(NId id, NRepositorySupportedAction supportedAction, NFetchMode mode) {
+        String groups = config().getGroups();
         if (NBlankable.isBlank(groups)) {
             return true;
         }
@@ -405,31 +406,31 @@ public class NCachedRepository extends AbstractNRepositoryBase {
     }
 
     @Override
-    public final NId searchLatestVersion(NId id, NIdFilter filter, NFetchMode fetchMode, NSession session) {
+    public final NId searchLatestVersion(NId id, NIdFilter filter, NFetchMode fetchMode) {
         if (id.getVersion().isBlank() && filter == null) {
-            NId bestId = lib.searchLatestVersion(id, filter, session);
+            NId bestId = lib.searchLatestVersion(id, filter);
             NId c1 = null;
             if (cache.isReadEnabled()) {
-                c1 = cache.searchLatestVersion(id, filter, session);
+                c1 = cache.searchLatestVersion(id, filter);
                 if (bestId == null || (c1 != null && c1.getVersion().compareTo(bestId.getVersion()) > 0)) {
                     bestId = c1;
                 }
             }
             try {
-                c1 = searchLatestVersionCore(id, filter, fetchMode, session);
+                c1 = searchLatestVersionCore(id, filter, fetchMode);
                 if (bestId == null || (c1 != null && c1.getVersion().compareTo(bestId.getVersion()) > 0)) {
                     bestId = c1;
                 }
             } catch (NNotFoundException | NFetchModeNotSupportedException ex) {
                 //ignore
             } catch (Exception ex) {
-                _LOGOP(session).level(Level.SEVERE).error(ex)
+                _LOGOP().level(Level.SEVERE).error(ex)
                         .log(NMsg.ofJ("search latest versions error : {0}", ex));
                 //ignore....
             }
-            return mirroring.searchLatestVersion(bestId, id, filter, fetchMode, session);
+            return mirroring.searchLatestVersion(bestId, id, filter, fetchMode);
         }
-        return super.searchLatestVersion(id, filter, fetchMode, session);
+        return super.searchLatestVersion(id, filter, fetchMode);
     }
 
     @Override
@@ -437,18 +438,18 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         return new AbstractNUpdateRepositoryStatsCmd(this) {
             @Override
             public NUpdateRepositoryStatsCmd run() {
-                lib.reindexFolder(getSession());
+                lib.reindexFolder();
                 if (cache.isWriteEnabled()) {
-                    cache.reindexFolder(getSession());
+                    cache.reindexFolder();
                 }
-                updateStatisticsImpl(getSession());
+                updateStatisticsImpl();
                 return this;
             }
         };
     }
 
     @Override
-    public boolean isAcceptFetchMode(NFetchMode mode, NSession session) {
+    public boolean isAcceptFetchMode(NFetchMode mode) {
         return true;
     }
 

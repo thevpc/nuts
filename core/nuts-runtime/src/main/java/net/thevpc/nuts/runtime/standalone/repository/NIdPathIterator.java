@@ -46,7 +46,6 @@ public class NIdPathIterator extends NIteratorBase<NId> {
     private final NRepository repository;
     private final StackOrQueue<PathAndDepth> stack;
     private final NIdFilter filter;
-    private final NSession session;
     private final NIdPathIteratorModel model;
     private final int maxDepth;
     private final NPath basePath;
@@ -57,24 +56,24 @@ public class NIdPathIterator extends NIteratorBase<NId> {
     private final NObjectElement extraProperties;
     private final String kind;
 
-    public NIdPathIterator(NRepository repository, NPath rootFolder, NPath basePath, NIdFilter filter, NSession session, NIdPathIteratorModel model, int maxDepth, String kind, NObjectElement extraProperties,boolean bfs) {
+    public NIdPathIterator(NRepository repository, NPath rootFolder, NPath basePath, NIdFilter filter, NIdPathIteratorModel model, int maxDepth, String kind, NObjectElement extraProperties, boolean bfs) {
         this.stack = bfs?new OneQueue<>():new OneStack<>();
         this.repository = repository;
         this.extraProperties = extraProperties;
         this.kind = kind;
-        this.session = session;
         this.filter = filter;
         this.model = model;
         this.maxDepth = maxDepth;
+        NSession session = repository.getWorkspace().currentSession();
         if (rootFolder == null) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("could not iterate over null rootFolder"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("could not iterate over null rootFolder"));
         }
         this.basePath = basePath;
         this.rootFolder = rootFolder;
         NPath startUrl = rootFolder;
         if (basePath != null) {
             if (basePath.isAbsolute()) {
-                throw new NIllegalArgumentException(session, NMsg.ofC("expected relative path : %s", basePath));
+                throw new NIllegalArgumentException(NMsg.ofC("expected relative path : %s", basePath));
             } else {
                 startUrl = startUrl.resolve(basePath);
             }
@@ -83,13 +82,13 @@ public class NIdPathIterator extends NIteratorBase<NId> {
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return NElements.of(session).ofObject()
+    public NElement describe() {
+        return NElements.of().ofObject()
                 .set("type", "ScanPath")
                 .set("repository", repository == null ? null : repository.getName())
-                .set("filter", NEDesc.describeResolveOrDestruct(filter, session))
-                .set("path", NElements.of(session).toElement(basePath))
-                .set("root", NElements.of(session).toElement(rootFolder))
+                .set("filter", NEDesc.describeResolveOrDestruct(filter))
+                .set("path", NElements.of().toElement(basePath))
+                .set("root", NElements.of().toElement(rootFolder))
                 .set("maxDepth", maxDepth)
                 .addAll(extraProperties)
                 .build();
@@ -100,6 +99,7 @@ public class NIdPathIterator extends NIteratorBase<NId> {
         last = null;
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.remove();
+            NSession session = repository.getWorkspace().currentSession();
             if (file.folder) {
                 session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s", repository.getName(), kind, "search folder", file.path.toCompressedForm()));
                 visitedFoldersCount++;
@@ -108,12 +108,12 @@ public class NIdPathIterator extends NIteratorBase<NId> {
                     children = file.path.stream().toArray(NPath[]::new);
                 } catch (NIOException ex) {
                     //just log without stack trace!
-                    session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s %s", repository.getName(), kind, "search folder", file.path.toCompressedForm(), NTexts.of(session).ofStyled("failed!", NTextStyle.error())));
-                    NLogOp.of(NIdPathIterator.class, session).level(Level.FINE)//.error(ex)
+                    session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s %s", repository.getName(), kind, "search folder", file.path.toCompressedForm(), NTexts.of().ofStyled("failed!", NTextStyle.error())));
+                    NLogOp.of(NIdPathIterator.class).level(Level.FINE)//.error(ex)
                             .log(NMsg.ofJ("error listing : {0} : {1} : {2}", file.path, toString(), ex.toString()));
                 } catch (Exception ex) {
-                    session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s %s", repository.getName(), kind, "search folder", file.path.toCompressedForm(), NTexts.of(session).ofStyled("failed!", NTextStyle.error())));
-                    NLogOp.of(NIdPathIterator.class, session).level(Level.FINE).error(ex)
+                    session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s %s", repository.getName(), kind, "search folder", file.path.toCompressedForm(), NTexts.of().ofStyled("failed!", NTextStyle.error())));
+                    NLogOp.of(NIdPathIterator.class).level(Level.FINE).error(ex)
                             .log(NMsg.ofJ("error listing : {0} : {1}", file.path, toString()));
                 }
                 boolean deep = file.depth < maxDepth;
@@ -133,9 +133,9 @@ public class NIdPathIterator extends NIteratorBase<NId> {
 
                 NId t = null;
                 try {
-                    t = model.parseId(file.path, rootFolder, filter, repository, session);
+                    t = model.parseId(file.path, rootFolder, filter, repository);
                 } catch (Exception ex) {
-                    NLogOp.of(NIdPathIterator.class, session).level(Level.FINE).error(ex)
+                    NLogOp.of(NIdPathIterator.class).level(Level.FINE).error(ex)
                             .log(NMsg.ofJ("error parsing : {0} : {1}", file.path, toString()));
                 }
                 if (t != null) {
@@ -158,9 +158,10 @@ public class NIdPathIterator extends NIteratorBase<NId> {
     @Override
     public void remove() {
         if (last != null) {
-            model.undeploy(last, session);
+            model.undeploy(last);
         }
-        throw new NUnsupportedOperationException(session, NMsg.ofPlain("unsupported Remove"));
+        NSession session=repository.getWorkspace().currentSession();
+        throw new NUnsupportedOperationException(NMsg.ofPlain("unsupported Remove"));
     }
 
     public long getVisitedFoldersCount() {

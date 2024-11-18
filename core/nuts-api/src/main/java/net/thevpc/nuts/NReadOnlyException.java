@@ -40,19 +40,16 @@ public class NReadOnlyException extends NException {
     /**
      * Constructs a new NutsReadOnlyException exception
      *
-     * @param session  workspace
      * @param location location
      */
-    public NReadOnlyException(NSession session, String location) {
-        super(session, NMsg.ofC("cannot update readonly workspace %s", NTexts.of(session).ofStyled(location, NTextStyle.path())));
+    public NReadOnlyException(String location) {
+        super(NMsg.ofC("cannot update readonly workspace %s", NTexts.of().ofStyled(location, NTextStyle.path())));
     }
 
     /**
      * Constructs a new NutsReadOnlyException exception
-     *
-     * @param session workspace
      */
-    public NReadOnlyException(NSession session) {
-        this(session, session == null ? null : String.valueOf(NLocations.of(session).getWorkspaceLocation()));
+    public NReadOnlyException() {
+        this(NSession.of().isNotPresent()? null : String.valueOf(NLocations.of().getWorkspaceLocation()));
     }
 }

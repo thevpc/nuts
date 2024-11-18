@@ -13,10 +13,10 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public interface NOptional<T> extends NBlankable, NSessionProvider {
+public interface NOptional<T> extends NBlankable {
 
     static <T> NOptional<T> ofNamedEmpty(String name) {
-        return ofEmpty(s -> NMsg.ofC("missing %s", NStringUtils.firstNonBlank(name, "value")));
+        return ofEmpty(() -> NMsg.ofC("missing %s", NStringUtils.firstNonBlank(name, "value")));
     }
 
     static <T> NOptional<T> ofNamedEmpty(NMsg message) {
@@ -24,42 +24,42 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
     }
 
     static <T> NOptional<T> ofNamedError(NMsg message) {
-        return ofError(message == null ? s -> NMsg.ofC("error evaluating %s", "value") : s -> message);
+        return ofError(message == null ? () -> NMsg.ofC("error evaluating %s", "value") : () -> message);
     }
 
     static <T> NOptional<T> ofNamedError(NMsg message, Throwable throwable) {
-        return ofError(message == null ? s -> NMsg.ofC("error evaluating %s", "value") : s -> message, throwable);
+        return ofError(message == null ? () -> NMsg.ofC("error evaluating %s", "value") : () -> message, throwable);
     }
 
     static <T> NOptional<T> ofNamedError(String name) {
-        return ofError(s -> NMsg.ofC("error evaluating %s", NStringUtils.firstNonBlank(name, "value")));
+        return ofError(() -> NMsg.ofC("error evaluating %s", NStringUtils.firstNonBlank(name, "value")));
     }
 
     static <T> NOptional<T> ofNamedError(String name, Throwable throwable) {
-        return ofError(s -> NMsg.ofC("error evaluating %s", name), throwable);
+        return ofError(() -> NMsg.ofC("error evaluating %s", name), throwable);
     }
 
     static <T> NOptional<T> ofEmpty() {
-        return ofEmpty((Function<NSession, NMsg>)null);
+        return ofEmpty((Supplier<NMsg>)null);
     }
 
-    static <T> NOptional<T> ofEmpty(Function<NSession, NMsg> emptyMessage) {
+    static <T> NOptional<T> ofEmpty(Supplier<NMsg> emptyMessage) {
         return new NReservedOptionalEmpty<>(emptyMessage);
     }
 
     static <T> NOptional<T> ofEmpty(NMsg emptyMessage) {
-        return new NReservedOptionalEmpty<>(s->emptyMessage);
+        return new NReservedOptionalEmpty<>(()->emptyMessage);
     }
 
-    static <T> NOptional<T> ofError(Function<NSession, NMsg> errorMessage) {
+    static <T> NOptional<T> ofError(Supplier<NMsg> errorMessage) {
         return ofError(errorMessage, null);
     }
 
     static <T> NOptional<T> ofError(NMsg errorMessage) {
-        return ofError(errorMessage==null?null:q->errorMessage, null);
+        return ofError(errorMessage==null?null:()->errorMessage, null);
     }
 
-    static <T> NOptional<T> ofError(Function<NSession, NMsg> errorMessage, Throwable throwable) {
+    static <T> NOptional<T> ofError(Supplier<NMsg> errorMessage, Throwable throwable) {
         return new NReservedOptionalError<>(errorMessage, throwable);
     }
 
@@ -78,14 +78,14 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
 
     static <T> NOptional<T> ofSupplier(Supplier<T> value) {
         NAssert.requireNonNull(value, "supplier");
-        return new NReservedOptionalValidCallable<>(s -> value.get());
+        return new NReservedOptionalValidCallable<>(() -> value.get());
     }
 
     static <T> NOptional<T> ofNamed(T value, String name) {
-        return of(value, s -> NMsg.ofC("missing %s", NStringUtils.firstNonBlank(name, "value")));
+        return of(value, () -> NMsg.ofC("missing %s", NStringUtils.firstNonBlank(name, "value")));
     }
 
-    static <T> NOptional<T> of(T value, Function<NSession, NMsg> emptyMessage) {
+    static <T> NOptional<T> of(T value, Supplier<NMsg> emptyMessage) {
         if (value == null) {
             return ofEmpty(emptyMessage);
         }
@@ -97,14 +97,14 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
     }
 
     static <T> NOptional<T> ofNamedOptional(Optional<T> optional, String name) {
-        return ofOptional(optional, s -> NMsg.ofC("missing %s", NStringUtils.firstNonBlank(name, "value")));
+        return ofOptional(optional, () -> NMsg.ofC("missing %s", NStringUtils.firstNonBlank(name, "value")));
     }
 
     static <T> NOptional<T> ofOptional(Optional<T> optional, NMsg name) {
-        return ofOptional(optional, s -> name);
+        return ofOptional(optional, () -> name);
     }
 
-    static <T> NOptional<T> ofOptional(Optional<T> optional, Function<NSession, NMsg> errorMessage) {
+    static <T> NOptional<T> ofOptional(Optional<T> optional, Supplier<NMsg> errorMessage) {
         if (optional.isPresent()) {
             return of(optional.get());
         }
@@ -120,7 +120,7 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
             return ofSingleton(collection, null, null);
         }
         return ofFirst(collection,
-                s -> NMsg.ofC("missing %s", NStringUtils.firstNonBlank(name, "value"))
+                () -> NMsg.ofC("missing %s", NStringUtils.firstNonBlank(name, "value"))
         );
     }
 
@@ -129,17 +129,17 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
             return ofSingleton(collection, null, null);
         }
         return ofSingleton(collection,
-                s -> NMsg.ofC("missing %s", NStringUtils.firstNonBlank(name, "value")),
-                 s -> NMsg.ofC("too many elements %s>1 for %s", collection == null ? 0 : collection.size(), NStringUtils.firstNonBlank(name, "value")));
+                () -> NMsg.ofC("missing %s", NStringUtils.firstNonBlank(name, "value")),
+                () -> NMsg.ofC("too many elements %s>1 for %s", collection == null ? 0 : collection.size(), NStringUtils.firstNonBlank(name, "value")));
     }
 
-    static <T> NOptional<T> ofSingleton(Collection<T> collection, Function<NSession, NMsg> emptyMessage, Function<NSession, NMsg> errorMessage) {
+    static <T> NOptional<T> ofSingleton(Collection<T> collection, Supplier<NMsg> emptyMessage, Supplier<NMsg> errorMessage) {
         if (collection == null || collection.isEmpty()) {
             return ofEmpty(emptyMessage);
         }
         if (collection.size() > 1) {
             if (errorMessage == null) {
-                errorMessage = s -> NMsg.ofC("too many elements %s>1", collection.size());
+                errorMessage = () -> NMsg.ofC("too many elements %s>1", collection.size());
             }
             return ofError(errorMessage);
         }
@@ -153,9 +153,9 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
         return ofFirst(collection, null);
     }
 
-    static <T> NOptional<T> ofFirst(Collection<T> collection, Function<NSession, NMsg> emptyMessage) {
+    static <T> NOptional<T> ofFirst(Collection<T> collection, Supplier<NMsg> emptyMessage) {
         if (emptyMessage == null) {
-            emptyMessage = s -> NMsg.ofPlain("missing element");
+            emptyMessage = () -> NMsg.ofPlain("missing element");
         }
         if (collection == null || collection.isEmpty()) {
             return ofEmpty(emptyMessage);
@@ -167,12 +167,8 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
     }
 
     default NOptional<T> failFast() {
-        return failFast(null);
-    }
-
-    default NOptional<T> failFast(NSession session) {
         if (isError()) {
-            get(session);
+            get();
         }
         return this;
     }
@@ -224,7 +220,7 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
 
     NOptional<T> filter(Predicate<T> predicate);
 
-    NOptional<T> filter(Predicate<T> predicate, Function<NSession, NMsg> message);
+    NOptional<T> filter(Predicate<T> predicate, Supplier<NMsg> message);
 
     NOptional<T> ifPresent(Consumer<T> t);
 
@@ -252,13 +248,10 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
 
     T get();
 
-    T get(Function<NSession, NMsg> message, NSession session);
 
     T get(Supplier<NMsg> message);
 
     Throwable getError();
-
-    T get(NSession session);
 
     T orNull();
 
@@ -270,7 +263,7 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
 
     NOptional<T> ifBlank(T other);
 
-    NOptional<T> ifBlankEmpty(Function<NSession, NMsg> emptyMessage);
+    NOptional<T> ifBlankEmpty(Supplier<NMsg> emptyMessage);
 
     NOptional<T> ifBlankEmpty();
 
@@ -326,15 +319,6 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
     
     NOptionalType getType();
 
-    Function<NSession, NMsg> getMessage();
-
-    /**
-     * set default session or null
-     *
-     * @param session default session or null
-     * @return {@code this} instance
-     */
-    NOptional<T> setSession(NSession session);
-
+    Supplier<NMsg> getMessage();
 
 }

@@ -40,11 +40,10 @@ public class NRepositoryAlreadyRegisteredException extends NRepositoryException 
     /**
      * Constructs a new NutsNotInstalledException exception
      *
-     * @param session    workspace
      * @param repository repository
      */
-    public NRepositoryAlreadyRegisteredException(NSession session, String repository) {
-        super(session, repository,
+    public NRepositoryAlreadyRegisteredException(String repository) {
+        super(repository,
                 NMsg.ofC("repository already registered %s", (repository == null ? "<null>" : repository))
                 , null);
     }
@@ -52,12 +51,11 @@ public class NRepositoryAlreadyRegisteredException extends NRepositoryException 
     /**
      * Constructs a new NutsNotInstalledException exception
      *
-     * @param session    workspace
      * @param repository repository
      * @param err        error
      */
-    public NRepositoryAlreadyRegisteredException(NSession session, String repository, Throwable err) {
-        super(session, repository,
+    public NRepositoryAlreadyRegisteredException(String repository, Throwable err) {
+        super(repository,
                 NMsg.ofC("repository already registered %s", (repository == null ? "<null>" : repository))
                 , err);
     }

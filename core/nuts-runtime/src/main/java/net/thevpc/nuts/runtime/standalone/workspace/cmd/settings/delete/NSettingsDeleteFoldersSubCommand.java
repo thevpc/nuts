@@ -22,31 +22,35 @@ import java.util.Set;
  * @author thevpc
  */
 public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubCommand {
+    public NSettingsDeleteFoldersSubCommand(NWorkspace workspace) {
+        super(workspace);
+    }
 
-    private static void deleteRepoCache(NRepository repository, NSession session, boolean force) {
+    private static void deleteRepoCache(NRepository repository, boolean force) {
         NPath s = repository.config().getStoreLocation(NStoreType.CACHE);
         if (s != null) {
+            NSession session = repository.getWorkspace().currentSession();
             if (s.exists()) {
                 session.out().println(NMsg.ofC("```error deleting``` %s folder %s ...",
-                        NTexts.of(session).ofStyled("cache", NTextStyle.primary1())
+                        NTexts.of().ofStyled("cache", NTextStyle.primary1())
                         , s));
                 if (force
-                        || NAsk.of(session)
+                        || NAsk.of()
                         .forBoolean(NMsg.ofPlain("force delete?")).setDefaultValue(false)
-                        .setSession(session).getBooleanValue()) {
+                        .getBooleanValue()) {
                     s.delete();
                 }
             }
         }
         if (repository.config().isSupportedMirroring()) {
             for (NRepository mirror : repository.config().getMirrors()) {
-                deleteRepoCache(mirror, session, force);
+                deleteRepoCache(mirror, force);
             }
         }
     }
 
     @Override
-    public boolean exec(NCmdLine cmdLine, Boolean autoSave, NSession session) {
+    public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
         for (NStoreType value : NStoreType.values()) {
             String cmdName = "delete " + value.id();
             cmdLine.setCommandName("settings " + cmdName);
@@ -57,9 +61,9 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
                 while (cmdLine.hasNext()) {
                     NArg a;
                     if ((a = cmdLine.nextFlag("-y", "--yes").orNull()) != null) {
-                        force = a.getBooleanValue().get(session);
+                        force = a.getBooleanValue().get();
                     } else if (!cmdLine.isNextOption()) {
-                        String s = cmdLine.peek().get(session).asString().get();
+                        String s = cmdLine.peek().get().asString().get();
                         try {
                             locationsToDelete.add(NStoreType.valueOf(s.toUpperCase()));
                         } catch (Exception ex) {
@@ -71,7 +75,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
                 }
                 if (cmdLine.isExecMode()) {
                     for (NStoreType folder : locationsToDelete) {
-                        deleteWorkspaceFolder(session, folder, force);
+                        deleteWorkspaceFolder(folder, force);
                     }
                 }
                 return true;
@@ -80,40 +84,42 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
         return false;
     }
 
-    private void deleteWorkspaceFolder(NSession session, NStoreType folder, boolean force) {
-        NPath sstoreLocation = NLocations.of(session).getStoreLocation(folder);
+    private void deleteWorkspaceFolder(NStoreType folder, boolean force) {
+        NPath sstoreLocation = NLocations.of().getStoreLocation(folder);
+        NSession session = workspace.currentSession();
         if (sstoreLocation != null) {
-            NTexts factory = NTexts.of(session);
+            NTexts factory = NTexts.of();
             if (sstoreLocation.exists()) {
                 session.out().println(NMsg.ofC("```error deleting``` %s for workspace %s folder %s ...",
                         factory.ofStyled(folder.id(), NTextStyle.primary1()),
                         factory.ofStyled(session.getWorkspace().getName(), NTextStyle.primary1()),
                         factory.ofStyled(sstoreLocation.toString(), NTextStyle.path())));
                 if (force
-                        || NAsk.of(session)
-                        .forBoolean(NMsg.ofPlain("force delete?")).setDefaultValue(false).setSession(session)
+                        || NAsk.of()
+                        .forBoolean(NMsg.ofPlain("force delete?")).setDefaultValue(false)
                         .getBooleanValue()) {
                     sstoreLocation.delete();
                 }
             }
         }
-        for (NRepository repository : NRepositories.of(session).getRepositories()) {
-            deleteRepoFolder(repository, session, folder, force);
+        for (NRepository repository : NRepositories.of().getRepositories()) {
+            deleteRepoFolder(repository, folder, force);
         }
     }
 
-    private void deleteRepoFolder(NRepository repository, NSession session, NStoreType folder, boolean force) {
-        NPath sstoreLocation = NLocations.of(session).getStoreLocation(folder);
+    private void deleteRepoFolder(NRepository repository, NStoreType folder, boolean force) {
+        NPath sstoreLocation = NLocations.of().getStoreLocation(folder);
         if (sstoreLocation != null) {
-            NTexts factory = NTexts.of(session);
+            NTexts factory = NTexts.of();
+            NSession session = workspace.currentSession();
             if (sstoreLocation.exists()) {
                 session.out().println(NMsg.ofC("```error deleting``` %s for repository %s folder %s ...",
                         factory.ofStyled(folder.id(), NTextStyle.primary1()),
                         factory.ofStyled(repository.getName(), NTextStyle.primary1()),
                         factory.ofStyled(sstoreLocation.toString(), NTextStyle.path())));
                 if (force
-                        || NAsk.of(session)
-                        .forBoolean(NMsg.ofPlain("Force Delete?")).setDefaultValue(false).setSession(session)
+                        || NAsk.of()
+                        .forBoolean(NMsg.ofPlain("Force Delete?")).setDefaultValue(false)
                         .getBooleanValue()) {
                     sstoreLocation.delete();
                 }
@@ -121,20 +127,20 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
         }
         if (repository.config().isSupportedMirroring()) {
             for (NRepository subRepository : repository.config().getMirrors()) {
-                deleteRepoCache(subRepository, session, force);
+                deleteRepoCache(subRepository, force);
             }
         }
     }
 
     private void deleteCache(NSession session, boolean force) {
-        NPath sstoreLocation = NLocations.of(session).getStoreLocation(NStoreType.CACHE);
+        NPath sstoreLocation = NLocations.of().getStoreLocation(NStoreType.CACHE);
         if (sstoreLocation != null) {
             //            File cache = new File(storeLocation);
             if (sstoreLocation.exists()) {
                 sstoreLocation.delete();
             }
-            for (NRepository repository : NRepositories.of(session).getRepositories()) {
-                deleteRepoCache(repository, session, force);
+            for (NRepository repository : NRepositories.of().getRepositories()) {
+                deleteRepoCache(repository, force);
             }
         }
     }

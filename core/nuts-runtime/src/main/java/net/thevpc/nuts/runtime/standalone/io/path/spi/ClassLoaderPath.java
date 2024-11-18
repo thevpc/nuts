@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -15,6 +14,7 @@ public class ClassLoaderPath extends URLPath {
     private final String path;
     private final String effectivePath;
     private final ClassLoader loader;
+    private final NWorkspace workspace;
     private static String fileOf(String path,boolean check, NSession session){
         if(path!=null){
             if(path.startsWith("classpath:")){
@@ -27,16 +27,17 @@ public class ClassLoaderPath extends URLPath {
             }
         }
         if(check){
-            throw new NIOException(session, NMsg.ofC("invalid class path file : %s",path));
+            throw new NIOException(NMsg.ofC("invalid class path file : %s",path));
         }
         return null;
     }
 
-    public ClassLoaderPath(String path, ClassLoader loader, NSession session) {
-        super(loader.getResource(fileOf(path,true,session)), session, true);
+    public ClassLoaderPath(String path, ClassLoader loader, NWorkspace workspace) {
+        super(loader.getResource(fileOf(path,true,workspace.currentSession())), workspace, true);
         this.path = path;
-        this.effectivePath = fileOf(path,false,session);
+        this.effectivePath = fileOf(path,false,workspace.currentSession());
         this.loader = loader;
+        this.workspace = workspace;
     }
 
     @Override
@@ -62,7 +63,7 @@ public class ClassLoaderPath extends URLPath {
     }
 
     protected NPath rebuildURLPath(String other) {
-        return NPath.of(new ClassLoaderPath(other, loader, getSession()),getSession());
+        return NPath.of(new ClassLoaderPath(other, loader, workspace));
     }
 
     @Override
@@ -81,18 +82,17 @@ public class ClassLoaderPath extends URLPath {
     }
 
     public static class ClasspathFactory implements NPathFactorySPI {
-        NWorkspace ws;
+        NWorkspace workspace;
 
-        public ClasspathFactory(NWorkspace ws) {
-            this.ws = ws;
+        public ClasspathFactory(NWorkspace workspace) {
+            this.workspace = workspace;
         }
 
         @Override
-        public NCallableSupport<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
-            NSessionUtils.checkSession(ws, session);
+        public NCallableSupport<NPathSPI> createPath(String path, ClassLoader classLoader) {
             try {
                 if (path.startsWith("classpath:")) {
-                    return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT,()->new ClassLoaderPath(path, classLoader, session));
+                    return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT,()->new ClassLoaderPath(path, classLoader, workspace));
                 }
             } catch (Exception ex) {
                 //ignore

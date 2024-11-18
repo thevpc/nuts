@@ -37,16 +37,14 @@ public interface NSearchId {
     /**
      * return id
      *
-     * @param session session
      * @return id
      */
-    NId getId(NSession session);
+    NId getId();
 
     /**
      * return descriptor
      *
-     * @param session session
      * @return descriptor
      */
-    NDescriptor getDescriptor(NSession session);
+    NDescriptor getDescriptor();
 }

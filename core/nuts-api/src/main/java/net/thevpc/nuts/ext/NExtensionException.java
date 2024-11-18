@@ -27,7 +27,6 @@ package net.thevpc.nuts.ext;
 
 import net.thevpc.nuts.NException;
 import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NMsg;
 
 /**
@@ -51,6 +50,7 @@ public abstract class NExtensionException extends NException {
      * {@code cause} is <i>not</i> automatically incorporated in
      * this runtime exception's detail message.
      *
+     * @param extensionId extension id
      * @param message     the detail message (which is saved for later retrieval
      *                    by the {@link #getMessage()} method). if the message is null, a
      *                    default one is provided
@@ -58,11 +58,9 @@ public abstract class NExtensionException extends NException {
      *                    {@link #getCause()} method).  (A {@code null} value is
      *                    permitted, and indicates that the cause is nonexistent or
      *                    unknown.)
-     * @param session     the workspace of this Nuts Exception
-     * @param extensionId extension id
      */
-    public NExtensionException(NSession session, NId extensionId, NMsg message, Throwable cause) {
-        super(session,
+    public NExtensionException(NId extensionId, NMsg message, Throwable cause) {
+        super(
                 message == null
                         ? NMsg.ofC("extension %s has encountered problem", (extensionId == null ? "<null>" : extensionId)) : message, cause);
         this.id = extensionId;

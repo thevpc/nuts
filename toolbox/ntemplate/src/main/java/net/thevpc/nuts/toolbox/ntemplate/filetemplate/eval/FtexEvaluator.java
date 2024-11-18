@@ -232,11 +232,11 @@ public class FtexEvaluator implements ExprEvaluator {
 
     private Object evalAntiQuotesString(String value, FileTemplater ctx) {
         NSession session = ctx.getSession();
-        return NExecCmd.of(session).addCommand(
-                        NCmdLine.parseDefault(value).get(session).toStringArray()
+        return NExecCmd.of().addCommand(
+                        NCmdLine.parseDefault(value).get().toStringArray()
                 ).setDirectory(
                         NBlankable.isBlank(ctx.getWorkingDirRequired()) ? null :
-                                NPath.of(ctx.getWorkingDirRequired(), session)
+                                NPath.of(ctx.getWorkingDirRequired())
                 )
                 .run()
                 .getGrabbedOutOnlyString();

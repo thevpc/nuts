@@ -6,15 +6,13 @@ import net.thevpc.nuts.util.NStringUtils;
 import java.util.Comparator;
 
 public class NSdkLocationComparator implements Comparator<NPlatformLocation> {
-    private NSession session;
-    public NSdkLocationComparator(NSession session) {
-        this.session =session;
+    public NSdkLocationComparator() {
     }
 
     @Override
     public int compare(NPlatformLocation o1, NPlatformLocation o2) {
-        NVersion v1 = NVersion.of(o1.getVersion()).get(session);
-        NVersion v2 = NVersion.of(o2.getVersion()).get(session);
+        NVersion v1 = NVersion.of(o1.getVersion()).get();
+        NVersion v2 = NVersion.of(o2.getVersion()).get();
         int x = (v1 == null || v2 == null) ? 0 : (v1 != null && v2 != null) ? v1.compareTo(v2) : v2 == null ? 1 : -1;
         if (x != 0) {
             return x;

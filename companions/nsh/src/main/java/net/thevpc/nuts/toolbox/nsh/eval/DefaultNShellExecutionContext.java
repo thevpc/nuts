@@ -77,7 +77,7 @@ public class DefaultNShellExecutionContext implements NShellExecutionContext {
     }
     @Override
     public boolean configureFirst(NCmdLine cmd) {
-        NArg a = cmd.peek().get(session);
+        NArg a = cmd.peek().get();
         if (a == null) {
             return false;
         }
@@ -177,13 +177,13 @@ public class DefaultNShellExecutionContext implements NShellExecutionContext {
 
     @Override
     public NShellExecutionContext setOut(PrintStream out) {
-        getSession().getTerminal().setErr(NPrintStream.of(out, getSession()));
+        getSession().getTerminal().setErr(NPrintStream.of(out));
         return this;
     }
 
     @Override
     public NShellExecutionContext setErr(PrintStream err) {
-        getSession().getTerminal().setErr(NPrintStream.of(err, getSession()));
+        getSession().getTerminal().setErr(NPrintStream.of(err));
         return this;
     }
 

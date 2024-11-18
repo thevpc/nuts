@@ -42,7 +42,7 @@ class IdCache {
         this.id = id;
         this.url = url;
         this.workspace = workspace;
-        NLogOp lop = LOG.with().session(validLogSession(session));
+        NLogOp lop = LOG.with();
         Class<NComponent> serviceClass = NComponent.class;
         NRef<Boolean> logStart = NRef.of(false);
         int count = 0;

@@ -35,7 +35,7 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
     public AbstractRunner(NSession session) {
         this.session = session;
         this.out = this.session.out();
-        INIT_FOLDER = NPath.ofUserDirectory(this.session);
+        INIT_FOLDER = NPath.ofUserDirectory();
         CURRENT_FOLDER = INIT_FOLDER;
     }
 
@@ -58,7 +58,7 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
 
     @Override
     public Object configure(boolean skipUnsupported, String... args) {
-        configure(skipUnsupported, NCmdLine.of(args, session));
+        configure(skipUnsupported, NCmdLine.of(args));
         return this;
     }
 
@@ -99,7 +99,7 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
     }
 
     public NPath path(String path) {
-        return NPath.of(path, session);
+        return NPath.of(path);
     }
 
     public void ssh(String... cmd) {
@@ -167,7 +167,7 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
         traceCmd(cmd);
         //}
 //        String out =
-        NExecCmd.of(session)
+        NExecCmd.of()
                 .addCommand(cmd)
                 .failFast()
                 .system()
@@ -183,7 +183,7 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
         if (session.isDry() || session.isTrace()) {
             traceCmd(cmd);
         }
-        return NExecCmd.of(session)
+        return NExecCmd.of()
                 .addCommand(cmd)
                 .failFast()
                 .system()
@@ -208,7 +208,7 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
         if (session.isDry() || session.isTrace()) {
             traceCmd("sed", fromExpr, to, path.toString());
         }
-        NPath p = NPath.ofTempFile("temp", session);
+        NPath p = NPath.ofTempFile("temp");
         try (PrintStream out = p.getPrintStream()) {
             try (BufferedReader br = path.getBufferedReader()) {
                 String line;
@@ -376,21 +376,21 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
     }
 
     protected NPath removeThevpcMaven() {
-        return NPath.of(context().home + "/srv/maven-thevpc/", session);
+        return NPath.of(context().home + "/srv/maven-thevpc/");
     }
 
     protected NPath remoteTheVpcNuts() {
 //        return NPath.of(context().home + "/srv/tomcat-a/webapps-thevpc/ROOT/nuts/", session);
-        return NPath.of(context().home + "/srv/tomcat-a/domain-webapps/thevpc.net/ROOT/nuts/", session);
+        return NPath.of(context().home + "/srv/tomcat-a/domain-webapps/thevpc.net/ROOT/nuts/");
     }
 
     protected NPath localMvn() {
-        return NPath.of(Mvn.localMaven(), session);
+        return NPath.of(Mvn.localMaven());
     }
 
     protected NPath removeMvn() {
         String remoteUser = "vpc";
-        return NPath.of("/home/" + remoteUser + "/.m2/repository", session);
+        return NPath.of("/home/" + remoteUser + "/.m2/repository");
     }
 
     public NSession session() {
@@ -443,19 +443,19 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
         if (rfrom.endsWith("/*")) {
             String rfrom0 = rfrom.substring(0, rfrom.length() - 2);
             if (explodedUpload) {
-                for (NPath p : NPath.of(rfrom0,session).list()) {
+                for (NPath p : NPath.of(rfrom0).list()) {
                     String rto = to + "/" + p.getName();
                     if (p.isDirectory()) {
                         remoteMkdirs(rto);
-                        rto = NPath.of(rto,session).getParent().toString();
+                        rto = NPath.of(rto).getParent().toString();
                     }
                     scpOrRsync(p.toString(), getRemoteSshConnexion().get() + ":" + rto);
                 }
             } else {
                 String rto = to;
-                if (NPath.of(rfrom,session).isDirectory()) {
+                if (NPath.of(rfrom).isDirectory()) {
                     remoteMkdirs(rto);
-                    rto = NPath.of(rto,session()).getParent().toString();
+                    rto = NPath.of(rto).getParent().toString();
                 }
 //                log(NMsg.ofC("##upload## %s to %s",
 //                        NMsg.ofStyled(rfrom0, NTextStyle.path()),
@@ -463,10 +463,10 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
                 scpOrRsync(rfrom0, getRemoteSshConnexion().get() + ":" + rto);
             }
         } else {
-            String rto = NPath.of(to,session()).toString();
-            if (NPath.of(rfrom,session()).isDirectory()) {
+            String rto = NPath.of(to).toString();
+            if (NPath.of(rfrom).isDirectory()) {
                 remoteMkdirs(rto);
-                rto = NPath.of(rto,session()).getParent().toString();
+                rto = NPath.of(rto).getParent().toString();
             }
             scpOrRsync(rfrom, remoteSshConnexion + ":" + rto);
         }
@@ -485,11 +485,11 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
     }
 
     public void rexec(String... command) {
-        NExecCmd.of(session()).system()
+        NExecCmd.of().system()
                 .addCommand(
                         "ssh",
                         remoteSshConnexion,
-                        NCmdLine.of(command).format(session()).filteredText()
+                        NCmdLine.of(command).format().filteredText()
                 )
                 .failFast()
                 .run();

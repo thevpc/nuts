@@ -20,8 +20,8 @@ public class DefaultNTextNodeParser extends AbstractNTextNodeParser {
 
     private State state = new State();
 
-    public DefaultNTextNodeParser(NSession session) {
-        super(session);
+    public DefaultNTextNodeParser(NWorkspace workspace) {
+        super(workspace);
     }
 
 
@@ -94,7 +94,7 @@ public class DefaultNTextNodeParser extends AbstractNTextNodeParser {
         private boolean lineStart = true;
 
         public State() {
-            statusStack.push(new RootParserStep(true, getSession()));
+            statusStack.push(new RootParserStep(true, getWorkspace()));
         }
 
         public boolean isLineStart() {
@@ -174,7 +174,7 @@ public class DefaultNTextNodeParser extends AbstractNTextNodeParser {
         }
 
         public void applyDropReplacePreParsedPlain(ParserStep me, String text, boolean exitOnBrace) {
-            applyDropReplace(me, new PlainParserStep(text, lineStart, false, session, state, null, true, exitOnBrace));
+            applyDropReplace(me, new PlainParserStep(text, lineStart, false, workspace, state, null, true, exitOnBrace));
         }
 
         public void applyDropReplace(ParserStep me, ParserStep r) {
@@ -227,11 +227,11 @@ public class DefaultNTextNodeParser extends AbstractNTextNodeParser {
         public void applyPush(char c, boolean spreadLines, boolean lineStart, boolean exitOnBrace) {
             switch (c) {
                 case '`': {
-                    this.applyPush(new AntiQuote3ParserStep(c, spreadLines, getSession(), exitOnBrace));
+                    this.applyPush(new AntiQuote3ParserStep(c, spreadLines, getWorkspace(), exitOnBrace));
                     break;
                 }
                 case '#': {
-                    this.applyPush(new StyledParserStep(c, lineStart, getSession(), state(), exitOnBrace));
+                    this.applyPush(new StyledParserStep(c, lineStart, getWorkspace(), state(), exitOnBrace));
                     break;
                 }
                 case NConstants.Ntf.SILENT: {
@@ -240,7 +240,7 @@ public class DefaultNTextNodeParser extends AbstractNTextNodeParser {
                 }
                 case '\n':
                 case '\r': {
-                    this.applyPush(new NewLineParserStep(c, getSession()));
+                    this.applyPush(new NewLineParserStep(c, getWorkspace()));
                     if (lineMode) {
                         forceEnding();
                     }
@@ -249,7 +249,7 @@ public class DefaultNTextNodeParser extends AbstractNTextNodeParser {
                 default: {
                     State state = state();
 //                    state.setLineStart(lineStart);
-                    this.applyPush(new PlainParserStep(c, lineStart, getSession(), state, null, exitOnBrace));
+                    this.applyPush(new PlainParserStep(c, lineStart, getWorkspace(), state, null, exitOnBrace));
                 }
             }
         }
@@ -370,7 +370,7 @@ public class DefaultNTextNodeParser extends AbstractNTextNodeParser {
             statusStack.clear();
             lineMode = false;
             lineStart = true;
-            statusStack.push(new RootParserStep(true, getSession()));
+            statusStack.push(new RootParserStep(true, getWorkspace()));
         }
     }
 

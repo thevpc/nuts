@@ -1,6 +1,5 @@
 package net.thevpc.nuts.toolbox.ndb.sql.sqlbase.cmd;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;
 import net.thevpc.nuts.toolbox.ndb.base.cmd.FindCmd;
@@ -19,8 +18,8 @@ public class SqlFindCmd<C extends NdbConfig> extends FindCmd<C> {
     }
 
     @Override
-    protected void run(ExtendedQuery eq, C options, NSession session) {
-        getSupport().runSQL(Arrays.asList(eq.getRawQuery()), options, session);
+    protected void run(ExtendedQuery eq, C options) {
+        getSupport().runSQL(Arrays.asList(eq.getRawQuery()), options);
     }
 
 }

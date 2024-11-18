@@ -137,7 +137,7 @@ public class DataService {
         }
         Map<String, String> row = rows.get(0);
         if (!row.containsKey("allDependencies")) {
-            List<NId> allDependencies = NSearchCmd.of(session)
+            List<NId> allDependencies = NSearchCmd.of()
                     .setBasePackage(false)
                     .setInlineDependencies(true)
                     .addId(id)
@@ -145,7 +145,7 @@ public class DataService {
                     .setContent(false)
                     .getResultIds().toList();
             Map<String, String> oldRow = new HashMap<>(row);
-            row.put("allDependencies", NElements.of(session).json()
+            row.put("allDependencies", NElements.of().json()
                     .setValue(allDependencies.stream().map(Object::toString)
                             .collect(Collectors.toList()))
                             .setNtf(false)
@@ -154,9 +154,9 @@ public class DataService {
             );
             updateData(dirPath, oldRow, row);
         }
-        String[] array = NElements.of(session).json().parse(new StringReader(row.get("allDependencies")), String[].class);
+        String[] array = NElements.of().json().parse(new StringReader(row.get("allDependencies")), String[].class);
         List<Map<String, String>> allDependencies = Arrays.stream(array)
-                .map(s -> NIndexerUtils.nutsIdToMap(NId.of(s).get(session)))
+                .map(s -> NIndexerUtils.nutsIdToMap(NId.of(s).get()))
                 .collect(Collectors.toList());
         return allDependencies;
     }
@@ -167,9 +167,9 @@ public class DataService {
             return null;
         }
         Map<String, String> row = rows.get(0);
-        String[] array = NElements.of(session).json().parse(new StringReader(row.get("dependencies")), String[].class);
+        String[] array = NElements.of().json().parse(new StringReader(row.get("dependencies")), String[].class);
         List<Map<String, String>> dependencies = Arrays.stream(array)
-                .map(s -> NIndexerUtils.nutsIdToMap(NId.of(s).get(session)))
+                .map(s -> NIndexerUtils.nutsIdToMap(NId.of(s).get()))
                 .collect(Collectors.toList());
         return dependencies;
     }

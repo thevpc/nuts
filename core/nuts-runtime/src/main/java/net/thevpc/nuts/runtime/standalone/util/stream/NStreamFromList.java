@@ -20,7 +20,7 @@ public class NStreamFromList<T> extends NStreamBase<T> {
     private final List<?> o;
 
     public NStreamFromList(NSession session, String nutsBase, List<T> o) {
-        super(session, nutsBase);
+        super(nutsBase);
         this.o = o;
     }
 
@@ -38,7 +38,6 @@ public class NStreamFromList<T> extends NStreamBase<T> {
     public NIterator<T> iterator() {
         return NIterator.of(
                 ((Collection<T>) o).iterator()
-                , session
         );
     }
 

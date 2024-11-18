@@ -64,8 +64,8 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
     private boolean compact;
     private NContentType outputFormat;
 
-    public DefaultNObjectFormat(NSession session) {
-        super(session, "object-format");
+    public DefaultNObjectFormat(NWorkspace workspace) {
+        super(workspace, "object-format");
     }
 
     @Override
@@ -150,18 +150,15 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
     }
 
     public NContentTypeFormat getBase() {
-        checkSession();
-        NSession session = getSession();
+        NSession session=workspace.currentSession();
         NContentTypeFormat base = createObjectFormat();
-        base.setSession(session);
-        base.configure(true, NBootManager.of(session).getBootOptions().getOutputFormatOptions().orElseGet(Collections::emptyList).toArray(new String[0]));
+        base.configure(true, NBootManager.of().getBootOptions().getOutputFormatOptions().orElseGet(Collections::emptyList).toArray(new String[0]));
         base.configure(true, session.getOutputFormatOptions().toArray(new String[0]));
         return base;
     }
 
     public NContentTypeFormat createObjectFormat() {
-        checkSession();
-        NSession session = getSession();
+        NSession session=workspace.currentSession();
         Object value = getValue();
         String formatMode = getFormatMode();
         String type2 = formatMode == null ? "" : NNameFormat.CLASS_NAME.format(NStringUtils.trim(formatMode));
@@ -176,15 +173,15 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
                 if (value instanceof NPath) {
                     //
                 } else if (value instanceof File) {
-                    value = NPath.of((File) value, session);
+                    value = NPath.of((File) value);
                 } else if (value instanceof URL) {
-                    value = NPath.of((URL) value, session);
+                    value = NPath.of((URL) value);
                 } else if (value instanceof String) {
-                    value = NPath.of((String) value, session);
+                    value = NPath.of((String) value);
                 } else if (value instanceof NPathSPI) {
-                    value = NPath.of((NPathSPI) value, session);
+                    value = NPath.of((NPathSPI) value);
                 } else {
-                    throw new NIllegalArgumentException(session, NMsg.ofC("invalid RollingPath value %s", value));
+                    throw new NIllegalArgumentException(NMsg.ofC("invalid RollingPath value %s", value));
                 }
                 NLiteral count = NLiteral.of(formatParams != null ? formatParams.get("count") : null);
                 RollingFileService fs = new RollingFileService(
@@ -196,15 +193,15 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
                 break;
             }
         }
-        switch (getSession().getOutputFormat().orDefault()) {
+        switch (session.getOutputFormat().orDefault()) {
             //structured formats!
             case XML:
             case JSON:
             case TSON:
             case YAML: {
-                NElements ee = NElements.of(session).setNtf(isNtf())
+                NElements ee = NElements.of().setNtf(isNtf())
                         .setCompact(isCompact())
-                        .setContentType(getSession().getOutputFormat().orDefault());
+                        .setContentType(session.getOutputFormat().orDefault());
                 if (value instanceof NString) {
                     NTextBuilder builder = ((NString) value).builder();
                     Object[] r = builder.lines().map(
@@ -225,7 +222,7 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
                 return ee;
             }
             case PROPS: {
-                NPropertiesFormat ee = NPropertiesFormat.of(session).setNtf(isNtf());
+                NPropertiesFormat ee = NPropertiesFormat.of().setNtf(isNtf());
                 if (value instanceof NString) {
                     NTextBuilder builder = ((NString) value).builder();
                     Object[] r = builder.lines().toArray(Object[]::new);
@@ -236,7 +233,7 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
                 return ee;
             }
             case TREE: {
-                NTreeFormat ee = NTreeFormat.of(session).setNtf(isNtf());
+                NTreeFormat ee = NTreeFormat.of().setNtf(isNtf());
                 if (value instanceof NString) {
                     NTextBuilder builder = ((NString) value).builder();
                     Object[] r = builder.lines().toArray(Object[]::new);
@@ -247,7 +244,7 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
                 return ee;
             }
             case TABLE: {
-                NTableFormat ee = NTableFormat.of(session).setNtf(isNtf());
+                NTableFormat ee = NTableFormat.of().setNtf(isNtf());
                 if (value instanceof NString) {
                     NTextBuilder builder = ((NString) value).builder();
                     Object[] r = builder.lines().toArray(Object[]::new);
@@ -258,12 +255,12 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
                 return ee;
             }
             case PLAIN: {
-                NFormatPlain ee = new NFormatPlain(session).setCompact(isCompact()).setNtf(isNtf());
+                NFormatPlain ee = new NFormatPlain(workspace).setCompact(isCompact()).setNtf(isNtf());
                 ee.setValue(value);
                 return ee;
             }
         }
-        throw new NUnsupportedEnumException(getSession(), getSession().getOutputFormat().orDefault());
+        throw new NUnsupportedEnumException(session.getOutputFormat().orDefault());
     }
 
 //    @Override

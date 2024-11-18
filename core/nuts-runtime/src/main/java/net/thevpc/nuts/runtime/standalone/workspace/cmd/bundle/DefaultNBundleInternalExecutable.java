@@ -24,21 +24,21 @@ import java.util.stream.Collectors;
  */
 public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNBundleInternalExecutable(String[] args, NExecCmd execCommand) {
-        super("bundle", args, execCommand);
+    public DefaultNBundleInternalExecutable(NWorkspace workspace,String[] args, NExecCmd execCommand) {
+        super(workspace,"bundle", args, execCommand);
     }
 
     @Override
     public int execute() {
-        if (getSession().isDry()) {
+        NSession session = workspace.currentSession();
+        if (session.isDry()) {
             dryExecute();
             return NExecutionException.SUCCESS;
         }
-        if (NAppUtils.processHelpOptions(args, getSession())) {
+        if (NAppUtils.processHelpOptions(args, session)) {
             showDefaultHelp();
             return NExecutionException.SUCCESS;
         }
-        NSession session = getSession();
         NCmdLine cmdLine = NCmdLine.of(args);
         List<String> ids = new ArrayList<>();
         NRef<Boolean> withDependencies = NRef.of(true);
@@ -51,44 +51,44 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         NRef<String> withFormat = NRef.of(null);
         NRef<Boolean> withClean = NRef.of(false);
         while (cmdLine.hasNext()) {
-            NArg a = cmdLine.peek().get(session);
+            NArg a = cmdLine.peek().get();
             if (a.isOption()) {
                 switch (a.key()) {
                     case "--optional": {
-                        cmdLine.withNextFlag((v, ar, s) -> withOptional.set(v));
+                        cmdLine.withNextFlag((v, ar) -> withOptional.set(v));
                         break;
                     }
                     case "--deps":
                     case "--dependencies": {
-                        cmdLine.withNextFlag((v, ar, s) -> withDependencies.set(v));
+                        cmdLine.withNextFlag((v, ar) -> withDependencies.set(v));
                         break;
                     }
                     case "--app-version": {
-                        cmdLine.withNextEntry((v, ar, s) -> withAppVersion.set(v));
+                        cmdLine.withNextEntry((v, ar) -> withAppVersion.set(v));
                         break;
                     }
                     case "--app-name":
                     case "--name": {
-                        cmdLine.withNextEntry((v, ar, s) -> withAppName.set(v));
+                        cmdLine.withNextEntry((v, ar) -> withAppName.set(v));
                         break;
                     }
                     case "--app-desc":
                     case "--desc": {
-                        cmdLine.withNextEntry((v, ar, s) -> withAppDesc.set(v));
+                        cmdLine.withNextEntry((v, ar) -> withAppDesc.set(v));
                         break;
                     }
                     case "--app-title":
                     case "--title": {
-                        cmdLine.withNextEntry((v, ar, s) -> withAppTitle.set(v));
+                        cmdLine.withNextEntry((v, ar) -> withAppTitle.set(v));
                         break;
                     }
                     case "--target": {
-                        cmdLine.withNextEntry((v, ar, s) -> withTarget.set(v));
+                        cmdLine.withNextEntry((v, ar) -> withTarget.set(v));
                         break;
                     }
                     case "--dir":
                     case "--as-dir": {
-                        cmdLine.withNextFlag((v, ar, s) -> {
+                        cmdLine.withNextFlag((v, ar) -> {
                             if (v) {
                                 withFormat.set("dir");
                             }
@@ -97,7 +97,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     }
                     case "--exploded":
                     case "--as-exploded": {
-                        cmdLine.withNextFlag((v, ar, s) -> {
+                        cmdLine.withNextFlag((v, ar) -> {
                             if (v) {
                                 withFormat.set("exploded");
                             }
@@ -106,7 +106,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     }
                     case "--jar":
                     case "--as-jar": {
-                        cmdLine.withNextFlag((v, ar, s) -> {
+                        cmdLine.withNextFlag((v, ar) -> {
                             if (v) {
                                 withFormat.set("jar");
                             }
@@ -115,7 +115,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     }
                     case "--as-zip":
                     case "--zip": {
-                        cmdLine.withNextFlag((v, ar, s) -> {
+                        cmdLine.withNextFlag((v, ar) -> {
                             if (v) {
                                 withFormat.set("zip");
                             }
@@ -123,7 +123,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                         break;
                     }
                     case "--clean": {
-                        cmdLine.withNextFlag((v, ar, s) -> withClean.set(v));
+                        cmdLine.withNextFlag((v, ar) -> withClean.set(v));
                         break;
                     }
                     default: {
@@ -161,14 +161,14 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     nIds.add(apiId);
                     nIds.add(session.getWorkspace().getRuntimeId());
                 } else {
-                    List<NId> found = NSearchCmd.of(session).addId(id)
+                    List<NId> found = NSearchCmd.of().addId(id)
                             .setLatest(true)
                             .setDistinct(true)
-                            .setDependencyFilter(NDependencyFilters.of(session).byRunnable())
+                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
                             .setInlineDependencies(true)
                             .getResultIds().toList();
                     if (found.isEmpty()) {
-                        throw new NNotFoundException(session, NId.of(id).get());
+                        throw new NNotFoundException(NId.of(id).get());
                     }
                     for (NId resultId : found) {
                         if (resultId.getShortName().equals(session.getWorkspace().getApiId().getShortName())) {
@@ -195,15 +195,15 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         switch (format) {
             case "jar":
             case "zip": {
-                rootFolder = NPath.ofTempFolder("bundle", session);
+                rootFolder = NPath.ofTempFolder("bundle");
                 includeConfigFiles = true;
                 bundleFolder = rootFolder.resolve("META-INF/bundle");
                 break;
             }
             case "exploded": {
                 rootFolder = NBlankable.isBlank(withTarget.get()) ?
-                        NPath.ofUserDirectory(session).resolve(appName + "-bundle")
-                        : NPath.of(withTarget.get(), session)
+                        NPath.ofUserDirectory().resolve(appName + "-bundle")
+                        : NPath.of(withTarget.get())
                 ;
                 includeConfigFiles = true;
                 bundleFolder = rootFolder.resolve("META-INF/bundle");
@@ -227,8 +227,8 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
             }
             case "dir": {
                 rootFolder = NBlankable.isBlank(withTarget.get()) ?
-                        NPath.ofUserDirectory(session).resolve(appName + "-bundle")
-                        : NPath.of(withTarget.get(), session)
+                        NPath.ofUserDirectory().resolve(appName + "-bundle")
+                        : NPath.of(withTarget.get())
                 ;
                 bundleFolder = rootFolder;
                 if (withClean.get()) {
@@ -247,7 +247,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         }
         bundleFolder.mkdirs();
 
-        NCp cp = NCp.of(session);
+        NCp cp = NCp.of();
         if ("jar".equals(format)) {
             cp
                     .from(getClass().getResource("/META-INF/bundle/NutsBundleRunner.class.template"))
@@ -262,7 +262,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         }
 
 
-        NFetchCmd f = NFetchCmd.of(session);
+        NFetchCmd f = NFetchCmd.of();
         NStringBuilder nuts_bundle_files_config = new NStringBuilder();
         NStringBuilder nuts_bundle_info_config = new NStringBuilder();
 
@@ -299,7 +299,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
             }
 
             fullPath = NIdUtils.resolveNutsDescriptorPath(id);
-            cp.from(NDescriptorFormat.of(session).setValue(resultDefinition.getDescriptor()).setNtf(false).toString().getBytes())
+            cp.from(NDescriptorFormat.of().setValue(resultDefinition.getDescriptor()).setNtf(false).toString().getBytes())
                     .to(bundleFolder.resolve(fullPath))
                     .run();
             if (includeConfigFiles) {
@@ -318,12 +318,12 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
 
                 nuts_bundle_files_config.println("copy /" + fullPath
                         + " $target/"
-                        + NPath.of(fullPath, session).getName()
+                        + NPath.of(fullPath).getName()
                 );
                 nuts_bundle_files_config.println(
                         "copy /" + fullPath
                                 + " ${user.dir}/"
-                                + NPath.of(fullPath, session).getName()
+                                + NPath.of(fullPath).getName()
                 );
             }
             rootFolder.resolve("META-INF/nuts-bundle-files.config").writeString(nuts_bundle_files_config.toString());
@@ -354,7 +354,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
 
         switch (format) {
             case "jar": {
-                NCompress zip = NCompress.of(session).setPackaging("zip");
+                NCompress zip = NCompress.of().setPackaging("zip");
                 zip.addSource(rootFolder)
                         .setSkipRoot(true)
                         .setTarget(
@@ -368,7 +368,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                 break;
             }
             case "zip": {
-                NCompress zip = NCompress.of(session).setPackaging("zip");
+                NCompress zip = NCompress.of().setPackaging("zip");
                 zip.addSource(rootFolder)
                         .setSkipRoot(true)
                         .setTarget(

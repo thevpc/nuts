@@ -13,13 +13,12 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.UUID;
 import java.util.function.Function;
-import java.util.logging.Logger;
 
 public class ApacheTomcatRepositoryModel implements NRepositoryModel {
     public static final String HTTPS_ARCHIVE_APACHE_ORG_DIST_TOMCAT = "https://archive.apache.org/dist/tomcat/";
-    private static final Logger LOG = Logger.getLogger(ApacheTomcatRepositoryModel.class.getName());
-
-    public ApacheTomcatRepositoryModel() {
+    private NWorkspace workspace;
+    public ApacheTomcatRepositoryModel(NWorkspace workspace) {
+        this.workspace=workspace;
     }
 
     @Override
@@ -33,18 +32,18 @@ public class ApacheTomcatRepositoryModel implements NRepositoryModel {
     }
 
     @Override
-    public NIterator<NId> searchVersions(NId id, NIdFilter filter, NFetchMode fetchMode, NRepository repository, NSession session) {
+    public NIterator<NId> searchVersions(NId id, NIdFilter filter, NFetchMode fetchMode, NRepository repository) {
         if (fetchMode != NFetchMode.REMOTE) {
             return null;
         }
         if ("org.apache.catalina:apache-tomcat".equals(id.getShortName())) {
-            return search(filter, new NPath[]{null}, fetchMode, repository, session);
+            return search(filter, new NPath[]{null}, fetchMode, repository);
         }
         return null;
     }
 
     @Override
-    public NDescriptor fetchDescriptor(NId id, NFetchMode fetchMode, NRepository repository, NSession session) {
+    public NDescriptor fetchDescriptor(NId id, NFetchMode fetchMode, NRepository repository) {
         if (fetchMode != NFetchMode.REMOTE) {
             return null;
         }
@@ -59,6 +58,7 @@ public class ApacheTomcatRepositoryModel implements NRepositoryModel {
             } catch (MalformedURLException e) {
 
             }
+            NSession session = workspace.currentSession();
             if (url != null) {
                 session.getTerminal().printProgress(NMsg.ofC("peek %s", url));
                 try (InputStream inputStream = url.openStream()) {
@@ -113,14 +113,15 @@ public class ApacheTomcatRepositoryModel implements NRepositoryModel {
     }
 
     @Override
-    public NPath fetchContent(NId id, NDescriptor descriptor, NFetchMode fetchMode, NRepository repository, NSession session) {
+    public NPath fetchContent(NId id, NDescriptor descriptor, NFetchMode fetchMode, NRepository repository) {
+        NSession session = workspace.currentSession();
         if (fetchMode != NFetchMode.REMOTE) {
             return null;
         }
         if ("org.apache.catalina:apache-tomcat".equals(id.getShortName())) {
             String r = getUrl(id.getVersion(), ".zip");
-            NPath localPath = NPath.of(getIdLocalFile(id.builder().setFaceContent().build(), fetchMode, repository, session), session);
-            NCp.of(session).from(NPath.of(r, session)).to(localPath)
+            NPath localPath = NPath.of(getIdLocalFile(id.builder().setFaceContent().build(), fetchMode, repository));
+            NCp.of().from(NPath.of(r)).to(localPath)
                     .addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE).run();
             return localPath;
         }
@@ -128,14 +129,15 @@ public class ApacheTomcatRepositoryModel implements NRepositoryModel {
     }
 
     @Override
-    public NIterator<NId> search(NIdFilter filter, NPath[] basePaths, NFetchMode fetchMode, NRepository repository, NSession session) {
+    public NIterator<NId> search(NIdFilter filter, NPath[] basePaths, NFetchMode fetchMode, NRepository repository) {
+        NSession session = workspace.currentSession();
         if (fetchMode != NFetchMode.REMOTE) {
-            return NIterator.ofEmpty(session);
+            return NIterator.ofEmpty();
         }
         //List<NutsId> all = new ArrayList<>();
 //        NutsWorkspace ws = session.getWorkspace();
         NIdBuilder idBuilder = NIdBuilder.of("org.apache.catalina", "apache-tomcat");
-        return NPath.of("htmlfs:https://archive.apache.org/dist/tomcat/", session)
+        return NPath.of("htmlfs:https://archive.apache.org/dist/tomcat/")
                 .stream()
                 .filter(NPredicate.of((NPath x) -> x.isDirectory() && x.getName().matches("tomcat-[0-9.]+")).withDesc(NEDesc.of("directory && tomcat")))
                 .flatMapStream(NFunction.of(
@@ -155,9 +157,9 @@ public class ApacheTomcatRepositoryModel implements NRepositoryModel {
                                                                         || s2n.matches(".*-RC[0-9]+/") || s2n.matches(".*-M[0-9]+/")
                                                         ) {
                                                             //will ignore all alpha versions
-                                                            return NStream.ofEmpty(session);
+                                                            return NStream.ofEmpty();
                                                         }
-                                                        NVersion version = NVersion.of(s2n.substring(1, s2n.length() - 1)).get(session);
+                                                        NVersion version = NVersion.of(s2n.substring(1, s2n.length() - 1)).get();
                                                         if (version.compareTo("4.1.32") < 0) {
                                                             prefix = "jakarta-tomcat-";
                                                         }
@@ -178,9 +180,9 @@ public class ApacheTomcatRepositoryModel implements NRepositoryModel {
                                                                             (NPath x5) -> {
                                                                                 String s3 = x5.getName();
                                                                                 String v0 = s3.substring(finalPrefix.length(), s3.length() - 4);
-                                                                                NVersion v = NVersion.of(v0).get(session);
+                                                                                NVersion v = NVersion.of(v0).get();
                                                                                 NId id2 = idBuilder.setVersion(v).build();
-                                                                                if (filter == null || filter.acceptId(id2, session)) {
+                                                                                if (filter == null || filter.acceptId(id2)) {
                                                                                     return id2;
                                                                                 }
                                                                                 return null;
@@ -188,10 +190,10 @@ public class ApacheTomcatRepositoryModel implements NRepositoryModel {
                                                                     .<NId>nonNull();
                                                         } else {
                                                             NId id2 = idBuilder.setVersion(version).build();
-                                                            if (filter == null || filter.acceptId(id2, session)) {
-                                                                return NStream.ofSingleton(id2, session);
+                                                            if (filter == null || filter.acceptId(id2)) {
+                                                                return NStream.ofSingleton(id2);
                                                             }
-                                                            return NStream.ofEmpty(session);
+                                                            return NStream.ofEmpty();
                                                         }
 
                                                     }
@@ -211,10 +213,11 @@ public class ApacheTomcatRepositoryModel implements NRepositoryModel {
         return HTTPS_ARCHIVE_APACHE_ORG_DIST_TOMCAT + "tomcat-" + version.get(0).flatMap(NLiteral::asString).orElse("unknown") + "/v" + version + "/" + bin + "/" + prefix + version + extension;
     }
 
-    public String getIdLocalFile(NId id, NFetchMode fetchMode, NRepository repository, NSession session) {
+    public String getIdLocalFile(NId id, NFetchMode fetchMode, NRepository repository) {
+        NSession session = workspace.currentSession();
         return repository.config().getStoreLocation()
-                .resolve(NLocations.of(session).getDefaultIdBasedir(id))
-                .resolve(NLocations.of(session).getDefaultIdFilename(id))
+                .resolve(NLocations.of().getDefaultIdBasedir(id))
+                .resolve(NLocations.of().getDefaultIdFilename(id))
                 .toString();
     }
 

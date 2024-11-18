@@ -13,7 +13,6 @@ import net.thevpc.nuts.runtime.standalone.io.util.*;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.CharacterizedExecFile;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmd;
-import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NMsg;
 
@@ -28,7 +27,6 @@ import java.util.logging.Level;
  */
 public class DefaultNArtifactPathExecutable extends AbstractNExecutableInformationExt implements Closeable {
 
-    private final NLog LOG;
     String cmdName;
     String[] args;
     List<String> executorOptions;
@@ -41,17 +39,16 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableInformati
     String tempFolder;
     DefaultNExecCmd.NExecutorComponentAndContext executorComponentAndContext;
 
-    public DefaultNArtifactPathExecutable(String cmdName, String[] args, List<String> executorOptions, List<String> workspaceOptions,
+    public DefaultNArtifactPathExecutable(NWorkspace workspace,String cmdName, String[] args, List<String> executorOptions, List<String> workspaceOptions,
                                           NExecutionType executionType, NRunAs runAs, DefaultNExecCmd execCommand,
                                           DefaultNDefinition nutToRun,
                                           CharacterizedExecFile c,
                                           String tempFolder,
                                           DefaultNExecCmd.NExecutorComponentAndContext executorComponentAndContext
     ) {
-        super(cmdName,
+        super(workspace,cmdName,
                 NCmdLine.of(args).toString(),
                 NExecutableType.ARTIFACT, execCommand);
-        LOG = NLog.of(DefaultNArtifactPathExecutable.class, getSession());
         this.c = c;
         this.tempFolder = tempFolder;
         this.runAs = runAs;
@@ -89,12 +86,12 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableInformati
     }
 
     private void dispose() {
-        NSession session = getExecCommand().getSession();
+        NSession session = workspace.currentSession();
         if (tempFolder != null) {
             try {
-                CoreIOUtils.delete(session, Paths.get(tempFolder));
+                CoreIOUtils.delete(Paths.get(tempFolder));
             } catch (UncheckedIOException | NIOException e) {
-                LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.FAIL)
+                LOG().with().level(Level.FINEST).verb(NLogVerb.FAIL)
                         .log(NMsg.ofC("unable to delete temp folder created for execution : %s", tempFolder));
             }
         }

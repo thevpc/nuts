@@ -8,7 +8,6 @@ import net.thevpc.nuts.runtime.standalone.extension.DefaultNClassLoader;
 import net.thevpc.nuts.runtime.standalone.io.path.NCompressedPath;
 import net.thevpc.nuts.runtime.standalone.io.path.NCompressedPathHelper;
 import net.thevpc.nuts.runtime.standalone.io.util.NPathParts;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathFactorySPI;
@@ -37,15 +36,15 @@ public class NResourcePath implements NPathSPI {
     private final List<NId> ids;
     private String path;
     private String location;
+    private NWorkspace workspace;
     private boolean urlPathLookedUp = false;
     private URL[] urls = null;
     private NPath urlPath = null;
-    private NSession session;
     private static String nResourceProtocol = "resource://";
 
-    public NResourcePath(String path, NSession session) {
+    public NResourcePath(String path, NWorkspace workspace) {
+        this.workspace = workspace;
         this.path = path;
-        this.session = session;
         String idsStr;
         if (path.startsWith(nResourceProtocol +"(")) {
             int x = path.indexOf(')');
@@ -53,7 +52,7 @@ public class NResourcePath implements NPathSPI {
                 idsStr = path.substring((nResourceProtocol+"(").length(), x);
                 location = path.substring(x + 1);
             } else {
-                throw new NIllegalArgumentException(session, NMsg.ofC("invalid path %s", path));
+                throw new NIllegalArgumentException(NMsg.ofC("invalid path %s", path));
             }
         } else if (path.startsWith(nResourceProtocol)) {
             int x = path.indexOf('/', nResourceProtocol.length());
@@ -61,20 +60,23 @@ public class NResourcePath implements NPathSPI {
                 idsStr = path.substring(nResourceProtocol.length(), x);
                 location = path.substring(x);
             } else {
-                throw new NIllegalArgumentException(session, NMsg.ofC("invalid path %s", path));
+                throw new NIllegalArgumentException(NMsg.ofC("invalid path %s", path));
             }
         } else {
-            throw new NIllegalArgumentException(session, NMsg.ofC("invalid path %s", path));
+            throw new NIllegalArgumentException(NMsg.ofC("invalid path %s", path));
         }
         this.ids = StringTokenizerUtils.splitSemiColon(idsStr).stream().map(x -> {
             x = x.trim();
             if (x.length() > 0) {
-                return NId.of(x).get(session);
+                return NId.of(x).get();
             }
             return null;
         }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
+    public NWorkspace getWorkspace() {
+        return workspace;
+    }
 
     protected static String rebuildURL(String location, NId[] ids) {
         StringBuilder sb = new StringBuilder(nResourceProtocol);
@@ -93,7 +95,7 @@ public class NResourcePath implements NPathSPI {
         return sb.toString();
     }
     protected static NString rebuildURL2(NString location, NId[] ids, NSession session) {
-        NTexts txt = NTexts.of(session);
+        NTexts txt = NTexts.of();
         NTextBuilder sb = txt.ofBuilder();
         sb.append(nResourceProtocol, NTextStyle.path());
         boolean complex = Arrays.stream(ids).map(Object::toString).anyMatch(x -> x.contains(";") || x.contains("/"));
@@ -122,11 +124,11 @@ public class NResourcePath implements NPathSPI {
             urlPathLookedUp = true;
             try {
                 String loc = location;
-                ClassLoader resultClassLoader = NSearchCmd.of(getSession()).addIds(
+                ClassLoader resultClassLoader = NSearchCmd.of().addIds(
                                 this.ids.toArray(new NId[0])
                         ).setLatest(true).setContent(true).setDependencies(true)
                         .setDependencyFilter(
-                                NDependencyFilters.of(getSession())
+                                NDependencyFilters.of()
                                         .byRunnable()
                         )
                         .setOptional(false).getResultClassLoader();
@@ -137,7 +139,7 @@ public class NResourcePath implements NPathSPI {
                 }
                 URL resource = resultClassLoader.getResource(loc);
                 if (resource != null) {
-                    urlPath = NPath.of(resource, getSession());
+                    urlPath = NPath.of(resource);
                 }
             } catch (Exception e) {
                 //e.printStackTrace();
@@ -171,29 +173,29 @@ public class NResourcePath implements NPathSPI {
     @Override
     public NPath resolve(NPath basePath, String path) {
         return NPath.of(new NResourcePath(rebuildURL(
-                NPath.of(location, session).resolve(path).toString()
-                , ids.toArray(new NId[0])), getSession()), session);
+                NPath.of(location).resolve(path).toString()
+                , ids.toArray(new NId[0])), workspace));
     }
 
     @Override
     public NPath resolve(NPath basePath, NPath path) {
         return NPath.of(new NResourcePath(rebuildURL(
-                NPath.of(location, session).resolve(path).toString()
-                , ids.toArray(new NId[0])), getSession()), session);
+                NPath.of(location).resolve(path).toString()
+                , ids.toArray(new NId[0])), workspace));
     }
 
     @Override
     public NPath resolveSibling(NPath basePath, String path) {
         return NPath.of(new NResourcePath(rebuildURL(
-                NPath.of(location, session).resolveSibling(path).toString()
-                , ids.toArray(new NId[0])), getSession()), session);
+                NPath.of(location).resolveSibling(path).toString()
+                , ids.toArray(new NId[0])), workspace));
     }
 
     @Override
     public NPath resolveSibling(NPath basePath, NPath path) {
         return NPath.of(new NResourcePath(rebuildURL(
-                NPath.of(location, session).resolveSibling(path).toString()
-                , ids.toArray(new NId[0])), getSession()), session);
+                NPath.of(location).resolveSibling(path).toString()
+                , ids.toArray(new NId[0])), workspace));
     }
 
     @Override
@@ -207,7 +209,7 @@ public class NResourcePath implements NPathSPI {
         if (up != null) {
             return up.toURL();
         }
-        throw new NIOException(getSession(), NMsg.ofC("unable to resolve url from %s", toString()));
+        throw new NIOException(NMsg.ofC("unable to resolve url from %s", toString()));
     }
 
     @Override
@@ -216,7 +218,7 @@ public class NResourcePath implements NPathSPI {
         if (up != null) {
             return up.toPath();
         }
-        throw new NIOException(getSession(), NMsg.ofC("unable to resolve file from %s", toString()));
+        throw new NIOException(NMsg.ofC("unable to resolve file from %s", toString()));
     }
 
     @Override
@@ -302,7 +304,7 @@ public class NResourcePath implements NPathSPI {
     public InputStream getInputStream(NPath basePath, NPathOption... options) {
         NPath up = toURLPath();
         if (up == null) {
-            throw new NIOException(getSession(), NMsg.ofC("unable to resolve input stream %s", toString()));
+            throw new NIOException(NMsg.ofC("unable to resolve input stream %s", toString()));
         }
         return up.getInputStream();
     }
@@ -311,21 +313,18 @@ public class NResourcePath implements NPathSPI {
     public OutputStream getOutputStream(NPath basePath, NPathOption... options) {
         NPath up = toURLPath();
         if (up == null) {
-            throw new NIOException(getSession(), NMsg.ofC("unable to resolve output stream %s", toString()));
+            throw new NIOException(NMsg.ofC("unable to resolve output stream %s", toString()));
         }
         return up.getOutputStream();
     }
 
-    @Override
-    public NSession getSession() {
-        return session;
-    }
+
 
     @Override
     public void delete(NPath basePath, boolean recurse) {
         NPath up = toURLPath();
         if (up == null) {
-            throw new NIOException(getSession(), NMsg.ofC("unable to delete %s", toString()));
+            throw new NIOException(NMsg.ofC("unable to delete %s", toString()));
         }
         up.delete(recurse);
     }
@@ -334,7 +333,7 @@ public class NResourcePath implements NPathSPI {
     public void mkdir(boolean parents, NPath basePath) {
         NPath up = toURLPath();
         if (up == null) {
-            throw new NIOException(getSession(), NMsg.ofC("unable to mkdir %s", toString()));
+            throw new NIOException(NMsg.ofC("unable to mkdir %s", toString()));
         }
         up.mkdir(parents);
     }
@@ -366,7 +365,7 @@ public class NResourcePath implements NPathSPI {
         if (ppath == null) {
             return null;
         }
-        return NPath.of(rebuildURL(ppath, ids.toArray(new NId[0])), getSession());
+        return NPath.of(rebuildURL(ppath, ids.toArray(new NId[0])));
     }
 
     @Override
@@ -425,7 +424,7 @@ public class NResourcePath implements NPathSPI {
         if (NBlankable.isBlank(location)) {
             return 0;
         }
-        return NPath.of(location, getSession()).getLocationItemsCount();
+        return NPath.of(location).getLocationItemsCount();
     }
 
     @Override
@@ -439,7 +438,7 @@ public class NResourcePath implements NPathSPI {
             case "\\\\":
                 return true;
         }
-        return NPath.of(loc, getSession()).isRoot();
+        return NPath.of(loc).isRoot();
     }
 
     @Override
@@ -458,23 +457,23 @@ public class NResourcePath implements NPathSPI {
     @Override
     public NPath subpath(NPath basePath, int beginIndex, int endIndex) {
         return NPath.of(new NResourcePath(rebuildURL(
-                NPath.of(location, getSession()).subpath(beginIndex, endIndex).toString()
-                , ids.toArray(new NId[0])), getSession()), session);
+                NPath.of(location).subpath(beginIndex, endIndex).toString()
+                , ids.toArray(new NId[0])), workspace));
     }
 
     @Override
     public List<String> getLocationItems(NPath basePath) {
-        return NPath.of(location, getSession()).getLocationItems();
+        return NPath.of(location).getLocationItems();
     }
 
     @Override
     public void moveTo(NPath basePath, NPath other, NPathOption... options) {
-        throw new NIOException(session, NMsg.ofC("unable to move %s", this));
+        throw new NIOException(NMsg.ofC("unable to move %s", this));
     }
 
     @Override
     public void copyTo(NPath basePath, NPath other, NPathOption... options) {
-        NCp.of(session).from(basePath).to(other).addOptions(options).run();
+        NCp.of().from(basePath).to(other).addOptions(options).run();
     }
 
     @Override
@@ -491,7 +490,7 @@ public class NResourcePath implements NPathSPI {
             if (child.startsWith("/") || child.startsWith("\\")) {
                 child = child.substring(1);
             }
-            return NPath.of(child, session);
+            return NPath.of(child);
         }
         return null;
     }
@@ -532,7 +531,7 @@ public class NResourcePath implements NPathSPI {
 
         public NString asFormattedString() {
             String path = p.path;
-            NTexts text = NTexts.of(p.getSession());
+            NTexts text = NTexts.of();
             NTextBuilder tb = text.ofBuilder();
             tb.append("resource://", NTextStyle.primary1());
             if (path.startsWith("resource://(")) {
@@ -541,11 +540,11 @@ public class NResourcePath implements NPathSPI {
                 if (x > 0) {
                     String idsStr = path.substring("resource://(".length(), x);
                     tb.appendJoined(
-                            NTexts.of(p.getSession()).ofStyled(";", NTextStyle.separator()),
+                            NTexts.of().ofStyled(";", NTextStyle.separator()),
                             StringTokenizerUtils.splitSemiColon(idsStr).stream().map(xi -> {
                                 xi = xi.trim();
                                 if (!xi.isEmpty()) {
-                                    NId pp = NId.of(xi).get(p.getSession());
+                                    NId pp = NId.of(xi).get();
                                     if (pp == null) {
                                         return xi;
                                     }
@@ -562,7 +561,7 @@ public class NResourcePath implements NPathSPI {
                 int x = path.indexOf('/', "resource://".length());
                 if (x > 0) {
                     String sid = path.substring("resource://".length(), x);
-                    NId ii = NId.of(sid).get(p.getSession());
+                    NId ii = NId.of(sid).get();
                     if (ii == null) {
                         tb.append(sid);
                     } else {
@@ -590,18 +589,17 @@ public class NResourcePath implements NPathSPI {
     }
 
     public static class NResourceFactory implements NPathFactorySPI {
-        NWorkspace ws;
+        NWorkspace workspace;
 
-        public NResourceFactory(NWorkspace ws) {
-            this.ws = ws;
+        public NResourceFactory(NWorkspace workspace1) {
+            this.workspace = workspace1;
         }
 
         @Override
-        public NCallableSupport<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
-            NSessionUtils.checkSession(ws, session);
+        public NCallableSupport<NPathSPI> createPath(String path, ClassLoader classLoader) {
             try {
                 if (path.startsWith("resource:")) {
-                    return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, () -> new NResourcePath(path, session));
+                    return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, () -> new NResourcePath(path, workspace));
                 }
             } catch (Exception ex) {
                 //ignore
@@ -623,7 +621,7 @@ public class NResourcePath implements NPathSPI {
         @Override
         public NString toCompressedString(NPath base, NSession session) {
             return rebuildURL2(NPathParts.compressPath(location, session),
-                    ids.stream().map(x -> NId.of(x.getArtifactId()).get(session)).toArray(NId[]::new)
+                    ids.stream().map(x -> NId.of(x.getArtifactId()).get()).toArray(NId[]::new)
                     ,session
             );
         }

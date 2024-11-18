@@ -15,10 +15,10 @@ public class ProgressOptions {
     public static NStringMapFormat COMMAS_FORMAT = NStringMapFormat.of("=", ",;", "", true);
 
     public static ProgressOptions of(NSession session) {
-        return session.getOrComputeProperty(ProgressOptions.class.getName(), NScopeType.SESSION, s -> {
+        return session.getOrComputeProperty(ProgressOptions.class.getName(), NScopeType.SESSION, () -> {
             ProgressOptions o = new ProgressOptions();
             boolean enabledVisited = false;
-            Map<String, String> m = COMMAS_FORMAT.parse(session.getProgressOptions()).get(session);
+            Map<String, String> m = COMMAS_FORMAT.parse(session.getProgressOptions()).get();
             for (Map.Entry<String, String> e : m.entrySet()) {
                 String k = e.getKey();
                 String v = e.getValue();
@@ -38,7 +38,7 @@ public class ProgressOptions {
                     o.put(k, NLiteral.of(v));
                 }
             }
-            for (Map.Entry<String, String> e : NConfigs.of(session).getConfigMap().entrySet()) {
+            for (Map.Entry<String, String> e : NConfigs.of().getConfigMap().entrySet()) {
                 if (e.getKey().startsWith("progress.")) {
                     String k = e.getKey().substring("progress.".length());
                     if (o.get(k).isNotPresent()) {

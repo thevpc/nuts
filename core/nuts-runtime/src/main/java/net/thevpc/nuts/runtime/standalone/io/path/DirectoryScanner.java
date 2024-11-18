@@ -99,12 +99,12 @@ public class DirectoryScanner {
                     r = initialPattern.getRoot();
                 }
                 if (r == null) {
-                    r= NPath.of(((PlainPathPart) parts[i]).value,session);
+                    r= NPath.of(((PlainPathPart) parts[i]).value);
                 }else {
                     r = r.resolve(((PlainPathPart) parts[i]).value);
                 }
                 if(!r.exists()){
-                    return NStream.ofEmpty(session);
+                    return NStream.ofEmpty();
                 }
             } else if (parts[i] instanceof NameWildCardPathPart) {
                 NameWildCardPathPart w = (NameWildCardPathPart) parts[i];
@@ -112,7 +112,7 @@ public class DirectoryScanner {
                     r = initialPattern.getRoot();
                 }
                 if (r == null) {
-                    return NStream.ofEmpty(session);
+                    return NStream.ofEmpty();
                 }
                 NStream<NPath> t = r.stream().filter(x -> w.matchesName(x.getName())).withDesc(NEDesc.of("getName"));
                 if (parts.length - i - 1 == 0) {
@@ -138,13 +138,13 @@ public class DirectoryScanner {
                     return t.flatMapStream((NFunction) f).distinct();
                 }
             } else {
-                throw new NIllegalArgumentException(session, NMsg.ofC("unsupported %s",parts[i]));
+                throw new NIllegalArgumentException(NMsg.ofC("unsupported %s",parts[i]));
             }
         }
         if (r == null) {
-            return NStream.ofSingleton(initialPattern.getRoot(),session);
+            return NStream.ofSingleton(initialPattern.getRoot());
         }
-        return NStream.ofSingleton(r,session);
+        return NStream.ofSingleton(r);
     }
 
     private static class PathPart {
@@ -240,7 +240,7 @@ public class DirectoryScanner {
         }
 
         public NStream<NPath> stream() {
-            return NStream.of(this,session);
+            return NStream.of(this);
         }
     }
 }

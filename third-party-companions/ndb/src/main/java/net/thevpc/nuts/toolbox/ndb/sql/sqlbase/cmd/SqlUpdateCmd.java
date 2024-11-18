@@ -2,7 +2,6 @@ package net.thevpc.nuts.toolbox.ndb.sql.sqlbase.cmd;
 
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;
@@ -22,7 +21,7 @@ public class SqlUpdateCmd<C extends NdbConfig> extends UpdateCmd<C> {
     }
 
     @Override
-    protected void runUpdate(ExtendedQuery eq, C options, NSession session) {
+    protected void runUpdate(ExtendedQuery eq, C options) {
         StringBuilder sql = new StringBuilder();
         sql.append("update ").append(eq.getTable()).append(" set ");
         StringBuilder setSb = new StringBuilder();
@@ -30,7 +29,7 @@ public class SqlUpdateCmd<C extends NdbConfig> extends UpdateCmd<C> {
             s = s.trim();
             if (s.length() > 0) {
                 if (s.startsWith("{")) {
-                    Map<String, Object> row = NElements.of(session).parse(s, Map.class);
+                    Map<String, Object> row = NElements.of().parse(s, Map.class);
                     for (Map.Entry<String, Object> e : row.entrySet()) {
                         if (setSb.length() > 0) {
                             setSb.append(",");
@@ -48,13 +47,13 @@ public class SqlUpdateCmd<C extends NdbConfig> extends UpdateCmd<C> {
             }
         }
         if (setSb.length() == 0) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("missing set"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("missing set"));
         }
-        String whereSQL = getSupport().createWhere(eq.getWhere(), session);
+        String whereSQL = getSupport().createWhere(eq.getWhere());
         if (!whereSQL.isEmpty()) {
             sql.append(" where ");
             sql.append(whereSQL);
         }
-        getSupport().runSQL(Arrays.asList(sql.toString()), options, session);
+        getSupport().runSQL(Arrays.asList(sql.toString()), options);
     }
 }

@@ -41,11 +41,11 @@ import java.util.stream.Collectors;
 public class DefaultNArrayElementBuilder implements NArrayElementBuilder {
 
     private final List<NElement> values = new ArrayList<>();
-    private transient NSession session;
+    private transient NWorkspace workspace;
 
-    public DefaultNArrayElementBuilder(NSession session) {
-        this.session = session;
-        if(session==null){
+    public DefaultNArrayElementBuilder(NWorkspace workspace) {
+        this.workspace = workspace;
+        if(workspace==null){
             throw new NullPointerException();
         }
     }
@@ -267,7 +267,7 @@ public class DefaultNArrayElementBuilder implements NArrayElementBuilder {
 
     @Override
     public NArrayElement build() {
-        return new DefaultNArrayElement(values,session);
+        return new DefaultNArrayElement(values, workspace);
     }
 
     @Override
@@ -283,7 +283,7 @@ public class DefaultNArrayElementBuilder implements NArrayElementBuilder {
     }
 
     private NElements _elements() {
-        return NElements.of(session);
+        return NElements.of();
     }
 //
 //    private NutsPrimitiveElementBuilder _primitive() {

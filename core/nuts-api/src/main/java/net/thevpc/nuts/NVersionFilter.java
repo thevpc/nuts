@@ -71,21 +71,19 @@ public interface NVersionFilter extends NArtifactFilter {
      * true if the version is accepted by this instance filter
      *
      * @param version version to check
-     * @param session current session instance
      * @return true if the version is accepted by this instance interval
      */
-    boolean acceptVersion(NVersion version, NSession session);
+    boolean acceptVersion(NVersion version);
 
     /**
      * true if the version is accepted by this instance filter
      *
-     * @param sid     search id
-     * @param session current session instance
+     * @param sid search id
      * @return true if accepted
      */
     @Override
-    default boolean acceptSearchId(NSearchId sid, NSession session) {
-        return acceptVersion(sid.getId(session).getVersion(), session);
+    default boolean acceptSearchId(NSearchId sid) {
+        return acceptVersion(sid.getId().getVersion());
     }
 
     NVersionFilter or(NVersionFilter other);
@@ -97,15 +95,9 @@ public interface NVersionFilter extends NArtifactFilter {
     NOptional<List<NVersionInterval>> intervals();
 
     @Override
-    default NElement describe(NSession session) {
-        return NArtifactFilter.super.describe(session);
+    default NElement describe() {
+        return NArtifactFilter.super.describe();
     }
 
-    @Override
-    default NFilter withDesc(NEDesc description) {
-        if(description==null){
-            return this;
-        }
-        return new NVersionFilterWithDescription(this,description);
-    }
+    NFilter withDesc(NEDesc description);
 }

@@ -73,12 +73,12 @@ public class NoApiUtils {
         }
 
         if (json) {
-            return NElements.of(session).json().parse(source, NElement.class);
+            return NElements.of().json().parse(source, NElement.class);
         } else {
 //            return NutsElements.of(session).json().parse(inputStream, NutsElement.class);
             try (InputStream is = source.getInputStream()) {
                 final Object o = new Yaml().load(is);
-                return NElements.of(session).toElement(o);
+                return NElements.of().toElement(o);
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -239,7 +239,7 @@ public class NoApiUtils {
     public static NPath addExtension(NPath source, String ext, NSession session) {
         NPath path = source.normalize().toAbsolute();
         String n = path.getName();
-        n = NPath.of(n, session).getSmartBaseName() + "." + ext;
+        n = NPath.of(n).getSmartBaseName() + "." + ext;
         return path.getParent().resolve(n);
     }
 
@@ -254,18 +254,18 @@ public class NoApiUtils {
                 temp = NoApiUtils.addExtension(target, "adoc", session).toString();
             } else {
                 temp = NPath
-                        .ofTempFile("temp.adoc",session).toString();
+                        .ofTempFile("temp.adoc").toString();
             }
             adocFile = temp;
         }
 
-        try (MdWriter mw = new AsciiDoctorWriter(NPath.of(adocFile, session))) {
+        try (MdWriter mw = new AsciiDoctorWriter(NPath.of(adocFile))) {
             mw.write(md);
         }
         if (trace) {
             if (pdf) {
                 session.out().println(NMsg.ofC("generated src %s",
-                        NTexts.of(session).ofStyled(
+                        NTexts.of().ofStyled(
                                 adocFile, NTextStyle.primary4()
                         )
                 ));
@@ -285,7 +285,7 @@ public class NoApiUtils {
                             .toFile(new File(pdfFile))
             );
             if (session.isPlainTrace()) {
-                session.out().println(NMsg.ofC("generate  pdf file %s", NPath.of(pdfFile,session)));
+                session.out().println(NMsg.ofC("generate  pdf file %s", NPath.of(pdfFile)));
             }
             if (!keep) {
                 new File(temp).delete();

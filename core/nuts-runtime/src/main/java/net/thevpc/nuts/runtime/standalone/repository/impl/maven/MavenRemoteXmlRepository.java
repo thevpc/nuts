@@ -46,18 +46,19 @@ import java.util.List;
  */
 public class MavenRemoteXmlRepository extends MavenFolderRepository {
 
-    public MavenRemoteXmlRepository(NAddRepositoryOptions options, NSession session, NRepository parentRepository) {
-        super(options, session, parentRepository);
+    public MavenRemoteXmlRepository(NAddRepositoryOptions options, NWorkspace workspace, NRepository parentRepository) {
+        super(options, workspace, parentRepository);
     }
 
     @Override
-    public NIterator<NId> findNonSingleVersionImpl(NId id, NIdFilter idFilter, NFetchMode fetchMode, NSession session) {
+    public NIterator<NId> findNonSingleVersionImpl(NId id, NIdFilter idFilter, NFetchMode fetchMode) {
         if (!acceptedFetchNoCache(fetchMode)) {
             return IteratorBuilder.emptyIterator();
         }
+        NSession session = getWorkspace().currentSession();
         String groupId = id.getGroupId();
         String artifactId = id.getArtifactId();
-        NPath metadataURL = config().setSession(session).getLocationPath().resolve(groupId.replace('.', '/') + "/" + artifactId + "/maven-metadata.xml");
+        NPath metadataURL = config().getLocationPath().resolve(groupId.replace('.', '/') + "/" + artifactId + "/maven-metadata.xml");
 
         return IteratorBuilder.ofSupplier(
                 () -> {
@@ -66,16 +67,16 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
                     session.getTerminal().printProgress(NMsg.ofC("looking for versions of %s at %s", id,metadataURL.toCompressedForm()));
                     try {
                         try {
-                            metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNConstants.QueryFaces.CATALOG).build(), "artifact catalog", "retrieve", session);
+                            metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNConstants.QueryFaces.CATALOG).build(), "artifact catalog", "retrieve");
                         } catch (UncheckedIOException | NIOException ex) {
                             return IteratorBuilder.emptyIterator();
                         }
-                        MavenMetadata info = MavenUtils.of(session).parseMavenMetaData(metadataStream, session);
+                        MavenMetadata info = MavenUtils.of().parseMavenMetaData(metadataStream, session);
                         if (info != null) {
                             for (String version : info.getVersions()) {
                                 final NId nutsId = id.builder().setVersion(version).build();
 
-                                if (idFilter != null && !idFilter.acceptId(nutsId, session)) {
+                                if (idFilter != null && !idFilter.acceptId(nutsId)) {
                                     continue;
                                 }
                                 ret.add(
@@ -98,11 +99,11 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
                     }
                     return ret.iterator();
                 }
-                , e -> NElements.of(e).ofObject()
+                , () -> NElements.of().ofObject()
                         .set("type", "ScanMavenMetadataXml")
                         .set("path", metadataURL.toString())
-                        .build(),
-                session).build();
+                        .build()
+        ).build();
 
 
     }

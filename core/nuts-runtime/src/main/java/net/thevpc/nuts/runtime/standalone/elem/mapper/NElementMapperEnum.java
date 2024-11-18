@@ -36,13 +36,13 @@ public class NElementMapperEnum implements NElementMapper<Enum> {
             case SHORT:
             case INTEGER:
             case LONG: {
-                return (Enum) ((Class) to).getEnumConstants()[o.asInt().get(session)];
+                return (Enum) ((Class) to).getEnumConstants()[o.asInt().get()];
             }
             case STRING: {
                 Class cc = ReflectUtils.getRawClass(to);
-                String name = o.asString().get(session);
+                String name = o.asString().get();
                 if (NEnum.class.isAssignableFrom(cc)) {
-                    return (Enum) NEnum.parse(cc, name).get(session);
+                    return (Enum) NEnum.parse(cc, name).get();
                 }
                 try {
                     return Enum.valueOf(cc, name);
@@ -56,7 +56,7 @@ public class NElementMapperEnum implements NElementMapper<Enum> {
                 }
             }
         }
-        throw new NUnsupportedEnumException(session, o.type());
+        throw new NUnsupportedEnumException(o.type());
     }
 
     private static Map<Class, LenientParser> cache = new HashMap<>();

@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
@@ -44,8 +43,8 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
         }
     }
 
-    public AbstractNDeployCmd(NSession session) {
-        super(session, "deploy");
+    public AbstractNDeployCmd(NWorkspace workspace) {
+        super(workspace, "deploy");
     }
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
@@ -67,8 +66,8 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
 
     @Override
     public NDeployCmd setContent(InputStream stream) {
-        checkSession();
-        content = stream == null ? null : NInputSource.of(stream,session);
+        NSession session=workspace.currentSession();
+        content = stream == null ? null : NInputSource.of(stream);
         return this;
     }
 
@@ -80,20 +79,23 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
 
     @Override
     public NDeployCmd setContent(byte[] content) {
-        this.content = content == null ? null : NInputSource.of(content,session);
+        NSession session=workspace.currentSession();
+        this.content = content == null ? null : NInputSource.of(content);
         return this;
     }
 
     @Override
     public NDeployCmd setContent(File file) {
-        content = file == null ? null : NPath.of(file, getSession());
+        NSession session=workspace.currentSession();
+        content = file == null ? null : NPath.of(file);
         invalidateResult();
         return this;
     }
 
     @Override
     public NDeployCmd setContent(Path file) {
-        content = file == null ? null : NPath.of(file, getSession());
+        NSession session=workspace.currentSession();
+        content = file == null ? null : NPath.of(file);
         invalidateResult();
         return this;
     }
@@ -161,7 +163,8 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
 
     @Override
     public NDeployCmd setContent(URL url) {
-        content = url == null ? null : NPath.of(url, getSession());
+        NSession session=workspace.currentSession();
+        content = url == null ? null : NPath.of(url);
         invalidateResult();
         return this;
     }
@@ -232,11 +235,10 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
     }
 
     protected void addResult(NId nid, String repository, NString source) {
-        checkSession();
+        NSession session=workspace.currentSession();
         if (result == null) {
             result = new ArrayList<>();
         }
-        checkSession();
         result.add(new Result(nid, repository, source));
 //        if (getSession().isPlainTrace()) {
 //            getSession().getTerminal().out().resetLine().print(NMsg.ofC("Nuts %s deployed successfully to %s%n",
@@ -248,11 +250,11 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
 
     @Override
     public NDeployCmd addIds(String... values) {
-        checkSession();
+        NSession session=workspace.currentSession();
         if (values != null) {
             for (String s : values) {
                 if (!NBlankable.isBlank(s)) {
-                    ids.add(NId.of(s).get(session));
+                    ids.add(NId.of(s).get());
                 }
             }
         }
@@ -295,16 +297,16 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
 
     @Override
     public NDeployCmd removeId(String id) {
-        checkSession();
-        ids.remove(NId.of(id).get(session));
+        NSession session=workspace.currentSession();
+        ids.remove(NId.of(id).get());
         return this;
     }
 
     @Override
     public NDeployCmd addId(String id) {
-        checkSession();
+        NSession session=workspace.currentSession();
         if (!NBlankable.isBlank(id)) {
-            ids.add(NId.of(id).get(session));
+            ids.add(NId.of(id).get());
         }
         return this;
     }
@@ -316,42 +318,43 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NArg a = cmdLine.peek().get(session);
+        NSession session=workspace.currentSession();
+        NArg a = cmdLine.peek().get();
         if (a == null) {
             return false;
         }
         switch (a.key()) {
             case "-d":
             case "--desc": {
-                cmdLine.withNextEntry((v, r, s) -> setDescriptor(v));
+                cmdLine.withNextEntry((v, r) -> setDescriptor(v));
                 return true;
             }
             case "-s":
             case "--source":
             case "--from": {
-                cmdLine.withNextEntry((v, r, s) -> from(v));
+                cmdLine.withNextEntry((v, r) -> from(v));
                 return true;
             }
             case "-r":
             case "--target":
             case "--to": {
-                cmdLine.withNextEntry((v, r, s) -> to(v));
+                cmdLine.withNextEntry((v, r) -> to(v));
                 return true;
             }
             case "--desc-sha1": {
-                cmdLine.withNextEntry((v, r, s) -> setDescSha1(v));
+                cmdLine.withNextEntry((v, r) -> setDescSha1(v));
                 return true;
             }
             case "--desc-sha1-file": {
-                cmdLine.withNextEntry((v, r, s) -> this.setDescSha1(NPath.of(v, getSession()).readString()));
+                cmdLine.withNextEntry((v, r) -> this.setDescSha1(NPath.of(v).readString()));
                 return true;
             }
             case "--sha1": {
-                cmdLine.withNextEntry((v, r, s) -> this.setSha1(v));
+                cmdLine.withNextEntry((v, r) -> this.setSha1(v));
                 return true;
             }
             case "--sha1-file": {
-                cmdLine.withNextEntry((v, r, s) -> this.setSha1(NPath.of(v, getSession()).readString()));
+                cmdLine.withNextEntry((v, r) -> this.setSha1(NPath.of(v).readString()));
                 return true;
             }
             default: {
@@ -362,9 +365,9 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
                     cmdLine.throwUnexpectedArgument();
                 } else {
                     cmdLine.skip();
-                    String idOrPath = a.asString().get(session);
+                    String idOrPath = a.asString().get();
                     if (idOrPath.indexOf('/') >= 0 || idOrPath.indexOf('\\') >= 0) {
-                        setContent(NPath.of(idOrPath, session));
+                        setContent(NPath.of(idOrPath));
                     } else {
                         addId(idOrPath);
                     }

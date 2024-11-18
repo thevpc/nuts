@@ -24,7 +24,6 @@
  */
 package net.thevpc.nuts.toolbox.ndb.base;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
 /**
@@ -33,5 +32,5 @@ import net.thevpc.nuts.cmdline.NCmdLine;
  */
 public interface NdbSupport {
 
-    void run(NSession session, NCmdLine cmdline);
+    void run(NCmdLine cmdline);
 }

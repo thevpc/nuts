@@ -12,14 +12,14 @@ import java.util.*;
 public class DefaultNTextNodeBuilder implements NTextBuilder {
 
     private final List<NText> children = new ArrayList<>();
-    private final NSession session;
+    private final NWorkspace workspace;
     private final NTexts txt;
     private NTextStyleGenerator styleGenerator;
     private boolean flattened = true;
 
-    public DefaultNTextNodeBuilder(NSession session) {
-        this.session = session;
-        txt = NTexts.of(session);
+    public DefaultNTextNodeBuilder(NWorkspace workspace) {
+        this.workspace = workspace;
+        txt = NTexts.of();
     }
 
     @Override
@@ -85,10 +85,11 @@ public class DefaultNTextNodeBuilder implements NTextBuilder {
     @Override
     public NTextBuilder append(Object text, NTextStyles styles) {
         if (text != null) {
+            NSession session = workspace.currentSession();
             if (styles.size() == 0) {
-                append(NTexts.of(session).ofText(text));
+                append(NTexts.of().ofText(text));
             } else {
-                append(txt.ofStyled(NTexts.of(session).ofText(text), styles));
+                append(txt.ofStyled(NTexts.of().ofText(text), styles));
             }
         }
         return this;
@@ -97,7 +98,8 @@ public class DefaultNTextNodeBuilder implements NTextBuilder {
     @Override
     public NTextBuilder append(Object node) {
         if (node != null) {
-            return append(NTexts.of(session).ofText(node));
+            NSession session = workspace.currentSession();
+            return append(NTexts.of().ofText(node));
         }
         return this;
     }
@@ -186,25 +188,26 @@ public class DefaultNTextNodeBuilder implements NTextBuilder {
             to = size() - 1;
         }
         if (to <= from) {
-            return NTexts.of(session).ofPlain("");
+            return NTexts.of().ofPlain("");
         }
-        return NTexts.of(session).ofBuilder().appendAll(children.subList(from, to)).build();
+        return NTexts.of().ofBuilder().appendAll(children.subList(from, to)).build();
     }
 
     public NText substring(int from, int to) {
+        NSession session = workspace.currentSession();
         if (to <= from) {
-            return NTexts.of(session).ofPlain("");
+            return NTexts.of().ofPlain("");
         }
         int firstIndex = ensureCut(from);
         if (firstIndex < 0) {
-            return NTexts.of(session).ofPlain("");
+            return NTexts.of().ofPlain("");
         }
         int secondIndex = ensureCut(to);
         if (secondIndex < 0) {
             //the cut is till the end
-            return NTexts.of(session).ofBuilder().appendAll(children.subList(firstIndex, children.size())).build();
+            return NTexts.of().ofBuilder().appendAll(children.subList(firstIndex, children.size())).build();
         }
-        return NTexts.of(session).ofBuilder().appendAll(children.subList(firstIndex, secondIndex)).build();
+        return NTexts.of().ofBuilder().appendAll(children.subList(firstIndex, secondIndex)).build();
     }
 
     @Override
@@ -286,7 +289,7 @@ public class DefaultNTextNodeBuilder implements NTextBuilder {
                 }
                 this.children.add(z);
             } else {
-                throw new NUnsupportedOperationException(session, NMsg.ofPlain("expected plain or styled nodes"));
+                throw new NUnsupportedOperationException(NMsg.ofPlain("expected plain or styled nodes"));
             }
         }
     }
@@ -314,7 +317,7 @@ public class DefaultNTextNodeBuilder implements NTextBuilder {
                     public NTextBuilder next() {
                         return n;
                     }
-                }, session
+                }
         );
     }
 
@@ -332,7 +335,7 @@ public class DefaultNTextNodeBuilder implements NTextBuilder {
             }
             r.add(t);
         }
-        return NTexts.of(session).ofBuilder().appendAll(r);
+        return NTexts.of().ofBuilder().appendAll(r);
     }
 
     private boolean isNewLine(NText t) {
@@ -345,7 +348,7 @@ public class DefaultNTextNodeBuilder implements NTextBuilder {
 
 
     public NTextBuilder copy() {
-        DefaultNTextNodeBuilder c = new DefaultNTextNodeBuilder(session);
+        DefaultNTextNodeBuilder c = new DefaultNTextNodeBuilder(workspace);
         c.appendAll(children);
         c.flattened = flattened;
         return c;
@@ -356,7 +359,7 @@ public class DefaultNTextNodeBuilder implements NTextBuilder {
         if (at <= 0) {
             return 0;
         }
-        NTexts text = NTexts.of(session);
+        NTexts text = NTexts.of();
         int charPos = 0;
         int index = 0;
         while (index < children.size()) {
@@ -422,9 +425,9 @@ public class DefaultNTextNodeBuilder implements NTextBuilder {
     @Override
     public NString immutable() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        NTextNodeWriterStringer ss = new NTextNodeWriterStringer(out, session);
+        NTextNodeWriterStringer ss = new NTextNodeWriterStringer(out);
         ss.writeNode(build());
-        return new NImmutableString(session, out.toString());
+        return new NImmutableString(out.toString());
     }
 
     @Override
@@ -458,7 +461,7 @@ public class DefaultNTextNodeBuilder implements NTextBuilder {
 
     @Override
     public NTextBuilder builder() {
-        return NTexts.of(session).ofBuilder().append(this);
+        return NTexts.of().ofBuilder().append(this);
     }
 
     @Override

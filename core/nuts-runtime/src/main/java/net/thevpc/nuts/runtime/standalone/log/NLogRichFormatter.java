@@ -29,7 +29,7 @@ public class NLogRichFormatter extends Formatter {
     @Override
     public String format(LogRecord record) {
         NLogRecord wRecord = NLogUtils.toNutsLogRecord(record, session);
-        NTexts tf = NTexts.of(wRecord.getSession());
+        NTexts tf = NTexts.of();
 
         NTextBuilder sb = tf.ofBuilder();
         String date = CoreNUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(wRecord.getMillis()));
@@ -146,7 +146,7 @@ public class NLogRichFormatter extends Formatter {
 
         NMsg message = wRecord.getFormattedMessage();
         NString msgStr =
-                NTexts.of(wRecord.getSession())
+                NTexts.of()
                         .ofText(message);
         sb.append(msgStr);
         if (wRecord.getTime() > 0) {
@@ -158,7 +158,7 @@ public class NLogRichFormatter extends Formatter {
         lastMillis = wRecord.getMillis();
         if (wRecord.getThrown() != null) {
             sb.append(
-                    NTexts.of(wRecord.getSession()).ofPlain(
+                    NTexts.of().ofPlain(
                             NLogUtils.stacktrace(wRecord.getThrown())
                     ).toString()
             );

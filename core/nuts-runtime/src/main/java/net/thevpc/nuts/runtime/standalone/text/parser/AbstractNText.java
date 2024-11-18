@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.text.NImmutableString;
+import net.thevpc.nuts.text.NImmutableString;
 import net.thevpc.nuts.runtime.standalone.text.NTextNodeWriterStringer;
 import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.text.NText;
@@ -12,19 +12,10 @@ import net.thevpc.nuts.util.NBlankable;
 import java.io.ByteArrayOutputStream;
 
 public abstract class AbstractNText implements NText {
+    protected NWorkspace workspace;
 
-    private NSession session;
-
-    public AbstractNText(NSession session) {
-        this.session = session;
-    }
-
-    public NSession getSession() {
-        return session;
-    }
-
-    protected NWorkspace getWorkspace() {
-        return session.getWorkspace();
+    public AbstractNText(NWorkspace workspace) {
+        this.workspace=workspace;
     }
 
     @Override
@@ -35,9 +26,9 @@ public abstract class AbstractNText implements NText {
     @Override
     public NString immutable() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        NTextNodeWriterStringer ss = new NTextNodeWriterStringer(out, session);
+        NTextNodeWriterStringer ss = new NTextNodeWriterStringer(out);
         ss.writeNode(this);
-        return new NImmutableString(session, out.toString());
+        return new NImmutableString(out.toString());
     }
 
     @Override
@@ -67,7 +58,7 @@ public abstract class AbstractNText implements NText {
 
     @Override
     public NTextBuilder builder() {
-        return NTexts.of(session).ofBuilder().append(this);
+        return NTexts.of().ofBuilder().append(this);
     }
 
 }

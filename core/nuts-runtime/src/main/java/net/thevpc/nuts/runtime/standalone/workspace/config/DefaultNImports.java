@@ -3,20 +3,15 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 import net.thevpc.nuts.*;
 import java.util.Set;
 
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
 public class DefaultNImports implements NImports {
 
     private DefaultImportModel model;
-    private NSession session;
 
-    public DefaultNImports(NSession session) {
-        this.session = session;
-        NWorkspace w = this.session.getWorkspace();
-        NWorkspaceExt e = (NWorkspaceExt) w;
+    public DefaultNImports(NWorkspace workspace) {
+        NWorkspaceExt e = NWorkspaceExt.of(workspace);
         this.model = e.getModel().importModel;
     }
 
@@ -27,57 +22,37 @@ public class DefaultNImports implements NImports {
 
     @Override
     public NImports addImports(String... importExpressions) {
-        checkSession();
-        model.add(importExpressions, session);
+        model.add(importExpressions);
         return this;
     }
 
-    private void checkSession() {
-        NSessionUtils.checkSession(model.getWorkspace(), session);
-    }
 
     @Override
     public NImports clearImports() {
-        checkSession();
-        model.removeAll(session);
+        model.removeAll();
         return this;
     }
 
     @Override
     public NImports removeImports(String... importExpressions) {
-        checkSession();
-        model.remove(importExpressions, session);
+        model.remove(importExpressions);
         return this;
     }
 
     @Override
     public NImports updateImports(String[] imports) {
-        checkSession();
-        model.set(imports, session);
+        model.set(imports);
         return this;
     }
 
     @Override
     public boolean isImportedGroupId(String groupId) {
-        checkSession();
         return model.isImportedGroupId(groupId);
     }
 
     @Override
     public Set<String> getAllImports() {
-        checkSession();
         return model.getAll();
-    }
-
-    @Override
-    public NSession getSession() {
-        return session;
-    }
-
-    @Override
-    public DefaultNImports setSession(NSession session) {
-        this.session = NWorkspaceUtils.bindSession(model.getWorkspace(), session);
-        return this;
     }
 
     public DefaultImportModel getModel() {

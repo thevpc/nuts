@@ -28,24 +28,25 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
     private NTableFormat table;
     private NMutableTableModel model;
 
-    public DefaultSearchFormatTable(NSession session, NPrintStream writer, NFetchDisplayOptions options) {
-        super(session, writer, NContentType.TABLE, options);
+    public DefaultSearchFormatTable(NWorkspace workspace, NPrintStream writer, NFetchDisplayOptions options) {
+        super(workspace, writer, NContentType.TABLE, options);
     }
 
-    public NMutableTableModel getTableModel(NSession session) {
-        getTable(session);
+    public NMutableTableModel getTableModel() {
+        getTable();
         return model;
     }
 
-    public NTableFormat getTable(NSession session) {
+    public NTableFormat getTable() {
         if (table == null) {
-            table = NTableFormat.of(session);
-            model = NMutableTableModel.of(session);
+            table = NTableFormat.of();
+            model = NMutableTableModel.of();
             table.setValue(model);
-            if (getSession() != null && getSession().getOutputFormatOptions() != null) {
-                for (String outputFormatOption : getSession().getOutputFormatOptions()) {
+            NSession session = getWorkspace().currentSession();
+            if (session.getOutputFormatOptions() != null) {
+                for (String outputFormatOption : session.getOutputFormatOptions()) {
                     if (outputFormatOption != null) {
-                        table.configure(true, NCmdLine.of(outputFormatOption, NShellFamily.BASH, session).setExpandSimpleOptions(false));
+                        table.configure(true, NCmdLine.of(outputFormatOption, NShellFamily.BASH).setExpandSimpleOptions(false));
                     }
                 }
             }
@@ -55,8 +56,7 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NSession session = getSession();
-        NArg a = cmdLine.peek().get(session);
+        NArg a = cmdLine.peek().get();
         if (a == null) {
             return false;
         }
@@ -68,7 +68,7 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
 
     @Override
     public void start() {
-        getTableModel(getSession())
+        getTableModel()
                 .addHeaderCells(
                         Arrays.stream(getDisplayOptions().getDisplayProperties())
                                 .map(x -> CoreEnumUtils.getEnumString(x)).toArray()
@@ -77,22 +77,22 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
 
     @Override
     public void next(Object object, long index) {
-        NIdFormatHelper fid = NIdFormatHelper.of(object, getSession());
+        NIdFormatHelper fid = NIdFormatHelper.of(object);
         if (fid != null) {
             formatElement(fid, index);
         } else {
-            getTableModel(getSession()).newRow().addCell(object);
+            getTableModel().newRow().addCell(object);
         }
         getWriter().flush();
     }
 
     public void formatElement(NIdFormatHelper id, long index) {
-        getTableModel(getSession()).newRow().addCells((Object[]) id.getMultiColumnRow(getDisplayOptions()));
+        getTableModel().newRow().addCells((Object[]) id.getMultiColumnRow(getDisplayOptions()));
     }
 
     @Override
     public void complete(long count) {
-        getTable(getSession()).println(getWriter());
+        getTable().println(getWriter());
     }
 
 }

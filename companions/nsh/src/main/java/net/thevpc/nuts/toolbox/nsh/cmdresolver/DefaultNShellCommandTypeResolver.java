@@ -20,7 +20,7 @@ public class DefaultNShellCommandTypeResolver implements NShellCommandTypeResolv
         if (a != null) {
             return new NShellCommandResolution(item, "path", a, item + " is aliased to " + a);
         }
-        NPath path = NPath.of(item,context.getSession()).toAbsolute(context.getDirectory());
+        NPath path = NPath.of(item).toAbsolute(context.getDirectory());
         if (path.exists()) {
             return new NShellCommandResolution(item, "path", path.toString(), item + " is " + path);
         }

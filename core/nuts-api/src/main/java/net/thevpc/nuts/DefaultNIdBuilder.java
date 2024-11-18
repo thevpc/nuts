@@ -492,8 +492,8 @@ public class DefaultNIdBuilder implements NIdBuilder {
     }
 
     @Override
-    public NIdFilter filter(NSession session) {
-        return build().filter(session);
+    public NIdFilter filter() {
+        return build().filter();
     }
 
     @Override
@@ -522,7 +522,7 @@ public class DefaultNIdBuilder implements NIdBuilder {
     }
 
     @Override
-    public NFormat formatter(NSession session) {
-        return build().formatter(session);
+    public NFormat formatter() {
+        return build().formatter();
     }
 }

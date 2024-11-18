@@ -189,8 +189,8 @@ public class NHttpServletFacade {
             boolean transitive = parameters.containsKey("transitive");
             List<NId> fetch = null;
             try {
-                NSession session = context.getSession();
-                fetch = NSearchCmd.of(context.getSession().copy().setTransitive(transitive))
+                fetch = NSearchCmd.of()
+                        .setTransitive(transitive)
                         .addId(id).getResultIds().toList();
             } catch (Exception exc) {
                 //

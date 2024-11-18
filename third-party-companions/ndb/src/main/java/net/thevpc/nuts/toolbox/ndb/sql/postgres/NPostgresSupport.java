@@ -54,26 +54,26 @@ public class NPostgresSupport extends SqlSupport<NPostgresConfig> {
         }
     }
 
-    public void prepareDump(NPostgresConfig options, NSession session) {
+    public void prepareDump(NPostgresConfig options) {
 
         if (isRemoteCommand(options)) {
 
         } else {
-            NPath pgpass = NPath.ofUserHome(session).resolve(".pgpass");
+            NPath pgpass = NPath.ofUserHome().resolve(".pgpass");
             String u = options.getHost() + ":" + options.getPort() + ":" + options.getDatabaseName() + ":" + options.getUser();
             if (pgpass.exists()) {
                 String q = pgpass.getLines().filter(x -> x.startsWith(u + ":")).findFirst().orElse(null);
                 if (q != null) {
                     String storedPassword = q.substring(u.length() + 1);
                     if (!NBlankable.isBlank(options.getPassword()) && !Objects.equals(options.getPassword(), storedPassword)) {
-                        throw new NIllegalArgumentException(session, NMsg.ofPlain("stored password does not match"));
+                        throw new NIllegalArgumentException(NMsg.ofPlain("stored password does not match"));
                     }
                 } else {
                     if (NBlankable.isBlank(options.getPassword())) {
-                        throw new NIllegalArgumentException(session, NMsg.ofPlain("missing password"));
+                        throw new NIllegalArgumentException(NMsg.ofPlain("missing password"));
                     }
                     pgpass.writeString(u + ":" + options.getPassword() + "\n", NPathOption.APPEND);
-                    run(sysCmd(session)
+                    run(sysCmd()
                             .addCommand("chmod", "0600", pgpass.toString())
                     );
                 }
@@ -101,7 +101,7 @@ public class NPostgresSupport extends SqlSupport<NPostgresConfig> {
     }
 
 
-    public CmdRedirect createDumpCommand(NPath remoteSql, NPostgresConfig options, NSession session) {
+    public CmdRedirect createDumpCommand(NPath remoteSql, NPostgresConfig options) {
         return new CmdRedirect(
                 NCmdLine.of(
                         new String[]{
@@ -119,7 +119,7 @@ public class NPostgresSupport extends SqlSupport<NPostgresConfig> {
     }
 
 
-    public CmdRedirect createRestoreCommand(NPath remoteSql, NPostgresConfig options, NSession session) {
+    public CmdRedirect createRestoreCommand(NPath remoteSql, NPostgresConfig options) {
 //        return new CmdRedirect(
 //                NCmdLine.of(
 //                        new String[]{

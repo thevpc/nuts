@@ -35,7 +35,7 @@ public class NPrintIterator<T> extends NIteratorBase<T> {
         this.listFormat = session.getIterableOutput();
         this.displayOptions = displayOptions;
         if (this.listFormat == null) {
-            this.listFormat = NElements.of(session).setContentType(session.getOutputFormat().orDefault()).iter(out);
+            this.listFormat = NElements.of().setContentType(session.getOutputFormat().orDefault()).iter(out);
         }
         this.listFormat
                 .configure(true, displayOptions.toCmdLineOptions())
@@ -43,10 +43,10 @@ public class NPrintIterator<T> extends NIteratorBase<T> {
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return NEDesc.describeResolveOrDestructAsObject(curr, session)
+    public NElement describe() {
+        return NEDesc.describeResolveOrDestructAsObject(curr)
                 .builder()
-                .set("print", NElements.of(session).ofObject().set("format",listFormat.getOutputFormat().id()).build())
+                .set("print", NElements.of().ofObject().set("format",listFormat.getOutputFormat().id()).build())
                 .build();
     }
 

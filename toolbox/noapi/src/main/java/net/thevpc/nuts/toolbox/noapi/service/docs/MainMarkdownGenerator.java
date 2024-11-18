@@ -47,9 +47,9 @@ public class MainMarkdownGenerator {
         doc.setDate(LocalDate.now());
         doc.setSubTitle("RESTRICTED - INTERNAL");
 
-        NElements prv = NElements.of(session);
+        NElements prv = NElements.of();
         List<MdElement> all = new ArrayList<>();
-        NObjectElement entries = obj.asObject().get(session);
+        NObjectElement entries = obj.asObject().get();
         all.add(MdFactory.endParagraph());
         NObjectElement infoObj = entries.getObject("info").orElse(prv.ofEmptyObject());
         String documentTitle = infoObj.getString("title").orNull();
@@ -122,7 +122,7 @@ public class MainMarkdownGenerator {
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(2, msg.get("INTRODUCTION").get()));
         all.add(MdFactory.endParagraph());
-        NObjectElement info = entries.getObject("info").orElse(NObjectElement.ofEmpty(session));
+        NObjectElement info = entries.getObject("info").orElse(NObjectElement.ofEmpty());
         all.add(NoApiUtils.asText(info.getString("description").orElse("").trim()));
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(3, msg.get("CONTACT").get()));
@@ -131,7 +131,7 @@ public class MainMarkdownGenerator {
         ));
         all.add(MdFactory.endParagraph());
 
-        NObjectElement contact = info.getObject("contact").orElse(NObjectElement.ofEmpty(session));
+        NObjectElement contact = info.getObject("contact").orElse(NObjectElement.ofEmpty());
         all.add(MdFactory.table()
                 .addColumns(
                         MdFactory.column().setName(msg.get("NAME").get()),
@@ -154,7 +154,7 @@ public class MainMarkdownGenerator {
         ));
         all.add(MdFactory.endParagraph());
 
-        NArrayElement changeLog = info.getArray("changes").orElse(NArrayElement.ofEmpty(session));
+        NArrayElement changeLog = info.getArray("changes").orElse(NArrayElement.ofEmpty());
         MdTableBuilder changeLogTable = MdFactory.table()
                 .addColumns(
                         MdFactory.column().setName(msg.get("DATE").get()),
@@ -181,7 +181,7 @@ public class MainMarkdownGenerator {
                     oo.getString("observations").get()
             ));
             all.add(MdFactory.endParagraph());
-            for (NElement item : oo.getArray("details").orElse(NArrayElement.ofEmpty(session))) {
+            for (NElement item : oo.getArray("details").orElse(NArrayElement.ofEmpty())) {
                 all.add(MdFactory.ul(1,NoApiUtils.asText(item.asString().get())));
             }
             all.add(MdFactory.endParagraph());
@@ -189,7 +189,7 @@ public class MainMarkdownGenerator {
     }
 
     private void _fillHeaders(NObjectElement entries, List<MdElement> all, Vars vars2) {
-        NObjectElement components = entries.getObject("components").orElse(NObjectElement.ofEmpty(session));
+        NObjectElement components = entries.getObject("components").orElse(NObjectElement.ofEmpty());
         if (!components.getObject("headers").isEmpty()) {
             all.add(MdFactory.endParagraph());
             all.add(MdFactory.title(3, msg.get("HEADERS").get()));
@@ -203,17 +203,17 @@ public class MainMarkdownGenerator {
                             MdFactory.column().setName(msg.get("DESCRIPTION").get())
                     );
 
-            for (NElementEntry ee : components.getObject("headers").orElse(NObjectElement.ofEmpty(session))) {
+            for (NElementEntry ee : components.getObject("headers").orElse(NObjectElement.ofEmpty())) {
                 String k = ee.getKey().toString();
-                k = k + (ee.getValue().asObject().get(session).getBoolean("deprecated").orElse(false) ? (" [" + msg.get("DEPRECATED").get() + "]") : "");
-                k = k + NoApiUtils.asText(requiredSuffix(ee.getValue().asObject().get(session)));
+                k = k + (ee.getValue().asObject().get().getBoolean("deprecated").orElse(false) ? (" [" + msg.get("DEPRECATED").get() + "]") : "");
+                k = k + NoApiUtils.asText(requiredSuffix(ee.getValue().asObject().get()));
                 table.addRows(
                         MdFactory.row().addCells(
                                 MdFactory.codeBacktick3("", k),
-                                MdFactory.codeBacktick3("", ee.getValue().asObject().get(session).getObject("schema")
-                                        .orElse(NObjectElement.ofEmpty(session))
+                                MdFactory.codeBacktick3("", ee.getValue().asObject().get().getObject("schema")
+                                        .orElse(NObjectElement.ofEmpty())
                                         .getString("type").orElse("")),
-                                NoApiUtils.asText(ee.getValue().asObject().get(session).getString("description").orElse(""))
+                                NoApiUtils.asText(ee.getValue().asObject().get().getString("description").orElse(""))
                         )
                 );
             }
@@ -222,21 +222,21 @@ public class MainMarkdownGenerator {
     }
 
     private void _fillSecuritySchemes(NObjectElement entries, List<MdElement> all, Vars vars2) {
-        NObjectElement components = entries.getObject("components").orElse(NObjectElement.ofEmpty(session));
-        NObjectElement securitySchemes = components.getObject("securitySchemes").orElse(NObjectElement.ofEmpty(session));
+        NObjectElement components = entries.getObject("components").orElse(NObjectElement.ofEmpty());
+        NObjectElement securitySchemes = components.getObject("securitySchemes").orElse(NObjectElement.ofEmpty());
         if (!securitySchemes.isEmpty()) {
             all.add(MdFactory.endParagraph());
             all.add(MdFactory.title(3, msg.get("SECURITY_AND_AUTHENTICATION").get()));
             all.add(MdFactory.endParagraph());
             all.add(NoApiUtils.asText(msg.get("section.security.body").get()));
             for (NElementEntry ee : securitySchemes) {
-                String type = ee.getValue().asObject().get(session).getString("type").orElse("");
+                String type = ee.getValue().asObject().get().getString("type").orElse("");
                 switch (type) {
                     case "apiKey": {
                         all.add(MdFactory.endParagraph());
                         all.add(MdFactory.title(4, ee.getKey() + " (Api Key)"));
                         all.add(MdFactory.endParagraph());
-                        all.add(NoApiUtils.asText(vars2.format(ee.getValue().asObject().get(session).getString("description").orElse(""))));
+                        all.add(NoApiUtils.asText(vars2.format(ee.getValue().asObject().get().getString("description").orElse(""))));
                         all.add(MdFactory.endParagraph());
                         all.add(MdFactory
                                 .table().addColumns(
@@ -246,9 +246,9 @@ public class MainMarkdownGenerator {
                                 .addRows(MdFactory.row()
                                         .addCells(
                                                 MdFactory.codeBacktick3("",
-                                                        vars2.format(ee.getValue().asObject().get(session).getString("name").orElse(""))),
+                                                        vars2.format(ee.getValue().asObject().get().getString("name").orElse(""))),
                                                 MdFactory.codeBacktick3("",
-                                                        vars2.format(ee.getValue().asObject().get(session).getString("in").orElse("").toUpperCase())
+                                                        vars2.format(ee.getValue().asObject().get().getString("in").orElse("").toUpperCase())
                                                 )
                                         ))
                                 .build()
@@ -260,7 +260,7 @@ public class MainMarkdownGenerator {
                         all.add(MdFactory.title(4, ee.getKey() + " (Http)"));
                         all.add(MdFactory.endParagraph());
                         all.add(NoApiUtils.asText(
-                                vars2.format(ee.getValue().asObject().get(session).getString("description").orElse(""))));
+                                vars2.format(ee.getValue().asObject().get().getString("description").orElse(""))));
                         all.add(MdFactory
                                 .table().addColumns(
                                         MdFactory.column().setName(msg.get("SCHEME").get()),
@@ -268,8 +268,8 @@ public class MainMarkdownGenerator {
                                 )
                                 .addRows(MdFactory.row()
                                         .addCells(
-                                                NoApiUtils.asText(vars2.format(ee.getValue().asObject().get(session).getString("scheme").orElse(""))),
-                                                NoApiUtils.asText(vars2.format(ee.getValue().asObject().get(session).getString("bearerFormat").orElse("")))
+                                                NoApiUtils.asText(vars2.format(ee.getValue().asObject().get().getString("scheme").orElse(""))),
+                                                NoApiUtils.asText(vars2.format(ee.getValue().asObject().get().getString("bearerFormat").orElse("")))
                                         ))
                                 .build()
                         );
@@ -279,7 +279,7 @@ public class MainMarkdownGenerator {
                         all.add(MdFactory.endParagraph());
                         all.add(MdFactory.title(4, ee.getKey() + " (Oauth2)"));
                         all.add(MdFactory.endParagraph());
-                        all.add(NoApiUtils.asText(vars2.format(ee.getValue().asObject().get(session).getString("description").orElse(""))));
+                        all.add(NoApiUtils.asText(vars2.format(ee.getValue().asObject().get().getString("description").orElse(""))));
 //                        all.add(MdFactory
 //                                .table().addColumns(
 //                                        MdFactory.column().setName("SCHEME"),
@@ -297,14 +297,14 @@ public class MainMarkdownGenerator {
                         all.add(MdFactory.endParagraph());
                         all.add(MdFactory.title(4, ee.getKey() + " (OpenId Connect)"));
                         all.add(MdFactory.endParagraph());
-                        all.add(NoApiUtils.asText(ee.getValue().asObject().get(session).getString("description").orElse("")));
+                        all.add(NoApiUtils.asText(ee.getValue().asObject().get().getString("description").orElse("")));
                         all.add(MdFactory
                                 .table().addColumns(
                                         MdFactory.column().setName("URL")
                                 )
                                 .addRows(MdFactory.row()
                                         .addCells(
-                                                NoApiUtils.asText(ee.getValue().asObject().get(session).getString("openIdConnectUrl").orElse(""))
+                                                NoApiUtils.asText(ee.getValue().asObject().get().getString("openIdConnectUrl").orElse(""))
                                         ))
                                 .build()
                         );
@@ -313,7 +313,7 @@ public class MainMarkdownGenerator {
                     default: {
                         all.add(MdFactory.endParagraph());
                         all.add(MdFactory.title(4, ee.getKey() + " (" + type + ")"));
-                        all.add(NoApiUtils.asText(vars2.format(ee.getValue().asObject().get(session).getString("description").orElse(""))));
+                        all.add(NoApiUtils.asText(vars2.format(ee.getValue().asObject().get().getString("description").orElse(""))));
                     }
                 }
             }
@@ -403,42 +403,42 @@ public class MainMarkdownGenerator {
 
     private void _fillApiPaths(NObjectElement entries, List<MdElement> all, Vars vars2, List<TypeCrossRef> typeCrossRefs) {
         Map<String, TypeInfo> allTypes = openApiParser.parseTypes(entries, session);
-        NElements prv = NElements.of(session);
+        NElements prv = NElements.of();
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(2, msg.get("API_PATHS").get()));
-        int apiSize = entries.get(prv.ofString("paths")).flatMap(NElement::asObject).get(session).size();
+        int apiSize = entries.get(prv.ofString("paths")).flatMap(NElement::asObject).get().size();
         all.add(NoApiUtils.asText(NMsg.ofV(msg.get("API_PATHS.body").get(), NMaps.of("apiSize", apiSize)).toString()));
         all.add(MdFactory.endParagraph());
-        for (NElementEntry path : entries.get(prv.ofString("paths")).flatMap(NElement::asObject).get(session)) {
-            String url = path.getKey().asString().get(session);
+        for (NElementEntry path : entries.get(prv.ofString("paths")).flatMap(NElement::asObject).get()) {
+            String url = path.getKey().asString().get();
             all.add(MdFactory.ul(1, MdFactory.codeBacktick3("", url)));
         }
         all.add(MdFactory.endParagraph());
         all.add(NoApiUtils.asText(msg.get("API_PATHS.text").get()));
         NObjectElement schemas = entries.getObjectByPath("components", "schemas").orNull();
-        for (NElementEntry path : entries.get(prv.ofString("paths")).flatMap(NElement::asObject).get(session)) {
-            String url = path.getKey().asString().get(session);
+        for (NElementEntry path : entries.get(prv.ofString("paths")).flatMap(NElement::asObject).get()) {
+            String url = path.getKey().asString().get();
             Map<String, NObjectElement> calls = new HashMap<>();
             String dsummary = null;
             String ddescription = null;
             NArrayElement dparameters = null;
-            for (NElementEntry ss : path.getValue().asObject().get(session)) {
-                String k = ss.getKey().asString().get(session);
+            for (NElementEntry ss : path.getValue().asObject().get()) {
+                String k = ss.getKey().asString().get();
                 switch (k) {
                     case "summary": {
-                        dsummary = ss.getValue().asString().get(session);
+                        dsummary = ss.getValue().asString().get();
                         break;
                     }
                     case "description": {
-                        ddescription = ss.getValue().asString().get(session);
+                        ddescription = ss.getValue().asString().get();
                         break;
                     }
                     case "parameters": {
-                        dparameters = ss.getValue().asArray().get(session);
+                        dparameters = ss.getValue().asArray().get();
                         break;
                     }
                     default: {
-                        calls.put(k, ss.getValue().asObject().get(session));
+                        calls.put(k, ss.getValue().asObject().get());
                     }
                 }
             }
@@ -454,7 +454,7 @@ public class MainMarkdownGenerator {
         all.add(NoApiUtils.asText(
                 msg.get("section.serverlist.body").get()
         ));
-        NElements prv = NElements.of(session);
+        NElements prv = NElements.of();
         for (NElement srv : entries.getArray(prv.ofString("servers")).orElse(prv.ofEmptyArray())) {
             NObjectElement srvObj = (NObjectElement) srv.asObject().orElse(prv.ofEmptyObject());
             all.add(MdFactory.endParagraph());
@@ -467,13 +467,13 @@ public class MainMarkdownGenerator {
                         MdFactory.column().setName("SPEC"),
                         MdFactory.column().setName("DESCRIPTION")
                 );
-                for (NElementEntry variables : vars.asObject().get(session)) {
+                for (NElementEntry variables : vars.asObject().get()) {
                     mdTableBuilder.addRows(
                             MdFactory.row().addCells(
-                                    NoApiUtils.asText(variables.getKey().asString().get(session)),
+                                    NoApiUtils.asText(variables.getKey().asString().get()),
                                     //                                asText(variables.getValue().asObject().getString("enum")),
-                                    NoApiUtils.asText(vars2.format(variables.getValue().asObject().get(session).getString("default").orNull())),
-                                    NoApiUtils.asText(vars2.format(variables.getValue().asObject().get(session).getString("description").orNull()))
+                                    NoApiUtils.asText(vars2.format(variables.getValue().asObject().get().getString("default").orNull())),
+                                    NoApiUtils.asText(vars2.format(variables.getValue().asObject().get().getString("description").orNull()))
                             )
                     );
                 }
@@ -507,7 +507,7 @@ public class MainMarkdownGenerator {
                 },
                 headerParameters.stream().map(
                         headerParameter -> {
-                            NObjectElement obj = headerParameter.asObject().orElse(NElements.of(session).ofEmptyObject());
+                            NObjectElement obj = headerParameter.asObject().orElse(NElements.of().ofEmptyObject());
                             String name = obj.getString("name").orNull();
                             boolean pdeprecated = obj.getBoolean("deprecated").orElse(false);
                             String type = getSmartTypeName(obj)
@@ -565,10 +565,10 @@ public class MainMarkdownGenerator {
         }
         NArrayElement parameters = call.getArray(prv.ofString("parameters"))
                 .orElseUse(() -> NOptional.of(dparameters))
-                .orElseGet(() -> NArrayElementBuilder.of(session).build());
-        List<NElement> headerParameters = parameters.stream().filter(x -> "header".equals(x.asObject().get(session).getString("in").orNull())).collect(Collectors.toList());
-        List<NElement> queryParameters = parameters.stream().filter(x -> "query".equals(x.asObject().get(session).getString("in").orNull())).collect(Collectors.toList());
-        List<NElement> pathParameters = parameters.stream().filter(x -> "path".equals(x.asObject().get(session).getString("in").orNull())).collect(Collectors.toList());
+                .orElseGet(() -> NArrayElementBuilder.of().build());
+        List<NElement> headerParameters = parameters.stream().filter(x -> "header".equals(x.asObject().get().getString("in").orNull())).collect(Collectors.toList());
+        List<NElement> queryParameters = parameters.stream().filter(x -> "query".equals(x.asObject().get().getString("in").orNull())).collect(Collectors.toList());
+        List<NElement> pathParameters = parameters.stream().filter(x -> "path".equals(x.asObject().get().getString("in").orNull())).collect(Collectors.toList());
         NObjectElement requestBody = call.getObject("requestBody").orNull();
         boolean withRequestHeaderParameters = !headerParameters.isEmpty();
         boolean withRequestPathParameters = !pathParameters.isEmpty();
@@ -621,7 +621,7 @@ public class MainMarkdownGenerator {
             if (withRequestBody) {
                 boolean required = requestBody.getBoolean("required").orElse(false);
                 String desc = requestBody.getString("description").orElse("");
-                NObjectElement r = requestBody.getObject("content").orElseGet(() -> NObjectElement.ofEmpty(session));
+                NObjectElement r = requestBody.getObject("content").orElseGet(() -> NObjectElement.ofEmpty());
                 for (NElementEntry ii : r) {
                     all.add(MdFactory.endParagraph());
                     all.add(MdFactory.title(5, msg.get("REQUEST_BODY").get() + " - " + ii.getKey() +
@@ -630,7 +630,7 @@ public class MainMarkdownGenerator {
                     if (!NBlankable.isBlank(desc) && !desc.endsWith(".")) {
                         all.add(MdFactory.text("."));
                     }
-                    TypeInfo o = openApiParser.parseOneType(ii.getValue().asObject().get(session), null, session, allTypes);
+                    TypeInfo o = openApiParser.parseOneType(ii.getValue().asObject().get(), null, session, allTypes);
                     if (o.getRef() != null) {
                         typeCrossRefs.add(new TypeCrossRef(o.getRef(), url, "Request Body"));
 //                        all.add(MdFactory.endParagraph());
@@ -682,7 +682,7 @@ public class MainMarkdownGenerator {
         all.add(MdFactory.title(4, msg.get("RESPONSE").get()));
         all.add(NoApiUtils.asText(NMsg.ofV(msg.get("section.response.body").get(), NMaps.of("path", url)).toString()));
 
-        call.getObject("responses").get(session).stream()
+        call.getObject("responses").get().stream()
                 .forEach(x -> {
                     NElement s = x.getKey();
                     NElement v = x.getValue();
@@ -691,13 +691,13 @@ public class MainMarkdownGenerator {
                     all.add(MdFactory.title(5, msg.get("STATUS_CODE").get() + " - " + s
                             + (NBlankable.isBlank(codeDescription) ? "" : (" - " + codeDescription))
                     ));
-                    String description = v.asObject().get(session).getString("description").orElse("");
+                    String description = v.asObject().get().getString("description").orElse("");
                     all.add(NoApiUtils.asText(description));
                     if (!NBlankable.isBlank(description) && !description.endsWith(".")) {
                         all.add(MdFactory.text("."));
                     }
-                    for (NElementEntry content : v.asObject().get(session).getObject("content").orElse(NObjectElement.ofEmpty(session))) {
-                        TypeInfo o = openApiParser.parseOneType(content.getValue().asObject().get(session), null, session, allTypes);
+                    for (NElementEntry content : v.asObject().get().getObject("content").orElse(NObjectElement.ofEmpty())) {
+                        TypeInfo o = openApiParser.parseOneType(content.getValue().asObject().get(), null, session, allTypes);
                         if (o.getUserType().equals("$ref")) {
                             typeCrossRefs.add(new TypeCrossRef(
                                     o.getRef(),
@@ -711,7 +711,7 @@ public class MainMarkdownGenerator {
                                         )
                                         .addRows(
                                                 MdFactory.row().addCells(
-                                                        NoApiUtils.asText(content.getKey().asString().get(session)),
+                                                        NoApiUtils.asText(content.getKey().asString().get()),
                                                         NoApiUtils.asText(o.getRef())
                                                 )
                                         ).build()
@@ -724,7 +724,7 @@ public class MainMarkdownGenerator {
                                         )
                                         .addRows(
                                                 MdFactory.row().addCells(
-                                                        NoApiUtils.asText(content.getKey().asString().get(session)),
+                                                        NoApiUtils.asText(content.getKey().asString().get()),
                                                         NoApiUtils.asText(o.getRef())
                                                 )
                                         ).build()
@@ -743,7 +743,7 @@ public class MainMarkdownGenerator {
                                                 )
                                                 .addRows(
                                                         MdFactory.row().addCells(
-                                                                NoApiUtils.asText(content.getKey().asString().get(session)),
+                                                                NoApiUtils.asText(content.getKey().asString().get()),
                                                                 NoApiUtils.asText(o.getRef())//,
 //                                                        MdFactory.seq(NoApiUtils.asText(msg.get("SEE_BELOW").get()), asText("..."))
                                                         )
@@ -765,7 +765,7 @@ public class MainMarkdownGenerator {
                                     )
                                     .addRows(
                                             MdFactory.row().addCells(
-                                                    NoApiUtils.asText(content.getKey().asString().get(session)),
+                                                    NoApiUtils.asText(content.getKey().asString().get()),
                                                     NoApiUtils.codeElement(o, true, "", msg)
                                                     //NoApiUtils.asText(o.getRef())
                                             )

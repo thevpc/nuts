@@ -14,11 +14,17 @@ import java.util.Arrays;
 import java.util.List;
 
 public class NshAutoCompleter implements NCmdLineAutoCompleteResolver {
+    private NWorkspace workspace;
+
+    public NshAutoCompleter(NWorkspace workspace) {
+        this.workspace = workspace;
+    }
 
     @Override
-    public List<NArgCandidate> resolveCandidates(NCmdLine cmdLine, int wordIndex, NSession session) {
+    public List<NArgCandidate> resolveCandidates(NCmdLine cmdLine, int wordIndex) {
         List<NArgCandidate> candidates = new ArrayList<>();
-        NShellContext fileContext = (NShellContext) NEnvs.of(session).getProperties().get(NShellContext.class.getName());
+        NSession session=workspace.currentSession();
+        NShellContext fileContext = (NShellContext) NEnvs.of().getProperties().get(NShellContext.class.getName());
 
         if (wordIndex == 0) {
             for (NShellBuiltin command : fileContext.builtins().getAll()) {

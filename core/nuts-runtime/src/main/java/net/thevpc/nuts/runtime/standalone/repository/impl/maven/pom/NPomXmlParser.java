@@ -31,10 +31,8 @@ public class NPomXmlParser {
     public static final Pattern NUTS_OS_ARCH_DEPS_PATTERN = Pattern.compile("^nuts([.](?<os>[a-zA-Z0-9-_]+)-os)?([.](?<arch>[a-zA-Z0-9-_]+)-arch)?-dependencies$");
 
 
-    private final NSession session;
 
-    public NPomXmlParser(NSession session) {
-        this.session = session;
+    public NPomXmlParser() {
     }
 
     private static String elemToStr(Element ex) {
@@ -115,7 +113,7 @@ public class NPomXmlParser {
         return o;
     }
 
-    public static NPomRepositoriesNode parseRepositories(Element elem1, NSession session, PomDomVisitor visitor, PomDomVisitorContext context, PomMode mode) {
+    public static NPomRepositoriesNode parseRepositories(Element elem1, PomDomVisitor visitor, PomDomVisitorContext context, PomMode mode) {
         List<NPomRepositoryNode> repositories = new ArrayList<>();
         if (visitor != null) {
             if (mode == PomMode.ROOT) {
@@ -132,7 +130,7 @@ public class NPomXmlParser {
         for (int j = 0; j < dependenciesChildList.getLength(); j++) {
             Element repository = toElement(dependenciesChildList.item(j), childName);
             if (repository != null) {
-                NPomRepositoryNode repo = parseRepository(repository, session, visitor, context, mode);
+                NPomRepositoryNode repo = parseRepository(repository, visitor, context, mode);
                 repositories.add(repo);
             }
         }
@@ -147,7 +145,7 @@ public class NPomXmlParser {
         return d;
     }
 
-    public static NPomDependenciesNode parseDependencies(Element elem1, NSession session, PomDomVisitor visitor, PomDomVisitorContext context, OsAndArch osAndArch, PomMode mode) {
+    public static NPomDependenciesNode parseDependencies(Element elem1, PomDomVisitor visitor, PomDomVisitorContext context, OsAndArch osAndArch, PomMode mode) {
         List<NPomDependencyNode> dependencies = new ArrayList<>();
         if (visitor != null) {
             if (mode == PomMode.ROOT) {
@@ -160,7 +158,7 @@ public class NPomXmlParser {
         for (int j = 0; j < dependenciesChildList.getLength(); j++) {
             Element dependencyElem = toElement(dependenciesChildList.item(j), "dependency");
             if (dependencyElem != null) {
-                NPomDependencyNode dep = parseDependency(dependencyElem, osAndArch, session, visitor, context, mode);
+                NPomDependencyNode dep = parseDependency(dependencyElem, osAndArch, visitor, context, mode);
                 dependencies.add(dep);
             }
         }
@@ -175,7 +173,7 @@ public class NPomXmlParser {
         return d;
     }
 
-    public static NPomDependencyNode parseDependency(Element dependency, OsAndArch props, NSession session, PomDomVisitor visitor, PomDomVisitorContext context, PomMode mode) {
+    public static NPomDependencyNode parseDependency(Element dependency, OsAndArch props, PomDomVisitor visitor, PomDomVisitorContext context, PomMode mode) {
         if (visitor != null) {
             if (mode == PomMode.ROOT) {
                 visitor.visitStartDependency(dependency, context);
@@ -307,7 +305,7 @@ public class NPomXmlParser {
     }
 
 
-    public static NPomProfileNode parseProfile(Element profile, PomDomVisitor visitor, NSession session, PomDomVisitorContext context, OsAndArch osAndArch, PomMode mode) {
+    public static NPomProfileNode parseProfile(Element profile, PomDomVisitor visitor, PomDomVisitorContext context, OsAndArch osAndArch, PomMode mode) {
         if (visitor != null) {
             if (mode == PomMode.ROOT) {
                 visitor.visitStartProfile(profile, context);
@@ -411,17 +409,17 @@ public class NPomXmlParser {
                     for (int j = 0; j < dependenciesChildList.getLength(); j++) {
                         Element dependenciesElem = toElement(dependenciesChildList.item(j), "dependencies");
                         if (dependenciesElem != null) {
-                            dependenciesManagement.addAll(parseDependencies(dependenciesElem, session, visitor, context, osAndArch, PomMode.PROFILE_DEPENDENCY_MANAGEMENT).getObject());
+                            dependenciesManagement.addAll(parseDependencies(dependenciesElem, visitor, context, osAndArch, PomMode.PROFILE_DEPENDENCY_MANAGEMENT).getObject());
                         }
                     }
                     break;
                 }
                 case "dependencies": {
-                    dependencies.addAll(parseDependencies(elem1, session, visitor, context, osAndArch, PomMode.PROFILE).getObject());
+                    dependencies.addAll(parseDependencies(elem1, visitor, context, osAndArch, PomMode.PROFILE).getObject());
                     break;
                 }
                 case "repositories": {
-                    repositories.addAll(parseRepositories(elem1, session, visitor, context, PomMode.PROFILE).getObject());
+                    repositories.addAll(parseRepositories(elem1, visitor, context, PomMode.PROFILE).getObject());
                     break;
                 }
                 case "pluginRepositories": {
@@ -435,7 +433,7 @@ public class NPomXmlParser {
 //                            if (visitor != null) {
 //                                visitor.visitStartPluginRepository(repository);
 //                            }
-                            NPomRepositoryNode repo = parseRepository(repository, session, visitor, context, mode);
+                            NPomRepositoryNode repo = parseRepository(repository, visitor, context, mode);
 //                            if (visitor != null) {
 //                                visitor.visitEndPluginRepository(repository, repo);
 //                            }
@@ -464,7 +462,7 @@ public class NPomXmlParser {
         return d;
     }
 
-    public static NPomRepositoryNode parseRepository(Element repository, NSession session, PomDomVisitor visitor, PomDomVisitorContext context, PomMode mode) {
+    public static NPomRepositoryNode parseRepository(Element repository, PomDomVisitor visitor, PomDomVisitorContext context, PomMode mode) {
         if (visitor != null) {
             if (mode == PomMode.ROOT) {
                 visitor.visitStartRepositories(repository, context);
@@ -601,22 +599,22 @@ public class NPomXmlParser {
     }
 
     public static void writeDocument(Document doc, File result, NSession session) throws TransformerException {
-        writeDocument(doc, new StreamResult(result), session);
+        writeDocument(doc, new StreamResult(result));
     }
 
     public static void writeDocument(Document doc, Writer result, NSession session) throws TransformerException {
-        writeDocument(doc, new StreamResult(result), session);
+        writeDocument(doc, new StreamResult(result));
     }
 
     public static void writeDocument(Document doc, OutputStream result, NSession session) throws TransformerException {
-        writeDocument(doc, new StreamResult(result), session);
+        writeDocument(doc, new StreamResult(result));
     }
 
-    public static void writeDocument(Document doc, StreamResult result, NSession session) throws TransformerException {
-        XmlUtils.writeDocument(doc, result, false, true, session);
+    public static void writeDocument(Document doc, StreamResult result) throws TransformerException {
+        XmlUtils.writeDocument(doc, result, false, true);
     }
 
-    public static boolean appendOrReplaceDependency(NPomDependency dependency, Element dependencyElement, Element dependenciesElement, Map<String, String> props, NSession session, PomDomVisitor visitor, PomDomVisitorContext context, PomMode mode) {
+    public static boolean appendOrReplaceDependency(NPomDependency dependency, Element dependencyElement, Element dependenciesElement, Map<String, String> props, PomDomVisitor visitor, PomDomVisitorContext context, PomMode mode) {
         if (dependencyElement != null && dependenciesElement == null) {
             dependenciesElement = (Element) dependencyElement.getParentNode();
         }
@@ -625,7 +623,7 @@ public class NPomXmlParser {
             dependenciesElement.appendChild(createDependencyElement(doc, dependency));
             return true;
         } else {
-            NPomDependencyNode old = parseDependency(dependencyElement, new OsAndArch(props, session), session, visitor, context, mode);
+            NPomDependencyNode old = parseDependency(dependencyElement, new OsAndArch(props), visitor, context, mode);
             if (old == null || !old.getObject().equals(dependency)) {
                 dependenciesElement.replaceChild(createDependencyElement(doc, dependency), dependencyElement);
                 return true;
@@ -634,7 +632,7 @@ public class NPomXmlParser {
         }
     }
 
-    public static boolean appendOrReplaceRepository(NPomRepository repository, Element repositoryElement, Element repositoriesElement, NSession session, PomDomVisitor visitor, PomDomVisitorContext context, PomMode mode) {
+    public static boolean appendOrReplaceRepository(NPomRepository repository, Element repositoryElement, Element repositoriesElement, PomDomVisitor visitor, PomDomVisitorContext context, PomMode mode) {
         if (repositoryElement != null && repositoriesElement == null) {
             repositoriesElement = (Element) repositoryElement.getParentNode();
         }
@@ -643,7 +641,7 @@ public class NPomXmlParser {
             repositoriesElement.appendChild(createRepositoryElement(doc, repository));
             return true;
         } else {
-            NPomRepositoryNode old = parseRepository(repositoryElement, session, visitor, context, mode);
+            NPomRepositoryNode old = parseRepository(repositoryElement, visitor, context, mode);
             if (old == null || !old.getObject().equals(repository)) {
                 repositoriesElement.replaceChild(createRepositoryElement(doc, repository), repositoryElement);
                 return true;
@@ -652,71 +650,71 @@ public class NPomXmlParser {
         }
     }
 
-    public NPom parse(URL url, NSession session) throws IOException, SAXException, ParserConfigurationException {
-        return parse(url, null, session);
+    public NPom parse(URL url) throws IOException, SAXException, ParserConfigurationException {
+        return parse(url, null);
     }
 
-    public NPom parse(URL url, PomDomVisitor visitor, NSession session) {
+    public NPom parse(URL url, PomDomVisitor visitor) {
         try {
             try (InputStream is = url.openStream()) {
-                return parse(is, visitor, session);
+                return parse(is, visitor);
             }
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
-    public NPom parse(URI uri, NSession session) {
-        return parse(uri, null, session);
+    public NPom parse(URI uri) {
+        return parse(uri, null);
     }
 
-    public NPom parse(URI uri, PomDomVisitor visitor, NSession session) {
+    public NPom parse(URI uri, PomDomVisitor visitor) {
         try {
             try (InputStream is = uri.toURL().openStream()) {
-                return parse(is, visitor, session);
+                return parse(is, visitor);
             }
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
-    public NPom parse(File file, NSession session) {
-        return parse(file, null, session);
+    public NPom parse(File file) {
+        return parse(file, null);
     }
 
-    public NPom parse(NPath file, PomDomVisitor visitor, NSession session) {
+    public NPom parse(NPath file, PomDomVisitor visitor) {
         try {
             try (InputStream is = file.getInputStream()) {
-                return parse(is, visitor, session);
+                return parse(is, visitor);
             }
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
 
     }
 
-    public NPom parse(File file, PomDomVisitor visitor, NSession session) {
+    public NPom parse(File file, PomDomVisitor visitor) {
         try {
             try (InputStream is = new FileInputStream(file)) {
-                return parse(is, visitor, session);
+                return parse(is, visitor);
             }
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
-    public NPom parse(InputStream stream, NSession session) {
-        return parse(stream, null, session);
+    public NPom parse(InputStream stream) {
+        return parse(stream, null);
     }
 
-    public NPom parse(InputStream stream, PomDomVisitor visitor, NSession session) {
+    public NPom parse(InputStream stream, PomDomVisitor visitor) {
         try {
-            Document doc = XmlUtils.createDocumentBuilder(true, session).parse(preValidateStream(stream, session));
-            return parse(doc, visitor, session);
+            Document doc = XmlUtils.createDocumentBuilder(true).parse(preValidateStream(stream));
+            return parse(doc, visitor);
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         } catch (SAXException ex) {
-            throw new NParseException(session, NMsg.ofC("error parsing %s", stream), ex);
+            throw new NParseException(NMsg.ofC("error parsing %s", stream), ex);
         }
     }
 
@@ -734,25 +732,25 @@ public class NPomXmlParser {
             }
             return o.toByteArray();
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
-    private InputStream preValidateStream(InputStream in, NSession session) {
+    private InputStream preValidateStream(InputStream in) {
         byte[] bytes0 = loadAllBytes(in);
         int skip = 0;
         while (skip < bytes0.length && Character.isWhitespace(bytes0[skip])) {
             skip++;
         }
         String x = new String(bytes0, skip, bytes0.length - skip);
-        return new ByteArrayInputStream(XmlEscaper.escapeToCode(x, session).getBytes());
+        return new ByteArrayInputStream(XmlEscaper.escapeToCode(x).getBytes());
     }
 
-    public NPom parse(Document doc, NSession session) {
-        return parse(doc, null, session);
+    public NPom parse(Document doc) {
+        return parse(doc, null);
     }
 
-    public NPom parse(Document doc, PomDomVisitor visitor, NSession session) {
+    public NPom parse(Document doc, PomDomVisitor visitor) {
         List<NPomDependencyNode> deps = new ArrayList<>();
         List<NPomDependencyNode> depsMan = new ArrayList<>();
         List<NPomRepositoryNode> repos = new ArrayList<>();
@@ -910,12 +908,12 @@ public class NPomXmlParser {
                         break;
                     }
                     case "dependencyManagement": {
-                        OsAndArch osAndArch = new OsAndArch(props, session);
+                        OsAndArch osAndArch = new OsAndArch(props);
                         NodeList dependenciesChildList = elem1.getChildNodes();
                         for (int j = 0; j < dependenciesChildList.getLength(); j++) {
                             Element dependenciesElem = toElement(dependenciesChildList.item(j), "dependencies");
                             if (dependenciesElem != null) {
-                                depsMan.addAll(parseDependencies(dependenciesElem, session, visitor, context, osAndArch, PomMode.ROOT_DEPENDENCY_MANAGEMENT).getObject());
+                                depsMan.addAll(parseDependencies(dependenciesElem, visitor, context, osAndArch, PomMode.ROOT_DEPENDENCY_MANAGEMENT).getObject());
                             }
                         }
 
@@ -923,21 +921,21 @@ public class NPomXmlParser {
                         break;
                     }
                     case "dependencies": {
-                        OsAndArch osAndArch = new OsAndArch(props, session);
-                        deps.addAll(parseDependencies(elem1, session, visitor, context, osAndArch, PomMode.ROOT).getObject());
+                        OsAndArch osAndArch = new OsAndArch(props);
+                        deps.addAll(parseDependencies(elem1, visitor, context, osAndArch, PomMode.ROOT).getObject());
                         break;
                     }
                     case "repositories": {
-                        repos.addAll(parseRepositories(elem1, session, visitor, context, PomMode.ROOT).getObject());
+                        repos.addAll(parseRepositories(elem1, visitor, context, PomMode.ROOT).getObject());
                         break;
                     }
                     case "pluginRepositories": {
-                        pluginRepos.addAll(parseRepositories(elem1, session, visitor, context, PomMode.ROOT_PLUGIN).getObject());
+                        pluginRepos.addAll(parseRepositories(elem1, visitor, context, PomMode.ROOT_PLUGIN).getObject());
                         break;
                     }
                     case "profiles": {
-                        OsAndArch osAndArch = new OsAndArch(props, session);
-                        profiles.addAll(parseProfiles(elem1, session, visitor, context, osAndArch, PomMode.ROOT).getObject());
+                        OsAndArch osAndArch = new OsAndArch(props);
+                        profiles.addAll(parseProfiles(elem1, visitor, context, osAndArch, PomMode.ROOT).getObject());
                         break;
                     }
                 }
@@ -1023,7 +1021,7 @@ public class NPomXmlParser {
         return cc;
     }
 
-    private NPomProfilesNode parseProfiles(Element elem1, NSession session, PomDomVisitor visitor, DefaultPomDomVisitorContext context, OsAndArch osAndArch, PomMode mode) {
+    private NPomProfilesNode parseProfiles(Element elem1, PomDomVisitor visitor, DefaultPomDomVisitorContext context, OsAndArch osAndArch, PomMode mode) {
         List<NPomProfileNode> profiles = new ArrayList<>();
         if (visitor != null) {
             if (mode == PomMode.ROOT) {
@@ -1034,7 +1032,7 @@ public class NPomXmlParser {
         for (int j = 0; j < childList.getLength(); j++) {
             Element profile = toElement(childList.item(j), "profile");
             if (profile != null) {
-                NPomProfileNode pomProfileObj = parseProfile(profile, visitor, session, context, osAndArch, mode);
+                NPomProfileNode pomProfileObj = parseProfile(profile, visitor, context, osAndArch, mode);
                 profiles.add(pomProfileObj);
             }
         }
@@ -1051,7 +1049,7 @@ public class NPomXmlParser {
         Map<String, String> osMap = new HashMap<>();
         Map<String, String> archMap = new HashMap<>();
 
-        public OsAndArch(Map<String, String> props, NSession session) {
+        public OsAndArch(Map<String, String> props) {
             for (Map.Entry<String, String> entry : props.entrySet()) {
                 Matcher m = NUTS_OS_ARCH_DEPS_PATTERN.matcher(entry.getKey());
                 if (m.find()) {

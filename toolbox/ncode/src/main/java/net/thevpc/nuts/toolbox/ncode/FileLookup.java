@@ -18,7 +18,7 @@ public class FileLookup implements SourceProcessor {
 
     @Override
     public Object process(Source source, NSession session) {
-        return NPath.of(source.getExternalPath(),session);
+        return NPath.of(source.getExternalPath());
     }
 
 }

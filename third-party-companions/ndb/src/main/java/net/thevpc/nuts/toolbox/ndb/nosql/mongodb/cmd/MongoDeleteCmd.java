@@ -1,8 +1,8 @@
 package net.thevpc.nuts.toolbox.ndb.nosql.mongodb.cmd;
 
 import com.mongodb.client.result.DeleteResult;
-import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
 import net.thevpc.nuts.toolbox.ndb.base.cmd.DeleteCmd;
 import net.thevpc.nuts.toolbox.ndb.nosql.mongodb.NMongoConfig;
@@ -20,7 +20,7 @@ public class MongoDeleteCmd extends DeleteCmd<NMongoConfig> {
     }
 
     @Override
-    protected void runDelete(ExtendedQuery eq, NMongoConfig options, NSession session) {
+    protected void runDelete(ExtendedQuery eq, NMongoConfig options) {
         getSupport().doWithMongoCollection(options, eq.getTable(), mongoCollection -> {
             Document docWhere = Document.parse("{}");
             for (String s : eq.getWhere()) {
@@ -31,6 +31,7 @@ public class MongoDeleteCmd extends DeleteCmd<NMongoConfig> {
             DeleteResult r = eq.getOne() ?
                     mongoCollection.deleteOne(docWhere)
                     : mongoCollection.deleteMany(docWhere);
+            NSession session = NSession.of().get();
             session.out().println(r);
         });
     }

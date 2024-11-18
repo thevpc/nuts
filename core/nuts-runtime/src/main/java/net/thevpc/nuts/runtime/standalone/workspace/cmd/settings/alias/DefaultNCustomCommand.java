@@ -17,7 +17,6 @@ import java.util.logging.Level;
 
 public class DefaultNCustomCommand implements NCustomCmd {
 
-    private NLog LOG;
     private String name;
     private NId owner;
     private String factoryId;
@@ -25,21 +24,18 @@ public class DefaultNCustomCommand implements NCustomCmd {
     private List<String> helpCommand;
     private String helpText;
     private List<String> executorOptions;
-    private NWorkspace ws;
+    private NWorkspace workspace;
 
-    public DefaultNCustomCommand(NWorkspace ws) {
-        this.ws = ws;
+    public DefaultNCustomCommand(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
-    protected NLogOp _LOGOP(NSession session) {
-        return _LOG(session).with().session(session);
+    protected NLogOp _LOGOP() {
+        return _LOG().with();
     }
 
-    protected NLog _LOG(NSession session) {
-        if (LOG == null) {
-            LOG = NLog.of(DefaultNCustomCommand.class, session);
-        }
-        return LOG;
+    protected NLog _LOG() {
+            return NLog.of(DefaultNCustomCommand.class);
     }
 
     @Override
@@ -63,7 +59,8 @@ public class DefaultNCustomCommand implements NCustomCmd {
     }
 
     @Override
-    public int exec(String[] args, NCmdExecOptions options, NSession session) {
+    public int exec(String[] args, NCmdExecOptions options) {
+        NSession session = workspace.currentSession();
         if (session.isDry()) {
             List<String> executorOptions = new ArrayList<>(options.getExecutorOptions());
             executorOptions.addAll(this.getExecutorOptions());
@@ -71,7 +68,7 @@ public class DefaultNCustomCommand implements NCustomCmd {
             r.addAll(Arrays.asList(args));
             args = r.toArray(new String[0]);
 
-            return NExecCmd.of(session)
+            return NExecCmd.of()
                     .addCommand(args)
                     .addExecutorOptions(executorOptions)
                     .setDirectory(options.getDirectory())
@@ -90,7 +87,7 @@ public class DefaultNCustomCommand implements NCustomCmd {
             r.addAll(Arrays.asList(args));
             args = r.toArray(new String[0]);
 
-            return NExecCmd.of(session)
+            return NExecCmd.of()
                     .addCommand(args)
                     .addExecutorOptions(executorOptions)
                     .setDirectory(options.getDirectory())
@@ -107,22 +104,23 @@ public class DefaultNCustomCommand implements NCustomCmd {
 
 
     @Override
-    public NText getHelpText(NSession session) throws NExecutionException {
+    public NText getHelpText() throws NExecutionException {
+        NSession session=workspace.currentSession();
         if (!NBlankable.isBlank(helpText)) {
-            return NTexts.of(session).ofPlain(helpText);
+            return NTexts.of().ofPlain(helpText);
         }
         if (helpCommand != null && helpCommand.size() > 0) {
             try {
-                return NTexts.of(session).ofPlain(
-                        NExecCmd.of(session)
+                return NTexts.of().ofPlain(
+                        NExecCmd.of()
                                 .addCommand(helpCommand)
                                 .setFailFast(false)
                                 .run()
                                 .getGrabbedAllString()
                 );
             } catch (Exception ex) {
-                _LOGOP(session).level(Level.FINE).error(ex).log(NMsg.ofC("failed to retrieve help for %s", getName()));
-                return NTexts.of(session).ofStyled("failed to retrieve help for " + getName(), NTextStyle.error());
+                _LOGOP().level(Level.FINE).error(ex).log(NMsg.ofC("failed to retrieve help for %s", getName()));
+                return NTexts.of().ofStyled("failed to retrieve help for " + getName(), NTextStyle.error());
             }
         }
         return null;
@@ -191,11 +189,11 @@ public class DefaultNCustomCommand implements NCustomCmd {
     }
 
     public NWorkspace getWorkspace() {
-        return ws;
+        return workspace;
     }
 
-    public void setWs(NWorkspace ws) {
-        this.ws = ws;
+    public void setWorkspace(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
     @Override

@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.reserved.rpi;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NIterable;
 import net.thevpc.nuts.util.NIterator;
@@ -39,8 +39,8 @@ import java.util.stream.Stream;
  * Collections related Internal Programming Interface
  */
 public interface NCollectionsRPI extends NComponent {
-    static NCollectionsRPI of(NSession session) {
-        return session.extensions().createComponent(NCollectionsRPI.class).get();
+    static NCollectionsRPI of() {
+        return NExtensions.of().createComponent(NCollectionsRPI.class).get();
     }
 
     <T> NStream<T> arrayToStream(T[] str);

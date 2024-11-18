@@ -34,7 +34,7 @@ public class Test29_DependencyTest {
 //        NOptional<Map<String, List<String>>> u = f.parseDuplicates("cond-properties=a,b\\=c&exclusions=asm:asm,asm:asm-tree,log4j:log4j,oro:oro&profile=coverage");
         String t1="net.sourceforge.cobertura:cobertura#${cobertura.version}?cond-properties=a,b\\=c&exclusions=asm:asm,asm:asm-tree,log4j:log4j,oro:oro&profile=coverage";
         String t2="net.sourceforge.cobertura:cobertura#${cobertura.version}?cond-properties='a,b=c'&exclusions=asm:asm,asm:asm-tree,log4j:log4j,oro:oro&profile=coverage";
-        NDependency s = NDependency.of(t1).get(session);
+        NDependency s = NDependency.of(t1).get();
         TestUtils.println(t2);
         TestUtils.println(s.toString());
         Assertions.assertTrue(
@@ -46,6 +46,7 @@ public class Test29_DependencyTest {
                 t1.equals(s2.toString())
                         || t2.equals(s2.toString())
         );
+        System.out.println("Okkay");
     }
 
 }

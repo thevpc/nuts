@@ -7,12 +7,12 @@ import net.thevpc.nuts.util.NFilterOp;
 
 public class NIdFilterTrue extends AbstractIdFilter implements NIdFilter, NSimplifiable<NIdFilter>, NExprIdFilter {
 
-    public NIdFilterTrue(NSession session) {
-        super(session, NFilterOp.TRUE);
+    public NIdFilterTrue(NWorkspace workspace) {
+        super(workspace, NFilterOp.TRUE);
     }
 
     @Override
-    public boolean acceptId(NId id, NSession session) {
+    public boolean acceptId(NId id) {
         return true;
     }
 

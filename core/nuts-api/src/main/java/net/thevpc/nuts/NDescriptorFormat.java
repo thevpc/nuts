@@ -38,8 +38,8 @@ import net.thevpc.nuts.spi.NComponent;
  * @since 0.5.4
  */
 public interface NDescriptorFormat extends NFormat, NComponent {
-    static NDescriptorFormat of(NSession session) {
-       return NExtensions.of(session).createComponent(NDescriptorFormat.class).get();
+    static NDescriptorFormat of() {
+       return NExtensions.of().createComponent(NDescriptorFormat.class).get();
     }
 
     /**
@@ -84,8 +84,6 @@ public interface NDescriptorFormat extends NFormat, NComponent {
      * @since 0.5.6
      */
     NDescriptorFormat setValue(NDescriptor descriptor);
-
-    NDescriptorFormat setSession(NSession session);
 
     /**
      * configure the current command with the given arguments. This is an

@@ -26,14 +26,14 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 
 import java.util.regex.Pattern;
 
 public interface NGlob extends NComponent {
-    static NGlob of(NSession session) {
-        return session.extensions().createComponent(NGlob.class).get();
+    static NGlob of() {
+        return NExtensions.of().createComponent(NGlob.class).get();
     }
 
     String getSeparator();

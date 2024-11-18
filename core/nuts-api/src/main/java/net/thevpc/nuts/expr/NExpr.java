@@ -26,16 +26,15 @@
  */
 package net.thevpc.nuts.expr;
 
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NSessionProvider;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 
 /**
  * Simple Expression Parser Module used in multiple syb-systems of nuts (such as search)
  */
-public interface NExpr extends NComponent, NSessionProvider {
-    static NExpr of(NSession session) {
-        return session.extensions().createComponent(NExpr.class).get();
+public interface NExpr extends NComponent {
+    static NExpr of() {
+        return NExtensions.of().createComponent(NExpr.class).get();
     }
 
     NExprDeclarations newDeclarations(boolean includeDefaults);

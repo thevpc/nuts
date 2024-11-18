@@ -28,6 +28,7 @@ package net.thevpc.nuts.runtime.standalone.text.parser;
 
 
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.text.NTextAnchor;
 import net.thevpc.nuts.text.NTextType;
 
@@ -39,8 +40,8 @@ import java.util.Objects;
 public class DefaultNTextAnchor extends NTextSpecialBase implements NTextAnchor {
     private String value;
 
-    public DefaultNTextAnchor(NSession session, String start, String separator, String end, String value) {
-        super(session, start, "anchor", separator, end);
+    public DefaultNTextAnchor(NWorkspace workspace, String start, String separator, String end, String value) {
+        super(workspace, start, "anchor", separator, end);
         this.value = value;
     }
 

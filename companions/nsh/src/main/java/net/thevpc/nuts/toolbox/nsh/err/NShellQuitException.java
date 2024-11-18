@@ -32,7 +32,6 @@
 package net.thevpc.nuts.toolbox.nsh.err;
 
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 
 /**
  * @author thevpc (taha.bensalah@gmail.com)
@@ -41,16 +40,16 @@ import net.thevpc.nuts.NSession;
  */
 public class NShellQuitException extends NShellException {
 
-    public NShellQuitException(NSession session, int result) {
-        this(session, null, result);
+    public NShellQuitException(int result) {
+        this(null, result);
     }
     
-    public NShellQuitException(NSession session) {
-        this(session, null, 0);
+    public NShellQuitException() {
+        this(null, 0);
     }
 
-    public NShellQuitException(NSession session, Throwable cause, int result) {
-        super(session, NMsg.ofPlain("quit"), cause,result);
+    public NShellQuitException(Throwable cause, int result) {
+        super(NMsg.ofPlain("quit"), cause,result);
     }
     
 }

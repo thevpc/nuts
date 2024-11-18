@@ -16,40 +16,40 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 public class DefaultNLocks extends AbstractNLocks {
-    public DefaultNLocks(NSession session) {
-        super(session);
+    public DefaultNLocks(NWorkspace workspace) {
+        super(workspace);
     }
 
     @Override
     public NLock create() {
-        checkSession();
+        NSession session=getWorkspace().currentSession();
         Object s = getSource();
         Object lr = getResource();
         Path lrPath = null;
         if (lr == null) {
             if (s == null) {
-                throw new NLockException(getSession(), NMsg.ofPlain("unsupported lock for null"), null, null);
+                throw new NLockException(NMsg.ofPlain("unsupported lock for null"), null, null);
             }
             Path p = toPath(s);
             if (p == null) {
-                throw new NLockException(getSession(), NMsg.ofC("unsupported lock for %s", s.getClass().getName()), null, s);
+                throw new NLockException(NMsg.ofC("unsupported lock for %s", s.getClass().getName()), null, s);
             }
             lrPath = p.resolveSibling(p.getFileName().toString() + ".lock");
         } else {
             lrPath = toPath(lr);
             if (lrPath == null) {
-                throw new NLockException(getSession(), NMsg.ofC("unsupported lock %s", lr.getClass().getName()), lr, s);
+                throw new NLockException(NMsg.ofC("unsupported lock %s", lr.getClass().getName()), lr, s);
             }
         }
-        return new DefaultFileNLock(lrPath, s, getSession());
+        return new DefaultFileNLock(lrPath, s, session);
     }
 
     @Override
     public <T> T call(Callable<T> runnable) {
-        checkSession();
+        NSession session=getWorkspace().currentSession();
         NLock lock = create();
         if (!lock.tryLock()) {
-            throw new NLockAcquireException(getSession(), null, getResource(), lock);
+            throw new NLockAcquireException(null, getResource(), lock);
         }
         T value = null;
         try {
@@ -58,7 +58,7 @@ public class DefaultNLocks extends AbstractNLocks {
             if (e instanceof NException) {
                 throw (NException) e;
             }
-            throw new NException(getSession(), NMsg.ofPlain("call failed"), e);
+            throw new NException(NMsg.ofPlain("call failed"), e);
         } finally {
             lock.unlock();
         }
@@ -67,16 +67,16 @@ public class DefaultNLocks extends AbstractNLocks {
 
     @Override
     public <T> T call(Callable<T> runnable, long time, TimeUnit unit) {
-        checkSession();
+        NSession session=getWorkspace().currentSession();
         NLock lock = create();
         boolean b = false;
         try {
             b = lock.tryLock(time, unit);
         } catch (InterruptedException e) {
-            throw new NLockAcquireException(getSession(), null, getResource(), lock);
+            throw new NLockAcquireException(null, getResource(), lock);
         }
         if (!b) {
-            throw new NLockAcquireException(getSession(), null, getResource(), lock);
+            throw new NLockAcquireException(null, getResource(), lock);
         }
         T value = null;
         try {
@@ -85,7 +85,7 @@ public class DefaultNLocks extends AbstractNLocks {
             if (e instanceof NException) {
                 throw (NException) e;
             }
-            throw new NException(getSession(), NMsg.ofPlain("call failed"), e);
+            throw new NException(NMsg.ofPlain("call failed"), e);
         } finally {
             lock.unlock();
         }
@@ -94,10 +94,10 @@ public class DefaultNLocks extends AbstractNLocks {
 
     @Override
     public void run(Runnable runnable) {
-        checkSession();
+        NSession session=getWorkspace().currentSession();
         NLock lock = create();
         if (!lock.tryLock()) {
-            throw new NLockAcquireException(getSession(), null, getResource(), lock);
+            throw new NLockAcquireException(null, getResource(), lock);
         }
         try {
             runnable.run();
@@ -105,7 +105,7 @@ public class DefaultNLocks extends AbstractNLocks {
             if (e instanceof NException) {
                 throw (NException) e;
             }
-            throw new NException(getSession(), NMsg.ofPlain("call failed"), e);
+            throw new NException(NMsg.ofPlain("call failed"), e);
         } finally {
             lock.unlock();
         }
@@ -113,16 +113,16 @@ public class DefaultNLocks extends AbstractNLocks {
 
     @Override
     public void run(Runnable runnable, long time, TimeUnit unit) {
-        checkSession();
+        NSession session=getWorkspace().currentSession();
         NLock lock = create();
         boolean b = false;
         try {
             b = lock.tryLock(time, unit);
         } catch (InterruptedException e) {
-            throw new NLockAcquireException(getSession(), null, getResource(), lock);
+            throw new NLockAcquireException(null, getResource(), lock);
         }
         if (!b) {
-            throw new NLockAcquireException(getSession(), null, getResource(), lock);
+            throw new NLockAcquireException(null, getResource(), lock);
         }
         try {
             runnable.run();
@@ -130,7 +130,7 @@ public class DefaultNLocks extends AbstractNLocks {
             if (e instanceof NException) {
                 throw (NException) e;
             }
-            throw new NException(getSession(), NMsg.ofPlain("lock action failed"), e);
+            throw new NException(NMsg.ofPlain("lock action failed"), e);
         } finally {
             lock.unlock();
         }
@@ -143,7 +143,8 @@ public class DefaultNLocks extends AbstractNLocks {
             if (NBlankable.isBlank(face)) {
                 face = "content";
             }
-            return NLocations.of(getSession()).getStoreLocation((NId) lockedObject, NStoreType.RUN)
+            NSession session=getWorkspace().currentSession();
+            return NLocations.of().getStoreLocation((NId) lockedObject, NStoreType.RUN)
                     .resolve("nuts-" + face)
                     .toPath().get()
                     ;

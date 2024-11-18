@@ -37,6 +37,7 @@ import net.thevpc.nuts.toolbox.nsh.sys.NShellExternalExecutor;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * @author vpc
@@ -68,7 +69,7 @@ public class NShellConfiguration {
      * default false
      */
     private Boolean includeExternalExecutor;
-    private Function<NSession, NMsg> headerMessageSupplier;
+    private Supplier<NMsg> headerMessageSupplier;
 
     public NSession getSession() {
         return session;
@@ -169,11 +170,11 @@ public class NShellConfiguration {
         return this;
     }
 
-    public Function<NSession, NMsg> getHeaderMessageSupplier() {
+    public Supplier<NMsg> getHeaderMessageSupplier() {
         return headerMessageSupplier;
     }
 
-    public NShellConfiguration setHeaderMessageSupplier(Function<NSession, NMsg> headerMessageSupplier) {
+    public NShellConfiguration setHeaderMessageSupplier(Supplier<NMsg> headerMessageSupplier) {
         this.headerMessageSupplier = headerMessageSupplier;
         return this;
     }

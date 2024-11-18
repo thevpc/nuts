@@ -38,34 +38,31 @@ public class NUnsupportedArgumentException extends NException {
     /**
      * Constructs a new NutsUnsupportedArgumentException exception
      *
-     * @param session workspace
      * @param message message
      */
-    public NUnsupportedArgumentException(NSession session, NMsg message) {
-        super(session, message);
+    public NUnsupportedArgumentException(NMsg message) {
+        super(message);
     }
 
     /**
      * Constructs a new NutsUnsupportedArgumentException exception
      *
-     * @param session workspace
      * @param message message
      * @param cause   cause
      */
-    public NUnsupportedArgumentException(NSession session, NMsg message, Throwable cause) {
-        super(session, message, cause);
+    public NUnsupportedArgumentException(NMsg message, Throwable cause) {
+        super(message, cause);
     }
 
     /**
      * Constructs a new NutsUnsupportedArgumentException exception
      *
-     * @param session            workspace
      * @param message            message
      * @param cause              cause
      * @param enableSuppression  whether or not suppression is enabled or disabled
      * @param writableStackTrace whether or not the stack trace should be writable
      */
-    public NUnsupportedArgumentException(NSession session, NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(session, message, cause, enableSuppression, writableStackTrace);
+    public NUnsupportedArgumentException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
     }
 }

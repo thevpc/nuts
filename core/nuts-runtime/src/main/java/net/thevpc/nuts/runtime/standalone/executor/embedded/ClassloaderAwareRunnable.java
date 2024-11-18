@@ -80,7 +80,7 @@ public abstract class ClassloaderAwareRunnable implements Runnable {
 
     public void runAndWaitFor() throws Throwable {
         try {
-            NScheduler.of(getSession()).executorService().submit(this).get();
+            NScheduler.of().executorService().submit(this).get();
         } catch (InterruptedException ex) {
             setError(ex);
         }

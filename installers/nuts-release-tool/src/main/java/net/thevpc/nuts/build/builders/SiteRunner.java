@@ -47,7 +47,7 @@ public class SiteRunner extends AbstractRunner {
         NArg c = cmdLine.peek().orNull();
         switch (c.key()) {
             case "site": {
-                cmdLine.withNextFlag((v, a, s) -> NUTS_FLAG_SITE = v);
+                cmdLine.withNextFlag((v, a) -> NUTS_FLAG_SITE = v);
                 return true;
             }
         }
@@ -82,7 +82,7 @@ public class SiteRunner extends AbstractRunner {
 
         vars.put("buildTime", new SimpleDateFormat("yyyy-MM-dd-HHmmss").format(new Date()));
         vars.put("latestApiVersion", latestApiVersion);
-        String latestRuntimeVersion = NDescriptorParser.of(session)
+        String latestRuntimeVersion = NDescriptorParser.of()
                 .setDescriptorStyle(NDescriptorStyle.MAVEN)
                 .parse(context().root.resolve("core/nuts-runtime/pom.xml")).get().getId().getVersion().toString();
         vars.put("latestRuntimeVersion", latestRuntimeVersion);
@@ -108,13 +108,13 @@ public class SiteRunner extends AbstractRunner {
         for (Map.Entry<String, Object> e : prepareVars().entrySet()) {
             templateProject.setVar(e.getKey(), e.getValue());
         }
-        NPath.of(Mvn.localMaven() + "/" + Mvn.file(Nuts.getApiId(), MvnArtifactType.JAR), session)
+        NPath.of(Mvn.localMaven() + "/" + Mvn.file(Nuts.getApiId(), MvnArtifactType.JAR))
                 .copyTo(context().NUTS_WEBSITE_BASE.resolve("static/nuts-preview.jar")
                 );
     }
 
     private void runSiteGithubDocumentation() {
-        NInstallCmd.of(session.copy().yes()).addIds("ndocusaurus").run();
+        NInstallCmd.of().addIds("ndocusaurus").run();
         echo("**** $v (nuts)...", NMaps.of("v", NMsg.ofStyled("ndocusaurus", NTextStyle.keyword())));
         String workdir = context().NUTS_WEBSITE_BASE.toString();
         DocusaurusProject docusaurusProject = new DocusaurusProject(workdir,
@@ -124,7 +124,7 @@ public class SiteRunner extends AbstractRunner {
                 .setBuildWebSite(true)
                 .setStartWebSite(false)
                 .setBuildPdf(true)
-                .setAutoInstallNutsPackages(NBootManager.of(session())
+                .setAutoInstallNutsPackages(NBootManager.of()
                         .getBootOptions().getConfirm().orElse(NConfirmationMode.ASK) == NConfirmationMode.YES)
                 .setVars(prepareVars());
 

@@ -224,9 +224,9 @@ public class NJobsSubService {
     public boolean removeJob(String jobId) {
         long count = service.tasks().findAllTasks().filter(x -> jobId.equals(x.getJobId())).count();
         if (count > 1) {
-            throw new NIllegalArgumentException(session, NMsg.ofC("job is used in %d tasks. It cannot be removed.",count));
+            throw new NIllegalArgumentException(NMsg.ofC("job is used in %d tasks. It cannot be removed.",count));
         } else if (count > 0) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("job is used in one task. It cannot be removed."));
+            throw new NIllegalArgumentException(NMsg.ofPlain("job is used in one task. It cannot be removed."));
         }
         return dal.delete(NJob.class, jobId);
     }

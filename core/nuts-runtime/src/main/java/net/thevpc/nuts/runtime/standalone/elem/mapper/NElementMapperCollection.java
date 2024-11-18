@@ -34,12 +34,12 @@ public class NElementMapperCollection implements NElementMapper {
     public NElement createElement(Object o, Type typeOfSrc, NElementFactoryContext context) {
         Collection<Object> coll = (Collection) o;
         List<NElement> collect = coll.stream().map(x -> context.objectToElement(x, null)).collect(Collectors.toList());
-        return new DefaultNArrayElement(collect, context.getSession());
+        return new DefaultNArrayElement(collect, context.getWorkspace());
     }
 
     public Collection fillObject(NElement o, Collection coll, Type elemType, Type to, NElementFactoryContext context) {
         NSession session = context.getSession();
-        for (NElement nutsElement : o.asArray().get(session).items()) {
+        for (NElement nutsElement : o.asArray().get().items()) {
             coll.add(context.elementToObject(nutsElement, elemType));
         }
         return coll;
@@ -61,7 +61,7 @@ public class NElementMapperCollection implements NElementMapper {
             case "java.util.Collection":
             case "java.util.List":
             case "java.util.ArrayList": {
-                return fillObject(o, new ArrayList(o.asArray().get(session).size()), elemType, to, context);
+                return fillObject(o, new ArrayList(o.asArray().get().size()), elemType, to, context);
             }
             case "java.util.Set":
             case "java.util.LinkedHashset": {

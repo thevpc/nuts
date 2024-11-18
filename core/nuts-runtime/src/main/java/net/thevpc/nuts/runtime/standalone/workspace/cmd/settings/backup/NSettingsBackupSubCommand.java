@@ -29,9 +29,13 @@ import java.util.List;
  * @author thevpc
  */
 public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
+    public NSettingsBackupSubCommand(NWorkspace workspace) {
+        super(workspace);
+    }
 
     @Override
-    public boolean exec(NCmdLine cmdLine, Boolean autoSave, NSession session) {
+    public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
+        NSession session=workspace.currentSession();
         if (cmdLine.next("backup").isPresent()) {
             cmdLine.setCommandName("settings backup");
             String file = null;
@@ -39,19 +43,19 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
             while (cmdLine.hasNext()) {
                 if ((a = cmdLine.nextEntry("--file", "-f").orNull()) != null) {
                     file = a.getValue().asString().orElse("");
-                } else if (cmdLine.peek().get(session).isNonOption()) {
-                    file = cmdLine.nextEntry().get(session).getValue().asString().orElse("");
+                } else if (cmdLine.peek().get().isNonOption()) {
+                    file = cmdLine.nextEntry().get().getValue().asString().orElse("");
                 } else {
                     session.configureLast(cmdLine);
                 }
             }
             if (cmdLine.isExecMode()) {
                 List<String> all = new ArrayList<>();
-                all.add(NLocations.of(session).getWorkspaceLocation().toPath().get()
+                all.add(NLocations.of().getWorkspaceLocation().toPath().get()
                         .resolve("nuts-workspace.json").toString()
                 );
                 for (NStoreType value : NStoreType.values()) {
-                    NPath r = NLocations.of(session).getStoreLocation(value);
+                    NPath r = NLocations.of().getStoreLocation(value);
                     if (r.isDirectory()) {
                         all.add(r.toString());
                     }
@@ -66,9 +70,9 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                 if (Paths.get(file).getFileName().toString().indexOf('.') < 0) {
                     file += ".zip";
                 }
-                NCompress cmp = NCompress.of(session);
+                NCompress cmp = NCompress.of();
                 for (String s : all) {
-                    cmp.addSource(NPath.of(s,session));
+                    cmp.addSource(NPath.of(s));
                 }
                 cmp.to(file).run();
             }
@@ -83,8 +87,8 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                     file = a.getValue().asString().orElse("");
                 } else if ((a = cmdLine.nextEntry("--workspace", "-w").orNull()) != null) {
                     ws = a.getValue().asString().orElse("");
-                } else if (cmdLine.peek().get(session).isNonOption()) {
-                    file = cmdLine.nextEntry().get(session).getValue().asString().orElse("");
+                } else if (cmdLine.peek().get().isNonOption()) {
+                    file = cmdLine.nextEntry().get().getValue().asString().orElse("");
                 } else {
                     session.configureLast(cmdLine);
                 }
@@ -104,9 +108,9 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
             }
             if (cmdLine.isExecMode()) {
                 NObjectElement[] nutsWorkspaceConfigRef = new NObjectElement[1];
-                NElements elem = NElements.of(session);
-                NUncompress.of(session)
-                        .from(NPath.of(file,session))
+                NElements elem = NElements.of();
+                NUncompress.of()
+                        .from(NPath.of(file))
                         .visit(new NUncompressVisitor() {
                             @Override
                             public boolean visitFolder(String path) {
@@ -117,7 +121,7 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                             public boolean visitFile(String path, InputStream inputStream) {
                                 if ("/nuts-workspace.json".equals(path)) {
                                     NObjectElement e = elem.json()
-                                            .parse(inputStream, NObjectElement.class).asObject().get(session);
+                                            .parse(inputStream, NObjectElement.class).asObject().get();
                                     nutsWorkspaceConfigRef[0] = e;
                                     return false;
                                 }
@@ -128,16 +132,15 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                     cmdLine.throwMissingArgument(NMsg.ofC("not a valid file : %s", file));
                 }
                 if (ws == null || ws.isEmpty()) {
-                    NElements prv = elem.setSession(session);
-                    ws = nutsWorkspaceConfigRef[0].getString("name").get(session);
+                    ws = nutsWorkspaceConfigRef[0].getString("name").get();
                 }
                 if (ws == null || ws.isEmpty()) {
                     cmdLine.throwMissingArgument(NMsg.ofC("not a valid file : %s", file));
                 }
-                String platformHomeFolder = NPlatformHome.of(null, NConfigs.of(session).stored().isSystem()).getWorkspaceLocation(ws);
-                NUncompress.of(session)
-                        .from(NPath.of(file,session))
-                        .to(NPath.of(platformHomeFolder,session))
+                String platformHomeFolder = NPlatformHome.of(null, NConfigs.of().stored().isSystem()).getWorkspaceLocation(ws);
+                NUncompress.of()
+                        .from(NPath.of(file))
+                        .to(NPath.of(platformHomeFolder))
                         .setSkipRoot(true).run();
                 if (session.isPlainTrace()) {
                     session.out().println(NMsg.ofC("restore %s to %s", file, platformHomeFolder));

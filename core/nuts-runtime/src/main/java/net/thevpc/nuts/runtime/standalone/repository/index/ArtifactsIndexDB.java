@@ -21,15 +21,15 @@ public class ArtifactsIndexDB {
 //        this.tableName = tableName;
 //        this.db = db;
 //        this.ws = ws;
-        table = db.createTable(def(tableName, db), true, session);
+        table = db.createTable(def(tableName, db), true);
     }
 
     public static ArtifactsIndexDB of(NSession session) {
         synchronized (session.getWorkspace()) {
-            ArtifactsIndexDB o = (ArtifactsIndexDB) NEnvs.of(session).getProperties().get(ArtifactsIndexDB.class.getName());
+            ArtifactsIndexDB o = (ArtifactsIndexDB) NEnvs.of().getProperties().get(ArtifactsIndexDB.class.getName());
             if (o == null) {
-                o = new ArtifactsIndexDB(DEFAULT_ARTIFACT_TABLE_NAME, CacheDB.of(session), session);
-                NEnvs.of(session).getProperties().put(ArtifactsIndexDB.class.getName(), o);
+                o = new ArtifactsIndexDB(DEFAULT_ARTIFACT_TABLE_NAME, CacheDB.of(), session);
+                NEnvs.of().getProperties().put(ArtifactsIndexDB.class.getName(), o);
             }
             return o;
         }
@@ -48,23 +48,23 @@ public class ArtifactsIndexDB {
     }
 
     public NStream<NId> findAll(NSession session) {
-        return table.stream(session);
+        return table.stream();
     }
 
     public NStream<NId> findByGroupId(String groupId, NSession session) {
-        return table.findByIndex("groupId", groupId, session);
+        return table.findByIndex("groupId", groupId);
     }
 
     public NStream<NId> findByArtifactId(String artifactId, NSession session) {
-        return table.findByIndex("artifactId", artifactId, session);
+        return table.findByIndex("artifactId", artifactId);
     }
 
     public void add(NId id, NSession session) {
-        table.add(id, session);
+        table.add(id);
     }
 
     public void flush(NSession session) {
-        table.flush(session);
+        table.flush();
     }
 
 
@@ -73,6 +73,6 @@ public class ArtifactsIndexDB {
                 id.getLongId()
                         .builder().setRepository(id.getRepository())
                         .build().toDependency()
-                , session).findAny().orNull() != null;
+        ).findAny().orNull() != null;
     }
 }

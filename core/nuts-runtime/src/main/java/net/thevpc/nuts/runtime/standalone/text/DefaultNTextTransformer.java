@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NArg;
@@ -21,14 +22,14 @@ import java.util.stream.Collectors;
 public class DefaultNTextTransformer implements NTextTransformer {
     private final NTexts txt;
     private final NTextTransformConfig config;
-    private final NSession session;
+    private final NWorkspace workspace;
     private final NWorkspaceVarExpansionFunction d;
 
-    public DefaultNTextTransformer(NTextTransformConfig config, NSession session) {
-        this.session = session;
+    public DefaultNTextTransformer(NTextTransformConfig config, NWorkspace workspace) {
+        this.workspace = workspace;
         this.config = config;
-        txt = NTexts.of(session);
-        d = NWorkspaceVarExpansionFunction.of(session);
+        txt = NTexts.of();
+        d = NWorkspaceVarExpansionFunction.of();
     }
 
     @Override
@@ -166,7 +167,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
                         if (n == null) {
                             n = config.getTitleNumberSequence();
                             if (n == null) {
-                                n = NTexts.of(session).ofNumbering();
+                                n = NTexts.of().ofNumbering();
                             }
                             context.setTitleSequence(n);
                         }
@@ -219,7 +220,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
             case CODE: {
                 NTextCode t = (NTextCode) text;
                 if (config.isNormalize() || config.isFlatten()) {
-                    text = t.highlight(session);
+                    text = t.highlight();
                     // We have no insurance that highlight is not using special nodes so
                     // we enforce flattening
                     text = txt.transform(text, new NTextTransformConfig()
@@ -255,17 +256,17 @@ public class DefaultNTextTransformer implements NTextTransformer {
     private NPath resolveRelativePath(String path, NPath curr) {
         if (path.startsWith("classpath:")) {
             // NPath.of(path, Thread.currentThread().getContextClassLoader(), session).exists()
-            NPath p = NPath.of(path, Thread.currentThread().getContextClassLoader(), session);
+            NPath p = NPath.of(path, Thread.currentThread().getContextClassLoader());
             if (p.exists()) {
                 return p;
             }
-            p = NPath.of(path, getClass().getClassLoader(), session);
+            p = NPath.of(path, getClass().getClassLoader());
             if (p.exists()) {
                 return p;
             }
-            throw new NIllegalArgumentException(session, NMsg.ofC("unable to resolve path %s", path));
+            throw new NIllegalArgumentException(NMsg.ofC("unable to resolve path %s", path));
         }
-        return NPath.of(path, getClass().getClassLoader(), session);
+        return NPath.of(path, getClass().getClassLoader());
     }
 
     private NText applyFlatStyle(NText tt, NTextStyles styles) {

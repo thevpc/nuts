@@ -8,42 +8,40 @@ import net.thevpc.nuts.util.NMsg;
 
 public class DefaultNUndeployCmd extends AbstractNUndeployCmd {
 
-    public DefaultNUndeployCmd(NSession session) {
-        super(session);
+    public DefaultNUndeployCmd(NWorkspace workspace) {
+        super(workspace);
     }
 
     @Override
     public NUndeployCmd run() {
-        NWorkspaceUtils.of(getSession()).checkReadOnly();
+        NSession session=workspace.currentSession();
+        NWorkspaceUtils.of(workspace).checkReadOnly();
         if (ids.isEmpty()) {
-            throw new NExecutionException(getSession(), NMsg.ofPlain("no package to undeploy"), NExecutionException.ERROR_1);
+            throw new NExecutionException(NMsg.ofPlain("no package to undeploy"), NExecutionException.ERROR_1);
         }
-        checkSession();
-        NSession session = getSession();
         for (NId id : ids) {
-            NDefinition p = NSearchCmd.of(session
-                            .copy()
-                            .setFetchStrategy(isOffline() ? NFetchStrategy.OFFLINE : NFetchStrategy.ONLINE))
+            NDefinition p = NSearchCmd.of()
+                    .setFetchStrategy(isOffline() ? NFetchStrategy.OFFLINE : NFetchStrategy.ONLINE)
                     .addIds(id)
-                    .addRepositoryFilter(NRepositoryFilters.of(session).byName(getRepository()))
+                    .addRepositoryFilter(NRepositoryFilters.of().byName(getRepository()))
                     //skip 'installed' repository
                     .setRepositoryFilter(
-                            NRepositories.of(session).filter().installedRepo().neg()
+                            NRepositories.of().filter().installedRepo().neg()
                     )
                     .setDistinct(true)
                     .failFast()
                     .getResultDefinitions().findFirst().get();
-            NRepository repository1 = NRepositories.of(session)
+            NRepository repository1 = NRepositories.of()
                     .findRepository(p.getRepositoryUuid()).get();
-            NRepositorySPI repoSPI = NWorkspaceUtils.of(getSession()).repoSPI(repository1);
+            NRepositorySPI repoSPI = NWorkspaceUtils.of(workspace).repoSPI(repository1);
             repoSPI.undeploy()
-                    .setId(p.getId()).setSession(getSession())
+                    .setId(p.getId())
                     //                    .setFetchMode(NutsFetchMode.LOCAL)
                     .run();
             addResult(id);
         }
-        if (getSession().isTrace()) {
-            getSession().out().println(result);
+        if (session.isTrace()) {
+            session.out().println(result);
         }
         return this;
     }

@@ -54,7 +54,7 @@ public class Test16_TerminalProgressTest {
 
     @Test
     public void test2() {
-        CProgressBar rr = CProgressBar.of(session);
+        CProgressBar rr = CProgressBar.of();
         rr.setMinPeriod(-1);
         for (String formatter : rr.getFormatterNames()) {
             rr.setFormatter(formatter);
@@ -76,7 +76,7 @@ public class Test16_TerminalProgressTest {
 
     @Test
     public void test3() {
-        CProgressBar rr = new CProgressBar(session);
+        CProgressBar rr = new CProgressBar();
         rr.setMinPeriod(-1);
         for (String formatter : rr.getFormatterNames()) {
             rr.setFormatter(formatter);
@@ -99,7 +99,7 @@ public class Test16_TerminalProgressTest {
 
     @Test
     public void test4() {
-        CProgressBar rr = new CProgressBar(session);
+        CProgressBar rr = new CProgressBar();
         for (int i = 0; i < 12; i++) {
             int finalI = i;
             rr.setIndeterminatePosition(new CProgressBar.IndeterminatePosition() {

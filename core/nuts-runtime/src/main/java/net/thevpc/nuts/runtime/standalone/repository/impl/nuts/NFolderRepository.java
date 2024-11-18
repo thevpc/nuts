@@ -25,7 +25,6 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.nuts;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
@@ -47,20 +46,20 @@ import java.util.Map;
 public class NFolderRepository extends NFolderRepositoryBase {
 
 
-    public NFolderRepository(NAddRepositoryOptions options, NSession session, NRepository parentRepository) {
-        super(options, session, parentRepository, null, true, NConstants.RepoTypes.NUTS, true);
+    public NFolderRepository(NAddRepositoryOptions options, NWorkspace workspace, NRepository parentRepository) {
+        super(options, workspace, parentRepository, null, true, NConstants.RepoTypes.NUTS, true);
         repoIter = new NRepoIter(this);
 //        LOG = session.log().of(NutsFolderRepository.class);
         extensions.put("src", "-src.zip");
     }
 
     @Override
-    public NId searchLatestVersionCore(NId id, NIdFilter filter, NFetchMode fetchMode, NSession session) {
+    public NId searchLatestVersionCore(NId id, NIdFilter filter, NFetchMode fetchMode) {
         return null;
     }
 
-    public String getIdExtension(NId id, NSession session) {
-        checkSession(session);
+    public String getIdExtension(NId id) {
+        NSession session=getWorkspace().currentSession();
         Map<String, String> q = id.getProperties();
         String f = NStringUtils.trim(q.get(NConstants.IdProperties.FACE));
         switch (f) {
@@ -74,24 +73,24 @@ public class NFolderRepository extends NFolderRepositoryBase {
                 return ".nuts.catalog";
             }
             case NConstants.QueryFaces.CONTENT_HASH: {
-                return getIdExtension(id.builder().setFaceContent().build(), session) + ".sha1";
+                return getIdExtension(id.builder().setFaceContent().build()) + ".sha1";
             }
             case NConstants.QueryFaces.CONTENT: {
                 String packaging = q.get(NConstants.IdProperties.PACKAGING);
-                return NLocations.of(session).getDefaultIdContentExtension(packaging);
+                return NLocations.of().getDefaultIdContentExtension(packaging);
             }
             default: {
-                throw new NUnsupportedArgumentException(session, NMsg.ofC("unsupported fact %s", f));
+                throw new NUnsupportedArgumentException(NMsg.ofC("unsupported fact %s", f));
             }
         }
     }
 
-    public NDescriptor fetchDescriptorCore(NId id, NFetchMode fetchMode, NSession session) {
-        checkSession(session);
+    public NDescriptor fetchDescriptorCore(NId id, NFetchMode fetchMode) {
+        NSession session=getWorkspace().currentSession();
         if (!acceptedFetchNoCache(fetchMode)) {
-            throw new NNotFoundException(session, id, new NFetchModeNotSupportedException(session, this, fetchMode, id.toString(), null));
+            throw new NNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
         }
-        NPath nutsPath = getIdRemotePath(id, session);
+        NPath nutsPath = getIdRemotePath(id);
         NNotFoundException nutsPathEx = null;
         try {
             InputStream stream = null;
@@ -101,28 +100,28 @@ public class NFolderRepository extends NFolderRepositoryBase {
                 byte[] bytes = null;
                 String name = null;
                 try {
-                    stream = getStream(idDesc, "artifact descriptor", "retrieve", session);
-                    bytes = CoreIOUtils.loadByteArray(stream, true, session);
-                    name = NInputSource.of(stream,session).getMetaData().getName().orElse("no-name");
-                    nutsDescriptor = NDescriptorParser.of(session)
+                    stream = getStream(idDesc, "artifact descriptor", "retrieve");
+                    bytes = CoreIOUtils.loadByteArray(stream, true);
+                    name = NInputSource.of(stream).getMetaData().getName().orElse("no-name");
+                    nutsDescriptor = NDescriptorParser.of()
                             .setDescriptorStyle(NDescriptorStyle.NUTS)
-                            .parse(CoreIOUtils.createBytesStream(bytes, NMsg.ofNtf(name), "application/json", StandardCharsets.UTF_8.name(), "nuts.json", session)).get();
+                            .parse(CoreIOUtils.createBytesStream(bytes, NMsg.ofNtf(name), "application/json", StandardCharsets.UTF_8.name(), "nuts.json")).get();
                 } finally {
                     if (stream != null) {
                         stream.close();
                     }
                 }
                 checkSHA1Hash(id.builder().setFace(NConstants.QueryFaces.DESCRIPTOR_HASH).build(),
-                        CoreIOUtils.createBytesStream(bytes, name == null ? null : NMsg.ofNtf(name), "application/json", StandardCharsets.UTF_8.name(), "nuts.json", session)
-                        , "artifact descriptor", session);
+                        CoreIOUtils.createBytesStream(bytes, name == null ? null : NMsg.ofNtf(name), "application/json", StandardCharsets.UTF_8.name(), "nuts.json")
+                        , "artifact descriptor");
                 return nutsDescriptor;
             } catch (IOException | UncheckedIOException | NIOException ex) {
-                throw new NNotFoundException(session, id,
+                throw new NNotFoundException(id,
                         new NNotFoundException.NIdInvalidDependency[0],
                         new NNotFoundException.NIdInvalidLocation[]{
                                 new NNotFoundException.NIdInvalidLocation(
                                         getName(),
-                                        getIdRemotePath(idDesc, session).toString(),
+                                        getIdRemotePath(idDesc).toString(),
                                         ex.getMessage()
                                 )
                         },
@@ -133,12 +132,11 @@ public class NFolderRepository extends NFolderRepositoryBase {
             //ignore
         }
         //now try pom file (maven!)
-        checkSession(session);
         InputStream stream = null;
         NPath pomURL =
-                config().setSession(session).getLocationPath().resolve(
-                        getIdBasedir(id, session).resolve(
-                                getIdFilename(id, ".pom", session)
+                config().getLocationPath().resolve(
+                        getIdBasedir(id).resolve(
+                                getIdFilename(id, ".pom")
                         )
                 );
         try {
@@ -146,12 +144,12 @@ public class NFolderRepository extends NFolderRepositoryBase {
             byte[] bytes = null;
             String name = null;
             try {
-                stream = openStream(id, pomURL, id, "artifact descriptor", "retrieve", session);
-                bytes = CoreIOUtils.loadByteArray(stream, true, session);
-                name = NInputSource.of(stream,session).getMetaData().getName().orElse("no-name");
-                nutsDescriptor = NDescriptorParser.of(session)
+                stream = openStream(id, pomURL, id, "artifact descriptor", "retrieve");
+                bytes = CoreIOUtils.loadByteArray(stream, true);
+                name = NInputSource.of(stream).getMetaData().getName().orElse("no-name");
+                nutsDescriptor = NDescriptorParser.of()
                         .setDescriptorStyle(NDescriptorStyle.NUTS)
-                        .parse(CoreIOUtils.createBytesStream(bytes, NMsg.ofNtf(name), "text/xml", StandardCharsets.UTF_8.name(), "pom.xml", session)).get();
+                        .parse(CoreIOUtils.createBytesStream(bytes, NMsg.ofNtf(name), "text/xml", StandardCharsets.UTF_8.name(), "pom.xml")).get();
 
             } finally {
                 if (stream != null) {
@@ -159,11 +157,11 @@ public class NFolderRepository extends NFolderRepositoryBase {
                 }
             }
             checkSHA1Hash(id.builder().setFace(NConstants.QueryFaces.DESCRIPTOR_HASH).build(),
-                    CoreIOUtils.createBytesStream(bytes, name == null ? null : NMsg.ofNtf(name), "text/xml", StandardCharsets.UTF_8.name(), "pom.xml", session)
-                    , "artifact descriptor", session);
+                    CoreIOUtils.createBytesStream(bytes, name == null ? null : NMsg.ofNtf(name), "text/xml", StandardCharsets.UTF_8.name(), "pom.xml")
+                    , "artifact descriptor");
             return nutsDescriptor;
         } catch (IOException | UncheckedIOException | NIOException ex) {
-            throw new NNotFoundException(session, id,
+            throw new NNotFoundException(id,
                     new NNotFoundException.NIdInvalidDependency[0],
                     new NNotFoundException.NIdInvalidLocation[]{
                             new NNotFoundException.NIdInvalidLocation(

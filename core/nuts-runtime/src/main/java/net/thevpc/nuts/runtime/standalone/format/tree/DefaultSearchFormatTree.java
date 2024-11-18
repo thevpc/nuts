@@ -29,21 +29,21 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
     private Object lastObject;
     NTreeNodeFormat nTreeNodeFormat = new NTreeNodeFormat() {
         @Override
-        public NString format(Object o, int depth, NSession session) {
-            NIdFormatHelper fid = NIdFormatHelper.of(o, getSession());
+        public NString format(Object o, int depth) {
+            NIdFormatHelper fid = NIdFormatHelper.of(o);
             if (fid != null) {
                 return fid.getSingleColumnRow(getDisplayOptions());
             } else {
                 if (o instanceof XNode) {
                     return ((XNode) o).toNutsString();
                 }
-                return NTexts.of(getSession()).ofBuilder().append(o).immutable();
+                return NTexts.of().ofBuilder().append(o).immutable();
             }
         }
     };
 
-    public DefaultSearchFormatTree(NSession session, NPrintStream writer, NFetchDisplayOptions options) {
-        super(session, writer, NContentType.TREE, options);
+    public DefaultSearchFormatTree(NWorkspace workspace, NPrintStream writer, NFetchDisplayOptions options) {
+        super(workspace, writer, NContentType.TREE, options);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
     }
 
     public void formatElement(Object object, long index, boolean last) {
-        NTreeFormat tree = NTreeFormat.of(getSession());
+        NTreeFormat tree = NTreeFormat.of();
         List<String> options = new ArrayList<>();
         options.add("--omit-root");
         if (!last) {

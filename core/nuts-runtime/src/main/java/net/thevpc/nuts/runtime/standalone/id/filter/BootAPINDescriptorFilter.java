@@ -8,16 +8,16 @@ public class BootAPINDescriptorFilter extends AbstractDescriptorFilter {
 
     private final NVersion bootApiVersion;
 
-    public BootAPINDescriptorFilter(NSession session, NVersion bootApiVersion) {
-        super(session, NFilterOp.CUSTOM);
+    public BootAPINDescriptorFilter(NWorkspace workspace, NVersion bootApiVersion) {
+        super(workspace, NFilterOp.CUSTOM);
         this.bootApiVersion = bootApiVersion;
     }
 
     @Override
-    public boolean acceptDescriptor(NDescriptor descriptor, NSession session) {
+    public boolean acceptDescriptor(NDescriptor descriptor) {
         for (NDependency dependency : descriptor.getDependencies()) {
             if (dependency.getSimpleName().equals(NConstants.Ids.NUTS_API)) {
-                if (bootApiVersion.filter(session).acceptVersion(dependency.getVersion(), session)) {
+                if (bootApiVersion.filter().acceptVersion(dependency.getVersion())) {
                     return true;
                 } else {
                     return false;

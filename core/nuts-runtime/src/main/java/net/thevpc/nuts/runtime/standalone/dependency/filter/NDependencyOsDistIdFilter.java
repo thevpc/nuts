@@ -14,29 +14,29 @@ public class NDependencyOsDistIdFilter extends AbstractDependencyFilter  {
 
     private Set<NId> accepted = new HashSet<>();
 
-    public NDependencyOsDistIdFilter(NSession session) {
-        super(session, NFilterOp.CUSTOM);
+    public NDependencyOsDistIdFilter(NWorkspace workspace) {
+        super(workspace, NFilterOp.CUSTOM);
     }
 
-    private NDependencyOsDistIdFilter(NSession session, Collection<NId> accepted) {
-        super(session, NFilterOp.CUSTOM);
+    private NDependencyOsDistIdFilter(NWorkspace workspace, Collection<NId> accepted) {
+        super(workspace, NFilterOp.CUSTOM);
         this.accepted = new LinkedHashSet<>(accepted);
     }
 
     public NDependencyOsDistIdFilter add(Collection<NId> os) {
         LinkedHashSet<NId> s2 = new LinkedHashSet<>(accepted);
         s2.addAll(os);
-        return new NDependencyOsDistIdFilter(getSession(), s2);
+        return new NDependencyOsDistIdFilter(workspace, s2);
     }
 
     @Override
-    public boolean acceptDependency(NId from, NDependency dependency, NSession session) {
-        List<String> current = NStream.of(dependency.getCondition().getOsDist(),session).filterNonBlank().toList();
+    public boolean acceptDependency(NId from, NDependency dependency) {
+        List<String> current = NStream.of(dependency.getCondition().getOsDist()).filterNonBlank().toList();
         if(current.size()==0 || accepted.isEmpty()){
             return true;
         }
         for (NId nutsId : accepted) {
-            if(CoreFilterUtils.matchesOsDist(nutsId.toString(),current,session)){
+            if(CoreFilterUtils.matchesOsDist(nutsId.toString(),current)){
                 return true;
             }
         }
@@ -54,6 +54,6 @@ public class NDependencyOsDistIdFilter extends AbstractDependencyFilter  {
 
     @Override
     public NDependencyFilter simplify() {
-        return accepted.isEmpty() ? NDependencyFilters.of(getSession()).always() : this;
+        return accepted.isEmpty() ? NDependencyFilters.of().always() : this;
     }
 }

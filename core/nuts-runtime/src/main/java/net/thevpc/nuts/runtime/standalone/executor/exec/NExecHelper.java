@@ -27,8 +27,8 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
     NExecCmd pb;
     NPrintStream out;
 
-    public NExecHelper(NExecCmd pb, NSession session, NPrintStream out) {
-        super(session);
+    public NExecHelper(NExecCmd pb, NWorkspace workspace, NPrintStream out) {
+        super(workspace);
         this.pb = pb;
         this.out = out;
     }
@@ -39,21 +39,21 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
                                      NExecOutput out,
                                      NExecOutput err,
                                      NRunAs runAs,
-                                     NSession session) {
-        NExecCmd pb = NExecCmd.of(session);
+                                     NWorkspace workspace) {
+        NExecCmd pb = NExecCmd.of();
         NCmdLineUtils.OptionsAndArgs optionsAndArgs = NCmdLineUtils.parseOptionsFirst(args);
         pb.setCommand(optionsAndArgs.getArgs())
                 .addExecutorOptions(optionsAndArgs.getOptions())
                 .setRunAs(runAs)
                 .setEnv(env)
-                .setDirectory(directory == null ? null : NPath.of(directory, session))
+                .setDirectory(directory == null ? null : NPath.of(directory))
                 .setSleepMillis((int) sleep)
                 .setFailFast(failFast);
-        pb.setIn(CoreIOUtils.validateIn(in, session));
-        pb.setOut(CoreIOUtils.validateOut(out, session));
-        pb.setErr(CoreIOUtils.validateErr(err, session));
+        pb.setIn(CoreIOUtils.validateIn(in));
+        pb.setOut(CoreIOUtils.validateOut(out));
+        pb.setErr(CoreIOUtils.validateErr(err));
 
-        NLog _LL = NLog.of(NWorkspaceUtils.class, session);
+        NLog _LL = NLog.of(NWorkspaceUtils.class);
         NCmdLine commandOut = NCmdLine.of(pb.getCommand());
         if (_LL.isLoggable(Level.FINEST)) {
             _LL.with().level(Level.FINE).verb(NLogVerb.START).log(
@@ -61,27 +61,29 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
                             commandOut
                     ));
         }
-        if (showCommand || NBootManager.of(session).getCustomBootOption("---show-command")
+        NSession session = workspace.currentSession();
+        if (showCommand || NBootManager.of().getCustomBootOption("---show-command")
                 .flatMap(NLiteral::asBoolean)
                 .orElse(false)) {
+
             if (session.out().getTerminalMode() == NTerminalMode.FORMATTED) {
-                session.out().print(NMsg.ofC("%s ", NTexts.of(session).ofStyled("[exec]", NTextStyle.primary4())));
-                session.out().println(NTexts.of(session).ofText(commandOut));
+                session.out().print(NMsg.ofC("%s ", NTexts.of().ofStyled("[exec]", NTextStyle.primary4())));
+                session.out().println(NTexts.of().ofText(commandOut));
             } else {
                 session.out().print("exec ");
                 session.out().println(commandOut);
             }
         }
-        return new NExecHelper(pb, session, session.out());
+        return new NExecHelper(pb, workspace, session.out());
     }
 
     public static NExecHelper ofDefinition(NDefinition nutMainFile,
                                            String[] args, Map<String, String> env, String directory, boolean showCommand, boolean failFast, long sleep,
                                            NExecInput in, NExecOutput out, NExecOutput err,
                                            NRunAs runAs,
-                                           NSession session
+                                           NWorkspace workspace
     ) throws NExecutionException {
-        Path wsLocation = NLocations.of(session).getWorkspaceLocation().toPath().get();
+        Path wsLocation = NLocations.of().getWorkspaceLocation().toPath().get();
         Path pdirectory = null;
         if (NBlankable.isBlank(directory)) {
             pdirectory = wsLocation;
@@ -91,12 +93,13 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
         return ofArgs(args, env, pdirectory, showCommand, failFast,
                 sleep,
                 in, out, err, runAs,
-                session);
+                workspace);
     }
 
 
     public int exec() {
-        if (getSession().isDry()) {
+        NSession session = workspace.currentSession();
+        if (session.isDry()) {
             if (out.getTerminalMode() == NTerminalMode.FORMATTED) {
                 out.print("[dry] ==[exec]== ");
                 out.println(pb.format());
@@ -114,8 +117,8 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
 
     public Future<Integer> execAsync() {
         if (out != null) {
-            out.run(NTerminalCmd.MOVE_LINE_START, getSession());
+            out.run(NTerminalCmd.MOVE_LINE_START);
         }
-        return NScheduler.of(getSession()).executorService().submit(() -> pb.getResultCode());
+        return NScheduler.of().executorService().submit(() -> pb.getResultCode());
     }
 }

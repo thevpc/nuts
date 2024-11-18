@@ -1,6 +1,5 @@
 package net.thevpc.nuts.spi.base;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.reserved.util.NPredicateWithDescription;
@@ -15,8 +14,8 @@ public abstract class NPredicateDelegate<T> extends AbstractNPredicate<T> {
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return basePredicate().describe(session);
+    public NElement describe() {
+        return basePredicate().describe();
     }
 
     @Override

@@ -74,20 +74,20 @@ public class LsCommand extends NShellBuiltinDefault {
         NSession session = context.getSession();
         NArg a;
         if ((a = cmdLine.nextFlag("-d", "--dir").orNull()) != null) {
-            options.d = a.getBooleanValue().get(session);
+            options.d = a.getBooleanValue().get();
             return true;
         } else if ((a = cmdLine.nextFlag("-l", "--list").orNull()) != null) {
-            options.l = a.getBooleanValue().get(session);
+            options.l = a.getBooleanValue().get();
             return true;
         } else if ((a = cmdLine.nextFlag("-a", "--all").orNull()) != null) {
-            options.a = a.getBooleanValue().get(session);
+            options.a = a.getBooleanValue().get();
             return true;
         } else if ((a = cmdLine.nextFlag("-h").orNull()) != null) {
-            options.h = a.getBooleanValue().get(session);
+            options.h = a.getBooleanValue().get();
             return true;
-        } else if (cmdLine.peek().get(session).isNonOption()) {
-            String path = cmdLine.next(NArgName.of("file", session))
-                    .flatMap(NLiteral::asString).get(session);
+        } else if (cmdLine.peek().get().isNonOption()) {
+            String path = cmdLine.next(NArgName.of("file"))
+                    .flatMap(NLiteral::asString).get();
             options.paths.add(path);
             options.paths.addAll(Arrays.asList(cmdLine.toStringArray()));
             cmdLine.skip();
@@ -118,7 +118,7 @@ public class LsCommand extends NShellBuiltinDefault {
                 errors.result.put(path, NMsg.ofC("cannot access '%s': No such file or directory", path));
                 continue;
             }
-            NPath file = NPath.of(path, session);
+            NPath file = NPath.of(path);
             if (file == null) {
                 if (errors == null) {
                     errors = new ResultError();
@@ -127,7 +127,7 @@ public class LsCommand extends NShellBuiltinDefault {
                 errors.result.put(path, NMsg.ofC("cannot access '%s': No such file or directory", path));
                 continue;
             }
-            file = file.toAbsolute(NPath.of(context.getDirectory(), session));
+            file = file.toAbsolute(NPath.of(context.getDirectory()));
             if (!file.exists()) {
                 exitCode = 1;
                 if (errors == null) {
@@ -183,7 +183,7 @@ public class LsCommand extends NShellBuiltinDefault {
                             .flatMap(x ->
                                     x.children == null ? Stream.empty() :
                                             x.children.stream().map(y -> {
-                                                Map m = (Map) NElements.of(session).destruct(y);
+                                                Map m = (Map) NElements.of().destruct(y);
                                                 m.put("group", x.name);
                                                 return m;
                                             })).collect(Collectors.toList()));
@@ -248,8 +248,8 @@ public class LsCommand extends NShellBuiltinDefault {
                     item.modified == null ? "" : SIMPLE_DATE_FORMAT.format(item.modified)
             ));
         }
-        String name = NPath.of(item.path, session).getName();
-        NTexts text = NTexts.of(session);
+        String name = NPath.of(item.path).getName();
+        NTexts text = NTexts.of();
         if (item.hidden) {
             out.println(text.ofStyled(name, NTextStyle.pale()));
         } else if (item.type == 'd') {
@@ -404,8 +404,8 @@ public class LsCommand extends NShellBuiltinDefault {
         }
 
         @Override
-        public NElement describe(NSession session) {
-            return NElements.of(session).ofString("foldersFirst");
+        public NElement describe() {
+            return NElements.of().ofString("foldersFirst");
         }
     }
 

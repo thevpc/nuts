@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NUnsupportedEnumException;
 import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOp;
 import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOpUtils;
@@ -12,11 +12,11 @@ import java.io.OutputStream;
 
 public class FormatOutputStream extends RenderedOutputStream implements ExtendedFormatAware {
 
-    public FormatOutputStream(OutputStream out, NSystemTerminalBase term, NSession session) {
-        super(out, term, false, session);
+    public FormatOutputStream(OutputStream out, NSystemTerminalBase term, NWorkspace workspace) {
+        super(out, term, false, workspace);
         NTerminalModeOp op = NTerminalModeOpUtils.resolveNutsTerminalModeOp(out);
         if (op != NTerminalModeOp.NOP) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("expected Raw"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("expected Raw"));
         }
     }
 
@@ -35,22 +35,22 @@ public class FormatOutputStream extends RenderedOutputStream implements Extended
                 if (out instanceof ExtendedFormatAware) {
                     return (ExtendedFormatAware) out;
                 }
-                return new RawOutputStream(out, getTerminal(), session);
+                return new RawOutputStream(out, getTerminal(), workspace);
             }
             case FORMAT: {
                 return this;
             }
             case FILTER: {
-                return new FilterFormatOutputStream(out, getTerminal(), session);
+                return new FilterFormatOutputStream(out, getTerminal(), workspace);
             }
             case ESCAPE: {
-                return new EscapeOutputStream(this, getTerminal(), session);
+                return new EscapeOutputStream(this, getTerminal(), workspace);
             }
             case UNESCAPE: {
-                return new UnescapeOutputStream(this, getTerminal(), session);
+                return new UnescapeOutputStream(this, getTerminal(), workspace);
             }
         }
-        throw new NUnsupportedEnumException(session, other);
+        throw new NUnsupportedEnumException(other);
     }
 
 }

@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.text.NTextPlain;
 import net.thevpc.nuts.text.NTexts;
 
@@ -13,10 +13,10 @@ import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextPlain;
 public class RootParserStep extends ParserStep {
     boolean spreadLines;
     LinkedList<ParserStep> available = new LinkedList<>();
-    private NSession session;
-    public RootParserStep(boolean spreadLines, NSession session) {
+    private NWorkspace workspace;
+    public RootParserStep(boolean spreadLines, NWorkspace workspace) {
         this.spreadLines = spreadLines;
-        this.session = session;
+        this.workspace = workspace;
     }
 
     @Override
@@ -63,13 +63,13 @@ public class RootParserStep extends ParserStep {
                 NTextPlain p1=(NTextPlain) n;
                 NTextPlain p2=(NTextPlain) all.remove(all.size()-1);
                 all.add(new DefaultNTextPlain(
-                        session,p1.getText()+p2.getText()
+                        workspace,p1.getText()+p2.getText()
                 ));
             }else{
                 all.add(n);
             }
         }
-        return NTexts.of(session).ofList(all).simplify();
+        return NTexts.of().ofList(all).simplify();
     }
 
     @Override

@@ -84,10 +84,10 @@ public class NElementPathFilter {
      * aa.bb.cc aa[bb].cc
      *
      * @param jpath path
-     * @param session session
+     * @param workspace session
      * @return element path
      */
-    public static NElementPath compile(String jpath, NSession session) {
+    public static NElementPath compile(String jpath, NWorkspace workspace) {
         StreamTokenizer st = new StreamTokenizer(new StringReader(jpath));
         st.resetSyntax();
         st.wordChars(33, 255);
@@ -101,12 +101,12 @@ public class NElementPathFilter {
                 switch (st.ttype) {
                     case StreamTokenizer.TT_WORD: {
                         wasNotDotName = true;
-                        q.queue.add(new SubItemJsonPath(st.sval, session));
+                        q.queue.add(new SubItemJsonPath(st.sval, workspace));
                         break;
                     }
                     case '.': {
                         if (!wasNotDotName) {
-                            q.queue.add(new SubItemJsonPath("*", session));
+                            q.queue.add(new SubItemJsonPath("*", workspace));
                         }
                         wasNotDotName = false;
                         break;
@@ -116,9 +116,9 @@ public class NElementPathFilter {
                         st.pushBack();
                         String p = compile_readArrItem(st);
                         if (p.isEmpty()) {
-                            q.queue.add(new ArrItemCollectorJsonPath(session));
+                            q.queue.add(new ArrItemCollectorJsonPath(workspace));
                         } else {
-                            q.queue.add(new SubItemJsonPath(p, session));
+                            q.queue.add(new SubItemJsonPath(p, workspace));
                         }
                         break;
                     }
@@ -128,19 +128,19 @@ public class NElementPathFilter {
                 }
             }
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
         return q;
     }
 
     public interface NElementNameMatcher {
 
-        boolean matches(int index, NElement name, int len, Map<String, Object> matchContext, NSession session);
+        boolean matches(int index, NElement name, int len, Map<String, Object> matchContext);
     }
 
     public interface NElementIndexMatcher {
 
-        boolean matches(NElement value, int index, int len, Map<String, Object> matchContext, NSession session);
+        boolean matches(NElement value, int index, int len, Map<String, Object> matchContext);
     }
 
     private static class QueueJsonPath implements NElementPath {
@@ -171,12 +171,12 @@ public class NElementPathFilter {
 
     private static class ArrItemCollectorJsonPath implements NElementPath {
 
-        private final NSession session;
+        private final NWorkspace workspace;
         private final NElements builder;
 
-        public ArrItemCollectorJsonPath(NSession session) {
-            this.session = session;
-            builder = NElements.of(session);
+        public ArrItemCollectorJsonPath(NWorkspace workspace) {
+            this.workspace = workspace;
+            builder = NElements.of();
         }
 
         @Override
@@ -201,8 +201,8 @@ public class NElementPathFilter {
 
         private final String pattern;
 
-        public SubItemJsonPath(String subItem, NSession session) {
-            super(session);
+        public SubItemJsonPath(String subItem, NWorkspace workspace) {
+            super(workspace);
             this.pattern = subItem;
         }
 
@@ -214,27 +214,27 @@ public class NElementPathFilter {
         @Override
         public List<NElement> filter(NElement element) {
             if (element.type() == NElementType.ARRAY) {
-                List<NElement> arr = new ArrayList<>(element.asArray().get(session).items());
+                List<NElement> arr = new ArrayList<>(element.asArray().get().items());
                 List<NElement> result = new ArrayList<>();
                 int len = arr.size();
                 NElementIndexMatcher indexMatcher = matchesIndex(pattern);
                 Map<String, Object> matchContext = new HashMap<>();
                 for (int i = 0; i < arr.size(); i++) {
                     NElement value = arr.get(i);
-                    if (indexMatcher.matches(value, i, len, matchContext, session)) {
+                    if (indexMatcher.matches(value, i, len, matchContext)) {
                         result.add(value);
                     }
                 }
                 return result;
             } else if (element.type() == NElementType.OBJECT) {
                 List<NElement> result = new ArrayList<>();
-                Collection<NElementEntry> aa0 = element.asObject().get(session).entries();
+                Collection<NElementEntry> aa0 = element.asObject().get().entries();
                 int len = aa0.size();
                 int index = 0;
                 Map<String, Object> matchContext = new HashMap<>();
                 NElementNameMatcher nameMatcher = matchesName(pattern);
                 for (NElementEntry se : aa0) {
-                    if (nameMatcher.matches(index, se.getKey(), len, matchContext, session)) {
+                    if (nameMatcher.matches(index, se.getKey(), len, matchContext)) {
                         result.add(se.getValue());
                     }
                     index++;
@@ -372,10 +372,10 @@ public class NElementPathFilter {
 
     private static abstract class AbstractJsonPath implements NElementPath {
 
-        NSession session;
+        NWorkspace workspace;
 
-        public AbstractJsonPath(NSession session) {
-            this.session = session;
+        public AbstractJsonPath(NWorkspace workspace) {
+            this.workspace = workspace;
         }
 
         public abstract List<NElement> filter(NElement element);
@@ -403,9 +403,9 @@ public class NElementPathFilter {
         }
 
         @Override
-        public boolean matches(int index, NElement name, int len, Map<String, Object> matchContext, NSession session) {
+        public boolean matches(int index, NElement name, int len, Map<String, Object> matchContext) {
             for (NElementNameMatcher any : all) {
-                if (any.matches(index, name, len, matchContext, session)) {
+                if (any.matches(index, name, len, matchContext)) {
                     return true;
                 }
             }
@@ -423,9 +423,9 @@ public class NElementPathFilter {
         }
 
         @Override
-        public boolean matches(NElement value, int index, int len, Map<String, Object> matchContext, NSession session) {
+        public boolean matches(NElement value, int index, int len, Map<String, Object> matchContext) {
             for (NElementIndexMatcher any : all) {
-                if (any.matches(value, index, len, matchContext, session)) {
+                if (any.matches(value, index, len, matchContext)) {
                     return true;
                 }
             }
@@ -445,7 +445,7 @@ public class NElementPathFilter {
         }
 
         @Override
-        public boolean matches(NElement value, int index, int len, Map<String, Object> matchContext, NSession session) {
+        public boolean matches(NElement value, int index, int len, Map<String, Object> matchContext) {
             return index % 2 == 0;
         }
     }
@@ -456,7 +456,7 @@ public class NElementPathFilter {
         }
 
         @Override
-        public boolean matches(NElement value, int index, int len, Map<String, Object> matchContext, NSession session) {
+        public boolean matches(NElement value, int index, int len, Map<String, Object> matchContext) {
             return index % 2 == 1;
         }
     }
@@ -467,7 +467,7 @@ public class NElementPathFilter {
         }
 
         @Override
-        public boolean matches(NElement value, int index, int len, Map<String, Object> matchContext, NSession session) {
+        public boolean matches(NElement value, int index, int len, Map<String, Object> matchContext) {
             return true;
         }
     }
@@ -478,7 +478,7 @@ public class NElementPathFilter {
         }
 
         @Override
-        public boolean matches(int index, NElement s, int len, Map<String, Object> matchContext, NSession session) {
+        public boolean matches(int index, NElement s, int len, Map<String, Object> matchContext) {
             return true;
         }
     }
@@ -492,7 +492,7 @@ public class NElementPathFilter {
         }
 
         @Override
-        public boolean matches(int index, NElement name, int len, Map<String, Object> matchContext, NSession session) {
+        public boolean matches(int index, NElement name, int len, Map<String, Object> matchContext) {
             if (a < 0) {
                 return index == len + a;
             }
@@ -506,7 +506,7 @@ public class NElementPathFilter {
         }
 
         @Override
-        public boolean matches(int index, NElement name, int len, Map<String, Object> matchContext, NSession session) {
+        public boolean matches(int index, NElement name, int len, Map<String, Object> matchContext) {
             return index % 2 == 1;
         }
     }
@@ -517,7 +517,7 @@ public class NElementPathFilter {
         }
 
         @Override
-        public boolean matches(int index, NElement name, int len, Map<String, Object> matchContext, NSession session) {
+        public boolean matches(int index, NElement name, int len, Map<String, Object> matchContext) {
             return index % 2 == 0;
         }
     }
@@ -533,7 +533,7 @@ public class NElementPathFilter {
         }
 
         @Override
-        public boolean matches(int index, NElement name, int len, Map<String, Object> matchContext, NSession session) {
+        public boolean matches(int index, NElement name, int len, Map<String, Object> matchContext) {
             return index >= a && index <= b;
         }
     }
@@ -544,7 +544,7 @@ public class NElementPathFilter {
         }
 
         @Override
-        public boolean matches(int index, NElement name, int len, Map<String, Object> matchContext, NSession session) {
+        public boolean matches(int index, NElement name, int len, Map<String, Object> matchContext) {
             return false;
         }
     }
@@ -560,9 +560,9 @@ public class NElementPathFilter {
         }
 
         @Override
-        public boolean matches(int index, NElement name, int len, Map<String, Object> matchContext, NSession session) {
+        public boolean matches(int index, NElement name, int len, Map<String, Object> matchContext) {
             if (name.type() == NElementType.STRING) {
-                String sname = name.asString().get(session);
+                String sname = name.asString().get();
                 return lower
                         ? sname.toLowerCase().matches(pat)
                         : sname.matches(pat);
@@ -580,7 +580,7 @@ public class NElementPathFilter {
         }
 
         @Override
-        public boolean matches(NElement value, int index, int len, Map<String, Object> matchContext, NSession session) {
+        public boolean matches(NElement value, int index, int len, Map<String, Object> matchContext) {
             if (a < 0) {
                 return index == len + a;
             }
@@ -594,7 +594,7 @@ public class NElementPathFilter {
         }
 
         @Override
-        public boolean matches(NElement value, int index, int len, Map<String, Object> matchContext, NSession session) {
+        public boolean matches(NElement value, int index, int len, Map<String, Object> matchContext) {
             return false;
         }
     }
@@ -610,7 +610,7 @@ public class NElementPathFilter {
         }
 
         @Override
-        public boolean matches(NElement value, int index, int len, Map<String, Object> matchContext, NSession session) {
+        public boolean matches(NElement value, int index, int len, Map<String, Object> matchContext) {
             return index >= a && index <= b;
         }
     }
@@ -621,13 +621,13 @@ public class NElementPathFilter {
         }
 
         @Override
-        public boolean matches(NElement value, int index, int len, Map<String, Object> matchContext, NSession session) {
+        public boolean matches(NElement value, int index, int len, Map<String, Object> matchContext) {
             Set<String> u = (Set<String>) matchContext.get("unique");
             if (u == null) {
                 u = new HashSet<>();
                 matchContext.put("unique", u);
             }
-            String v = NElements.of(session).json().setNtf(false).setValue(value).format()
+            String v = NElements.of().json().setNtf(false).setValue(value).format()
                     .filteredText();
             if (u.contains(v)) {
                 return false;

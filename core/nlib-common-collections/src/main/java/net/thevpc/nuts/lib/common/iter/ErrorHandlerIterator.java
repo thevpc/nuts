@@ -5,7 +5,6 @@
  */
 package net.thevpc.nuts.lib.common.iter;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.log.NLogOp;
@@ -24,17 +23,15 @@ public class ErrorHandlerIterator<T> extends NIteratorBase<T> {
     private IteratorErrorHandlerType type;
     private Iterator<T> base;
     private RuntimeException ex;
-    private NSession session;
 
-    public ErrorHandlerIterator(IteratorErrorHandlerType type, Iterator<T> base, NSession session) {
+    public ErrorHandlerIterator(IteratorErrorHandlerType type, Iterator<T> base) {
         this.base = base;
         this.type = type;
-        this.session = session;
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return NEDesc.describeResolveOrDestructAsObject(base, session)
+    public NElement describe() {
+        return NEDesc.describeResolveOrDestructAsObject(base)
                 .builder()
                 .set("onError",type.toString().toLowerCase())
                 .build();
@@ -48,7 +45,7 @@ public class ErrorHandlerIterator<T> extends NIteratorBase<T> {
             ex = null;
             return v;
         } catch (RuntimeException ex) {
-            NLogOp.of(IndexFirstIterator.class,session)
+            NLogOp.of(IndexFirstIterator.class)
                     .verb(NLogVerb.WARNING)
                     .level(Level.FINEST)
                     .log(NMsg.ofC("error evaluating Iterator 'hasNext()' : %s", ex));

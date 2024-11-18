@@ -89,7 +89,7 @@ class GrepResultCollectorImpl implements GrepResultCollector {
                             first = false;
                         } else {
                             if (options.byLine) {
-                                String v = NAsk.of(session)
+                                String v = NAsk.of()
                                         .forString(NMsg.ofPlain("continue"))
                                         .setDefaultValue("y")
                                         .getValue();

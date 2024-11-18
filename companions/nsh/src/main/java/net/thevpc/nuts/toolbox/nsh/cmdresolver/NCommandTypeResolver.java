@@ -49,11 +49,11 @@ public class NCommandTypeResolver implements NShellCommandTypeResolver {
             path = context.getDirectory() + "/" + item;
         }
         NSession session = context.getSession();
-        try(NExecutableInformation w = NExecCmd.of(session).addCommand(item).which()) {
+        try(NExecutableInformation w = NExecCmd.of().addCommand(item).which()) {
             if (w != null) {
                 return new NShellCommandResolution(item, "nuts " + w.getType().toString().toLowerCase(), w.getValue(), w.getDescription());
             }
-            if (NPath.of(path, session).exists()) {
+            if (NPath.of(path).exists()) {
                 return new NShellCommandResolution(item, "path", path, item + " is " + path);
             }
             return null;

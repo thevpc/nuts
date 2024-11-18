@@ -109,7 +109,7 @@ public class FileTemplater {
 
             private NLogOp log() {
                 if (logOp == null) {
-                    logOp = NLog.of(FileTemplater.class, session)
+                    logOp = NLog.of(FileTemplater.class)
                             .with()
                     ;
                 }
@@ -560,7 +560,7 @@ public class FileTemplater {
         if (parent != null) {
             return parent.getVar(name);
         }
-        return NOptional.ofEmpty(session1 -> {
+        return NOptional.ofEmpty(() -> {
             String source = getSourcePath().orElse(null);
             if (source == null) {
                 return NMsg.ofC("not found : %s", StringUtils.escapeString(name));
@@ -587,15 +587,15 @@ public class FileTemplater {
                         try {
                             processRegularFile(x, null);
                         } catch (Exception ex) {
-                            throw new NIllegalArgumentException(getSession(), NMsg.ofC("error processing %s : %s", x, ex), ex);
+                            throw new NIllegalArgumentException(NMsg.ofC("error processing %s : %s", x, ex), ex);
                         }
                     }
                 });
             } catch (IOException e) {
-                throw new NIOException(getSession(), e);
+                throw new NIOException(e);
             }
         } else {
-            throw new NIOException(getSession(), NMsg.ofC("unsupported path %s", path));
+            throw new NIOException(NMsg.ofC("unsupported path %s", path));
         }
     }
 
@@ -616,10 +616,10 @@ public class FileTemplater {
                             }
                         });
             } catch (IOException e) {
-                throw new NIOException(getSession(), e);
+                throw new NIOException(e);
             }
         } else {
-            throw new NIOException(getSession(), NMsg.ofC("unsupported path %s", path));
+            throw new NIOException(NMsg.ofC("unsupported path %s", path));
         }
     }
 
@@ -631,7 +631,7 @@ public class FileTemplater {
         Path absolutePath = toAbsolutePath(path);
         Path parentPath = absolutePath.getParent();
         if (!Files.isRegularFile(absolutePath)) {
-            throw new NIllegalArgumentException(getSession(), NMsg.ofC("no a file : %s", path));
+            throw new NIllegalArgumentException(NMsg.ofC("no a file : %s", path));
         }
         String[] mimeTypesArray = mimeTypesString == null ? FileProcessorUtils.splitMimeTypes(getMimeTypeResolver().resolveMimetype(path.toString()))
                 : FileProcessorUtils.splitMimeTypes(mimeTypesString);
@@ -662,18 +662,18 @@ public class FileTemplater {
                         return out.toString();
                     }
                 } catch (IOException ex) {
-                    throw new NIOException(getSession(), NMsg.ofC("error executing file : %s", path), ex);
+                    throw new NIOException(NMsg.ofC("error executing file : %s", path), ex);
                 }
             }
         }
-        throw new NIllegalArgumentException(getSession(), NMsg.ofC("processor not found for %s", mimeTypesString));
+        throw new NIllegalArgumentException(NMsg.ofC("processor not found for %s", mimeTypesString));
     }
 
     public void processRegularFile(Path path, String mimeType) {
         Path absolutePath = toAbsolutePath(path);
         Path parentPath = absolutePath.getParent();
         if (!Files.isRegularFile(absolutePath)) {
-            throw new NIllegalArgumentException(getSession(), NMsg.ofC("unsupported file : %s", path.toString()));
+            throw new NIllegalArgumentException(NMsg.ofC("unsupported file : %s", path.toString()));
         }
         String[] mimeTypes = mimeType == null ? FileProcessorUtils.splitMimeTypes(getMimeTypeResolver().resolveMimetype(path.toString()))
                 : FileProcessorUtils.splitMimeTypes(mimeType);
@@ -729,9 +729,9 @@ public class FileTemplater {
                     return bos.toString();
                 }
             }
-            throw new NIllegalArgumentException(getSession(), NMsg.ofC("unsupported mimetype : %s", mimeType));
+            throw new NIllegalArgumentException(NMsg.ofC("unsupported mimetype : %s", mimeType));
         } catch (IOException ex) {
-            throw new NIOException(getSession(), ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -762,7 +762,7 @@ public class FileTemplater {
                 return;
             }
         }
-        throw new NIllegalArgumentException(getSession(), NMsg.ofC("unsupported mimetype : %s", mimeType));
+        throw new NIllegalArgumentException(NMsg.ofC("unsupported mimetype : %s", mimeType));
     }
 
     public MimeTypeResolver getMimeTypeResolver() {
@@ -811,20 +811,20 @@ public class FileTemplater {
         this.contextName = NStringUtils.trimToNull(config.getContextName());
         if (projectPath == null) {
             if (config.getPaths().isEmpty()) {
-                throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("missing path to process"));
+                throw new NIllegalArgumentException(NMsg.ofPlain("missing path to process"));
             }
             if (targetFolder == null) {
-                throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("missing target folder"));
+                throw new NIllegalArgumentException(NMsg.ofPlain("missing target folder"));
             }
         }
         Path oProjectDirPath = Paths.get(projectPath);
         Path oProjectFile = oProjectDirPath.resolve(getProjectFileName());
         Path oProjectSrc = oProjectDirPath.resolve("src");
         if (!Files.isDirectory(oProjectSrc)) {
-            throw new NIllegalArgumentException(getSession(), NMsg.ofC("invalid project, missing src/ folder : %s", oProjectDirPath));
+            throw new NIllegalArgumentException(NMsg.ofC("invalid project, missing src/ folder : %s", oProjectDirPath));
         }
         if (!Files.isRegularFile(oProjectFile)) {
-            throw new NIllegalArgumentException(getSession(), NMsg.ofC("invalid project, missing project.ftex : %s", oProjectDirPath));
+            throw new NIllegalArgumentException(NMsg.ofC("invalid project, missing project.ftex : %s", oProjectDirPath));
         }
         List<String> initScripts = new ArrayList<>(config.getInitScripts());
         initScripts.add(oProjectFile.toString());
@@ -852,20 +852,20 @@ public class FileTemplater {
             }
         }
         if (targetFolder == null) {
-            throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("missing target folder"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("missing target folder"));
         }
         FileProcessorUtils.mkdirs(Paths.get(targetFolder));
         try {
             targetFolder = Paths.get(targetFolder).toRealPath().toString();
         } catch (IOException ex) {
-            throw new NIOException(getSession(), ex);
+            throw new NIOException(ex);
         }
         for (String path : paths) {
             Path opath;
             try {
                 opath = Paths.get(path).toRealPath();
             } catch (IOException ex) {
-                throw new NIOException(getSession(), ex);
+                throw new NIOException(ex);
             }
             if (Files.isDirectory(opath)) {
                 this.setWorkingDir(opath.toString());

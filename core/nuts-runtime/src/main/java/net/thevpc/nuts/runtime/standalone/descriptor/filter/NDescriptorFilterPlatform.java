@@ -41,8 +41,8 @@ public class NDescriptorFilterPlatform extends AbstractDescriptorFilter {
 
     private final String platform;
 
-    public NDescriptorFilterPlatform(NSession session, String packaging) {
-        super(session, NFilterOp.CUSTOM);
+    public NDescriptorFilterPlatform(NWorkspace workspace, String packaging) {
+        super(workspace, NFilterOp.CUSTOM);
         this.platform = packaging;
     }
 
@@ -51,8 +51,8 @@ public class NDescriptorFilterPlatform extends AbstractDescriptorFilter {
     }
 
     @Override
-    public boolean acceptDescriptor(NDescriptor descriptor, NSession session) {
-        return CoreFilterUtils.matchesPlatform(platform, descriptor.getCondition().getPlatform(), session);
+    public boolean acceptDescriptor(NDescriptor descriptor) {
+        return CoreFilterUtils.matchesPlatform(platform, descriptor.getCondition().getPlatform());
     }
 
     /**

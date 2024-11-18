@@ -50,7 +50,7 @@ public class Adoc2Pdf {
         }
         List<String> cmdList = new ArrayList<>();
         cmdList.addAll(
-                NCmdLine.parse(StringUtils.replace(bin, config.getPlaceHolderReplacer()),config.getSession())
+                NCmdLine.parse(StringUtils.replace(bin, config.getPlaceHolderReplacer()))
                         .get().toStringList()
         );
         cmdList.addAll(Arrays.asList(args).stream().map(x -> StringUtils.replace(x, config.getPlaceHolderReplacer())).collect(Collectors.toList()));

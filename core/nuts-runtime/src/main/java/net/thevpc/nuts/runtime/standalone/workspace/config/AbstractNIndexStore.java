@@ -28,6 +28,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.NIndexStore;
 import net.thevpc.nuts.NRepository;
+import net.thevpc.nuts.NWorkspace;
 
 import java.util.*;
 
@@ -73,5 +74,9 @@ public abstract class AbstractNIndexStore implements NIndexStore {
 
     public void setRepository(NRepository repository) {
         this.repository = repository;
+    }
+
+    public NWorkspace getWorkspace(){
+        return repository==null?null:repository.getWorkspace();
     }
 }

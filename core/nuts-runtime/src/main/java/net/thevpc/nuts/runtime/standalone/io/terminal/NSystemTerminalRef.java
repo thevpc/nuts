@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
-import net.thevpc.nuts.NEvents;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NWorkspaceEvent;
-import net.thevpc.nuts.NWorkspaceListener;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEvent;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
@@ -14,7 +11,8 @@ public class NSystemTerminalRef extends AbstractSystemTerminalAdapter {
     private NSystemTerminalBase base;
     private NSystemTerminalBase defaultVal;
 
-    public NSystemTerminalRef(NSystemTerminalBase base) {
+    public NSystemTerminalRef(NWorkspace workspace,NSystemTerminalBase base) {
+        super(workspace);
         this.base = base;
         this.defaultVal = base;
     }
@@ -24,7 +22,8 @@ public class NSystemTerminalRef extends AbstractSystemTerminalAdapter {
         return base;
     }
 
-    public NSystemTerminalRef setBase(NSystemTerminalBase base, NSession session) {
+    public NSystemTerminalRef setBase(NSystemTerminalBase base) {
+        NSession session = getWorkspace().currentSession();
         NSystemTerminalBase old = this.base;
         if (base == null) {
             this.base = defaultVal;
@@ -35,7 +34,7 @@ public class NSystemTerminalRef extends AbstractSystemTerminalAdapter {
         if (old != base) {
             NWorkspaceEvent event = null;
             if (session != null) {
-                for (NWorkspaceListener workspaceListener : NEvents.of(session).getWorkspaceListeners()) {
+                for (NWorkspaceListener workspaceListener : NEvents.of().getWorkspaceListeners()) {
                     if (event == null) {
                         event = new DefaultNWorkspaceEvent(session, null, "systemTerminal", null, this);
                     }
@@ -48,7 +47,7 @@ public class NSystemTerminalRef extends AbstractSystemTerminalAdapter {
     }
 
     @Override
-    public void setStyles(NTextStyles styles, NPrintStream printStream, NSession session) {
-        base.setStyles(styles, printStream, session);
+    public void setStyles(NTextStyles styles, NPrintStream printStream) {
+        base.setStyles(styles, printStream);
     }
 }

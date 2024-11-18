@@ -2,7 +2,6 @@ package net.thevpc.nuts.time;
 
 import net.thevpc.nuts.format.NFormat;
 import net.thevpc.nuts.format.NFormattable;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NMapBy;
@@ -1058,8 +1057,8 @@ public class NDuration implements Serializable, NFormattable {
     }
 
     @Override
-    public NFormat formatter(NSession session) {
-        return NFormat.of(session, new NFormatSPI() {
+    public NFormat formatter() {
+        return NFormat.of(new NFormatSPI() {
             private NDurationFormatMode formatMode;
 
             @Override
@@ -1074,10 +1073,10 @@ public class NDuration implements Serializable, NFormattable {
 
             @Override
             public boolean configureFirst(NCmdLine cmdLine) {
-                NArg a = cmdLine.peek().get(session);
+                NArg a = cmdLine.peek().get();
                 switch (a.key()) {
                     case "--mode": {
-                        a = cmdLine.nextEntry().get(session);
+                        a = cmdLine.nextEntry().get();
                         if (a.isActive()) {
                             formatMode = NDurationFormatMode.parse(a.getStringValue().get()).get();
                         }

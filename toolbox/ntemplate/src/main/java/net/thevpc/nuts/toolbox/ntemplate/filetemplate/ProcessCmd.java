@@ -27,9 +27,9 @@ public class ProcessCmd extends NShellBuiltinDefault {
         Options o = context.getOptions();
         NSession session = context.getSession();
         if (cmdLine.isNonOption(0)) {
-            o.args.add(cmdLine.next().flatMap(NLiteral::asString).get(session));
+            o.args.add(cmdLine.next().flatMap(NLiteral::asString).get());
             while (cmdLine.hasNext()) {
-                o.args.add(cmdLine.next().flatMap(NLiteral::asString).get(session));
+                o.args.add(cmdLine.next().flatMap(NLiteral::asString).get());
             }
             return true;
         }
@@ -40,7 +40,7 @@ public class ProcessCmd extends NShellBuiltinDefault {
     protected void main(NCmdLine cmdLine, NShellExecutionContext context) {
         Options o = context.getOptions();
         if (o.args.size() == 0) {
-            throw new NExecutionException(context.getSession(), NMsg.ofC("%s : invalid arguments count", getName()), NExecutionException.ERROR_1);
+            throw new NExecutionException(NMsg.ofC("%s : invalid arguments count", getName()), NExecutionException.ERROR_1);
         }
         for (String pathString : o.args) {
             fileTemplater.getLog().debug("eval", getName() + "(" + StringUtils.toLiteralString(pathString) + ")");

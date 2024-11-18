@@ -23,9 +23,9 @@ public class Test21_SecurityTest {
 
     @Test
     public void testEncrypt(){
-        char[] r = CoreSecurityUtils.defaultEncryptChars("Hello".toCharArray(), "okkay",session);
+        char[] r = CoreSecurityUtils.defaultEncryptChars("Hello".toCharArray(), "okkay");
         TestUtils.println(new String(r));
-        char[] i = CoreSecurityUtils.defaultDecryptChars(r, "okkay",session);
+        char[] i = CoreSecurityUtils.defaultDecryptChars(r, "okkay");
         TestUtils.println(new String(i));
     }
 
@@ -33,19 +33,19 @@ public class Test21_SecurityTest {
         String mySecret = "my-secret";
         Map<String,String> envProvider = new LinkedHashMap<>();
         NSession session = TestUtils.openNewTestWorkspace();
-        String withAllowRetreiveId = new String(a.createCredentials(mySecret.toCharArray(), true, null, envProvider, session));
+        String withAllowRetreiveId = new String(a.createCredentials(mySecret.toCharArray(), true, null, envProvider));
         TestUtils.println(withAllowRetreiveId);
         Assertions.assertTrue(withAllowRetreiveId.startsWith(a.getId() + ":"));
-        a.checkCredentials(withAllowRetreiveId.toCharArray(), "my-secret".toCharArray(), envProvider, session);
+        a.checkCredentials(withAllowRetreiveId.toCharArray(), "my-secret".toCharArray(), envProvider);
         try {
-            a.checkCredentials(withAllowRetreiveId.toCharArray(), "my-bad-secret".toCharArray(), envProvider, session);
+            a.checkCredentials(withAllowRetreiveId.toCharArray(), "my-bad-secret".toCharArray(), envProvider);
             Assertions.assertTrue(false);
         } catch (SecurityException ex) {
             Assertions.assertTrue(true);
         }
-        Assertions.assertEquals(mySecret, new String(a.getCredentials(withAllowRetreiveId.toCharArray(), envProvider, session)));
+        Assertions.assertEquals(mySecret, new String(a.getCredentials(withAllowRetreiveId.toCharArray(), envProvider)));
 
-        String withoutAllowRetreiveId = new String(a.createCredentials(mySecret.toCharArray(), false, null, envProvider, session));
+        String withoutAllowRetreiveId = new String(a.createCredentials(mySecret.toCharArray(), false, null, envProvider));
         TestUtils.println(withoutAllowRetreiveId);
         Assertions.assertTrue(withoutAllowRetreiveId.startsWith(a.getId() + ":"));
     }
@@ -54,19 +54,19 @@ public class Test21_SecurityTest {
         String mySecret = "my-secret";
         Map<String,String> envProvider = new LinkedHashMap<>();
         NSession session = TestUtils.openNewTestWorkspace();
-        String withoutAllowRetreiveId = new String(a.createCredentials(mySecret.toCharArray(), false, null, envProvider, session));
+        String withoutAllowRetreiveId = new String(a.createCredentials(mySecret.toCharArray(), false, null, envProvider));
         TestUtils.println(withoutAllowRetreiveId);
         Assertions.assertTrue(withoutAllowRetreiveId.startsWith(a.getId() + ":"));
-        a.checkCredentials(withoutAllowRetreiveId.toCharArray(), "my-secret".toCharArray(), envProvider, session);
+        a.checkCredentials(withoutAllowRetreiveId.toCharArray(), "my-secret".toCharArray(), envProvider);
         try {
-            a.checkCredentials(withoutAllowRetreiveId.toCharArray(), "my-bad-secret".toCharArray(), envProvider, session);
+            a.checkCredentials(withoutAllowRetreiveId.toCharArray(), "my-bad-secret".toCharArray(), envProvider);
             Assertions.assertTrue(false);
         } catch (SecurityException ex) {
             Assertions.assertTrue(true);
         }
         if (alwaysRetrievable) {
             try {
-                a.getCredentials(withoutAllowRetreiveId.toCharArray(), envProvider, session);
+                a.getCredentials(withoutAllowRetreiveId.toCharArray(), envProvider);
                 Assertions.assertTrue(true);
             } catch (SecurityException ex) {
                 Assertions.assertTrue(false);
@@ -74,7 +74,7 @@ public class Test21_SecurityTest {
 
         } else {
             try {
-                a.getCredentials(withoutAllowRetreiveId.toCharArray(), envProvider, session);
+                a.getCredentials(withoutAllowRetreiveId.toCharArray(), envProvider);
                 Assertions.assertTrue(false);
             } catch (SecurityException ex) {
                 Assertions.assertTrue(true);

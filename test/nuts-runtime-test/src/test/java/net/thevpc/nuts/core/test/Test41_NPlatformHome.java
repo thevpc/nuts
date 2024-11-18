@@ -20,7 +20,7 @@ public class Test41_NPlatformHome {
     @Test
     public void test02() {
         NSession session = TestUtils.openNewMinTestWorkspace();
-        NPlatformLocation z = NPlatforms.of(session).findPlatformByVersion(NPlatformFamily.JAVA, "[1.8,6]").orNull();
+        NPlatformLocation z = NPlatforms.of().findPlatformByVersion(NPlatformFamily.JAVA, "[1.8,6]").orNull();
         System.out.println(z);
     }
 

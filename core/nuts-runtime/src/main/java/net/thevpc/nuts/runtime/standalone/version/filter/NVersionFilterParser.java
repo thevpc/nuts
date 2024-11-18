@@ -11,13 +11,13 @@ import java.util.List;
 import java.util.Objects;
 
 public class NVersionFilterParser extends NTypedFiltersParser<NVersionFilter> {
-    public NVersionFilterParser(String str, NSession session) {
-        super(str, session);
+    public NVersionFilterParser(String str, NWorkspace workspace) {
+        super(str, workspace);
     }
 
     @Override
     protected NVersionFilters getTManager() {
-        return NVersionFilters.of(getSession());
+        return NVersionFilters.of();
     }
 
     protected NVersionFilter wordToPredicate(String word) {
@@ -47,13 +47,13 @@ public class NVersionFilterParser extends NTypedFiltersParser<NVersionFilter> {
 
     public NVersionFilter parse() {
         if (NBlankable.isBlank(str.getContent())) {
-            return new NVersionFilterTrue(getSession());
+            return new NVersionFilterTrue(workspace);
         }
         NVersion v = asVersion();
         if (v != null) {
             List<NVersionInterval> intervals = v.intervals().orNull();
             if (intervals != null && intervals.size() > 0) {
-                return new NVersionIntervalsVersionFilter(v);
+                return new NVersionIntervalsVersionFilter(workspace, v);
             }
         }
         return super.parse();
@@ -62,8 +62,8 @@ public class NVersionFilterParser extends NTypedFiltersParser<NVersionFilter> {
     private class NVersionIntervalsVersionFilter extends AbstractVersionFilter {
         private final NVersion version;
 
-        public NVersionIntervalsVersionFilter(NVersion version) {
-            super(NVersionFilterParser.this.getSession(), NFilterOp.CUSTOM);
+        public NVersionIntervalsVersionFilter(NWorkspace workspace,NVersion version) {
+            super(workspace, NFilterOp.CUSTOM);
             this.version = version;
         }
 
@@ -73,7 +73,7 @@ public class NVersionFilterParser extends NTypedFiltersParser<NVersionFilter> {
         }
 
         @Override
-        public boolean acceptVersion(NVersion version, NSession session) {
+        public boolean acceptVersion(NVersion version) {
             for (NVersionInterval i : version.intervals().orElse(new ArrayList<>())) {
                 if (i.acceptVersion(version)) {
                     return true;

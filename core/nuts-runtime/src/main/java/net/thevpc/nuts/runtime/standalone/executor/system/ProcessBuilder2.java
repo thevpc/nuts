@@ -57,7 +57,7 @@ public class ProcessBuilder2 {
     private File directory;
     private boolean failFast;
     private long sleepMillis = 1000;
-    private NSession session;
+    private NWorkspace workspace;
 
     private NExecInput2 in = new NExecInput2(NExecInput.ofInherit());
     private NExecOutput2 out = new NExecOutput2(NExecOutput.ofInherit());
@@ -72,32 +72,30 @@ public class ProcessBuilder2 {
     private int result;
     private Process proc;
     private long pid;
-    private NLog nLog;
 
-    public ProcessBuilder2(NSession session) {
-        this.session = session;
-        this.nLog = NLog.of(ProcessBuilder2.class,session);
+    public ProcessBuilder2(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
     private static String formatArg(String s, NSession session) {
         DefaultNArg a = new DefaultNArg(s);
         StringBuilder sb = new StringBuilder();
-        NTexts factory = NTexts.of(session);
+        NTexts factory = NTexts.of();
         if (a.isKeyValue()) {
             if (a.isOption()) {
                 sb.append(factory.ofStyled(NStringUtils.formatStringLiteral(a.key()), NTextStyle.option()));
                 sb.append("=");
-                sb.append(NStringUtils.formatStringLiteral(a.getStringValue().get(session)));
+                sb.append(NStringUtils.formatStringLiteral(a.getStringValue().get()));
             } else {
                 sb.append(factory.ofStyled(NStringUtils.formatStringLiteral(a.key()), NTextStyle.primary4()));
                 sb.append("=");
-                sb.append(NStringUtils.formatStringLiteral(a.getStringValue().get(session)));
+                sb.append(NStringUtils.formatStringLiteral(a.getStringValue().get()));
             }
         } else {
             if (a.isOption()) {
-                sb.append(factory.ofStyled(NStringUtils.formatStringLiteral(a.asString().get(session)), NTextStyle.option()));
+                sb.append(factory.ofStyled(NStringUtils.formatStringLiteral(a.asString().get()), NTextStyle.option()));
             } else {
-                sb.append(NStringUtils.formatStringLiteral(a.asString().get(session)));
+                sb.append(NStringUtils.formatStringLiteral(a.asString().get()));
             }
         }
         return sb.toString();
@@ -261,10 +259,10 @@ public class ProcessBuilder2 {
 
     public ProcessBuilder2 start() throws IOException {
         if (proc != null) {
-            throw new NIllegalStateException(session, NMsg.ofPlain("already started"));
+            throw new NIllegalStateException(NMsg.ofPlain("already started"));
         }
-        nLog.with().verb(NLogVerb.START).level(Level.FINEST).log(
-                NMsg.ofNtf(NTexts.of(session).ofCode("system", getCommandString()))
+        NLog.of(ProcessBuilder2.class).with().verb(NLogVerb.START).level(Level.FINEST).log(
+                NMsg.ofNtf(NTexts.of().ofCode("system", getCommandString()))
         );
         switch (in.base.getType()) {
             case PIPE:
@@ -278,7 +276,7 @@ public class ProcessBuilder2 {
                 NPath path = in.base.getPath();
                 Path file = path.toPath().get();
                 if (file == null) {
-                    in.tempPath = NPath.ofTempFile(session);
+                    in.tempPath = NPath.ofTempFile();
                     in.file = in.tempPath.toFile().get();
                     path.copyTo(in.tempPath);
                 } else {
@@ -293,7 +291,7 @@ public class ProcessBuilder2 {
             case GRAB_STREAM:
             case GRAB_FILE:
             case REDIRECT: {
-                throw new NIllegalArgumentException(session, NMsg.ofC("unsupported in mode : %s", in.base.getType()));
+                throw new NIllegalArgumentException(NMsg.ofC("unsupported in mode : %s", in.base.getType()));
             }
         }
 
@@ -314,7 +312,7 @@ public class ProcessBuilder2 {
                 break;
             }
             case GRAB_FILE: {
-                out.tempPath = NPath.ofTempFile(session);
+                out.tempPath = NPath.ofTempFile();
                 out.file = out.tempPath.toFile().get();
                 base.redirectOutput(ProcessBuilder.Redirect.to(out.file));
             }
@@ -340,7 +338,7 @@ public class ProcessBuilder2 {
                 break;
             }
             case REDIRECT: {
-                throw new NIllegalArgumentException(session, NMsg.ofC("unsupported in mode : %s", out.base.getType()));
+                throw new NIllegalArgumentException(NMsg.ofC("unsupported in mode : %s", out.base.getType()));
             }
         }
 
@@ -361,7 +359,7 @@ public class ProcessBuilder2 {
                 break;
             }
             case GRAB_FILE: {
-                err.tempPath = NPath.ofTempFile(session);
+                err.tempPath = NPath.ofTempFile();
                 err.file = err.tempPath.toFile().get();
                 base.redirectError(ProcessBuilder.Redirect.to(err.file));
             }
@@ -419,14 +417,14 @@ public class ProcessBuilder2 {
         if (proc == null) {
             throw new IOException("Not started");
         }
-        String procString = NPath.of(command.get(0), session).getName()
+        String procString = NPath.of(command.get(0)).getName()
                 + "-" + (pid < 0 ? ("unknown-pid" + String.valueOf(-pid)) : String.valueOf(pid));
         String cmdStr = String.join(" ", command);
         switch (in.base.getType()) {
             case NULL: {
                 String pname = "pipe-in-proc-" + procString;
-                in.termIn = createNonBlockingInput(NIO.of(session).ofNullRawInputStream(), pname);
-                PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "in", in.termIn, proc.getOutputStream(), session);
+                in.termIn = createNonBlockingInput(NIO.of().ofNullRawInputStream(), pname);
+                PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "in", in.termIn, proc.getOutputStream());
                 if (pipes == null) {
                     pipes = Executors.newCachedThreadPool();
                 }
@@ -437,7 +435,7 @@ public class ProcessBuilder2 {
             case STREAM: {
                 String pname = "pipe-in-proc-" + procString;
                 in.termIn = createNonBlockingInput(in.base.getStream(), pname);
-                PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "in", in.termIn, proc.getOutputStream(), session);
+                PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "in", in.termIn, proc.getOutputStream());
                 if (pipes == null) {
                     pipes = Executors.newCachedThreadPool();
                 }
@@ -451,8 +449,8 @@ public class ProcessBuilder2 {
                 String pname = "pipe-out-proc-" + procString;
                 NNonBlockingInputStream procInput = createNonBlockingInput(proc.getInputStream(), pname);
                 PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "out", procInput,
-                        NIO.of(session).ofNullRawOutputStream()
-                        , session);
+                        NIO.of().ofNullRawOutputStream()
+                );
                 if (pipes == null) {
                     pipes = Executors.newCachedThreadPool();
                 }
@@ -463,7 +461,7 @@ public class ProcessBuilder2 {
             case STREAM: {
                 String pname = "pipe-out-proc-" + procString;
                 NNonBlockingInputStream procInput = createNonBlockingInput(proc.getInputStream(), pname);
-                PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "out", procInput, out.base.getStream(), session);
+                PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "out", procInput, out.base.getStream());
                 if (pipes == null) {
                     pipes = Executors.newCachedThreadPool();
                 }
@@ -474,7 +472,7 @@ public class ProcessBuilder2 {
             case GRAB_STREAM: {
                 String pname = "pipe-out-proc-" + procString;
                 NNonBlockingInputStream procInput = createNonBlockingInput(proc.getInputStream(), pname);
-                PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "out", procInput, out.tempStream, session);
+                PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "out", procInput, out.tempStream);
                 if (pipes == null) {
                     pipes = Executors.newCachedThreadPool();
                 }
@@ -487,7 +485,7 @@ public class ProcessBuilder2 {
                     //this happens when the path is not local
                     String pname = "pipe-out-proc-" + procString;
                     NNonBlockingInputStream procInput = createNonBlockingInput(proc.getInputStream(), pname);
-                    PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "out", procInput, out.tempStream, session);
+                    PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "out", procInput, out.tempStream);
                     if (pipes == null) {
                         pipes = Executors.newCachedThreadPool();
                     }
@@ -501,7 +499,7 @@ public class ProcessBuilder2 {
             case STREAM: {
                 String pname = "pipe-err-proc-" + procString;
                 NNonBlockingInputStream procInput = createNonBlockingInput(proc.getErrorStream(), pname);
-                PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "err", procInput, err.base.getStream(), session);
+                PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "err", procInput, err.base.getStream());
                 if (pipes == null) {
                     pipes = Executors.newCachedThreadPool();
                 }
@@ -512,7 +510,7 @@ public class ProcessBuilder2 {
             case GRAB_STREAM: {
                 String pname = "pipe-err-proc-" + procString;
                 NNonBlockingInputStream procInput = createNonBlockingInput(proc.getErrorStream(), pname);
-                PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "err", procInput, err.tempStream, session);
+                PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "err", procInput, err.tempStream);
                 if (pipes == null) {
                     pipes = Executors.newCachedThreadPool();
                 }
@@ -525,7 +523,7 @@ public class ProcessBuilder2 {
                     //this happens when the path is not local
                     String pname = "pipe-err-proc-" + procString;
                     NNonBlockingInputStream procInput = createNonBlockingInput(proc.getErrorStream(), pname);
-                    PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "err", procInput, err.tempStream, session);
+                    PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "err", procInput, err.tempStream);
                     if (pipes == null) {
                         pipes = Executors.newCachedThreadPool();
                     }
@@ -578,7 +576,7 @@ public class ProcessBuilder2 {
             try {
                 pipes.awaitTermination(5, TimeUnit.MINUTES);
             } catch (InterruptedException e) {
-                throw new NUnexpectedException(session, NMsg.ofPlain("unable to await termination"));
+                throw new NUnexpectedException(NMsg.ofPlain("unable to await termination"));
             }
         }
         proc.getInputStream().close();
@@ -593,7 +591,7 @@ public class ProcessBuilder2 {
             }
             case GRAB_STREAM: {
                 out.tempStream.close();
-                out.base.setResult(NInputSource.of(((ByteArrayOutputStream) out.tempStream).toByteArray(),session));
+                out.base.setResult(NInputSource.of(((ByteArrayOutputStream) out.tempStream).toByteArray()));
                 break;
             }
             case GRAB_FILE: {
@@ -615,7 +613,7 @@ public class ProcessBuilder2 {
             }
             case GRAB_STREAM: {
                 err.tempStream.close();
-                err.base.setResult(NInputSource.of(((ByteArrayOutputStream) err.tempStream).toByteArray(),session));
+                err.base.setResult(NInputSource.of(((ByteArrayOutputStream) err.tempStream).toByteArray()));
                 break;
             }
             case GRAB_FILE: {
@@ -632,26 +630,26 @@ public class ProcessBuilder2 {
             if (isFailFast()) {
                 if (base.redirectErrorStream()) {
                     if (out.base.getType() == NRedirectType.GRAB_FILE || out.base.getType() == NRedirectType.GRAB_STREAM) {
-                        throw new NExecutionException(session,
+                        throw new NExecutionException(
                                 NMsg.ofC("execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
                                         NCmdLine.of(getCommand())),
                                 result);
                     }
                 } else {
                     if (err.base.getType() == NRedirectType.GRAB_FILE || err.base.getType() == NRedirectType.GRAB_STREAM) {
-                        throw new NExecutionException(session,
+                        throw new NExecutionException(
                                 NMsg.ofC("execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
                                         NCmdLine.of(getCommand())),
                                 result);
                     }
                     if (out.base.getType() == NRedirectType.GRAB_FILE || out.base.getType() == NRedirectType.GRAB_STREAM) {
-                        throw new NExecutionException(session, NMsg.ofC(
+                        throw new NExecutionException(NMsg.ofC(
                                 "execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
                                 NCmdLine.of(getCommand())
                         ), result);
                     }
                 }
-                throw new NExecutionException(session, NMsg.ofC("execution failed with code %d. Command was %s", result,
+                throw new NExecutionException(NMsg.ofC("execution failed with code %d. Command was %s", result,
                         NCmdLine.of(getCommand())
                 ), result);
             }
@@ -660,7 +658,7 @@ public class ProcessBuilder2 {
     }
 
     private NNonBlockingInputStream createNonBlockingInput(InputStream proc, String pname) {
-        return NInputSourceBuilder.of(proc,session)
+        return NInputSourceBuilder.of(proc)
                 .setMetadata(new DefaultNContentMetadata().setMessage(NMsg.ofPlain(pname)))
                 .createNonBlockingInputStream()
                 ;
@@ -734,7 +732,6 @@ public class ProcessBuilder2 {
                         NShellHelper.of(NShellFamily.getCurrent())
                                 .escapeArguments(fullCommandString.toArray(new String[0]),
                                         new NCmdLineShellOptions()
-                                                .setSession(session)
                                                 .setExpectEnv(true)
                                                 .setFormatStrategy(NCmdLineFormatStrategy.SUPPORT_QUOTES)
                                 )
@@ -774,15 +771,15 @@ public class ProcessBuilder2 {
         return sb.toString();
     }
 
-    public String getFormattedCommandString(NSession session) {
-        return getFormattedCommandString(session, null);
+    public String getFormattedCommandString() {
+        return getFormattedCommandString(null);
     }
 
-    private String escape(NSession session, String f) {
-        return NTexts.of(session).ofPlain(f).toString();
+    private String escape(String f) {
+        return NTexts.of().ofPlain(f).toString();
     }
 
-    public String getFormattedCommandString(NSession session, CommandStringFormat f) {
+    public String getFormattedCommandString(CommandStringFormat f) {
 //        NutsFormatManager tf = session.formats();
 //        StringBuilder sb = new StringBuilder();
         File ff = getDirectory();
@@ -836,13 +833,12 @@ public class ProcessBuilder2 {
             }
             fullCommandString.add(s);
         }
-        NTexts txt = NTexts.of(session);
+        NTexts txt = NTexts.of();
         NTextBuilder sb = txt.ofBlank().builder()
                 .append(txt.ofCode("system",
                         NShellHelper.of(NShellFamily.getCurrent())
                                 .escapeArguments(fullCommandString.toArray(new String[0]),
                                         new NCmdLineShellOptions()
-                                                .setSession(session)
                                                 .setFormatStrategy(NCmdLineFormatStrategy.SUPPORT_QUOTES)
                                                 .setExpectEnv(true)
                                 )
@@ -916,7 +912,7 @@ public class ProcessBuilder2 {
                 ", directory=" + directory +
                 ", failFast=" + failFast +
                 ", sleepMillis=" + sleepMillis +
-                ", session=" + session +
+                ", session=" + workspace +
                 ", in=" + in +
                 ", out=" + out +
                 ", err=" + err +

@@ -24,16 +24,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
-import net.thevpc.nuts.boot.NBootWorkspace;
-import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
-import net.thevpc.nuts.util.NStringUtils;
-
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Nuts App. Nuts is a Package manager for Java Applications and this
@@ -61,7 +52,7 @@ public final class NutsApp {
         } catch (Exception ex) {
             NSession session = NSessionAwareExceptionBase.resolveSession(ex).orNull();
             if (session != null) {
-                System.exit(NApplicationExceptionHandler.of(session)
+                System.exit(NApplicationExceptionHandler.of()
                         .processThrowable(args, ex));
             } else {
                 System.exit(NApiUtilsRPI.processThrowable(ex, args));

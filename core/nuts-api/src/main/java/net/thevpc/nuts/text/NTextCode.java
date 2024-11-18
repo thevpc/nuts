@@ -26,8 +26,6 @@
  */
 package net.thevpc.nuts.text;
 
-import net.thevpc.nuts.NSession;
-
 /**
  * @app.category Format
  */
@@ -35,10 +33,9 @@ public interface NTextCode extends NText {
     /**
      * return a parsed instance of this code
      *
-     * @param session session
      * @return return
      */
-    NText highlight(NSession session);
+    NText highlight();
 
     /**
      * text

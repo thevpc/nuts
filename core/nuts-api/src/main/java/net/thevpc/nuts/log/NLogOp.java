@@ -27,7 +27,6 @@
 package net.thevpc.nuts.log;
 
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 
 import java.util.function.Supplier;
 import java.util.logging.Level;
@@ -38,15 +37,13 @@ import java.util.logging.Level;
  * @app.category Logging
  */
 public interface NLogOp {
-    static NLogOp of(Class clazz, NSession session) {
-        return NLog.of(clazz, session).with();
+    static NLogOp of(Class<?> clazz) {
+        return NLog.of(clazz).with();
     }
 
-    static NLogOp of(String name, NSession session) {
-        return NLog.of(name, session).with();
+    static NLogOp of(String name) {
+        return NLog.of(name).with();
     }
-
-    NLogOp session(NSession session);
 
     /**
      * set log verb

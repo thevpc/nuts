@@ -41,9 +41,9 @@ import java.util.Set;
  * @app.category Config
  * @since 0.5.4
  */
-public interface NConfigs extends NComponent,NSessionProvider {
-    static NConfigs of(NSession session) {
-        return NExtensions.of(session).createComponent(NConfigs.class).get();
+public interface NConfigs extends NComponent {
+    static NConfigs of() {
+        return NExtensions.of().createComponent(NConfigs.class).get();
     }
 
     NWorkspaceStoredConfig stored();
@@ -79,7 +79,6 @@ public interface NConfigs extends NComponent,NSessionProvider {
 
     boolean isSystemWorkspace();
 
-    NConfigs setSession(NSession session);
 
     Map<String, String> getConfigMap();
 

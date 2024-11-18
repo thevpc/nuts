@@ -96,7 +96,7 @@ public class JobServiceCmd {
             long tasksCount = service.tasks().findTasks(NTaskStatusFilter.OPEN, null, -1, null, null, null, null, null).count();
             long jobsCount = service.jobs().findMonthJobs(null).count();
             long allJobsCount = service.jobs().findLastJobs(null, -1, null, null, null, null, null).count();
-            NTexts text = NTexts.of(session);
+            NTexts text = NTexts.of();
             session.out().print(NMsg.ofC("%s open task%s\n", text.ofStyled("" + tasksCount, NTextStyle.primary1()), tasksCount == 1 ? "" : "s"));
             session.out().print(NMsg.ofC("%s job%s %s\n", text.ofStyled("" + allJobsCount, NTextStyle.primary1()), allJobsCount == 1 ? "" : "s",
                     allJobsCount == 0 ? ""
@@ -110,8 +110,8 @@ public class JobServiceCmd {
     }
 
     protected void showCustomHelp(String name) {
-        NTexts text = NTexts.of(session);
-        NPath p = NPath.of("classpath:/net/thevpc/nuts/toolbox/" + name + ".ntf", session);
+        NTexts text = NTexts.of();
+        NPath p = NPath.of("classpath:/net/thevpc/nuts/toolbox/" + name + ".ntf");
         session.out().println(
                 text.transform(text.parser().parse(p), new NTextTransformConfig()
                         .setCurrentDir(p.getParent())
@@ -124,7 +124,7 @@ public class JobServiceCmd {
     }
 
     protected NString getFormattedProject(String projectName) {
-        NTextBuilder builder = NTexts.of(session).ofBuilder();
+        NTextBuilder builder = NTexts.of().ofBuilder();
         builder.getStyleGenerator()
                 .setIncludeForeground(true)
                 .setUsePaletteColors();
@@ -143,40 +143,40 @@ public class JobServiceCmd {
 
     protected NString getCheckedString(Boolean x) {
         if (x == null) {
-            return NTexts.of(session).ofPlain("");
+            return NTexts.of().ofPlain("");
         }
         if (x) {
-            return NTexts.of(session).ofPlain("\u2611");
+            return NTexts.of().ofPlain("\u2611");
         } else {
-            return NTexts.of(session).ofPlain("\u25A1");
+            return NTexts.of().ofPlain("\u25A1");
         }
     }
 
     protected NString getPriorityString(NPriority x) {
         if (x == null) {
-            return NTexts.of(session).ofPlain("N");
+            return NTexts.of().ofPlain("N");
         }
         switch (x) {
             case NONE:
-                return NTexts.of(session).ofStyled("0", NTextStyle.pale());
+                return NTexts.of().ofStyled("0", NTextStyle.pale());
             case LOW:
-                return NTexts.of(session).ofStyled("L", NTextStyle.pale());
+                return NTexts.of().ofStyled("L", NTextStyle.pale());
             case NORMAL:
-                return NTexts.of(session).ofPlain("N");
+                return NTexts.of().ofPlain("N");
             case MEDIUM:
-                return NTexts.of(session).ofStyled("M", NTextStyle.primary1());
+                return NTexts.of().ofStyled("M", NTextStyle.primary1());
             case URGENT:
-                return NTexts.of(session).ofStyled("U", NTextStyle.primary2());
+                return NTexts.of().ofStyled("U", NTextStyle.primary2());
             case HIGH:
-                return NTexts.of(session).ofStyled("H", NTextStyle.primary3());
+                return NTexts.of().ofStyled("H", NTextStyle.primary3());
             case CRITICAL:
-                return NTexts.of(session).ofStyled("C", NTextStyle.fail());
+                return NTexts.of().ofStyled("C", NTextStyle.fail());
         }
-        return NTexts.of(session).ofPlain("?");
+        return NTexts.of().ofPlain("?");
     }
 
     protected NString getStatusString(NTaskStatus x) {
-        NTexts text = NTexts.of(session);
+        NTexts text = NTexts.of();
         if (x == null) {
             return text.ofPlain("*");
         }
@@ -196,17 +196,17 @@ public class JobServiceCmd {
     private NString getFlagString(String x, int index) {
         switch (index) {
             case 1:
-                return NTexts.of(session).ofStyled(x, NTextStyle.primary1());
+                return NTexts.of().ofStyled(x, NTextStyle.primary1());
             case 2:
-                return NTexts.of(session).ofStyled(x, NTextStyle.primary2());
+                return NTexts.of().ofStyled(x, NTextStyle.primary2());
             case 3:
-                return NTexts.of(session).ofStyled(x, NTextStyle.primary3());
+                return NTexts.of().ofStyled(x, NTextStyle.primary3());
             case 4:
-                return NTexts.of(session).ofStyled(x, NTextStyle.primary4());
+                return NTexts.of().ofStyled(x, NTextStyle.primary4());
             case 5:
-                return NTexts.of(session).ofStyled(x, NTextStyle.primary5());
+                return NTexts.of().ofStyled(x, NTextStyle.primary5());
         }
-        throw new NIllegalArgumentException(session, NMsg.ofC("invalid index %s", index));
+        throw new NIllegalArgumentException(NMsg.ofC("invalid index %s", index));
     }
 
     protected NString getFlagString(NFlag x) {
@@ -215,7 +215,7 @@ public class JobServiceCmd {
         }
         switch (x) {
             case NONE:
-                return NTexts.of(session).ofPlain("\u2690");
+                return NTexts.of().ofPlain("\u2690");
 
             case STAR1:
                 return getFlagString("\u2605", 1);
@@ -272,7 +272,7 @@ public class JobServiceCmd {
             case PHONE5:
                 return getFlagString("\u260E", 5);
         }
-        return NTexts.of(session).ofPlain("[" + x.toString().toLowerCase() + "]");
+        return NTexts.of().ofPlain("[" + x.toString().toLowerCase() + "]");
     }
 
     protected <T> void appendPredicateRef(NRef<Predicate<T>> whereFilter, Predicate<T> t) {
@@ -301,21 +301,21 @@ public class JobServiceCmd {
     }
 
     public void runInteractive(NCmdLine cmdLine) {
-        NSystemTerminal.enableRichTerm(session);
-        NIO.of(session).getSystemTerminal()
-                .setCommandAutoCompleteResolver(new JobAutoCompleter())
+        NSystemTerminal.enableRichTerm();
+        NIO.of().getSystemTerminal()
+                .setCommandAutoCompleteResolver(new JobAutoCompleter(session.getWorkspace()))
                 .setCommandHistory(
-                        NCmdLineHistory.of(session)
+                        NCmdLineHistory.of()
                                 .setPath(session.getAppVarFolder().resolve("njob-history.hist"))
                 );
-        NEnvs.of(session).setProperty(JobServiceCmd.class.getName(), this);
+        NEnvs.of().setProperty(JobServiceCmd.class.getName(), this);
 
 //        session.setTerminal(
 //                session.io().term().createTerminal(
 //                session.io().term().getSystemTerminal(), 
 //                        session
 //        ));
-        NTexts text = NTexts.of(session);
+        NTexts text = NTexts.of();
 
         session.out().print(NMsg.ofC(
                 "%s interactive mode. type %s to quit.%n",
@@ -343,7 +343,7 @@ public class JobServiceCmd {
                     lastError.printStackTrace(session.out().asPrintStream());
                 }
             } else {
-                NCmdLine cmd = NCmdLine.parseDefault(line).get(session);
+                NCmdLine cmd = NCmdLine.parseDefault(line).get();
                 cmd.setCommandName(session.getAppId().getArtifactId());
                 try {
                     lastError = null;

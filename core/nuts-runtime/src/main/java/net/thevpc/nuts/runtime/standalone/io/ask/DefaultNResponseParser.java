@@ -24,7 +24,7 @@ public class DefaultNResponseParser<T> implements NAskParser<T> {
             response = defaultValue;
         }
         if ("cancel!".equals(response)) {
-            throw new NCancelException(session);
+            throw new NCancelException();
         }
         if (response == null) {
             return null;
@@ -64,13 +64,13 @@ public class DefaultNResponseParser<T> implements NAskParser<T> {
                 String sReponse = response.toString();
                 NArg a = new DefaultNArg(sReponse);
                 if (!a.isBoolean()) {
-                    throw new NIllegalArgumentException(session, NMsg.ofC("invalid response %s", sReponse));
+                    throw new NIllegalArgumentException(NMsg.ofC("invalid response %s", sReponse));
                 }
-                return (T) (Object) a.asBoolean().get(session);
+                return (T) (Object) a.asBoolean().get();
             }
 
             default: {
-                throw new NUnsupportedArgumentException(session, NMsg.ofC("unsupported type %s", type.getName()));
+                throw new NUnsupportedArgumentException(NMsg.ofC("unsupported type %s", type.getName()));
             }
         }
     }

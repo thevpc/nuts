@@ -66,7 +66,7 @@ public class JavaClassUtils {
      * @param stream stream
      * @return main class type for the given
      */
-    public static MainClassType getMainClassType(InputStream stream, NSession session) {
+    public static MainClassType getMainClassType(InputStream stream, NWorkspace workspace) {
         final NRef<Boolean> mainClass = new NRef<>();
         final NRef<Boolean> nutsApp = new NRef<>();
         final NRef<String> nutsAppVer = new NRef<>();
@@ -112,19 +112,19 @@ public class JavaClassUtils {
                 return NVisitResult.CONTINUE;
             }
         };
-        JavaClassByteCode classReader = new JavaClassByteCode(new BufferedInputStream(stream), cl, session);
+        JavaClassByteCode classReader = new JavaClassByteCode(new BufferedInputStream(stream), cl, workspace);
         if (mainClass.isSet()) {
             return new MainClassType(className.get(), mainClass.isSet(), nutsApp.isSet());
         }
         return null;
     }
 
-    public static NExecutionEntry parseClassExecutionEntry(InputStream classStream, String sourceName, NSession session) {
+    public static NExecutionEntry parseClassExecutionEntry(InputStream classStream, String sourceName) {
         MainClassType mainClass = null;
         try {
-            mainClass = getMainClassType(classStream, session);
+            mainClass = getMainClassType(classStream, NWorkspace.of().get());
         } catch (Exception ex) {
-            NLogOp.of(CorePlatformUtils.class, session).level(Level.FINE).error(ex)
+            NLogOp.of(CorePlatformUtils.class).level(Level.FINE).error(ex)
                     .log(NMsg.ofJ("invalid file format {0}", sourceName));
         }
         if (mainClass != null) {
@@ -145,7 +145,7 @@ public class JavaClassUtils {
      * @param classVersion
      * @return
      */
-    public static String classVersionToSourceVersion(String classVersion, NSession session) {
+    public static String classVersionToSourceVersion(String classVersion) {
         int major;
         int minor;
         int i = classVersion.indexOf('.');
@@ -156,12 +156,12 @@ public class JavaClassUtils {
             major = Integer.parseInt(classVersion);
             minor = 0;
         }
-        return classVersionToSourceVersion(major, minor, session);
+        return classVersionToSourceVersion(major, minor);
     }
 
-    public static String classVersionToSourceVersion(int major, int minor, NSession session) {
+    public static String classVersionToSourceVersion(int major, int minor) {
         if (major < 45) {
-            throw new NIllegalArgumentException(session, NMsg.ofC("invalid classVersion %s.%s", major,minor));
+            throw new NIllegalArgumentException(NMsg.ofC("invalid classVersion %s.%s", major,minor));
         }
         if (major == 45) {
             if (minor <= 3) {
@@ -179,12 +179,12 @@ public class JavaClassUtils {
         }
     }
 
-    public static String sourceVersionToClassVersion(String sourceVersion, NSession session) {
-        NVersion v = NVersion.of(sourceVersion).get(session);
+    public static String sourceVersionToClassVersion(String sourceVersion) {
+        NVersion v = NVersion.of(sourceVersion).get();
         int major = v.getNumber(0).flatMap(NLiteral::asInt).orElse(0);
         int minor = v.getNumber(1).flatMap(NLiteral::asInt).orElse(-1);
         if (major < 1) {
-            throw new NIllegalArgumentException(session, NMsg.ofC("invalid sourceVersion %s", sourceVersion));
+            throw new NIllegalArgumentException(NMsg.ofC("invalid sourceVersion %s", sourceVersion));
         }
         if (major == 1) {
             switch (minor) {
@@ -202,7 +202,7 @@ public class JavaClassUtils {
                 case 9:
                     return String.valueOf(46 - minor - 2);
                 default: {
-                    throw new NIllegalArgumentException(session, NMsg.ofC("invalid sourceVersion %s", sourceVersion));
+                    throw new NIllegalArgumentException(NMsg.ofC("invalid sourceVersion %s", sourceVersion));
                 }
             }
         } else {

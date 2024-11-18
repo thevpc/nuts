@@ -2,7 +2,6 @@ package net.thevpc.nuts.time;
 
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.util.NMsgTemplate;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NComponent;
 
@@ -10,8 +9,8 @@ import java.io.PrintStream;
 import java.util.logging.Logger;
 
 public interface NProgressMonitors extends NComponent {
-    static NProgressMonitors of(NSession session) {
-        return NExtensions.of(session).createComponent(NProgressMonitors.class).get();
+    static NProgressMonitors of() {
+        return NExtensions.of().createComponent(NProgressMonitors.class).get();
     }
 
 

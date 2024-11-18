@@ -64,10 +64,10 @@ public class XmlCommand extends NShellBuiltinDefault {
         Options options = context.getOptions();
         NArg a;
         if ((a = cmdLine.nextEntry("-f", "--file").orNull()) != null) {
-            options.input = a.getStringValue().get(session);
+            options.input = a.getStringValue().get();
             return true;
         } else if ((a = cmdLine.nextEntry("-q", "--xpath").orNull()) != null) {
-            options.xpaths.add(a.getStringValue().get(session));
+            options.xpaths.add(a.getStringValue().get());
             return true;
         }
         return false;
@@ -86,20 +86,20 @@ public class XmlCommand extends NShellBuiltinDefault {
         try {
             dBuilder = dbFactory.newDocumentBuilder();
         } catch (Exception ex) {
-            throw new NExecutionException(session, NMsg.ofPlain("unable to initialize xml system"), ex, NExecutionException.ERROR_2);
+            throw new NExecutionException(NMsg.ofPlain("unable to initialize xml system"), ex, NExecutionException.ERROR_2);
         }
 
         Document doc = null;
         if (options.input != null) {
-            NPath file = NPath.of(options.input, session).toAbsolute(context.getDirectory());
+            NPath file = NPath.of(options.input).toAbsolute(context.getDirectory());
             if (file.isRegularFile()) {
                 try (InputStream is = file.getInputStream()) {
                     doc = dBuilder.parse(is);
                 } catch (Exception ex) {
-                    throw new NExecutionException(session, NMsg.ofC("invalid xml %s", options.input), ex, NExecutionException.ERROR_2);
+                    throw new NExecutionException(NMsg.ofC("invalid xml %s", options.input), ex, NExecutionException.ERROR_2);
                 }
             } else {
-                throw new NExecutionException(session, NMsg.ofC("invalid path %s", options.input), NExecutionException.ERROR_1);
+                throw new NExecutionException(NMsg.ofC("invalid path %s", options.input), NExecutionException.ERROR_1);
             }
         } else {
             StringBuilder sb = new StringBuilder();
@@ -109,13 +109,13 @@ public class XmlCommand extends NShellBuiltinDefault {
                 try {
                     line = reader.readLine();
                 } catch (IOException ex) {
-                    throw new NExecutionException(session, NMsg.ofPlain("broken Input"), NExecutionException.ERROR_2);
+                    throw new NExecutionException(NMsg.ofPlain("broken Input"), NExecutionException.ERROR_2);
                 }
                 if (line == null) {
                     try {
                         doc = dBuilder.parse(new InputSource(new StringReader(sb.toString())));
                     } catch (Exception ex) {
-                        throw new NExecutionException(session, NMsg.ofC("invalid xml : %s", sb), ex, NExecutionException.ERROR_2);
+                        throw new NExecutionException(NMsg.ofC("invalid xml : %s", sb), ex, NExecutionException.ERROR_2);
                     }
                     break;
                 } else {
@@ -141,7 +141,7 @@ public class XmlCommand extends NShellBuiltinDefault {
             try {
                 result.add((NodeList) xPath.compile(query).evaluate(doc, XPathConstants.NODESET));
             } catch (XPathExpressionException ex) {
-                throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_3);
+                throw new NExecutionException(NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_3);
             }
         }
         if (all.size() == 1) {

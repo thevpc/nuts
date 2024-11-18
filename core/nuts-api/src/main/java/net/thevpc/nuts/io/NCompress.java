@@ -48,9 +48,9 @@ import java.util.Set;
  * @app.category Toolkit
  * @since 0.5.4
  */
-public interface NCompress extends NComponent, NSessionProvider {
-    static NCompress of(NSession session) {
-        return NExtensions.of(session).createComponent(NCompress.class).get();
+public interface NCompress extends NComponent {
+    static NCompress of() {
+        return NExtensions.of().createComponent(NCompress.class).get();
     }
 
     /**
@@ -227,14 +227,6 @@ public interface NCompress extends NComponent, NSessionProvider {
      * @return {@code this} instance
      */
     NCompress to(File target);
-
-    /**
-     * update current session
-     *
-     * @param session current session
-     * @return {@code this} instance
-     */
-    NCompress setSession(NSession session);
 
     /**
      * run this Compress action

@@ -36,8 +36,8 @@ import net.thevpc.nuts.ext.NExtensions;
  * @app.category Security
  */
 public interface NRemoveUserCmd extends NWorkspaceCmd {
-    static NRemoveUserCmd of(NSession session) {
-        return NExtensions.of(session).createComponent(NRemoveUserCmd.class).get();
+    static NRemoveUserCmd of() {
+        return NExtensions.of().createComponent(NRemoveUserCmd.class).get();
     }
 
     /**
@@ -56,26 +56,10 @@ public interface NRemoveUserCmd extends NWorkspaceCmd {
      */
     NRemoveUserCmd setUsername(String username);
 
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
-    NRemoveUserCmd setSession(NSession session);
-
     NRepository getRepository();
 
     NRemoveUserCmd setRepository(NRepository repository);
 
-    /**
-     * copy session
-     *
-     * @return {@code this} instance
-     */
-    @Override
-    NRemoveUserCmd copySession();
 
     /**
      * configure the current command with the given arguments. This is an

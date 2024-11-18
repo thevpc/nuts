@@ -57,15 +57,15 @@ public class DfCommand extends NShellBuiltinDefault {
     protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
-        switch (cmdLine.peek().get(session).key()) {
+        switch (cmdLine.peek().get().key()) {
             case "-a":
             case "--all": {
-                cmdLine.withNextFlag((v, a, s) -> options.all = v);
+                cmdLine.withNextFlag((v, a) -> options.all = v);
                 return true;
             }
             case "-h":
             case "--human-readable": {
-                cmdLine.withNextFlag((v, a, s) -> options.humanReadable = v);
+                cmdLine.withNextFlag((v, a) -> options.humanReadable = v);
                 return true;
             }
         }
@@ -136,11 +136,11 @@ public class DfCommand extends NShellBuiltinDefault {
             desc = x.desc;
             readOnly = x.readOnly;
             if (options.humanReadable) {
-                totalSpace = x.totalSpace < 0 ? "" : formatter.toString(x.totalSpace, session);
-                usableSpace = x.usableSpace < 0 ? "" : formatter.toString(x.usableSpace, session);
-                unallocatedSpace = x.unallocatedSpace < 0 ? "" : formatter.toString(x.unallocatedSpace, session);
-                available = x.available < 0 ? "" : formatter.toString(x.available, session);
-                used = x.used < 0 ? "" : formatter.toString(x.used, session);
+                totalSpace = x.totalSpace < 0 ? "" : formatter.toString(x.totalSpace);
+                usableSpace = x.usableSpace < 0 ? "" : formatter.toString(x.usableSpace);
+                unallocatedSpace = x.unallocatedSpace < 0 ? "" : formatter.toString(x.unallocatedSpace);
+                available = x.available < 0 ? "" : formatter.toString(x.available);
+                used = x.used < 0 ? "" : formatter.toString(x.used);
             } else {
                 totalSpace = x.totalSpace < 0 ? "" : String.valueOf(x.totalSpace);
                 usableSpace = x.usableSpace < 0 ? "" : String.valueOf(x.usableSpace);
@@ -157,7 +157,7 @@ public class DfCommand extends NShellBuiltinDefault {
         NSession session = context.getSession();
         options.xfiles = ShellHelper.xfilesOf(options.files, context.getDirectory(), session);
         List<UInfo> result = new ArrayList<>();
-        NTextFormat<Number> formatter = NTexts.of(session).createNumberTextFormat("bytes", "").get();
+        NTextFormat<Number> formatter = NTexts.of().createNumberTextFormat("bytes", "").get();
         List<FileStore> stores = NCollections.list(FileSystems.getDefault().getFileStores());
         if (options.xfiles.isEmpty()) {
             Stream<CInfo> s = stores.stream()

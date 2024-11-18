@@ -31,7 +31,6 @@ import static net.thevpc.nuts.runtime.standalone.util.CoreStringUtils.stringValu
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementEntry;
-import net.thevpc.nuts.NSession;
 
 /**
  *
@@ -39,7 +38,7 @@ import net.thevpc.nuts.NSession;
  */
 public class NFormatUtils {
 
-    public static void putAllInProps(String prefix, Map<String, String> dest, NElement value, NSession session) {
+    public static void putAllInProps(String prefix, Map<String, String> dest, NElement value) {
 
         switch (value.type()) {
             case BOOLEAN:
@@ -50,7 +49,7 @@ public class NFormatUtils {
 //            case NUTS_STRING:
             case NULL:
             {
-                dest.put(prefix, stringValue(value.asPrimitive().get(session).getRaw()));
+                dest.put(prefix, stringValue(value.asPrimitive().get().getRaw()));
                 break;
             }
             case OBJECT: {
@@ -59,8 +58,8 @@ public class NFormatUtils {
                 } else {
                     prefix = "";
                 }
-                for (NElementEntry e : value.asObject().get(session).entries()) {
-                    putAllInProps(prefix + e.getKey(), dest, e.getValue(), session);
+                for (NElementEntry e : value.asObject().get().entries()) {
+                    putAllInProps(prefix + e.getKey(), dest, e.getValue());
                 }
                 break;
             }
@@ -71,8 +70,8 @@ public class NFormatUtils {
                     prefix = "";
                 }
                 int i = 0;
-                for (NElement e : value.asArray().get(session).items()) {
-                    putAllInProps(prefix + (i + 1), dest, e, session);
+                for (NElement e : value.asArray().get().items()) {
+                    putAllInProps(prefix + (i + 1), dest, e);
                     i++;
                 }
                 break;

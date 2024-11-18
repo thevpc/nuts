@@ -22,7 +22,8 @@ public class ResolveIdFacadeCommand extends AbstractFacadeCommand {
         boolean transitive = parameters.containsKey("transitive");
         NId fetch = null;
         try {
-            fetch = NFetchCmd.of(id,context.getSession().copy().setTransitive(transitive))
+            fetch = NFetchCmd.of(id)
+                    .setTransitive(transitive)
                     .getResultId();
         } catch (Exception exc) {
             //

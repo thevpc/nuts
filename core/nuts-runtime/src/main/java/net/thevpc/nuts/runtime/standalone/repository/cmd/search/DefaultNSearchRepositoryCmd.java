@@ -26,39 +26,35 @@ import java.util.logging.Level;
  */
 public class DefaultNSearchRepositoryCmd extends AbstractNSearchRepositoryCmd {
 
-    private NLog LOG;
 
     public DefaultNSearchRepositoryCmd(NRepository repo) {
         super(repo);
     }
 
-    protected NLogOp _LOGOP(NSession session) {
-        return _LOG(session).with().session(session);
+    protected NLogOp _LOGOP() {
+        return _LOG().with();
     }
 
-    protected NLog _LOG(NSession session) {
-        if (LOG == null) {
-            LOG = NLog.of(DefaultNSearchRepositoryCmd.class, session);
-        }
-        return LOG;
+    protected NLog _LOG() {
+            return NLog.of(DefaultNSearchRepositoryCmd.class);
     }
 
     @Override
     public NSearchRepositoryCmd run() {
-        NSession session = getSession();
+        NSession session = getRepo().getWorkspace().currentSession();
         NSessionUtils.checkSession(getRepo().getWorkspace(), session);
         NRunnable startRunnable = NRunnable.of(
                 () -> {
-                    getRepo().security().setSession(session).checkAllowed(NConstants.Permissions.FETCH_DESC, "search");
+                    getRepo().security().checkAllowed(NConstants.Permissions.FETCH_DESC, "search");
                     NRepositoryExt xrepo = NRepositoryExt.of(getRepo());
-                    xrepo.checkAllowedFetch(null, session);
-                    _LOGOP(session).level(Level.FINEST).verb(NLogVerb.START)
+                    xrepo.checkAllowedFetch(null);
+                    _LOGOP().level(Level.FINEST).verb(NLogVerb.START)
                             .log(NMsg.ofJ("{0} search packages", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST)));
                 }
         ).withDesc(NEDesc.of("CheckAuthorizations"));
         NRunnable endRunnable =
                 NRunnable.of(
-                        () -> _LOGOP(session).level(Level.FINEST).verb(NLogVerb.SUCCESS)
+                        () -> _LOGOP().level(Level.FINEST).verb(NLogVerb.SUCCESS)
                                 .log(NMsg.ofJ("{0} search packages", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST)))
                         ).withDesc(NEDesc.of("Log"));
         try {
@@ -68,30 +64,30 @@ public class DefaultNSearchRepositoryCmd extends AbstractNSearchRepositoryCmd {
             if (processIndexFirst) {
                 Iterator<NId> o = null;
                 try {
-                    o = xrepo.getIndexStore().search(filter, session);
+                    o = xrepo.getIndexStore().search(filter);
                 } catch (NIndexerNotAccessibleException ex) {
                     //just ignore
                 } catch (NException ex) {
-                    _LOGOP(session).level(Level.FINEST).verb(NLogVerb.FAIL)
+                    _LOGOP().level(Level.FINEST).verb(NLogVerb.FAIL)
                             .log(NMsg.ofJ("error search operation using Indexer for {0} : {1}", getRepo().getName(), ex));
                 }
                 if (o != null) {
                     result = IteratorBuilder.of(new IndexFirstIterator<>(o,
-                            xrepo.searchImpl(filter, getFetchMode(), session),session
-                    ), session).onStart(startRunnable).onFinish(endRunnable).build();
+                            xrepo.searchImpl(filter, getFetchMode()),session
+                    )).onStart(startRunnable).onFinish(endRunnable).build();
                     return this;
                 }
             }
-            result = IteratorBuilder.of(xrepo.searchImpl(filter, getFetchMode(), session), session)
+            result = IteratorBuilder.of(xrepo.searchImpl(filter, getFetchMode()))
                     .onStart(startRunnable)
                     .onFinish(endRunnable)
                     .build();
         } catch (NNotFoundException | SecurityException ex) {
-            _LOGOP(session).level(Level.FINEST).verb(NLogVerb.FAIL)
+            _LOGOP().level(Level.FINEST).verb(NLogVerb.FAIL)
                     .log(NMsg.ofJ("{0} search packages", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST)));
             throw ex;
         } catch (RuntimeException ex) {
-            _LOGOP(session).level(Level.SEVERE).verb(NLogVerb.FAIL)
+            _LOGOP().level(Level.SEVERE).verb(NLogVerb.FAIL)
                     .log(NMsg.ofJ("{0} search packages", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST)));
             throw ex;
         }

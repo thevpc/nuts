@@ -94,7 +94,7 @@ public interface NWorkspaceOptionsBuilder extends NWorkspaceOptions {
     NWorkspaceOptionsBuilder setConfirm(NConfirmationMode confirm);
 
     NWorkspaceOptionsBuilder setDry(Boolean dry);
-    
+
     NWorkspaceOptionsBuilder setShowStacktrace(Boolean showStacktrace);
 
     NWorkspaceOptionsBuilder setCreationTime(Instant creationTime);
@@ -103,6 +103,8 @@ public interface NWorkspaceOptionsBuilder extends NWorkspaceOptions {
     NWorkspaceOptionsBuilder setExcludedExtensions(List<String> excludedExtensions);
 
     NWorkspaceOptionsBuilder setExecutionType(NExecutionType executionType);
+
+    NWorkspaceOptionsBuilder setMainInstance(Boolean mainInstance);
 
     /**
      * set runAs mode
@@ -325,11 +327,12 @@ public interface NWorkspaceOptionsBuilder extends NWorkspaceOptions {
     NWorkspaceOptionsBuilder setTheme(String theme);
 
     NWorkspaceOptionsBuilder setAll(NWorkspaceOptions other);
+
     NWorkspaceOptionsBuilder setAllPresent(NWorkspaceOptions other);
 
-    NWorkspaceOptionsBuilder setCmdLine(String cmdLine, NSession session);
+    NWorkspaceOptionsBuilder setCmdLine(String cmdLine);
 
-    NWorkspaceOptionsBuilder setCmdLine(String[] args, NSession session);
+    NWorkspaceOptionsBuilder setCmdLine(String[] args);
 
     NWorkspaceOptionsBuilder setUserName(String username);
 
@@ -349,8 +352,11 @@ public interface NWorkspaceOptionsBuilder extends NWorkspaceOptions {
      * @since 0.8.3
      */
     NWorkspaceOptionsBuilder setDependencySolver(String dependencySolver);
+
     NWorkspaceOptionsBuilder unsetRuntimeOptions();
+
     NWorkspaceOptionsBuilder unsetCreationOptions();
+
     NWorkspaceOptionsBuilder unsetExportedOptions();
 
 

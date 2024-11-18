@@ -25,7 +25,6 @@
  */
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.time.NProgressFactory;
@@ -42,18 +41,11 @@ import java.nio.file.Path;
  * @author thevpc
  * @app.category Toolkit
  */
-public interface NInputStreamMonitor extends NComponent, NSessionProvider {
-    static NInputStreamMonitor of(NSession session) {
-        return NExtensions.of(session).createComponent(NInputStreamMonitor.class).get();
+public interface NInputStreamMonitor extends NComponent {
+    static NInputStreamMonitor of() {
+        return NExtensions.of().createComponent(NInputStreamMonitor.class).get();
     }
 
-    /**
-     * update current session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    NInputStreamMonitor setSession(NSession session);
 
     /**
      * return action name

@@ -40,15 +40,15 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
             switch (name) {
                 case "descriptor":
                     try {
-                        descriptor = NDescriptorParser.of(session)
-                                .setSession(session).parse(info.getContent()).get(session);
+                        descriptor = NDescriptorParser.of()
+                                .parse(info.getContent()).get();
                     } finally {
                         info.getContent().close();
                     }
                     break;
                 case "content-hash":
                     try {
-                        receivedContentHash = NDigest.of(session).setSource(info.getContent()).computeString();
+                        receivedContentHash = NDigest.of().setSource(info.getContent()).computeString();
                     } finally {
                         info.getContent().close();
                     }
@@ -56,13 +56,12 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
                 case "content":
                     contentFile = NPath
                             .ofTempFile(
-                                    NLocations.of(session).getDefaultIdFilename(
+                                    NLocations.of().getDefaultIdFilename(
                                             descriptor.getId().builder().setFaceDescriptor().build()
-                                    ),session).toString();
-                    NCp.of(session)
-                            .setSession(session)
+                                    )).toString();
+                    NCp.of()
                             .setSource(info.getContent())
-                            .setTarget(NPath.of(contentFile,session))
+                            .setTarget(NPath.of(contentFile))
                             .run();
                     break;
             }
@@ -70,7 +69,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
         if (contentFile == null) {
             context.sendError(400, "invalid NShellCommandNode arguments : " + getName() + " : missing file");
         }
-        NId id = NDeployCmd.of(session.copy()).setContent(NPath.of(contentFile,session))
+        NId id = NDeployCmd.of().setContent(NPath.of(contentFile))
                 .setSha1(receivedContentHash)
                 .setDescriptor(descriptor)
                 .getResult().get(0);

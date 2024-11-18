@@ -266,8 +266,8 @@ public class SqlHelper implements Closeable {
 
     public static ClassLoader createClassLoader(NSession session, String id) {
         String z = session.getWorkspace().getUuid() + "/" + id;
-        return cachedClassLoaders.computeIfAbsent(z, x -> NSearchCmd.of(session).addId(id)
-                .setDependencyFilter(NDependencyFilters.of(session).byRunnable())
+        return cachedClassLoaders.computeIfAbsent(z, x -> NSearchCmd.of().addId(id)
+                .setDependencyFilter(NDependencyFilters.of().byRunnable())
                 .getResultClassLoader(SqlHelper.class.getClassLoader()));
     }
 
@@ -523,7 +523,7 @@ public class SqlHelper implements Closeable {
     }
 
 
-    public static <C extends NdbConfig> SqlDB computeSchema(ExtendedQuery eq, SqlSupport<C> ss, C options, NSession session) {
+    public static <C extends NdbConfig> SqlDB computeSchema(ExtendedQuery eq, SqlSupport<C> ss, C options) {
         return ss.callInDb(new SqlCallable<SqlDB>() {
             @Override
             public SqlDB run(SqlHelper c, NSession session) throws Exception {
@@ -578,7 +578,7 @@ public class SqlHelper implements Closeable {
                 }
                 return d.sort();
             }
-        }, options, session);
+        }, options);
     }
 
     private static void fillTableIndexes(DatabaseMetaData metaData, SqlCatalog sCat, SqlSchema sSchema, SqlTable sTable) throws SQLException {

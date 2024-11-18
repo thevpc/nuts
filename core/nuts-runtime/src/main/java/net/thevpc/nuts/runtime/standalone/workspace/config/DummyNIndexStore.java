@@ -12,12 +12,12 @@ public class DummyNIndexStore extends AbstractNIndexStore {
     }
 
     @Override
-    public NIterator<NId> searchVersions(NId id, NSession session) {
+    public NIterator<NId> searchVersions(NId id) {
         return IteratorBuilder.emptyIterator();
     }
 
     @Override
-    public NIterator<NId> search(NIdFilter filter, NSession session) {
+    public NIterator<NId> search(NIdFilter filter) {
         return IteratorBuilder.emptyIterator();
     }
 
@@ -33,27 +33,27 @@ public class DummyNIndexStore extends AbstractNIndexStore {
     }
 
     @Override
-    public NIndexStore invalidate(NId id, NSession session) {
+    public NIndexStore invalidate(NId id) {
         return this;
     }
 
     @Override
-    public NIndexStore revalidate(NId id, NSession session) {
+    public NIndexStore revalidate(NId id) {
         return this;
     }
 
     @Override
-    public NIndexStore subscribe(NSession session) {
+    public NIndexStore subscribe() {
         return this;
     }
 
     @Override
-    public NIndexStore unsubscribe(NSession session) {
+    public NIndexStore unsubscribe() {
         return this;
     }
 
     @Override
-    public boolean isSubscribed(NSession session) {
+    public boolean isSubscribed() {
         return false;
     }
 }

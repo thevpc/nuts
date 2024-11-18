@@ -26,7 +26,7 @@ public class NutsReleaseToolRunner {
                 }
             }
             return false;
-        }, false, args.toStringArray(), "nuts-builder", session());
+        }, false, args.toStringArray(), "nuts-builder");
         for (AbstractRunner runner : runners) {
             runner.configureAfterOptions();
         }

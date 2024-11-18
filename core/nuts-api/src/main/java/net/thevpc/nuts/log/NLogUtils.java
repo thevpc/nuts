@@ -69,7 +69,7 @@ public class NLogUtils {
             return NOptional.of(new CustomLogLevel("LEVEL" + i, i));
         }
         String finalValue = value;
-        return NOptional.ofError(s -> NMsg.ofC("invalid level %s", finalValue));
+        return NOptional.ofError(() -> NMsg.ofC("invalid level %s", finalValue));
     }
 
     private static class CustomLogLevel extends Level {

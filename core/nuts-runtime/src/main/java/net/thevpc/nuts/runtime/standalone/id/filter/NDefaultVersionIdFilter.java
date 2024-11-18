@@ -21,17 +21,17 @@ public class NDefaultVersionIdFilter extends AbstractIdFilter implements NIdFilt
 
     private final Boolean defaultVersion;
 
-    public NDefaultVersionIdFilter(NSession session, Boolean defaultVersion) {
-        super(session, NFilterOp.CUSTOM);
+    public NDefaultVersionIdFilter(NWorkspace workspace, Boolean defaultVersion) {
+        super(workspace, NFilterOp.CUSTOM);
         this.defaultVersion = defaultVersion;
     }
 
     @Override
-    public boolean acceptId(NId other, NSession session) {
+    public boolean acceptId(NId other) {
         if (defaultVersion == null) {
             return true;
         }
-        return NWorkspaceExt.of(session.getWorkspace()).getInstalledRepository().isDefaultVersion(other, session) == defaultVersion;
+        return NWorkspaceExt.of(workspace).getInstalledRepository().isDefaultVersion(other) == defaultVersion;
     }
 
     @Override

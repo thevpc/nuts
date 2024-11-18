@@ -1,7 +1,6 @@
 package net.thevpc.nuts.lib.common.str;
 
 import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.NSession;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -178,13 +177,11 @@ public class NStreamTokenizer {
     //    private boolean slashSlashCommentsP = false;
 //    private boolean slashStarCommentsP = false;
 //    private boolean xmlCommentsP = false;
-    private NSession session;
 
     /**
      * Private constructor that initializes everything except the streams.
      */
-    private NStreamTokenizer(NSession session) {
-        this.session = session;
+    private NStreamTokenizer() {
         wordChars('a', 'z');
         wordChars('A', 'Z');
         wordChars(128 + 32, 255);
@@ -203,16 +200,13 @@ public class NStreamTokenizer {
      * @param r a Reader object providing the input stream.
      * @since JDK1.1
      */
-    public NStreamTokenizer(Reader r, NSession session) {
-        this(session);
-        if (r == null) {
-            throw new NullPointerException();
-        }
-        reader = r;
+    public NStreamTokenizer(Reader r) {
+        this();
+        reader = r==null?new StringReader("") : r;
     }
 
-    public NStreamTokenizer(String r, NSession session) {
-        this(new StringReader(r == null ? "" : r), session);
+    public NStreamTokenizer(String r) {
+        this(new StringReader(r == null ? "" : r));
     }
 
     /**
@@ -517,7 +511,7 @@ public class NStreamTokenizer {
         try {
             return reader.read();
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -525,7 +519,7 @@ public class NStreamTokenizer {
         try {
             reader.mark(count);
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -533,7 +527,7 @@ public class NStreamTokenizer {
         try {
             reader.reset();
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 

@@ -22,7 +22,8 @@ public class FetchHashFacadeCommand extends AbstractFacadeCommand {
         boolean transitive = parameters.containsKey("transitive");
         String hash = null;
         try {
-            hash = NFetchCmd.of(id,context.getSession().copy().setTransitive(transitive))
+            hash = NFetchCmd.of(id)
+                    .setTransitive(transitive)
                     .getResultContentHash();
         } catch (Exception exc) {
             //

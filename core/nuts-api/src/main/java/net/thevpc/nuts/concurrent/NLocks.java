@@ -26,8 +26,6 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NSessionProvider;
 import net.thevpc.nuts.spi.NComponent;
 
 import java.io.File;
@@ -43,9 +41,9 @@ import java.util.concurrent.locks.Lock;
  * @app.category Input Output
  * @since 0.5.8
  */
-public interface NLocks extends NComponent, NSessionProvider {
-    static NLocks of(NSession session) {
-        return NExtensions.of(session).createComponent(NLocks.class).get();
+public interface NLocks extends NComponent {
+    static NLocks of() {
+        return NExtensions.of().createComponent(NLocks.class).get();
     }
 
     /**
@@ -96,13 +94,6 @@ public interface NLocks extends NComponent, NSessionProvider {
      */
     NLocks setResource(Object source);
 
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    NLocks setSession(NSession session);
 
     /**
      * create lock object for the given source and resource

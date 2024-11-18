@@ -24,36 +24,32 @@ import net.thevpc.nuts.util.NStringUtils;
  */
 public class DefaultNPushRepositoryCmd extends AbstractNPushRepositoryCmd {
 
-    private NLog LOG;
 
     public DefaultNPushRepositoryCmd(NRepository repo) {
         super(repo);
     }
 
-    protected NLogOp _LOGOP(NSession session) {
-        return _LOG(session).with().session(session);
+    protected NLogOp _LOGOP() {
+        return _LOG().with();
     }
 
-    protected NLog _LOG(NSession session) {
-        if (LOG == null) {
-            LOG = NLog.of(DefaultNPushRepositoryCmd.class,session);
-        }
-        return LOG;
+    protected NLog _LOG() {
+        return NLog.of(DefaultNPushRepositoryCmd.class);
     }
 
     @Override
     public NPushRepositoryCmd run() {
-        NSession session = getSession();
+        NSession session = repo.getWorkspace().currentSession();
         NSessionUtils.checkSession(getRepo().getWorkspace(), session);
-        getRepo().security().setSession(session).checkAllowed(NConstants.Permissions.PUSH, "push");
+        getRepo().security().checkAllowed(NConstants.Permissions.PUSH, "push");
         try {
             NRepositoryExt.of(getRepo()).pushImpl(this);
-                _LOGOP(session).level(Level.FINEST).verb(NLogVerb.SUCCESS)
-                        .log(NMsg.ofC("%s push %s", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), getId()));
+            _LOGOP().level(Level.FINEST).verb(NLogVerb.SUCCESS)
+                    .log(NMsg.ofC("%s push %s", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), getId()));
         } catch (RuntimeException ex) {
 
-            if (_LOG(session).isLoggable(Level.FINEST)) {
-                _LOGOP(session).level(Level.FINEST).verb(NLogVerb.FAIL)
+            if (_LOG().isLoggable(Level.FINEST)) {
+                _LOGOP().level(Level.FINEST).verb(NLogVerb.FAIL)
                         .log(NMsg.ofC("%s push %s", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), getId()));
             }
         }

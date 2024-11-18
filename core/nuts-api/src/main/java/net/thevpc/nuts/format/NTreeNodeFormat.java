@@ -26,7 +26,6 @@
  */
 package net.thevpc.nuts.format;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.text.NString;
 
 /**
@@ -41,10 +40,9 @@ public interface NTreeNodeFormat {
     /**
      * format (transform to rich string) object at the given depth
      *
-     * @param object  object to transform
-     * @param depth   tree node depth
-     * @param session session
+     * @param object object to transform
+     * @param depth  tree node depth
      * @return string representation
      */
-    NString format(Object object, int depth, NSession session);
+    NString format(Object object, int depth);
 }

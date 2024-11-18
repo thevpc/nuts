@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.search;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.id.filter.NIdFilterOr;
@@ -54,22 +55,22 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
  */
 public class DefaultNSearchCmd extends AbstractNSearchCmd {
 
-    public DefaultNSearchCmd(NSession session) {
-        super(session);
+    public DefaultNSearchCmd(NWorkspace workspace) {
+        super(workspace);
     }
 
     @Override
     public NSearchCmd copy() {
-        DefaultNSearchCmd b = new DefaultNSearchCmd(getSession());
+        DefaultNSearchCmd b = new DefaultNSearchCmd(getWorkspace());
         b.setAll(this);
         return b;
     }
 
     @Override
     public NFetchCmd toFetch() {
-        checkSession();
-        NFetchCmd t = new DefaultNFetchCmd(getSession()).copyFromDefaultNQueryBaseOptions(this)
-                .setSession(getSession());
+        NSession session=getWorkspace().currentSession();
+        NFetchCmd t = new DefaultNFetchCmd(getWorkspace()).copyFromDefaultNQueryBaseOptions(this)
+                ;
         if (getDisplayOptions().isRequireDefinition()) {
             t.setContent(true);
         }
@@ -87,12 +88,12 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
         boolean searchInInstalled = true;
         boolean searchInOtherRepositories = true;
         if (status != null && Arrays.stream(NInstallStatuses.ALL_DEPLOYED).noneMatch(
-                x -> status.acceptInstallStatus(x, session)
+                x -> status.acceptInstallStatus(x)
         )) {
             searchInInstalled = false;
         }
         if (status != null && Arrays.stream(NInstallStatuses.ALL_UNDEPLOYED).noneMatch(
-                x -> status.acceptInstallStatus(x, session)
+                x -> status.acceptInstallStatus(x)
         )) {
             searchInOtherRepositories = false;
         }
@@ -105,14 +106,14 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                     NInstallStatusFilter status2 = ((NInstallStatusIdFilter) subFilter).getInstallStatus();
                     if (searchInInstalled) {
                         if (status != null && Arrays.stream(NInstallStatuses.ALL_DEPLOYED).noneMatch(
-                                x -> status2.acceptInstallStatus(x, session)
+                                x -> status2.acceptInstallStatus(x)
                         )) {
                             searchInInstalled = false;
                         }
                     }
                     if (searchInOtherRepositories) {
                         if (status != null && Arrays.stream(NInstallStatuses.ALL_UNDEPLOYED).noneMatch(
-                                x -> status2.acceptInstallStatus(x, session)
+                                x -> status2.acceptInstallStatus(x)
                         )) {
                             searchInOtherRepositories = false;
                         }
@@ -124,7 +125,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
             }
         }
 
-        NRepositoryFilters repository = NRepositoryFilters.of(session);
+        NRepositoryFilters repository = NRepositoryFilters.of();
         if (!searchInInstalled && searchInOtherRepositories) {
             otherFilters.add(repository.installedRepo().neg());
         } else if (searchInInstalled && !searchInOtherRepositories) {
@@ -144,14 +145,13 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
 
     //@Override
     private DefaultNSearch build() {
-        checkSession();
-        NSession session = getSession();
+        NSession session=getWorkspace().currentSession();
         HashSet<String> someIds = new HashSet<>();
         for (NId id : this.getIds()) {
             someIds.add(id.toString());
         }
         if (this.getIds().size() == 0 && isCompanion()) {
-            someIds.addAll(this.session.extensions().getCompanionIds().stream().map(NId::getShortName).collect(Collectors.toList()));
+            someIds.addAll(NExtensions.of().getCompanionIds().stream().map(NId::getShortName).collect(Collectors.toList()));
         }
         if (this.getIds().size() == 0 && isRuntime()) {
             someIds.add(NConstants.Ids.NUTS_RUNTIME);
@@ -191,24 +191,24 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                 if (oo.isEmpty()) {
                     idFilter0 = null;
                 } else {
-                    idFilter0 = NIdFilters.of(this.session).any(oo.toArray(new NIdFilter[0]));
+                    idFilter0 = NIdFilters.of().any(oo.toArray(new NIdFilter[0]));
                 }
             }
         }
 
-        NDescriptorFilters dfilter = NDescriptorFilters.of(session);
+        NDescriptorFilters dfilter = NDescriptorFilters.of();
         NDescriptorFilter _descriptorFilter = dfilter.always();
-        NIdFilter _idFilter = NIdFilters.of(this.session).always();
-        NDependencyFilter depFilter = NDependencyFilters.of(session).always();
-        NRepositoryFilter rfilter = NRepositories.of(this.session).filter().always();
+        NIdFilter _idFilter = NIdFilters.of().always();
+        NDependencyFilter depFilter = NDependencyFilters.of().always();
+        NRepositoryFilter rfilter = NRepositories.of().filter().always();
         for (String j : this.getScripts()) {
             if (!NBlankable.isBlank(j)) {
                 if (CoreStringUtils.containsTopWord(j, "descriptor")) {
                     _descriptorFilter = _descriptorFilter.and(dfilter.parse(j));
                 } else if (CoreStringUtils.containsTopWord(j, "dependency")) {
-                    depFilter = depFilter.and(NDependencyFilters.of(session).parse(j));
+                    depFilter = depFilter.and(NDependencyFilters.of().parse(j));
                 } else {
-                    _idFilter = _idFilter.and(NIdFilters.of(session).parse(j));
+                    _idFilter = _idFilter.and(NIdFilters.of().parse(j));
                 }
             }
         }
@@ -221,10 +221,10 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
 
         _idFilter = _idFilter.and(idFilter0);
         if (getInstallStatus() != null) {
-            _idFilter = _idFilter.and(NIdFilters.of(session).byInstallStatus(getInstallStatus()));
+            _idFilter = _idFilter.and(NIdFilters.of().byInstallStatus(getInstallStatus()));
         }
         if (getDefaultVersions() != null) {
-            _idFilter = _idFilter.and(NIdFilters.of(session).byDefaultVersion(getDefaultVersions()));
+            _idFilter = _idFilter.and(NIdFilters.of().byDefaultVersion(getDefaultVersions()));
         }
         if (execType != null) {
             switch (execType) {
@@ -264,9 +264,9 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
             ));
         }
         if (!wildcardIds.isEmpty()) {
-            _idFilter = _idFilter.and(NIdFilters.of(session).byName(wildcardIds.toArray(new String[0])));
+            _idFilter = _idFilter.and(NIdFilters.of().byName(wildcardIds.toArray(new String[0])));
         }
-        NRepositoryFilter extraRepositoryFilter = createRepositoryFilter(installStatus, _idFilter, getSession());
+        NRepositoryFilter extraRepositoryFilter = createRepositoryFilter(installStatus, _idFilter, session);
         if (extraRepositoryFilter != null) {
             _repositoryFilter = _repositoryFilter.and(extraRepositoryFilter);
         }
@@ -322,7 +322,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                 goodIds.toArray(new String[0]),
                 _repositoryFilter,
                 _idFilter, _descriptorFilter,
-                getSession());
+                session);
     }
 
     //    private Collection<NutsId> applyPrintDecoratorCollectionOfNutsId(Collection<NutsId> curr, boolean print) {
@@ -525,7 +525,6 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
         DefaultNSearch search = build();
 
         List<NIterator<? extends NId>> allResults = new ArrayList<>();
-        checkSession();
         NSession session = search.getSession();
         NSessionUtils.checkSession(session.getWorkspace(), session);
         NIdFilter sIdFilter = search.getIdFilter();
@@ -538,11 +537,11 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
 //                search.isSearchInOtherRepositories()
 //        );
         Set<NRepository> consideredRepos = new HashSet<>();
-        NWorkspaceUtils wu = NWorkspaceUtils.of(session);
-        NElements elems = NElements.of(session);
+        NWorkspaceUtils wu = NWorkspaceUtils.of(workspace);
+        NElements elems = NElements.of();
         if (regularIds.length > 0) {
             for (String id : regularIds) {
-                NId nutsId = NId.of(id).get(session);
+                NId nutsId = NId.of(id).get();
                 if (nutsId != null) {
                     List<NId> nutsId2 = new ArrayList<>();
                     if (NBlankable.isBlank(nutsId.getGroupId())) {
@@ -554,15 +553,15 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                             if (!nutsId.getArtifactId().contains("*")) {
                                 NRepositorySPI repoSPI = wu
                                         .repoSPI(NWorkspaceExt.of(getWorkspace()).getInstalledRepository());
-                                NIterator<NId> it = repoSPI.search().setFetchMode(NFetchMode.LOCAL).setFilter(NIdFilters.of(session).byName(
+                                NIterator<NId> it = repoSPI.search().setFetchMode(NFetchMode.LOCAL).setFilter(NIdFilters.of().byName(
                                         nutsId.builder().setGroupId("*").build().toString()
-                                )).setSession(getSession()).getResult();
+                                )).getResult();
                                 installedIds = IteratorUtils.toList(it);
                             }
                             if (!installedIds.isEmpty()) {
                                 nutsId2.addAll(installedIds);
                             } else {
-                                for (String aImport : NImports.of(session).getAllImports()) {
+                                for (String aImport : NImports.of().getAllImports()) {
                                     //example import(net.thevpc),search(pnote) ==>net.thevpc:pnote
                                     nutsId2.add(nutsId.builder().setGroupId(aImport).build());
                                     //example import(net.thevpc),search(pnote) ==>net.thevpc.pnote:pnote
@@ -585,11 +584,11 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                             releaseVersion = true;
                             nutsIdNonLatest = nutsIdNonLatest.builder().setVersion("");
                         }
-                        NIdFilter idFilter2 = NFilters.of(session).all(sIdFilter,
-                                NIdFilters.of(session).byName(nutsIdNonLatest.getFullName())
+                        NIdFilter idFilter2 = NFilters.of().all(sIdFilter,
+                                NIdFilters.of().byName(nutsIdNonLatest.getFullName())
                         );
                         NIdFilter filter = CoreFilterUtils.simplify(CoreFilterUtils.idFilterOf(nutsIdNonLatest.getProperties(),
-                                idFilter2, sDescriptorFilter, session));
+                                idFilter2, sDescriptorFilter));
                         List<NRepositoryAndFetchMode> repositoryAndFetchModes = wu.filterRepositoryAndFetchModes(
                                 NRepositorySupportedAction.SEARCH, nutsIdNonLatest, sRepositoryFilter, fetchMode, session
                         );
@@ -604,14 +603,13 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                                     NRepositorySPI repoSPI = wu.repoSPI(repoAndMode.getRepository());
 
                                     NIterator<NId> z = IteratorBuilder.of(repoSPI.searchVersions().setId(nutsIdNonLatest).setFilter(filter)
-                                                    .setSession(session)
                                                     .setFetchMode(repoAndMode.getFetchMode())
-                                                    .getResult(), session)
+                                                    .getResult())
                                             .named(
                                                     elems.ofObject()
                                                             .set("description", "searchVersions")
                                                             .set("repository", repoAndMode.getRepository().getName())
-                                                            .set("filter", NEDesc.describeResolveOrDestruct(filter, session))
+                                                            .set("filter", NEDesc.describeResolveOrDestruct(filter))
                                                             .build()
                                             ).safeIgnore().iterator();
                                     z = filterLatestAndDuplicatesThenSort(z, isLatest() || latestVersion || releaseVersion, isDistinct(), false);
@@ -626,11 +624,11 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                     }
                     if (nutsId.getGroupId() == null) {
                         //now will look with *:artifactId pattern
-                        NSearchCmd search2 = NSearchCmd.of(session)
+                        NSearchCmd search2 = NSearchCmd.of()
                                 .setRepositoryFilter(search.getRepositoryFilter())
                                 .setDescriptorFilter(search.getDescriptorFilter());
                         search2.setIdFilter(
-                                NIdFilters.of(session).byName(nutsId.builder().setGroupId("*").build().toString())
+                                NIdFilters.of().byName(nutsId.builder().setGroupId("*").build().toString())
                                         .and(search.getIdFilter())
                         );
                         NIterator<NId> extraResult = search2.getResultIds().iterator();
@@ -644,7 +642,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                 }
             }
         } else {
-            NIdFilter filter = CoreFilterUtils.simplify(CoreFilterUtils.idFilterOf(null, sIdFilter, sDescriptorFilter, session));
+            NIdFilter filter = CoreFilterUtils.simplify(CoreFilterUtils.idFilterOf(null, sIdFilter, sDescriptorFilter));
 
             List<NIterator<? extends NId>> all = new ArrayList<>();
             for (NRepositoryAndFetchMode repoAndMode : wu.filterRepositoryAndFetchModes(
@@ -655,15 +653,15 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                 NSession finalSession1 = session;
                 all.add(
                         IteratorBuilder.of(wu.repoSPI(repoAndMode.getRepository()).search()
-                                        .setFilter(filter).setSession(finalSession1)
+                                        .setFilter(filter)
                                         .setFetchMode(repoAndMode.getFetchMode())
-                                        .getResult(), session).safeIgnore()
+                                        .getResult()).safeIgnore()
                                 .named(
                                         elems.ofObject()
                                                 .set("description", "searchRepository")
                                                 .set("repository", repoAndMode.getRepository().getName())
                                                 .set("fetchMode", repoAndMode.getFetchMode().id())
-                                                .set("filter", NEDesc.describeResolveOrDestruct(filter, session))
+                                                .set("filter", NEDesc.describeResolveOrDestruct(filter))
                                                 .build()
                                 ).iterator()
                 );
@@ -681,13 +679,13 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
             baseIterator = filterLatestAndDuplicatesThenSort(baseIterator, isLatest(), isDistinct(), false);
             //now include dependencies
             NIterator<NId> curr = baseIterator;
-            baseIterator = IteratorBuilder.of(curr, session)
+            baseIterator = IteratorBuilder.of(curr)
                     .flatMap(
                             NFunction.of(
                                             (NId x) -> IteratorBuilder.of(
                                                     toFetch().setId(x).setContent(false)
-                                                            .setDependencies(true).getResultDefinition().getDependencies().get(session).transitiveWithSource().iterator(),
-                                                    session).build())
+                                                            .setDependencies(true).getResultDefinition().getDependencies().get().transitiveWithSource().iterator()
+                                            ).build())
                                     .withDesc(NEDesc.of("getDependencies"))
                     ).map(NFunction.of(NDependency::toId)
                             .withDesc(NEDesc.of("DependencyToId"))
@@ -826,10 +824,11 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
     private NIterator<NId> filterLatestAndDuplicatesThenSort(NIterator<NId> baseIterator, boolean latest, boolean distinct, boolean sort) {
         //ff ft tt tf
         NIterator<NId> r;
+        NSession session=getWorkspace().currentSession();
         if (!latest && !distinct) {
             r = baseIterator;
         } else if (!latest && distinct) {
-            r = IteratorBuilder.of(baseIterator, session).distinct(
+            r = IteratorBuilder.of(baseIterator).distinct(
                     NFunction.of(
                             (NId nutsId) -> nutsId.getLongId()
                                     .toString())
@@ -847,12 +846,12 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                             }
                         }
                         return visited.values().iterator();
-                    }, e -> NEDesc.describeResolveOrDestructAsObject(baseIterator, session)
+                    }, () -> NEDesc.describeResolveOrDestructAsObject(baseIterator)
                             .builder()
                             .set("latest", true)
                             .set("distinct", true)
-                            .build(),
-                    session).build();
+                            .build()
+            ).build();
         } else /*if (latest && !distinct)*/ {
             r = IteratorBuilder.ofSupplier(() -> {
                                 Map<String, List<NId>> visited = new LinkedHashMap<>();
@@ -867,13 +866,13 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                                         oldList.add(nutsId);
                                     }
                                 }
-                                return IteratorBuilder.ofFlatMap(NIterator.of(visited.values().iterator(),session).withDesc(NEDesc.of("visited")), session).build();
-                            }, e -> NEDesc.describeResolveOrDestructAsObject(baseIterator, session)
+                                return IteratorBuilder.ofFlatMap(NIterator.of(visited.values().iterator()).withDesc(NEDesc.of("visited"))).build();
+                            }, () -> NEDesc.describeResolveOrDestructAsObject(baseIterator)
                                     .builder()
                                     .set("latest", true)
                                     .set("duplicates", true)
-                                    .build(),
-                            session)
+                                    .build()
+                    )
                     .build();
         }
         if (sort) {

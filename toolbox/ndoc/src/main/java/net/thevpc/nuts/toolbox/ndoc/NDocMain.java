@@ -22,32 +22,32 @@ public class NDocMain implements NApplication, NCmdLineRunner {
     }
 
     @Override
-    public void run(NSession session) {
+    public void run() {
+        NSession session = NSession.of().get();
         session.runAppCmdLine(this);
     }
 
     @Override
     public boolean nextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
-        NSession session = cmdLine.getSession();
         switch (option.key()) {
             case "-s":
             case "--source": {
-                cmdLine.withNextEntry((v, r, s) -> src.add(v));
+                cmdLine.withNextEntry((v, r) -> src.add(v));
                 return true;
             }
             case "-t":
             case "--target": {
-                cmdLine.withNextEntry((v, r, s) -> target=v);
+                cmdLine.withNextEntry((v, r) -> target=v);
                 return true;
             }
             case "-p":
             case "--package": {
-                cmdLine.withNextEntry((v, r, s) -> pck.add(v));
+                cmdLine.withNextEntry((v, r) -> pck.add(v));
                 return true;
             }
             case "-b":
             case "--backend": {
-                cmdLine.withNextEntry((v, r, s) -> backend=v);
+                cmdLine.withNextEntry((v, r) -> backend=v);
                 return true;
             }
         }

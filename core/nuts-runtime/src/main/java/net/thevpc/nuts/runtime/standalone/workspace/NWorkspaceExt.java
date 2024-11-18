@@ -12,6 +12,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
 import net.thevpc.nuts.spi.NInstallerComponent;
 import net.thevpc.nuts.text.NText;
 
+import java.util.Stack;
+
 /**
  * @author thevpc
  */
@@ -25,27 +27,27 @@ public interface NWorkspaceExt {
         return (NWorkspaceExt) ws;
     }
 
-    NText getWelcomeText(NSession session);
+    NText getWelcomeText();
 
-    NText getHelpText(NSession session);
+    NText getHelpText();
 
-    NText getLicenseText(NSession session);
+    NText getLicenseText();
 
-    NText resolveDefaultHelp(Class clazz, NSession session);
+    NText resolveDefaultHelp(Class<?> clazz);
 
-    NId resolveEffectiveId(NDescriptor descriptor, NSession options);
+    NId resolveEffectiveId(NDescriptor descriptor);
 
-    NIdType resolveNutsIdType(NId id, NSession session);
+    NIdType resolveNutsIdType(NId id);
 
-    NInstallerComponent getInstaller(NDefinition nutToInstall, NSession session);
+    NInstallerComponent getInstaller(NDefinition nutToInstall);
 
-    void requireImpl(NDefinition def, boolean withDependencies, NId[] forId, NSession session);
+    void requireImpl(NDefinition def, boolean withDependencies, NId[] forId);
 
-    void installImpl(NDefinition def, String[] args, boolean updateDefaultVersion, NSession session);
+    void installImpl(NDefinition def, String[] args, boolean updateDefaultVersion);
 
-    void updateImpl(NDefinition def, String[] args, boolean updateDefaultVersion, NSession session);
+    void updateImpl(NDefinition def, String[] args, boolean updateDefaultVersion);
 
-    void uninstallImpl(NDefinition def, String[] args, boolean runInstaller, boolean deleteFiles, boolean eraseFiles, boolean traceBeforeEvent, NSession session);
+    void uninstallImpl(NDefinition def, String[] args, boolean runInstaller, boolean deleteFiles, boolean eraseFiles, boolean traceBeforeEvent);
 
     /**
      * true when runtime extension is required for running this workspace. A
@@ -55,22 +57,21 @@ public interface NWorkspaceExt {
      * <code>NutsConstants.ENV_KEY_EXCLUDE_RUNTIME_EXTENSION</code> is forced to
      * false
      *
-     * @param session session
      * @return true when runtime extension is required for running this
      * workspace
      */
-    boolean requiresRuntimeExtension(NSession session);
+    boolean requiresRuntimeExtension();
 
     //    @Override
-    NDescriptor resolveEffectiveDescriptor(NDescriptor descriptor, NSession session);
+    NDescriptor resolveEffectiveDescriptor(NDescriptor descriptor);
 
     NInstalledRepository getInstalledRepository();
 
-    NInstallStatus getInstallStatus(NId id, boolean checkDependencies, NSession session);
+    NInstallStatus getInstallStatus(NId id, boolean checkDependencies);
 
     NExecutionContextBuilder createExecutionContext();
 
-    void deployBoot(NSession session, NId def, boolean withDependencies);
+    void deployBoot(NId def, boolean withDependencies);
 
     NSession defaultSession();
 
@@ -78,5 +79,8 @@ public interface NWorkspaceExt {
 
     String getInstallationDigest();
 
-    void setInstallationDigest(String value,NSession session);
+    void setInstallationDigest(String value);
+
+    Stack<NSession> sessionScopes();
+
 }

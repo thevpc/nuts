@@ -26,7 +26,6 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.NException;
-import net.thevpc.nuts.NSession;
 
 /**
  * Generic exception to be thrown when an optional is erroneous is not found.
@@ -42,12 +41,11 @@ public class NOptionalErrorException extends NException {
      * The cause is not initialized, and may subsequently be initialized by a
      * call to {@link #initCause}.
      *
-     * @param session the workspace of this Nuts Exception
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public NOptionalErrorException(NSession session, NMsg message) {
-        super(session, message);
+    public NOptionalErrorException(NMsg message) {
+        super(message);
     }
 
     /**
@@ -64,10 +62,9 @@ public class NOptionalErrorException extends NException {
      *                {@link #getCause()} method).  (A {@code null} value is
      *                permitted, and indicates that the cause is nonexistent or
      *                unknown.)
-     * @param session the workspace of this Nuts Exception
      */
-    public NOptionalErrorException(NSession session, NMsg message, Throwable cause) {
-        super(session, message, cause);
+    public NOptionalErrorException(NMsg message, Throwable cause) {
+        super(message, cause);
     }
 
     /**
@@ -82,9 +79,8 @@ public class NOptionalErrorException extends NException {
      *                           or disabled
      * @param writableStackTrace whether or not the stack trace should
      *                           be writable
-     * @param session            the workspace of this Nuts Exception
      */
-    public NOptionalErrorException(NSession session, NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(session, message, cause, enableSuppression, writableStackTrace);
+    public NOptionalErrorException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
     }
 }

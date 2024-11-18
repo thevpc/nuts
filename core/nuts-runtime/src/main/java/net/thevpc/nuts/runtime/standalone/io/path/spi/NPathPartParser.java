@@ -1,7 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
-import net.thevpc.nuts.NSession;
-
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.StringReader;
@@ -9,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NPathPartParser {
-    public static NPathPartList parseParts(String ttt, NSession session) {
+    public static NPathPartList parseParts(String ttt) {
         PushbackReader r = new PushbackReader(new StringReader(ttt == null ? "" : ttt));
         List<NPathPart> all = new ArrayList<>();
         try {
@@ -49,6 +47,6 @@ public class NPathPartParser {
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }
-        return new NPathPartList(all,session);
+        return new NPathPartList(all);
     }
 }

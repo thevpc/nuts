@@ -1,6 +1,5 @@
 package net.thevpc.nuts.reserved.util;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NFunction3;
@@ -31,8 +30,8 @@ public class NFunction3WithDescription<A, B, C, V> implements NFunction3<A, B, C
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return NEDesc.safeDescribe(session,
+    public NElement describe() {
+        return NEDesc.safeDescribe(
                 description,
                 NEDesc.ofPossibleDescribable(base),
                 NEDesc.ofLateToString(this)

@@ -112,62 +112,62 @@ public class DocusaurusProject {
     }
 
     public NObjectElement getSidebars() {
-        return loadModuleExportsFile("sidebars.js").asObject().orElse(NObjectElement.ofEmpty(session));
+        return loadModuleExportsFile("sidebars.js").asObject().orElse(NObjectElement.ofEmpty());
     }
 
     public String getTitle() {
-        return getConfig().getString("title").get(session);
+        return getConfig().getString("title").get();
     }
 
     public String getProjectName() {
-        return getConfig().getString("projectName").get(session);
+        return getConfig().getString("projectName").get();
     }
 
     public NObjectElement getConfigBaseConfig() {
         if (jsConfig) {;
-            return loadModuleExportsFile("docusaurus.config.js").asObject().orElse(NObjectElement.ofEmpty(session));
+            return loadModuleExportsFile("docusaurus.config.js").asObject().orElse(NObjectElement.ofEmpty());
         }
         if (tsConfig) {;
-            return loadModuleExportsFile("docusaurus.config.ts").asObject().orElse(NObjectElement.ofEmpty(session));
+            return loadModuleExportsFile("docusaurus.config.ts").asObject().orElse(NObjectElement.ofEmpty());
         }
         throw new IllegalArgumentException("unexpected config");
     }
 
     public NObjectElement getConfigAsciiDoctor() {
-        NPath newPath = NPath.of(Paths.get(resolvePath(".dir-template/ndocusaurus.config.json")), session);
+        NPath newPath = NPath.of(Paths.get(resolvePath(".dir-template/ndocusaurus.config.json")));
         if (newPath.exists()) {
-            return NElements.of(session).json().parse(newPath, NObjectElement.class)
-                    .getObjectByPath("asciidoctor").get(session);
+            return NElements.of().json().parse(newPath, NObjectElement.class)
+                    .getObjectByPath("asciidoctor").get();
         }
-        return getConfigBaseConfig().getObjectByPath("customFields", "asciidoctor").get(session);
+        return getConfigBaseConfig().getObjectByPath("customFields", "asciidoctor").get();
     }
 
     public NObjectElement getConfigDocusaurus() {
-        return getConfigBaseConfig().getObjectByPath("customFields", "asciidoctor").get(session);
+        return getConfigBaseConfig().getObjectByPath("customFields", "asciidoctor").get();
     }
 
     public NObjectElement getConfigDocusaurusExtra() {
-        NPath newPath = NPath.of(Paths.get(resolvePath(".dir-template/ndocusaurus.config.json")), session);
+        NPath newPath = NPath.of(Paths.get(resolvePath(".dir-template/ndocusaurus.config.json")));
         if (newPath.exists()) {
-            return NElements.of(session).json().parse(newPath, NObjectElement.class)
-                    .getObjectByPath("docusaurus").get(session);
+            return NElements.of().json().parse(newPath, NObjectElement.class)
+                    .getObjectByPath("docusaurus").get();
         }
-        return getConfigBaseConfig().getObjectByPath("customFields", "docusaurus").get(session);
+        return getConfigBaseConfig().getObjectByPath("customFields", "docusaurus").get();
     }
 
     public NObjectElement getConfigCustom() {
-        NPath newPath = NPath.of(Paths.get(resolvePath(".dir-template/ndocusaurus.config.json")), session);
+        NPath newPath = NPath.of(Paths.get(resolvePath(".dir-template/ndocusaurus.config.json")));
         if (newPath.exists()) {
-            return NElements.of(session).json().parse(newPath, NObjectElement.class)
+            return NElements.of().json().parse(newPath, NObjectElement.class)
                     ;
         }
-        return getConfigBaseConfig().getObjectByPath("customFields").get(session);
+        return getConfigBaseConfig().getObjectByPath("customFields").get();
     }
 
     public NObjectElement getConfig() {
-        NPath newPath = NPath.of(Paths.get(resolvePath(".dir-template/ndocusaurus.config.json")), session);
+        NPath newPath = NPath.of(Paths.get(resolvePath(".dir-template/ndocusaurus.config.json")));
         if (newPath.exists()) {
-            return NElements.of(session).json().parse(newPath, NObjectElement.class);
+            return NElements.of().json().parse(newPath, NObjectElement.class);
         }
         return getConfigBaseConfig();
     }
@@ -185,7 +185,7 @@ public class DocusaurusProject {
         try {
             a = new String(Files.readAllBytes(Paths.get(resolvePath(path))));
         } catch (IOException ex) {
-            return NElements.of(session).ofNull();
+            return NElements.of().ofNull();
         }
         //(?s) stands for single line mode in which the dot includes line breaks
         Pattern p = Pattern.compile("(?s)module.exports[ ]*=[ ]*(?<json>.*[^;])[;]?");
@@ -194,7 +194,7 @@ public class DocusaurusProject {
         if (matcher.find()) {
             json = matcher.group("json");
             if (json != null) {
-                return NElements.of(session).json()
+                return NElements.of().json()
                         .parse(json, NElement.class);
             }
         }
@@ -204,14 +204,14 @@ public class DocusaurusProject {
         if (matcher.find()) {
             json = matcher.group("json");
             if (json != null) {
-                return NElements.of(session).json()
+                return NElements.of().json()
                         .parse(json, NElement.class);
             }
         }
         if (json == null) {
-            return NElements.of(session).ofObject().build();
+            return NElements.of().ofObject().build();
         }
-        return NElements.of(session).json()
+        return NElements.of().json()
                 .parse(json, NElement.class);
     }
 
@@ -283,11 +283,11 @@ public class DocusaurusProject {
         if (a.isString()) {
             return new DocusaurusFileOrFolder[]{
                 //DocusaurusUtils.concatPath(path, member.getValue().asString())
-                root.getPage(a.asString().get(session), true, null)
+                root.getPage(a.asString().get(), true, null)
             };
         } else if (a.isArray()) {
             List<DocusaurusFileOrFolder> aa = new ArrayList<>();
-            for (NElement ljson : a.asArray().get(session)) {
+            for (NElement ljson : a.asArray().get()) {
                 aa.addAll(Arrays.asList(LJSON_to_DocusaurusFileOrFolder_list(ljson, root)));
             }
             return aa.toArray(new DocusaurusFileOrFolder[0]);
@@ -295,7 +295,7 @@ public class DocusaurusProject {
             List<DocusaurusFileOrFolder> aa = new ArrayList<>();
             int order = 0;
             //detect effective folder from children
-            for (NElementEntry member : a.asObject().get(session)) {
+            for (NElementEntry member : a.asObject().get()) {
                 DocusaurusFileOrFolder[] cc = LJSON_to_DocusaurusFileOrFolder_list(member.getValue(), root);
                 String rootPath = root.getPath();
                 Path parentPath = detectFileParent(cc);
@@ -307,10 +307,10 @@ public class DocusaurusProject {
                     }
                 }
                 aa.add(new DocusaurusFolder(
-                        member.getKey().asString().get(session),//no id  here!
-                        member.getKey().asString().get(session),
+                        member.getKey().asString().get(),//no id  here!
+                        member.getKey().asString().get(),
                         ++order,
-                        NElements.of(session).ofObject().build(),
+                        NElements.of().ofObject().build(),
                         cc,
                         resolveFolderContent(parentPath), parentPath == null ? null : parentPath.toString()
                 ));
@@ -349,7 +349,7 @@ public class DocusaurusProject {
         DocusaurusFileOrFolder[] someSidebars = LJSON_to_DocusaurusFileOrFolder_list(getSidebars()
                 .get("someSidebar").orNull(), getPhysicalDocsFolder());
         return new DocusaurusFolder("/", "/", 0,
-                NElements.of(session).ofObject().build(), someSidebars, resolveFolderContent(getPhysicalDocsFolderBasePath()),
+                NElements.of().ofObject().build(), someSidebars, resolveFolderContent(getPhysicalDocsFolderBasePath()),
                 getPhysicalDocsFolder().getPath()
         );
     }

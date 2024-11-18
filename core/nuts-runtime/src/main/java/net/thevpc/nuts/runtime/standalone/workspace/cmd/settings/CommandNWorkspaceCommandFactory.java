@@ -15,10 +15,10 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
     private String[] findCommand;
     private String[] execCommand;
     private String[] listCommand;
-    private NSession session;
+    private NWorkspace workspace;
 
-    public CommandNWorkspaceCommandFactory(NSession session) {
-        this.session = session;
+    public CommandNWorkspaceCommandFactory(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
     public void configure(NCommandFactoryConfig config) {
@@ -33,7 +33,7 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
             findCommand = validateCommand(p.get("find"));
             execCommand = validateCommand(p.get("exec"));
             String slistCommand = p.get("list");
-            listCommand = slistCommand == null ? new String[0] : NCmdLine.of(slistCommand, NShellFamily.BASH, session).setExpandSimpleOptions(false).toStringArray();
+            listCommand = slistCommand == null ? new String[0] : NCmdLine.of(slistCommand, NShellFamily.BASH).setExpandSimpleOptions(false).toStringArray();
             if (listCommand.length > 0 && !listCommand[0].contains(":")) {
                 listCommand = new String[0];
             }
@@ -54,7 +54,7 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
         if (command == null) {
             return new String[0];
         }
-        String[] commandArr = NCmdLine.of(command, NShellFamily.BASH, session).setExpandSimpleOptions(false).toStringArray();
+        String[] commandArr = NCmdLine.of(command, NShellFamily.BASH).setExpandSimpleOptions(false).toStringArray();
         if (commandArr.length == 0) {
             return commandArr;
         }
@@ -86,11 +86,11 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
     }
 
     @Override
-    public NCommandConfig findCommand(String name, NSession session) {
+    public NCommandConfig findCommand(String name) {
         if (findCommand.length > 0 && execCommand.length > 0) {
             String[] fc = replaceParam(findCommand, name);
             String[] ec = replaceParam(execCommand, name);
-            NExecCmd exec = NExecCmd.of(session).addCommand(fc)
+            NExecCmd exec = NExecCmd.of().addCommand(fc)
                     //                        .setExecutorOptions("--show-command")
                     .grabAll()
                     .run();
@@ -98,7 +98,7 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
             if (r == 0) {
                 return new NCommandConfig()
                         .setFactoryId(getFactoryId())
-                        .setOwner(NId.of(ec[0]).get(session))
+                        .setOwner(NId.of(ec[0]).get())
                         .setName(name)
                         .setCommand(Arrays.copyOfRange(ec, 1, ec.length));
             }
@@ -107,10 +107,10 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
     }
 
     @Override
-    public List<NCommandConfig> findCommands(NSession session) {
+    public List<NCommandConfig> findCommands() {
         List<NCommandConfig> c = new ArrayList<>();
         if (listCommand.length > 0) {
-            NExecCmd b = NExecCmd.of(session).addCommand(listCommand)
+            NExecCmd b = NExecCmd.of().addCommand(listCommand)
                     .grabAll();
             int r = b.getResultCode();
             if (r == 0) {

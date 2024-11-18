@@ -39,24 +39,22 @@ public class NNotInstallableException extends NInstallationException {
     /**
      * Constructs a new NutsNotInstallableException exception
      *
-     * @param session workspace
-     * @param id      artifact
+     * @param id artifact
      */
-    public NNotInstallableException(NSession session, NId id) {
-        this(session, id, null, null);
+    public NNotInstallableException(NId id) {
+        this(id, null, null);
     }
 
 
     /**
      * Constructs a new NutsNotInstallableException exception
      *
-     * @param session workspace
-     * @param id      artifact
-     * @param msg     message
-     * @param ex      exception
+     * @param id  artifact
+     * @param msg message
+     * @param ex  exception
      */
-    public NNotInstallableException(NSession session, NId id, NMsg msg, Exception ex) {
-        super(session, id,
+    public NNotInstallableException(NId id, NMsg msg, Exception ex) {
+        super(id,
                 msg == null ? NMsg.ofC("not installed %s", (id == null ? "<null>" : id)) : msg, ex);
     }
 }

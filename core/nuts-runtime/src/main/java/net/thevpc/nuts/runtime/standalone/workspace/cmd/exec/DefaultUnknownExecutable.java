@@ -16,16 +16,17 @@ import net.thevpc.nuts.util.NMsg;
 public class DefaultUnknownExecutable extends AbstractNExecutableInformationExt {
 
 
-    public DefaultUnknownExecutable(String[] cmd, NExecCmd execCommand) {
-        super(cmd[0], NCmdLine.of(cmd).toString(), NExecutableType.UNKNOWN,execCommand);
+    public DefaultUnknownExecutable(NWorkspace workspace,String[] cmd, NExecCmd execCommand) {
+        super(workspace,cmd[0], NCmdLine.of(cmd).toString(), NExecutableType.UNKNOWN,execCommand);
     }
 
     @Override
     public int execute() {
-        if(getSession().isDry()){
-            throw new NExecutionException(getSession(), NMsg.ofC("cannot execute an unknown command : %s", name), NExecutionException.ERROR_1);
+        NSession session = workspace.currentSession();
+        if(session.isDry()){
+            throw new NExecutionException(NMsg.ofC("cannot execute an unknown command : %s", name), NExecutionException.ERROR_1);
         }else {
-            throw new NExecutionException(getSession(), NMsg.ofC("cannot execute an unknown command : %s", name), NExecutionException.ERROR_1);
+            throw new NExecutionException(NMsg.ofC("cannot execute an unknown command : %s", name), NExecutionException.ERROR_1);
         }
     }
 

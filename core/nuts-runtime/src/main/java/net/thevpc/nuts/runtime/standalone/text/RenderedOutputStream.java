@@ -5,8 +5,7 @@ import net.thevpc.nuts.NWorkspace;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.runtime.standalone.io.outputstream.OutputStreamHelper;
+
 import net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamBase;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamRaw;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
@@ -15,18 +14,16 @@ public class RenderedOutputStream extends OutputStream implements NOutputStreamT
 
     FormatOutputStreamSupport h;
     OutputStream out;
-    NSession session;
-    NWorkspace ws;
+    NWorkspace workspace;
     NSystemTerminalBase terminal;
 
-    public RenderedOutputStream(OutputStream out, NSystemTerminalBase terminal, boolean filtered, NSession session) {
+    public RenderedOutputStream(OutputStream out, NSystemTerminalBase terminal, boolean filtered, NWorkspace workspace) {
         this.out = out;
-        this.session = session;
-        this.ws = session.getWorkspace();
+        this.workspace = workspace;
         this.terminal=terminal;
         h = new FormatOutputStreamSupport(
-                new NPrintStreamRaw(out,true,null,session,new NPrintStreamBase.Bindings(), terminal)
-                , session,terminal,filtered);
+                new NPrintStreamRaw(out,true,null, workspace,new NPrintStreamBase.Bindings(), terminal)
+                , workspace,terminal,filtered);
     }
 
     public NSystemTerminalBase getTerminal() {

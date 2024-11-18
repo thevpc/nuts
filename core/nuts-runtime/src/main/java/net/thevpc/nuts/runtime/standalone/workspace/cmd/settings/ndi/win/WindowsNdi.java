@@ -1,10 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.win;
 
-import net.thevpc.nuts.NEnvs;
-import net.thevpc.nuts.NId;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.FreeDesktopEntryWriter;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NdiScriptInfo;
@@ -19,12 +16,12 @@ import java.util.Set;
 
 public class WindowsNdi extends BaseSystemNdi {
 
-    public WindowsNdi(NSession session) {
-        super(session);
+    public WindowsNdi(NWorkspace workspace) {
+        super(workspace);
     }
 
     protected NShellFamily[] getShellGroups() {
-        Set<NShellFamily> all=new LinkedHashSet<>(NEnvs.of(session).getShellFamilies());
+        Set<NShellFamily> all=new LinkedHashSet<>(NEnvs.of().getShellFamilies());
         all.retainAll(Arrays.asList(NShellFamily.WIN_CMD, NShellFamily.WIN_POWER_SHELL));
         return all.toArray(new NShellFamily[0]);
     }
@@ -80,8 +77,8 @@ public class WindowsNdi extends BaseSystemNdi {
     @Override
     protected FreeDesktopEntryWriter createFreeDesktopEntryWriter() {
         return new WindowFreeDesktopEntryWriter(
-                NEnvs.of(session).getDesktopPath()==null?null: NPath.of(NEnvs.of(session).getDesktopPath(),getSession())
-                , session);
+                NEnvs.of().getDesktopPath()==null?null: NPath.of(NEnvs.of().getDesktopPath())
+                , workspace);
     }
 
     protected int resolveIconExtensionPriority(String extension) {

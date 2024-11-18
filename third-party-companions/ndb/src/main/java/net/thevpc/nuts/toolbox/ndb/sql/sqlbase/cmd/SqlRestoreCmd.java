@@ -28,20 +28,20 @@ public class SqlRestoreCmd<C extends NdbConfig> extends RestoreCmd<C> {
         return (SqlSupport<C>) super.getSupport();
     }
 
-    public void run(NSession session, NCmdLine cmdLine) {
+    public void run(NCmdLine cmdLine) {
         NRef<AtName> name = NRef.ofNull(AtName.class);
         NRef<NPath> file = NRef.ofNull(NPath.class);
         C otherOptions = createConfigInstance();
         while (cmdLine.hasNext()) {
             if (cmdLine.isNextOption()) {
-                switch (cmdLine.peek().get(session).key()) {
+                switch (cmdLine.peek().get().key()) {
                     case "--name": {
-                        readConfigNameOption(cmdLine, session, name);
+                        readConfigNameOption(cmdLine, name);
                         break;
                     }
                     case "--file": {
-                        cmdLine.withNextEntry((v, a, s) -> {
-                            file.set(NPath.of(v, s));
+                        cmdLine.withNextEntry((v, a) -> {
+                            file.set(NPath.of(v));
                         });
                         break;
                     }
@@ -53,22 +53,22 @@ public class SqlRestoreCmd<C extends NdbConfig> extends RestoreCmd<C> {
                 cmdLine.throwUnexpectedArgument();
             }
         }
-        String dumpExt = getSupport().getDumpExt(otherOptions, session);
+        String dumpExt = getSupport().getDumpExt(otherOptions);
 
         C options = loadFromName(name, otherOptions);
         NPath sqlFile;
         revalidateOptions(options);
-        getSupport().prepareDump(options, session);
+        getSupport().prepareDump(options);
         if (file.get() == null) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("missing file"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("missing file"));
         } else {
             if (file.get().isDirectory()) {
 
             }
             if (file.get().getName().toLowerCase().endsWith(".sql")) {
                 sqlFile = file.get();
-                CmdRedirect restoreCommand = getSupport().createRestoreCommand(sqlFile, options, session);
-                NExecCmd nExecCmd = sysCmd(session).addCommand(restoreCommand.getCmd().toStringArray());
+                CmdRedirect restoreCommand = getSupport().createRestoreCommand(sqlFile, options);
+                NExecCmd nExecCmd = sysCmd().addCommand(restoreCommand.getCmd().toStringArray());
                 if (restoreCommand.getPath() != null) {
                     nExecCmd.setIn(NExecInput.ofPath(restoreCommand.getPath()));
                 }
@@ -83,7 +83,7 @@ public class SqlRestoreCmd<C extends NdbConfig> extends RestoreCmd<C> {
                             file.get().resolveSibling(fileName).mkdirs();
                         } else {
                             if (fileName.endsWith(dumpExt)) {
-                                NPath newFile = file.get().resolveSibling(NPath.of(fileName, session).getName());
+                                NPath newFile = file.get().resolveSibling(NPath.of(fileName).getName());
                                 newFile.getParent().mkdirs();
                                 try (OutputStream fos = newFile.getOutputStream()) {
                                     byte[] buffer = new byte[2048];
@@ -94,8 +94,8 @@ public class SqlRestoreCmd<C extends NdbConfig> extends RestoreCmd<C> {
                                     zis.closeEntry();
                                 }
 
-                                CmdRedirect restoreCommand = getSupport().createRestoreCommand(newFile, options, session);
-                                NExecCmd nExecCmd = sysCmd(session).addCommand(restoreCommand.getCmd().toStringArray());
+                                CmdRedirect restoreCommand = getSupport().createRestoreCommand(newFile, options);
+                                NExecCmd nExecCmd = sysCmd().addCommand(restoreCommand.getCmd().toStringArray());
                                 if (restoreCommand.getPath() != null) {
                                     nExecCmd.setIn(NExecInput.ofPath(restoreCommand.getPath()));
                                 }
@@ -107,10 +107,10 @@ public class SqlRestoreCmd<C extends NdbConfig> extends RestoreCmd<C> {
                     }
                     zis.closeEntry();
                 } catch (IOException ex) {
-                    throw new NIOException(session, ex);
+                    throw new NIOException(ex);
                 }
             } else {
-                throw new NIllegalArgumentException(session, NMsg.ofPlain("missing file"));
+                throw new NIllegalArgumentException(NMsg.ofPlain("missing file"));
             }
         }
     }

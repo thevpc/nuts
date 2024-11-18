@@ -20,23 +20,23 @@ public class NPrintStreamRaw extends NPrintStreamBase {
     protected OutputStream out;
     private PrintStream base;
 
-    protected NPrintStreamRaw(OutputStream out, PrintStream base, Boolean autoFlush, NTerminalMode mode, NSession session, Bindings bindings, NSystemTerminalBase term) {
-        super(autoFlush == null || autoFlush, mode, session, bindings, term);
-        getMetaData().setMessage(NMsg.ofNtf(NTexts.of(session).ofStyled("<raw-stream>", NTextStyle.path())));
+    protected NPrintStreamRaw(OutputStream out, PrintStream base, Boolean autoFlush, NTerminalMode mode, NWorkspace workspace, Bindings bindings, NSystemTerminalBase term) {
+        super(autoFlush == null || autoFlush, mode, workspace, bindings, term);
+        getMetaData().setMessage(NMsg.ofNtf(NTexts.of().ofStyled("<raw-stream>", NTextStyle.path())));
         this.out = out;
         this.base = base;
     }
 
-    public NPrintStreamRaw(OutputStream out, Boolean autoFlush, String encoding, NSession session, Bindings bindings, NSystemTerminalBase term) {
-        this(out, null, autoFlush, encoding, session, bindings, term);
+    public NPrintStreamRaw(OutputStream out, Boolean autoFlush, String encoding, NWorkspace workspace, Bindings bindings, NSystemTerminalBase term) {
+        this(out, null, autoFlush, encoding, workspace, bindings, term);
     }
 
     public NPrintStreamRaw(OutputStream out, NTerminalMode mode, Boolean autoFlush,
-                           String encoding, NSession session,
+                           String encoding, NWorkspace workspace,
                            Bindings bindings,
                            NSystemTerminalBase term) {
-        super(true, mode == null ? NTerminalMode.INHERITED : mode, session, bindings, term);
-        getMetaData().setMessage(NMsg.ofNtf(NTexts.of(session).ofStyled("<raw-stream>", NTextStyle.path())));
+        super(true, mode == null ? NTerminalMode.INHERITED : mode, workspace, bindings, term);
+        getMetaData().setMessage(NMsg.ofNtf(NTexts.of().ofStyled("<raw-stream>", NTextStyle.path())));
         this.out = out;
         if (out instanceof PrintStream) {
             PrintStream ps = (PrintStream) out;
@@ -124,17 +124,8 @@ public class NPrintStreamRaw extends NPrintStreamBase {
         return this;
     }
 
-
     @Override
-    public NPrintStream setSession(NSession session) {
-        if (session == null || session == this.session) {
-            return this;
-        }
-        return new NPrintStreamRaw(out, base, autoFlash, getTerminalMode(), session, new Bindings(), getTerminal());
-    }
-
-    @Override
-    public NPrintStream run(NTerminalCmd command, NSession session) {
+    public NPrintStream run(NTerminalCmd command) {
         return this;
     }
 
@@ -142,10 +133,10 @@ public class NPrintStreamRaw extends NPrintStreamBase {
     protected NPrintStream convertImpl(NTerminalMode other) {
         switch (other) {
             case FORMATTED: {
-                return new NPrintStreamFormatted(this, getSession(), bindings);
+                return new NPrintStreamFormatted(this, workspace, bindings);
             }
             case FILTERED: {
-                return new NPrintStreamFiltered(this, getSession(), bindings);
+                return new NPrintStreamFiltered(this, workspace, bindings);
             }
             case ANSI: {
                 if(this.getTerminalMode()==NTerminalMode.INHERITED){
@@ -154,7 +145,7 @@ public class NPrintStreamRaw extends NPrintStreamBase {
                 break;
             }
         }
-        throw new NIllegalArgumentException(getSession(), NMsg.ofC("unsupported %s -> %s", getTerminalMode(), other));
+        throw new NIllegalArgumentException(NMsg.ofC("unsupported %s -> %s", getTerminalMode(), other));
     }
 
     @Override

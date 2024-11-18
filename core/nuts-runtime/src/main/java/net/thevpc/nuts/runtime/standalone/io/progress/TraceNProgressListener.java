@@ -39,9 +39,9 @@ public class TraceNProgressListener implements NProgressListener/*, NutsOutputSt
     public boolean onProgress(NProgressEvent event) {
         switch (event.getState()) {
             case START: {
-                bar = CProgressBar.of(event.getSession());
+                bar = CProgressBar.of();
                 this.out = event.getSession().getTerminal().err();
-                this.logger= NLog.of(TraceNProgressListener.class,event.getSession());
+                this.logger= NLog.of(TraceNProgressListener.class);
                 if (event.getSession().isPlainOut()) {
                     onProgress0(event, false);
                 }
@@ -72,7 +72,7 @@ public class TraceNProgressListener implements NProgressListener/*, NutsOutputSt
         }
         double partialSeconds = event.getPartialDuration().getTimeAsDoubleSeconds();
         if (event.getCurrentCount() == 0 || partialSeconds > 0.5 || event.getCurrentCount() == event.getMaxValue()) {
-            NTexts text = NTexts.of(event.getSession());
+            NTexts text = NTexts.of();
             double globalSeconds = event.getDuration().getTimeAsDoubleSeconds();
             long globalSpeed = globalSeconds == 0 ? 0 : (long) (event.getCurrentCount() / globalSeconds);
             long partialSpeed = partialSeconds == 0 ? 0 : (long) (event.getPartialCount() / partialSeconds);

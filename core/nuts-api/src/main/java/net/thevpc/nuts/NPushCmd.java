@@ -40,8 +40,8 @@ import java.util.List;
  */
 public interface NPushCmd extends NWorkspaceCmd {
 
-    static NPushCmd of(NSession session) {
-        return NExtensions.of(session).createComponent(NPushCmd.class).get();
+    static NPushCmd of() {
+        return NExtensions.of().createComponent(NPushCmd.class).get();
     }
     /**
      * remove id to push.
@@ -242,23 +242,6 @@ public interface NPushCmd extends NWorkspaceCmd {
      * @return {@code this} instance
      */
     NPushCmd setRepository(String repository);
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
-    NPushCmd setSession(NSession session);
-
-    /**
-     * copy session
-     *
-     * @return {@code this} instance
-     */
-    @Override
-    NPushCmd copySession();
 
     /**
      * configure the current command with the given arguments. This is an

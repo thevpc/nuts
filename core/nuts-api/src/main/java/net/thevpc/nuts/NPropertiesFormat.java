@@ -38,8 +38,8 @@ import java.util.Map;
  * @app.category Format
  */
 public interface NPropertiesFormat extends NContentTypeFormat {
-    static NPropertiesFormat of(NSession session) {
-       return NExtensions.of(session).createComponent(NPropertiesFormat.class).get();
+    static NPropertiesFormat of() {
+       return NExtensions.of().createComponent(NPropertiesFormat.class).get();
     }
 
     /**
@@ -82,14 +82,6 @@ public interface NPropertiesFormat extends NContentTypeFormat {
     @Override
     NPropertiesFormat setValue(Object value);
 
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this instance}
-     */
-    @Override
-    NPropertiesFormat setSession(NSession session);
 
     /**
      * configure the current command with the given arguments. This is an

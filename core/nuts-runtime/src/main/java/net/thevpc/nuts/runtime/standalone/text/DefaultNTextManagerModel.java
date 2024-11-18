@@ -25,12 +25,12 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactoryService;
 import net.thevpc.nuts.runtime.standalone.elem.NElementFactoryService;
 import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
 import net.thevpc.nuts.runtime.standalone.format.json.DefaultJsonElementFormat;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.text.highlighter.CustomStyleCodeHighlighter;
 import net.thevpc.nuts.runtime.standalone.text.theme.DefaultNTextFormatTheme;
 import net.thevpc.nuts.runtime.standalone.text.theme.NTextFormatPropertiesTheme;
@@ -59,7 +59,7 @@ import java.util.Map;
  */
 public class DefaultNTextManagerModel {
 
-    private final NWorkspace ws;
+    private final NWorkspace workspace;
     private final Map<String, String> kindToHighlighter = new HashMap<>();
     private final Map<String, NCodeHighlighter> highlighters = new HashMap<>();
     private final Map<String, NCodeHighlighter> _cachedHighlighters = new HashMap<>();
@@ -71,12 +71,12 @@ public class DefaultNTextManagerModel {
     private NElementStreamFormat yamlMan;
     private NElementStreamFormat xmlMan;
 
-    public DefaultNTextManagerModel(NWorkspace ws) {
-        this.ws = ws;
+    public DefaultNTextManagerModel(NWorkspace workspace) {
+        this.workspace = workspace;
     }
     public void loadExtensions(){
-        NSession session = NSessionUtils.defaultSession(ws);
-        List<NCodeHighlighter> all = session.extensions().createComponents(NCodeHighlighter.class, null);
+        NSession session = workspace.currentSession();
+        List<NCodeHighlighter> all = NExtensions.of().createComponents(NCodeHighlighter.class, null);
         for (NCodeHighlighter h : all) {
             highlighters.put(h.getId().toLowerCase(), h);
         }
@@ -105,12 +105,12 @@ public class DefaultNTextManagerModel {
                 }
             }
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
 
-    public NTextFormatTheme createTheme(String y, NSession session) {
+    public NTextFormatTheme createTheme(String y) {
         y = y == null ? "" : y.trim();
         if (NBlankable.isBlank(y)) {
             y = "default";
@@ -118,44 +118,45 @@ public class DefaultNTextManagerModel {
         if ("default".equals(y)) {
             //default always refers to this implementation
             if (defaultTheme == null) {
-                if (NEnvs.of(session).getOsFamily() == NOsFamily.WINDOWS) {
+                NSession session = workspace.currentSession();
+                if (NEnvs.of().getOsFamily() == NOsFamily.WINDOWS) {
                     //dark blue and red are very ugly under windows, replace them with green tones !
-                    defaultTheme = new NTextFormatThemeWrapper(new NTextFormatPropertiesTheme("grass", null, session));
+                    defaultTheme = new NTextFormatThemeWrapper(new NTextFormatPropertiesTheme("grass", null, workspace));
                 } else {
-                    defaultTheme = new DefaultNTextFormatTheme(ws);
+                    defaultTheme = new DefaultNTextFormatTheme(workspace);
                 }
             }
             return defaultTheme;
         } else {
-            return new NTextFormatThemeWrapper(new NTextFormatPropertiesTheme(y, null, session));
+            return new NTextFormatThemeWrapper(new NTextFormatPropertiesTheme(y, null, workspace));
         }
     }
 
-    public NTextFormatTheme getTheme(NSession session) {
+    public NTextFormatTheme getTheme() {
         if (styleTheme == null) {
             if (styleThemeName == null) {
-                NWorkspaceOptions bootOptions = NWorkspaceExt.of(this.ws).getModel().bootModel.getBootUserOptions();
+                NWorkspaceOptions bootOptions = NWorkspaceExt.of(this.workspace).getModel().bootModel.getBootUserOptions();
                 styleThemeName = bootOptions.getTheme().orNull();
             }
-            styleTheme = createTheme(styleThemeName, session);
+            styleTheme = createTheme(styleThemeName);
         }
         return styleTheme;
     }
 
-    public void setTheme(NTextFormatTheme styleTheme, NSession session) {
+    public void setTheme(NTextFormatTheme styleTheme) {
         this.styleTheme = styleTheme;
     }
 
-    public void setTheme(String styleThemeName, NSession session) {
+    public void setTheme(String styleThemeName) {
         if (styleThemeName == null || styleThemeName.trim().isEmpty()) {
             styleThemeName = "default";
         }
         styleThemeName = styleThemeName.trim();
-        styleTheme = createTheme(styleThemeName, session);
+        styleTheme = createTheme(styleThemeName);
         this.styleThemeName = styleThemeName;
     }
 
-    public NCodeHighlighter getCodeHighlighter(String highlighterId, NSession session) {
+    public NCodeHighlighter getCodeHighlighter(String highlighterId) {
         String lc = NStringUtils.trim(highlighterId).toLowerCase();
         NCodeHighlighter old = _cachedHighlighters.get(lc);
         if (old != null) {
@@ -167,6 +168,7 @@ public class DefaultNTextManagerModel {
             return h;
         }
         int best = -1;
+        NSession session = workspace.currentSession();
         for (NCodeHighlighter hh : highlighters.values()) {
             int lvl = hh.getSupportLevel(new NDefaultSupportLevelContext(
                     session, lc
@@ -189,8 +191,8 @@ public class DefaultNTextManagerModel {
             }
         }
         if ("system".equals(lc)) {
-            NShellFamily shellFamily = NEnvs.of(session).getShellFamily();
-            h = getCodeHighlighter(shellFamily.id(), session);
+            NShellFamily shellFamily = NEnvs.of().getShellFamily();
+            h = getCodeHighlighter(shellFamily.id());
             _cachedHighlighters.put(lc, h);
             return h;
         }
@@ -199,7 +201,7 @@ public class DefaultNTextManagerModel {
             try {
                 NTextStyle found = NTextStyle.parse(lc).orNull();
                 if (found != null) {
-                    h = new CustomStyleCodeHighlighter(found, session);
+                    h = new CustomStyleCodeHighlighter(found, workspace);
                     _cachedHighlighters.put(lc, h);
                     return h;
                 }
@@ -212,7 +214,7 @@ public class DefaultNTextManagerModel {
         if (h != null) {
             return h;
         }
-        throw new NIllegalArgumentException(session, NMsg.ofPlain("not found plain highlighter"));
+        throw new NIllegalArgumentException(NMsg.ofPlain("not found plain highlighter"));
     }
 
     private String expandAlias(String ss) {
@@ -230,40 +232,40 @@ public class DefaultNTextManagerModel {
     }
 
 
-    public void addCodeHighlighter(NCodeHighlighter format, NSession session) {
+    public void addCodeHighlighter(NCodeHighlighter format) {
         highlighters.put(format.getId(), format);
     }
 
-    public void removeCodeHighlighter(String id, NSession session) {
+    public void removeCodeHighlighter(String id) {
         highlighters.remove(id);
     }
 
-    public NCodeHighlighter[] getCodeHighlighters(NSession session) {
+    public NCodeHighlighter[] getCodeHighlighters() {
         return highlighters.values().toArray(new NCodeHighlighter[0]);
     }
 
-    public NElementFactoryService getElementFactoryService(NSession session) {
+    public NElementFactoryService getElementFactoryService() {
         if (elementFactoryService == null) {
-            elementFactoryService = new DefaultNElementFactoryService(session);
+            elementFactoryService = new DefaultNElementFactoryService(workspace);
         }
         return elementFactoryService;
     }
 
-    public NElementStreamFormat getJsonMan(NSession session) {
+    public NElementStreamFormat getJsonMan() {
         if (jsonMan == null) {
-            jsonMan = new DefaultJsonElementFormat(ws);
+            jsonMan = new DefaultJsonElementFormat(workspace);
         }
         return jsonMan;
     }
 
-    public NElementStreamFormat getYamlMan(NSession session) {
+    public NElementStreamFormat getYamlMan() {
         if (yamlMan == null) {
-            yamlMan = new SimpleYaml(ws);
+            yamlMan = new SimpleYaml(workspace);
         }
         return yamlMan;
     }
 
-    public NElementStreamFormat getXmlMan(NSession session) {
+    public NElementStreamFormat getXmlMan() {
         if (xmlMan == null) {
             xmlMan = new DefaultXmlNElementStreamFormat();
         }
@@ -271,7 +273,7 @@ public class DefaultNTextManagerModel {
     }
 
     public NWorkspace getWorkspace() {
-        return ws;
+        return workspace;
     }
 
 }

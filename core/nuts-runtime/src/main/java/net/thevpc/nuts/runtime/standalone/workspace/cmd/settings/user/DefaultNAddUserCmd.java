@@ -39,18 +39,18 @@ import net.thevpc.nuts.util.NMsg;
  */
 public class DefaultNAddUserCmd extends AbstractNAddUserCmd {
 
-    public DefaultNAddUserCmd(NSession session) {
-        super(session);
+    public DefaultNAddUserCmd(NWorkspace workspace) {
+        super(workspace);
     }
 
     @Override
     public NAddUserCmd run() {
+        NSession session=getWorkspace().currentSession();
         if (NBlankable.isBlank(getUsername())) {
-            throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("invalid user"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("invalid user"));
         }
-        checkSession();
         if (repository != null) {
-            NRepositorySecurityManager sec = repository.security().setSession(session);
+            NRepositorySecurityManager sec = repository.security();
             NUserConfig security = new NUserConfig(getUsername(),
                     CoreStringUtils.chrToStr(sec
                             .createCredentials(getCredentials(), false, null)),
@@ -59,18 +59,16 @@ public class DefaultNAddUserCmd extends AbstractNAddUserCmd {
             security.setRemoteCredentials(CoreStringUtils.chrToStr(sec.createCredentials(getRemoteCredentials(), true, null)));
             NRepositoryConfigManagerExt.of(repository.config())
                     .getModel()
-                    .setUser(security, getSession());
+                    .setUser(security);
         } else {
-            checkSession();
-            NSession session = getSession();
-            NWorkspaceSecurityManager sec = NWorkspaceSecurityManager.of(session);
+            NWorkspaceSecurityManager sec = NWorkspaceSecurityManager.of();
             NUserConfig security = new NUserConfig(getUsername(),
                     CoreStringUtils.chrToStr(sec.createCredentials(getCredentials(), false, null)),
                     getGroups(), getPermissions());
             security.setRemoteIdentity(getRemoteIdentity());
             security.setRemoteCredentials(CoreStringUtils.chrToStr(sec.createCredentials(getRemoteCredentials(), true, null)));
-            NConfigsExt.of(NConfigs.of(session)).getModel()
-                    .setUser(security, session);
+            NConfigsExt.of(NConfigs.of()).getModel()
+                    .setUser(security);
         }
         return this;
     }

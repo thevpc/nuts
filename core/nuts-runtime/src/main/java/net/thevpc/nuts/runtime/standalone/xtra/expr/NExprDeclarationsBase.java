@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.expr.*;
@@ -7,17 +8,14 @@ import net.thevpc.nuts.expr.*;
 import java.util.Arrays;
 
 public abstract class NExprDeclarationsBase implements NExprDeclarations {
-    private NSession session;
+    protected NWorkspace workspace;
 
-    @Override
-    public NSession getSession() {
-        return session;
+    public NExprDeclarationsBase(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
-    @Override
-    public NExprDeclarationsBase setSession(NSession session) {
-        this.session = session;
-        return this;
+    public NWorkspace getWorkspace() {
+        return workspace;
     }
 
     public NOptional<Object> evalFunction(String fctName, Object... args) {
@@ -33,7 +31,8 @@ public abstract class NExprDeclarationsBase implements NExprDeclarations {
     }
 
     public NOptional<Object> evalSetVar(String varName, Object value) {
-        return NOptional.of(getVar(varName).get(getSession()).set(value, this));
+        NSession session = workspace.currentSession();
+        return NOptional.of(getVar(varName).get().set(value, this));
     }
 
     public NOptional<Object> evalGetVar(String varName) {
@@ -41,22 +40,23 @@ public abstract class NExprDeclarationsBase implements NExprDeclarations {
         if(!var.isPresent()){
             return var.map(x->null);
         }
-        return NOptional.ofNullable(var.get(getSession()).get(this));
+        NSession session = workspace.currentSession();
+        return NOptional.ofNullable(var.get().get(this));
     }
 
     @Override
     public NExprDeclarations newDeclarations(NExprEvaluator evaluator) {
-        return new NExprEvaluatorAsContext(evaluator, this);
+        return new NExprEvaluatorAsContext(workspace,evaluator, this);
     }
 
     @Override
     public NExprMutableDeclarations newMutableDeclarations() {
-        return new DefaultDeclarationMutableContext(this);
+        return new DefaultDeclarationMutableContext(workspace,this);
     }
 
     @Override
     public NOptional<NExprNode> parse(String expression) {
-        return new SyntaxParser(expression, new NExprWithCache(this), getSession()).parse();
+        return new SyntaxParser(expression, new NExprWithCache(this), workspace).parse();
     }
 
 }

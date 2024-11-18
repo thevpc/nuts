@@ -107,7 +107,7 @@ public class _IOUtils {
     }
 
     public static String getAbsoluteFile2(String path, String cwd, NSession session) {
-        NPath np = NPath.of(path, session);
+        NPath np = NPath.of(path);
         if (np.isAbsolute()) {
             return path;
         }
@@ -119,7 +119,7 @@ public class _IOUtils {
                 return System.getProperty("user.home");
             default: {
                 if (path.startsWith("~/") || path.startsWith("~\\")) {
-                    return NPath.ofUserHome(session).resolve(path.substring(2)).normalize().toAbsolute().toString();
+                    return NPath.ofUserHome().resolve(path.substring(2)).normalize().toAbsolute().toString();
                 }
                 return np.toAbsolute(cwd).normalize().toAbsolute().toString();
             }

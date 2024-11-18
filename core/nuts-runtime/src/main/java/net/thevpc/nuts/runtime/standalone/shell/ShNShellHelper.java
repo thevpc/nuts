@@ -87,7 +87,7 @@ public class ShNShellHelper extends AbstractNixNShellHelper {
     }
 
     @Override
-    public String[] parseCmdLineArr(String commandLineString, NSession session) {
+    public String[] parseCmdLineArr(String commandLineString) {
         if (commandLineString == null) {
             return new String[0];
         }
@@ -149,10 +149,10 @@ public class ShNShellHelper extends AbstractNixNShellHelper {
                             break;
                         }
                         case '\'': {
-                            throw new NParseException(session, NMsg.ofC("illegal char %s", c));
+                            throw new NParseException(NMsg.ofC("illegal char %s", c));
                         }
                         case '"': {
-                            throw new NParseException(session, NMsg.ofC("illegal char %s", c));
+                            throw new NParseException(NMsg.ofC("illegal char %s", c));
                         }
                         case '\\': {
                             i++;
@@ -216,7 +216,7 @@ public class ShNShellHelper extends AbstractNixNShellHelper {
                 break;
             }
             case IN_QUOTED_WORD: {
-                throw new NParseException(session, NMsg.ofPlain("expected '"));
+                throw new NParseException(NMsg.ofPlain("expected '"));
             }
         }
         return args.toArray(new String[0]);
@@ -283,9 +283,6 @@ public class ShNShellHelper extends AbstractNixNShellHelper {
         if(options==null){
             options=new NCmdLineShellOptions();
         }
-        if(options.getSession()==null){
-            throw new NMissingSessionException();
-        }
         NCmdLineFormatStrategy s = options.getFormatStrategy();
         if(s==null|| s== NCmdLineFormatStrategy.DEFAULT){
             s= NCmdLineFormatStrategy.SUPPORT_QUOTES;
@@ -336,7 +333,7 @@ public class ShNShellHelper extends AbstractNixNShellHelper {
                         case '\n':
                         case '\r':
                         {
-                            throw new NIllegalArgumentException(options.getSession(), NMsg.ofPlain("unsupported new line in arguments"));
+                            throw new NIllegalArgumentException(NMsg.ofPlain("unsupported new line in arguments"));
                         }
                         default:
                         {
@@ -370,7 +367,7 @@ public class ShNShellHelper extends AbstractNixNShellHelper {
                         case '\n':
                         case '\r':
                         {
-                            throw new NIllegalArgumentException(options.getSession(), NMsg.ofPlain("unsupported new line in arguments"));
+                            throw new NIllegalArgumentException(NMsg.ofPlain("unsupported new line in arguments"));
                         }
                         default:
                         {
@@ -396,7 +393,7 @@ public class ShNShellHelper extends AbstractNixNShellHelper {
                         case '\n':
                         case '\r':
                         {
-                            throw new NIllegalArgumentException(options.getSession(),
+                            throw new NIllegalArgumentException(
                                     NMsg.ofPlain("unsupported new line in arguments"));
                         }
                         default:
@@ -410,7 +407,7 @@ public class ShNShellHelper extends AbstractNixNShellHelper {
                 return sb.toString();
             }
             default:{
-                throw new NUnsupportedEnumException(options.getSession(),s);
+                throw new NUnsupportedEnumException(s);
             }
         }
     }

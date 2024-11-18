@@ -1,6 +1,5 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 
@@ -25,7 +24,7 @@ public interface UnsafeFunction<T, V> {
         return t -> t;
     }
 
-    default NElement describe(NSession session) {
-        return NElements.of(session).toElement("unsafe function");
+    default NElement describe() {
+        return NElements.of().toElement("unsafe function");
     }
 }

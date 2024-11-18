@@ -24,7 +24,7 @@ public class ColumnRuler {
     }
 
     public NString nextNum(long nbr, NSession session){
-        return NTexts.of(session).ofStyled(next(String.valueOf(nbr)),
+        return NTexts.of().ofStyled(next(String.valueOf(nbr)),
                 NTextStyle.number()
         );
     }

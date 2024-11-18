@@ -40,8 +40,8 @@ public class NDescriptorFilterDesktopEnvironment extends AbstractDescriptorFilte
 
     private final String desktopEnvironment;
 
-    public NDescriptorFilterDesktopEnvironment(NSession session, String desktopEnvironment) {
-        super(session, NFilterOp.CUSTOM);
+    public NDescriptorFilterDesktopEnvironment(NWorkspace workspace, String desktopEnvironment) {
+        super(workspace, NFilterOp.CUSTOM);
         this.desktopEnvironment = desktopEnvironment;
     }
 
@@ -50,8 +50,8 @@ public class NDescriptorFilterDesktopEnvironment extends AbstractDescriptorFilte
     }
 
     @Override
-    public boolean acceptDescriptor(NDescriptor descriptor, NSession session) {
-        return CoreFilterUtils.matchesDesktopEnvironment(desktopEnvironment, descriptor.getCondition().getDesktopEnvironment(), session);
+    public boolean acceptDescriptor(NDescriptor descriptor) {
+        return CoreFilterUtils.matchesDesktopEnvironment(desktopEnvironment, descriptor.getCondition().getDesktopEnvironment());
     }
 
     /**

@@ -39,18 +39,18 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
-    private final NSession session;
+    private final NWorkspace workspace;
     private final NPath desktopPath;
 
-    public UnixFreeDesktopEntryWriter(NSession session, NPath desktopPath) {
-        this.session = session;
+    public UnixFreeDesktopEntryWriter(NWorkspace workspace, NPath desktopPath) {
+        this.workspace = workspace;
         this.desktopPath = desktopPath;
     }
 
 
     @Override
     public PathInfo[] writeShortcut(FreeDesktopEntry descriptor, NPath path, boolean doOverride, NId id) {
-        path = NPath.of(ensureName(path == null ? null : path.toString(), descriptor.getOrCreateDesktopEntry().getName(), "desktop"),session);
+        path = NPath.of(ensureName(path == null ? null : path.toString(), descriptor.getOrCreateDesktopEntry().getName(), "desktop"));
         PathInfo.Status s = tryWrite(descriptor, path);
         return new PathInfo[]{new PathInfo("desktop-shortcut", id, path, s)};
     }
@@ -68,7 +68,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
 
         List<PathInfo> all = new ArrayList<>();
         FreeDesktopEntry.Group root = descriptor.getOrCreateDesktopEntry();
-        NPath folder4shortcuts = NPath.ofUserHome(session).resolve(".local/share/applications");
+        NPath folder4shortcuts = NPath.ofUserHome().resolve(".local/share/applications");
         folder4shortcuts.mkdirs();
         NPath shortcutFile =folder4shortcuts.resolve(desktopFileName);
         all.add(new PathInfo("desktop-icon", id,
@@ -78,7 +78,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         if (categories.isEmpty()) {
             categories.add("/");
         }
-        NPath folder4menus = NPath.ofUserHome(session).resolve(".config/menus/applications-merged");
+        NPath folder4menus = NPath.ofUserHome().resolve(".config/menus/applications-merged");
         folder4menus.mkdirs();
 
         //menu name must include category
@@ -109,7 +109,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
             ByteArrayOutputStream b = new ByteArrayOutputStream();
             tr.transform(new DOMSource(dom), new StreamResult(b));
             NPath menuFile = folder4menus.resolve(menuFileName);
-            all.add(new PathInfo("desktop-menu", id, menuFile, CoreIOUtils.tryWrite(b.toByteArray(), menuFile, session)));
+            all.add(new PathInfo("desktop-menu", id, menuFile, CoreIOUtils.tryWrite(b.toByteArray(), menuFile)));
         } catch (ParserConfigurationException | TransformerException ex) {
             throw new RuntimeException(ex);
         }
@@ -125,11 +125,12 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         Path a = NSysExecUtils.sysWhich(sysCmd);
         if (a != null) {
             cmdList.add(0, a.toString());
-            String outStr = NExecCmd.of(session)
+            String outStr = NExecCmd.of()
                     .setCommand(cmdList)
                     .addCommand()
                     .system()
                     .getGrabbedAllString().trim();
+            NSession session = workspace.currentSession();
             if (session.isPlainTrace() && !outStr.isEmpty()) {
                 session.out().println(CoreStringUtils.prefixLinesOsNL(outStr, "[" + sysCmd + "] "));
             }
@@ -204,18 +205,18 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
     }
 
     public void write(FreeDesktopEntry file, Path out) {
-        NPath.of(out,session).mkParentDirs();
+        NPath.of(out).mkParentDirs();
         try (PrintStream p = new PrintStream(Files.newOutputStream(out))) {
             write(file, p);
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
 
     public PathInfo.Status tryWrite(FreeDesktopEntry file, NPath out) {
         out.mkParentDirs();
-        return CoreIOUtils.tryWrite(writeAsString(file).getBytes(), out, session);
+        return CoreIOUtils.tryWrite(writeAsString(file).getBytes(), out);
     }
 
     public String writeAsString(FreeDesktopEntry file) {
@@ -228,11 +229,11 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
 
 
     public void write(FreeDesktopEntry file, File out) {
-        NPath.of(out,session).mkParentDirs();
+        NPath.of(out).mkParentDirs();
         try (PrintStream p = new PrintStream(out)) {
             write(file, p);
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -245,9 +246,9 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         for (FreeDesktopEntry.Group group : file.getGroups()) {
             out.println();
             String gn = group.getGroupName();
-            NAssert.requireNonBlank(gn, "group name", session);
+            NAssert.requireNonBlank(gn, "group name");
             FreeDesktopEntry.Type t = group.getType();
-            NAssert.requireNonNull(t, "type", session);
+            NAssert.requireNonNull(t, "type");
             out.println("[" + gn.trim() + "]");
             for (Map.Entry<String, Object> e : group.toMap().entrySet()) {
                 Object value = e.getValue();

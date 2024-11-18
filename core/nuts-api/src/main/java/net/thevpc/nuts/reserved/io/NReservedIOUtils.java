@@ -496,10 +496,11 @@ public class NReservedIOUtils {
     }
 
     public static long deleteAndConfirmAll(Path[] folders, boolean force, NReservedDeleteFilesContext refForceAll,
-                                           String header, NSession session, NLog bLog, NBootOptions bOptions, Supplier<String> readline) {
+                                           String header, NLog bLog, NBootOptions bOptions, Supplier<String> readline) {
         long count = 0;
         boolean headerWritten = false;
         if (folders != null) {
+            NSession session = NSession.of().orNull();
             for (Path child : folders) {
                 if (Files.exists(child)) {
                     if (!headerWritten) {
@@ -516,7 +517,7 @@ public class NReservedIOUtils {
                             }
                         }
                     }
-                    count += deleteAndConfirm(child, force, refForceAll, session, bLog, bOptions, readline);
+                    count += deleteAndConfirm(child, force, refForceAll, bLog, bOptions, readline);
                 }
             }
         }
@@ -524,16 +525,17 @@ public class NReservedIOUtils {
     }
 
     private static long deleteAndConfirm(Path directory, boolean force, NReservedDeleteFilesContext refForceAll,
-                                         NSession session, NLog bLog, NBootOptions bOptions, Supplier<String> readline) {
+                                         NLog bLog, NBootOptions bOptions, Supplier<String> readline) {
         if (Files.exists(directory)) {
             if (!force && !refForceAll.isForce() && refForceAll.accept(directory)) {
                 String line = null;
+                NSession session = NSession.of().orNull();
                 if (session != null) {
-                    line = NAsk.of(session)
+                    line = NAsk.of()
                             .forString(
                                     NMsg.ofC(
                                             "do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory
-                                    )).setSession(session).getValue();
+                                    )).getValue();
                 } else {
                     if (bOptions.getBot().orElse(false)) {
                         if (bOptions.getConfirm().orElse(NConfirmationMode.ASK) == NConfirmationMode.YES) {
@@ -573,7 +575,7 @@ public class NReservedIOUtils {
                 if ("a".equalsIgnoreCase(line) || "all".equalsIgnoreCase(line)) {
                     refForceAll.setForce(true);
                 } else if ("c".equalsIgnoreCase(line)) {
-                    throw new NCancelException(session);
+                    throw new NCancelException();
                 } else if (!NLiteral.of(line).asBoolean().orElse(false)) {
                     refForceAll.ignore(directory);
                     return 0;
@@ -708,11 +710,11 @@ public class NReservedIOUtils {
         if (optionsCopy.getBot().orElse(false) || !NReservedLangUtils.isGraphicalDesktopEnvironment()) {
             optionsCopy.setGui(false);
         }
-        return deleteAndConfirmAll(folders.toArray(new Path[0]), force, DELETE_FOLDERS_HEADER, null, bLog, optionsCopy, readline);
+        return deleteAndConfirmAll(folders.toArray(new Path[0]), force, DELETE_FOLDERS_HEADER, bLog, optionsCopy, readline);
     }
 
-    public static long deleteAndConfirmAll(Path[] folders, boolean force, String header, NSession session,
+    public static long deleteAndConfirmAll(Path[] folders, boolean force, String header,
                                            NLog bLog, NBootOptions bOptions, Supplier<String> readline) {
-        return deleteAndConfirmAll(folders, force, new NReservedDeleteFilesContextImpl(), header, session, bLog, bOptions, readline);
+        return deleteAndConfirmAll(folders, force, new NReservedDeleteFilesContextImpl(), header, bLog, bOptions, readline);
     }
 }

@@ -27,10 +27,10 @@ public class NElementMapperPrimitiveByteArray implements NElementMapper<byte[]> 
     @Override
     public byte[] createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
         NSession session = context.getSession();
-        NArrayElement earr = o.asArray().get(session);
+        NArrayElement earr = o.asArray().get();
         byte[] arr = new byte[earr.size()];
         for (int i = 0; i < arr.length; i++) {
-            arr[i] = (byte) context.elementToObject(earr.get(i).get(session), byte.class);
+            arr[i] = (byte) context.elementToObject(earr.get(i).get(), byte.class);
         }
         return arr;
     }

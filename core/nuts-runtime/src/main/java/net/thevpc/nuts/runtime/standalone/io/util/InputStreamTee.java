@@ -5,10 +5,10 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.util;
 
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.format.NFormat;
 import net.thevpc.nuts.format.NFormattable;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.*;
 
 import java.io.IOException;
@@ -25,14 +25,14 @@ public class InputStreamTee extends InputStream implements NInterruptible<InputS
     private final Runnable onClose;
     private boolean interrupted;
     private NContentMetadata metadata;
-    private NSession session;
+    private NWorkspace workspace;
 
-    public InputStreamTee(InputStream in, OutputStream out, Runnable onClose, NContentMetadata metadata, NSession session) {
+    public InputStreamTee(InputStream in, OutputStream out, Runnable onClose, NContentMetadata metadata, NWorkspace workspace) {
         this.in = in;
         this.out = out;
         this.onClose = onClose;
         this.metadata = CoreIOUtils.createContentMetadata(metadata, in);
-        this.session = session;
+        this.workspace = workspace;
     }
 
     @Override
@@ -46,8 +46,8 @@ public class InputStreamTee extends InputStream implements NInterruptible<InputS
     }
 
     @Override
-    public NFormat formatter(NSession session) {
-        return NFormat.of(session, new NContentMetadataProviderFormatSPI(this, null, "input-stream-tee"));
+    public NFormat formatter() {
+        return NFormat.of(new NContentMetadataProviderFormatSPI(this, null, "input-stream-tee"));
     }
 
     @Override
@@ -139,12 +139,12 @@ public class InputStreamTee extends InputStream implements NInterruptible<InputS
 
     private void checkInterrupted() {
         if (interrupted) {
-            throw new NIOException(session, NMsg.ofPlain("stream is interrupted"));
+            throw new NIOException(NMsg.ofPlain("stream is interrupted"));
         }
     }
 
     private void checkMark() {
-        throw new NIOException(session, NMsg.ofPlain("unsupported mark"));
+        throw new NIOException(NMsg.ofPlain("unsupported mark"));
     }
 
 }

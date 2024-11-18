@@ -11,24 +11,22 @@ import net.thevpc.nuts.util.NMsg;
 import java.util.logging.Level;
 
 class SilentStartNProgressListenerAdapter implements NProgressListener {
-    private NLog LOG;
     private final NProgressListener delegate;
     private final NMsg path;
+    private final NWorkspace workspace;
 
-    public SilentStartNProgressListenerAdapter(NProgressListener delegate, NMsg path) {
+    public SilentStartNProgressListenerAdapter(NWorkspace workspace,NProgressListener delegate, NMsg path) {
         this.delegate = delegate;
         this.path = path;
+        this.workspace = workspace;
     }
 
-    protected NLogOp _LOGOP(NSession session) {
-        return _LOG(session).with().session(session);
+    protected NLogOp _LOGOP() {
+        return _LOG().with();
     }
 
-    protected NLog _LOG(NSession session) {
-        if (LOG == null) {
-            LOG = NLog.of(SilentStartNProgressListenerAdapter.class,session);
-        }
-        return LOG;
+    protected NLog _LOG() {
+            return NLog.of(SilentStartNProgressListenerAdapter.class);
     }
     
     @Override
@@ -40,10 +38,10 @@ class SilentStartNProgressListenerAdapter implements NProgressListener {
             case COMPLETE:{
                 boolean b=delegate.onProgress(event);
                 if (event.getError() != null) {
-                    _LOGOP(event.getSession()).level(Level.FINEST).verb(NLogVerb.FAIL)
+                    _LOGOP().level(Level.FINEST).verb(NLogVerb.FAIL)
                             .log(NMsg.ofC("download failed    : %s", path));
                 } else {
-                    _LOGOP(event.getSession()).level(Level.FINEST).verb(NLogVerb.SUCCESS)
+                    _LOGOP().level(Level.FINEST).verb(NLogVerb.SUCCESS)
                             .log(NMsg.ofC( "download succeeded : %s", path));
                 }
                 return b;

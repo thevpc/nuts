@@ -57,17 +57,19 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
     public NSession getSession() {
         return session;
     }
-
+    NWorkspace getWorkspace(){
+        return session.getWorkspace();
+    }
     @Override
-    public void run(NSession session, NCmdLine cmdLine) {
+    public void run(NCmdLine cmdLine) {
         NArg a;
         cmdLine.setCommandName("ndb " + dbType);
         while (cmdLine.hasNext()) {
             boolean ok = false;
             for (NdbCmd<C> cc : commands.values()) {
-                if (cmdLine.withNextFlag((value, arg, s) -> {
+                if (cmdLine.withNextFlag((value, arg) -> {
                     cmdLine.setCommandName(getDbType() + " " + arg.key());
-                    cc.run(s, cmdLine);
+                    cc.run(cmdLine);
                 }, cc.getNames())) {
                     ok = true;
                     break;
@@ -77,7 +79,8 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
                 if (runExtraCommand(session, cmdLine)) {
 
                 } else {
-                    cmdLine.getSession().configureLast(cmdLine);
+                    NSession session = NSession.of().get();
+                    session.configureLast(cmdLine);
                 }
             }
         }
@@ -128,7 +131,7 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
         if (!file.exists()) {
             return NOptional.ofNamedEmpty("config " + name);
         }
-        NElements json = NElements.of(session).setNtf(false).json();
+        NElements json = NElements.of().setNtf(false).json();
         return NOptional.ofNamed(json.parse(file, configClass), "config " + name);
     }
 
@@ -142,25 +145,25 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
         NSession session = getSession();
         NArg a;
         if ((a = cmdLine.nextEntry("--name").orNull()) != null) {
-            options.setName(a.getStringValue().get(session));
+            options.setName(a.getStringValue().get());
             return true;
         } else if ((a = cmdLine.nextEntry("-h", "--host").orNull()) != null) {
-            options.setHost(a.getStringValue().get(session));
+            options.setHost(a.getStringValue().get());
             return true;
         } else if ((a = cmdLine.nextEntry("-p", "--port").orNull()) != null) {
-            options.setPort(a.getValue().asInt().get(session));
+            options.setPort(a.getValue().asInt().get());
             return true;
         } else if ((a = cmdLine.nextEntry("-n", "--dbname").orNull()) != null) {
-            options.setDatabaseName(a.getStringValue().get(session));
+            options.setDatabaseName(a.getStringValue().get());
             return true;
         } else if ((a = cmdLine.nextEntry("-u", "--user").orNull()) != null) {
-            options.setUser(a.getStringValue().get(session));
+            options.setUser(a.getStringValue().get());
             return true;
         } else if ((a = cmdLine.nextEntry("-P", "--password").orNull()) != null) {
-            options.setPassword(a.getStringValue().get(session));
+            options.setPassword(a.getStringValue().get());
             return true;
         } else if ((a = cmdLine.nextEntry("--db").orNull()) != null) {
-            String db = a.getStringValue().get(session);
+            String db = a.getStringValue().get();
             DbUrlString dbUrlString = DbUrlString.parse(db).get();
             if(dbUrlString.getSsh()!=null) {
                 options.setRemoteUser(dbUrlString.getSsh().getUser());
@@ -188,16 +191,16 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
             }
             return true;
         } else if ((a = cmdLine.nextEntry("--remote-server").orNull()) != null) {
-            options.setRemoteServer(a.getStringValue().get(session));
+            options.setRemoteServer(a.getStringValue().get());
             return true;
         } else if ((a = cmdLine.nextEntry("--remote-user").orNull()) != null) {
-            options.setRemoteUser(a.getStringValue().get(session));
+            options.setRemoteUser(a.getStringValue().get());
             return true;
         } else if ((a = cmdLine.nextEntry("--remote-temp-folder").orNull()) != null) {
-            options.setRemoteTempFolder(a.getStringValue().get(session));
+            options.setRemoteTempFolder(a.getStringValue().get());
             return true;
         } else if ((a = cmdLine.nextEntry("--ssh").orNull()) != null) {
-            String ssh = a.getStringValue().get(session);
+            String ssh = a.getStringValue().get();
             NConnexionString dbUrlString = NConnexionString.of("ssh://"+ssh).get();
             options.setRemoteUser(dbUrlString.getUser());
             options.setRemotePassword(dbUrlString.getPassword());
@@ -223,13 +226,13 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
     }
 
 
-    public NPath getRemoteTempFolder(C options, NSession session) {
+    public NPath getRemoteTempFolder(C options) {
         String remoteTempFolder = options.getRemoteTempFolder();
         if (NBlankable.isBlank(remoteTempFolder)) {
-            return NPath.of(NdbUtils.getDefaultUserHome(options.getRemoteUser()), session);
+            return NPath.of(NdbUtils.getDefaultUserHome(options.getRemoteUser()));
         } else {
             remoteTempFolder = remoteTempFolder.trim();
-            return NPath.of(NdbUtils.getDefaultUserHome(options.getRemoteUser()), session).resolve(remoteTempFolder);
+            return NPath.of(NdbUtils.getDefaultUserHome(options.getRemoteUser())).resolve(remoteTempFolder);
         }
     }
 
@@ -241,7 +244,7 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
             if (fillOption(commandLine, options)) {
                 //
             } else if (
-                    commandLine.withNextFlag((v, a, s) -> {
+                    commandLine.withNextFlag((v, a) -> {
                         update.set(v);
                     }, "--update")
             ) {
@@ -260,7 +263,7 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
         }
 
         NPath file = sharedConfigFolder.resolve(asFullName(options.getName()) + NdbUtils.SERVER_CONFIG_EXT);
-        NElements json = NElements.of(commandLine.getSession()).setNtf(false).json();
+        NElements json = NElements.of().setNtf(false).json();
         if (file.exists()) {
             if (update.get()) {
                 C old = json.parse(file, configClass);
@@ -277,18 +280,19 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
     }
 
 
-    public NExecCmd sysSsh(C options, NSession session) {
-        return sysCmd(session).addCommand("ssh", options.getRemoteUser() + "@" + options.getRemoteServer());
+    public NExecCmd sysSsh(C options) {
+        return sysCmd().addCommand("ssh", options.getRemoteUser() + "@" + options.getRemoteServer());
     }
 
     public NExecCmd run(NExecCmd cmd) {
-        cmd.getSession().out().println(cmd);
+        NSession session = getWorkspace().currentSession();
+        session.out().println(cmd);
         cmd.run();
         return cmd;
     }
 
-    public NExecCmd sysCmd(NSession session) {
-        return NExecCmd.of(session)
+    public NExecCmd sysCmd() {
+        return NExecCmd.of()
                 .failFast()
                 .system()
                 ;
@@ -326,19 +330,19 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
         return isRemoteHost(options.getRemoteServer());
     }
 
-    public DumpRestoreMode getDumpRestoreMode(C options, NSession session) {
+    public DumpRestoreMode getDumpRestoreMode(C options) {
         return DumpRestoreMode.FILE;
     }
 
-    public <C extends NdbConfig> String getDumpExt(C options, NSession session) {
+    public <C extends NdbConfig> String getDumpExt(C options) {
         return ".sql";
     }
 
-    public abstract CmdRedirect createDumpCommand(NPath remoteSql, C options, NSession session);
+    public abstract CmdRedirect createDumpCommand(NPath remoteSql, C options);
 
-    public abstract CmdRedirect createRestoreCommand(NPath remoteSql, C options, NSession session);
+    public abstract CmdRedirect createRestoreCommand(NPath remoteSql, C options);
 
-    public void prepareDump(C options, NSession session) {
+    public void prepareDump(C options) {
 
     }
 

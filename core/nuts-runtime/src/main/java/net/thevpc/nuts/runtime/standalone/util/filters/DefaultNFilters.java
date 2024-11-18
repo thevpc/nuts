@@ -21,7 +21,7 @@ public class DefaultNFilters implements NFilters {
     @Override
     public <T extends NFilter> T nonnull(Class<T> type, NFilter filter) {
         checkSession();
-        return model.nonnull(type, filter,session);
+        return model.nonnull(type, filter);
     }
 
     private void checkSession() {
@@ -31,78 +31,78 @@ public class DefaultNFilters implements NFilters {
     @Override
     public <T extends NFilter> T always(Class<T> type) {
         checkSession();
-        return model.always(type,session);
+        return model.always(type);
     }
 
     @Override
     public <T extends NFilter> T never(Class<T> type) {
         checkSession();
-        return model.never(type,session);
+        return model.never(type);
     }
 
     @Override
     public <T extends NFilter> T all(Class<T> type, NFilter... others) {
         checkSession();
-        return model.all(type,others,session);
+        return model.all(type,others);
     }
 
     @Override
     public <T extends NFilter> T all(NFilter... others) {
         checkSession();
-        return model.all(others,session);
+        return model.all(others);
     }
 
     @Override
     public <T extends NFilter> T any(Class<T> type, NFilter... others) {
         checkSession();
-        return model.any(type,others,session);
+        return model.any(type,others);
     }
 
     @Override
     public <T extends NFilter> T not(NFilter other) {
         checkSession();
-        return model.not(other,session);
+        return model.not(other);
     }
 
     @Override
     public <T extends NFilter> T not(Class<T> type, NFilter other) {
         checkSession();
-        return model.not(type,other,session);
+        return model.not(type,other);
     }
 
     @Override
     public <T extends NFilter> T any(NFilter... others) {
         checkSession();
-        return model.any(others,session);
+        return model.any(others);
     }
 
     @Override
     public <T extends NFilter> T none(Class<T> type, NFilter... others) {
         checkSession();
-        return model.none(type,others,session);
+        return model.none(type,others);
     }
 
     @Override
     public <T extends NFilter> T none(NFilter... others) {
         checkSession();
-        return model.none(others,session);
+        return model.none(others);
     }
 
     @Override
     public <T extends NFilter> T to(Class<T> toFilterInterface, NFilter filter) {
         checkSession();
-        return model.to(toFilterInterface,filter,session);
+        return model.to(toFilterInterface,filter);
     }
 
     public <T extends NFilter> T as(Class<T> toFilterInterface, NFilter filter) {
         checkSession();
-        return model.as(toFilterInterface,filter,session);
+        return model.as(toFilterInterface,filter);
     }
 
     @Override
     public Class<? extends NFilter> detectType(NFilter nFilter) {
         checkSession();
-        return model.detectType(nFilter,session);
+        return model.detectType(nFilter);
     }
 
     @Override

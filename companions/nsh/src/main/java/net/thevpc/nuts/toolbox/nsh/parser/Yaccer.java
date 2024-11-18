@@ -679,7 +679,7 @@ public class Yaccer {
     }
 
     public static String evalTokenString(Token token, NShellContext context) {
-        NGlob g = NGlob.of(context.getSession());
+        NGlob g = NGlob.of();
         switch (token.type) {
             case "WORD": {
                 return token.value.toString();
@@ -1118,7 +1118,7 @@ public class Yaccer {
 
         @Override
         public int eval(NShellContext context) {
-            throw new NIllegalArgumentException(context.getSession(), NMsg.ofC("not yet implemented UnOpSuffix %s", op.image));
+            throw new NIllegalArgumentException(NMsg.ofC("not yet implemented UnOpSuffix %s", op.image));
         }
     }
 
@@ -1169,7 +1169,7 @@ public class Yaccer {
 
         @Override
         public int eval(NShellContext context) {
-            throw new NIllegalArgumentException(context.getSession(), NMsg.ofC("not yet implemented UnOpPrefix %s", op.image));
+            throw new NIllegalArgumentException(NMsg.ofC("not yet implemented UnOpPrefix %s", op.image));
         }
     }
 
@@ -1193,7 +1193,7 @@ public class Yaccer {
 
         @Override
         public int eval(NShellContext context) {
-            throw new NIllegalArgumentException(context.getSession(), NMsg.ofC("not yet implemented BinOp %s", op.image));
+            throw new NIllegalArgumentException(NMsg.ofC("not yet implemented BinOp %s", op.image));
         }
     }
 
@@ -1252,7 +1252,7 @@ public class Yaccer {
                 }
             }
             if (applyWildCard) {
-                NPath pp = NPath.of(value, context.getSession());
+                NPath pp = NPath.of(value);
                 if (!pp.isAbsolute()) {
                     pp = pp.toAbsolute(context.getDirectory());
                 }

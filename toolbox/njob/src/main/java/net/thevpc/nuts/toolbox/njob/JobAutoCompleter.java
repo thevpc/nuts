@@ -38,15 +38,16 @@ import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
  * @author thevpc
  */
 public class JobAutoCompleter implements NCmdLineAutoCompleteResolver {
-
-    public JobAutoCompleter() {
+    NWorkspace workspace;
+    public JobAutoCompleter(NWorkspace workspace) {
+        this.workspace=workspace;
     }
 
     @Override
-    public List<NArgCandidate> resolveCandidates(NCmdLine cmdLine, int wordIndex, NSession session) {
-        JobServiceCmd fileContext = (JobServiceCmd) NEnvs.of(session).getProperties().get(JobServiceCmd.class.getName());
+    public List<NArgCandidate> resolveCandidates(NCmdLine cmdLine, int wordIndex) {
+        NSession session=workspace.currentSession();
+        JobServiceCmd fileContext = (JobServiceCmd) NEnvs.of().getProperties().get(JobServiceCmd.class.getName());
         DefaultNCmdLineAutoComplete autoComplete = new DefaultNCmdLineAutoComplete()
-                .setSession(session)
                 .setCurrentWordIndex(wordIndex)
                 .setLine(cmdLine.toString()).setWords(
                 Arrays.asList(cmdLine.toStringArray())

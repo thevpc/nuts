@@ -44,8 +44,8 @@ import java.util.List;
  * @since 0.5.4
  */
 public interface NIdFormat extends NFormat, NComponent {
-    static NIdFormat of(NSession session) {
-       return NExtensions.of(session).createComponent(NIdFormat.class).get();
+    static NIdFormat of() {
+       return NExtensions.of().createComponent(NIdFormat.class).get();
     }
 
     /**
@@ -197,14 +197,6 @@ public interface NIdFormat extends NFormat, NComponent {
      */
     NIdFormat setValue(NId id);
 
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this instance}
-     */
-    @Override
-    NIdFormat setSession(NSession session);
 
     /**
      * configure the current command with the given arguments. This is an

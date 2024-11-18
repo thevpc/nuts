@@ -15,15 +15,15 @@ public class NDependencyFilterAnd extends AbstractDependencyFilter implements NC
 
     private final NDependencyFilter[] all;
 
-    public NDependencyFilterAnd(NSession session, NDependencyFilter... all) {
-        super(session, NFilterOp.AND);
+    public NDependencyFilterAnd(NWorkspace workspace, NDependencyFilter... all) {
+        super(workspace, NFilterOp.AND);
         this.all = all;
     }
 
     @Override
-    public boolean acceptDependency(NId from, NDependency dependency, NSession session) {
+    public boolean acceptDependency(NId from, NDependency dependency) {
         for (NDependencyFilter nDependencyFilter : all) {
-            if (nDependencyFilter != null && !nDependencyFilter.acceptDependency(from, dependency, session)) {
+            if (nDependencyFilter != null && !nDependencyFilter.acceptDependency(from, dependency)) {
                 return false;
             }
         }
@@ -31,7 +31,7 @@ public class NDependencyFilterAnd extends AbstractDependencyFilter implements NC
     }
 
     public NDependencyFilter simplify() {
-        return CoreFilterUtils.simplifyFilterAnd(getSession(), NDependencyFilter.class,this,all);
+        return CoreFilterUtils.simplifyFilterAnd(NDependencyFilter.class,this,all);
     }
 
     @Override

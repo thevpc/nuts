@@ -1,7 +1,7 @@
 package net.thevpc.nuts.reserved.util;
 
 import net.thevpc.nuts.NIdFilter;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.spi.base.NIdFilterDelegate;
@@ -11,8 +11,8 @@ public class NIdFilterWithDescriptor extends NIdFilterDelegate {
     private NIdFilter base;
     private NEDesc description;
 
-    public NIdFilterWithDescriptor(NIdFilter base, NEDesc description) {
-        super(base.getSession());
+    public NIdFilterWithDescriptor(NWorkspace workspace, NIdFilter base, NEDesc description) {
+        super(workspace);
         this.base = base;
         this.description = description;
     }
@@ -29,7 +29,7 @@ public class NIdFilterWithDescriptor extends NIdFilterDelegate {
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return NEDesc.safeDescribeOfBase(session, description, base);
+    public NElement describe() {
+        return NEDesc.safeDescribeOfBase(description, base);
     }
 }

@@ -31,14 +31,14 @@ public class NCompressedPathBase extends NPathBase {
     private final NPath base;
 
     public NCompressedPathBase(NPath base) {
-        super(base.getSession());
+        super(base.getWorkspace());
         this.base = base;
-        this.compressedForm = compressUrl(base.toString(), base.getSession());
-        this.formattedCompressedForm = NTexts.of(base.getSession()).ofStyled(compressedForm, NTextStyle.path());
+        this.compressedForm = compressUrl(base.toString(), base.getWorkspace().currentSession());
+        this.formattedCompressedForm = NTexts.of().ofStyled(compressedForm, NTextStyle.path());
     }
 
     public NCompressedPathBase(NPath base, String compressedForm, NString formattedCompressedForm) {
-        super(base.getSession());
+        super(base.getWorkspace());
         this.compressedForm = compressedForm;
         this.formattedCompressedForm = formattedCompressedForm;
         this.base = base;
@@ -50,7 +50,7 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     public static String compressUrl(String path, NSession session) {
-        NPathParts p = new NPathParts(path, session);
+        NPathParts p = new NPathParts(path);
         switch (p.getType()) {
             case FILE_URL:
             case URL: {
@@ -158,14 +158,14 @@ public class NCompressedPathBase extends NPathBase {
 
     @Override
     public InputStream getInputStream(NPathOption... options) {
-        return NInputSourceBuilder.of(base.getInputStream(options),getSession())
+        return NInputSourceBuilder.of(base.getInputStream(options))
                 .setMetadata(getMetaData())
                 .createInputStream();
     }
 
     @Override
     public OutputStream getOutputStream(NPathOption... options) {
-        return NOutputStreamBuilder.of(base.getOutputStream(options),getSession()).setMetadata(this.getMetaData()).createOutputStream();
+        return NOutputStreamBuilder.of(base.getOutputStream(options)).setMetadata(this.getMetaData()).createOutputStream();
     }
 
     @Override
@@ -402,8 +402,8 @@ public class NCompressedPathBase extends NPathBase {
     }
 
     @Override
-    public NFormat formatter(NSession session) {
-        return new MyPathFormat(this).setSession(session != null ? session : getSession());
+    public NFormat formatter() {
+        return new MyPathFormat(this);
     }
 
     private static class MyPathFormat extends DefaultFormatBase<NFormat> {
@@ -411,12 +411,12 @@ public class NCompressedPathBase extends NPathBase {
         private final NCompressedPathBase p;
 
         public MyPathFormat(NCompressedPathBase p) {
-            super(p.getSession(), "path");
+            super(p.getWorkspace(), "path");
             this.p = p;
         }
 
         public NString asFormattedString() {
-            return NTexts.of(p.base.getSession()).ofStyled(p.compressedForm, NTextStyle.path());
+            return NTexts.of().ofStyled(p.compressedForm, NTextStyle.path());
         }
 
         @Override

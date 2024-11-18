@@ -54,10 +54,10 @@ public class SetCommand extends NShellBuiltinDefault {
     protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
-        NArg a = cmdLine.peek().get(session);
+        NArg a = cmdLine.peek().get();
         if (a.isNonOption()) {
             if (a.isKeyValue()) {
-                options.vars.put(a.key(), a.getStringValue().get(session));
+                options.vars.put(a.key(), a.getStringValue().get());
                 return true;
             }
         }

@@ -24,50 +24,54 @@ import java.util.logging.Logger;
  * @author thevpc
  */
 public class NSettingsLogSubCommand extends AbstractNSettingsSubCommand {
+    public NSettingsLogSubCommand(NWorkspace workspace) {
+        super(workspace);
+    }
 
     @Override
-    public boolean exec(NCmdLine cmdLine, Boolean autoSave, NSession session) {
+    public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
+        NSession session = workspace.currentSession();
         if (cmdLine.next("set loglevel", "sll").isPresent()) {
 //            NutsWorkspaceConfigManager configManager = context.getWorkspace().config();
             if (cmdLine.next("verbose", "finest").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLog.setTermLevel(Level.FINEST,session);
+                    NLog.setTermLevel(Level.FINEST);
                 }
             } else if (cmdLine.next("fine").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLog.setTermLevel(Level.FINE,session);
+                    NLog.setTermLevel(Level.FINE);
                 }
             } else if (cmdLine.next("finer").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLog.setTermLevel(Level.FINER,session);
+                    NLog.setTermLevel(Level.FINER);
                 }
             } else if (cmdLine.next("info").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLog.setTermLevel(Level.INFO,session);
+                    NLog.setTermLevel(Level.INFO);
                 }
             } else if (cmdLine.next("warning").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLog.setTermLevel(Level.WARNING,session);
+                    NLog.setTermLevel(Level.WARNING);
                 }
             } else if (cmdLine.next("severe", "error").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLog.setTermLevel(Level.SEVERE,session);
+                    NLog.setTermLevel(Level.SEVERE);
                 }
             } else if (cmdLine.next("config").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLog.setTermLevel(Level.CONFIG,session);
+                    NLog.setTermLevel(Level.CONFIG);
                 }
             } else if (cmdLine.next("off").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLog.setTermLevel(Level.OFF,session);
+                    NLog.setTermLevel(Level.OFF);
                 }
             } else if (cmdLine.next("all").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLog.setTermLevel(Level.ALL,session);
+                    NLog.setTermLevel(Level.ALL);
                 }
             } else {
                 if (cmdLine.isExecMode()) {
-                    throw new NIllegalArgumentException(session, NMsg.ofPlain("invalid loglevel"));
+                    throw new NIllegalArgumentException(NMsg.ofPlain("invalid loglevel"));
                 }
             }
             cmdLine.setCommandName("config log").throwUnexpectedArgument();
@@ -80,8 +84,8 @@ public class NSettingsLogSubCommand extends AbstractNSettingsSubCommand {
         } else if (cmdLine.next("install-log").isPresent()) {
             if (cmdLine.isExecMode()) {
                 if(session.isPlainOut()) {
-                    for (NInstallLogRecord r : NWorkspaceExt.of(session).getInstalledRepository().findLog(session)) {
-                        NTexts txt = NTexts.of(session);
+                    for (NInstallLogRecord r : NWorkspaceExt.of(session).getInstalledRepository().findLog()) {
+                        NTexts txt = NTexts.of();
                         session.out().print(
                                 NMsg.ofC("%s %s %s %s %s %s %s%n",
                                         r.getDate(),
@@ -98,7 +102,7 @@ public class NSettingsLogSubCommand extends AbstractNSettingsSubCommand {
                     }
                 }else{
                     session.out().println(
-                            NWorkspaceExt.of(session).getInstalledRepository().findLog(session).toList()
+                            NWorkspaceExt.of(session).getInstalledRepository().findLog().toList()
                     );
                 }
             }

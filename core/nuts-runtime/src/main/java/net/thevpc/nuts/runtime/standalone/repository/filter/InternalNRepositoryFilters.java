@@ -16,37 +16,32 @@ import net.thevpc.nuts.util.NMsg;
 public class InternalNRepositoryFilters extends InternalNTypedFilters<NRepositoryFilter>
         implements NRepositoryFilters {
 
-    public InternalNRepositoryFilters(NSession session) {
-        super(session, NRepositoryFilter.class);
+    public InternalNRepositoryFilters(NWorkspace workspace) {
+        super(workspace, NRepositoryFilter.class);
     }
 
     @Override
     public NRepositoryFilter always() {
-        checkSession();
-        return new NRepositoryFilterTrue(getSession());
+        return new NRepositoryFilterTrue(getWorkspace());
     }
 
     @Override
     public NRepositoryFilter never() {
-        checkSession();
-        return new NRepositoryFilterFalse(getSession());
+        return new NRepositoryFilterFalse(getWorkspace());
     }
 
     @Override
     public NRepositoryFilter not(NFilter other) {
-        checkSession();
-        return new NRepositoryFilterNone(getSession(), (NRepositoryFilter) other);
+        return new NRepositoryFilterNone(getWorkspace(), (NRepositoryFilter) other);
     }
 
     @Override
     public NRepositoryFilter installedRepo() {
-        checkSession();
-        return new DefaultNRepositoryUuidFilter(getSession(), Arrays.asList(DefaultNInstalledRepository.INSTALLED_REPO_UUID));
+        return new DefaultNRepositoryUuidFilter(getWorkspace(), Arrays.asList(DefaultNInstalledRepository.INSTALLED_REPO_UUID));
     }
 
     @Override
     public NRepositoryFilter byName(String[] names) {
-        checkSession();
         if (names == null || names.length == 0) {
             return always();
         }
@@ -56,12 +51,11 @@ public class InternalNRepositoryFilters extends InternalNTypedFilters<NRepositor
         if (namesList.isEmpty()) {
             return always();
         }
-        return new DefaultNRepositoryNameFilter(getSession(), namesList);
+        return new DefaultNRepositoryNameFilter(getWorkspace(), namesList);
     }
 
     @Override
     public NRepositoryFilter bySelector(String[] names) {
-        checkSession();
         if (names == null || names.length == 0) {
             return always();
         }
@@ -80,12 +74,11 @@ public class InternalNRepositoryFilters extends InternalNTypedFilters<NRepositor
         if (namesList.isEmpty()) {
             return always();
         }
-        return new DefaultNRepositorySelectorFilter(getSession(), namesList);
+        return new DefaultNRepositorySelectorFilter(getWorkspace(), namesList);
     }
 
     @Override
     public NRepositoryFilter byNameSelector(String... names) {
-        checkSession();
         if (names == null || names.length == 0) {
             return always();
         }
@@ -108,16 +101,15 @@ public class InternalNRepositoryFilters extends InternalNTypedFilters<NRepositor
         if (namesList.isEmpty()) {
             return always();
         }
-        return new DefaultNRepositorySelectorFilter(getSession(), namesList);
+        return new DefaultNRepositorySelectorFilter(getWorkspace(), namesList);
     }
 
     @Override
     public NRepositoryFilter byUuid(String... uuids) {
-        checkSession();
         if (uuids == null || uuids.length == 0) {
             return always();
         }
-        return new DefaultNRepositoryUuidFilter(getSession(), Arrays.asList(uuids));
+        return new DefaultNRepositoryUuidFilter(getWorkspace(), Arrays.asList(uuids));
     }
 
     @Override
@@ -130,20 +122,18 @@ public class InternalNRepositoryFilters extends InternalNTypedFilters<NRepositor
 
     @Override
     public NRepositoryFilter from(NFilter a) {
-        checkSession();
         if (a == null) {
             return null;
         }
         NRepositoryFilter t = as(a);
         if (t == null) {
-            throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("not a RepositoryFilter"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("not a RepositoryFilter"));
         }
         return t;
     }
 
     @Override
     public NRepositoryFilter all(NFilter... others) {
-        checkSession();
         List<NRepositoryFilter> all = convertList(others);
         if (all.isEmpty()) {
             return always();
@@ -151,12 +141,11 @@ public class InternalNRepositoryFilters extends InternalNTypedFilters<NRepositor
         if (all.size() == 1) {
             return all.get(0);
         }
-        return new NRepositoryFilterAnd(getSession(), all.toArray(new NRepositoryFilter[0]));
+        return new NRepositoryFilterAnd(getWorkspace(), all.toArray(new NRepositoryFilter[0]));
     }
 
     @Override
     public NRepositoryFilter any(NFilter... others) {
-        checkSession();
         List<NRepositoryFilter> all = convertList(others);
         if (all.isEmpty()) {
             return always();
@@ -164,23 +153,21 @@ public class InternalNRepositoryFilters extends InternalNTypedFilters<NRepositor
         if (all.size() == 1) {
             return all.get(0);
         }
-        return new NRepositoryFilterOr(getSession(), all.toArray(new NRepositoryFilter[0]));
+        return new NRepositoryFilterOr(getWorkspace(), all.toArray(new NRepositoryFilter[0]));
     }
 
     @Override
     public NRepositoryFilter none(NFilter... others) {
-        checkSession();
         List<NRepositoryFilter> all = convertList(others);
         if (all.isEmpty()) {
             return always();
         }
-        return new NRepositoryFilterNone(getSession(), all.toArray(new NRepositoryFilter[0]));
+        return new NRepositoryFilterNone(getWorkspace(), all.toArray(new NRepositoryFilter[0]));
     }
 
     @Override
     public NRepositoryFilter parse(String expression) {
-        checkSession();
-        return new NRepositoryFilterParser(expression, getSession()).parse();
+        return new NRepositoryFilterParser(expression, getWorkspace()).parse();
     }
 
     @Override

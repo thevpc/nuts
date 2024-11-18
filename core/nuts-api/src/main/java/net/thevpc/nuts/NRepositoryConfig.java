@@ -27,6 +27,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.spi.NRepositoryLocation;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -49,18 +50,19 @@ public class NRepositoryConfig extends NConfigItem {
     private List<NRepositoryRef> mirrors;
     private List<NUserConfig> users;
     private boolean indexEnabled;
-    private boolean preview;
     private String authenticationAgent;
+    private String[] tags;
 
     public NRepositoryConfig() {
     }
 
-    public boolean isPreview() {
-        return preview;
+    public String[] getTags() {
+        return tags;
     }
 
-    public void setPreview(boolean preview) {
-        this.preview = preview;
+    public NRepositoryConfig setTags(String[] tags) {
+        this.tags = tags;
+        return this;
     }
 
     public String getName() {
@@ -184,9 +186,9 @@ public class NRepositoryConfig extends NConfigItem {
         hash = 53 * hash + Objects.hashCode(this.env);
         hash = 53 * hash + Objects.hashCode(this.mirrors);
         hash = 53 * hash + Objects.hashCode(this.users);
-        hash = 53 * hash + Objects.hashCode(this.preview);
         hash = 53 * hash + (this.indexEnabled ? 1 : 0);
         hash = 53 * hash + Objects.hashCode(this.authenticationAgent);
+        hash = 53 * hash + Arrays.hashCode(this.tags);
         return hash;
     }
 
@@ -203,9 +205,6 @@ public class NRepositoryConfig extends NConfigItem {
         }
         final NRepositoryConfig other = (NRepositoryConfig) obj;
         if (this.indexEnabled != other.indexEnabled) {
-            return false;
-        }
-        if (this.preview != other.preview) {
             return false;
         }
         if (!Objects.equals(this.uuid, other.uuid)) {
@@ -238,6 +237,9 @@ public class NRepositoryConfig extends NConfigItem {
         if (!Objects.equals(this.mirrors, other.mirrors)) {
             return false;
         }
+        if (!Arrays.equals(this.tags, other.tags)) {
+            return false;
+        }
         return Objects.equals(this.users, other.users);
     }
 
@@ -248,7 +250,7 @@ public class NRepositoryConfig extends NConfigItem {
                 + ", location=" + location + ", storeLocations=" + (storeLocations == null ? "null" : storeLocations.toString()) + ", storeStrategy=" + storeStrategy + ", groups=" + groups + ", env=" + env + ", mirrors=" + mirrors + ", users="
                 + users + ", indexEnabled=" + indexEnabled
                 + ", authenticationAgent=" + authenticationAgent
-                + ", preview=" + preview
+                + ", tags=" + (tags==null?"[]":Arrays.toString(tags))
                 + '}';
     }
 

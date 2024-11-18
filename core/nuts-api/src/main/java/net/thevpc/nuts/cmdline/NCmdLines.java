@@ -28,7 +28,6 @@ package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NSessionProvider;
 import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.spi.NComponent;
 
@@ -37,9 +36,9 @@ import net.thevpc.nuts.spi.NComponent;
  * @app.category Command Line
  * @since 0.8.3
  */
-public interface NCmdLines extends NComponent, NSessionProvider {
-    static NCmdLines of(NSession session) {
-        return NExtensions.of(session).createComponent(NCmdLines.class, session).get();
+public interface NCmdLines extends NComponent {
+    static NCmdLines of() {
+        return NExtensions.of().createComponent(NCmdLines.class).get();
     }
 
     /**
@@ -69,8 +68,6 @@ public interface NCmdLines extends NComponent, NSessionProvider {
      */
     NArgName createName(String type, String label);
 
-
-    NCmdLines setSession(NSession session);
 
     /**
      * return command line family

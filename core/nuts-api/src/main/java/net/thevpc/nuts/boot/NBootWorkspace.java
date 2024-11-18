@@ -125,8 +125,6 @@ public final class NBootWorkspace {
     //private Set<NRepositoryLocation> parsedBootRuntimeDependenciesRepositories;
     private Set<NRepositoryLocation> parsedBootRuntimeRepositories;
     private boolean preparedWorkspace;
-    private NLog nLog;
-    private NSession nLogSession;
     private Scanner scanner;
     private NBootCache cache = new NBootCache();
     Boolean runtimeLoaded;
@@ -142,7 +140,7 @@ public final class NBootWorkspace {
         }
         InputStream in = userOptions.getStdin().orNull();
         scanner = new Scanner(in == null ? System.in : in);
-        userOptions.setCmdLine(args, null);
+        userOptions.setCmdLine(args);
         if (userOptions.getSkipErrors().orElse(false)) {
             StringBuilder errorMessage = new StringBuilder();
             for (NMsg s : userOptions.getErrors().orElseGet(Collections::emptyList)) {
@@ -224,7 +222,7 @@ public final class NBootWorkspace {
         }
         Map<NStoreType, String> storeLocations =
                 NPlatformHome.of(bootOptions.getStoreLayout().orNull(), system)
-                        .buildLocations(bootOptions.getStoreStrategy().orNull(), bootOptions.getStoreLocations().orNull(), bootOptions.getHomeLocations().orNull(), bootOptions.getWorkspace().orNull(), null//no session!
+                        .buildLocations(bootOptions.getStoreStrategy().orNull(), bootOptions.getStoreLocations().orNull(), bootOptions.getHomeLocations().orNull(), bootOptions.getWorkspace().orNull() //no session!
                         );
         if (new HashSet<>(storeLocations.values()).size() != storeLocations.size()) {
             Map<String, List<NStoreType>> conflicts = new LinkedHashMap<>();
@@ -271,11 +269,11 @@ public final class NBootWorkspace {
         String[] processCmdLine = createProcessCmdLine();
         int result;
         try {
-            if (nLog != null) {
-                nLog.with().session(nLogSession).level(Level.FINE).verb(NLogVerb.START).log(NMsg.ofC("start new process : %s", NCmdLine.of(processCmdLine)));
-            } else {
+//            if (nLog != null) {
+//                nLog.with().level(Level.FINE).verb(NLogVerb.START).log(NMsg.ofC("start new process : %s", NCmdLine.of(processCmdLine)));
+//            } else {
                 bLog.log(Level.FINE, NLogVerb.START, NMsg.ofC("start new process : %s", NCmdLine.of(processCmdLine)));
-            }
+//            }
             result = new ProcessBuilder(processCmdLine).inheritIO().start().waitFor();
         } catch (IOException | InterruptedException ex) {
             throw new NBootException(NMsg.ofPlain("failed to run new nuts process"), ex);
@@ -304,8 +302,8 @@ public final class NBootWorkspace {
         }
         bLog.log(Level.FINE, NLogVerb.START, NMsg.ofC("resolve boot repositories to load nuts-runtime from options : %s and config: %s", computedOptions.getRepositories().orElseGet(Collections::emptyList).toString(), computedOptions.getBootRepositories().ifBlankEmpty().orElse("[]")));
 //        }
-        NRepositorySelectorList bootRepositoriesSelector = NRepositorySelectorList.of(computedOptions.getRepositories().orNull(), repositoryDB, null).get();
-        NRepositorySelector[] old = NRepositorySelectorList.of(Arrays.asList(computedOptions.getBootRepositories().orNull()), repositoryDB, null).get().toArray();
+        NRepositorySelectorList bootRepositoriesSelector = NRepositorySelectorList.of(computedOptions.getRepositories().orNull(), repositoryDB).get();
+        NRepositorySelector[] old = NRepositorySelectorList.of(Arrays.asList(computedOptions.getBootRepositories().orNull()), repositoryDB).get().toArray();
         NRepositoryLocation[] result;
         if (old.length == 0) {
             //no previous config, use defaults!
@@ -327,7 +325,7 @@ public final class NBootWorkspace {
                             NReservedPath r2 = r1.resolve(".nuts-repository");
                             NReservedJsonParser parser = null;
                             try {
-                                byte[] bytes = r2.readAllBytes(nLog);
+                                byte[] bytes = r2.readAllBytes(bLog);
                                 if (bytes != null) {
                                     fileExists = true;
                                     parser = new NReservedJsonParser(new InputStreamReader(new ByteArrayInputStream(bytes)));
@@ -930,7 +928,7 @@ public final class NBootWorkspace {
         return !computedOptions.getRecover().orElse(false) && !computedOptions.getReset().orElse(false);
     }
 
-    public NSession openWorkspace() {
+    public NWorkspace openWorkspace() {
         prepareWorkspace();
         if (hasUnsatisfiedRequirements()) {
             throw new NUnsatisfiedRequirementsException(NMsg.ofC("unable to open a distinct version : %s from nuts#%s", getRequirementsHelpString(true), Nuts.getVersion()));
@@ -1061,7 +1059,7 @@ public final class NBootWorkspace {
                 bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("unable to load Workspace Component from ClassPath : %s", Arrays.asList(bootClassWorldURLs)));
                 throw new NInvalidWorkspaceException(this.computedOptions.getWorkspace().orNull(), NMsg.ofC("unable to load Workspace Component from ClassPath : %s%n  caused by:%n\t%s", Arrays.asList(bootClassWorldURLs), exceptions.stream().map(Throwable::toString).collect(Collectors.joining("\n\t"))));
             }
-            return nWorkspace.createSession();
+            return nWorkspace;
         } catch (NReadOnlyException | NCancelException | NNoSessionCancelException ex) {
             throw ex;
         } catch (UnsatisfiedLinkError | AbstractMethodError ex) {
@@ -1246,7 +1244,7 @@ public final class NBootWorkspace {
         bLog.outln("%s", Nuts.getVersion());
     }
 
-    public NSession runWorkspace() {
+    public NWorkspace runWorkspace() {
         if (computedOptions.getCommandHelp().orElse(false)) {
             runCommandHelp();
             return null;
@@ -1258,56 +1256,52 @@ public final class NBootWorkspace {
             runNewProcess();
             return null;
         }
-        NSession session = this.openWorkspace();
-        NWorkspace workspace = session.getWorkspace();
-        String message = "workspace started successfully";
-        NBootOptions o = this.getOptions();
-        if (workspace == null) {
-            fallbackInstallActionUnavailable(message);
-            throw new NBootException(NMsg.ofC("workspace not available to run : %s", NCmdLine.of(o.getApplicationArguments().get())));
-        }
-
-        session.setAppId(workspace.getApiId());
-        if (nLog == null) {
-            nLog = NLog.of(NBootWorkspace.class, session);
-            nLogSession = session;
-        }
-        NLogOp logOp = nLog.with().session(session).level(Level.CONFIG);
-        logOp.verb(NLogVerb.SUCCESS).log(NMsg.ofC("running workspace in %s mode", getRunModeString()));
-        if (workspace == null && o.getApplicationArguments().get().size() > 0) {
-            switch (o.getApplicationArguments().get().get(0)) {
-                case "version": {
-                    runCommandVersion();
-                    return session;
-                }
-                case "help": {
-                    runCommandHelp();
-                    return session;
+        NWorkspace workspace = this.openWorkspace();
+        workspace.runWith(() -> {
+            String message = "workspace started successfully";
+            NBootOptions o = this.getOptions();
+            if (workspace == null) {
+                fallbackInstallActionUnavailable(message);
+                throw new NBootException(NMsg.ofC("workspace not available to run : %s", NCmdLine.of(o.getApplicationArguments().get())));
+            }
+            workspace.currentSession().setAppId(workspace.getApiId());
+            NLogOp logOp = NLog.of(NBootWorkspace.class).with().level(Level.CONFIG);
+            logOp.verb(NLogVerb.SUCCESS).log(NMsg.ofC("running workspace in %s mode", getRunModeString()));
+            if (workspace == null && o.getApplicationArguments().get().size() > 0) {
+                switch (o.getApplicationArguments().get().get(0)) {
+                    case "version": {
+                        runCommandVersion();
+                        return;
+                    }
+                    case "help": {
+                        runCommandHelp();
+                        return;
+                    }
                 }
             }
-        }
-        NExecCmd execCmd = NExecCmd.of(session.setDry(computedOptions.getDry().orElse(false)))
-                .setExecutionType(o.getExecutionType().orNull())
-                .setRunAs(o.getRunAs().orNull())
-                .failFast();
-        List<String> executorOptions = o.getExecutorOptions().orNull();
-        if (executorOptions != null) {
-            execCmd.configure(true, executorOptions.toArray(new String[0]));
-        }
-        NCmdLine executorOptionsCmdLine = NCmdLine.of(executorOptions, session).setExpandSimpleOptions(false);
-        while (executorOptionsCmdLine.hasNext()) {
-            execCmd.configureLast(executorOptionsCmdLine);
-        }
-        if (o.getApplicationArguments().get().size() == 0) {
-            if (o.getSkipWelcome().orElse(false)) {
-                return session;
+            NExecCmd execCmd = NExecCmd.of()
+                    .setExecutionType(o.getExecutionType().orNull())
+                    .setRunAs(o.getRunAs().orNull())
+                    .failFast();
+            List<String> executorOptions = o.getExecutorOptions().orNull();
+            if (executorOptions != null) {
+                execCmd.configure(true, executorOptions.toArray(new String[0]));
             }
-            execCmd.addCommand("welcome");
-        } else {
-            execCmd.addCommand(o.getApplicationArguments().get());
-        }
-        execCmd.run();
-        return session;
+            NCmdLine executorOptionsCmdLine = NCmdLine.of(executorOptions).setExpandSimpleOptions(false);
+            while (executorOptionsCmdLine.hasNext()) {
+                execCmd.configureLast(executorOptionsCmdLine);
+            }
+            if (o.getApplicationArguments().get().size() == 0) {
+                if (o.getSkipWelcome().orElse(false)) {
+                    return;
+                }
+                execCmd.addCommand("welcome");
+            } else {
+                execCmd.addCommand(o.getApplicationArguments().get());
+            }
+            execCmd.run();
+        });
+        return workspace;
     }
 
     private void fallbackInstallActionUnavailable(String message) {

@@ -42,15 +42,15 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
     private boolean hasMoreBytes = true;
     private boolean closed = false;
     private boolean interrupted = false;
-    private NSession session;
+    private NWorkspace worksapce;
     private NContentMetadata md;
     private InputStream base;
     private NMsg sourceName;
 
-    public NNonBlockingInputStreamAdapter(InputStream base, NContentMetadata md, NMsg sourceName, NSession session) {
+    public NNonBlockingInputStreamAdapter(InputStream base, NContentMetadata md, NMsg sourceName, NWorkspace workspace) {
         super(base);
         this.base = base;
-        this.session = session;
+        this.worksapce = workspace;
         this.md = CoreIOUtils.createContentMetadata(md, base);
         if (sourceName == null) {
             NMsg m2 = this.md.getMessage().orElse(null);
@@ -69,7 +69,7 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
 
     private void checkInterrupted() {
         if (interrupted) {
-            throw new NIOException(session, NMsg.ofPlain("stream is interrupted"));
+            throw new NIOException(NMsg.ofPlain("stream is interrupted"));
         }
     }
 
@@ -254,8 +254,8 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
 
 
     @Override
-    public NFormat formatter(NSession session) {
-        return NFormat.of(session, new NContentMetadataProviderFormatSPI(this, sourceName, "input-stream"));
+    public NFormat formatter() {
+        return NFormat.of(new NContentMetadataProviderFormatSPI(this, sourceName, "input-stream"));
     }
 
     @Override

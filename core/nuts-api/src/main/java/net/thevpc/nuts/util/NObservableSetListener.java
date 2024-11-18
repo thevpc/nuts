@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
@@ -23,22 +23,45 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
-package net.thevpc.nuts.lib.common.collections;
+ */
+package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.util.NMapListener;
-
-import java.util.*;
+import net.thevpc.nuts.NListener;
 
 /**
- * Created by vpc on 1/21/17.
+ * Map Listener to catch updates
+ *
+ * @param <V> key type
+ * @app.category Base
+ * @since 0.2.0
  */
-public interface ObservableMap<K, V> extends Map<K, V> {
+public interface NObservableSetListener<V> extends NListener {
 
-    void addListener(NMapListener<K, V> listener);
+    /**
+     * Invoked when item added
+     *
+     * @param value   value
+     */
+    default void itemAdded(V value) {
 
-    void removeListener(NMapListener<K, V> listener);
+    }
 
-    List<NMapListener<K, V>> getListeners();
+    /**
+     * Invoked when item removed
+     *
+     * @param value   value
+     */
+    default void itemRemoved(V value) {
 
+    }
+
+    /**
+     * Invoked when item updated
+     *
+     * @param newValue new value
+     * @param oldValue old value
+     */
+    default void itemUpdated(V newValue, V oldValue) {
+
+    }
 }

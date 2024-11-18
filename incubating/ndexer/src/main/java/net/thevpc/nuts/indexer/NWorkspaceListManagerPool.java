@@ -19,7 +19,7 @@ public class NWorkspaceListManagerPool {
         NWorkspaceList o = pool.get(name);
         if (o == null) {
             NSession session = app.getSession();
-            o = NWorkspaceList.of(session).setName(name);
+            o = NWorkspaceList.of().setName(name);
             pool.put(name, o);
         }
         return o;

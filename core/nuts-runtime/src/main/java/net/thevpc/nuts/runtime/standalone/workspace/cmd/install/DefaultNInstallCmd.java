@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.install;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NMemoryPrintStream;
 import net.thevpc.nuts.io.NPrintStream;
@@ -55,8 +56,8 @@ import java.util.stream.Collectors;
  */
 public class DefaultNInstallCmd extends AbstractNInstallCmd {
 
-    public DefaultNInstallCmd(NSession session) {
-        super(session);
+    public DefaultNInstallCmd(NWorkspace workspace) {
+        super(workspace);
     }
 
     private NDefinition _loadIdContent(NId id, NId forId, NSession session, boolean includeDeps, InstallIdList loaded, NInstallStrategy installStrategy) {
@@ -87,7 +88,7 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
             }
         }
         try {
-            def.definition = NFetchCmd.of(id,session)
+            def.definition = NFetchCmd.of(id)
                     .content()
                     .effective()
                     .setDependencies(includeDeps)
@@ -95,7 +96,7 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
                     //
                     .setOptional(false)
                     .addScope(NDependencyScopePattern.RUN)
-                    .setDependencyFilter(NDependencyFilters.of(session).byRunnable())
+                    .setDependencyFilter(NDependencyFilters.of().byRunnable())
                     //
                     .getResultDefinition();
         } catch (NNotFoundException ee) {
@@ -112,19 +113,19 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
             }
             if (includeDeps) {
                 NDependencies nDependencies = def.definition.getDependencies().get();
-                for (NDependency dependency : def.definition.getDependencies().get(session)) {
+                for (NDependency dependency : def.definition.getDependencies().get()) {
                     NId did = dependency.toId();
                     _loadIdContent(did, id, session, false, loaded, NInstallStrategy.REQUIRE);
                 }
             }
         } else {
-            _LOGOP(session).verb(NLogVerb.WARNING).level(Level.FINE)
+            _LOGOP().verb(NLogVerb.WARNING).level(Level.FINE)
                     .log(NMsg.ofC("failed to retrieve %s", def.id));
         }
         return def.definition;
     }
 
-    private boolean doThis(NId id, InstallIdList list, NSession session) {
+    private boolean doThis(NId id, InstallIdList list) {
         List<String> cmdArgs = new ArrayList<>(this.getArgs());
 //        if (session.isYes()) {
 //            cmdArgs.add(0, "--yes");
@@ -133,9 +134,8 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
 //            cmdArgs.add(0, "--trace");
 //        }
 
-        checkSession();
-        NWorkspace ws = getSession().getWorkspace();
-        NWorkspaceExt dws = NWorkspaceExt.of(ws);
+        NSession session=getWorkspace().currentSession();
+        NWorkspaceExt dws = NWorkspaceExt.of(getWorkspace());
         InstallIdInfo info = list.get(id);
         if (info.doInstall) {
             _loadIdContent(info.id, null, session, true, list, info.strategy);
@@ -146,29 +146,29 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
                     }
                 }
             }
-            dws.installImpl(info.definition, cmdArgs.toArray(new String[0]), info.doSwitchVersion, session);
+            dws.installImpl(info.definition, cmdArgs.toArray(new String[0]), info.doSwitchVersion);
             return true;
         } else if (info.doRequire) {
             _loadIdContent(info.id, null, session, true, list, info.strategy);
-            dws.requireImpl(info.definition, info.doRequireDependencies, new NId[0], session);
+            dws.requireImpl(info.definition, info.doRequireDependencies, new NId[0]);
             return true;
         } else if (info.doSwitchVersion) {
-            dws.getInstalledRepository().setDefaultVersion(info.id, session);
+            dws.getInstalledRepository().setDefaultVersion(info.id);
             return true;
         } else if (info.ignored) {
             return false;
         } else {
-            throw new NUnexpectedException(getSession(), NMsg.ofPlain("unexpected"));
+            throw new NUnexpectedException(NMsg.ofPlain("unexpected"));
         }
     }
 
     @Override
     public NStream<NDefinition> getResult() {
-        checkSession();
+        NSession session=getWorkspace().currentSession();
         if (result == null) {
             run();
         }
-        return new NStreamFromList<NDefinition>(getSession(),
+        return new NStreamFromList<NDefinition>(session,
                 ids.isEmpty() ? null : ids.keySet().toArray()[0].toString(),
                 Arrays.asList(result)
         ).withDesc(NEDesc.of("InstallResult"));
@@ -176,19 +176,18 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
 
     @Override
     public NInstallCmd run() {
-        checkSession();
-        NWorkspace ws = getSession().getWorkspace();
+        NSession session=getWorkspace().currentSession();
+        NWorkspace ws = getWorkspace();
         NWorkspaceExt dws = NWorkspaceExt.of(ws);
-        NSession session = getSession();
         NPrintStream out = session.out();
-        NWorkspaceSecurityManager.of(session).checkAllowed(NConstants.Permissions.INSTALL, "install");
+        NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.INSTALL, "install");
 //        LinkedHashMap<NutsId, Boolean> allToInstall = new LinkedHashMap<>();
         InstallIdList list = new InstallIdList(NInstallStrategy.INSTALL);
         for (Map.Entry<NId, NInstallStrategy> idAndStrategy : this.getIdMap().entrySet()) {
             if (!list.isVisited(idAndStrategy.getKey())) {
-                List<NId> allIds = NSearchCmd.of(session).addId(idAndStrategy.getKey()).setLatest(true).getResultIds().toList();
+                List<NId> allIds = NSearchCmd.of().addId(idAndStrategy.getKey()).setLatest(true).getResultIds().toList();
                 if (allIds.isEmpty()) {
-                    throw new NNotFoundException(getSession(), idAndStrategy.getKey());
+                    throw new NNotFoundException(idAndStrategy.getKey());
                 }
                 for (NId id0 : allIds) {
                     list.addForInstall(id0, idAndStrategy.getValue(), false);
@@ -199,11 +198,11 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
             // In all cases, even though search may be empty we consider that the list is not empty
             // so that no empty exception is thrown
             list.emptyCommand = false;
-            for (NId sid : session.extensions().getCompanionIds()) {
+            for (NId sid : NExtensions.of().getCompanionIds()) {
                 if (!list.isVisited(sid)) {
-                    List<NId> allIds = NSearchCmd.of(session).addId(sid).setLatest(true).setTargetApiVersion(ws.getApiVersion()).getResultIds().toList();
+                    List<NId> allIds = NSearchCmd.of().addId(sid).setLatest(true).setTargetApiVersion(ws.getApiVersion()).getResultIds().toList();
                     if (allIds.isEmpty()) {
-                        throw new NNotFoundException(getSession(), sid);
+                        throw new NNotFoundException(sid);
                     }
                     for (NId id0 : allIds) {
                         list.addForInstall(id0.builder().setRepository(null).build(), this.getCompanions(), false);
@@ -221,13 +220,13 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
             // In all cases, even though search may be empty we considere that the list is not empty
             // so that no empty exception is thrown
             list.emptyCommand = false;
-            for (NId resultId : NSearchCmd.of(session).setInstallStatus(
-                    NInstallStatusFilters.of(session).byInstalled(true)).getResultIds()) {
+            for (NId resultId : NSearchCmd.of().setInstallStatus(
+                    NInstallStatusFilters.of().byInstalled(true)).getResultIds()) {
                 list.addForInstall(resultId, getInstalled(), true);
             }
             // This bloc is to handle packages that were installed but their jar/content was removed for any reason!
             NInstalledRepository ir = dws.getInstalledRepository();
-            for (NInstallInformation y : IteratorUtils.toList(ir.searchInstallInformation(session))) {
+            for (NInstallInformation y : IteratorUtils.toList(ir.searchInstallInformation())) {
                 if (y != null && y.getInstallStatus().isInstalled() && y.getId() != null) {
                     list.addForInstall(y.getId(), getInstalled(), true);
                 }
@@ -236,7 +235,7 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
 
         for (InstallIdInfo info : list.infos()) {
             NId nid = info.id;
-            info.oldInstallStatus = dws.getInstalledRepository().getInstallStatus(nid, session);
+            info.oldInstallStatus = dws.getInstalledRepository().getInstallStatus(nid);
 //            boolean _installed = installStatus.contains(NutsInstallStatus.INSTALLED);
 //            boolean _defVer = dws.getInstalledRepository().isDefaultVersion(nid, session);
 
@@ -279,7 +278,7 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
                         break;
                     }
                     default: {
-                        throw new NUnexpectedException(getSession(), NMsg.ofC("unsupported strategy %s", strategy));
+                        throw new NUnexpectedException(NMsg.ofC("unsupported strategy %s", strategy));
                     }
                 }
             } else if (info.getOldInstallStatus().isObsolete()) {
@@ -313,7 +312,7 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
                         break;
                     }
                     default: {
-                        throw new NUnexpectedException(getSession(), NMsg.ofC("unsupported strategy %s", strategy));
+                        throw new NUnexpectedException(NMsg.ofC("unsupported strategy %s", strategy));
                     }
                 }
             } else if (info.getOldInstallStatus().isInstalled()) {
@@ -341,7 +340,7 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
                         break;
                     }
                     default: {
-                        throw new NUnexpectedException(getSession(), NMsg.ofC("unsupported strategy %s", strategy));
+                        throw new NUnexpectedException(NMsg.ofC("unsupported strategy %s", strategy));
                     }
                 }
             } else if (info.getOldInstallStatus().isRequired()) {
@@ -370,11 +369,11 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
                         break;
                     }
                     default: {
-                        throw new NUnexpectedException(getSession(), NMsg.ofC("unsupported strategy %s", strategy));
+                        throw new NUnexpectedException(NMsg.ofC("unsupported strategy %s", strategy));
                     }
                 }
             } else {
-                throw new NUnexpectedException(getSession(), NMsg.ofC("unsupported status %s", info.oldInstallStatus));
+                throw new NUnexpectedException(NMsg.ofC("unsupported status %s", info.oldInstallStatus));
             }
         }
         Map<String, List<InstallIdInfo>> error = list.infos().stream().filter(x -> x.doError != null).collect(Collectors.groupingBy(installIdInfo -> installIdInfo.doError));
@@ -383,15 +382,15 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
             for (Map.Entry<String, List<InstallIdInfo>> stringListEntry : error.entrySet()) {
                 out.resetLine().println("the following " + (stringListEntry.getValue().size() > 1 ? "artifacts are" : "artifact is") + " cannot be ```error installed``` (" + stringListEntry.getKey() + ") : "
                         + stringListEntry.getValue().stream().map(x -> x.id)
-                        .map(x -> NIdFormat.of(session).setOmitImportedGroupId(true).setValue(x.getLongId()).format().toString())
+                        .map(x -> NIdFormat.of().setOmitImportedGroupId(true).setValue(x.getLongId()).format().toString())
                         .collect(Collectors.joining(", ")));
                 sb.append("\n" + "the following ").append(stringListEntry.getValue().size() > 1 ? "artifacts are" : "artifact is").append(" cannot be installed (").append(stringListEntry.getKey()).append(") : ").append(stringListEntry.getValue().stream().map(x -> x.id)
-                        .map(x -> NIdFormat.of(session).setOmitImportedGroupId(true).setValue(x.getLongId()).format().toString())
+                        .map(x -> NIdFormat.of().setOmitImportedGroupId(true).setValue(x.getLongId()).format().toString())
                         .collect(Collectors.joining(", ")));
             }
-            throw new NInstallException(getSession(), null, NMsg.ofNtf(sb.toString().trim()), null);
+            throw new NInstallException(null, NMsg.ofNtf(sb.toString().trim()), null);
         }
-        NMemoryPrintStream mout = NMemoryPrintStream.of(session);
+        NMemoryPrintStream mout = NMemoryPrintStream.of();
         List<NId> nonIgnored = list.ids(x -> !x.ignored);
         List<NId> list_new_installed = list.ids(x -> x.doInstall && !x.isAlreadyExists());
         List<NId> list_new_required = list.ids(x -> x.doRequire && !x.doInstall && !x.isAlreadyExists());
@@ -402,7 +401,7 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
         List<NId> installed_ignored = list.ids(x -> x.ignored);
 
         if (!nonIgnored.isEmpty()) {
-            if (getSession().isPlainTrace() || (!list.emptyCommand && getSession().getConfirm().orDefault() == NConfirmationMode.ASK)) {
+            if (session.isPlainTrace() || (!list.emptyCommand && session.getConfirm().orDefault() == NConfirmationMode.ASK)) {
                 printList(mout, "new", "installed", list_new_installed);
                 printList(mout, "new", "required", list_new_required);
                 printList(mout, "required", "re-required", list_required_rerequired);
@@ -416,31 +415,29 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
             } else {
                 mout.println("should we proceed installation?");
             }
-            if (!NIO.of(getSession()).getDefaultTerminal().ask()
-                    .setSession(session)
+            if (!NIO.of().getDefaultTerminal().ask()
                     .forBoolean(NMsg.ofNtf(mout.toString()))
                     .setDefaultValue(true)
                     .setCancelMessage(
                             NMsg.ofC("installation cancelled : %s ", nonIgnored.stream().map(NId::getFullName).collect(Collectors.joining(", ")))
                     )
                     .getBooleanValue()) {
-                throw new NCancelException(getSession(), NMsg.ofC("installation cancelled: %s", nonIgnored.stream().map(NId::getFullName).collect(Collectors.joining(", "))));
+                throw new NCancelException(NMsg.ofC("installation cancelled: %s", nonIgnored.stream().map(NId::getFullName).collect(Collectors.joining(", "))));
             }
         } else if (!installed_ignored.isEmpty()) {
             //all packages are already installed, ask if we need to re-install!
-            if (getSession().isPlainTrace() || (!list.emptyCommand && getSession().getConfirm().orDefault() == NConfirmationMode.ASK)) {
+            if (session.isPlainTrace() || (!list.emptyCommand && session.getConfirm().orDefault() == NConfirmationMode.ASK)) {
                 printList(mout, "installed", "re-reinstalled", installed_ignored);
             }
             mout.println("should we proceed?");
-            if (!NIO.of(getSession()).getDefaultTerminal().ask()
-                    .setSession(session)
+            if (!NIO.of().getDefaultTerminal().ask()
                     .forBoolean(NMsg.ofNtf(mout.toString()))
                     .setDefaultValue(true)
                     .setCancelMessage(
                             NMsg.ofC("installation cancelled : %s ", nonIgnored.stream().map(NId::getFullName).collect(Collectors.joining(", ")))
                     )
                     .getBooleanValue()) {
-                throw new NCancelException(getSession(), NMsg.ofC("installation cancelled: %s", nonIgnored.stream().map(NId::getFullName).collect(Collectors.joining(", "))));
+                throw new NCancelException(NMsg.ofC("installation cancelled: %s", nonIgnored.stream().map(NId::getFullName).collect(Collectors.joining(", "))));
             }
             //force installation
             for (InstallIdInfo info : list.infos()) {
@@ -465,16 +462,15 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
             if (!list.ids(x -> !x.ignored).isEmpty()) {
                 for (InstallIdInfo info : list.infos(x -> !x.ignored)) {
                     try {
-                        if (doThis(info.id, list, session)) {
+                        if (doThis(info.id, list)) {
                             resultList.add(info.definition);
                         }
                     } catch (RuntimeException ex) {
-                        _LOGOP(session).error(ex).verb(NLogVerb.WARNING).level(Level.FINE)
+                        _LOGOP().error(ex).verb(NLogVerb.WARNING).level(Level.FINE)
                                 .log(NMsg.ofC("failed to install %s", info.id));
                         failedList.add(info.id);
                         if (session.isPlainTrace()) {
-                            if (!NIO.of(getSession()).getDefaultTerminal().ask()
-                                    .setSession(session)
+                            if (!NIO.of().getDefaultTerminal().ask()
                                     .forBoolean(NMsg.ofC("%s %s and its dependencies... Continue installation?",
                                             NMsg.ofStyled("failed to install", NTextStyle.error()),
                                             info.id))
@@ -497,15 +493,16 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
             failed = failedList.toArray(new NId[0]);
         }
         if (list.emptyCommand) {
-            throw new NExecutionException(getSession(), NMsg.ofPlain("missing packages to install"), NExecutionException.ERROR_1);
+            throw new NExecutionException(NMsg.ofPlain("missing packages to install"), NExecutionException.ERROR_1);
         }
         return this;
     }
 
     private void printList(NPrintStream out, String skind, String saction, List<NId> all) {
         if (all.size() > 0) {
+            NSession session=getWorkspace().currentSession();
             if (session.isPlainOut()) {
-                NTexts text = NTexts.of(session);
+                NTexts text = NTexts.of();
                 NText kind = text.ofStyled(skind, NTextStyle.primary2());
                 NText action =
                         text.ofStyled(saction,
@@ -513,22 +510,21 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
                                         saction.equals("ignored") ? NTextStyle.pale() :
                                                 NTextStyle.primary1()
                         );
-                NSession session = getSession();
-                NTextBuilder msg = NTexts.of(getSession()).ofBuilder();
+                NTextBuilder msg = NTexts.of().ofBuilder();
                 msg.append("the following ")
                         .append(kind).append(" ").append((all.size() > 1 ? "artifacts are" : "artifact is"))
                         .append(" going to be ").append(action).append(" : ")
                         .appendJoined(
-                                NTexts.of(session).ofPlain(", "),
+                                NTexts.of().ofPlain(", "),
                                 all.stream().map(x
-                                                -> NTexts.of(session).ofText(
+                                                -> NTexts.of().ofText(
                                                 x.builder().build()
                                         )
                                 ).collect(Collectors.toList())
                         );
                 out.resetLine().println(msg);
             } else {
-                NElements elem = NElements.of(session);
+                NElements elem = NElements.of();
                 session.eout().add(elem.ofObject()
                         .set("command", "warning")
                         .set("artifact-kind", skind)

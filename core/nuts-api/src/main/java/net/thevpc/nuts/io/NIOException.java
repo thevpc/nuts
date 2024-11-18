@@ -28,7 +28,6 @@ package net.thevpc.nuts.io;
 import net.thevpc.nuts.NException;
 import net.thevpc.nuts.NExceptionBase;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 
 /**
  * Exception thrown when copy validation fails
@@ -40,32 +39,29 @@ public class NIOException extends NException {
     /**
      * Constructs a new Validation Exception
      *
-     * @param session workspace
      * @param message message
      */
-    public NIOException(NSession session, NMsg message) {
-        super(session, message);
+    public NIOException(NMsg message) {
+        super(message);
     }
 
     /**
      * Constructs a new Validation Exception
      *
-     * @param session workspace
      * @param message message
      * @param cause   cause
      */
-    public NIOException(NSession session, NMsg message, Throwable cause) {
-        super(session, message, cause);
+    public NIOException(NMsg message, Throwable cause) {
+        super(message, cause);
     }
 
     /**
      * Constructs a new Validation Exception
      *
-     * @param session workspace
-     * @param cause   cause
+     * @param cause cause
      */
-    public NIOException(NSession session, Throwable cause) {
-        super(session,
+    public NIOException(Throwable cause) {
+        super(
                 cause == null ? null
                         : (cause instanceof NExceptionBase) ?
                         ((NExceptionBase) cause).getFormattedMessage()

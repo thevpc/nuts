@@ -35,18 +35,18 @@ import java.util.stream.Stream;
 public class FilePath implements NPathSPI {
 
     private final Path value;
-    private final NSession session;
+    protected final NWorkspace workspace;
 
-    public FilePath(Path value, NSession session) {
+    public FilePath(Path value, NWorkspace workspace) {
         if (value == null) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("invalid null value"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("invalid null value"));
         }
         this.value = value;
-        this.session = session;
+        this.workspace = workspace;
     }
 
-    private NPath fastPath(Path p, NSession s) {
-        return NPath.of(new FilePath(p, s), s);
+    private NPath fastPath(Path p, NWorkspace s) {
+        return NPath.of(new FilePath(p, s));
     }
 
     @Override
@@ -55,13 +55,13 @@ public class FilePath implements NPathSPI {
             try {
                 try (Stream<Path> files = Files.list(value)) {
                     //ensure closed!!
-                    return NStream.of(files.collect(Collectors.toList()), getSession()).map(x -> fastPath(x, getSession()));
+                    return NStream.of(files.collect(Collectors.toList())).map(x -> fastPath(x, getWorkspace()));
                 }
             } catch (IOException e) {
                 //
             }
         }
-        return NStream.ofEmpty(getSession());
+        return NStream.ofEmpty();
     }
 
     @Override
@@ -83,27 +83,27 @@ public class FilePath implements NPathSPI {
     @Override
     public NPath resolve(NPath basePath, String path) {
         if (NBlankable.isBlank(path)) {
-            return fastPath(value, getSession());
+            return fastPath(value, getWorkspace());
         }
         try {
-            return fastPath(value.resolve(path), getSession());
+            return fastPath(value.resolve(path), getWorkspace());
         } catch (Exception ex) {
             //always return an instance if is invalid
-            return NPath.of(value + getSep() + path, getSession());
+            return NPath.of(value + getSep() + path);
         }
     }
 
     @Override
     public NPath resolve(NPath basePath, NPath path) {
         if (path == null) {
-            return fastPath(value, getSession());
+            return fastPath(value, getWorkspace());
         }
         if (path.toString().isEmpty()) {
-            return fastPath(value, getSession());
+            return fastPath(value, getWorkspace());
         }
         Path f = path.toPath().orNull();
         if (f != null) {
-            return fastPath(value.resolve(f), getSession());
+            return fastPath(value.resolve(f), getWorkspace());
         }
         return resolve(basePath, path.toString());
     }
@@ -117,13 +117,13 @@ public class FilePath implements NPathSPI {
             return getParent(basePath);
         }
         try {
-            return fastPath(value.resolveSibling(path), getSession());
+            return fastPath(value.resolveSibling(path), getWorkspace());
         } catch (Exception e) {
             Path p = value.getParent();
             if (p == null) {
-                return NPath.of(path, session);
+                return NPath.of(path);
             }
-            return fastPath(p, session).resolve(path);
+            return fastPath(p, workspace).resolve(path);
         }
     }
 
@@ -201,12 +201,12 @@ public class FilePath implements NPathSPI {
 
     @Override
     public String getContentType(NPath basePath) {
-        return NContentTypes.of(session).probeContentType(value);
+        return NContentTypes.of().probeContentType(value);
     }
 
     @Override
     public String getCharset(NPath basePath) {
-        return NContentTypes.of(session).probeCharset(value);
+        return NContentTypes.of().probeCharset(value);
     }
 
     @Override
@@ -218,7 +218,7 @@ public class FilePath implements NPathSPI {
         try {
             return Files.newInputStream(value, toOpenOptions(options));
         } catch (IOException e) {
-            throw new NIOException(session, e);
+            throw new NIOException(e);
         }
     }
 
@@ -226,7 +226,7 @@ public class FilePath implements NPathSPI {
         try {
             return Files.newOutputStream(value, toOpenOptions(options));
         } catch (IOException e) {
-            throw new NIOException(session, e);
+            throw new NIOException(e);
         }
     }
 
@@ -299,9 +299,8 @@ public class FilePath implements NPathSPI {
         return oo.toArray(new OpenOption[0]);
     }
 
-    @Override
-    public NSession getSession() {
-        return session;
+    public NWorkspace getWorkspace() {
+        return workspace;
     }
 
     @Override
@@ -310,34 +309,34 @@ public class FilePath implements NPathSPI {
             try {
                 Files.delete(value);
             } catch (IOException e) {
-                throw new NIOException(getSession(), e);
+                throw new NIOException(e);
             }
         } else if (Files.isDirectory(value)) {
             if (recurse) {
-                CoreIOUtils.delete(getSession(), value);
+                CoreIOUtils.delete(value);
             } else {
                 try {
                     Files.delete(value);
                 } catch (IOException e) {
-                    throw new NIOException(getSession(), e);
+                    throw new NIOException(e);
                 }
             }
         } else {
-            throw new NIOException(getSession(), NMsg.ofC("unable to delete path %s", value));
+            throw new NIOException(NMsg.ofC("unable to delete path %s", value));
         }
     }
 
     @Override
     public void mkdir(boolean parents, NPath basePath) {
         if (Files.isRegularFile(value)) {
-            throw new NIOException(getSession(), NMsg.ofC("unable to create folder out of regular file %s", value));
+            throw new NIOException(NMsg.ofC("unable to create folder out of regular file %s", value));
         } else if (Files.isDirectory(value)) {
             return;
         } else {
             try {
                 Files.createDirectories(value);
             } catch (IOException e) {
-                throw new NIOException(getSession(), NMsg.ofC("unable to create folders %s", value));
+                throw new NIOException(NMsg.ofC("unable to create folders %s", value));
             }
         }
     }
@@ -382,7 +381,7 @@ public class FilePath implements NPathSPI {
         if (p == null) {
             return null;
         }
-        return fastPath(p, getSession());
+        return fastPath(p, getWorkspace());
     }
 
     @Override
@@ -391,14 +390,14 @@ public class FilePath implements NPathSPI {
             return basePath;
         }
         if (rootPath == null) {
-            return fastPath(value.normalize().toAbsolutePath(), session);
+            return fastPath(value.normalize().toAbsolutePath(), workspace);
         }
         return rootPath.toAbsolute().resolve(toString());
     }
 
     @Override
     public NPath normalize(NPath basePath) {
-        return fastPath(value.normalize(), session);
+        return fastPath(value.normalize(), workspace);
     }
 
     @Override
@@ -557,18 +556,18 @@ public class FilePath implements NPathSPI {
                 }).filter(Objects::nonNull).toArray(FileVisitOption[]::new);
         if (Files.isDirectory(value)) {
             try {
-                return NStream.of(Files.walk(value, maxDepth, fileOptions).map(x -> fastPath(x, getSession())),
-                        getSession());
+                return NStream.of(Files.walk(value, maxDepth, fileOptions).map(x -> fastPath(x, getWorkspace()))
+                );
             } catch (IOException e) {
                 //
             }
         }
-        return NStream.ofEmpty(getSession());
+        return NStream.ofEmpty();
     }
 
     @Override
     public NPath subpath(NPath basePath, int beginIndex, int endIndex) {
-        return fastPath(value.subpath(beginIndex, endIndex), getSession());
+        return fastPath(value.subpath(beginIndex, endIndex), getWorkspace());
     }
 
     @Override
@@ -588,7 +587,7 @@ public class FilePath implements NPathSPI {
             try {
                 Files.move(value, f, StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
-                throw new NIOException(session, e);
+                throw new NIOException(e);
             }
         } else {
             copyTo(basePath, other, options);
@@ -598,7 +597,7 @@ public class FilePath implements NPathSPI {
 
     @Override
     public void copyTo(NPath basePath, NPath other, NPathOption... options) {
-        NCp.of(session).from(fastPath(value, session)).to(other).addOptions(options).run();
+        NCp.of().from(fastPath(value, workspace)).to(other).addOptions(options).run();
     }
 
     @Override
@@ -616,22 +615,22 @@ public class FilePath implements NPathSPI {
             Files.walkFileTree(value, foptions, maxDepth, new FileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                    return fileVisitResult(visitor.preVisitDirectory(fastPath(dir, session), session));
+                    return fileVisitResult(visitor.preVisitDirectory(fastPath(dir, workspace)));
                 }
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    return fileVisitResult(visitor.visitFile(fastPath(file, session), session));
+                    return fileVisitResult(visitor.visitFile(fastPath(file, workspace)));
                 }
 
                 @Override
                 public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-                    return fileVisitResult(visitor.visitFileFailed(fastPath(file, session), exc, session));
+                    return fileVisitResult(visitor.visitFileFailed(fastPath(file, workspace), exc));
                 }
 
                 @Override
                 public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                    return fileVisitResult(visitor.postVisitDirectory(fastPath(dir, session), exc, session));
+                    return fileVisitResult(visitor.postVisitDirectory(fastPath(dir, workspace), exc));
                 }
 
                 private FileVisitResult fileVisitResult(NTreeVisitResult z) {
@@ -651,7 +650,7 @@ public class FilePath implements NPathSPI {
                 }
             });
         } catch (IOException e) {
-            throw new NIOException(getSession(), e);
+            throw new NIOException(e);
         }
     }
 
@@ -816,7 +815,7 @@ public class FilePath implements NPathSPI {
         }
 
         public NString asFormattedString() {
-            return NTexts.of(p.getSession()).ofText(p.value);
+            return NTexts.of().ofText(p.value);
         }
 
         @Override
@@ -838,14 +837,13 @@ public class FilePath implements NPathSPI {
         }
 
         @Override
-        public NCallableSupport<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
-            NSessionUtils.checkSession(ws, session);
+        public NCallableSupport<NPathSPI> createPath(String path, ClassLoader classLoader) {
             try {
                 if (URLPath.MOSTLY_URL_PATTERN.matcher(path).matches()) {
                     return null;
                 }
                 Path value = Paths.get(path);
-                return NCallableSupport.of(10, () -> new FilePath(value, session));
+                return NCallableSupport.of(10, () -> new FilePath(value, ws));
             } catch (Exception ex) {
                 //ignore
             }
@@ -878,7 +876,7 @@ public class FilePath implements NPathSPI {
             if (child.startsWith("/") || child.startsWith("\\")) {
                 child = child.substring(1);
             }
-            return NPath.of(child, session);
+            return NPath.of(child);
         }
         return null;
     }

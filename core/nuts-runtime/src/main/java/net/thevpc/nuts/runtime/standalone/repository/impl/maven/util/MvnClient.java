@@ -7,9 +7,8 @@ import net.thevpc.nuts.util.NMsg;
 import java.util.logging.Level;
 
 public class MvnClient {
-    private final NLog LOG;
     public static final String NET_VPC_APP_NUTS_MVN = "net.thevpc.nuts.toolbox:mvn";
-    private NSession session;
+    private NWorkspace workspace;
     private Status status = Status.INIT;
 
     public enum Status {
@@ -19,12 +18,16 @@ public class MvnClient {
         FAIL,
     }
 
-    public MvnClient(NSession session) {
-        this.session = session;
-        LOG= NLog.of(MvnClient.class,session);
+    public MvnClient(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
-    public boolean get(NId id, String repoURL, NSession session) {
+    protected NLog LOG() {
+        NSession session = workspace.currentSession();
+        return NLog.of(MvnClient.class);
+    }
+
+    public boolean get(NId id, String repoURL) {
         if (id.getShortName().equals(NET_VPC_APP_NUTS_MVN)) {
             return false;
         }
@@ -32,18 +35,19 @@ public class MvnClient {
             case INIT: {
                 status = Status.DIRTY;
                 try {
-                    NDefinition ff = NSearchCmd.of(session.copy().setFetchStrategy(NFetchStrategy.ONLINE))
+                    NDefinition ff = NSearchCmd.of()
+                            .setFetchStrategy(NFetchStrategy.ONLINE)
                             .addId(NET_VPC_APP_NUTS_MVN)
                             .setOptional(false)
                             .setInlineDependencies(true).setLatest(true).getResultDefinitions().findFirst().get();
-                    for (NId nutsId : NSearchCmd.of(this.session).addId(ff.getId()).setInlineDependencies(true).getResultIds()) {
-                        NFetchCmd.of(nutsId,session.copy().setFetchStrategy(NFetchStrategy.ONLINE))
+                    for (NId nutsId : NSearchCmd.of().addId(ff.getId()).setInlineDependencies(true).getResultIds()) {
+                        NFetchCmd.of(nutsId).setFetchStrategy(NFetchStrategy.ONLINE)
                                 .setOptional(false)
                                 .setDependencies(true).getResultDefinition();
                     }
                     status = Status.SUCCESS;
                 } catch (Exception ex) {
-                    LOG.with().session(session).level(Level.SEVERE).error(ex)
+                    LOG().with().level(Level.SEVERE).error(ex)
                             .log(NMsg.ofJ("failed to load {0} : {1}", NET_VPC_APP_NUTS_MVN, ex));
                     ex.printStackTrace();
                     status = Status.FAIL;
@@ -63,7 +67,7 @@ public class MvnClient {
             }
         }
         try {
-            NExecCmd b = NExecCmd.of(session)
+            NExecCmd b = NExecCmd.of()
                     .failFast()
                     .addCommand(
                             NET_VPC_APP_NUTS_MVN,
@@ -74,7 +78,7 @@ public class MvnClient {
                     ).run();
             return (b.getResultCode() == 0);
         } catch (Exception ex) {
-            LOG.with().session(session).level(Level.SEVERE).error(ex)
+            LOG().with().level(Level.SEVERE).error(ex)
                     .log(NMsg.ofJ("failed to invoke {0} : {1}", NET_VPC_APP_NUTS_MVN, ex));
             return false;
         }

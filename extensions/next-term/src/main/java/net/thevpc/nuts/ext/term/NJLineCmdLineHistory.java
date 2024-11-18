@@ -71,12 +71,12 @@ public class NJLineCmdLineHistory implements NCmdLineHistory {
 
     @Override
     public NCmdLineHistory setPath(Path path) {
-        return setPath(path==null?null: NPath.of(path,session));
+        return setPath(path==null?null: NPath.of(path));
     }
 
     @Override
     public NCmdLineHistory setPath(File path) {
-        return setPath(path==null?null: NPath.of(path,session));
+        return setPath(path==null?null: NPath.of(path));
     }
 
     @Override
@@ -95,7 +95,7 @@ public class NJLineCmdLineHistory implements NCmdLineHistory {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        NSystemTerminal st = NIO.of(context.getSession()).getSystemTerminal();
+        NSystemTerminal st = NIO.of().getSystemTerminal();
         boolean jline=false;
         NSystemTerminalBase b = st.getBase();
         if(b!=null){
@@ -133,7 +133,7 @@ public class NJLineCmdLineHistory implements NCmdLineHistory {
                     public void accept(String l) {
                         int idx = l.indexOf(':');
                         if (idx < 0) {
-                            throw new NExecutionException(session,  NMsg.ofPlain("Bad history file syntax! "
+                            throw new NExecutionException(NMsg.ofPlain("Bad history file syntax! "
                                     + "The history file may be an older history: "
                                     + "please remove it or use a different history file."), NExecutionException.ERROR_2);
                         }
@@ -146,7 +146,7 @@ public class NJLineCmdLineHistory implements NCmdLineHistory {
                 nbEntriesInFile = lastLoaded;
                 maybeResize();
             } catch (Exception ex) {
-                throw new NIOException(session,ex);
+                throw new NIOException(ex);
             }
         }
     }

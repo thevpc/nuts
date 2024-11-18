@@ -14,12 +14,13 @@ public class NTomcatMain implements NApplication {
     }
 
     @Override
-    public void run(NSession session) {
-        NRepository apacheRepo = NRepositories.of(session).findRepository("apache-tomcat").orNull();
+    public void run() {
+        NRepository apacheRepo = NRepositories.of().findRepository("apache-tomcat").orNull();
+        NSession session = NSession.of().get();
         if (apacheRepo == null) {
-            NRepositories.of(session).addRepository(
+            NRepositories.of().addRepository(
                     new NAddRepositoryOptions()
-                            .setRepositoryModel(new ApacheTomcatRepositoryModel())
+                            .setRepositoryModel(new ApacheTomcatRepositoryModel(session.getWorkspace()))
                             .setTemporary(true)
                             
             );
@@ -28,7 +29,7 @@ public class NTomcatMain implements NApplication {
         Boolean local = null;
         boolean skipFirst = false;
         if (cmdLine.hasNext()) {
-            NArg a = cmdLine.peek().get(session);
+            NArg a = cmdLine.peek().get();
             String s = a.asString().orElse("");
             if ((s.equals   ("--remote") || s.equals("-r"))) {
                 cmdLine.skip();

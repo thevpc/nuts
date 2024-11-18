@@ -50,8 +50,8 @@
 //     * @param missingType missing type
 //     * @param criteria    extension support criteria object
 //     */
-//    public NExtensionNotFoundException(NSession session, Class missingType, Object criteria) {
-//        super(session, null,
+//    public NExtensionNotFoundException(Class missingType, Object criteria) {
+//        super(null,
 //                criteria == null ?
 //                        NMsg.ofC(
 //                                "extension %s could not found: type %s could not be wired",

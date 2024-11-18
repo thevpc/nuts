@@ -51,7 +51,6 @@ import java.util.*;
  */
 public class NRepositoryFolderHelper {
     private final NRepository repo;
-    private final NSession session;
     private final NPath rootPath;
     private final boolean cacheFolder;
     private NLog LOG;
@@ -59,17 +58,26 @@ public class NRepositoryFolderHelper {
     private boolean writeEnabled = true;
     private final String kind;
     private final NObjectElement extraInfoElements;
+    private final NWorkspace workspace;
 
-    public NRepositoryFolderHelper(NRepository repo, NSession session, NPath rootPath, boolean cacheFolder, String kind, NObjectElement extraInfoElements) {
+    public NRepositoryFolderHelper(NRepository repo, NWorkspace workspace, NPath rootPath, boolean cacheFolder, String kind, NObjectElement extraInfoElements) {
         this.repo = repo;
+        this.workspace = workspace;
         this.kind = kind;
-        this.session = session;
         this.extraInfoElements = extraInfoElements;
-        if (session == null && repo == null) {
+        if (workspace == null && repo == null) {
             throw new IllegalArgumentException("both workspace and repository are null");
         }
+
         this.rootPath = rootPath;
         this.cacheFolder = cacheFolder;
+    }
+
+    private NSession currentSession() {
+        if(repo!=null) {
+            return repo.getWorkspace().currentSession();
+        }
+        return workspace.currentSession();
     }
 
     public boolean isReadEnabled() {
@@ -91,66 +99,64 @@ public class NRepositoryFolderHelper {
     public NPath getLongIdLocalFolder(NId id, NSession session) {
         CoreNIdUtils.checkLongId(id, session);
         if (repo == null) {
-            return getStoreLocation().resolve(NLocations.of(session).getDefaultIdBasedir(id));
+            return getStoreLocation().resolve(NLocations.of().getDefaultIdBasedir(id));
         }
-        return getStoreLocation().resolve(NRepositoryExt0.of(repo).getIdBasedir(id, session));
+        return getStoreLocation().resolve(NRepositoryExt0.of(repo).getIdBasedir(id));
     }
 
-    public NPath getLongIdLocalFile(NId id, NSession session) {
+    public NPath getLongIdLocalFile(NId id) {
+        NSession session = currentSession();
         if (repo == null) {
-            return getLongIdLocalFolder(id, session).resolve(NLocations.of(session).getDefaultIdFilename(id));
+            return getLongIdLocalFolder(id, session).resolve(NLocations.of().getDefaultIdFilename(id));
         }
-        return getLongIdLocalFolder(id, session).resolve(NRepositoryExt0.of(repo).getIdFilename(id, session));
+        return getLongIdLocalFolder(id, session).resolve(NRepositoryExt0.of(repo).getIdFilename(id));
     }
 
     public NPath getShortIdLocalFolder(NId id, NSession session) {
         CoreNIdUtils.checkShortId(id, session);
         if (repo == null) {
-            return getStoreLocation().resolve(NLocations.of(session).getDefaultIdBasedir(id.builder().setVersion("").build()));
+            return getStoreLocation().resolve(NLocations.of().getDefaultIdBasedir(id.builder().setVersion("").build()));
         }
-        return getStoreLocation().resolve(NRepositoryExt0.of(repo).getIdBasedir(id.builder().setVersion("").build(), session));
+        return getStoreLocation().resolve(NRepositoryExt0.of(repo).getIdBasedir(id.builder().setVersion("").build()));
     }
 
-    public NPath fetchContentImpl(NId id, NSession session) {
-        NPath cacheContent = getLongIdLocalFile(id.builder().setFaceContent().build(), session);
-        if (cacheContent != null && pathExists(cacheContent, session)) {
+    public NPath fetchContentImpl(NId id) {
+        NPath cacheContent = getLongIdLocalFile(id.builder().setFaceContent().build());
+        if (cacheContent != null && pathExists(cacheContent)) {
             return cacheContent.setUserCache(cacheFolder).setUserTemporary(false);
         }
         return null;
     }
 
     public NWorkspace getWorkspace() {
-        return session.getWorkspace();
-    }
-
-    public NSession getSession() {
-        return session;
+        return repo.getWorkspace();
     }
 
 
-    protected String getIdFilename(NId id, NSession session) {
+    protected String getIdFilename(NId id) {
         if (repo == null) {
-            return NLocations.of(session).getDefaultIdFilename(id);
+            return NLocations.of().getDefaultIdFilename(id);
         }
-        return NRepositoryExt0.of(repo).getIdFilename(id, session);
+        return NRepositoryExt0.of(repo).getIdFilename(id);
     }
 
     public NPath getGoodPath(NId id, NSession session) {
-        String idFilename = getIdFilename(id, session);
+        String idFilename = getIdFilename(id);
         NPath versionFolder = getLongIdLocalFolder(id, session);
         return versionFolder.resolve(idFilename);
     }
 
-    public NDescriptor fetchDescriptorImpl(NId id, NSession session) {
+    public NDescriptor fetchDescriptorImpl(NId id) {
         if (!isReadEnabled()) {
             return null;
         }
-        String idFilename = getIdFilename(id.builder().setFaceDescriptor().build(), session);
+        NSession session = currentSession();
+        String idFilename = getIdFilename(id.builder().setFaceDescriptor().build());
         NPath goodFile = null;
         NPath versionFolder = getLongIdLocalFolder(id, session);
         goodFile = versionFolder.resolve(idFilename);
-        if (pathExists(goodFile, session)) {
-            return NDescriptorParser.of(session).parse(goodFile).get(session);
+        if (pathExists(goodFile)) {
+            return NDescriptorParser.of().parse(goodFile).get();
         }
 //        String alt = id.getAlternative();
 //        String goodAlt = null;
@@ -210,9 +216,10 @@ public class NRepositoryFolderHelper {
         return null;
     }
 
-    protected NDescriptor loadMatchingDescriptor(NPath file, NId id, NSession session) {
-        if (pathExists(file, session)) {
-            NDescriptor d = file.isRegularFile() ? NDescriptorParser.of(session).parse(file).get(session) : null;
+    protected NDescriptor loadMatchingDescriptor(NPath file, NId id) {
+        if (pathExists(file)) {
+            NSession session = currentSession();
+            NDescriptor d = file.isRegularFile() ? NDescriptorParser.of().parse(file).get() : null;
             if (d != null) {
                 Map<String, String> query = id.getProperties();
                 String os = query.get(NConstants.IdProperties.OS);
@@ -220,7 +227,7 @@ public class NRepositoryFolderHelper {
                 String dist = query.get(NConstants.IdProperties.OS_DIST);
                 String platform = query.get(NConstants.IdProperties.PLATFORM);
                 String de = query.get(NConstants.IdProperties.DESKTOP);
-                if (CoreFilterUtils.matchesEnv(arch, os, dist, platform, de, d.getCondition(), session)) {
+                if (CoreFilterUtils.matchesEnv(arch, os, dist, platform, de, d.getCondition())) {
                     return d;
                 }
             }
@@ -232,15 +239,16 @@ public class NRepositoryFolderHelper {
         CoreNIdUtils.checkShortId(id, session);
         return NPath.of(
                 net.thevpc.nuts.util.NIdUtils.resolveIdPath(id.getShortId())
-                , session);
+        );
     }
 
-    public NPath getLocalGroupAndArtifactFile(NId id, NSession session) {
+    public NPath getLocalGroupAndArtifactFile(NId id) {
+        NSession session = workspace.currentSession();
         CoreNIdUtils.checkShortId(id, session);
         return getStoreLocation().resolve(net.thevpc.nuts.util.NIdUtils.resolveIdPath(id.getShortId()));
     }
 
-    public NIterator<NId> searchVersions(NId id, final NIdFilter filter, boolean deep, NSession session) {
+    public NIterator<NId> searchVersions(NId id, final NIdFilter filter, boolean deep) {
         if (!isReadEnabled()) {
             return null;
         }
@@ -249,31 +257,33 @@ public class NRepositoryFolderHelper {
                         id.getVersion().isReleaseVersion() ? null :
                                 id.getVersion().asSingleValue().orNull();
         if (singleVersion != null) {
+            NSession session = workspace.currentSession();
             return IteratorBuilder.ofSupplier(
                     () -> {
                         if (NConstants.Versions.LATEST.equals(singleVersion) || NConstants.Versions.RELEASE.equals(singleVersion)) {
-                            NId found = searchLatestVersion(id, filter, session);
+                            NId found = searchLatestVersion(id, filter);
                             return (found != null ? Arrays.asList(found).iterator() : Collections.emptyIterator());
                         }
                         NId id1 = id.builder().setVersion(singleVersion).setFaceDescriptor().build();
-                        NPath localFile = getLongIdLocalFile(id1, session);
+                        NPath localFile = getLongIdLocalFile(id1);
                         if (localFile != null && localFile.isRegularFile()) {
                             return Collections.singletonList(id.builder().setRepository(repo == null ? null : repo.getName()).build()).iterator();
                         }
                         return IteratorBuilder.emptyIterator();
                     },
-                    e -> NElements.of(e)
+                    () -> NElements.of()
                             .ofObject()
                             .set("type", "searchSingleVersion")
                             .set("repository", repo == null ? null : repo.getName())
                             .set("id", id.toString())
                             .set("root", getStoreLocation().toString())
                             .addAll(extraInfoElements)
-                            .build(),
-                    session).build();
+                            .build()
+            ).build();
         }
-        NIdFilter filter2 = NIdFilters.of(session).all(filter,
-                NIdFilters.of(session).byName(id.getShortName())
+        NSession session = workspace.currentSession();
+        NIdFilter filter2 = NIdFilters.of().all(filter,
+                NIdFilters.of().byName(id.getShortName())
         );
         return findInFolder(getRelativeLocalGroupAndArtifactFile(id, session), filter2,
                 deep ? Integer.MAX_VALUE : 1,
@@ -291,16 +301,20 @@ public class NRepositoryFolderHelper {
         if (!isReadEnabled()) {
             return null;
         }
-        return new NIdPathIterator(repo, rootPath, folder, filter, session, new NIdPathIteratorBase() {
+        return new NIdPathIterator(repo, rootPath, folder, filter, new NIdPathIteratorBase() {
             @Override
-            public void undeploy(NId id, NSession session) throws NExecutionException {
+            public NWorkspace getWorkspace() {
+                return repo.getWorkspace();
+            }
+            @Override
+            public void undeploy(NId id) throws NExecutionException {
                 if (repo == null) {
                     NRepositoryFolderHelper.this.undeploy(new DefaultNRepositoryUndeployCmd(session.getWorkspace())
                             .setFetchMode(NFetchMode.LOCAL)
-                            .setId(id).setSession(session));
+                            .setId(id));
                 } else {
-                    NRepositorySPI repoSPI = NWorkspaceUtils.of(session).repoSPI(repo);
-                    repoSPI.undeploy().setId(id).setSession(session)
+                    NRepositorySPI repoSPI = NWorkspaceUtils.of(workspace).repoSPI(repo);
+                    repoSPI.undeploy().setId(id)
                             //.setFetchMode(NutsFetchMode.LOCAL)
                             .run();
                 }
@@ -312,12 +326,12 @@ public class NRepositoryFolderHelper {
             }
 
             @Override
-            public NDescriptor parseDescriptor(NPath pathname, InputStream in, NFetchMode fetchMode, NRepository repository, NSession session, NPath rootURL) throws IOException {
-                if (cacheFolder && CoreIOUtils.isObsoletePath(session, pathname)) {
+            public NDescriptor parseDescriptor(NPath pathname, InputStream in, NFetchMode fetchMode, NRepository repository, NPath rootURL)  {
+                if (cacheFolder && CoreIOUtils.isObsoletePath(pathname)) {
                     //this is invalid cache!
                     return null;
                 } else {
-                    return NDescriptorParser.of(session).parse(pathname).get(session);
+                    return NDescriptorParser.of().parse(pathname).get();
                 }
             }
         }, maxDepth, kind, extraInfoElements, true
@@ -328,22 +342,23 @@ public class NRepositoryFolderHelper {
         return rootPath;
     }
 
-    public NId searchLatestVersion(NId id, NIdFilter filter, NSession session) {
+    public NId searchLatestVersion(NId id, NIdFilter filter) {
         if (!isReadEnabled()) {
             return null;
         }
         NId bestId = null;
-        NPath file = getLocalGroupAndArtifactFile(id, session);
+        NPath file = getLocalGroupAndArtifactFile(id);
         if (file.exists()) {
             NPath[] versionFolders = file.stream().filter(NPath::isDirectory)
                     .withDesc(NEDesc.of("idDirectory"))
                     .toArray(NPath[]::new);
             if (versionFolders != null) {
+                NSession session = workspace.currentSession();
                 for (NPath versionFolder : versionFolders) {
-                    if (pathExists(versionFolder, session)) {
+                    if (pathExists(versionFolder)) {
                         NId id2 = id.builder().setVersion(versionFolder.getName()).build();
                         if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
-                            if (filter == null || filter.acceptId(id2, session)) {
+                            if (filter == null || filter.acceptId(id2)) {
                                 bestId = id2;
                             }
                         }
@@ -357,9 +372,9 @@ public class NRepositoryFolderHelper {
     }
 
     public NDescriptor deploy(NDeployRepositoryCmd deployment, NConfirmationMode writeType) {
-        NSession session = deployment.getSession();
+        NSession session = repo.getWorkspace().currentSession();
         if (!isWriteEnabled()) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("read-only repository"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("read-only repository"));
         }
         NDescriptor descriptor = deployment.getDescriptor();
         NId id = deployment.getId();
@@ -370,16 +385,16 @@ public class NRepositoryFolderHelper {
         NInputSource inputSource = null;
         if (deployment.getContent() == null) {
             if (!NDescriptorUtils.isNoContent(descriptor)) {
-                NAssert.requireNonNull(deployment.getContent(), () -> NMsg.ofC("invalid deployment; missing content for %s", deployment.getId()), session);
+                NAssert.requireNonNull(deployment.getContent(), () -> NMsg.ofC("invalid deployment; missing content for %s", deployment.getId()));
             }
         } else {
-            inputSource = NInputSource.ofMultiRead(deployment.getContent(),session);
+            inputSource = NInputSource.ofMultiRead(deployment.getContent());
             inputSource.getMetaData().setKind("package content");
             if (descriptor == null) {
                 try (final CharacterizedExecFile c = DefaultNExecCmd.characterizeForExec(inputSource, session, null)) {
 //                    NutsUtils.requireNonNull(c.getDescriptor(),session,s->NMsg.ofC("invalid deployment; missing descriptor for %s", deployment.getContent()));
                     if (c.getDescriptor() == null) {
-                        throw new NNotFoundException(session, null,
+                        throw new NNotFoundException(null,
                                 NMsg.ofC("unable to resolve a valid descriptor for %s", deployment.getContent()), null);
                     }
                     descriptor = c.getDescriptor();
@@ -387,13 +402,13 @@ public class NRepositoryFolderHelper {
             }
         }
 
-        if (isDeployed(id, descriptor, session)) {
+        if (isDeployed(id, descriptor)) {
             NId finalId = id;
             if (!DefaultWriteTypeProcessor
                     .of(writeType, session)
                     .ask(NMsg.ofC("override deployment for %s?", id))
-                    .withLog(_LOG(session), NMsg.ofC("nuts deployment overridden %s", id))
-                    .onError(() -> new NAlreadyDeployedException(session, finalId))
+                    .withLog(_LOG(), NMsg.ofC("nuts deployment overridden %s", id))
+                    .onError(() -> new NAlreadyDeployedException(finalId))
                     .process()) {
                 return descriptor;
             }
@@ -406,8 +421,8 @@ public class NRepositoryFolderHelper {
             }
         }
 
-        deployDescriptor(id, descriptor, writeType, session);
-        NPath pckFile = inputSource == null ? null : deployContent(id, inputSource, descriptor, writeType, session);
+        deployDescriptor(id, descriptor, writeType);
+        NPath pckFile = inputSource == null ? null : deployContent(id, inputSource, descriptor, writeType);
         if (repo != null) {
             NRepositoryHelper.of(repo).events().fireOnDeploy(new DefaultNContentEvent(
                     pckFile, deployment, session, repo));
@@ -415,63 +430,63 @@ public class NRepositoryFolderHelper {
         return descriptor.builder().setId(id.getLongId()).build();
     }
 
-    protected NLog _LOG(NSession session) {
-        if (LOG == null) {
-            LOG = NLog.of(DefaultNFetchContentRepositoryCmd.class, session);
-        }
-        return LOG;
+    protected NLog _LOG() {
+        return NLog.of(DefaultNFetchContentRepositoryCmd.class);
     }
 
-    public NPath deployDescriptor(NId id, NDescriptor desc, NConfirmationMode writeType, NSession session) {
+    public NPath deployDescriptor(NId id, NDescriptor desc, NConfirmationMode writeType) {
+        NSession session = repo.getWorkspace().currentSession();
         if (!isWriteEnabled()) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("read only repository"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("read only repository"));
         }
         CoreNIdUtils.checkLongId(id, session);
-        NPath descFile = getLongIdLocalFile(id.builder().setFaceDescriptor().build(), session);
+        NPath descFile = getLongIdLocalFile(id.builder().setFaceDescriptor().build());
         if (descFile.exists()) {
             if (!DefaultWriteTypeProcessor
                     .of(writeType, session)
                     .ask(NMsg.ofC("override descriptor file for %s?", id))
-                    .withLog(_LOG(session), NMsg.ofC("nuts descriptor file overridden %s", id))
-                    .onError(() -> new NAlreadyDeployedException(session, id))
+                    .withLog(_LOG(), NMsg.ofC("nuts descriptor file overridden %s", id))
+                    .onError(() -> new NAlreadyDeployedException(id))
                     .process()) {
                 return descFile;
             }
         }
-        return NLocks.of(session).setSource(descFile).call(() -> {
+        return NLocks.of().setSource(descFile).call(() -> {
 
-            desc.formatter(session).setNtf(false).print(descFile);
-            byte[] bytes = NDigest.of(session).sha1().setSource(desc).computeString().getBytes();
-            NCp.of(session)
+            desc.formatter().setNtf(false).print(descFile);
+            byte[] bytes = NDigest.of().sha1().setSource(desc).computeString().getBytes();
+            NCp.of()
                     .from(NInputSource.of(
                                     bytes
                                     , new DefaultNContentMetadata(
                                             NMsg.ofC("sha1://%s", desc.getId()),
                                             (long) bytes.length,
                                             CoreIOUtils.MIME_TYPE_SHA1,
-                                    StandardCharsets.UTF_8.name(), "descriptor hash"
-                                    ),session
+                                            StandardCharsets.UTF_8.name(), "descriptor hash"
+                                    )
                             )
                     ).to(descFile.resolveSibling(descFile.getName() + ".sha1")).addOptions(NPathOption.SAFE).run();
             return descFile;
         });
     }
 
-    public boolean isDeployed(NId id, NDescriptor descriptor, NSession session) {
-        NPath pckFile = getLongIdLocalFile(id.builder().setFaceContent().setPackaging(descriptor.getPackaging()).build(), session);
-        if (!pckFile.exists() || (cacheFolder && CoreIOUtils.isObsoletePath(session, pckFile))) {
+    public boolean isDeployed(NId id, NDescriptor descriptor) {
+        NSession session = repo.getWorkspace().currentSession();
+        NPath pckFile = getLongIdLocalFile(id.builder().setFaceContent().setPackaging(descriptor.getPackaging()).build());
+        if (!pckFile.exists() || (cacheFolder && CoreIOUtils.isObsoletePath(pckFile))) {
             return false;
         }
-        NPath descFile = getLongIdLocalFile(id.builder().setFaceDescriptor().build(), session);
-        return descFile.exists() && (!cacheFolder || !CoreIOUtils.isObsoletePath(session, descFile));
+        NPath descFile = getLongIdLocalFile(id.builder().setFaceDescriptor().build());
+        return descFile.exists() && (!cacheFolder || !CoreIOUtils.isObsoletePath(descFile));
     }
 
-    public NPath deployContent(NId id, NInputSource content, NDescriptor descriptor, NConfirmationMode writeType, NSession session) {
+    public NPath deployContent(NId id, NInputSource content, NDescriptor descriptor, NConfirmationMode writeType) {
         if (!isWriteEnabled()) {
             return null;
         }
+        NSession session = repo.getWorkspace().currentSession();
         CoreNIdUtils.checkLongId(id, session);
-        NPath pckFile = getLongIdLocalFile(id.builder().setFaceContent().setPackaging(descriptor.getPackaging()).build(), session);
+        NPath pckFile = getLongIdLocalFile(id.builder().setFaceContent().setPackaging(descriptor.getPackaging()).build());
         if (pckFile.exists()) {
             if (content instanceof NPath) {
                 if (((NPath) content).equals(pckFile)) {
@@ -482,21 +497,20 @@ public class NRepositoryFolderHelper {
             if (!DefaultWriteTypeProcessor
                     .of(writeType, session)
                     .ask(NMsg.ofC("override content file for %s?", id))
-                    .withLog(_LOG(session), NMsg.ofC("nuts content file overridden %s", id))
-                    .onError(() -> new NAlreadyDeployedException(session, id))
+                    .withLog(_LOG(), NMsg.ofC("nuts content file overridden %s", id))
+                    .onError(() -> new NAlreadyDeployedException(id))
                     .process()) {
                 return pckFile;
             }
         }
-        return NLocks.of(session).setSource(pckFile).call(() -> {
-            NCp.of(session).from(content)
+        return NLocks.of().setSource(pckFile).call(() -> {
+            NCp.of().from(content)
                     .to(pckFile).addOptions(NPathOption.SAFE).run();
-            NCp.of(session).from(
-                    CoreIOUtils.createBytesStream(NDigestUtils.evalSHA1Hex(pckFile, session).getBytes(),
+            NCp.of().from(
+                    CoreIOUtils.createBytesStream(NDigestUtils.evalSHA1Hex(pckFile).getBytes(),
                             NMsg.ofC("sha1://%s", id),
                             CoreIOUtils.MIME_TYPE_SHA1,
-                            StandardCharsets.UTF_8.name(), null,
-                            session
+                            StandardCharsets.UTF_8.name(), null
                     )
             ).to(pckFile.resolveSibling(pckFile.getName() + ".sha1")).addOptions(NPathOption.SAFE).run();
             return pckFile;
@@ -507,15 +521,16 @@ public class NRepositoryFolderHelper {
         if (!isWriteEnabled()) {
             return false;
         }
-        NPath localFolder = getLongIdLocalFile(command.getId().builder().setFaceContent().build(), command.getSession());
+        NSession session = repo.getWorkspace().currentSession();
+        NPath localFolder = getLongIdLocalFile(command.getId().builder().setFaceContent().build());
         if (localFolder != null && localFolder.exists()) {
-            if (NLocks.of(command.getSession()).setSource(localFolder).call(() -> {
+            if (NLocks.of().setSource(localFolder).call(() -> {
                 localFolder.deleteTree();
                 return false;
             })) {
                 if (repo != null) {
                     NRepositoryHelper.of(repo).events().fireOnUndeploy(new DefaultNContentEvent(
-                            localFolder, command, command.getSession(), repo));
+                            localFolder, command, session, repo));
                     return true;
                 }
             }
@@ -523,14 +538,15 @@ public class NRepositoryFolderHelper {
         return true;
     }
 
-    public void reindexFolder(NSession session) {
-        reindexFolder(getStoreLocation(), session);
+    public void reindexFolder() {
+        reindexFolder(getStoreLocation());
     }
 
-    private boolean reindexFolder(NPath path, NSession session) {
+    private boolean reindexFolder(NPath path) {
         if (!isWriteEnabled()) {
             return false;
         }
+        NSession session = repo.getWorkspace().currentSession();
         try {
             Path start = path.toPath().get();
 
@@ -552,9 +568,9 @@ public class NRepositoryFolderHelper {
 
                 @Override
                 public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                    if(dir.toString().startsWith(start.resolve(".git").toString()+"/")
-                            ||dir.toString().equals(start.resolve(".git").toString())
-                    ){
+                    if (dir.toString().startsWith(start.resolve(".git").toString() + "/")
+                            || dir.toString().equals(start.resolve(".git").toString())
+                    ) {
                         return FileVisitResult.CONTINUE;
                     }
                     File folder = dir.toFile();
@@ -582,19 +598,20 @@ public class NRepositoryFolderHelper {
                             p.println(file);
                         }
                     } catch (FileNotFoundException e) {
-                        throw new NIOException(session, e);
+                        throw new NIOException(e);
                     }
                     return FileVisitResult.CONTINUE;
                 }
             });
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
         return true;
     }
 
-    private boolean pathExists(NPath p, NSession session) {
+    private boolean pathExists(NPath p) {
+        NSession session = workspace.currentSession();
         return p.exists() &&
-                !(cacheFolder && CoreIOUtils.isObsoletePath(session, p));
+                !(cacheFolder && CoreIOUtils.isObsoletePath(p));
     }
 }

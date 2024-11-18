@@ -25,8 +25,6 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NSession;
-
 /**
  * Archetype implementation of this component define the behaviour of
  * the workspace upon creation. By default thread implementations are provided by nuts:
@@ -51,16 +49,12 @@ public interface NWorkspaceArchetypeComponent extends NComponent/*archetype id*/
 
     /**
      * called to initialize the workspace
-     *
-     * @param session session
      */
-    void initializeWorkspace(NSession session);
+    void initializeWorkspace();
 
     /**
      * called after the workspace starts to perform extra configuration such
      * as installing packages.
-     *
-     * @param session session
      */
-    void startWorkspace(NSession session);
+    void startWorkspace();
 }

@@ -26,18 +26,16 @@
  */
 package net.thevpc.nuts.format;
 
-import net.thevpc.nuts.NSession;
-
 /**
  * Tree Visitor
  * @param <T> Type
  */
 public interface NTreeVisitor<T> {
-    default NTreeVisitResult preVisitDirectory(T dir, NSession session){return NTreeVisitResult.CONTINUE;}
+    default NTreeVisitResult preVisitDirectory(T dir){return NTreeVisitResult.CONTINUE;}
 
-    default NTreeVisitResult visitFile(T file, NSession session){return NTreeVisitResult.CONTINUE;}
+    default NTreeVisitResult visitFile(T file){return NTreeVisitResult.CONTINUE;}
 
-    default NTreeVisitResult visitFileFailed(T file, Exception exc, NSession session){return NTreeVisitResult.CONTINUE;}
+    default NTreeVisitResult visitFileFailed(T file, Exception exc){return NTreeVisitResult.CONTINUE;}
 
-    default NTreeVisitResult postVisitDirectory(T dir, Exception exc, NSession session){return NTreeVisitResult.CONTINUE;}
+    default NTreeVisitResult postVisitDirectory(T dir, Exception exc){return NTreeVisitResult.CONTINUE;}
 }

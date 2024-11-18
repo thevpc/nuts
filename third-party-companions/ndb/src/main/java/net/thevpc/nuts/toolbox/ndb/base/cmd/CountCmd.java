@@ -19,7 +19,7 @@ public class CountCmd<C extends NdbConfig> extends NdbCmd<C> {
         this.names.addAll(Arrays.asList(names));
     }
 
-    public void run(NSession session, NCmdLine cmdLine) {
+    public void run(NCmdLine cmdLine) {
         NRef<AtName> name = NRef.ofNull(AtName.class);
         ExtendedQuery eq = new ExtendedQuery(getName());
         C otherOptions = createConfigInstance();
@@ -28,26 +28,26 @@ public class CountCmd<C extends NdbConfig> extends NdbCmd<C> {
         while (cmdLine.hasNext()) {
             switch (status) {
                 case "": {
-                    switch (cmdLine.peek().get(session).key()) {
+                    switch (cmdLine.peek().get().key()) {
                         case "--config": {
-                            readConfigNameOption(cmdLine, session, name);
+                            readConfigNameOption(cmdLine, name);
                             break;
                         }
                         case "--entity":
                         case "--table":
                         case "--collection": {
-                            cmdLine.withNextEntry((v, a, s) -> eq.setTable(v));
+                            cmdLine.withNextEntry((v, a) -> eq.setTable(v));
                             break;
                         }
                         case "--where": {
                             status = "--where";
-                            cmdLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a) -> {
                             });
                             break;
                         }
                         case "--set": {
                             status = "--set";
-                            cmdLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a) -> {
                             });
                             break;
                         }
@@ -58,7 +58,7 @@ public class CountCmd<C extends NdbConfig> extends NdbCmd<C> {
                     break;
                 }
                 case "--where": {
-                    switch (cmdLine.peek().get(session).key()) {
+                    switch (cmdLine.peek().get().key()) {
                         default: {
                             eq.getWhere().add(cmdLine.next().get().toString());
                         }
@@ -76,11 +76,11 @@ public class CountCmd<C extends NdbConfig> extends NdbCmd<C> {
         if (NBlankable.isBlank(otherOptions.getDatabaseName())) {
             cmdLine.throwMissingArgument("--dbname");
         }
-        runCount(eq, options, session);
+        runCount(eq, options);
     }
 
-    protected void runCount(ExtendedQuery eq, C options, NSession session) {
-        throw new NIllegalArgumentException(session, NMsg.ofPlain("invalid"));
+    protected void runCount(ExtendedQuery eq, C options) {
+        throw new NIllegalArgumentException(NMsg.ofPlain("invalid"));
     }
 
 }

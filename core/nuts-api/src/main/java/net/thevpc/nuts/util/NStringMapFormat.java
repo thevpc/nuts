@@ -315,7 +315,7 @@ public class NStringMapFormat {
             try {
                 r = readToken(reader, conf);
             } catch (IOException e) {
-                return NOptional.ofError(x -> NMsg.ofPlain("failed to read token"), e);
+                return NOptional.ofError(() -> NMsg.ofPlain("failed to read token"), e);
             }
             if (r != null) {
                 tokens.add(r);

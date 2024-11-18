@@ -3,12 +3,15 @@ package net.thevpc.nuts.runtime.standalone.text.highlighter;
 import net.thevpc.nuts.NCodeHighlighter;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
 public class NtfCodeHighlighter implements NCodeHighlighter {
-    public NtfCodeHighlighter(NSession session) {
+    NWorkspace workspace;
+    public NtfCodeHighlighter(NWorkspace workspace) {
+        this.workspace=workspace;
     }
 
     @Override
@@ -41,12 +44,12 @@ public class NtfCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText stringToText(String text, NTexts txt, NSession session) {
+    public NText stringToText(String text, NTexts txt) {
         return txt.parse(text);
     }
 
     @Override
-    public NText tokenToText(String text, String tokenType, NTexts txt, NSession session) {
+    public NText tokenToText(String text, String tokenType, NTexts txt) {
         return txt.parse(text);
     }
 }

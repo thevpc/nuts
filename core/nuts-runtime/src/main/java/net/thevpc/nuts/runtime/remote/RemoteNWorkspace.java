@@ -17,30 +17,30 @@ public abstract class RemoteNWorkspace extends AbstractNWorkspace {
     public RemoteNWorkspace() {
     }
 
-    public NElement createCall(String commandName, NElement body, NSession session) {
+    public NElement createCall(String commandName, NElement body) {
         try (NTalkClient cli = new NTalkClient()) {
-            NElements e = NElements.of(session).json();
+            NElements e = NElements.of().json();
             NObjectElement q = e.ofObject()
                     .set("cmd", commandName)
                     .set("body", body).build();
             NString json = e.setValue(q).format();
-            String wsURL = NBootManager.of(session).getBootOptions().getWorkspace().orNull();
+            String wsURL = NBootManager.of().getBootOptions().getWorkspace().orNull();
             byte[] result = cli.request("nuts/ws:"+wsURL, json.toString().getBytes());
             NObjectElement resultObject = e.parse(result, NObjectElement.class);
-            NElements prv = NElements.of(session);
-            boolean success = resultObject.getBoolean("success").get(session);
+            NElements prv = NElements.of();
+            boolean success = resultObject.getBoolean("success").get();
             if (success) {
                 return resultObject.get("body").orNull();
             } else {
                 //TODO mush deserialize exception
-                throw new NException(session, NMsg.ofC("unable to call %s",
-                        NTexts.of(session).ofStyled(commandName, NTextStyle.primary1())));
+                throw new NException(NMsg.ofC("unable to call %s",
+                        NTexts.of().ofStyled(commandName, NTextStyle.primary1())));
             }
         }
     }
 
-    public NElement createCall(String commandName, String callId, NElement body, NSession session) {
-        NElements e = NElements.of(session);
+    public NElement createCall(String commandName, String callId, NElement body) {
+        NElements e = NElements.of();
         return e.ofObject()
                 .set(
                         "cmd",
@@ -110,7 +110,7 @@ public abstract class RemoteNWorkspace extends AbstractNWorkspace {
 //    }
 //
     public <T> T remoteCall(NElement call, Class<T> expectedType) {
-        throw new NUnsupportedOperationException(null, NMsg.ofPlain("not yet supported remoteCall"));
+        throw new NUnsupportedOperationException(NMsg.ofPlain("not yet supported remoteCall"));
     }
 
 }

@@ -26,6 +26,7 @@
 package net.thevpc.nuts;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -362,7 +363,8 @@ public class NAddRepositoryOptions implements Serializable {
                 && deployWeight == that.deployWeight
                 && Objects.equals(name, that.name)
                 && Objects.equals(location, that.location)
-                && Objects.equals(config, that.config);
+                && Objects.equals(config, that.config)
+                ;
     }
 
     @Override

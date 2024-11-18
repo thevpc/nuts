@@ -36,13 +36,13 @@ public class NElementMapperMapEntry implements NElementMapper<Map.Entry> {
         if (to instanceof ParameterizedType) {
             Type[] kvt = ((ParameterizedType) to).getActualTypeArguments();
             return new AbstractMap.SimpleEntry(
-                    context.elementToObject(o.asObject().get(session).get(context.elem().ofString("key")).orNull(), kvt[0]),
-                    context.elementToObject(o.asObject().get(session).get(context.elem().ofString("value")).orNull(), kvt[0])
+                    context.elementToObject(o.asObject().get().get(context.elem().ofString("key")).orNull(), kvt[0]),
+                    context.elementToObject(o.asObject().get().get(context.elem().ofString("value")).orNull(), kvt[0])
             );
         }
         return new AbstractMap.SimpleEntry(
-                context.elementToObject(o.asObject().get(session).get(context.elem().ofString("key")).orNull(), Object.class),
-                context.elementToObject(o.asObject().get(session).get(context.elem().ofString("value")).orNull(), Object.class)
+                context.elementToObject(o.asObject().get().get(context.elem().ofString("key")).orNull(), Object.class),
+                context.elementToObject(o.asObject().get().get(context.elem().ofString("value")).orNull(), Object.class)
         );
     }
 

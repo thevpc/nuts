@@ -29,9 +29,9 @@ public class NCompressedPath extends NPathBase {
     private final NCompressedPathHelper compressedPathHelper;
 
     public NCompressedPath(NPath base, NCompressedPathHelper compressedPathHelper) {
-        super(base.getSession());
+        super(base.getWorkspace());
         this.base = base;
-        this.formattedCompressedForm = compressedPathHelper.toCompressedString(base, base.getSession());
+        this.formattedCompressedForm = compressedPathHelper.toCompressedString(base, base.getWorkspace().currentSession());
         this.compressedForm = this.formattedCompressedForm.filteredText();
         this.compressedPathHelper = compressedPathHelper;
     }
@@ -125,13 +125,13 @@ public class NCompressedPath extends NPathBase {
 
     @Override
     public InputStream getInputStream(NPathOption... options) {
-        return NInputSourceBuilder.of(base.getInputStream(options),getSession())
+        return NInputSourceBuilder.of(base.getInputStream(options))
                 .setMetadata(getMetaData()).createInputStream();
     }
 
     @Override
     public OutputStream getOutputStream(NPathOption... options) {
-        return NOutputStreamBuilder.of(base.getOutputStream(options),getSession()).setMetadata(this.getMetaData()).createOutputStream();
+        return NOutputStreamBuilder.of(base.getOutputStream(options)).setMetadata(this.getMetaData()).createOutputStream();
     }
 
     @Override
@@ -373,9 +373,8 @@ public class NCompressedPath extends NPathBase {
     }
 
     @Override
-    public NFormat formatter(NSession session) {
-        return new MyPathFormat(this)
-                .setSession(session != null ? session : getSession());
+    public NFormat formatter() {
+        return new MyPathFormat(this);
     }
 
     private static class MyPathFormat extends DefaultFormatBase<NFormat> {
@@ -383,7 +382,7 @@ public class NCompressedPath extends NPathBase {
         private final NCompressedPath p;
 
         public MyPathFormat(NCompressedPath p) {
-            super(p.getSession(), "path");
+            super(p.getWorkspace(), "path");
             this.p = p;
         }
 

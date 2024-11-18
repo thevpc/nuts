@@ -37,9 +37,8 @@ import java.util.List;
  * @app.category Command Line
  * @since 0.5.5
  */
-public interface NCmdLineAutoComplete extends NSessionProvider {
+public interface NCmdLineAutoComplete  {
 
-    NSession getSession();
 
     <T> T get(Class<T> t);
 

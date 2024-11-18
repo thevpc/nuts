@@ -18,28 +18,28 @@ import net.thevpc.nuts.text.NText;
  */
 public class DefaultNLicenseInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNLicenseInternalExecutable(String[] args, NExecCmd execCommand) {
-        super("license", args, execCommand);
+    public DefaultNLicenseInternalExecutable(NWorkspace workspace,String[] args, NExecCmd execCommand) {
+        super(workspace,"license", args, execCommand);
     }
 
     @Override
     public int execute() {
-        if (getSession().isDry()) {
+        NSession session = workspace.currentSession();
+        if (session.isDry()) {
             dryExecute();
             return NExecutionException.SUCCESS;
         }
-        if (NAppUtils.processHelpOptions(args, getSession())) {
+        if (NAppUtils.processHelpOptions(args, session)) {
             showDefaultHelp();
             return NExecutionException.SUCCESS;
         }
-        NSession session = getSession();
         NCmdLine cmdLine = NCmdLine.of(args);
         while (cmdLine.hasNext()) {
-            NArg a = cmdLine.peek().get(session);
+            NArg a = cmdLine.peek().get();
             session.configureLast(cmdLine);
         }
 
-        NText licenseString = NWorkspaceExt.of(session.getWorkspace()).getLicenseText(session);
+        NText licenseString = NWorkspaceExt.of(session.getWorkspace()).getLicenseText();
         session.out().println(licenseString);
         return NExecutionException.SUCCESS;
     }

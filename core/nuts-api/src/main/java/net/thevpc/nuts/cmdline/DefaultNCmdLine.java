@@ -29,7 +29,6 @@ import net.thevpc.nuts.reserved.util.NReservedSimpleCharQueue;
 import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
@@ -62,16 +61,10 @@ public class DefaultNCmdLine implements NCmdLine {
     private int wordIndex = 0;
     private NCmdLineAutoComplete autoComplete;
     private char eq = '=';
-    private NSession session;
 
     //Constructors
     public DefaultNCmdLine() {
 
-    }
-
-    public DefaultNCmdLine(NSession session) {
-        setArguments(session.getAppArguments());
-        setAutoComplete(session.getAppAutoComplete());
     }
 
     public DefaultNCmdLine(String[] args, NCmdLineAutoComplete autoComplete) {
@@ -90,15 +83,6 @@ public class DefaultNCmdLine implements NCmdLine {
 
     public DefaultNCmdLine(List<String> args) {
         setArguments(args);
-    }
-
-    public NSession getSession() {
-        return session;
-    }
-
-    public NCmdLine setSession(NSession session) {
-        this.session = session;
-        return this;
     }
 
     //End Constructors
@@ -360,9 +344,9 @@ public class DefaultNCmdLine implements NCmdLine {
     public boolean withNextOptionalFlag(NArgProcessor<NOptional<Boolean>> consumer) {
         NOptional<NArg> v = nextFlag();
         if (v.isPresent()) {
-            NArg a = v.get(session);
+            NArg a = v.get();
             if (a.isActive()) {
-                consumer.run(a.getBooleanValue(), a, session);
+                consumer.run(a.getBooleanValue(), a);
                 return true;
             }
         }
@@ -373,9 +357,9 @@ public class DefaultNCmdLine implements NCmdLine {
     public boolean withNextOptionalFlag(NArgProcessor<NOptional<Boolean>> consumer, String... names) {
         NOptional<NArg> v = nextFlag(names);
         if (v.isPresent()) {
-            NArg a = v.get(session);
+            NArg a = v.get();
             if (a.isActive()) {
-                consumer.run(a.getBooleanValue(), a, session);
+                consumer.run(a.getBooleanValue(), a);
                 return true;
             }
         }
@@ -386,9 +370,9 @@ public class DefaultNCmdLine implements NCmdLine {
     public boolean withNextOptionalEntry(NArgProcessor<NOptional<String>> consumer) {
         NOptional<NArg> v = nextEntry();
         if (v.isPresent()) {
-            NArg a = v.get(session);
+            NArg a = v.get();
             if (a.isActive()) {
-                consumer.run(a.getStringValue(), a, session);
+                consumer.run(a.getStringValue(), a);
                 return true;
             }
         }
@@ -399,9 +383,9 @@ public class DefaultNCmdLine implements NCmdLine {
     public boolean withNextOptionalEntry(NArgProcessor<NOptional<String>> consumer, String... names) {
         NOptional<NArg> v = nextEntry(names);
         if (v.isPresent()) {
-            NArg a = v.get(session);
+            NArg a = v.get();
             if (a.isActive()) {
-                consumer.run(a.getStringValue(), a, session);
+                consumer.run(a.getStringValue(), a);
                 return true;
             }
         }
@@ -413,9 +397,9 @@ public class DefaultNCmdLine implements NCmdLine {
     public boolean withNextFlag(NArgProcessor<Boolean> consumer) {
         NOptional<NArg> v = nextFlag();
         if (v.isPresent()) {
-            NArg a = v.get(session);
+            NArg a = v.get();
             if (a.isActive()) {
-                consumer.run(a.getBooleanValue().get(session), a, session);
+                consumer.run(a.getBooleanValue().get(), a);
                 return true;
             }
         }
@@ -424,18 +408,18 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public boolean withNextTrueFlag(NArgProcessor<Boolean> consumer) {
-        return withNextFlag((value, arg, session1) -> {
+        return withNextFlag((value, arg) -> {
             if (value) {
-                consumer.run(true, arg, session1);
+                consumer.run(true, arg);
             }
         });
     }
 
     @Override
     public boolean withNextTrueFlag(NArgProcessor<Boolean> consumer, String... names) {
-        return withNextFlag((value, arg, session) -> {
+        return withNextFlag((value, arg) -> {
             if (value) {
-                consumer.run(true, arg, session);
+                consumer.run(true, arg);
             }
         }, names);
     }
@@ -444,9 +428,9 @@ public class DefaultNCmdLine implements NCmdLine {
     public boolean withNextFlag(NArgProcessor<Boolean> consumer, String... names) {
         NOptional<NArg> v = nextFlag(names);
         if (v.isPresent()) {
-            NArg a = v.get(session);
+            NArg a = v.get();
             if (a.isActive()) {
-                consumer.run(a.getBooleanValue().get(session), a, session);
+                consumer.run(a.getBooleanValue().get(), a);
                 return true;
             }
         }
@@ -457,9 +441,9 @@ public class DefaultNCmdLine implements NCmdLine {
     public boolean withNextEntry(NArgProcessor<String> consumer) {
         NOptional<NArg> v = nextEntry();
         if (v.isPresent()) {
-            NArg a = v.get(session);
+            NArg a = v.get();
             if (a.isActive()) {
-                consumer.run(a.getStringValue().get(session), a, session);
+                consumer.run(a.getStringValue().get(), a);
                 return true;
             }
         }
@@ -470,9 +454,9 @@ public class DefaultNCmdLine implements NCmdLine {
     public boolean withNextEntry(NArgProcessor<String> consumer, String... names) {
         NOptional<NArg> v = nextEntry(names);
         if (v.isPresent()) {
-            NArg a = v.get(session);
+            NArg a = v.get();
             if (a.isActive()) {
-                consumer.run(a.getStringValue().get(session), a, session);
+                consumer.run(a.getStringValue().get(), a);
                 return true;
             }
         }
@@ -483,9 +467,9 @@ public class DefaultNCmdLine implements NCmdLine {
     public boolean withNextEntryValue(NArgProcessor<NLiteral> consumer) {
         NOptional<NArg> v = nextEntry();
         if (v.isPresent()) {
-            NArg a = v.get(session);
+            NArg a = v.get();
             if (a.isActive()) {
-                consumer.run(a.getValue(), a, session);
+                consumer.run(a.getValue(), a);
                 return true;
             }
         }
@@ -496,9 +480,9 @@ public class DefaultNCmdLine implements NCmdLine {
     public boolean withNextEntryValue(NArgProcessor<NLiteral> consumer, String... names) {
         NOptional<NArg> v = nextEntry(names);
         if (v.isPresent()) {
-            NArg a = v.get(session);
+            NArg a = v.get();
             if (a.isActive()) {
-                consumer.run(a.getValue(), a, session);
+                consumer.run(a.getValue(), a);
                 return true;
             }
         }
@@ -509,9 +493,9 @@ public class DefaultNCmdLine implements NCmdLine {
     public boolean withNextValue(NArgProcessor<NLiteral> consumer) {
         NOptional<NArg> v = next();
         if (v.isPresent()) {
-            NArg a = v.get(session);
+            NArg a = v.get();
             if (a.isActive()) {
-                consumer.run(a.getValue(), a, session);
+                consumer.run(a.getValue(), a);
                 return true;
             }
         }
@@ -641,15 +625,15 @@ public class DefaultNCmdLine implements NCmdLine {
         if (!NBlankable.isBlank(getCommandName())) {
             a.add(getCommandName());
             a.addAll(Arrays.asList(args));
-            return NOptional.ofEmpty(s -> NMsg.ofC("%s : " + str, a.toArray()));
+            return NOptional.ofEmpty(() -> NMsg.ofC("%s : " + str, a.toArray()));
         } else {
             a.addAll(Arrays.asList(args));
         }
-        return NOptional.ofEmpty(s -> NMsg.ofC(str, a.toArray()));
+        return NOptional.ofEmpty(() -> NMsg.ofC(str, a.toArray()));
     }
 
     private <T> NOptional<T> errorOptionalCformat(String str, Object... args) {
-        return NOptional.ofError(s -> {
+        return NOptional.ofError(() -> {
             if (!NBlankable.isBlank(getCommandName())) {
                 return NMsg.ofC("%s : %s ", getCommandName(), NMsg.ofC(str, args));
             }
@@ -835,37 +819,25 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public void throwError(NMsg message) {
-        if (session == null) {
-            if (NBlankable.isBlank(commandName)) {
-                throw new IllegalArgumentException(message.toString());
-            }
-            throw new IllegalArgumentException(NMsg.ofC("%s : %s", commandName, message).toString());
-        }
         if (NBlankable.isBlank(commandName)) {
-            throw new NIllegalArgumentException(session, message);
+            throw new NIllegalArgumentException(message);
         }
-        throw new NIllegalArgumentException(session, NMsg.ofC("%s : %s", commandName, message));
+        throw new NIllegalArgumentException(NMsg.ofC("%s : %s", commandName, message));
     }
 
     @Override
     public void throwError(NString message) {
-        if (session == null) {
-            if (!NBlankable.isBlank(commandName)) {
-                throw new IllegalArgumentException(NMsg.ofC("%s : %s", commandName, message).toString());
-            }
-            throw new IllegalArgumentException(NMsg.ofC("%s", commandName, message).toString());
-        }
-        NTextBuilder m = NTexts.of(session).ofBuilder();
+        NTextBuilder m = NTextBuilder.of();
         if (!NBlankable.isBlank(commandName)) {
             m.append(commandName).append(" : ");
         }
         m.append(message);
-        throw new NIllegalArgumentException(session, NMsg.ofNtf(m.build().toString()));
+        throw new NIllegalArgumentException(NMsg.ofNtf(m.build().toString()));
     }
 
     @Override
-    public NCmdLineFormat formatter(NSession session) {
-        return NCmdLineFormat.of(session != null ? session : this.session).setValue(this);
+    public NCmdLineFormat formatter() {
+        return NCmdLineFormat.of().setValue(this);
     }
 
 
@@ -1106,7 +1078,6 @@ public class DefaultNCmdLine implements NCmdLine {
 
     public NCmdLine copy() {
         DefaultNCmdLine c = new DefaultNCmdLine(toStringArray(), autoComplete);
-        c.setSession(session);
         c.eq = this.eq;
         c.commandName = this.commandName;
         return c;
@@ -1201,7 +1172,7 @@ public class DefaultNCmdLine implements NCmdLine {
                         }
                         case '\'':
                         case '"': {
-                            return NOptional.ofError(session -> NMsg.ofC("illegal char %s", c));
+                            return NOptional.ofError(() -> NMsg.ofC("illegal char %s", c));
                         }
                         case '\\': {
                             i++;
@@ -1265,7 +1236,7 @@ public class DefaultNCmdLine implements NCmdLine {
                 break;
             }
             case IN_QUOTED_WORD: {
-                return NOptional.ofError(session -> NMsg.ofPlain("expected quote"));
+                return NOptional.ofError(() -> NMsg.ofPlain("expected quote"));
             }
         }
         return NOptional.of(args.toArray(new String[0]));
@@ -1353,7 +1324,7 @@ public class DefaultNCmdLine implements NCmdLine {
             }
         }else{
             while (cmd.hasNext()) {
-                a = cmd.peek().get(session);
+                a = cmd.peek().get();
                 boolean consumed;
                 if (a.isOption()) {
                     consumed = processor.nextOption(a, cmd, context);

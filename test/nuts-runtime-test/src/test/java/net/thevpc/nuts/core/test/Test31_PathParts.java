@@ -27,7 +27,7 @@ public class Test31_PathParts {
 
     @Test
     public void test01() {
-        NPathParts h = new NPathParts("http://a:password@here.com/a/b/c?a=toz", session);
+        NPathParts h = new NPathParts("http://a:password@here.com/a/b/c?a=toz");
         Assertions.assertEquals(NPathParts.Type.URL, h.getType());
         Assertions.assertEquals("http", h.getProtocol());
         Assertions.assertEquals("a:password@here.com", h.getAuthority());
@@ -38,7 +38,7 @@ public class Test31_PathParts {
 
     @Test
     public void test02() {
-        NPathParts h = new NPathParts("http://a:password@here.com:12?a=toz/be", session);
+        NPathParts h = new NPathParts("http://a:password@here.com:12?a=toz/be");
         Assertions.assertEquals(NPathParts.Type.URL, h.getType());
         Assertions.assertEquals("http", h.getProtocol());
         Assertions.assertEquals("a:password@here.com:12", h.getAuthority());
@@ -49,7 +49,7 @@ public class Test31_PathParts {
 
     @Test
     public void test03() {
-        NPathParts h = new NPathParts("http://a:password@here.com:12/", session);
+        NPathParts h = new NPathParts("http://a:password@here.com:12/");
         Assertions.assertEquals(NPathParts.Type.URL, h.getType());
         Assertions.assertEquals("http", h.getProtocol());
         Assertions.assertEquals("a:password@here.com:12", h.getAuthority());
@@ -60,7 +60,7 @@ public class Test31_PathParts {
 
     @Test
     public void test04() {
-        NPathParts h = new NPathParts("http://a:password@here.com:12#something", session);
+        NPathParts h = new NPathParts("http://a:password@here.com:12#something");
         Assertions.assertEquals(NPathParts.Type.URL, h.getType());
         Assertions.assertEquals("http", h.getProtocol());
         Assertions.assertEquals("a:password@here.com:12", h.getAuthority());
@@ -71,7 +71,7 @@ public class Test31_PathParts {
 
     @Test
     public void test05() {
-        NPathParts h = new NPathParts("#something", session);
+        NPathParts h = new NPathParts("#something");
         Assertions.assertEquals(NPathParts.Type.REF, h.getType());
         Assertions.assertEquals("", h.getProtocol());
         Assertions.assertEquals("", h.getAuthority());
@@ -115,7 +115,7 @@ public class Test31_PathParts {
     }
 
     private String[] d(String n) {
-        NPath p = NPath.of(n, session);
+        NPath p = NPath.of(n);
         if(p==null){
             return new String[]{"",""};
         }

@@ -28,12 +28,12 @@ public class NProjectsSubService {
     public void addProject(NProject p) {
         String name = p.getName();
         if (name == null) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("invalid project"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("invalid project"));
         }
         p.setId(null);
         NProject p0 = getProject(name);
         if (p0 != null) {
-            throw new NIllegalArgumentException(session, NMsg.ofC("project already exists: %d", name));
+            throw new NIllegalArgumentException(NMsg.ofC("project already exists: %d", name));
         }
         if (p.getBeneficiary() == null) {
             p.setBeneficiary("unspecified");
@@ -66,7 +66,7 @@ public class NProjectsSubService {
     public void updateProject(NProject p) {
         String name = p.getName();
         if (name == null) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("invalid project"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("invalid project"));
         }
         String id = p.getId();
         if (id == null) {
@@ -94,7 +94,7 @@ public class NProjectsSubService {
     public NProject getProjectOrError(String projectNameOrId) {
         NProject p = getProject(projectNameOrId);
         if (p == null) {
-            throw new NIllegalArgumentException(session, NMsg.ofC("project not found %s", projectNameOrId));
+            throw new NIllegalArgumentException(NMsg.ofC("project not found %s", projectNameOrId));
         }
         return p;
     }
@@ -123,7 +123,7 @@ public class NProjectsSubService {
                 }
                 sb.append(countTasks > 1 ? "one task" : (countTasks + " task"));
             }
-            throw new NIllegalArgumentException(session, NMsg.ofC("Project is used in %s. It cannot be removed.",sb));
+            throw new NIllegalArgumentException(NMsg.ofC("Project is used in %s. It cannot be removed.",sb));
         }
         return dal.delete(NProject.class, projectName);
     }

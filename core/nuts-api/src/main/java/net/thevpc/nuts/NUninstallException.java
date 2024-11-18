@@ -39,23 +39,21 @@ public class NUninstallException extends NInstallationException {
     /**
      * Custom Constructor
      *
-     * @param session workspace
-     * @param id      nuts id
+     * @param id nuts id
      */
-    public NUninstallException(NSession session, NId id) {
-        this(session, id, null, null);
+    public NUninstallException(NId id) {
+        this(id, null, null);
     }
 
     /**
      * Custom Constructor
      *
-     * @param session workspace
-     * @param id      nuts id
-     * @param msg     message
-     * @param ex      exception
+     * @param id  nuts id
+     * @param msg message
+     * @param ex  exception
      */
-    public NUninstallException(NSession session, NId id, NMsg msg, Throwable ex) {
-        super(session, id,
+    public NUninstallException(NId id, NMsg msg, Throwable ex) {
+        super(id,
                 msg == null ? NMsg.ofC("unable to uninstall %s", (id == null ? "<null>" : id)) : msg, ex);
     }
 }

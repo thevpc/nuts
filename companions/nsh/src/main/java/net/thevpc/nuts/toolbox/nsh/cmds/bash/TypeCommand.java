@@ -55,9 +55,9 @@ public class TypeCommand extends NShellBuiltinDefault {
     protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options config = context.getOptions();
         NSession session = context.getSession();
-        NArg a = cmdLine.peek().get(session);
+        NArg a = cmdLine.peek().get();
         if (a.isNonOption()) {
-            config.commands.add(cmdLine.next().flatMap(NLiteral::asString).get(session));
+            config.commands.add(cmdLine.next().flatMap(NLiteral::asString).get());
             return true;
         }
         return false;

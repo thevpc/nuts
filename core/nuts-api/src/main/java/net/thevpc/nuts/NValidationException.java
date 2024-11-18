@@ -37,45 +37,40 @@ public class NValidationException extends NException {
 
     /**
      * Constructs a new NutsValidationException exception
-     *
-     * @param session session
      */
-    public NValidationException(NSession session) {
-        super(session, NMsg.ofNtf("invalid value"));
+    public NValidationException() {
+        super(NMsg.ofNtf("invalid value"));
     }
 
     /**
      * Constructs a new NutsValidationException exception
      *
-     * @param session workspace
      * @param message message
      */
-    public NValidationException(NSession session, NMsg message) {
-        super(session, message);
+    public NValidationException(NMsg message) {
+        super(message);
     }
 
     /**
      * Constructs a new NutsValidationException exception
      *
-     * @param session workspace
      * @param message message
      * @param cause   cause
      */
-    public NValidationException(NSession session, NMsg message, Throwable cause) {
-        super(session, message, cause);
+    public NValidationException(NMsg message, Throwable cause) {
+        super(message, cause);
     }
 
     /**
      * Constructs a new NutsValidationException exception
      *
-     * @param session            workspace
      * @param message            message
      * @param cause              cause
      * @param enableSuppression  whether or not suppression is enabled or disabled
      * @param writableStackTrace whether or not the stack trace should be writable
      */
-    public NValidationException(NSession session, NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(session, message, cause, enableSuppression, writableStackTrace);
+    public NValidationException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
     }
 
 }

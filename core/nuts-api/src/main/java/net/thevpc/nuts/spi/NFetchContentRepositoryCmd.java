@@ -61,15 +61,6 @@ public interface NFetchContentRepositoryCmd extends NRepositoryCmd {
     NFetchContentRepositoryCmd setId(NId id);
 
     /**
-     * set current session.
-     *
-     * @param session current session
-     * @return {@code this} instance
-     */
-    @Override
-    NFetchContentRepositoryCmd setSession(NSession session);
-
-    /**
      * preform command. Should be called after setting all parameters.
      * Result is retrievable with {@link #getResult()}.
      *

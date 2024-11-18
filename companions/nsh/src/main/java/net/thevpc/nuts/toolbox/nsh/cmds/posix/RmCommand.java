@@ -56,10 +56,10 @@ public class RmCommand extends NShellBuiltinDefault {
         Options options = context.getOptions();
         NArg a;
         if ((a = cmdLine.nextFlag("-R").orNull()) != null) {
-            options.R = a.getBooleanValue().get(session);
+            options.R = a.getBooleanValue().get();
             return true;
-        } else if (cmdLine.peek().get(session).isNonOption()) {
-            options.files.add(ShellHelper.xfileOf(cmdLine.next().flatMap(NLiteral::asString).get(session),
+        } else if (cmdLine.peek().get().isNonOption()) {
+            options.files.add(ShellHelper.xfileOf(cmdLine.next().flatMap(NLiteral::asString).get(),
                     context.getDirectory(), session));
             return true;
         }
@@ -70,7 +70,7 @@ public class RmCommand extends NShellBuiltinDefault {
     protected void main(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        NAssert.requireNonBlank(options.files, "parameters", session);
+        NAssert.requireNonBlank(options.files, "parameters");
 //        ShellHelper.WsSshListener listener = options.verbose ? new ShellHelper.WsSshListener(context.getSession()) : null;
         for (NPath p : options.files) {
 //            if (p instanceof SshXFile) {

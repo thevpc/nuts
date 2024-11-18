@@ -119,7 +119,7 @@ public class Test20_VersionTest {
     }
 
     private void checkEq(String a, String b, NSession session) {
-        NVersionFilter u = NVersionFilters.of(session).parse(a);
+        NVersionFilter u = NVersionFilters.of().parse(a);
         String b2 = u.toString();
         Assertions.assertEquals(b, b2);
         TestUtils.println(a + " ==> " + b);

@@ -83,12 +83,7 @@ public class NReservedBootLog implements NLog {
     }
 
     @Override
-    public void log(NSession session, Level level, NLogVerb verb, NMsg msg, Throwable thrown) {
-        log(level, verb, msg, thrown);
-    }
-
-    @Override
-    public void log(NSession session, Level level, NLogVerb verb, Supplier<NMsg> msgSupplier, Supplier<Throwable> errorSupplier) {
+    public void log(Level level, NLogVerb verb, Supplier<NMsg> msgSupplier, Supplier<Throwable> errorSupplier) {
         if (isLoggableTerm(level)) {
             log(level, verb, msgSupplier.get(), errorSupplier.get());
         }
@@ -311,7 +306,6 @@ public class NReservedBootLog implements NLog {
     }
 
     private static class LogOp implements NLogOp {
-        private NSession session;
         private NReservedBootLog logger;
         private Level level = Level.FINE;
         private NLogVerb verb;
@@ -322,16 +316,6 @@ public class NReservedBootLog implements NLog {
 
         public LogOp(NReservedBootLog logger) {
             this.logger = logger;
-        }
-
-        public NSession getSession() {
-            return session;
-        }
-
-        @Override
-        public NLogOp session(NSession session) {
-            this.session = session;
-            return this;
         }
 
         @Override

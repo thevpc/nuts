@@ -15,15 +15,15 @@ public class NDependencyFilterNone extends AbstractDependencyFilter{
 
     private final NDependencyFilter[] all;
 
-    public NDependencyFilterNone(NSession session, NDependencyFilter... all) {
-        super(session, NFilterOp.NOT);
+    public NDependencyFilterNone(NWorkspace workspace, NDependencyFilter... all) {
+        super(workspace, NFilterOp.NOT);
         this.all = all;
     }
 
     @Override
-    public boolean acceptDependency(NId from, NDependency dependency, NSession session) {
+    public boolean acceptDependency(NId from, NDependency dependency) {
         for (NDependencyFilter nDependencyFilter : all) {
-            if (nDependencyFilter != null && nDependencyFilter.acceptDependency(from, dependency, session)) {
+            if (nDependencyFilter != null && nDependencyFilter.acceptDependency(from, dependency)) {
                 return false;
             }
         }
@@ -31,7 +31,7 @@ public class NDependencyFilterNone extends AbstractDependencyFilter{
     }
 
     public NDependencyFilter simplify() {
-        return CoreFilterUtils.simplifyFilterNone(getSession(), NDependencyFilter.class,this,all);
+        return CoreFilterUtils.simplifyFilterNone( NDependencyFilter.class,this,all);
     }
 
     @Override

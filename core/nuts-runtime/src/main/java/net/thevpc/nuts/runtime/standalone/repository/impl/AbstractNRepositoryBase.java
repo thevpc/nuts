@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.deploy.DefaultNDeployRepositoryCmd;
@@ -43,7 +44,6 @@ import java.util.*;
 import java.util.logging.Level;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
-import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
@@ -56,13 +56,11 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
     private static final long serialVersionUID = 1L;
     protected NIndexStore nIndexStore;
 
-    private final NLog LOG;
 
-    public AbstractNRepositoryBase(NAddRepositoryOptions options, NSession session, NRepository parentRepository, NSpeedQualifier speed, boolean supportedMirroring, String repositoryType, boolean supportsDeploy) {
-        this.initSession=session;
+    public AbstractNRepositoryBase(NAddRepositoryOptions options, NWorkspace workspace, NRepository parentRepository, NSpeedQualifier speed, boolean supportedMirroring, String repositoryType, boolean supportsDeploy) {
+        super(workspace);
         this.supportsDeploy=supportsDeploy;
-        LOG = NLog.of(AbstractNRepositoryBase.class,session);
-        init(options, session, parentRepository, speed, supportedMirroring, repositoryType);
+        init(options, parentRepository, speed, supportedMirroring, repositoryType);
     }
 
     @Override
@@ -70,16 +68,15 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
         return nIndexStore;
     }
 
-    protected void init(NAddRepositoryOptions options, NSession initSession, NRepository parent, NSpeedQualifier speed, boolean supportedMirroring, String repositoryType) {
-        this.workspace = initSession.getWorkspace();
+    protected void init(NAddRepositoryOptions options, NRepository parent, NSpeedQualifier speed, boolean supportedMirroring, String repositoryType) {
         this.parentRepository = parent;
-        this.configModel = new DefaultNRepositoryConfigModel(this, options, initSession,speed, supportedMirroring, repositoryType);
-        this.nIndexStore = NConfigs.of(initSession).getIndexStoreClientFactory().createIndexStore(this);
+        this.configModel = new DefaultNRepositoryConfigModel(this, options, workspace,speed, supportedMirroring, repositoryType);
+        this.nIndexStore = NConfigs.of().getIndexStoreClientFactory().createIndexStore(this);
 //        setEnabled(options.isEnabled(), initSession);
     }
 
     @Override
-    public boolean acceptAction(NId id, NRepositorySupportedAction supportedAction, NFetchMode mode, NSession session) {
+    public boolean acceptAction(NId id, NRepositorySupportedAction supportedAction, NFetchMode mode) {
         String groups = config().getGroups();
         if (NBlankable.isBlank(groups)) {
             return true;
@@ -112,7 +109,7 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
     }
 
     @Override
-    public void checkAllowedFetch(NId id, NSession session) {
+    public void checkAllowedFetch(NId id) {
     }
 
     @Override
@@ -121,8 +118,8 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
     }
 
     @Override
-    public NId searchLatestVersion(NId id, NIdFilter filter, NFetchMode fetchMode, NSession session) {
-        Iterator<NId> allVersions = searchVersions().setSession(session).setId(id).setFilter(filter)
+    public NId searchLatestVersion(NId id, NIdFilter filter, NFetchMode fetchMode) {
+        Iterator<NId> allVersions = searchVersions().setId(id).setFilter(filter)
                 .setFetchMode(fetchMode)
                 .getResult();
         NId a = null;
@@ -135,8 +132,9 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
         return a;
     }
 
-    protected void traceMessage(NSession session, NFetchMode fetchMode, Level lvl, NId id, NLogVerb tracePhase, String title, long startTime, NMsg extraMessage) {
-        NLogUtils.traceMessage(LOG, lvl, getName(), session, fetchMode, id, tracePhase, title, startTime, extraMessage);
+    protected void traceMessage(NFetchMode fetchMode, Level lvl, NId id, NLogVerb tracePhase, String title, long startTime, NMsg extraMessage) {
+        NSession session = workspace.currentSession();
+        NLogUtils.traceMessage(NLog.of(AbstractNRepositoryBase.class), lvl, getName(), fetchMode, id, tracePhase, title, startTime, extraMessage);
     }
 
     @Override
@@ -169,25 +167,25 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
         return new DefaultNRepositoryUndeployCmd(this);
     }
 
-    protected String getIdComponentExtension(String packaging, NSession session) {
-        return NLocations.of(session).getDefaultIdContentExtension(packaging);
+    protected String getIdComponentExtension(String packaging) {
+        return NLocations.of().getDefaultIdContentExtension(packaging);
     }
 
-    protected String getIdExtension(NId id, NSession session) {
-        return NLocations.of(session).getDefaultIdExtension(id);
+    protected String getIdExtension(NId id) {
+        return NLocations.of().getDefaultIdExtension(id);
     }
 
     @Override
-    public NPath getIdBasedir(NId id, NSession session) {
-        return NLocations.of(session).getDefaultIdBasedir(id);
+    public NPath getIdBasedir(NId id) {
+        return NLocations.of().getDefaultIdBasedir(id);
     }
 
-    public NPath getIdRemotePath(NId id, NSession session) {
-        return config().setSession(session).getLocationPath().resolve(getIdRelativePath(id, session));
+    public NPath getIdRemotePath(NId id) {
+        return config().getLocationPath().resolve(getIdRelativePath(id));
     }
 
-    protected NPath getIdRelativePath(NId id, NSession session) {
-        return getIdBasedir(id, session).resolve(getIdFilename(id, session));
+    protected NPath getIdRelativePath(NId id) {
+        return getIdBasedir(id).resolve(getIdFilename(id));
     }
 
     @Override

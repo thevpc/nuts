@@ -54,7 +54,7 @@ public class WhoamiCommand extends NShellBuiltinDefault {
     protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options config = context.getOptions();
         NSession session = context.getSession();
-        switch (cmdLine.peek().get(session).key()) {
+        switch (cmdLine.peek().get().key()) {
             case "--all":
             case "-a": {
                 config.argAll = true;
@@ -80,14 +80,14 @@ public class WhoamiCommand extends NShellBuiltinDefault {
             result.login = System.getProperty("user.name");
         } else {
             NSession session = context.getSession();
-            String login = NWorkspaceSecurityManager.of(session).getCurrentUsername();
+            String login = NWorkspaceSecurityManager.of().getCurrentUsername();
             result.login = login;
             if (options.argAll) {
-                NUser user = NWorkspaceSecurityManager.of(session).findUser(login);
+                NUser user = NWorkspaceSecurityManager.of().findUser(login);
                 Set<String> groups = new TreeSet<>((user.getGroups()));
                 Set<String> rights = new TreeSet<>((user.getPermissions()));
                 Set<String> inherited = new TreeSet<>((user.getInheritedPermissions()));
-                result.loginStack = NWorkspaceSecurityManager.of(session).getCurrentLoginStack();
+                result.loginStack = NWorkspaceSecurityManager.of().getCurrentLoginStack();
                 if (result.loginStack.length <= 1) {
                     result.loginStack = null;
                 }
@@ -113,7 +113,7 @@ public class WhoamiCommand extends NShellBuiltinDefault {
                     result.remoteId = user.getRemoteIdentity();
                 }
                 List<RepoResult> rr = new ArrayList<>();
-                for (NRepository repository : NRepositories.of(context.getSession()).getRepositories()) {
+                for (NRepository repository : NRepositories.of().getRepositories()) {
                     NUser ruser = repository.security().getEffectiveUser(login);
                     if (ruser != null && (ruser.getGroups().size() > 0
                             || ruser.getPermissions().size() > 0
@@ -150,7 +150,7 @@ public class WhoamiCommand extends NShellBuiltinDefault {
                 NPrintStream out = context.getSession().out();
                 out.println(NMsg.ofC("%s", result.login));
                 if (options.nutsUser) {
-                    NTexts factory = NTexts.of(context.getSession());
+                    NTexts factory = NTexts.of();
                     if (result.loginStack != null) {
                         out.print(NMsg.ofC("%s      :",
                                 factory.ofStyled("stack", NTextStyle.primary5())

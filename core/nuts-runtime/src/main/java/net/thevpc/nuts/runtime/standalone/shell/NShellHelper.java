@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.shell;
 
 import net.thevpc.nuts.env.NOsFamily;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineShellOptions;
 
@@ -62,7 +61,7 @@ public interface NShellHelper {
 
     String getSysRcName();
 
-    String[] parseCmdLineArr(String line, NSession session) ;
+    String[] parseCmdLineArr(String line) ;
 
     String escapeArgument(String arg, NCmdLineShellOptions options) ;
 

@@ -15,13 +15,11 @@ import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.PrintStream;
 import java.util.logging.Level;
-import net.thevpc.nuts.util.NBlankable;
 
 @NComponentScope(NScopeType.SESSION)
 public class DefaultNApplicationExceptionHandler implements NApplicationExceptionHandler {
@@ -38,8 +36,8 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
     public int processThrowable(String[] args, Throwable throwable) {
         NAssert.requireSession(session);
         NBootOptionsBuilder bo = null;
-        bo = NBootManager.of(session).getBootOptions().builder();
-        if (!NEnvs.of(session).isGraphicalDesktopEnvironment()) {
+        bo = NBootManager.of().getBootOptions().builder();
+        if (!NEnvs.of().isGraphicalDesktopEnvironment()) {
             bo.setGui(false);
         }
 
@@ -55,14 +53,14 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
 
         NPrintStream fout = null;
         try {
-            fout = NIO.of(session).getSystemTerminal().getErr();
+            fout = NIO.of().getSystemTerminal().getErr();
             if (fm != null) {
                 fm = NMsg.ofStyled(fm, NTextStyle.error());
             } else {
                 fm = NMsg.ofStyled(m, NTextStyle.error());
             }
         } catch (Exception ex2) {
-            NLogOp.of(NApplications.class, session).level(Level.FINE).error(ex2).log(
+            NLogOp.of(NApplications.class).level(Level.FINE).error(ex2).log(
                     NMsg.ofPlain("unable to get system terminal")
             );
         }
@@ -80,14 +78,14 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
                 fout.flush();
             } else {
                 if (fm != null) {
-                    session.eout().add(NElements.of(session).ofObject()
+                    session.eout().add(NElements.of().ofObject()
                             .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
-                            .set("error", NTexts.of(session).ofText(fm).filteredText())
+                            .set("error", NTexts.of().ofText(fm).filteredText())
                             .build()
                     );
                     if (showTrace) {
-                        session.eout().add(NElements.of(session).ofObject().set("errorTrace",
-                                NElements.of(session).ofArray().addAll(NLogUtils.stacktraceToArray(throwable)).build()
+                        session.eout().add(NElements.of().ofObject().set("errorTrace",
+                                NElements.of().ofArray().addAll(NLogUtils.stacktraceToArray(throwable)).build()
                         ).build());
                     }
                     NArrayElementBuilder e = session.eout();
@@ -97,13 +95,13 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
                     }
                     fout.flush();
                 } else {
-                    session.eout().add(NElements.of(session).ofObject()
+                    session.eout().add(NElements.of().ofObject()
                             .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
                             .set("error", m)
                             .build());
                     if (showTrace) {
-                        session.eout().add(NElements.of(session).ofObject().set("errorTrace",
-                                NElements.of(session).ofArray().addAll(NLogUtils.stacktraceToArray(throwable)).build()
+                        session.eout().add(NElements.of().ofObject().set("errorTrace",
+                                NElements.of().ofArray().addAll(NLogUtils.stacktraceToArray(throwable)).build()
                         ).build());
                     }
                     NArrayElementBuilder e = session.eout();
@@ -130,7 +128,7 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
         if (showGui) {
             StringBuilder sb = new StringBuilder();
             if (fm != null) {
-                sb.append(NTexts.of(session).ofText(fm).filteredText());
+                sb.append(NTexts.of().ofText(fm).filteredText());
             } else {
                 sb.append(m);
             }

@@ -48,8 +48,8 @@ public abstract class AbstractNAddUserCmd extends NWorkspaceCmdBaseRepo<NAddUser
     protected final Set<String> permissions = new HashSet<>();
     protected final Set<String> groups = new HashSet<>();
 
-    public AbstractNAddUserCmd(NSession session) {
-        super(session, "add-user");
+    public AbstractNAddUserCmd(NWorkspace workspace) {
+        super(workspace, "add-user");
     }
 
     @Override
@@ -213,7 +213,8 @@ public abstract class AbstractNAddUserCmd extends NWorkspaceCmdBaseRepo<NAddUser
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NArg a = cmdLine.peek().get(session);
+        NSession session=getWorkspace().currentSession();
+        NArg a = cmdLine.peek().get();
         if (a == null) {
             return false;
         }

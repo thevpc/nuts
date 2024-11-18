@@ -75,11 +75,11 @@ public class ZipDescriptorContentParserComponent implements NDescriptorContentPa
         try {
             if (ZipUtils.extractFirstPath(parserContext.getFullStream(), POSSIBLE_PATHS, buffer, true)) {
                 NSession session = parserContext.getSession();
-                return NDescriptorParser.of(session)
-                        .parse(buffer.toByteArray()).get(session);
+                return NDescriptorParser.of()
+                        .parse(buffer.toByteArray()).get();
             }
         } catch (IOException ex) {
-            throw new NIOException(parserContext.getSession(),ex);
+            throw new NIOException(ex);
         }
         return null;
     }

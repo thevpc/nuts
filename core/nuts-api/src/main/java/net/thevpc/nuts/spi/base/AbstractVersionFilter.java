@@ -25,6 +25,8 @@
 package net.thevpc.nuts.spi.base;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.reserved.util.NVersionFilterWithDescription;
 import net.thevpc.nuts.util.NSimplifiable;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NFilterOp;
@@ -39,8 +41,8 @@ import java.util.List;
  */
 public abstract class AbstractVersionFilter extends AbstractNFilter implements NVersionFilter, NSimplifiable<NVersionFilter> {
 
-    public AbstractVersionFilter(NSession session, NFilterOp op) {
-        super(session, op);
+    public AbstractVersionFilter(NWorkspace workspace, NFilterOp op) {
+        super(workspace, op);
     }
 
     @Override
@@ -62,5 +64,11 @@ public abstract class AbstractVersionFilter extends AbstractNFilter implements N
     public NOptional<List<NVersionInterval>> intervals() {
         return NOptional.of(Collections.emptyList());
     }
-
+    @Override
+    public NFilter withDesc(NEDesc description) {
+        if(description==null){
+            return this;
+        }
+        return new NVersionFilterWithDescription(workspace,this,description);
+    }
 }

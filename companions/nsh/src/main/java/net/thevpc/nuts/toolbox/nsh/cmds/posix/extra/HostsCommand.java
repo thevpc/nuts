@@ -53,7 +53,7 @@ public class HostsCommand extends NShellBuiltinDefault {
     protected boolean nextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options config = context.getOptions();
         NSession session = context.getSession();
-        switch (cmdLine.peek().get(session).key()) {
+        switch (cmdLine.peek().get().key()) {
             case "add": {
                 return nextOptionAdd(cmdLine, context, config);
             }
@@ -68,7 +68,7 @@ public class HostsCommand extends NShellBuiltinDefault {
     protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options config = context.getOptions();
         NSession session = context.getSession();
-        switch (cmdLine.peek().get(session).key()) {
+        switch (cmdLine.peek().get().key()) {
             case "--hosts-file": {
                 NArg hf = cmdLine.nextEntry().get();
                 if (hf.isActive()) {
@@ -91,10 +91,10 @@ public class HostsCommand extends NShellBuiltinDefault {
 
     private boolean nextOptionAdd(NCmdLine cmdLine, NShellExecutionContext context, Options config) {
         NSession session = context.getSession();
-        if (cmdLine.peek().get(session).key().equals("add")) {
+        if (cmdLine.peek().get().key().equals("add")) {
             cmdLine.next();
             while (cmdLine.hasNext()) {
-                NArg a = cmdLine.peek().get(session);
+                NArg a = cmdLine.peek().get();
                 if (!a.isOption() && !isKeyword(a.getImage())) {
                     a = cmdLine.nextEntry().get();
                     String ip = a.key();
@@ -113,10 +113,10 @@ public class HostsCommand extends NShellBuiltinDefault {
 
     private boolean nextOptionRemove(NCmdLine cmdLine, NShellExecutionContext context, Options config) {
         NSession session = context.getSession();
-        if (cmdLine.peek().get(session).key().equals("remove")) {
+        if (cmdLine.peek().get().key().equals("remove")) {
             cmdLine.next();
             while (cmdLine.hasNext()) {
-                NArg a = cmdLine.peek().get(session);
+                NArg a = cmdLine.peek().get();
                 if (!a.isOption() && !isKeyword(a.getImage())) {
                     a = cmdLine.next().get();
                     String ip = a.getImage();
@@ -161,7 +161,7 @@ public class HostsCommand extends NShellBuiltinDefault {
 
         private void writeHostLines(HostLines value, Options options, NSession session) {
             String hostsFile = NStringUtils.firstNonBlank(options.hostsFile, "/etc/hosts");
-            NPath nPath = NPath.of(hostsFile, session);
+            NPath nPath = NPath.of(hostsFile);
             try (PrintStream out = nPath.getPrintStream()) {
                 for (HostLine line : value.lines) {
                     if (line instanceof HostLineEntry) {
@@ -176,7 +176,7 @@ public class HostsCommand extends NShellBuiltinDefault {
 
         private HostLines readHostLines(Options options, NSession session) {
             String hostsFile = NStringUtils.firstNonBlank(options.hostsFile, "/etc/hosts");
-            NPath nPath = NPath.of(hostsFile, session);
+            NPath nPath = NPath.of(hostsFile);
             NRef<HostLineComment> lastComment = NRef.ofNull();
             HostLines hosts = new HostLines();
             nPath.getLines().forEach(s -> {

@@ -5,12 +5,12 @@ import net.thevpc.nuts.util.NFilterOp;
 
 public final class NDependencyFilterTrue extends AbstractDependencyFilter{
 
-    public NDependencyFilterTrue(NSession session) {
-        super(session, NFilterOp.TRUE);
+    public NDependencyFilterTrue(NWorkspace workspace) {
+        super(workspace, NFilterOp.TRUE);
     }
 
     @Override
-    public boolean acceptDependency(NId from, NDependency dependency, NSession session) {
+    public boolean acceptDependency(NId from, NDependency dependency) {
         return true;
     }
 

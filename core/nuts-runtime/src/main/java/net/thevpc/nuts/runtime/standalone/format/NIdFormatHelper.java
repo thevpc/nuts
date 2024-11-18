@@ -51,7 +51,6 @@ import net.thevpc.nuts.util.NMsg;
  */
 public class NIdFormatHelper {
 
-    private NLog LOG;
     NId id;
     NInstallStatus installStatus = NInstallStatus.NONE;
     Boolean executable = null;
@@ -62,7 +61,7 @@ public class NIdFormatHelper {
     NDefinition def;
     NDescriptor desc;
     NDependency dep;
-    NSession session;
+    NWorkspace workspace;
     Instant dte;
     String usr;
     char status_f;
@@ -75,50 +74,49 @@ public class NIdFormatHelper {
     boolean built = false;
     boolean ntf = true;
 
-    public static NIdFormatHelper of(Object object, NSession session) {
+    public static NIdFormatHelper of(Object object) {
         if (object instanceof NId) {
             NId v = (NId) object;
-            return (new NIdFormatHelper(v, session));
+            return (new NIdFormatHelper(v, NWorkspace.of().get()));
         } else if (object instanceof NDescriptor) {
             NDescriptor v = (NDescriptor) object;
-            return (new NIdFormatHelper(v, session));
+            return (new NIdFormatHelper(v, NWorkspace.of().get()));
         } else if (object instanceof NDefinition) {
             NDefinition v = (NDefinition) object;
-            return (new NIdFormatHelper(v, session));
+            return (new NIdFormatHelper(v, NWorkspace.of().get()));
         } else if (object instanceof NDependency) {
             NDependency v = (NDependency) object;
-            return (new NIdFormatHelper(v, session));
+            return (new NIdFormatHelper(v, NWorkspace.of().get()));
         } else if (object instanceof NDependencyTreeNode) {
             NDependencyTreeNode v = (NDependencyTreeNode) object;
-            return (new NIdFormatHelper(v, session));
+            return (new NIdFormatHelper(v, NWorkspace.of().get()));
         } else {
             return null;
         }
 
     }
 
-    public NIdFormatHelper(NDependencyTreeNode id, NSession session) {
-        this(null, null, null, id.getDependency(), session);
+    public NIdFormatHelper(NDependencyTreeNode id, NWorkspace workspace) {
+        this(null, null, null, id.getDependency(), workspace);
     }
 
-    public NIdFormatHelper(NId id, NSession session) {
-        this(id, null, null, null, session);
+    public NIdFormatHelper(NId id, NWorkspace workspace) {
+        this(id, null, null, null, workspace);
     }
 
-    public NIdFormatHelper(NDescriptor desc, NSession session) {
-        this(null, desc, null, null, session);
+    public NIdFormatHelper(NDescriptor desc, NWorkspace workspace) {
+        this(null, desc, null, null, workspace);
     }
 
-    public NIdFormatHelper(NDefinition def, NSession session) {
-        this(null, null, def, null, session);
+    public NIdFormatHelper(NDefinition def, NWorkspace workspace) {
+        this(null, null, def, null, workspace);
     }
 
-    public NIdFormatHelper(NDependency dep, NSession session) {
-        this(null, null, null, dep, session);
+    public NIdFormatHelper(NDependency dep, NWorkspace workspace) {
+        this(null, null, null, dep, workspace);
     }
 
-    private NIdFormatHelper(NId id, NDescriptor desc, NDefinition def, NDependency dep, NSession session) {
-        LOG = NLog.of(NIdFormatHelper.class,session);
+    private NIdFormatHelper(NId id, NDescriptor desc, NDefinition def, NDependency dep, NWorkspace workspace) {
         if (id == null) {
             if (def != null) {
                 id = def.getId();
@@ -133,7 +131,7 @@ public class NIdFormatHelper {
                 desc = def.getDescriptor();
             }
         }
-        this.session = session;
+        this.workspace = workspace;
         this.id = id;
         this.def = def;
         this.dep = dep;
@@ -158,28 +156,28 @@ public class NIdFormatHelper {
         return b;
     }
 
-    private static FormatHelper getFormatHelper(NSession session) {
-        FormatHelper h = (FormatHelper) NEnvs.of(session).getProperties().get(FormatHelper.class.getName());
+    private static FormatHelper getFormatHelper(NWorkspace workspace) {
+        FormatHelper h = (FormatHelper) NEnvs.of().getProperties().get(FormatHelper.class.getName());
         if (h != null) {
             return h;
         }
-        FormatHelperResetListener h2 = (FormatHelperResetListener) NEnvs.of(session)
+        FormatHelperResetListener h2 = (FormatHelperResetListener) NEnvs.of()
                 .getProperty(FormatHelperResetListener.class.getName())
                 .map(NLiteral::getRaw).orNull()
                 ;
         if (h2 == null) {
             h2 = new FormatHelperResetListener();
-            NEvents.of(session).addWorkspaceListener(h2);
+            NEvents.of().addWorkspaceListener(h2);
         }
-        h = new FormatHelper(session);
-        NEnvs.of(session).setProperty(FormatHelper.class.getName(), h);
+        h = new FormatHelper(workspace);
+        NEnvs.of().setProperty(FormatHelper.class.getName(), h);
         return h;
     }
 
     public static class FormatHelperResetListener implements NWorkspaceListener, NRepositoryListener {
 
         private void _onReset(NSession session) {
-            NEnvs.of(session).setProperty(FormatHelper.class.getName(), null);
+            NEnvs.of().setProperty(FormatHelper.class.getName(), null);
         }
 
         @Override
@@ -230,10 +228,10 @@ public class NIdFormatHelper {
 
     public static class FormatHelper {
 
-        NSession session;
+        NWorkspace workspace;
 
-        public FormatHelper(NSession session) {
-            this.session = session;
+        public FormatHelper(NWorkspace workspace) {
+            this.workspace = workspace;
         }
 
         private Integer maxRepoNameSize;
@@ -245,7 +243,7 @@ public class NIdFormatHelper {
             }
             int z = 0;
             Stack<NRepository> stack = new Stack<>();
-            for (NRepository repository : NRepositories.of(session)
+            for (NRepository repository : NRepositories.of()
                     .getRepositories()) {
                 stack.push(repository);
             }
@@ -257,7 +255,6 @@ public class NIdFormatHelper {
                 }
                 if (r.config().isSupportedMirroring()) {
                     for (NRepository repository : r.config()
-                            .setSession(session)
                             .getMirrors()) {
                         stack.push(repository);
                     }
@@ -271,7 +268,7 @@ public class NIdFormatHelper {
                 return maxUserNameSize;
             }
             int z = "anonymous".length();
-            NConfigsExt wc = NConfigsExt.of(NConfigs.of(session));
+            NConfigsExt wc = NConfigsExt.of(NConfigs.of());
             NUserConfig[] users = wc.getModel().getStoredConfigSecurity().getUsers();
             if (users != null) {
                 for (NUserConfig user : users) {
@@ -282,13 +279,13 @@ public class NIdFormatHelper {
                 }
             }
             Stack<NRepository> stack = new Stack<>();
-            for (NRepository repository : NRepositories.of(session).getRepositories()) {
+            for (NRepository repository : NRepositories.of().getRepositories()) {
                 stack.push(repository);
             }
             while (!stack.isEmpty()) {
                 NRepository r = stack.pop();
                 NRepositoryConfigManagerExt rc = NRepositoryConfigManagerExt.of(r.config());
-                NUserConfig[] users1 = rc.getModel().findUsers(session);
+                NUserConfig[] users1 = rc.getModel().findUsers();
                 if (users1 != null) {
                     for (NUserConfig user : users1) {
                         String s = user.getUser();
@@ -298,7 +295,7 @@ public class NIdFormatHelper {
                     }
                 }
                 if (r.config().isSupportedMirroring()) {
-                    for (NRepository repository : r.config().setSession(session).getMirrors()) {
+                    for (NRepository repository : r.config().getMirrors()) {
                         stack.push(repository);
                     }
                 }
@@ -309,7 +306,7 @@ public class NIdFormatHelper {
 
     public NString getSingleColumnRow(NFetchDisplayOptions oo) {
         NDisplayProperty[] a = oo.getDisplayProperties();
-        NTexts txt = NTexts.of(session);
+        NTexts txt = NTexts.of();
         NTextBuilder sb = txt.ofBuilder();
         for (int j = 0; j < a.length; j++) {
             NString s = buildMain(oo, a[j]);
@@ -320,7 +317,7 @@ public class NIdFormatHelper {
                     break;
                 }
                 case REPOSITORY: {
-                    z = getFormatHelper(session).maxRepoNameSize();
+                    z = getFormatHelper(workspace).maxRepoNameSize();
                     break;
                 }
                 case REPOSITORY_ID: {
@@ -328,7 +325,7 @@ public class NIdFormatHelper {
                     break;
                 }
                 case INSTALL_USER: {
-                    z = getFormatHelper(session).maxUserNameSize();
+                    z = getFormatHelper(workspace).maxUserNameSize();
                     break;
                 }
             }
@@ -348,8 +345,7 @@ public class NIdFormatHelper {
     }
 
     public NString buildMain(NFetchDisplayOptions oo, NDisplayProperty dp) {
-        NSession session = this.session;
-        NTexts text = NTexts.of(session);
+        NTexts text = NTexts.of();
         if (oo.isRequireDefinition()) {
             buildLong();
         }
@@ -425,7 +421,7 @@ public class NIdFormatHelper {
             }
             case INSTALL_DATE: {
                 if (def != null && def.getInstallInformation().isPresent()) {
-                    return stringValue(def.getInstallInformation().get(this.session).getCreatedInstant());
+                    return stringValue(def.getInstallInformation().get().getCreatedInstant());
                 }
                 return text.ofStyled("<null>", NTextStyle.pale());
             }
@@ -436,7 +432,7 @@ public class NIdFormatHelper {
                         rname = def.getRepositoryName();
                     }
                     if (def.getRepositoryUuid() != null) {
-                        NRepository r = NRepositories.of(this.session.copy().setTransitive(false))
+                        NRepository r = NRepositories.of()
                                 .findRepositoryById(def.getRepositoryUuid()).orNull();
                         if (r != null) {
                             rname = r.getName();
@@ -457,7 +453,7 @@ public class NIdFormatHelper {
                 }
                 if (ruuid == null && id != null) {
                     String p = id.getRepository();
-                    NRepository r = NRepositories.of(this.session.copy().setTransitive(false))
+                    NRepository r = NRepositories.of()
                             .findRepositoryByName(p).orNull();
                     if (r != null) {
                         ruuid = r.getUuid();
@@ -467,49 +463,49 @@ public class NIdFormatHelper {
             }
             case INSTALL_USER: {
                 if (def != null && def.getInstallInformation().isPresent()) {
-                    return stringValue(def.getInstallInformation().get(this.session).getInstallUser());
+                    return stringValue(def.getInstallInformation().get().getInstallUser());
                 }
                 return text.ofStyled("nobody", NTextStyle.error());
             }
             case CACHE_FOLDER: {
                 if (def != null) {
-                    return stringValue(NLocations.of(session).getStoreLocation(def.getId(), NStoreType.CACHE));
+                    return stringValue(NLocations.of().getStoreLocation(def.getId(), NStoreType.CACHE));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case CONF_FOLDER: {
                 if (def != null) {
-                    return stringValue(NLocations.of(session).getStoreLocation(def.getId(), NStoreType.CONF));
+                    return stringValue(NLocations.of().getStoreLocation(def.getId(), NStoreType.CONF));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case LIB_FOLDER: {
                 if (def != null) {
-                    return stringValue(NLocations.of(session).getStoreLocation(def.getId(), NStoreType.LIB));
+                    return stringValue(NLocations.of().getStoreLocation(def.getId(), NStoreType.LIB));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case LOG_FOLDER: {
                 if (def != null) {
-                    return stringValue(NLocations.of(session).getStoreLocation(def.getId(), NStoreType.LOG));
+                    return stringValue(NLocations.of().getStoreLocation(def.getId(), NStoreType.LOG));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case TEMP_FOLDER: {
                 if (def != null) {
-                    return stringValue(NLocations.of(session).getStoreLocation(def.getId(), NStoreType.TEMP));
+                    return stringValue(NLocations.of().getStoreLocation(def.getId(), NStoreType.TEMP));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case VAR_LOCATION: {
                 if (def != null) {
-                    return stringValue(NLocations.of(session).getStoreLocation(def.getId(), NStoreType.VAR));
+                    return stringValue(NLocations.of().getStoreLocation(def.getId(), NStoreType.VAR));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case BIN_FOLDER: {
                 if (def != null) {
-                    return stringValue(NLocations.of(session).getStoreLocation(def.getId(), NStoreType.BIN));
+                    return stringValue(NLocations.of().getStoreLocation(def.getId(), NStoreType.BIN));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
@@ -536,7 +532,7 @@ public class NIdFormatHelper {
             }
             case INSTALL_FOLDER: {
                 if (def != null && def.getInstallInformation().isPresent()) {
-                    return stringValue(def.getInstallInformation().get(this.session).getInstallFolder());
+                    return stringValue(def.getInstallInformation().get().getInstallFolder());
                 }
                 return text.ofStyled("<null>", NTextStyle.pale());
             }
@@ -576,7 +572,7 @@ public class NIdFormatHelper {
             }
 
             default: {
-                throw new NUnsupportedEnumException(this.session, dp);
+                throw new NUnsupportedEnumException(dp);
             }
         }
     }
@@ -584,10 +580,10 @@ public class NIdFormatHelper {
     public NIdFormatHelper buildLong() {
         if (!built) {
             built = true;
-            NWorkspace ws = session.getWorkspace();
+            NWorkspace ws = workspace;
             NInstalledRepository rr = NWorkspaceExt.of(ws).getInstalledRepository();
-            this.installStatus = rr.getInstallStatus(id, session);
-            NInstallInformation iif = rr.getInstallInformation(id, session);
+            this.installStatus = rr.getInstallStatus(id);
+            NInstallInformation iif = rr.getInstallInformation(id);
             this.dte = iif == null ? null : iif.getCreatedInstant();
             this.usr = iif == null ? null : iif.getInstallUser();
 //            Boolean updatable = null;
@@ -600,7 +596,8 @@ public class NIdFormatHelper {
 
             try {
                 if (this.installStatus.isNonDeployed() || def == null) {
-                    this.defFetched = NFetchCmd.of(id,session.copy().setFetchStrategy(NFetchStrategy.OFFLINE))
+                    this.defFetched = NFetchCmd.of(id)
+                            .setFetchStrategy(NFetchStrategy.OFFLINE)
                             .setContent(true)
                             .setOptional(false)
                             .setDependencies(this.checkDependencies)
@@ -610,7 +607,7 @@ public class NIdFormatHelper {
                     this.fetched = true;
                 }
             } catch (Exception ex) {
-                LOG.with().session(session).level(Level.FINE).error(ex)
+                NLog.of(NIdFormatHelper.class).with().level(Level.FINE).error(ex)
                         .log(
                                 NMsg.ofC("failed to build id format for %s", id));
             }
@@ -733,7 +730,7 @@ public class NIdFormatHelper {
     }
 
     public NString getFormattedStatusString() {
-        NTexts text = NTexts.of(session);
+        NTexts text = NTexts.of();
         if (dep != null) {
             return text.ofStyled("" + status_f
                     //                    + status_obs
@@ -764,7 +761,7 @@ public class NIdFormatHelper {
     }
 
     private NString keywordArr0(List<String> any, NTextStyle style) {
-        NTexts txt = NTexts.of(session);
+        NTexts txt = NTexts.of();
         if (any == null || any.size() == 0) {
             return txt.ofBlank();
         }
@@ -782,6 +779,6 @@ public class NIdFormatHelper {
     }
 
     private NString stringValue(Object any) {
-        return NTextUtils.stringValueFormatted(any, false, session);
+        return NTextUtils.stringValueFormatted(any, false);
     }
 }

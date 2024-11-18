@@ -1,6 +1,5 @@
 package net.thevpc.nuts.reserved.util;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NCallable;
@@ -15,8 +14,8 @@ public class NCallableWithDescription<T> implements NCallable<T> {
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return description.apply(session);
+    public NElement describe() {
+        return description.get();
     }
 
     @Override
@@ -26,7 +25,7 @@ public class NCallableWithDescription<T> implements NCallable<T> {
     }
 
     @Override
-    public T call(NSession session) {
-        return base.call(session);
+    public T call() {
+        return base.call();
     }
 }

@@ -36,8 +36,8 @@ import java.util.List;
  * @since 0.5.4
  */
 public interface NUndeployCmd extends NWorkspaceCmd {
-    static NUndeployCmd of(NSession session) {
-        return NExtensions.of(session).createComponent(NUndeployCmd.class).get();
+    static NUndeployCmd of() {
+        return NExtensions.of().createComponent(NUndeployCmd.class).get();
     }
 
     String getRepository();
@@ -59,23 +59,6 @@ public interface NUndeployCmd extends NWorkspaceCmd {
     NUndeployCmd addIds(NId... value);
 
     NUndeployCmd clearIds();
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
-    NUndeployCmd setSession(NSession session);
-
-    /**
-     * copy session
-     *
-     * @return {@code this} instance
-     */
-    @Override
-    NUndeployCmd copySession();
 
     /**
      * configure the current command with the given arguments. This is an

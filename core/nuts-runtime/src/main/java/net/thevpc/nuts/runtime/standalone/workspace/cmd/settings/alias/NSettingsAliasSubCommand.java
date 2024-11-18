@@ -23,21 +23,26 @@ import java.util.stream.Collectors;
  * @author thevpc
  */
 public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
+    public NSettingsAliasSubCommand(NWorkspace workspace) {
+        super(workspace);
+    }
+
     @Override
-    public boolean exec(NCmdLine cmdLine, Boolean autoSave, NSession session) {
+    public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
         if (cmdLine.next("list aliases").isPresent()) {
             cmdLine.setCommandName("settings list aliases");
             List<String> toList = new ArrayList<>();
+            NSession session = workspace.currentSession();
             while (cmdLine.hasNext()) {
                 if (!cmdLine.isNextOption()) {
-                    NArg a = cmdLine.next().get(session);
+                    NArg a = cmdLine.next().get();
                     toList.add(a.toString());
                 } else {
                     cmdLine.throwUnexpectedArgument();
                 }
             }
             if (cmdLine.isExecMode()) {
-                List<NCustomCmd> r = NCommands.of(session).findAllCommands()
+                List<NCustomCmd> r = NCommands.of().findAllCommands()
                         .stream()
                         .filter(new Predicate<NCustomCmd>() {
                             @Override
@@ -62,13 +67,13 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                         .sorted((x, y) -> x.getName().compareTo(y.getName()))
                         .collect(Collectors.toList());
                 if (session.isPlainOut()) {
-                    NPropertiesFormat.of(session).setValue(
+                    NPropertiesFormat.of().setValue(
                             r.stream().collect(
                                     Collectors.toMap(
                                             NCustomCmd::getName,
                                             x -> NCmdLine.of(x.getCommand()).toString(),
                                             (x, y) -> {
-                                                throw new NIllegalArgumentException(session, NMsg.ofC("duplicate %s", x));
+                                                throw new NIllegalArgumentException(NMsg.ofC("duplicate %s", x));
                                             },
                                             //preserve order
                                             LinkedHashMap::new
@@ -76,7 +81,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                     ).println();
                 } else {
                     session.out().println(
-                            r.stream().map(x -> new AliasInfo(x, session)).collect(Collectors.toList())
+                            r.stream().map(x -> new AliasInfo(x)).collect(Collectors.toList())
                     );
                 }
             }
@@ -84,9 +89,9 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
         } else if (cmdLine.next("remove alias").isPresent()) {
             if (cmdLine.isExecMode()) {
                 while (cmdLine.hasNext()) {
-                    NCommands.of(session).removeCommand(cmdLine.next().get(session).toString());
+                    NCommands.of().removeCommand(cmdLine.next().get().toString());
                 }
-                NConfigs.of(session).save();
+                NConfigs.of().save();
             }
             return true;
         } else if (cmdLine.next("add alias").isPresent()) {
@@ -95,19 +100,19 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                 LinkedHashMap<String, AliasInfo> toAdd = new LinkedHashMap<>();
                 while (cmdLine.hasNext()) {
                     if (!cmdLine.isNextOption()) {
-                        NArg a = cmdLine.next().get(session);
+                        NArg a = cmdLine.next().get();
                         if (a.isKeyValue()) {
                             if (n != null) {
                                 cmdLine.pushBack(a);
                                 cmdLine.throwUnexpectedArgument();
                             }
-                            String[] cmdAndArgs = splitCmdAndExecArgs(a.getStringValue().get(session), session);
-                            toAdd.put(a.key(), new AliasInfo(a.getKey().asString().get(session), cmdAndArgs[0], null, null, cmdAndArgs[1]));
+                            String[] cmdAndArgs = splitCmdAndExecArgs(a.getStringValue().get());
+                            toAdd.put(a.key(), new AliasInfo(a.getKey().asString().get(), cmdAndArgs[0], null, null, cmdAndArgs[1]));
                         } else {
                             if (n == null) {
                                 n = a.toString();
                             } else {
-                                String[] cmdAndArgs = splitCmdAndExecArgs(a.toString(), session);
+                                String[] cmdAndArgs = splitCmdAndExecArgs(a.toString());
                                 toAdd.put(n, new AliasInfo(n, cmdAndArgs[0], null, null, cmdAndArgs[1]));
                                 n = null;
                             }
@@ -117,32 +122,32 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                     }
                 }
                 if (toAdd.isEmpty()) {
-                    cmdLine.next().get(session);
+                    cmdLine.next().get();
                 }
                 for (AliasInfo value : toAdd.values()) {
-                    NCommands.of(session)
+                    NCommands.of()
                             .addCommand(
                                     new NCommandConfig()
-                                            .setCommand(NCmdLine.of(value.command, NShellFamily.BASH, session).setExpandSimpleOptions(false).toStringArray())
+                                            .setCommand(NCmdLine.of(value.command, NShellFamily.BASH).setExpandSimpleOptions(false).toStringArray())
                                             .setName(value.name)
                                             .setExecutorOptions(
-                                                    NCmdLine.of(value.executionOptions, NShellFamily.BASH, session)
+                                                    NCmdLine.of(value.executionOptions, NShellFamily.BASH)
                                                             .setExpandSimpleOptions(false).toStringList())
                             );
                 }
-                NConfigs.of(session).save();
+                NConfigs.of().save();
             }
             return true;
         }
         return false;
     }
-    private String[] splitCmdAndExecArgs(String aliasValue, NSession session){
-        NCmdLine cmdLine2 = NCmdLine.of(aliasValue, NShellFamily.BASH, session).setExpandSimpleOptions(false);
+    private String[] splitCmdAndExecArgs(String aliasValue){
+        NCmdLine cmdLine2 = NCmdLine.of(aliasValue, NShellFamily.BASH).setExpandSimpleOptions(false);
         List<String> executionOptions = new ArrayList<>();
         while (cmdLine2.hasNext()) {
-            NArg r = cmdLine2.peek().get(session);
+            NArg r = cmdLine2.peek().get();
             if (r.isOption()) {
-                executionOptions.add(cmdLine2.next().flatMap(NLiteral::asString).get(session));
+                executionOptions.add(cmdLine2.next().flatMap(NLiteral::asString).get());
             } else {
                 break;
             }
@@ -170,7 +175,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
             this.executionOptions = executionOptions;
         }
 
-        public AliasInfo(NCustomCmd a, NSession session) {
+        public AliasInfo(NCustomCmd a) {
             name = a.getName();
             command = NCmdLine.of(a.getCommand()).toString();
             executionOptions = NCmdLine.of(a.getExecutorOptions()).toString();

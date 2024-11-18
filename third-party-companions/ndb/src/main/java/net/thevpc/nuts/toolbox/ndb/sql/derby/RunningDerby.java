@@ -15,11 +15,11 @@ public class RunningDerby {
     public RunningDerby(NPsInfo r, NSession session) {
         pid =r.getPid();
         argsLine=r.getCmdLine();
-        NCmdLine cmdline = NCmdLine.parse(r.getCmdLine(),session).get(session).setExpandSimpleOptions(false);
+        NCmdLine cmdline = NCmdLine.parse(r.getCmdLine()).get().setExpandSimpleOptions(false);
         NArg a=null;
         while(cmdline.hasNext()){
             if((a=cmdline.nextEntry("-Dderby.system.home").orNull())!=null) {
-                home = a.getStringValue().get(session);
+                home = a.getStringValue().get();
             }else{
                 cmdline.skip();
             }

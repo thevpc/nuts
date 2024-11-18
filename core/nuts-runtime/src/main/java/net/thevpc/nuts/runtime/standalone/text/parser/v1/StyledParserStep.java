@@ -28,14 +28,14 @@ public class StyledParserStep extends ParserStep {
     boolean lineStart;
 //    List<ParserStep> children = new ArrayList<>();
     int maxSize = 10;
-    private NSession session;
+    private NWorkspace workspace;
     private EvictingCharQueue charQueue = new EvictingCharQueue(5);
     private DefaultNTextNodeParser.State state;
     private StyledParserStepCmdParser parseHelper = new StyledParserStepCmdParser();
     private boolean wasEscape;
     private boolean exitOnBrace;
 
-    public StyledParserStep(char c, boolean lineStart, NSession session, DefaultNTextNodeParser.State state, boolean exitOnBrace) {
+    public StyledParserStep(char c, boolean lineStart, NWorkspace workspace, DefaultNTextNodeParser.State state, boolean exitOnBrace) {
         switch (c) {
             case '#': {
                 curState = CurState.SHARP;
@@ -48,13 +48,13 @@ public class StyledParserStep extends ParserStep {
         }
 //        this.spreadLines = spreadLines;
         this.lineStart = lineStart;
-        this.session = session;
+        this.workspace = workspace;
         this.state = state;
         this.exitOnBrace = exitOnBrace;
     }
 
-    public StyledParserStep(String c, boolean lineStart, NSession session, DefaultNTextNodeParser.State state, boolean exitOnBrace) {
-        this.session = session;
+    public StyledParserStep(String c, boolean lineStart, NWorkspace workspace, DefaultNTextNodeParser.State state, boolean exitOnBrace) {
+        this.workspace = workspace;
         if (c.charAt(0) == '#') {
             curState = CurState.SHARP;
             sharpsStartCount = 1;
@@ -72,7 +72,7 @@ public class StyledParserStep extends ParserStep {
 
     public void consume(char c, DefaultNTextNodeParser.State state, boolean wasNewLine) {
         charQueue.add(c);
-        NTexts text = NTexts.of(session);
+        NTexts text = NTexts.of();
         switch (curState) {
             case EMPTY: {
                 throw new IllegalArgumentException("unexpected");
@@ -97,7 +97,7 @@ public class StyledParserStep extends ParserStep {
                     case ')': {
                         beforeChangingStep();
                         state.applyDropReplace(this, new TitleParserStep(
-                                CoreStringUtils.fillString("#", sharpsStartCount) + ")", session));
+                                CoreStringUtils.fillString("#", sharpsStartCount) + ")", workspace.currentSession()));
                         break;
                     }
                     case NConstants.Ntf.SILENT: {
@@ -276,7 +276,7 @@ public class StyledParserStep extends ParserStep {
                             }
                             sharpsEndCount=0;
                             beforeChangingStep();
-                            state.applyPush(new StyledParserStep("#", false, session, state,false));
+                            state.applyPush(new StyledParserStep("#", false, workspace, state,false));
                             for (int i = 0; i < sharpsEndCount - 1; i++) {
                                 state.applyNextChar('#');
                             }
@@ -377,7 +377,7 @@ public class StyledParserStep extends ParserStep {
                                 children.add(text.ofPlain(content.removeAll()));
                             }
                             beforeChangingStep();
-                            state.applyPush(new StyledParserStep("#", false, session, state,true));
+                            state.applyPush(new StyledParserStep("#", false, workspace, state,true));
                         }
                         break;
                     }
@@ -511,7 +511,7 @@ public class StyledParserStep extends ParserStep {
                         int _sharpsEndCount=sharpsEndCount;
                         sharpsEndCount=0;
                         beforeChangingStep();
-                        state.applyPush(new StyledParserStep("#", false, session, state,false));
+                        state.applyPush(new StyledParserStep("#", false, workspace, state,false));
                         for (int i = 0; i < _sharpsEndCount - 1; i++) {
                             state.applyNextChar('#');
                         }
@@ -535,7 +535,7 @@ public class StyledParserStep extends ParserStep {
                         int _sharpsEndCount=sharpsEndCount;
                         sharpsEndCount=0;
                         beforeChangingStep();
-                        state.applyPush(new StyledParserStep("#", false, session, state,false));
+                        state.applyPush(new StyledParserStep("#", false, workspace, state,false));
                         for (int i = 0; i < _sharpsEndCount - 1; i++) {
                             state.applyNextChar('#');
                         }
@@ -578,7 +578,7 @@ public class StyledParserStep extends ParserStep {
             NTextPlain p1=(NTextPlain) children.remove(children.size()-1);
             NTextPlain p2=(NTextPlain) n;
             children.add(new DefaultNTextPlain(
-                    session,p1.getText()+p2.getText()
+                    workspace,p1.getText()+p2.getText()
             ));
         }else{
             children.add(n);
@@ -588,7 +588,7 @@ public class StyledParserStep extends ParserStep {
     @Override
     public NText toText() {
         List<NText> childrenTextNodes2 = new ArrayList<>(children);
-        NTexts text = NTexts.of(session);
+        NTexts text = NTexts.of();
         if (!content.isEmpty()) {
             childrenTextNodes2.add(text.ofPlain(content.toString()));
         }
@@ -629,10 +629,10 @@ public class StyledParserStep extends ParserStep {
                 if (s != null) {
                     return text.ofStyled(a, s);
                 }
-                throw new NIllegalArgumentException(session, NMsg.ofC("unable to resolve style from %s",name.toString()));
+                throw new NIllegalArgumentException(NMsg.ofC("unable to resolve style from %s",name.toString()));
             }
         }
-        throw new NUnsupportedEnumException(session, curState);
+        throw new NUnsupportedEnumException(curState);
     }
 
     @Override
@@ -652,8 +652,8 @@ public class StyledParserStep extends ParserStep {
     }
 
     private void logErr(String s) {
-        if(NDebugString.of(NBootManager.of(session).getBootOptions().getDebug().orNull(),session).isEnabled()) {
-            session.err().println(s);
+        if(NDebugString.of(NBootManager.of().getBootOptions().getDebug().orNull()).isEnabled()) {
+            workspace.currentSession().err().println(s);
         }
     }
 

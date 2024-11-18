@@ -21,14 +21,14 @@ public class DefaultNDependencies implements NDependencies {
 
     private NDependency[] mergedDependencies;
     private NDependencyTreeNode[] mergedNodes;
-    private transient NSession session;
+    private transient NWorkspace workspace;
     private transient NEDesc description;
 
     public DefaultNDependencies(String solver, NId[] ids, NDependencyFilter filter, NDependency[] immediateDependencies,
                                 NDependency[] nonMergedDependencies, NDependencyTreeNode[] nonMergedNodes,
                                 NDependency[] mergedDependencies, NDependencyTreeNode[] mergedNodes,
                                 NEDesc description,
-                                NSession session
+                                NWorkspace workspace
     ) {
         this.sourceIds = ids;
         this.solver = solver;
@@ -38,7 +38,7 @@ public class DefaultNDependencies implements NDependencies {
         this.nonMergedNodes = nonMergedNodes;
         this.mergedNodes = mergedNodes;
         this.mergedDependencies = mergedDependencies;
-        this.session = session;
+        this.workspace = workspace;
         this.description = description;
     }
 
@@ -49,8 +49,8 @@ public class DefaultNDependencies implements NDependencies {
     @Override
     public NStream<NId> sourceIds() {
         return NStream.of(
-                NIterator.of(Arrays.asList(sourceIds).iterator(),session).withDesc(description)
-                , session);
+                NIterator.of(Arrays.asList(sourceIds).iterator()).withDesc(description)
+        );
     }
 
     @Override
@@ -61,36 +61,36 @@ public class DefaultNDependencies implements NDependencies {
     @Override
     public NStream<NDependency> immediate() {
         return NStream.of(
-                NIterator.of(Arrays.asList(immediateDependencies).iterator(),session).withDesc(description)
-                , session);
+                NIterator.of(Arrays.asList(immediateDependencies).iterator()).withDesc(description)
+        );
     }
 
     @Override
     public NStream<NDependency> transitive() {
         return NStream.of(
-                NIterator.of(Arrays.asList(nonMergedDependencies).iterator(),session).withDesc(description)
-                , session);
+                NIterator.of(Arrays.asList(nonMergedDependencies).iterator()).withDesc(description)
+        );
     }
 
     @Override
     public NStream<NDependencyTreeNode> transitiveNodes() {
         return NStream.of(
-                NIterator.of(Arrays.asList(nonMergedNodes).iterator(),session).withDesc(description)
-                , session);
+                NIterator.of(Arrays.asList(nonMergedNodes).iterator()).withDesc(description)
+        );
     }
 
     @Override
     public NStream<NDependency> transitiveWithSource() {
         return NStream.of(
-                NIterator.of(Arrays.asList(mergedDependencies).iterator(),session).withDesc(description)
-                , session);
+                NIterator.of(Arrays.asList(mergedDependencies).iterator()).withDesc(description)
+        );
     }
 
     @Override
     public NStream<NDependencyTreeNode> sourceNodes() {
         return NStream.of(
-                NIterator.of(Arrays.asList(mergedNodes).iterator(),session).withDesc(description)
-                , session);
+                NIterator.of(Arrays.asList(mergedNodes).iterator()).withDesc(description)
+        );
     }
 
     @Override
@@ -99,8 +99,8 @@ public class DefaultNDependencies implements NDependencies {
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return NEDesc.safeDescribe(session,description);
+    public NElement describe() {
+        return NEDesc.safeDescribe(description);
     }
 
     @Override

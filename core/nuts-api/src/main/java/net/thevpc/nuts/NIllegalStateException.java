@@ -40,28 +40,25 @@ public class NIllegalStateException extends NException {
     /**
      * Constructs a new NutsIllegalArgumentException exception
      *
-     * @param session workspace
      * @param message message
      */
-    public NIllegalStateException(NSession session, NMsg message) {
-        super(session, message);
+    public NIllegalStateException(NMsg message) {
+        super(message);
     }
 
     /**
      * Constructs a new NutsIllegalArgumentException exception
      *
-     * @param session workspace
      * @param message message
      * @param cause   cause
      */
-    public NIllegalStateException(NSession session, NMsg message, Throwable cause) {
-        super(session, message, cause);
+    public NIllegalStateException(NMsg message, Throwable cause) {
+        super(message, cause);
     }
 
     /**
      * Constructs a new NutsIllegalArgumentException exception
      *
-     * @param session            workspace
      * @param message            message
      * @param cause              cause
      * @param enableSuppression  whether or not suppression is enabled or
@@ -69,7 +66,7 @@ public class NIllegalStateException extends NException {
      * @param writableStackTrace whether or not the stack trace should be
      *                           writable
      */
-    public NIllegalStateException(NSession session, NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(session, message, cause, enableSuppression, writableStackTrace);
+    public NIllegalStateException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
     }
 }

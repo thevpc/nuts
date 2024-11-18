@@ -45,12 +45,12 @@ public class DefaultNTextStyled extends AbstractNText implements NTextStyled {
     private NTextStyles textStyles;
     private boolean completed;
 
-    public DefaultNTextStyled(NSession session, NText child, NTextStyles textStyle) {
-        this(session, "##", "##", child, true, textStyle);
+    public DefaultNTextStyled(NWorkspace workspace, NText child, NTextStyles textStyle) {
+        this(workspace, "##", "##", child, true, textStyle);
     }
 
-    public DefaultNTextStyled(NSession session, String start, String end, NText child, boolean completed, NTextStyles textStyle) {
-        super(session);
+    public DefaultNTextStyled(NWorkspace workspace, String start, String end, NText child, boolean completed, NTextStyles textStyle) {
+        super(workspace);
         this.start = start;
         this.end = end;
         this.child = child;

@@ -70,7 +70,7 @@ public class Hello extends NShellBuiltinBase {
                 //        --who=me
                 //        or (using spaces)
                 //        --who me
-                cmdLine.withNextEntry((v, aa, session) -> o.who = v);
+                cmdLine.withNextEntry((v, aa) -> o.who = v);
                 //return true to say that the option was successfully processed
                 return true;
             }
@@ -83,7 +83,7 @@ public class Hello extends NShellBuiltinBase {
                 //        --complex
                 //        it can even be negated with '~' or '!'
                 //        --!complex
-                cmdLine.withNextFlag((v, a, s) -> o.complex = v);
+                cmdLine.withNextFlag((v, a) -> o.complex = v);
                 //return true to say that the option was successfully processed
                 return true;
             }

@@ -29,8 +29,8 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
 
     public final NTreeNodeFormat TO_STRING_FORMATTER = new NTreeNodeFormat() {
         @Override
-        public NString format(Object o, int depth, NSession session) {
-            return NTexts.of(session).ofBuilder().append(o).immutable();
+        public NString format(Object o, int depth) {
+            return NTexts.of().ofBuilder().append(o).immutable();
         }
     };
     private NTreeNodeFormat formatter;
@@ -47,23 +47,23 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
 
         @Override
         public NString stringValue(Object o, NSession session) {
-            return getNodeFormat().format(o, -1, session);
+            return getNodeFormat().format(o, -1);
         }
 
     };
 
-    public DefaultNTreeFormat(NSession session) {
-        super(session, "tree-format");
+    public DefaultNTreeFormat(NWorkspace workspace) {
+        super(workspace, "tree-format");
         formatter = TO_STRING_FORMATTER;
         linkFormatter = CorePlatformUtils.SUPPORTS_UTF_ENCODING ? LINK_UNICODE_FORMATTER : LINK_ASCII_FORMATTER;
     }
 
-    public DefaultNTreeFormat(NSession session, NTreeModel tree) {
-        this(session, tree, null, null);
+    public DefaultNTreeFormat(NWorkspace workspace, NTreeModel tree) {
+        this(workspace, tree, null, null);
     }
 
-    public DefaultNTreeFormat(NSession session, NTreeModel tree, NTreeNodeFormat formatter, NTreeLinkFormat linkFormatter) {
-        super(session, "tree");
+    public DefaultNTreeFormat(NWorkspace workspace, NTreeModel tree, NTreeNodeFormat formatter, NTreeLinkFormat linkFormatter) {
+        super(workspace, "tree");
         if (formatter == null) {
             formatter = TO_STRING_FORMATTER;
         }
@@ -108,17 +108,17 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
 
     @Override
     public NTreeModel getModel() {
-        checkSession();
+        NSession session = workspace.currentSession();
         if (tree instanceof NTreeModel) {
 //        if(tree instanceof NutsTreeModel){
             return (NTreeModel) tree;
         }
-        Object destructredObject = NElements.of(getSession())
+        Object destructredObject = NElements.of()
                 .setNtf(true)
                 .setIndestructibleFormat()
                 .destruct(tree);
         return new NElementTreeModel(
-                XNode.root(destructredObject, rootName, getSession(), xNodeFormatter)
+                XNode.root(destructredObject, rootName, session, xNodeFormatter)
         );
     }
 
@@ -146,7 +146,8 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
     @Override
     public String toString() {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
-        NPrintStream out = NPrintStream.of(b, getSession());
+        NSession session = workspace.currentSession();
+        NPrintStream out = NPrintStream.of(b);
         NTreeModel tree = getModel();
         print(tree, "", NPositionType.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0, false);
         out.flush();
@@ -161,7 +162,7 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
     }
 
     private boolean print(NTreeModel tree, String prefix, NPositionType type, Object o, NPrintStream out, boolean hideRoot, int depth, boolean prefixNewLine) {
-        checkSession();
+        NSession session = workspace.currentSession();
         Object oValue = o;
         if (oValue instanceof XNode) {
             oValue = ((XNode) oValue).toNutsString();
@@ -172,7 +173,7 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
             }
             out.print(prefix);
             out.print(linkFormatter.formatMain(type));
-            out.print(formatter.format(oValue, depth, getSession()));
+            out.print(formatter.format(oValue, depth));
             out.flush();
             prefixNewLine = true;
         }
@@ -197,12 +198,12 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
     }
 
     private void print(NTreeModel tree, String prefix, NPositionType type, Object o, PrintWriter out, boolean hideRoot, int depth) {
-        checkSession();
+        NSession session = workspace.currentSession();
         boolean skipNewLine = true;
         if (!hideRoot) {
             out.print(prefix);
             out.print(linkFormatter.formatMain(type));
-            out.print(formatter.format(o, depth, getSession()));
+            out.print(formatter.format(o, depth));
             skipNewLine = false;
             out.flush();
         }
@@ -238,7 +239,7 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NSession session = getSession();
+        NSession session = workspace.currentSession();
         NArg aa = cmdLine.peek().orNull();
         if (aa == null) {
             return false;
@@ -246,7 +247,7 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
         boolean enabled = aa.isActive();
         switch (aa.key()) {
             case "--border": {
-                cmdLine.withNextEntry((v, a, s) -> {
+                cmdLine.withNextEntry((v, a) -> {
                     switch (NStringUtils.trim(v)) {
                         case "simple": {
                             setLinkFormat(LINK_ASCII_FORMATTER);
@@ -261,17 +262,17 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
                 return true;
             }
             case "--omit-root": {
-                cmdLine.withNextFlag((v, a, s) -> setOmitRoot(v));
+                cmdLine.withNextFlag((v, a) -> setOmitRoot(v));
                 return true;
             }
             case "--infinite": {
-                cmdLine.withNextFlag((v, a, s) -> infinite = (v));
+                cmdLine.withNextFlag((v, a) -> infinite = (v));
                 return true;
             }
             case DefaultNPropertiesFormat.OPTION_MULTILINE_PROPERTY: {
-                NArg i = cmdLine.nextEntry().get(session);
+                NArg i = cmdLine.nextEntry().get();
                 if (enabled) {
-                    addMultilineProperty(i.key(), i.getStringValue().get(session));
+                    addMultilineProperty(i.key(), i.getStringValue().get());
                 }
                 return true;
             }
@@ -298,7 +299,8 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
         if (vv.length == 0 || vv.length == 1) {
             return null;
         }
-        return Arrays.stream(vv).map(x -> NTexts.of(getSession()).ofText(x)).toArray(NString[]::new);
+        NSession session = workspace.currentSession();
+        return Arrays.stream(vv).map(x -> NTexts.of().ofText(x)).toArray(NString[]::new);
     }
 
     private String getMultilineSeparator(NString key) {

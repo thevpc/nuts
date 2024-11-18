@@ -63,14 +63,14 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     public void write(PrintStream out) {
-        NElements.of(session).json().setValue(getConfig())
+        NElements.of().json().setValue(getConfig())
                 .setNtf(false).print(out);
     }
 
     public String pull(String localPath, boolean restore, boolean deleteRemote) {
         CachedMapFile lastRun = new CachedMapFile(session, "pull-" + getName());
         if (lastRun.exists()) {
-            if (!NAsk.of(session)
+            if (!NAsk.of()
                     .forBoolean(
                             NMsg.ofPlain("a previous pull has failed. would you like to resume (yes) or ignore and re-run the pull (no).")
                     )
@@ -105,7 +105,7 @@ public class RemoteMysqlDatabaseConfigService {
         if (t > 0) {
             remoteTempPath = remoteTempPath.substring(t);
         }
-        NElements elem = NElements.of(session);
+        NElements elem = NElements.of();
         Map<String, Object> resMap = elem.parse(remoteTempPath.getBytes(), Map.class);
         String ppath = (String) resMap.get("path");
 
@@ -116,8 +116,8 @@ public class RemoteMysqlDatabaseConfigService {
                     .resolve(/*MysqlUtils.newDateString()+"-"+*/Paths.get(ppath).getFileName().toString())
                     .toString();
         }
-        NPath remoteFullFilePath = NPath.of(prepareSshServer(cconfig.getServer()) + "/" + ppath, session);
-        NTexts text = NTexts.of(session);
+        NPath remoteFullFilePath = NPath.of(prepareSshServer(cconfig.getServer()) + "/" + ppath);
+        NTexts text = NTexts.of();
         if (session.isPlainTrace()) {
             session.out().println(NMsg.ofC("%s copy '%s' to '%s'", getBracketsPrefix(name),
                     text.ofStyled(remoteFullFilePath.toString(), NTextStyle.path()),
@@ -126,16 +126,16 @@ public class RemoteMysqlDatabaseConfigService {
         }
         if (lastRun.get("localPath") != null) {
             String s = lastRun.get("localPath");
-            NCp.of(session).from(NPath.of(s, session)).to(NPath.of(localPath, session)).run();
+            NCp.of().from(NPath.of(s)).to(NPath.of(localPath)).run();
         } else {
             if (Paths.get(localPath).getParent() != null) {
                 try {
                     Files.createDirectories(Paths.get(localPath).getParent());
                 } catch (IOException e) {
-                    throw new NIOException(session, e);
+                    throw new NIOException(e);
                 }
             }
-            NExecCmd.of(session.copy()).setExecutionType(NExecutionType.EMBEDDED)
+            NExecCmd.of().setExecutionType(NExecutionType.EMBEDDED)
                     .addCommand("nsh",
                             "--bot",
                             "-c",
@@ -182,31 +182,31 @@ public class RemoteMysqlDatabaseConfigService {
             localPath = loc.backup(localPath).path;
         } else {
             if (NBlankable.isBlank(localPath)) {
-                throw new NExecutionException(session, NMsg.ofPlain("missing local path"), NExecutionException.ERROR_2);
+                throw new NExecutionException(NMsg.ofPlain("missing local path"), NExecutionException.ERROR_2);
             }
         }
         if (!new File(localPath).isFile()) {
-            throw new NExecutionException(session, NMsg.ofC("invalid local path %s", localPath), NExecutionException.ERROR_2);
+            throw new NExecutionException(NMsg.ofC("invalid local path %s", localPath), NExecutionException.ERROR_2);
         }
         RemoteMysqlDatabaseConfig cconfig = getConfig();
         String remoteTempPath = null;
         final String searchResultString = execRemoteNuts("search --!color --json net.thevpc.nuts.toolbox:nmysql --display temp-folder --installed --first");
-        List<Map> result = NElements.of(session).json().parse(new StringReader(searchResultString), List.class);
+        List<Map> result = NElements.of().json().parse(new StringReader(searchResultString), List.class);
         if (result.isEmpty()) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("Mysql is not installed on the remote machine"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("Mysql is not installed on the remote machine"));
         }
         remoteTempPath = (String) result.get(0).get("temp-folder");
 
         String remoteFilePath = "/" + remoteTempPath + "-" + MysqlUtils.newDateString() + "-" + MysqlUtils.getFileName(localPath);
-        NPath remoteFullFilePath = NPath.of(prepareSshServer(cconfig.getServer()) + "/" + remoteFilePath, session);
-        NTexts text = NTexts.of(session);
+        NPath remoteFullFilePath = NPath.of(prepareSshServer(cconfig.getServer()) + "/" + remoteFilePath);
+        NTexts text = NTexts.of();
         if (session.isPlainTrace()) {
             session.out().println(NMsg.ofC("%s copy %s to %s", getBracketsPrefix(name),
                     text.ofStyled(localPath, NTextStyle.path()),
                     remoteFullFilePath
             ));
         }
-        NExecCmd.of(session)
+        NExecCmd.of()
                 .addCommand(
                         "nsh",
                         "--bot",
@@ -246,7 +246,7 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     public String execRemoteNuts(String... cmd) {
-        NExecCmd b = NExecCmd.of(session.copy());
+        NExecCmd b = NExecCmd.of();
         if ("localhost".equals(this.config.getServer())) {
             b.addCommand("nuts");
             b.addCommand("-b");
@@ -293,7 +293,7 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     public NString getBracketsPrefix(String str) {
-        return NTexts.of(session).ofBuilder()
+        return NTexts.of().ofBuilder()
                 .append("[")
                 .append(str, NTextStyle.primary5())
                 .append("]");

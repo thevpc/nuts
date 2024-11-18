@@ -123,7 +123,7 @@ public class CommonRootsByIdHelper {
                 sb.append(aa[i]);
             }
         }
-        return NId.of(sb.toString() + ":*").get( session);
+        return NId.of(sb.toString() + ":*").get();
     }
 
     private static Set<NId> resolveRootId(String groupId, String artifactId, String version, NSession session) {
@@ -141,7 +141,7 @@ public class CommonRootsByIdHelper {
         Set<NId> v = resolveRootId0(filter, session);
         if (v == null) {
             HashSet<NId> s = new HashSet<>();
-            s.add(NId.of("*:*").get( session));
+            s.add(NId.of("*:*").get());
             return s;
         }
         return v;

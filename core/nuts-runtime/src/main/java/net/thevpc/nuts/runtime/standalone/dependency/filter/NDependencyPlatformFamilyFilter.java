@@ -16,19 +16,19 @@ public class NDependencyPlatformFamilyFilter extends AbstractDependencyFilter  {
 
     private Set<NPlatformFamily> accepted = EnumSet.noneOf(NPlatformFamily.class);
 
-    public NDependencyPlatformFamilyFilter(NSession session) {
-        super(session, NFilterOp.CUSTOM);
+    public NDependencyPlatformFamilyFilter(NWorkspace workspace) {
+        super(workspace, NFilterOp.CUSTOM);
     }
 
-    private NDependencyPlatformFamilyFilter(NSession session, Collection<NPlatformFamily> accepted) {
-        super(session, NFilterOp.CUSTOM);
+    private NDependencyPlatformFamilyFilter(NWorkspace workspace, Collection<NPlatformFamily> accepted) {
+        super(workspace, NFilterOp.CUSTOM);
         this.accepted = EnumSet.copyOf(accepted);
     }
 
-    public NDependencyPlatformFamilyFilter(NSession session, String accepted) {
-        super(session, NFilterOp.CUSTOM);
+    public NDependencyPlatformFamilyFilter(NWorkspace workspace, String accepted) {
+        super(workspace, NFilterOp.CUSTOM);
         this.accepted = EnumSet.noneOf(NPlatformFamily.class);
-        for (NId e : NId.ofList(accepted).get(session)) {
+        for (NId e : NId.ofList(accepted).get()) {
             if (!e.isBlank()) {
                 this.accepted.add(NPlatformFamily.parse(e.getArtifactId()).orNull());
             }
@@ -38,11 +38,11 @@ public class NDependencyPlatformFamilyFilter extends AbstractDependencyFilter  {
     public NDependencyPlatformFamilyFilter add(Collection<NPlatformFamily> os) {
         EnumSet<NPlatformFamily> s2 = EnumSet.copyOf(this.accepted);
         s2.addAll(os);
-        return new NDependencyPlatformFamilyFilter(getSession(), s2);
+        return new NDependencyPlatformFamilyFilter(workspace, s2);
     }
 
     @Override
-    public boolean acceptDependency(NId from, NDependency dependency, NSession session) {
+    public boolean acceptDependency(NId from, NDependency dependency) {
         List<String> current = dependency.getCondition().getPlatform();
         boolean empty = true;
         if (current != null) {
@@ -67,6 +67,6 @@ public class NDependencyPlatformFamilyFilter extends AbstractDependencyFilter  {
 
     @Override
     public NDependencyFilter simplify() {
-        return accepted.isEmpty() ? NDependencyFilters.of(getSession()).always() : this;
+        return accepted.isEmpty() ? NDependencyFilters.of().always() : this;
     }
 }

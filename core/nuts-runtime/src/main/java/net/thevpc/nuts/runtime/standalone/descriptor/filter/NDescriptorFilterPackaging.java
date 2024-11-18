@@ -40,8 +40,8 @@ public class NDescriptorFilterPackaging extends AbstractDescriptorFilter {
 
     private final String packaging;
 
-    public NDescriptorFilterPackaging(NSession session, String packaging) {
-        super(session, NFilterOp.CUSTOM);
+    public NDescriptorFilterPackaging(NWorkspace workspace, String packaging) {
+        super(workspace, NFilterOp.CUSTOM);
         this.packaging = packaging;
     }
 
@@ -50,8 +50,8 @@ public class NDescriptorFilterPackaging extends AbstractDescriptorFilter {
     }
 
     @Override
-    public boolean acceptDescriptor(NDescriptor descriptor, NSession session) {
-        return CoreFilterUtils.matchesPackaging(packaging, descriptor, session);
+    public boolean acceptDescriptor(NDescriptor descriptor) {
+        return CoreFilterUtils.matchesPackaging(packaging, descriptor);
     }
 
     /**

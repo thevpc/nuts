@@ -6,8 +6,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.index;
 
 import net.thevpc.nuts.NConfigs;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NUpdateStatsCmd;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
@@ -19,16 +19,19 @@ import java.util.List;
  * @author thevpc
  */
 public class NSettingsIndexSubCommand extends AbstractNSettingsSubCommand {
+    public NSettingsIndexSubCommand(NWorkspace workspace) {
+        super(workspace);
+    }
 
     @Override
-    public boolean exec(NCmdLine cmdLine, Boolean autoSave, NSession session) {
+    public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
         String name = "settings update stats";
         if (cmdLine.next("update stats").isPresent()) {
             List<String> repos = new ArrayList<>();
             while (cmdLine.hasNext()) {
-                repos.add(cmdLine.next().flatMap(NLiteral::asString).get(session));
+                repos.add(cmdLine.next().flatMap(NLiteral::asString).get());
             }
-            updateStatistics(session, repos.toArray(new String[0]));
+            updateStatistics(repos.toArray(new String[0]));
             cmdLine.setCommandName(name).throwUnexpectedArgument();
             return true;
         } else {
@@ -36,9 +39,9 @@ public class NSettingsIndexSubCommand extends AbstractNSettingsSubCommand {
         }
     }
 
-    private void updateStatistics(NSession session, String[] repos) {
-        NConfigs cfg = NConfigs.of(session);
-        NUpdateStatsCmd cmd = NUpdateStatsCmd.of(session);
+    private void updateStatistics(String[] repos) {
+        NConfigs cfg = NConfigs.of();
+        NUpdateStatsCmd cmd = NUpdateStatsCmd.of();
         for (String repo : repos) {
             cmd.add(repo);
         }

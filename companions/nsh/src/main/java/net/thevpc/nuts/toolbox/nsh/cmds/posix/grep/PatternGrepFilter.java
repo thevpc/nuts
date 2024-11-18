@@ -36,7 +36,7 @@ public class PatternGrepFilter implements GrepFilter {
             int pos = matcher.start();
             int end = matcher.end();
             coloredLine.replace(pos, end,
-                    NTexts.of(session).ofStyled(
+                    NTexts.of().ofStyled(
                             coloredLine.substring(pos, end)
                             , selectionStyle
                     )

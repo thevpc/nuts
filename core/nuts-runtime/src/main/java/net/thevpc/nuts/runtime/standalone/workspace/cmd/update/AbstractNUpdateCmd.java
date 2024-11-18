@@ -43,8 +43,8 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
     protected NWorkspaceUpdateResult result;
     protected NRepositoryFilter repositoryFilter;
 
-    public AbstractNUpdateCmd(NSession session) {
-        super(session, "update");
+    public AbstractNUpdateCmd(NWorkspace workspace) {
+        super(workspace, "update");
     }
 
     @Override
@@ -59,16 +59,15 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
 
     @Override
     public NUpdateCmd addId(String id) {
-        checkSession();
-        NSession session = getSession();
-        return addId(id == null ? null : NId.of(id).get(session));
+        NSession session=workspace.currentSession();
+        return addId(id == null ? null : NId.of(id).get());
     }
 
     @Override
     public NUpdateCmd addId(NId id) {
         if (id == null) {
-            checkSession();
-            throw new NNotFoundException(getSession(), id);
+            NSession session=workspace.currentSession();
+            throw new NNotFoundException(id);
         } else {
             ids.add(id);
         }
@@ -101,9 +100,8 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
 
     @Override
     public NUpdateCmd removeId(String id) {
-        checkSession();
-        NSession session = getSession();
-        return removeId(NId.of(id).get(session));
+        NSession session=workspace.currentSession();
+        return removeId(NId.of(id).get());
     }
 
     @Override
@@ -246,7 +244,7 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
             return true;
         }
         for (NId id : ids) {
-            if (id.getShortName().equals(ws.getRuntimeId().getShortName())) {
+            if (id.getShortName().equals(workspace.getRuntimeId().getShortName())) {
                 return true;
             }
 
@@ -298,12 +296,12 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
 
     @Override
     public NWorkspaceUpdateResult getResult() {
-        checkSession();
+        NSession session=workspace.currentSession();
         if (result == null) {
             checkUpdates();
         }
         if (result == null) {
-            throw new NUnexpectedException(getSession());
+            throw new NUnexpectedException();
         }
         return result;
     }
@@ -379,10 +377,9 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
 
     @Override
     public NUpdateCmd addLockedId(String id) {
-        checkSession();
-        NSession session = getSession();
+        NSession session=workspace.currentSession();
         if (!NBlankable.isBlank(id)) {
-            lockedIds.add(NId.of(id).get(session));
+            lockedIds.add(NId.of(id).get());
         }
         return this;
     }
@@ -421,8 +418,8 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        checkSession();
-        NArg a = cmdLine.peek().get(session);
+        NSession session=workspace.currentSession();
+        NArg a = cmdLine.peek().get();
         if (a == null) {
             return false;
         }
@@ -447,34 +444,34 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
 //            }
             case "-i":
             case "--installed": {
-                cmdLine.withNextFlag((v, r, s) -> this.setInstalled(v));
+                cmdLine.withNextFlag((v, r) -> this.setInstalled(v));
                 return true;
             }
             case "-r":
             case "--runtime": {
-                cmdLine.withNextFlag((v, r, s) -> this.setRuntime(v));
+                cmdLine.withNextFlag((v, r) -> this.setRuntime(v));
                 return true;
             }
             case "-A":
             case "--api": {
-                cmdLine.withNextFlag((v, r, s) -> this.setApi(v));
+                cmdLine.withNextFlag((v, r) -> this.setApi(v));
                 return true;
             }
 
             case "-e":
             case "--extensions": {
-                cmdLine.withNextFlag((v, r, s) -> this.setExtensions(v));
+                cmdLine.withNextFlag((v, r) -> this.setExtensions(v));
                 return true;
             }
             case "-c":
             case "--companions": {
-                cmdLine.withNextFlag((v, r, s) -> this.setCompanions(v));
+                cmdLine.withNextFlag((v, r) -> this.setCompanions(v));
                 return true;
             }
             case "-v":
             case "--api-version":
             case "--to-version": {
-                cmdLine.withNextEntry((v, r, s) -> this.setApiVersion(NVersion.of(v).get(getSession())));
+                cmdLine.withNextEntry((v, r) -> this.setApiVersion(NVersion.of(v).get()));
                 return true;
             }
             case "-g":
@@ -488,10 +485,10 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
             }
             case "-N":
             case "--expire": {
-                a = cmdLine.next().get(session);
+                a = cmdLine.next().get();
                 if (enabled) {
                     if (a.getStringValue() != null) {
-                        expireTime = Instant.parse(a.getStringValue().get(session));
+                        expireTime = Instant.parse(a.getStringValue().get());
                     } else {
                         expireTime = Instant.now();
                     }
@@ -507,7 +504,7 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
                     return false;
                 } else {
                     cmdLine.skip();
-                    addId(a.asString().get(session));
+                    addId(a.asString().get());
                     return true;
                 }
             }

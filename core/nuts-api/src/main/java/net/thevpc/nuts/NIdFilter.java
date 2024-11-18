@@ -37,15 +37,14 @@ public interface NIdFilter extends NArtifactFilter {
     /**
      * return true when the id is to be accepted
      *
-     * @param id      id to check
-     * @param session current workspace session
+     * @param id id to check
      * @return true when the id is to be accepted
      */
-    boolean acceptId(NId id, NSession session);
+    boolean acceptId(NId id);
 
     @Override
-    default boolean acceptSearchId(NSearchId sid, NSession session) {
-        return acceptId(sid.getId(session), session);
+    default boolean acceptSearchId(NSearchId sid) {
+        return acceptId(sid.getId());
     }
 
     NIdFilter or(NIdFilter other);

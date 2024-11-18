@@ -29,25 +29,26 @@ import java.util.Collections;
 import java.util.List;
 
 public class DefaultNIORPI implements NIORPI {
-    private final NSession session;
+    private final NWorkspace workspace;
     public DefaultNWorkspaceConfigModel cmodel;
     public DefaultNBootModel bootModel;
 
-    public DefaultNIORPI(NSession session) {
-        this.session = session;
-        this.cmodel = ((DefaultNConfigs) NConfigs.of(session)).getModel();
+    public DefaultNIORPI(NWorkspace workspace) {
+        this.workspace = workspace;
+        NSession session = workspace.currentSession();
+        this.cmodel = ((DefaultNConfigs) NConfigs.of()).getModel();
         bootModel = NWorkspaceExt.of(session.getWorkspace()).getModel().bootModel;
     }
 
 
     @Override
-    public <T> NAsk<T> createQuestion(NSession session) {
-        return createQuestion(session.getTerminal());
+    public <T> NAsk<T> createQuestion() {
+        return createQuestion(workspace.currentSession().getTerminal());
     }
 
     @Override
     public <T> NAsk<T> createQuestion(NSessionTerminal terminal) {
-        return new DefaultNAsk<>(session, terminal, terminal.out());
+        return new DefaultNAsk<>(workspace, terminal, terminal.out());
     }
 
     @Override
@@ -57,7 +58,7 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public NMemoryPrintStream ofInMemoryPrintStream(NTerminalMode mode) {
-        return new NByteArrayPrintStream(mode, session);
+        return new NByteArrayPrintStream(mode, workspace);
     }
 
     @Override
@@ -65,7 +66,7 @@ public class DefaultNIORPI implements NIORPI {
         if (out == null) {
             return null;
         }
-        NWorkspaceOptions woptions = NBootManager.of(session).getBootOptions();
+        NWorkspaceOptions woptions = NBootManager.of().getBootOptions();
         NTerminalMode expectedMode0 = woptions.getTerminalMode().orElse(NTerminalMode.DEFAULT);
         if (expectedMode0 == NTerminalMode.DEFAULT) {
             if (woptions.getBot().orElse(false)) {
@@ -91,19 +92,19 @@ public class DefaultNIORPI implements NIORPI {
             case ANSI:
             case INHERITED: {
                 return new NPrintStreamRaw(out, expectedMode,
-                        null, null, session,
+                        null, null, workspace,
                         new NPrintStreamBase.Bindings(), term
                 );
             }
             case FILTERED:
             case FORMATTED: {
                 return new NPrintStreamRaw(out, NTerminalMode.INHERITED,
-                        null, null, session,
+                        null, null, workspace,
                         new NPrintStreamBase.Bindings(), term
                 ).setTerminalMode(expectedMode);
             }
         }
-        throw new NIllegalArgumentException(session, NMsg.ofC("unsupported mode %s", expectedMode));
+        throw new NIllegalArgumentException(NMsg.ofC("unsupported mode %s", expectedMode));
     }
 
     @Override
@@ -112,7 +113,7 @@ public class DefaultNIORPI implements NIORPI {
         if (out instanceof NPrintStreamAdapter) {
             return ((NPrintStreamAdapter) out).getBasePrintStream();
         }
-        return new NPrintStreamRaw(out, null, null, session, new NPrintStreamBase.Bindings(), null);
+        return new NPrintStreamRaw(out, null, null, workspace, new NPrintStreamBase.Bindings(), null);
     }
 
     @Override
@@ -136,7 +137,7 @@ public class DefaultNIORPI implements NIORPI {
         if (out instanceof NPrintStreamAdapter) {
             return ((NPrintStreamAdapter) out).getBasePrintStream().setTerminalMode(mode);
         }
-        SimpleWriterOutputStream w = new SimpleWriterOutputStream(out, terminal, session);
+        SimpleWriterOutputStream w = new SimpleWriterOutputStream(out, terminal, workspace);
         return ofPrintStream(w, mode, terminal);
     }
 
@@ -178,16 +179,17 @@ public class DefaultNIORPI implements NIORPI {
                 //just ignore error
                 //throw new UncheckedIOException(e);
             }
+            NSession session = workspace.currentSession();
             if (inputStream instanceof ByteArrayInputStream) {
-                str = NTexts.of(session).ofStyled("<memory-buffer>", NTextStyle.path());
+                str = NTexts.of().ofStyled("<memory-buffer>", NTextStyle.path());
             } else {
-                str = NTexts.of(session).ofStyled(inputStream.toString(), NTextStyle.path());
+                str = NTexts.of().ofStyled(inputStream.toString(), NTextStyle.path());
             }
             metadata = new DefaultNContentMetadata(NMsg.ofNtf(str), contentLength, null, null, null);
         }
 
         InputStream inputStreamExt = ofInputSourceBuilder(inputStream).setMetadata(metadata).createInputStream();
-        return new NInputStreamSource(inputStreamExt, null, session);
+        return new NInputStreamSource(inputStreamExt, null, workspace);
     }
 
 
@@ -196,13 +198,14 @@ public class DefaultNIORPI implements NIORPI {
         if (source.isMultiRead()) {
             return source;
         }
-        NPath tf = NPath.ofTempFile(session);
+        NSession session = workspace.currentSession();
+        NPath tf = NPath.ofTempFile();
         try (InputStream in = source.getInputStream()) {
             try (OutputStream out = tf.getOutputStream()) {
-                CoreIOUtils.copy(in, out, 4096, session);
+                CoreIOUtils.copy(in, out, 4096);
             }
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
         return tf;
     }
@@ -225,13 +228,13 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public NOutputTarget ofOutputTarget(OutputStream outputStream, NContentMetadata metadata) {
-        return new OutputTargetExt(NOutputStreamBuilder.of(outputStream, session)
-                .setMetadata(metadata).createOutputStream(), null, session);
+        return new OutputTargetExt(NOutputStreamBuilder.of(outputStream)
+                .setMetadata(metadata).createOutputStream(), null, workspace);
     }
 
     @Override
     public NOutputStreamBuilder ofOutputStreamBuilder(OutputStream base) {
-        return new DefaultNOutputStreamBuilder(session).setBase(base);
+        return new DefaultNOutputStreamBuilder(workspace).setBase(base);
     }
 
     public NNonBlockingInputStream ofNonBlockingInputStream(InputStream base) {
@@ -243,17 +246,17 @@ public class DefaultNIORPI implements NIORPI {
     }
 
     public NInputSourceBuilder ofInputSourceBuilder(InputStream inputStream) {
-        return new DefaultNInputSourceBuilder(session).setBase(inputStream);
+        return new DefaultNInputSourceBuilder(workspace).setBase(inputStream);
     }
 
     @Override
     public NSessionTerminal createTerminal() {
-        return cmodel.createTerminal(session);
+        return cmodel.createTerminal();
     }
 
     @Override
     public NSessionTerminal createTerminal(InputStream in, NPrintStream out, NPrintStream err) {
-        return cmodel.createTerminal(in, out, err, session);
+        return cmodel.createTerminal(in, out, err);
     }
 
     @Override
@@ -263,13 +266,13 @@ public class DefaultNIORPI implements NIORPI {
         }
         if (terminal instanceof DefaultNSessionTerminalFromSystem) {
             DefaultNSessionTerminalFromSystem t = (DefaultNSessionTerminalFromSystem) terminal;
-            return new DefaultNSessionTerminalFromSystem(session, t);
+            return new DefaultNSessionTerminalFromSystem(workspace, t);
         }
         if (terminal instanceof DefaultNSessionTerminalFromSession) {
             DefaultNSessionTerminalFromSession t = (DefaultNSessionTerminalFromSession) terminal;
-            return new DefaultNSessionTerminalFromSession(session, t);
+            return new DefaultNSessionTerminalFromSession(workspace, t);
         }
-        return new DefaultNSessionTerminalFromSession(session, terminal);
+        return new DefaultNSessionTerminalFromSession(workspace, terminal);
     }
 
     @Override
@@ -280,14 +283,15 @@ public class DefaultNIORPI implements NIORPI {
     @Override
     public NSessionTerminal createInMemoryTerminal(boolean mergeErr) {
         ByteArrayInputStream in = new ByteArrayInputStream(new byte[0]);
-        NMemoryPrintStream out = NMemoryPrintStream.of(session);
-        NMemoryPrintStream err = mergeErr ? out : NMemoryPrintStream.of(session);
+        NSession session = workspace.currentSession();
+        NMemoryPrintStream out = NMemoryPrintStream.of();
+        NMemoryPrintStream err = mergeErr ? out : NMemoryPrintStream.of();
         return createTerminal(in, out, err);
     }
 
     @Override
     public void enableRichTerm() {
-        bootModel.enableRichTerm(session);
+        bootModel.enableRichTerm();
     }
 
 
@@ -299,7 +303,8 @@ public class DefaultNIORPI implements NIORPI {
                     return parseExecutionEntries(in, "jar", file.toAbsolute().normalize().toString());
                 }
             } catch (IOException ex) {
-                throw new NIOException(session, ex);
+                NSession session = workspace.currentSession();
+                throw new NIOException(ex);
             }
         } else if (file.getName().toLowerCase().endsWith(".class")) {
             try {
@@ -307,7 +312,8 @@ public class DefaultNIORPI implements NIORPI {
                     return parseExecutionEntries(in, "class", file.toAbsolute().normalize().toString());
                 }
             } catch (IOException ex) {
-                throw new NIOException(session, ex);
+                NSession session = workspace.currentSession();
+                throw new NIOException(ex);
             }
         } else {
             return Collections.emptyList();
@@ -316,10 +322,11 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public List<NExecutionEntry> parseExecutionEntries(InputStream inputStream, String type, String sourceName) {
+        NSession session = workspace.currentSession();
         if ("jar".equals(type)) {
-            return JavaJarUtils.parseJarExecutionEntries(inputStream, session);
+            return JavaJarUtils.parseJarExecutionEntries(inputStream);
         } else if ("class".equals(type)) {
-            NExecutionEntry u = JavaClassUtils.parseClassExecutionEntry(inputStream, sourceName, session);
+            NExecutionEntry u = JavaClassUtils.parseClassExecutionEntry(inputStream, sourceName);
             return u == null ? Collections.emptyList() : Arrays.asList(u);
         }
         return Collections.emptyList();

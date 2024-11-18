@@ -35,12 +35,12 @@ public class IndexFirstIterator<T> extends NIteratorBase<T> {
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return NElements.of(session)
+    public NElement describe() {
+        return NElements.of()
                 .ofObject()
                 .set("type","IndexFirst")
-                .set("index", NEDesc.describeResolveOrDestruct(index, session))
-                .set("nonIndex", NEDesc.describeResolveOrDestruct(other, session))
+                .set("index", NEDesc.describeResolveOrDestruct(index))
+                .set("nonIndex", NEDesc.describeResolveOrDestruct(other))
                 .build()
                 ;
     }
@@ -67,7 +67,7 @@ public class IndexFirstIterator<T> extends NIteratorBase<T> {
                     }
                     index = null;
                 } catch (NIndexerNotAccessibleException ex) {
-                    NLogOp.of(IndexFirstIterator.class,session)
+                    NLogOp.of(IndexFirstIterator.class)
                             .verb(NLogVerb.WARNING)
                             .level(Level.FINEST)
                             .log(NMsg.ofC("error evaluating Iterator 'hasNext()' : %s", ex));

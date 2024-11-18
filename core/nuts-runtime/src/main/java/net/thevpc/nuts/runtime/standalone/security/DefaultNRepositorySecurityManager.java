@@ -8,7 +8,6 @@ package net.thevpc.nuts.runtime.standalone.security;
 import net.thevpc.nuts.*;
 
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.security.NAuthenticationAgent;
 
 import java.util.List;
@@ -20,21 +19,9 @@ import java.util.List;
 public class DefaultNRepositorySecurityManager implements NRepositorySecurityManager {
 
     private DefaultNRepositorySecurityModel model;
-    private NSession session;
 
     public DefaultNRepositorySecurityManager(DefaultNRepositorySecurityModel model) {
         this.model = model;
-    }
-
-    @Override
-    public NSession getSession() {
-        return session;
-    }
-
-    @Override
-    public NRepositorySecurityManager setSession(NSession session) {
-        this.session = NWorkspaceUtils.bindSession(model.getWorkspace(), session);
-        return this;
     }
 
     public DefaultNRepositorySecurityModel getModel() {
@@ -43,8 +30,7 @@ public class DefaultNRepositorySecurityManager implements NRepositorySecurityMan
 
     @Override
     public NRepositorySecurityManager checkAllowed(String right, String operationName) {
-        checkSession(session);
-        model.checkAllowed(right, operationName, session);
+        model.checkAllowed(right, operationName);
         return this;
     }
 
@@ -54,75 +40,63 @@ public class DefaultNRepositorySecurityManager implements NRepositorySecurityMan
 
     @Override
     public NAddUserCmd addUser(String name) {
-        checkSession(session);
-        return model.addUser(name, session);
+        return model.addUser(name);
     }
 
     @Override
     public NUpdateUserCmd updateUser(String name) {
-        checkSession(session);
-        return model.updateUser(name, session);
+        return model.updateUser(name);
     }
 
     @Override
     public NRemoveUserCmd removeUser(String name) {
-        checkSession(session);
-        return model.removeUser(name, session);
+        return model.removeUser(name);
     }
 
     @Override
     public boolean isAllowed(String right) {
-        checkSession(session);
-        return model.isAllowed(right, session);
+        return model.isAllowed(right);
     }
 
     @Override
     public List<NUser> findUsers() {
-        checkSession(session);
-        return model.findUsers(session);
+        return model.findUsers();
     }
 
     @Override
     public NUser getEffectiveUser(String username) {
-        checkSession(session);
-        return model.getEffectiveUser(username, session);
+        return model.getEffectiveUser(username);
     }
 
     @Override
     public NAuthenticationAgent getAuthenticationAgent(String id) {
-        checkSession(session);
-        return model.getAuthenticationAgent(id, session);
+        return model.getAuthenticationAgent(id);
     }
 
     @Override
     public NRepositorySecurityManager setAuthenticationAgent(String authenticationAgent) {
-        checkSession(session);
-        model.setAuthenticationAgent(authenticationAgent, session);
+        model.setAuthenticationAgent(authenticationAgent);
         return this;
     }
 
     @Override
     public NRepositorySecurityManager checkCredentials(char[] credentialsId, char[] password) throws NSecurityException {
-        checkSession(session);
-        model.checkCredentials(credentialsId, password, session);
+        model.checkCredentials(credentialsId, password);
         return this;
     }
 
     @Override
     public char[] getCredentials(char[] credentialsId) {
-        checkSession(session);
-        return model.getCredentials(credentialsId, session);
+        return model.getCredentials(credentialsId);
     }
 
     @Override
     public boolean removeCredentials(char[] credentialsId) {
-        checkSession(session);
-        return model.removeCredentials(credentialsId, session);
+        return model.removeCredentials(credentialsId);
     }
 
     @Override
     public char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId) {
-        checkSession(session);
-        return model.createCredentials(credentials, allowRetrieve, credentialId, session);
+        return model.createCredentials(credentials, allowRetrieve, credentialId);
     }
 }

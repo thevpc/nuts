@@ -4,7 +4,6 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.log.NLogs;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
@@ -26,77 +25,62 @@ public class DefaultNLogs implements NLogs {
     }
 
     @Override
-    public List<Handler> getHandlers(NSession session) {
-        checkSession(session);
+    public List<Handler> getHandlers() {
         return model.getHandlers();
     }
 
     @Override
-    public NLogs removeHandler(Handler handler, NSession session) {
-        checkSession(session);
+    public NLogs removeHandler(Handler handler) {
         model.removeHandler(handler);
         return this;
     }
 
     @Override
-    public NLogs addHandler(Handler handler, NSession session) {
-        checkSession(session);
+    public NLogs addHandler(Handler handler) {
         model.addHandler(handler);
         return this;
     }
 
     @Override
-    public Handler getTermHandler(NSession session) {
-        checkSession(session);
+    public Handler getTermHandler() {
         return model.getTermHandler();
     }
 
     @Override
-    public Handler getFileHandler(NSession session) {
-        checkSession(session);
+    public Handler getFileHandler() {
         return model.getFileHandler();
     }
 
     @Override
-    public NLog createLogger(String name, NSession session) {
-        checkSession(session);
-        return model.createLogger(name, session);
+    public NLog createLogger(String name) {
+        return model.createLogger(name);
     }
 
     @Override
-    public NLog createLogger(Class clazz, NSession session) {
-        checkSession(session);
+    public NLog createLogger(Class<?> clazz) {
         return model.createLogger(clazz, session);
     }
 
     @Override
-    public Level getTermLevel(NSession session) {
-        checkSession(session);
+    public Level getTermLevel() {
         return model.getTermLevel();
     }
 
     @Override
-    public NLogs setTermLevel(Level level, NSession session) {
-        checkSession(session);
-        model.setTermLevel(level, session);
+    public NLogs setTermLevel(Level level) {
+        model.setTermLevel(level);
         return this;
     }
 
     @Override
-    public Level getFileLevel(NSession session) {
-        checkSession(session);
+    public Level getFileLevel() {
         return model.getFileLevel();
     }
 
     @Override
-    public NLogs setFileLevel(Level level, NSession session) {
-        checkSession(session);
-        model.setFileLevel(level, session);
+    public NLogs setFileLevel(Level level) {
+        model.setFileLevel(level);
         return this;
-    }
-
-    private void checkSession(NSession session) {
-        NSessionUtils.checkSession(model.getWorkspace(), session);
     }
 
     public DefaultNLogModel getModel() {

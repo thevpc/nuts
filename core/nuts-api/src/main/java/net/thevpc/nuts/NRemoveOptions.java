@@ -33,10 +33,9 @@ import java.util.Objects;
  * @app.category Commands
  * @since 0.5.4
  */
-public class NRemoveOptions implements NSessionProvider{
+public class NRemoveOptions {
 
     private boolean erase = false;
-    private NSession session;
 
     public boolean isErase() {
         return erase;
@@ -47,18 +46,9 @@ public class NRemoveOptions implements NSessionProvider{
         return this;
     }
 
-    public NSession getSession() {
-        return session;
-    }
-
-    public NRemoveOptions setSession(NSession session) {
-        this.session = session;
-        return this;
-    }
-
     @Override
     public int hashCode() {
-        return Objects.hash(erase, session);
+        return Objects.hash(erase);
     }
 
     @Override
@@ -66,15 +56,13 @@ public class NRemoveOptions implements NSessionProvider{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         NRemoveOptions that = (NRemoveOptions) o;
-        return erase == that.erase &&
-                Objects.equals(session, that.session);
+        return erase == that.erase;
     }
 
     @Override
     public String toString() {
         return "NutsRemoveOptions{" +
                 "erase=" + erase +
-                ", session=" + session +
                 '}';
     }
 }

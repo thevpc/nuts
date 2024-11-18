@@ -20,7 +20,7 @@ public class NStreamFromJavaStream<T> extends NStreamBase<T> {
 
     private final Stream<T> o;
     public NStreamFromJavaStream(NSession session, String nutsBase, Stream<T> o) {
-        super(session, nutsBase);
+        super(nutsBase);
         this.o = o;
     }
 
@@ -36,7 +36,7 @@ public class NStreamFromJavaStream<T> extends NStreamBase<T> {
 
     @Override
     public NIterator<T> iterator() {
-        return NIterator.of(o.iterator(),session);
+        return NIterator.of(o.iterator());
     }
 
     @Override

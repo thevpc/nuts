@@ -1,6 +1,5 @@
 package net.thevpc.nuts.reserved.util;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NRunnable;
@@ -15,12 +14,12 @@ public class NRunnableWithDescription implements NRunnable {
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return nfo.apply(session);
+    public NElement describe() {
+        return nfo.get();
     }
 
     @Override
-    public void run(NSession session) {
-        base.run(session);
+    public void run() {
+        base.run();
     }
 }

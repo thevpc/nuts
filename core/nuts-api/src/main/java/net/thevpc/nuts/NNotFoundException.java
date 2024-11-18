@@ -49,36 +49,33 @@ public class NNotFoundException extends NException {
     /**
      * Constructs a new NutsNotFoundException exception
      *
-     * @param session workspace
-     * @param id      artifact id
+     * @param id artifact id
      */
-    public NNotFoundException(NSession session, NId id) {
-        this(session, id, (NMsg) null);
+    public NNotFoundException(NId id) {
+        this(id, (NMsg) null);
     }
 
     /**
      * Constructs a new NutsNotFoundException exception
      *
-     * @param session workspace
-     * @param id      artifact id
-     * @param cause   cause
+     * @param id    artifact id
+     * @param cause cause
      */
-    public NNotFoundException(NSession session, NId id, Throwable cause) {
-        this(session, id, null, null, cause);
+    public NNotFoundException(NId id, Throwable cause) {
+        this(id, null, null, cause);
     }
 
 
     /**
      * Constructs a new NutsNotFoundException exception
      *
-     * @param session      workspace
      * @param id           artifact id
      * @param dependencies dependencies
      * @param locations    locations
      * @param cause        cause
      */
-    public NNotFoundException(NSession session, NId id, NIdInvalidDependency[] dependencies, NIdInvalidLocation[] locations, Throwable cause) {
-        super(session,
+    public NNotFoundException(NId id, NIdInvalidDependency[] dependencies, NIdInvalidLocation[] locations, Throwable cause) {
+        super(
                 NMsg.ofC("artifact not found: %s%s", (id == null ? "<null>" : id), dependenciesToString(dependencies))
                 , cause);
         this.id = id;
@@ -93,14 +90,13 @@ public class NNotFoundException extends NException {
     /**
      * Constructs a new NutsNotFoundException exception
      *
-     * @param session workspace
      * @param id      artifact id
      * @param message message
      * @param cause   cause
      */
-    public NNotFoundException(NSession session, NId id, NMsg message, Throwable cause) {
+    public NNotFoundException(NId id, NMsg message, Throwable cause) {
         super(
-                session, message == null ? NMsg.ofC("no such nuts : %s", (id == null ? "<null>" : id)) : message,
+                message == null ? NMsg.ofC("no such nuts : %s", (id == null ? "<null>" : id)) : message,
                 cause);
         this.id = id;
     }
@@ -108,12 +104,11 @@ public class NNotFoundException extends NException {
     /**
      * Constructs a new NutsNotFoundException exception
      *
-     * @param session workspace
      * @param id      artifact id
      * @param message message
      */
-    public NNotFoundException(NSession session, NId id, NMsg message) {
-        this(session, id, message, null);
+    public NNotFoundException(NId id, NMsg message) {
+        this(id, message, null);
     }
 
     protected static String dependenciesToString(NIdInvalidDependency[] dependencies) {

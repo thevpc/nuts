@@ -15,18 +15,18 @@ public class NDependencyFilterOr extends AbstractDependencyFilter implements NCo
 
     private final NDependencyFilter[] all;
 
-    public NDependencyFilterOr(NSession session, NDependencyFilter... all) {
-        super(session, NFilterOp.OR);
+    public NDependencyFilterOr(NWorkspace workspace, NDependencyFilter... all) {
+        super(workspace, NFilterOp.OR);
         this.all = all;
     }
 
     @Override
-    public boolean acceptDependency(NId from, NDependency dependency, NSession session) {
+    public boolean acceptDependency(NId from, NDependency dependency) {
         boolean one = false;
         for (NDependencyFilter nDependencyFilter : all) {
             if (nDependencyFilter != null) {
                 one = true;
-                if (nDependencyFilter.acceptDependency(from, dependency, session)) {
+                if (nDependencyFilter.acceptDependency(from, dependency)) {
                     return true;
                 }
             }
@@ -36,7 +36,7 @@ public class NDependencyFilterOr extends AbstractDependencyFilter implements NCo
 
     @Override
     public NDependencyFilter simplify() {
-        return CoreFilterUtils.simplifyFilterOr(getSession(), NDependencyFilter.class,this,all);
+        return CoreFilterUtils.simplifyFilterOr(NDependencyFilter.class,this,all);
     }
 
     @Override

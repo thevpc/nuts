@@ -26,20 +26,20 @@ public class RestoreCmd<C extends NdbConfig> extends NdbCmd<C> {
 
 
     @Override
-    public void run(NSession session, NCmdLine cmdLine) {
+    public void run(NCmdLine cmdLine) {
         NRef<AtName> name = NRef.ofNull(AtName.class);
         NRef<NPath> file = NRef.ofNull(NPath.class);
         C otherOptions = createConfigInstance();
         while (cmdLine.hasNext()) {
             if (cmdLine.isNextOption()) {
-                switch (cmdLine.peek().get(session).key()) {
+                switch (cmdLine.peek().get().key()) {
                     case "--name": {
-                        readConfigNameOption(cmdLine, session, name);
+                        readConfigNameOption(cmdLine, name);
                         break;
                     }
                     case "--file": {
-                        cmdLine.withNextEntry((v, a, s) -> {
-                            file.set(NPath.of(v, s));
+                        cmdLine.withNextEntry((v, a) -> {
+                            file.set(NPath.of(v));
                         });
                         break;
                     }
@@ -51,20 +51,20 @@ public class RestoreCmd<C extends NdbConfig> extends NdbCmd<C> {
                 cmdLine.throwUnexpectedArgument();
             }
         }
-        String dumpExt = getSupport().getDumpExt(otherOptions, session);
+        String dumpExt = getSupport().getDumpExt(otherOptions);
 
         C options = loadFromName(name, otherOptions);
         NPath sqlFile;
         revalidateOptions(options);
-        getSupport().prepareDump(options, session);
-        NdbSupportBase.DumpRestoreMode dumpRestoreMode = getSupport().getDumpRestoreMode(options, session);
+        getSupport().prepareDump(options);
+        NdbSupportBase.DumpRestoreMode dumpRestoreMode = getSupport().getDumpRestoreMode(options);
         if (file.get() == null) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("missing file"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("missing file"));
         } else {
             if (isRemoteCommand(options)) {
-                NPath remoteTempFolder = getSupport().getRemoteTempFolder(options, session);
+                NPath remoteTempFolder = getSupport().getRemoteTempFolder(options);
                 NPath upFile = remoteTempFolder.resolveSibling(file.get());
-                run(sysCmd(session)
+                run(sysCmd()
                         .addCommand("scp")
                         .addCommand(file.get().isDirectory() ? "-r" : null)//when null ignored!
                         .addCommand(file.get().toString())
@@ -82,26 +82,26 @@ public class RestoreCmd<C extends NdbConfig> extends NdbCmd<C> {
                                         //upFile.resolveSibling(fileName).mkdirs();
                                     } else {
                                         if (fileName.endsWith(dumpExt)) {
-                                            sshRestore(upFile.resolve(fileName), options, session);
+                                            sshRestore(upFile.resolve(fileName), options);
                                         }
                                     }
                                     ze = zis.getNextEntry();
                                 }
                                 zis.closeEntry();
                             } catch (IOException ex) {
-                                throw new NIOException(session, ex);
+                                throw new NIOException(ex);
                             }
-                            sshRm(upFile,options, session);
+                            sshRm(upFile,options);
                         } else {
-                            sshRestore(upFile, options, session);
-                            sshRm(upFile,options, session);
+                            sshRestore(upFile, options);
+                            sshRm(upFile,options);
                         }
                         break;
                     }
                     case FOLDER: {
                         if (/*file.get().isFile() && */file.get().getName().toLowerCase().endsWith(".zip")) {
                             NPath unzippedFolder = file.get().resolveSibling(file.get().getLongBaseName());
-                            NExecCmd zipExec = sysSsh(options, session)
+                            NExecCmd zipExec = sysSsh(options)
                                     .addCommand("unzip")
                                     .addCommand("-q")
                                     .addCommand("-o")
@@ -109,16 +109,16 @@ public class RestoreCmd<C extends NdbConfig> extends NdbCmd<C> {
                                     .addCommand("-d")
                                     .addCommand(unzippedFolder.toString());
                             run(zipExec);
-                            sshRestore(unzippedFolder, options, session);
-                            sshRm(upFile,options, session);
+                            sshRestore(unzippedFolder, options);
+                            sshRm(upFile,options);
                             unzippedFolder.deleteTree();
                         } else {
                             sqlFile = file.get();
                             if (!sqlFile.isDirectory()) {
-                                throw new NIllegalArgumentException(session, NMsg.ofC("expected folder %s", sqlFile));
+                                throw new NIllegalArgumentException(NMsg.ofC("expected folder %s", sqlFile));
                             }
-                            sshRestore(upFile, options, session);
-                            sshRm(upFile,options, session);
+                            sshRestore(upFile, options);
+                            sshRm(upFile,options);
                         }
                     }
                 }
@@ -138,7 +138,7 @@ public class RestoreCmd<C extends NdbConfig> extends NdbCmd<C> {
                                         if (fileName.endsWith(dumpExt)) {
                                             NPath newFile = file.get().resolve(fileName);
                                             newFile.getParent().mkdirs();
-                                            restoreFile(newFile, options, session);
+                                            restoreFile(newFile, options);
                                             newFile.delete();
                                         }
                                     }
@@ -146,11 +146,11 @@ public class RestoreCmd<C extends NdbConfig> extends NdbCmd<C> {
                                 }
                                 zis.closeEntry();
                             } catch (IOException ex) {
-                                throw new NIOException(session, ex);
+                                throw new NIOException(ex);
                             }
                         } else {
                             sqlFile = file.get();
-                            restoreFile(sqlFile, options, session);
+                            restoreFile(sqlFile, options);
                         }
                         break;
                     }
@@ -158,7 +158,8 @@ public class RestoreCmd<C extends NdbConfig> extends NdbCmd<C> {
                         if (/*file.get().isFile() && */file.get().getName().toLowerCase().endsWith(".zip")) {
                             NPath zipPath = file.get();
                             NPath unzippedFolder = file.get().resolveSibling(file.get().getLongBaseName());
-                            NExecCmd zipExec = sysCmd(session)
+                            NSession session = NSession.of().get();
+                            NExecCmd zipExec = sysCmd()
                                     .addCommand("unzip")
                                     .addCommand(session.isTrace()?null:"-q")
                                     .addCommand("-o")
@@ -166,14 +167,14 @@ public class RestoreCmd<C extends NdbConfig> extends NdbCmd<C> {
                                     .addCommand("-d")
                                     .addCommand(unzippedFolder.toString());
                             run(zipExec);
-                            restoreFile(unzippedFolder, options, session);
+                            restoreFile(unzippedFolder, options);
                             unzippedFolder.deleteTree();
                         } else {
                             sqlFile = file.get();
                             if (!sqlFile.isDirectory()) {
-                                throw new NIllegalArgumentException(session, NMsg.ofC("expected folder %s", sqlFile));
+                                throw new NIllegalArgumentException(NMsg.ofC("expected folder %s", sqlFile));
                             }
-                            restoreFile(sqlFile, options, session);
+                            restoreFile(sqlFile, options);
                         }
                     }
                 }
@@ -182,21 +183,21 @@ public class RestoreCmd<C extends NdbConfig> extends NdbCmd<C> {
     }
 
 
-    private void sshRestore(NPath upRestorePath, C options, NSession session) {
-        CmdRedirect restoreCommand = getSupport().createRestoreCommand(upRestorePath, options, session);
-        NExecCmd nExecCmd = sysSsh(options, session).addCommand(
+    private void sshRestore(NPath upRestorePath, C options) {
+        CmdRedirect restoreCommand = getSupport().createRestoreCommand(upRestorePath, options);
+        NExecCmd nExecCmd = sysSsh(options).addCommand(
                 restoreCommand.getCmd().toString()
                         + (restoreCommand.getPath() == null ? "" : (" > " + restoreCommand.getPath()))
         );
         run(nExecCmd);
     }
 
-    private void restoreFile(NPath sqlFile, C options, NSession session) {
+    private void restoreFile(NPath sqlFile, C options) {
         if (!sqlFile.exists()) {
-            throw new NIllegalArgumentException(session, NMsg.ofC("does not exist %s", sqlFile));
+            throw new NIllegalArgumentException(NMsg.ofC("does not exist %s", sqlFile));
         }
-        CmdRedirect restoreCommand = getSupport().createRestoreCommand(sqlFile, options, session);
-        NExecCmd nExecCmd = sysCmd(session).addCommand(restoreCommand.getCmd().toStringArray());
+        CmdRedirect restoreCommand = getSupport().createRestoreCommand(sqlFile, options);
+        NExecCmd nExecCmd = sysCmd().addCommand(restoreCommand.getCmd().toStringArray());
         if (restoreCommand.getPath() != null) {
             nExecCmd.setIn(NExecInput.ofPath(restoreCommand.getPath()));
         }

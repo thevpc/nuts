@@ -27,19 +27,18 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.NSession;
 
 import java.util.List;
 
 public interface NDependencySolvers extends NComponent {
-    static NDependencySolvers of(NSession session) {
-       return NExtensions.of(session).createComponent(NDependencySolvers.class).get();
+    static NDependencySolvers of() {
+       return NExtensions.of().createComponent(NDependencySolvers.class).get();
     }
 
-    NDependencySolver createSolver(NSession session);
+    NDependencySolver createSolver();
 
-    NDependencySolver createSolver(String solverName, NSession session);
+    NDependencySolver createSolver(String solverName);
 
-    List<String> getSolverNames(NSession session);
+    List<String> getSolverNames();
 
 }

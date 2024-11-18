@@ -30,64 +30,63 @@ import java.util.stream.Collectors;
  */
 public class DefaultNUninstallCmd extends AbstractNUninstallCmd {
 
-    public DefaultNUninstallCmd(NSession session) {
-        super(session);
+    public DefaultNUninstallCmd(NWorkspace workspace) {
+        super(workspace);
     }
 
     @Override
     public NUninstallCmd run() {
-        checkSession();
-        NWorkspaceUtils.of(getSession()).checkReadOnly();
-        checkSession();
-        NSession session = getSession();
+        NSession session=workspace.currentSession();
+        NWorkspaceUtils.of(workspace).checkReadOnly();
         NWorkspaceExt dws = NWorkspaceExt.of(session.getWorkspace());
-        NWorkspaceSecurityManager.of(session).checkAllowed(NConstants.Permissions.UNINSTALL, "uninstall");
+        NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.UNINSTALL, "uninstall");
         List<NDefinition> defs = new ArrayList<>();
         List<NId> nutsIds = this.getIds();
-        NAssert.requireNonBlank(nutsIds, "packages to uninstall", session);
+        NAssert.requireNonBlank(nutsIds, "packages to uninstall");
         List<NId> installed = new ArrayList<>();
         for (NId id : nutsIds) {
-            List<NDefinition> resultDefinitions = NSearchCmd.of(session.copy().setTransitive(false))
+            List<NDefinition> resultDefinitions = NSearchCmd.of()
+                    .setTransitive(false)
                     .addId(id)
-                    .setInstallStatus(NInstallStatusFilters.of(session).byInstalled(true))
+                    .setInstallStatus(NInstallStatusFilters.of().byInstalled(true))
                     .setOptional(false).setEffective(true)
                     .setContent(true)//include content so that we can remove it by calling executor
                     .setDependencies(true)//include dependencies so that we can remove it by calling executor
                     .addScope(NDependencyScopePattern.RUN)
                     .getResultDefinitions().toList();
-            resultDefinitions.removeIf(it -> !it.getInstallInformation().get(session).isInstalledOrRequired());
+            resultDefinitions.removeIf(it -> !it.getInstallInformation().get().isInstalledOrRequired());
             if (resultDefinitions.isEmpty()) {
-                throw new NIllegalArgumentException(getSession(), NMsg.ofC("not installed : %s", id));
+                throw new NIllegalArgumentException(NMsg.ofC("not installed : %s", id));
             }
             installed.addAll(resultDefinitions.stream().map(NDefinition::getId).collect(Collectors.toList()));
             defs.addAll(resultDefinitions);
         }
-        NMemoryPrintStream mout = NMemoryPrintStream.of(session);
+        NMemoryPrintStream mout = NMemoryPrintStream.of();
         printList(mout, "installed", "uninstalled", installed);
         mout.println("should we proceed uninstalling ?");
         NMsg cancelMessage = NMsg.ofC("uninstall cancelled : %s", defs.stream()
                 .map(NDefinition::getId)
                 .map(NId::getFullName)
                 .collect(Collectors.joining(", ")));
-        if (!defs.isEmpty() && !NAsk.of(getSession())
-                .setSession(session)
+        if (!defs.isEmpty() && !NAsk.of()
                 .forBoolean(NMsg.ofNtf(mout.toString()))
                 .setDefaultValue(true)
                 .setCancelMessage(cancelMessage)
                 .getBooleanValue()) {
-            throw new NCancelException(getSession(), cancelMessage);
+            throw new NCancelException(cancelMessage);
         }
 
         for (NDefinition def : defs) {
-            NWorkspaceExt.of(ws).uninstallImpl(def, getArgs().toArray(new String[0]), true, true, isErase(),true, session);
+            NWorkspaceExt.of(workspace).uninstallImpl(def, getArgs().toArray(new String[0]), true, true, isErase(),true);
         }
         return this;
     }
 
     private void printList(NPrintStream out, String skind, String saction, List<NId> all) {
         if (all.size() > 0) {
+            NSession session=workspace.currentSession();
             if (session.isPlainOut()) {
-                NTexts text = NTexts.of(session);
+                NTexts text = NTexts.of();
                 NText kind = text.ofStyled(skind, NTextStyle.primary2());
                 NText action =
                         text.ofStyled(saction,
@@ -95,22 +94,21 @@ public class DefaultNUninstallCmd extends AbstractNUninstallCmd {
                                         saction.equals("ignored") ? NTextStyle.pale() :
                                                 NTextStyle.primary1()
                         );
-                NSession session = getSession();
-                NTextBuilder msg = NTexts.of(getSession()).ofBuilder();
+                NTextBuilder msg = NTexts.of().ofBuilder();
                 msg.append("the following ")
                         .append(kind).append(" ").append((all.size() > 1 ? "artifacts are" : "artifact is"))
                         .append(" going to be ").append(action).append(" : ")
                         .appendJoined(
-                                NTexts.of(session).ofPlain(", "),
+                                NTexts.of().ofPlain(", "),
                                 all.stream().map(x
-                                                -> NTexts.of(session).ofText(
+                                                -> NTexts.of().ofText(
                                                 x.builder().build()
                                         )
                                 ).collect(Collectors.toList())
                         );
                 out.resetLine().println(msg);
             } else {
-                NElements elem = NElements.of(session);
+                NElements elem = NElements.of();
                 session.eout().add(elem.ofObject()
                         .set("command", "warning")
                         .set("artifact-kind", skind)

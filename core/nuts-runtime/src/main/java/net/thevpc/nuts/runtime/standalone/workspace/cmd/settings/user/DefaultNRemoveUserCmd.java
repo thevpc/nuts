@@ -18,18 +18,16 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
  */
 public class DefaultNRemoveUserCmd extends AbstractNRemoveUserCmd {
 
-    public DefaultNRemoveUserCmd(NSession session) {
-        super(session);
+    public DefaultNRemoveUserCmd(NWorkspace workspace) {
+        super(workspace);
     }
 
     @Override
     public NRemoveUserCmd run() {
-        checkSession();
-        NWorkspace ws = getSession().getWorkspace();
         if (repository != null) {
-            NRepositoryConfigManagerExt.of(repository.config().setSession(session)).getModel().removeUser(login, getSession());
+            NRepositoryConfigManagerExt.of(repository.config()).getModel().removeUser(login);
         } else {
-            NConfigsExt.of(NConfigs.of(session).setSession(session)).getModel().removeUser(login, getSession());
+            NConfigsExt.of(NConfigs.of()).getModel().removeUser(login);
         }
         return this;
     }

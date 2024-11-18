@@ -17,8 +17,8 @@ public class DefaultNCmdLineFormat extends DefaultFormatBase<NCmdLineFormat> imp
     private NShellFamily formatFamily = NShellFamily.getCurrent();
     private NCmdLineFormatStrategy formatStrategy = NCmdLineFormatStrategy.DEFAULT;
 
-    public DefaultNCmdLineFormat(NSession session) {
-        super(session, "commandLine");
+    public DefaultNCmdLineFormat(NWorkspace workspace) {
+        super(workspace, "commandLine");
     }
 
     public NCmdLineFormat setNtf(boolean ntf) {
@@ -34,13 +34,13 @@ public class DefaultNCmdLineFormat extends DefaultFormatBase<NCmdLineFormat> imp
 
     @Override
     public NCmdLineFormat setValue(String[] args) {
-        checkSession();
         return setValue(args == null ? null : NCmdLine.of(args));
     }
 
     @Override
     public NCmdLineFormat setValue(String args) {
-        return setValue(args == null ? null : NCmdLines.of(getSession()).parseCmdLine(args));
+        NSession session=getWorkspace().currentSession();
+        return setValue(args == null ? null : NCmdLines.of().parseCmdLine(args));
     }
 
     public NShellFamily getShellFamily() {
@@ -72,19 +72,17 @@ public class DefaultNCmdLineFormat extends DefaultFormatBase<NCmdLineFormat> imp
 
     @Override
     public void print(NPrintStream out) {
-        checkSession();
         if (value != null) {
             String cmd =
                     NShellHelper.of(getShellFamily())
                             .escapeArguments(value.toStringArray(),
                                     new NCmdLineShellOptions()
-                                            .setSession(getSession())
                                             .setFormatStrategy(getFormatStrategy())
                                             .setExpectEnv(true)
                             );
             if (isNtf()) {
                 out.print(
-                        NTexts.of(getSession()).ofCode("system", cmd)
+                        NTexts.of().ofCode("system", cmd)
                 );
             } else {
                 out.print(cmd);

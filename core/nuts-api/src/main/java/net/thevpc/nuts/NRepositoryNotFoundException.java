@@ -40,11 +40,10 @@ public class NRepositoryNotFoundException extends NRepositoryException {
     /**
      * Constructs a new NutsRepositoryNotFoundException exception
      *
-     * @param session    workspace
      * @param repository repository
      */
-    public NRepositoryNotFoundException(NSession session, String repository) {
-        super(session, repository,
+    public NRepositoryNotFoundException(String repository) {
+        super(repository,
                 NMsg.ofC("no such repository %s", (repository == null ? "<null>" : repository))
                 , null);
     }

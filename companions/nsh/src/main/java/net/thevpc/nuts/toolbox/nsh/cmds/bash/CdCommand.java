@@ -50,9 +50,9 @@ public class CdCommand extends NShellBuiltinDefault {
     protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
-        if (cmdLine.peek().get(session).isNonOption()) {
+        if (cmdLine.peek().get().isNonOption()) {
             if (options.dirname == null) {
-                options.dirname = cmdLine.next().flatMap(NLiteral::asString).get(session);
+                options.dirname = cmdLine.next().flatMap(NLiteral::asString).get();
                 return true;
             } else {
                 cmdLine.throwUnexpectedArgument();

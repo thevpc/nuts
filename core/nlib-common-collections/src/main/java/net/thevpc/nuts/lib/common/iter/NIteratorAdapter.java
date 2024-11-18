@@ -7,12 +7,13 @@ import net.thevpc.nuts.NSession;
 
 import java.util.Iterator;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class NIteratorAdapter<T> extends NIteratorBase<T> {
     private final Iterator<T> base;
-    private final Function<NSession, NElement> info;
+    private final Supplier<NElement> info;
 
-    public NIteratorAdapter(Iterator<T> base, Function<NSession, NElement> info) {
+    public NIteratorAdapter(Iterator<T> base, Supplier<NElement> info) {
         this.base = base;
         this.info = info;
     }
@@ -28,13 +29,13 @@ public class NIteratorAdapter<T> extends NIteratorBase<T> {
     }
 
     @Override
-    public NElement describe(NSession session) {
-        NElement a = info.apply(session);
+    public NElement describe() {
+        NElement a = info.get();
         if(!a.isObject()){
-            a= NElements.of(session).ofObject().set("name",a).build();
+            a= NElements.of().ofObject().set("name",a).build();
         }
-        return NEDesc.describeResolveOrDestructAsObject(base, session)
+        return NEDesc.describeResolveOrDestructAsObject(base)
                 .builder()
-                        .addAll(a.asObject().get(session)).build();
+                        .addAll(a.asObject().get()).build();
     }
 }

@@ -52,13 +52,13 @@ public class UnsetCommand extends NShellBuiltinDefault {
     protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        NArg aa = cmdLine.peek().get(session);
+        NArg aa = cmdLine.peek().get();
         if (aa.isOption()) {
             if (aa.key().equals("-v")) {
-                cmdLine.withNextFlag((v, a, s) -> options.fct= !v);
+                cmdLine.withNextFlag((v, a) -> options.fct= !v);
                 return true;
             } else if (aa.key().equals("-f")) {
-                cmdLine.withNextFlag((v, a, s) -> options.fct= v);
+                cmdLine.withNextFlag((v, a) -> options.fct= v);
                 return true;
             }
         } else {

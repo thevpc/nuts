@@ -13,50 +13,40 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Locale;
 
-public class ExtendedFormatAwarePrintWriter extends PrintWriter implements ExtendedFormatAware, NSessionAware {
-    private final NWorkspace ws;
-    private NSession session;
+public class ExtendedFormatAwarePrintWriter extends PrintWriter implements ExtendedFormatAware {
+    private final NWorkspace workspace;
     private final NSystemTerminalBase term;
     private Object base = null;
 
-    public ExtendedFormatAwarePrintWriter(Writer out, NSystemTerminalBase term, NSession session) {
+    public ExtendedFormatAwarePrintWriter(Writer out, NSystemTerminalBase term, NWorkspace workspace) {
         super(out);
         base = out;
-        this.session = session;
+        this.workspace = workspace;
         this.term = term;
-        this.ws = session.getWorkspace();
     }
 
-    public ExtendedFormatAwarePrintWriter(Writer out, boolean autoFlush, NSystemTerminalBase term, NSession session) {
+    public ExtendedFormatAwarePrintWriter(Writer out, boolean autoFlush, NSystemTerminalBase term, NWorkspace workspace) {
         super(out, autoFlush);
         base = out;
-        this.session = session;
+        this.workspace = workspace;
         this.term = term;
-        this.ws = session.getWorkspace();
     }
 
-    public ExtendedFormatAwarePrintWriter(OutputStream out, NSystemTerminalBase term, NSession session) {
+    public ExtendedFormatAwarePrintWriter(OutputStream out, NSystemTerminalBase term, NWorkspace workspace) {
         super(out);
         base = out;
-        this.session = session;
         this.term = term;
-        this.ws = session.getWorkspace();
+        this.workspace = workspace;
     }
 
-    public ExtendedFormatAwarePrintWriter(OutputStream out, boolean autoFlush, NSystemTerminalBase term, NSession session) {
+    public ExtendedFormatAwarePrintWriter(OutputStream out, boolean autoFlush, NSystemTerminalBase term, NWorkspace workspace) {
         super(out, autoFlush);
         base = out;
-        this.session = session;
+        this.workspace = workspace;
         this.term = term;
-        this.ws = session.getWorkspace();
     }
 
-    @Override
-    public void setSession(NSession session) {
-        this.session = NWorkspaceUtils.bindSession(ws, session);
-//        this.session = session;
-//        this.ws = session==null?null:session.getWorkspace();
-    }
+
 
     @Override
     public NTerminalModeOp getModeOp() {
@@ -79,19 +69,19 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
                 return this;
             }
             case FORMAT: {
-                return new FormatOutputStream(new SimpleWriterOutputStream(this, term, session), term, session);
+                return new FormatOutputStream(new SimpleWriterOutputStream(this, term, workspace), term, workspace);
             }
             case FILTER: {
-                return new FilterFormatOutputStream(new SimpleWriterOutputStream(this, term, session), term, session);
+                return new FilterFormatOutputStream(new SimpleWriterOutputStream(this, term, workspace), term, workspace);
             }
             case ESCAPE: {
-                return new EscapeOutputStream(new SimpleWriterOutputStream(this, term, session), term, session);
+                return new EscapeOutputStream(new SimpleWriterOutputStream(this, term, workspace), term, workspace);
             }
             case UNESCAPE: {
-                return new EscapeOutputStream(new SimpleWriterOutputStream(this, term, session), term, session);
+                return new EscapeOutputStream(new SimpleWriterOutputStream(this, term, workspace), term, workspace);
             }
         }
-        throw new NUnsupportedEnumException(session, other);
+        throw new NUnsupportedEnumException(other);
     }
 
     @Override
@@ -107,15 +97,14 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
     @Override
     public ExtendedFormatAwarePrintWriter format(Locale l, String format, Object... args) {
         if (l == null) {
-            print(NTexts.of(session).ofText(
+            print(NTexts.of().ofText(
                     NMsg.ofC(
                             format, args
                     )
             ));
         } else {
-            NSession s2 = this.session.copy().setLocale(l.toString());
             print(
-                    NTexts.of(s2).ofText(
+                    NTexts.of().ofText(
                             NMsg.ofC(
                                     format, args
                             )

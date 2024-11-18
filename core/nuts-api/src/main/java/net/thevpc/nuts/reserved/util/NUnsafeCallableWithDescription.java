@@ -1,6 +1,5 @@
 package net.thevpc.nuts.reserved.util;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.spi.base.NUnsafeCallableBase;
@@ -16,8 +15,8 @@ public class NUnsafeCallableWithDescription<T> extends NUnsafeCallableBase<T> {
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return description.apply(session);
+    public NElement describe() {
+        return description.get();
     }
 
     @Override
@@ -27,7 +26,7 @@ public class NUnsafeCallableWithDescription<T> extends NUnsafeCallableBase<T> {
     }
 
     @Override
-    public T call(NSession session) throws Exception {
-        return base.call(session);
+    public T call() throws Exception {
+        return base.call();
     }
 }

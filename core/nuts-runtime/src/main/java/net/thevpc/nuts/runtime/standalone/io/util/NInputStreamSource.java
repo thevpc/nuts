@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.format.NFormat;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NContentMetadata;
 import net.thevpc.nuts.io.NContentMetadataProviderFormatSPI;
 import net.thevpc.nuts.io.NIOException;
@@ -13,8 +13,8 @@ public class NInputStreamSource extends AbstractSingleReadNInputSource {
     private InputStream inputStream;
     private NContentMetadata md;
 
-    public NInputStreamSource(InputStream inputStream, NContentMetadata md, NSession session) {
-        super(session);
+    public NInputStreamSource(InputStream inputStream, NContentMetadata md, NWorkspace workspace) {
+        super(workspace);
         this.inputStream = inputStream;
         this.md = CoreIOUtils.createContentMetadata(md, inputStream);
     }
@@ -35,8 +35,8 @@ public class NInputStreamSource extends AbstractSingleReadNInputSource {
     }
 
     @Override
-    public NFormat formatter(NSession session) {
-        return NFormat.of(session, new NContentMetadataProviderFormatSPI(this, null, "input-stream"));
+    public NFormat formatter() {
+        return NFormat.of(new NContentMetadataProviderFormatSPI(this, null, "input-stream"));
     }
 
     @Override
@@ -59,7 +59,7 @@ public class NInputStreamSource extends AbstractSingleReadNInputSource {
         try {
             inputStream.close();
         } catch (IOException e) {
-            throw new NIOException(getSession(), e);
+            throw new NIOException(e);
         }
     }
 

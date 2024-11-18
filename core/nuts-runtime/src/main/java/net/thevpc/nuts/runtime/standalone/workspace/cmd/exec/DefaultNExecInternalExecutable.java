@@ -7,6 +7,8 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.NExecCmd;
 import net.thevpc.nuts.NExecutionException;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 
@@ -16,36 +18,41 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
  */
 public class DefaultNExecInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNExecInternalExecutable(String[] args, NExecCmd execCommand) {
-        super("exec", args, execCommand);
+    public DefaultNExecInternalExecutable(NWorkspace workspace, String[] args, NExecCmd execCommand) {
+        super(workspace, "exec", args, execCommand);
     }
 
     @Override
     public int execute() {
-        if(getSession().isDry()){
+        NSession session = workspace.currentSession();
+        if (session.isDry()) {
             dryExecute();
             return NExecutionException.SUCCESS;
         }
-        if (NAppUtils.processHelpOptions(args, getSession())) {
+        if (NAppUtils.processHelpOptions(args, session)) {
             showDefaultHelp();
             return NExecutionException.SUCCESS;
         }
-        return getExecCommand().copy().setSession(getSession()).clearCommand().configure(false, args)
+        return getExecCommand().copy().clearCommand().configure(false, args)
                 .failFast().run()
                 .getResultCode();
     }
 
     @Override
     public void dryExecute() {
-        if (NAppUtils.processHelpOptions(args, getSession())) {
-            getSession().out().println("[dry] ==show-help==");
+        NSession session = workspace.currentSession();
+        if (NAppUtils.processHelpOptions(args, session)) {
+            session.out().println("[dry] ==show-help==");
             return;
         }
-        getExecCommand()
-                .copy()
-                .setSession(getSession().copy().setDry(true)).clearCommand().configure(false, args)
-                .failFast()
-                .run()
-        ;
+
+        session.copy().setDry(true).runWith(() ->
+                getExecCommand()
+                        .copy()
+                        .clearCommand().configure(false, args)
+                        .failFast()
+                        .run()
+        );
+
     }
 }

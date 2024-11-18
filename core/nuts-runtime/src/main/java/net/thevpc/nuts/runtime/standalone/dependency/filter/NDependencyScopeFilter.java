@@ -13,19 +13,19 @@ public class NDependencyScopeFilter extends AbstractDependencyFilter {
 
     private EnumSet<NDependencyScope> scope=EnumSet.noneOf(NDependencyScope.class);
 
-    public NDependencyScopeFilter(NSession session) {
-        super(session, NFilterOp.CUSTOM);
+    public NDependencyScopeFilter(NWorkspace workspace) {
+        super(workspace, NFilterOp.CUSTOM);
     }
 
-    private NDependencyScopeFilter(NSession session, Collection<NDependencyScope> scope) {
-        super(session, NFilterOp.CUSTOM);
+    private NDependencyScopeFilter(NWorkspace workspace, Collection<NDependencyScope> scope) {
+        super(workspace, NFilterOp.CUSTOM);
         this.scope = EnumSet.copyOf(scope);
     }
 
     public NDependencyScopeFilter add(Collection<NDependencyScope> scope) {
         EnumSet<NDependencyScope> s2 = EnumSet.copyOf(this.scope);
         s2.addAll(scope);
-        return new NDependencyScopeFilter(getSession(),s2);
+        return new NDependencyScopeFilter(workspace,s2);
     }
 
     public NDependencyScopeFilter addScopePatterns(Collection<NDependencyScopePattern> scope) {
@@ -35,11 +35,11 @@ public class NDependencyScopeFilter extends AbstractDependencyFilter {
                 s2.addAll(ss.toScopes());
             }
         }
-        return new NDependencyScopeFilter(getSession(),s2);
+        return new NDependencyScopeFilter(workspace,s2);
     }
 
     @Override
-    public boolean acceptDependency(NId from, NDependency dependency, NSession session) {
+    public boolean acceptDependency(NId from, NDependency dependency) {
         return scope.isEmpty() || scope.contains(NDependencyScope.parse(dependency.getScope()).orElse(NDependencyScope.API));
     }
 
@@ -52,6 +52,6 @@ public class NDependencyScopeFilter extends AbstractDependencyFilter {
 
     @Override
     public NDependencyFilter simplify() {
-        return scope.isEmpty()? NDependencyFilters.of(getSession()).always() : this;
+        return scope.isEmpty()? NDependencyFilters.of().always() : this;
     }
 }

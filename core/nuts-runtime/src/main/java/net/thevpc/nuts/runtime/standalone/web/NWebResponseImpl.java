@@ -10,7 +10,6 @@ import net.thevpc.nuts.web.NWebResponseException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -71,7 +70,7 @@ public class NWebResponseImpl implements NWebResponse {
             return null;
         }
         try (InputStream in = content.getInputStream()) {
-            return NElements.of(session)
+            return NElements.of()
                     .json().parse(in, clz);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
@@ -112,7 +111,7 @@ public class NWebResponseImpl implements NWebResponse {
     @Override
     public NWebResponse failFast() {
         if (isError()) {
-            throw new NWebResponseException(session, msg, userMessage, code);
+            throw new NWebResponseException(msg, userMessage, code);
         }
         return this;
     }

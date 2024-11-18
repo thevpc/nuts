@@ -1,7 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
-import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.io.NPrintStream;
@@ -19,17 +20,18 @@ public class AnsiNPrintStreamTerminalBase extends NSystemTerminalBaseImpl {
     private String commandHighlighter;
     private NCmdLineAutoCompleteResolver commandAutoCompleteResolver;
 
-    public AnsiNPrintStreamTerminalBase(NPrintStream out) {
+    public AnsiNPrintStreamTerminalBase(NWorkspace workspace,NPrintStream out) {
+        super(workspace);
         this.out = out;
     }
 
     @Override
-    public String readLine(NPrintStream out, NMsg message, NSession session) {
+    public String readLine(NPrintStream out, NMsg message) {
         return null;
     }
 
     @Override
-    public char[] readPassword(NPrintStream out, NMsg message, NSession session) {
+    public char[] readPassword(NPrintStream out, NMsg message) {
         return new char[0];
     }
 
@@ -81,8 +83,9 @@ public class AnsiNPrintStreamTerminalBase extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public Object run(NTerminalCmd command, NPrintStream printStream, NSession session) {
-        String s = NAnsiTermHelper.of(session).command(command, session);
+    public Object run(NTerminalCmd command, NPrintStream printStream) {
+        NSession session=getWorkspace().currentSession();
+        String s = NAnsiTermHelper.of(getWorkspace()).command(command);
         if (s != null) {
             byte[] bytes = s.getBytes();
             out.write(bytes, 0, bytes.length);
@@ -92,8 +95,8 @@ public class AnsiNPrintStreamTerminalBase extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public void setStyles(NTextStyles styles, NPrintStream printStream, NSession session) {
-        String s = NAnsiTermHelper.of(session).styled(styles, session);
+    public void setStyles(NTextStyles styles, NPrintStream printStream) {
+        String s = NAnsiTermHelper.of(getWorkspace()).styled(styles);
         if (s != null) {
             byte[] bytes = s.getBytes();
             out.write(bytes, 0, bytes.length);

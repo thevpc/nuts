@@ -38,7 +38,7 @@ public class DefaultVarNode implements NExprWordNode {
         try {
             return context.evalGetVar(name);
         } catch (Exception ex) {
-            return NOptional.ofError(x -> NMsg.ofC("error %s ", ex));
+            return NOptional.ofError(() -> NMsg.ofC("error %s ", ex));
         }
     }
 

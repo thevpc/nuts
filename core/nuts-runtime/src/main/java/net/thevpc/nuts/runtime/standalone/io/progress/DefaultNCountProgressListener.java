@@ -70,7 +70,7 @@ public class DefaultNCountProgressListener implements NProgressListener/*, NutsO
     public boolean onProgress0(NProgressEvent event, boolean end) {
         double partialSeconds = event.getPartialDuration().getTimeAsDoubleSeconds();
         if (event.getCurrentCount() == 0 || partialSeconds > 0.5 || event.getCurrentCount() == event.getMaxValue()) {
-            NTexts text = NTexts.of(event.getSession());
+            NTexts text = NTexts.of();
             out.resetLine();
             double globalSeconds = event.getDuration().getTimeAsDoubleSeconds();
             long globalSpeed = globalSeconds == 0 ? 0 : (long) (event.getCurrentCount() / globalSeconds);
@@ -82,7 +82,7 @@ public class DefaultNCountProgressListener implements NProgressListener/*, NutsO
 //            int x = (int) (20.0 / 100.0 * percent);
 
             NTextBuilder formattedLine = text.ofBuilder();
-            CProgressBar cp= CProgressBar.of(event.getSession());
+            CProgressBar cp= CProgressBar.of();
 
             formattedLine.append(cp.progress((int)percent));
 //            if (x > 0) {

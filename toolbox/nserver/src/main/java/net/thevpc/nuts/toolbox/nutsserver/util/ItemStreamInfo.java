@@ -96,7 +96,7 @@ public class ItemStreamInfo {
                 return substring;
             }
         }
-        throw new NIllegalArgumentException(session, NMsg.ofPlain("invalid boundary"));
+        throw new NIllegalArgumentException(NMsg.ofPlain("invalid boundary"));
     }
 
 //    private static class ErrInputStream extends InputStream {

@@ -24,14 +24,11 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts.runtime.standalone.text;
+package net.thevpc.nuts.text;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.text.NString;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextBuilder;
-import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NOptional;
 
 import java.io.StringReader;
 
@@ -40,10 +37,8 @@ import java.io.StringReader;
  */
 public class NImmutableString implements NString {
     private final String value;
-    private transient final NSession session;
 
-    public NImmutableString(NSession session, String value) {
-        this.session = session;
+    public NImmutableString(String value) {
         this.value = value == null ? "" : value;
     }
 
@@ -76,7 +71,11 @@ public class NImmutableString implements NString {
 
     @Override
     public String filteredText() {
-        return NTexts.of(session).filterText(value);
+        NOptional<NSession> s = NSession.of();
+        if(!s.isPresent()){
+            return value;
+        }
+        return NTexts.of().filterText(value);
     }
 
     public int textLength() {
@@ -84,7 +83,7 @@ public class NImmutableString implements NString {
     }
 
     public NText toText() {
-        return NTexts.of(session).parser().parse(new StringReader(value));
+        return NTexts.of().parser().parse(new StringReader(value));
     }
 
     @Override
@@ -94,7 +93,7 @@ public class NImmutableString implements NString {
 
     @Override
     public NTextBuilder builder() {
-        return NTexts.of(session).ofBuilder().append(this);
+        return NTexts.of().ofBuilder().append(this);
     }
 
     @Override

@@ -42,8 +42,8 @@ import java.util.List;
  */
 public interface NDependencyFormat extends NFormat, NComponent {
 
-    static NDependencyFormat of(NSession session) {
-       return NExtensions.of(session).createComponent(NDependencyFormat.class).get();
+    static NDependencyFormat of() {
+       return NExtensions.of().createComponent(NDependencyFormat.class).get();
     }
 
     /**
@@ -260,15 +260,6 @@ public interface NDependencyFormat extends NFormat, NComponent {
      * @since 0.5.6
      */
     NDependencyFormat setValue(NDependency dependency);
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this instance}
-     */
-    @Override
-    NDependencyFormat setSession(NSession session);
 
     /**
      * configure the current command with the given arguments. This is an

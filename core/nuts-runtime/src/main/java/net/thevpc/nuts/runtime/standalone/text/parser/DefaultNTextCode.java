@@ -43,8 +43,8 @@ public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
 
     private final String text;
 
-    public DefaultNTextCode(NSession session, String start, String kind, String separator, String end, String text) {
-        super(session, start, kind,
+    public DefaultNTextCode(NWorkspace workspace, String start, String kind, String separator, String end, String text) {
+        super(workspace, start, kind,
                 (kind != null && kind.length() > 0
                         &&
                         text != null && text.length() > 0
@@ -59,11 +59,11 @@ public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
     }
 
     @Override
-    public NText highlight(NSession session) {
-        NTexts txt = NTexts.of(session);
+    public NText highlight() {
+        NTexts txt = NTexts.of();
         NCodeHighlighter t = ((DefaultNTexts) txt)
                 .resolveCodeHighlighter(getKind());
-        return t.stringToText(text, txt, session);
+        return t.stringToText(text, txt);
     }
 
     @Override

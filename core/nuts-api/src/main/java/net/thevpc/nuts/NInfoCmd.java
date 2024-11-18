@@ -42,18 +42,9 @@ import java.util.*;
  */
 public interface NInfoCmd extends NFormat, NWorkspaceCmd {
 
-    static NInfoCmd of(NSession session) {
-       return NExtensions.of(session).createComponent(NInfoCmd.class).get();
+    static NInfoCmd of() {
+       return NExtensions.of().createComponent(NInfoCmd.class).get();
     }
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this instance}
-     */
-    @Override
-    NInfoCmd setSession(NSession session);
 
     /**
      * configure the current command with the given arguments. This is an
@@ -118,12 +109,6 @@ public interface NInfoCmd extends NFormat, NWorkspaceCmd {
     NInfoCmd setFancy(boolean fancy);
 
 
-    /**
-     * copy session
-     *
-     * @return {@code this} instance
-     */
-    NInfoCmd copySession();
 
     Map<String, Object> getPropertyValues() ;
 

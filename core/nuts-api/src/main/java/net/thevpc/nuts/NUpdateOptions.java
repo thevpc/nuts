@@ -36,39 +36,12 @@ import java.io.Serializable;
  * @app.category Commands
  * @since 0.5.7
  */
-public class NUpdateOptions implements Serializable,NSessionProvider {
+public class NUpdateOptions implements Serializable {
     private static final long serialVersionUID = 1;
 
-    /**
-     * current session
-     */
-    private NSession session;
 
     public NUpdateOptions() {
     }
 
-    public NUpdateOptions(NSession session) {
-        this.session = session;
-    }
-
-    /**
-     * current session
-     *
-     * @return current session
-     */
-    public NSession getSession() {
-        return session;
-    }
-
-    /**
-     * update current session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    public NUpdateOptions setSession(NSession session) {
-        this.session = session;
-        return this;
-    }
 
 }

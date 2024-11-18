@@ -1,6 +1,5 @@
 package net.thevpc.nuts.reserved.util;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NRunnable;
 
 public class NRunnableFromJavaRunnable implements NRunnable {
@@ -11,7 +10,7 @@ public class NRunnableFromJavaRunnable implements NRunnable {
     }
 
     @Override
-    public void run(NSession session) {
+    public void run() {
         base.run();
     }
 }

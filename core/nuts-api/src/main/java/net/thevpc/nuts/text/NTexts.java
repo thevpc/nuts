@@ -41,9 +41,9 @@ import java.util.List;
 /**
  * @app.category Format
  */
-public interface NTexts extends NComponent, NSessionProvider {
-    static NTexts of(NSession session) {
-        return NExtensions.of(session).createComponent(NTexts.class).get();
+public interface NTexts extends NComponent {
+    static NTexts of() {
+        return NExtensions.of().createComponent(NTexts.class).get();
     }
 
     NTextBuilder ofBuilder();

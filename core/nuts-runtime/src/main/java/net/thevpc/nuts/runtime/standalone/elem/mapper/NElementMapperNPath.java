@@ -22,6 +22,6 @@ public class NElementMapperNPath implements NElementMapper<NPath> {
     @Override
     public NPath createObject(NElement o, Type to, NElementFactoryContext context) {
         String i = context.defaultElementToObject(o, String.class);
-        return NPath.of(i,context.getSession());
+        return NPath.of(i);
     }
 }

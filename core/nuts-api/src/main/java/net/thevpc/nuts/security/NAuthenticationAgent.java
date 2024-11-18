@@ -27,7 +27,6 @@
 package net.thevpc.nuts.security;
 
 import net.thevpc.nuts.NSecurityException;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponent;
 
 import java.util.Map;
@@ -59,10 +58,9 @@ public interface NAuthenticationAgent extends NComponent/* as authentication age
      * @param credentialsId credentialsId
      * @param password      password
      * @param envProvider   environment provider, nullable
-     * @param session       session
      * @throws NSecurityException when check failed
      */
-    void checkCredentials(char[] credentialsId, char[] password, Map<String, String> envProvider, NSession session) throws NSecurityException;
+    void checkCredentials(char[] credentialsId, char[] password, Map<String, String> envProvider) throws NSecurityException;
 
     /**
      * get the credentials for the given id. The {@code credentialsId}
@@ -71,10 +69,9 @@ public interface NAuthenticationAgent extends NComponent/* as authentication age
      *
      * @param credentialsId credentials-id
      * @param envProvider   environment provider, nullable
-     * @param session       session
      * @return credentials
      */
-    char[] getCredentials(char[] credentialsId, Map<String, String> envProvider, NSession session);
+    char[] getCredentials(char[] credentialsId, Map<String, String> envProvider);
 
     /**
      * remove existing credentials with the given id The {@code credentialsId}
@@ -83,10 +80,9 @@ public interface NAuthenticationAgent extends NComponent/* as authentication age
      *
      * @param credentialsId credentials-id
      * @param envProvider   environment provider, nullable
-     * @param session       session
      * @return credentials
      */
-    boolean removeCredentials(char[] credentialsId, Map<String, String> envProvider, NSession session);
+    boolean removeCredentials(char[] credentialsId, Map<String, String> envProvider);
 
     /**
      * store credentials in the agent's and return the credential id to store
@@ -96,12 +92,11 @@ public interface NAuthenticationAgent extends NComponent/* as authentication age
      * AuthenticationAgent'd id and ':' character
      *
      * @param credentials   credential
-     * @param allowRetrieve when true {@link #getCredentials(char[], Map, NSession)}  }
+     * @param allowRetrieve when true {@link #getCredentials(char[], Map)}  }
      *                      can be invoked over {@code credentialId}
      * @param credentialId  preferred credentialId, if null, a new one is created
      * @param envProvider   environment provider, nullable
-     * @param session       session
      * @return credentials-id
      */
-    char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId, Map<String, String> envProvider, NSession session);
+    char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId, Map<String, String> envProvider);
 }

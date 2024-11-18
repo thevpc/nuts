@@ -8,7 +8,6 @@ package net.thevpc.nuts.runtime.standalone.repository.impl;
 import net.thevpc.nuts.NId;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.NRepository;
-import net.thevpc.nuts.NSession;
 
 /**
  *
@@ -20,7 +19,7 @@ public interface NRepositoryExt0 {
         return (NRepositoryExt0) repo;
     }
 
-    NPath getIdBasedir(NId id, NSession session);
+    NPath getIdBasedir(NId id);
 
-    String getIdFilename(NId id, NSession session);
+    String getIdFilename(NId id);
 }

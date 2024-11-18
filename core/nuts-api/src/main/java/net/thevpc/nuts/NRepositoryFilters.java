@@ -32,8 +32,8 @@ import net.thevpc.nuts.ext.NExtensions;
  * @app.category Base
  */
 public interface NRepositoryFilters extends NTypedFilters<NRepositoryFilter> {
-    static NRepositoryFilters of(NSession session) {
-       return NExtensions.of(session).createComponent(NRepositoryFilters.class).get();
+    static NRepositoryFilters of() {
+       return NExtensions.of().createComponent(NRepositoryFilters.class).get();
     }
 
     NRepositoryFilter bySelector(String... names);

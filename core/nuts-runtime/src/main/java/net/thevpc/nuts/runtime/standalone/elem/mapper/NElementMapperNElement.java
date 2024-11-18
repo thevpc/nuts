@@ -18,13 +18,13 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
         NSession session = context.getSession();
         switch (src.type()) {
             case ARRAY: {
-                return src.asArray().get(session).items().stream().map(x -> context.destruct(x, null)).collect(Collectors.toList());
+                return src.asArray().get().items().stream().map(x -> context.destruct(x, null)).collect(Collectors.toList());
             }
             case OBJECT: {
                 Set<Object> visited = new HashSet<>();
                 boolean map = true;
                 List<Map.Entry<Object, Object>> all = new ArrayList<>();
-                for (NElementEntry nElementEntry : src.asObject().get(session).entries()) {
+                for (NElementEntry nElementEntry : src.asObject().get().entries()) {
                     Object k = context.destruct(nElementEntry.getKey(), null);
                     Object v = context.destruct(nElementEntry.getValue(), null);
                     if (map && visited.contains(k)) {
@@ -60,7 +60,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
         }
         switch (src.type()){
             case ARRAY:{
-                NArrayElement arr = src.asArray().get(session);
+                NArrayElement arr = src.asArray().get();
                 List<NElement> children=new ArrayList<>(arr.size());
                 boolean someChange=false;
                 for (NElement c : arr) {
@@ -76,7 +76,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                 return src;
             }
             case OBJECT:{
-                NObjectElement obj = src.asObject().get(session);
+                NObjectElement obj = src.asObject().get();
                 List<NElementEntry> children=new ArrayList<>(obj.size());
                 boolean someChange=false;
                 for (NElementEntry e : obj) {
@@ -104,7 +104,7 @@ public class NElementMapperNElement implements NElementMapper<NElement> {
                 return src;
             }
             case CUSTOM:{
-                Object v1 = src.asCustom().get(session).getValue();
+                Object v1 = src.asCustom().get().getValue();
                 if(context.getIndestructibleObjects()!=null && context.getIndestructibleObjects().test(v1.getClass())){
                     return src;
                 }

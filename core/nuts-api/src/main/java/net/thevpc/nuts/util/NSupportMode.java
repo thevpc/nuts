@@ -25,7 +25,6 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.NMissingSessionException;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NUnsupportedEnumException;
 
 public enum NSupportMode implements NEnum {
@@ -69,10 +68,7 @@ public enum NSupportMode implements NEnum {
         return id;
     }
 
-    public boolean acceptCondition(NSupportMode request, NSession session) {
-        if (session == null) {
-            throw new NMissingSessionException();
-        }
+    public boolean acceptCondition(NSupportMode request) {
         if (request == null) {
             request = NSupportMode.NEVER;
         }
@@ -95,7 +91,7 @@ public enum NSupportMode implements NEnum {
                         return false;
                     }
                     default: {
-                        throw new NUnsupportedEnumException(session, request);
+                        throw new NUnsupportedEnumException(request);
                     }
                 }
             }
@@ -109,12 +105,12 @@ public enum NSupportMode implements NEnum {
                         return true;
                     }
                     default: {
-                        throw new NUnsupportedEnumException(session, request);
+                        throw new NUnsupportedEnumException(request);
                     }
                 }
             }
             default: {
-                throw new NUnsupportedEnumException(session, this);
+                throw new NUnsupportedEnumException(this);
             }
         }
     }

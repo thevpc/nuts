@@ -29,7 +29,6 @@ import net.thevpc.nuts.boot.NClassLoaderNode;
 import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -48,12 +47,9 @@ import java.util.List;
 public class DefaultNBootManager implements NBootManager {
 
     private DefaultNBootModel model;
-    private NSession session;
 
-    public DefaultNBootManager(NSession session) {
-        this.session = session;
-        NWorkspace w = this.session.getWorkspace();
-        NWorkspaceExt e = (NWorkspaceExt) w;
+    public DefaultNBootManager(NWorkspace ws) {
+        NWorkspaceExt e = (NWorkspaceExt) ws;
         this.model = e.getModel().bootModel;
     }
 
@@ -67,67 +63,48 @@ public class DefaultNBootManager implements NBootManager {
     }
 
     @Override
-    public NSession getSession() {
-        return session;
-    }
-
-    @Override
-    public NBootManager setSession(NSession session) {
-        this.session = NWorkspaceUtils.bindSession(model.getWorkspace(), session);
-        return this;
-    }
-
-    @Override
     public boolean isFirstBoot() {
         return model.isFirstBoot();
     }
 
     @Override
     public NOptional<NLiteral> getCustomBootOption(String... names) {
-        checkSession();
         return model.getCustomBootOption(names);
     }
 
 
     @Override
     public NBootOptions getBootOptions() {
-        checkSession();
         return _configModel().getBootModel().getBootEffectiveOptions();
     }
 
     @Override
     public ClassLoader getBootClassLoader() {
-        checkSession();
         return _configModel().getBootClassLoader();
     }
 
     @Override
     public List<URL> getBootClassWorldURLs() {
-        checkSession();
         return Collections.unmodifiableList(_configModel().getBootClassWorldURLs());
     }
 
     @Override
     public String getBootRepositories() {
-        checkSession();
         return _configModel().getBootRepositories();
     }
 
     @Override
     public Instant getCreationStartTime() {
-        checkSession();
         return _configModel().getCreationStartTime();
     }
 
     @Override
     public Instant getCreationFinishTime() {
-        checkSession();
         return _configModel().getCreationFinishTime();
     }
 
     @Override
     public Duration getCreationDuration() {
-        checkSession();
         return _configModel().getCreateDuration();
     }
 
@@ -145,13 +122,9 @@ public class DefaultNBootManager implements NBootManager {
     }
 
     private DefaultNWorkspaceConfigModel _configModel() {
-        DefaultNConfigs config = (DefaultNConfigs) NConfigs.of(session);
+        DefaultNConfigs config = (DefaultNConfigs) NConfigs.of();
         DefaultNWorkspaceConfigModel configModel = config.getModel();
         return configModel;
-    }
-
-    private void checkSession() {
-        NSessionUtils.checkSession(model.getWorkspace(), session);
     }
 
 }

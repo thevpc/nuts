@@ -12,7 +12,7 @@ import net.thevpc.nuts.text.NText;
 public class StringReaderExtUtils {
 
     public static NText[] readSpaces(NSession session, StringReaderExt ar) {
-        NTexts factory = NTexts.of(session);
+        NTexts factory = NTexts.of();
         StringBuilder sb = new StringBuilder();
         while (ar.hasNext() && ar.peekChar() <= 32) {
             sb.append(ar.readChar());
@@ -23,7 +23,7 @@ public class StringReaderExtUtils {
     }
 
     public static NText[] readSlashSlashComments(NSession session, StringReaderExt ar) {
-        NTexts factory = NTexts.of(session);
+        NTexts factory = NTexts.of();
         StringBuilder sb = new StringBuilder();
         if (!ar.peekChars("//")) {
             return null;
@@ -52,7 +52,7 @@ public class StringReaderExtUtils {
     }
 
     public static NText[] readSlashStarComments(NSession session, StringReaderExt ar) {
-        NTexts factory = NTexts.of(session);
+        NTexts factory = NTexts.of();
         StringBuilder sb = new StringBuilder();
         if (!ar.peekChars("/*")) {
             return null;
@@ -81,7 +81,7 @@ public class StringReaderExtUtils {
     }
 
     public static NText[] readJSDoubleQuotesString(NSession session, StringReaderExt ar) {
-        NTexts factory = NTexts.of(session);
+        NTexts factory = NTexts.of();
         List<NText> all = new ArrayList<>();
         boolean inLoop = true;
         StringBuilder sb = new StringBuilder();
@@ -131,7 +131,7 @@ public class StringReaderExtUtils {
     }
 
     public static NText[] readJSSimpleQuotes(NSession session, StringReaderExt ar) {
-        NTexts factory = NTexts.of(session);
+        NTexts factory = NTexts.of();
         List<NText> all = new ArrayList<>();
         boolean inLoop = true;
         StringBuilder sb = new StringBuilder();
@@ -181,7 +181,7 @@ public class StringReaderExtUtils {
     }
 
     public static NText[] readJSIdentifier(NSession session, StringReaderExt ar) {
-        NTexts factory = NTexts.of(session);
+        NTexts factory = NTexts.of();
         List<NText> all = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
         if (!ar.hasNext() || !Character.isJavaIdentifierStart(ar.peekChar())) {
@@ -201,7 +201,7 @@ public class StringReaderExtUtils {
 
 
     public static NText[] readNumber(NSession session, StringReaderExt ar) {
-        NTexts factory = NTexts.of(session);
+        NTexts factory = NTexts.of();
         boolean nbrVisited = false;
         boolean minusVisited = false;
         boolean EminusVisited = false;

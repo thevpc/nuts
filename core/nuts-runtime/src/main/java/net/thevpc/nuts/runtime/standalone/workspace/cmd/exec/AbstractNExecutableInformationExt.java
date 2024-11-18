@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NExecutableInformationExt;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
@@ -20,21 +21,24 @@ public abstract class AbstractNExecutableInformationExt implements NExecutableIn
     protected String name;
     protected String value;
     private final NExecCmd execCommand;
-    public AbstractNExecutableInformationExt(String name, NExecutableType type, NExecCmd execCommand) {
+    protected final NWorkspace workspace;
+    public AbstractNExecutableInformationExt(NWorkspace workspace,String name, NExecutableType type, NExecCmd execCommand) {
         this.type = type;
         this.name = name;
         this.execCommand = execCommand;
+        this.workspace = workspace;
     }
 
-    public AbstractNExecutableInformationExt(String name, String value, NExecutableType type, NExecCmd execCommand) {
+    public AbstractNExecutableInformationExt(NWorkspace workspace,String name, String value, NExecutableType type, NExecCmd execCommand) {
         this.type = type;
         this.name = name;
         this.value = value;
         this.execCommand = execCommand;
+        this.workspace = workspace;
     }
 
-    public NSession getSession() {
-        return getExecCommand().getSession();
+    protected NLog LOG(){
+        return NLog.of(getClass());
     }
 
     public NExecCmd getExecCommand() {
@@ -63,7 +67,7 @@ public abstract class AbstractNExecutableInformationExt implements NExecutableIn
 
     @Override
     public NText getHelpText() {
-        return NTexts.of(getSession()).ofStyled(
+        return NTexts.of().ofStyled(
                 "No help available. Try '" + getName() + " --help'",
                 NTextStyle.error()
         );

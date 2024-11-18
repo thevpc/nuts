@@ -42,23 +42,21 @@ public class NAlreadyInstalledException extends NInstallationException {
     /**
      * Custom Constructor
      *
-     * @param session workspace
-     * @param id      nuts id
+     * @param id nuts id
      */
-    public NAlreadyInstalledException(NSession session, NId id) {
-        this(session, id, null, null);
+    public NAlreadyInstalledException(NId id) {
+        this(id, null, null);
     }
 
     /**
      * Custom Constructor
      *
-     * @param session session
-     * @param id      nuts id
-     * @param msg     message
-     * @param cause   exception
+     * @param id    nuts id
+     * @param msg   message
+     * @param cause exception
      */
-    public NAlreadyInstalledException(NSession session, NId id, NMsg msg, Exception cause) {
-        super(session, id, msg == null ? NMsg.ofC("already installed %s", (id == null ? "<null>" : id)) : msg, cause);
+    public NAlreadyInstalledException(NId id, NMsg msg, Exception cause) {
+        super(id, msg == null ? NMsg.ofC("already installed %s", (id == null ? "<null>" : id)) : msg, cause);
     }
 
 }

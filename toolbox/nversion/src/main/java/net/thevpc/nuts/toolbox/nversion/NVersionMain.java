@@ -40,24 +40,24 @@ public class NVersionMain implements NApplication {
         try {
             Path p = Paths.get(filePath);
             if (!Files.exists(p)) {
-                throw new NExecutionException(session, NMsg.ofC("nversion: file does not exist: %s" , p), NExecutionException.ERROR_2);
+                throw new NExecutionException(NMsg.ofC("nversion: file does not exist: %s" , p), NExecutionException.ERROR_2);
             }
             if (Files.isDirectory(p)) {
-                throw new NExecutionException(session, NMsg.ofC("nversion: unsupported directory: %s", p), NExecutionException.ERROR_2);
+                throw new NExecutionException(NMsg.ofC("nversion: unsupported directory: %s", p), NExecutionException.ERROR_2);
             }
             if (Files.isRegularFile(p)) {
-                throw new NExecutionException(session, NMsg.ofC("nversion: unsupported file: %s", filePath), NExecutionException.ERROR_2);
+                throw new NExecutionException(NMsg.ofC("nversion: unsupported file: %s", filePath), NExecutionException.ERROR_2);
             }
         } catch (NExecutionException ex) {
             throw ex;
         } catch (Exception ex) {
             //
         }
-        throw new NExecutionException(session, NMsg.ofC("nversion: unsupported path: %s", filePath), NExecutionException.ERROR_2);
+        throw new NExecutionException(NMsg.ofC("nversion: unsupported path: %s", filePath), NExecutionException.ERROR_2);
     }
 
     @Override
-    public void run(NSession session) {
+    public void run() {
         Set<String> unsupportedFileTypes = new HashSet<>();
         Set<String> jarFiles = new HashSet<>();
         Set<String> exeFiles = new HashSet<>();
@@ -71,35 +71,36 @@ public class NVersionMain implements NApplication {
         boolean sort = false;
         boolean table = false;
         boolean error = false;
+        NSession session = NSession.of().get();
         NCmdLine cmdLine = session.getAppCmdLine();
         NArg a;
         int processed = 0;
         while (cmdLine.hasNext()) {
             if ((a = cmdLine.nextFlag("--maven").orNull())!=null) {
-                maven = a.getBooleanValue().get(session);
+                maven = a.getBooleanValue().get();
             } else if ((a = cmdLine.nextFlag("--win-pe").orNull())!=null) {
-                winPE = a.getBooleanValue().get(session);
+                winPE = a.getBooleanValue().get();
             } else if ((a = cmdLine.nextFlag("--exe").orNull())!=null) {
-                winPE = a.getBooleanValue().get(session);
+                winPE = a.getBooleanValue().get();
             } else if ((a = cmdLine.nextFlag("--dll").orNull())!=null) {
-                winPE = a.getBooleanValue().get(session);
+                winPE = a.getBooleanValue().get();
             } else if ((a = cmdLine.nextFlag("--long").orNull())!=null) {
-                longFormat = a.getBooleanValue().get(session);
+                longFormat = a.getBooleanValue().get();
             } else if ((a = cmdLine.nextFlag("--name").orNull())!=null) {
-                nameFormat = a.getBooleanValue().get(session);
+                nameFormat = a.getBooleanValue().get();
             } else if ((a = cmdLine.nextFlag("--sort").orNull())!=null) {
-                sort = a.getBooleanValue().get(session);
+                sort = a.getBooleanValue().get();
             } else if ((a = cmdLine.nextFlag("--id").orNull())!=null) {
-                idFormat = a.getBooleanValue().get(session);
+                idFormat = a.getBooleanValue().get();
             } else if ((a = cmdLine.nextFlag("--all").orNull())!=null) {
-                all = a.getBooleanValue().get(session);
+                all = a.getBooleanValue().get();
             } else if ((a = cmdLine.nextFlag("--table").orNull())!=null) {
-                table = a.getBooleanValue().get(session);
+                table = a.getBooleanValue().get();
             } else if ((a = cmdLine.nextFlag("--error").orNull())!=null) {
-                error = a.getBooleanValue().get(session);
-            } else if (cmdLine.peek().get(session).isNonOption()) {
-                a = cmdLine.next().get(session);
-                jarFiles.add(a.asString().get(session));
+                error = a.getBooleanValue().get();
+            } else if (cmdLine.peek().get().isNonOption()) {
+                a = cmdLine.next().get();
+                jarFiles.add(a.asString().get());
             } else {
                 session.configureLast(cmdLine);
             }
@@ -110,29 +111,29 @@ public class NVersionMain implements NApplication {
                 Set<VersionDescriptor> value = null;
                 try {
                     processed++;
-                    value = detectVersions(NPath.of(arg, session).toAbsolute().toString(), session);
+                    value = detectVersions(NPath.of(arg).toAbsolute().toString(), session);
                 } catch (IOException e) {
-                    throw new NExecutionException(session, NMsg.ofC("nversion: unable to detect version for %s",arg), e, NExecutionException.ERROR_2);
+                    throw new NExecutionException(NMsg.ofC("nversion: unable to detect version for %s",arg), e, NExecutionException.ERROR_2);
                 }
                 if (!value.isEmpty()) {
                     results.put(arg, value);
                 }
             }
             if (processed == 0) {
-                throw new NExecutionException(session, NMsg.ofPlain("nversion: missing file"), NExecutionException.ERROR_2);
+                throw new NExecutionException(NMsg.ofPlain("nversion: missing file"), NExecutionException.ERROR_2);
             }
             if (table && all) {
-                throw new NExecutionException(session, NMsg.ofPlain("nversion: options conflict --table --all"), NExecutionException.ERROR_1);
+                throw new NExecutionException(NMsg.ofPlain("nversion: options conflict --table --all"), NExecutionException.ERROR_1);
             }
             if (table && longFormat) {
-                throw new NExecutionException(session, NMsg.ofPlain("nversion: options conflict --table --long"), NExecutionException.ERROR_1);
+                throw new NExecutionException(NMsg.ofPlain("nversion: options conflict --table --long"), NExecutionException.ERROR_1);
             }
 
             NPrintStream out = session.out();
             NPrintStream err = session.out();
-            NTexts text = NTexts.of(session);
+            NTexts text = NTexts.of();
             if (table) {
-                NPropertiesFormat tt = NPropertiesFormat.of(session).setSorted(sort);
+                NPropertiesFormat tt = NPropertiesFormat.of().setSorted(sort);
                 Properties pp = new Properties();
                 for (Map.Entry<String, Set<VersionDescriptor>> entry : results.entrySet()) {
                     VersionDescriptor o = entry.getValue().toArray(new VersionDescriptor[0])[0];
@@ -148,7 +149,7 @@ public class NVersionMain implements NApplication {
                 }
                 if (error) {
                     for (String t : unsupportedFileTypes) {
-                        File f = new File(NPath.of(t,session).toAbsolute().toString());
+                        File f = new File(NPath.of(t).toAbsolute().toString());
                         if (f.isFile()) {
                             pp.setProperty(t, text.ofBuilder().append("<<ERROR>>", NTextStyle.error()).append(" unsupported file type").toString());
                         } else if (f.isDirectory()) {
@@ -179,7 +180,7 @@ public class NVersionMain implements NApplication {
                             out.println(NMsg.ofC("%s", text.ofText(descriptor.getId())));
                         } else if (longFormat) {
                             out.println(NMsg.ofC("%s", text.ofText(descriptor.getId())));
-                            NPropertiesFormat f = NPropertiesFormat.of(session)
+                            NPropertiesFormat f = NPropertiesFormat.of()
                                     .setSorted(true);
                             f.setValue(descriptor.getProperties()).print(out);
                         } else {
@@ -193,7 +194,7 @@ public class NVersionMain implements NApplication {
                 if (error) {
                     if (!unsupportedFileTypes.isEmpty()) {
                         for (String t : unsupportedFileTypes) {
-                            File f = NPath.of(t,session).toAbsolute().toFile().get();
+                            File f = NPath.of(t).toAbsolute().toFile().get();
                             if (f.isFile()) {
                                 err.println(NMsg.ofC("%s : unsupported file type%n", t));
                             } else if (f.isDirectory()) {
@@ -206,7 +207,7 @@ public class NVersionMain implements NApplication {
                 }
             }
             if (!unsupportedFileTypes.isEmpty()) {
-                throw new NExecutionException(session, NMsg.ofC("nversion: unsupported file types %s", unsupportedFileTypes), NExecutionException.ERROR_3);
+                throw new NExecutionException(NMsg.ofC("nversion: unsupported file types %s", unsupportedFileTypes), NExecutionException.ERROR_3);
             }
         }
     }

@@ -1,6 +1,5 @@
 package net.thevpc.nuts.lib.common.iter;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NIterator;
 
@@ -21,8 +20,8 @@ public abstract class NIteratorDelegate<T> extends NIteratorBase<T> {
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return baseIterator().describe(session);
+    public NElement describe() {
+        return baseIterator().describe();
     }
 
     @Override

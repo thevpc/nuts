@@ -6,26 +6,22 @@ import net.thevpc.nuts.log.NLogOp;
 
 public class DefaultNTerminalModel {
 
-    private NWorkspace ws;
-    private NLog LOG;
+    private NWorkspace workspace;
 
-    public DefaultNTerminalModel(NWorkspace ws) {
-        this.ws = ws;
+    public DefaultNTerminalModel(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
-    protected NLogOp _LOGOP(NSession session) {
-        return _LOG(session).with().session(session);
+    protected NLogOp _LOGOP() {
+        return _LOG().with();
     }
 
-    protected NLog _LOG(NSession session) {
-        if (LOG == null) {
-            LOG = NLog.of(DefaultNTerminalModel.class,session);
-        }
-        return LOG;
+    protected NLog _LOG() {
+        return NLog.of(DefaultNTerminalModel.class);
     }
 
     public NWorkspace getWorkspace() {
-        return ws;
+        return workspace;
     }
 
 

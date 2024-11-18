@@ -50,13 +50,14 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
     }
 
     @Override
-    public NIterator<NId> searchVersions(NId id, NSession session) {
+    public NIterator<NId> searchVersions(NId id) {
+        NSession session=getRepository().getWorkspace().currentSession();
         return IteratorBuilder.ofSupplier(
                 () -> {
                     if (isInaccessible()) {
                         return IteratorBuilder.emptyIterator();
                     }
-                    String uu = getIndexURL(session).resolve( NConstants.Folders.ID).resolve( "allVersions")
+                    String uu = getIndexURL().resolve( NConstants.Folders.ID).resolve( "allVersions")
                             + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s"
                                     + "&os=%s&osdist=%s&arch=%s&face=%s&"/*alternative=%s*/,
                             getRepository().getUuid(),
@@ -67,63 +68,66 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
 //                , NutsUtilStrings.trim(id.getAlternative())
                     );
                     try {
-                        Map[] array = NElements.of(session).json().parse(new InputStreamReader(NPath.of(uu,session).getInputStream()), Map[].class);
+                        Map[] array = NElements.of().json().parse(new InputStreamReader(NPath.of(uu).getInputStream()), Map[].class);
                         return Arrays.stream(array)
-                                .map(s -> NId.of(s.get("stringId").toString()).get(session))
+                                .map(s -> NId.of(s.get("stringId").toString()).get())
                                 .collect(Collectors.toList()).iterator();
                     } catch (UncheckedIOException | NIOException e) {
                         setInaccessible();
                         return IteratorBuilder.emptyIterator();
                     }
                 },
-                e-> NElements.of(e)
+                ()-> NElements.of()
                         .ofObject()
                         .set("type","SearchIndexVersions")
-                        .set("source", getIndexURL(session).resolve( NConstants.Folders.ID).resolve( "allVersions").toString())
-                        .build(),
-                session).build();
+                        .set("source", getIndexURL().resolve( NConstants.Folders.ID).resolve( "allVersions").toString())
+                        .build()
+        ).build();
     }
 
     @Override
-    public NIterator<NId> search(NIdFilter filter, NSession session) {
-        NElements elems = NElements.of(session);
+    public NIterator<NId> search(NIdFilter filter) {
+        NSession session=getWorkspace().currentSession();
+        NElements elems = NElements.of();
         return IteratorBuilder.ofSupplier(
                 () -> {
                     if (isInaccessible()) {
-                        throw new NIndexerNotAccessibleException(session, NMsg.ofC("index search failed for %s",getRepository().getName()));
+                        throw new NIndexerNotAccessibleException(NMsg.ofC("index search failed for %s",getRepository().getName()));
 //                        return IteratorUtils.emptyIterator();
                     }
-                    String uu = getIndexURL(session).resolve(NConstants.Folders.ID) + "?repositoryUuid=" + getRepository().getUuid();
+                    String uu = getIndexURL().resolve(NConstants.Folders.ID) + "?repositoryUuid=" + getRepository().getUuid();
                     try {
-                        Map[] array = elems.json().parse(new InputStreamReader(NPath.of(uu,session).getInputStream()), Map[].class);
+                        Map[] array = elems.json().parse(new InputStreamReader(NPath.of(uu).getInputStream()), Map[].class);
                         return Arrays.stream(array)
-                                .map(s -> NId.of(s.get("stringId").toString()).get(session))
+                                .map(s -> NId.of(s.get("stringId").toString()).get())
                                 .filter(filter != null ? new NIdFilterToNIdPredicate(filter, session) : NPredicates.always())
                                 .iterator();
                     } catch (UncheckedIOException | NIOException e) {
                         setInaccessible();
-                        throw new NIndexerNotAccessibleException(session, NMsg.ofC("index search failed for %s",getRepository().getName()));
+                        throw new NIndexerNotAccessibleException(NMsg.ofC("index search failed for %s",getRepository().getName()));
 //                        return IteratorUtils.emptyIterator();
                     }
                 },
-                e-> NElements.of(e)
+                ()-> NElements.of()
                         .ofObject().set("type","SearchIndexPackages")
-                        .set("source", getIndexURL(session).resolve(NConstants.Folders.ID).toString())
-                        .set("filter", NEDesc.describeResolveOrToString(filter,session))
-                        .build(),
-                session).build();
+                        .set("source", getIndexURL().resolve(NConstants.Folders.ID).toString())
+                        .set("filter", NEDesc.describeResolveOrToString(filter))
+                        .build()
+        ).build();
     }
 
-    private NPath getIndexURL(NSession session) {
-        return NPath.of("http://localhost:7070/indexer/",session);
+    private NPath getIndexURL() {
+        NSession session=getRepository().getWorkspace().currentSession();
+        return NPath.of("http://localhost:7070/indexer/");
     }
 
     @Override
-    public NIndexStore invalidate(NId id, NSession session) {
+    public NIndexStore invalidate(NId id) {
         if (isInaccessible()) {
             return this;
         }
-        String uu = getIndexURL(session).resolve( NConstants.Folders.ID).resolve("delete")
+        NSession session=getRepository().getWorkspace().currentSession();
+        String uu = getIndexURL().resolve( NConstants.Folders.ID).resolve("delete")
                 + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s&version=%s"
                         + "&os=%s&osdist=%s&arch=%s&face=%s"/*&alternative=%s*/, getRepository().getUuid(),
                 NStringUtils.trim(id.getArtifactId()), NStringUtils.trim(id.getRepository()), NStringUtils.trim(id.getGroupId()), NStringUtils.trim(id.getVersion().toString()),
@@ -134,7 +138,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
 //                ,NutsUtilStrings.trim(id.getAlternative())
         );
         try {
-            NPath.of(uu,session).getInputStream();
+            NPath.of(uu).getInputStream();
         } catch (UncheckedIOException | NIOException e) {
             setInaccessible();
             //
@@ -143,11 +147,12 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
     }
 
     @Override
-    public NIndexStore revalidate(NId id, NSession session) {
+    public NIndexStore revalidate(NId id) {
         if (isInaccessible()) {
             return this;
         }
-        String uu = getIndexURL(session).resolve(NConstants.Folders.ID).resolve("addData")
+        NSession session=getRepository().getWorkspace().currentSession();
+        String uu = getIndexURL().resolve(NConstants.Folders.ID).resolve("addData")
                 + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s&version=%s"
                         + "&os=%s&osdist=%s&arch=%s&face=%s"/*&alternative=%s*/, getRepository().getUuid(),
                 NStringUtils.trim(id.getArtifactId()), NStringUtils.trim(id.getRepository()), NStringUtils.trim(id.getGroupId()), NStringUtils.trim(id.getVersion().toString()),
@@ -158,7 +163,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
 //                ,NutsUtilStrings.trim(id.getAlternative())
         );
         try {
-            NPath.of(uu,session).getInputStream();
+            NPath.of(uu).getInputStream();
         } catch (UncheckedIOException | NIOException e) {
             setInaccessible();
             //
@@ -167,38 +172,41 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
     }
 
     @Override
-    public NIndexStore subscribe(NSession session) {
+    public NIndexStore subscribe() {
+        NSession session=getRepository().getWorkspace().currentSession();
         String uu = "http://localhost:7070/indexer/subscription/subscribe?workspaceLocation="
-                + CoreIOUtils.urlEncodeString(NLocations.of(session).getWorkspaceLocation().toString(),session)
-                + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid(),session);
+                + CoreIOUtils.urlEncodeString(NLocations.of().getWorkspaceLocation().toString())
+                + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid());
         try {
-            NPath.of(uu,session).getInputStream();
+            NPath.of(uu).getInputStream();
         } catch (UncheckedIOException | NIOException e) {
-            throw new NUnsupportedOperationException(session, NMsg.ofC("unable to subscribe for repository%s", getRepository().getName()), e);
+            throw new NUnsupportedOperationException(NMsg.ofC("unable to subscribe for repository%s", getRepository().getName()), e);
         }
         return this;
     }
 
     @Override
-    public NIndexStore unsubscribe(NSession session) {
+    public NIndexStore unsubscribe() {
+        NSession session=getRepository().getWorkspace().currentSession();
         String uu = "http://localhost:7070/indexer/subscription/unsubscribe?workspaceLocation="
-                + CoreIOUtils.urlEncodeString(NLocations.of(session).getWorkspaceLocation().toString(),session)
-                + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid(),session);
+                + CoreIOUtils.urlEncodeString(NLocations.of().getWorkspaceLocation().toString())
+                + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid());
         try {
-            NPath.of(uu,session).getInputStream();
+            NPath.of(uu).getInputStream();
         } catch (UncheckedIOException | NIOException e) {
-            throw new NUnsupportedOperationException(session, NMsg.ofC("unable to unsubscribe for repository %s", getRepository().getName()), e);
+            throw new NUnsupportedOperationException(NMsg.ofC("unable to unsubscribe for repository %s", getRepository().getName()), e);
         }
         return this;
     }
 
     @Override
-    public boolean isSubscribed(NSession session) {
+    public boolean isSubscribed() {
+        NSession session = getRepository().getWorkspace().currentSession();
         String uu = "http://localhost:7070/indexer/subscription/isSubscribed?workspaceLocation="
-                + CoreIOUtils.urlEncodeString(NLocations.of(session).getWorkspaceLocation().toString(),session)
-                + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid(),session);
+                + CoreIOUtils.urlEncodeString(NLocations.of().getWorkspaceLocation().toString())
+                + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid());
         try {
-            return new Scanner(NPath.of(uu,session).getInputStream()).nextBoolean();
+            return new Scanner(NPath.of(uu).getInputStream()).nextBoolean();
         } catch (UncheckedIOException | NIOException e) {
             return false;
         }

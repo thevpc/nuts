@@ -25,6 +25,9 @@
 package net.thevpc.nuts.spi.base;
 
 import net.thevpc.nuts.NInstallStatusFilter;
+import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.reserved.util.InstallStatusFilterWithDescription;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.NSession;
@@ -36,8 +39,8 @@ import net.thevpc.nuts.util.NSimplifiable;
  */
 public abstract class AbstractInstallStatusFilter extends AbstractNFilter implements NInstallStatusFilter, NSimplifiable<NInstallStatusFilter> {
 
-    public AbstractInstallStatusFilter(NSession session, NFilterOp op) {
-        super(session, op);
+    public AbstractInstallStatusFilter(NWorkspace workspace, NFilterOp op) {
+        super(workspace, op);
     }
 
     @Override
@@ -53,5 +56,13 @@ public abstract class AbstractInstallStatusFilter extends AbstractNFilter implem
     @Override
     public NInstallStatusFilter neg() {
         return super.neg().to(NInstallStatusFilter.class);
+    }
+
+    @Override
+    public NFilter withDesc(NEDesc description) {
+        if(description==null){
+            return this;
+        }
+        return new InstallStatusFilterWithDescription(workspace, this,description);
     }
 }

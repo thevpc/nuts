@@ -78,10 +78,10 @@ public class IOUtils {
         fileWriter.flush();
         fileWriter.close();
         if (isOverride) {
-            console.println("[OVERRIDE] %s%n", NTexts.of(project.getSession()).ofStyled(file.getPath(), NTextStyle.path()));
+            console.println("[OVERRIDE] %s%n", NTexts.of().ofStyled(file.getPath(), NTextStyle.path()));
         } else {
             project.setNewlyCreated(file.getPath());
-            console.println("[GENERATE] %s%n" + NTexts.of(project.getSession()).ofStyled(file.getPath(), NTextStyle.path()));
+            console.println("[GENERATE] %s%n" + NTexts.of().ofStyled(file.getPath(), NTextStyle.path()));
         }
     }
 

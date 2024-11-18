@@ -39,22 +39,20 @@ public class NUnsupportedEnumException extends NException {
     /**
      * create new instance of NutsUnexpectedEnumException
      *
-     * @param session   workspace
      * @param enumValue enumeration instance (cannot be null)
      */
-    public NUnsupportedEnumException(NSession session, Enum enumValue) {
-        this(session, null, enumValue);
+    public NUnsupportedEnumException(Enum enumValue) {
+        this(null, enumValue);
     }
 
     /**
      * create new instance of NutsUnexpectedEnumException
      *
-     * @param session   workspace
-     * @param enumValue enumeration instance (cannot be null)
      * @param message   message
+     * @param enumValue enumeration instance (cannot be null)
      */
-    public NUnsupportedEnumException(NSession session, NMsg message, Enum enumValue) {
-        super(session,
+    public NUnsupportedEnumException(NMsg message, Enum enumValue) {
+        super(
                 message != null ? message : NMsg.ofC(
                         "unexpected/unsupported enum %s of type %s", enumValue, enumValue.getClass().getName())
         );
@@ -64,13 +62,12 @@ public class NUnsupportedEnumException extends NException {
     /**
      * create new instance of NutsUnexpectedEnumException
      *
-     * @param session     workspace
-     * @param enumValue   enumeration instance (cannot be null)
-     * @param stringValue invalid value
      * @param message     message
+     * @param stringValue invalid value
+     * @param enumValue   enumeration instance (cannot be null)
      */
-    public NUnsupportedEnumException(NSession session, NMsg message, String stringValue, Enum enumValue) {
-        super(session,
+    public NUnsupportedEnumException(NMsg message, String stringValue, Enum enumValue) {
+        super(
                 message == null ? (
                         NMsg.ofC("unexpected/unsupported value %s of type %s", stringValue, enumValue.getClass().getName()))
                         : message

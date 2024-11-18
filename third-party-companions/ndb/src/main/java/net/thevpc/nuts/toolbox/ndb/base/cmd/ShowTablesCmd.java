@@ -20,19 +20,19 @@ public class ShowTablesCmd<C extends NdbConfig> extends NdbCmd<C> {
     }
 
     @Override
-    public void run(NSession session, NCmdLine cmdLine) {
+    public void run(NCmdLine cmdLine) {
         NRef<AtName> name = NRef.ofNull(AtName.class);
         C otherOptions = createConfigInstance();
         ExtendedQuery eq = new ExtendedQuery(getName());
         while (cmdLine.hasNext()) {
             if (cmdLine.isNextOption()) {
-                switch (cmdLine.peek().get(session).key()) {
+                switch (cmdLine.peek().get().key()) {
                     case "--config": {
-                        readConfigNameOption(cmdLine, session, name);
+                        readConfigNameOption(cmdLine, name);
                         break;
                     }
                     case "--long": {
-                        cmdLine.withNextFlag((v, a, s)-> eq.setLongMode(v));
+                        cmdLine.withNextFlag((v, a)-> eq.setLongMode(v));
                         break;
                     }
                     default: {
@@ -48,11 +48,11 @@ public class ShowTablesCmd<C extends NdbConfig> extends NdbCmd<C> {
         }
         C options = loadFromName(name, otherOptions);
         support.revalidateOptions(options);
-        runShowTables(eq, options, session);
+        runShowTables(eq, options);
     }
 
-    protected void runShowTables(ExtendedQuery eq, C options, NSession session) {
-        throw new NIllegalArgumentException(session, NMsg.ofPlain("invalid"));
+    protected void runShowTables(ExtendedQuery eq, C options) {
+        throw new NIllegalArgumentException(NMsg.ofPlain("invalid"));
     }
 
 

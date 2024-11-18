@@ -20,7 +20,7 @@ public class NElementMapperNPlatformLocation implements NElementMapper<NPlatform
     @Override
     public NPlatformLocation createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
         NSession session = context.getSession();
-        NObjectElement obj = o.asObject().get(session);
+        NObjectElement obj = o.asObject().get();
         NElements _prm = context.elem();
         NId id = context.elementToObject(obj.get("id").orElse(_prm.ofString("")), NId.class);
         String product = context.elementToObject(obj.get("product").orElse(_prm.ofString("")), String.class);

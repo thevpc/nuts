@@ -10,13 +10,13 @@ public class NDependencyTypeFilter extends AbstractDependencyFilter {
 
     private String type = null;
 
-    public NDependencyTypeFilter(NSession session, String type) {
-        super(session, NFilterOp.CUSTOM);
+    public NDependencyTypeFilter(NWorkspace workspace, String type) {
+        super(workspace, NFilterOp.CUSTOM);
         this.type = type;
     }
 
     @Override
-    public boolean acceptDependency(NId from, NDependency dependency, NSession session) {
+    public boolean acceptDependency(NId from, NDependency dependency) {
         String curr = NDependencyUtils.normalizeDependencyType(dependency.getType());
         String toCheck = NDependencyUtils.normalizeDependencyType(type);
         return Objects.equals(curr, toCheck);

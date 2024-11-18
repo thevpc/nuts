@@ -26,7 +26,6 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.reserved.util.NRunnableFromJavaRunnable;
 import net.thevpc.nuts.reserved.util.NRunnableWithDescription;
@@ -53,5 +52,5 @@ public interface NRunnable extends NElementDescribable<NRunnable> {
         return new NRunnableWithDescription(this, description);
     }
 
-    void run(NSession session);
+    void run();
 }

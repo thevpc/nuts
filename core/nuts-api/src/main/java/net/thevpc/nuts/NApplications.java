@@ -70,27 +70,16 @@ public final class NApplications {
         return m;
     }
 
-    /**
-     * run the given application and call System.exit(?)
-     *
-     * @param application application
-     * @param args        arguments
-     */
-    @Deprecated
-    public static void runApplicationAndExit(NApplication application, String[] args) {
-        runApplicationAndExit(application, null, args);
-    }
 
     /**
      * run the given application and call System.exit(?)
      *
      * @param application application
-     * @param session     session
      * @param args        arguments
      */
-    public static void runApplicationAndExit(NApplication application, NSession session, String[] args) {
+    public static void runApplicationAndExit(NApplication application, String[] args) {
         try {
-            application.run(session, args);
+            application.run(args);
         } catch (Exception ex) {
             System.exit(NApplications.processThrowable(ex));
             return;
@@ -107,33 +96,30 @@ public final class NApplications {
      */
     @Deprecated
     public static <T extends NApplication> T createApplicationInstance(Class<T> appType) {
-        NSession session = null;
         String[] args = null;
-        return createApplicationInstance(appType, session, args);
+        return createApplicationInstance(appType, args);
     }
 
     /**
      * creates application instance by calling
      *
-     * @param appType application type
-     * @param session session
-     * @param args    args
      * @param <T>     application type
+     * @param appType application type
+     * @param args    args
      * @return new instance
      */
     @SuppressWarnings("unchecked")
-    public static <T extends NApplication> T createApplicationInstance(Class<T> appType, NSession session, String[] args) {
+    public static <T extends NApplication> T createApplicationInstance(Class<T> appType, String[] args) {
         try {
             for (Method declaredMethod : appType.getDeclaredMethods()) {
                 if (Modifier.isStatic(declaredMethod.getModifiers())) {
                     if (declaredMethod.getName().equals("createApplicationInstance")
-                            && declaredMethod.getParameterCount() == 2
-                            && declaredMethod.getParameterTypes()[0].equals(NSession.class)
-                            && declaredMethod.getParameterTypes()[1].equals(String[].class)
+                            && declaredMethod.getParameterCount() == 1
+                            && declaredMethod.getParameterTypes()[0].equals(String[].class)
                     ) {
                         if (appType.isAssignableFrom(declaredMethod.getReturnType())) {
                             declaredMethod.setAccessible(true);
-                            Object o = declaredMethod.invoke(null, session, args);
+                            Object o = declaredMethod.invoke(null, (Object)args);
                             if (o != null) {
                                 return appType.cast(o);
                             }
@@ -146,10 +132,9 @@ public final class NApplications {
             }
             Constructor<T> dconstructor = null;
             for (Constructor<?> constructor : appType.getConstructors()) {
-                if (constructor.getParameterCount() == 2
-                        && constructor.getParameterTypes()[0].equals(NSession.class)
-                        && constructor.getParameterTypes()[1].equals(String[].class)) {
-                    return (T) constructor.newInstance(session, args);
+                if (constructor.getParameterCount() == 1
+                        && constructor.getParameterTypes()[0].equals(String[].class)) {
+                    return (T) constructor.newInstance((Object)args);
                 } else if (constructor.getParameterCount() == 0) {
                     dconstructor = (Constructor<T>) constructor;
                 }
@@ -178,22 +163,37 @@ public final class NApplications {
      * run application with given life cycle.
      *
      * @param applicationInstance application
-     * @param session             session
      * @param nutsArgs            nuts arguments
      * @param args                application arguments
      */
-    public static void runApplication(NApplication applicationInstance, NSession session, String[] nutsArgs, String[] args) {
+    public static void runApplication(NApplication applicationInstance, String[] nutsArgs, String[] args) {
         NClock now = NClock.now();
-        if (session == null) {
-            session = Nuts.openInheritedWorkspace(nutsArgs, args);
+        NWorkspace ws = NWorkspace.of().orNull();
+        if (ws == null) {
+            ws = Nuts.openInheritedWorkspace(nutsArgs, args).getWorkspace();
+            NWorkspace finalWs = ws;
+            ws.runWith(()->{
+                finalWs.currentSession().prepareApplication(args, applicationInstance.getClass(), null, now);
+                runApplication(applicationInstance);
+            });
+        }else {
+            ws.currentSession().prepareApplication(args, applicationInstance.getClass(), null, now);
+            runApplication(applicationInstance);
         }
-        session.prepareApplication(args, applicationInstance.getClass(), null, now);
-        runApplication(applicationInstance, session);
     }
 
-    public static void runApplication(NApplication applicationInstance, NSession session) {
-        boolean inherited = NBootManager.of(session).getBootOptions().getInherited().orElse(false);
-        NLog.of(NApplications.class, session).with().level(Level.FINE).verb(NLogVerb.START)
+    public static void runApplication(NApplication applicationInstance) {
+        NWorkspace ws = NWorkspace.of().orNull();
+        if (ws == null) {
+            ws = Nuts.openInheritedWorkspace(new String[0], new String[0]).getWorkspace();
+            ws.runWith(() -> {
+                runApplication(applicationInstance);
+            });
+            return;
+        }
+        NSession session=NSession.of().get();
+        boolean inherited = NBootManager.of().getBootOptions().getInherited().orElse(false);
+        NLog.of(NApplications.class).with().level(Level.FINE).verb(NLogVerb.START)
                 .log(
                         NMsg.ofC(
                                 "running application %s: %s %s",
@@ -208,19 +208,19 @@ public final class NApplications {
                 //session.isExecMode()
                 case RUN:
                 case AUTO_COMPLETE: {
-                    applicationInstance.run(session);
+                    applicationInstance.run();
                     return;
                 }
                 case INSTALL: {
-                    applicationInstance.onInstallApplication(session);
+                    applicationInstance.onInstallApplication();
                     return;
                 }
                 case UPDATE: {
-                    applicationInstance.onUpdateApplication(session);
+                    applicationInstance.onUpdateApplication();
                     return;
                 }
                 case UNINSTALL: {
-                    applicationInstance.onUninstallApplication(session);
+                    applicationInstance.onUninstallApplication();
                     return;
                 }
             }
@@ -230,7 +230,7 @@ public final class NApplications {
             }
             throw e;
         }
-        throw new NExecutionException(session, NMsg.ofC("unsupported execution mode %s", session.getAppMode()), NExecutionException.ERROR_255);
+        throw new NExecutionException(NMsg.ofC("unsupported execution mode %s", session.getAppMode()), NExecutionException.ERROR_255);
     }
 
     /**

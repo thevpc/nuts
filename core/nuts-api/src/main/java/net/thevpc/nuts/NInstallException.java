@@ -39,24 +39,22 @@ public class NInstallException extends NInstallationException {
     /**
      * Custom Constructor
      *
-     * @param session workspace
-     * @param id      nuts id
+     * @param id nuts id
      */
-    public NInstallException(NSession session, NId id) {
-        this(session, id, null, null);
+    public NInstallException(NId id) {
+        this(id, null, null);
     }
 
 
     /**
      * Custom Constructor
      *
-     * @param session session
-     * @param id      nuts id
-     * @param msg     message
-     * @param ex      exception
+     * @param id  nuts id
+     * @param msg message
+     * @param ex  exception
      */
-    public NInstallException(NSession session, NId id, NMsg msg, Throwable ex) {
-        super(session, id, msg == null ? NMsg.ofC("unable to install %s", (id == null ? "<null>" : id)) : msg, ex);
+    public NInstallException(NId id, NMsg msg, Throwable ex) {
+        super(id, msg == null ? NMsg.ofC("unable to install %s", (id == null ? "<null>" : id)) : msg, ex);
     }
 
 

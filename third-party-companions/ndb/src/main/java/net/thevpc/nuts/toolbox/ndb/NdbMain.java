@@ -15,23 +15,25 @@ public class NdbMain implements NApplication {
     }
 
     @Override
-    public void run(NSession session) {
-        run(session.getAppCmdLine(), session);
+    public void run() {
+        NSession session = NSession.of().get();
+        run(session.getAppCmdLine());
     }
 
-    public void run(NCmdLine cmdLine, NSession session) {
+    public void run(NCmdLine cmdLine) {
+        NSession session = NSession.of().get();
         while (cmdLine.hasNext()) {
             if (cmdLine.next("mysql", "mariadb").isPresent()) {
-                new NMysqlMain(session).run(session, cmdLine);
+                new NMysqlMain(session).run(cmdLine);
                 return;
             } else if (cmdLine.next("derby").isPresent()) {
-                new NDerbyMain(session).run(session, cmdLine);
+                new NDerbyMain(session).run(cmdLine);
                 return;
             } else if (cmdLine.next("mongo", "mongodb").isPresent()) {
-                new NMongoSupport(session).run(session, cmdLine);
+                new NMongoSupport(session).run(cmdLine);
                 return;
             } else if (cmdLine.next("postgres", "postgresql").isPresent()) {
-                new NPostgresSupport(session).run(session, cmdLine);
+                new NPostgresSupport(session).run(cmdLine);
                 return;
             } else {
                 session.configureLast(cmdLine);

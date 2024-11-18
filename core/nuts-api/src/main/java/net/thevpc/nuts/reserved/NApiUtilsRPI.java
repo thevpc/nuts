@@ -150,7 +150,7 @@ public class NApiUtilsRPI {
 
     public static int processThrowable(Throwable ex, String[] args) {
         DefaultNBootOptionsBuilder bo = new DefaultNBootOptionsBuilder();
-        bo.setCmdLine(args, null);
+        bo.setCmdLine(args);
         return processThrowable(ex, null, true, resolveShowStackTrace(bo), resolveGui(bo));
     }
 
@@ -169,7 +169,7 @@ public class NApiUtilsRPI {
         NSession session = NSessionAwareExceptionBase.resolveSession(ex).orNull();
         NBootOptionsBuilder bo = null;
         if (session != null) {
-            bo = NBootManager.of(session).getBootOptions().builder();
+            bo = NBootManager.of().getBootOptions().builder();
         } else {
             NBootOptionsBuilder options = new DefaultNBootOptionsBuilder();
             //load inherited
@@ -178,7 +178,7 @@ public class NApiUtilsRPI {
                     + " " + NStringUtils.trim(System.getProperty("nuts.args"))
             );
             try {
-                options.setCmdLine(NCmdLine.parseDefault(nutsArgs).get().toStringArray(), null);
+                options.setCmdLine(NCmdLine.parseDefault(nutsArgs).get().toStringArray());
             } catch (Exception e) {
                 //any, ignore...
             }
@@ -217,14 +217,14 @@ public class NApiUtilsRPI {
         if (out == null) {
             if (session != null) {
                 try {
-                    sout = NIO.of(session).getSystemTerminal().getErr();
+                    sout = NIO.of().getSystemTerminal().getErr();
                     if (fm != null) {
-                        fm = NMsg.ofNtf(NTexts.of(session).ofBuilder().append(fm, NTextStyle.error()).build());
+                        fm = NMsg.ofNtf(NTexts.of().ofBuilder().append(fm, NTextStyle.error()).build());
                     } else {
                         fm = NMsg.ofStyled(m, NTextStyle.error());
                     }
                 } catch (Exception ex2) {
-                    NLogOp.of(NApplications.class, session).level(Level.FINE).error(ex2).log(
+                    NLogOp.of(NApplications.class).level(Level.FINE).error(ex2).log(
                             NMsg.ofPlain("unable to get system terminal")
                     );
                     //
@@ -261,14 +261,14 @@ public class NApiUtilsRPI {
                     sout.flush();
                 } else {
                     if (fm != null) {
-                        session.eout().add(NElements.of(session).ofObject()
+                        session.eout().add(NElements.of().ofObject()
                                 .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
-                                .set("error", NTexts.of(session).ofText(fm).filteredText())
+                                .set("error", NTexts.of().ofText(fm).filteredText())
                                 .build()
                         );
                         if (showStackTrace) {
-                            session.eout().add(NElements.of(session).ofObject().set("errorTrace",
-                                    NElements.of(session).ofArray().addAll(NReservedLangUtils.stacktraceToArray(ex)).build()
+                            session.eout().add(NElements.of().ofObject().set("errorTrace",
+                                    NElements.of().ofArray().addAll(NReservedLangUtils.stacktraceToArray(ex)).build()
                             ).build());
                         }
                         NArrayElementBuilder e = session.eout();
@@ -278,13 +278,13 @@ public class NApiUtilsRPI {
                         }
                         sout.flush();
                     } else {
-                        session.eout().add(NElements.of(session).ofObject()
+                        session.eout().add(NElements.of().ofObject()
                                 .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
                                 .set("error", m)
                                 .build());
                         if (showStackTrace) {
-                            session.eout().add(NElements.of(session).ofObject().set("errorTrace",
-                                    NElements.of(session).ofArray().addAll(NReservedLangUtils.stacktraceToArray(ex)).build()
+                            session.eout().add(NElements.of().ofObject().set("errorTrace",
+                                    NElements.of().ofArray().addAll(NReservedLangUtils.stacktraceToArray(ex)).build()
                             ).build());
                         }
                         NArrayElementBuilder e = session.eout();
@@ -319,7 +319,7 @@ public class NApiUtilsRPI {
             StringBuilder sb = new StringBuilder();
             if (fm != null) {
                 if (session != null) {
-                    sb.append(NTexts.of(session).ofText(fm).filteredText());
+                    sb.append(NTexts.of().ofText(fm).filteredText());
                 } else {
                     sb.append(fm);
                 }
@@ -384,18 +384,17 @@ public class NApiUtilsRPI {
 
     @SuppressWarnings("unchecked")
 
-    public static <T> T getOrCreateRefProperty(String name, Class<T> type, NSession session, Supplier<T> sup) {
-        NAssert.requireSession(session);
+    public static <T> T getOrCreateRefProperty(String name, Class<T> type, Supplier<T> sup) {
         name = NStringUtils.trim(name);
         if (NBlankable.isBlank(name)) {
             name = "default";
         }
         String key = type.getName() + "(" + name + ")";
-        return session.getOrComputeProperty(key, NScopeType.SESSION, s -> sup.get());
+        return NSession.of().get().getOrComputeProperty(key, NScopeType.SESSION, () -> sup.get());
     }
 
-    public static <T> T getOrCreateRefProperty(Class<T> type, NSession session, Supplier<T> sup) {
-        return getOrCreateRefProperty("default", type, session, sup);
+    public static <T> T getOrCreateRefProperty(Class<T> type, Supplier<T> sup) {
+        return getOrCreateRefProperty("default", type, sup);
     }
 
     public static NMsg resolveValidErrorMessage(Supplier<NMsg> supplier) {

@@ -117,7 +117,7 @@ public enum NShellFamily implements NEnum {
             }
             switch (n) {
                 case "":
-                    return NOptional.ofEmpty(session -> NMsg.ofC("%s is empty", NShellFamily.class.getSimpleName()));
+                    return NOptional.ofEmpty(() -> NMsg.ofC("%s is empty", NShellFamily.class.getSimpleName()));
                 case "SH":
                     return NOptional.of(SH);
                 case "BASH":

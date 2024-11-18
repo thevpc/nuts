@@ -17,7 +17,7 @@ import java.util.Date;
 
 public abstract class NPrintStreamBase implements NPrintStream {
     private static String LINE_SEP = System.getProperty("line.separator");
-    protected NSession session;
+    protected NWorkspace workspace;
     protected Bindings bindings;
     protected OutputStream osWrapper;
     protected PrintStream psWrapper;
@@ -27,15 +27,15 @@ public abstract class NPrintStreamBase implements NPrintStream {
     protected NSystemTerminalBase term;
     private DefaultNContentMetadata md = new DefaultNContentMetadata();
 
-    public NPrintStreamBase(boolean autoFlash, NTerminalMode mode, NSession session, Bindings bindings, NSystemTerminalBase term) {
-        NAssert.requireNonNull(mode, "mode", session);
+    public NPrintStreamBase(boolean autoFlash, NTerminalMode mode, NWorkspace workspace, Bindings bindings, NSystemTerminalBase term) {
+        NAssert.requireNonNull(mode, "mode");
         bindings.setOrErr(this, mode);
         this.bindings = bindings;
         this.autoFlash = autoFlash;
         this.mode = mode;
-        this.session = session;
+        this.workspace = workspace;
         if(term==null && mode==NTerminalMode.ANSI){
-            term=new AnsiNPrintStreamTerminalBase(this);
+            term=new AnsiNPrintStreamTerminalBase(workspace,this);
         }
         this.term = term;
     }
@@ -49,10 +49,6 @@ public abstract class NPrintStreamBase implements NPrintStream {
     @Override
     public String toString() {
         return super.toString();
-    }
-
-    public NSession getSession() {
-        return session;
     }
 
     @Override
@@ -98,8 +94,8 @@ public abstract class NPrintStreamBase implements NPrintStream {
                 case CODE:
                 case TITLE:
                 default: {
-                    if (session != null) {
-                        throw new NUnsupportedOperationException(session);
+                    if (workspace != null) {
+                        throw new NUnsupportedOperationException();
                     } else {
                         throw new UnsupportedOperationException();
                     }
@@ -152,7 +148,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
     }
 
     protected NTexts txt() {
-        return NTexts.of(session);
+        return NTexts.of();
     }
 
     @Override
@@ -267,7 +263,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
         } else if (obj instanceof byte[]) {
             this.print((byte[]) obj);
         } else {
-            NObjectFormat.of(session).setValue(obj).print(this);
+            NObjectFormat.of().setValue(obj).print(this);
         }
         return this;
     }
@@ -363,8 +359,8 @@ public abstract class NPrintStreamBase implements NPrintStream {
 
     @Override
     public NPrintStream resetLine() {
-        run(NTerminalCmd.CLEAR_LINE, session);
-        run(NTerminalCmd.MOVE_LINE_START, session);
+        run(NTerminalCmd.CLEAR_LINE);
+        run(NTerminalCmd.MOVE_LINE_START);
         return this;
     }
 
@@ -616,7 +612,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
     }
 
     @Override
-    public NFormat formatter(NSession session) {
-        return NFormat.of(session, new NContentMetadataProviderFormatSPI(this, null, "print-stream"));
+    public NFormat formatter() {
+        return NFormat.of(new NContentMetadataProviderFormatSPI(this, null, "print-stream"));
     }
 }

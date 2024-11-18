@@ -34,20 +34,10 @@ import java.util.List;
  */
 public class DefaultNCmdLineAutoComplete extends NCmdLineAutoCompleteBase {
 
-    private NSession session;
     private List<String> words = new ArrayList<>();
     private int currentWordIndex;
     private String line;
 
-    @Override
-    public NSession getSession() {
-        return session;
-    }
-
-    public DefaultNCmdLineAutoComplete setSession(NSession session) {
-        this.session = session;
-        return this;
-    }
 
     @Override
     public String getLine() {

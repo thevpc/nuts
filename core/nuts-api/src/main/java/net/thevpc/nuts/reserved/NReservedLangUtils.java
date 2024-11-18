@@ -61,7 +61,7 @@ public final class NReservedLangUtils {
                 }
             }
         }
-        return NOptional.ofEmpty(x -> NMsg.ofC("error with type %s not found", type.getSimpleName()));
+        return NOptional.ofEmpty(() -> NMsg.ofC("error with type %s not found", type.getSimpleName()));
     }
 
     public static String[] stacktraceToArray(Throwable th) {
@@ -117,7 +117,7 @@ public final class NReservedLangUtils {
 
     public static NOptional<Integer> parseFileSizeInBytes(String value, Integer defaultMultiplier) {
         if (NBlankable.isBlank(value)) {
-            return NOptional.ofEmpty(session -> NMsg.ofPlain("empty size"));
+            return NOptional.ofEmpty(() -> NMsg.ofPlain("empty size"));
         }
         value = value.trim();
         Integer i = NLiteral.of(value).asInt().orNull();
@@ -148,7 +148,7 @@ public final class NReservedLangUtils {
             }
         }
         String finalValue = value;
-        return NOptional.ofError(session -> NMsg.ofC("invalid size :%s", finalValue));
+        return NOptional.ofError(() -> NMsg.ofC("invalid size :%s", finalValue));
     }
 
     public static int firstIndexOf(String string, char[] chars) {

@@ -1,6 +1,5 @@
 package net.thevpc.nuts.lib.common.str;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NMapBy;
@@ -845,8 +844,8 @@ public class NMemorySize implements Serializable, NFormattable {
     }
 
     @Override
-    public NFormat formatter(NSession session) {
-        return NFormat.of(session, new NFormatSPI() {
+    public NFormat formatter() {
+        return NFormat.of(new NFormatSPI() {
             private Boolean iec;
             private boolean fixed;
 
@@ -862,17 +861,17 @@ public class NMemorySize implements Serializable, NFormattable {
 
             @Override
             public boolean configureFirst(NCmdLine cmdLine) {
-                NArg a = cmdLine.peek().get(session);
+                NArg a = cmdLine.peek().get();
                 switch (a.key()) {
                     case "--iec": {
-                        a = cmdLine.nextFlag().get(session);
+                        a = cmdLine.nextFlag().get();
                         if (a.isActive()) {
                             iec = a.getBooleanValue().get();
                         }
                         return true;
                     }
                     case "--fixed": {
-                        a = cmdLine.nextFlag().get(session);
+                        a = cmdLine.nextFlag().get();
                         if (a.isActive()) {
                             fixed = a.getBooleanValue().get();
                         }
@@ -913,7 +912,7 @@ public class NMemorySize implements Serializable, NFormattable {
                     } else {
                         String finalValue = value;
                         int finalR = r;
-                        return NOptional.ofError(s -> NMsg.ofC(
+                        return NOptional.ofError(() -> NMsg.ofC(
                                 "unexpected char %s in memory size : %s",
                                 String.valueOf((char) finalR),
                                 String.valueOf(finalValue)
@@ -928,13 +927,13 @@ public class NMemorySize implements Serializable, NFormattable {
             }
         } catch (IOException ie) {
             String finalValue1 = value;
-            return NOptional.ofError(s -> NMsg.ofC(
+            return NOptional.ofError(() -> NMsg.ofC(
                     "erroneous memory size : %s",
                     String.valueOf(finalValue1)
             ), ie);
         }
         String finalValue1 = value;
-        return NOptional.ofError(s -> NMsg.ofC(
+        return NOptional.ofError(() -> NMsg.ofC(
                 "erroneous memory size : %s",
                 String.valueOf(finalValue1)
         ));

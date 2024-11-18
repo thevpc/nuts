@@ -59,18 +59,18 @@ public abstract class AbstractFacadeCommand implements FacadeCommand {
         String userPasswordS = (upList == null || upList.isEmpty()) ? null : upList.get(0);
 
         char[] userPassword = userPasswordS == null ? null : userPasswordS.toCharArray();
-        NWorkspaceSecurityManager secu = NWorkspaceSecurityManager.of(context.getSession());
+        NWorkspaceSecurityManager secu = NWorkspaceSecurityManager.of();
         userLogin = userLogin == null ? null : new String(secu.getCredentials(userLogin.toCharArray()));
         userPassword = userPassword == null ? null : secu.getCredentials(userPassword);
         if (!NBlankable.isBlank(userLogin)) {
             boolean loggedId = false;
             try {
-                NWorkspaceSecurityManager.of(context.getSession()).login(userLogin, userPassword);
+                NWorkspaceSecurityManager.of().login(userLogin, userPassword);
                 loggedId = true;
                 executeImpl(context);
             } finally {
                 if (loggedId) {
-                    NWorkspaceSecurityManager.of(context.getSession()).logout();
+                    NWorkspaceSecurityManager.of().logout();
                 }
             }
         } else {

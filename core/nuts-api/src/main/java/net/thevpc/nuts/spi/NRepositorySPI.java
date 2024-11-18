@@ -26,7 +26,7 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.util.NMapListener;
+import net.thevpc.nuts.util.NObservableMapListener;
 
 import java.util.List;
 import java.util.Map;
@@ -190,14 +190,14 @@ public interface NRepositorySPI {
      *
      * @return array of registered user properties listeners
      */
-    List<NMapListener<String, Object>> getUserPropertyListeners();
+    List<NObservableMapListener<String, Object>> getUserPropertyListeners();
 
     /**
      * enabled if config is enabled and runtime is enabled
      *
      * @return true if config is enabled and runtime is enabled
      */
-    boolean isEnabled(NSession session);
+    boolean isEnabled();
 
     /**
      * set runtime enabled
@@ -205,14 +205,13 @@ public interface NRepositorySPI {
      * @param enabled runtime enabled value
      * @return {@code this} instance
      */
-    NRepository setEnabled(boolean enabled, NSession session);
+    NRepository setEnabled(boolean enabled);
 
     /**
      * true if fetch mode is accepted
      *
-     * @param mode    fetch mode
-     * @param session session
+     * @param mode fetch mode
      * @return true if fetch mode is accepted
      */
-    boolean isAcceptFetchMode(NFetchMode mode, NSession session);
+    boolean isAcceptFetchMode(NFetchMode mode);
 }

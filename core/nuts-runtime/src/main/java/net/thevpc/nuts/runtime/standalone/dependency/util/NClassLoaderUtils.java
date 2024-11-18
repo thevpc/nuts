@@ -38,29 +38,26 @@ import net.thevpc.nuts.io.NPath;
  */
 public final class NClassLoaderUtils {
 
-    public static NClassLoaderNode definitionToClassLoaderNode(NDefinition def, NRepositoryFilter repositoryFilter, NSession session) {
-        if (session == null) {
-            throw new NullPointerException("session cannot be null");
-        }
-        def.getDependencies().get(session);
-        def.getContent().get(session);
-        def.getContent().flatMap(NPath::toURL).get(session);
+    public static NClassLoaderNode definitionToClassLoaderNode(NDefinition def, NRepositoryFilter repositoryFilter) {
+        def.getDependencies().get();
+        def.getContent().get();
+        def.getContent().flatMap(NPath::toURL).get();
         return new NClassLoaderNode(
                 def.getId().toString(),
                 def.getContent().flatMap(NPath::toURL).orNull(),
                 true,
                 true,
-                def.getDependencies().get(session).transitiveWithSource().stream().map(x -> toClassLoaderNodeWithOptional(x, false, repositoryFilter, session))
+                def.getDependencies().get().transitiveWithSource().stream().map(x -> toClassLoaderNodeWithOptional(x, false, repositoryFilter))
                         .filter(Objects::nonNull)
                         .toArray(NClassLoaderNode[]::new)
         );
     }
 
-    private static NClassLoaderNode toClassLoaderNode(NDependencyTreeNode d, boolean withChildren, NRepositoryFilter repositoryFilter, NSession session) {
-        return toClassLoaderNodeWithOptional(d, false, withChildren, repositoryFilter, session);
+    private static NClassLoaderNode toClassLoaderNode(NDependencyTreeNode d, boolean withChildren, NRepositoryFilter repositoryFilter) {
+        return toClassLoaderNodeWithOptional(d, false, withChildren, repositoryFilter);
     }
 
-    private static NClassLoaderNode toClassLoaderNodeWithOptional(NDependency d, boolean isOptional, NRepositoryFilter repositoryFilter, NSession session) {
+    private static NClassLoaderNode toClassLoaderNodeWithOptional(NDependency d, boolean isOptional, NRepositoryFilter repositoryFilter) {
         NPath cc = null;
         if (!isOptional) {
             if (!NDependencyUtils.isRequiredDependency(d)) {
@@ -69,7 +66,7 @@ public final class NClassLoaderUtils {
         }
         NId id = d.toId();
         try {
-            cc = NFetchCmd.of(id, session)
+            cc = NFetchCmd.of(id)
                     .setRepositoryFilter(repositoryFilter)
                     .getResultContent();
         } catch (NNotFoundException ex) {
@@ -88,10 +85,10 @@ public final class NClassLoaderUtils {
         if (isOptional) {
             return null;
         }
-        throw new NNotFoundException(session, id);
+        throw new NNotFoundException(id);
     }
 
-    private static NClassLoaderNode toClassLoaderNodeWithOptional(NDependencyTreeNode d, boolean isOptional, boolean withChildren, NRepositoryFilter repositoryFilter, NSession session) {
+    private static NClassLoaderNode toClassLoaderNodeWithOptional(NDependencyTreeNode d, boolean isOptional, boolean withChildren, NRepositoryFilter repositoryFilter) {
         NPath cc = null;
         if (!isOptional) {
             if (!NDependencyUtils.isRequiredDependency(d.getDependency())) {
@@ -99,7 +96,7 @@ public final class NClassLoaderUtils {
             }
         }
         try {
-            cc = NFetchCmd.of(d.getDependency().toId(), session)
+            cc = NFetchCmd.of(d.getDependency().toId())
                     .setRepositoryFilter(repositoryFilter)
                     .getResultContent();
         } catch (NNotFoundException ex) {
@@ -111,7 +108,7 @@ public final class NClassLoaderUtils {
                 List<NClassLoaderNode> aa = new ArrayList<>();
                 if (withChildren) {
                     for (NDependencyTreeNode child : d.getChildren()) {
-                        NClassLoaderNode q = toClassLoaderNodeWithOptional(child, isOptional, true, repositoryFilter, session);
+                        NClassLoaderNode q = toClassLoaderNodeWithOptional(child, isOptional, true, repositoryFilter);
                         if (q != null) {
                             aa.add(q);
                         }
@@ -126,7 +123,7 @@ public final class NClassLoaderUtils {
         if (isOptional) {
             return null;
         }
-        throw new NNotFoundException(session, d.getDependency().toId());
+        throw new NNotFoundException(d.getDependency().toId());
     }
 
     public static URL[] resolveClasspathURLs(ClassLoader contextClassLoader) {

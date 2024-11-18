@@ -26,7 +26,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.urlpart;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.URLPath;
 import net.thevpc.nuts.util.NOptional;
 
@@ -176,9 +175,9 @@ public abstract class URLPart {
         WEB, FS_FILE, URL_FILE, URL, JAR, SUB_PATH
     }
 
-    public abstract URLPart[] getChildren(boolean includeFolders, boolean deep, final Predicate<URLPart> filter, NSession session) ;
+    public abstract URLPart[] getChildren(boolean includeFolders, boolean deep, final Predicate<URLPart> filter) ;
 
-    public abstract InputStream getInputStream(NSession session);
+    public abstract InputStream getInputStream();
 
 
 }

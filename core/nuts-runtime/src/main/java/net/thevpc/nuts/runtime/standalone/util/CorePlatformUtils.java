@@ -169,7 +169,7 @@ public class CorePlatformUtils {
             CoreStringUtils.clear(osVersion);
             try {
                 osVersion.append(
-                        NExecCmd.of(session).system()
+                        NExecCmd.of().system()
                                 .setCommand("uname", "-r")
                                 .setSleepMillis(50)
                                 .getGrabbedAllString()
@@ -317,8 +317,8 @@ public class CorePlatformUtils {
 
 
     public static boolean checkAcceptCondition(NEnvCondition condition, boolean currentVM, NSession session) {
-        if (!CoreFilterUtils.acceptCondition(condition, currentVM, session)) {
-            throw new NIllegalArgumentException(session, NMsg.ofC("environment %s is rejected by %s", currentVM, condition));
+        if (!CoreFilterUtils.acceptCondition(condition, currentVM)) {
+            throw new NIllegalArgumentException(NMsg.ofC("environment %s is rejected by %s", currentVM, condition));
         }
         return true;
     }
@@ -372,7 +372,7 @@ public class CorePlatformUtils {
             } catch (RuntimeException ex) {
                 throw ex;
             } catch (Exception ex) {
-                throw new NException(session, NMsg.ofPlain("run with loader failed"), ex);
+                throw new NException(NMsg.ofPlain("run with loader failed"), ex);
             }
         }, "RunWithinLoader");
         thread.setContextClassLoader(loader);
@@ -380,7 +380,7 @@ public class CorePlatformUtils {
         try {
             thread.join();
         } catch (InterruptedException ex) {
-            throw new NException(session, NMsg.ofPlain("run with loader failed"), ex);
+            throw new NException(NMsg.ofPlain("run with loader failed"), ex);
         }
         return ref.get();
     }

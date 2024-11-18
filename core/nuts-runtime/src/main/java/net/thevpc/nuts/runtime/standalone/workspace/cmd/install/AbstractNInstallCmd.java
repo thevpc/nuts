@@ -73,8 +73,8 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
         }
     }
 
-    public AbstractNInstallCmd(NSession session) {
-        super(session, "install");
+    public AbstractNInstallCmd(NWorkspace workspace) {
+        super(workspace, "install");
     }
 
     @Override
@@ -84,8 +84,8 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
 
     @Override
     public NInstallCmd addId(String id) {
-        checkSession();
-        return addId(id == null ? null : NId.of(id).get(session));
+        NSession session=getWorkspace().currentSession();
+        return addId(id == null ? null : NId.of(id).get());
     }
 
     @Override
@@ -111,8 +111,8 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
     @Override
     public NInstallCmd addId(NId id) {
         if (id == null) {
-            checkSession();
-            throw new NNotFoundException(session, id);
+            NSession session=getWorkspace().currentSession();
+            throw new NNotFoundException(id);
         } else {
             ids.put(id, getStrategy());
         }
@@ -145,9 +145,9 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
 
     @Override
     public NInstallCmd removeId(String id) {
-        checkSession();
+        NSession session=getWorkspace().currentSession();
         if (id != null) {
-            this.ids.remove(NId.of(id).get(session));
+            this.ids.remove(NId.of(id).get());
         }
         return this;
     }
@@ -297,7 +297,8 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NArg aa = cmdLine.peek().get(session);
+        NSession session=getWorkspace().currentSession();
+        NArg aa = cmdLine.peek().get();
         if (aa == null) {
             return false;
         }
@@ -305,17 +306,17 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
         switch (aa.key()) {
             case "-c":
             case "--companions": {
-                cmdLine.withNextFlag((v, a, s) -> this.setCompanions(v));
+                cmdLine.withNextFlag((v, a) -> this.setCompanions(v));
                 return true;
             }
             case "-i":
             case "--installed": {
-                cmdLine.withNextFlag((v, a, s) -> this.setInstalled(v));
+                cmdLine.withNextFlag((v, a) -> this.setInstalled(v));
                 return true;
             }
             case "-s":
             case "--strategy": {
-                String val = cmdLine.nextEntry().flatMap(NLiteral::asString).get(session);
+                String val = cmdLine.nextEntry().flatMap(NLiteral::asString).get();
                 if (enabled) {
                     this.setStrategy(CoreEnumUtils.parseEnumString(val, NInstallStrategy.class, false));
                 }
@@ -359,7 +360,7 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
                     return false;
                 } else {
                     cmdLine.skip();
-                    addId(aa.asString().get(session));
+                    addId(aa.asString().get());
                     return true;
                 }
             }

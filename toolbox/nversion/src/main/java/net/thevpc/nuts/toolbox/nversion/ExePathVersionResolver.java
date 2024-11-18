@@ -110,7 +110,7 @@ public class ExePathVersionResolver implements PathVersionResolver{
             }
             return d;
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 }

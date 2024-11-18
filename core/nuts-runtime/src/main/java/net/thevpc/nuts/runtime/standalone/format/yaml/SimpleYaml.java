@@ -160,7 +160,7 @@ public class SimpleYaml implements NElementStreamFormat {
                     }
                 }
             } catch (IOException ex) {
-                throw new NIOException(context.getSession(), ex);
+                throw new NIOException(ex);
             }
             return current;
         }
@@ -194,7 +194,7 @@ public class SimpleYaml implements NElementStreamFormat {
             try {
                 reader.mark(1024);
             } catch (IOException ex) {
-                throw new NIOException(context.getSession(),ex);
+                throw new NIOException(ex);
             }
         }
 
@@ -202,13 +202,13 @@ public class SimpleYaml implements NElementStreamFormat {
             try {
                 reader.reset();
             } catch (IOException ex) {
-                throw new NIOException(context.getSession(),ex);
+                throw new NIOException(ex);
             }
         }
 
         public NElements builder() {
             if (ebuilder == null) {
-                ebuilder = NElements.of(context.getSession()).setSession(context.getSession());
+                ebuilder = NElements.of();
             }
             return ebuilder;
         }

@@ -20,7 +20,7 @@ public class FindCmd<C extends NdbConfig> extends NdbCmd<C> {
     }
 
     @Override
-    public void run(NSession session, NCmdLine cmdLine) {
+    public void run(NCmdLine cmdLine) {
         NRef<AtName> name = NRef.ofNull(AtName.class);
         ExtendedQuery eq = new ExtendedQuery(getName());
         C otherOptions = createConfigInstance();
@@ -29,35 +29,35 @@ public class FindCmd<C extends NdbConfig> extends NdbCmd<C> {
         while (cmdLine.hasNext()) {
             switch (status) {
                 case "": {
-                    switch (cmdLine.peek().get(session).key()) {
+                    switch (cmdLine.peek().get().key()) {
                         case "--config": {
-                            readConfigNameOption(cmdLine, session, name);
+                            readConfigNameOption(cmdLine, name);
                             break;
                         }
                         case "--entity":
                         case "--table":
                         case "--collection": {
-                            cmdLine.withNextEntry((v, a, s) -> eq.setTable(v));
+                            cmdLine.withNextEntry((v, a) -> eq.setTable(v));
                             break;
                         }
                         case "--where": {
                             status = "--where";
-                            cmdLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a) -> {
                             });
                             break;
                         }
                         case "--sort": {
                             status = "--sort";
-                            cmdLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a) -> {
                             });
                             break;
                         }
                         case "--limit": {
-                            cmdLine.withNextValue((v, a, s) -> eq.setLimit(v.asLong().get()));
+                            cmdLine.withNextValue((v, a) -> eq.setLimit(v.asLong().get()));
                             break;
                         }
                         case "--skip": {
-                            cmdLine.withNextValue((v, a, s) -> eq.setSkip(v.asLong().get()));
+                            cmdLine.withNextValue((v, a) -> eq.setSkip(v.asLong().get()));
                             break;
                         }
                         default: {
@@ -67,10 +67,10 @@ public class FindCmd<C extends NdbConfig> extends NdbCmd<C> {
                     break;
                 }
                 case "--where": {
-                    switch (cmdLine.peek().get(session).key()) {
+                    switch (cmdLine.peek().get().key()) {
                         case "--sort": {
                             status = "--sort";
-                            cmdLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a) -> {
                             });
                             break;
                         }
@@ -81,10 +81,10 @@ public class FindCmd<C extends NdbConfig> extends NdbCmd<C> {
                     break;
                 }
                 case "--sort": {
-                    switch (cmdLine.peek().get(session).key()) {
+                    switch (cmdLine.peek().get().key()) {
                         case "--where": {
                             status = "--where";
-                            cmdLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a) -> {
                             });
                             break;
                         }
@@ -104,11 +104,11 @@ public class FindCmd<C extends NdbConfig> extends NdbCmd<C> {
         if (NBlankable.isBlank(otherOptions.getDatabaseName())) {
             cmdLine.throwMissingArgument("--dbname");
         }
-        run(eq, options, session);
+        run(eq, options);
     }
 
-    protected void run(ExtendedQuery eq, C options, NSession session) {
-        throw new NIllegalArgumentException(session, NMsg.ofPlain("invalid"));
+    protected void run(ExtendedQuery eq, C options) {
+        throw new NIllegalArgumentException(NMsg.ofPlain("invalid"));
     }
 
 

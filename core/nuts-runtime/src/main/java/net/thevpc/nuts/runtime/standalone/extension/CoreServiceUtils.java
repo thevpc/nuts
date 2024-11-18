@@ -55,14 +55,14 @@ public final class CoreServiceUtils {
             ZipUtils.visitZipStream(jarStream, (path, inputStream) -> {
                 if (path.equals("META-INF/services/" + service.getName())) {
                     try (Reader reader = new InputStreamReader(inputStream)) {
-                        found.addAll(CoreIOUtils.confLines(reader, session).map(String::trim).collect(Collectors.toSet()));
+                        found.addAll(CoreIOUtils.confLines(reader).map(String::trim).collect(Collectors.toSet()));
                     } catch (IOException ex) {
-                        throw new NIOException(session, ex);
+                        throw new NIOException(ex);
                     }
                     return NVisitResult.TERMINATE;
                 }
                 return NVisitResult.CONTINUE;
-            }, session);
+            });
         }
         return found;
     }
@@ -74,14 +74,14 @@ public final class CoreServiceUtils {
             for (URL url : found2) {
                 try (Reader reader = new InputStreamReader(url.openStream())) {
                     found.addAll(
-                            CoreIOUtils.confLines(reader, session).map(String::trim).collect(Collectors.toSet())
+                            CoreIOUtils.confLines(reader).map(String::trim).collect(Collectors.toSet())
                     );
                 } catch (IOException ex) {
-                    throw new NIOException(session, ex);
+                    throw new NIOException(ex);
                 }
             }
         }catch (IOException ex){
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
         return found;
     }
@@ -94,9 +94,9 @@ public final class CoreServiceUtils {
             for (File f : files) {
                 if (f.getName().equals(service.getName())) {
                     try (Reader reader = new FileReader(f)) {
-                        return CoreIOUtils.confLines(reader, session).map(String::trim).collect(Collectors.toSet());
+                        return CoreIOUtils.confLines(reader).map(String::trim).collect(Collectors.toSet());
                     } catch (IOException ex) {
-                        throw new NIOException(session, ex);
+                        throw new NIOException(ex);
                     }
                 }
             }
@@ -115,14 +115,14 @@ public final class CoreServiceUtils {
                 try (final InputStream jarStream = new FileInputStream(file)) {
                     return loadZipServiceClassNamesFromJarStream(jarStream, service, session);
                 } catch (IOException ex) {
-                    throw new NIOException(session, ex);
+                    throw new NIOException(ex);
                 }
             }
         } else {
             try (final InputStream jarStream = url.openStream()) {
                 return loadZipServiceClassNamesFromJarStream(jarStream, service, session);
             } catch (IOException ex) {
-                throw new NIOException(session, ex);
+                throw new NIOException(ex);
             }
         }
         return found;
@@ -131,9 +131,9 @@ public final class CoreServiceUtils {
     public static List<String> loadServiceClassNames(URL u, Class<?> service, NSession session) {
 
         try (InputStreamReader ir = new InputStreamReader(CoreIOUtils.openStream(u).get(), StandardCharsets.UTF_8)) {
-            return CoreIOUtils.confLines(ir, session).map(String::trim).collect(Collectors.toList());
+            return CoreIOUtils.confLines(ir).map(String::trim).collect(Collectors.toList());
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -148,7 +148,7 @@ public final class CoreServiceUtils {
                 configs = classLoader.getResources(fullName);
             }
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
         while (configs.hasMoreElements()) {
             names.addAll(loadServiceClassNames(configs.nextElement(), service, session));
@@ -159,10 +159,10 @@ public final class CoreServiceUtils {
             try {
                 c = Class.forName(n, false, classLoader);
             } catch (ClassNotFoundException x) {
-                throw new NException(session, NMsg.ofC("unable to load service class %s", n), x);
+                throw new NException(NMsg.ofC("unable to load service class %s", n), x);
             }
             if (!service.isAssignableFrom(c)) {
-                throw new NException(session,
+                throw new NException(
                         NMsg.ofC("not a valid type %s <> %s", c, service));
             }
             classes.add(c);

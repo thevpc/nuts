@@ -47,23 +47,23 @@ public class NTasksSubCmd {
         List<Consumer<NTask>> runLater = new ArrayList<>();
         while (cmd.hasNext()) {
             if ((a = cmd.nextFlag("--list", "-l").orNull()) != null) {
-                list = a.getBooleanValue().get(session);
+                list = a.getBooleanValue().get();
             } else if ((a = cmd.nextFlag("--show", "-s").orNull()) != null) {
-                show = a.getBooleanValue().get(session);
+                show = a.getBooleanValue().get();
             } else if ((a = cmd.nextEntry("--on", "--due", "-t").orNull()) != null) {
-                String s = a.getStringValue().get(session);
+                String s = a.getStringValue().get();
                 runLater.add(t -> t.setDueTime(new TimeParser().parseInstant(s, false)));
             } else if ((a = cmd.nextEntry("--at").orNull()) != null) {
-                String s = a.getStringValue().get(session);
+                String s = a.getStringValue().get();
                 runLater.add(t -> t.setDueTime(new TimeParser().setTimeOnly(true).parseInstant(s, false)));
             } else if ((a = cmd.nextEntry("--start").orNull()) != null) {
-                String s = a.getStringValue().get(session);
+                String s = a.getStringValue().get();
                 runLater.add(t -> t.setStartTime(new TimeParser().parseInstant(s, false)));
             } else if ((a = cmd.nextEntry("--end").orNull()) != null) {
-                String s = a.getStringValue().get(session);
+                String s = a.getStringValue().get();
                 runLater.add(t -> t.setEndTime(new TimeParser().parseInstant(s, false)));
             } else if ((a = cmd.nextEntry("--for").orNull()) != null) {
-                String s = a.getStringValue().get(session);
+                String s = a.getStringValue().get();
                 runLater.add(t -> {
                     Instant u = new TimeParser().parseInstant(s, true);
                     if (u != null) {
@@ -73,13 +73,13 @@ public class NTasksSubCmd {
                     }
                 });
             } else if ((a = cmd.nextEntry("-p", "--project").orNull()) != null) {
-                String s = a.getStringValue().get(session);
+                String s = a.getStringValue().get();
                 runLater.add(t -> t.setProject(s));
             } else if ((a = cmd.nextEntry("-n", "--name").orNull()) != null) {
-                String s = a.getStringValue().get(session);
+                String s = a.getStringValue().get();
                 runLater.add(t -> t.setName(s));
             } else if ((a = cmd.nextEntry("-f", "--flag").orNull()) != null) {
-                String s = a.getStringValue().get(session);
+                String s = a.getStringValue().get();
                 runLater.add(t -> {
                     String v = s;
                     NFlag f = null;
@@ -91,7 +91,7 @@ public class NTasksSubCmd {
                     t.setFlag(f);
                 });
             } else if ((a = cmd.nextEntry("-j", "--job").orNull()) != null) {
-                String s = a.getStringValue().get(session);
+                String s = a.getStringValue().get();
                 runLater.add(t -> {
                     String jobId = s;
                     NJob job = service.jobs().getJob(jobId);
@@ -101,7 +101,7 @@ public class NTasksSubCmd {
                     t.setJobId(job.getId());
                 });
             } else if ((a = cmd.nextEntry("-T", "--parent").orNull()) != null) {
-                String s = a.getStringValue().get(session);
+                String s = a.getStringValue().get();
                 runLater.add(t -> {
                     String taskId = s;
                     NTask parentTask = service.tasks().getTask(taskId);
@@ -111,7 +111,7 @@ public class NTasksSubCmd {
                     t.setParentTaskId(parentTask.getId());
                 });
             } else if ((a = cmd.nextEntry("-P", "--priority").orNull()) != null) {
-                String s = a.getStringValue().get(session);
+                String s = a.getStringValue().get();
                 runLater.add(t -> {
                     String v = s;
                     NPriority p = NPriority.NORMAL;
@@ -125,12 +125,12 @@ public class NTasksSubCmd {
                     t.setPriority(p);
                 });
             } else if ((a = cmd.nextEntry("-o", "--obs").orNull()) != null) {
-                String s = a.getStringValue().get(session);
+                String s = a.getStringValue().get();
                 runLater.add(t -> {
                     t.setObservations(s);
                 });
             } else if ((a = cmd.nextEntry("-d", "--duration").orNull()) != null) {
-                String s = a.getStringValue().get(session);
+                String s = a.getStringValue().get();
                 runLater.add(t -> {
                     t.setDuration(TimePeriod.parse(s, true));
                 });
@@ -151,8 +151,8 @@ public class NTasksSubCmd {
             } else if ((a = cmd.next("--normal").orNull()) != null) {
                 runLater.add(t -> t.setPriority(NPriority.NORMAL));
             } else {
-                if (cmd.peek().get(session).isNonOption() && !nameVisited) {
-                    String n = cmd.next("name").flatMap(NLiteral::asString).get(session);
+                if (cmd.peek().get().isNonOption() && !nameVisited) {
+                    String n = cmd.next("name").flatMap(NLiteral::asString).get();
                     runLater.add(t -> t.setName(n));
                 } else {
                     cmd.throwUnexpectedArgument();
@@ -167,7 +167,7 @@ public class NTasksSubCmd {
             service.tasks().addTask(t);
             if (session.isPlainTrace()) {
                 session.out().println(NMsg.ofC("task %s (%s) added.",
-                        NTexts.of(session).ofStyled(t.getId(), NTextStyle.primary5()),
+                        NTexts.of().ofStyled(t.getId(), NTextStyle.primary5()),
                         t.getName()
                 ));
             }
@@ -189,74 +189,74 @@ public class NTasksSubCmd {
         }
         Data d=new Data();
         while (cmd.hasNext()) {
-            NArg aa = cmd.peek().get(session);
+            NArg aa = cmd.peek().get();
             switch(aa.key()) {
                 case "--list":
                 case "-l": {
-                    cmd.withNextFlag((v, a, s) -> d.list=v);
+                    cmd.withNextFlag((v, a) -> d.list=v);
                     break;
                 }
                 case "--show":
                 case "-s": {
-                    cmd.withNextFlag((v, a, s) -> d.show=v);
+                    cmd.withNextFlag((v, a) -> d.show=v);
                     break;
                 }
                 case "--start": {
-                    cmd.withNextEntry((v, a, s) -> d.runLater.add(t -> t.setStartTime(new TimeParser().parseInstant(v, false))));
+                    cmd.withNextEntry((v, a) -> d.runLater.add(t -> t.setStartTime(new TimeParser().parseInstant(v, false))));
                     break;
                 }
                 case "-t":
                 case "--on":
                 case "--due": {
-                    cmd.withNextEntry((v, a, s) -> d.runLater.add(t -> t.setDueTime(TimePeriod.parseOpPeriodAsInstant(v, t.getDueTime(), true))));
+                    cmd.withNextEntry((v, a) -> d.runLater.add(t -> t.setDueTime(TimePeriod.parseOpPeriodAsInstant(v, t.getDueTime(), true))));
                     break;
                 }
                 case "--at": {
-                    cmd.withNextEntry((v, a, s) -> d.runLater.add(t -> t.setDueTime(new TimeParser().setTimeOnly(true).parseInstant(v, false))));
+                    cmd.withNextEntry((v, a) -> d.runLater.add(t -> t.setDueTime(new TimeParser().setTimeOnly(true).parseInstant(v, false))));
                     break;
                 }
                 case "--end": {
-                    cmd.withNextEntry((v, a, s) -> d.runLater.add(t -> t.setEndTime(new TimeParser().parseInstant(v, false))));
+                    cmd.withNextEntry((v, a) -> d.runLater.add(t -> t.setEndTime(new TimeParser().parseInstant(v, false))));
                     break;
                 }
                 case "--wip": {
-                    cmd.withNextTrueFlag((v, a, s) -> d.runLater.add(t -> t.setStatus(NTaskStatus.WIP)));
+                    cmd.withNextTrueFlag((v, a) -> d.runLater.add(t -> t.setStatus(NTaskStatus.WIP)));
                     break;
                 }
                 case "--done": {
-                    cmd.withNextTrueFlag((v, a, s) -> d.runLater.add(t -> t.setStatus(NTaskStatus.DONE)));
+                    cmd.withNextTrueFlag((v, a) -> d.runLater.add(t -> t.setStatus(NTaskStatus.DONE)));
                     break;
                 }
                 case "--cancel": {
-                    cmd.withNextTrueFlag((v, a, s) -> d.runLater.add(t -> t.setStatus(NTaskStatus.CANCELLED)));
+                    cmd.withNextTrueFlag((v, a) -> d.runLater.add(t -> t.setStatus(NTaskStatus.CANCELLED)));
                     break;
                 }
                 case "--todo": {
-                    cmd.withNextTrueFlag((v, a, s) -> d.runLater.add(t -> t.setStatus(NTaskStatus.TODO)));
+                    cmd.withNextTrueFlag((v, a) -> d.runLater.add(t -> t.setStatus(NTaskStatus.TODO)));
                     break;
                 }
                 case "--high": {
-                    cmd.withNextTrueFlag((v, a, s) -> d.runLater.add(t -> t.setPriority(NPriority.HIGH)));
+                    cmd.withNextTrueFlag((v, a) -> d.runLater.add(t -> t.setPriority(NPriority.HIGH)));
                     break;
                 }
                 case "--critical": {
-                    cmd.withNextTrueFlag((v, a, s) -> d.runLater.add(t -> t.setPriority(NPriority.CRITICAL)));
+                    cmd.withNextTrueFlag((v, a) -> d.runLater.add(t -> t.setPriority(NPriority.CRITICAL)));
                     break;
                 }
                 case "--normal": {
-                    cmd.withNextTrueFlag((v, a, s) -> d.runLater.add(t -> t.setPriority(NPriority.NORMAL)));
+                    cmd.withNextTrueFlag((v, a) -> d.runLater.add(t -> t.setPriority(NPriority.NORMAL)));
                     break;
                 }
                 case "++P":
                 case "++prio":
                 case "--prio++": {
-                    cmd.withNextTrueFlag((v, a, s) -> d.runLater.add(t -> t.setPriority((t.getPriority() == null ? NPriority.NORMAL : t.getPriority()).higher())));
+                    cmd.withNextTrueFlag((v, a) -> d.runLater.add(t -> t.setPriority((t.getPriority() == null ? NPriority.NORMAL : t.getPriority()).higher())));
                     break;
                 }
                 case "--P":
                 case "--prio":
                 case "--prio--": {
-                    cmd.withNextEntry((v, a, s) -> {
+                    cmd.withNextEntry((v, a) -> {
                         if (!aa.key().equals("--prio")) {
                             v = null;
                         }
@@ -270,28 +270,28 @@ public class NTasksSubCmd {
                     break;
                 }
                 case "--status": {
-                    cmd.withNextEntry((v, a, s) -> {
+                    cmd.withNextEntry((v, a) -> {
                         d.runLater.add(t -> t.setStatus(NTaskStatus.parse(v)));
                     });
                     break;
                 }
                 case "-d":
                 case "--duration": {
-                    cmd.withNextEntry((v, a, s) -> {
+                    cmd.withNextEntry((v, a) -> {
                         d.runLater.add(t -> t.setDuration(TimePeriod.parse(v, false)));
                     });
                     break;
                 }
                 case "-n":
                 case "--name": {
-                    cmd.withNextEntry((v, a, s) -> {
+                    cmd.withNextEntry((v, a) -> {
                         d.runLater.add(t -> t.setName(v));
                     });
                     break;
                 }
                 case "-f":
                 case "--flag": {
-                    cmd.withNextEntry((v, a, s) -> {
+                    cmd.withNextEntry((v, a) -> {
                         NFlag f = NFlag.parse(v);
                         d.runLater.add(t -> t.setFlag(f));
                     });
@@ -299,7 +299,7 @@ public class NTasksSubCmd {
                 }
                 case "-j":
                 case "--job": {
-                    cmd.withNextEntry((v, a, s) -> {
+                    cmd.withNextEntry((v, a) -> {
                         NJob job = service.jobs().getJob(v);
                         if (job == null) {
                             cmd.throwError(NMsg.ofC("invalid job %s", v));
@@ -310,7 +310,7 @@ public class NTasksSubCmd {
                 }
                 case "-T":
                 case "--parent": {
-                    cmd.withNextEntry((v, a, s) -> {
+                    cmd.withNextEntry((v, a) -> {
                         NTask parentTask = service.tasks().getTask(v);
                         if (parentTask == null) {
                             cmd.throwError(NMsg.ofC("invalid parent task %s", v));
@@ -321,7 +321,7 @@ public class NTasksSubCmd {
                 }
                 case "-P":
                 case "--priority": {
-                    cmd.withNextEntry((v, a, s) -> {
+                    cmd.withNextEntry((v, a) -> {
                         d.runLater.add(t -> {
                             NPriority p = t.getPriority();
                             if (v.equalsIgnoreCase("higher")) {
@@ -337,7 +337,7 @@ public class NTasksSubCmd {
                     break;
                 }
                 case "--for": {
-                    cmd.withNextEntry((v, a, s) -> {
+                    cmd.withNextEntry((v, a) -> {
                         d.runLater.add(t -> {
                             Instant u = TimePeriod.parseOpPeriodAsInstant(v, t.getDueTime(), true);
                             if (u != null) {
@@ -351,14 +351,14 @@ public class NTasksSubCmd {
                 }
                 case "-p":
                 case "--project": {
-                    cmd.withNextEntry((v, a, s) -> {
+                    cmd.withNextEntry((v, a) -> {
                         d.runLater.add(t -> t.setProject(v));
                     });
                     break;
                 }
                 case "-o":
                 case "--obs": {
-                    cmd.withNextEntry((v, a, s) -> {
+                    cmd.withNextEntry((v, a) -> {
                         d.runLater.add(t -> t.setObservations(v));
                     });
                     break;
@@ -366,7 +366,7 @@ public class NTasksSubCmd {
                 case "-o+":
                 case "--obs+":
                 case "+obs": {
-                    cmd.withNextEntry((v, a, s) -> {
+                    cmd.withNextEntry((v, a) -> {
                         d.runLater.add(t -> {
                             String so = t.getObservations();
                             if (so == null) {
@@ -385,7 +385,7 @@ public class NTasksSubCmd {
                 }
                 default: {
                     if (aa.isNonOption()) {
-                        String pid = cmd.next().get(session).toString();
+                        String pid = cmd.next().get().toString();
                         NTask t = findTask(pid, cmd);
                         d.tasks.add(t);
                     } else {
@@ -403,7 +403,7 @@ public class NTasksSubCmd {
                     c.accept(task);
                 }
             }
-            NTexts text = NTexts.of(session);
+            NTexts text = NTexts.of();
             for (NTask task : new LinkedHashSet<>(d.tasks)) {
                 service.tasks().updateTask(task);
                 if (session.isPlainTrace()) {
@@ -436,28 +436,28 @@ public class NTasksSubCmd {
         }
         Data d=new Data();
         while (cmd.hasNext()) {
-            NArg aa = cmd.peek().get(session);
+            NArg aa = cmd.peek().get();
             switch(aa.key()) {
                 case "-w":
                 case "--weeks": {
                     d.countType = ChronoUnit.WEEKS;
-                    d.count = cmd.nextEntry().get(session).getValue().asInt().get(session);
+                    d.count = cmd.nextEntry().get().getValue().asInt().get();
                     break;
                 }
                 case "-m":
                 case "--months": {
                     d.countType = ChronoUnit.MONTHS;
-                    d.count = cmd.nextEntry().get(session).getValue().asInt().get(session);
+                    d.count = cmd.nextEntry().get().getValue().asInt().get();
                     break;
                 }
                 case "-l": {
                     d.countType = null;
-                    d.count = cmd.nextEntry().get(session).getValue().asInt().get(session);
+                    d.count = cmd.nextEntry().get().getValue().asInt().get();
                     break;
                 }
                 case "-u":
                 case "--unit": {
-                    cmd.withNextEntry((v, a, s) -> {
+                    cmd.withNextEntry((v, a) -> {
                         d.timeUnit = TimePeriod.parseUnit(v, false);
                     });
                     break;
@@ -505,8 +505,8 @@ public class NTasksSubCmd {
                 case "--groupBy":
                 case "--groupby":
                 case "--group-by": {
-                    NArg y = cmd.nextEntry().get(session);
-                    switch (y.getStringValue().get(session)) {
+                    NArg y = cmd.nextEntry().get();
+                    switch (y.getStringValue().get()) {
                         case "p":
                         case "project": {
                             d.groupBy = NJobGroup.PROJECT_NAME;
@@ -530,7 +530,7 @@ public class NTasksSubCmd {
                 }
                 case "--project":
                 case "-p": {
-                    cmd.withNextEntry((v, a, s) -> {
+                    cmd.withNextEntry((v, a) -> {
                         Predicate<String> sp = parent.createProjectFilter(v);
                         Predicate<NTask> t = x -> sp.test(x.getProject());
                         d.whereFilter = parent.appendPredicate(d.whereFilter, t);
@@ -539,7 +539,7 @@ public class NTasksSubCmd {
                 }
                 case "-n":
                 case "--name": {
-                    cmd.withNextEntry((v, a, s) -> {
+                    cmd.withNextEntry((v, a) -> {
                         Predicate<String> sp = parent.createStringFilter(v);
                         Predicate<NTask> t = x -> sp.test(x.getName());
                         d.whereFilter = parent.appendPredicate(d.whereFilter, t);
@@ -548,7 +548,7 @@ public class NTasksSubCmd {
                 }
                 case "-b":
                 case "--beneficiary": {
-                    cmd.withNextEntry((v, a, s) -> {
+                    cmd.withNextEntry((v, a) -> {
                         Predicate<String> sp = parent.createStringFilter(v);
                         Predicate<NTask> t = x -> {
                             NProject project = service.projects().getProject(x.getProject());
@@ -560,7 +560,7 @@ public class NTasksSubCmd {
                 }
                 case "-c":
                 case "--company": {
-                    cmd.withNextEntry((v, a, s) -> {
+                    cmd.withNextEntry((v, a) -> {
                         Predicate<String> sp = parent.createStringFilter(v);
                         Predicate<NTask> t = x -> {
                             NProject project = service.projects().getProject(x.getProject());
@@ -572,7 +572,7 @@ public class NTasksSubCmd {
                 }
                 case "-d":
                 case "--duration": {
-                    cmd.withNextEntry((v, a, s) -> {
+                    cmd.withNextEntry((v, a) -> {
                         Predicate<TimePeriod> p = TimePeriod.parseFilter(v, false);
                         Predicate<NTask> t = x -> p.test(x.getDuration());
                         d.whereFilter = parent.appendPredicate(d.whereFilter, t);
@@ -582,7 +582,7 @@ public class NTasksSubCmd {
                 case "-t":
                 case "--startTime":
                 case "--start-time": {
-                    cmd.withNextEntry((v, a, s) -> {
+                    cmd.withNextEntry((v, a) -> {
                         Predicate<Instant> t = new TimeParser().parseInstantFilter(v, false);
                         d.whereFilter = parent.appendPredicate(d.whereFilter, x -> t.test(x.getStartTime()));
                     });
@@ -597,7 +597,7 @@ public class NTasksSubCmd {
             Stream<NTask> r = service.tasks().findTasks(d.status, null, d.count, d.countType, d.whereFilter, d.groupBy, d.timeUnit, d.hoursPerDay);
 
             if (session.isPlainTrace()) {
-                NMutableTableModel m = NMutableTableModel.of(session);
+                NMutableTableModel m = NMutableTableModel.of();
                 List<NTask> lastResults = new ArrayList<>();
                 int[] index = new int[1];
                 r.forEach(x -> {
@@ -608,7 +608,7 @@ public class NTasksSubCmd {
                     lastResults.add(x);
                 });
                 session.setProperty("LastResults", lastResults.toArray(new NTask[0]));
-                NTableFormat.of(session)
+                NTableFormat.of()
                         .setBorder("spaces")
                         .setValue(m).println();
             } else {
@@ -622,7 +622,7 @@ public class NTasksSubCmd {
         NProject p = project == null ? null : service.projects().getProject(project);
         NTaskStatus s = x.getStatus();
         String dte0 = parent.getFormattedDate(x.getDueTime());
-        NTextBuilder dte = NTexts.of(session).ofBuilder();
+        NTextBuilder dte = NTexts.of().ofBuilder();
         if (s == NTaskStatus.CANCELLED || s == NTaskStatus.DONE) {
             dte.append(dte0, NTextStyle.pale());
         } else if (x.getDueTime() != null && x.getDueTime().compareTo(Instant.now()) < 0) {
@@ -633,7 +633,7 @@ public class NTasksSubCmd {
         String projectName = p != null ? p.getName() : project != null ? project : "*";
         return new Object[]{
             index,
-            NTexts.of(session).ofBuilder().append(x.getId(), NTextStyle.pale()),
+            NTexts.of().ofBuilder().append(x.getId(), NTextStyle.pale()),
             parent.getFlagString(x.getFlag()),
             parent.getStatusString(x.getStatus()),
             parent.getPriorityString(x.getPriority()),
@@ -644,9 +644,9 @@ public class NTasksSubCmd {
     }
 
     private void runTaskRemove(NCmdLine cmd) {
-        NTexts text = NTexts.of(session);
+        NTexts text = NTexts.of();
         while (cmd.hasNext()) {
-            NArg a = cmd.next().get(session);
+            NArg a = cmd.next().get();
             if (cmd.isExecMode()) {
                 NTask t = findTask(a.toString(), cmd);
                 if (service.tasks().removeTask(t.getId())) {
@@ -668,7 +668,7 @@ public class NTasksSubCmd {
 
     private void runTaskShow(NCmdLine cmd) {
         while (cmd.hasNext()) {
-            NArg a = cmd.next().get(session);
+            NArg a = cmd.next().get();
             if (cmd.isExecMode()) {
                 NTask task = findTask(a.toString(), cmd);
                 NPrintStream out = session.out();

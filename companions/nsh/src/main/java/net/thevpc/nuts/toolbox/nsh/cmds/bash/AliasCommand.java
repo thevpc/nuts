@@ -52,7 +52,7 @@ public class AliasCommand extends NShellBuiltinDefault {
     protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        final NArg a = cmdLine.peek().get(session);
+        final NArg a = cmdLine.peek().get();
         if (a.isOption()) {
             if (a.key().equals("--sort")) {
                 cmdLine.skip();
@@ -61,11 +61,11 @@ public class AliasCommand extends NShellBuiltinDefault {
             }
         } else if (a.isKeyValue()) {
             cmdLine.skip();
-            options.add.put(a.key(), a.getStringValue().get(session));
+            options.add.put(a.key(), a.getStringValue().get());
             return true;
         } else {
             cmdLine.skip();
-            options.show.add(a.asString().get(session));
+            options.show.add(a.asString().get());
             return true;
         }
         return false;

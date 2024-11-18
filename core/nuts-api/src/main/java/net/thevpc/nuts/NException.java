@@ -26,8 +26,6 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.text.NString;
-import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NMsg;
 
 /**
@@ -47,14 +45,12 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
      * cause is not initialized, and may subsequently be initialized by a call
      * to {@link #initCause}.
      *
-     * @param session the workspace session of this Nuts Exception
      * @param message the detail message. The detail message is saved for later
      *                retrieval by the {@link #getMessage()} method.
      */
-    public NException(NSession session, NMsg message) {
-        super(NException.messageToString(message, session));
-        NAssert.requireSession(session);
-        this.session = session;
+    public NException(NMsg message) {
+        super(NException.messageToString(message));
+        this.session = NSession.of().orNull();
         this.formattedMessage = NException.validateFormattedMessage(message);
     }
 
@@ -70,11 +66,10 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
      * @param cause   the cause (which is saved for later retrieval by the
      *                {@link #getCause()} method). (A {@code null} value is permitted, and
      *                indicates that the cause is nonexistent or unknown.)
-     * @param session the workspace of this Nuts Exception
      */
-    public NException(NSession session, NMsg message, Throwable cause) {
-        super(NException.messageToString(message, session), cause);
-        this.session = session;
+    public NException(NMsg message, Throwable cause) {
+        super(NException.messageToString(message), cause);
+        this.session = NSession.of().orNull();
         this.formattedMessage = NException.validateFormattedMessage(message);
     }
 
@@ -89,12 +84,11 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
      * @param enableSuppression  whether suppression is enabled or not
      *                           disabled
      * @param writableStackTrace whether the stack trace should be writable or not
-     * @param session            the workspace session of this Nuts Exception
      */
-    public NException(NSession session, NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(NException.messageToString(message, session),
+    public NException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(NException.messageToString(message),
                 cause, enableSuppression, writableStackTrace);
-        this.session = session;
+        this.session = NSession.of().orNull();
         this.formattedMessage = NException.validateFormattedMessage(message);
     }
 
@@ -105,12 +99,12 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
         return message;
     }
 
-    static NString messageToFormattedString(NMsg message, NSession session) {
-        return NTexts.of(session).ofText(validateFormattedMessage(message));
+    static NString messageToFormattedString(NMsg message) {
+        return NString.of(validateFormattedMessage(message));
     }
 
-    static String messageToString(NMsg message, NSession session) {
-        return messageToFormattedString(message, session).filteredText();
+    static String messageToString(NMsg message) {
+        return messageToFormattedString(message).filteredText();
     }
 
     @Override

@@ -9,7 +9,6 @@ import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.DefaultNArtifactCall;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
@@ -30,20 +29,17 @@ import java.util.stream.Collectors;
 @NComponentScope(NScopeType.PROTOTYPE)
 public class DefaultNDescriptorParser implements NDescriptorParser {
 
-    private final NWorkspace ws;
-    private NSession session;
+    private final NWorkspace workspace;
     private NDescriptorStyle descriptorStyle;
     private String format;
 
-    public DefaultNDescriptorParser(NSession session) {
-        this.session = session;
-        this.ws = session.getWorkspace();
+    public DefaultNDescriptorParser(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
     @Override
     public NOptional<NDescriptor> parse(URL url) {
-        checkSession();
-        return parse(NPath.of(url, getSession()));
+        return parse(NPath.of(url));
     }
 
     @Override
@@ -53,25 +49,21 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
 
     @Override
     public NOptional<NDescriptor> parse(Path path) {
-        checkSession();
-        return parse(NPath.of(path, getSession()));
+        return parse(NPath.of(path));
     }
 
     @Override
     public NOptional<NDescriptor> parse(File file) {
-        checkSession();
         return parse(file.toPath());
     }
 
     @Override
     public NOptional<NDescriptor> parse(InputStream stream) {
-        checkSession();
         return parse(stream, null, false);
     }
 
     @Override
     public NOptional<NDescriptor> parse(NPath path) {
-        checkSession();
         try {
             boolean startParsing = false;
             try {
@@ -102,28 +94,27 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
                     }
                     NOptional<NDescriptor> r = parse(is, defaultDescriptorStyle, true);
                     if (r.isError()) {
-                        return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor from %s : %s", path,
-                                r.getMessage().apply(session)
+                        return NOptional.ofError(() -> NMsg.ofC("unable to parse descriptor from %s : %s", path,
+                                r.getMessage().get()
                         ));
                     }
                     return r;
                 } catch (RuntimeException ex) {
-                    return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor from %s : %s", path, ex), ex);
+                    return NOptional.ofError(() -> NMsg.ofC("unable to parse descriptor from %s : %s", path, ex), ex);
                 }
             } catch (IOException ex) {
                 if (!startParsing) {
-                    return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor from %s : file not found", path), ex);
+                    return NOptional.ofError(() -> NMsg.ofC("unable to parse descriptor from %s : file not found", path), ex);
                 }
-                return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor from %s : %s", path, ex), ex);
+                return NOptional.ofError(() -> NMsg.ofC("unable to parse descriptor from %s : %s", path, ex), ex);
             }
         } catch (Exception ex) {
-            return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor from %s : %s", path, ex), ex);
+            return NOptional.ofError(() -> NMsg.ofC("unable to parse descriptor from %s : %s", path, ex), ex);
         }
     }
 
     @Override
     public NOptional<NDescriptor> parse(String str) {
-        checkSession();
         if (NBlankable.isBlank(str)) {
             return null;
         }
@@ -141,34 +132,19 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
         return this;
     }
 
-    @Override
-    public NSession getSession() {
-        return session;
-    }
 
-
-    @Override
-    public NDescriptorParser setSession(NSession session) {
-        this.session = NWorkspaceUtils.bindSession(ws, session);
-        return this;
-    }
-
-    private void checkSession() {
-        NSessionUtils.checkSession(getWorkspace(), getSession());
-    }
 
     private NOptional<NDescriptor> parse(InputStream in, NDescriptorStyle defaultDescriptorStyle, boolean closeStream) {
         try {
             return NOptional.of(parseNonLenient(in, defaultDescriptorStyle, closeStream));
         } catch (Exception ex) {
-            return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor from %s : %s",
+            return NOptional.ofError(() -> NMsg.ofC("unable to parse descriptor from %s : %s",
                     in,
                     ex), ex);
         }
     }
 
     private NDescriptor parseNonLenient(InputStream in, NDescriptorStyle defaultDescriptorStyle, boolean closeStream) {
-        checkSession();
         NDescriptorStyle style = getDescriptorStyle();
         if (style == null) {
             style = defaultDescriptorStyle;
@@ -179,13 +155,13 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
         switch (style) {
             case MAVEN: {
                 try {
-                    return MavenUtils.of(session).parsePomXml(in, NFetchMode.LOCAL, "descriptor", null);
+                    return MavenUtils.of().parsePomXml(in, NFetchMode.LOCAL, "descriptor", null);
                 } finally {
                     if (closeStream) {
                         try {
                             in.close();
                         } catch (IOException ex) {
-                            throw new NIOException(getSession(), ex);
+                            throw new NIOException(ex);
                         }
                     }
                 }
@@ -193,15 +169,14 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
             case NUTS: {
                 try {
                     Reader rr = new InputStreamReader(in);
-                    return NElements.of(getSession())
-                            .setSession(session)
+                    return NElements.of()
                             .json().parse(rr, NDescriptor.class);
                 } finally {
                     if (closeStream) {
                         try {
                             in.close();
                         } catch (IOException ex) {
-                            throw new NIOException(getSession(), ex);
+                            throw new NIOException(ex);
                         }
                     }
                 }
@@ -321,7 +296,7 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
                                             .collect(Collectors.toList()))
                                     //.setCondition()
                                     .setExecutor(new DefaultNArtifactCall(
-                                            NId.of("java").get(getSession()),
+                                            NId.of("java").get(),
                                             //new String[]{"-jar"}
                                             NBlankable.isBlank(mainClass) ? Collections.emptyList()
                                                     : Arrays.asList(
@@ -331,28 +306,28 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
                                     .setDependencies(new ArrayList<>(deps))
                                     .build();
                         }
-                        throw new NParseException(getSession(), NMsg.ofC("unable to parse Descriptor for Manifest from %s", in));
+                        throw new NParseException(NMsg.ofC("unable to parse Descriptor for Manifest from %s", in));
                     } catch (IOException ex) {
-                        throw new NIOException(getSession(), ex);
+                        throw new NIOException(ex);
                     }
                 } finally {
                     if (closeStream) {
                         try {
                             in.close();
                         } catch (IOException ex) {
-                            throw new NIOException(getSession(), ex);
+                            throw new NIOException(ex);
                         }
                     }
                 }
             }
             default: {
-                throw new NUnsupportedEnumException(getSession(), style);
+                throw new NUnsupportedEnumException(style);
             }
         }
     }
 
     public NWorkspace getWorkspace() {
-        return ws;
+        return workspace;
     }
 
     @Override

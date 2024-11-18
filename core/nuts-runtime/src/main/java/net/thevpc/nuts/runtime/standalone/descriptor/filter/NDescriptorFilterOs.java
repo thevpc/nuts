@@ -41,8 +41,8 @@ public class NDescriptorFilterOs extends AbstractDescriptorFilter {
 
     private final String os;
 
-    public NDescriptorFilterOs(NSession session, String os) {
-        super(session, NFilterOp.CUSTOM);
+    public NDescriptorFilterOs(NWorkspace workspace, String os) {
+        super(workspace, NFilterOp.CUSTOM);
         this.os = os;
     }
 
@@ -51,8 +51,8 @@ public class NDescriptorFilterOs extends AbstractDescriptorFilter {
     }
 
     @Override
-    public boolean acceptDescriptor(NDescriptor descriptor, NSession session) {
-        return CoreFilterUtils.matchesOs(os, descriptor.getCondition().getOs(), session);
+    public boolean acceptDescriptor(NDescriptor descriptor) {
+        return CoreFilterUtils.matchesOs(os, descriptor.getCondition().getOs());
     }
 
     /**

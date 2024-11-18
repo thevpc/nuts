@@ -23,15 +23,15 @@ public class IteratorUtils {
 //    }
 
     public static <T> NIterator<T> safe(IteratorErrorHandlerType type, NIterator<T> t, NSession session) {
-        return new ErrorHandlerIterator(type, t,session);
+        return new ErrorHandlerIterator(type, t);
     }
 
     public static <T> NIterator<T> safeIgnore(NIterator<T> t, NSession session) {
-        return new ErrorHandlerIterator(IteratorErrorHandlerType.IGNORE, t,session);
+        return new ErrorHandlerIterator(IteratorErrorHandlerType.IGNORE, t);
     }
 
     public static <T> NIterator<T> safePospone(NIterator<T> t, NSession session) {
-        return new ErrorHandlerIterator(IteratorErrorHandlerType.POSTPONE, t,session);
+        return new ErrorHandlerIterator(IteratorErrorHandlerType.POSTPONE, t);
     }
 
     public static <T> boolean isNullOrEmpty(Iterator<T> t) {

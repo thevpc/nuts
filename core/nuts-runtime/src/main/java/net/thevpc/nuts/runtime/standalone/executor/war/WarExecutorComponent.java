@@ -54,7 +54,7 @@ public class WarExecutorComponent implements NExecutorComponent {
     public int getSupportLevel(NSupportLevelContext context) {
         this.session =context.getSession();
         if(ID==null){
-            ID = NId.of("net.thevpc.nuts.exec:war").get(session);
+            ID = NId.of("net.thevpc.nuts.exec:war").get();
         }
         NDefinition def = context.getConstraints(NDefinition.class);
         if (def != null) {
@@ -71,9 +71,9 @@ public class WarExecutorComponent implements NExecutorComponent {
     }
 
     public IProcessExecHelper execHelper(NExecutionContext executionContext) {
-        return new AbstractSyncIProcessExecHelper(executionContext.getSession()) {
+        return new AbstractSyncIProcessExecHelper(executionContext.getWorkspace()) {
             public int exec() {
-                throw new NIOException(getSession(), NMsg.ofC("unsupported yet execution of %s with packaging %s",
+                throw new NIOException(NMsg.ofC("unsupported yet execution of %s with packaging %s",
                         executionContext.getDefinition().getId(),
                         executionContext.getDefinition().getDescriptor().getPackaging()
                 ));

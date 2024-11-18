@@ -26,7 +26,7 @@ public class DefaultImportModel {
         return cachedImports;
     }
 
-    public void add(String[] importExpressions, NSession session) {
+    public void add(String[] importExpressions) {
         Set<String> imports = new LinkedHashSet<>();
         if (getStoreModelMain().getImports() != null) {
             imports.addAll(getStoreModelMain().getImports());
@@ -42,14 +42,14 @@ public class DefaultImportModel {
         }
         String[] arr = imports.toArray(new String[0]);
 //        Arrays.sort(arr);
-        set(arr, session);
+        set(arr);
     }
 
-    public void removeAll(NSession session) {
-        set(null, session);
+    public void removeAll() {
+        set(null);
     }
 
-    public void remove(String[] importExpressions, NSession session) {
+    public void remove(String[] importExpressions) {
         if (getStoreModelMain().getImports() != null) {
             Set<String> imports = new LinkedHashSet<>();
             for (String importExpression : getStoreModelMain().getImports()) {
@@ -62,11 +62,11 @@ public class DefaultImportModel {
             }
             String[] arr = imports.toArray(new String[0]);
 //        Arrays.sort(arr);
-            set(arr, session);
+            set(arr);
         }
     }
 
-    public void set(String[] imports, NSession session) {
+    public void set(String[] imports) {
         Set<String> simports = new LinkedHashSet<>();
         if (imports != null) {
             for (String s : imports) {
@@ -74,9 +74,9 @@ public class DefaultImportModel {
             }
         }
         getStoreModelMain().setImports(new ArrayList<>(simports));
-        NConfigsExt.of(NConfigs.of(session))
+        NConfigsExt.of(NConfigs.of())
                 .getModel()
-                .fireConfigurationChanged("import", session, ConfigEventType.MAIN);
+                .fireConfigurationChanged("import", ConfigEventType.MAIN);
     }
 
     public boolean isImportedGroupId(String groupId) {

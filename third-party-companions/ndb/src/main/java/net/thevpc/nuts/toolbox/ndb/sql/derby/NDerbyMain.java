@@ -35,7 +35,7 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
     }
 
     @Override
-    public void run(NSession session, NCmdLine cmdLine) {
+    public void run(NCmdLine cmdLine) {
         NArg a;
         NDerbyConfig options = new NDerbyConfig();
         cmdLine.setCommandName("derby");
@@ -53,19 +53,19 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
                 options.setCmd(Command.runtimeinfo);
             } else if ((a = cmdLine.nextEntry("trace").orNull()) != null) {
                 options.setCmd(Command.trace);
-                options.setExtraArg(a.getStringValue().get(session));
+                options.setExtraArg(a.getStringValue().get());
             } else if ((a = cmdLine.nextEntry("trace-directory", "tracedirectory").orNull()) != null) {
                 options.setCmd(Command.tracedirectory);
-                options.setExtraArg(a.getStringValue().get(session));
+                options.setExtraArg(a.getStringValue().get());
             } else if ((a = cmdLine.nextEntry("max-threads", "maxthreads").orNull()) != null) {
                 options.setCmd(Command.maxthreads);
-                options.setExtraArg(a.getStringValue().get(session));
+                options.setExtraArg(a.getStringValue().get());
             } else if ((a = cmdLine.nextEntry("time-slice", "timeslice").orNull()) != null) {
                 options.setCmd(Command.timeslice);
-                options.setExtraArg(a.getStringValue().get(session));
+                options.setExtraArg(a.getStringValue().get());
             } else if ((a = cmdLine.nextEntry("log-connections", "logconnections").orNull()) != null) {
                 options.setCmd(Command.logconnections);
-                options.setExtraArg(a.getStringValue().get(session));
+                options.setExtraArg(a.getStringValue().get());
             } else if ((a = cmdLine.next("stop", "shutdown").orNull()) != null) {
                 options.setCmd(Command.shutdown);
             } else if ((a = cmdLine.next("ps").orNull()) != null) {
@@ -87,18 +87,18 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
             DerbyService srv = new DerbyService(session);
             int effectivePort = options.getPort() < 0 ? 1527 : options.getPort();
             if (options.getCmd() == Command.start) {
-                NTexts factory = NTexts.of(session);
+                NTexts factory = NTexts.of();
                 if (cmdLine.isExecMode()) {
                     if (new DerbyService(session).isRunning()) {
                         session.out().println(NMsg.ofC("derby is %s on port %s",
                                 factory.ofStyled("already running", NTextStyle.warn()),
                                 factory.ofStyled("" + effectivePort, NTextStyle.number())
                         ));
-                        throw new NExecutionException(session, NMsg.ofC("derby is already running on port %d", effectivePort), NExecutionException.ERROR_3);
+                        throw new NExecutionException(NMsg.ofC("derby is already running on port %d", effectivePort), NExecutionException.ERROR_3);
                     }
                 }
             } else if (options.getCmd() == Command.shutdown) {
-                NTexts factory = NTexts.of(session);
+                NTexts factory = NTexts.of();
                 if (cmdLine.isExecMode()) {
                     if (!new DerbyService(session).isRunning()) {
                         session.out().println(NMsg.ofC("derby is %s on port %s",
@@ -106,7 +106,7 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
                                 factory.ofStyled("" + effectivePort, NTextStyle.number())
                         ));
                         session.out().println(NMsg.ofC("derby is %s", factory.ofStyled("already stopped", NTextStyle.warn())));
-                        throw new NExecutionException(session, NMsg.ofC("derby is already stopped on port %d", effectivePort), NExecutionException.ERROR_3);
+                        throw new NExecutionException(NMsg.ofC("derby is already stopped on port %d", effectivePort), NExecutionException.ERROR_3);
                     }
                 }
             }
@@ -121,11 +121,11 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
         NRef<Boolean> forceShowSQL = NRef.ofNull(Boolean.class);
         while (commandLine.hasNext()) {
             if (commandLine.isNextOption()) {
-                switch (commandLine.peek().get(session).key()) {
+                switch (commandLine.peek().get().key()) {
                     case "--name": {
-                        commandLine.withNextEntry((v, a, s) -> {
+                        commandLine.withNextEntry((v, a) -> {
                             if (name.isNull()) {
-                                name.set(new AtName(a.getStringValue().get(session)));
+                                name.set(new AtName(a.getStringValue().get()));
                             } else {
                                 commandLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
                             }
@@ -133,7 +133,7 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
                         break;
                     }
                     case "--show-sql": {
-                        commandLine.withNextFlag((v, a, s) -> {
+                        commandLine.withNextFlag((v, a) -> {
                             forceShowSQL.set(v);
                         });
                         break;
@@ -144,9 +144,9 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
                 }
             } else {
                 if (name.isNull()) {
-                    name.set(new AtName(commandLine.next().get(session).asString().get(session)));
+                    name.set(new AtName(commandLine.next().get().asString().get()));
                 } else {
-                    sql.add(commandLine.next().flatMap(NLiteral::asString).get(session));
+                    sql.add(commandLine.next().flatMap(NLiteral::asString).get());
                 }
             }
         }
@@ -191,7 +191,7 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
             }
         }
         options.setCmd(Command.ping);
-        NTexts factory = NTexts.of(session);
+        NTexts factory = NTexts.of();
         if (cmdLine.isExecMode()) {
             if (new DerbyService(session).isRunning()) {
                 session.out().println(NMsg.ofC("derby is %s", factory.ofStyled("running", NTextStyle.primary1())));
@@ -204,10 +204,10 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
     private boolean _opt(NCmdLine cmdLine, NDerbyConfig options) {
         NArg a;
         if ((a = cmdLine.nextEntry("-v", "--derby-version").orNull()) != null) {
-            options.setDerbyVersion(a.getStringValue().get(session));
+            options.setDerbyVersion(a.getStringValue().get());
             return true;
         } else if ((a = cmdLine.nextEntry("-H", "--home").orNull()) != null) {
-            options.setDerbyDataHomeRoot(a.getStringValue().get(session));
+            options.setDerbyDataHomeRoot(a.getStringValue().get());
             return true;
         } else if ((a = cmdLine.nextEntry("--nb").orNull()) != null) {
             options.setDerbyDataHomeRoot(System.getProperty("user.home") + File.separator + ".netbeans-derby");
@@ -216,16 +216,16 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
 //            options.derbyDataHomeReplace = System.getProperty("user.home") + "/.netbeans-derby";
 //            return true;
         } else if ((a = cmdLine.nextEntry("-h", "--host").orNull()) != null) {
-            options.setHost(a.getStringValue().get(session));
+            options.setHost(a.getStringValue().get());
             return true;
         } else if ((a = cmdLine.nextEntry("-p", "--port").orNull()) != null) {
-            options.setPort(a.getValue().asInt().get(session));
+            options.setPort(a.getValue().asInt().get());
             return true;
         } else if ((a = cmdLine.nextEntry("-ssl", "--ssl").orNull()) != null) {
-            options.setSslmode(SSLMode.valueOf(a.getStringValue().get(session)));
+            options.setSslmode(SSLMode.valueOf(a.getStringValue().get()));
             return true;
         } else if ((a = cmdLine.nextEntry("-n", "--dbname").orNull()) != null) {
-            options.setDatabaseName(a.getStringValue().get(session));
+            options.setDatabaseName(a.getStringValue().get());
             return true;
         } else if (session.configureFirst(cmdLine)) {
             return true;
@@ -250,7 +250,7 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
                 args.throwUnexpectedArgument();
             }
         }
-        NTexts factory = NTexts.of(session);
+        NTexts factory = NTexts.of();
         if (args.isExecMode()) {
             if (session.isPlainOut()) {
                 NPrintStream out = session.out();
@@ -268,7 +268,7 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
                                     factory.ofPlain("HOME:"),
                                     factory.ofStyled(jpsResult.getHome(), NTextStyle.path()),
                                     factory.ofPlain("CMD:"),
-                                    NCmdLine.parse(jpsResult.getArgsLine(), session))
+                                    NCmdLine.parse(jpsResult.getArgsLine()))
                             );
                             break;
                         }
@@ -309,12 +309,12 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
     }
 
     @Override
-    public CmdRedirect createDumpCommand(NPath remoteSql, NDerbyConfig options, NSession session) {
+    public CmdRedirect createDumpCommand(NPath remoteSql, NDerbyConfig options) {
         throw new RuntimeException("not supported dump");
     }
 
     @Override
-    public CmdRedirect createRestoreCommand(NPath remoteSql, NDerbyConfig options, NSession session) {
+    public CmdRedirect createRestoreCommand(NPath remoteSql, NDerbyConfig options) {
         throw new RuntimeException("not supported restore");
     }
 }

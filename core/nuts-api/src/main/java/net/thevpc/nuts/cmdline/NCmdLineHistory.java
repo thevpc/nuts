@@ -27,7 +27,6 @@ package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponent;
 
 import java.io.File;
@@ -44,8 +43,8 @@ import java.util.ListIterator;
  * @app.category Command Line
  */
 public interface NCmdLineHistory extends NComponent {
-    static NCmdLineHistory of(NSession session) {
-       return NExtensions.of(session).createComponent(NCmdLineHistory.class).get();
+    static NCmdLineHistory of() {
+       return NExtensions.of().createComponent(NCmdLineHistory.class).get();
     }
 
 

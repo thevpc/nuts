@@ -5,9 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.search;
 
-import net.thevpc.nuts.NExecCmd;
-import net.thevpc.nuts.NExecutionException;
-import net.thevpc.nuts.NSearchCmd;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 
@@ -17,21 +15,22 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
  */
 public class DefaultNSearchInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNSearchInternalExecutable(String[] args, NExecCmd execCommand) {
-        super("search", args, execCommand);
+    public DefaultNSearchInternalExecutable(NWorkspace workspace, String[] args, NExecCmd execCommand) {
+        super(workspace,"search", args, execCommand);
     }
 
     @Override
     public int execute() {
-        if(getSession().isDry()){
+        NSession session = workspace.currentSession();
+        if(session.isDry()){
             dryExecute();
             return NExecutionException.SUCCESS;
         }
-        if (NAppUtils.processHelpOptions(args, getSession())) {
+        if (NAppUtils.processHelpOptions(args, session)) {
             showDefaultHelp();
             return NExecutionException.SUCCESS;
         }
-        NSearchCmd.of(getSession())
+        NSearchCmd.of()
                 .configure(false, args).run();
         return NExecutionException.SUCCESS;
     }

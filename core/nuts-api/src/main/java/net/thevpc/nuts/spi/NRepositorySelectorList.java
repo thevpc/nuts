@@ -29,7 +29,6 @@ package net.thevpc.nuts.spi;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
@@ -50,11 +49,11 @@ public class NRepositorySelectorList {
         }
     }
 
-    public static NOptional<NRepositorySelectorList> of(List<String> expressions, NSession session) {
-        return of(expressions, session == null ? NRepositoryDB.ofDefault() : NRepositoryDB.of(session), session);
+    public static NOptional<NRepositorySelectorList> of(List<String> expressions) {
+        return of(expressions, NRepositoryDB.of());
     }
 
-    public static NOptional<NRepositorySelectorList> of(List<String> expressions, NRepositoryDB db, NSession session) {
+    public static NOptional<NRepositorySelectorList> of(List<String> expressions, NRepositoryDB db) {
         if (expressions == null) {
             return NOptional.of(new NRepositorySelectorList());
         }
@@ -63,10 +62,10 @@ public class NRepositorySelectorList {
             if (t != null) {
                 t = t.trim();
                 if (!t.isEmpty()) {
-                    NOptional<NRepositorySelectorList> r = of(t, db, session);
+                    NOptional<NRepositorySelectorList> r = of(t, db);
                     if (r.isNotPresent()) {
                         String finalT = t;
-                        return NOptional.ofError(x -> NMsg.ofC("invalid selector list : %s", finalT));
+                        return NOptional.ofError(() -> NMsg.ofC("invalid selector list : %s", finalT));
                     }
                     result = result.merge(r.get());
                 }
@@ -75,7 +74,7 @@ public class NRepositorySelectorList {
         return NOptional.of(result);
     }
 
-    public static NOptional<NRepositorySelectorList> of(String expression, NRepositoryDB db, NSession session) {
+    public static NOptional<NRepositorySelectorList> of(String expression, NRepositoryDB db) {
         if (NBlankable.isBlank(expression)) {
             return NOptional.of(new NRepositorySelectorList());
         }
@@ -84,9 +83,9 @@ public class NRepositorySelectorList {
         for (String s : NStringUtils.split(expression, ",;", true, true)) {
             s = s.trim();
             if (s.length() > 0) {
-                NOptional<NRepositorySelector> oe = NRepositorySelector.of(op, s, db, session);
+                NOptional<NRepositorySelector> oe = NRepositorySelector.of(op, s, db);
                 if (oe.isNotPresent()) {
-                    return NOptional.ofError(x -> NMsg.ofC("invalid selector list : %s", expression));
+                    return NOptional.ofError(() -> NMsg.ofC("invalid selector list : %s", expression));
                 }
                 NRepositorySelector e = oe.get();
                 op = e.getOp();

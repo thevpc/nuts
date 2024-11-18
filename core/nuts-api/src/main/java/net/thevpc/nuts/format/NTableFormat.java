@@ -26,7 +26,6 @@
 package net.thevpc.nuts.format;
 
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 
 /**
@@ -35,8 +34,8 @@ import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
  * @since 0.5.5
  */
 public interface NTableFormat extends NContentTypeFormat {
-    static NTableFormat of(NSession session) {
-       return NExtensions.of(session).createComponent(NTableFormat.class).get();
+    static NTableFormat of() {
+       return NExtensions.of().createComponent(NTableFormat.class).get();
     }
 
     boolean isVisibleHeader();
@@ -59,15 +58,6 @@ public interface NTableFormat extends NContentTypeFormat {
 
     @Override
     NTableFormat setValue(Object value);
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this instance}
-     */
-    @Override
-    NTableFormat setSession(NSession session);
 
     /**
      * configure the current command with the given arguments. This is an

@@ -27,28 +27,25 @@ import net.thevpc.nuts.util.UncheckedException;
  */
 public class NDescriptorIdFilter extends AbstractIdFilter implements NIdFilter, NSimplifiable<NIdFilter> {
 
-    private NLog LOG;
     private final NDescriptorFilter filter;
 
-    public NDescriptorIdFilter(NDescriptorFilter filter, NSession session) {
-        super(session, NFilterOp.CONVERT);
+    public NDescriptorIdFilter(NDescriptorFilter filter, NWorkspace workspace) {
+        super(workspace, NFilterOp.CONVERT);
         this.filter = filter;
     }
 
     @Override
-    public boolean acceptSearchId(NSearchId sid, NSession session) {
-        return filter == null ? true : filter.acceptSearchId(sid, session);
+    public boolean acceptSearchId(NSearchId sid) {
+        return filter == null ? true : filter.acceptSearchId(sid);
     }
 
     @Override
-    public boolean acceptId(NId id, NSession session) {
+    public boolean acceptId(NId id) {
         if (filter == null) {
             return true;
         }
-        if (LOG == null) {
-            LOG = NLog.of(MavenRepositoryFolderHelper.class, session);
-        }
-        DelegateNDescriptor d = new DelegateNDescriptor(session) {
+        NLog LOG = NLog.of(MavenRepositoryFolderHelper.class);
+        DelegateNDescriptor d = new DelegateNDescriptor(workspace) {
             NDescriptor descriptor = null;
             boolean loaded = false;
             RuntimeException replayException;
@@ -64,14 +61,14 @@ public class NDescriptorIdFilter extends AbstractIdFilter implements NIdFilter, 
                     loaded = true;
                     try {
 //                descriptor = repository.fetchDescriptor().setId(id).setSession(session).getResult();
-                        descriptor = NFetchCmd.of(id,session).getResultDescriptor();
+                        descriptor = NFetchCmd.of(id).getResultDescriptor();
                         if (!CoreNUtils.isEffectiveId(descriptor.getId())) {
                             NDescriptor nutsDescriptor = null;
                             try {
                                 //NutsWorkspace ws = repository.getWorkspace();
-                                nutsDescriptor = NWorkspaceExt.of(session.getWorkspace()).resolveEffectiveDescriptor(descriptor, session);
+                                nutsDescriptor = NWorkspaceExt.of(workspace).resolveEffectiveDescriptor(descriptor);
                             } catch (Exception ex) {
-                                LOG.with().session(session).level(Level.FINE).error(ex)
+                                LOG.with().level(Level.FINE).error(ex)
                                         .log(NMsg.ofC("failed to resolve effective desc %s for %s", descriptor.getId(), id));
                                 //throw new NutsException(e);
                             }
@@ -80,7 +77,7 @@ public class NDescriptorIdFilter extends AbstractIdFilter implements NIdFilter, 
                     } catch (Exception ex) {
                         //suppose we cannot retrieve descriptor
                         if (LOG.isLoggable(Level.FINER)) {
-                            LOG.with().session(session).level(Level.FINER).verb(NLogVerb.FAIL)
+                            LOG.with().level(Level.FINER).verb(NLogVerb.FAIL)
                                     .log(
                                             NMsg.ofC("unable to fetch descriptor for %s : %s",
                                                     id, ex)
@@ -99,7 +96,7 @@ public class NDescriptorIdFilter extends AbstractIdFilter implements NIdFilter, 
             }
         };
 
-        if (!filter.acceptDescriptor(d, session)) {
+        if (!filter.acceptDescriptor(d)) {
             return false;
         }
         return true;
@@ -139,7 +136,7 @@ public class NDescriptorIdFilter extends AbstractIdFilter implements NIdFilter, 
         if (f2 == filter) {
             return this;
         }
-        return new NDescriptorIdFilter(f2, getSession());
+        return new NDescriptorIdFilter(f2, workspace);
     }
 
     @Override

@@ -19,7 +19,8 @@ public class NTemplateMain implements NApplication {
     }
 
     @Override
-    public void run(NSession session) {
+    public void run() {
+        NSession session = NSession.of().get();
         session.runAppCmdLine(new NCmdLineRunner() {
 
             @Override
@@ -27,22 +28,22 @@ public class NTemplateMain implements NApplication {
                 switch (option.key()) {
                     case "-i":
                     case "--init": {
-                        cmdLine.withNextEntry((v, r, s) -> config.addInitScript(v));
+                        cmdLine.withNextEntry((v, r) -> config.addInitScript(v));
                         return true;
                     }
                     case "-s":
                     case "--scriptType": {
-                        cmdLine.withNextEntry((v, r, s) -> config.setScriptType(v));
+                        cmdLine.withNextEntry((v, r) -> config.setScriptType(v));
                         return true;
                     }
                     case "-t":
                     case "--to": {
-                        cmdLine.withNextEntry((v, r, s) -> config.setTargetFolder(v));
+                        cmdLine.withNextEntry((v, r) -> config.setTargetFolder(v));
                         return true;
                     }
                     case "-p":
                     case "--project": {
-                        cmdLine.withNextEntry((v, r, s) -> config.setProjectPath(v));
+                        cmdLine.withNextEntry((v, r) -> config.setProjectPath(v));
                         return true;
                     }
 
@@ -52,8 +53,7 @@ public class NTemplateMain implements NApplication {
 
             @Override
             public boolean nextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
-                NSession session = cmdLine.getSession();
-                config.addSource(cmdLine.next().flatMap(NLiteral::asString).get(session));
+                config.addSource(cmdLine.next().flatMap(NLiteral::asString).get());
                 return false;
             }
 

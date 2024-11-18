@@ -27,7 +27,6 @@
 package net.thevpc.nuts.log;
 
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponent;
 
 import java.util.List;
@@ -40,102 +39,91 @@ import java.util.logging.Level;
  * @app.category Logging
  */
 public interface NLogs extends NComponent {
-    static NLogs of(NSession session) {
-       return NExtensions.of(session).createComponent(NLogs.class).get();
+    static NLogs of() {
+       return NExtensions.of().createComponent(NLogs.class).get();
     }
 
     /**
      * Log handler
      *
-     * @param session session
      * @return Log handler
      */
-    List<Handler> getHandlers(NSession session);
+    List<Handler> getHandlers();
 
     /**
      * remove the given handler
      *
      * @param handler handler to remove
-     * @param session session
      * @return this
      */
-    NLogs removeHandler(Handler handler, NSession session);
+    NLogs removeHandler(Handler handler);
 
     /**
      * add the given handler
      *
      * @param handler handler to add
-     * @param session session
      * @return this
      */
-    NLogs addHandler(Handler handler, NSession session);
+    NLogs addHandler(Handler handler);
 
     /**
      * terminal handler
      *
-     * @param session session
      * @return terminal handler
      */
-    Handler getTermHandler(NSession session);
+    Handler getTermHandler();
 
     /**
      * file handler
      *
-     * @param session session
      * @return file handler
      */
-    Handler getFileHandler(NSession session);
+    Handler getFileHandler();
 
     /**
      * create an instance of {@link NLog}
      *
      * @param name logger name
-     * @param session session
      * @return new instance of {@link NLog}
      */
-    NLog createLogger(String name, NSession session);
+    NLog createLogger(String name);
 
     /**
      * create an instance of {@link NLog}
      *
      * @param clazz logger clazz
-     * @param session session
      * @return new instance of {@link NLog}
      */
-    NLog createLogger(Class clazz, NSession session);
+    NLog createLogger(Class<?> clazz);
 
     /**
      * return terminal logger level
      *
-     * @param session session
      * @return terminal logger level
      */
-    Level getTermLevel(NSession session);
+    Level getTermLevel();
 
     /**
      * set terminal logger level
      *
      * @param level new level
-     * @param session session
      * @return this
      */
-    NLogs setTermLevel(Level level, NSession session);
+    NLogs setTermLevel(Level level);
 
     /**
      * return file logger level
      *
-     * @param session session
      * @return file logger level
      */
-    Level getFileLevel(NSession session);
+    Level getFileLevel();
 
     /**
      * set file logger level
      *
      * @param level new level
-     * @param session session
      * @return this
      */
-    NLogs setFileLevel(Level level, NSession session);
+    NLogs setFileLevel(Level level);
 
 }

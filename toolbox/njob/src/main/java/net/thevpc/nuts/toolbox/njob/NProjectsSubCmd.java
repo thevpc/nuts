@@ -43,54 +43,54 @@ public class NProjectsSubCmd {
         NRef<Boolean> list = NRef.of(false);
         NRef<Boolean> show = NRef.of(false);
         while (cmd.hasNext()) {
-            NArg aa = cmd.peek().get(session);
+            NArg aa = cmd.peek().get();
             switch (aa.key()) {
                 case "--list":
                 case "-l": {
-                    cmd.withNextFlag((v, a, s) -> list.set(v));
+                    cmd.withNextFlag((v, a) -> list.set(v));
                     break;
                 }
                 case "--show":
                 case "-s": {
-                    cmd.withNextFlag((v, a, s) -> show.set(v));
+                    cmd.withNextFlag((v, a) -> show.set(v));
                     break;
                 }
                 case "-t":
                 case "--start":
                 case "--on": {
-                    cmd.withNextEntry((v, a, s) -> t.setStartTime(new TimeParser().parseInstant(v, false)));
+                    cmd.withNextEntry((v, a) -> t.setStartTime(new TimeParser().parseInstant(v, false)));
                     break;
                 }
                 case "--at": {
-                    cmd.withNextEntry((v, a, s) -> t.setStartTime(new TimeParser().setTimeOnly(true).parseInstant(v, false)));
+                    cmd.withNextEntry((v, a) -> t.setStartTime(new TimeParser().setTimeOnly(true).parseInstant(v, false)));
                     break;
                 }
                 case "-b":
                 case "--beneficiary":
                 case "--for": {
-                    cmd.withNextEntry((v, a, s) -> t.setBeneficiary(v));
+                    cmd.withNextEntry((v, a) -> t.setBeneficiary(v));
                     break;
                 }
                 case "-c":
                 case "--company":
                 case "--via": {
-                    cmd.withNextEntry((v, a, s) -> t.setCompany(v));
+                    cmd.withNextEntry((v, a) -> t.setCompany(v));
                     break;
                 }
                 case "-1":
                 case "--day1": {
-                    cmd.withNextEntry((v, a, s) -> t.setStartWeekDay(WeekDay.parse(v)));
+                    cmd.withNextEntry((v, a) -> t.setStartWeekDay(WeekDay.parse(v)));
                     break;
                 }
                 case "-o":
                 case "--obs": {
-                    cmd.withNextEntry((v, a, s) -> t.setObservations(v));
+                    cmd.withNextEntry((v, a) -> t.setObservations(v));
                     break;
                 }
                 default: {
                     if (aa.isNonOption()) {
                         if (t.getName() == null) {
-                            t.setName(cmd.next().get(session).toString());
+                            t.setName(cmd.next().get().toString());
                         } else {
                             cmd.throwUnexpectedArgument();
                         }
@@ -104,7 +104,7 @@ public class NProjectsSubCmd {
             service.projects().addProject(t);
             if (session.isPlainTrace()) {
                 session.out().println(NMsg.ofC("project %s (%s) added.",
-                        NTexts.of(session).ofStyled(t.getId(), NTextStyle.primary5()),
+                        NTexts.of().ofStyled(t.getId(), NTextStyle.primary5()),
                         t.getName()
                 ));
             }
@@ -127,51 +127,51 @@ public class NProjectsSubCmd {
         }
         Data d = new Data();
         while (cmd.hasNext()) {
-            NArg aa = cmd.peek().get(session);
+            NArg aa = cmd.peek().get();
             switch (aa.key()) {
                 case "-l":
                 case "--list": {
-                    cmd.withNextFlag((v, a, s) -> d.list = v);
+                    cmd.withNextFlag((v, a) -> d.list = v);
                     break;
                 }
                 case "-s":
                 case "--show": {
-                    cmd.withNextFlag((v, a, s) -> d.show = v);
+                    cmd.withNextFlag((v, a) -> d.show = v);
                     break;
                 }
                 case "--on":
                 case "--start": {
-                    cmd.withNextEntry((v, a, s) -> d.runLater.add(t -> t.setStartTime(new TimeParser().parseInstant(v, false))));
+                    cmd.withNextEntry((v, a) -> d.runLater.add(t -> t.setStartTime(new TimeParser().parseInstant(v, false))));
                     break;
                 }
                 case "--at": {
-                    cmd.withNextEntry((v, a, s) -> d.runLater.add(t -> t.setStartTime(new TimeParser().setTimeOnly(true).parseInstant(v, false))));
+                    cmd.withNextEntry((v, a) -> d.runLater.add(t -> t.setStartTime(new TimeParser().setTimeOnly(true).parseInstant(v, false))));
                     break;
                 }
                 case "--for":
                 case "--beneficiary":
                 case "-b": {
-                    cmd.withNextEntry((v, a, s) -> d.runLater.add(t -> t.setBeneficiary(v)));
+                    cmd.withNextEntry((v, a) -> d.runLater.add(t -> t.setBeneficiary(v)));
                     break;
                 }
                 case "--company":
                 case "--via":
                 case "-c": {
-                    cmd.withNextEntry((v, a, s) -> d.runLater.add(t -> t.setCompany(v)));
+                    cmd.withNextEntry((v, a) -> d.runLater.add(t -> t.setCompany(v)));
                     break;
                 }
                 case "--day1":
                 case "-1": {
-                    cmd.withNextEntry((v, a, s) -> d.runLater.add(t -> t.setStartWeekDay(WeekDay.parse(v))));
+                    cmd.withNextEntry((v, a) -> d.runLater.add(t -> t.setStartWeekDay(WeekDay.parse(v))));
                     break;
                 }
                 case "--obs":
                 case "-o": {
-                    cmd.withNextEntry((v, a, s) -> d.runLater.add(t -> t.setObservations(v)));
+                    cmd.withNextEntry((v, a) -> d.runLater.add(t -> t.setObservations(v)));
                     break;
                 }
                 case "--merge-to": {
-                    cmd.withNextEntry((v, a, s) -> {
+                    cmd.withNextEntry((v, a) -> {
                         if (d.mergeTo != null) {
                             cmd.pushBack(a);
                             cmd.throwUnexpectedArgument();
@@ -183,7 +183,7 @@ public class NProjectsSubCmd {
                 }
                 case "++obs":
                 case "+o": {
-                    cmd.withNextEntry((v, a, s) -> {
+                    cmd.withNextEntry((v, a) -> {
                         d.runLater.add(t -> {
                             String ss = t.getObservations();
                             if (ss == null) {
@@ -202,7 +202,7 @@ public class NProjectsSubCmd {
                 }
                 default: {
                     if (aa.isNonOption()) {
-                        String pid = cmd.next().get(session).toString();
+                        String pid = cmd.next().get().toString();
                         NProject t = findProject(pid, cmd);
                         d.projects.add(t);
                     } else {
@@ -215,7 +215,7 @@ public class NProjectsSubCmd {
             cmd.throwError(NMsg.ofNtf("project name expected"));
         }
         if (cmd.isExecMode()) {
-            NTexts text = NTexts.of(session);
+            NTexts text = NTexts.of();
             for (NProject project : d.projects) {
                 for (Consumer<NProject> c : d.runLater) {
                     c.accept(project);
@@ -232,7 +232,7 @@ public class NProjectsSubCmd {
                 service.projects().mergeProjects(d.mergeTo, d.projects.stream().map(x -> x.getId()).toArray(String[]::new));
                 if (session.isPlainTrace()) {
                     session.out().println(NMsg.ofC("projects merged to %s.",
-                            NTexts.of(session)
+                            NTexts.of()
                                     .ofStyled(d.mergeTo, NTextStyle.primary5())
                     ));
                 }
@@ -251,11 +251,11 @@ public class NProjectsSubCmd {
     private void runProjectList(NCmdLine cmd) {
         final NRef<Predicate<NProject>> whereFilter = NRef.ofNull();
         while (cmd.hasNext()) {
-            NArg aa = cmd.peek().get(session);
+            NArg aa = cmd.peek().get();
             switch (aa.key()) {
                 case "-b":
                 case "-beneficiary": {
-                    cmd.withNextEntry((v, a, s) -> {
+                    cmd.withNextEntry((v, a) -> {
                         Predicate<String> sp = parent.createStringFilter(v);
                         Predicate<NProject> t = x -> sp.test(x.getBeneficiary());
                         parent.appendPredicateRef(whereFilter, t);
@@ -264,7 +264,7 @@ public class NProjectsSubCmd {
                 }
                 case "-c":
                 case "-company": {
-                    cmd.withNextEntry((v, a, s) -> {
+                    cmd.withNextEntry((v, a) -> {
                         Predicate<String> sp = parent.createStringFilter(v);
                         Predicate<NProject> t = x -> sp.test(x.getCompany());
                         parent.appendPredicateRef(whereFilter, t);
@@ -273,7 +273,7 @@ public class NProjectsSubCmd {
                 }
                 case "-n":
                 case "--name": {
-                    cmd.withNextEntry((v, a, s) -> {
+                    cmd.withNextEntry((v, a) -> {
                         Predicate<String> sp = parent.createStringFilter(v);
                         Predicate<NProject> t = x -> sp.test(x.getName());
                         parent.appendPredicateRef(whereFilter, t);
@@ -281,7 +281,7 @@ public class NProjectsSubCmd {
                     break;
                 }
                 case "--unused": {
-                    cmd.withNextFlag((v, a, s) -> {
+                    cmd.withNextFlag((v, a) -> {
                         Predicate<NProject> t = x -> service.projects().isUsedProject(x.getId()) != v;
                         parent.appendPredicateRef(whereFilter, t);
                     });
@@ -290,7 +290,7 @@ public class NProjectsSubCmd {
                 case "-t":
                 case "--startTime":
                 case "--start-time": {
-                    cmd.withNextEntry((v, a, s) -> {
+                    cmd.withNextEntry((v, a) -> {
                         Predicate<Instant> t = new TimeParser().parseInstantFilter(v, false);
                         parent.appendPredicateRef(whereFilter, x -> t.test(x.getStartTime()));
                     });
@@ -318,7 +318,7 @@ public class NProjectsSubCmd {
                     );
 
             if (session.isPlainTrace()) {
-                NMutableTableModel m = NMutableTableModel.of(session);
+                NMutableTableModel m = NMutableTableModel.of();
                 List<NProject> lastResults = new ArrayList<>();
                 int[] index = new int[1];
                 r.forEach(x -> {
@@ -340,7 +340,7 @@ public class NProjectsSubCmd {
                     );
                 });
                 session.setProperty("LastResults", lastResults.toArray(new NProject[0]));
-                NTableFormat.of(session)
+                NTableFormat.of()
                         .setBorder("spaces")
                         .setValue(m).println(session.out());
             } else {
@@ -350,9 +350,9 @@ public class NProjectsSubCmd {
     }
 
     private void runProjectRemove(NCmdLine cmd) {
-        NTexts text = NTexts.of(session);
+        NTexts text = NTexts.of();
         while (cmd.hasNext()) {
-            NArg a = cmd.next().get(session);
+            NArg a = cmd.next().get();
             if (cmd.isExecMode()) {
                 NProject t = findProject(a.toString(), cmd);
                 NPrintStream out = session.out();
@@ -375,7 +375,7 @@ public class NProjectsSubCmd {
 
     private void runProjectShow(NCmdLine cmd) {
         while (cmd.hasNext()) {
-            NArg a = cmd.next().get(session);
+            NArg a = cmd.next().get();
             NProject project = findProject(a.toString(), cmd);
             NPrintStream out = session.out();
             if (project == null) {

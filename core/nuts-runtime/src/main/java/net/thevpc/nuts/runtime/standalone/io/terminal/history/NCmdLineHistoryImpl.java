@@ -56,24 +56,24 @@ public class NCmdLineHistoryImpl implements NCmdLineHistory {
     @Override
     public void load() {
         entries.clear();
-        NAssert.requireNonNull(path, "path", session);
+        NAssert.requireNonNull(path, "path");
         if (path.exists()) {
             try (InputStream in = path.getInputStream()) {
                 load(in);
             } catch (IOException ex) {
-                throw new NIOException(session, ex);
+                throw new NIOException(ex);
             }
         }
     }
 
     @Override
     public void save() {
-        NAssert.requireNonNull(path, "path", session);
+        NAssert.requireNonNull(path, "path");
         path.mkParentDirs();
         try (OutputStream out = path.getOutputStream()) {
             save(out);
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -97,7 +97,7 @@ public class NCmdLineHistoryImpl implements NCmdLineHistory {
                     }
                 }
             } catch (IOException ex) {
-                throw new NIOException(session, ex);
+                throw new NIOException(ex);
             }
         }
     }
@@ -114,13 +114,13 @@ public class NCmdLineHistoryImpl implements NCmdLineHistory {
 
     @Override
     public NCmdLineHistory setPath(Path path) {
-        this.path = path == null ? null : NPath.of(path, session);
+        this.path = path == null ? null : NPath.of(path);
         return this;
     }
 
     @Override
     public NCmdLineHistory setPath(File path) {
-        this.path = path == null ? null : NPath.of(path, session);
+        this.path = path == null ? null : NPath.of(path);
         return this;
     }
 

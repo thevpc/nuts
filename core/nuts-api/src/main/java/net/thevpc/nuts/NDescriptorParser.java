@@ -42,10 +42,10 @@ import java.nio.file.Path;
  * @author thevpc
  * @app.category Descriptor
  */
-public interface NDescriptorParser extends NComponent, NSessionProvider {
+public interface NDescriptorParser extends NComponent {
 
-    static NDescriptorParser of(NSession session) {
-        return NExtensions.of(session).createComponent(NDescriptorParser.class).get();
+    static NDescriptorParser of() {
+        return NExtensions.of().createComponent(NDescriptorParser.class).get();
     }
 
     /**
@@ -108,6 +108,5 @@ public interface NDescriptorParser extends NComponent, NSessionProvider {
 
     NDescriptorParser setDescriptorStyle(NDescriptorStyle descriptorStyle);
 
-    NDescriptorParser setSession(NSession session);
 
 }

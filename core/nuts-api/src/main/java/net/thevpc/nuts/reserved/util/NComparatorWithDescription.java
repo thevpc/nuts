@@ -1,6 +1,5 @@
 package net.thevpc.nuts.reserved.util;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NComparator;
@@ -21,8 +20,8 @@ public class NComparatorWithDescription<T> implements NComparator<T> {
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return NEDesc.safeDescribeOfBase(session, description, comparator);
+    public NElement describe() {
+        return NEDesc.safeDescribeOfBase(description, comparator);
     }
 
     @Override

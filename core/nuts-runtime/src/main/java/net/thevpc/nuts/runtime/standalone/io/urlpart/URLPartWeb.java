@@ -1,9 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.urlpart;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NIOException;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -14,7 +12,7 @@ class URLPartWeb extends URLPart {
         super(parent, Type.WEB, path, obj);
     }
 
-    public InputStream getInputStream(NSession session) {
+    public InputStream getInputStream() {
         try {
             if (obj instanceof URL) {
                 return ((URL) obj).openStream();
@@ -22,11 +20,11 @@ class URLPartWeb extends URLPart {
                 return new URL(path).openStream();
             }
         } catch (IOException e) {
-            throw new NIOException(session, e);
+            throw new NIOException(e);
         }
     }
 
-    public URLPart[] getChildren(boolean includeFolders, boolean deep, final Predicate<URLPart> filter, NSession session) {
+    public URLPart[] getChildren(boolean includeFolders, boolean deep, final Predicate<URLPart> filter) {
         throw new UnsupportedOperationException("unsupported");
     }
 

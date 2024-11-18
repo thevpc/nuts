@@ -40,10 +40,11 @@ public class NMvnMain implements NApplication {
     }
 
     @Override
-    public void run(NSession session) {
+    public void run() {
         String command = null;
         List<String> args2 = new ArrayList<>();
         Options o = new Options();
+        NSession session = NSession.of().get();
         NCmdLine cmd = session.getAppCmdLine();
         NArg a;
         while (cmd.hasNext()) {
@@ -51,17 +52,17 @@ public class NMvnMain implements NApplication {
                 if (session.configureFirst(cmd)) {
                     //fo nothing
                 } else if ((a = cmd.nextFlag("-j", "--json").orNull()) != null) {
-                    o.json = a.getBooleanValue().get(session);
+                    o.json = a.getBooleanValue().get();
                 } else if ((a = cmd.next("build").orNull()) != null) {
                     command = "build";
                 } else if ((a = cmd.next("get").orNull()) != null) {
                     command = "get";
                 } else {
                     command = "default";
-                    args2.add(cmd.next().flatMap(NLiteral::asString).get(session));
+                    args2.add(cmd.next().flatMap(NLiteral::asString).get());
                 }
             } else {
-                args2.add(cmd.next().flatMap(NLiteral::asString).get(session));
+                args2.add(cmd.next().flatMap(NLiteral::asString).get());
             }
         }
         if (command == null) {
@@ -87,7 +88,7 @@ public class NMvnMain implements NApplication {
                     if (r == NExecutionException.SUCCESS) {
                         return;
                     } else {
-                        throw new NExecutionException(session, NMsg.ofC("Maven Call exited with code %d", r), r);
+                        throw new NExecutionException(NMsg.ofC("Maven Call exited with code %d", r), r);
                     }
                 }
                 case "get": {
@@ -116,7 +117,7 @@ public class NMvnMain implements NApplication {
                     if (r == NExecutionException.SUCCESS) {
                         return;
                     } else {
-                        throw new NExecutionException(session, NMsg.ofC("Maven Call exited with code %s", r), r);
+                        throw new NExecutionException(NMsg.ofC("Maven Call exited with code %s", r), r);
                     }
                 }
             }
@@ -160,7 +161,7 @@ public class NMvnMain implements NApplication {
     }
 
     private static Path createTempPom(NSession session) {
-        Path d = NPath.ofTempFolder(session).toPath().get();
+        Path d = NPath.ofTempFolder().toPath().get();
         try (Writer out = Files.newBufferedWriter(d.resolve("pom.xml"))) {
             out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                     + "<project xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://maven.apache.org/POM/4.0.0\"\n"

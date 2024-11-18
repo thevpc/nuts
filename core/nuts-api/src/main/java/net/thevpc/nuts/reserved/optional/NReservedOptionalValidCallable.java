@@ -2,13 +2,10 @@ package net.thevpc.nuts.reserved.optional;
 
 import java.util.Objects;
 import java.util.function.Function;
-import net.thevpc.nuts.NSession;
+
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NCallable;
 import net.thevpc.nuts.util.NOptional;
-import static net.thevpc.nuts.util.NOptionalType.EMPTY;
-import static net.thevpc.nuts.util.NOptionalType.ERROR;
-import static net.thevpc.nuts.util.NOptionalType.PRESENT;
 
 public class NReservedOptionalValidCallable<T> extends NReservedOptionalValid<T> implements Cloneable {
 
@@ -41,9 +38,9 @@ public class NReservedOptionalValidCallable<T> extends NReservedOptionalValid<T>
     }
 
     @Override
-    public T get(NSession session) {
+    public T get() {
         if(!evaluated){
-            result=value.call(session);
+            result=value.call();
             evaluated=true;
         }
         return result;

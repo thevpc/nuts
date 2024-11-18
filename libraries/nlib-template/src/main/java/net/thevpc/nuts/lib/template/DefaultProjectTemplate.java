@@ -61,10 +61,10 @@ public class DefaultProjectTemplate implements ProjectTemplate {
                 if (DefaultProjectTemplate.this.session.getConfirm().orDefault() == NConfirmationMode.YES) {
                     return defaultValue;
                 }
-                return NAsk.of(session)
+                return NAsk.of()
                         .forString(
                                 NMsg.ofNtf(
-                                        NTexts.of(getSession()).ofBuilder()
+                                        NTexts.of().ofBuilder()
                                                 .append(propertyTitle, NTextStyle.primary4())
                                                 .append(" (")
                                                 .append(propName, NTextStyle.pale())
@@ -405,7 +405,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
             if (!pomFile.isFile()) {
                 return null;
             }
-            NDescriptorParser.of(session).setDescriptorStyle(NDescriptorStyle.MAVEN).parse(pomFile);
+            NDescriptorParser.of().setDescriptorStyle(NDescriptorStyle.MAVEN).parse(pomFile);
             return pomFile;
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -425,18 +425,18 @@ public class DefaultProjectTemplate implements ProjectTemplate {
         if (p == null) {
             p = resolveFirstPomFile(getProjectRootFolder());
             if (p != null) {
-                if (!NAsk.of(getSession())
+                if (!NAsk.of()
                         .forBoolean(NMsg.ofC("accept project location %s?",
-                                NTexts.of(session).ofStyled(p.getPath(), NTextStyle.path())))
+                                NTexts.of().ofStyled(p.getPath(), NTextStyle.path())))
                         .setDefaultValue(false)
                         .getBooleanValue()) {
-                    throw new NCancelException(getSession());
+                    throw new NCancelException();
                 }
             }
         }
         try {
-            return NDescriptorParser.of(session).setDescriptorStyle(NDescriptorStyle.MAVEN)
-                    .parse(new File(getProjectRootFolder(), "pom.xml")).get(session);
+            return NDescriptorParser.of().setDescriptorStyle(NDescriptorStyle.MAVEN)
+                    .parse(new File(getProjectRootFolder(), "pom.xml")).get();
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }

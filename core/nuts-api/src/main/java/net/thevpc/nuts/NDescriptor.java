@@ -259,5 +259,5 @@ public interface NDescriptor extends Serializable, NBlankable, NFormattable {
      */
     NDescriptorOrganization getOrganization();
 
-    NDescriptorFormat formatter(NSession session);
+    NDescriptorFormat formatter();
 }

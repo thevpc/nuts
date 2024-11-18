@@ -6,10 +6,8 @@ import net.thevpc.nuts.env.NDesktopEnvironmentFamily;
 import net.thevpc.nuts.env.NDesktopIntegrationItem;
 import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NdiScriptOptions;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NSettingsNdiSubCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.SystemNdi;
@@ -39,12 +37,9 @@ public class DefaultNEnvs implements NEnvs {
     private final DefaultNWorkspaceEnvManagerModel model;
 
     protected DefaultNPlatformModel sdkModel;
-    private NSession session;
 
-    public DefaultNEnvs(NSession session) {
-        this.session = session;
-        NWorkspace w = this.session.getWorkspace();
-        NWorkspaceExt e = (NWorkspaceExt) w;
+    public DefaultNEnvs(NWorkspace ws) {
+        NWorkspaceExt e = NWorkspaceExt.of(ws);
         this.model = e.getModel().envModel;
         this.sdkModel = e.getModel().sdkModel;
     }
@@ -56,19 +51,16 @@ public class DefaultNEnvs implements NEnvs {
 
     @Override
     public Map<String, Object> getProperties() {
-        checkSession();
         return model.getProperties();
     }
 
     @Override
     public NOptional<NLiteral> getProperty(String property) {
-        checkSession();
-        return model.getProperty(property, getSession());
+        return model.getProperty(property);
     }
 
     @Override
     public NEnvs setProperty(String property, Object value) {
-        checkSession();
         model.setProperty(property, value);
         return this;
     }
@@ -106,23 +98,23 @@ public class DefaultNEnvs implements NEnvs {
 
     @Override
     public Set<NId> getDesktopEnvironments() {
-        return model.getDesktopEnvironments(session);
+        return model.getDesktopEnvironments();
     }
 
     @Override
     public NDesktopEnvironmentFamily getDesktopEnvironmentFamily() {
-        return model.getDesktopEnvironmentFamily(session);
+        return model.getDesktopEnvironmentFamily();
     }
 
     @Override
     public Set<NDesktopEnvironmentFamily> getDesktopEnvironmentFamilies() {
-        return model.getDesktopEnvironmentFamilies(session);
+        return model.getDesktopEnvironmentFamilies();
     }
 
     @Override
     public NId getPlatform() {
 //        checkSession();
-        return model.getPlatform(session);
+        return model.getPlatform();
     }
 
     @Override
@@ -149,43 +141,30 @@ public class DefaultNEnvs implements NEnvs {
     }
 
     @Override
-    public NSession getSession() {
-        return session;
-    }
-
-    @Override
-    public NEnvs setSession(NSession session) {
-        this.session = NWorkspaceUtils.bindSession(model.getWorkspace(), session);
-        return this;
-    }
-
-
-    @Override
     public boolean isGraphicalDesktopEnvironment() {
         return model.isGraphicalDesktopEnvironment();
     }
 
     @Override
     public NSupportMode getDesktopIntegrationSupport(NDesktopIntegrationItem item) {
-        checkSession();
-        NAssert.requireNonBlank(item, "item", session);
+        NAssert.requireNonBlank(item, "item");
         switch (item) {
             case DESKTOP: {
-                NSupportMode a = NBootManager.of(session).getBootOptions().getDesktopLauncher().orNull();
+                NSupportMode a = NBootManager.of().getBootOptions().getDesktopLauncher().orNull();
                 if (a != null) {
                     return a;
                 }
                 break;
             }
             case MENU: {
-                NSupportMode a = NBootManager.of(session).getBootOptions().getMenuLauncher().orNull();
+                NSupportMode a = NBootManager.of().getBootOptions().getMenuLauncher().orNull();
                 if (a != null) {
                     return a;
                 }
                 break;
             }
             case USER: {
-                NSupportMode a = NBootManager.of(session).getBootOptions().getUserLauncher().orNull();
+                NSupportMode a = NBootManager.of().getBootOptions().getUserLauncher().orNull();
                 if (a != null) {
                     return a;
                 }
@@ -288,9 +267,8 @@ public class DefaultNEnvs implements NEnvs {
     }
 
     public void addLauncher(NLauncherOptions launcher) {
-        checkSession();
         //apply isolation!
-        NIsolationLevel isolation = NBootManager.of(session).getBootOptions().getIsolationLevel().orElse(NIsolationLevel.SYSTEM);
+        NIsolationLevel isolation = NBootManager.of().getBootOptions().getIsolationLevel().orElse(NIsolationLevel.SYSTEM);
         if (isolation.compareTo(NIsolationLevel.CONFINED) >= 0) {
             launcher.setCreateDesktopLauncher(NSupportMode.NEVER);
             launcher.setCreateMenuLauncher(NSupportMode.NEVER);
@@ -298,28 +276,23 @@ public class DefaultNEnvs implements NEnvs {
             launcher.setSwitchWorkspace(false);
             launcher.setSwitchWorkspaceLocation(null);
         }
-        NSession session = getSession();
-        SystemNdi ndi = NSettingsNdiSubCommand.createNdi(session);
+        SystemNdi ndi = NSettingsNdiSubCommand.createNdi(this.model.getWorkspace());
         if (ndi != null) {
             ndi.addScript(
                     new NdiScriptOptions()
-                            .setSession(session)
                             .setLauncher(launcher.copy()),
                     new String[]{launcher.getId().builder().getFullName()}
             );
         }
     }
 
-    private void checkSession() {
-        NSessionUtils.checkSession(model.getWorkspace(), session);
-    }
 
     public DefaultNWorkspaceEnvManagerModel getModel() {
         return model;
     }
 
     private DefaultNWorkspaceConfigModel _configModel() {
-        DefaultNConfigs config = (DefaultNConfigs) NConfigs.of(session);
+        DefaultNConfigs config = (DefaultNConfigs) NConfigs.of();
         return config.getModel();
     }
 
@@ -501,6 +474,6 @@ public class DefaultNEnvs implements NEnvs {
 
     @Override
     public List<String> buildEffectiveCommand(String[] cmd, NRunAs runAsMode, Set<NDesktopEnvironmentFamily> de, Function<String, String> sysWhich, Boolean gui, String rootName, String userName, String[] executorOptions) {
-        return NSysExecUtils.buildEffectiveCommand(cmd, runAsMode, de, sysWhich, gui, rootName, userName, executorOptions, session);
+        return NSysExecUtils.buildEffectiveCommand(cmd, runAsMode, de, sysWhich, gui, rootName, userName, executorOptions);
     }
 }

@@ -18,16 +18,16 @@ public class DefaultNRepositorySelectorFilter extends AbstractRepositoryFilter{
     private final Set<String> exactRepos;
     private final Set<Pattern> wildcardRepos;
 
-    public DefaultNRepositorySelectorFilter(NSession session, Collection<String> exactRepos) {
-        super(session, NFilterOp.CUSTOM);
+    public DefaultNRepositorySelectorFilter(NWorkspace workspace, Collection<String> exactRepos) {
+        super(workspace, NFilterOp.CUSTOM);
         this.exactRepos = new HashSet<>();
         this.wildcardRepos = new HashSet<>();
         NRepositorySelectorList li=new NRepositorySelectorList();
-        NRepositoryDB db = NRepositoryDB.of(session);
+        NRepositoryDB db = NRepositoryDB.of();
         for (String exactRepo : exactRepos) {
-            li=li.merge(NRepositorySelectorList.of(exactRepo, db,session).get());
+            li=li.merge(NRepositorySelectorList.of(exactRepo, db).get());
         }
-        NRepositoryLocation[] input = NRepositories.of(session).getRepositories().stream()
+        NRepositoryLocation[] input = NRepositories.of().getRepositories().stream()
                 .map(x -> x.config().getLocation().setName(x.getName()))
                 .toArray(NRepositoryLocation[]::new);
         String[] names = Arrays.stream(li.resolve(input,db)).map(NRepositoryLocation::getName).toArray(String[]::new);
@@ -64,7 +64,7 @@ public class DefaultNRepositorySelectorFilter extends AbstractRepositoryFilter{
     @Override
     public NRepositoryFilter simplify() {
         if(exactRepos.isEmpty() && wildcardRepos.isEmpty()){
-            return NRepositories.of(getSession()).filter().always();
+            return NRepositories.of().filter().always();
         }
         return this;
     }

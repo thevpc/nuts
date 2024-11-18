@@ -44,12 +44,9 @@ import java.util.stream.Collectors;
 public class DefaultNConfigs implements NConfigs, NConfigsExt {
 
     private final DefaultNWorkspaceConfigModel cmodel;
-    private NSession session;
 
-    public DefaultNConfigs(NSession session) {
-        this.session = session;
-        NWorkspace w = this.session.getWorkspace();
-        NWorkspaceExt e = (NWorkspaceExt) w;
+    public DefaultNConfigs(NWorkspace ws) {
+        NWorkspaceExt e = NWorkspaceExt.of(ws);
         this.cmodel = e.getModel().configModel;
     }
 
@@ -64,94 +61,69 @@ public class DefaultNConfigs implements NConfigs, NConfigsExt {
 
     @Override
     public NWorkspaceStoredConfig stored() {
-        checkSession();
         return cmodel.stored();
     }
 
     @Override
     public boolean isReadOnly() {
-        checkSession();
         return cmodel.isReadOnly();
     }
 
     @Override
     public boolean save(boolean force) {
-        checkSession();
-        return cmodel.save(force, session);
+        return cmodel.save(force);
     }
 
     @Override
     public boolean save() {
-        checkSession();
-        return cmodel.save(session);
+        return cmodel.save();
     }
 
     @Override
     public NWorkspaceBootConfig loadBootConfig(String _ws, boolean global, boolean followLinks) {
-        checkSession();
-        return cmodel.loadBootConfig(_ws, global, followLinks, session);
+        return cmodel.loadBootConfig(_ws, global, followLinks);
     }
 
     @Override
     public boolean isSupportedRepositoryType(String repositoryType) {
-        checkSession();
-        return cmodel.isSupportedRepositoryType(repositoryType, session);
+        return cmodel.isSupportedRepositoryType(repositoryType);
     }
 
     @Override
     public List<NAddRepositoryOptions> getDefaultRepositories() {
-        checkSession();
-        return cmodel.getDefaultRepositories(session);
+        return cmodel.getDefaultRepositories();
     }
 
     @Override
     public Set<String> getAvailableArchetypes() {
-        checkSession();
-        return cmodel.getAvailableArchetypes(session);
+        return cmodel.getAvailableArchetypes();
     }
 
     @Override
     public NPath resolveRepositoryPath(String repositoryLocation) {
-        checkSession();
-        return cmodel.resolveRepositoryPath(NPath.of(repositoryLocation, session), session);
+        return cmodel.resolveRepositoryPath(NPath.of(repositoryLocation));
     }
 
     @Override
     public NIndexStoreFactory getIndexStoreClientFactory() {
-        checkSession();
         return cmodel.getIndexStoreClientFactory();
     }
 
     @Override
     public String getJavaCommand() {
-        checkSession();
         return cmodel.getJavaCommand();
     }
 
     @Override
     public String getJavaOptions() {
-        checkSession();
         return cmodel.getJavaOptions();
     }
 
     @Override
     public boolean isSystemWorkspace() {
-        checkSession();
         return cmodel.isSystem();
     }
 
-    public NSession getSession() {
-        return session;
-    }
-
-    public NConfigs setSession(NSession session) {
-        this.session = NWorkspaceUtils.bindSession(cmodel.getWorkspace(), session);
-        return this;
-    }
-
-    protected void checkSession() {
-        NSessionUtils.checkSession(cmodel.getWorkspace(), session);
-    }
 
     @Override
     public String toString() {
@@ -163,22 +135,21 @@ public class DefaultNConfigs implements NConfigs, NConfigsExt {
                 + "workspaceBootId=" + s1
                 + ", workspaceRuntimeId=" + s2
                 + ", workspace=" + ((cmodel.getCurrentConfig() == null) ? "NULL" : ("'" +
-                NLocations.of(NSessionUtils.defaultSession(cmodel.getWorkspace()))
+                NLocations.of()
                         .getWorkspaceLocation() + '\''))
                 + '}';
     }
 
     public List<String> getDependencySolverNames() {
-        checkSession();
         // the first element is always the default one,
         // the rest is lexicographically sorter
-        return Arrays.stream(cmodel.getDependencySolvers(getSession()))
+        return Arrays.stream(cmodel.getDependencySolvers())
                 .map(NDependencySolverFactory::getName)
                 .sorted(new Comparator<String>() {
                     @Override
                     public int compare(String o1, String o2) {
                         if (!o1.equals(o2)) {
-                            String n = NDependencySolverUtils.resolveSolverName(session.getDependencySolver());
+                            String n = NDependencySolverUtils.resolveSolverName(NSession.of().get().getDependencySolver());
                             if (o1.equals(n)) {
                                 return -1;
                             }
@@ -193,29 +164,25 @@ public class DefaultNConfigs implements NConfigs, NConfigsExt {
     }
 
     public NDependencySolver createDependencySolver(String name) {
-        checkSession();
-        return cmodel.createDependencySolver(name, getSession());
+        return cmodel.createDependencySolver(name);
     }
 
 
 
     @Override
     public Map<String, String> getConfigMap() {
-        checkSession();
         return cmodel.getConfigMap();
     }
 
     @Override
     public NOptional<NLiteral> getConfigProperty(String property) {
-        checkSession();
-        return cmodel.getConfigProperty(property, getSession());
+        return cmodel.getConfigProperty(property);
     }
 
     @Override
     public NConfigs setConfigProperty(String property, String value) {
-        checkSession();
-        cmodel.setConfigProperty(property, value, session);
-        cmodel.save(getSession());
+        cmodel.setConfigProperty(property, value);
+        cmodel.save();
         return this;
     }
 

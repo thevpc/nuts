@@ -51,7 +51,7 @@ public class BaseNameCommand extends NShellBuiltinDefault {
     protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        NArg a = cmdLine.peek().get(session);
+        NArg a = cmdLine.peek().get();
         switch (a.key()) {
             case "-z":
             case "--zero": {
@@ -62,12 +62,12 @@ public class BaseNameCommand extends NShellBuiltinDefault {
             case "-a":
             case "--all":
             case "--multi": {
-                cmdLine.withNextFlag((v, r, s) -> options.multi = v);
+                cmdLine.withNextFlag((v, r) -> options.multi = v);
                 return true;
             }
             case "-s":
             case "--suffix": {
-                cmdLine.withNextEntry((v, r, s) -> {
+                cmdLine.withNextEntry((v, r) -> {
                     options.suffix = v;
                     options.multi = true;
                 });
@@ -78,7 +78,7 @@ public class BaseNameCommand extends NShellBuiltinDefault {
 
                 } else {
                     while (!cmdLine.isEmpty()) {
-                        NArg n = cmdLine.nextNonOption().get(session);
+                        NArg n = cmdLine.nextNonOption().get();
                         if (options.names.isEmpty()) {
                             options.names.add(n.toString());
                         } else {

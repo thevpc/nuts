@@ -18,18 +18,18 @@ public class ExamplesOfCp {
 
     public void executeSomeCommand(NSession session) {
         session.out().println("Example of ## Cp ##");
-        NCp.of(session)
-                .from(NPath.of("http://www.google.com", session))
-                .to(NPath.of("example.txt", session))
+        NCp.of()
+                .from(NPath.of("http://www.google.com"))
+                .to(NPath.of("example.txt"))
                 .addOptions(NPathOption.LOG, NPathOption.TRACE)
                 .run();
     }
 
     public void executeCustomMonitor(NSession session) {
         session.out().println("Example of ## Cp ##");
-        NCp.of(session)
-                .from(NPath.of("http://www.google.com", session))
-                .to(NPath.of("example.txt", session))
+        NCp.of()
+                .from(NPath.of("http://www.google.com"))
+                .to(NPath.of("example.txt"))
                 .setProgressMonitor(new NProgressListener() {
                     @Override
                     public boolean onProgress(NProgressEvent event) {

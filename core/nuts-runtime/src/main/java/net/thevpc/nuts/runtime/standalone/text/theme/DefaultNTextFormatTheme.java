@@ -50,7 +50,7 @@ public class DefaultNTextFormatTheme implements NTextFormatTheme {
     }
 
     @Override
-    public NTextStyles toBasicStyles(NTextStyles styles, NSession session) {
+    public NTextStyles toBasicStyles(NTextStyles styles) {
         NTextStyles ret = NTextStyles.PLAIN;
         if (styles != null) {
             for (NTextStyle style : styles) {

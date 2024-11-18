@@ -4,7 +4,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -15,31 +14,31 @@ import net.thevpc.nuts.util.*;
 import java.util.Map;
 
 public class DefaultNWorkspaceLocationModel {
-    private final NWorkspace ws;
+    private final NWorkspace workspace;
     private final NPath workspaceLocation;
 
-    public DefaultNWorkspaceLocationModel(NWorkspace ws, String workspaceLocation) {
-        this.ws = ws;
-        this.workspaceLocation = NPath.of(workspaceLocation, NSessionUtils.defaultSession(ws));
+    public DefaultNWorkspaceLocationModel(NWorkspace workspace, String workspaceLocation) {
+        this.workspace = workspace;
+        this.workspaceLocation = NPath.of(workspaceLocation);
     }
 
     public NWorkspace getWorkspace() {
-        return ws;
+        return workspace;
     }
 
     private DefaultNWorkspaceConfigModel cfg() {
-        return ((DefaultNWorkspace) ws).getConfigModel();
+        return ((DefaultNWorkspace) workspace).getConfigModel();
     }
 
 
-    public void setHomeLocation(NHomeLocation homeType, String location, NSession session) {
+    public void setHomeLocation(NHomeLocation homeType, String location) {
 //        if (homeType == null) {
 //            throw new NutsIllegalArgumentException(session, NMsg.ofC("invalid store root folder null"));
 //        }
 //        session = CoreNutsUtils.validate(session, ws);
-        cfg().onPreUpdateConfig("home-location", session);
+        cfg().onPreUpdateConfig("home-location");
         cfg().getStoreModelBoot().setHomeLocations(new NHomeLocationsMap(cfg().getStoreModelBoot().getHomeLocations()).set(homeType, location).toMapOrNull());
-        cfg().onPostUpdateConfig("home-location", session);
+        cfg().onPostUpdateConfig("home-location");
     }
 
 
@@ -48,74 +47,79 @@ public class DefaultNWorkspaceLocationModel {
     }
 
 
-    public NPath getHomeLocation(NStoreType folderType, NSession session) {
-        return cfg().current().getHomeLocation(folderType,session);
+    public NPath getHomeLocation(NStoreType folderType) {
+        return cfg().current().getHomeLocation(folderType);
     }
 
 
-    public NPath getStoreLocation(NStoreType folderType, NSession session) {
+    public NPath getStoreLocation(NStoreType folderType) {
         try {
-            return cfg().current().getStoreLocation(folderType,session);
+            return cfg().current().getStoreLocation(folderType);
         } catch (IllegalStateException stillInitializing) {
-            NWorkspaceOptions info = NWorkspaceExt.of(ws).getModel().bootModel.getBootUserOptions();
+            NWorkspaceOptions info = NWorkspaceExt.of(workspace).getModel().bootModel.getBootUserOptions();
             String h = info.getStoreType(folderType).orNull();
-            return h==null?null: NPath.of(h,session);
+            NSession session = getWorkspace().currentSession();
+            return h==null?null: NPath.of(h);
         }
     }
 
 
-    public void setStoreLocation(NStoreType folderType, String location, NSession session) {
-        NAssert.requireNonNull(folderType, "store root folder", session);
-        cfg().onPreUpdateConfig("store-location", session);
+    public void setStoreLocation(NStoreType folderType, String location) {
+        NSession session = getWorkspace().currentSession();
+        NAssert.requireNonNull(folderType, "store root folder");
+        cfg().onPreUpdateConfig("store-location");
         cfg().getStoreModelBoot().setStoreLocations(new NStoreLocationsMap(cfg().getStoreModelBoot().getStoreLocations()).set(folderType, location).toMapOrNull());
-        cfg().onPostUpdateConfig("store-location", session);
+        cfg().onPostUpdateConfig("store-location");
     }
 
 
-    public void setStoreStrategy(NStoreStrategy strategy, NSession session) {
+    public void setStoreStrategy(NStoreStrategy strategy) {
         if (strategy == null) {
             strategy = NStoreStrategy.EXPLODED;
         }
 //        session = CoreNutsUtils.validate(session, ws);
-        cfg().onPreUpdateConfig("store-strategy", session);
+        cfg().onPreUpdateConfig("store-strategy");
         cfg().getStoreModelBoot().setStoreStrategy(strategy);
-        cfg().onPostUpdateConfig("store-strategy", session);
+        cfg().onPostUpdateConfig("store-strategy");
     }
 
 
-    public void setStoreLayout(NOsFamily layout, NSession session) {
+    public void setStoreLayout(NOsFamily layout) {
 //        session = CoreNutsUtils.validate(session, ws);
-        cfg().onPreUpdateConfig("store-layout", session);
+        cfg().onPreUpdateConfig("store-layout");
         cfg().getStoreModelBoot().setStoreLayout(layout);
-        cfg().onPostUpdateConfig("store-layout", session);
+        cfg().onPostUpdateConfig("store-layout");
     }
 
 
-    public NPath getStoreLocation(NStoreType folderType, String repositoryIdOrName, NSession session) {
+    public NPath getStoreLocation(NStoreType folderType, String repositoryIdOrName) {
+        NSession session = getWorkspace().currentSession();
         if (repositoryIdOrName == null) {
-            return getStoreLocation(folderType, session);
+            return getStoreLocation(folderType);
         }
-        NRepository repositoryById = NRepositories.of(session).findRepository(repositoryIdOrName).get();
-        NRepositorySPI nRepositorySPI = NWorkspaceUtils.of(session).repoSPI(repositoryById);
+        NRepository repositoryById = NRepositories.of().findRepository(repositoryIdOrName).get();
+        NRepositorySPI nRepositorySPI = NWorkspaceUtils.of(getWorkspace()).repoSPI(repositoryById);
         return nRepositorySPI.config().getStoreLocation(folderType);
     }
 
 
-    public NPath getStoreLocation(NId id, NStoreType folderType, String repositoryIdOrName, NSession session) {
+    public NPath getStoreLocation(NId id, NStoreType folderType, String repositoryIdOrName) {
+        NSession session = getWorkspace().currentSession();
         if (repositoryIdOrName == null) {
-            return getStoreLocation(id, folderType, session);
+            return getStoreLocation(id, folderType);
         }
-        NPath storeLocation = getStoreLocation(folderType, repositoryIdOrName, session);
-        return storeLocation.resolve(NConstants.Folders.ID).resolve(getDefaultIdBasedir(id, session));
+        NPath storeLocation = getStoreLocation(folderType, repositoryIdOrName);
+        return storeLocation.resolve(NConstants.Folders.ID).resolve(getDefaultIdBasedir(id));
     }
 
 
-    public NPath getStoreLocation(NId id, NStoreType folderType, NSession session) {
-        NPath storeLocation = getStoreLocation(folderType, session);
+    public NPath getStoreLocation(NId id, NStoreType folderType) {
+        NPath storeLocation = getStoreLocation(folderType);
         if (storeLocation == null) {
             return null;
         }
-        return storeLocation.resolve(NConstants.Folders.ID).resolve(getDefaultIdBasedir(id, session));
+        NSession session = getWorkspace().currentSession();
+        return storeLocation.resolve(NConstants.Folders.ID).resolve(getDefaultIdBasedir(id));
 //        switch (folderType) {
 //            case CACHE:
 //                return storeLocation.resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id));
@@ -125,43 +129,44 @@ public class DefaultNWorkspaceLocationModel {
 //        return storeLocation.resolve(getDefaultIdBasedir(id));
     }
 
-    public NStoreStrategy getStoreStrategy(NSession session) {
+    public NStoreStrategy getStoreStrategy() {
         return cfg().current().getStoreStrategy();
     }
 
 
-    public NStoreStrategy getRepositoryStoreStrategy(NSession session) {
+    public NStoreStrategy getRepositoryStoreStrategy() {
         return cfg().current().getRepositoryStoreStrategy();
     }
 
 
-    public NOsFamily getStoreLayout(NSession session) {
+    public NOsFamily getStoreLayout() {
         return cfg().current().getStoreLayout();
     }
 
 
-    public Map<NStoreType, String> getStoreLocations(NSession session) {
+    public Map<NStoreType, String> getStoreLocations() {
         return cfg().current().getStoreLocations();
     }
 
 
-    public Map<NHomeLocation, String> getHomeLocations(NSession session) {
+    public Map<NHomeLocation, String> getHomeLocations() {
         return cfg().current().getHomeLocations();
     }
 
 
-    public NPath getHomeLocation(NHomeLocation location, NSession session) {
-        return cfg().current().getHomeLocation(location,session);
+    public NPath getHomeLocation(NHomeLocation location) {
+        return cfg().current().getHomeLocation(location);
     }
 
 
-    public NPath getDefaultIdBasedir(NId id, NSession session) {
+    public NPath getDefaultIdBasedir(NId id) {
+        NSession session = getWorkspace().currentSession();
         CoreNIdUtils.checkShortId(id,session);
         String groupId = id.getGroupId();
         String artifactId = id.getArtifactId();
         String plainIdPath = groupId.replace('.', '/') + "/" + artifactId;
         if (id.getVersion().isBlank()) {
-            return NPath.of(plainIdPath,session);
+            return NPath.of(plainIdPath);
         }
         String version = id.getVersion().getValue();
 //        String a = CoreNutsUtils.trimToNullAlternative(id.getAlternative());
@@ -169,13 +174,14 @@ public class DefaultNWorkspaceLocationModel {
 //        if (a != null) {
 //            x += "/" + a;
 //        }
-        return NPath.of(x,session);
+        return NPath.of(x);
     }
 
 
-    public String getDefaultIdFilename(NId id, NSession session) {
+    public String getDefaultIdFilename(NId id) {
         String classifier = "";
-        String ext = getDefaultIdExtension(id, session);
+        NSession session = getWorkspace().currentSession();
+        String ext = getDefaultIdExtension(id);
         if (!ext.equals(NConstants.Files.DESCRIPTOR_FILE_EXTENSION) && !ext.equals(".pom")) {
             String c = id.getClassifier();
             if (!NBlankable.isBlank(c)) {
@@ -186,8 +192,9 @@ public class DefaultNWorkspaceLocationModel {
     }
 
 
-    public String getDefaultIdContentExtension(String packaging, NSession session) {
-        NAssert.requireNonBlank(packaging, "packaging", session);
+    public String getDefaultIdContentExtension(String packaging) {
+        NSession session = getWorkspace().currentSession();
+        NAssert.requireNonBlank(packaging, "packaging");
         switch (packaging) {
             case "jar":
             case "bundle":
@@ -228,7 +235,8 @@ public class DefaultNWorkspaceLocationModel {
     }
 
 
-    public String getDefaultIdExtension(NId id, NSession session) {
+    public String getDefaultIdExtension(NId id) {
+        NSession session = getWorkspace().currentSession();
         Map<String, String> q = id.getProperties();
         String f = NStringUtils.trim(q.get(NConstants.IdProperties.FACE));
         switch (f) {
@@ -242,17 +250,17 @@ public class DefaultNWorkspaceLocationModel {
                 return ".catalog";
             }
             case NConstants.QueryFaces.CONTENT_HASH: {
-                return getDefaultIdExtension(id.builder().setFaceContent().build(), session) + ".sha1";
+                return getDefaultIdExtension(id.builder().setFaceContent().build()) + ".sha1";
             }
             case NConstants.QueryFaces.CONTENT: {
-                return getDefaultIdContentExtension(q.get(NConstants.IdProperties.PACKAGING), session);
+                return getDefaultIdContentExtension(q.get(NConstants.IdProperties.PACKAGING));
             }
             default: {
                 if (f.equals("cache") || f.endsWith(".cache")) {
                     return "." + f;
                 }
-                NAssert.requireNonBlank(f, ()-> NMsg.ofC("missing face in %s", id), session);
-                throw new NIllegalArgumentException(session, NMsg.ofC("unsupported face %s in %s", f, id));
+                NAssert.requireNonBlank(f, ()-> NMsg.ofC("missing face in %s", id));
+                throw new NIllegalArgumentException(NMsg.ofC("unsupported face %s in %s", f, id));
             }
         }
     }

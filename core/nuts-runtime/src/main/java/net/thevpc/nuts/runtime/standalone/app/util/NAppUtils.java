@@ -9,7 +9,7 @@ public class NAppUtils {
         if (isIncludesHelpOption(args)) {
             NCmdLine cmdLine = NCmdLine.of(args);
             while (cmdLine.hasNext()) {
-                NArg a = cmdLine.peek().get(session);
+                NArg a = cmdLine.peek().get();
                 if (a.isOption()) {
                     switch(a.key()) {
                         case "--help": {

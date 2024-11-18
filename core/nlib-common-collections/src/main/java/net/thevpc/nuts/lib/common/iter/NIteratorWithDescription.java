@@ -6,12 +6,13 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NIterator;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class NIteratorWithDescription<T> extends NIteratorDelegate<T> {
     private NIterator<T> base;
-    private Function<NSession, NElement> description;
+    private Supplier<NElement> description;
 
-    public NIteratorWithDescription(NIterator<T> base, Function<NSession, NElement> description) {
+    public NIteratorWithDescription(NIterator<T> base, Supplier<NElement> description) {
         this.base = base;
         this.description = description;
     }
@@ -27,13 +28,13 @@ public class NIteratorWithDescription<T> extends NIteratorDelegate<T> {
     }
 
     @Override
-    public NElement describe(NSession session) {
+    public NElement describe() {
         if (description != null) {
-            NElement s = description.apply(session);
+            NElement s = description.get();
             if (s != null) {
                 return s;
             }
         }
-        return super.describe(session);
+        return super.describe();
     }
 }

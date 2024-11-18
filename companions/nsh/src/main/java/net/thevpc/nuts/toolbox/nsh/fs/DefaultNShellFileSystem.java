@@ -26,21 +26,21 @@ public class DefaultNShellFileSystem implements NShellFileSystem {
 
     @Override
     public String getAbsolutePath(String path, NSession session) {
-        return NPath.of(path,session).normalize().toString();
+        return NPath.of(path).normalize().toString();
     }
 
     @Override
     public boolean isAbsolute(String path, NSession session) {
-        return NPath.of(path,session).isAbsolute();
+        return NPath.of(path).isAbsolute();
     }
 
     @Override
     public boolean isDirectory(String path, NSession session) {
-        return NPath.of(path,session).isDirectory();
+        return NPath.of(path).isDirectory();
     }
 
     @Override
     public boolean exists(String path, NSession session) {
-        return NPath.of(path,session).exists();
+        return NPath.of(path).exists();
     }
 }

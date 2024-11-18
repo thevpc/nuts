@@ -95,12 +95,12 @@ public class NWorkspaceLoginModule implements LoginModule {
                 this.login = name;
                 return true;
             }
-            NUserConfig registeredUser = NConfigsExt.of(NConfigs.of(session))
+            NUserConfig registeredUser = NConfigsExt.of(NConfigs.of())
                     .getModel()
-                    .getUser(name, session);
+                    .getUser(name);
             if (registeredUser != null) {
                 try {
-                    NWorkspaceSecurityManager.of(session)
+                    NWorkspaceSecurityManager.of()
                             .checkCredentials(registeredUser.getCredentials().toCharArray(),password);
                     this.login = name;
                     return true;

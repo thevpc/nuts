@@ -292,14 +292,14 @@ public class MultipartStream2 {
                             ProgressNotifier pNotifier, NSession session) {
 
         if (boundary == null) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("boundary may not be null"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("boundary may not be null"));
         }
         // We prepend CR/LF to the boundary to chop trailing CR/LF from
         // body-data tokens.
         this.boundaryLength = boundary.length + BOUNDARY_PREFIX.length;
         if (bufSize < this.boundaryLength + 1) {
             throw new NIllegalArgumentException(
-                    null, NMsg.ofPlain("the buffer size specified for the MultipartStream is too small"));
+                    NMsg.ofPlain("the buffer size specified for the MultipartStream is too small"));
         }
 
         this.input = input;

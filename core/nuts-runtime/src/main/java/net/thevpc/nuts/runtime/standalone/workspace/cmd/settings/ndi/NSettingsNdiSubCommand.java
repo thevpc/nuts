@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.optional.mslink.OptionalMsLinkHelper;
@@ -24,24 +25,27 @@ import java.util.Arrays;
 import java.util.List;
 
 public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
+    public NSettingsNdiSubCommand(NWorkspace workspace) {
+        super(workspace);
+    }
 
-    public static SystemNdi createNdi(NSession session) {
+    public static SystemNdi createNdi(NWorkspace workspace) {
         SystemNdi ndi = null;
-        NEnvs workspaceEnvManager = NEnvs.of(session);
+        NEnvs workspaceEnvManager = NEnvs.of();
         switch (workspaceEnvManager.getOsFamily()) {
             case LINUX:
             case UNIX: {
 
-                ndi = new LinuxNdi(session);
+                ndi = new LinuxNdi(workspace);
                 break;
             }
             case MACOS: {
-                ndi = new MacosNdi(session);
+                ndi = new MacosNdi(workspace);
                 break;
             }
             case WINDOWS: {
                 if (OptionalMsLinkHelper.isSupported()) {
-                    ndi = new WindowsNdi(session);
+                    ndi = new WindowsNdi(workspace);
                 }
                 break;
             }
@@ -49,7 +53,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
         return ndi;
     }
 
-    public void runAddLauncher(NCmdLine cmdLine, NSession session) {
+    public void runAddLauncher(NCmdLine cmdLine) {
         class Data {
             NdiScriptOptions options = new NdiScriptOptions();
             List<String> idsToInstall = new ArrayList<>();
@@ -64,33 +68,33 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
             boolean ignoreUnsupportedOs = false;
         }
         Data d = new Data();
-        d.options.setSession(session.copy());
 
 //        String linkName = null;
 //        boolean env = false;
         cmdLine.setCommandName("settings add launcher");
+        NSession session=workspace.currentSession();
         while (cmdLine.hasNext()) {
             switch (cmdLine.peek().get().key()) {
                 case "-t":
                 case "--fetch": {
-                    cmdLine.withNextFlag((v, a, s) -> d.options.setFetch(v));
+                    cmdLine.withNextFlag((v, a) -> d.options.setFetch(v));
                     break;
                 }
                 case "-d":
                 case "--workdir": {
-                    cmdLine.withNextEntry((v, a, s) -> d.options.getLauncher().setWorkingDirectory(v));
+                    cmdLine.withNextEntry((v, a) -> d.options.getLauncher().setWorkingDirectory(v));
                     break;
                 }
                 case "--icon": {
-                    cmdLine.withNextEntry((v, a, s) -> d.options.getLauncher().setIcon(v));
+                    cmdLine.withNextEntry((v, a) -> d.options.getLauncher().setIcon(v));
                     break;
                 }
                 case "--menu": {
-                    cmdLine.withNextEntry((v, a, s) -> d.options.getLauncher().setCreateMenuLauncher(parseCond(v, session)));
+                    cmdLine.withNextEntry((v, a) -> d.options.getLauncher().setCreateMenuLauncher(parseCond(v)));
                     break;
                 }
                 case "--menu-category": {
-                    cmdLine.withNextEntry((v, a, s) -> {
+                    cmdLine.withNextEntry((v, a) -> {
                         d.options.getLauncher().setMenuCategory(v);
                         if (d.options.getLauncher().getMenuCategory() != null && !d.options.getLauncher().getMenuCategory().isEmpty()) {
                             if (d.options.getLauncher().getCreateMenuLauncher() == NSupportMode.NEVER) {
@@ -101,11 +105,11 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     break;
                 }
                 case "--desktop": {
-                    cmdLine.withNextEntry((v, a, s) -> d.options.getLauncher().setCreateDesktopLauncher(parseCond(v, session)));
+                    cmdLine.withNextEntry((v, a) -> d.options.getLauncher().setCreateDesktopLauncher(parseCond(v)));
                     break;
                 }
                 case "--desktop-name": {
-                    cmdLine.withNextEntry((v, a, s) -> {
+                    cmdLine.withNextEntry((v, a) -> {
                         d.options.getLauncher().setShortcutName(v);
                         if (d.options.getLauncher().getCreateDesktopLauncher() == NSupportMode.NEVER) {
                             d.options.getLauncher().setCreateDesktopLauncher(NSupportMode.PREFERRED);
@@ -114,7 +118,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     break;
                 }
                 case "--menu-name": {
-                    cmdLine.withNextEntry((v, a, s) -> {
+                    cmdLine.withNextEntry((v, a) -> {
                         d.options.getLauncher().setShortcutName(v);
                         if (d.options.getLauncher().getCreateDesktopLauncher() == NSupportMode.NEVER) {
                             d.options.getLauncher().setCreateMenuLauncher(NSupportMode.PREFERRED);
@@ -123,7 +127,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     break;
                 }
                 case "--shortcut-name": {
-                    cmdLine.withNextEntry((v, a, s) -> {
+                    cmdLine.withNextEntry((v, a) -> {
                         d.options.getLauncher().setShortcutName(v);
                         if (d.options.getLauncher().getCreateUserLauncher() == NSupportMode.NEVER) {
                             d.options.getLauncher().setCreateUserLauncher(NSupportMode.PREFERRED);
@@ -132,7 +136,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     break;
                 }
                 case "--shortcut-path": {
-                    cmdLine.withNextEntry((v, a, s) -> {
+                    cmdLine.withNextEntry((v, a) -> {
                         d.options.getLauncher().setCustomShortcutPath(v);
                         if (d.options.getLauncher().getCreateUserLauncher() == NSupportMode.NEVER) {
                             d.options.getLauncher().setCreateUserLauncher(NSupportMode.PREFERRED);
@@ -143,50 +147,50 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 case "-x":
                 case "--external":
                 case "--spawn": {
-                    cmdLine.withNextTrueFlag((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--spawn"));
+                    cmdLine.withNextTrueFlag((v, a) -> d.options.getLauncher().getNutsOptions().add("--spawn"));
                     break;
                 }
                 case "-b":
                 case "--embedded": {
-                    cmdLine.withNextTrueFlag((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--embedded"));
+                    cmdLine.withNextTrueFlag((v, a) -> d.options.getLauncher().getNutsOptions().add("--embedded"));
                     break;
                 }
                 case "--terminal": {
-                    cmdLine.withNextFlag((v, a, s) -> d.options.getLauncher().setOpenTerminal(v));
+                    cmdLine.withNextFlag((v, a) -> d.options.getLauncher().setOpenTerminal(v));
                     break;
                 }
                 case "-e":
                 case "--env": {
-                    cmdLine.withNextFlag((v, a, s) -> d.options.setIncludeEnv(v));
+                    cmdLine.withNextFlag((v, a) -> d.options.setIncludeEnv(v));
                     break;
                 }
                 case "--system": {
-                    cmdLine.withNextTrueFlag((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--system"));
+                    cmdLine.withNextTrueFlag((v, a) -> d.options.getLauncher().getNutsOptions().add("--system"));
                     break;
                 }
                 case "--current-user": {
-                    cmdLine.withNextTrueFlag((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--current-user"));
+                    cmdLine.withNextTrueFlag((v, a) -> d.options.getLauncher().getNutsOptions().add("--current-user"));
                     break;
                 }
                 case "--as-root": {
-                    cmdLine.withNextTrueFlag((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--as-root"));
+                    cmdLine.withNextTrueFlag((v, a) -> d.options.getLauncher().getNutsOptions().add("--as-root"));
                     break;
                 }
                 case "--run-as": {
-                    cmdLine.withNextEntry((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--run-as=" + v));
+                    cmdLine.withNextEntry((v, a) -> d.options.getLauncher().getNutsOptions().add("--run-as=" + v));
                     break;
                 }
                 case "-X":
                 case "--exec-options": {
-                    cmdLine.withNextEntry((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--exec-options=" + v));
+                    cmdLine.withNextEntry((v, a) -> d.options.getLauncher().getNutsOptions().add("--exec-options=" + v));
                     break;
                 }
                 case "-i":
                 case "--installed": {
-                    cmdLine.withNextTrueFlag((v, a, s) -> {
+                    cmdLine.withNextTrueFlag((v, a) -> {
                         session.setConfirm(NConfirmationMode.YES);
-                        for (NId resultId : NSearchCmd.of(session).setInstallStatus(
-                                NInstallStatusFilters.of(session).byInstalled(true)
+                        for (NId resultId : NSearchCmd.of().setInstallStatus(
+                                NInstallStatusFilters.of().byInstalled(true)
                         ).getResultIds()) {
                             d.idsToInstall.add(resultId.getLongName());
                             d.missingAnyArgument = false;
@@ -196,38 +200,38 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 }
                 case "-c":
                 case "--companions": {
-                    cmdLine.withNextTrueFlag((v, a, s) -> {
+                    cmdLine.withNextTrueFlag((v, a) -> {
                         session.setConfirm(NConfirmationMode.YES);
-                        for (NId companion : session.extensions().getCompanionIds()) {
-                            d.idsToInstall.add(NSearchCmd.of(session).addId(companion).setLatest(true).getResultIds().findFirst().get().getLongName());
+                        for (NId companion : NExtensions.of().getCompanionIds()) {
+                            d.idsToInstall.add(NSearchCmd.of().addId(companion).setLatest(true).getResultIds().findFirst().get().getLongName());
                             d.missingAnyArgument = false;
                         }
                     });
                     break;
                 }
                 case "--switch": {
-                    cmdLine.withNextFlag((v, a, s) -> d.options.getLauncher().setSwitchWorkspace(v));
+                    cmdLine.withNextFlag((v, a) -> d.options.getLauncher().setSwitchWorkspace(v));
                     break;
                 }
                 case "--ignore-unsupported-os": {
-                    cmdLine.withNextFlag((v, a, s) -> d.ignoreUnsupportedOs = v);
+                    cmdLine.withNextFlag((v, a) -> d.ignoreUnsupportedOs = v);
                     break;
                 }
                 case "-w":
                 case "--workspace": {
-                    cmdLine.withNextEntry((v, a, s) -> d.options.getLauncher().setSwitchWorkspaceLocation(v));
+                    cmdLine.withNextEntry((v, a) -> d.options.getLauncher().setSwitchWorkspaceLocation(v));
                     break;
                 }
                 case "-n":
                 case "--name": {
-                    cmdLine.withNextEntry((v, a, s) -> d.options.getLauncher().setCustomScriptPath(v));
+                    cmdLine.withNextEntry((v, a) -> d.options.getLauncher().setCustomScriptPath(v));
                     break;
                 }
                 default: {
                     if (cmdLine.isNextOption()) {
                         session.configureLast(cmdLine);
                     } else {
-                        d.idsToInstall.add(cmdLine.next().flatMap(NLiteral::asString).get(session));
+                        d.idsToInstall.add(cmdLine.next().flatMap(NLiteral::asString).get());
                         d.missingAnyArgument = false;
                     }
                 }
@@ -236,24 +240,24 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
         }
 
         if (d.missingAnyArgument) {
-            cmdLine.peek().get(session);
+            cmdLine.peek().get();
         }
         if (cmdLine.isExecMode()) {
-            SystemNdi ndi = createNdi(session);
+            SystemNdi ndi = createNdi(workspace);
             if (ndi == null) {
                 if (d.ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NExecutionException(session, NMsg.ofC("platform not supported : %s", NEnvs.of(session).getOs()), NExecutionException.ERROR_2);
+                throw new NExecutionException(NMsg.ofC("platform not supported : %s", NEnvs.of().getOs()), NExecutionException.ERROR_2);
             }
             if (!d.idsToInstall.isEmpty()) {
-                printResults(session, ndi.addScript(d.options, d.idsToInstall.toArray(new String[0])));
+                printResults(ndi.addScript(d.options, d.idsToInstall.toArray(new String[0])));
             }
         }
     }
 
 
-    private NSupportMode parseCond(String s, NSession session) {
+    private NSupportMode parseCond(String s) {
         switch (s) {
             case "supported": {
                 return NSupportMode.SUPPORTED;
@@ -269,7 +273,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 return NSupportMode.PREFERRED;
             }
             default: {
-                if (NLiteral.of(s).asBoolean().get(session)) {
+                if (NLiteral.of(s).asBoolean().get()) {
                     return NSupportMode.PREFERRED;
                 } else {
                     return NSupportMode.NEVER;
@@ -278,37 +282,38 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
         }
     }
 
-    public void runRemoveLauncher(NCmdLine cmdLine, NSession session) {
+    public void runRemoveLauncher(NCmdLine cmdLine) {
         ArrayList<String> idsToUninstall = new ArrayList<>();
         boolean forceAll = false;
         boolean missingAnyArgument = true;
         NArg a;
         boolean ignoreUnsupportedOs = false;
+        NSession session=workspace.currentSession();
         while (cmdLine.hasNext()) {
             if ((a = cmdLine.nextEntry("--ignore-unsupported-os").orNull()) != null) {
                 if (a.isActive()) {
-                    ignoreUnsupportedOs = a.getBooleanValue().get(session);
+                    ignoreUnsupportedOs = a.getBooleanValue().get();
                 }
             } else if (cmdLine.isNextOption()) {
                 session.configureLast(cmdLine);
             } else {
-                idsToUninstall.add(cmdLine.next().flatMap(NLiteral::asString).get(session));
+                idsToUninstall.add(cmdLine.next().flatMap(NLiteral::asString).get());
                 missingAnyArgument = false;
             }
         }
         if (missingAnyArgument) {
-            cmdLine.peek().get(session);
+            cmdLine.peek().get();
         }
         if (cmdLine.isExecMode()) {
             if (forceAll) {
                 session.setConfirm(NConfirmationMode.YES);
             }
-            SystemNdi ndi = createNdi(session);
+            SystemNdi ndi = createNdi(workspace);
             if (ndi == null) {
                 if (ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NExecutionException(session, NMsg.ofC("platform not supported : %s", NEnvs.of(session).getOs()), NExecutionException.ERROR_2);
+                throw new NExecutionException(NMsg.ofC("platform not supported : %s", NEnvs.of().getOs()), NExecutionException.ERROR_2);
             }
             boolean subTrace = session.isTrace();
             if (!session.isPlainTrace()) {
@@ -319,18 +324,17 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     try {
                         ndi.removeNutsScript(
                                 id,
-                                null,
-                                session.copy().setTrace(subTrace)
+                                null
                         );
                     } catch (UncheckedIOException | NIOException e) {
-                        throw new NExecutionException(session, NMsg.ofC("unable to run script %s : %s", id, e), e);
+                        throw new NExecutionException(NMsg.ofC("unable to run script %s : %s", id, e), e);
                     }
                 }
             }
         }
     }
 
-    public void runSwitch(NCmdLine cmdLine, NSession session) {
+    public void runSwitch(NCmdLine cmdLine) {
         class Data {
             String switchWorkspaceLocation = null;
             String switchWorkspaceApi = null;
@@ -341,28 +345,29 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
             String shortcutName = null;
         }
         Data d = new Data();
+        NSession session=workspace.currentSession();
         while (cmdLine.hasNext()) {
             switch (cmdLine.peek().get().key()) {
                 case "--ignore-unsupported-os": {
-                    cmdLine.withNextFlag((v, a, s) -> d.ignoreUnsupportedOs = v);
+                    cmdLine.withNextFlag((v, a) -> d.ignoreUnsupportedOs = v);
                     break;
                 }
                 case "-w":
                 case "--workspace": {
-                    cmdLine.withNextEntry((v, a, s) -> d.switchWorkspaceLocation = v);
+                    cmdLine.withNextEntry((v, a) -> d.switchWorkspaceLocation = v);
                     break;
                 }
                 case "-a":
                 case "--api": {
-                    cmdLine.withNextEntry((v, a, s) -> d.switchWorkspaceApi = v);
+                    cmdLine.withNextEntry((v, a) -> d.switchWorkspaceApi = v);
                     break;
                 }
                 case "--menu": {
-                    cmdLine.withNextEntry((v, a, s) -> d.createMenu = parseCond(v, session));
+                    cmdLine.withNextEntry((v, a) -> d.createMenu = parseCond(v));
                     break;
                 }
                 case "--menu-category": {
-                    cmdLine.withNextEntry((v, a, s) -> {
+                    cmdLine.withNextEntry((v, a) -> {
                         d.menuCategory = v;
                         if (d.menuCategory != null && !d.menuCategory.isEmpty()) {
                             if (d.createMenu == NSupportMode.NEVER) {
@@ -373,7 +378,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     break;
                 }
                 case "--menu-name": {
-                    cmdLine.withNextEntry((v, a, s) -> {
+                    cmdLine.withNextEntry((v, a) -> {
                         d.shortcutName = v;
                         if (d.shortcutName != null && !d.shortcutName.isEmpty()) {
                             if (d.createMenu == NSupportMode.NEVER) {
@@ -384,7 +389,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     break;
                 }
                 case "--desktop-name": {
-                    cmdLine.withNextEntry((v, a, s) -> {
+                    cmdLine.withNextEntry((v, a) -> {
                         d.shortcutName = v;
                         if (d.shortcutName != null && !d.shortcutName.isEmpty()) {
                             if (d.createDesktop == NSupportMode.NEVER) {
@@ -395,8 +400,8 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     break;
                 }
                 case "--desktop": {
-                    cmdLine.withNextEntry((v, a, s) -> {
-                        d.createDesktop = parseCond(v, session);
+                    cmdLine.withNextEntry((v, a) -> {
+                        d.createDesktop = parseCond(v);
                     });
                     break;
                 }
@@ -404,9 +409,9 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     if (cmdLine.isNextOption()) {
                         cmdLine.throwUnexpectedArgument();
                     } else if (d.switchWorkspaceLocation == null) {
-                        d.switchWorkspaceLocation = cmdLine.next().flatMap(NLiteral::asString).get(session);
+                        d.switchWorkspaceLocation = cmdLine.next().flatMap(NLiteral::asString).get();
                     } else if (d.switchWorkspaceApi == null) {
-                        d.switchWorkspaceApi = cmdLine.next().flatMap(NLiteral::asString).get(session);
+                        d.switchWorkspaceApi = cmdLine.next().flatMap(NLiteral::asString).get();
                     } else if (cmdLine.isNextOption()) {
                         session.configureLast(cmdLine);
                     } else {
@@ -416,16 +421,15 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
             }
         }
         if (cmdLine.isExecMode()) {
-            SystemNdi ndi = createNdi(session);
+            SystemNdi ndi = createNdi(workspace);
             if (ndi == null) {
                 if (d.ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NExecutionException(session, NMsg.ofC("platform not supported : %s ", NEnvs.of(session).getOs()), NExecutionException.ERROR_2);
+                throw new NExecutionException(NMsg.ofC("platform not supported : %s ", NEnvs.of().getOs()), NExecutionException.ERROR_2);
             }
             if (d.switchWorkspaceLocation != null || d.switchWorkspaceApi != null) {
-                NdiScriptOptions oo = new NdiScriptOptions()
-                        .setSession(session);
+                NdiScriptOptions oo = new NdiScriptOptions();
                 oo.getLauncher().setSwitchWorkspaceLocation(d.switchWorkspaceLocation);
                 oo.getLauncher().setCreateDesktopLauncher(d.createDesktop);
                 oo.getLauncher().setMenuCategory(d.menuCategory);
@@ -437,13 +441,14 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
 
     }
 
-    private void printResults(NSession session, PathInfo[] result) {
+    private void printResults(PathInfo[] result) {
+        NSession session=workspace.currentSession();
         if (session.isTrace()) {
             result = Arrays.stream(result).filter(x -> x.getStatus() != PathInfo.Status.DISCARDED).toArray(PathInfo[]::new);
             if (session.isPlainTrace()) {
                 int namesSize = Arrays.stream(result).mapToInt(x -> x.getPath().getName().length()).max().orElse(1);
                 for (PathInfo ndiScriptInfo : result) {
-                    NTexts txt = NTexts.of(session);
+                    NTexts txt = NTexts.of();
                     session.out().resetLine().println(NMsg.ofC(
                             "%s script %-" + namesSize + "s for %s"
                                     + " at %s",
@@ -464,15 +469,15 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
     }
 
     @Override
-    public boolean exec(NCmdLine cmdLine, Boolean autoSave, NSession session) {
+    public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
         if (cmdLine.next("add launcher", "lna").isPresent()) {
-            runAddLauncher(cmdLine, session);
+            runAddLauncher(cmdLine);
             return true;
         } else if (cmdLine.next("remove launcher", "lnrm").isPresent()) {
-            runRemoveLauncher(cmdLine, session);
+            runRemoveLauncher(cmdLine);
             return true;
         } else if (cmdLine.next("switch", "lnsw").isPresent()) {
-            runSwitch(cmdLine, session);
+            runSwitch(cmdLine);
             return true;
         }
         return false;

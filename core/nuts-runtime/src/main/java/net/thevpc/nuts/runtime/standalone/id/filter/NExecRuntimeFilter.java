@@ -17,14 +17,14 @@ import net.thevpc.nuts.util.NLiteral;
 public class NExecRuntimeFilter extends AbstractDescriptorFilter {
     private NId apiId;
     private boolean communityRuntime;
-    public NExecRuntimeFilter(NSession session, NId apiId, boolean communityRuntime) {
-        super(session, NFilterOp.CUSTOM);
+    public NExecRuntimeFilter(NWorkspace workspace, NId apiId, boolean communityRuntime) {
+        super(workspace, NFilterOp.CUSTOM);
         this.apiId=apiId;
         this.communityRuntime = communityRuntime;
     }
 
     @Override
-    public boolean acceptDescriptor(NDescriptor other, NSession session) {
+    public boolean acceptDescriptor(NDescriptor other) {
         if(other.getId().getShortName().equals(NConstants.Ids.NUTS_RUNTIME)){
             if(apiId==null){
                 return true;

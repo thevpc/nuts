@@ -7,13 +7,13 @@ public class NDependencyOptionFilter extends AbstractDependencyFilter{
 
     private final Boolean optional;
 
-    public NDependencyOptionFilter(NSession session, Boolean optional) {
-        super(session, NFilterOp.CUSTOM);
+    public NDependencyOptionFilter(NWorkspace workspace, Boolean optional) {
+        super(workspace, NFilterOp.CUSTOM);
         this.optional = optional;
     }
 
     @Override
-    public boolean acceptDependency(NId from, NDependency dependency, NSession session) {
+    public boolean acceptDependency(NId from, NDependency dependency) {
         if (optional == null) {
             return false;
         }

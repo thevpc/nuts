@@ -1,6 +1,5 @@
 package net.thevpc.nuts.lib.common.iter;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
@@ -14,22 +13,20 @@ public class SupplierIterator2<T> extends NIteratorBase<T> {
     private final Supplier<Iterator<T>> from;
     private NIterator<T> iterator;
     private NEDesc name;
-    private NSession session;
 
-    public SupplierIterator2(Supplier<Iterator<T>> from, NEDesc name,NSession session) {
+    public SupplierIterator2(Supplier<Iterator<T>> from, NEDesc name) {
         this.from = from;
         this.name = name;
-        this.session = session;
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return NElements.of(session).ofObject()
+    public NElement describe() {
+        return NElements.of().ofObject()
                 .set("type", "Supplier")
                 .set("template",
-                        NEDesc.describeResolveOr(from, session, () -> {
-                            NElement t = name.apply(session);
-                            return NElements.of(session).ofObject().set("type", "compiled")
+                        NEDesc.describeResolveOr(from, () -> {
+                            NElement t = name.get();
+                            return NElements.of().ofObject().set("type", "compiled")
                                     .addAll(t == null ? null : t.asObject().orNull())
                                     .build();
                         })
@@ -41,7 +38,7 @@ public class SupplierIterator2<T> extends NIteratorBase<T> {
     public boolean hasNext() {
         if (iterator == null) {
             Iterator<T> it = from.get();
-            iterator = it == null ? null : NIterator.of(it,session).withDesc(name);
+            iterator = it == null ? null : NIterator.of(it).withDesc(name);
             if (iterator == null) {
                 return false;
             }

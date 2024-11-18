@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.format.table;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.format.NTableCellFormat;
 import net.thevpc.nuts.text.NTextStyle;
@@ -19,14 +18,14 @@ public class DefaultTableHeaderFormat implements NTableCellFormat {
     }
 
     @Override
-    public String format(int row, int col, Object value, NSession session) {
-        return NTexts.of(session).ofBuilder().append(String.valueOf(value),
+    public String format(int row, int col, Object value) {
+        return NTexts.of().ofBuilder().append(String.valueOf(value),
                 NTextStyle.primary1()
                 ).toString();
     }
 
     @Override
-    public NPositionType getHorizontalAlign(int row, int col, Object value, NSession session) {
+    public NPositionType getHorizontalAlign(int row, int col, Object value) {
         return NPositionType.HEADER;
     }
 

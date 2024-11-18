@@ -12,7 +12,9 @@ import net.thevpc.nuts.runtime.standalone.dependency.NDependencyScopes;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
+import net.thevpc.nuts.util.NOptional;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
@@ -35,15 +37,22 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
     private boolean effective = false;
     private NFetchDisplayOptions displayOptions;
     private NRepositoryFilter repositoryFilter;
+    private NFetchStrategy fetchStrategy;
+    private Boolean transitive;
+    private Instant expireTime;
 
     //    private Boolean transitive = true;
 //    private Boolean cached = true;
 //    private Boolean indexed = null;
 //    private NutsFetchStrategy fetchStrategy = null;
-    public DefaultNQueryBaseOptions(NSession session, String name) {
-        super(session, name);
+    public DefaultNQueryBaseOptions(NWorkspace workspace, String name) {
+        super(workspace, name);
 //        this.session=ws.createSession();
-        displayOptions = new NFetchDisplayOptions(session);
+        displayOptions = new NFetchDisplayOptions(workspace);
+        NSession s = workspace.currentSession();
+        this.fetchStrategy=s.getFetchStrategy().orNull();
+        this.transitive=s.getTransitive().orNull();
+        this.expireTime=s.getExpireTime().orNull();
     }
 
     //@Override
@@ -59,9 +68,38 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
             this.scope = EnumSet.copyOf(other.getScope());
             this.dependencyFilter = other.getDependencyFilter();
             this.repositoryFilter = other.getRepositoryFilter();
+            this.fetchStrategy=((DefaultNQueryBaseOptions<T>)other).getFetchStrategy().orNull();
+            this.transitive=((DefaultNQueryBaseOptions<T>)other).getTransitive().orNull();
+            this.expireTime=((DefaultNQueryBaseOptions<T>)other).getExpireTime().orNull();
 
         }
         return (T) this;
+    }
+
+    public NOptional<Instant> getExpireTime() {
+        return NOptional.ofNamed(expireTime,"expireTime").orElseUse(()-> NSession.of().get().getExpireTime());
+    }
+
+    public NOptional<NFetchStrategy> getFetchStrategy() {
+        return NOptional.ofNamed(fetchStrategy,"fetchStrategy").orElseUse(()-> NSession.of().get().getFetchStrategy());
+    }
+
+    public NOptional<Boolean> getTransitive() {
+        return NOptional.ofNamed(transitive,"transitive").orElseUse(()-> NSession.of().get().getTransitive());
+    }
+
+    public T setFetchStrategy(NFetchStrategy fetchStrategy) {
+        this.fetchStrategy = fetchStrategy;
+        return (T)this;
+    }
+
+    public T setTransitive(Boolean transitive) {
+        this.transitive = transitive;
+        return (T)this;
+    }
+    public T setExpireTime(Instant transitive) {
+        this.expireTime = expireTime;
+        return (T)this;
     }
 
     //@Override
@@ -259,26 +297,27 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
         if (getDisplayOptions().configureFirst(cmdLine)) {
             return true;
         }
-        NArg a = cmdLine.peek().get(session);
+        NSession session = workspace.currentSession();
+        NArg a = cmdLine.peek().get();
         if (a == null) {
             return false;
         }
         switch (a.key()) {
             case "--failfast": {
-                cmdLine.withNextFlag((v, r, s) -> this.setFailFast(v));
+                cmdLine.withNextFlag((v, r) -> this.setFailFast(v));
                 return true;
             }
             case "-r":
             case "--repository": {
-                cmdLine.withNextEntry((v, r, s) -> addRepositoryFilter(NRepositoryFilters.of(getSession()).bySelector(v)));
+                cmdLine.withNextEntry((v, r) -> addRepositoryFilter(NRepositoryFilters.of().bySelector(v)));
                 return true;
             }
             case "--dependencies": {
-                cmdLine.withNextFlag((v, r, s) -> this.setDependencies(v));
+                cmdLine.withNextFlag((v, r) -> this.setDependencies(v));
                 return true;
             }
             case "--scope": {
-                cmdLine.withNextEntry((v, r, s) -> this.addScope(NDependencyScopePattern.parse(v).orElse(NDependencyScopePattern.API)));
+                cmdLine.withNextEntry((v, r) -> this.addScope(NDependencyScopePattern.parse(v).orElse(NDependencyScopePattern.API)));
                 return true;
             }
 
@@ -290,17 +329,17 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
 //                return true;
 //            }
             case "--optional": {
-                cmdLine.withNextEntryValue((v, r, s) -> this.setOptional(
-                        NLiteral.of(v.asString().get(session)).asBoolean()
+                cmdLine.withNextEntryValue((v, r) -> this.setOptional(
+                        NLiteral.of(v.asString().get()).asBoolean()
                                 .orNull()));
                 return true;
             }
             case "--effective": {
-                cmdLine.withNextFlag((v, r, s) -> this.setEffective(v));
+                cmdLine.withNextFlag((v, r) -> this.setEffective(v));
                 return true;
             }
             case "--content": {
-                cmdLine.withNextFlag((v, r, s) -> this.setContent(v));
+                cmdLine.withNextFlag((v, r) -> this.setContent(v));
                 return true;
             }
         }
@@ -314,11 +353,11 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
 
     //    @Override
     public T setRepositoryFilter(String filter) {
-        checkSession();
+        NSession session = workspace.currentSession();
         if (NBlankable.isBlank(filter)) {
             this.repositoryFilter = null;
         } else {
-            this.repositoryFilter = NRepositories.of(getSession()).filter().bySelector(filter);
+            this.repositoryFilter = NRepositories.of().filter().bySelector(filter);
         }
         return (T) this;
     }
@@ -354,7 +393,6 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
                 + ", effective=" + effective
 //                + ", repos=" + repos
                 + ", displayOptions=" + displayOptions
-                + ", session=" + getSession()
                 + ')';
     }
 
@@ -371,8 +409,8 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
 
     //    @Override
     public T setDependencyFilter(String filter) {
-        checkSession();
-        this.dependencyFilter = NDependencyFilters.of(getSession()).parse(filter);
+        NSession session = workspace.currentSession();
+        this.dependencyFilter = NDependencyFilters.of().parse(filter);
         return (T) this;
     }
 

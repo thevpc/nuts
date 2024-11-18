@@ -32,13 +32,13 @@ public class NPatternIdFilter extends AbstractIdFilter implements NIdFilter {
     private Map<String, String> qm;
     private List<Predicate<Map<String, String>>> q = new ArrayList<>();
 
-    public NPatternIdFilter(NSession session, NId id) {
-        super(session, NFilterOp.CUSTOM);
+    public NPatternIdFilter(NWorkspace workspace, NId id) {
+        super(workspace, NFilterOp.CUSTOM);
         this.id = id;
         this.wildcard = containsWildcad(id.toString());
         g = GlobUtils.ofExact(id.getGroupId());
         n = GlobUtils.ofExact(id.getArtifactId());
-        v = id.getVersion().filter(session);
+        v = id.getVersion().filter();
         qm = id.getProperties();
         for (Map.Entry<String, String> entry : id.getProperties().entrySet()) {
             String key = entry.getKey();
@@ -62,14 +62,14 @@ public class NPatternIdFilter extends AbstractIdFilter implements NIdFilter {
     }
 
     @Override
-    public boolean acceptId(NId other, NSession session) {
+    public boolean acceptId(NId other) {
         if (!g.matcher(other.getGroupId()).matches()) {
             return false;
         }
         if (!n.matcher(other.getArtifactId()).matches()) {
             return false;
         }
-        if (!v.acceptVersion(other.getVersion(), session)) {
+        if (!v.acceptVersion(other.getVersion())) {
             return false;
         }
         Map<String, String> oqm = null;
@@ -85,12 +85,12 @@ public class NPatternIdFilter extends AbstractIdFilter implements NIdFilter {
         if (condition != null && !condition.isBlank()) {
             NEnvCondition otherCondition = null;
             try {
-                otherCondition = NFetchCmd.of(other,session).getResultDescriptor().getCondition();
+                otherCondition = NFetchCmd.of(other).getResultDescriptor().getCondition();
             } catch (Exception ex) {
                 //ignore any error
             }
             if (otherCondition != null && !otherCondition.isBlank()) {
-                if (!CoreFilterUtils.acceptCondition(condition, otherCondition, session)) {
+                if (!CoreFilterUtils.acceptCondition(condition, otherCondition)) {
                     return false;
                 }
             }

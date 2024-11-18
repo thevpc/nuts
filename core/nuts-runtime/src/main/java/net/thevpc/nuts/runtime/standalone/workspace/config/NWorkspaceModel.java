@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.runtime.standalone.NWsConfDB;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEventModel;
+import net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions;
 import net.thevpc.nuts.runtime.standalone.io.cache.CachedSupplier;
 import net.thevpc.nuts.lib.common.collections.LRUMap;
 import net.thevpc.nuts.lib.common.collections.NPropertiesHolder;
@@ -20,9 +21,11 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.SimpleRecommendati
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class NWorkspaceModel {
-    public NWorkspace ws;
+    public NWorkspace workspace;
+    public InheritableThreadLocal<Stack<NSession>> sessionScopes=new InheritableThreadLocal<>();
     public NSession initSession;
     public DefaultNBootModel bootModel;
     public DefaultNWorkspaceSecurityModel securityModel;
@@ -48,23 +51,27 @@ public class NWorkspaceModel {
     public DefaultImportModel importModel;
     public String apiDigest;
     public String installationDigest;
-    public SafeRecommendationConnector recomm =new SafeRecommendationConnector(new SimpleRecommendationConnector());
+    public SafeRecommendationConnector recomm;
     public List<String> recommendedCompanions=new ArrayList<>();
     public NPropertiesHolder properties = new NPropertiesHolder();
     public NVersion askedApiVersion;
     public NId askedRuntimeId;
     public NBootOptions bOption0;
-    public NWsConfDB confDB=new NWsConfDB();
+    public NWsConfDB confDB;
     public LRUMap<NId, CachedSupplier<NDefinition>> cachedDefs=new LRUMap<>(100);
+    public DefaultNExtensions extensions;
 
-    public NWorkspaceModel(NWorkspace ws, NBootOptions bOption0) {
-        this.ws = ws;
+    public NWorkspaceModel(NWorkspace workspace, NBootOptions bOption0) {
+        this.workspace = workspace;
+        recomm =new SafeRecommendationConnector(new SimpleRecommendationConnector(workspace));
+        this.confDB=new NWsConfDB(workspace);
         this.bOption0 = bOption0;
         // initialized here because they just do nothing...
-        this.aliasesModel = new DefaultCustomCommandsModel(ws);
-        this.importModel = new DefaultImportModel(ws);
-        this.eventsModel = new DefaultNWorkspaceEventModel(ws);
-        this.repositoryModel = new DefaultNRepositoryModel(ws);
+        this.aliasesModel = new DefaultCustomCommandsModel(workspace);
+        this.importModel = new DefaultImportModel(workspace);
+        this.eventsModel = new DefaultNWorkspaceEventModel(workspace);
+        this.repositoryModel = new DefaultNRepositoryModel(workspace);
+        this.extensions= new DefaultNExtensions(this);
     }
 
     public void init(){
@@ -74,14 +81,14 @@ public class NWorkspaceModel {
             askedRuntimeId = NId.ofRuntime("").get();
         }
 
-        this.textModel = new DefaultNTextManagerModel(ws);
+        this.textModel = new DefaultNTextManagerModel(workspace);
         this.apiVersion = Nuts.getVersion();
         this.apiId = NId.ofApi(this.apiVersion).get();
         this.runtimeId = NId.of(
                 askedRuntimeId.getGroupId(),
                 askedRuntimeId.getArtifactId(),
                 NVersion.of(askedRuntimeId.getVersion().toString()).get()).get();
-        this.bootModel = new DefaultNBootModel(ws,this);
+        this.bootModel = new DefaultNBootModel(workspace,this);
         this.bootModel.init(bOption0);
     }
 }

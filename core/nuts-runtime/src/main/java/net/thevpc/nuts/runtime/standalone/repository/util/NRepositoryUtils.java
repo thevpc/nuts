@@ -40,7 +40,7 @@ public class NRepositoryUtils {
 
     }
 
-    public static NRepositoryLocation validateLocation(NRepositoryLocation r, NLog nLog, NSession session) {
+    public static NRepositoryLocation validateLocation(NRepositoryLocation r, NLog nLog) {
         if (NBlankable.isBlank(r.getLocationType()) || NBlankable.isBlank(r.getName())) {
             if (r.getFullLocation() != null) {
                 NReservedPath r1 = new NReservedPath(r.getPath()).toAbsolute();
@@ -83,7 +83,7 @@ public class NRepositoryUtils {
                     }
                 }
                 if (NBlankable.isBlank(r.getLocationType())) {
-                    NPath p = NPath.of(r.getPath(), session);
+                    NPath p = NPath.of(r.getPath());
                     if (p.isLocal()) {
                         if (!p.exists() || p.isDirectory()) {
                             r = r.setLocationType(NConstants.RepoTypes.NUTS);
@@ -95,11 +95,11 @@ public class NRepositoryUtils {
         return r;
     }
 
-    public static String getRepoType(NRepositoryConfig conf, NSession session) {
+    public static String getRepoType(NRepositoryConfig conf) {
         if (conf != null) {
             NRepositoryLocation loc = conf.getLocation();
             if (loc != null) {
-                loc = validateLocation(loc, null, session);
+                loc = validateLocation(loc, null);
                 if (!NBlankable.isBlank(loc.getLocationType())) {
                     return loc.getLocationType();
                 }

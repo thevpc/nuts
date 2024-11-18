@@ -11,7 +11,6 @@ import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.concurrent.NScheduler;
 import net.thevpc.nuts.io.DefaultNContentMetadata;
-import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NInputSourceBuilder;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
 import net.thevpc.nuts.runtime.standalone.executor.system.PipeRunnable;
@@ -32,9 +31,14 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
 
     public static final int DEFAULT_ADMIN_SERVER_PORT = 8898;
 
+    public NSettingsConnectSubCommand(NWorkspace workspace) {
+        super(workspace);
+    }
+
     @Override
-    public boolean exec(NCmdLine cmdLine, Boolean autoSave, NSession session) {
+    public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
         String cmd0 = cmdLine.toString();
+        NSession session = workspace.currentSession();
         if (cmdLine.next("connect").isPresent()) {
             char[] password = null;
             String server = null;
@@ -45,7 +49,7 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
                 } else if (cmdLine.isNextOption()) {
                     session.configureLast(cmdLine);
                 } else {
-                    server = cmdLine.nextNonOption(NArgName.of("ServerAddress", session)).flatMap(NLiteral::asString).get(session);
+                    server = cmdLine.nextNonOption(NArgName.of("ServerAddress")).flatMap(NLiteral::asString).get();
                     cmdLine.setCommandName("settings connect").throwUnexpectedArgument();
                 }
             }
@@ -54,7 +58,7 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
             }
             String login = null;
             int port = -1;
-            NAssert.requireNonBlank(server, "server", session);
+            NAssert.requireNonBlank(server, "server");
             if (server.contains("@")) {
                 login = server.substring(0, server.indexOf("@"));
                 server = server.substring(server.indexOf("@") + 1);
@@ -73,10 +77,10 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
                     socket = new Socket(InetAddress.getByName(server), validPort);
                     PipeRunnable rr = NSysExecUtils.pipe("pipe-out-socket-" + server + ":" + validPort,
                             cmd0, "connect-socket",
-                            NInputSourceBuilder.of(socket.getInputStream(), session)
+                            NInputSourceBuilder.of(socket.getInputStream())
                                     .setMetadata(new DefaultNContentMetadata().setMessage(NMsg.ofC("pipe-out-socket-%s:%s", server, validPort)))
-                                    .createNonBlockingInputStream(), session.out().asPrintStream(), session);
-                    NScheduler.of(session).executorService().submit(rr);
+                                    .createNonBlockingInputStream(), session.out().asPrintStream());
+                    NScheduler.of().executorService().submit(rr);
                     PrintStream out = new PrintStream(socket.getOutputStream());
                     if (!NBlankable.isBlank(login)) {
                         out.printf("connect ==%s %s== %n", login, new String(password));
@@ -99,7 +103,7 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
                     }
                 }
             } catch (Exception ex) {
-                throw new NExecutionException(session, NMsg.ofPlain("settings connect failed"), ex, NExecutionException.ERROR_2);
+                throw new NExecutionException(NMsg.ofPlain("settings connect failed"), ex, NExecutionException.ERROR_2);
             }
             return true;
         }

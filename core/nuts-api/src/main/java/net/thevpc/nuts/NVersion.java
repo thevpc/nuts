@@ -65,7 +65,7 @@ public interface NVersion extends Serializable, /*NTokenFilter, */NFormattable, 
         if (PATTERN.matcher(version2).matches()) {
             return NOptional.of(new DefaultNVersion(version2));
         }
-        return NOptional.ofError(s -> NMsg.ofC("invalid version format : %s", version));
+        return NOptional.ofError(() -> NMsg.ofC("invalid version format : %s", version));
     }
 
     /**
@@ -106,7 +106,7 @@ public interface NVersion extends Serializable, /*NTokenFilter, */NFormattable, 
      *
      * @return new instance of {@link NVersionFilter}
      */
-    NVersionFilter filter(NSession session);
+    NVersionFilter filter();
 
     /**
      * when the current version is a single value version X , returns ],X] version that guarantees backward compatibility

@@ -15,8 +15,8 @@ import java.util.Objects;
 public class NRepositorySelectorHelper {
 
     public static NAddRepositoryOptions createRepositoryOptions(String s, boolean requireName, NSession session) {
-        NRepositorySelectorList r = NRepositorySelectorList.of(s, NRepositoryDB.of(session), session).get();
-        NRepositoryLocation[] all = r.resolve(null, NRepositoryDB.of(session));
+        NRepositorySelectorList r = NRepositorySelectorList.of(s, NRepositoryDB.of()).get();
+        NRepositoryLocation[] all = r.resolve(null, NRepositoryDB.of());
         if (all.length != 1) {
             throw new IllegalArgumentException("unexpected");
         }
@@ -25,7 +25,7 @@ public class NRepositorySelectorHelper {
 
     public static NAddRepositoryOptions createRepositoryOptions(NRepositoryLocation loc, boolean requireName, NSession session) {
         String defaultName = null;
-        NRepositoryDB db = NRepositoryDB.of(session);
+        NRepositoryDB db = NRepositoryDB.of();
         if (db.isDefaultRepositoryName(loc.getName())) {
             defaultName = loc.getName();
         } else {
@@ -54,7 +54,7 @@ public class NRepositorySelectorHelper {
 
     public static NAddRepositoryOptions createCustomRepositoryOptions(String name, String url, boolean requireName, NSession session) {
         if ((name == null || name.isEmpty()) && requireName) {
-            NAssert.requireNonBlank(name, "repository name (<name>=<url>)", session);
+            NAssert.requireNonBlank(name, "repository name (<name>=<url>)");
         }
         if (name == null || name.isEmpty()) {
             name = url;
@@ -72,16 +72,16 @@ public class NRepositorySelectorHelper {
                 name = name.substring(1);
             }
         }
-        NAssert.requireNonBlank(name, "repository name (<name>=<url>)", session);
-        NAssert.requireNonBlank(url, "repository url (<name>=<url>)", session);
+        NAssert.requireNonBlank(name, "repository name (<name>=<url>)");
+        NAssert.requireNonBlank(url, "repository url (<name>=<url>)");
 
         NRepositoryLocation loc = NRepositoryLocation.of(url);
-        String sloc = NPath.of(loc.getPath(), session).toAbsolute().toString();
+        String sloc = NPath.of(loc.getPath()).toAbsolute().toString();
         loc = loc.setPath(sloc);
 
         return new NAddRepositoryOptions().setName(name)
                 .setFailSafe(false).setCreate(true)
-                .setOrder((!NBlankable.isBlank(url) && NPath.of(url, session).isLocal())
+                .setOrder((!NBlankable.isBlank(url) && NPath.of(url).isLocal())
                         ? NAddRepositoryOptions.ORDER_USER_LOCAL
                         : NAddRepositoryOptions.ORDER_USER_REMOTE
                 )
@@ -114,8 +114,8 @@ public class NRepositorySelectorHelper {
                                         .setLocation(NRepositoryLocation.of("nuts@"
                                                 + NPath.of(
                                                         NPlatformHome.SYSTEM.getWorkspaceLocation(
-                                                                NStoreType.LIB, NConfigs.of(session).stored().getHomeLocations(),
-                                                                NConstants.Names.DEFAULT_WORKSPACE_NAME), session)
+                                                                NStoreType.LIB, NConfigs.of().stored().getHomeLocations(),
+                                                                NConstants.Names.DEFAULT_WORKSPACE_NAME))
                                                 .resolve(NConstants.Folders.ID)
                                                 .toString())
                                         )
@@ -129,7 +129,7 @@ public class NRepositorySelectorHelper {
                         .setConfig(
                                 new NRepositoryConfig()
                                         .setLocation(NRepositoryLocation.of("maven@"
-                                                        + NPath.ofUserHome(session).resolve(".m2/repository").toString()
+                                                        + NPath.ofUserHome().resolve(".m2/repository").toString()
                                                 )
                                         )
                         );

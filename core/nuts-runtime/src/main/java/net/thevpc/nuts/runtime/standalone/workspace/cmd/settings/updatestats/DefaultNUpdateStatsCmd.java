@@ -24,29 +24,27 @@ import net.thevpc.nuts.util.NMsg;
  */
 public class DefaultNUpdateStatsCmd extends AbstractNUpdateStatsCmd {
 
-    public DefaultNUpdateStatsCmd(NSession session) {
-        super(session);
+    public DefaultNUpdateStatsCmd(NWorkspace workspace) {
+        super(workspace);
     }
 
     @Override
     public NUpdateStatsCmd run() {
         boolean processed = false;
-        NSession session = getSession();
-        checkSession();
+        NSession session=getWorkspace().currentSession();
         for (String repository : getRepositories()) {
             processed = true;
-            NRepository repo = NRepositories.of(getSession()).findRepository(repository).get();
-            NRepositorySPI repoSPI = NWorkspaceUtils.of(session).repoSPI(repo);
+            NRepository repo = NRepositories.of().findRepository(repository).get();
+            NRepositorySPI repoSPI = NWorkspaceUtils.of(workspace).repoSPI(repo);
             repoSPI.updateStatistics()
-                    .setSession(session)
                     //                    .setFetchMode(NutsFetchMode.LOCAL)
                     .run();
         }
         for (Path repositoryPath : getPaths()) {
             processed = true;
-            NAssert.requireNonBlank(repositoryPath, "location", session);
+            NAssert.requireNonBlank(repositoryPath, "location");
             if (!Files.isDirectory(repositoryPath)) {
-                throw new NIllegalArgumentException(getSession(), NMsg.ofC("expected folder at location %s",repositoryPath));
+                throw new NIllegalArgumentException(NMsg.ofC("expected folder at location %s",repositoryPath));
             }
             File[] mavenRepoRootFiles = repositoryPath.toFile().listFiles(x
                     -> x.getName().equals("index.html")
@@ -60,34 +58,33 @@ public class DefaultNUpdateStatsCmd extends AbstractNUpdateStatsCmd {
                     || x.getName().equals("project-summary.html")
             );
             if (mavenRepoRootFiles != null && mavenRepoRootFiles.length > 3) {
-                new MavenRepositoryFolderHelper(null, getSession(), NPath.of(repositoryPath,session)).reindexFolder(getSession());
+                new MavenRepositoryFolderHelper(null, session, NPath.of(repositoryPath)).reindexFolder(session);
                 if (session.isPlainTrace()) {
-                    session.getTerminal().out().resetLine().println(NMsg.ofC("[%s] updated maven index %s", NLocations.of(getSession()).getWorkspaceLocation(), repositoryPath));
+                    session.getTerminal().out().resetLine().println(NMsg.ofC("[%s] updated maven index %s", NLocations.of().getWorkspaceLocation(), repositoryPath));
                 }
             } else {
                 File[] nutsRepoRootFiles = repositoryPath.toFile().listFiles(x
                         -> x.getName().equals("nuts-repository.json")
                 );
                 if (nutsRepoRootFiles != null && nutsRepoRootFiles.length > 0) {
-                    new NRepositoryFolderHelper(null, session, NPath.of(repositoryPath,session), false,"stats",null).reindexFolder(session);
+                    new NRepositoryFolderHelper(null, workspace, NPath.of(repositoryPath), false,"stats",null).reindexFolder();
                 } else {
-                    throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("unsupported repository folder"));
+                    throw new NIllegalArgumentException(NMsg.ofPlain("unsupported repository folder"));
                 }
                 if (session.isPlainTrace()) {
-                    session.out().resetLine().println(NMsg.ofC("[%s] updated stats %s", NLocations.of(getSession()).getWorkspaceLocation(), repositoryPath));
+                    session.out().resetLine().println(NMsg.ofC("[%s] updated stats %s", NLocations.of().getWorkspaceLocation(), repositoryPath));
                 }
             }
         }
         if (!processed) {
             if (session.isPlainTrace()) {
-                session.out().resetLine().println(NMsg.ofC("%s updating workspace stats", NLocations.of(getSession()).getWorkspaceLocation()));
+                session.out().resetLine().println(NMsg.ofC("%s updating workspace stats", NLocations.of().getWorkspaceLocation()));
             }
-            for (NRepository repo : NRepositories.of(getSession()).getRepositories()) {
+            for (NRepository repo : NRepositories.of().getRepositories()) {
                 if (session.isPlainTrace()) {
-                    session.out().resetLine().println(NMsg.ofC("%s updating stats %s", NLocations.of(getSession()).getWorkspaceLocation(), repo));
+                    session.out().resetLine().println(NMsg.ofC("%s updating stats %s", NLocations.of().getWorkspaceLocation(), repo));
                 }
-                NWorkspaceUtils.of(session).repoSPI(repo).updateStatistics()
-                        .setSession(session)
+                NWorkspaceUtils.of(workspace).repoSPI(repo).updateStatistics()
                         //                        .setFetchMode(NutsFetchMode.LOCAL)
                         .run();
             }
@@ -97,7 +94,8 @@ public class DefaultNUpdateStatsCmd extends AbstractNUpdateStatsCmd {
 
     @Override
     public void add(String repo) {
-        NAssert.requireNonBlank(repo, "repository or path", session);
+        NSession session=getWorkspace().currentSession();
+        NAssert.requireNonBlank(repo, "repository or path");
         if (repo.equals(".") || repo.equals("..") || repo.contains("/") || repo.contains("\\")) {
             addPath(Paths.get(repo));
         } else {

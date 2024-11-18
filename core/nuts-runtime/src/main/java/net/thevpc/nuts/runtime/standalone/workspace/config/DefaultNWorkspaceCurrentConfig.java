@@ -22,7 +22,7 @@ public final class DefaultNWorkspaceCurrentConfig {
     private final Map<NStoreType, String> effStoreLocationsMap = new HashMap<>();
     private final Path[] effStoreLocationPath = new Path[NStoreType.values().length];
     private final Map<NHomeLocation, String> homeLocations = new HashMap<>();
-    private final NWorkspace ws;
+    private final NWorkspace workspace;
     private String name;
     private NId apiId;
     private NId bootRuntime;
@@ -41,8 +41,8 @@ public final class DefaultNWorkspaceCurrentConfig {
 //    private NutsId arch;
 //    private NutsId osdist;
 
-    public DefaultNWorkspaceCurrentConfig(NWorkspace ws) {
-        this.ws = ws;
+    public DefaultNWorkspaceCurrentConfig(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
     public DefaultNWorkspaceCurrentConfig merge(NWorkspaceOptions c, NSession session) {
@@ -50,7 +50,7 @@ public final class DefaultNWorkspaceCurrentConfig {
             this.name = c.getName().orNull();
         }
         if (c.getRuntimeId().isPresent()) {
-            setRuntimeId(c.getRuntimeId().get(), session);
+            setRuntimeId(c.getRuntimeId().get());
         }
         if (c.getJavaCommand().isPresent()) {
             this.bootJavaCommand = c.getJavaCommand().get();
@@ -85,9 +85,6 @@ public final class DefaultNWorkspaceCurrentConfig {
         return this;
     }
 
-    public void setRuntimeId(NId s, NSession session) {
-        this.bootRuntime = s;
-    }
 
     public DefaultNWorkspaceCurrentConfig mergeRuntime(NWorkspaceOptions c, NSession session) {
         if (c.getRuntimeId().isPresent()) {
@@ -105,17 +102,17 @@ public final class DefaultNWorkspaceCurrentConfig {
         return this;
     }
 
-    public DefaultNWorkspaceCurrentConfig build(NPath workspaceLocation, NSession session) {
+    public DefaultNWorkspaceCurrentConfig build(NPath workspaceLocation) {
         if (storeStrategy == null) {
             storeStrategy = NStoreStrategy.EXPLODED;
         }
         if (repositoryStoreStrategy == null) {
             repositoryStoreStrategy = NStoreStrategy.EXPLODED;
         }
+        NSession session= workspace.currentSession();
         Map<NStoreType, String> storeLocations =
         NPlatformHome.of(getStoreLayout(),getSystem()).buildLocations(storeStrategy,
-                getStoreLocations(), homeLocations, workspaceLocation.toString(),
-                session
+                getStoreLocations(), homeLocations, workspaceLocation.toString()
         );
         this.effStoreLocationsMap.clear();
         this.effStoreLocationsMap.putAll(storeLocations);
@@ -123,17 +120,17 @@ public final class DefaultNWorkspaceCurrentConfig {
             effStoreLocationPath[i] = Paths.get(effStoreLocationsMap.get(NStoreType.values()[i]));
         }
         if (apiId == null) {
-            apiId = NId.ofApi(Nuts.getVersion()).get(session);
+            apiId = NId.ofApi(Nuts.getVersion()).get();
         }
         if (storeLayout == null) {
-            storeLayout = NEnvs.of(session).getOsFamily();
+            storeLayout = NEnvs.of().getOsFamily();
         }
         return this;
     }
 
     public DefaultNWorkspaceCurrentConfig merge(NWorkspaceConfigApi c, NSession session) {
         if (c.getApiVersion() != null && !c.getApiVersion().isBlank()) {
-            this.apiId = NId.ofApi(c.getApiVersion()).get(session);
+            this.apiId = NId.ofApi(c.getApiVersion()).get();
         }
         if (c.getRuntimeId() != null) {
             this.bootRuntime = c.getRuntimeId();
@@ -150,23 +147,24 @@ public final class DefaultNWorkspaceCurrentConfig {
         return this;
     }
 
-    public DefaultNWorkspaceCurrentConfig merge(NWorkspaceConfigRuntime c, NSession session) {
+    public DefaultNWorkspaceCurrentConfig merge(NWorkspaceConfigRuntime c) {
         if (c.getId() != null) {
             this.bootRuntime = c.getId();
         }
         if (c.getDependencies() != null) {
+            NSession session=workspace.currentSession();
             this.runtimeBootDescriptor = new DefaultNDescriptorBuilder()
                     .setId(NId.of(this.bootRuntime.toString()).get())
                     .setDependencies(
                             StringTokenizerUtils.splitSemiColon(c.getDependencies()).stream()
-                                    .map(x -> NDependency.of(x).get(session)).collect(Collectors.toList())
+                                    .map(x -> NDependency.of(x).get()).collect(Collectors.toList())
                     ).build()
             ;
         }
         return this;
     }
 
-    public DefaultNWorkspaceCurrentConfig merge(NWorkspaceConfigBoot c, NSession session) {
+    public DefaultNWorkspaceCurrentConfig merge(NWorkspaceConfigBoot c) {
         if (c.getName() != null) {
             this.name = c.getName();
         }
@@ -198,10 +196,11 @@ public final class DefaultNWorkspaceCurrentConfig {
         return this;
     }
 
-    public DefaultNWorkspaceCurrentConfig merge(NBootConfig c, NSession session) {
+    public DefaultNWorkspaceCurrentConfig merge(NBootConfig c) {
         this.name = c.getName();
         if (c.getApiVersion() != null) {
-            this.apiId = NId.of(NConstants.Ids.NUTS_API + "#" + c.getApiVersion()).get(session);
+            NSession session=workspace.currentSession();
+            this.apiId = NId.of(NConstants.Ids.NUTS_API + "#" + c.getApiVersion()).get();
         }
         if (c.getRuntimeId() != null) {
             this.bootRuntime = c.getRuntimeId();
@@ -362,21 +361,24 @@ public final class DefaultNWorkspaceCurrentConfig {
         return this;
     }
 
-    public NPath getStoreLocation(NStoreType storeType, NSession session) {
+    public NPath getStoreLocation(NStoreType storeType) {
+        NSession session=workspace.currentSession();
         Path p = effStoreLocationPath[storeType.ordinal()];
-        return p == null ? null : NPath.of(p, session);
+        return p == null ? null : NPath.of(p);
     }
 
-    public NPath getHomeLocation(NHomeLocation location, NSession session) {
+    public NPath getHomeLocation(NHomeLocation location) {
+        NSession session=workspace.currentSession();
         String s = new NHomeLocationsMap(homeLocations).get(location);
-        return s == null ? null : NPath.of(s, session);
+        return s == null ? null : NPath.of(s);
     }
 
-    public NPath getHomeLocation(NStoreType storeType, NSession session) {
+    public NPath getHomeLocation(NStoreType storeType) {
+        NSession session=workspace.currentSession();
         return NPath.of(Paths.get(NPlatformHome.of(getStoreLayout(), isSystem()).getWorkspaceLocation(
                 storeType, getHomeLocations(),
                 getName()
-        )), session);
+        )));
     }
 
     public NOsFamily getStoreLayout() {
@@ -407,22 +409,24 @@ public final class DefaultNWorkspaceCurrentConfig {
     }
 
 
-    public NPath getStoreLocation(String id, NStoreType storeType, NSession session) {
-        return getStoreLocation(NId.of(id).get(session), storeType, session);
+    public NPath getStoreLocation(String id, NStoreType storeType) {
+        NSession session=workspace.currentSession();
+        return getStoreLocation(NId.of(id).get(), storeType);
     }
 
-    public NPath getStoreLocation(NId id, NStoreType storeType, NSession session) {
-        NPath storeLocation = getStoreLocation(storeType, session);
+    public NPath getStoreLocation(NId id, NStoreType storeType) {
+        NSession session=workspace.currentSession();
+        NPath storeLocation = getStoreLocation(storeType);
         if (storeLocation == null) {
             return null;
         }
         switch (storeType) {
             case CACHE:
-                return storeLocation.resolve(NConstants.Folders.ID).resolve(NLocations.of(session).getDefaultIdBasedir(id));
+                return storeLocation.resolve(NConstants.Folders.ID).resolve(NLocations.of().getDefaultIdBasedir(id));
             case CONF:
-                return storeLocation.resolve(NConstants.Folders.ID).resolve(NLocations.of(session).getDefaultIdBasedir(id));
+                return storeLocation.resolve(NConstants.Folders.ID).resolve(NLocations.of().getDefaultIdBasedir(id));
         }
-        return storeLocation.resolve(NLocations.of(session).getDefaultIdBasedir(id));
+        return storeLocation.resolve(NLocations.of().getDefaultIdBasedir(id));
     }
 
 }

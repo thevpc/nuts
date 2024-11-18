@@ -41,20 +41,18 @@ public interface NIndexStore {
     /**
      * search all versions of the given artifact
      *
-     * @param id      artifact to search for
-     * @param session current session
+     * @param id artifact to search for
      * @return all available versions (in the index)
      */
-    NIterator<NId> searchVersions(NId id, NSession session);
+    NIterator<NId> searchVersions(NId id);
 
     /**
      * search all artifacts matching the given filter
      *
-     * @param filter  filter or null for all
-     * @param session current session
+     * @param filter filter or null for all
      * @return all available versions (in the index)
      */
-    NIterator<NId> search(NIdFilter filter, NSession session);
+    NIterator<NId> search(NIdFilter filter);
 
     /**
      * return true if the index is enabled
@@ -74,44 +72,39 @@ public interface NIndexStore {
     /**
      * invalidate the artifact from the index
      *
-     * @param id      id to invalidate
-     * @param session session
+     * @param id id to invalidate
      * @return {@code this} instance
      */
-    NIndexStore invalidate(NId id, NSession session);
+    NIndexStore invalidate(NId id);
 
     /**
      * invalidate the artifact from the index and re-index it
      *
-     * @param id      id to re-index
-     * @param session session
+     * @param id id to re-index
      * @return {@code this} instance
      */
-    NIndexStore revalidate(NId id, NSession session);
+    NIndexStore revalidate(NId id);
 
     /**
      * subscribe the current repository so the indexing
      * is processed.
      *
-     * @param session session
      * @return {@code this} instance
      */
-    NIndexStore subscribe(NSession session);
+    NIndexStore subscribe();
 
     /**
      * unsubscribe the current repository so that the indexing
      * is disabled and the index is removed.
      *
-     * @param session session
      * @return {@code this} instance
      */
-    NIndexStore unsubscribe(NSession session);
+    NIndexStore unsubscribe();
 
     /**
      * return true if the current repository is registered
      *
-     * @param session session
      * @return true if the current repository is registered
      */
-    boolean isSubscribed(NSession session);
+    boolean isSubscribed();
 }

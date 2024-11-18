@@ -79,7 +79,7 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
             return null;
         }
         NSession session = parserContext.getSession();
-        final NId JAVA = NId.of("java").get(session);
+        final NId JAVA = NId.of("java").get();
         final NRef<NDescriptor> nutsjson = new NRef<>();
         final NRef<NDescriptor> metainf = new NRef<>();
         final NRef<NDescriptor> maven = new NRef<>();
@@ -89,7 +89,7 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
             switch (path) {
                 case "META-INF/MANIFEST.MF": {
                     try {
-                        metainf.setNonNull(NDescriptorParser.of(session)
+                        metainf.setNonNull(NDescriptorParser.of()
                                 .setDescriptorStyle(NDescriptorStyle.MANIFEST)
                                 .parse(inputStream).orNull());
                     } finally {
@@ -99,9 +99,9 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
                 }
                 case ("META-INF/" + NConstants.Files.DESCRIPTOR_FILE_NAME): {
                     try {
-                        nutsjson.setNonNull(NDescriptorParser.of(session)
+                        nutsjson.setNonNull(NDescriptorParser.of()
                                 .setDescriptorStyle(NDescriptorStyle.NUTS)
-                                .parse(inputStream).get(session));
+                                .parse(inputStream).get());
                     } finally {
                         inputStream.close();
                     }
@@ -110,16 +110,16 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
                 default: {
                     if (path.startsWith("META-INF/maven/") && path.endsWith("/pom.xml")) {
                         try {
-                            maven.setNonNull(MavenUtils.of(session).parsePomXmlAndResolveParents(inputStream, NFetchMode.REMOTE, path, null));
+                            maven.setNonNull(MavenUtils.of().parsePomXmlAndResolveParents(inputStream, NFetchMode.REMOTE, path, null));
                         } finally {
                             inputStream.close();
                         }
                         break;
                     } else if (path.startsWith("META-INF/nuts/") && path.endsWith("/nuts.json")) {
                         try {
-                            nutsjson.setNonNull(NDescriptorParser.of(session)
+                            nutsjson.setNonNull(NDescriptorParser.of()
                                     .setDescriptorStyle(NDescriptorStyle.NUTS)
-                                    .parse(inputStream).get(session));
+                                    .parse(inputStream).get());
                         } finally {
                             inputStream.close();
                         }
@@ -132,7 +132,7 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
                 return NVisitResult.CONTINUE;
             }
             return NVisitResult.TERMINATE;
-        }, session);
+        });
 
         if (nutsjson.isSet()) {
             return nutsjson.get();
@@ -180,7 +180,7 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
         NArg a;
         while (!cmd.isEmpty()) {
             if ((a = cmd.nextFlag("--all-mains").orNull()) != null) {
-                alwaysSelectAllMainClasses = a.getBooleanValue().get(session);
+                alwaysSelectAllMainClasses = a.getBooleanValue().get();
             } else {
                 cmd.skip();
             }

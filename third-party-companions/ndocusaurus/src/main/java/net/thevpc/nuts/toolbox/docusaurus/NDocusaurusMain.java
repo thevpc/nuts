@@ -21,16 +21,16 @@ public class NDocusaurusMain implements NApplication {
     }
 
     @Override
-    public void run(NSession session) {
+    public void run() {
+        NSession session = NSession.of().get();
         session.runAppCmdLine(new NCmdLineRunner() {
             @Override
             public boolean nextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
-                NSession session = cmdLine.getSession();
                 switch (option.key()) {
                     case "-d":
                     case "--dir": {
                         if (workdir == null) {
-                            cmdLine.withNextEntry((v, a, s) -> workdir = v);
+                            cmdLine.withNextEntry((v, a) -> workdir = v);
                             return true;
                         }
                     }
@@ -40,18 +40,17 @@ public class NDocusaurusMain implements NApplication {
 
             @Override
             public boolean nextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
-                NSession session = cmdLine.getSession();
-                switch (nonOption.asString().get(session)) {
+                switch (nonOption.asString().get()) {
                     case "start": {
-                        cmdLine.withNextFlag((v, a, s) -> start = v);
+                        cmdLine.withNextFlag((v, a) -> start = v);
                         return true;
                     }
                     case "build": {
-                        cmdLine.withNextFlag((v, a, s) -> build = v);
+                        cmdLine.withNextFlag((v, a) -> build = v);
                         return true;
                     }
                     case "pdf": {
-                        cmdLine.withNextFlag((v, a, s) -> buildPdf = v);
+                        cmdLine.withNextFlag((v, a) -> buildPdf = v);
                         return true;
                     }
                 }
@@ -60,7 +59,6 @@ public class NDocusaurusMain implements NApplication {
 
             @Override
             public void validate(NCmdLine cmdLine, NCmdLineContext context) {
-                NSession session = cmdLine.getSession();
                 if (!start && !build && !buildPdf) {
                     cmdLine.throwMissingArgument(
                             NMsg.ofC("missing command. try %s", NMsg.ofCode("sh", "ndocusaurus pdf | start | build"))
@@ -75,12 +73,12 @@ public class NDocusaurusMain implements NApplication {
                 }
                 DocusaurusProject docusaurusProject = new DocusaurusProject(workdir,
                         Paths.get(workdir).resolve(".dir-template").resolve("src").toString(),
-                        cmdLine.getSession());
+                        session);
                 new DocusaurusCtrl(docusaurusProject, session)
                         .setBuildWebSite(build)
                         .setStartWebSite(start)
                         .setBuildPdf(buildPdf)
-                        .setAutoInstallNutsPackages(NBootManager.of(cmdLine.getSession()).getBootOptions().getConfirm().orElse(NConfirmationMode.ASK) == NConfirmationMode.YES)
+                        .setAutoInstallNutsPackages(NBootManager.of().getBootOptions().getConfirm().orElse(NConfirmationMode.ASK) == NConfirmationMode.YES)
                         .run();
             }
         });

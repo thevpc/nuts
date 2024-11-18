@@ -89,12 +89,12 @@ public class NPathParts {
                 break;
             }
             default: {
-                throw new NIllegalArgumentException(session, NMsg.ofPlain("unsupported NutsPathParts"));
+                throw new NIllegalArgumentException(NMsg.ofPlain("unsupported NutsPathParts"));
             }
         }
     }
 
-    public NPathParts(String path, NSession session) {
+    public NPathParts(String path) {
         if (path == null || path.trim().isEmpty()) {
             type = Type.EMPTY;
             protocol = "";
@@ -311,7 +311,7 @@ public class NPathParts {
     }
 
     public static NString toNutsString(NString protocol, NString authority, NString path, NString query, NString ref, NSession session) {
-        NTexts txt = NTexts.of(session);
+        NTexts txt = NTexts.of();
         NTextBuilder result = txt.ofBuilder();
         result.append(protocol);
         if (authority != null && authority.textLength() > 0) {
@@ -365,8 +365,8 @@ public class NPathParts {
     }
 
     public static NString compressPath(String path, int left, int right, NSession session) {
-        NTexts txt = NTexts.of(session);
-        NPathParts p = new NPathParts(path, session);
+        NTexts txt = NTexts.of();
+        NPathParts p = new NPathParts(path);
         switch (p.getType()) {
             case FILE_URL:
             case URL: {
@@ -388,6 +388,6 @@ public class NPathParts {
             case EMPTY:
                 return txt.ofBlank();
         }
-        throw new NUnsupportedEnumException(session, p.getType());
+        throw new NUnsupportedEnumException(p.getType());
     }
 }

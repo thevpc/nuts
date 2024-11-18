@@ -15,16 +15,16 @@ public class NExclusionDependencyFilter extends AbstractDependencyFilter{
     private final NDependencyFilter base;
     private final NId[] exclusions;
 
-    public NExclusionDependencyFilter(NSession session, NDependencyFilter base, NId[] exclusions) {
-        super(session, NFilterOp.CUSTOM);
+    public NExclusionDependencyFilter(NWorkspace workspace, NDependencyFilter base, NId[] exclusions) {
+        super(workspace, NFilterOp.CUSTOM);
         this.base = base;
         this.exclusions = exclusions;
     }
 
     @Override
-    public boolean acceptDependency(NId from, NDependency dependency, NSession session) {
+    public boolean acceptDependency(NId from, NDependency dependency) {
         if (base != null) {
-            if (!base.acceptDependency(from, dependency, session)) {
+            if (!base.acceptDependency(from, dependency)) {
                 return false;
             }
         }
@@ -33,7 +33,7 @@ public class NExclusionDependencyFilter extends AbstractDependencyFilter{
             if (
                     GlobUtils.ofExact(exclusion.getGroupId()).matcher(NStringUtils.trim(nutsId.getGroupId())).matches()
                     && GlobUtils.ofExact(exclusion.getArtifactId()).matcher(NStringUtils.trim(nutsId.getArtifactId())).matches()
-                    && exclusion.getVersion().filter(session).acceptVersion(nutsId.getVersion(), session)) {
+                    && exclusion.getVersion().filter().acceptVersion(nutsId.getVersion())) {
                 return false;
             }
         }
@@ -47,7 +47,7 @@ public class NExclusionDependencyFilter extends AbstractDependencyFilter{
         }
         NDependencyFilter base2 = CoreFilterUtils.simplify(base);
         if (base2 != base) {
-            return new NExclusionDependencyFilter(getSession(),base2, exclusions);
+            return new NExclusionDependencyFilter(workspace,base2, exclusions);
         }
         return this;
     }

@@ -36,8 +36,6 @@ import net.thevpc.nuts.NSession;
  */
 public interface NRepositoryUndeployCmd extends NRepositoryCmd {
 
-    @Override
-    NRepositoryUndeployCmd setSession(NSession session);
 
 //    /**
 //     * fetchMode

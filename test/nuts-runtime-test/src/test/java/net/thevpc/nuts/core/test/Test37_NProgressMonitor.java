@@ -34,7 +34,7 @@ public class Test37_NProgressMonitor {
     public void test01() {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         PrintStream out = new PrintStream(bout);
-        NProgressMonitor m = NProgressMonitors.of(session).of(event -> {
+        NProgressMonitor m = NProgressMonitors.of().of(event -> {
             String msg = event.toString();
             System.out.println(msg);
             out.println(msg);
@@ -71,7 +71,7 @@ public class Test37_NProgressMonitor {
     public void test02() {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         PrintStream out = new PrintStream(bout);
-        NProgressMonitor m = NProgressMonitors.of(session).of(event -> {
+        NProgressMonitor m = NProgressMonitors.of().of(event -> {
             String msg = event.toString();
             System.out.println(msg);
             out.println(msg);

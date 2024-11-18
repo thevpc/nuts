@@ -37,22 +37,14 @@ import net.thevpc.nuts.spi.NComponent;
  * @app.category Commands
  * @since 0.5.5
  */
-public interface NWorkspaceCmd extends NCmdLineConfigurable, NComponent, NSessionProvider {
+public interface NWorkspaceCmd extends NCmdLineConfigurable, NComponent {
 
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    NWorkspaceCmd setSession(NSession session);
-
-    /**
-     * copy session
-     *
-     * @return {@code this} instance
-     */
-    NWorkspaceCmd copySession();
+//    /**
+//     * copy session
+//     *
+//     * @return {@code this} instance
+//     */
+//    NWorkspaceCmd copySession();
 
     /**
      * configure the current command with the given arguments. This is an

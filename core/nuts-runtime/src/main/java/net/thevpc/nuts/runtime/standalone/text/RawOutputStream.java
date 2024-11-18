@@ -6,18 +6,16 @@ import net.thevpc.nuts.runtime.standalone.io.outputstream.BaseTransparentFilterO
 import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOp;
 
 import java.io.OutputStream;
-import net.thevpc.nuts.NSession;
+
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 
 public class RawOutputStream extends BaseTransparentFilterOutputStream implements ExtendedFormatAware {
-    private NSession session;
-    private NWorkspace ws;
+    private NWorkspace workspace;
     private NSystemTerminalBase term;
-    public RawOutputStream(OutputStream out, NSystemTerminalBase term, NSession session) {
+    public RawOutputStream(OutputStream out, NSystemTerminalBase term, NWorkspace workspace) {
         super(out);
-        this.session=session;
         this.term=term;
-        this.ws=session.getWorkspace();
+        this.workspace =workspace;
     }
 
     @Override
@@ -35,18 +33,18 @@ public class RawOutputStream extends BaseTransparentFilterOutputStream implement
                 return this;
             }
             case FORMAT: {
-                return new FormatOutputStream(out,term,session);
+                return new FormatOutputStream(out,term,workspace);
             }
             case FILTER: {
-                return new FilterFormatOutputStream(out,term, session);
+                return new FilterFormatOutputStream(out,term, workspace);
             }
             case ESCAPE: {
-                return new EscapeOutputStream(this,term,session);
+                return new EscapeOutputStream(this,term,workspace);
             }
             case UNESCAPE: {
-                return new UnescapeOutputStream(this,term,session);
+                return new UnescapeOutputStream(this,term,workspace);
             }
         }
-        throw new NUnsupportedEnumException(session, other);
+        throw new NUnsupportedEnumException(other);
     }
 }

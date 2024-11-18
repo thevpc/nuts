@@ -67,7 +67,6 @@ import java.time.Year;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.logging.Level;
@@ -91,7 +90,7 @@ public class NShell {
     private NSession session;
     private NId appId = null;
     private String serviceName = null;
-    private Function<NSession, NMsg> headerMessageSupplier = null;
+    private Supplier<NMsg> headerMessageSupplier = null;
 
     public NShell(NShellConfiguration configuration) {
         if (configuration == null) {
@@ -116,7 +115,7 @@ public class NShell {
         if (this.appId == null && session != null) {
             this.appId = session.getAppId();
             if (this.appId == null) {
-                this.appId = NId.ofClass(NShell.class, session).orNull();
+                this.appId = NId.ofClass(NShell.class).orNull();
             }
         }
         if (this.appId == null && session != null) {
@@ -180,15 +179,15 @@ public class NShell {
             NShellContext _rootContext = getRootContext();
             NSession rSession = _rootContext.getSession();
 
-            NEnvs.of(session).setProperty(NShellContext.class.getName(), _rootContext);
+            NEnvs.of().setProperty(NShellContext.class.getName(), _rootContext);
             _rootContext.setSession(session);
             //add default commands
             List<NShellBuiltin> allCommand = new ArrayList<>();
             NSupportLevelContext constraints = new NDefaultSupportLevelContext(session, this);
 
             Predicate<NShellBuiltin> filter = new NShellBuiltinPredicate(configuration);
-            for (NShellBuiltin command : session.extensions().
-                    createServiceLoader(NShellBuiltin.class, NShell.class, NShellBuiltin.class.getClassLoader())
+            for (NShellBuiltin command : NWorkspace.of().get().extensions()
+                            .createServiceLoader(NShellBuiltin.class, NShell.class, NShellBuiltin.class.getClassLoader())
                     .loadAll(this)) {
                 NShellBuiltin old = _rootContext.builtins().find(command.getName());
                 if (old != null && old.getSupportLevel(constraints) >= command.getSupportLevel(constraints)) {
@@ -204,19 +203,19 @@ public class NShell {
             try {
                 NPath histFile = this.history.getHistoryFile();
                 if (histFile == null) {
-                    histFile = NLocations.of(rSession).getStoreLocation(this.appId, NStoreType.VAR).resolve((serviceName == null ? "" : serviceName) + ".history");
+                    histFile = NLocations.of().getStoreLocation(this.appId, NStoreType.VAR).resolve((serviceName == null ? "" : serviceName) + ".history");
                     this.history.setHistoryFile(histFile);
                     if (histFile.exists()) {
                         this.history.load(histFile);
                     }
                 }
             } catch (Exception ex) {
-                NLog.of(NShell.class, session)
+                NLog.of(NShell.class)
                         .with().level(Level.SEVERE)
                         .error(ex)
                         .log(NMsg.ofC("error resolving history file %s", this.history.getHistoryFile()));
             }
-            NEnvs.of(rSession).setProperty(NShellHistory.class.getName(), this.history);
+            NEnvs.of().setProperty(NShellHistory.class.getName(), this.history);
         }
     }
 
@@ -230,7 +229,7 @@ public class NShell {
     private static String resolveServiceName(NSession session, String serviceName, NId appId) {
         if ((serviceName == null || serviceName.trim().isEmpty())) {
             if (appId == null) {
-                appId = NId.ofClass(NShell.class, session).get();
+                appId = NId.ofClass(NShell.class).get();
             }
             serviceName = appId.getArtifactId();
         }
@@ -283,13 +282,13 @@ public class NShell {
 
     public List<String> findFiles(final String namePattern, boolean exact, String parent, NSession session) {
         if (exact) {
-            String[] all = NPath.of(parent, session).stream()
+            String[] all = NPath.of(parent).stream()
                     .filter(NPredicate.of((NPath x) -> namePattern.equals(x.getName())).withDesc(NEDesc.of("name='" + namePattern + "'")))
                     .map(NFunction.of(NPath::toString).withDesc(NEDesc.of("toString"))).toArray(String[]::new);
             return Arrays.asList(all);
         } else {
             final Pattern o = Pattern.compile(namePattern);
-            String[] all = NPath.of(parent, session).stream()
+            String[] all = NPath.of(parent).stream()
                     .filter(NPredicate.of((NPath x) -> o.matcher(x.getName()).matches()).withDesc(NEDesc.of("name~~'" + namePattern + "'")))
                     .map(NFunction.of(NPath::toString).withDesc(NEDesc.of("toString"))).toArray(String[]::new);
             return Arrays.asList(all);
@@ -388,7 +387,7 @@ public class NShell {
             if (th instanceof RuntimeException) {
                 throw (RuntimeException) th;
             }
-            throw new NShellQuitException(context.getSession(), th, 100);
+            throw new NShellQuitException(th, 100);
         }
 
         if (th instanceof NShellException) {
@@ -455,14 +454,14 @@ public class NShell {
     ) {
         context.getShell().traceExecution(() -> String.join(" ", command), context);
         String cmdToken = command[0];
-        NPath cmdPath = NPath.of(cmdToken, context.getSession());
+        NPath cmdPath = NPath.of(cmdToken);
         if (!cmdPath.isName()) {
             if (isShellFile(cmdPath, session)) {
                 return executeServiceFile(createNewContext(context, cmdPath.toString(), command), false);
             } else {
                 final NShellExternalExecutor externalExec = getExternalExecutor();
                 if (externalExec == null) {
-                    throw new NShellException(context.getSession(), NMsg.ofC("not found %s", cmdToken), 101);
+                    throw new NShellException(NMsg.ofC("not found %s", cmdToken), 101);
                 }
                 return externalExec.execExternalCommand(command, context);
             }
@@ -506,11 +505,11 @@ public class NShell {
                 if (considerExternal) {
                     final NShellExternalExecutor externalExec = getExternalExecutor();
                     if (externalExec == null) {
-                        throw new NShellException(context.getSession(), NMsg.ofC("not found %s", cmdToken), 101);
+                        throw new NShellException(NMsg.ofC("not found %s", cmdToken), 101);
                     }
                     externalExec.execExternalCommand(cmds.toArray(new String[0]), context);
                 } else {
-                    throw new NShellException(context.getSession(), NMsg.ofC("not found %s", cmdToken), 101);
+                    throw new NShellException(NMsg.ofC("not found %s", cmdToken), 101);
                 }
             }
         }
@@ -590,7 +589,7 @@ public class NShell {
         } catch (NExecutionException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_1);
+            throw new NExecutionException(NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_1);
         }
     }
 
@@ -602,7 +601,7 @@ public class NShell {
     protected void printHeader(NPrintStream out) {
         NMsg m = null;
         if (headerMessageSupplier != null) {
-            m = headerMessageSupplier.apply(out.getSession());
+            m = headerMessageSupplier.get();
             if (m == null) {
                 return;
             }
@@ -611,7 +610,7 @@ public class NShell {
             NDescriptor resultDescriptor = null;
             if (appId != null) {
                 try {
-                    resultDescriptor = NFetchCmd.of(appId, session).setEffective(true).getResultDescriptor();
+                    resultDescriptor = NFetchCmd.of(appId).setEffective(true).getResultDescriptor();
                 } catch (Exception ex) {
                     //just ignore
                 }
@@ -669,17 +668,17 @@ public class NShell {
     }
 
     protected void executeInteractive(NShellContext context) {
-        NSystemTerminal.enableRichTerm(session);
+        NSystemTerminal.enableRichTerm();
         NPath appVarFolder = session.getAppVarFolder();
         if (appVarFolder == null) {
-            appVarFolder = NLocations.of(session).getStoreLocation(
+            appVarFolder = NLocations.of().getStoreLocation(
                     NId.of("net.thevpc.app.nuts.toolbox:nsh").get()
                     , NStoreType.VAR);
         }
-        NIO.of(session).getSystemTerminal()
-                .setCommandAutoCompleteResolver(new NshAutoCompleter())
+        NIO.of().getSystemTerminal()
+                .setCommandAutoCompleteResolver(new NshAutoCompleter(context.getWorkspace()))
                 .setCommandHistory(
-                        NCmdLineHistory.of(session)
+                        NCmdLineHistory.of()
                                 .setPath(appVarFolder.resolve("nsh-history.hist"))
                 );
         prepareContext(getRootContext());
@@ -717,7 +716,7 @@ public class NShell {
         if (getOptions().isLogin()) {
             executeLogoutScripts();
         }
-        onQuit(new NShellQuitException(session, 0));
+        onQuit(new NShellQuitException(0));
     }
 
     private void executeLoginScripts() {
@@ -764,25 +763,25 @@ public class NShell {
         if (quitException.getExitCode() == 0) {
             return;
         }
-        throw new NExecutionException(getRootContext().getSession(), NMsg.ofC("%s", quitException), quitException.getExitCode());
+        throw new NExecutionException(NMsg.ofC("%s", quitException), quitException.getExitCode());
 //        throw quitException;
     }
 
     public int executeServiceFile(NShellContext context, boolean ignoreIfNotFound) {
         String file = context.getServiceName();
         if (file != null) {
-            file = NPath.of(file, session).toAbsolute(context.getDirectory()).toString();
+            file = NPath.of(file).toAbsolute(context.getDirectory()).toString();
         }
-        if (file == null || !NPath.of(file, session).exists()) {
+        if (file == null || !NPath.of(file).exists()) {
             if (ignoreIfNotFound) {
                 return 0;
             }
-            throw new NShellException(session, NMsg.ofC("shell file not found : %s", file), 1);
+            throw new NShellException(NMsg.ofC("shell file not found : %s", file), 1);
         }
         context.setServiceName(file);
         InputStream stream = null;
         try {
-            stream = NPath.of(file, session).getInputStream();
+            stream = NPath.of(file).getInputStream();
             NShellCommandNode ii = parseScript(stream);
             if (ii == null) {
                 return 0;
@@ -795,7 +794,7 @@ public class NShell {
                     stream.close();
                 }
             } catch (IOException ex) {
-                throw new NShellException(session, ex, 1);
+                throw new NShellException(ex, 1);
             }
         }
     }
@@ -834,7 +833,7 @@ public class NShell {
         } catch (Exception th) {
             if (getErrorHandler().isQuitException(th)) {
                 onResult(null, context);
-                throw new NShellUniformException(context.getSession(), getErrorHandler().errorToCode(th), true, th);
+                throw new NShellUniformException(getErrorHandler().errorToCode(th), true, th);
             }
             onResult(th, context);
             context.err().println(NMsg.ofC("error: %s", th));
@@ -864,7 +863,7 @@ public class NShell {
 //        String wss = ws == null ? "" : new File(getRootContext().getAbsolutePath(ws.config().getWorkspaceLocation().toString())).getName();
         String login = null;
         if (session != null) {
-            login = NWorkspaceSecurityManager.of(session).getCurrentUsername();
+            login = NWorkspaceSecurityManager.of().getCurrentUsername();
         }
         String prompt = ((login != null && login.length() > 0 && !"anonymous".equals(login)) ? (login + "@") : "");
         if (!NBlankable.isBlank(getRootContext().getServiceName())) {
@@ -1174,7 +1173,7 @@ public class NShell {
     }
 
     public String getVersion() {
-        NId nutsId = NId.ofClass(getClass(), session).orNull();
+        NId nutsId = NId.ofClass(getClass()).orNull();
         if (nutsId == null) {
             return "dev";
         }

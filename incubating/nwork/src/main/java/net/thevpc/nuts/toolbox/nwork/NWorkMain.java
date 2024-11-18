@@ -13,7 +13,8 @@ public class NWorkMain implements NApplication {
     }
 
     @Override
-    public void run(NSession session) {
+    public void run() {
+        NSession session = NSession.of().get();
         this.service = new WorkspaceService(session);
         NCmdLine cmdLine = session.getAppCmdLine().setCommandName("nwork");
         NArg a;
@@ -28,14 +29,14 @@ public class NWorkMain implements NApplication {
                 return;
             } else if ((a = cmdLine.next("status", "t").orNull()) != null) {
                 if (a.getValue().isBoolean()) {
-                    service.enableScan(cmdLine, session, a.getBooleanValue().get(session));
+                    service.enableScan(cmdLine, session, a.getBooleanValue().get());
                 } else {
                     service.status(cmdLine, session);
                 }
                 return;
             } else if ((a = cmdLine.next("push").orNull()) != null) {
                 if (a.getValue().isBoolean()) {
-                    service.enableScan(cmdLine, session, a.getBooleanValue().get(session));
+                    service.enableScan(cmdLine, session, a.getBooleanValue().get());
                 } else {
                     service.push(cmdLine, session);
                 }

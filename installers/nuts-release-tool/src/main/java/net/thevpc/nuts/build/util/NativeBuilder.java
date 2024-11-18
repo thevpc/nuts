@@ -159,7 +159,7 @@ public class NativeBuilder {
 //  cd $NUTS_ROOT_BASE/installers/nuts-installer/src/dist
         ensureRegularFile(graalvmHome + "/bin/java", "graalvmHome");
         ensureRegularFile(graalvmHome + "/bin/native-image", "graalvmHome");
-        NExecCmd.of(session).system()
+        NExecCmd.of().system()
                 .setEnv("JAVA_HOME",graalvmHome)
                 .setDirectory(evalSrcDist())
                 .addCommand(graalvmHome + "/bin/java")
@@ -172,7 +172,7 @@ public class NativeBuilder {
                 .run();
 
         NPath f = rootDistLinux64Bin.resolve(evalName(platform, null, null));
-        NExecCmd.of(session).system()
+        NExecCmd.of().system()
                 .setEnv("JAVA_HOME",graalvmHome)
                 .setDirectory(evalSrcDist())
                 .addCommand(graalvmHome + "/bin/native-image")
@@ -200,7 +200,7 @@ public class NativeBuilder {
 
     private NPath zipFolder(NPath folder, BinPlatform platform, String discriminator) {
         NPath fzip = folder.resolveSibling(evalName(platform, discriminator, ".zip"));
-        NExecCmd.of(session).system()
+        NExecCmd.of().system()
                 .setDirectory(folder.getParent())
                 .addCommand("zip")
                 .addCommand("-r")
@@ -212,7 +212,7 @@ public class NativeBuilder {
     }
 
     private BinPlatform currentPlatform() {
-        NEnvs e = NEnvs.of(session);
+        NEnvs e = NEnvs.of();
         switch (e.getOsFamily()) {
             case UNIX:
             case LINUX: {
@@ -245,7 +245,7 @@ public class NativeBuilder {
     }
 
     private BinPlatform evalCurrentBinPlatform() {
-        NEnvs z = NEnvs.of(session);
+        NEnvs z = NEnvs.of();
         switch (z.getOsFamily()) {
             case LINUX: {
                 switch (z.getArchFamily()) {
@@ -285,7 +285,7 @@ public class NativeBuilder {
         if (targetFolder.isDirectory()) {
             targetFolder.deleteTree();
         }
-        NExecCmd.of(session).system()
+        NExecCmd.of().system()
                 .addCommand(jpackageHome + "/bin/jpackage")
                 .addCommand("--name")
                 .addCommand(appName)
@@ -315,8 +315,8 @@ public class NativeBuilder {
     }
 
     private NPath installJar2App() {
-        NPath jar2appBase = NPath.ofTempFolder("jar2app", session);
-        NExecCmd.of(session).system()
+        NPath jar2appBase = NPath.ofTempFolder("jar2app");
+        NExecCmd.of().system()
                 .setDirectory(jar2appBase)
                 .addCommand("git", "clone")
                 .addCommand("https://github.com/Jorl17/jar2app.git")
@@ -332,8 +332,8 @@ public class NativeBuilder {
 //                jar2appFolderBin
 //        );
 //        jar2appFolderBin=jar2appFolderBin.setUserTemporary(true);
-        NExecCmd.of(session).system().setDirectory(jar2appFolderSrc).failFast().addCommand("chmod", "-R", "a+rw", jar2appFolderSrc.resolve("jar2app_basefiles").toString()).run();
-        NExecCmd.of(session).system().setDirectory(jar2appFolderSrc).failFast().addCommand("chmod", "-R", "a+rw", jar2appFolderSrc.resolve("jar2app").toString()).run();
+        NExecCmd.of().system().setDirectory(jar2appFolderSrc).failFast().addCommand("chmod", "-R", "a+rw", jar2appFolderSrc.resolve("jar2app_basefiles").toString()).run();
+        NExecCmd.of().system().setDirectory(jar2appFolderSrc).failFast().addCommand("chmod", "-R", "a+rw", jar2appFolderSrc.resolve("jar2app").toString()).run();
         return jar2appFolderSrc;
     }
 
@@ -349,7 +349,7 @@ public class NativeBuilder {
             target.deleteTree();
         }
         NPath jar2AppRoot = installJar2App();
-        NExecCmd.of(session).system()
+        NExecCmd.of().system()
                 .setDirectory(jar2AppRoot)
                 .addCommand("python3")
                 .addCommand("./jar2app")
@@ -389,7 +389,7 @@ public class NativeBuilder {
         if (NBlankable.isBlank(value)) {
             throw new IllegalArgumentException("expected file " + name);
         }
-        NPath p = NPath.of(value, session);
+        NPath p = NPath.of(value);
         if (!p.exists()) {
             throw new IllegalArgumentException("file " + name + " does not exists");
         }
@@ -436,12 +436,12 @@ public class NativeBuilder {
                 throw new IllegalArgumentException("unsupported " + platform);
             }
         }
-        NPath packrbin = NPath.ofUserHome(session).resolve("packr-all-4.0.0.jar");
+        NPath packrbin = NPath.ofUserHome().resolve("packr-all-4.0.0.jar");
         if (!packrbin.exists()) {
-            NPath.of("https://github.com/libgdx/packr/releases/download/4.0.0/packr-all-4.0.0.jar", session)
+            NPath.of("https://github.com/libgdx/packr/releases/download/4.0.0/packr-all-4.0.0.jar")
                     .copyTo(packrbin);
         }
-        NExecCmd.of(session).system()
+        NExecCmd.of().system()
                 .addCommand("java")
                 .addCommand("-jar")
                 .addCommand(packrbin)
@@ -586,7 +586,7 @@ public class NativeBuilder {
     public NativeBuilder setProjectFolder(NPath projectFolder, NId preferredId, String jarName) {
         this.projectFolder = projectFolder;
         //setProjectFolder(projectFolder);
-        NDescriptor nDescriptor = NDescriptorParser.of(session).setDescriptorStyle(NDescriptorStyle.MAVEN).parse(getProjectFolder().resolve("pom.xml")).get();
+        NDescriptor nDescriptor = NDescriptorParser.of().setDescriptorStyle(NDescriptorStyle.MAVEN).parse(getProjectFolder().resolve("pom.xml")).get();
         this.projectId = nDescriptor.getId();
         if (preferredId != null && preferredId.getVersion().isBlank()) {
             preferredId=preferredId.builder().setVersion(projectId.getVersion()).builder();

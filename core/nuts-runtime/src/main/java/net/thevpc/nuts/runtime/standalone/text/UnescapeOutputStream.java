@@ -13,12 +13,12 @@ import java.io.OutputStream;
 
 public class UnescapeOutputStream extends BaseTransparentFilterOutputStream implements ExtendedFormatAware {
 
-    private NSession session;
+    private NWorkspace workspace;
     private NSystemTerminalBase term;
 
-    public UnescapeOutputStream(OutputStream out, NSystemTerminalBase term, NSession session) {
+    public UnescapeOutputStream(OutputStream out, NSystemTerminalBase term, NWorkspace workspace) {
         super(out);
-        this.session = session;
+        this.workspace = workspace;
         this.term = term;
         NTerminalModeOp t = NTerminalModeOpUtils.resolveNutsTerminalModeOp(out);
         if (t.in() != NTerminalMode.FORMATTED && t.in() != NTerminalMode.FILTERED) {
@@ -36,7 +36,7 @@ public class UnescapeOutputStream extends BaseTransparentFilterOutputStream impl
     }
 
     private String filterThanEscape(String b) throws IOException {
-        NTexts txt = NTexts.of(session);
+        NTexts txt = NTexts.of();
         String filtered = txt.ofBuilder().append(b).filteredText();
         return txt.ofPlain(filtered).toString();
 //        return ws.text().escapeText(
@@ -65,13 +65,13 @@ public class UnescapeOutputStream extends BaseTransparentFilterOutputStream impl
                 if (out instanceof ExtendedFormatAware) {
                     return ((ExtendedFormatAware) out).convert(NTerminalModeOp.NOP);
                 }
-                return new RawOutputStream(out, term,session);
+                return new RawOutputStream(out, term, workspace);
             }
             case FORMAT: {
                 if (out instanceof ExtendedFormatAware) {
                     return ((ExtendedFormatAware) out).convert(NTerminalModeOp.FORMAT);
                 }
-                return new FormatOutputStream(out, term,session);
+                return new FormatOutputStream(out, term, workspace);
             }
             case FILTER: {
                 if (out instanceof ExtendedFormatAware) {
@@ -86,6 +86,6 @@ public class UnescapeOutputStream extends BaseTransparentFilterOutputStream impl
                 return ((ExtendedFormatAware) out);
             }
         }
-        throw new NUnsupportedEnumException(session, other);
+        throw new NUnsupportedEnumException(other);
     }
 }

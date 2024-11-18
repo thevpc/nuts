@@ -25,11 +25,7 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
     public DefaultFormatBase(NWorkspace ws, String name) {
         super(ws, name);
     }
-
-    public DefaultFormatBase(NSession session, String name) {
-        super(session, name);
-    }
-
+    
 //    @Override
 //    public PrintWriter getValidPrintWriter(Writer out) {
 //        checkSession();
@@ -37,9 +33,9 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
 //            return
 //        }
 //        return (out == null) ?
-//                CoreIOUtils.toPrintWriter(getSession().getTerminal().getOut(), getSession())
+//                CoreIOUtils.toPrintWriter(session.getTerminal().getOut(), session)
 //                :
-//                CoreIOUtils.toPrintWriter(out, getSession());
+//                CoreIOUtils.toPrintWriter(out, session);
 //    }
 
 //    @Override
@@ -49,9 +45,9 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
 
     @Override
     public NPrintStream getValidPrintStream(NPrintStream out) {
-        checkSession();
         if (out == null) {
-            out = getSession().getTerminal().getOut();
+            NSession session=workspace.currentSession();
+            out = session.getTerminal().getOut();
         }
         return out;
     }
@@ -63,24 +59,22 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
 
     @Override
     public NString format() {
-        checkSession();
         if (isNtf()) {
-            NPrintStream out = NMemoryPrintStream.of(NTerminalMode.FORMATTED, getSession());
+            NPrintStream out = NMemoryPrintStream.of(NTerminalMode.FORMATTED);
             print(out);
-            return NTexts.of(getSession()).parse(out.toString());
+            return NTexts.of().parse(out.toString());
         } else {
-            NPrintStream out = NMemoryPrintStream.of(NTerminalMode.INHERITED, getSession());
+            NPrintStream out = NMemoryPrintStream.of(NTerminalMode.INHERITED);
             print(out);
-            return NTexts.of(getSession()).ofPlain(out.toString());
+            return NTexts.of().ofPlain(out.toString());
         }
     }
 
     @Override
     public String formatPlain() {
-        checkSession();
         boolean ntf = isNtf();
         try {
-            NPrintStream out = NPrintStream.ofMem(NTerminalMode.INHERITED, getSession());
+            NPrintStream out = NPrintStream.ofMem(NTerminalMode.INHERITED);
             print(out);
             return out.toString();
         } finally {
@@ -90,14 +84,14 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
 
     @Override
     public void print() {
-        checkSession();
-        print(getSession().getTerminal());
+        NSession session=workspace.currentSession();
+        print(session.getTerminal());
     }
 
     @Override
     public void println() {
-        checkSession();
-        println(getSession().getTerminal());
+        NSession session=workspace.currentSession();
+        println(session.getTerminal());
     }
 
     @Override
@@ -113,13 +107,12 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
 //    }
     @Override
     public void print(Writer out) {
-        checkSession();
         if (out == null) {
             NPrintStream pout = getValidPrintStream();
             print(pout);
             pout.flush();
         } else {
-            NPrintStream pout = NPrintStream.of(out, getSession());
+            NPrintStream pout = NPrintStream.of(out);
             print(pout);
             pout.flush();
         }
@@ -127,51 +120,47 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
 
     @Override
     public void print(OutputStream out) {
-        checkSession();
         NPrintStream p =
                 out == null ? getValidPrintStream() :
-                        NPrintStream.of(out, getSession());
+                        NPrintStream.of(out);
         print(p);
         p.flush();
     }
 
     @Override
     public void print(Path path) {
-        checkSession();
-        print(NPath.of(path, getSession()));
+        print(NPath.of(path));
     }
 
     @Override
     public void print(NPath path) {
-        checkSession();
         path.mkParentDirs();
         try (Writer w = path.getWriter()) {
             print(w);
         } catch (IOException ex) {
-            throw new NIOException(getSession(), ex);
+            throw new NIOException(ex);
         }
     }
 
     @Override
     public void print(File file) {
-        print(NPath.of(file, getSession()));
+        print(NPath.of(file));
     }
 
     @Override
     public void print(NSessionTerminal terminal) {
-        checkSession();
-        print(terminal == null ? getSession().getTerminal().out() : terminal.out());
+        NSession session=workspace.currentSession();
+        print(terminal == null ? session.getTerminal().out() : terminal.out());
     }
 
     @Override
     public void println(Writer w) {
-        checkSession();
         if (w == null) {
             NPrintStream pout = getValidPrintStream();
             println(pout);
             pout.flush();
         } else {
-            NPrintStream pout = NPrintStream.of(w, getSession());
+            NPrintStream pout = NPrintStream.of(w);
             println(pout);
             pout.flush();
         }
@@ -179,7 +168,6 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
 
     @Override
     public void println(NPrintStream out) {
-        checkSession();
         NPrintStream p = getValidPrintStream(out);
         print(out);
         p.println();
@@ -188,13 +176,12 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
 
     @Override
     public void println(OutputStream out) {
-        checkSession();
         if (out == null) {
             NPrintStream pout = getValidPrintStream();
             println(pout);
             pout.flush();
         } else {
-            NPrintStream pout = NPrintStream.of(out, getSession());
+            NPrintStream pout = NPrintStream.of(out);
             println(pout);
             pout.flush();
         }
@@ -202,25 +189,23 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
 
     @Override
     public void println(Path path) {
-        checkSession();
-        println(NPath.of(path, getSession()));
+        println(NPath.of(path));
     }
 
     @Override
     public void println(NPath out) {
-        checkSession();
         out.mkParentDirs();
         try (Writer w = out.getWriter()) {
             println(w);
         } catch (IOException ex) {
-            throw new NIOException(getSession(), ex);
+            throw new NIOException(ex);
         }
     }
 
     @Override
     public void println(NSessionTerminal terminal) {
-        checkSession();
-        println(terminal == null ? getSession().getTerminal().out() : terminal.out());
+        NSession session=workspace.currentSession();
+        println(terminal == null ? session.getTerminal().out() : terminal.out());
     }
 
     @Override

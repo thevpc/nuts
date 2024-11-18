@@ -30,33 +30,32 @@ import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NMsg;
 
 import java.util.Collection;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public interface NRunnableSupport {
-    static NRunnableSupport resolve(Collection<NRunnableSupport> source, Function<NSession, NMsg> emptyMessage) {
+    static NRunnableSupport resolve(Collection<NRunnableSupport> source, Supplier<NMsg> emptyMessage) {
         if (source == null) {
             return invalid(emptyMessage);
         }
         return resolve(source.stream(), emptyMessage);
     }
 
-    static NRunnableSupport resolve(Stream<NRunnableSupport> source, Function<NSession, NMsg> emptyMessage) {
+    static NRunnableSupport resolve(Stream<NRunnableSupport> source, Supplier<NMsg> emptyMessage) {
         if (source == null) {
             return invalid(emptyMessage);
         }
         return resolveSupplier(source.map(x -> () -> x), emptyMessage);
     }
 
-    static NRunnableSupport resolveSupplier(Collection<Supplier<NRunnableSupport>> source, Function<NSession, NMsg> emptyMessage) {
+    static NRunnableSupport resolveSupplier(Collection<Supplier<NRunnableSupport>> source, Supplier<NMsg> emptyMessage) {
         if (source == null) {
             return invalid(emptyMessage);
         }
         return resolveSupplier(source.stream(), emptyMessage);
     }
 
-    static NRunnableSupport resolveSupplier(Stream<Supplier<NRunnableSupport>> source, Function<NSession, NMsg> emptyMessage) {
+    static NRunnableSupport resolveSupplier(Stream<Supplier<NRunnableSupport>> source, Supplier<NMsg> emptyMessage) {
         Object[] track = new Object[2];
         if (source != null) {
             source.forEach(i -> {
@@ -89,14 +88,14 @@ public interface NRunnableSupport {
         return of(supportLevel, supplier, null);
     }
 
-    static NRunnableSupport of(int supportLevel, Runnable supplier, Function<NSession, NMsg> emptyMessage) {
+    static NRunnableSupport of(int supportLevel, Runnable supplier, Supplier<NMsg> emptyMessage) {
         return (supportLevel <= 0 || supplier == null) ? invalid(emptyMessage)
                 : new DefaultNRunnableSupport(supplier, supportLevel, emptyMessage)
                 ;
     }
 
     @SuppressWarnings("unchecked")
-    static NRunnableSupport invalid(Function<NSession, NMsg> emptyMessage) {
+    static NRunnableSupport invalid(Supplier<NMsg> emptyMessage) {
         return new DefaultNRunnableSupport(null, NConstants.Support.NO_SUPPORT, emptyMessage);
     }
 
@@ -104,7 +103,7 @@ public interface NRunnableSupport {
         return s != null && s.isValid();
     }
 
-    void run(NSession session);
+    void run();
 
     default boolean isValid() {
         return getSupportLevel() > 0;

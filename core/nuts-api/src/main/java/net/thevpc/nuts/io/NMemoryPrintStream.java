@@ -26,16 +26,15 @@
  */
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.reserved.rpi.NIORPI;
 
 public interface NMemoryPrintStream extends NPrintStream {
-    static NMemoryPrintStream of(NSession session) {
-        return NIORPI.of(session).ofInMemoryPrintStream();
+    static NMemoryPrintStream of() {
+        return NIORPI.of().ofInMemoryPrintStream();
     }
 
-    static NMemoryPrintStream of(NTerminalMode mode, NSession session) {
-        return NIORPI.of(session).ofInMemoryPrintStream(mode);
+    static NMemoryPrintStream of(NTerminalMode mode) {
+        return NIORPI.of().ofInMemoryPrintStream(mode);
     }
 
     byte[] getBytes();

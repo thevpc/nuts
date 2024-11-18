@@ -37,8 +37,8 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
     private Object value;
     private boolean compact;
 
-    public NFormatPlain(NSession session) {
-        super(session, NContentType.PLAIN.id() + "-format");
+    public NFormatPlain(NWorkspace workspace) {
+        super(workspace, NContentType.PLAIN.id() + "-format");
     }
 
     @Override
@@ -54,21 +54,21 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NSession session = getSession();
+        NSession session=workspace.currentSession();
         NArg n = cmdLine.peek().orNull();
         if (n != null) {
             NArg a;
             boolean enabled = n.isActive();
             if ((a = cmdLine.nextEntry(DefaultNPropertiesFormat.OPTION_MULTILINE_PROPERTY).orNull()) != null) {
                 if (enabled) {
-                    NArg i = NArg.of(a.getStringValue().get(session));
-                    extraConfig.add(a.asString().get(session));
-                    addMultilineProperty(i.key(), i.getStringValue().get(session));
+                    NArg i = NArg.of(a.getStringValue().get());
+                    extraConfig.add(a.asString().get());
+                    addMultilineProperty(i.key(), i.getStringValue().get());
                 }
             } else {
-                a = cmdLine.next().get(session);
+                a = cmdLine.next().get();
                 if (!a.isOption() || a.isActive()) {
-                    extraConfig.add(a.asString().get(session));
+                    extraConfig.add(a.asString().get());
                 }
             }
             return true;
@@ -84,60 +84,60 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
     private String getFormattedPrimitiveValue(NElement value) {
         switch (value.type()) {
             default: {
-                throw new NUnsupportedArgumentException(getSession(), NMsg.ofC("invalid element type: %s", value.type()));
+                NSession session=workspace.currentSession();
+                throw new NUnsupportedArgumentException(NMsg.ofC("invalid element type: %s", value.type()));
             }
         }
     }
 
     @Override
     public void print(NPrintStream w) {
-        checkSession();
+        NSession session=workspace.currentSession();
         Object value = getValue();
-        NSession session = getSession();
         if (value instanceof NTableModel) {
-            NTableFormat.of(session).setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+            NTableFormat.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
         } else if (value instanceof NTreeModel) {
-            NTreeFormat.of(session).setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+            NTreeFormat.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
         } else if (value instanceof Properties) {
-            NPropertiesFormat.of(session).setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+            NPropertiesFormat.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
         } else if (value instanceof NElement) {
-            NElements.of(session).setValue(value).setNtf(isNtf())
+            NElements.of().setValue(value).setNtf(isNtf())
                     .setCompact(isCompact())
                     .configure(true, extraConfig.toArray(new String[0])).print(w);
         } else if (value instanceof org.w3c.dom.Document) {
-            XmlUtils.writeDocument((org.w3c.dom.Document) value, new StreamResult(w.asPrintStream()), false, true, getSession());
+            XmlUtils.writeDocument((org.w3c.dom.Document) value, new StreamResult(w.asPrintStream()), false, true);
         } else if (value instanceof org.w3c.dom.Element) {
             Element elem = (org.w3c.dom.Element) value;
-            Document doc = XmlUtils.createDocument(getSession());
+            Document doc = XmlUtils.createDocument();
             doc.appendChild(doc.importNode(elem, true));
-            XmlUtils.writeDocument(doc, new StreamResult(w.asPrintStream()), false, false, getSession());
+            XmlUtils.writeDocument(doc, new StreamResult(w.asPrintStream()), false, false);
         } else {
-            NElements element = NElements.of(session);
+            NElements element = NElements.of();
             Object newVal = element.setNtf(true).setIndestructibleFormat().destruct(value);
             Flags f=new Flags();
             collectFlags(newVal,f,300);
             if(f.map){
                 if(f.msg || f.formattable){
-                    NTreeFormat.of(session).setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+                    NTreeFormat.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
                 }else if(f.elems){
-                    NElements.of(session).setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+                    NElements.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
                 }else {
                     //defaults to elements
-                    NElements.of(session).setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+                    NElements.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
                 }
             }else if(f.list){
                 if(f.msg || f.formattable){
-                    NTableFormat.of(session).setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+                    NTableFormat.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
                     //table.configure(true, "--no-header", "--border=spaces");
                 }else if(f.elems){
-                    NElements.of(session).setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+                    NElements.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
                 }else {
                     //defaults to elements
-                    NElements.of(session).setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+                    NElements.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
                 }
             }else{
                 NPrintStream out = getValidPrintStream(w);
-                out.print(NTexts.of(session).ofText(value));
+                out.print(NTexts.of().ofText(value));
                 out.flush();
             }
         }

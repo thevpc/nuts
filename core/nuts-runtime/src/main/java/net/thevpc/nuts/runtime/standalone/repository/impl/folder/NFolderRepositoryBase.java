@@ -29,13 +29,12 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
     protected NIdPathIteratorBase repoIter;
 
     public NFolderRepositoryBase(NAddRepositoryOptions options,
-                                 NSession session, NRepository parent, NSpeedQualifier speed,
+                                 NWorkspace workspace, NRepository parent, NSpeedQualifier speed,
                                  boolean supportedMirroring, String repositoryType, boolean supportsDeploy) {
-        super(options, session, parent,
+        super(options, workspace, parent,
                 speed == null ? (NPath.of(options.getConfig().getLocation().getPath()
-                        , session).isRemote() ? NSpeedQualifier.SLOW : NSpeedQualifier.FASTER) : speed
+                ).isRemote() ? NSpeedQualifier.SLOW : NSpeedQualifier.FASTER) : speed
                 , supportedMirroring, repositoryType, supportsDeploy);
-        NPath locationPath = config().setSession(initSession).getLocationPath();
         if (!isRemote()) {
             if (options.getConfig().getStoreStrategy() != NStoreStrategy.STANDALONE) {
                 cache.setWriteEnabled(false);
@@ -45,19 +44,19 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
     }
 
     @Override
-    protected boolean isAvailableImpl(NSession session) {
+    protected boolean isAvailableImpl() {
         long now = System.currentTimeMillis();
         try {
-            NPath loc = config().setSession(initSession).getLocationPath();
+            NPath loc = config().getLocationPath();
             try {
                 return loc.exists();
             } finally {
-                LOG.with().level(Level.FINEST).verb(NLogVerb.SUCCESS)
+                _LOG().with().level(Level.FINEST).verb(NLogVerb.SUCCESS)
                         .time(System.currentTimeMillis() - now)
                         .log(NMsg.ofC("check available %s : success", getName()));
             }
         } catch (Exception e) {
-            LOG.with().level(Level.FINEST).verb(NLogVerb.FAIL)
+            _LOG().with().level(Level.FINEST).verb(NLogVerb.FAIL)
                     .time(System.currentTimeMillis() - now)
                     .log(NMsg.ofC("check available %s : failed", getName()));
             return false;
@@ -65,46 +64,49 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
     }
 
     @Override
-    public NIterator<NId> searchVersionsCore(final NId id, NIdFilter idFilter, NFetchMode fetchMode, final NSession session) {
+    public NIterator<NId> searchVersionsCore(final NId id, NIdFilter idFilter, NFetchMode fetchMode) {
         if (!acceptedFetchNoCache(fetchMode)) {
             return null;
         }
-        NIdFilter filter2 = NIdFilters.of(session).nonnull(idFilter).and(
-                NIdFilters.of(session).byName(id.getShortName())
+        NSession session = getWorkspace().currentSession();
+        NIdFilter filter2 = NIdFilters.of().nonnull(idFilter).and(
+                NIdFilters.of().byName(id.getShortName())
         );
         if (id.getVersion().isSingleValue()) {
-            return findSingleVersionImpl(id, filter2, fetchMode, session);
+            return findSingleVersionImpl(id, filter2, fetchMode);
         }
-        return findNonSingleVersionImpl(id, filter2, fetchMode, session);
+        return findNonSingleVersionImpl(id, filter2, fetchMode);
     }
 
 
     @Override
-    public NPath fetchContentCore(NId id, NDescriptor descriptor, NFetchMode fetchMode, NSession session) {
+    public NPath fetchContentCore(NId id, NDescriptor descriptor, NFetchMode fetchMode) {
+        NSession session = getWorkspace().currentSession();
         if (!acceptedFetchNoCache(fetchMode)) {
-            throw new NNotFoundException(session, id, new NFetchModeNotSupportedException(session, this, fetchMode, id.toString(), null));
+            throw new NNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
         }
         NPath fetch = NIdLocationUtils.fetch(id, descriptor.getLocations(), this, session);
         if (fetch != null) {
             return fetch;
         }
-        return fetchContentCoreUsingRepoHelper(id, descriptor, fetchMode, session);
+        return fetchContentCoreUsingRepoHelper(id, descriptor, fetchMode);
     }
 
     @Override
     public boolean isRemote() {
-        return config().setSession(initSession).getLocationPath().isRemote();
+        return config().getLocationPath().isRemote();
     }
 
 
     @Override
-    public NIterator<NId> searchCore(final NIdFilter filter, NPath[] basePaths, NId[] baseIds, NFetchMode fetchMode, NSession session) {
+    public NIterator<NId> searchCore(final NIdFilter filter, NPath[] basePaths, NId[] baseIds, NFetchMode fetchMode) {
         if (!acceptedFetchNoCache(fetchMode)) {
             return null;
         }
 
-        NPath repoRoot = config().setSession(session).getLocationPath();
+        NPath repoRoot = config().getLocationPath();
         List<NIterator<? extends NId>> list = new ArrayList<>();
+        NSession session = getWorkspace().currentSession();
         for (NPath basePath : basePaths) {
             //,"https://search.maven.org/solrsearch",
             //                                                "maven.solrsearch.enable","true"
@@ -113,81 +115,83 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                             () -> session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s", getName(), "browse",
                                     (basePath == null ? repoRoot : repoRoot.resolve(basePath)).toCompressedForm()
                             )),
-                            "Log",
+                            "Log"
 
-                            session).build());
+                    ).build());
             if (basePath.getName().equals("*")) {
-                list.add(new NIdPathIterator(this, repoRoot, basePath.getParent(), filter, session, repoIter, Integer.MAX_VALUE, "core", null, true));
+                list.add(new NIdPathIterator(this, repoRoot, basePath.getParent(), filter, repoIter, Integer.MAX_VALUE, "core", null, true));
             } else {
-                list.add(new NIdPathIterator(this, repoRoot, basePath, filter, session, repoIter, 2, "core", null, true));
+                list.add(new NIdPathIterator(this, repoRoot, basePath, filter, repoIter, 2, "core", null, true));
             }
         }
         return IteratorUtils.concat(list);
     }
 
     @Override
-    public void updateStatisticsImpl(NSession session) {
-        config().setSession(session).getLocationPath()
+    public void updateStatisticsImpl() {
+        config().getLocationPath()
                 .walkDfs(new NTreeVisitor<NPath>() {
                              @Override
-                             public NTreeVisitResult preVisitDirectory(NPath dir, NSession session) {
+                             public NTreeVisitResult preVisitDirectory(NPath dir) {
 
                                  return NTreeVisitResult.CONTINUE;
                              }
 
                              @Override
-                             public NTreeVisitResult visitFile(NPath file, NSession session) {
-                                 throw new NIOException(session, NMsg.ofPlain("updateStatistics Not supported."));
+                             public NTreeVisitResult visitFile(NPath file) {
+                                 throw new NIOException(NMsg.ofPlain("updateStatistics Not supported."));
                              }
 
                              @Override
-                             public NTreeVisitResult visitFileFailed(NPath file, Exception exc, NSession session) {
-                                 throw new NIOException(session, NMsg.ofPlain("updateStatistics Not supported."));
+                             public NTreeVisitResult visitFileFailed(NPath file, Exception exc) {
+                                 throw new NIOException(NMsg.ofPlain("updateStatistics Not supported."));
                              }
 
                              @Override
-                             public NTreeVisitResult postVisitDirectory(NPath dir, Exception exc, NSession session) {
-                                 throw new NIOException(session, NMsg.ofPlain("updateStatistics Not supported."));
+                             public NTreeVisitResult postVisitDirectory(NPath dir, Exception exc) {
+                                 throw new NIOException(NMsg.ofPlain("updateStatistics Not supported."));
                              }
                          }
                 );
     }
 
     @Override
-    public boolean isAcceptFetchMode(NFetchMode mode, NSession session) {
+    public boolean isAcceptFetchMode(NFetchMode mode) {
         return isRemote() || mode == NFetchMode.LOCAL;
     }
 
-    public NPath fetchContentCoreUsingRepoHelper(NId id, NDescriptor descriptor, NFetchMode fetchMode, NSession session) {
-        NPath p = getIdRemotePath(id, session);
+    public NPath fetchContentCoreUsingRepoHelper(NId id, NDescriptor descriptor, NFetchMode fetchMode) {
+        NPath p = getIdRemotePath(id);
+        NSession session = getWorkspace().currentSession();
         if (p.isLocal()) {
             if (p.exists()) {
                 return p.copy();
             } else {
-                throw new NNotFoundException(session, id);
+                throw new NNotFoundException(id);
             }
         } else {
             String tempFile = NPath
-                    .ofTempRepositoryFile(p.getName(), this, session).toString();
+                    .ofTempRepositoryFile(p.getName(), this).toString();
             try {
-                NCp.of(session)
-                        .from(getStream(id, "artifact binaries", "retrieve", session)).to(NPath.of(tempFile, session)).setValidator(new NCpValidator() {
+                NCp.of()
+                        .from(getStream(id, "artifact binaries", "retrieve")).to(NPath.of(tempFile)).setValidator(new NCpValidator() {
                             @Override
                             public void validate(InputStream in) throws IOException {
-                                checkSHA1Hash(id.builder().setFace(NConstants.QueryFaces.CONTENT_HASH).build(), in, "artifact binaries", session);
+                                checkSHA1Hash(id.builder().setFace(NConstants.QueryFaces.CONTENT_HASH).build(), in, "artifact binaries");
                             }
                         }).run();
             } catch (UncheckedIOException | NIOException ex) {
-                throw new NNotFoundException(session, id, null, ex);
+                throw new NNotFoundException(id, null, ex);
             }
-            return NPath.of(tempFile, session).setUserTemporary(true).setUserCache(true);
+            return NPath.of(tempFile).setUserTemporary(true).setUserCache(true);
         }
     }
 
-    public NIterator<NId> findNonSingleVersionImpl(final NId id, NIdFilter idFilter, NFetchMode fetchMode, final NSession session) {
+    public NIterator<NId> findNonSingleVersionImpl(final NId id, NIdFilter idFilter, NFetchMode fetchMode) {
         String groupId = id.getGroupId();
         String artifactId = id.getArtifactId();
-        NPath foldersFileUrl = config().setSession(session).getLocationPath().resolve(groupId.replace('.', '/') + "/" + artifactId + "/");
+        NPath foldersFileUrl = config().getLocationPath().resolve(groupId.replace('.', '/') + "/" + artifactId + "/");
+        NSession session = getWorkspace().currentSession();
 
         return IteratorBuilder.ofSupplier(
                 () -> {
@@ -199,36 +203,37 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                             ).withDesc(NEDesc.of("isDirectory")).map(versionFolder -> {
                                 String versionName = versionFolder.getName();
                                 NId expectedId = NIdBuilder.of(groupId, artifactId).setVersion(versionName).build();
-                                if (isValidArtifactVersionFolder(expectedId, versionFolder, session)) {
+                                if (isValidArtifactVersionFolder(expectedId, versionFolder)) {
                                     final NId nutsId = id.builder().setVersion(versionFolder.getName()).build();
-                                    if (idFilter == null || idFilter.acceptId(nutsId, session)) {
+                                    if (idFilter == null || idFilter.acceptId(nutsId)) {
                                         return expectedId;
                                     }
                                 }
                                 return null;
                             }).filterNonNull().iterator()
-                            ,session).withDesc(NEDesc.of("findNonSingleVersion"));
+                    ).withDesc(NEDesc.of("findNonSingleVersion"));
                 }
-                , e -> NElements.of(e).ofObject()
+                , () -> NElements.of().ofObject()
                         .set("type", "NonSingleVersion")
                         .set("path", foldersFileUrl.toString())
-                        .build(),
-                session).build();
+                        .build()
+        ).build();
     }
 
-    private boolean isValidArtifactVersionFolder(NId expectedId, NPath versionFolder, NSession session) {
-        String expectedFileName = getIdFilename(expectedId.builder().setFaceDescriptor().build(), session);
+    private boolean isValidArtifactVersionFolder(NId expectedId, NPath versionFolder) {
+        String expectedFileName = getIdFilename(expectedId.builder().setFaceDescriptor().build());
         return versionFolder.resolve(expectedFileName).isRegularFile();
     }
 
-    public NIterator<NId> findSingleVersionImpl(final NId id, NIdFilter idFilter, NFetchMode fetchMode, final NSession session) {
+    public NIterator<NId> findSingleVersionImpl(final NId id, NIdFilter idFilter, NFetchMode fetchMode) {
         String singleVersion = id.getVersion().asSingleValue().orNull();
+        NSession session = getWorkspace().currentSession();
         if (singleVersion != null) {
             String groupId = id.getGroupId();
             String artifactId = id.getArtifactId();
-            NPath metadataURL = config().setSession(session).getLocationPath()
+            NPath metadataURL = config().getLocationPath()
                     .resolve(groupId.replace('.', '/') + "/" + artifactId + "/" + singleVersion + "/"
-                            + getIdFilename(id.builder().setFaceDescriptor().build(), session)
+                            + getIdFilename(id.builder().setFaceDescriptor().build())
                     );
             return IteratorBuilder.ofSupplier(
                     () -> {
@@ -240,13 +245,13 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                         }
                         return ret.iterator();
                     }
-                    , e -> NElements.of(e).ofObject()
+                    , () -> NElements.of().ofObject()
                             .set("type", "SingleVersion")
                             .set("path", metadataURL.toString())
-                            .build(),
-                    session).build();
+                            .build()
+            ).build();
         } else {
-            throw new NIllegalArgumentException(session, NMsg.ofC("expected single version in %s", id));
+            throw new NIllegalArgumentException(NMsg.ofC("expected single version in %s", id));
         }
     }
 
@@ -254,15 +259,16 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
         return (fetchMode == NFetchMode.REMOTE) == isRemote();
     }
 
-    public InputStream getStream(NId id, String typeName, String action, NSession session) {
-        NPath url = getIdRemotePath(id, session);
-        return openStream(id, url, id, typeName, action, session);
+    public InputStream getStream(NId id, String typeName, String action) {
+        NPath url = getIdRemotePath(id);
+        return openStream(id, url, id, typeName, action);
     }
 
-    public String getStreamAsString(NId id, String typeName, String action, NSession session) {
-        byte[] barr = NCp.of(session)
+    public String getStreamAsString(NId id, String typeName, String action) {
+        NSession session = getWorkspace().currentSession();
+        byte[] barr = NCp.of()
                 .addOptions(NPathOption.LOG, NPathOption.TRACE, NPathOption.SAFE)
-                .from(getIdRemotePath(id, session))
+                .from(getIdRemotePath(id))
                 .setSourceOrigin(id)
                 .setActionMessage(action == null ? null : NMsg.ofPlain(action))
                 .setSourceTypeName(action)
@@ -271,19 +277,20 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
 //        return CoreIOUtils.loadString(openStream(id, url, id, typeName, action, session), true, session);
     }
 
-    public void checkSHA1Hash(NId id, InputStream stream, String typeName, NSession session) throws IOException {
+    public void checkSHA1Hash(NId id, InputStream stream, String typeName) throws IOException {
         if (!isRemote()) {
             //do not do any test
             stream.close();
             return;
         }
+        NSession session = getWorkspace().currentSession();
         switch (NStringUtils.trim(id.getFace())) {
             case NConstants.QueryFaces.CONTENT_HASH:
             case NConstants.QueryFaces.DESCRIPTOR_HASH: {
                 break;
             }
             default: {
-                _LOGOP(session).level(Level.SEVERE).error(new NIllegalArgumentException(session, NMsg.ofC("unsupported Hash Type %s", id.getFace())))
+                _LOGOP().level(Level.SEVERE).error(new NIllegalArgumentException(NMsg.ofC("unsupported Hash Type %s", id.getFace())))
                         .log(NMsg.ofC("[BUG] unsupported Hash Type %s", id.getFace()));
                 throw new IOException("unsupported hash type " + id.getFace());
             }
@@ -296,7 +303,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                 //sha is not provided... so do not check anything!
                 return;
             }
-            String lhash = NDigestUtils.evalSHA1Hex(stream, true, session);
+            String lhash = NDigestUtils.evalSHA1Hex(stream, true);
             if (!rhash.equalsIgnoreCase(lhash)) {
                 throw new IOException("invalid file hash " + id);
             }
@@ -309,7 +316,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
 //        if (!isRemoteRepository()) {
 //            return CoreIOUtils.evalSHA1Hex(getStream(id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(), typeName, "verify", session), true, session);
 //        }
-        String hash = getStreamAsString(id, typeName + " SHA1", "verify", session).toUpperCase();
+        String hash = getStreamAsString(id, typeName + " SHA1", "verify").toUpperCase();
         for (String s : hash.split("[ \n\r]")) {
             if (s.length() > 0) {
                 return s;
@@ -318,9 +325,10 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
         return hash.split("[ \n\r]")[0];
     }
 
-    public InputStream openStream(NId id, NPath path, Object source, String typeName, String action, NSession session) {
+    public InputStream openStream(NId id, NPath path, Object source, String typeName, String action) {
+        NSession session = getWorkspace().currentSession();
         session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s", getName(), action, path.toCompressedForm()));
-        return NInputStreamMonitor.of(session).setSource(path).setOrigin(source).setSourceTypeName(typeName).create();
+        return NInputStreamMonitor.of().setSource(path).setOrigin(source).setSourceTypeName(typeName).create();
     }
 
 }

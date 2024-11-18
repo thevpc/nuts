@@ -7,29 +7,16 @@ import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLines;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.option.*;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.shell.NShellHelper;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
 public class DefaultNCmdLines implements NCmdLines {
 
     private NWorkspace ws;
-    private NSession session;
     private NShellFamily family = NShellFamily.getCurrent();
 
-    public DefaultNCmdLines(NSession session) {
-        this.session = session;
-        this.ws = session.getWorkspace();
-    }
-
-    public NSession getSession() {
-        return session;
-    }
-
-    public NCmdLines setSession(NSession session) {
-        this.session = NWorkspaceUtils.bindSession(ws, session);
-        return this;
+    public DefaultNCmdLines(NWorkspace ws) {
+        this.ws = ws;
     }
 
     public NShellFamily getShellFamily() {
@@ -47,40 +34,33 @@ public class DefaultNCmdLines implements NCmdLines {
 
     @Override
     public NCmdLine parseCmdLine(String line) {
-        checkSession();
-        return new DefaultNCmdLine(parseCmdLineArr(line)).setSession(getSession());
+        return new DefaultNCmdLine(parseCmdLineArr(line));
     }
 
     private String[] parseCmdLineArr(String line) {
         NShellFamily f = getShellFamily();
         if (f == null) {
-            f = NEnvs.of(session).getShellFamily();
+            f = NEnvs.of().getShellFamily();
         }
         if (f == null) {
             f = NShellFamily.getCurrent();
         }
-        return NShellHelper.of(f).parseCmdLineArr(line, session);
-    }
-
-    protected void checkSession() {
-        NSessionUtils.checkSession(ws, session);
+        return NShellHelper.of(f).parseCmdLineArr(line);
     }
 
     @Override
     public NArgName createName(String type, String label) {
-        checkSession();
-        return Factory.createName0(getSession(), type, label);
+        return Factory.createName0(type, label);
     }
 
     @Override
     public NArgName createName(String type) {
-        checkSession();
         return createName(type, type);
     }
 
     public static class Factory {
 
-        public static NArgName createName0(NSession session, String type, String label) {
+        public static NArgName createName0(String type, String label) {
             if (type == null) {
                 type = "";
             }
@@ -95,7 +75,7 @@ public class DefaultNCmdLines implements NCmdLines {
                     return new PackagingNonOption(label);
                 }
                 case "extension": {
-                    return new ExtensionNonOption(type, session);
+                    return new ExtensionNonOption(type);
                 }
                 case "file": {
                     return new FileNonOption(type);

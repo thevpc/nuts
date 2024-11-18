@@ -74,10 +74,10 @@ public class NExecOutput {
                 if (result != null) {
                     return NOptional.of(result);
                 }
-                return NOptional.ofEmpty(s -> NMsg.ofPlain("grabbed result is not available"));
+                return NOptional.ofEmpty(() -> NMsg.ofPlain("grabbed result is not available"));
             }
         }
-        return NOptional.ofEmpty(s -> NMsg.ofPlain("no buffer was configured; should call setGrabOutString"));
+        return NOptional.ofEmpty(() -> NMsg.ofPlain("no buffer was configured; should call setGrabOutString"));
     }
 
     public byte[] getResultBytes() {

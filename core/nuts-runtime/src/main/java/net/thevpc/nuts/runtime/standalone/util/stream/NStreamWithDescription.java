@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.util.stream;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NIterator;
@@ -32,13 +31,13 @@ public class NStreamWithDescription<T> extends NStreamDelegate<T> {
     }
 
     @Override
-    public NElement describe(NSession session) {
+    public NElement describe() {
         if (description != null) {
-            NElement s = description.apply(session);
+            NElement s = description.get();
             if (s != null) {
                 return s;
             }
         }
-        return super.describe(session);
+        return super.describe();
     }
 }

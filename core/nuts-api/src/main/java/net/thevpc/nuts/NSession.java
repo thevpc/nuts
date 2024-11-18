@@ -38,14 +38,17 @@ import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.time.NClock;
-import net.thevpc.nuts.util.NMapListener;
+import net.thevpc.nuts.util.NCallable;
+import net.thevpc.nuts.util.NObservableMapListener;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NRunnable;
 
+import java.io.Closeable;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.logging.Filter;
 import java.util.logging.Level;
 
@@ -56,9 +59,21 @@ import java.util.logging.Level;
  * @app.category Base
  * @since 0.5.4
  */
-public interface NSession extends NCmdLineConfigurable {
-
+public interface NSession extends NCmdLineConfigurable, Closeable {
     String AUTO_COMPLETE_CANDIDATE_PREFIX = "```error Candidate```: ";
+
+    static NSession get() {
+        return of().get();
+    }
+
+    static NOptional<NSession> of() {
+        return NWorkspace.of().map(NWorkspace::currentSession);
+    }
+
+    void runWith(NRunnable runnable);
+
+    <T> T callWith(NCallable<T> callable);
+
 
     NOptional<Boolean> getTrace();
 
@@ -159,6 +174,7 @@ public interface NSession extends NCmdLineConfigurable {
     boolean isBot();
 
     NSession setBot(Boolean bot);
+
     NSession setPreviewRepo(Boolean bot);
 
     NSession bot();
@@ -379,7 +395,7 @@ public interface NSession extends NCmdLineConfigurable {
      * <ul>
      * <li>{@link NWorkspaceListener}</li>
      * <li>{@link NInstallListener}</li>
-     * <li>{@link NMapListener}</li>
+     * <li>{@link NObservableMapListener}</li>
      * <li>{@link NRepositoryListener}</li>
      * </ul>
      *
@@ -393,7 +409,7 @@ public interface NSession extends NCmdLineConfigurable {
      * <ul>
      * <li>{@link NWorkspaceListener}</li>
      * <li>{@link NInstallListener}</li>
-     * <li>{@link NMapListener}</li>
+     * <li>{@link NObservableMapListener}</li>
      * <li>{@link NRepositoryListener}</li>
      * </ul>
      *
@@ -407,7 +423,7 @@ public interface NSession extends NCmdLineConfigurable {
      * <ul>
      * <li>{@link NWorkspaceListener}</li>
      * <li>{@link NInstallListener}</li>
-     * <li>{@link NMapListener}</li>
+     * <li>{@link NObservableMapListener}</li>
      * <li>{@link NRepositoryListener}</li>
      * </ul>
      *
@@ -602,7 +618,7 @@ public interface NSession extends NCmdLineConfigurable {
      * @return expired date/time or zero
      * @since 0.8.0
      */
-    Instant getExpireTime();
+    NOptional<Instant> getExpireTime();
 
     /**
      * set expire instant. Expire time is used to expire any cached file that
@@ -723,12 +739,6 @@ public interface NSession extends NCmdLineConfigurable {
     NSession currentUser();
 
     /**
-     * @return new extension manager instance
-     * @since 0.8.3
-     */
-    NExtensions extensions();
-
-    /**
      * return dependency solver Name
      *
      * @return dependency solver Name
@@ -745,7 +755,7 @@ public interface NSession extends NCmdLineConfigurable {
      */
     NSession setDependencySolver(String dependencySolver);
 
-    <T> T getOrComputeProperty(String name, NScopeType scope, Function<NSession, T> supplier);
+    <T> T getOrComputeProperty(String name, NScopeType scope, Supplier<T> supplier);
 
     <T> T setProperty(String name, NScopeType scope, T value);
 
@@ -758,4 +768,6 @@ public interface NSession extends NCmdLineConfigurable {
     NSession setAppStartTime(NClock startTime);
 
     NSession setAppPreviousVersion(NVersion previousVersion);
+
+    void close();
 }

@@ -27,7 +27,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
-import net.thevpc.nuts.util.NMapListener;
+import net.thevpc.nuts.util.NObservableMapListener;
 
 import java.util.List;
 
@@ -35,9 +35,9 @@ import java.util.List;
  * @author thevpc
  * @app.category Events
  */
-public interface NEvents extends NComponent, NSessionProvider {
-    static NEvents of(NSession session) {
-        return NExtensions.of(session).createComponent(NEvents.class).get();
+public interface NEvents extends NComponent {
+    static NEvents of() {
+        return NExtensions.of().createComponent(NEvents.class).get();
     }
 
     NEvents removeRepositoryListener(NRepositoryListener listener);
@@ -46,11 +46,11 @@ public interface NEvents extends NComponent, NSessionProvider {
 
     List<NRepositoryListener> getRepositoryListeners();
 
-    NEvents addUserPropertyListener(NMapListener<String, Object> listener);
+    NEvents addUserPropertyListener(NObservableMapListener<String, Object> listener);
 
-    NEvents removeUserPropertyListener(NMapListener<String, Object> listener);
+    NEvents removeUserPropertyListener(NObservableMapListener<String, Object> listener);
 
-    List<NMapListener<String, Object>> getUserPropertyListeners();
+    List<NObservableMapListener<String, Object>> getUserPropertyListeners();
 
     NEvents removeWorkspaceListener(NWorkspaceListener listener);
 

@@ -26,8 +26,8 @@ public abstract class AbstractNPrepareCmd extends NWorkspaceCmdBase<NPrepareCmd>
     protected String targetHome;
     protected List<NId> ids = new ArrayList<>();
 
-    public AbstractNPrepareCmd(NSession session) {
-        super(session, "prepare");
+    public AbstractNPrepareCmd(NWorkspace workspace) {
+        super(workspace, "prepare");
     }
 
     @Override
@@ -91,25 +91,26 @@ public abstract class AbstractNPrepareCmd extends NWorkspaceCmdBase<NPrepareCmd>
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NArg a = cmdLine.peek().get(session);
+        NSession session=getWorkspace().currentSession();
+        NArg a = cmdLine.peek().get();
         if (a == null) {
             return false;
         }
         if (super.configureFirst(cmdLine)) {
             return true;
-        } else if (cmdLine.withNextEntry((v, arg, s) -> {
+        } else if (cmdLine.withNextEntry((v, arg) -> {
             setUserName(v);
         }, "--user")) {
             return true;
-        } else if (cmdLine.withNextEntry((v, arg, s) -> {
+        } else if (cmdLine.withNextEntry((v, arg) -> {
             setTargetServer(v);
         }, "--target-server")) {
             return true;
-        } else if (cmdLine.withNextEntry((v, arg, s) -> {
+        } else if (cmdLine.withNextEntry((v, arg) -> {
             setVersion(v);
         }, "--version")) {
             return true;
-        } else if (cmdLine.withNextEntry((v, arg, s) -> {
+        } else if (cmdLine.withNextEntry((v, arg) -> {
             this.targetHome = v;
         }, "--target-home")) {
             return true;

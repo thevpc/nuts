@@ -74,9 +74,9 @@ public class CoreFilterUtils {
     }
 
     public static <T extends NFilter> T[]
-    getTopLevelFilters(NFilter idFilter, Class<T> clazz, NSession session) {
+    getTopLevelFilters(NFilter idFilter, Class<T> clazz) {
         return getTopLevelFilters(idFilter).stream()
-                .map(x -> NFilters.of(session).as(clazz, x))
+                .map(x -> NFilters.of().as(clazz, x))
                 .toArray(value -> (T[]) Array.newInstance(clazz, value));
     }
 
@@ -91,16 +91,16 @@ public class CoreFilterUtils {
     }
 
     public static NIdFilter idFilterOf(Map<String, String> map, NIdFilter idFilter, NDescriptorFilter
-            descriptorFilter, NSession session) {
-        return NIdFilters.of(session).nonnull(idFilter).and(
-                CoreFilterUtils.createNutsDescriptorFilter(map, session).and(descriptorFilter).to(NIdFilter.class)
+            descriptorFilter) {
+        return NIdFilters.of().nonnull(idFilter).and(
+                CoreFilterUtils.createNutsDescriptorFilter(map).and(descriptorFilter).to(NIdFilter.class)
         );
     }
 
 
     public static NDescriptorFilter createNutsDescriptorFilter(String arch, String os, String osDist, String
-            platform, String desktopEnv, NSession session) {
-        NDescriptorFilters d = NDescriptorFilters.of(session);
+            platform, String desktopEnv) {
+        NDescriptorFilters d = NDescriptorFilters.of();
         return d.byArch(arch)
                 .and(d.byOs(os))
                 .and(d.byOsDist(osDist))
@@ -109,21 +109,21 @@ public class CoreFilterUtils {
                 ;
     }
 
-    public static NDescriptorFilter createNutsDescriptorFilter(Map<String, String> faceMap, NSession session) {
+    public static NDescriptorFilter createNutsDescriptorFilter(Map<String, String> faceMap) {
         return createNutsDescriptorFilter(
                 faceMap == null ? null : faceMap.get(NConstants.IdProperties.ARCH),
                 faceMap == null ? null : faceMap.get(NConstants.IdProperties.OS),
                 faceMap == null ? null : faceMap.get(NConstants.IdProperties.OS_DIST),
                 faceMap == null ? null : faceMap.get(NConstants.IdProperties.PLATFORM),
-                faceMap == null ? null : faceMap.get(NConstants.IdProperties.DESKTOP),
-                session);
+                faceMap == null ? null : faceMap.get(NConstants.IdProperties.DESKTOP)
+        );
     }
 
-    public static NPredicate<NId> createFilter(NIdFilter t, NSession session) {
+    public static NPredicate<NId> createFilter(NIdFilter t) {
         if (t == null) {
             return null;
         }
-        return new NIdFilterToPredicate(t, session);
+        return new NIdFilterToPredicate(t);
     }
 
 
@@ -150,7 +150,7 @@ public class CoreFilterUtils {
         return new ArrayList<>(valid.values());
     }
 
-    public static boolean matchesPackaging(String packaging, NDescriptor desc, NSession session) {
+    public static boolean matchesPackaging(String packaging, NDescriptor desc) {
         if (NBlankable.isBlank(packaging)) {
             return true;
         }
@@ -163,15 +163,15 @@ public class CoreFilterUtils {
             return _v == _v2;
         }
         if (_v.equalsShortId(_v2)) {
-            if (_v.getVersion().filter(session).acceptVersion(_v2.getVersion(), session)) {
+            if (_v.getVersion().filter().acceptVersion(_v2.getVersion())) {
                 return true;
             }
         }
         return false;
     }
 
-    public static boolean acceptDependency(NDependency dep, NSession session) {
-        if (CoreFilterUtils.acceptCondition(dep.getCondition(), false, session)) {
+    public static boolean acceptDependency(NDependency dep) {
+        if (CoreFilterUtils.acceptCondition(dep.getCondition(), false)) {
             // fast reject jfx dependencies with different environment defined by classifier!
             if (dep.getGroupId().equals("org.openjfx") && dep.getArtifactId().startsWith("javafx")) {
                 String c = NStringUtils.trim(dep.getClassifier());
@@ -180,14 +180,14 @@ public class CoreFilterUtils {
                     if (a.length > 0) {
                         NOsFamily o = NOsFamily.parse(a[0]).orNull();
                         if (o != null) {
-                            if (o != NEnvs.of(session).getOsFamily()) {
+                            if (o != NEnvs.of().getOsFamily()) {
                                 return false;
                             }
                         }
                         if (a.length > 1) {
                             NArchFamily af = NArchFamily.parse(a[1]).orNull();
                             if (af != null) {
-                                if (af != NEnvs.of(session).getArchFamily()) {
+                                if (af != NEnvs.of().getArchFamily()) {
                                     return false;
                                 }
                             }
@@ -216,26 +216,26 @@ public class CoreFilterUtils {
         return !someFalse;
     }
 
-    public static boolean acceptCondition(NEnvCondition envCond, NEnvCondition cond2, NSession session) {
+    public static boolean acceptCondition(NEnvCondition envCond, NEnvCondition cond2) {
         if (envCond == null || envCond.isBlank()) {
             return true;
         }
         if (cond2 == null || cond2.isBlank()) {
             return true;
         }
-        if (!matchAny(cond2.getArch(), s -> matchesArch(s, envCond.getArch(), session))) {
+        if (!matchAny(cond2.getArch(), s -> matchesArch(s, envCond.getArch()))) {
             return false;
         }
-        if (!matchAny(cond2.getOs(), s -> matchesOs(s, envCond.getOs(), session))) {
+        if (!matchAny(cond2.getOs(), s -> matchesOs(s, envCond.getOs()))) {
             return false;
         }
-        if (!matchAny(cond2.getOsDist(), s -> matchesOsDist(s, envCond.getOsDist(), session))) {
+        if (!matchAny(cond2.getOsDist(), s -> matchesOsDist(s, envCond.getOsDist()))) {
             return false;
         }
-        if (!matchAny(cond2.getPlatform(), s -> matchesOsDist(s, envCond.getPlatform(), session))) {
+        if (!matchAny(cond2.getPlatform(), s -> matchesOsDist(s, envCond.getPlatform()))) {
             return false;
         }
-        if (!matchAny(cond2.getDesktopEnvironment(), s -> matchesOsDist(s, envCond.getDesktopEnvironment(), session))) {
+        if (!matchAny(cond2.getDesktopEnvironment(), s -> matchesOsDist(s, envCond.getDesktopEnvironment()))) {
             return false;
         }
         if (!matchesProperties(
@@ -246,41 +246,41 @@ public class CoreFilterUtils {
         return true;
     }
 
-    public static boolean acceptCondition(NEnvCondition envCond, boolean currentVMOnLy, NSession session) {
+    public static boolean acceptCondition(NEnvCondition envCond, boolean currentVMOnLy) {
         if (envCond == null || envCond.isBlank()) {
             return true;
         }
-        NEnvs env = NEnvs.of(session);
-        NPlatforms platforms = NPlatforms.of(session);
+        NEnvs env = NEnvs.of();
+        NPlatforms platforms = NPlatforms.of();
         if (!matchesArch(
                 env.getArchFamily().id(),
-                envCond.getArch(), session
+                envCond.getArch()
         )) {
             return false;
         }
         if (!matchesOs(
                 env.getOsFamily().id(),
-                envCond.getOs(), session
+                envCond.getOs()
         )) {
             return false;
         }
         if (!matchesOsDist(
                 env.getOsDist().toString(),
-                envCond.getOsDist(), session
+                envCond.getOsDist()
         )) {
             return false;
         }
         if (currentVMOnLy) {
             if (!matchesPlatform(
                     env.getPlatform().toString(),
-                    envCond.getPlatform(), session
+                    envCond.getPlatform()
             )) {
                 return false;
             }
         } else {
             if (!matchesPlatform(
                     platforms.findPlatforms().toList(),
-                    envCond.getPlatform(), session
+                    envCond.getPlatform()
             )) {
                 return false;
             }
@@ -288,21 +288,21 @@ public class CoreFilterUtils {
 
         if (!matchesDesktopEnvironment(
                 env.getDesktopEnvironments(),
-                envCond.getDesktopEnvironment(), session
+                envCond.getDesktopEnvironment()
         )) {
             return false;
         }
         if (!matchesProperties(
-                envCond.getProperties(), session
+                envCond.getProperties()
         )) {
             return false;
         }
         return true;
     }
 
-    private static boolean matchesProperties(Map<String, String> props, NSession session) {
+    private static boolean matchesProperties(Map<String, String> props) {
         for (Map.Entry<String, String> kv : props.entrySet()) {
-            if (!matchesProperty(kv.getKey(), kv.getValue(), session)) {
+            if (!matchesProperty(kv.getKey(), kv.getValue())) {
                 return false;
             }
         }
@@ -324,9 +324,9 @@ public class CoreFilterUtils {
         return true;
     }
 
-    private static boolean matchesProperty(String k, String expected, NSession session) {
+    private static boolean matchesProperty(String k, String expected) {
         return matchesProperty(k, expected, x -> {
-            Object u = session.getProperty(x);
+            Object u = NSession.of().get().getProperty(x);
             if (u != null) {
                 return String.valueOf(u);
             }
@@ -334,9 +334,9 @@ public class CoreFilterUtils {
         });
     }
 
-    private static boolean matchesProperty(String k, String expected, Function<String, String> session) {
+    private static boolean matchesProperty(String k, String expected, Function<String, String> props) {
         //maven always checks System Props
-        String f = session.apply(k);
+        String f = props.apply(k);
         if (expected == null) {
             return f != null;
         }
@@ -350,23 +350,23 @@ public class CoreFilterUtils {
     }
 
 
-    public static boolean matchesArch(String current, Collection<String> allConds, NSession session) {
+    public static boolean matchesArch(String current, Collection<String> allConds) {
         if (NBlankable.isBlank(current)) {
             return true;
         }
-        NId currentId = NId.of(current).get(session);
+        NId currentId = NId.of(current).get();
         if (allConds != null && allConds.size() > 0) {
             for (String cond : allConds) {
                 if (NBlankable.isBlank(cond)) {
                     return true;
                 }
-                NId idCond = NId.of(cond).get(session);
+                NId idCond = NId.of(cond).get();
                 NArchFamily w = NArchFamily.parse(idCond.getArtifactId()).orNull();
                 if (w != null) {
                     idCond = idCond.builder().setArtifactId(w.id()).build();
                 }
                 if (idCond.equalsShortId(currentId)) {
-                    if (idCond.getVersion().filter(session).acceptVersion(currentId.getVersion(), session)) {
+                    if (idCond.getVersion().filter().acceptVersion(currentId.getVersion())) {
                         return true;
                     }
                 }
@@ -377,22 +377,22 @@ public class CoreFilterUtils {
         }
     }
 
-    public static boolean matchesOs(String os, Collection<String> allConds, NSession session) {
+    public static boolean matchesOs(String os, Collection<String> allConds) {
         if (NBlankable.isBlank(os)) {
             return true;
         }
-        NId currentId = NId.of(os).get(session);
+        NId currentId = NId.of(os).get();
         if (allConds != null && allConds.size() > 0) {
             for (String cond : allConds) {
                 if (NBlankable.isBlank(cond)) {
                     return true;
                 }
-                NId condId = NId.of(cond).get(session);
+                NId condId = NId.of(cond).get();
                 NOsFamily w = NOsFamily.parse(condId.getArtifactId()).orNull();
                 if (w != null) {
                     condId = condId.builder().setArtifactId(w.id()).build();
                 }
-                return condId.compatNewer().filter(session).acceptId(currentId, session);
+                return condId.compatNewer().filter().acceptId(currentId);
             }
             return false;
         } else {
@@ -400,18 +400,18 @@ public class CoreFilterUtils {
         }
     }
 
-    public static boolean matchesOsDist(String current, Collection<String> allConditions, NSession session) {
+    public static boolean matchesOsDist(String current, Collection<String> allConditions) {
         if (NBlankable.isBlank(current)) {
             return true;
         }
-        NId currentId = NId.of(current).get(session);
+        NId currentId = NId.of(current).get();
         if (allConditions != null && allConditions.size() > 0) {
             for (String cond : allConditions) {
                 if (NBlankable.isBlank(cond)) {
                     return true;
                 }
-                NId condId = NId.of(cond).get(session);
-                return condId.compatNewer().filter(session).acceptId(currentId, session);
+                NId condId = NId.of(cond).get();
+                return condId.compatNewer().filter().acceptId(currentId);
             }
             return false;
         } else {
@@ -420,11 +420,11 @@ public class CoreFilterUtils {
 
     }
 
-    public static boolean matchesPlatform(Collection<NPlatformLocation> platforms, Collection<String> allCond, NSession session) {
+    public static boolean matchesPlatform(Collection<NPlatformLocation> platforms, Collection<String> allCond) {
         for (NPlatformLocation platform : platforms) {
             NId id = platform.getId();
             if (id != null) {
-                if (matchesPlatform(id.toString(), allCond, session)) {
+                if (matchesPlatform(id.toString(), allCond)) {
                     return true;
                 }
             }
@@ -432,22 +432,22 @@ public class CoreFilterUtils {
         return false;
     }
 
-    public static boolean matchesPlatform(String current, Collection<String> allConds, NSession session) {
+    public static boolean matchesPlatform(String current, Collection<String> allConds) {
         if (NBlankable.isBlank(current)) {
             return true;
         }
-        NId currentId = NId.of(current).get(session);
+        NId currentId = NId.of(current).get();
         if (allConds != null && allConds.size() > 0) {
             for (String cond : allConds) {
                 if (NBlankable.isBlank(cond)) {
                     return true;
                 }
-                NId condId = NId.of(cond).get(session);
+                NId condId = NId.of(cond).get();
                 NPlatformFamily w = NPlatformFamily.parse(condId.getArtifactId()).orNull();
                 if (w != null) {
                     condId = condId.builder().setArtifactId(w.id()).build();
                 }
-                return condId.compatNewer().filter(session).acceptId(currentId, session);
+                return condId.compatNewer().filter().acceptId(currentId);
             }
             return false;
         } else {
@@ -455,31 +455,31 @@ public class CoreFilterUtils {
         }
     }
 
-    public static boolean matchesDesktopEnvironment(Collection<NId> platforms, Collection<String> allConds, NSession session) {
+    public static boolean matchesDesktopEnvironment(Collection<NId> platforms, Collection<String> allConds) {
         for (NId platform : platforms) {
-            if (matchesDesktopEnvironment(platform.toString(), allConds, session)) {
+            if (matchesDesktopEnvironment(platform.toString(), allConds)) {
                 return true;
             }
         }
         return false;
     }
 
-    public static boolean matchesDesktopEnvironment(String current, Collection<String> allConds, NSession session) {
+    public static boolean matchesDesktopEnvironment(String current, Collection<String> allConds) {
         if (NBlankable.isBlank(current)) {
             return true;
         }
-        NId currentId = NId.of(current).get(session);
+        NId currentId = NId.of(current).get();
         if (allConds != null && allConds.size() > 0) {
             for (String cond : allConds) {
                 if (NBlankable.isBlank(cond)) {
                     return true;
                 }
-                NId condId = NId.of(cond).get(session);
+                NId condId = NId.of(cond).get();
                 NDesktopEnvironmentFamily w = NDesktopEnvironmentFamily.parse(condId.getArtifactId()).orNull();
                 if (w != null) {
                     condId = condId.builder().setArtifactId(w.id()).build();
                 }
-                return condId.compatNewer().filter(session).acceptId(currentId, session);
+                return condId.compatNewer().filter().acceptId(currentId);
             }
             return false;
         } else {
@@ -488,33 +488,33 @@ public class CoreFilterUtils {
     }
 
     public static boolean matchesEnv(String arch, String os, String dist, String platform, String de, NEnvCondition
-            desc, NSession session) {
-        if (!matchesArch(arch, desc.getArch(), session)) {
+            desc) {
+        if (!matchesArch(arch, desc.getArch())) {
             return false;
         }
-        if (!matchesOs(os, desc.getOs(), session)) {
+        if (!matchesOs(os, desc.getOs())) {
             return false;
         }
-        if (!matchesOsDist(dist, desc.getOsDist(), session)) {
+        if (!matchesOsDist(dist, desc.getOsDist())) {
             return false;
         }
-        if (!matchesPlatform(platform, desc.getPlatform(), session)) {
+        if (!matchesPlatform(platform, desc.getPlatform())) {
             return false;
         }
-        if (!matchesDesktopEnvironment(de, desc.getDesktopEnvironment(), session)) {
+        if (!matchesDesktopEnvironment(de, desc.getDesktopEnvironment())) {
             return false;
         }
         return true;
     }
 
     public static List<NDependency> filterDependencies(NId from, List<NDependency> d0, NDependencyFilter
-            dependencyFilter, NSession session) {
+            dependencyFilter) {
         if (dependencyFilter == null) {
             return d0;
         }
         List<NDependency> r = new ArrayList<>(d0.size());
         for (NDependency nutsDependency : d0) {
-            if (dependencyFilter.acceptDependency(from, nutsDependency, session)) {
+            if (dependencyFilter.acceptDependency(from, nutsDependency)) {
                 r.add(nutsDependency);
             }
         }
@@ -543,7 +543,7 @@ public class CoreFilterUtils {
         return c0.equals(c1);
     }
 
-    public static Map<String, String> toMap(NEnvCondition condition, NSession session) {
+    public static Map<String, String> toMap(NEnvCondition condition) {
         LinkedHashMap<String, String> m = new LinkedHashMap<>();
         String s = condition.getArch().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
         if (!NBlankable.isBlank(s)) {
@@ -576,9 +576,9 @@ public class CoreFilterUtils {
         return m;
     }
 
-    public static <T extends NFilter> T simplifyFilterOr(NSession session, Class<T> cls, T base, NFilter... all) {
+    public static <T extends NFilter> T simplifyFilterOr(Class<T> cls, T base, NFilter... all) {
         if (all.length == 0) {
-            return NFilters.of(session).always(cls);
+            return NFilters.of().always(cls);
         }
         if (all.length == 1) {
             return (T) all[0].simplify();
@@ -591,7 +591,7 @@ public class CoreFilterUtils {
             if (t2 != null) {
                 switch (t2.getFilterOp()) {
                     case TRUE: {
-                        return NFilters.of(session).always(cls);
+                        return NFilters.of().always(cls);
                     }
                     case FALSE: {
                         someFalse = true;
@@ -610,9 +610,9 @@ public class CoreFilterUtils {
         }
         if (all2.isEmpty()) {
             if (someFalse) {
-                return NFilters.of(session).never(cls);
+                return NFilters.of().never(cls);
             }
-            return NFilters.of(session).always(cls);
+            return NFilters.of().always(cls);
         }
         if (all2.size() == 1) {
             return all2.get(0);
@@ -620,12 +620,12 @@ public class CoreFilterUtils {
         if (!updates) {
             return base;
         }
-        return NFilters.of(session).any(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
+        return NFilters.of().any(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
     }
 
-    public static <T extends NFilter> T simplifyFilterAnd(NSession session, Class<T> cls, T base, NFilter... all) {
+    public static <T extends NFilter> T simplifyFilterAnd(Class<T> cls, T base, NFilter... all) {
         if (all.length == 0) {
-            return NFilters.of(session).always(cls);
+            return NFilters.of().always(cls);
         }
         if (all.length == 1) {
             return (T) all[0].simplify();
@@ -637,7 +637,7 @@ public class CoreFilterUtils {
             if (t2 != null) {
                 switch (t2.getFilterOp()) {
                     case FALSE: {
-                        return NFilters.of(session).never(cls);
+                        return NFilters.of().never(cls);
                     }
                     case TRUE: {
                         updates = true;
@@ -655,7 +655,7 @@ public class CoreFilterUtils {
             }
         }
         if (all2.size() == 0) {
-            return NFilters.of(session).always(cls);
+            return NFilters.of().always(cls);
         }
         if (all2.size() == 1) {
             return all2.get(0);
@@ -663,12 +663,12 @@ public class CoreFilterUtils {
         if (!updates) {
             return base;
         }
-        return NFilters.of(session).all(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
+        return NFilters.of().all(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
     }
 
-    public static <T extends NFilter> T simplifyFilterNone(NSession session, Class<T> cls, T base, NFilter... all) {
+    public static <T extends NFilter> T simplifyFilterNone(Class<T> cls, T base, NFilter... all) {
         if (all.length == 0) {
-            return NFilters.of(session).always(cls);
+            return NFilters.of().always(cls);
         }
         List<T> all2 = new ArrayList<>();
         boolean updates = false;
@@ -677,7 +677,7 @@ public class CoreFilterUtils {
             if (t2 != null) {
                 switch (t2.getFilterOp()) {
                     case TRUE: {
-                        return NFilters.of(session).never(cls);
+                        return NFilters.of().never(cls);
                     }
                     case FALSE: {
                         updates = true;
@@ -695,12 +695,12 @@ public class CoreFilterUtils {
             }
         }
         if (all2.size() == 0) {
-            return NFilters.of(session).always(cls);
+            return NFilters.of().always(cls);
         }
         if (!updates) {
             return base;
         }
-        return NFilters.of(session).none(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
+        return NFilters.of().none(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
     }
 
     public static <T> T simplify(T any) {
@@ -759,21 +759,19 @@ public class CoreFilterUtils {
 
     private static class NIdFilterToPredicate extends AbstractNPredicate<NId> {
         private final NIdFilter t;
-        private final NSession session;
 
-        public NIdFilterToPredicate(NIdFilter t, NSession session) {
+        public NIdFilterToPredicate(NIdFilter t) {
             this.t = t;
-            this.session = session;
         }
 
         @Override
         public boolean test(NId value) {
-            return t.acceptId(value, session);
+            return t.acceptId(value);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(t, session);
+            return Objects.hash(t);
         }
 
         @Override
@@ -781,7 +779,7 @@ public class CoreFilterUtils {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             NIdFilterToPredicate that = (NIdFilterToPredicate) o;
-            return Objects.equals(t, that.t) && Objects.equals(session, that.session);
+            return Objects.equals(t, that.t) ;
         }
 
         @Override

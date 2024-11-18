@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.xtra.digest;
 
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NStringUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 
@@ -15,28 +14,28 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 public class NDigestUtils {
-    public static byte[] evalMD5(String input, NSession session) {
+    public static byte[] evalMD5(String input) {
         byte[] bytesOfMessage = input.getBytes(StandardCharsets.UTF_8);
-        return evalMD5(bytesOfMessage, session);
+        return evalMD5(bytesOfMessage);
     }
 
-    public static String evalMD5Hex(Path path, NSession session) {
-        return NStringUtils.toHexString(evalMD5(path, session));
+    public static String evalMD5Hex(Path path) {
+        return NStringUtils.toHexString(evalMD5(path));
     }
 
-    public static byte[] evalMD5(Path path, NSession session) {
+    public static byte[] evalMD5(Path path) {
         try (java.io.InputStream is = new BufferedInputStream(Files.newInputStream(path))) {
-            return evalMD5(is, session);
+            return evalMD5(is);
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
-    public static String evalMD5Hex(java.io.InputStream input, NSession session) {
-        return NStringUtils.toHexString(evalMD5(input, session));
+    public static String evalMD5Hex(InputStream input) {
+        return NStringUtils.toHexString(evalMD5(input));
     }
 
-    public static byte[] evalHash(java.io.InputStream input, String algo, NSession session) {
+    public static byte[] evalHash(InputStream input, String algo) {
 
         try {
             MessageDigest md;
@@ -50,15 +49,15 @@ public class NDigestUtils {
                     len = input.read(buffer);
                 }
             } catch (IOException e) {
-                throw new NIOException(session, e);
+                throw new NIOException(e);
             }
             return md.digest();
         } catch (NoSuchAlgorithmException e) {
-            throw new NIOException(session, new IOException(e));
+            throw new NIOException(new IOException(e));
         }
     }
 
-    public static byte[] evalMD5(java.io.InputStream input, NSession session) {
+    public static byte[] evalMD5(InputStream input) {
 
         try {
             MessageDigest md;
@@ -72,68 +71,68 @@ public class NDigestUtils {
                     len = input.read(buffer);
                 }
             } catch (IOException e) {
-                throw new NIOException(session, e);
+                throw new NIOException(e);
             }
             return md.digest();
         } catch (NoSuchAlgorithmException e) {
-            throw new NIOException(session, e);
+            throw new NIOException(e);
         }
     }
 
-    public static byte[] evalMD5(byte[] bytesOfMessage, NSession session) {
+    public static byte[] evalMD5(byte[] bytesOfMessage) {
         try {
             MessageDigest md;
             md = MessageDigest.getInstance("MD5");
             return md.digest(bytesOfMessage);
         } catch (NoSuchAlgorithmException e) {
-            throw new NIOException(session, e);
+            throw new NIOException(e);
         }
     }
 
-    public static String evalSHA1Hex(NPath file, NSession session) {
+    public static String evalSHA1Hex(NPath file) {
         try {
             try (InputStream is = file.getInputStream()) {
-                return evalSHA1Hex(is, true, session);
+                return evalSHA1Hex(is, true);
             }
         } catch (IOException e) {
-            throw new NIOException(session, e);
+            throw new NIOException(e);
         }
     }
 
-    public static String evalSHA1(File file, NSession session) {
+    public static String evalSHA1(File file) {
         try {
-            return evalSHA1Hex(new FileInputStream(file), true, session);
+            return evalSHA1Hex(new FileInputStream(file), true);
         } catch (FileNotFoundException e) {
-            throw new NIOException(session, e);
+            throw new NIOException(e);
         }
     }
 
-    public static char[] evalSHA1(char[] input, NSession session) {
+    public static char[] evalSHA1(char[] input) {
         byte[] bytes = CoreIOUtils.charsToBytes(input);
-        char[] r = evalSHA1HexChars(new ByteArrayInputStream(bytes), true, session);
+        char[] r = evalSHA1HexChars(new ByteArrayInputStream(bytes), true);
         Arrays.fill(bytes, (byte) 0);
         return r;
     }
 
-    public static String evalSHA1(String input, NSession session) {
-        return evalSHA1Hex(new ByteArrayInputStream(input.getBytes()), true, session);
+    public static String evalSHA1(String input) {
+        return evalSHA1Hex(new ByteArrayInputStream(input.getBytes()), true);
     }
 
-    public static String evalSHA1Hex(InputStream input, boolean closeStream, NSession session) {
-        return NStringUtils.toHexString(evalSHA1(input, closeStream, session));
+    public static String evalSHA1Hex(InputStream input, boolean closeStream) {
+        return NStringUtils.toHexString(evalSHA1(input, closeStream));
     }
 
-    public static char[] evalSHA1HexChars(InputStream input, boolean closeStream, NSession session) {
-        return NStringUtils.toHexString(evalSHA1(input, closeStream, session)).toCharArray();
+    public static char[] evalSHA1HexChars(InputStream input, boolean closeStream) {
+        return NStringUtils.toHexString(evalSHA1(input, closeStream)).toCharArray();
     }
 
-    public static byte[] evalSHA1(InputStream input, boolean closeStream, NSession session) {
+    public static byte[] evalSHA1(InputStream input, boolean closeStream) {
         try {
             MessageDigest sha1 = null;
             try {
                 sha1 = MessageDigest.getInstance("SHA-1");
             } catch (NoSuchAlgorithmException ex) {
-                throw new NIOException(session, ex);
+                throw new NIOException(ex);
             }
             byte[] buffer = new byte[8192];
             int len = 0;
@@ -144,7 +143,7 @@ public class NDigestUtils {
                     len = input.read(buffer);
                 }
             } catch (IOException e) {
-                throw new NIOException(session, e);
+                throw new NIOException(e);
             }
             return sha1.digest();
         } finally {
@@ -153,7 +152,7 @@ public class NDigestUtils {
                     try {
                         input.close();
                     } catch (IOException ex) {
-                        throw new NIOException(session, ex);
+                        throw new NIOException(ex);
                     }
                 }
             }

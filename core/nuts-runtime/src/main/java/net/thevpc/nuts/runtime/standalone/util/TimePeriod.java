@@ -21,7 +21,7 @@ public class TimePeriod {
 
     public static NOptional<TimePeriod> parse(String str, TimeUnit defaultUnit) {
         if (NBlankable.isBlank(str)) {
-            return NOptional.ofEmpty(s -> NMsg.ofPlain(TimePeriod.class.getSimpleName() + " is empty"));
+            return NOptional.ofEmpty(() -> NMsg.ofPlain(TimePeriod.class.getSimpleName() + " is empty"));
         }
         if (defaultUnit == null) {
             defaultUnit = TimeUnit.MILLISECONDS;
@@ -32,7 +32,7 @@ public class TimePeriod {
             try {
                 unitCount = Long.parseLong(matcher.group("val"));
             } catch (Exception ex) {
-                return NOptional.ofError(s -> NMsg.ofC(TimePeriod.class.getSimpleName() + " invalid value : %s", str),ex);
+                return NOptional.ofError(() -> NMsg.ofC(TimePeriod.class.getSimpleName() + " invalid value : %s", str),ex);
             }
             String u = matcher.group("unit");
             if (u == null) {
@@ -90,7 +90,7 @@ public class TimePeriod {
             }
             return NOptional.of(new TimePeriod(unitCount, unit));
         }
-        return NOptional.ofError(s -> NMsg.ofC(TimePeriod.class.getSimpleName() + " invalid value : %s", str));
+        return NOptional.ofError(() -> NMsg.ofC(TimePeriod.class.getSimpleName() + " invalid value : %s", str));
     }
 
     public long getCount() {

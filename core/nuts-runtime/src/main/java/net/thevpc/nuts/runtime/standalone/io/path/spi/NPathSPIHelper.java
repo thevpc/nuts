@@ -29,7 +29,7 @@ public class NPathSPIHelper {
     public static NStream<NPath> walk(NSession session, NPath basePath, int maxDepth, NPathOption[] options) {
         boolean noMax=maxDepth<=0 || maxDepth==Integer.MAX_VALUE;
         Iterator<NPath> it = new NPathIterator(basePath, noMax, maxDepth);
-        return NStream.of(it, session);
+        return NStream.of(it);
     }
 
     public static void walkDfs(NSession session, NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {
@@ -42,7 +42,7 @@ public class NPathSPIHelper {
             if(i.folder){
                 if(!i.visited){
                     i.visited=true;
-                    NTreeVisitResult r = visitor.preVisitDirectory(i.p, session);
+                    NTreeVisitResult r = visitor.preVisitDirectory(i.p);
                     switch (r){
                         case TERMINATE:return;
                         case SKIP_SUBTREE: {
@@ -60,7 +60,7 @@ public class NPathSPIHelper {
                     }
                 }else{
                     stack.pop();
-                    NTreeVisitResult r = visitor.postVisitDirectory(i.p, null,session);
+                    NTreeVisitResult r = visitor.postVisitDirectory(i.p, null);
                     switch (r){
                         case TERMINATE:return;
                         case SKIP_SUBTREE: {
@@ -94,10 +94,10 @@ public class NPathSPIHelper {
         }
 
         @Override
-        public NElement describe(NSession session) {
-            return NElements.of(session).ofObject()
+        public NElement describe() {
+            return NElements.of().ofObject()
                     .set("type","ScanPath")
-                    .set("path", NElements.of(session).toElement(basePath))
+                    .set("path", NElements.of().toElement(basePath))
                     .set("maxDepth",maxDepth)
                     .build();
         }

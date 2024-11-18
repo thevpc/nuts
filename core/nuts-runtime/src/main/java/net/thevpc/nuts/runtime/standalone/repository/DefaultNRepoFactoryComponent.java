@@ -42,6 +42,11 @@ import java.util.Map;
  */
 @NComponentScope(NScopeType.WORKSPACE)
 public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent {
+    private NWorkspace workspace;
+
+    public DefaultNRepoFactoryComponent(NWorkspace workspace) {
+        this.workspace = workspace;
+    }
 
     @Override
     public int getSupportLevel(NSupportLevelContext criteria) {
@@ -51,12 +56,12 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
         NSession session = criteria.getSession();
         NRepositoryConfig r = criteria.getConstraints(NRepositoryConfig.class);
         if (r != null) {
-            String type = NRepositoryUtils.getRepoType(r, session);
+            String type = NRepositoryUtils.getRepoType(r);
             if (NConstants.RepoTypes.NUTS.equals(type)) {
                 return NConstants.Support.DEFAULT_SUPPORT + 10;
             }
             if (NBlankable.isBlank(type)) {
-                NPath rp = NPath.of(r.getLocation().getPath(), session).resolve("nuts-repository.json");
+                NPath rp = NPath.of(r.getLocation().getPath()).resolve("nuts-repository.json");
                 if (rp.exists()) {
                     r.setLocation(r.getLocation().setLocationType(NConstants.RepoTypes.NUTS));
                     return NConstants.Support.DEFAULT_SUPPORT + 10;
@@ -68,47 +73,49 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
     }
 
     @Override
-    public List<NAddRepositoryOptions> getDefaultRepositories(NSession session) {
+    public List<NAddRepositoryOptions> getDefaultRepositories() {
         List<NAddRepositoryOptions> all=new ArrayList<>();
-        if (!NConfigs.of(session).isSystemWorkspace()) {
+        NSession session=workspace.currentSession();
+        if (!NConfigs.of().isSystemWorkspace()) {
             all.add(NRepositorySelectorHelper.createRepositoryOptions(
-                    NRepositoryLocation.of("system", NRepositoryDB.of(session), session).get(),
+                    NRepositoryLocation.of("system", NRepositoryDB.of()).get(),
                     true, session));
         }
         all.add(NRepositorySelectorHelper.createRepositoryOptions(
-                NRepositoryLocation.of("nuts-public", NRepositoryDB.of(session), session).get(),
+                NRepositoryLocation.of("nuts-public", NRepositoryDB.of()).get(),
                 true, session));
         if(session.isPreviewRepo()){
             all.add(NRepositorySelectorHelper.createRepositoryOptions(
-                    NRepositoryLocation.of("preview", NRepositoryDB.of(session), session).get(),
+                    NRepositoryLocation.of("preview", NRepositoryDB.of()).get(),
                     true, session));
             all.add(NRepositorySelectorHelper.createRepositoryOptions(
-                    NRepositoryLocation.of("dev", NRepositoryDB.of(session), session).get(),
+                    NRepositoryLocation.of("dev", NRepositoryDB.of()).get(),
                     true, session));
         }
         return all;
     }
 
     @Override
-    public NRepository create(NAddRepositoryOptions options, NSession session, NRepository parentRepository) {
+    public NRepository create(NAddRepositoryOptions options, NRepository parentRepository) {
         NRepositoryConfig config = options.getConfig();
-        String type = NRepositoryUtils.getRepoType(config, session);
+        NSession session=workspace.currentSession();
+        String type = NRepositoryUtils.getRepoType(config);
         if (NBlankable.isBlank(type)) {
             return null;
         }
         if (NConstants.RepoTypes.NUTS.equals(type)) {
             if (NBlankable.isBlank(config.getLocation()) ||
-                    NPath.of(config.getLocation().getPath(), session).isLocal()
+                    NPath.of(config.getLocation().getPath()).isLocal()
             ) {
-                return new NFolderRepository(options, session, parentRepository);
-            } else if (NPath.of(config.getLocation().getPath(), session).isURL()) {
+                return new NFolderRepository(options, workspace, parentRepository);
+            } else if (NPath.of(config.getLocation().getPath()).isURL()) {
                 Map<String, String> e = config.getEnv();
                 if (e != null) {
                     if (NLiteral.of(e.get("nuts-api-server")).asBoolean().orElse(false)) {
-                        return (new NHttpSrvRepository(options, session, parentRepository));
+                        return (new NHttpSrvRepository(options, workspace, parentRepository));
                     }
                 }
-                return (new NFolderRepository(options, session, parentRepository));
+                return (new NFolderRepository(options, workspace, parentRepository));
             }
         }
         return null;

@@ -19,8 +19,8 @@ public abstract class AbstractNUndeployCmd extends NWorkspaceCmdBase<NUndeployCm
     protected String repository;
     protected boolean offline = true;
 
-    public AbstractNUndeployCmd(NSession session) {
-        super(session, "undeploy");
+    public AbstractNUndeployCmd(NWorkspace workspace) {
+        super(workspace, "undeploy");
     }
 
     @Override
@@ -44,19 +44,17 @@ public abstract class AbstractNUndeployCmd extends NWorkspaceCmdBase<NUndeployCm
 
     @Override
     public NUndeployCmd addId(String id) {
-        checkSession();
-        NSession session = getSession();
-        return addId(NBlankable.isBlank(id) ? null : NId.of(id).get(session));
+        NSession session=workspace.currentSession();
+        return addId(NBlankable.isBlank(id) ? null : NId.of(id).get());
     }
 
     @Override
     public NUndeployCmd addIds(String... values) {
-        checkSession();
-        NSession session = getSession();
+        NSession session=workspace.currentSession();
         if (values != null) {
             for (String s : values) {
                 if (!NBlankable.isBlank(s)) {
-                    ids.add(NId.of(s).get(session));
+                    ids.add(NId.of(s).get());
                 }
             }
         }
@@ -98,8 +96,7 @@ public abstract class AbstractNUndeployCmd extends NWorkspaceCmdBase<NUndeployCm
             result = new ArrayList<>();
         }
         result.add(id);
-        checkSession();
-        NSession session = getSession();
+        NSession session=workspace.currentSession();
         if (session.isTrace()) {
             if (session.getOutputFormat() == null || session.getOutputFormat().orDefault() == NContentType.PLAIN) {
                 if (session.getOutputFormat() == null || session.getOutputFormat().orDefault() == NContentType.PLAIN) {
@@ -135,13 +132,13 @@ public abstract class AbstractNUndeployCmd extends NWorkspaceCmdBase<NUndeployCm
         boolean enabled = aa.isActive();
         switch (aa.key()) {
             case "--offline": {
-                cmdLine.withNextFlag((v, a, s) -> setOffline(v));
+                cmdLine.withNextFlag((v, a) -> setOffline(v));
                 return true;
             }
             case "-r":
             case "-repository":
             case "--from": {
-                cmdLine.withNextEntry((v, a, s) -> setRepository(v));
+                cmdLine.withNextEntry((v, a) -> setRepository(v));
                 break;
             }
 
@@ -153,7 +150,8 @@ public abstract class AbstractNUndeployCmd extends NWorkspaceCmdBase<NUndeployCm
                     return false;
                 } else {
                     cmdLine.skip();
-                    addId(aa.asString().get(session));
+                    NSession session=workspace.currentSession();
+                    addId(aa.asString().get());
                     return true;
                 }
             }

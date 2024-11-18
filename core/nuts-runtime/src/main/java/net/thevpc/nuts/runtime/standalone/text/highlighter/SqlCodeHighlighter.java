@@ -11,10 +11,10 @@ public class SqlCodeHighlighter implements NCodeHighlighter {
 
     private Set<String> reservedWords1 =new HashSet<>();
     private Set<String> reservedWords2 =new HashSet<>();
-    private NWorkspace ws;
+    private NWorkspace workspace;
 
-    public SqlCodeHighlighter(NWorkspace ws) {
-        this.ws = ws;
+    public SqlCodeHighlighter(NWorkspace workspace) {
+        this.workspace = workspace;
         reservedWords1.addAll(NCodeHighlighterHelper.loadNames("sql.kw1",getClass()));
         reservedWords2.addAll(NCodeHighlighterHelper.loadNames("sql.kw2",getClass()));
     }
@@ -25,7 +25,7 @@ public class SqlCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText tokenToText(String text, String nodeType, NTexts txt, NSession session) {
+    public NText tokenToText(String text, String nodeType, NTexts txt) {
         return txt.ofPlain(text);
     }
 
@@ -48,7 +48,8 @@ public class SqlCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText stringToText(String text, NTexts txt, NSession session) {
+    public NText stringToText(String text, NTexts txt) {
+        NSession session=workspace.currentSession();
         List<NText> all = new ArrayList<>();
         StringReaderExt ar = new StringReaderExt(text);
         while (ar.hasNext()) {

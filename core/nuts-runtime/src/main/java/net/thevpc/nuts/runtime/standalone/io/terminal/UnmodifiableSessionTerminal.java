@@ -14,21 +14,21 @@ public class UnmodifiableSessionTerminal extends AbstractNSessionTerminal {
 
     private final NSessionTerminal base;
     protected CProgressBar progressBar;
-    protected NSession session;
+    protected NWorkspace workspace;
 
-    public UnmodifiableSessionTerminal(NSessionTerminal base, NSession session) {
+    public UnmodifiableSessionTerminal(NSessionTerminal base, NWorkspace workspace) {
         this.base = base;
-        this.session = session;
+        this.workspace = workspace;
     }
 
     @Override
-    public String readLine(NPrintStream out, NMsg message, NSession session) {
-        return getBase().readLine(out, message, session!=null?session:getSession());
+    public String readLine(NPrintStream out, NMsg message) {
+        return getBase().readLine(out, message);
     }
 
     @Override
-    public char[] readPassword(NPrintStream out, NMsg prompt, NSession session) {
-        return getBase().readPassword(out, prompt, session!=null?session:getSession());
+    public char[] readPassword(NPrintStream out, NMsg prompt) {
+        return getBase().readPassword(out, prompt);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class UnmodifiableSessionTerminal extends AbstractNSessionTerminal {
     public <T> NAsk<T> ask() {
         return getBase()
                 .<T>ask()
-                .setSession(session);
+                ;
     }
 
     @Override
@@ -95,6 +95,7 @@ public class UnmodifiableSessionTerminal extends AbstractNSessionTerminal {
 
     @Override
     public NSessionTerminal printProgress(float progress, NMsg message) {
+        NSession session=workspace.currentSession();
         if (session.isProgress()) {
             if (getBase() != null) {
                 getBase().printProgress(progress, message);
@@ -102,7 +103,7 @@ public class UnmodifiableSessionTerminal extends AbstractNSessionTerminal {
                 getProgressBar().printProgress(
                         Float.isNaN(progress) ? -1
                                 : (int) (progress * 100),
-                        NTexts.of(session).ofText(message),
+                        NTexts.of().ofText(message),
                         err()
                 );
             }
@@ -112,7 +113,7 @@ public class UnmodifiableSessionTerminal extends AbstractNSessionTerminal {
 
     private CProgressBar getProgressBar() {
         if (progressBar == null) {
-            progressBar = CProgressBar.of(session);
+            progressBar = CProgressBar.of();
         }
         return progressBar;
     }
@@ -121,8 +122,4 @@ public class UnmodifiableSessionTerminal extends AbstractNSessionTerminal {
         return base;
     }
 
-    @Override
-    public NSession getSession() {
-        return session;
-    }
 }

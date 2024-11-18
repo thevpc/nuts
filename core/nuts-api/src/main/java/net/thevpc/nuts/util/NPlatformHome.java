@@ -511,24 +511,19 @@ public class NPlatformHome {
      * @param baseLocations     baseLocations or null
      * @param homeLocations     homeLocations or null
      * @param workspaceLocation workspaceName or null
-     * @param session           session or null
      * @return locations map
      */
     public Map<NStoreType, String> buildLocations(
             NStoreStrategy storeStrategy,
             Map<NStoreType, String> baseLocations,
             Map<NHomeLocation, String> homeLocations,
-            String workspaceLocation, NSession session) {
+            String workspaceLocation) {
         workspaceLocation = getWorkspaceLocation(workspaceLocation);
         String[] homes = new String[NStoreType.values().length];
         for (NStoreType location : NStoreType.values()) {
             String platformHomeFolder = getWorkspaceLocation(location, homeLocations, workspaceLocation);
             if (NBlankable.isBlank(platformHomeFolder)) {
-                if (session == null) {
-                    throw new NBootException(NMsg.ofC("missing Home for %s", location.id()));
-                } else {
-                    throw new NIllegalArgumentException(session, NMsg.ofC("missing Home for %s", location.id()));
-                }
+                throw new NIllegalArgumentException(NMsg.ofC("missing Home for %s", location.id()));
             }
             homes[location.ordinal()] = platformHomeFolder;
         }
@@ -540,11 +535,7 @@ public class NPlatformHome {
             for (Map.Entry<NStoreType, String> e : baseLocations.entrySet()) {
                 NStoreType loc = e.getKey();
                 if (loc == null) {
-                    if (session == null) {
-                        throw new NBootException(NMsg.ofPlain("null location"));
-                    } else {
-                        throw new NIllegalArgumentException(session, NMsg.ofPlain("null location"));
-                    }
+                    throw new NIllegalArgumentException(NMsg.ofPlain("null location"));
                 }
                 storeLocations.put(loc, e.getValue());
             }

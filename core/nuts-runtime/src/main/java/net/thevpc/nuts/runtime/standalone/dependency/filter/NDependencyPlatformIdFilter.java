@@ -14,29 +14,29 @@ public class NDependencyPlatformIdFilter extends AbstractDependencyFilter  {
 
     private Set<NId> accepted = new HashSet<>();
 
-    public NDependencyPlatformIdFilter(NSession session) {
-        super(session, NFilterOp.CUSTOM);
+    public NDependencyPlatformIdFilter(NWorkspace workspace) {
+        super(workspace, NFilterOp.CUSTOM);
     }
 
-    private NDependencyPlatformIdFilter(NSession session, Collection<NId> accepted) {
-        super(session, NFilterOp.CUSTOM);
+    private NDependencyPlatformIdFilter(NWorkspace workspace, Collection<NId> accepted) {
+        super(workspace, NFilterOp.CUSTOM);
         this.accepted = new LinkedHashSet<>(accepted);
     }
 
     public NDependencyPlatformIdFilter add(Collection<NId> os) {
         LinkedHashSet<NId> s2 = new LinkedHashSet<>(accepted);
         s2.addAll(os);
-        return new NDependencyPlatformIdFilter(getSession(), s2);
+        return new NDependencyPlatformIdFilter(workspace, s2);
     }
 
     @Override
-    public boolean acceptDependency(NId from, NDependency dependency, NSession session) {
-        List<String> current = NStream.of(dependency.getCondition().getPlatform(),session).filterNonBlank().toList();
+    public boolean acceptDependency(NId from, NDependency dependency) {
+        List<String> current = NStream.of(dependency.getCondition().getPlatform()).filterNonBlank().toList();
         if(current.size()==0 || accepted.isEmpty()){
             return true;
         }
         for (NId nutsId : accepted) {
-            if(CoreFilterUtils.matchesPlatform(nutsId.toString(),current,session)){
+            if(CoreFilterUtils.matchesPlatform(nutsId.toString(),current)){
                 return true;
             }
         }
@@ -52,6 +52,6 @@ public class NDependencyPlatformIdFilter extends AbstractDependencyFilter  {
 
     @Override
     public NDependencyFilter simplify() {
-        return accepted.isEmpty() ? NDependencyFilters.of(getSession()).always() : this;
+        return accepted.isEmpty() ? NDependencyFilters.of().always() : this;
     }
 }

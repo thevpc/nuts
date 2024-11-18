@@ -16,10 +16,10 @@ import java.util.List;
 
 public class XmlCodeHighlighter implements NCodeHighlighter {
 
-    private final NWorkspace ws;
+    private final NWorkspace workspace;
 
-    public XmlCodeHighlighter(NWorkspace ws) {
-        this.ws = ws;
+    public XmlCodeHighlighter(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
     @Override
@@ -49,8 +49,8 @@ public class XmlCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText stringToText(String text, NTexts txt, NSession session) {
-        NStreamTokenizer st = new NStreamTokenizer(new StringReader(text),session);
+    public NText stringToText(String text, NTexts txt) {
+        NStreamTokenizer st = new NStreamTokenizer(new StringReader(text));
         st.xmlComments(true);
         st.parseNumbers(false);
         st.wordChars('0', '9');
@@ -119,7 +119,7 @@ public class XmlCodeHighlighter implements NCodeHighlighter {
         return txt.ofList(nodes).simplify();
     }
 
-    public NText tokenToText(String text, String nodeType, NTexts txt, NSession session) {
+    public NText tokenToText(String text, String nodeType, NTexts txt) {
         switch (NStringUtils.trim(nodeType).toLowerCase()) {
             case "name":
                 return formatNodeName(text, txt);

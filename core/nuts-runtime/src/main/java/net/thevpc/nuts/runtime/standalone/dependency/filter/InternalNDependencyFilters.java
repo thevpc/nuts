@@ -19,26 +19,23 @@ import java.util.stream.Collectors;
 public class InternalNDependencyFilters extends InternalNTypedFilters<NDependencyFilter>
         implements NDependencyFilters {
 
-    public InternalNDependencyFilters(NSession session) {
-        super(session, NDependencyFilter.class);
+    public InternalNDependencyFilters(NWorkspace workspace) {
+        super(workspace, NDependencyFilter.class);
 //        localModel = model.getShared(LocalModel.class, () -> new LocalModel(ws));
     }
 
     @Override
     public NDependencyFilter always() {
-        checkSession();
-        return new NDependencyFilterTrue(getSession());
+        return new NDependencyFilterTrue(workspace);
     }
 
     @Override
     public NDependencyFilter never() {
-        checkSession();
-        return new NDependencyFilterFalse(getSession());
+        return new NDependencyFilterFalse(getWorkspace());
     }
 
     @Override
     public NDependencyFilter all(NFilter... others) {
-        checkSession();
         List<NDependencyFilter> all = convertList(others);
         if (all.isEmpty()) {
             return always();
@@ -46,12 +43,11 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (all.size() == 1) {
             return all.get(0);
         }
-        return new NDependencyFilterAnd(getSession(), all.toArray(new NDependencyFilter[0]));
+        return new NDependencyFilterAnd(getWorkspace(), all.toArray(new NDependencyFilter[0]));
     }
 
     @Override
     public NDependencyFilter any(NFilter... others) {
-        checkSession();
         List<NDependencyFilter> all = convertList(others);
         if (all.isEmpty()) {
             return always();
@@ -59,40 +55,35 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (all.size() == 1) {
             return all.get(0);
         }
-        return new NDependencyFilterOr(getSession(), all.toArray(new NDependencyFilter[0]));
+        return new NDependencyFilterOr(getWorkspace(), all.toArray(new NDependencyFilter[0]));
     }
 
     @Override
     public NDependencyFilter not(NFilter other) {
-        checkSession();
-        return new NDependencyFilterNone(getSession(), (NDependencyFilter) other);
+        return new NDependencyFilterNone(getWorkspace(), (NDependencyFilter) other);
     }
 
     @Override
     public NDependencyFilter none(NFilter... others) {
-        checkSession();
         List<NDependencyFilter> all = convertList(others);
         if (all.isEmpty()) {
             return always();
         }
-        return new NDependencyFilterNone(getSession(), all.toArray(new NDependencyFilter[0]));
+        return new NDependencyFilterNone(getWorkspace(), all.toArray(new NDependencyFilter[0]));
     }
 
     @Override
     public NDependencyFilter from(NFilter a) {
-        checkSession();
         if (a == null) {
             return null;
         }
         NDependencyFilter t = as(a);
-        NSession session = getSession();
-        NAssert.requireNonNull(t, "InstallDependencyFilter", session);
+        NAssert.requireNonNull(t, "InstallDependencyFilter");
         return t;
     }
 
     @Override
     public NDependencyFilter as(NFilter a) {
-        checkSession();
         if (a instanceof NDependencyFilter) {
             return (NDependencyFilter) a;
         }
@@ -101,127 +92,111 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
 
     @Override
     public NDependencyFilter parse(String expression) {
-        checkSession();
-        return new NDependencyFilterParser(expression, getSession()).parse();
+        return new NDependencyFilterParser(expression, getWorkspace()).parse();
     }
 
     @Override
     public NDependencyFilter nonnull(NFilter filter) {
-        checkSession();
         return super.nonnull(filter);
     }
 
     @Override
     public NDependencyFilter byScope(NDependencyScopePattern scope) {
-        checkSession();
         if (scope == null) {
             return always();
         }
-        return new ScopeNDependencyFilter(getSession(), scope);
+        return new ScopeNDependencyFilter(getWorkspace(), scope);
     }
 
     @Override
     public NDependencyFilter byScope(NDependencyScope scope) {
-        checkSession();
         if (scope == null) {
             return always();
         }
-        return new NDependencyScopeFilter(getSession()).add(Arrays.asList(scope));
+        return new NDependencyScopeFilter(getWorkspace()).add(Arrays.asList(scope));
     }
 
     @Override
     public NDependencyFilter byScope(NDependencyScope... scopes) {
-        checkSession();
         if (scopes == null) {
             return always();
         }
-        return new NDependencyScopeFilter(getSession()).add(Arrays.asList(scopes));
+        return new NDependencyScopeFilter(getWorkspace()).add(Arrays.asList(scopes));
     }
 
     @Override
     public NDependencyFilter byScope(Collection<NDependencyScope> scopes) {
-        checkSession();
         if (scopes == null) {
             return always();
         }
-        return new NDependencyScopeFilter(getSession()).add(scopes);
+        return new NDependencyScopeFilter(getWorkspace()).add(scopes);
     }
 
     @Override
     public NDependencyFilter byOptional(Boolean optional) {
-        checkSession();
         if (optional == null) {
             return always();
         }
-        return new NDependencyOptionFilter(getSession(), optional);
+        return new NDependencyOptionFilter(getWorkspace(), optional);
     }
 
     @Override
     public NDependencyFilter byExclude(NDependencyFilter filter, String[] exclusions) {
-        checkSession();
-        return new NExclusionDependencyFilter(getSession(), filter, Arrays.stream(exclusions).map(x -> NId.of(x).get( getSession())).toArray(NId[]::new));
+        return new NExclusionDependencyFilter(getWorkspace(), filter, Arrays.stream(exclusions).map(x -> NId.of(x).get()).toArray(NId[]::new));
     }
 
     @Override
     public NDependencyFilter byArch(Collection<NArchFamily> archs) {
-        checkSession();
         if (archs == null) {
             return always();
         }
-        return new NDependencyArchFamilyFilter(getSession()).add(archs);
+        return new NDependencyArchFamilyFilter(getWorkspace()).add(archs);
     }
 
     @Override
     public NDependencyFilter byArch(NArchFamily arch) {
-        checkSession();
         if (arch == null) {
             return always();
         }
-        return new NDependencyArchFamilyFilter(getSession()).add(Arrays.asList(arch));
+        return new NDependencyArchFamilyFilter(getWorkspace()).add(Arrays.asList(arch));
     }
 
     @Override
     public NDependencyFilter byArch(NArchFamily... archs) {
-        checkSession();
         if (archs == null) {
             return always();
         }
-        return new NDependencyArchFamilyFilter(getSession()).add(Arrays.asList(archs));
+        return new NDependencyArchFamilyFilter(getWorkspace()).add(Arrays.asList(archs));
     }
 
     @Override
     public NDependencyFilter byArch(String arch) {
-        checkSession();
         if (arch == null) {
             return always();
         }
-        return new NDependencyArchFamilyFilter(getSession(), arch);
+        return new NDependencyArchFamilyFilter(getWorkspace(), arch);
     }
 
     @Override
     public NDependencyFilter byOs(Collection<NOsFamily> os) {
-        checkSession();
         if (os == null) {
             return always();
         }
-        return new NDependencyOsFilter(getSession()).add(os);
+        return new NDependencyOsFilter(getWorkspace()).add(os);
     }
 
     @Override
     public NDependencyFilter byCurrentDesktop() {
-        checkSession();
-        return byDesktop(NEnvs.of(getSession()).getDesktopEnvironmentFamilies());
+        return byDesktop(NEnvs.of().getDesktopEnvironmentFamilies());
     }
 
     public NDependencyFilter byCurrentArch() {
-        checkSession();
-        return byArch(NEnvs.of(getSession()).getArchFamily());
+        return byArch(NEnvs.of().getArchFamily());
     }
 
     @Override
     public NDependencyFilter byCurrentOs() {
-        checkSession();
-        return byOs(NEnvs.of(getSession()).getOsFamily());
+        return byOs(NEnvs.of().getOsFamily());
     }
 
     @Override
@@ -251,40 +226,34 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
 
     @Override
     public NDependencyFilter byOs(NOsFamily os) {
-        checkSession();
         if (os == null) {
             return always();
         }
-        return new NDependencyOsFilter(getSession()).add(Arrays.asList(os));
+        return new NDependencyOsFilter(getWorkspace()).add(Arrays.asList(os));
     }
 
     @Override
     public NDependencyFilter byOs(NOsFamily... os) {
-        checkSession();
-        checkSession();
         if (os == null) {
             return always();
         }
-        return new NDependencyOsFilter(getSession()).add(Arrays.asList(os));
+        return new NDependencyOsFilter(getWorkspace()).add(Arrays.asList(os));
     }
 
     @Override
     public NDependencyFilter byDesktop(NDesktopEnvironmentFamily de) {
-        checkSession();
         if (de == null) {
             return always();
         }
-        return new NDependencyDEFilter(getSession()).add(Arrays.asList(de));
+        return new NDependencyDEFilter(getWorkspace()).add(Arrays.asList(de));
     }
 
     @Override
     public NDependencyFilter byDesktop(NDesktopEnvironmentFamily... de) {
-        checkSession();
-        checkSession();
         if (de == null) {
             return always();
         }
-        return new NDependencyDEFilter(getSession()).add(Arrays.asList(de));
+        return new NDependencyDEFilter(getWorkspace()).add(Arrays.asList(de));
     }
 
     @Override
@@ -294,68 +263,62 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
 
     @Override
     public NDependencyFilter byType(String type) {
-        return new NDependencyTypeFilter(getSession(), type);
+        return new NDependencyTypeFilter(getWorkspace(), type);
     }
 
     @Override
     public NDependencyFilter byOs(String os) {
-        checkSession();
         if (os == null) {
             return always();
         }
-        return new NDependencyOsFilter(getSession(), os);
+        return new NDependencyOsFilter(getWorkspace(), os);
     }
 
     @Override
     public NDependencyFilter byOsDist(String osDist) {
-        checkSession();
         if (osDist == null) {
             return always();
         }
-        return new NDependencyOsDistIdFilter(getSession()).add(Collections.singletonList(NId.of(osDist).get( getSession())));
+        return new NDependencyOsDistIdFilter(getWorkspace()).add(Collections.singletonList(NId.of(osDist).get()));
     }
 
     @Override
     public NDependencyFilter byOsDist(String... osDists) {
-        checkSession();
         if (osDists == null || osDists.length==0) {
             return always();
         }
-        return new NDependencyOsDistIdFilter(getSession()).add(
-                Arrays.stream(osDists).map(x-> NId.of(x).get(getSession()))
+        return new NDependencyOsDistIdFilter(getWorkspace()).add(
+                Arrays.stream(osDists).map(x-> NId.of(x).get())
                         .collect(Collectors.toList())
         );
     }
 
     @Override
     public NDependencyFilter byOsDist(Collection<String> osDists) {
-        checkSession();
         if (osDists == null || osDists.isEmpty()) {
             return always();
         }
-        return new NDependencyOsDistIdFilter(getSession()).add(
-                osDists.stream().map(x-> NId.of(x).get(getSession()))
+        return new NDependencyOsDistIdFilter(getWorkspace()).add(
+                osDists.stream().map(x-> NId.of(x).get())
                         .collect(Collectors.toList())
         );
     }
 
     @Override
     public NDependencyFilter byPlatform(NPlatformFamily... pf) {
-        checkSession();
         if (pf == null || pf.length==0) {
             return always();
         }
-        return new NDependencyPlatformFamilyFilter(getSession()).add(Arrays.asList(pf));
+        return new NDependencyPlatformFamilyFilter(getWorkspace()).add(Arrays.asList(pf));
     }
 
     @Override
     public NDependencyFilter byPlatform(String... pf) {
-        checkSession();
         if (pf == null || pf.length==0) {
             return always();
         }
-        return new NDependencyPlatformIdFilter(getSession()).add(
-                Arrays.stream(pf).map(x-> NId.of(x).get(getSession()))
+        return new NDependencyPlatformIdFilter(getWorkspace()).add(
+                Arrays.stream(pf).map(x-> NId.of(x).get())
                         .collect(Collectors.toList())
         );
     }

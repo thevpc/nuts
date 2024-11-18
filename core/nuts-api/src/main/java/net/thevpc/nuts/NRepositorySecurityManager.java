@@ -34,7 +34,7 @@ import java.util.List;
  * @app.category Security
  * @since 0.5.4
  */
-public interface NRepositorySecurityManager extends NSessionProvider {
+public interface NRepositorySecurityManager {
 
     boolean isAllowed(String right);
 
@@ -99,6 +99,4 @@ public interface NRepositorySecurityManager extends NSessionProvider {
      * @return credentials-id
      */
     char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId);
-
-    NRepositorySecurityManager setSession(NSession session);
 }

@@ -93,7 +93,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
             docs = new Stack<>();
             context.getProperties().put(Document.class.getName(), docs);
             try {
-                docs.push(doc != null ? doc : XmlUtils.createDocument(context.getSession()));
+                docs.push(doc != null ? doc : XmlUtils.createDocument());
                 return impl.get();
             } finally {
                 docs.pop();
@@ -101,7 +101,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
         } else {
             if (docs.isEmpty() || doc != null) {
                 try {
-                    docs.push(doc != null ? doc : XmlUtils.createDocument(context.getSession()));
+                    docs.push(doc != null ? doc : XmlUtils.createDocument());
                     return impl.get();
                 } finally {
                     docs.pop();
@@ -122,7 +122,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
             Stack<Document> docs = new Stack<>();
             context.getProperties().put(Document.class.getName(), docs);
             try {
-                docs.push(XmlUtils.createDocument(session));
+                docs.push(XmlUtils.createDocument());
                 return createObject(elem, typeOfResult, context);
             } finally {
                 docs.pop();
@@ -131,7 +131,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
             Stack<Document> docs = (Stack<Document>) context.getProperties().get(Document.class.getName());
             if (docs.isEmpty()) {
                 try {
-                    docs.push(XmlUtils.createDocument(session));
+                    docs.push(XmlUtils.createDocument());
                     return createObject(elem, typeOfResult, context);
                 } finally {
                     docs.pop();
@@ -148,7 +148,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
             }
             case STRING: {
                 Element e = doc.createElement(TAG_STRING);
-                final String s = elem.asString().get(session);
+                final String s = elem.asString().get();
                 if (isComplexString(s)) {
                     e.setTextContent(s);
                 } else {
@@ -168,48 +168,48 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
 //            }
             case BOOLEAN: {
                 return doc.createElement(
-                        elem.asBoolean().get(session) ? TAG_TRUE : TAG_FALSE
+                        elem.asBoolean().get() ? TAG_TRUE : TAG_FALSE
                 );
             }
             case BYTE: {
                 Element e = doc.createElement(TAG_BYTE);
-                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asByte().get(session)));
+                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asByte().get()));
                 return e;
             }
             case SHORT: {
                 Element e = doc.createElement(TAG_SHORT);
-                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asShort().get(session)));
+                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asShort().get()));
                 return e;
             }
             case INTEGER: {
                 Element e = doc.createElement(TAG_INT);
-                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asInt().get(session)));
+                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asInt().get()));
                 return e;
             }
             case LONG: {
                 Element e = doc.createElement(TAG_LONG);
-                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asLong().get(session)));
+                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asLong().get()));
                 return e;
             }
             case FLOAT: {
                 Element e = doc.createElement(TAG_FLOAT);
-                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asFloat().get(session)));
+                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asFloat().get()));
                 return e;
             }
             case DOUBLE: {
                 Element e = doc.createElement(TAG_DOUBLE);
-                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asDouble().get(session)));
+                e.setAttribute(ATTRIBUTE_VALUE, String.valueOf(elem.asDouble().get()));
                 return e;
             }
             case INSTANT: {
                 Element e = doc.createElement(TAG_INSTANT);
-                e.setAttribute(ATTRIBUTE_VALUE, elem.asInstant().get(session).toString());
+                e.setAttribute(ATTRIBUTE_VALUE, elem.asInstant().get().toString());
                 return e;
             }
             case ARRAY: {
                 Element e = doc.createElement(TAG_ARRAY);
                 int count = 0;
-                for (NElement attribute : elem.asArray().get(session).items()) {
+                for (NElement attribute : elem.asArray().get().items()) {
                     Node c = createObject(attribute, Element.class, context);
                     if (c != null) {
                         e.appendChild(c);
@@ -220,10 +220,10 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
             }
             case OBJECT: {
                 Element obj = doc.createElement(TAG_OBJECT);
-                for (NElementEntry ne : elem.asObject().get(session).entries()) {
+                for (NElementEntry ne : elem.asObject().get().entries()) {
                     final NElementType kt = ne.getKey().type();
                     boolean complexKey = kt == NElementType.ARRAY || kt == NElementType.OBJECT
-                            || (kt == NElementType.STRING && isComplexString(ne.getKey().asString().get(session)));
+                            || (kt == NElementType.STRING && isComplexString(ne.getKey().asString().get()));
                     if (complexKey) {
                         Element entry = doc.createElement(TAG_ENTRY);
                         Element ek = (Element) createObject(ne.getKey(), NElement.class, context);
@@ -235,11 +235,11 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
                         obj.appendChild(entry);
                     } else {
                         String tagName
-                                = ne.getKey().type() == NElementType.BOOLEAN ? ne.getKey().asString().get(session)
+                                = ne.getKey().type() == NElementType.BOOLEAN ? ne.getKey().asString().get()
                                 : ne.getKey().type().id();
                         Element entryElem = (Element) doc.createElement(tagName);
                         if (ne.getKey().type() != NElementType.BOOLEAN && ne.getKey().type() != NElementType.NULL) {
-                            entryElem.setAttribute(ATTRIBUTE_KEY, ne.getKey().asString().get(session));
+                            entryElem.setAttribute(ATTRIBUTE_KEY, ne.getKey().asString().get());
                         }
                         switch (ne.getValue().type()) {
                             case ARRAY:
@@ -256,12 +256,12 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
                                 break;
                             }
                             case STRING: {
-                                entryElem.setAttribute(ATTRIBUTE_VALUE, ne.getValue().asString().get(session));
+                                entryElem.setAttribute(ATTRIBUTE_VALUE, ne.getValue().asString().get());
                                 obj.appendChild(entryElem);
                                 break;
                             }
                             default: {
-                                entryElem.setAttribute(ATTRIBUTE_VALUE, ne.getValue().asString().get(session));
+                                entryElem.setAttribute(ATTRIBUTE_VALUE, ne.getValue().asString().get());
                                 entryElem.setAttribute(ATTRIBUTE_VALUE_TYPE, ne.getValue().type().id());
                                 obj.appendChild(entryElem);
                                 break;
@@ -279,7 +279,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
 
 
     public NElement createElement(String type, String value, NElementFactoryContext context) {
-        NElements f = NElements.of(context.getSession());
+        NElements f = NElements.of();
         switch (type) {
             case TAG_NULL: {
                 return f.ofNull();
@@ -337,7 +337,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
             }
             default: {
                 //special object
-                NElements elements = NElements.of(context.getSession());
+                NElements elements = NElements.of();
 //                NObjectElementBuilder obj = elements.ofObject();
 //                NamedNodeMap attrs = element.getAttributes();
 //                for (int i = 0; i < attrs.getLength(); i++) {
@@ -512,7 +512,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
     }
 
     public NElement createElementObject(Node node, Type typeOfSrc, NElementFactoryContext context, boolean includeTagName) {
-        NElements elements = NElements.of(context.getSession());
+        NElements elements = NElements.of();
         Element element = (Element) node;
         NodeInfo ni = new NodeInfo(element);
 //special object
@@ -566,7 +566,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
     }
 
     public NElement createElement(Node node, Type typeOfSrc, NElementFactoryContext context, boolean includeTagName) {
-        NElements elements = NElements.of(context.getSession());
+        NElements elements = NElements.of();
         if (node instanceof Attr) {
             Attr at = (Attr) node;
             return elements.ofObject().set(at.getName(), context.objectToElement(at.getValue(), String.class)).build();

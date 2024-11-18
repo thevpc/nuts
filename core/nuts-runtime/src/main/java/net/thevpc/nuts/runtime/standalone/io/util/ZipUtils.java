@@ -174,13 +174,12 @@ public class ZipUtils {
     /**
      * Unzip it
      *
-     * @param session      workspace
      * @param zipFile      input zip file
      * @param outputFolder zip file output folder
      * @param options      options
      * @throws IOException io exception
      */
-    public static void unzip(NSession session, String zipFile, String outputFolder, UnzipOptions options) throws IOException {
+    public static void unzip(String zipFile, String outputFolder, UnzipOptions options) throws IOException {
         if (options == null) {
             options = new UnzipOptions();
         }
@@ -222,7 +221,7 @@ public class ZipUtils {
                     newFile.mkdirs();
                 } else {
                     File newFile = new File(outputFolder + File.separator + fileName);
-                    NLogOp.of(ZipUtils.class, session).level(Level.FINEST).verb(NLogVerb.WARNING)
+                    NLogOp.of(ZipUtils.class).level(Level.FINEST).verb(NLogVerb.WARNING)
                             .log(NMsg.ofJ("file unzip : {0}", newFile.getAbsoluteFile()));
                     //create all non exists folders
                     //else you will hit FileNotFoundException for compressed folder
@@ -307,23 +306,23 @@ public class ZipUtils {
 //            throw new RuntimeIOException(e);
 //        }
 //    }
-    public static boolean visitZipStream(NPath zipFile, InputStreamVisitor visitor, NSession session) {
+    public static boolean visitZipStream(NPath zipFile, InputStreamVisitor visitor) {
         try (InputStream is = zipFile.getInputStream()) {
-            return visitZipStream(is, visitor, session);
+            return visitZipStream(is, visitor);
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
-    public static boolean visitZipStream(Path zipFile, InputStreamVisitor visitor, NSession session) {
+    public static boolean visitZipStream(Path zipFile, InputStreamVisitor visitor) {
         try (InputStream is = Files.newInputStream(zipFile)) {
-            return visitZipStream(is, visitor, session);
+            return visitZipStream(is, visitor);
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
-    public static boolean visitZipStream(InputStream zipFile, InputStreamVisitor visitor, NSession session) {
+    public static boolean visitZipStream(InputStream zipFile, InputStreamVisitor visitor) {
         //byte[] buffer = new byte[4 * 1024];
 
         //get the zip file content
@@ -370,13 +369,13 @@ public class ZipUtils {
                 ze = zis.getNextEntry();
             }
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         } finally {
             if (zis != null) {
                 try {
                     zis.close();
                 } catch (IOException ex) {
-                    throw new NIOException(session, ex);
+                    throw new NIOException(ex);
                 }
             }
         }

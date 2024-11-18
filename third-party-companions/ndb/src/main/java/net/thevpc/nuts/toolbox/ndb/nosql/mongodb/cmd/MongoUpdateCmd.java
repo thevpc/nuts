@@ -1,8 +1,8 @@
 package net.thevpc.nuts.toolbox.ndb.nosql.mongodb.cmd;
 
 import com.mongodb.client.result.UpdateResult;
-import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
 import net.thevpc.nuts.toolbox.ndb.base.cmd.UpdateCmd;
 import net.thevpc.nuts.toolbox.ndb.nosql.mongodb.NMongoConfig;
@@ -20,7 +20,7 @@ public class MongoUpdateCmd extends UpdateCmd<NMongoConfig> {
     }
 
     @Override
-    protected void runUpdate(ExtendedQuery eq, NMongoConfig options, NSession session) {
+    protected void runUpdate(ExtendedQuery eq, NMongoConfig options) {
         getSupport().doWithMongoCollection(options, eq.getTable(), mongoCollection -> {
             Document docSet = Document.parse("{}");
             for (String s : eq.getSet()) {
@@ -37,6 +37,7 @@ public class MongoUpdateCmd extends UpdateCmd<NMongoConfig> {
             UpdateResult r = eq.getOne() ?
                     mongoCollection.updateOne(docWhere, docSet)
                     : mongoCollection.updateMany(docWhere, docSet);
+            NSession session = NSession.of().get();
             session.out().println(r);
         });
     }

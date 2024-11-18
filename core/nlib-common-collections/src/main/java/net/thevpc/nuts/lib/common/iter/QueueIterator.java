@@ -26,7 +26,6 @@
 */
 package net.thevpc.nuts.lib.common.iter;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
@@ -45,16 +44,16 @@ public class QueueIterator<T> extends NIteratorBase<T> {
 
 
     @Override
-    public NElement describe(NSession session) {
-        return NElements.of(session)
+    public NElement describe() {
+        return NElements.of()
                 .ofObject()
                 .set("type","Queue")
                 .set("items",
-                        NElements.of(session).ofArray()
+                        NElements.of().ofArray()
                                 .addAll(
                                         new ArrayList<>(children)
                                                 .stream().map(
-                                                        x-> NEDesc.describeResolveOrDestruct(x, session)
+                                                        x-> NEDesc.describeResolveOrDestruct(x)
                                                 ).collect(Collectors.toList())
                                 )
                                 .build()

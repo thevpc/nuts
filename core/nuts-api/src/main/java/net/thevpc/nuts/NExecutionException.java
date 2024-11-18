@@ -53,51 +53,47 @@ public class NExecutionException extends NException implements NExceptionWithExi
     /**
      * Constructs a new NutsExecutionException exception
      *
-     * @param session  workspace
      * @param message  message
      * @param exitCode exit code
      */
-    public NExecutionException(NSession session, NMsg message, int exitCode) {
-        super(session, message);
+    public NExecutionException(NMsg message, int exitCode) {
+        super(message);
         this.exitCode = exitCode;
     }
 
     /**
      * Constructs a new NutsExecutionException exception
      *
-     * @param session workspace
      * @param message message
      * @param cause   cause
      */
-    public NExecutionException(NSession session, NMsg message, Throwable cause) {
-        this(session, message, cause, ERROR_255);
+    public NExecutionException(NMsg message, Throwable cause) {
+        this(message, cause, ERROR_255);
     }
 
     /**
      * Constructs a new NutsExecutionException exception
      *
-     * @param session  workspace
      * @param message  message
      * @param cause    cause
      * @param exitCode exit code
      */
-    public NExecutionException(NSession session, NMsg message, Throwable cause, int exitCode) {
-        super(session, message, cause);
+    public NExecutionException(NMsg message, Throwable cause, int exitCode) {
+        super(message, cause);
         this.exitCode = exitCode;
     }
 
     /**
      * Constructs a new NutsExecutionException exception
      *
-     * @param session            workspace
      * @param message            message
      * @param cause              cause
      * @param enableSuppression  whether or not suppression is enabled or disabled
      * @param writableStackTrace whether or not the stack trace should be writable
      * @param exitCode           exit code
      */
-    public NExecutionException(NSession session, NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, int exitCode) {
-        super(session, message, cause, enableSuppression, writableStackTrace);
+    public NExecutionException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, int exitCode) {
+        super(message, cause, enableSuppression, writableStackTrace);
         this.exitCode = exitCode;
     }
 

@@ -32,7 +32,7 @@ public abstract class NdbCmd<C extends NdbConfig> {
         return names.toArray(new String[0]);
     }
 
-    abstract public void run(NSession session, NCmdLine cmdLine);
+    abstract public void run(NCmdLine cmdLine);
 
     protected boolean fillOption(NCmdLine cmdLine, C options) {
         if (support.fillOption(cmdLine, options)) {
@@ -70,10 +70,10 @@ public abstract class NdbCmd<C extends NdbConfig> {
         return support.getConfigClass();
     }
 
-    protected void readConfigNameOption(NCmdLine commandLine, NSession session, NRef<AtName> name) {
-        commandLine.withNextEntry((v, a, s) -> {
+    protected void readConfigNameOption(NCmdLine commandLine, NRef<AtName> name) {
+        commandLine.withNextEntry((v, a) -> {
             if (name.isNull()) {
-                String name2 = NdbUtils.checkName(a.getStringValue().get(session), session);
+                String name2 = NdbUtils.checkName(a.getStringValue().get());
                 name.set(new AtName(name2));
             } else {
                 commandLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
@@ -91,7 +91,8 @@ public abstract class NdbCmd<C extends NdbConfig> {
         } else if (support.getSession().configureFirst(commandLine)) {
             return true;
         } else {
-            commandLine.getSession().configureLast(commandLine);
+            NSession session = NSession.of().get();
+            session.configureLast(commandLine);
             return true;
         }
     }
@@ -120,33 +121,33 @@ public abstract class NdbCmd<C extends NdbConfig> {
         return getSupport().isRemoteCommand(options);
     }
 
-    public NExecCmd sysSsh(C options, NSession session) {
-        return getSupport().sysSsh(options, session);
+    public NExecCmd sysSsh(C options) {
+        return getSupport().sysSsh(options);
     }
 
-    protected void sshPull(NPath remote, NPath local, C options, NSession session) {
-        run(sysCmd(session)
+    protected void sshPull(NPath remote, NPath local, C options) {
+        run(sysCmd()
                 .addCommand("scp", options.getRemoteUser() + "@" + options.getRemoteServer() + ":" + remote)
                 .addCommand(local.toString())
         );
     }
 
-    protected void sshPush(NPath local, NPath remote, C options, NSession session) {
-        run(sysCmd(session)
+    protected void sshPush(NPath local, NPath remote, C options) {
+        run(sysCmd()
                 .addCommand("scp", local.toString())
                 .addCommand(options.getRemoteUser() + "@" + options.getRemoteServer() + ":" + remote.toString())
         );
     }
 
-    protected void sshRm(NPath upRestorePath, C options, NSession session) {
-        run(sysSsh(options, session).addCommand("rm -rf " + upRestorePath.toString()));
+    protected void sshRm(NPath upRestorePath, C options) {
+        run(sysSsh(options).addCommand("rm -rf " + upRestorePath.toString()));
     }
 
     public NExecCmd run(NExecCmd cmd) {
         return getSupport().run(cmd);
     }
 
-    public NExecCmd sysCmd(NSession session) {
-        return getSupport().sysCmd(session);
+    public NExecCmd sysCmd() {
+        return getSupport().sysCmd();
     }
 }

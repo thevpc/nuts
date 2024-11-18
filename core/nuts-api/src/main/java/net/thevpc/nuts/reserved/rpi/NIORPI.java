@@ -1,7 +1,6 @@
 package net.thevpc.nuts.reserved.rpi;
 
 import net.thevpc.nuts.NExecutionEntry;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NComponent;
@@ -17,11 +16,11 @@ import java.util.List;
  * Input/Output Internal Programming Interface
  */
 public interface NIORPI extends NComponent {
-    static NIORPI of(NSession session) {
-        return NExtensions.of(session).createComponent(NIORPI.class).get();
+    static NIORPI of() {
+        return NExtensions.of().createComponent(NIORPI.class).get();
     }
 
-    <T> NAsk<T> createQuestion(NSession session);
+    <T> NAsk<T> createQuestion();
 
     <T> NAsk<T> createQuestion(NSessionTerminal terminal);
 

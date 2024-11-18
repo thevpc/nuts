@@ -21,24 +21,24 @@ public class CopyDBCmd<C extends NdbConfig> extends NdbCmd<C> {
     }
 
 
-    public void run(NSession session, NCmdLine cmdLine) {
+    public void run(NCmdLine cmdLine) {
         List<String> fromOptions = new ArrayList<>();
         List<String> toOptions = new ArrayList<>();
         NRef<NPath> tempDataFile = NRef.ofNull();
         NRef<Boolean> keepFile = NRef.ofNull();
         while (cmdLine.hasNext()) {
             if (cmdLine.isNextOption()) {
-                String key = cmdLine.peek().get(session).key();
+                String key = cmdLine.peek().get().key();
                 switch (key) {
                     case "--from":
                     {
-                        cmdLine.withNextEntry((v, a, s) ->
+                        cmdLine.withNextEntry((v, a) ->
                                 fromOptions.addAll(Arrays.asList("--db", v)));
                         break;
                     }
                     case "--to":
                     {
-                        cmdLine.withNextEntry((v, a, s) ->
+                        cmdLine.withNextEntry((v, a) ->
                                 toOptions.addAll(Arrays.asList("--db", v)));
                         break;
                     }
@@ -54,7 +54,7 @@ public class CopyDBCmd<C extends NdbConfig> extends NdbCmd<C> {
                     case "--from-ssh":
                     case "--from-db":
                     {
-                        cmdLine.withNextEntry((v, a, s) ->
+                        cmdLine.withNextEntry((v, a) ->
                                 fromOptions.addAll(Arrays.asList(
                                         "--" + key.substring("--from-".length())
                                         , v)));
@@ -71,29 +71,30 @@ public class CopyDBCmd<C extends NdbConfig> extends NdbCmd<C> {
                     case "--to-remote-temp-folder":
                     case "--to-ssh":
                     case "--to-db": {
-                        cmdLine.withNextEntry((v, a, s) -> toOptions.addAll(Arrays.asList(
+                        cmdLine.withNextEntry((v, a) -> toOptions.addAll(Arrays.asList(
                                 "--" + key.substring("--to-".length())
                                 , v)));
                         break;
                     }
                     case "--file": {
-                        cmdLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a) -> {
                             if (!v.endsWith(".zip")) {
                                 v = v + ".zip";
                             }
-                            tempDataFile.set(NPath.of(v, session).toAbsolute());
+                            tempDataFile.set(NPath.of(v).toAbsolute());
                         });
                         break;
                     }
                     case "--keep-file": {
-                        cmdLine.withNextFlag((v, a, s) -> keepFile.set(v));
+                        cmdLine.withNextFlag((v, a) -> keepFile.set(v));
                         break;
                     }
                     default: {
                         if (support.getSession().configureFirst(cmdLine)) {
 
                         } else {
-                            cmdLine.getSession().configureLast(cmdLine);
+                            NSession session = NSession.of().get();
+                            session.configureLast(cmdLine);
                         }
                     }
                 }
@@ -102,7 +103,7 @@ public class CopyDBCmd<C extends NdbConfig> extends NdbCmd<C> {
             }
         }
         if (tempDataFile.isNull()) {
-            tempDataFile.set(NPath.ofUserDirectory(session).resolve(
+            tempDataFile.set(NPath.ofUserDirectory().resolve(
                     new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS").format(new Date())
                             + ".zip"
             ));
@@ -114,8 +115,8 @@ public class CopyDBCmd<C extends NdbConfig> extends NdbCmd<C> {
         }
         fromOptions.addAll(Arrays.asList("--file", tempDataFile.toString()));
         toOptions.addAll(Arrays.asList("--file", tempDataFile.toString()));
-        getSupport().findCommand("dump").get().run(session, NCmdLine.of(fromOptions).setSession(session));
-        getSupport().findCommand("restore").get().run(session, NCmdLine.of(toOptions).setSession(session));
+        getSupport().findCommand("dump").get().run(NCmdLine.of(fromOptions));
+        getSupport().findCommand("restore").get().run(NCmdLine.of(toOptions));
         if (!keepFile.get()) {
             tempDataFile.get().deleteTree();
         }

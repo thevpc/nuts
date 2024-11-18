@@ -61,9 +61,9 @@ import java.util.Set;
  * @app.category Input Output
  * @since 0.5.4
  */
-public interface NCp extends NComponent,NSessionProvider {
-    static NCp of(NSession session) {
-       return NExtensions.of(session).createComponent(NCp.class).get();
+public interface NCp extends NComponent {
+    static NCp of() {
+       return NExtensions.of().createComponent(NCp.class).get();
     }
 
     /**
@@ -320,14 +320,6 @@ public interface NCp extends NComponent,NSessionProvider {
     boolean isMkdirs();
 
     NCp setMkdirs(boolean mkdirs);
-
-    /**
-     * update current session
-     *
-     * @param session current session
-     * @return {@code this} instance
-     */
-    NCp setSession(NSession session);
 
     /**
      * run this copy action with {@link java.io.ByteArrayOutputStream} target and return bytes result

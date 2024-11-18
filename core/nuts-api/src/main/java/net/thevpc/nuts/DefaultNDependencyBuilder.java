@@ -480,8 +480,8 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
     }
 
     @Override
-    public NDependencyFormat formatter(NSession session) {
-        return build().formatter(session);
+    public NDependencyFormat formatter() {
+        return build().formatter();
     }
 
 }
