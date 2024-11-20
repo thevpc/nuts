@@ -67,7 +67,7 @@ public class DefaultNContentMetadata implements NContentMetadata {
 
     //    public DefaultNContentMetadata(NMsg message, long contentLength, String contentType, String kind) {
 //        this(message == null ? null : message.toString(),
-//                session -> message == null ? null : message.toNutsString(session), contentLength, contentType, kind);
+//                () -> message == null ? null : message.toNutsString(session), contentLength, contentType, kind);
 //    }
 //
 //    public DefaultNContentMetadata(NutsString message, long contentLength, String contentType, String kind) {

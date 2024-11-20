@@ -7,12 +7,12 @@ import net.thevpc.nuts.util.NFilterOp;
 
 public class NVersionFilterFalse extends AbstractVersionFilter implements NExprIdFilter {
 
-    public NVersionFilterFalse(NSession session) {
-        super(session, NFilterOp.FALSE);
+    public NVersionFilterFalse(NWorkspace workspace) {
+        super(workspace, NFilterOp.FALSE);
     }
 
     @Override
-    public boolean acceptVersion(NVersion id, NSession session) {
+    public boolean acceptVersion(NVersion id) {
         return false;
     }
 

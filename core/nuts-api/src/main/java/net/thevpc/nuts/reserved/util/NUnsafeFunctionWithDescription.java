@@ -1,6 +1,5 @@
 package net.thevpc.nuts.reserved.util;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NUnsafeFunction;
@@ -31,7 +30,7 @@ public class NUnsafeFunctionWithDescription<T, V> implements NUnsafeFunction<T, 
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return NEDesc.safeDescribe(session, description, NEDesc.ofLateToString(this));
+    public NElement describe() {
+        return NEDesc.safeDescribe(description, NEDesc.ofLateToString(this));
     }
 }

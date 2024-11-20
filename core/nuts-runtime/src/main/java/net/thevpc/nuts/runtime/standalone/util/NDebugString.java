@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ public class NDebugString {
     public NDebugString() {
     }
 
-    public static NDebugString of(String str, NSession session) {
+    public static NDebugString of(String str) {
         NDebugString d=new NDebugString();
         if (str == null) {
             d.setEnabled(false);
@@ -51,17 +50,17 @@ public class NDebugString {
                             d.setPort(Integer.parseInt(s.substring(0,sep)));
                             d.setMaxPort(Integer.parseInt(s.substring(sep+1)));
                         }else{
-                            d.setPort(na.getValue().asInt().get(session));
+                            d.setPort(na.getValue().asInt().get());
                         }
                         break;
                     }
                     default: {
                         if (na.getValue().isNull()) {
                             if (na.getKey().isBoolean()) {
-                                boolean v = na.getKey().asBoolean().get(session);
+                                boolean v = na.getKey().asBoolean().get();
                                 d.setEnabled(na.isNegated() != v);
                             } else if (na.getKey().isInt()) {
-                                d.setPort(na.getKey().asInt().get(session));
+                                d.setPort(na.getKey().asInt().get());
                             } else {
                                 d.options.add(na);
                             }

@@ -26,7 +26,6 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.reserved.rpi.NCollectionsRPI;
 import net.thevpc.nuts.reserved.util.NIterableWithDescription;
@@ -36,8 +35,8 @@ import net.thevpc.nuts.reserved.util.NIterableWithDescription;
  * @param <T> Type
  */
 public interface NIterable<T> extends Iterable<T>, NElementDescribable<NIterable<T>> {
-    static <T> NIterable<T> of(Iterable<T> o, NSession session){
-        return NCollectionsRPI.of(session).toIterable(o);
+    static <T> NIterable<T> of(Iterable<T> o){
+        return NCollectionsRPI.of().toIterable(o);
     }
 
     default NIterable<T> withDesc(NEDesc description) {

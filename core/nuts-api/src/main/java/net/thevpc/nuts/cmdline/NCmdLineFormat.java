@@ -27,7 +27,6 @@ package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.format.NFormat;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NShellFamily;
 
 /**
@@ -39,8 +38,8 @@ import net.thevpc.nuts.NShellFamily;
  */
 public interface NCmdLineFormat extends NFormat {
 
-    static NCmdLineFormat of(NSession session) {
-       return NExtensions.of(session).createComponent(NCmdLineFormat.class).get();
+    static NCmdLineFormat of() {
+       return NExtensions.of().createComponent(NCmdLineFormat.class).get();
     }
 
     /**
@@ -90,14 +89,6 @@ public interface NCmdLineFormat extends NFormat {
      */
     NCmdLineFormat setShellFamily(NShellFamily family);
 
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this instance}
-     */
-    @Override
-    NCmdLineFormat setSession(NSession session);
 
     /**
      * configure the current command with the given arguments. This is an

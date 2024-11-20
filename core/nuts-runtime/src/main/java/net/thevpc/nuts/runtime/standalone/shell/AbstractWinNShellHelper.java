@@ -18,7 +18,7 @@ public abstract class AbstractWinNShellHelper implements NShellHelper {
     }
 
 
-    public String[] parseCmdLineArr(String commandLineString, NSession session) {
+    public String[] parseCmdLineArr(String commandLineString) {
         if (commandLineString == null) {
             return new String[0];
         }
@@ -74,7 +74,7 @@ public abstract class AbstractWinNShellHelper implements NShellHelper {
                             break;
                         }
                         case '"': {
-                            throw new NParseException(session, NMsg.ofC("illegal char %s", c));
+                            throw new NParseException(NMsg.ofC("illegal char %s", c));
                         }
                         case '^': {
                             i++;
@@ -121,7 +121,7 @@ public abstract class AbstractWinNShellHelper implements NShellHelper {
                 break;
             }
             case IN_DBQUOTED_WORD: {
-                throw new NParseException(session, NMsg.ofPlain("expected \""));
+                throw new NParseException(NMsg.ofPlain("expected \""));
             }
         }
         return args.toArray(new String[0]);
@@ -167,9 +167,6 @@ public abstract class AbstractWinNShellHelper implements NShellHelper {
         }
         if(options==null){
             options=new NCmdLineShellOptions();
-        }
-        if(options.getSession()==null){
-            throw new NMissingSessionException();
         }
         NCmdLineFormatStrategy s = options.getFormatStrategy();
         if(s==null|| s== NCmdLineFormatStrategy.DEFAULT){
@@ -226,7 +223,7 @@ public abstract class AbstractWinNShellHelper implements NShellHelper {
                         case '\n':
                         case '\r':
                         {
-                            throw new NIllegalArgumentException(options.getSession(), NMsg.ofPlain("unsupported new line in arguments"));
+                            throw new NIllegalArgumentException(NMsg.ofPlain("unsupported new line in arguments"));
                         }
                         default:
                         {
@@ -264,7 +261,7 @@ public abstract class AbstractWinNShellHelper implements NShellHelper {
                         case '\n':
                         case '\r':
                         {
-                            throw new NIllegalArgumentException(options.getSession(), NMsg.ofPlain("unsupported new line in arguments"));
+                            throw new NIllegalArgumentException(NMsg.ofPlain("unsupported new line in arguments"));
                         }
                         default:
                         {
@@ -289,7 +286,7 @@ public abstract class AbstractWinNShellHelper implements NShellHelper {
                         case '\n':
                         case '\r':
                         {
-                            throw new NIllegalArgumentException(options.getSession(), NMsg.ofPlain("unsupported new line in arguments"));
+                            throw new NIllegalArgumentException(NMsg.ofPlain("unsupported new line in arguments"));
                         }
                         default:
                         {
@@ -302,7 +299,7 @@ public abstract class AbstractWinNShellHelper implements NShellHelper {
                 return sb.toString();
             }
             default:{
-                throw new NUnsupportedEnumException(options.getSession(),s);
+                throw new NUnsupportedEnumException(s);
             }
         }
     }

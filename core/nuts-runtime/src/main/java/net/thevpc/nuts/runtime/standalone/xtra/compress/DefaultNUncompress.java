@@ -38,18 +38,16 @@ public class DefaultNUncompress implements NUncompress {
     private boolean skipRoot = false;
     private boolean safe = true;
     private String packaging = "zip";
-    private NWorkspace ws;
+    private NWorkspace workspace;
     private NInputSource source;
     private NOutputTarget target;
-    private NSession session;
     private NProgressFactory progressFactory;
     private Set<NPathOption> options = new LinkedHashSet<>();
     private NUncompressVisitor visitor;
     private NUncompressPackaging packagingImpl;
 
-    public DefaultNUncompress(NSession session) {
-        this.session = session;
-        this.ws = session.getWorkspace();
+    public DefaultNUncompress(NWorkspace ws) {
+        this.workspace = ws;
     }
 
     @Override
@@ -57,13 +55,13 @@ public class DefaultNUncompress implements NUncompress {
         return NConstants.Support.DEFAULT_SUPPORT;
     }
 
-    protected NLogOp _LOGOP(NSession session) {
-        return _LOG(session).with().session(session);
+    protected NLogOp _LOGOP() {
+        return _LOG().with();
     }
 
-    protected NLog _LOG(NSession session) {
+    protected NLog _LOG() {
         if (LOG == null) {
-            LOG = NLog.of(DefaultNUncompress.class, session);
+            LOG = NLog.of(DefaultNUncompress.class);
         }
         return LOG;
     }
@@ -75,18 +73,13 @@ public class DefaultNUncompress implements NUncompress {
 
     @Override
     public NUncompress setPackaging(String packaging) {
-        checkSession();
-        this.packagingImpl = NExtensions.of(session).createComponent(NUncompressPackaging.class, this).get();
+        this.packagingImpl = NExtensions.of().createComponent(NUncompressPackaging.class, this).get();
         return this;
     }
 
     @Override
     public NInputSource getSource() {
         return source;
-    }
-
-    protected void checkSession() {
-        NSessionUtils.checkSession(ws, session);
     }
 
     @Override
@@ -104,45 +97,43 @@ public class DefaultNUncompress implements NUncompress {
 
     @Override
     public NUncompress setSource(InputStream source) {
-        checkSession();
-        this.source = source == null ? null : NInputSource.of(source,session);
+        this.source = source == null ? null : NInputSource.of(source);
         return this;
     }
 
     @Override
     public NUncompress setSource(NPath source) {
-        checkSession();
         this.source = source;
         return this;
     }
 
     @Override
     public NUncompress setSource(File source) {
-        this.source = source == null ? null : NPath.of(source, session);
+        this.source = source == null ? null : NPath.of(source);
         return this;
     }
 
     @Override
     public NUncompress setSource(Path source) {
-        this.source = source == null ? null : NPath.of(source, session);
+        this.source = source == null ? null : NPath.of(source);
         return this;
     }
 
     @Override
     public NUncompress setSource(URL source) {
-        this.source = source == null ? null : NPath.of(source, session);
+        this.source = source == null ? null : NPath.of(source);
         return this;
     }
 
     @Override
     public NUncompress setTarget(Path target) {
-        this.target = target == null ? null : NPath.of(target, session);
+        this.target = target == null ? null : NPath.of(target);
         return this;
     }
 
     @Override
     public NUncompress setTarget(File target) {
-        this.target = target == null ? null : NPath.of(target, session);
+        this.target = target == null ? null : NPath.of(target);
         return this;
     }
 
@@ -213,48 +204,36 @@ public class DefaultNUncompress implements NUncompress {
     }
 
     @Override
-    public NSession getSession() {
-        return session;
-    }
-
-    @Override
-    public NUncompress setSession(NSession session) {
-        this.session = NWorkspaceUtils.bindSession(ws, session);
-        return this;
-    }
-
-    @Override
     public NUncompress run() {
-        checkSession();
         CompressType compressType = toCompressType(getPackaging());
-        NAssert.requireNonNull(source, "source", getSession());
+        NAssert.requireNonNull(source, "source");
 
         NInputSource _source = source;
         if (options.contains(NPathOption.LOG)
                 || options.contains(NPathOption.TRACE)
                 || getProgressFactory() != null) {
-            NInputStreamMonitor monitor = NInputStreamMonitor.of(session);
+            NInputStreamMonitor monitor = NInputStreamMonitor.of();
             monitor.setOrigin(source);
             monitor.setLogProgress(options.contains(NPathOption.LOG));
             monitor.setTraceProgress(options.contains(NPathOption.TRACE));
             monitor.setProgressFactory(getProgressFactory());
             monitor.setSource(source);
-            _source = NInputSource.of(monitor.create(),session);
+            _source = NInputSource.of(monitor.create());
         }
 
         if (visitor == null && target == null) {
-            NAssert.requireNonNull(target, "target", getSession());
+            NAssert.requireNonNull(target, "target");
         } else if (visitor != null && target != null) {
-            throw new NIllegalArgumentException(getSession(), NMsg.ofC("invalid target %s when visitor is specified", target));
+            throw new NIllegalArgumentException(NMsg.ofC("invalid target %s when visitor is specified", target));
         } else if (visitor != null) {
             return runVisitor(_source, compressType);
         }
 
-        _LOGOP(session).level(Level.FINEST).verb(NLogVerb.START)
+        _LOGOP().level(Level.FINEST).verb(NLogVerb.START)
                 .log(NMsg.ofJ("uncompress {0} to {1}", _source, target));
 
         if (packagingImpl == null) {
-            this.packagingImpl = NExtensions.of(session).createComponent(NUncompressPackaging.class, this).get();
+            this.packagingImpl = NExtensions.of().createComponent(NUncompressPackaging.class, this).get();
         }
         packagingImpl.uncompressPackage(this, _source);
         return this;
@@ -280,21 +259,21 @@ public class DefaultNUncompress implements NUncompress {
                 return CompressType.GZIP;
             }
         }
-        throw new NUnsupportedArgumentException(getSession(), NMsg.ofC("unsupported format %s", format));
+        throw new NUnsupportedArgumentException(NMsg.ofC("unsupported format %s", format));
     }
 
     private NUncompress runVisitor(NInputSource source, CompressType format) {
         switch (format) {
             case ZIP: {
-                new NUncompressZip().visitPackage(this, source, visitor);
+                new NUncompressZip(workspace).visitPackage(this, source, visitor);
                 break;
             }
             case GZIP: {
-                new NUncompressGzip().visitPackage(this, source, visitor);
+                new NUncompressGzip(workspace).visitPackage(this, source, visitor);
                 break;
             }
             default: {
-                throw new NUnsupportedArgumentException(getSession(), NMsg.ofC("unsupported format %s", format));
+                throw new NUnsupportedArgumentException(NMsg.ofC("unsupported format %s", format));
             }
         }
         return this;

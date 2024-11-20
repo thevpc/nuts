@@ -205,8 +205,8 @@ public class DefaultNDependency implements NDependency {
     }
 
     @Override
-    public NDependencyFormat formatter(NSession session) {
-        return NDependencyFormat.of(session).setValue(this);
+    public NDependencyFormat formatter() {
+        return NDependencyFormat.of().setValue(this);
     }
 
     @Override

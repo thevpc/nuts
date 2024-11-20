@@ -70,7 +70,7 @@ public class RemoteTomcat {
                 }
             }
         }
-        throw new NExecutionException(session, NMsg.ofPlain("missing tomcat action. Type: nuts tomcat --help"), NExecutionException.ERROR_1);
+        throw new NExecutionException(NMsg.ofPlain("missing tomcat action. Type: nuts tomcat --help"), NExecutionException.ERROR_1);
     }
 
     public void list(NCmdLine args) {
@@ -91,9 +91,9 @@ public class RemoteTomcat {
         Helper x = new Helper();
         while (args.hasNext()) {
             if ((a = args.nextEntry("--name").orNull()) != null) {
-                x.print(loadOrCreateTomcatConfig(a.getStringValue().get(session)));
-            } else if (args.peek().get(session).isNonOption()) {
-                x.print(loadOrCreateTomcatConfig(args.nextNonOption().get(session).getStringValue().get(session)));
+                x.print(loadOrCreateTomcatConfig(a.getStringValue().get()));
+            } else if (args.peek().get().isNonOption()) {
+                x.print(loadOrCreateTomcatConfig(args.nextNonOption().get().getStringValue().get()));
             } else {
                 session.configureLast(args);
             }
@@ -114,42 +114,42 @@ public class RemoteTomcat {
         while (args.hasNext()) {
             if ((a = args.nextEntry("--name").orNull()) != null) {
                 if (c == null) {
-                    instanceName = a.getStringValue().get(session);
+                    instanceName = a.getStringValue().get();
                     c = loadOrCreateTomcatConfig(instanceName);
                 } else {
-                    throw new NExecutionException(session, NMsg.ofPlain("instance already defined"), NExecutionException.ERROR_2);
+                    throw new NExecutionException(NMsg.ofPlain("instance already defined"), NExecutionException.ERROR_2);
                 }
             } else if ((a = args.nextEntry("--server").orNull()) != null) {
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
-                c.getConfig().setServer(a.getStringValue().get(session));
+                c.getConfig().setServer(a.getStringValue().get());
             } else if ((a = args.nextEntry("--remote-temp-path").orNull()) != null) {
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
-                c.getConfig().setRemoteTempPath(a.getStringValue().get(session));
+                c.getConfig().setRemoteTempPath(a.getStringValue().get());
             } else if ((a = args.nextEntry("--remote-instance").orNull()) != null) {
-                String value = a.getStringValue().get(session);
+                String value = a.getStringValue().get();
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
                 c.getConfig().setRemoteName(value);
             } else if ((a = args.nextEntry("--app").orNull()) != null) {
-                appName = a.getStringValue().get(session);
+                appName = a.getStringValue().get();
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
                 c.getAppOrCreate(appName);
             } else if ((a = args.nextEntry("--app.path").orNull()) != null) {
-                String value = a.getStringValue().get(session);
+                String value = a.getStringValue().get();
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
                 RemoteTomcatAppConfigService tomcatAppConfig = c.getAppOrError(appName);
                 tomcatAppConfig.getConfig().setPath(value);
             } else if ((a = args.nextEntry("--app.version").orNull()) != null) {
-                String value = a.getStringValue().get(session);
+                String value = a.getStringValue().get();
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
@@ -163,13 +163,13 @@ public class RemoteTomcat {
             c = loadOrCreateTomcatConfig(null);
         }
         boolean ok = false;
-        NTexts text = NTexts.of(getSession());
+        NTexts text = NTexts.of();
         while (!ok) {
             try {
                 ok = true;
                 if (NBlankable.isBlank(c.getConfig().getServer())) {
                     ok = false;
-                    c.getConfig().setServer(NAsk.of(session)
+                    c.getConfig().setServer(NAsk.of()
                             .forString(
                                     NMsg.ofC("[instance=%s] would you enter %s value ?"
                                             , text.ofStyled(c.getName(), NTextStyle.primary1())
@@ -183,7 +183,7 @@ public class RemoteTomcat {
                 if (NBlankable.isBlank(c.getConfig().getRemoteTempPath())) {
                     ok = false;
                     c.getConfig()
-                            .setRemoteTempPath(NAsk.of(session)
+                            .setRemoteTempPath(NAsk.of()
                                     .forString(NMsg.ofC("[instance=%s] would you enter %s value ?"
                                             , text.ofStyled(c.getName(), NTextStyle.primary1())
                                             , text.ofStyled("--remote-temp-path", NTextStyle.option())
@@ -194,7 +194,7 @@ public class RemoteTomcat {
                 for (RemoteTomcatAppConfigService aa : c.getApps()) {
                     if (NBlankable.isBlank(aa.getConfig().getPath())) {
                         ok = false;
-                        aa.getConfig().setPath(NAsk.of(session)
+                        aa.getConfig().setPath(NAsk.of()
                                 .forString(NMsg.ofC("[instance=%s] [app=%s] would you enter %s value ?"
                                         , text.ofStyled(c.getName(), NTextStyle.primary1())
                                         , text.ofStyled(aa.getName(), NTextStyle.option())
@@ -204,7 +204,7 @@ public class RemoteTomcat {
                     }
                 }
             } catch (NCancelException ex) {
-                throw new NExecutionException(session, NMsg.ofPlain("cancelled"), NExecutionException.ERROR_1);
+                throw new NExecutionException(NMsg.ofPlain("cancelled"), NExecutionException.ERROR_1);
             }
         }
         c.save();
@@ -229,10 +229,10 @@ public class RemoteTomcat {
             }
         }
         if (!processed) {
-            throw new NExecutionException(session, NMsg.ofPlain("invalid parameters"), NExecutionException.ERROR_2);
+            throw new NExecutionException(NMsg.ofPlain("invalid parameters"), NExecutionException.ERROR_2);
         }
         if (lastExitCode != NExecutionException.SUCCESS) {
-            throw new NExecutionException(session, NMsg.ofPlain("tomcat remove failed"), lastExitCode);
+            throw new NExecutionException(NMsg.ofPlain("tomcat remove failed"), lastExitCode);
         }
     }
 
@@ -244,7 +244,7 @@ public class RemoteTomcat {
         args.setCommandName("tomcat --remote install");
         while (args.hasNext()) {
             if ((a = args.nextEntry("--app").orNull()) != null) {
-                loadApp(a.getStringValue().get(session)).install();
+                loadApp(a.getStringValue().get()).install();
             } else {
                 session.configureLast(args);
             }
@@ -259,9 +259,9 @@ public class RemoteTomcat {
         args.setCommandName("tomcat --remote deploy");
         while (args.hasNext()) {
             if ((a = args.nextEntry("--app").orNull()) != null) {
-                app = a.getStringValue().get(session);
+                app = a.getStringValue().get();
             } else if ((a = args.nextEntry("--version").orNull()) != null) {
-                version = a.getStringValue().get(session);
+                version = a.getStringValue().get();
             } else {
                 session.configureLast(args);
             }
@@ -274,8 +274,8 @@ public class RemoteTomcat {
         String name = null;
         NArg a;
         while (args.hasNext()) {
-            if (args.peek().get(session).isNonOption()) {
-                name = args.nextNonOption().flatMap(NLiteral::asString).get(session);
+            if (args.peek().get().isNonOption()) {
+                name = args.nextNonOption().flatMap(NLiteral::asString).get();
                 RemoteTomcatConfigService c = loadTomcatConfig(name);
                 c.shutdown();
             } else {
@@ -292,13 +292,13 @@ public class RemoteTomcat {
         NArg a;
         while (args.hasNext()) {
             if ((a = args.nextFlag("--deleteLog").orNull()) != null) {
-                deleteLog = a.getBooleanValue().get(session);
+                deleteLog = a.getBooleanValue().get();
             } else if ((a = args.nextFlag("--install").orNull()) != null) {
-                install = a.getBooleanValue().get(session);
+                install = a.getBooleanValue().get();
             } else if ((a = args.nextEntry("--name").orNull()) != null) {
-                instance = a.getStringValue().get(session);
+                instance = a.getStringValue().get();
             } else if ((a = args.nextEntry("--deploy").orNull()) != null) {
-                for (String s : a.getStringValue().get(session).split(",")) {
+                for (String s : a.getStringValue().get().split(",")) {
                     s = s.trim();
                     if (!NBlankable.isBlank(s)) {
                         apps.add(s);
@@ -306,8 +306,8 @@ public class RemoteTomcat {
                 }
 //            } else if ((a = args.nextNonOption(DefaultNonOption.NAME)) != null) {
 //                instance = a.getString();
-            } else if (args.peek().get(session).isNonOption()) {
-                instance = args.nextNonOption().get(session).getStringValue().get(session);
+            } else if (args.peek().get().isNonOption()) {
+                instance = args.nextNonOption().get().getStringValue().get();
             } else {
                 session.configureLast(args);
             }
@@ -370,14 +370,14 @@ public class RemoteTomcat {
             public void show(RemoteTomcatServiceBase aa) {
                 NSession session = getSession();
                 if (json) {
-                    session.out().println(NMsg.ofC("%s :", NTexts.of(session).ofStyled(aa.getName(), NTextStyle.primary4())));
+                    session.out().println(NMsg.ofC("%s :", NTexts.of().ofStyled(aa.getName(), NTextStyle.primary4())));
                     aa.println(session.out());
                 } else if (yaml) {
                     //TODO FIX ME, what to do in Yaml?
-                    session.out().println(NMsg.ofC("%s :", NTexts.of(session).ofStyled(aa.getName(), NTextStyle.primary4())));
+                    session.out().println(NMsg.ofC("%s :", NTexts.of().ofStyled(aa.getName(), NTextStyle.primary4())));
                     aa.println(session.out());
                 } else {
-                    session.out().println(NMsg.ofC("%s :", NTexts.of(session).ofStyled(aa.getName(), NTextStyle.primary4())));
+                    session.out().println(NMsg.ofC("%s :", NTexts.of().ofStyled(aa.getName(), NTextStyle.primary4())));
                     aa.println(session.out());
                 }
             }
@@ -386,9 +386,9 @@ public class RemoteTomcat {
         args.setCommandName("tomcat --remote show");
         while (args.hasNext()) {
             if ((a = args.nextFlag("--json").orNull()) != null) {
-                h.json = a.getBooleanValue().get(session);
+                h.json = a.getBooleanValue().get();
             } else if ((a = args.nextFlag("--yaml").orNull()) != null) {
-                h.yaml = a.getBooleanValue().get(session);
+                h.yaml = a.getBooleanValue().get();
             } else if ((s = readBaseServiceArg(args)) != null) {
                 h.show(s);
             } else {
@@ -433,7 +433,7 @@ public class RemoteTomcat {
             RemoteTomcatConfigService u = loadOrCreateTomcatConfig(strings[0]);
             RemoteTomcatAppConfigService a = u.getAppOrNull(strings[1]);
             if (a == null) {
-                throw new NExecutionException(session, NMsg.ofC("unknown name %s. it is no domain or app", name), NExecutionException.ERROR_3);
+                throw new NExecutionException(NMsg.ofC("unknown name %s. it is no domain or app", name), NExecutionException.ERROR_3);
             }
             return a;
         }
@@ -442,13 +442,13 @@ public class RemoteTomcat {
     public RemoteTomcatServiceBase readBaseServiceArg(NCmdLine args) {
         NArg a;
         if ((a = args.nextEntry("--name").orNull()) != null) {
-            return (loadOrCreateTomcatConfig(a.getStringValue().get(session)));
+            return (loadOrCreateTomcatConfig(a.getStringValue().get()));
         } else if ((a = args.nextEntry("--app").orNull()) != null) {
-            return (loadApp(a.getStringValue().get(session)));
+            return (loadApp(a.getStringValue().get()));
         } else if (args.hasNext() && args.isNextOption()) {
             return null;
         } else {
-            return (loadServiceBase(args.next().flatMap(NLiteral::asString).get(session)));
+            return (loadServiceBase(args.next().flatMap(NLiteral::asString).get()));
         }
     }
 

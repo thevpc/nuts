@@ -73,11 +73,12 @@ public interface NReflectType {
 
     boolean hasSessionConstructor();
 
+    boolean hasWorkspaceConstructor();
+
     NReflectType getRawType();
 
     Object newInstance();
 
-    Object newInstance(NSession session);
 
     boolean isArrayType();
 

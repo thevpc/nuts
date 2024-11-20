@@ -19,8 +19,8 @@ public class NVersionFilterNone extends AbstractVersionFilter implements NExprId
 
     private NVersionFilter[] all;
 
-    public NVersionFilterNone(NSession session, NVersionFilter... all) {
-        super(session, NFilterOp.NOT);
+    public NVersionFilterNone(NWorkspace workspace, NVersionFilter... all) {
+        super(workspace, NFilterOp.NOT);
         List<NVersionFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NVersionFilter filter : all) {
@@ -33,12 +33,12 @@ public class NVersionFilterNone extends AbstractVersionFilter implements NExprId
     }
 
     @Override
-    public boolean acceptVersion(NVersion id, NSession session) {
+    public boolean acceptVersion(NVersion id) {
         if (all.length == 0) {
             return true;
         }
         for (NVersionFilter filter : all) {
-            if (filter.acceptVersion(id, session)) {
+            if (filter.acceptVersion(id)) {
                 return false;
             }
         }
@@ -47,7 +47,7 @@ public class NVersionFilterNone extends AbstractVersionFilter implements NExprId
 
     @Override
     public NVersionFilter simplify() {
-        return CoreFilterUtils.simplifyFilterNone(getSession(), NVersionFilter.class,this,all);
+        return CoreFilterUtils.simplifyFilterNone(NVersionFilter.class,this,all);
     }
 
     public String toExpr() {

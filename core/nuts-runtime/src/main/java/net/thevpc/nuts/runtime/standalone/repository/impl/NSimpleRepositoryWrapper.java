@@ -9,8 +9,8 @@ public class NSimpleRepositoryWrapper extends NCachedRepository {
     private NRepositoryModel base;
     private int mode;
 
-    public NSimpleRepositoryWrapper(NAddRepositoryOptions options, NSession session, NRepository parent, NRepositoryModel base) {
-        super(options, session, parent,
+    public NSimpleRepositoryWrapper(NAddRepositoryOptions options, NWorkspace workspace, NRepository parent, NRepositoryModel base) {
+        super(options, workspace, parent,
                 base.getSpeed(),
                 (base.getMode() & NRepositoryModel.MIRRORING) != 0,
                 base.getRepositoryType(),true
@@ -23,28 +23,28 @@ public class NSimpleRepositoryWrapper extends NCachedRepository {
         this.base = base;
     }
     
-    public NIterator<NId> searchVersionsCore(NId id, NIdFilter idFilter, NFetchMode fetchMode, NSession session) {
-        return base.searchVersions(id, idFilter, fetchMode, this, session);
+    public NIterator<NId> searchVersionsCore(NId id, NIdFilter idFilter, NFetchMode fetchMode) {
+        return base.searchVersions(id, idFilter, fetchMode, this);
     }
 
-    public NId searchLatestVersionCore(NId id, NIdFilter filter, NFetchMode fetchMode, NSession session) {
-        return base.searchLatestVersion(id, filter, fetchMode, this, session);
+    public NId searchLatestVersionCore(NId id, NIdFilter filter, NFetchMode fetchMode) {
+        return base.searchLatestVersion(id, filter, fetchMode, this);
     }
 
-    public NDescriptor fetchDescriptorCore(NId id, NFetchMode fetchMode, NSession session) {
-        return base.fetchDescriptor(id, fetchMode, this, session);
+    public NDescriptor fetchDescriptorCore(NId id, NFetchMode fetchMode) {
+        return base.fetchDescriptor(id, fetchMode, this);
     }
 
-    public NPath fetchContentCore(NId id, NDescriptor descriptor, NFetchMode fetchMode, NSession session) {
-        return base.fetchContent(id, descriptor, fetchMode, this, session);
+    public NPath fetchContentCore(NId id, NDescriptor descriptor, NFetchMode fetchMode) {
+        return base.fetchContent(id, descriptor, fetchMode, this);
     }
 
-    public NIterator<NId> searchCore(final NIdFilter filter, NPath[] basePaths, NId[] baseIds, NFetchMode fetchMode, NSession session) {
-        return base.search(filter, basePaths, fetchMode, this, session);
+    public NIterator<NId> searchCore(final NIdFilter filter, NPath[] basePaths, NId[] baseIds, NFetchMode fetchMode) {
+        return base.search(filter, basePaths, fetchMode, this);
     }
 
-    public void updateStatisticsImpl(NSession session) {
-        base.updateStatistics(this, session);
+    public void updateStatisticsImpl() {
+        base.updateStatistics(this);
     }
 
     protected boolean isAllowedOverrideArtifact(NId id) {
@@ -52,19 +52,19 @@ public class NSimpleRepositoryWrapper extends NCachedRepository {
     }
 
     @Override
-    public boolean acceptAction(NId id, NRepositorySupportedAction supportedAction, NFetchMode mode, NSession session) {
-        if(!super.acceptAction(id, supportedAction, mode, session)){
+    public boolean acceptAction(NId id, NRepositorySupportedAction supportedAction, NFetchMode mode) {
+        if(!super.acceptAction(id, supportedAction, mode)){
             return false;
         }
         switch (supportedAction){
-            case DEPLOY: return base.acceptDeploy(id, mode, this, session);
-            case SEARCH: return base.acceptFetch(id, mode, this, session);
+            case DEPLOY: return base.acceptDeploy(id, mode, this);
+            case SEARCH: return base.acceptFetch(id, mode, this);
         }
         return false;
     }
 
     @Override
-    public boolean isAcceptFetchMode(NFetchMode mode, NSession session) {
+    public boolean isAcceptFetchMode(NFetchMode mode) {
         return base.isAcceptFetchMode(mode);
     }
 

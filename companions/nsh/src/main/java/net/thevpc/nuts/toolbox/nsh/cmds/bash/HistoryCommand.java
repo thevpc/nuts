@@ -62,7 +62,7 @@ public class HistoryCommand extends NShellBuiltinDefault {
             return true;
         } else if ((a = cmdLine.nextEntry("-d", "--delete").orNull()) != null) {
             options.action = Action.DELETE;
-            options.ival = a.getValue().asInt().get(session);
+            options.ival = a.getValue().asInt().get();
             cmdLine.setCommandName(getName()).throwUnexpectedArgument();
             return true;
         } else if ((a = cmdLine.next("-D", "--remove-duplicates").orNull()) != null) {
@@ -72,25 +72,25 @@ public class HistoryCommand extends NShellBuiltinDefault {
         } else if ((a = cmdLine.next("-w", "--write").orNull()) != null) {
             options.action = Action.WRITE;
             if (a.isKeyValue()) {
-                options.sval = a.getStringValue().get(session);
+                options.sval = a.getStringValue().get();
             } else if (!cmdLine.isEmpty()) {
-                options.sval = cmdLine.next().flatMap(NLiteral::asString).get(session);
+                options.sval = cmdLine.next().flatMap(NLiteral::asString).get();
             }
             cmdLine.setCommandName(getName()).throwUnexpectedArgument();
             return true;
         } else if ((a = cmdLine.next("-r", "--read").orNull()) != null) {
             options.action = Action.READ;
             if (a.isKeyValue()) {
-                options.sval = a.getStringValue().get(session);
+                options.sval = a.getStringValue().get();
             } else if (!cmdLine.isEmpty()) {
-                options.sval = cmdLine.next().flatMap(NLiteral::asString).get(session);
+                options.sval = cmdLine.next().flatMap(NLiteral::asString).get();
             }
             cmdLine.setCommandName(getName()).throwUnexpectedArgument();
             return true;
         } else {
-            if (cmdLine.peek().get(session).asInt().orElse(0) != 0) {
+            if (cmdLine.peek().get().asInt().orElse(0) != 0) {
                 options.action = Action.PRINT;
-                options.ival = Math.abs(cmdLine.next().get(session).asInt().get(session));
+                options.ival = Math.abs(cmdLine.next().get().asInt().get());
                 return true;
             }
         }
@@ -132,10 +132,10 @@ public class HistoryCommand extends NShellBuiltinDefault {
 
                         shistory.save();
                     } else {
-                        shistory.save(NPath.of(options.sval, session).toAbsolute(NLocations.of(session).getWorkspaceLocation()));
+                        shistory.save(NPath.of(options.sval).toAbsolute(NLocations.of().getWorkspaceLocation()));
                     }
                 } catch (IOException ex) {
-                    throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_2);
+                    throw new NExecutionException(NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_2);
                 }
                 return;
             }
@@ -145,15 +145,15 @@ public class HistoryCommand extends NShellBuiltinDefault {
                         shistory.clear();
                         shistory.load();
                     } else {
-                        shistory.load(NPath.of(options.sval, session).toAbsolute(NLocations.of(session).getWorkspaceLocation()));
+                        shistory.load(NPath.of(options.sval).toAbsolute(NLocations.of().getWorkspaceLocation()));
                     }
                 } catch (IOException ex) {
-                    throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_2);
+                    throw new NExecutionException(NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_2);
                 }
                 return;
             }
             default: {
-                throw new NUnsupportedArgumentException(session, NMsg.ofC("unsupported %s", String.valueOf(options.action)));
+                throw new NUnsupportedArgumentException(NMsg.ofC("unsupported %s", String.valueOf(options.action)));
             }
         }
     }

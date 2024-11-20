@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 
 import java.io.*;
 import java.util.Arrays;
@@ -17,13 +17,15 @@ public class NanoDBDefaultIndex<T> extends NanoDBAbstractIndex<T> {
     private DBIndexValueStoreFactory storeFactory;
     private File file;
     private Class<T> keyType;
+    private NWorkspace workspace;
 
-    public NanoDBDefaultIndex(Class<T> keyType,NanoDBSerializer<T> ser, DBIndexValueStoreFactory storeFactory, Map<T, DBIndexValueStore> index, File file) {
+    public NanoDBDefaultIndex(NWorkspace workspace,Class<T> keyType, NanoDBSerializer<T> ser, DBIndexValueStoreFactory storeFactory, Map<T, DBIndexValueStore> index, File file) {
         super(ser);
         this.keyType = keyType;
         this.index = index;
         this.storeFactory = storeFactory;
         this.file = file;
+        this.workspace = workspace;
     }
 
     public File getFile() {
@@ -31,64 +33,64 @@ public class NanoDBDefaultIndex<T> extends NanoDBAbstractIndex<T> {
     }
 
     @Override
-    public void load(NSession session) {
+    public void load() {
         if (file.exists()) {
-            load(file,session);
+            load(file);
         }
     }
 
     @Override
-    public void flush(NSession session) {
+    public void flush() {
         file.getParentFile().mkdirs();
         try (OutputStream out = new FileOutputStream(file)) {
-            store(new NanoDBDefaultOutputStream(out,session),session);
+            store(new NanoDBDefaultOutputStream(out,workspace));
         } catch (IOException e) {
-            throw new NIOException(session,e);
+            throw new NIOException(e);
         }
     }
 
     @Override
-    public void put(T s, long position, NSession session) {
+    public void put(T s, long position) {
         DBIndexValueStore store = index.get(s);
         if (store == null) {
             store = storeFactory.create(this, s);
             index.put(s, store);
         }
-        store.add(position,session);
+        store.add(position);
 
     }
 
     @Override
-    public LongStream get(T s, NSession session) {
+    public LongStream get(T s) {
         DBIndexValueStore store = index.get(s);
-        return store == null ? Arrays.stream(new long[0]) : store.stream(session);
+        return store == null ? Arrays.stream(new long[0]) : store.stream();
     }
 
     @Override
-    public void clear(NSession session) {
+    public void clear() {
         index.clear();
     }
 
     @Override
-    public Stream<T> findAll(NSession session) {
+    public Stream<T> findAll() {
         return index.keySet().stream();
     }
 
-    public void storeKey(T k, NanoDBOutputStream dos, NSession session) throws IOException {
-        ser.write(k, dos, session);
+    public void storeKey(T k, NanoDBOutputStream dos) throws IOException {
+        ser.write(k, dos);
     }
 
 
-    public void store(NanoDBOutputStream dos, NSession session) {
+    public void store(NanoDBOutputStream dos) {
         try {
             dos.writeUTF(NANODB_INDEX_0_8_1);
             dos.writeLong(index.size());
             for (Map.Entry<T, DBIndexValueStore> e : index.entrySet()) {
-                storeKey(e.getKey(), dos, session);
+                storeKey(e.getKey(), dos);
                 DBIndexValueStore store = e.getValue();
                 boolean mem = store.isMem();
                 if (mem) {
-                    long[] pos = store.stream(session).toArray();
+                    long[] pos = store.stream().toArray();
                     dos.writeByte(0);
                     dos.writeInt(pos.length);
                     for (long po : pos) {
@@ -96,26 +98,26 @@ public class NanoDBDefaultIndex<T> extends NanoDBAbstractIndex<T> {
                     }
                 } else {
                     dos.writeByte(1);
-                    store.flush(session);
+                    store.flush();
                 }
             }
             dos.flush();
         } catch (IOException ex) {
-            throw new NIOException(session,ex);
+            throw new NIOException(ex);
         }
     }
 
-    public void load(NanoDBInputStream in, NSession session) {
+    public void load(NanoDBInputStream in) {
         try {
             String header = in.readUTF();
             if (!NANODB_INDEX_0_8_1.equals(header)) {
-                throw new NIOException(session, NMsg.ofC("unsupported index file %s",header));
+                throw new NIOException(NMsg.ofC("unsupported index file %s",header));
             }
             long r = in.readLong();
             index = new HashMap<T, DBIndexValueStore>(r <= 10 ? 10 : (int) r);
 
             for (long i = 0; i < r; i++) {
-                T o = readKey(in,session);
+                T o = readKey(in);
                 byte type = in.readByte();
                 if (type == 0 /**in  memory **/) {
                     int len = in.readInt();
@@ -131,27 +133,27 @@ public class NanoDBDefaultIndex<T> extends NanoDBAbstractIndex<T> {
                 }
             }
         } catch (IOException ex) {
-            throw new NIOException(session,ex);
+            throw new NIOException(ex);
         }
     }
 
-    protected T readKey(NanoDBInputStream in, NSession session) throws IOException {
-        return ser.read(in, keyType, session);
+    protected T readKey(NanoDBInputStream in) throws IOException {
+        return ser.read(in, keyType);
     }
 
-    public void store(File stream, NSession session) throws IOException {
+    public void store(File stream) throws IOException {
         try (OutputStream out = new FileOutputStream(stream)) {
-            store(new NanoDBDefaultOutputStream(out,session),session);
+            store(new NanoDBDefaultOutputStream(out,workspace));
         }
     }
 
 
 
-    public void load(File stream, NSession session) {
+    public void load(File stream) {
         try (InputStream out = new FileInputStream(stream)) {
-            load(new NanoDBDefaultInputStream(out,session),session);
+            load(new NanoDBDefaultInputStream(out,workspace));
         } catch (IOException ex) {
-            throw new NIOException(session,ex);
+            throw new NIOException(ex);
         }
     }
 

@@ -44,34 +44,31 @@ public class NPushException extends NException {
     /**
      * Constructs a new NutsPushException exception
      *
-     * @param session workspace
-     * @param id      artifact id
+     * @param id artifact id
      */
-    public NPushException(NSession session, NId id) {
-        this(session, id, null, null);
+    public NPushException(NId id) {
+        this(id, null, null);
     }
 
     /**
      * Constructs a new NutsPushException exception
      *
-     * @param session workspace
      * @param id      artifact id
      * @param message message
      */
-    public NPushException(NSession session, NId id, NMsg message) {
-        this(session, id, message, null);
+    public NPushException(NId id, NMsg message) {
+        this(id, message, null);
     }
 
     /**
      * Constructs a new NutsPushException exception
      *
-     * @param session workspace
      * @param id      artifact id
      * @param message message
      * @param cause   cause
      */
-    public NPushException(NSession session, NId id, NMsg message, Throwable cause) {
-        super(session, message == null ? NMsg.ofC("unable to push %s", id == null ? "<null>" : id) : message, cause);
+    public NPushException(NId id, NMsg message, Throwable cause) {
+        super(message == null ? NMsg.ofC("unable to push %s", id == null ? "<null>" : id) : message, cause);
         this.id = id;
     }
 

@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.runtime.standalone.io.outputstream.OutputHelper;
 import net.thevpc.nuts.runtime.standalone.text.parser.AbstractNTextNodeParserDefaults;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.*;
@@ -11,8 +10,7 @@ public class FormatOutputStreamSupport {
     private NTextNodeWriter nodeWriter;
     private NTextParser parser;
     private boolean formatEnabled = true;
-    private NSession session;
-    private NWorkspace ws;
+    private NWorkspace workspace;
     private NTextTransformConfig writeConfiguration = new NTextTransformConfig();
     private NTextVisitor nutsTextNodeVisitor = node -> {
         nodeWriter.writeNode(node);
@@ -21,11 +19,10 @@ public class FormatOutputStreamSupport {
     public FormatOutputStreamSupport() {
     }
 
-    public FormatOutputStreamSupport(NPrintStream rawOutput, NSession session, NSystemTerminalBase term, boolean filtered) {
-        this.session = session;
-        this.ws = session.getWorkspace();
-        this.parser = AbstractNTextNodeParserDefaults.createDefault(session);
-        this.nodeWriter = new NTextNodeWriterRenderer(rawOutput, session, term)
+    public FormatOutputStreamSupport(NPrintStream rawOutput, NWorkspace workspace, NSystemTerminalBase term, boolean filtered) {
+        this.workspace = workspace;
+        this.parser = AbstractNTextNodeParserDefaults.createDefault(workspace);
+        this.nodeWriter = new NTextNodeWriterRenderer(rawOutput, workspace, term)
                 .setWriteConfiguration(writeConfiguration.setFiltered(false));
         this.writeConfiguration.setFiltered(filtered);
     }
@@ -35,7 +32,7 @@ public class FormatOutputStreamSupport {
     }
 
     public FormatOutputStreamSupport setParser(NTextParser parser) {
-        this.parser = parser == null ? NTexts.of(session).parser() : parser;
+        this.parser = parser == null ? NTexts.of().parser() : parser;
         return this;
     }
 

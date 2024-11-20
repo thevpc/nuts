@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.security;
 
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreSecurityUtils;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
@@ -14,18 +13,18 @@ public class DefaultNAuthenticationAgent extends AbstractNAuthenticationAgent {
     }
 
     @Override
-    protected char[] decryptChars(char[] data, String passphrase, NSession session) {
-        return CoreSecurityUtils.defaultDecryptChars(data, passphrase,session);
+    protected char[] decryptChars(char[] data, String passphrase) {
+        return CoreSecurityUtils.defaultDecryptChars(data, passphrase);
     }
 
     @Override
-    protected char[] encryptChars(char[] data, String passphrase, NSession session) {
-        return CoreSecurityUtils.defaultEncryptChars(data, passphrase,session);
+    protected char[] encryptChars(char[] data, String passphrase) {
+        return CoreSecurityUtils.defaultEncryptChars(data, passphrase);
     }
 
     @Override
-    protected char[] hashChars(char[] data, String passphrase, NSession session) {
-        return CoreSecurityUtils.defaultHashChars(data, passphrase,session);
+    protected char[] hashChars(char[] data, String passphrase) {
+        return CoreSecurityUtils.defaultHashChars(data, passphrase);
     }
 
 }

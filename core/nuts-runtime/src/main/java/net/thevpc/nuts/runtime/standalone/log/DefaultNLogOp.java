@@ -10,7 +10,6 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 
 public class DefaultNLogOp implements NLogOp {
-    private NSession session;
     private DefaultNLog logger;
     private Level level;
     private NLogVerb verb;
@@ -18,19 +17,11 @@ public class DefaultNLogOp implements NLogOp {
     private long time;
     private Supplier<NMsg> msgSupplier;
     private Throwable error;
+    private NWorkspace workspace;
 
-    public DefaultNLogOp(DefaultNLog logger) {
+    public DefaultNLogOp(NWorkspace workspace,DefaultNLog logger) {
         this.logger = logger;
-    }
-
-    public NSession getSession() {
-        return session;
-    }
-
-    @Override
-    public NLogOp session(NSession session) {
-        this.session = session;
-        return this;
+        this.workspace = workspace;
     }
 
     @Override
@@ -82,10 +73,7 @@ public class DefaultNLogOp implements NLogOp {
             if (msgSupplier != null) {
                 m = msgSupplier.get();
             }
-            NSession s=session;
-            if(s==null){
-                s=logger.getSession();
-            }
+            NSession s=workspace.createSession();
             NLogRecord record = new NLogRecord(
                     s,
                     level,

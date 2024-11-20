@@ -30,7 +30,7 @@ public class OutputStreamHelper implements OutputHelper {
             loopGard--;
         }
         if (rawOutput0 instanceof NOutputStreamTransparentAdapter) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("invalid rawOutput"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("invalid rawOutput"));
         }
     }
 
@@ -39,7 +39,7 @@ public class OutputStreamHelper implements OutputHelper {
         try {
             rawOutput0.write(b, offset, len);
         } catch (IOException ex) {
-            throw new NIOException(session,ex);
+            throw new NIOException(ex);
         }
     }
     //@Override
@@ -56,7 +56,7 @@ public class OutputStreamHelper implements OutputHelper {
             try {
                 rawOutput0.write(bb, 0, bb.length);
             } catch (IOException ex) {
-                throw new NIOException(session,ex);
+                throw new NIOException(ex);
             }
         }
     }

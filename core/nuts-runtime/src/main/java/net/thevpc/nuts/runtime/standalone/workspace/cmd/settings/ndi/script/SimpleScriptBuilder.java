@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.script;
 
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.NId;
 import net.thevpc.nuts.NSession;
@@ -19,8 +20,8 @@ public class SimpleScriptBuilder extends AbstractScriptBuilder {
     private BaseSystemNdi sndi;
     private List<String> lines=new ArrayList<>();
 
-    public SimpleScriptBuilder(NShellFamily shellFamily, String type, NId anyId, BaseSystemNdi sndi, NSession session) {
-        super(shellFamily,type, anyId,session);
+    public SimpleScriptBuilder(NShellFamily shellFamily, String type, NId anyId, BaseSystemNdi sndi, NWorkspace workspace) {
+        super(shellFamily,type, anyId,workspace);
         this.sndi = sndi;
     }
 
@@ -52,7 +53,7 @@ public class SimpleScriptBuilder extends AbstractScriptBuilder {
                 a.add(c);
             }
         } catch (IOException e) {
-            throw new NIOException(getSession(),e);
+            throw new NIOException(e);
         }
         return a;
 

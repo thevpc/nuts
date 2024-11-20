@@ -5,7 +5,7 @@ import net.thevpc.nuts.text.NTextStyle;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.thevpc.nuts.NSession;
+
 import net.thevpc.nuts.text.NTextStyles;
 
 public class NTextFormatThemeWrapper implements NTextFormatTheme {
@@ -21,24 +21,24 @@ public class NTextFormatThemeWrapper implements NTextFormatTheme {
     }
 
     @Override
-    public NTextStyles toBasicStyles(NTextStyles styles, NSession session) {
+    public NTextStyles toBasicStyles(NTextStyles styles) {
         NTextStyles ret = NTextStyles.PLAIN;
         if (styles != null) {
             for (NTextStyle style : styles) {
-                ret = ret.append(toBasicStyles(style,session));
+                ret = ret.append(toBasicStyles(style));
             }
         }
         return ret;
     }
 
-    public NTextStyles toBasicStyles(NTextStyle style, NSession session) {
+    public NTextStyles toBasicStyles(NTextStyle style) {
         if (style == null) {
             return NTextStyles.PLAIN;
         }
         if (style.getType().basic()) {
             return NTextStyles.of(style);
         }
-        NTextStyles t = other.toBasicStyles(NTextStyles.of(style), session);
+        NTextStyles t = other.toBasicStyles(NTextStyles.of(style));
         if (t == null) {
             return NTextStyles.PLAIN;
         }

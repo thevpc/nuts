@@ -21,17 +21,17 @@ import java.util.zip.ZipInputStream;
 public class NPomIdResolver {
 
     //    private NutsWorkspace ws;
-    private NSession session;
+    private NWorkspace workspace;
 
-    public NPomIdResolver(NSession session) {
-        this.session = session;
+    public NPomIdResolver(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
-    public NPomId[] resolvePomIds(NPath baseUrl, NSession session) {
-        return resolvePomIds(baseUrl, null, session);
+    public NPomId[] resolvePomIds(NPath baseUrl) {
+        return resolvePomIds(baseUrl, null);
     }
 
-    private NPomId[] resolvePomIdsFromTargetClasses(URLPart aa, String referenceResourcePath, NSession session) {
+    private NPomId[] resolvePomIdsFromTargetClasses(URLPart aa, String referenceResourcePath) {
         String basePath = aa.getPath().substring(0, aa.getPath().length() - (referenceResourcePath == null ? 0 : referenceResourcePath.length()));
         if (!basePath.endsWith("/") && !basePath.endsWith("\\")) {
             basePath += "/";
@@ -42,9 +42,9 @@ public class NPomIdResolver {
             String s2 = basePath.substring(0, basePath.length() - "/target/classes".length()) + "pom.xml";
             //this is most likely to be a maven project
             try {
-                all.add(new NPomXmlParser(session).parse(NPath.of(s2, session).toURL().get(), session).getPomId());
+                all.add(new NPomXmlParser().parse(NPath.of(s2).toURL().get()).getPomId());
             } catch (Exception ex) {
-                NLogOp.of(NPomXmlParser.class, session)
+                NLogOp.of(NPomXmlParser.class)
                         .verb(NLogVerb.WARNING)
                         .level(Level.FINEST)
                         .log(NMsg.ofC("failed to parse pom file %s : %s", s2, ex));
@@ -54,22 +54,22 @@ public class NPomIdResolver {
     }
 
 
-    private NPomId[] resolvePomIdsFromMetaInfMavenByRef(URLPart aa, String referenceResourcePath, NSession session) {
+    private NPomId[] resolvePomIdsFromMetaInfMavenByRef(URLPart aa, String referenceResourcePath) {
         String basePath = aa.getPath().substring(0, aa.getPath().length() - (referenceResourcePath == null ? 0 : referenceResourcePath.length()));
         if (!basePath.endsWith("/") && !basePath.endsWith("\\")) {
             basePath += "/";
         }
         final URLPart p = aa.rootSibling(basePath +"META-INF/maven");
-        return resolvePomIdsFromMetaInfMaven0(p, session);
+        return resolvePomIdsFromMetaInfMaven0(p);
     }
 
-    private NPomId[] resolvePomIdsFromMetaInfMaven0(URLPart p, NSession session) {
+    private NPomId[] resolvePomIdsFromMetaInfMaven0(URLPart p) {
         List<NPomId> all = new ArrayList<NPomId>();
-        URLPart[] children = p.getChildren(false, true, new MvnPomPropsURLFilter(),session);
+        URLPart[] children = p.getChildren(false, true, new MvnPomPropsURLFilter());
         for (URLPart url : children) {
             if (url != null) {
                 Properties prop = new Properties();
-                try (InputStream is=url.getInputStream(session)){
+                try (InputStream is=url.getInputStream()){
                     prop.load(is);
                 } catch (IOException e) {
                     //
@@ -85,30 +85,30 @@ public class NPomIdResolver {
         return all.toArray(new NPomId[0]);
     }
 
-    private NPomId[] resolvePomIdsFromMetaInfMavenAsRoot(URLPart aa, NSession session) {
+    private NPomId[] resolvePomIdsFromMetaInfMavenAsRoot(URLPart aa) {
 //        if (aa.len() == 2
 //                && aa.parent().getType() == URLPart.Type.JAR
 //                && aa.getType() == URLPart.Type.FS_FILE
 //        ) {
             URLPart p = aa.rootSibling("/META-INF/maven");
-            return resolvePomIdsFromMetaInfMaven0(p, session);
+            return resolvePomIdsFromMetaInfMaven0(p);
 //        }
 //        return new NPomId[0];
     }
 
-    public NPomId[] resolvePomIds(NPath baseUrl, String referenceResourcePath, NSession session) {
+    public NPomId[] resolvePomIds(NPath baseUrl, String referenceResourcePath) {
         final URLPart aa = URLPart.of(baseUrl.toURL().get());
         NPomId[] result;
         //List<URL> pomProperties = NCollections.list(Thread.currentThread().getContextClassLoader().getResources("META-INF/maven./pom.properties"));
-        result = resolvePomIdsFromMetaInfMavenByRef(aa, referenceResourcePath, session);
+        result = resolvePomIdsFromMetaInfMavenByRef(aa, referenceResourcePath);
         if (result.length > 0) {
             return result;
         }
-        result = resolvePomIdsFromMetaInfMavenAsRoot(aa, session);
+        result = resolvePomIdsFromMetaInfMavenAsRoot(aa);
         if (result.length > 0) {
             return result;
         }
-        result = resolvePomIdsFromTargetClasses(aa, referenceResourcePath, session);
+        result = resolvePomIdsFromTargetClasses(aa, referenceResourcePath);
         if (result.length > 0) {
             return result;
         }
@@ -129,10 +129,10 @@ public class NPomIdResolver {
             final Enumeration<URL> r = clazz.getClassLoader().getResources(n);
             ArrayList<URL> list = Collections.list(r);
             for (URL url : list) {
-                all.addAll(Arrays.asList(resolvePomIds(NPath.of(url, session), n, session)));
+                all.addAll(Arrays.asList(resolvePomIds(NPath.of(url), n)));
             }
         } catch (IOException ex) {
-            NLogOp.of(NPomXmlParser.class, session)
+            NLogOp.of(NPomXmlParser.class)
                     .verb(NLogVerb.WARNING)
                     .level(Level.FINEST)
                     .log(NMsg.ofC("failed to parse class %s : %s", clazz.getName(), ex));
@@ -153,7 +153,7 @@ public class NPomIdResolver {
     public NPomId resolvePomId(Class clazz, NPomId defaultValue) {
         NPomId[] pomIds = resolvePomIds(clazz);
         if (pomIds.length > 1) {
-            NLogOp.of(NPomXmlParser.class, session)
+            NLogOp.of(NPomXmlParser.class)
                     .verb(NLogVerb.WARNING)
                     .level(Level.FINEST)
                     .log(NMsg.ofC(

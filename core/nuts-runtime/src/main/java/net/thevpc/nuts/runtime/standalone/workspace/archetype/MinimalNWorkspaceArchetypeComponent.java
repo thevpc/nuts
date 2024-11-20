@@ -28,14 +28,17 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.log.NLog;
 
 /**
  * Created by vpc on 1/23/17.
  */
 @NComponentScope(NScopeType.WORKSPACE)
 public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeComponent {
-    private NLog LOG;
+    private NWorkspace workspace;
+
+    public MinimalNWorkspaceArchetypeComponent(NWorkspace workspace) {
+        this.workspace = workspace;
+    }
 
     @Override
     public String getName() {
@@ -43,20 +46,20 @@ public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
     }
 
     @Override
-    public void initializeWorkspace(NSession session) {
-        this.LOG = NLog.of(MinimalNWorkspaceArchetypeComponent.class, session);
+    public void initializeWorkspace() {
+        NSession session = workspace.currentSession();
 //        NutsWorkspace ws = session.getWorkspace();
 
-        DefaultNConfigs rm = (DefaultNConfigs) NConfigs.of(session);
+        DefaultNConfigs rm = (DefaultNConfigs) NConfigs.of();
 //        defaults.put(NutsConstants.Names.DEFAULT_REPOSITORY_NAME, null);
-        NRepositoryLocation[] br = rm.getModel().resolveBootRepositoriesList(session).resolve(
-                new NRepositoryLocation[0], NRepositoryDB.of(session));
-        NRepositories repos = NRepositories.of(session);
+        NRepositoryLocation[] br = rm.getModel().resolveBootRepositoriesList().resolve(
+                new NRepositoryLocation[0], NRepositoryDB.of());
+        NRepositories repos = NRepositories.of();
         for (NRepositoryLocation s : br) {
             repos.addRepository(s.toString());
         }
         //simple rights for minimal utilization
-        NUpdateUserCmd uu = NWorkspaceSecurityManager.of(session)
+        NUpdateUserCmd uu = NWorkspaceSecurityManager.of()
                 .updateUser(NConstants.Users.ANONYMOUS);
 //        for (String right : NutsConstants.Rights.RIGHTS) {
 //            if (!NutsConstants.Rights.ADMIN.equals(right)) {
@@ -67,13 +70,14 @@ public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
     }
 
     @Override
-    public void startWorkspace(NSession session) {
-        NBootManager boot = NBootManager.of(session);
+    public void startWorkspace() {
+        NSession session = workspace.currentSession();
+        NBootManager boot = NBootManager.of();
 //        boolean initializePlatforms = boot.getBootOptions().getInitPlatforms().ifEmpty(false).get(session);
 //        boolean initializeJava = boot.getBootOptions().getInitJava().ifEmpty(initializePlatforms).get(session);
-        boolean initializeScripts = boot.getBootOptions().getInitScripts().ifEmpty(true).get(session);
-        boolean initializeLaunchers = boot.getBootOptions().getInitLaunchers().ifEmpty(true).get(session);
-        Boolean installCompanions = NBootManager.of(session).getBootOptions().getInstallCompanions().orElse(false);
+        boolean initializeScripts = boot.getBootOptions().getInitScripts().ifEmpty(true).get();
+        boolean initializeLaunchers = boot.getBootOptions().getInitLaunchers().ifEmpty(true).get();
+        Boolean installCompanions = NBootManager.of().getBootOptions().getInstallCompanions().orElse(false);
 
 //        if (initializeJava) {
 //            NWorkspaceUtils.of(session).installAllJVM();
@@ -81,15 +85,15 @@ public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 //            NWorkspaceUtils.of(session).installCurrentJVM();
 //        }
         if (initializeScripts || initializeLaunchers || installCompanions) {
-            NId api = NFetchCmd.of(session).setId(session.getWorkspace().getApiId()).setFailFast(false).getResultId();
+            NId api = NFetchCmd.of().setId(session.getWorkspace().getApiId()).setFailFast(false).getResultId();
             if (api != null) {
                 if (initializeScripts || initializeLaunchers) {
                     //api would be null if running in fatjar and no internet/maven is available
-                    NWorkspaceUtils.of(session).installScriptsAndLaunchers(initializeLaunchers);
+                    NWorkspaceUtils.of(session.getWorkspace()).installScriptsAndLaunchers(initializeLaunchers);
                 }
                 if (installCompanions) {
                     if (api != null) {
-                        NWorkspaceUtils.of(session).installCompanions();
+                        NWorkspaceUtils.of(session.getWorkspace()).installCompanions();
                     }
                 }
             }

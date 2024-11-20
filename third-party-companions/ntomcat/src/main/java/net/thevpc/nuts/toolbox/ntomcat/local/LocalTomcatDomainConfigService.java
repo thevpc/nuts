@@ -41,7 +41,7 @@ public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase {
         if (b == null) {
             b = tomcat.getCatalinaHome();
         }
-        NPath p = config.getDeployPath()==null ?null: NPath.of(config.getDeployPath(), getSession());
+        NPath p = config.getDeployPath()==null ?null: NPath.of(config.getDeployPath());
         if (p == null) {
             p = tomcat.getDefaulDeployFolder(name);
         }
@@ -63,7 +63,7 @@ public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase {
         return this;
     }
     public NString getBracketsPrefix(String str) {
-        return NTexts.of(getSession()).ofBuilder()
+        return NTexts.of().ofBuilder()
                 .append("[")
                 .append(str, NTextStyle.primary5())
                 .append("]");
@@ -71,7 +71,7 @@ public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase {
 
     public LocalTomcatDomainConfigService print(NPrintStream out) {
         NSession session = getSession();
-        NElements.of(session).json().setValue(getConfig()).print(out);
+        NElements.of().json().setValue(getConfig()).print(out);
         return this;
     }
 

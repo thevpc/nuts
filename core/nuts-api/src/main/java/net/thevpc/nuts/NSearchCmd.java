@@ -29,6 +29,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NComparator;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStream;
 
 import java.time.Instant;
@@ -47,9 +48,37 @@ import java.util.Set;
  */
 public interface NSearchCmd extends NWorkspaceCmd {
 
-    static NSearchCmd of(NSession session) {
-        return NExtensions.of(session).createComponent(NSearchCmd.class).get();
+    static NSearchCmd of() {
+        return NExtensions.of().createComponent(NSearchCmd.class).get();
     }
+
+    NOptional<NFetchStrategy> getFetchStrategy();
+
+    NOptional<Boolean> getTransitive();
+
+    NSearchCmd setFetchStrategy(NFetchStrategy fetchStrategy);
+
+    NSearchCmd setTransitive(Boolean transitive);
+
+    /**
+     * return expired date/time or zero if not set. Expire time is used to
+     * expire any cached file that was downloaded before the given date/time
+     *
+     * @return expired date/time or zero
+     * @since 0.8.0
+     */
+    NOptional<Instant> getExpireTime();
+
+    /**
+     * set expire instant. Expire time is used to expire any cached file that
+     * was downloaded before the given date/time.
+     *
+     * @param value value
+     * @return {@code this} instance
+     * @since 0.8.0
+     */
+    NSearchCmd setExpireTime(Instant value);
+
 
     ////////////////////////////////////////////////////////
     // Setters
@@ -920,23 +949,6 @@ public interface NSearchCmd extends NWorkspaceCmd {
      * @since v0.5.5
      */
     NSearchCmd setDefaultVersions(Boolean enable);
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
-    NSearchCmd setSession(NSession session);
-
-    /**
-     * copy session
-     *
-     * @return {@code this} instance
-     */
-    @Override
-    NSearchCmd copySession();
 
     /**
      * configure the current command with the given arguments. This is an

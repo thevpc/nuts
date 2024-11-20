@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.NSession;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -16,13 +16,13 @@ public class NanoDBTableDefinitionBuilderFromBean<T> {
     private final Set<String> indexFields = new LinkedHashSet<>();
     private boolean nullable=true;
     private String name;
-    private NSession session;
+    private NWorkspace workspace;
 
 
-    public NanoDBTableDefinitionBuilderFromBean(Class<T> cls, NanoDB db, NSession session) {
+    public NanoDBTableDefinitionBuilderFromBean(Class<T> cls, NanoDB db, NWorkspace workspace) {
         this.cls = cls;
         this.db = db;
-        this.session = session;
+        this.workspace = workspace;
     }
     private Map<String, Field> getCurrFields(){
         if(currFields==null){
@@ -73,7 +73,7 @@ public class NanoDBTableDefinitionBuilderFromBean<T> {
         if(NBlankable.isBlank(name)){
             name=cls.getSimpleName();
         }
-        NanoDBTableFile t = db.findTable(name,session);
+        NanoDBTableFile t = db.findTable(name);
         if(t!=null){
             return t;
         }
@@ -82,7 +82,7 @@ public class NanoDBTableDefinitionBuilderFromBean<T> {
 
     public NanoDBTableFile<T> create(){
         NanoDBTableDefinition<T> t = build();
-        return db.createTable(t,session);
+        return db.createTable(t);
     }
 
     public NanoDBTableDefinition<T> build(){

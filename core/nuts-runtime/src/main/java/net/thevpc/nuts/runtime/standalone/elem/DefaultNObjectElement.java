@@ -15,8 +15,8 @@ public class DefaultNObjectElement extends AbstractNObjectElement {
     private Map<NElement, List<Integer>> indexes = new HashMap<>();
     private NElements elements;
 
-    public DefaultNObjectElement(List<NElementEntry> values, NSession session) {
-        super(session);
+    public DefaultNObjectElement(List<NElementEntry> values, NWorkspace workspace) {
+        super(workspace);
         if (values != null) {
             for (NElementEntry e : values) {
                 NElement key = e.getKey();
@@ -37,7 +37,7 @@ public class DefaultNObjectElement extends AbstractNObjectElement {
     @Override
     public NOptional<NElement> get(String s) {
         if (elements == null) {
-            elements = NElements.of(session);
+            elements = NElements.of();
         }
         NPrimitiveElement newKey = elements.ofString(s);
         return get(newKey);
@@ -76,7 +76,7 @@ public class DefaultNObjectElement extends AbstractNObjectElement {
 
     @Override
     public NObjectElementBuilder builder() {
-        return NElements.of(session).ofObject().set(this);
+        return NElements.of().ofObject().set(this);
     }
 
     @Override
@@ -124,6 +124,6 @@ public class DefaultNObjectElement extends AbstractNObjectElement {
         if(index>=0 && index<values.size()) {
             return NOptional.of(values.get(index));
         }
-        return NOptional.ofEmpty(ss-> NMsg.ofC("invalid object at %s",index));
+        return NOptional.ofEmpty(()-> NMsg.ofC("invalid object at %s",index));
     }
 }

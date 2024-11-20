@@ -3,7 +3,6 @@ package net.thevpc.nuts.lib.common.iter;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.NSession;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -22,12 +21,12 @@ public class FlatMapIterator<TT, RR> extends NIteratorBase<RR> {
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return NElements.of(session)
+    public NElement describe() {
+        return NElements.of()
                 .ofObject()
                 .set("type","FlatMap")
-                .set("base", NEDesc.describeResolveOrDestruct(from, session))
-                .set("mapper", NEDesc.describeResolveOrDestruct(converter, session))
+                .set("base", NEDesc.describeResolveOrDestruct(from))
+                .set("mapper", NEDesc.describeResolveOrDestruct(converter))
                 .build()
                 ;
     }

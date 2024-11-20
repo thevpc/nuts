@@ -27,7 +27,7 @@ public class DerbyUtils {
     }
 
     public static RunningDerby[] getRunningInstances(NSession session) {
-        return NPs.of(session)
+        return NPs.of()
                 .type("java").getResultList()
                 .stream().filter((p) -> p.getName().equals("org.apache.derby.drda.NetworkServerControl"))
                 .map(x -> new RunningDerby(x, session)).toArray(RunningDerby[]::new);

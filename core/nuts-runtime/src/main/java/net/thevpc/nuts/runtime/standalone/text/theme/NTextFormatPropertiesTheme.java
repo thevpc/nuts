@@ -20,15 +20,16 @@ import java.util.UUID;
 
 public class NTextFormatPropertiesTheme implements NTextFormatTheme {
     private final Properties props = new Properties();
-    private final NSession session;
+    private final NWorkspace workspace;
 
-    public NTextFormatPropertiesTheme(String name, ClassLoader cls, NSession session) {
-        this.session = session;
+    public NTextFormatPropertiesTheme(String name, ClassLoader cls, NWorkspace workspace) {
+        this.workspace = workspace;
+        NSession session = workspace.currentSession();
         if (name.indexOf('/') >= 0 || name.indexOf('\\') >= 0) {
-            try (InputStream is = NPath.of(name, session).getInputStream()) {
+            try (InputStream is = NPath.of(name).getInputStream()) {
                 props.load(is);
             } catch (IOException e) {
-                throw new NIllegalArgumentException(session, NMsg.ofC("invalid theme: %s", name), e);
+                throw new NIllegalArgumentException(NMsg.ofC("invalid theme: %s", name), e);
             }
         } else {
             if (cls == null) {
@@ -40,7 +41,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
                     InputStream inStream = null;
                     inStream = u.openStream();
                     if (inStream == null) {
-                        throw new NIllegalArgumentException(session, NMsg.ofC("invalid theme: %s", name));
+                        throw new NIllegalArgumentException(NMsg.ofC("invalid theme: %s", name));
                     }
                     try {
                         props.load(inStream);
@@ -48,21 +49,21 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
                         inStream.close();
                     }
                 } catch (IOException e) {
-                    throw new NIOException(session, e);
+                    throw new NIOException(e);
                 }
             } else {
-                NPath themeFile = NLocations.of(session).getStoreLocation(
-                        NId.ofRuntime("SHARED").get(session),
+                NPath themeFile = NLocations.of().getStoreLocation(
+                        NId.ofRuntime("SHARED").get(),
                         NStoreType.CONF
                 ).resolve("themes").resolve(name);
                 if (themeFile.isRegularFile()) {
                     try (InputStream inStream = themeFile.getInputStream()) {
                         props.load(inStream);
                     } catch (IOException e) {
-                        throw new NIllegalArgumentException(session, NMsg.ofC("invalid theme: %s", name), e);
+                        throw new NIllegalArgumentException(NMsg.ofC("invalid theme: %s", name), e);
                     }
                 } else {
-                    throw new NIllegalArgumentException(session, NMsg.ofC("invalid theme: %s", name));
+                    throw new NIllegalArgumentException(NMsg.ofC("invalid theme: %s", name));
                 }
             }
         }
@@ -79,11 +80,11 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
     }
 
     @Override
-    public NTextStyles toBasicStyles(NTextStyles styles, NSession session) {
+    public NTextStyles toBasicStyles(NTextStyles styles) {
         NTextStyles ret = NTextStyles.PLAIN;
         if (styles != null) {
             for (NTextStyle style : styles) {
-                ret = ret.append(toBasicStyles(style, session));
+                ret = ret.append(toBasicStyles(style));
             }
         }
         return ret;
@@ -134,13 +135,14 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
         return s;
     }
 
-    public NTextStyles toBasicStyles(NTextStyle style, NSession session) {
-        return toBasicStyles(style, session, 20);
+    public NTextStyles toBasicStyles(NTextStyle style) {
+        return toBasicStyles(style, 20);
     }
 
-    public NTextStyles toBasicStyles(NTextStyle style, NSession session, int maxLoop) {
+    public NTextStyles toBasicStyles(NTextStyle style, int maxLoop) {
         if (maxLoop <= 0) {
-            throw new NIllegalArgumentException(session,
+            NSession session = workspace.currentSession();
+            throw new NIllegalArgumentException(
                     NMsg.ofC("invalid ntf theme for %s(%s). infinite loop", style.getType(), style.getVariant()));
         }
         if (style.getType().basic()) {
@@ -152,13 +154,13 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
         }
         NTextStyles ret = NTextStyles.PLAIN;
         for (String v : s.split(",")) {
-            NTextStyles ss = toBasicStyles(v, style.getVariant(), session, maxLoop - 1);
+            NTextStyles ss = toBasicStyles(v, style.getVariant(), maxLoop - 1);
             ret = ret.append(ss);
         }
         return ret;
     }
 
-    public NTextStyles toBasicStyles(String v, int defaultVariant, NSession session, int maxLoop) {
+    public NTextStyles toBasicStyles(String v, int defaultVariant, int maxLoop) {
         v = v.trim();
         int a = v.indexOf('(');
         String n = "";
@@ -185,7 +187,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
                     if (maxLoop < 0) {
                         return null;
                     }
-                    return toBasicStyles(z, defaultVariant, session, maxLoop - 1);
+                    return toBasicStyles(z, defaultVariant, maxLoop - 1);
                 }
                 return NTextStyles.PLAIN;
             }
@@ -209,7 +211,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
                 if (ii == null) {
                     ii = getVarValAsInt(n);
                 }
-                return toBasicStyles(NTextStyle.of(st, ii), session, maxLoop);
+                return toBasicStyles(NTextStyle.of(st, ii), maxLoop);
             }
         }
     }

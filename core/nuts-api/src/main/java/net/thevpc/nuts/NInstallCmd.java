@@ -44,8 +44,8 @@ import java.util.function.Predicate;
  * @since 0.5.4
  */
 public interface NInstallCmd extends NWorkspaceCmd {
-    static NInstallCmd of(NSession session) {
-        return NExtensions.of(session).createComponent(NInstallCmd.class).get();
+    static NInstallCmd of() {
+        return NExtensions.of().createComponent(NInstallCmd.class).get();
     }
 
     /**
@@ -276,23 +276,6 @@ public interface NInstallCmd extends NWorkspaceCmd {
      * @return installation result
      */
     NStream<NDefinition> getResult();
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
-    NInstallCmd setSession(NSession session);
-
-    /**
-     * copy session
-     *
-     * @return {@code this} instance
-     */
-    @Override
-    NInstallCmd copySession();
 
     /**
      * configure the current command with the given arguments. This is an

@@ -8,11 +8,11 @@ import java.io.InputStream;
 
 public interface NIdPathIteratorModel {
 
-    void undeploy(NId id, NSession session) throws NExecutionException;
+    void undeploy(NId id) throws NExecutionException;
 
     boolean isDescFile(NPath pathname);
 
-    NDescriptor parseDescriptor(NPath pathname, InputStream in, NFetchMode fetchMode, NRepository repository, NSession session, NPath rootURL) throws IOException;
+    NDescriptor parseDescriptor(NPath pathname, InputStream in, NFetchMode fetchMode, NRepository repository, NPath rootURL) throws IOException;
 
-    NId parseId(NPath pathname, NPath rootPath, NIdFilter filter, NRepository repository, NSession session) throws IOException;
+    NId parseId(NPath pathname, NPath rootPath, NIdFilter filter, NRepository repository) throws IOException;
 }

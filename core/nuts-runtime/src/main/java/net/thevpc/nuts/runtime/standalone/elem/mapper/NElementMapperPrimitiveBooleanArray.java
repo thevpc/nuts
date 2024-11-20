@@ -27,10 +27,10 @@ public class NElementMapperPrimitiveBooleanArray implements NElementMapper<boole
     @Override
     public boolean[] createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
         NSession session = context.getSession();
-        NArrayElement earr = o.asArray().get(session);
+        NArrayElement earr = o.asArray().get();
         boolean[] arr = new boolean[earr.size()];
         for (int i = 0; i < arr.length; i++) {
-            arr[i] = (boolean) context.elementToObject(earr.get(i).get(session), boolean.class);
+            arr[i] = (boolean) context.elementToObject(earr.get(i).get(), boolean.class);
         }
         return arr;
     }

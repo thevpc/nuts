@@ -5,18 +5,18 @@ import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDB;
 import net.thevpc.nuts.runtime.standalone.repository.index.NanoDBNIdSerializer;
 
 public class InstallLogDB {
-    static NanoDB of(NSession session) {
-        synchronized (session.getWorkspace()) {
-            NanoDB o = (NanoDB) NEnvs.of(session).getProperties().get(NanoDB.class.getName());
+    static NanoDB of(NWorkspace workspace) {
+        synchronized (workspace) {
+            NanoDB o = (NanoDB) NEnvs.of().getProperties().get(NanoDB.class.getName());
             if (o == null) {
                 o = new NanoDB(
-                                NLocations.of(session).getStoreLocation(
-                                        session.getWorkspace().getApiId().builder().setVersion("SHARED").build(),
+                        NLocations.of().getStoreLocation(
+                                        workspace.getApiId().builder().setVersion("SHARED").build(),
                                         NStoreType.VAR
                                 ).resolve("install-log").toFile().get()
                 );
-                o.getSerializers().setSerializer(NId.class, () -> new NanoDBNIdSerializer(session));
-                NEnvs.of(session).getProperties().put(NanoDB.class.getName(), o);
+                o.getSerializers().setSerializer(NId.class, () -> new NanoDBNIdSerializer(workspace));
+                NEnvs.of().getProperties().put(NanoDB.class.getName(), o);
             }
             return o;
         }

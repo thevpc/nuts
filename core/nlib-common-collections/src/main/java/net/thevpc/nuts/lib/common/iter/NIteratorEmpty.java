@@ -2,7 +2,6 @@ package net.thevpc.nuts.lib.common.iter;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.NSession;
 
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -36,7 +35,7 @@ public class NIteratorEmpty<E> extends NIteratorBase<E> {
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return NElements.of(session).ofString("empty");
+    public NElement describe() {
+        return NElements.of().ofString("empty");
     }
 }

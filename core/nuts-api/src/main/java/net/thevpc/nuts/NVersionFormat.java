@@ -38,18 +38,9 @@ import java.util.Map;
  */
 public interface NVersionFormat extends NFormat, NComponent {
 
-    static NVersionFormat of(NSession session) {
-       return NExtensions.of(session).createComponent(NVersionFormat.class).get();
+    static NVersionFormat of() {
+       return NExtensions.of().createComponent(NVersionFormat.class).get();
     }
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this instance}
-     */
-    @Override
-    NVersionFormat setSession(NSession session);
 
     @Override
     NVersionFormat setNtf(boolean ntf);

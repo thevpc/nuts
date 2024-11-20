@@ -208,7 +208,7 @@ public class BytesSizeFormat {
                             depth = -1;
                         }
                         if (depth <= 0 || depth > 9) {
-                            throw new NIllegalArgumentException(session, NMsg.ofC("invalid depth %s", depth));
+                            throw new NIllegalArgumentException(NMsg.ofC("invalid depth %s", depth));
                         }
                     }
                     case 'F': {
@@ -226,7 +226,7 @@ public class BytesSizeFormat {
                         break;
                     }
                     default: {
-                        throw new NIllegalArgumentException(session, NMsg.ofC("unsupported %s", c));
+                        throw new NIllegalArgumentException(NMsg.ofC("unsupported %s", c));
                     }
                 }
             }
@@ -488,7 +488,7 @@ public class BytesSizeFormat {
     }
 
     public NText formatText(long bytes, NSession session) {
-        NTextBuilder sb = NTextBuilder.of(session);
+        NTextBuilder sb = NTextBuilder.of();
         boolean neg = bytes < 0;
         long v = bytes < 0 ? -bytes : bytes;
         long r = v;
@@ -658,7 +658,7 @@ public class BytesSizeFormat {
         }
         if (sb.filteredText().length() == 0) {
             if (neg) {
-                sb.insert(0, NTexts.of(session).ofText("-"));
+                sb.insert(0, NTexts.of().ofText("-"));
             }
             if (low >= T) {
                 sb.append(formatLeft(0, 3),NTextStyle.number()).append(binaryPrefix ? "Ti" : "T");
@@ -672,7 +672,7 @@ public class BytesSizeFormat {
             }
         } else {
             if (neg) {
-                sb.insert(0, NTexts.of(session).ofText("-"));
+                sb.insert(0, NTexts.of().ofText("-"));
             }
         }
         return sb.toText();

@@ -170,5 +170,5 @@ public interface NDependency extends Serializable, NFormattable, NBlankable {
     Map<String, String> getProperties();
 
     @Override
-    NDependencyFormat formatter(NSession session);
+    NDependencyFormat formatter();
 }

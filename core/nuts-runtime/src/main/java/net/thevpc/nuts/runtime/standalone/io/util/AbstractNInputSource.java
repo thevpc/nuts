@@ -1,10 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NInputSource;
-import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NIOUtils;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -20,11 +20,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class AbstractNInputSource implements NInputSource {
-    private NSession session;
+    protected NWorkspace workspace;
 
-    public AbstractNInputSource(NSession session) {
-        NAssert.requireSession(session);
-        this.session = session;
+    public AbstractNInputSource(NWorkspace workspace) {
+        this.workspace = workspace;
+    }
+
+    public NWorkspace getWorkspace() {
+        return workspace;
     }
 
     @Override
@@ -42,14 +45,6 @@ public abstract class AbstractNInputSource implements NInputSource {
         return getMetaData().getCharset().orNull();
     }
 
-    public NSession getSession() {
-        return session;
-    }
-
-    public NInputSource setSession(NSession session) {
-        this.session = NAssert.requireSession(session);
-        return this;
-    }
 
     @Override
     public Stream<String> getLines() {
@@ -67,7 +62,7 @@ public abstract class AbstractNInputSource implements NInputSource {
         try (InputStream in = getInputStream()) {
             return NIOUtils.readBytes(in);
         } catch (IOException e) {
-            throw new NIOException(getSession(), e);
+            throw new NIOException(e);
         }
     }
 
@@ -101,7 +96,7 @@ public abstract class AbstractNInputSource implements NInputSource {
                 }
             }
         } catch (IOException e) {
-            throw new NIOException(getSession(), e);
+            throw new NIOException(e);
         }
         return lines;
     }
@@ -185,12 +180,13 @@ public abstract class AbstractNInputSource implements NInputSource {
         if (NBlankable.isBlank(algo)) {
             algo = "SHA-1";
         }
+        NSession session = workspace.currentSession();
         try (InputStream input = getInputStream()) {
             MessageDigest sha1 = null;
             try {
                 sha1 = MessageDigest.getInstance(algo);
             } catch (NoSuchAlgorithmException ex) {
-                throw new NIOException(getSession(), ex);
+                throw new NIOException(ex);
             }
             byte[] buffer = new byte[8192];
             int len = 0;
@@ -201,12 +197,12 @@ public abstract class AbstractNInputSource implements NInputSource {
                     len = input.read(buffer);
                 }
             } catch (IOException e) {
-                throw new NIOException(getSession(), e);
+                throw new NIOException(e);
             }
             return sha1.digest();
 
         } catch (IOException e) {
-            throw new NIOException(getSession(), e);
+            throw new NIOException(e);
         }
     }
 }

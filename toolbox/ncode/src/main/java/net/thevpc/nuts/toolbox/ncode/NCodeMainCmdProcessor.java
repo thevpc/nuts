@@ -38,18 +38,18 @@ class NCodeMainCmdProcessor implements NCmdLineRunner {
 
     @Override
     public boolean nextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
-        switch (option.getStringKey().get(session)) {
+        switch (option.getStringKey().get()) {
             case "-i": {
-                option = cmdLine.nextFlag().get(session);
-                caseInsensitive = option.getBooleanValue().get(session);
+                option = cmdLine.nextFlag().get();
+                caseInsensitive = option.getBooleanValue().get();
                 return true;
             }
             case "-t": {
-                typeComparators.add(comp(cmdLine.nextEntry().get(session).getStringValue().get(session)));
+                typeComparators.add(comp(cmdLine.nextEntry().get().getStringValue().get()));
                 return true;
             }
             case "-f": {
-                fileComparators.add(comp(cmdLine.nextEntry().get(session).getStringValue().get(session)));
+                fileComparators.add(comp(cmdLine.nextEntry().get().getStringValue().get()));
                 return true;
             }
         }
@@ -77,7 +77,7 @@ class NCodeMainCmdProcessor implements NCmdLineRunner {
 
     @Override
     public boolean nextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
-        paths.add(cmdLine.next().flatMap(NLiteral::asString).get(session));
+        paths.add(cmdLine.next().flatMap(NLiteral::asString).get());
         return true;
     }
 

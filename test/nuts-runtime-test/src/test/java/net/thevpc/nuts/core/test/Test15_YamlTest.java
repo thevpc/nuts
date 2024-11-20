@@ -49,7 +49,7 @@ public class Test15_YamlTest {
     @Test
     public void test1() throws Exception {
         String path = "net/thevpc/nuts/core/test/blackbox/yaml1.yml";
-        NElements elem = NElements.of(session);
+        NElements elem = NElements.of();
         NElement e = elem.setContentType(NContentType.YAML)
                 .parse(getClass().getClassLoader().getResource(path), NElement.class);
         elem.json().setValue(e)

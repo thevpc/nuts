@@ -27,7 +27,6 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponent;
 
 import java.io.File;
@@ -44,8 +43,8 @@ import java.util.List;
  * @since 0.8.3
  */
 public interface NContentTypes extends NComponent {
-    static NContentTypes of(NSession session) {
-       return NExtensions.of(session).createComponent(NContentTypes.class).get();
+    static NContentTypes of() {
+       return NExtensions.of().createComponent(NContentTypes.class).get();
     }
 
     String probeContentType(URL path);

@@ -46,8 +46,8 @@ import java.util.List;
  */
 public interface NDeployCmd extends NWorkspaceCmd {
 
-    static NDeployCmd of(NSession session) {
-        return NExtensions.of(session).createComponent(NDeployCmd.class).get();
+    static NDeployCmd of() {
+        return NExtensions.of().createComponent(NDeployCmd.class).get();
     }
     /**
      * set content
@@ -278,23 +278,6 @@ public interface NDeployCmd extends NWorkspaceCmd {
      * @return {@code this} instance
      */
     NDeployCmd clearIds();
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
-    NDeployCmd setSession(NSession session);
-
-    /**
-     * copy session
-     *
-     * @return {@code this} instance
-     */
-    @Override
-    NDeployCmd copySession();
 
     /**
      * configure the current command with the given arguments. This is an

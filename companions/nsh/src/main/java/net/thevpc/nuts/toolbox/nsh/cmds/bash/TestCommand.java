@@ -47,13 +47,13 @@ public class TestCommand extends NShellBuiltinDefault {
     }
 
     private static NPath evalPath(Eval a, NShellExecutionContext context) {
-        return NPath.of(evalStr(a, context),context.getSession());
+        return NPath.of(evalStr(a, context));
     }
 
     private static String evalStr(Eval a, NShellExecutionContext context) {
         NSession session = context.getSession();
         if (a instanceof EvalArg) {
-            return ((EvalArg) a).arg.asString().get(session);
+            return ((EvalArg) a).arg.asString().get();
         }
         return String.valueOf(a.eval(context));
     }
@@ -61,7 +61,7 @@ public class TestCommand extends NShellBuiltinDefault {
     private static int evalInt(Eval a, NShellExecutionContext context) {
         NSession session = context.getSession();
         if (a instanceof EvalArg) {
-            return ((EvalArg) a).arg.asInt().get(session);
+            return ((EvalArg) a).arg.asInt().get();
         }
         return a.eval(context);
     }
@@ -192,10 +192,10 @@ public class TestCommand extends NShellBuiltinDefault {
         NSession session = context.getSession();
         cmdLine.setExpandSimpleOptions(false);
         Options options=context.getOptions();
-        NArg a = cmdLine.next().get(session);
-        switch (a.asString().get(session)) {
+        NArg a = cmdLine.next().get();
+        switch (a.asString().get()) {
             case "(": {
-                options.operators.add(a.asString().get(session));
+                options.operators.add(a.asString().get());
                 return true;
             }
             case ")": {
@@ -217,9 +217,9 @@ public class TestCommand extends NShellBuiltinDefault {
                 return true;
             }
             default: {
-                if (getArgsCount(a.asString().get(session)) > 0) {
-                    reduce(options.operators, options.operands, getArgsPrio(a.asString().get(session)));
-                    options.operators.add(a.asString().get(session));
+                if (getArgsCount(a.asString().get()) > 0) {
+                    reduce(options.operators, options.operands, getArgsPrio(a.asString().get()));
+                    options.operators.add(a.asString().get());
                 } else {
                     options.operands.add(new EvalArg(a));
                 }
@@ -292,7 +292,7 @@ public class TestCommand extends NShellBuiltinDefault {
         @Override
         public int eval(NShellExecutionContext context) {
             NSession session = context.getSession();
-            return arg.asString().get(session).length() > 0 ? 0 : 1;
+            return arg.asString().get().length() > 0 ? 0 : 1;
         }
 
     }
@@ -379,7 +379,7 @@ public class TestCommand extends NShellBuiltinDefault {
                 }
                 case "-r": {
                     EvalArg a = (EvalArg) arg;
-                    String path = a.arg.asString().get(session);
+                    String path = a.arg.asString().get();
                     try {
                         NPath pp = evalPath(arg, context);
                         return pp.exists() && pp.getPermissions().contains(NPathPermission.CAN_READ) ? 0 : 1;

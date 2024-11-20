@@ -59,14 +59,12 @@ import java.util.List;
 @NComponentScope(NScopeType.PROTOTYPE)
 public class DefaultNDigest implements NDigest {
 
-    private final NWorkspace ws;
+    private final NWorkspace workspace;
     private List<NInputSource> sources;
     private String algorithm;
-    private NSession session;
 
-    public DefaultNDigest(NSession session) {
-        this.session = session;
-        this.ws = session.getWorkspace();
+    public DefaultNDigest(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
     public NDigest addSource(NInputSource source) {
@@ -100,25 +98,25 @@ public class DefaultNDigest implements NDigest {
 
     @Override
     public NDigest setSource(InputStream source) {
-        this.setSource0((source == null ? null : NInputSource.of(source,session)));
+        this.setSource0((source == null ? null : NInputSource.of(source)));
         return this;
     }
 
     @Override
     public NDigest setSource(File source) {
-        this.setSource0((source == null ? null : NPath.of(source, getSession())));
+        this.setSource0((source == null ? null : NPath.of(source)));
         return this;
     }
 
     @Override
     public NDigest setSource(Path source) {
-        this.setSource0(source == null ? null : NPath.of(source, getSession()));
+        this.setSource0(source == null ? null : NPath.of(source));
         return this;
     }
 
     @Override
     public NDigest setSource(URL url) {
-        this.setSource0(url == null ? null : NPath.of(url, getSession()));
+        this.setSource0(url == null ? null : NPath.of(url));
         return this;
     }
 
@@ -130,15 +128,13 @@ public class DefaultNDigest implements NDigest {
 
     @Override
     public NDigest setSource(byte[] source) {
-        checkSession();
-        this.setSource0(source == null ? null : NInputSource.of(source,session));
+        this.setSource0(source == null ? null : NInputSource.of(source));
         return this;
     }
 
     @Override
     public NDigest setSource(NDescriptor source) {
-        checkSession();
-        this.setSource0(source == null ? null : new NDescriptorInputSource(source, session));
+        this.setSource0(source == null ? null : new NDescriptorInputSource(source, workspace));
         return this;
     }
 
@@ -149,7 +145,7 @@ public class DefaultNDigest implements NDigest {
 
     @Override
     public byte[] computeBytes() {
-        NAssert.requireTrue(!(sources == null || sources.isEmpty()), "source", getSession());
+        NAssert.requireTrue(!(sources == null || sources.isEmpty()), "source");
         String algo = getValidAlgo();
         MessageDigest md;
         try {
@@ -158,7 +154,7 @@ public class DefaultNDigest implements NDigest {
                 incrementalUpdateFileDigestInputSource(source, md);
             }
         } catch (NoSuchAlgorithmException e) {
-            throw new NIOException(session, new IOException(e));
+            throw new NIOException(new IOException(e));
         }
         return md.digest();
     }
@@ -167,18 +163,18 @@ public class DefaultNDigest implements NDigest {
         if (file.isDirectory()) {
             file.walkDfs(new NTreeVisitor<NPath>() {
                 @Override
-                public NTreeVisitResult visitFile(NPath file, NSession session) {
+                public NTreeVisitResult visitFile(NPath file) {
                     incrementalUpdateFileDigestInputStream(new ByteArrayInputStream(file.toString().getBytes()), md);
                     try (InputStream is = file.getInputStream()) {
                         incrementalUpdateFileDigestInputStream(is, md);
                     } catch (IOException ex) {
-                        throw new NIOException(session, ex);
+                        throw new NIOException(ex);
                     }
                     return NTreeVisitResult.CONTINUE;
                 }
 
                 @Override
-                public NTreeVisitResult preVisitDirectory(NPath dir, NSession session) {
+                public NTreeVisitResult preVisitDirectory(NPath dir) {
                     incrementalUpdateFileDigestInputStream(new ByteArrayInputStream(dir.toString().getBytes()), md);
                     return NTreeVisitResult.CONTINUE;
                 }
@@ -187,7 +183,7 @@ public class DefaultNDigest implements NDigest {
             try (InputStream is = file.getInputStream()) {
                 incrementalUpdateFileDigestInputStream(is, md);
             } catch (IOException ex) {
-                throw new NIOException(session, ex);
+                throw new NIOException(ex);
             }
         }
     }
@@ -201,7 +197,7 @@ public class DefaultNDigest implements NDigest {
         try (InputStream is = source.getInputStream()) {
             incrementalUpdateFileDigestInputStream(is, md);
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -216,10 +212,10 @@ public class DefaultNDigest implements NDigest {
                     len = is.read(buffer);
                 }
             } catch (IOException e) {
-                throw new NIOException(session, e);
+                throw new NIOException(e);
             }
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -228,7 +224,7 @@ public class DefaultNDigest implements NDigest {
         try {
             out.write(computeBytes());
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
         return this;
     }
@@ -236,17 +232,6 @@ public class DefaultNDigest implements NDigest {
     @Override
     public NDigest md5() {
         return setAlgorithm("MD5");
-    }
-
-    @Override
-    public NSession getSession() {
-        return session;
-    }
-
-    @Override
-    public NDigest setSession(NSession session) {
-        this.session = NWorkspaceUtils.bindSession(ws, session);
-        return this;
     }
 
     @Override
@@ -278,7 +263,7 @@ public class DefaultNDigest implements NDigest {
             MessageDigest.getInstance(algorithm);
             this.algorithm = algorithm;
         } catch (NoSuchAlgorithmException ex) {
-            throw new NIllegalArgumentException(getSession(), NMsg.ofC("unable to resolve algo: %s", algorithm), ex);
+            throw new NIllegalArgumentException(NMsg.ofC("unable to resolve algo: %s", algorithm), ex);
         }
         return this;
     }
@@ -290,10 +275,6 @@ public class DefaultNDigest implements NDigest {
         return algorithm;
     }
 
-    protected void checkSession() {
-        NSessionUtils.checkSession(ws, session);
-    }
-
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
         return NConstants.Support.DEFAULT_SUPPORT;
@@ -302,13 +283,13 @@ public class DefaultNDigest implements NDigest {
     private class NDescriptorInputSource extends AbstractMultiReadNInputSource {
         private final NDescriptor source;
 
-        public NDescriptorInputSource(NDescriptor source, NSession session) {
-            super(session);
+        public NDescriptorInputSource(NDescriptor source, NWorkspace workspace) {
+            super(workspace);
             this.source = source;
         }
 
         private byte[] getBytes() {
-            return source.formatter(session)
+            return source.formatter()
                     .setNtf(false)
                     .format().filteredText().getBytes();
         }
@@ -325,7 +306,7 @@ public class DefaultNDigest implements NDigest {
 
         @Override
         public long getContentLength() {
-            return source.formatter(session)
+            return source.formatter()
                     .setNtf(false)
                     .format().filteredText().getBytes().length;
         }
@@ -335,9 +316,9 @@ public class DefaultNDigest implements NDigest {
             NId id = source.getId();
             NString str;
             if (id != null) {
-                str = id.format(session);
+                str = id.format();
             } else {
-                str = NTexts.of(session).ofStyled("<empty-descriptor>", NTextStyle.path());
+                str = NTexts.of().ofStyled("<empty-descriptor>", NTextStyle.path());
             }
             return new DefaultNContentMetadata(NMsg.ofNtf(str), null, null, null, null);
         }
@@ -348,8 +329,8 @@ public class DefaultNDigest implements NDigest {
         }
 
         @Override
-        public NFormat formatter(NSession session) {
-            return NFormat.of(DefaultNDigest.this.session, new NFormatSPI() {
+        public NFormat formatter() {
+            return NFormat.of(new NFormatSPI() {
                 @Override
                 public String getName() {
                     return "input-stream";

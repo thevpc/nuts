@@ -58,7 +58,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
             null, null,
             null,
             null, null, null,
-            null, null, null, null);
+            null, null, null, null,null);
 
     private static final long serialVersionUID = 1;
     /**
@@ -405,6 +405,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
     private final Boolean initScripts;
     private final Boolean initPlatforms;
     private final Boolean initJava;
+    private final Boolean mainInstance;
     private final NIsolationLevel isolationLevel;
     private final NSupportMode desktopLauncher;
     private final NSupportMode menuLauncher;
@@ -428,7 +429,11 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
                                     List<String> applicationArguments, List<String> outputFormatOptions,
                                     List<String> customOptions, List<String> excludedExtensions, List<String> repositories,
                                     List<String> executorOptions, List<NMsg> errors, Map<NStoreType, String> storeLocations,
-                                    Map<NHomeLocation, String> homeLocations, NSupportMode desktopLauncher, NSupportMode menuLauncher, NSupportMode userLauncher, Boolean previewRepo) {
+                                    Map<NHomeLocation, String> homeLocations, NSupportMode desktopLauncher, NSupportMode menuLauncher,
+                                    NSupportMode userLauncher,
+                                    Boolean previewRepo,
+                                    Boolean mainInstance
+    ) {
         this.outputFormatOptions = NReservedLangUtils.unmodifiableOrNullList(outputFormatOptions);
         this.customOptions = NReservedLangUtils.unmodifiableOrNullList(customOptions);
         this.excludedExtensions = NReservedLangUtils.unmodifiableOrNullList(excludedExtensions);
@@ -503,11 +508,16 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
         this.menuLauncher = menuLauncher;
         this.userLauncher = userLauncher;
         this.previewRepo = previewRepo;
+        this.mainInstance = mainInstance;
     }
 
     @Override
     public NOptional<Boolean> getPreviewRepo() {
         return NOptional.ofNamed(previewRepo, "previewRepo");
+    }
+
+    public NOptional<Boolean> getMainInstance() {
+        return NOptional.ofNamed(mainInstance, "mainInstance");
     }
 
     @Override

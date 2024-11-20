@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.filter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.runtime.standalone.id.filter.*;
 import net.thevpc.nuts.runtime.standalone.util.filters.InternalNTypedFilters;
 
@@ -16,38 +17,34 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
         implements NDescriptorFilters {
 
 
-    public InternalNDescriptorFilters(NSession session) {
-        super(session, NDescriptorFilter.class);
+    public InternalNDescriptorFilters(NWorkspace workspace) {
+        super(workspace, NDescriptorFilter.class);
 //        localModel = model.getShared(LocalModel.class, () -> new LocalModel(ws));
     }
 
     @Override
     public NDescriptorFilter always() {
-        checkSession();
-        return new NDescriptorFilterTrue(getSession());
+        return new NDescriptorFilterTrue(getWorkspace());
     }
 
     @Override
     public NDescriptorFilter never() {
-        checkSession();
-        return new NDescriptorFilterFalse(getSession());
+        return new NDescriptorFilterFalse(getWorkspace());
     }
 
     @Override
     public NDescriptorFilter not(NFilter other) {
-        checkSession();
-        return new NDescriptorFilterNone(getSession(), (NDescriptorFilter) other);
+        return new NDescriptorFilterNone(getWorkspace(), (NDescriptorFilter) other);
     }
 
     @Override
     public NDescriptorFilter byPackaging(String... values) {
-        checkSession();
         if (values == null || values.length == 0) {
             return always();
         }
         List<NDescriptorFilter> packs = new ArrayList<>();
         for (String v : values) {
-            packs.add(new NDescriptorFilterPackaging(getSession(), v));
+            packs.add(new NDescriptorFilterPackaging(getWorkspace(), v));
         }
         if (packs.size() == 1) {
             return packs.get(0);
@@ -57,13 +54,12 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
 
     @Override
     public NDescriptorFilter byArch(String... values) {
-        checkSession();
         if (values == null || values.length == 0) {
             return always();
         }
         List<NDescriptorFilter> packs = new ArrayList<>();
         for (String v : values) {
-            packs.add(new NDescriptorFilterArch(getSession(), v));
+            packs.add(new NDescriptorFilterArch(getWorkspace(), v));
         }
         if (packs.size() == 1) {
             return packs.get(0);
@@ -73,13 +69,12 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
 
     @Override
     public NDescriptorFilter byOsDist(String... values) {
-        checkSession();
         if (values == null || values.length == 0) {
             return always();
         }
         List<NDescriptorFilter> packs = new ArrayList<>();
         for (String v : values) {
-            packs.add(new NDescriptorFilterOsDist(getSession(), v));
+            packs.add(new NDescriptorFilterOsDist(getWorkspace(), v));
         }
         if (packs.size() == 1) {
             return packs.get(0);
@@ -89,13 +84,12 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
 
     @Override
     public NDescriptorFilter byOs(String... values) {
-        checkSession();
         if (values == null || values.length == 0) {
             return always();
         }
         List<NDescriptorFilter> packs = new ArrayList<>();
         for (String v : values) {
-            packs.add(new NDescriptorFilterOs(getSession(), v));
+            packs.add(new NDescriptorFilterOs(getWorkspace(), v));
         }
         if (packs.size() == 1) {
             return packs.get(0);
@@ -105,13 +99,12 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
 
     @Override
     public NDescriptorFilter byPlatform(String... values) {
-        checkSession();
         if (values == null || values.length == 0) {
             return always();
         }
         List<NDescriptorFilter> packs = new ArrayList<>();
         for (String v : values) {
-            packs.add(new NDescriptorFilterPlatform(getSession(), v));
+            packs.add(new NDescriptorFilterPlatform(getWorkspace(), v));
         }
         if (packs.size() == 1) {
             return packs.get(0);
@@ -121,13 +114,12 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
 
     @Override
     public NDescriptorFilter byDesktopEnvironment(String... values) {
-        checkSession();
         if (values == null || values.length == 0) {
             return always();
         }
         List<NDescriptorFilter> packs = new ArrayList<>();
         for (String v : values) {
-            packs.add(new NDescriptorFilterDesktopEnvironment(getSession(), v));
+            packs.add(new NDescriptorFilterDesktopEnvironment(getWorkspace(), v));
         }
         if (packs.size() == 1) {
             return packs.get(0);
@@ -137,82 +129,73 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
 
     @Override
     public NDescriptorFilter byFlag(NDescriptorFlag... flags) {
-        return new NDescriptorFlagsIdFilter(getSession(),flags);
+        return new NDescriptorFlagsIdFilter(getWorkspace(),flags);
     }
 
     @Override
     public NDescriptorFilter byExtension(NVersion targetApiVersion) {
-        checkSession();
-        return new NExecExtensionFilter(getSession(),
-                targetApiVersion == null ? null : NId.of(NConstants.Ids.NUTS_API).get(getSession()).builder().setVersion(targetApiVersion).build()
+        return new NExecExtensionFilter(getWorkspace(),
+                targetApiVersion == null ? null : NId.of(NConstants.Ids.NUTS_API).get().builder().setVersion(targetApiVersion).build()
         );
     }
 
     @Override
     public NDescriptorFilter byRuntime(NVersion targetApiVersion) {
-        checkSession();
-        return new NExecRuntimeFilter(getSession(),
-                targetApiVersion == null ? null : NId.of(NConstants.Ids.NUTS_API).get(getSession()).builder().setVersion(targetApiVersion).build(),
+        return new NExecRuntimeFilter(getWorkspace(),
+                targetApiVersion == null ? null : NId.of(NConstants.Ids.NUTS_API).get().builder().setVersion(targetApiVersion).build(),
                 false
         );
     }
 
     @Override
     public NDescriptorFilter byCompanion(NVersion targetApiVersion) {
-        checkSession();
-        return new NExecCompanionFilter(getSession(),
-                targetApiVersion == null ? null : NId.of(NConstants.Ids.NUTS_API).get(getSession()).builder().setVersion(targetApiVersion).build(),
-                getSession().extensions().getCompanionIds().stream().map(NId::getShortName).toArray(String[]::new)
+        return new NExecCompanionFilter(getWorkspace(),
+                targetApiVersion == null ? null : NId.of(NConstants.Ids.NUTS_API).get().builder().setVersion(targetApiVersion).build(),
+                NExtensions.of().getCompanionIds().stream().map(NId::getShortName).toArray(String[]::new)
         );
     }
 
     @Override
     public NDescriptorFilter byApiVersion(NVersion apiVersion) {
-        checkSession();
         if (apiVersion == null) {
-            apiVersion = getSession().getWorkspace().getApiVersion();
+            apiVersion = getWorkspace().getApiVersion();
         }
         return new BootAPINDescriptorFilter(
-                getSession(),
-                NId.of(NConstants.Ids.NUTS_API).get(getSession()).builder().setVersion(apiVersion).build().getVersion()
+                getWorkspace(),
+                NId.of(NConstants.Ids.NUTS_API).get().builder().setVersion(apiVersion).build().getVersion()
         );
     }
 
     @Override
     public NDescriptorFilter byLockedIds(String... ids) {
-        checkSession();
-        return new NLockedIdExtensionFilter(getSession(),
-                Arrays.stream(ids).map(x -> NId.of(x).get(getSession())).toArray(NId[]::new)
+        return new NLockedIdExtensionFilter(getWorkspace(),
+                Arrays.stream(ids).map(x -> NId.of(x).get()).toArray(NId[]::new)
         );
     }
 
     @Override
     public NDescriptorFilter as(NFilter a) {
-        checkSession();
         if (a instanceof NDescriptorFilter) {
             return (NDescriptorFilter) a;
         }
         if (a instanceof NIdFilter) {
-            return new NDescriptorFilterById((NIdFilter) a,getSession());
+            return new NDescriptorFilterById((NIdFilter) a, getWorkspace());
         }
         return null;
     }
 
     @Override
     public NDescriptorFilter from(NFilter a) {
-        checkSession();
         if (a == null) {
             return null;
         }
         NDescriptorFilter t = as(a);
-        NSession session = getSession();
-        NAssert.requireNonNull(t, "DescriptorFilter", session);
+        NAssert.requireNonNull(t, "DescriptorFilter");
         return t;
     }
 
     @Override
     public NDescriptorFilter all(NFilter... others) {
-        checkSession();
         List<NDescriptorFilter> all = convertList(others);
         if (all.isEmpty()) {
             return always();
@@ -220,12 +203,11 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
         if (all.size() == 1) {
             return all.get(0);
         }
-        return new NDescriptorFilterAnd(getSession(), all.toArray(new NDescriptorFilter[0]));
+        return new NDescriptorFilterAnd(getWorkspace(), all.toArray(new NDescriptorFilter[0]));
     }
 
     @Override
     public NDescriptorFilter any(NFilter... others) {
-        checkSession();
         List<NDescriptorFilter> all = convertList(others);
         if (all.isEmpty()) {
             return always();
@@ -233,23 +215,21 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
         if (all.size() == 1) {
             return all.get(0);
         }
-        return new NDescriptorFilterOr(getSession(), all.toArray(new NDescriptorFilter[0]));
+        return new NDescriptorFilterOr(getWorkspace(), all.toArray(new NDescriptorFilter[0]));
     }
 
     @Override
     public NDescriptorFilter none(NFilter... others) {
-        checkSession();
         List<NDescriptorFilter> all = convertList(others);
         if (all.isEmpty()) {
             return always();
         }
-        return new NDescriptorFilterNone(getSession(), all.toArray(new NDescriptorFilter[0]));
+        return new NDescriptorFilterNone(getWorkspace(), all.toArray(new NDescriptorFilter[0]));
     }
 
     @Override
     public NDescriptorFilter parse(String expression) {
-        checkSession();
-        return new NDescriptorFilterParser(expression, getSession()).parse();
+        return new NDescriptorFilterParser(expression, getWorkspace()).parse();
     }
 
     @Override

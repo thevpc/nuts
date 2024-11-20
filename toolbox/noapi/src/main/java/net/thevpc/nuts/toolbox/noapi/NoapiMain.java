@@ -27,14 +27,14 @@ public class NoapiMain implements NApplication {
     }
 
     @Override
-    public void run(NSession session) {
+    public void run() {
+        NSession session = NSession.of().get();
         this.service = new NOpenAPIService(session);
         ref.setCommand("pdf");
         session.runAppCmdLine(new NCmdLineRunner() {
             @Override
             public boolean nextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
-                NSession session = cmdLine.getSession();
-                switch (option.asString().get(session)) {
+                switch (option.asString().get()) {
                     case "--yaml": {
                         cmdLine.nextFlag();
                         ref.setOpenAPIFormat("yaml");
@@ -119,7 +119,6 @@ public class NoapiMain implements NApplication {
 
             @Override
             public boolean nextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
-                NSession session = cmdLine.getSession();
                 NoapiCmdData c = new NoapiCmdData();
                 c.setCommand(ref.getCommand());
                 c.setKeep(ref.isKeep());
@@ -127,7 +126,7 @@ public class NoapiMain implements NApplication {
                 c.setTarget(ref.getTarget());
                 c.setVars(ref.getVars());
                 c.setVarsMap(new HashMap<>(ref.getVarsMap()));
-                NArg pathArg = cmdLine.next().get(session);
+                NArg pathArg = cmdLine.next().get();
                 c.setPath(pathArg.key());
                 data.add(c);
                 return true;
@@ -135,7 +134,6 @@ public class NoapiMain implements NApplication {
 
             @Override
             public void validate(NCmdLine cmdLine, NCmdLineContext context) {
-                NSession session = cmdLine.getSession();
                 if (data.isEmpty()) {
                     NoapiCmdData c = new NoapiCmdData();
                     c.setCommand(ref.getCommand());
@@ -144,13 +142,13 @@ public class NoapiMain implements NApplication {
                     c.setTarget(ref.getTarget());
                     c.setVars(ref.getVars());
                     c.setVarsMap(new HashMap<>(ref.getVarsMap()));
-                    c.setPath(NPath.ofUserDirectory(session).toString());
+                    c.setPath(NPath.ofUserDirectory().toString());
                     data.add(c);
                 }
                 for (NoapiCmdData d : data) {
-                    NAssert.requireNonBlank(d.getPath(), "path", session);
+                    NAssert.requireNonBlank(d.getPath(), "path");
                     if (!"pdf".equals(d.getCommand())) {
-                        throw new NIllegalArgumentException(session, NMsg.ofC("unsupported command %s", d.getCommand()));
+                        throw new NIllegalArgumentException(NMsg.ofC("unsupported command %s", d.getCommand()));
                     }
                 }
             }

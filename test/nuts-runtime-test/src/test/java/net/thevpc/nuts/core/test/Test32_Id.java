@@ -31,30 +31,30 @@ public class Test32_Id {
 
     @Test
     public void test01() {
-        List<NId> s = NId.ofList("java#[11,[").get(session);
-        Assertions.assertEquals(Arrays.asList(NId.of("java#[11,[").get(session)), s);
+        List<NId> s = NId.ofList("java#[11,[").get();
+        Assertions.assertEquals(Arrays.asList(NId.of("java#[11,[").get()), s);
     }
 
     @Test
     public void test02() {
-        List<NId> s = NId.ofList("java#[11,[ java#[11,[").get(session);
+        List<NId> s = NId.ofList("java#[11,[ java#[11,[").get();
         //removed duplicates...
-        Assertions.assertEquals(Arrays.asList(NId.of("java#[11,[").get(session)), s);
+        Assertions.assertEquals(Arrays.asList(NId.of("java#[11,[").get()), s);
     }
 
     @Test
     public void test03() {
-        List<NId> s = NId.ofList("java#[11,[ java#[12,[").get(session);
+        List<NId> s = NId.ofList("java#[11,[ java#[12,[").get();
         Assertions.assertEquals(Arrays.asList(
-                NId.of("java#[11,[").get(session),
-                NId.of("java#[12,[").get(session)
+                NId.of("java#[11,[").get(),
+                NId.of("java#[12,[").get()
         ), s);
     }
 
     @Test
     public void test04() {
         String t1="net.sourceforge.cobertura:cobertura#${cobertura.version}?exclusions=asm:asm,asm:asm-tree,log4j:log4j,oro:oro&profile=coverage&cond-properties='a,b=c'";
-        NId s = NId.of(t1).get(session);
+        NId s = NId.of(t1).get();
         Assertions.assertEquals("net.sourceforge.cobertura",s.getGroupId());
         Assertions.assertEquals("cobertura",s.getArtifactId());
         Assertions.assertEquals("asm:asm,asm:asm-tree,log4j:log4j,oro:oro",s.getProperties().get("exclusions"));
@@ -66,7 +66,7 @@ public class Test32_Id {
     @Test
     public void test05() {
         String t1="net.sourceforge.cobertura:cobertura#${cobertura.version}?exclusions=asm:asm,asm:asm-tree,log4j:log4j,oro:oro&profile=coverage&cond-properties=a,b\\=c";
-        NId s = NId.of(t1).get(session);
+        NId s = NId.of(t1).get();
         Assertions.assertEquals("net.sourceforge.cobertura",s.getGroupId());
         Assertions.assertEquals("cobertura",s.getArtifactId());
         Assertions.assertEquals("asm:asm,asm:asm-tree,log4j:log4j,oro:oro",s.getProperties().get("exclusions"));

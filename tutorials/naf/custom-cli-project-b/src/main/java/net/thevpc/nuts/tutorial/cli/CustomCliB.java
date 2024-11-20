@@ -3,8 +3,8 @@ package net.thevpc.nuts.tutorial.cli;
 import java.util.ArrayList;
 import java.util.List;
 import net.thevpc.nuts.NApplication;
-import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 
@@ -19,7 +19,8 @@ public class CustomCliB implements NApplication {
     }
 
     @Override
-    public void run(NSession session) {
+    public void run() {
+        NSession session = NSession.get();
         NCmdLine cmdLine = session.getAppCmdLine();
         boolean boolOption = false;
         String stringOption = null;
@@ -33,15 +34,15 @@ public class CustomCliB implements NApplication {
                     case "--option": {
                         a = cmdLine.nextFlag().get();
                         if (a.isEnabled()) {
-                            boolOption = a.getValue().asBoolean().get(session);
+                            boolOption = a.getValue().asBoolean().get();
                         }
                         break;
                     }
                     case "-n":
                     case "--name": {
-                        a = cmdLine.nextEntry().get(session);
+                        a = cmdLine.nextEntry().get();
                         if (a.isEnabled()) {
-                            stringOption = a.getValue().asString().get(session);
+                            stringOption = a.getValue().asString().get();
                         }
                         break;
                     }

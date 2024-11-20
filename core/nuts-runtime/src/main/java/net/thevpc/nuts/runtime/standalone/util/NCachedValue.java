@@ -6,23 +6,27 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * @author thevpc
  */
 public class NCachedValue<T> {
 
-    private final Function<NSession,T> supplier;
+    private final Supplier<T> supplier;
     private T lastValue;
     private long lastDate;
     private long timeoutMilliSeconds;
     private boolean updating = false;
+    private NWorkspace workspace;
 
-    public NCachedValue(Function<NSession,T> callable, long timeoutMilliSeconds) {
+    public NCachedValue(NWorkspace workspace,Supplier<T> callable, long timeoutMilliSeconds) {
         this.supplier = callable;
         this.timeoutMilliSeconds = timeoutMilliSeconds;
+        this.workspace = workspace;
     }
 
     public long getTimeoutMilliSeconds() {
@@ -51,23 +55,24 @@ public class NCachedValue<T> {
         return false;
     }
 
-    public void updateAsync(NSession session) {
+    public void updateAsync() {
+        NSession session = workspace.currentSession();
         if (!updating) {
             new Thread() {
                 @Override
                 public void run() {
-                    update(session);
+                    update();
                 }
             }.start();
         }
     }
 
-    public T update(NSession session) {
+    public T update() {
         updating = true;
         try {
             long now = System.currentTimeMillis();
             try {
-                lastValue = supplier.apply(session);
+                lastValue = supplier.get();
             } catch (RuntimeException ex) {
                 throw ex;
             } catch (Exception ex) {
@@ -83,16 +88,16 @@ public class NCachedValue<T> {
         return lastValue;
     }
 
-    public boolean tryUpdate(NSession session) {
+    public boolean tryUpdate() {
         if (isInvalid()) {
-            update(session);
+            update();
             return true;
         }
         return false;
     }
 
-    public T getValue(NSession session) {
-        tryUpdate(session);
+    public T getValue() {
+        tryUpdate();
         return lastValue;
     }
 

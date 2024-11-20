@@ -144,7 +144,7 @@ public class CompatUtils {
         try {
             return Files.readAllBytes(file);
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
     public static byte[] readAllBytes(NPath file, NSession session) {

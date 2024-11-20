@@ -41,13 +41,13 @@ public class NSearchIdById implements NSearchId {
     }
 
     @Override
-    public NId getId(NSession session) {
+    public NId getId() {
         return id;
     }
 
     @Override
-    public NDescriptor getDescriptor(NSession session) {
-        return NFetchCmd.of(id,session).getResultDescriptor();
+    public NDescriptor getDescriptor() {
+        return NFetchCmd.of(id).getResultDescriptor();
     }
 
 }

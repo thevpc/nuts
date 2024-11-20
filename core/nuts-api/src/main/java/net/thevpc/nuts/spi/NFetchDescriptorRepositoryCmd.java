@@ -62,9 +62,6 @@ public interface NFetchDescriptorRepositoryCmd extends NRepositoryCmd {
      */
     NFetchDescriptorRepositoryCmd setId(NId id);
 
-    @Override
-    NFetchDescriptorRepositoryCmd setSession(NSession session);
-
     /**
      * preform command. Should be called after setting all parameters.
      * Result is retrievable with {@link #getResult()}.

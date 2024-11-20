@@ -28,7 +28,6 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.reserved.rpi.NIORPI;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NAsk;
 
 import java.io.InputStream;
@@ -40,30 +39,28 @@ import java.io.InputStream;
  * @since 0.5.4
  */
 public interface NSessionTerminal {
-    static NSessionTerminal of(NSession session) {
-        return NIORPI.of(session).createTerminal();
+    static NSessionTerminal of() {
+        return NIORPI.of().createTerminal();
     }
 
-    static NSessionTerminal of(NSessionTerminal parent, NSession session) {
-        return NIORPI.of(session).createTerminal(parent);
+    static NSessionTerminal of(NSessionTerminal parent) {
+        return NIORPI.of().createTerminal(parent);
     }
 
-    static NSessionTerminal of(InputStream in, NPrintStream out, NPrintStream err, NSession session) {
-        return NIORPI.of(session).createTerminal(in, out, err);
+    static NSessionTerminal of(InputStream in, NPrintStream out, NPrintStream err) {
+        return NIORPI.of().createTerminal(in, out, err);
     }
 
-    static NSessionTerminal ofMem(NSession session) {
-        return NIORPI.of(session).createInMemoryTerminal();
+    static NSessionTerminal ofMem() {
+        return NIORPI.of().createInMemoryTerminal();
     }
 
-    static NSessionTerminal ofMem(boolean mergeError, NSession session) {
-        return NIORPI.of(session).createInMemoryTerminal(mergeError);
+    static NSessionTerminal ofMem(boolean mergeError) {
+        return NIORPI.of().createInMemoryTerminal(mergeError);
     }
 
     String readLine(NPrintStream out, NMsg message);
 
-
-    String readLine(NPrintStream out, NMsg message, NSession session);
 
     /**
      * Reads password as a single line of text from the terminal's input stream.
@@ -75,6 +72,7 @@ public interface NSessionTerminal {
      * @throws java.io.UncheckedIOException If an I/O error occurs.
      */
     char[] readPassword(NMsg prompt);
+
     /**
      * Reads password as a single line of text from the terminal's input stream.
      *
@@ -85,16 +83,6 @@ public interface NSessionTerminal {
      * @throws java.io.UncheckedIOException If an I/O error occurs.
      */
     char[] readPassword(NPrintStream out, NMsg prompt);
-    /**
-     * Reads password as a single line of text from the terminal's input stream.
-     *
-     * @param prompt prompt message
-     * @return A string containing the line read from the terminal's input
-     * stream, not including any line-termination characters, or {@code null}
-     * if an end of stream has been reached.
-     * @throws java.io.UncheckedIOException If an I/O error occurs.
-     */
-    char[] readPassword(NPrintStream out, NMsg prompt, NSession session);
 
     InputStream getIn();
 
@@ -175,5 +163,4 @@ public interface NSessionTerminal {
      */
     NSessionTerminal printProgress(NMsg message);
 
-    NSession getSession();
 }

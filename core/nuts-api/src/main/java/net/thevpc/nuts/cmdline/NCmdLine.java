@@ -100,22 +100,15 @@ import java.util.function.Consumer;
  * @app.category Command Line
  * @since 0.5.5
  */
-public interface NCmdLine extends Iterable<NArg>, NFormattable, NBlankable, NSessionProvider {
+public interface NCmdLine extends Iterable<NArg>, NFormattable, NBlankable {
 
     static NCmdLine of(String[] args) {
         return new DefaultNCmdLine(args);
     }
 
-    static NCmdLine of(String[] args, NSession session) {
-        return new DefaultNCmdLine(args).setSession(session);
-    }
 
     static NCmdLine of(List<String> args) {
         return new DefaultNCmdLine(args);
-    }
-
-    static NCmdLine of(List<String> args, NSession session) {
-        return new DefaultNCmdLine(args).setSession(session);
     }
 
     /**
@@ -129,12 +122,12 @@ public interface NCmdLine extends Iterable<NArg>, NFormattable, NBlankable, NSes
                 .map(DefaultNCmdLine::new);
     }
 
-    static NOptional<NCmdLine> parse(String line, NSession session) {
-        return NOptional.of(NCmdLines.of(session).parseCmdLine(line));
+    static NOptional<NCmdLine> parse(String line) {
+        return NOptional.of(NCmdLines.of().parseCmdLine(line));
     }
 
-    static NOptional<NCmdLine> parse(String line, NShellFamily shellFamily, NSession session) {
-        return NOptional.of(NCmdLines.of(session)
+    static NOptional<NCmdLine> parse(String line, NShellFamily shellFamily) {
+        return NOptional.of(NCmdLines.of()
                 .setShellFamily(shellFamily)
                 .parseCmdLine(line));
     }
@@ -144,11 +137,10 @@ public interface NCmdLine extends Iterable<NArg>, NFormattable, NBlankable, NSes
      *
      * @param line        line to parse
      * @param shellFamily shell family
-     * @param session     session
      * @return new command line instance
      */
-    static NCmdLine of(String line, NShellFamily shellFamily, NSession session) {
-        return NCmdLines.of(session).setShellFamily(shellFamily).parseCmdLine(line);
+    static NCmdLine of(String line, NShellFamily shellFamily) {
+        return NCmdLines.of().setShellFamily(shellFamily).parseCmdLine(line);
     }
 
     /**
@@ -636,7 +628,7 @@ public interface NCmdLine extends Iterable<NArg>, NFormattable, NBlankable, NSes
      */
     void throwError(NString message);
 
-    NCmdLineFormat formatter(NSession session);
+    NCmdLineFormat formatter();
 
     /**
      * add new argument (ignoring null values)
@@ -648,8 +640,6 @@ public interface NCmdLine extends Iterable<NArg>, NFormattable, NBlankable, NSes
     NCmdLine add(String argument);
 
     NCmdLine addAll(List<String> arguments);
-
-    NCmdLine setSession(NSession session);
 
     void forEachPeek(NCmdLineRunner processor);
     void forEachPeek(NCmdLineRunner processor, NCmdLineContext context);

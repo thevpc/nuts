@@ -41,8 +41,8 @@ public interface NWorkspaceCmdFactory {
 
     String getFactoryId();
 
-    NCommandConfig findCommand(String name, NSession session);
+    NCommandConfig findCommand(String name);
 
-    List<NCommandConfig> findCommands(NSession session);
+    List<NCommandConfig> findCommands();
 
 }

@@ -1,21 +1,20 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementEntry;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.lib.common.str.NStreamTokenizer;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class NElementPathImpl {
     private List<Item> items = new ArrayList<>();
-    private NSession session;
+    private NWorkspace workspace;
 
-    public NElementPathImpl(String pattern, NSession session) {
-        this.session = session;
-        NStreamTokenizer tit = new NStreamTokenizer(pattern, session);
+    public NElementPathImpl(String pattern, NWorkspace workspace) {
+        this.workspace = workspace;
+        NStreamTokenizer tit = new NStreamTokenizer(pattern);
         tit.wordChar('*');
         while (tit.hasNext()) {
             _readItem(tit);
@@ -86,7 +85,7 @@ public class NElementPathImpl {
                     break;
                 }
                 default: {
-                    Arrays.stream(e).map(x -> new NElementOrEntry(-1, x, session)).flatMap(x->{
+                    Arrays.stream(e).map(x -> new NElementOrEntry(-1, x, workspace)).flatMap(x->{
                         if(item.depth==ItemDepth.CHILD){
                             return x.children().stream().filter(item::accept);
                         }
@@ -190,20 +189,20 @@ public class NElementPathImpl {
         int index;
         NElement key;
         NElement value;
-        NSession session;
+        NWorkspace nWorkspace;
 
-        public NElementOrEntry(int index, NElement value, NSession session) {
+        public NElementOrEntry(int index, NElement value, NWorkspace nWorkspace) {
             this.index = index;
-            this.key = NElements.of(session).ofInt(index);
+            this.key = NElements.of().ofInt(index);
             this.value = value;
-            this.session = session;
+            this.nWorkspace = nWorkspace;
         }
 
-        public NElementOrEntry(int index, NElementEntry entry, NSession session) {
+        public NElementOrEntry(int index, NElementEntry entry, NWorkspace nWorkspace) {
             this.index = index;
             this.key = entry.getKey();
             this.value = entry.getValue();
-            this.session = session;
+            this.nWorkspace = nWorkspace;
         }
 
         List<NElementOrEntry> children() {
@@ -211,13 +210,13 @@ public class NElementPathImpl {
             if (value.isArray()) {
                 int i = 0;
                 for (NElement item : value.asArray().get().items()) {
-                    all.add(new NElementOrEntry(i, item, session));
+                    all.add(new NElementOrEntry(i, item, nWorkspace));
                     i++;
                 }
             } else if (value.isObject()) {
                 int i = 0;
                 for (NElementEntry item : value.asObject().get().entries()) {
-                    all.add(new NElementOrEntry(i, item, session));
+                    all.add(new NElementOrEntry(i, item, nWorkspace));
                     i++;
                 }
             }

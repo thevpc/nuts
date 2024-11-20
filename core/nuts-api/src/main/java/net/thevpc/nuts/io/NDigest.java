@@ -28,7 +28,6 @@ package net.thevpc.nuts.io;
 import net.thevpc.nuts.NDescriptor;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NSessionProvider;
 import net.thevpc.nuts.spi.NComponent;
 
 import java.io.File;
@@ -46,9 +45,9 @@ import java.util.List;
  * @app.category Input Output
  * @since 0.5.5
  */
-public interface NDigest extends NComponent, NSessionProvider {
-    static NDigest of(NSession session) {
-        return NExtensions.of(session).createComponent(NDigest.class).get();
+public interface NDigest extends NComponent {
+    static NDigest of() {
+        return NExtensions.of().createComponent(NDigest.class).get();
     }
 
     NDigest addSource(NInputSource source);
@@ -132,7 +131,6 @@ public interface NDigest extends NComponent, NSessionProvider {
      */
     NDigest md5();
 
-    NDigest setSession(NSession session);
 
     /**
      * select SHA1 hash algorithm

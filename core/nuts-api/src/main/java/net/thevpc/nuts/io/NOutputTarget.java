@@ -25,7 +25,6 @@
  */
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.format.NFormattable;
 import net.thevpc.nuts.reserved.rpi.NIORPI;
 
@@ -39,12 +38,12 @@ import java.io.OutputStream;
  * @since 0.5.5
  */
 public interface NOutputTarget extends NFormattable, NContentMetadataProvider {
-    static NOutputTarget of(OutputStream outputStream, NSession session) {
-        return NIORPI.of(session).ofOutputTarget(outputStream);
+    static NOutputTarget of(OutputStream outputStream) {
+        return NIORPI.of().ofOutputTarget(outputStream);
     }
 
-    static NOutputTarget of(OutputStream outputStream, NContentMetadata metadata, NSession session) {
-        return NIORPI.of(session).ofOutputTarget(outputStream, metadata);
+    static NOutputTarget of(OutputStream outputStream, NContentMetadata metadata) {
+        return NIORPI.of().ofOutputTarget(outputStream, metadata);
     }
 
     OutputStream getOutputStream();

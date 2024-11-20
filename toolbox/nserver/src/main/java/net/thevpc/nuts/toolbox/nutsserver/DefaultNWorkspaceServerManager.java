@@ -27,6 +27,7 @@
 package net.thevpc.nuts.toolbox.nutsserver;
 
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.toolbox.nutsserver.http.NHttpServerConfig;
 import net.thevpc.nuts.util.NAssert;
 
@@ -53,9 +54,9 @@ public class DefaultNWorkspaceServerManager implements NWorkspaceServerManager {
         if (serverConfig == null) {
             serverConfig = new NHttpServerConfig();
         }
-        NServerComponent server = session.extensions().createServiceLoader(NServerComponent.class, ServerConfig.class, NServerComponent.class.getClassLoader())
+        NServerComponent server = NWorkspace.of().get().extensions().createServiceLoader(NServerComponent.class, ServerConfig.class, NServerComponent.class.getClassLoader())
                 .loadBest(serverConfig);
-        NAssert.requireNonNull(server, "server", session);
+        NAssert.requireNonNull(server, "server");
         NServer s = server.start(session/*.self()*/, serverConfig);
         if (servers.get(s.getServerId()) != null) {
             servers.get(s.getServerId()).stop();
@@ -67,7 +68,7 @@ public class DefaultNWorkspaceServerManager implements NWorkspaceServerManager {
     @Override
     public NServer getServer(String serverId) {
         NServer nServer = servers.get(serverId);
-        NAssert.requireNonNull(nServer, "server "+serverId, session);
+        NAssert.requireNonNull(nServer, "server "+serverId);
         return nServer;
     }
 

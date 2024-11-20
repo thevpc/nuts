@@ -37,8 +37,8 @@ import java.util.List;
  * @since 0.5.5
  */
 public interface NPrepareCmd extends NWorkspaceCmd {
-    static NPrepareCmd of(NSession session) {
-        return NExtensions.of(session).createComponent(NPrepareCmd.class).get();
+    static NPrepareCmd of() {
+        return NExtensions.of().createComponent(NPrepareCmd.class).get();
     }
 
     NPrepareCmd setTargetServer(String remoteServer);
@@ -50,24 +50,7 @@ public interface NPrepareCmd extends NWorkspaceCmd {
     NPrepareCmd setIds(List<NId> id);
 
     NPrepareCmd addIds(List<NId> id);
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
-    NPrepareCmd setSession(NSession session);
-
-    /**
-     * copy session
-     *
-     * @return {@code this} instance
-     */
-    @Override
-    NPrepareCmd copySession();
-
+    
     /**
      * configure the current command with the given arguments. This is an
      * override of the {@link NCmdLineConfigurable#configure(boolean, String...) }

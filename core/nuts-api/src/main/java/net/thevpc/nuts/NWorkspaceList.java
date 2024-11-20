@@ -41,23 +41,25 @@ import java.util.List;
  */
 public interface NWorkspaceList extends NComponent {
 
-    static NWorkspaceList of(NSession session) {
-       return NExtensions.of(session).createComponent(NWorkspaceList.class).get();
+    static NWorkspaceList of() {
+        return NExtensions.of().createComponent(NWorkspaceList.class).get();
     }
+
     List<NWorkspaceLocation> getWorkspaces();
 
     NWorkspaceLocation getWorkspaceLocation(String uuid);
 
     NWorkspaceListConfig getConfig();
+
     String getName();
 
     NWorkspaceList setName(String name);
 
     NWorkspaceList setConfig(NWorkspaceListConfig config);
 
-    NSession addWorkspace(String path, NSession session);
+    NSession addWorkspace(String path);
 
-    boolean removeWorkspace(String name, NSession session);
+    boolean removeWorkspace(String name);
 
-    void save(NSession session);
+    void save();
 }

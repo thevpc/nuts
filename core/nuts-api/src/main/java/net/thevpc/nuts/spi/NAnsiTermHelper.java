@@ -39,17 +39,21 @@ import java.util.List;
 public class NAnsiTermHelper {
     private static final int[] FG8 = {30, 31, 32, 33, 34, 35, 36, 37, 90, 91, 92, 93, 94, 95, 96, 97};
     private static final int[] BG8 = {40, 41, 42, 43, 44, 45, 46, 47, 100, 101, 102, 103, 104, 105, 106, 107};
+    private NWorkspace workspace;
 
+    public static NAnsiTermHelper of(NWorkspace workspace) {
+        return new NAnsiTermHelper(workspace);
+    }
 
-    public static NAnsiTermHelper of(NSession session) {
-        return new NAnsiTermHelper();
+    public NAnsiTermHelper(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
     public String plain() {
         return "\u001B[0m";
     }
 
-    public String styled(NTextStyles styles, NSession session) {
+    public String styled(NTextStyles styles) {
         NColor foreground = null;
         NColor background = null;
         boolean bold = false;
@@ -107,10 +111,10 @@ public class NAnsiTermHelper {
                 }
             }
         }
-        return styled(foreground, background, bold, blink, underlined, striked, italic, reversed, intensity, session);
+        return styled(foreground, background, bold, blink, underlined, striked, italic, reversed, intensity);
     }
 
-    public String foreColor(NColor c, NSession session) {
+    public String foreColor(NColor c) {
         if (c != null) {
             int intColor = c.getColor();
             switch (c.getType()) {
@@ -144,7 +148,7 @@ public class NAnsiTermHelper {
         return null;
     }
 
-    public String backColor(NColor c, NSession session) {
+    public String backColor(NColor c) {
         if (c != null) {
             int intColor = c.getColor();
             switch (c.getType()) {
@@ -185,8 +189,7 @@ public class NAnsiTermHelper {
                          boolean striked,
                          boolean italic,
                          boolean reversed,
-                         int intensity,
-                         NSession session) {
+                         int intensity) {
         boolean plain = !bold && !blink && !underlined && !italic && !striked && !reversed
                 && NBlankable.isBlank(foreground)
                 && NBlankable.isBlank(background);
@@ -197,7 +200,7 @@ public class NAnsiTermHelper {
         boolean first = true;
         if (foreground != null) {
             first = false;
-            sb.append(foreColor(foreground, session));
+            sb.append(foreColor(foreground));
         }
         if (background != null) {
             if (first) {
@@ -205,7 +208,7 @@ public class NAnsiTermHelper {
             } else {
                 sb.append(';');
             }
-            sb.append(backColor(background, session));
+            sb.append(backColor(background));
         }
         if (bold) {
             if (first) {
@@ -259,7 +262,7 @@ public class NAnsiTermHelper {
         return sb.toString();
     }
 
-    public String command(NTerminalCmd command, NSession session) {
+    public String command(NTerminalCmd command) {
         switch (command.getName()) {
             case NTerminalCmd.Ids.MOVE_LINE_START: {
                 return ("\r");

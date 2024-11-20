@@ -4,7 +4,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
@@ -30,17 +29,16 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
     public static final String PREFIX = PROTOCOL + ":";
 
     public static class DotfilefsFactory implements NPathFactorySPI {
-        private NWorkspace ws;
+        private NWorkspace workspace;
 
-        public DotfilefsFactory(NWorkspace ws) {
-            this.ws = ws;
+        public DotfilefsFactory(NWorkspace workspace) {
+            this.workspace = workspace;
         }
 
         @Override
-        public NCallableSupport<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
-            NSessionUtils.checkSession(ws, session);
+        public NCallableSupport<NPathSPI> createPath(String path, ClassLoader classLoader) {
             if (path.startsWith(PREFIX)) {
-                return NCallableSupport.of(10, () -> new DotfilefsPath(path, session));
+                return NCallableSupport.of(10, () -> new DotfilefsPath(path, workspace));
             }
             return null;
         }
@@ -55,10 +53,10 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         }
     }
 
-    public DotfilefsPath(String url, NSession session) {
-        super(NPath.of(url.substring(PREFIX.length()), session), session);
+    public DotfilefsPath(String url, NWorkspace workspace) {
+        super(NPath.of(url.substring(PREFIX.length())), workspace);
         if (!url.startsWith(PREFIX)) {
-            throw new NUnsupportedArgumentException(session, NMsg.ofC("expected prefix '%s'", PREFIX));
+            throw new NUnsupportedArgumentException(NMsg.ofC("expected prefix '%s'", PREFIX));
         }
     }
 
@@ -89,10 +87,10 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         return NStream.of(parseHtml(ref.toString()).stream().map(
                 x -> {
                     if (x.endsWith("/")) {
-                        return NPath.of(PREFIX + ref.resolve(x), session);
+                        return NPath.of(PREFIX + ref.resolve(x));
                     }
                     return ref.resolve(x);
-                }), session);
+                }));
     }
 
     @Override
@@ -108,22 +106,22 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
 
     @Override
     public NPath resolve(NPath basePath, String path) {
-        return NPath.of(PREFIX + ref.resolve(path), session);
+        return NPath.of(PREFIX + ref.resolve(path));
     }
 
     @Override
     public NPath resolve(NPath basePath, NPath path) {
-        return NPath.of(PREFIX + ref.resolve(path), session);
+        return NPath.of(PREFIX + ref.resolve(path));
     }
 
     @Override
     public NPath resolveSibling(NPath basePath, String path) {
-        return NPath.of(PREFIX + ref.resolveSibling(path), session);
+        return NPath.of(PREFIX + ref.resolveSibling(path));
     }
 
     @Override
     public NPath resolveSibling(NPath basePath, NPath path) {
-        return NPath.of(PREFIX + ref.resolveSibling(path), session);
+        return NPath.of(PREFIX + ref.resolveSibling(path));
     }
 
 
@@ -171,7 +169,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         if (p == null) {
             return null;
         }
-        return NPath.of(PREFIX + p, session);
+        return NPath.of(PREFIX + p);
     }
 
     @Override
@@ -179,12 +177,12 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         if (isAbsolute(basePath)) {
             return basePath;
         }
-        return NPath.of(PREFIX + basePath.toAbsolute(rootPath), session);
+        return NPath.of(PREFIX + basePath.toAbsolute(rootPath));
     }
 
     @Override
     public NPath normalize(NPath basePath) {
-        return NPath.of(PREFIX + ref.normalize(), session);
+        return NPath.of(PREFIX + ref.normalize());
     }
 
     @Override
@@ -197,7 +195,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         if (isRoot(basePath)) {
             return basePath;
         }
-        return NPath.of(PREFIX + ref.getRoot(), session);
+        return NPath.of(PREFIX + ref.getRoot());
     }
 
     @NUseDefault
@@ -219,11 +217,12 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         List<String> all = new ArrayList<>();
         InputStream foldersFileStream = null;
         String dotFilesUrl = baseUrl + "/" + CoreNConstants.Files.DOT_FILES;
-        NVersion versionString = NVersion.of("0.5.5").get(session);
+        NSession session = workspace.currentSession();
+        NVersion versionString = NVersion.of("0.5.5").get();
         try {
-            session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "browse", NPath.of(baseUrl, session).toCompressedForm()));
-            foldersFileStream = NInputStreamMonitor.of(session).setSource(NPath.of(dotFilesUrl, session)).create();
-            List<String> splitted = StringTokenizerUtils.splitNewLine(CoreIOUtils.loadString(foldersFileStream, true, session));
+            session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "browse", NPath.of(baseUrl).toCompressedForm()));
+            foldersFileStream = NInputStreamMonitor.of().setSource(NPath.of(dotFilesUrl)).create();
+            List<String> splitted = StringTokenizerUtils.splitNewLine(CoreIOUtils.loadString(foldersFileStream, true));
             for (String s : splitted) {
                 s = s.trim();
                 if (s.length() > 0) {
@@ -231,7 +230,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
                         if (all.isEmpty()) {
                             s = s.substring(1).trim();
                             if (s.startsWith("version=")) {
-                                versionString = NVersion.of(s.substring("version=".length()).trim()).get(session);
+                                versionString = NVersion.of(s.substring("version=".length()).trim()).get();
                             }
                         }
                     } else {
@@ -272,19 +271,19 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
                 }
             }
         } catch (UncheckedIOException | NIOException ex) {
-            NLogOp.of(DotfilefsPath.class, session).level(Level.FINE).verb(NLogVerb.FAIL)
+            NLogOp.of(DotfilefsPath.class).level(Level.FINE).verb(NLogVerb.FAIL)
                     .log(NMsg.ofC("unable to navigate : file not found %s", dotFilesUrl));
         }
         if (versionString.compareTo("0.5.7") < 0) {
             if (folders) {
                 String[] foldersFileContent = null;
                 String dotFolderUrl = baseUrl + "/" + CoreNConstants.Files.DOT_FOLDERS;
-                try (InputStream stream = NInputStreamMonitor.of(session).setSource(NPath.of(dotFolderUrl, session))
+                try (InputStream stream = NInputStreamMonitor.of().setSource(NPath.of(dotFolderUrl))
                         .create()) {
-                    foldersFileContent = StringTokenizerUtils.splitNewLine(CoreIOUtils.loadString(stream, true, session))
+                    foldersFileContent = StringTokenizerUtils.splitNewLine(CoreIOUtils.loadString(stream, true))
                             .stream().map(x -> x.trim()).filter(x -> x.length() > 0).toArray(String[]::new);
                 } catch (IOException | UncheckedIOException | NIOException ex) {
-                    NLogOp.of(DotfilefsPath.class, session).level(Level.FINE).verb(NLogVerb.FAIL)
+                    NLogOp.of(DotfilefsPath.class).level(Level.FINE).verb(NLogVerb.FAIL)
                             .log(NMsg.ofC("unable to navigate : file not found %s", dotFolderUrl));
                 }
                 if (foldersFileContent != null) {
@@ -310,7 +309,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         }
 
         public NString asFormattedString() {
-            NTextBuilder sb = NTextBuilder.of(p.getSession());
+            NTextBuilder sb = NTextBuilder.of();
             sb.append("html", NTextStyle.primary1());
             sb.append(":", NTextStyle.separator());
             sb.append(p.ref);

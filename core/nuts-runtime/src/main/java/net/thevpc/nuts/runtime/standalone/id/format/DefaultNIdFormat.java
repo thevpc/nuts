@@ -26,8 +26,8 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
     private Set<String> omittedProperties = new HashSet<>();
     private NId id;
 
-    public DefaultNIdFormat(NSession session) {
-        super(session, "id-format");
+    public DefaultNIdFormat(NWorkspace workspace) {
+        super(workspace, "id-format");
     }
 
     public NIdFormat setNtf(boolean ntf) {
@@ -146,11 +146,11 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
 
     @Override
     public NString format() {
-        checkSession();
+        NSession session=getWorkspace().currentSession();
         if (id == null) {
             return isNtf() ?
-                    NTexts.of(getSession()).ofStyled("<null>", NTextStyle.of(NTextStyleType.BOOLEAN))
-                    : NTexts.of(getSession()).ofPlain("<null>")
+                    NTexts.of().ofStyled("<null>", NTextStyle.of(NTextStyleType.BOOLEAN))
+                    : NTexts.of().ofPlain("<null>")
                     ;
         }
         Map<String, String> queryMap = id.getProperties();
@@ -167,11 +167,11 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
             idBuilder.setProperty(NConstants.IdProperties.FACE, null);
         }
         id = idBuilder.build();
-        NTextBuilder sb = NTexts.of(getSession()).ofBuilder();
+        NTextBuilder sb = NTexts.of().ofBuilder();
         if (!isOmitGroupId()) {
             if (!NBlankable.isBlank(id.getGroupId())) {
                 boolean importedGroup2 = NConstants.Ids.NUTS_GROUP_ID.equals(id.getGroupId());
-                boolean importedGroup = NImports.of(getSession()).getAllImports().contains(id.getGroupId());
+                boolean importedGroup = NImports.of().getAllImports().contains(id.getGroupId());
                 if (!(importedGroup && isOmitImportedGroupId())) {
                     if (importedGroup || importedGroup2) {
                         sb.append(id.getGroupId(), NTextStyle.pale());
@@ -236,7 +236,7 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
                 sb.append(_encodeKey(id.getRepository()), NTextStyle.pale());
             }
         }
-        for (Map.Entry<String, String> e : CoreFilterUtils.toMap(id.getCondition(), getSession()).entrySet()) {
+        for (Map.Entry<String, String> e : CoreFilterUtils.toMap(id.getCondition()).entrySet()) {
             String kk = e.getKey();
             String kv = e.getValue();
             if (firstQ) {
@@ -278,7 +278,7 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
         if (isNtf()) {
             return sb.immutable();
         } else {
-            return NTexts.of(getSession()).ofPlain(sb.filteredText());
+            return NTexts.of().ofPlain(sb.filteredText());
         }
     }
 
@@ -310,34 +310,34 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NSession session = getSession();
-        NArg aa = cmdLine.peek().get(session);
+        NSession session=getWorkspace().currentSession();
+        NArg aa = cmdLine.peek().get();
         if (aa == null) {
             return false;
         }
         switch(aa.key()) {
             case "--omit-env": {
-                cmdLine.withNextFlag((v, a, s) -> this.setOmitOtherProperties(v));
+                cmdLine.withNextFlag((v, a) -> this.setOmitOtherProperties(v));
                 return true;
             }
             case "--omit-face": {
-                cmdLine.withNextFlag((v, a, s) -> this.setOmitFace(v));
+                cmdLine.withNextFlag((v, a) -> this.setOmitFace(v));
                 return true;
             }
             case "--omit-group": {
-                cmdLine.withNextFlag((v, a, s) -> this.setOmitGroupId(v));
+                cmdLine.withNextFlag((v, a) -> this.setOmitGroupId(v));
                 return true;
             }
             case "--omit-imported-group": {
-                cmdLine.withNextFlag((v, a, s) -> this.setOmitImportedGroupId(v));
+                cmdLine.withNextFlag((v, a) -> this.setOmitImportedGroupId(v));
                 return true;
             }
             case "--omit-repo": {
-                cmdLine.withNextFlag((v, a, s) -> this.setOmitRepository(v));
+                cmdLine.withNextFlag((v, a) -> this.setOmitRepository(v));
                 return true;
             }
             case "--highlight-imported-group": {
-                cmdLine.withNextFlag((v, a, s) -> this.setHighlightImportedGroupId(v));
+                cmdLine.withNextFlag((v, a) -> this.setHighlightImportedGroupId(v));
                 return true;
             }
         }

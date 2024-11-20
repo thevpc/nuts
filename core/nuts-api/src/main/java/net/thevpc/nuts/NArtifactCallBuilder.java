@@ -40,8 +40,8 @@ import java.util.List;
  * @since 0.5.4
  */
 public interface NArtifactCallBuilder extends Serializable, NComponent {
-    static NArtifactCallBuilder of(NSession session) {
-       return NExtensions.of(session).createComponent(NArtifactCallBuilder.class).get();
+    static NArtifactCallBuilder of() {
+       return NExtensions.of().createComponent(NArtifactCallBuilder.class).get();
     }
 
     /**

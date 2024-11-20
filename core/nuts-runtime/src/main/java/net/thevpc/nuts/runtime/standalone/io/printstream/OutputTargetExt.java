@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.format.NFormat;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.io.NContentMetadataProviderFormatSPI;
@@ -16,12 +16,12 @@ public class OutputTargetExt implements NOutputTarget {
     private OutputStream base;
     private NMsg sourceName;
     private NContentMetadata md;
-    private NSession session;
+    private NWorkspace workspace;
 
-    public OutputTargetExt(OutputStream base, NContentMetadata md0,NSession session) {
+    public OutputTargetExt(OutputStream base, NContentMetadata md0,NWorkspace workspace) {
         this.base = base;
         this.md = CoreIOUtils.createContentMetadata(md0,base);
-        this.session = session;
+        this.workspace = workspace;
     }
 
     @Override
@@ -35,8 +35,8 @@ public class OutputTargetExt implements NOutputTarget {
     }
 
     @Override
-    public NFormat formatter(NSession session) {
-        return NFormat.of(session, new NContentMetadataProviderFormatSPI(this, null, "output-stream"));
+    public NFormat formatter() {
+        return NFormat.of(new NContentMetadataProviderFormatSPI(this, null, "output-stream"));
     }
 
     @Override

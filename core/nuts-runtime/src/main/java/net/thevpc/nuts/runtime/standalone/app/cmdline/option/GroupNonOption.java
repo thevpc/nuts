@@ -70,12 +70,12 @@ public class GroupNonOption extends DefaultNonOption {
                 all.add(new DefaultNArgCandidate(n));
             }
         } else if (repository != null) {
-            for (NUser nutsSecurityEntityConfig : repository.security().setSession(context.getSession())
+            for (NUser nutsSecurityEntityConfig : repository.security()
                     .findUsers()) {
                 all.add(new DefaultNArgCandidate(nutsSecurityEntityConfig.getUser()));
             }
         } else {
-            for (NUser nutsSecurityEntityConfig : NWorkspaceSecurityManager.of(context.getSession())
+            for (NUser nutsSecurityEntityConfig : NWorkspaceSecurityManager.of()
                     .findUsers()) {
                 all.add(new DefaultNArgCandidate(nutsSecurityEntityConfig.getUser()));
             }

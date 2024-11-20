@@ -15,7 +15,6 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.util.NMsg;
 
 import java.util.ArrayList;
@@ -28,32 +27,30 @@ import java.util.logging.Level;
  * @author thevpc
  */
 public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCommand {
-    private final NLog LOG;
 
-    public DefaultNHelpInternalExecutable(String[] args, NExecCmd execCommand) {
-        super("help", args, execCommand);
-        LOG = NLog.of(DefaultNHelpInternalExecutable.class, execCommand.getSession());
+    public DefaultNHelpInternalExecutable(NWorkspace workspace,String[] args, NExecCmd execCommand) {
+        super(workspace,"help", args, execCommand);
     }
 
     @Override
     public int execute() {
-        if (getSession().isDry()) {
+        NSession session = workspace.currentSession();
+        if (session.isDry()) {
             dryExecute();
             return NExecutionException.SUCCESS;
         }
         List<String> helpFor = new ArrayList<>();
-        NSession session = getSession();
         NCmdLine cmdLine = NCmdLine.of(args);
         boolean helpColors = false;
         while (cmdLine.hasNext()) {
-            NArg a = cmdLine.peek().get(session);
+            NArg a = cmdLine.peek().get();
             if (a.isOption()) {
                 switch (a.key()) {
                     case "--colors":
                     case "--ntf": {
-                        NArg c = cmdLine.nextFlag().get(session);
+                        NArg c = cmdLine.nextFlag().get();
                         if (c.isActive()) {
-                            helpColors = c.getBooleanValue().get(session);
+                            helpColors = c.getBooleanValue().get();
                         }
                         break;
                     }
@@ -69,25 +66,25 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
                 }
             } else {
                 cmdLine.skip();
-                helpFor.add(a.asString().get(session));
+                helpFor.add(a.asString().get());
                 helpFor.addAll(Arrays.asList(cmdLine.toStringArray()));
                 cmdLine.skipAll();
             }
         }
 
         if (helpColors) {
-            NTexts txt = NTexts.of(session);
+            NTexts txt = NTexts.of();
             NText n = txt.parser().parse(NPath.of("classpath:/net/thevpc/nuts/runtime/ntf-help.ntf",
-                    this.getClass().getClassLoader(),
-                    session));
+                    this.getClass().getClassLoader()
+            ));
             session.getTerminal().out().print(
-                    n == null ? NTexts.of(session).ofStyled(("no help found for " + name), NTextStyle.error()) : n
+                    n == null ? NTexts.of().ofStyled(("no help found for " + name), NTextStyle.error()) : n
             );
         }
         //NPrintStream fout = NPrintStream.ofInMemory(session).setTerminalMode(NTerminalMode.FORMATTED);
         NPrintStream out = session.out();
         if (!helpColors && helpFor.isEmpty()) {
-            out.println(NWorkspaceExt.of(session.getWorkspace()).getHelpText(session));
+            out.println(NWorkspaceExt.of(session.getWorkspace()).getHelpText());
             out.flush();
         }
         for (String arg : helpFor) {
@@ -99,9 +96,9 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
             } else {
                 try {
                     try {
-                        w = NExecCmd.of(session).addCommand(arg).which();
+                        w = NExecCmd.of().addCommand(arg).which();
                     } catch (Exception ex) {
-                        LOG.with().session(session).level(Level.FINE).error(ex).log(NMsg.ofC("failed to execute : %s", arg));
+                        LOG().with().level(Level.FINE).error(ex).log(NMsg.ofC("failed to execute : %s", arg));
                         //ignore
                     }
                     if (w != null) {

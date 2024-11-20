@@ -20,31 +20,32 @@ public class NProgressUtils {
 
 
     public static NProgressFactory createLogProgressMonitorFactory(MonitorType mt) {
+        NWorkspace workspace = NWorkspace.of().get();
         switch (mt) {
             case STREAM:
-                return new DefaultNInputStreamProgressFactory();
+                return new DefaultNInputStreamProgressFactory(workspace);
             case DEFAULT:
-                return new DefaultNProgressFactory();
+                return new DefaultNProgressFactory(workspace);
         }
-        return new DefaultNProgressFactory();
+        return new DefaultNProgressFactory(workspace);
     }
 
-    public static NProgressListener createProgressMonitor(MonitorType mt, NInputSource source, Object sourceOrigin, NSession session,
+    public static NProgressListener createProgressMonitor(MonitorType mt, NInputSource source, Object sourceOrigin, NWorkspace workspace,
                                                           boolean logProgress,
                                                           boolean traceProgress,
                                                           NProgressFactory progressFactory) {
         List<NProgressListener> all = new ArrayList<>();
         if (logProgress) {
-            NProgressListener e = createLogProgressMonitorFactory(mt).createProgressListener(source, sourceOrigin, session);
+            NProgressListener e = createLogProgressMonitorFactory(mt).createProgressListener(source, sourceOrigin);
             if (e != null) {
                 all.add(e);
             }
         }
-        if (traceProgress && session.isProgress()) {
+        if (traceProgress && workspace.currentSession().isProgress()) {
             all.add(new TraceNProgressListener());
         }
         if (progressFactory != null) {
-            NProgressListener e = progressFactory.createProgressListener(source, sourceOrigin, session);
+            NProgressListener e = progressFactory.createProgressListener(source, sourceOrigin);
             if (e != null) {
                 all.add(e);
             }

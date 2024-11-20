@@ -24,6 +24,6 @@ public class NElementMapperNText implements NElementMapper<NText> {
     public NText createObject(NElement o, Type to, NElementFactoryContext context) {
         String i = context.defaultElementToObject(o, String.class);
         //return NutsTexts.of(context.getSession()).parse(i).toText();
-        return NTexts.of(context.getSession()).ofPlain(i).toText();
+        return NTexts.of().ofPlain(i).toText();
     }
 }

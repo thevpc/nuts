@@ -19,8 +19,8 @@ public class NIdFilterAnd extends AbstractIdFilter implements NIdFilter, NSimpli
 
     private NIdFilter[] children;
 
-    public NIdFilterAnd(NSession session, NIdFilter... all) {
-        super(session, NFilterOp.AND);
+    public NIdFilterAnd(NWorkspace workspace, NIdFilter... all) {
+        super(workspace, NFilterOp.AND);
         List<NIdFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NIdFilter filter : all) {
@@ -37,12 +37,12 @@ public class NIdFilterAnd extends AbstractIdFilter implements NIdFilter, NSimpli
     }
 
     @Override
-    public boolean acceptId(NId id, NSession session) {
+    public boolean acceptId(NId id) {
         if (children.length == 0) {
             return true;
         }
         for (NIdFilter filter : children) {
-            if (!filter.acceptId(id, session)) {
+            if (!filter.acceptId(id)) {
                 return false;
             }
         }
@@ -51,7 +51,7 @@ public class NIdFilterAnd extends AbstractIdFilter implements NIdFilter, NSimpli
 
     @Override
     public NIdFilter simplify() {
-        return CoreFilterUtils.simplifyFilterAnd(getSession(), NIdFilter.class,this,children);
+        return CoreFilterUtils.simplifyFilterAnd(NIdFilter.class,this,children);
     }
 
     @Override

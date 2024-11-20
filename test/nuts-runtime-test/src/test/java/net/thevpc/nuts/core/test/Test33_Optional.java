@@ -73,7 +73,7 @@ public class Test33_Optional {
         }
 
         {
-            NOptional<String> a = NOptional.ofError(s-> NMsg.ofPlain("error"));
+            NOptional<String> a = NOptional.ofError(NMsg.ofPlain("error"));
             Assertions.assertThrows(NNoSessionOptionalErrorException.class, () -> a.get());
             Assertions.assertEquals(false, a.isEmpty());
             Assertions.assertEquals(true, a.isError());

@@ -15,19 +15,17 @@ import java.io.OutputStream;
 public class NTextNodeWriterStringer extends AbstractNTextNodeWriter {
 
     private OutputStream out;
-    private NSession session;
 
-    public NTextNodeWriterStringer(OutputStream out, NSession session) {
+    public NTextNodeWriterStringer(OutputStream out) {
         this.out = out;
-        this.session = session;
     }
 
-    public static String toString(NText n, NSession session) {
+    public static String toString(NText n, NWorkspace workspace) {
         if (n == null) {
             return "";
         }
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        new NTextNodeWriterStringer(bos, session).writeNode(n);
+        new NTextNodeWriterStringer(bos).writeNode(n);
         return bos.toString();
     }
 
@@ -48,7 +46,7 @@ public class NTextNodeWriterStringer extends AbstractNTextNodeWriter {
         try {
             out.flush();
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
         return true;
     }
@@ -89,7 +87,7 @@ public class NTextNodeWriterStringer extends AbstractNTextNodeWriter {
             case COMMAND: {
                 NTextCmd s = (NTextCmd) node;
                 writeRaw("```!");
-                NCmdLine cmd = new DefaultNCmdLine().setSession(session);
+                NCmdLine cmd = new DefaultNCmdLine();
                 cmd.add(s.getCommand().getName());
                 cmd.addAll(s.getCommand().getArgs());
                 writeEscapedSpecial(cmd.toString());
@@ -206,7 +204,7 @@ public class NTextNodeWriterStringer extends AbstractNTextNodeWriter {
         try {
             out.write(rawString.getBytes());
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 

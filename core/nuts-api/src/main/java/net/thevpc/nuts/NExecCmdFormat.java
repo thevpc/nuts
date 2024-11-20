@@ -40,8 +40,8 @@ import java.util.function.Predicate;
  * @since 0.5.4
  */
 public interface NExecCmdFormat extends NFormat {
-    static NExecCmdFormat of(NSession session) {
-       return NExtensions.of(session).createComponent(NExecCmdFormat.class).get();
+    static NExecCmdFormat of() {
+       return NExtensions.of().createComponent(NExecCmdFormat.class).get();
     }
 
     /**

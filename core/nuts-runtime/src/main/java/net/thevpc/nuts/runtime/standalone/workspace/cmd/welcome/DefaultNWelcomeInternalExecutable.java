@@ -24,51 +24,51 @@ import java.util.Map;
  */
 public class DefaultNWelcomeInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNWelcomeInternalExecutable(String[] args, NExecCmd execCommand) {
-        super("welcome", args, execCommand);
+    public DefaultNWelcomeInternalExecutable(NWorkspace workspace,String[] args, NExecCmd execCommand) {
+        super(workspace,"welcome", args, execCommand);
     }
 
     @Override
     public int execute() {
-        if(getSession().isDry()){
+        NSession session = workspace.currentSession();
+        if(session.isDry()){
             dryExecute();
             return NExecutionException.SUCCESS;
         }
-        if (NAppUtils.processHelpOptions(args, getSession())) {
+        if (NAppUtils.processHelpOptions(args, session)) {
             showDefaultHelp();
             return NExecutionException.SUCCESS;
         }
-        NSession session = getSession();
         NCmdLine cmdLine = NCmdLine.of(args);
         while (cmdLine.hasNext()) {
-            NArg a = cmdLine.peek().get(session);
+            NArg a = cmdLine.peek().get();
             if (a.isOption()) {
                 switch(a.key()) {
                     default: {
-                        getSession().configureLast(cmdLine);
+                        session.configureLast(cmdLine);
                     }
                 }
             } else {
-                getSession().configureLast(cmdLine);
+                session.configureLast(cmdLine);
             }
         }
 
         if (session.isPlainOut()) {
-            session.out().resetLine().println(NWorkspaceExt.of(session.getWorkspace()).getWelcomeText(session));
+            session.out().resetLine().println(NWorkspaceExt.of(session.getWorkspace()).getWelcomeText());
         } else {
             Map<String, Object> welcome = new LinkedHashMap<>();
             welcome.put("message", "Welcome to nuts. Yeah, it is working...");
-            welcome.put("name", NTexts.of(session).ofStyled("nuts", NTextStyle.primary(1)));
+            welcome.put("name", NTexts.of().ofStyled("nuts", NTextStyle.primary(1)));
             welcome.put("long-name", "Network Updatable Things Services");
             welcome.put("description", "The Free and Open Source Package Manager for Java (TM) and other Things ...");
-            welcome.put("url", NPath.of("https://github.com/thevpc/nuts",session));
+            welcome.put("url", NPath.of("https://github.com/thevpc/nuts"));
             welcome.put("author", "thevpc");
             welcome.put("api-id", session.getWorkspace().getApiId().builder().setVersion("").build());
             welcome.put("api-version", session.getWorkspace().getApiVersion());
             welcome.put("runtime-id", session.getWorkspace().getRuntimeId().builder().setVersion("").build());
             welcome.put("runtime-version", session.getWorkspace().getRuntimeId().getVersion());
-            welcome.put("workspace", NLocations.of(session).getWorkspaceLocation());
-            welcome.put("hash-name", NPath.of(session.getWorkspace().getHashName(),session));
+            welcome.put("workspace", NLocations.of().getWorkspaceLocation());
+            welcome.put("hash-name", NPath.of(session.getWorkspace().getHashName()));
             if (session.isPlainOut()) {
                 session = session.copy().setOutputFormat(NContentType.PROPS);
             }

@@ -59,10 +59,10 @@ public class CommandCommand extends NShellBuiltinDefault {
         if (context.configureFirst(cmdLine)) {
             return true;
         } else if ((a = cmdLine.nextFlag("-p").orNull()) != null) {
-            options.p = a.getBooleanValue().get(session);
+            options.p = a.getBooleanValue().get();
         } else if (!cmdLine.isNextOption()) {
             if (options.commandName == null) {
-                options.commandName = cmdLine.next().flatMap(NLiteral::asString).get(session);
+                options.commandName = cmdLine.next().flatMap(NLiteral::asString).get();
             }
             options.args.addAll(Arrays.asList(cmdLine.toStringArray()));
             cmdLine.skipAll();

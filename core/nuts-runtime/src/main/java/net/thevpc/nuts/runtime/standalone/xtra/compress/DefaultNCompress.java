@@ -10,7 +10,6 @@ import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.progress.SingletonNInputStreamProgressFactory;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NCompressPackaging;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -41,16 +40,14 @@ public class DefaultNCompress implements NCompress {
     private NLog LOG;
     private boolean safe = true;
     private NOutputTarget target;
-    private NSession session;
     private boolean skipRoot;
     private NProgressFactory progressFactory;
     private String packaging = "zip";
     private NCompressPackaging packagingImpl;
     private Set<NPathOption> options = new LinkedHashSet<>();
 
-    public DefaultNCompress(NSession session) {
-        this.session = session;
-        this.ws = session.getWorkspace();
+    public DefaultNCompress(NWorkspace ws) {
+        this.ws = ws;
     }
 
     @Override
@@ -58,17 +55,12 @@ public class DefaultNCompress implements NCompress {
         return NConstants.Support.DEFAULT_SUPPORT;
     }
 
-    protected NLog _LOG(NSession session) {
+    protected NLog _LOG() {
         if (LOG == null) {
-            LOG = NLog.of(DefaultNCompress.class, session);
+            LOG = NLog.of(DefaultNCompress.class);
         }
         return LOG;
     }
-
-    private void checkSession() {
-        NSessionUtils.checkSession(ws, session);
-    }
-
 
     @Override
     public NCompress setFormatOption(String option, Object value) {
@@ -87,12 +79,11 @@ public class DefaultNCompress implements NCompress {
 
     @Override
     public NCompress setPackaging(String packaging) {
-        checkSession();
         if (NBlankable.isBlank(packaging)) {
             packaging = "zip";
         }
         this.packaging = packaging;
-        this.packagingImpl = NExtensions.of(session).createComponent(NCompressPackaging.class, this).get();
+        this.packagingImpl = NExtensions.of().createComponent(NCompressPackaging.class, this).get();
         return this;
     }
 
@@ -110,41 +101,37 @@ public class DefaultNCompress implements NCompress {
 
     @Override
     public NCompress addSource(InputStream source) {
-        checkSession();
         if (source == null) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("null source"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("null source"));
         }
-        this.sources.add(NInputSource.of(source,session));
+        this.sources.add(NInputSource.of(source));
         return this;
     }
 
     @Override
     public NCompress addSource(File source) {
-        checkSession();
         if (source == null) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("null source"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("null source"));
         }
-        this.sources.add(NPath.of(source, session));
+        this.sources.add(NPath.of(source));
         return this;
     }
 
     @Override
     public NCompress addSource(Path source) {
         if (source == null) {
-            checkSession();
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("null source"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("null source"));
         }
-        this.sources.add(NPath.of(source, session));
+        this.sources.add(NPath.of(source));
         return this;
     }
 
     @Override
     public NCompress addSource(URL source) {
         if (source == null) {
-            checkSession();
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("null source"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("null source"));
         }
-        this.sources.add(NPath.of(source, session));
+        this.sources.add(NPath.of(source));
         return this;
     }
 
@@ -166,8 +153,7 @@ public class DefaultNCompress implements NCompress {
         if (target == null) {
             this.target = null;
         } else {
-            checkSession();
-            this.target = NOutputTarget.of(target,session);
+            this.target = NOutputTarget.of(target);
         }
         return this;
     }
@@ -183,7 +169,7 @@ public class DefaultNCompress implements NCompress {
         if (target == null) {
             this.target = null;
         } else {
-            this.target = NPath.of(target, session);
+            this.target = NPath.of(target);
         }
         return this;
     }
@@ -193,7 +179,7 @@ public class DefaultNCompress implements NCompress {
         if (target == null) {
             this.target = null;
         } else {
-            this.target = NPath.of(target, session);
+            this.target = NPath.of(target);
         }
         return this;
     }
@@ -203,7 +189,7 @@ public class DefaultNCompress implements NCompress {
         if (target == null) {
             this.target = null;
         } else {
-            this.target = NPath.of(target, session);
+            this.target = NPath.of(target);
         }
         return this;
     }
@@ -240,21 +226,9 @@ public class DefaultNCompress implements NCompress {
     }
 
     @Override
-    public NSession getSession() {
-        return session;
-    }
-
-    @Override
-    public NCompress setSession(NSession session) {
-        this.session = NWorkspaceUtils.bindSession(ws, session);
-        return this;
-    }
-
-    @Override
     public NCompress run() {
-        checkSession();
         if (packagingImpl == null) {
-            this.packagingImpl = NExtensions.of(session).createComponent(NCompressPackaging.class, this).get();
+            this.packagingImpl = NExtensions.of().createComponent(NCompressPackaging.class, this).get();
         }
         packagingImpl.compressPackage(this);
         return this;
@@ -363,7 +337,7 @@ public class DefaultNCompress implements NCompress {
             if (c.getOptions().contains(NPathOption.LOG)
                     || c.getOptions().contains(NPathOption.TRACE)
                     || c.getProgressFactory() != null) {
-                NInputStreamMonitor monitor = NInputStreamMonitor.of(c.getSession());
+                NInputStreamMonitor monitor = NInputStreamMonitor.of();
                 monitor.setOrigin(inSource);
                 monitor.setLogProgress(c.getOptions().contains(NPathOption.LOG));
                 monitor.setTraceProgress(c.getOptions().contains(NPathOption.TRACE));

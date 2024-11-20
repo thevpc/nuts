@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.parser;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNDescriptorContentParserContext;
 import net.thevpc.nuts.runtime.standalone.descriptor.util.NDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
@@ -20,19 +21,18 @@ public class NDescriptorContentResolver {
      * @param localPath    localPath
      * @param parseOptions may include --all-mains to force lookup of all main
      *                     classes if available
-     * @param session      session
+     * @param workspace      workspace
      * @return descriptor
      */
-    public static NDescriptor resolveNutsDescriptorFromFileContent(Path localPath, List<String> parseOptions, NSession session) {
+    public static NDescriptor resolveNutsDescriptorFromFileContent(Path localPath, List<String> parseOptions, NWorkspace workspace) {
         if (parseOptions == null) {
             parseOptions = new ArrayList<>();
         }
         if (localPath != null) {
             String fileExtension = CoreIOUtils.getFileExtension(localPath.getFileName().toString());
-            NDescriptorContentParserContext ctx = new DefaultNDescriptorContentParserContext(session,
+            NDescriptorContentParserContext ctx = new DefaultNDescriptorContentParserContext(workspace.currentSession(),
                     localPath, fileExtension, null, parseOptions);
-            List<NDescriptorContentParserComponent> allParsers = session.extensions()
-                    .setSession(session)
+            List<NDescriptorContentParserComponent> allParsers = NExtensions.of()
                     .createComponents(NDescriptorContentParserComponent.class, ctx);
             if (allParsers.size() > 0) {
                 for (NDescriptorContentParserComponent parser : allParsers) {
@@ -40,7 +40,7 @@ public class NDescriptorContentResolver {
                     try {
                         desc = parser.parse(ctx);
                     } catch (Exception e) {
-                        NLogOp.of(CoreIOUtils.class, session)
+                        NLogOp.of(CoreIOUtils.class)
                                 .level(Level.FINE)
                                 .verb(NLogVerb.WARNING)
                                 .error(e)
@@ -51,7 +51,7 @@ public class NDescriptorContentResolver {
                         if (!desc.isBlank()) {
                             return desc;
                         }
-                        return NDescriptorUtils.checkDescriptor(desc, session);
+                        return NDescriptorUtils.checkDescriptor(desc, workspace);
                     }
                 }
             }

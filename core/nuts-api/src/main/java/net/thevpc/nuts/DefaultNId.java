@@ -89,8 +89,8 @@ public class DefaultNId implements NId {
     }
 
     @Override
-    public NFormat formatter(NSession session) {
-        return NIdFormat.of(session).setValue(this);
+    public NFormat formatter() {
+        return NIdFormat.of().setValue(this);
     }
 
     @Override
@@ -363,8 +363,8 @@ public class DefaultNId implements NId {
     }
 
     @Override
-    public NIdFilter filter(NSession session) {
-        return NIdFilters.of(session).byValue(this);
+    public NIdFilter filter() {
+        return NIdFilters.of().byValue(this);
     }
 
     @Override

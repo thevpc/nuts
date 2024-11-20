@@ -27,10 +27,10 @@ public class NElementMapperPrimitiveLongArray implements NElementMapper<long[]> 
     @Override
     public long[] createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
         NSession session = context.getSession();
-        NArrayElement earr = o.asArray().get(session);
+        NArrayElement earr = o.asArray().get();
         long[] arr = new long[earr.size()];
         for (int i = 0; i < arr.length; i++) {
-            arr[i] = (long) context.elementToObject(earr.get(i).get(session), long.class);
+            arr[i] = (long) context.elementToObject(earr.get(i).get(), long.class);
         }
         return arr;
     }

@@ -9,7 +9,7 @@ public class Test09_TestFetchTest {
     @Test
     public void test(){
         NSession session = TestUtils.openNewTestWorkspace();
-        NDefinition resultDefinition = NFetchCmd.of("org.springframework.boot:spring-boot#2.4.1",session)
+        NDefinition resultDefinition = NFetchCmd.of("org.springframework.boot:spring-boot#2.4.1")
                 .setDependencies(true)
                 .setContent(true)
                 .getResultDefinition();
@@ -18,11 +18,11 @@ public class Test09_TestFetchTest {
             TestUtils.println(dependency);
         }
         TestUtils.println("-----------------");
-        for (NDependency dependency : resultDefinition.getDependencies().get(session)) {
+        for (NDependency dependency : resultDefinition.getDependencies().get()) {
             TestUtils.println(dependency);
         }
         TestUtils.println("-----------------");
-        show(resultDefinition.getDependencies().get(session).transitiveNodes().toArray(NDependencyTreeNode[]::new), "");
+        show(resultDefinition.getDependencies().get().transitiveNodes().toArray(NDependencyTreeNode[]::new), "");
     }
 
     // disable test because, for some reason it fails on Gitlab CI with

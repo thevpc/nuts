@@ -24,7 +24,6 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -93,6 +92,9 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
     public static NRepositoryLocation of(String locationString) {
         return new NRepositoryLocation(locationString);
     }
+    public static NRepositoryLocation ofName(String name) {
+        return of(name,(String)null);
+    }
 
     /**
      * Create a new NutsRepositoryLocation. When the name is null,
@@ -120,14 +122,13 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
      * @param locationString location string in the format
      *                       {@code name=locationType:path}
      * @param db             repository database
-     * @param session        session or null
      * @return new Instance
      */
-    public static NOptional<NRepositoryLocation> of(String locationString, NRepositoryDB db, NSession session) {
+    public static NOptional<NRepositoryLocation> of(String locationString, NRepositoryDB db) {
         String name = null;
         String url = null;
         if (locationString == null) {
-            return NOptional.<NRepositoryLocation>ofEmpty(s -> NMsg.ofPlain("repository location")).setSession(session);
+            return NOptional.<NRepositoryLocation>ofEmpty(() -> NMsg.ofPlain("repository location"));
         }
         locationString = locationString.trim();
         if (locationString.startsWith("-")
@@ -136,7 +137,7 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
                 || locationString.indexOf(',') >= 0
                 || locationString.indexOf(';') >= 0) {
             String finalLocationString = locationString;
-            return NOptional.<NRepositoryLocation>ofError(s -> NMsg.ofC("invalid selection syntax : %s", finalLocationString)).setSession(session);
+            return NOptional.<NRepositoryLocation>ofError(() -> NMsg.ofC("invalid selection syntax : %s", finalLocationString));
         }
         Matcher matcher = Pattern.compile("(?<name>[a-zA-Z-_]+)=(?<value>.+)").matcher(locationString);
         if (matcher.find()) {
@@ -164,19 +165,18 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
         if (url.length() > 0) {
             return NOptional.of(NRepositoryLocation.of(name, url));
         }
-        return NOptional.<NRepositoryLocation>ofEmpty(s -> NMsg.ofPlain("repository location")).setSession(session);
+        return NOptional.<NRepositoryLocation>ofEmpty(() -> NMsg.ofPlain("repository location"));
     }
 
     /**
      * @param repositorySelectionExpression expression in the form +a,-b,=c
      * @param available                     available (default) locations
      * @param db                            repository database
-     * @param session                       session (or null)
      * @return repository location list from db that include available/defaults
      * and fulfills the condition {@code repositorySelectionExpression}
      */
-    public static NOptional<NRepositoryLocation[]> of(String repositorySelectionExpression, NRepositoryLocation[] available, NRepositoryDB db, NSession session) {
-        return NRepositorySelectorList.of(repositorySelectionExpression, db, session).map(x -> x.resolve(available, db));
+    public static NOptional<NRepositoryLocation[]> of(String repositorySelectionExpression, NRepositoryLocation[] available, NRepositoryDB db) {
+        return NRepositorySelectorList.of(repositorySelectionExpression, db).map(x -> x.resolve(available, db));
     }
 
     /**

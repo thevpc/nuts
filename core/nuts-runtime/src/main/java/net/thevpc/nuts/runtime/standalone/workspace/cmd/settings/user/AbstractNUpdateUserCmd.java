@@ -53,8 +53,8 @@ public abstract class AbstractNUpdateUserCmd extends NWorkspaceCmdBaseRepo<NUpda
     protected final Set<String> rm_permissions = new HashSet<>();
     protected final Set<String> rm_groups = new HashSet<>();
 
-    public AbstractNUpdateUserCmd(NSession session) {
-        super(session, "update-user");
+    public AbstractNUpdateUserCmd(NWorkspace workspace) {
+        super(workspace, "update-user");
     }
 
     @Override
@@ -409,7 +409,8 @@ public abstract class AbstractNUpdateUserCmd extends NWorkspaceCmdBaseRepo<NUpda
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NArg a = cmdLine.peek().get(session);
+        NSession session=getWorkspace().currentSession();
+        NArg a = cmdLine.peek().get();
         if (a == null) {
             return false;
         }

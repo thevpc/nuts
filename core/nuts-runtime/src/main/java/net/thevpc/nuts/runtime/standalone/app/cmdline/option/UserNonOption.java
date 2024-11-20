@@ -47,12 +47,11 @@ public class UserNonOption extends DefaultNonOption {
         NRepository repository = context.get(NRepository.class);
         if (repository != null) {
             for (NUser nutsSecurityEntityConfig : repository.security()
-                    .setSession(context.getSession())
                     .findUsers()) {
                 all.add(new DefaultNArgCandidate(nutsSecurityEntityConfig.getUser()));
             }
         } else {
-            for (NUser nutsSecurityEntityConfig : NWorkspaceSecurityManager.of(context.getSession())
+            for (NUser nutsSecurityEntityConfig : NWorkspaceSecurityManager.of()
                     .findUsers()) {
                 all.add(new DefaultNArgCandidate(nutsSecurityEntityConfig.getUser()));
             }

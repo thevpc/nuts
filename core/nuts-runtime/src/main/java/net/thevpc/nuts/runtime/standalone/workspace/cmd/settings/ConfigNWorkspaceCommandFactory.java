@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.ConfigEventType;
@@ -18,22 +17,18 @@ import java.util.logging.Level;
 
 public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
 
-    private NLog LOG;
-    private NWorkspace ws;
+    private NWorkspace workspace;
 
-    public ConfigNWorkspaceCommandFactory(NWorkspace ws) {
-        this.ws = ws;
+    public ConfigNWorkspaceCommandFactory(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
-    protected NLogOp _LOGOP(NSession session) {
-        return _LOG(session).with().session(session);
+    protected NLogOp _LOGOP() {
+        return _LOG().with();
     }
 
-    protected NLog _LOG(NSession session) {
-        if (LOG == null) {
-            LOG = NLog.of(ConfigNWorkspaceCommandFactory.class, session);
-        }
-        return LOG;
+    protected NLog _LOG() {
+            return NLog.of(ConfigNWorkspaceCommandFactory.class);
     }
 
     @Override
@@ -52,11 +47,10 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
     }
 
     @Override
-    public NCommandConfig findCommand(String name, NSession session) {
-        checkSession(session);
-        NPath file = getCommandsFolder(session).resolve(name + NConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
+    public NCommandConfig findCommand(String name) {
+        NPath file = getCommandsFolder().resolve(name + NConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         if (file.exists()) {
-            NCommandConfig c = NElements.of(session).json().parse(file, NCommandConfig.class);
+            NCommandConfig c = NElements.of().json().parse(file, NCommandConfig.class);
             if (c != null) {
                 c.setName(name);
                 return c;
@@ -66,53 +60,44 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
     }
 
     @Override
-    public List<NCommandConfig> findCommands(NSession session) {
-        return findCommands((Predicate<NCommandConfig>) null, session);
+    public List<NCommandConfig> findCommands() {
+        return findCommands((Predicate<NCommandConfig>) null);
     }
 
-    public NPath getStoreLocation(NSession session) {
-        checkSession(session);
-        return NLocations.of(session).getStoreLocation(session.getWorkspace().getApiId(), NStoreType.BIN);
+    public NPath getStoreLocation() {
+        return NLocations.of().getStoreLocation(workspace.getApiId(), NStoreType.BIN);
     }
 
-    private NPath getCommandsFolder(NSession session) {
-        checkSession(session);
+    private NPath getCommandsFolder() {
 //        options = CoreNutsUtils.validate(options, ws);
-        return getStoreLocation(session).resolve("cmd");
+        return getStoreLocation().resolve("cmd");
     }
 
-    public void uninstallCommand(String name, NSession session) {
-        checkSession(session);
+    public void uninstallCommand(String name) {
 //        options = CoreNutsUtils.validate(options, ws);
-        NPath file = getCommandsFolder(session).resolve(name + NConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
+        NPath file = getCommandsFolder().resolve(name + NConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         if (file.exists()) {
             file.delete();
-            NConfigsExt.of(NConfigs.of(session)).getModel().fireConfigurationChanged("command", session, ConfigEventType.MAIN);
+            NConfigsExt.of(NConfigs.of()).getModel().fireConfigurationChanged("command", ConfigEventType.MAIN);
         }
     }
 
-    protected void checkSession(NSession session) {
-        NSessionUtils.checkSession(ws, session);
-    }
-
-    public void installCommand(NCommandConfig command, NSession session) {
-        checkSession(session);
-        NPath path = getCommandsFolder(session).resolve(command.getName() + NConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
-        NElements.of(session).json().setValue(command)
+    public void installCommand(NCommandConfig command) {
+        NPath path = getCommandsFolder().resolve(command.getName() + NConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
+        NElements.of().json().setValue(command)
                 .setNtf(false).print(path);
-        NConfigsExt.of(NConfigs.of(session)).getModel().fireConfigurationChanged("command", session, ConfigEventType.MAIN);
+        NConfigsExt.of(NConfigs.of()).getModel().fireConfigurationChanged("command", ConfigEventType.MAIN);
     }
 
-    public List<NCommandConfig> findCommands(NId id, NSession session) {
-        return findCommands(value -> CoreFilterUtils.matchesSimpleNameStaticVersion(value.getOwner(), id), session);
+    public List<NCommandConfig> findCommands(NId id) {
+        return findCommands(value -> CoreFilterUtils.matchesSimpleNameStaticVersion(value.getOwner(), id));
     }
 
-    public List<NCommandConfig> findCommands(Predicate<NCommandConfig> filter, NSession session) {
-        checkSession(session);
+    public List<NCommandConfig> findCommands(Predicate<NCommandConfig> filter) {
         List<NCommandConfig> all = new ArrayList<>();
-        NPath storeLocation = getCommandsFolder(session);
+        NPath storeLocation = getCommandsFolder();
         if (!storeLocation.isDirectory()) {
-            //_LOGOP(session).level(Level.SEVERE).log(NMsg.jstyle("unable to locate commands. Invalid store locate {0}", storeLocation));
+            //_LOGOP().level(Level.SEVERE).log(NMsg.jstyle("unable to locate commands. Invalid store locate {0}", storeLocation));
             return all;
         }
         storeLocation.stream().forEach(file -> {
@@ -120,9 +105,9 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
             if (file.getName().endsWith(NConstants.Files.NUTS_COMMAND_FILE_EXTENSION)) {
                 NCommandConfig c = null;
                 try {
-                    c = NElements.of(session).json().parse(file, NCommandConfig.class);
+                    c = NElements.of().json().parse(file, NCommandConfig.class);
                 } catch (Exception ex) {
-                    _LOGOP(session).level(Level.FINE).error(ex).log(NMsg.ofC("unable to parse %s", file));
+                    _LOGOP().level(Level.FINE).error(ex).log(NMsg.ofC("unable to parse %s", file));
                     //
                 }
                 if (c != null) {

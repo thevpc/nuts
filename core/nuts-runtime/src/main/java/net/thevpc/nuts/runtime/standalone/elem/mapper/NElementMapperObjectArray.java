@@ -27,10 +27,10 @@ public class NElementMapperObjectArray implements NElementMapper<Object[]> {
     @Override
     public Object[] createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
         NSession session = context.getSession();
-        NArrayElement earr = o.asArray().get(session);
+        NArrayElement earr = o.asArray().get();
         Object[] arr = new Object[earr.size()];
         for (int i = 0; i < arr.length; i++) {
-            arr[i] = (Object) context.elementToObject(earr.get(i).get(session), Object.class);
+            arr[i] = (Object) context.elementToObject(earr.get(i).get(), Object.class);
         }
         return arr;
     }

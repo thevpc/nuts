@@ -111,8 +111,8 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
     private final List<Boolean> visibleColumns = new ArrayList<>();
     private boolean visibleHeader = true;
 
-    public DefaultTableFormat(NSession session) {
-        super(session, "table-format");
+    public DefaultTableFormat(NWorkspace workspace) {
+        super(workspace, "table-format");
     }
 
     public static Set<String> getAvailableTableBorders() {
@@ -209,7 +209,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                 break;
             }
             default: {
-                throw new NUnsupportedArgumentException(session, NMsg.ofC("unsupported position type %s", a));
+                throw new NUnsupportedArgumentException(NMsg.ofC("unsupported position type %s", a));
             }
         }
     }
@@ -239,8 +239,9 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
     @Override
     public NTableFormat setBorder(String borderName) {
         NTableBordersFormat n = parseTableBorders(borderName);
+        NSession session=workspace.currentSession();
         if (n == null) {
-            throw new NIllegalArgumentException(getSession(), NMsg.ofC("unsupported border. use one of : %s", getAvailableTableBorders()));
+            throw new NIllegalArgumentException(NMsg.ofC("unsupported border. use one of : %s", getAvailableTableBorders()));
         }
         setBorder(n);
         return this;
@@ -297,10 +298,10 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
     public void print(NPrintStream w) {
         NPrintStream out = getValidPrintStream(w);
         NStringBuilder line = new NStringBuilder();
-        List<Row> rows = rebuild(getSession());
+        NSession session=workspace.currentSession();
+        List<Row> rows = rebuild(session);
         if (rows.size() > 0) {
             List<DefaultCell> cells = rows.get(0).cells;
-            NSession session = getSession();
             if ((getSeparator(NTableSeparator.FIRST_ROW_START)
                     + getSeparator(NTableSeparator.FIRST_ROW_SEP)
                     + getSeparator(NTableSeparator.FIRST_ROW_LINE)
@@ -313,7 +314,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                     DefaultCell cell = cells.get(i);
                     String B = getSeparator(NTableSeparator.FIRST_ROW_LINE);
                     String s = cell.rendered.toString();
-                    line.append(CoreStringUtils.fillString(B, NTexts.of(session).parse(s).textLength()));
+                    line.append(CoreStringUtils.fillString(B, NTexts.of().parse(s).textLength()));
                 }
                 line.append(getSeparator(NTableSeparator.FIRST_ROW_END));
 
@@ -335,7 +336,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                             DefaultCell cell = cells.get(i);
                             String B = getSeparator(NTableSeparator.MIDDLE_ROW_LINE);
                             String s = cell.rendered.toString();
-                            line.append(CoreStringUtils.fillString(B, NTexts.of(session).parse(s).textLength()));
+                            line.append(CoreStringUtils.fillString(B, NTexts.of().parse(s).textLength()));
                         }
                         line.append(getSeparator(NTableSeparator.MIDDLE_ROW_END));
 
@@ -377,7 +378,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                     DefaultCell cell = cells.get(i);
                     String B = getSeparator(NTableSeparator.LAST_ROW_LINE);
                     String s = cell.rendered.toString();
-                    line.append(CoreStringUtils.fillString(B, NTexts.of(session).parse(s).textLength()));
+                    line.append(CoreStringUtils.fillString(B, NTexts.of().parse(s).textLength()));
                 }
                 line.append(getSeparator(NTableSeparator.LAST_ROW_END));
             }
@@ -395,7 +396,8 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
         try {
             w.flush();
         } catch (IOException ex) {
-            throw new NIOException(getSession(), ex);
+            NSession session=workspace.currentSession();
+            throw new NIOException(ex);
         }
         return out.toString();
     }
@@ -405,7 +407,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
     }
 
     private List<Row> rebuild(NSession session) {
-        NTexts metrics = NTexts.of(session);
+        NTexts metrics = NTexts.of();
         List<Row> rows1 = new ArrayList<>();
         NTableModel model = getModel();
         int columnsCount = model.getColumnsCount();
@@ -493,10 +495,10 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                 Object cvalue = cell.getValue();
                 cell.setRendered(new RenderedCell(
                         c0, r0, cvalue,
-                        formatter.format(r0, c0, cvalue, session),
+                        formatter.format(r0, c0, cvalue),
                         formatter,
-                        formatter.getVerticalAlign(r0, c0, cvalue, session),
-                        formatter.getHorizontalAlign(r0, c0, cvalue, session),
+                        formatter.getVerticalAlign(r0, c0, cvalue),
+                        formatter.getHorizontalAlign(r0, c0, cvalue),
                         metrics,
                         session
                 ));
@@ -582,9 +584,9 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
     }
 
     private NTableModel createTableModel(Object o) {
-        NSession session = getSession();
+        NSession session=workspace.currentSession();
         if (o == null) {
-            return NMutableTableModel.of(session);
+            return NMutableTableModel.of();
         }
         if (o instanceof NTableModel) {
             return (NTableModel) o;
@@ -599,7 +601,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
             return _model2(o, session);
         }
         if (o instanceof Map) {
-            NMutableTableModel model = NMutableTableModel.of(session);
+            NMutableTableModel model = NMutableTableModel.of();
             LinkedHashSet<String> columns = new LinkedHashSet<>();
             columns.add("Name");
             columns.add("Value");
@@ -619,7 +621,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                         || (o instanceof NString)
                         || (o instanceof NFormattable)
         ) {
-            NMutableTableModel model = NMutableTableModel.of(session);
+            NMutableTableModel model = NMutableTableModel.of();
             model.newRow();
             model.addCell(formatObject(o));
             return model;
@@ -641,20 +643,20 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                 return createTableModel(_elems().toElement(a));
             }
             case OBJECT: {
-                return createTableModel(_elems().toElement(elem.asObject().get(session).entries()));
+                return createTableModel(_elems().toElement(elem.asObject().get().entries()));
             }
             case ARRAY: {
 
                 return _model2(elem,session);
             }
             default: {
-                throw new NUnsupportedArgumentException(session, NMsg.ofC("unsupported %s", elem.type()));
+                throw new NUnsupportedArgumentException(NMsg.ofC("unsupported %s", elem.type()));
             }
         }
     }
 
     public NMutableTableModel _model2(Object obj, NSession session) {
-        NMutableTableModel model = NMutableTableModel.of(session);
+        NMutableTableModel model = NMutableTableModel.of();
         List<SimpleRow> rows=resolveColumnsFromRows(obj);
         List<String> titles=new ArrayList<>();
         Set<String> titlesSet=new HashSet<>();
@@ -698,12 +700,12 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
     }
     public List<SimpleRow> resolveColumnsFromRows(Object obj) {
         List<SimpleRow> rows = new ArrayList<>();
-        NSession session = getSession();
+        NSession session=workspace.currentSession();
         if (obj instanceof NElement) {
             NElement value = (NElement) obj;
             switch (value.type()) {
                 case ARRAY: {
-                    for (NElement value2 : value.asArray().get(session).items()) {
+                    for (NElement value2 : value.asArray().get().items()) {
                         rows.add(resolveColumnsFromRow(value2));
                     }
                     break;
@@ -724,27 +726,27 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
     }
 
     public SimpleRow resolveColumnsFromRow(Object obj) {
-        NSession session = getSession();
+        NSession session=workspace.currentSession();
         if (obj instanceof NElement) {
             NElement value = (NElement) obj;
             switch (value.type()) {
                 case OBJECT: {
                     SimpleRow e = new SimpleRow();
-                    for (NElementEntry nutsNamedValue : value.asObject().get(session).entries()) {
+                    for (NElementEntry nutsNamedValue : value.asObject().get().entries()) {
                         NElement k = nutsNamedValue.getKey();
                         if (!k.isString()) {
                             k = _elems().ofString(
                                     k.toString()
                             );
                         }
-                        e.cells.add(resolveColumnsFromCell(k.asString().get(session), nutsNamedValue.getValue()));
+                        e.cells.add(resolveColumnsFromCell(k.asString().get(), nutsNamedValue.getValue()));
                     }
                     return e;
                 }
                 case ARRAY: {
                     SimpleRow e = new SimpleRow();
                     int column = 1;
-                    for (NElement value2 : value.asArray().get(session).items()) {
+                    for (NElement value2 : value.asArray().get().items()) {
                         e.cells.add(resolveColumnsFromCell("COL " + column,value2));
                         column++;
                     }
@@ -786,7 +788,8 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
     }
 
     private NElements _elems() {
-        return NElements.of(getSession()).setSession(getSession());
+        NSession session=workspace.currentSession();
+        return NElements.of();
     }
 
     @Override
@@ -796,16 +799,16 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NSession session = getSession();
+        NSession session=workspace.currentSession();
         NArg a;
         if ((a = cmdLine.nextFlag("--no-header").orNull()) != null) {
-            boolean val = a.getBooleanValue().get(session);
+            boolean val = a.getBooleanValue().get();
             if (a.isActive()) {
                 setVisibleHeader(!val);
             }
             return true;
         } else if ((a = cmdLine.nextFlag("--header").orNull()) != null) {
-            boolean val = a.getBooleanValue().get(session);
+            boolean val = a.getBooleanValue().get();
             if (a.isActive()) {
                 setVisibleHeader(val);
             }
@@ -844,8 +847,8 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
     }
 
     private NString formatObject(Object any) {
-        checkSession();
-        return NTextUtils.stringValueFormatted(any, false, getSession());
+        NSession session=workspace.currentSession();
+        return NTextUtils.stringValueFormatted(any, false);
     }
 
     @Override

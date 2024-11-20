@@ -22,7 +22,7 @@ public class NStreamFromNIterable<T> extends NStreamBase<T> {
     private final NIterable<T> o;
 
     public NStreamFromNIterable(NSession session, String nutsBase, NIterable<T> o) {
-        super(session, nutsBase);
+        super(nutsBase);
         this.o = o;
     }
 

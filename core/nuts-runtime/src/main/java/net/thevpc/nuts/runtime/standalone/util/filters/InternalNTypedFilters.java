@@ -15,23 +15,19 @@ public abstract class InternalNTypedFilters<T extends NFilter> implements NTyped
     protected final DefaultNFilterModel model;
     protected final NWorkspace ws;
     private Class<T> type;
-    private NSession session;
+    protected NWorkspace workspace;
 
-    public InternalNTypedFilters(NSession session, Class<T> type) {
-        this.session = session;
-        this.model = NWorkspaceExt.of(session.getWorkspace()).getModel().filtersModel;
+    public InternalNTypedFilters(NWorkspace workspace, Class<T> type) {
+        this.workspace = workspace;
+        this.model = NWorkspaceExt.of(workspace).getModel().filtersModel;
         this.ws = model.getWorkspace();
         this.type = type;
     }
 
-    public NSession getSession() {
-        return session;
+    public NWorkspace getWorkspace() {
+        return workspace;
     }
 
-    protected void checkSession(){
-        NSessionUtils.checkSession(ws, session);
-    }
-    
     @Override
     public T nonnull(NFilter filter) {
         if (filter == null) {
@@ -41,7 +37,6 @@ public abstract class InternalNTypedFilters<T extends NFilter> implements NTyped
     }
 
     protected List<T> convertList(NFilter... others) {
-        checkSession();
         List<T> all = new ArrayList<>();
         for (NFilter other : others) {
             T a = from(other);

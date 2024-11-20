@@ -1,6 +1,5 @@
 package net.thevpc.nuts.lib.common.iter;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
@@ -34,9 +33,9 @@ class DistinctWithConverterPredicate<F, T> extends AbstractNPredicate<F> {
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return NElements.of(session).ofObject()
-                .set("distinctBy", NEDesc.describeResolveOrDestruct(converter, session))
+    public NElement describe() {
+        return NElements.of().ofObject()
+                .set("distinctBy", NEDesc.describeResolveOrDestruct(converter))
                 .build()
                 ;
     }

@@ -44,7 +44,7 @@ public class Docusaurus2Asciidoctor {
         String asciiDoctorBaseFolder = getAsciiDoctorBaseFolder();
         String pdfOutput = project.getConfigAsciiDoctor()
                 .getObject("pdf")
-                .orElse(NObjectElement.ofEmpty(session))
+                .orElse(NObjectElement.ofEmpty())
                 .getString("output").orNull();
         String pn=null;
         if(pdfOutput!=null && pdfOutput.endsWith(".pdf")){
@@ -102,16 +102,16 @@ public class Docusaurus2Asciidoctor {
         Adoc2PdfConfig config = new Adoc2PdfConfig();
         config.setSession(session);
         NObjectElement asciiDoctorConfig = project.getConfigAsciiDoctor();
-        config.setBin(asciiDoctorConfig.getStringByPath("pdf","command","bin").get(session));
-        config.setArgs(asciiDoctorConfig.getArrayByPath("pdf","command","args").get(session)
-                .stream().map(x->x.asString().get(session)).toArray(String[]::new));
+        config.setBin(asciiDoctorConfig.getStringByPath("pdf","command","bin").get());
+        config.setArgs(asciiDoctorConfig.getArrayByPath("pdf","command","args").get()
+                .stream().map(x->x.asString().get()).toArray(String[]::new));
         config.setWorkDir(toCanonicalFile(Paths.get(project.getDocusaurusBaseFolder())).toString());
         config.setBaseDir(toCanonicalFile(Paths.get(getAsciiDoctorBaseFolder())).toString());
         config.setInputAdoc(getAdocFile().toString());
-        NElement output = asciiDoctorConfig.getByPath("pdf","output"). get(session);
+        NElement output = asciiDoctorConfig.getByPath("pdf","output"). get();
         String pdfFile=project.getProjectName();
         if(output.isString()){
-            String s=output.asString().get(session).trim();
+            String s=output.asString().get().trim();
             if(!s.isEmpty()){
                 if(s.endsWith("/") ||s.endsWith("\\")){
                     s+=project.getProjectName()+".pdf";
@@ -139,13 +139,13 @@ public class Docusaurus2Asciidoctor {
                 return r;
             }
             if (varName.startsWith("asciidoctor.")) {
-                return asciiDoctorConfig.getString(varName.substring("asciidoctor.".length())).get(session);
+                return asciiDoctorConfig.getString(varName.substring("asciidoctor.".length())).get();
             }
             if (varName.startsWith("docusaurus.")) {
-                return project.getConfig().getString(varName.substring("docusaurus.".length())).get(session);
+                return project.getConfig().getString(varName.substring("docusaurus.".length())).get();
             }
             //if (varName.startsWith("docusaurus.")) {
-                return project.getConfig().getString(varName).get(session);
+                return project.getConfig().getString(varName).get();
             //}
             //return null;
         });
@@ -154,7 +154,7 @@ public class Docusaurus2Asciidoctor {
 
     private String getAsciiDoctorBaseFolder() {
         NSession session = project.getSession();
-        String s = project.getConfigAsciiDoctor().getString("path").get(session);
+        String s = project.getConfigAsciiDoctor().getString("path").get();
         if (!new File(s).isAbsolute()) {
             s = project.getDocusaurusBaseFolder() + "/" + s;
         }

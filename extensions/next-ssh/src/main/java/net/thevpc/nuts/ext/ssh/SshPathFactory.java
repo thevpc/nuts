@@ -7,13 +7,19 @@ import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.lib.common.str.NConnexionString;
 
 public class SshPathFactory implements NPathFactorySPI {
+    NWorkspace workspace;
+
+    public SshPathFactory(NWorkspace workspace) {
+        this.workspace = workspace;
+    }
+
     @Override
-    public NCallableSupport<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
+    public NCallableSupport<NPathSPI> createPath(String path, ClassLoader classLoader) {
         try{
             if(path.startsWith("ssh:")){
                 NConnexionString a=NConnexionString.of(path).orNull();
                 if(a!=null) {
-                    return NCallableSupport.of(3, () -> new SshNPath(a, session));
+                    return NCallableSupport.of(3, () -> new SshNPath(a, workspace));
                 }
             }
         }catch (Exception ex){

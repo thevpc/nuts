@@ -53,7 +53,7 @@ public class Test08_ElementTest {
 
     @Test
     public void test1() {
-        NElements e = NElements.of(session);
+        NElements e = NElements.of();
         NElement p
                 = e.ofArray()
                 .add(
@@ -98,7 +98,7 @@ public class Test08_ElementTest {
                                 .build()
                 ).build())
                 .build();
-        NObjectFormat ss = NObjectFormat.of(session).setValue(p).setNtf(false);
+        NObjectFormat ss = NObjectFormat.of().setValue(p).setNtf(false);
         ss.println();
         String json = ss.formatPlain();
         String EXPECTED = "[\n"
@@ -211,7 +211,7 @@ public class Test08_ElementTest {
             TestUtils.println("CHECKING : '" + tt.path + "'");
             List<NElement> filtered1 = e.compilePath(tt.path).filter(p);
             ss.setValue(filtered1).println();
-            NString sexpected = NString.ofPlain(tt.expected.get(0), e.getSession());
+            NString sexpected = NString.ofPlain(tt.expected.get(0));
             NString sresult = ss.format().immutable();
             Assertions.assertEquals(sexpected.immutable(), sresult.immutable());
         }
@@ -219,8 +219,8 @@ public class Test08_ElementTest {
 
     @Test
     public void testIndestructibleObjects() {
-        NText styledText = NTexts.of(session).ofStyled("Hello", NTextStyle.success());
-        NElements e = NElements.of(session);
+        NText styledText = NTexts.of().ofStyled("Hello", NTextStyle.success());
+        NElements e = NElements.of();
 
         //create a composite object with a styled element
         Map<String,Object> h=new HashMap<>();
@@ -241,7 +241,7 @@ public class Test08_ElementTest {
         expected=e.ofObject()
                 .set("a","13")
                 .set("b",
-                        e.ofCustom(NTexts.of(session).ofStyled("Hello", NTextStyle.success()))
+                        e.ofCustom(NTexts.of().ofStyled("Hello", NTextStyle.success()))
                         ).build();
         Assertions.assertEquals(expected,q);
 
@@ -250,7 +250,7 @@ public class Test08_ElementTest {
         NObjectElement b = e.ofObject()
                 .set("a", "13")
                 .set("b",
-                        e.ofCustom(NTexts.of(session).ofStyled("Hello", NTextStyle.success()))
+                        e.ofCustom(NTexts.of().ofStyled("Hello", NTextStyle.success()))
                 ).build();
 
         q = e.toElement(b);

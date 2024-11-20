@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.text.util;
 
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.format.NPositionType;
@@ -24,12 +25,14 @@ public class DefaultNDurationFormat2 {
     private static DecimalFormat F3 = new DecimalFormat("000");
     private static DecimalFormat F9 = new DecimalFormat("000000000");
     private static DecimalFormat F6 = new DecimalFormat("000000");
-
-    public DefaultNDurationFormat2(NDurationFormatMode mode) {
+    private NWorkspace workspace;
+    public DefaultNDurationFormat2(NWorkspace workspace,NDurationFormatMode mode) {
         this.mode = mode == null ? NDurationFormatMode.DEFAULT : mode;
+        this.workspace=workspace;
     }
 
-    public DefaultNDurationFormat2(String pattern) {
+    public DefaultNDurationFormat2(NWorkspace workspace,String pattern) {
+        this.workspace=workspace;
         if (NBlankable.isBlank(pattern)) {
             this.mode = NDurationFormatMode.DEFAULT;
         } else {
@@ -51,27 +54,27 @@ public class DefaultNDurationFormat2 {
 
     //    @Override
     public NText formatMillis(long millis,NSession session) {
-        return format(millis, 0,session);
+        return format(millis, 0);
     }
 
 
     public NText formatNanos(long nanos,NSession session) {
-        return format(nanos / 1000000, (int) (nanos % 1000000),session);
+        return format(nanos / 1000000, (int) (nanos % 1000000));
     }
 
     //    @Override
-    public NText format(long millis, int nanos,NSession session) {
+    public NText format(long millis, int nanos) {
         if (millis < 0) {
             throw new IllegalArgumentException("invalid millis " + millis);
         }
         if (nanos < 0 || nanos > 999999) {
             throw new IllegalArgumentException("invalid nanos " + millis);
         }
-        return format(NDuration.ofMillisAndNanos(millis, nanos),session);
+        return format(NDuration.ofMillisAndNanos(millis, nanos));
     }
 
-    public NText format(Duration duration,NSession session) {
-        return format(NDuration.ofDuration(duration),session);
+    public NText format(Duration duration) {
+        return format(NDuration.ofDuration(duration));
     }
 
     public void formatUnit(NDuration duration, ChronoUnit unit, Set<ChronoUnit> processed, NTextBuilder out) {
@@ -203,8 +206,8 @@ public class DefaultNDurationFormat2 {
         return true;
     }
 
-    public NText format(NDuration duration, NSession session) {
-        NTextBuilder sb = NTextBuilder.of(session);
+    public NText format(NDuration duration) {
+        NTextBuilder sb = NTextBuilder.of();
         print(duration, sb);
         return sb.toText();
     }

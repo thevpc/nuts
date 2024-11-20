@@ -42,8 +42,8 @@ class DefaultNCustomElement extends AbstractNElement implements NCustomElement {
 
     private final Object value;
 
-    DefaultNCustomElement(Object value, NSession session) {
-        super(NElementType.CUSTOM, session);
+    DefaultNCustomElement(Object value, NWorkspace workspace) {
+        super(NElementType.CUSTOM, workspace);
         this.value = value;
     }
 

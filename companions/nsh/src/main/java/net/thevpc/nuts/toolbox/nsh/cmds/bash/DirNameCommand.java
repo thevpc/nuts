@@ -52,7 +52,7 @@ public class DirNameCommand extends NShellBuiltinDefault {
     protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        NArg a = cmdLine.peek().get(session);
+        NArg a = cmdLine.peek().get();
         switch(a.key()) {
             case "-z":
             case "--zero": {
@@ -64,7 +64,7 @@ public class DirNameCommand extends NShellBuiltinDefault {
                 if (a.isOption()) {
 
                 } else {
-                    options.names.add(cmdLine.next().get(session).toString());
+                    options.names.add(cmdLine.next().get().toString());
                     return true;
                 }
             }

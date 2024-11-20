@@ -16,22 +16,20 @@ public class DefaultNDependencySolvers implements NDependencySolvers {
     }
 
     @Override
-    public NDependencySolver createSolver(NSession session) {
-        NSessionUtils.checkSession(ws, session);
-        return createSolver(session.getDependencySolver(),session);
+    public NDependencySolver createSolver() {
+        NSession session = NSession.of().get();
+        return createSolver(session.getDependencySolver());
     }
 
     @Override
-    public NDependencySolver createSolver(String solverName, NSession session) {
-        NSessionUtils.checkSession(ws, session);
-        DefaultNConfigs config = (DefaultNConfigs) NConfigs.of(session);
+    public NDependencySolver createSolver(String solverName) {
+        DefaultNConfigs config = (DefaultNConfigs) NConfigs.of();
         return config.createDependencySolver(solverName);
     }
 
     @Override
-    public List<String> getSolverNames(NSession session) {
-        NSessionUtils.checkSession(ws, session);
-        DefaultNConfigs config = (DefaultNConfigs)NConfigs.of(session);
+    public List<String> getSolverNames() {
+        DefaultNConfigs config = (DefaultNConfigs)NConfigs.of();
         return config.getDependencySolverNames();
     }
 

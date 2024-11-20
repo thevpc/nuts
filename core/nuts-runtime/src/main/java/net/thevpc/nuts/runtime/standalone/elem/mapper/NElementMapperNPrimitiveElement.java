@@ -27,7 +27,7 @@ public class NElementMapperNPrimitiveElement implements NElementMapper<NPrimitiv
     public NPrimitiveElement createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
         NSession session = context.getSession();
         if (o.type().isPrimitive()) {
-            return o.asPrimitive().get(session);
+            return o.asPrimitive().get();
         }
         return context.elem().ofString(o.toString());
     }

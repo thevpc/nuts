@@ -23,7 +23,7 @@ public class NElementMapperPath implements NElementMapper<Path> {
     public NElement createElement(Path o, Type typeOfSrc, NElementFactoryContext context) {
         if (context.isNtf()) {
             NSession session = context.getSession();
-            NText n = NTexts.of(session).ofStyled(o.toString(), NTextStyle.path());
+            NText n = NTexts.of().ofStyled(o.toString(), NTextStyle.path());
             return context.elem().ofString(n.toString());
         } else {
             return context.defaultObjectToElement(o.toString(), null);
@@ -33,6 +33,6 @@ public class NElementMapperPath implements NElementMapper<Path> {
     @Override
     public Path createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
         NSession session = context.getSession();
-        return Paths.get(o.asString().get(session));
+        return Paths.get(o.asString().get());
     }
 }

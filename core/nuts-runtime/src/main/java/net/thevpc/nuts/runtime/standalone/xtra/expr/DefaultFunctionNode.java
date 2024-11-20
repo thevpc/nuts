@@ -61,7 +61,7 @@ public class DefaultFunctionNode implements NExprFunctionNode {
                     Arrays.stream(args).map(x -> x.eval(context).get()).toArray()
             );
         }catch (Exception ex){
-            return NOptional.ofError(x -> NMsg.ofC("error %s ", ex));
+            return NOptional.ofError(() -> NMsg.ofC("error %s ", ex));
         }
     }
 }

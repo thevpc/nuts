@@ -1,6 +1,5 @@
 package net.thevpc.nuts.reserved.util;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.spi.base.NIteratorBase;
 import net.thevpc.nuts.util.NIterator;
@@ -36,8 +35,8 @@ public class NIteratorWithDescription<T> extends NIteratorBase<T> {
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return NEDesc.safeDescribeOfBase(session, description,base);
+    public NElement describe() {
+        return NEDesc.safeDescribeOfBase(description,base);
 //        NObjectElement b = NDescribables.resolveOr(base, session, () -> NElements.of(session).ofObject().build())
 //                .asObject().get(session);
 //        NElement a = description.apply(session);

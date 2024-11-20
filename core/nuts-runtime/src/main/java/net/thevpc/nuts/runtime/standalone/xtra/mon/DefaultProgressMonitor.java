@@ -359,15 +359,15 @@ public class DefaultProgressMonitor implements NProgressMonitor {
         for (NProgressListener listener : getListeners()) {
             switch (state) {
                 case START: {
-                    listener.onProgress(NProgressEvent.ofStart(null, getMessage(), -1, session));
+                    listener.onProgress(NProgressEvent.ofStart(null, getMessage(), -1));
                     break;
                 }
                 case COMPLETE: {
-                    listener.onProgress(NProgressEvent.ofComplete(null, getMessage(), model.getGlobalCount(), model.getGlobalDurationNanos(), model.getProgress(), model.getPartialCount(), model.getPartialDurationNanos(), model.getLength(), model.getException(), session));
+                    listener.onProgress(NProgressEvent.ofComplete(null, getMessage(), model.getGlobalCount(), model.getGlobalDurationNanos(), model.getProgress(), model.getPartialCount(), model.getPartialDurationNanos(), model.getLength(), model.getException()));
                     break;
                 }
                 default: {
-                    listener.onProgress(NProgressEvent.ofProgress(null, getMessage(), model.getGlobalCount(), model.getGlobalDurationNanos(), model.getProgress(), model.getPartialCount(), model.getPartialDurationNanos(), model.getLength(), model.getException(), session));
+                    listener.onProgress(NProgressEvent.ofProgress(null, getMessage(), model.getGlobalCount(), model.getGlobalDurationNanos(), model.getProgress(), model.getPartialCount(), model.getPartialDurationNanos(), model.getLength(), model.getException()));
                     break;
                 }
             }
@@ -400,7 +400,7 @@ public class DefaultProgressMonitor implements NProgressMonitor {
         }
         if ((progress < 0 || progress > 1) && !Double.isNaN(progress)) {
             if (strictComputationMonitor) {
-                throw new NIllegalArgumentException(session, NMsg.ofC("invalid Progress value [0..1] : %s", progress));
+                throw new NIllegalArgumentException(NMsg.ofC("invalid Progress value [0..1] : %s", progress));
             } else {
                 if (progress < 0) {
                     progress = 0;
@@ -592,7 +592,7 @@ public class DefaultProgressMonitor implements NProgressMonitor {
             if (enabledElement) {
                 all[i] = translate(xweight[i], coeffsOffsets[i]);
             } else {
-                all[i] = NProgressMonitors.of(session).ofSilent();
+                all[i] = NProgressMonitors.of().ofSilent();
             }
         }
         return all;

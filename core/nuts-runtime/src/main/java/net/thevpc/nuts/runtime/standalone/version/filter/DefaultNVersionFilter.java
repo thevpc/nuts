@@ -68,19 +68,19 @@ public class DefaultNVersionFilter extends AbstractVersionFilter implements NExp
      */
     private final List<NVersionInterval> intervals = new ArrayList<>();
 
-    public DefaultNVersionFilter(NSession session) {
-        super(session, NFilterOp.CUSTOM);
+    public DefaultNVersionFilter(NWorkspace workspace) {
+        super(workspace, NFilterOp.CUSTOM);
     }
 
-    public static NOptional<NVersionFilter> parse(String version, NSession session) {
+    public static NOptional<NVersionFilter> parse(String version, NWorkspace workspace) {
         if (NBlankable.isBlank(version) || "*".equals(version)) {
-            return NOptional.of(NVersionFilters.of(session).always());
+            return NOptional.of(NVersionFilters.of().always());
         }
 
         NOptional<List<NVersionInterval>> r = NVersionInterval.ofList(version);
         return r.map(
                 x -> {
-                    DefaultNVersionFilter dd = new DefaultNVersionFilter(session);
+                    DefaultNVersionFilter dd = new DefaultNVersionFilter(workspace);
                     for (NVersionInterval i : x) {
                         dd.add(i);
                     }
@@ -90,7 +90,7 @@ public class DefaultNVersionFilter extends AbstractVersionFilter implements NExp
     }
 
     @Override
-    public boolean acceptVersion(NVersion version, NSession session) {
+    public boolean acceptVersion(NVersion version) {
         if (intervals.isEmpty()) {
             return true;
         }
@@ -150,7 +150,7 @@ public class DefaultNVersionFilter extends AbstractVersionFilter implements NExp
         if (!updates) {
             return this;
         }
-        DefaultNVersionFilter d = new DefaultNVersionFilter(getSession());
+        DefaultNVersionFilter d = new DefaultNVersionFilter(workspace);
         d.intervals.addAll(intervals2);
         return d;
     }

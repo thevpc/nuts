@@ -25,8 +25,8 @@ public class DirtyLuceneIndexParser extends NIteratorBase<String> implements Clo
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return NElements.of(session).ofObject()
+    public NElement describe() {
+        return NElements.of().ofObject()
                 .set("type","ScanLucene")
                 .set("source",source0.toString())
                 .build();
@@ -131,7 +131,7 @@ public class DirtyLuceneIndexParser extends NIteratorBase<String> implements Clo
                 }
             }
         } catch (IOException ex) {
-            throw new NIOException(session,ex);
+            throw new NIOException(ex);
         }
         close();
         return null;
@@ -145,7 +145,7 @@ public class DirtyLuceneIndexParser extends NIteratorBase<String> implements Clo
         try {
             reader.close();
         } catch (IOException ex) {
-            throw new NIOException(session,ex);
+            throw new NIOException(ex);
         }
     }
 }

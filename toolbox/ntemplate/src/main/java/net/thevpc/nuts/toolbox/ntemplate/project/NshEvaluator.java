@@ -59,7 +59,7 @@ class NshEvaluator implements ExprEvaluator {
     public Object eval(String content, FileTemplater context) {
         NShellContext ctx = shell.createInlineContext(shell.getRootContext(), context.getSourcePath().orElse("nsh"), new String[0]);
         NSession session = context.getSession().copy();
-        session.setTerminal(NSessionTerminal.ofMem(session));
+        session.setTerminal(NSessionTerminal.ofMem());
         ctx.setSession(session);
         shell.executeScript(content, ctx);
         return session.out().toString();

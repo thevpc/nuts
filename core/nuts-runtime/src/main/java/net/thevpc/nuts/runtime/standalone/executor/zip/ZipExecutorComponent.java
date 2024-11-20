@@ -49,7 +49,7 @@ public class ZipExecutorComponent implements NExecutorComponent {
 
     public ZipExecutorComponent(NSession session) {
         this.session = session;
-        ID = NId.of("net.thevpc.nuts.exec:zip").get(session);
+        ID = NId.of("net.thevpc.nuts.exec:zip").get();
     }
 
     @Override
@@ -86,22 +86,22 @@ public class ZipExecutorComponent implements NExecutorComponent {
     //@Override
     public IProcessExecHelper execHelper(NExecutionContext executionContext) {
         NDefinition def = executionContext.getDefinition();
-        NSession session = executionContext.getSession();
         HashMap<String, String> osEnv = new HashMap<>();
         NArtifactCall executor = def.getDescriptor().getExecutor();
-        NAssert.requireNonNull(executor, () -> NMsg.ofC("missing executor %s", def.getId()), session);
+        NAssert.requireNonNull(executor, () -> NMsg.ofC("missing executor %s", def.getId()));
         List<String> args = new ArrayList<>(executionContext.getExecutorOptions());
         args.addAll(executionContext.getArguments());
         if (executor.getId() != null && !executor.getId().toString().equals("exec")) {
             // TODO: delegate to another executor!
-            throw new NIOException(session, NMsg.ofC("unsupported executor %s for %s", executor.getId(), def.getId()));
+            throw new NIOException(NMsg.ofC("unsupported executor %s for %s", executor.getId(), def.getId()));
         }
         String directory = null;
         return NExecHelper.ofDefinition(
                 def,
                 args.toArray(new String[0]), osEnv, directory, true,
                 true, executionContext.getSleepMillis(),
-                executionContext.getIn(), executionContext.getOut(), executionContext.getErr(), executionContext.getRunAs(), executionContext.getSession()
+                executionContext.getIn(), executionContext.getOut(), executionContext.getErr(), executionContext.getRunAs(),
+                executionContext.getWorkspace()
         );
     }
 }

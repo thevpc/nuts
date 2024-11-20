@@ -63,29 +63,29 @@ public class ZipInstallerComponent implements NInstallerComponent {
     public void install(NExecutionContext executionContext) {
         DefaultNDefinition nutsDefinition = (DefaultNDefinition) executionContext.getDefinition();
         NSession session = executionContext.getSession();
-        NPath installFolder = NLocations.of(session).getStoreLocation(nutsDefinition.getId(), NStoreType.BIN);
-        NCmdLine cmd = NCmdLine.of(executionContext.getArguments(), session);
+        NPath installFolder = NLocations.of().getStoreLocation(nutsDefinition.getId(), NStoreType.BIN);
+        NCmdLine cmd = NCmdLine.of(executionContext.getArguments());
         UnzipOptions unzipOptions = new UnzipOptions();
         while (cmd.hasNext()) {
-            if (!cmd.withNextFlag((v, a, s) -> {
+            if (!cmd.withNextFlag((v, a) -> {
                 unzipOptions.setSkipRoot(v);
             }, "--unzip-skip-root")) {
                 cmd.next();
             }
         }
         try {
-            ZipUtils.unzip(session,
-                    nutsDefinition.getContent().map(Object::toString).get(session),
+            ZipUtils.unzip(
+                    nutsDefinition.getContent().map(Object::toString).get(),
                     installFolder.toString(),
                     unzipOptions
             );
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
-        nutsDefinition.setInstallInformation(NWorkspaceExt.of(session).getInstalledRepository().getInstallInformation(nutsDefinition.getId(),
-                executionContext.getSession()));
+        nutsDefinition.setInstallInformation(NWorkspaceExt.of(session).getInstalledRepository().getInstallInformation(nutsDefinition.getId()
+        ));
         if (executionContext.getExecutorOptions().size() > 0) {
-            NExecCmd.of(session)
+            NExecCmd.of()
                     .addCommand(executionContext.getExecutorOptions())
                     .addExecutorOptions(executionContext.getExecutorOptions())
                     .setEnv(executionContext.getEnv())

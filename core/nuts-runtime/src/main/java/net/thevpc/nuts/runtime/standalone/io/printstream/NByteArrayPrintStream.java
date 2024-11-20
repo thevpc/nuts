@@ -14,27 +14,20 @@ import java.util.Arrays;
 public class NByteArrayPrintStream extends NPrintStreamRaw implements NMemoryPrintStream {
     private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
 
-    public NByteArrayPrintStream(NTerminalMode mode, NSession session) {
-        super(new ByteArrayOutputStream2(), mode, null, null, session, new Bindings(), null);
+    public NByteArrayPrintStream(NTerminalMode mode, NWorkspace workspace) {
+        super(new ByteArrayOutputStream2(), mode, null, null, workspace, new Bindings(), null);
         getMetaData().setMessage(
-                NMsg.ofNtf(NTexts.of(session).ofStyled("<memory-buffer>", NTextStyle.path()))
+                NMsg.ofNtf(NTexts.of().ofStyled("<memory-buffer>", NTextStyle.path()))
         );
     }
 
-    protected NByteArrayPrintStream(NTerminalMode mode, ByteArrayOutputStream2 bos, NSession session) {
-        super(bos, mode, null, null, session, new Bindings(), null);
+    protected NByteArrayPrintStream(NTerminalMode mode, ByteArrayOutputStream2 bos, NWorkspace workspace) {
+        super(bos, mode, null, null, workspace, new Bindings(), null);
         getMetaData().setMessage(
-                NMsg.ofNtf(NTexts.of(session).ofStyled("<memory-buffer>", NTextStyle.path()))
+                NMsg.ofNtf(NTexts.of().ofStyled("<memory-buffer>", NTextStyle.path()))
         );
     }
 
-    @Override
-    public NPrintStream setSession(NSession session) {
-        if (session == null || session == this.session) {
-            return this;
-        }
-        return new NByteArrayPrintStream(getTerminalMode(), out2(), session);
-    }
 
     @Override
     public byte[] getBytes() {
@@ -59,15 +52,15 @@ public class NByteArrayPrintStream extends NPrintStreamRaw implements NMemoryPri
 
     @Override
     public NInputSource asInputSource() {
-        return new AbstractMultiReadNInputSource(getSession()) {
+        return new AbstractMultiReadNInputSource(workspace) {
             @Override
             public InputStream getInputStream() {
                 return out2().asInputStream();
             }
 
             @Override
-            public NFormat formatter(NSession session) {
-                return NByteArrayPrintStream.this.formatter(session);
+            public NFormat formatter() {
+                return NByteArrayPrintStream.this.formatter();
             }
 
             @Override

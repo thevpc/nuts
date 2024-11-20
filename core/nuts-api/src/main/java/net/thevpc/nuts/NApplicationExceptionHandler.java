@@ -35,11 +35,11 @@ import net.thevpc.nuts.spi.NComponent;
 public interface NApplicationExceptionHandler extends NComponent {
     /**
      * return a new instance of {@code NApplicationExceptionHandler}
-     * @param session session
+     *
      * @return a new instance of {@code NApplicationExceptionHandler}
      */
-    static NApplicationExceptionHandler of(NSession session) {
-       return NExtensions.of(session).createComponent(NApplicationExceptionHandler.class).get();
+    static NApplicationExceptionHandler of() {
+       return NExtensions.of().createComponent(NApplicationExceptionHandler.class).get();
     }
 
     /**

@@ -38,13 +38,13 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
 
     private final List<NElementEntry> values = new ArrayList<>();
 
-    private transient NSession session;
+    private transient NWorkspace workspace;
 
-    public DefaultNObjectElementBuilder(NSession session) {
-        if(session==null){
+    public DefaultNObjectElementBuilder(NWorkspace workspace) {
+        if(workspace ==null){
             throw new NullPointerException();
         }
-        this.session = session;
+        this.workspace = workspace;
     }
 
     @Override
@@ -309,7 +309,7 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
 
     @Override
     public NObjectElement build() {
-        return new DefaultNObjectElement(values, session);
+        return new DefaultNObjectElement(values, workspace);
     }
 
     @Override
@@ -329,7 +329,7 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
     }
 
     private NElements _elements() {
-        return NElements.of(session);
+        return NElements.of();
     }
 
     @Override

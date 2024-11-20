@@ -25,10 +25,7 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NSessionProvider;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
-import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.reserved.rpi.NIORPI;
 
 import java.util.List;
@@ -42,14 +39,10 @@ import java.util.List;
  * @app.category Toolkit
  * @since 0.5.4
  */
-public interface NAsk<T> extends NCmdLineConfigurable, NSessionProvider {
+public interface NAsk<T> extends NCmdLineConfigurable {
 
-    static <T> NAsk<T> of(NSession session) {
-        return NIORPI.of(session).createQuestion(session);
-    }
-
-    static <T> NAsk<T> of(NSessionTerminal terminal) {
-        return NIORPI.of(terminal.getSession()).createQuestion(terminal);
+    static <T> NAsk<T> of() {
+        return NIORPI.of().createQuestion();
     }
 
     boolean isResetLine();
@@ -186,8 +179,6 @@ public interface NAsk<T> extends NCmdLineConfigurable, NSessionProvider {
     Boolean getBooleanValue();
 
     T getValue();
-
-    NAsk<T> setSession(NSession session);
 
     /**
      * configure the current command with the given arguments. This is an

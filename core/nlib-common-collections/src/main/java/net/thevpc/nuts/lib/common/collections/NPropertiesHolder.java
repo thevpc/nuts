@@ -6,11 +6,10 @@
 package net.thevpc.nuts.lib.common.collections;
 
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.NSession;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * @author thevpc
@@ -51,7 +50,7 @@ public class NPropertiesHolder {
         return NOptional.ofNamedEmpty(key);
     }
 
-    public <T> T getOrComputeProperty(String key, NSession session, Function<NSession, T> supplier) {
+    public <T> T getOrComputeProperty(String key, Supplier<T> supplier) {
         if (properties != null) {
             Object v = properties.get(key);
             if (v != null) {
@@ -63,7 +62,7 @@ public class NPropertiesHolder {
             if (o != null) {
                 return o;
             }
-            setProperty(key, o = supplier.apply(session));
+            setProperty(key, o = supplier.get());
             return o;
         }
     }

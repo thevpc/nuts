@@ -15,239 +15,192 @@ import java.util.Map;
 public class DefaultNRepoConfigManager implements NRepositoryConfigManager, NRepositoryConfigManagerExt {
 
     private final NRepositoryConfigModel model;
-    private NSession session;
 
     public DefaultNRepoConfigManager(NRepositoryConfigModel model) {
         this.model = model;
     }
 
-    private void checkSession() {
-        NSessionUtils.checkSession(getModel().getWorkspace(), session);
-    }
 
     @Override
     public String getGlobalName() {
-        checkSession();
-        return getModel().getGlobalName(session);
+        return getModel().getGlobalName();
     }
 
     public NRepositoryRef getRepositoryRef() {
-        checkSession();
-        return getModel().getRepositoryRef(session);
+        return getModel().getRepositoryRef();
     }
 
     @Override
     public String getType() {
-        checkSession();
-        return getModel().getType(session);
+        return getModel().getType();
     }
 
     @Override
     public String getGroups() {
-        checkSession();
-        return getModel().getGroups(session);
+        return getModel().getGroups();
     }
 
     @Override
     public NSpeedQualifier getSpeed() {
-        checkSession();
-        return getModel().getSpeed(session);
+        return getModel().getSpeed();
     }
 
     @Override
     public boolean isTemporary() {
-        checkSession();
-        return getModel().isTemporary(session);
+        return getModel().isTemporary();
     }
 
     @Override
     public NRepositoryConfigManager setTemporary(boolean enabled) {
-        checkSession();
-        getModel().setTemporary(enabled, session);
+        getModel().setTemporary(enabled);
         return this;
     }
 
     @Override
     public boolean isIndexSubscribed() {
-        checkSession();
-        return getModel().isIndexSubscribed(session);
+        return getModel().isIndexSubscribed();
     }
 
     @Override
     public NRepositoryLocation getLocation() {
-        checkSession();
-        return getModel().getLocation(session);
+        return getModel().getLocation();
     }
 
     @Override
     public NPath getLocationPath() {
-        checkSession();
-        return getModel().getLocationPath(session);
+        return getModel().getLocationPath();
     }
 
     @Override
     public NPath getStoreLocation() {
-        checkSession();
         return getModel().getStoreLocation();
     }
 
     @Override
     public NPath getStoreLocation(NStoreType folderType) {
-        checkSession();
-        return getModel().getStoreLocation(folderType, session);
+        return getModel().getStoreLocation(folderType);
     }
 
     @Override
     public boolean isIndexEnabled() {
-        checkSession();
-        return getModel().isIndexEnabled(session);
+        return getModel().isIndexEnabled();
     }
 
     @Override
     public boolean isPreview() {
-        checkSession();
-        return getModel().isPreview(session);
+        return getModel().isPreview();
     }
 
     @Override
     public NRepositoryConfigManager setIndexEnabled(boolean enabled) {
-        checkSession();
-        getModel().setIndexEnabled(enabled, session);
+        getModel().setIndexEnabled(enabled);
         return this;
     }
 
     @Override
     public NRepositoryConfigManager setMirrorEnabled(String repoName, boolean enabled) {
-        checkSession();
-        getModel().setMirrorEnabled(repoName, enabled, session);
+        getModel().setMirrorEnabled(repoName, enabled);
         return this;
     }
 
     @Override
     public int getDeployWeight() {
-        checkSession();
-        return getModel().getDeployWeight(session);
+        return getModel().getDeployWeight();
     }
 
     @Override
     public boolean isEnabled() {
-        checkSession();
-        return getModel().isEnabled(session);
+        return getModel().isEnabled();
     }
 
     @Override
     public NRepositoryConfigManager setEnabled(boolean enabled) {
-        checkSession();
-        getModel().setEnabled(enabled, session);
+        getModel().setEnabled(enabled);
         return this;
     }
 
     @Override
     public NRepositoryConfigManager subscribeIndex() {
-        checkSession();
-        getModel().subscribeIndex(session);
+        getModel().subscribeIndex();
         return this;
     }
 
     @Override
     public NRepositoryConfigManager unsubscribeIndex() {
-        checkSession();
-        getModel().unsubscribeIndex(session);
+        getModel().unsubscribeIndex();
         return this;
     }
 
     @Override
     public boolean isSupportedMirroring() {
-        checkSession();
-        return getModel().isSupportedMirroring(session);
+        return getModel().isSupportedMirroring();
     }
 
     @Override
     public NRepository findMirrorById(String repositoryNameOrId) {
-        checkSession();
-        return getModel().findMirrorById(repositoryNameOrId, session);
+        return getModel().findMirrorById(repositoryNameOrId);
     }
 
     @Override
     public NRepository findMirrorByName(String repositoryName) {
-        checkSession();
-        return getModel().findMirrorById(repositoryName, session);
+        return getModel().findMirrorById(repositoryName);
     }
 
     @Override
     public List<NRepository> getMirrors() {
-        checkSession();
-        return getModel().getMirrors(session);
+        return getModel().getMirrors();
     }
 
     @Override
     public NRepository getMirror(String repositoryIdOrName) {
-        checkSession();
-        return getModel().getMirror(repositoryIdOrName, session);
+        return getModel().getMirror(repositoryIdOrName);
     }
 
     @Override
     public NRepository findMirror(String repositoryIdOrName) {
-        checkSession();
-        return getModel().findMirror(repositoryIdOrName, session);
+        return getModel().findMirror(repositoryIdOrName);
     }
 
     @Override
     public NRepository addMirror(NAddRepositoryOptions options) {
-        checkSession();
-        return getModel().addMirror(options, session);
+        return getModel().addMirror(options);
     }
 
     @Override
     public NRepositoryConfigManager removeMirror(String repositoryId) {
-        checkSession();
-        getModel().removeMirror(repositoryId, session);
+        getModel().removeMirror(repositoryId);
         return this;
     }
 
     @Override
     public NStoreStrategy getStoreStrategy() {
-        checkSession();
-        return getModel().getStoreStrategy(session);
+        return getModel().getStoreStrategy();
     }
 
-    public NSession getSession() {
-        return session;
-    }
-
-    public NRepositoryConfigManager setSession(NSession session) {
-        this.session = NWorkspaceUtils.bindSession(model.getWorkspace(), session);
-        return this;
-    }
 
     @Override
     public Map<String, String> getConfigMap(boolean inherit) {
-        NSessionUtils.checkSession(model.getWorkspace(), session);
-        return model.toMap(inherit, getSession());
+        return model.toMap(inherit);
     }
 
     @Override
     public NOptional<NLiteral> getConfigProperty(String key, boolean inherit) {
-        NSessionUtils.checkSession(model.getWorkspace(), session);
-        return model.get(key, inherit, getSession());
+        return model.get(key, inherit);
     }
     @Override
     public NOptional<NLiteral> getConfigProperty(String property) {
-        NSessionUtils.checkSession(model.getWorkspace(), session);
         return getConfigProperty(property, true);
     }
 
     @Override
     public Map<String, String> getConfigMap() {
-        NSessionUtils.checkSession(model.getWorkspace(), session);
-        return model.toMap(getSession());
+        return model.toMap();
     }
 
 
     @Override
     public NRepositoryConfigManager setConfigProperty(String property, String value) {
-        NSessionUtils.checkSession(model.getWorkspace(), session);
-        model.set(property, value, session);
+        model.set(property, value);
         return this;
     }
 

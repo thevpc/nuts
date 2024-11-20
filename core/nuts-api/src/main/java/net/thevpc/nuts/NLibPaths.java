@@ -31,17 +31,15 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NOptional;
 
-import java.io.File;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.util.List;
 
 /**
  * @app.category Base
  */
-public interface NLibPaths extends NComponent,NSessionProvider {
-    static NLibPaths of(NSession session) {
-       return NExtensions.of(session).createComponent(NLibPaths.class).get();
+public interface NLibPaths extends NComponent {
+    static NLibPaths of() {
+        return NExtensions.of().createComponent(NLibPaths.class).get();
     }
 
 
@@ -60,9 +58,8 @@ public interface NLibPaths extends NComponent,NSessionProvider {
      */
     List<NExecutionEntry> parseExecutionEntries(InputStream inputStream, String type, String sourceName);
 
-    NLibPaths setSession(NSession session);
-
     List<NPath> resolveLibPaths(Class<?> clazz);
+
     NOptional<NPath> resolveLibPath(Class<?> clazz);
 
     /**
@@ -73,6 +70,7 @@ public interface NLibPaths extends NComponent,NSessionProvider {
      * @return nuts id detected from resources containing the given class
      */
     NOptional<NId> resolveId(Class<?> clazz);
+
     NOptional<NId> resolveId(NPath path);
 
     /**

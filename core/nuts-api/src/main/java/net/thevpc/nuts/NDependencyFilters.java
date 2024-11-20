@@ -43,11 +43,11 @@ public interface NDependencyFilters extends NTypedFilters<NDependencyFilter> {
 
     /**
      * return a new session bound instance of NutsDependencyFilters
-     * @param session session
+     *
      * @return a new session bound instance of NutsDependencyFilters
      */
-    static NDependencyFilters of(NSession session) {
-       return NExtensions.of(session).createComponent(NDependencyFilters.class).get();
+    static NDependencyFilters of() {
+       return NExtensions.of().createComponent(NDependencyFilters.class).get();
     }
 
     /**

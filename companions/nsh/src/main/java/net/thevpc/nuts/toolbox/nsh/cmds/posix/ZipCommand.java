@@ -57,10 +57,10 @@ public class ZipCommand extends NShellBuiltinDefault {
             return true;
         } else if (cmdLine.isNextOption()) {
             return false;
-        } else if (cmdLine.peek().get(session).isNonOption()) {
-            String path = cmdLine.nextNonOption(NArgName.of("file", session))
-                    .flatMap(NLiteral::asString).get(session);
-            NPath file = NPath.of(path, session).toAbsolute(context.getDirectory());
+        } else if (cmdLine.peek().get().isNonOption()) {
+            String path = cmdLine.nextNonOption(NArgName.of("file"))
+                    .flatMap(NLiteral::asString).get();
+            NPath file = NPath.of(path).toAbsolute(context.getDirectory());
             if (options.outZip == null) {
                 options.outZip = file;
             } else {
@@ -81,7 +81,7 @@ public class ZipCommand extends NShellBuiltinDefault {
         if (options.outZip == null) {
             cmdLine.throwError(NMsg.ofPlain("missing out-zip"));
         }
-        NCompress aa = NCompress.of(session)
+        NCompress aa = NCompress.of()
                 .setTarget(options.outZip);
         for (NPath file : options.files) {
             aa.addSource(file);

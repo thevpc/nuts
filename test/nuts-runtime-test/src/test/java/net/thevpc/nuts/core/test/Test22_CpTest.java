@@ -32,13 +32,13 @@ public class Test22_CpTest {
     @Test
     public void minimal1() throws Exception {
         final String url = "https://repo.maven.apache.org/maven2/archetype-catalog.xml";
-        InputStream j1 = CoreIOUtils.getCachedUrlWithSHA1(url, "archetype-catalog", true,session);
+        InputStream j1 = CoreIOUtils.getCachedUrlWithSHA1(url, "archetype-catalog", true);
         //just to consume the stream
-        NCp.of(session).from(j1).to(new ByteArrayOutputStream()).addOptions(NPathOption.LOG, NPathOption.TRACE).run();
+        NCp.of().from(j1).to(new ByteArrayOutputStream()).addOptions(NPathOption.LOG, NPathOption.TRACE).run();
         TestUtils.println(j1);
-        InputStream j2 = CoreIOUtils.getCachedUrlWithSHA1(url, "archetype-catalog", true,session);
+        InputStream j2 = CoreIOUtils.getCachedUrlWithSHA1(url, "archetype-catalog", true);
         //just to consume the stream
-        NCp.of(session).from(j2).to(new ByteArrayOutputStream()).addOptions(NPathOption.LOG, NPathOption.TRACE).run();
+        NCp.of().from(j2).to(new ByteArrayOutputStream()).addOptions(NPathOption.LOG, NPathOption.TRACE).run();
         TestUtils.println(j2);
     }
 

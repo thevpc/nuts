@@ -53,9 +53,9 @@ public class Test01_CreateTest {
                 "--verbose"
         );
         Assertions.assertEquals(
-                NPath.of(new File(wsPath, "cache"),session),
-                NLocations.of(session).getStoreLocation(NStoreType.CACHE));
-        Assertions.assertEquals(0, NRepositories.of(session).getRepositories().size());
+                NPath.of(new File(wsPath, "cache")),
+                NLocations.of().getStoreLocation(NStoreType.CACHE));
+        Assertions.assertEquals(0, NRepositories.of().getRepositories().size());
 //        Assertions.assertEquals(new File(wsPath,  "cache/" + NutsConstants.Folders.REPOSITORIES + "/" +
 //                        NRepositories.of(session).getRepositories()[0].getName() +
 //                        "/" + NRepositories.of(session).getRepositories()[0].getUuid()).getPath(),
@@ -82,7 +82,7 @@ public class Test01_CreateTest {
                 "a\n\nb";
         TestUtils.println("-----------------------");
         TestUtils.println(str);
-        NText txt = NTexts.of(session).parse(str);
+        NText txt = NTexts.of().parse(str);
         TestUtils.println("-----------------------");
         TestUtils.println(txt);
         long b=System.currentTimeMillis();
@@ -133,15 +133,15 @@ public class Test01_CreateTest {
             }
         }
         Assertions.assertEquals(
-                NPath.of(new File(base, new File(wsPath).getName()),session),
-                NLocations.of(session).getStoreLocation(NStoreType.CACHE));
+                NPath.of(new File(base, new File(wsPath).getName())),
+                NLocations.of().getStoreLocation(NStoreType.CACHE));
         Assertions.assertEquals(
                 NPath.of(new File(base, new File(wsPath).getName() + "/"
                         + NConstants.Folders.REPOSITORIES + "/"
-                        + NRepositories.of(session).getRepositories().get(0).getName()
-                        + "/" + NRepositories.of(session).getRepositories().get(0).getUuid()
-                ),session),
-                NRepositories.of(session).getRepositories().get(0).config().getStoreLocation(NStoreType.CACHE));
+                        + NRepositories.of().getRepositories().get(0).getName()
+                        + "/" + NRepositories.of().getRepositories().get(0).getUuid()
+                )),
+                NRepositories.of().getRepositories().get(0).config().getStoreLocation(NStoreType.CACHE));
     }
 
     @Test
@@ -177,7 +177,7 @@ public class Test01_CreateTest {
         NSession s = TestUtils.runNewTestWorkspace("--verbose","-b");
 
         {
-            NPath home = NPath.of(new File(System.getProperty("user.home")), s);
+            NPath home = NPath.of(new File(System.getProperty("user.home")));
             Assertions.assertNotNull(home);
         }
 
@@ -192,166 +192,166 @@ public class Test01_CreateTest {
         }
 
         {
-            NExpr expr = NExpr.of(s);
+            NExpr expr = NExpr.of();
             Assertions.assertNotNull(expr);
         }
 
         {
-            NStream<String> stream = NStream.of(new String[]{"a"}, s);
+            NStream<String> stream = NStream.of(new String[]{"a"});
             Assertions.assertNotNull(stream);
         }
 
         {
-            Pattern g = NGlob.of(s).toPattern("a.*");
+            Pattern g = NGlob.of().toPattern("a.*");
             Assertions.assertNotNull(g);
         }
 
         {
-            InputStream stdin = NIO.of(s).stdin();
+            InputStream stdin = NIO.of().stdin();
             Assertions.assertNotNull(stdin);
         }
 
         {
-            NPrintStream stdout = NIO.of(s).stdout();
+            NPrintStream stdout = NIO.of().stdout();
             Assertions.assertNotNull(stdout);
         }
 
         {
-            NCmdLineHistory h = NCmdLineHistory.of(s);
+            NCmdLineHistory h = NCmdLineHistory.of();
             Assertions.assertNotNull(h);
         }
 
 
         {
-            NLibPaths c = NLibPaths.of(s);
+            NLibPaths c = NLibPaths.of();
             Assertions.assertNotNull(c);
         }
 
         {
-            NDigest c = NDigest.of(s);
+            NDigest c = NDigest.of();
             Assertions.assertNotNull(c);
         }
 
         {
-            NInputStreamMonitor c = NInputStreamMonitor.of(s);
+            NInputStreamMonitor c = NInputStreamMonitor.of();
             Assertions.assertNotNull(c);
         }
         {
-            NLocks c = NLocks.of(s);
+            NLocks c = NLocks.of();
             Assertions.assertNotNull(c);
         }
         {
-            NPaths c = NPaths.of(s);
+            NPaths c = NPaths.of();
             Assertions.assertNotNull(c);
         }
         {
-            NCp c = NCp.of(s);
+            NCp c = NCp.of();
             Assertions.assertNotNull(c);
         }
         {
-            NPs c = NPs.of(s);
+            NPs c = NPs.of();
             Assertions.assertNotNull(c);
         }
         {
-            NCompress c = NCompress.of(s);
+            NCompress c = NCompress.of();
             Assertions.assertNotNull(c);
         }
         {
-            NUncompress c = NUncompress.of(s);
+            NUncompress c = NUncompress.of();
             Assertions.assertNotNull(c);
         }
         {
-            NLog log = NLog.of(Test01_CreateTest.class, s);
+            NLog log = NLog.of(Test01_CreateTest.class);
             Assertions.assertNotNull(log);
-            NLogOp logop = NLogOp.of(Test01_CreateTest.class, s);
+            NLogOp logop = NLogOp.of(Test01_CreateTest.class);
             Assertions.assertNotNull(logop);
         }
         {
-            NIdFormat r = NIdFormat.of(s);
+            NIdFormat r = NIdFormat.of();
             Assertions.assertNotNull(r);
         }
         {
-            NIdFilters r = NIdFilters.of(s);
+            NIdFilters r = NIdFilters.of();
             Assertions.assertNotNull(r);
         }
         {
-            NVersionFilters r = NVersionFilters.of(s);
+            NVersionFilters r = NVersionFilters.of();
             Assertions.assertNotNull(r);
         }
         {
-            NDependencyFilters r = NDependencyFilters.of(s);
+            NDependencyFilters r = NDependencyFilters.of();
             Assertions.assertNotNull(r);
         }
         {
-            NDescriptorFilters r = NDescriptorFilters.of(s);
+            NDescriptorFilters r = NDescriptorFilters.of();
             Assertions.assertNotNull(r);
         }
         {
-            NInstallStatusFilters r = NInstallStatusFilters.of(s);
+            NInstallStatusFilters r = NInstallStatusFilters.of();
             Assertions.assertNotNull(r);
         }
         {
-            NRepositoryFilters r = NRepositoryFilters.of(s);
+            NRepositoryFilters r = NRepositoryFilters.of();
             Assertions.assertNotNull(r);
         }
         {
-            NElements r = NElements.of(s);
+            NElements r = NElements.of();
             Assertions.assertNotNull(r);
         }
         {
-            NDescriptorParser r = NDescriptorParser.of(s);
+            NDescriptorParser r = NDescriptorParser.of();
             Assertions.assertNotNull(r);
         }
         {
-            NArtifactCallBuilder r = NArtifactCallBuilder.of(s);
+            NArtifactCallBuilder r = NArtifactCallBuilder.of();
             Assertions.assertNotNull(r);
         }
         {
-            NDescriptorFormat r = NDescriptorFormat.of(s);
+            NDescriptorFormat r = NDescriptorFormat.of();
             Assertions.assertNotNull(r);
         }
         {
-            NDependencySolver r = NDependencySolver.of(s);
+            NDependencySolver r = NDependencySolver.of();
             Assertions.assertNotNull(r);
         }
         {
-            NVersionFormat r = NVersionFormat.of(s);
+            NVersionFormat r = NVersionFormat.of();
             Assertions.assertNotNull(r);
         }
         {
-            NFilters r = NFilters.of(s);
+            NFilters r = NFilters.of();
             Assertions.assertNotNull(r);
         }
         {
-            NTexts r = NTexts.of(s);
+            NTexts r = NTexts.of();
             Assertions.assertNotNull(r);
         }
         {
-            NObjectFormat r = NObjectFormat.of(s);
+            NObjectFormat r = NObjectFormat.of();
             Assertions.assertNotNull(r);
         }
         {
-            NInfoCmd r = NInfoCmd.of(s);
+            NInfoCmd r = NInfoCmd.of();
             Assertions.assertNotNull(r);
         }
         {
-            NExecCmdFormat r = NExecCmdFormat.of(s);
+            NExecCmdFormat r = NExecCmdFormat.of();
             Assertions.assertNotNull(r);
         }
         {
-            NCmdLineFormat r = NCmdLineFormat.of(s);
+            NCmdLineFormat r = NCmdLineFormat.of();
             Assertions.assertNotNull(r);
         }
         {
-            NTableFormat r = NTableFormat.of(s);
+            NTableFormat r = NTableFormat.of();
             Assertions.assertNotNull(r);
         }
         {
-            NTreeFormat r = NTreeFormat.of(s);
+            NTreeFormat r = NTreeFormat.of();
             Assertions.assertNotNull(r);
         }
         {
-            NPropertiesFormat r = NPropertiesFormat.of(s);
+            NPropertiesFormat r = NPropertiesFormat.of();
             Assertions.assertNotNull(r);
         }
 

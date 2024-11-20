@@ -206,7 +206,7 @@ public class DefaultNShellOptionsParser implements NShellOptionsParser {
             args.clear();
             args.addAll(Arrays.asList(a.toStringArray()));
         } else {
-            throw new NShellException(session, NMsg.ofC("unsupported option %s", args.get(0)), 1);
+            throw new NShellException(NMsg.ofC("unsupported option %s", args.get(0)), 1);
         }
     }
 

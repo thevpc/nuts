@@ -18,7 +18,7 @@ public class NElementMapperNObjectElement extends NElementMapperNElement {
         NSession session = context.getSession();
         o = super.createObject(o, typeOfResult, context);
         if (o.type() == NElementType.OBJECT) {
-            return o.asObject().get(session);
+            return o.asObject().get();
         }
         return context.elem().ofObject().set("value", o).build();
     }

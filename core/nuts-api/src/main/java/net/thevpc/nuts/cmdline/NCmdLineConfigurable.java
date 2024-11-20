@@ -26,7 +26,6 @@ package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 
 import java.util.Arrays;
 
@@ -70,7 +69,6 @@ public interface NCmdLineConfigurable {
         boolean conf = false;
         int maxLoops = 1000;
         boolean robustMode = false;
-        NSession session = cmdLine.getSession();
         while (cmdLine.hasNext()) {
             if (robustMode) {
                 String[] before = cmdLine.toStringArray();
@@ -85,7 +83,7 @@ public interface NCmdLineConfigurable {
                 }
                 String[] after = cmdLine.toStringArray();
                 if (Arrays.equals(before, after)) {
-                    throw new NIllegalArgumentException(session,
+                    throw new NIllegalArgumentException(
                             NMsg.ofC(
                                     "bad implementation of configureFirst in class %s."
                                     + " cmdLine is not consumed; perhaps missing skip() class."
@@ -136,15 +134,15 @@ public interface NCmdLineConfigurable {
      * }
      * to help return a more specific return type;
      *
-     * @param <T> {@code this} Type
-     * @param c argument configurable
+     * @param <T>             {@code this} Type
+     * @param c               argument configurable
      * @param skipUnsupported skipUnsupported
-     * @param args argument to configure with
-     * @param commandName commandName
+     * @param args            argument to configure with
+     * @param commandName     commandName
      * @return {@code this} instance
      */
-    static <T> T configure(NCmdLineConfigurable c, boolean skipUnsupported, String[] args, String commandName, NSession session) {
-        c.configure(skipUnsupported, NCmdLine.of(args).setSession(session).setCommandName(commandName));
+    static <T> T configure(NCmdLineConfigurable c, boolean skipUnsupported, String[] args, String commandName) {
+        c.configure(skipUnsupported, NCmdLine.of(args).setCommandName(commandName));
         return (T) c;
     }
 }

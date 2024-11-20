@@ -38,15 +38,15 @@ import net.thevpc.nuts.io.NPrintStream;
 public abstract class DefaultSearchFormatBase implements NIterableFormat {
 
     private final NFetchDisplayOptions displayOptions;
-    private final NSession session;
+    private final NWorkspace workspace;
     private final NPrintStream writer;
     private final NContentType format;
 
-    public DefaultSearchFormatBase(NSession session, NPrintStream writer, NContentType format, NFetchDisplayOptions options) {
+    public DefaultSearchFormatBase(NWorkspace workspace, NPrintStream writer, NContentType format, NFetchDisplayOptions options) {
         this.format = format;
         this.writer = writer;
-        this.session = session;
-        displayOptions = new NFetchDisplayOptions(session);
+        this.workspace = workspace;
+        this.displayOptions = new NFetchDisplayOptions(workspace);
         if(options!=null){
             displayOptions.configure(true, options.toCmdLineOptions());
         }
@@ -71,15 +71,11 @@ public abstract class DefaultSearchFormatBase implements NIterableFormat {
      */
     @Override
     public NIterableFormat configure(boolean skipUnsupported, String... args) {
-        return NCmdLineConfigurable.configure(this, skipUnsupported, args,"search-" + getOutputFormat().id(),getSession());
+        return NCmdLineConfigurable.configure(this, skipUnsupported, args,"search-" + getOutputFormat().id());
     }
 
     public NWorkspace getWorkspace() {
-        return session.getWorkspace();
-    }
-
-    public NSession getSession() {
-        return session;
+        return workspace;
     }
 
     public NPrintStream getWriter() {

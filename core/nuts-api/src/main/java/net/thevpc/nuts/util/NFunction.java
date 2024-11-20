@@ -1,6 +1,5 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElementDescribable;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
@@ -42,8 +41,8 @@ public interface NFunction<T, V> extends Function<T, V>, NElementDescribable<NFu
         });
     }
 
-    default NElement describe(NSession session) {
-        return NElements.of(session).toElement("function");
+    default NElement describe() {
+        return NElements.of().toElement("function");
     }
 
     @Override

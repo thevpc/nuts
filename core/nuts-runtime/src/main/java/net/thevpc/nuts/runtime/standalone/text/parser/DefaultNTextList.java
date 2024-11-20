@@ -42,8 +42,8 @@ public class DefaultNTextList extends AbstractNText implements NTextList {
 
     private final List<NText> children = new ArrayList<NText>();
 
-    public DefaultNTextList(NSession session, NText... children) {
-        super(session);
+    public DefaultNTextList(NWorkspace workspace, NText... children) {
+        super(workspace);
         if (children != null) {
             for (NText c : children) {
                 if (c != null) {
@@ -86,7 +86,7 @@ public class DefaultNTextList extends AbstractNText implements NTextList {
     @Override
     public NText simplify() {
         if (isEmpty()) {
-            return new DefaultNTextPlain(getSession(), "");
+            return new DefaultNTextPlain(workspace, "");
         }
         if (size() == 1) {
             return get(0);

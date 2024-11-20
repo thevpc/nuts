@@ -60,9 +60,8 @@ public class PermissionNonOption extends DefaultNonOption {
         Iterator<NArgCandidate> i = all.iterator();
         NRepository repository=context.get(NRepository.class);
         NUser info = repository != null ? repository.security()
-                .setSession(context.getSession())
                 .getEffectiveUser(user) :
-                NWorkspaceSecurityManager.of(context.getSession()).findUser(user);
+                NWorkspaceSecurityManager.of().findUser(user);
         Set<String> rights = new HashSet<>(info == null ? Collections.emptyList() : (info.getPermissions()));
         while (i.hasNext()) {
             NArgCandidate right = i.next();

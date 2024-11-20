@@ -39,13 +39,11 @@ import java.util.List;
 /**
  * @author thevpc
  */
-public interface NBootManager extends NComponent, NSessionProvider {
+public interface NBootManager extends NComponent {
 
-    static NBootManager of(NSession session) {
-        return NExtensions.of(session).createComponent(NBootManager.class).get();
+    static NBootManager of() {
+        return NExtensions.of().createComponent(NBootManager.class).get();
     }
-
-    NBootManager setSession(NSession session);
 
     /**
      * return true when this is a first boot of the workspace (just installed!)

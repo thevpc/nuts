@@ -27,9 +27,9 @@ public class ShellHelper {
 
     public static NPath xfileOf(String expression, String cwd, NSession session) {
         if (expression.startsWith("file:") || expression.contains("://")) {
-            return NPath.of(expression,session);
+            return NPath.of(expression);
         }
-        return NPath.of(_IOUtils.getAbsoluteFile2(expression, cwd, session),session);
+        return NPath.of(_IOUtils.getAbsoluteFile2(expression, cwd, session));
     }
 
     public static String[] splitNameAndValue(String arg) {
@@ -91,7 +91,7 @@ public class ShellHelper {
 
         @Override
         public InputStream monitorInputStream(InputStream stream, long length, NMsg message) {
-            return NInputStreamMonitor.of(session).setSource(stream).setLength(length).setName(message).create();
+            return NInputStreamMonitor.of().setSource(stream).setLength(length).setName(message).create();
         }
     }
 

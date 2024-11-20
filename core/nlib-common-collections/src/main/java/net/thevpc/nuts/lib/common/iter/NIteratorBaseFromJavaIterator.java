@@ -1,6 +1,5 @@
 package net.thevpc.nuts.lib.common.iter;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NIterator;
 
@@ -36,16 +35,16 @@ public class NIteratorBaseFromJavaIterator<T> extends NIteratorBase<T> {
     }
 
     @Override
-    public NElement describe(NSession session) {
-        NObjectElement b = NEDesc.describeResolveOr(base, session, () -> NElements.of(session).ofObject().build())
-                .asObject().get(session);
-        NElement a = description.apply(session);
+    public NElement describe() {
+        NObjectElement b = NEDesc.describeResolveOr(base, () -> NElements.of().ofObject().build())
+                .asObject().get();
+        NElement a = description.get();
         if (b.isEmpty()) {
             return a;
         }
         if (a.isObject()) {
             return b.builder()
-                    .addAll(a.asObject().get(session))
+                    .addAll(a.asObject().get())
                     .build()
                     ;
         } else {

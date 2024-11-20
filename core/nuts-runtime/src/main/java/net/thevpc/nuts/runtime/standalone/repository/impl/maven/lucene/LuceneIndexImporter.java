@@ -24,13 +24,12 @@ public class LuceneIndexImporter {
 
     public long importGzURL(URL url, String repository, NSession session) {
 //        NutsWorkspace ws = session.getWorkspace();
-        String tempGzFile = NPath.ofTempFile("lucene-repository.gz",session).toString();
-        NCp.of(session)
-                .setSession(session)
-                .from(url).to(NPath.of(tempGzFile,session)).run();
-        String tempFolder = NPath.ofTempFolder("lucene-repository",session).toString();
-        NUncompress.of(session).from(NPath.of(tempGzFile,session)).to(
-                NPath.of(tempFolder,session)
+        String tempGzFile = NPath.ofTempFile("lucene-repository.gz").toString();
+        NCp.of()
+                .from(url).to(NPath.of(tempGzFile)).run();
+        String tempFolder = NPath.ofTempFolder("lucene-repository").toString();
+        NUncompress.of().from(NPath.of(tempGzFile)).to(
+                NPath.of(tempFolder)
         ).setPackaging("gz").run();
         try {
             long[] ref=new long[1];
@@ -41,7 +40,7 @@ public class LuceneIndexImporter {
             );
             return ref[0];
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -51,7 +50,7 @@ public class LuceneIndexImporter {
         int allCount=0;
         try (DirtyLuceneIndexParser p = new DirtyLuceneIndexParser(new FileInputStream(filePath),session)) {
             while (p.hasNext()) {
-                NId id = NId.of(p.next()).get(session).builder().setRepository(repository).build();
+                NId id = NId.of(p.next()).get().builder().setRepository(repository).build();
                 if (!adb.contains(id,session)) {
                     addedCount++;
                     adb.add(id,session);
@@ -59,7 +58,7 @@ public class LuceneIndexImporter {
                 allCount++;
             }
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         } finally {
             adb.flush(session);
         }

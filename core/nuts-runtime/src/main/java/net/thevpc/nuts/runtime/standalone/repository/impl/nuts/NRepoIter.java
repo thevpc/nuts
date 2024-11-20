@@ -17,8 +17,13 @@ class NRepoIter extends NIdPathIteratorBase {
     }
 
     @Override
-    public void undeploy(NId id, NSession session) throws NExecutionException {
-        r.undeploy().setId(id).setSession(session)
+    public NWorkspace getWorkspace() {
+        return r.getWorkspace();
+    }
+
+    @Override
+    public void undeploy(NId id) throws NExecutionException {
+        r.undeploy().setId(id)
                 //.setFetchMode(NutsFetchMode.LOCAL)
                 .run();
     }
@@ -30,18 +35,19 @@ class NRepoIter extends NIdPathIteratorBase {
     }
 
     @Override
-    public NDescriptor parseDescriptor(NPath pathname, InputStream in, NFetchMode fetchMode, NRepository repository, NSession session, NPath rootURL) throws IOException {
+    public NDescriptor parseDescriptor(NPath pathname, InputStream in, NFetchMode fetchMode, NRepository repository, NPath rootURL) throws IOException {
+        NSession session=getWorkspace().currentSession();
         session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "parse", pathname.toCompressedForm()));
         String fn = pathname.getName();
         if (fn.endsWith(".pom")) {
-            return MavenUtils.of(session).parsePomXmlAndResolveParents(in, fetchMode, pathname.toString(), repository);
+            return MavenUtils.of().parsePomXmlAndResolveParents(in, fetchMode, pathname.toString(), repository);
         }else{
-            return NDescriptorParser.of(session).setDescriptorStyle(NDescriptorStyle.NUTS).parse(in).get(session);
+            return NDescriptorParser.of().setDescriptorStyle(NDescriptorStyle.NUTS).parse(in).get();
         }
     }
 
     @Override
-    public NId parseId(NPath pomFile, NPath rootPath, NIdFilter filter, NRepository repository, NSession session) throws IOException {
+    public NId parseId(NPath pomFile, NPath rootPath, NIdFilter filter, NRepository repository) throws IOException {
         String fn = pomFile.getName();
         if (fn.endsWith(".pom")) {
             NPath versionFolder = pomFile.getParent();
@@ -68,7 +74,7 @@ class NRepoIter extends NIdPathIteratorBase {
                                             .setArtifactId(an)
                                             .setVersion(vn)
                                             .build(),
-                                    null, pomFile, rootPath, filter, repository, session);
+                                    null, pomFile, rootPath, filter, repository);
                         }
                     }
                 }
@@ -98,7 +104,7 @@ class NRepoIter extends NIdPathIteratorBase {
                                             .setArtifactId(an)
                                             .setVersion(vn)
                                             .build(),
-                                    null, pomFile, rootPath, filter, repository, session);
+                                    null, pomFile, rootPath, filter, repository);
                         }
                     }
                 }

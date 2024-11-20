@@ -24,9 +24,9 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
     public DefaultNWorkspaceList(NSession session) {
         this.defaultSession = session;
         setName(null);
-        NPath file = getConfigFile(session);
+        NPath file = getConfigFile();
         if (file.exists()) {
-            this.config = NElements.of(this.defaultSession).json().parse(file, NWorkspaceListConfig.class);
+            this.config = NElements.of().json().parse(file, NWorkspaceListConfig.class);
             for (NWorkspaceLocation var : this.config.getWorkspaces()) {
                 this.workspaces.put(var.getUuid(), var);
             }
@@ -38,9 +38,9 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
                     new NWorkspaceLocation()
                             .setUuid(session.getWorkspace().getUuid())
                             .setName(NConstants.Names.DEFAULT_WORKSPACE_NAME)
-                            .setLocation(NLocations.of(this.defaultSession).getWorkspaceLocation().toString())
+                            .setLocation(NLocations.of().getWorkspaceLocation().toString())
             );
-            this.save(session);
+            this.save();
         }
     }
 
@@ -56,9 +56,9 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
         return name;
     }
 
-    private NPath getConfigFile(NSession session) {
-        return NLocations.of(session)
-                .getStoreLocation(NId.ofClass(DefaultNWorkspaceList.class,session).get(),
+    private NPath getConfigFile() {
+        return NLocations.of()
+                .getStoreLocation(NId.ofClass(DefaultNWorkspaceList.class).get(),
                         NStoreType.CONF)
                 .resolve(name + "-nuts-workspace-list.json");
     }
@@ -85,34 +85,34 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
     }
 
     @Override
-    public NSession addWorkspace(String path, NSession session) {
+    public NSession addWorkspace(String path) {
         NSession ss = this.createWorkspace(path);
-        NLocations locations = NLocations.of(ss);
+        NLocations locations = NLocations.of();
         NWorkspaceLocation workspaceLocation = new NWorkspaceLocation()
                 .setUuid(ss.getWorkspace().getUuid())
                 .setName(locations.getWorkspaceLocation().getName())
                 .setLocation(locations.getWorkspaceLocation().toString());
         workspaces.put(ss.getWorkspace().getUuid(), workspaceLocation);
-        this.save(session);
+        this.save();
         return ss;
     }
 
     @Override
-    public boolean removeWorkspace(String uuid, NSession session) {
+    public boolean removeWorkspace(String uuid) {
         boolean b = this.workspaces.remove(uuid) != null;
         if (b) {
-            save(session);
+            save();
         }
         return b;
     }
 
     @Override
-    public void save(NSession session) {
+    public void save() {
         this.config.setWorkspaces(this.workspaces.isEmpty()
                 ? null
                 : new ArrayList<>(this.workspaces.values()));
-        NPath file = getConfigFile(session);
-        NElements.of(this.defaultSession).json().setValue(this.config)
+        NPath file = getConfigFile();
+        NElements.of().json().setValue(this.config)
                 .setNtf(false)
                 .print(file);
     }

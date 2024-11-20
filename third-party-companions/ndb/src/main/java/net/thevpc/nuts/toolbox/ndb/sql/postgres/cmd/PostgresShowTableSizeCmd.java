@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.ndb.sql.postgres.cmd;
 
-import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
 import net.thevpc.nuts.toolbox.ndb.base.NdbCmd;
@@ -40,19 +40,19 @@ public class PostgresShowTableSizeCmd extends NdbCmd<NPostgresConfig> {
     }
 
     @Override
-    public void run(NSession session, NCmdLine cmdLine) {
+    public void run(NCmdLine cmdLine) {
         NRef<AtName> name = NRef.ofNull(AtName.class);
         NPostgresConfig otherOptions = createConfigInstance();
         ExtendedQuery eq = new ExtendedQuery(getName());
         while (cmdLine.hasNext()) {
             if (cmdLine.isNextOption()) {
-                switch (cmdLine.peek().get(session).key()) {
+                switch (cmdLine.peek().get().key()) {
                     case "--config": {
-                        readConfigNameOption(cmdLine, session, name);
+                        readConfigNameOption(cmdLine, name);
                         break;
                     }
                     case "--long": {
-                        cmdLine.withNextFlag((v, a, s) -> eq.setLongMode(v));
+                        cmdLine.withNextFlag((v, a) -> eq.setLongMode(v));
                         break;
                     }
                     default: {
@@ -77,15 +77,15 @@ public class PostgresShowTableSizeCmd extends NdbCmd<NPostgresConfig> {
                 "from information_schema.tables\n" +
                 "where table_schema = 'public'\n" +
                 "order by 3 desc;";
-        SqlDB sqlDB = SqlHelper.computeSchema(eq, support1, options, session);
+        SqlDB sqlDB = SqlHelper.computeSchema(eq, support1, options);
 
         LinkedHashMap<String, Result> all = new LinkedHashMap<>();
         for (SqlCatalog cat : sqlDB.catalogs.values()) {
             for (SqlSchema schem : cat.schemas.values()) {
                 for (SqlTable s : schem.tables.values()) {
                     String tableName = s.tableName;
-                    List<Object> sizeResult = support1.callSqlAndWaitGet("Select pg_total_relation_size('" + tableName + "')", options, false, session);
-                    List<Object> countResult = support1.callSqlAndWaitGet("Select count(1) from \"" + tableName + "\"", options, false, session);
+                    List<Object> sizeResult = support1.callSqlAndWaitGet("Select pg_total_relation_size('" + tableName + "')", options, false);
+                    List<Object> countResult = support1.callSqlAndWaitGet("Select count(1) from \"" + tableName + "\"", options, false);
                     all.put(tableName, new Result(tableName,
                             sizeResult.isEmpty() ? 0L : ((Number) sizeResult.get(0)).longValue(),
                             countResult.isEmpty() ? 0L : ((Number) countResult.get(0)).longValue(),
@@ -116,6 +116,7 @@ public class PostgresShowTableSizeCmd extends NdbCmd<NPostgresConfig> {
                 totalRows,
                 totalColumns
         ));
+        NSession session = NSession.of().get();
         session.out().println(rr);
         //SqlHelper.callSqlAndWaitGet("")
     }

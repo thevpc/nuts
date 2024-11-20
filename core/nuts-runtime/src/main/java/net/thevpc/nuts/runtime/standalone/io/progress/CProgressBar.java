@@ -9,6 +9,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.IntSupplier;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
@@ -44,15 +46,15 @@ public class CProgressBar {
     private ProgressOptions options;
     private Formatter formatter;
     private NWorkspace ws;
-    private static Map<String, Function<NSession, Formatter>> formatters = new HashMap();
+    private static Map<String, Supplier<Formatter>> formatters = new HashMap();
 
     static {
-        reg("", session -> {
-            NTexts txt = NTexts.of(session);
-            return CorePlatformUtils.SUPPORTS_UTF_ENCODING ? createFormatter("braille", session) : createFormatter("simple", session);
+        reg("", () -> {
+            NTexts txt = NTexts.of();
+            return CorePlatformUtils.SUPPORTS_UTF_ENCODING ? createFormatter("braille") : createFormatter("simple");
         });
-        reg("square", session -> {
-            NTexts txt = NTexts.of(session);
+        reg("square", () -> {
+            NTexts txt = NTexts.of();
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
             }
@@ -66,12 +68,12 @@ public class CProgressBar {
                     -1, 10, 10
             );
         });
-        reg("vbar", session -> {
+        reg("vbar", () -> {
             //" ▁▂▃▄▅▆▇█"
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
             }
-            NTexts txt = NTexts.of(session);
+            NTexts txt = NTexts.of();
             return new SimpleFormatter("vbar",
                     new NText[]{
                             txt.ofStyled(" ", NTextStyle.primary1()),
@@ -108,8 +110,8 @@ public class CProgressBar {
             );
         });
 
-        reg("shadow", session -> {
-            NTexts txt = NTexts.of(session);
+        reg("shadow", () -> {
+            NTexts txt = NTexts.of();
             //" ░▒▓█"
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
@@ -128,8 +130,8 @@ public class CProgressBar {
                     1, 1, 10, 10
             );
         });
-        reg("hbar", session -> {
-            NTexts txt = NTexts.of(session);
+        reg("hbar", () -> {
+            NTexts txt = NTexts.of();
             //" ▏▎▍▌▋▊▉█"
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
@@ -152,8 +154,8 @@ public class CProgressBar {
                     10, -1, 10, 10
             );
         });
-        reg("circle", session -> {
-            NTexts txt = NTexts.of(session);
+        reg("circle", () -> {
+            NTexts txt = NTexts.of();
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
             }
@@ -166,8 +168,8 @@ public class CProgressBar {
                     10, -1, 10, 10
             );
         });
-        reg("parallelogram", session -> {
-            NTexts txt = NTexts.of(session);
+        reg("parallelogram", () -> {
+            NTexts txt = NTexts.of();
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
             }
@@ -180,8 +182,8 @@ public class CProgressBar {
                     10, -1, 10, 10
             );
         });
-        reg("simple", session -> {
-            NTexts txt = NTexts.of(session);
+        reg("simple", () -> {
+            NTexts txt = NTexts.of();
             return new SimpleFormatter("simple",
                     new NText[]{
                             txt.ofStyled(" ", NTextStyle.primary1()),
@@ -194,8 +196,8 @@ public class CProgressBar {
                     10, -1, 10, 10
             );
         });
-        reg("clock", session -> {
-            NTexts txt = NTexts.of(session);
+        reg("clock", () -> {
+            NTexts txt = NTexts.of();
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
             }
@@ -213,8 +215,8 @@ public class CProgressBar {
                     , 1, 1, 10, 10
             );
         });
-        reg("braille", session -> {
-            NTexts txt = NTexts.of(session);
+        reg("braille", () -> {
+            NTexts txt = NTexts.of();
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
             }
@@ -248,24 +250,24 @@ public class CProgressBar {
         });
     }
 
-    private static void reg(String name, Function<NSession, Formatter> f) {
+    private static void reg(String name, Supplier<Formatter> f) {
         formatters.put(name, f);
     }
 
-    public static CProgressBar of(NSession session) {
-        return session.getOrComputeProperty(CProgressBar.class.getName(), NScopeType.SESSION, CProgressBar::new);
+    public static CProgressBar of() {
+        return NSession.of().get().getOrComputeProperty(CProgressBar.class.getName(), NScopeType.SESSION, CProgressBar::new);
     }
 
-    public CProgressBar(NSession session) {
-        this(session, -1);
+    public CProgressBar() {
+        this( -1);
     }
 
-    public CProgressBar(NSession session, int determinateSize) {
-        this.session = session;
-        this.logger = NLog.of(CProgressBar.class, this.session);
+    public CProgressBar(int determinateSize) {
+        this.session = NSession.of().get();
+        this.logger = NLog.of(CProgressBar.class);
         this.options = ProgressOptions.of(session);
         this.ws = session.getWorkspace();
-        this.formatter = createFormatter(options.get("type").flatMap(NLiteral::asString).orElse(""), session);
+        this.formatter = createFormatter(options.get("type").flatMap(NLiteral::asString).orElse(""));
         if (determinateSize <= 0) {
             determinateSize = options.get("size").flatMap(NLiteral::asInt).orElse(formatter.getDefaultWidth());
         }
@@ -276,15 +278,15 @@ public class CProgressBar {
         return formatters.keySet().toArray(new String[0]);
     }
 
-    public static Formatter createFormatter(String name, NSession session) {
-        Function<NSession, Formatter> e = formatters.get(name);
+    public static Formatter createFormatter(String name) {
+        Supplier<Formatter> e = formatters.get(name);
         if (e != null) {
-            Formatter u = e.apply(session);
+            Formatter u = e.get();
             if (u != null) {
                 return u;
             }
         }
-        return formatters.get("").apply(session);
+        return formatters.get("").get();
     }
 
     public long getMinPeriod() {
@@ -300,11 +302,11 @@ public class CProgressBar {
     }
 
     public CProgressBar setFormatter(String formatter) {
-        return setFormatter(createFormatter(formatter, session));
+        return setFormatter(createFormatter(formatter));
     }
 
     public CProgressBar setFormatter(Formatter formatter) {
-        this.formatter = formatter == null ? createFormatter("", session) : formatter;
+        this.formatter = formatter == null ? createFormatter("") : formatter;
         return this;
     }
 
@@ -508,7 +510,7 @@ public class CProgressBar {
 
     public NText progress(int percent) {
         long now = System.currentTimeMillis();
-        NTexts txt = NTexts.of(session);
+        NTexts txt = NTexts.of();
         if (now < lastPrint + minPeriod) {
             return txt.ofPlain("");
         }
@@ -626,7 +628,7 @@ public class CProgressBar {
     }
 
     public NText progress(int percent, NText msg) {
-        NTexts txt = NTexts.of(session);
+        NTexts txt = NTexts.of();
         NTextBuilder sb = txt.ofBuilder();
         if (maxMessage < columns) {
             maxMessage = columns;

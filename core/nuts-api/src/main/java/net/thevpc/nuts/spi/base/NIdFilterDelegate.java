@@ -1,9 +1,6 @@
 package net.thevpc.nuts.spi.base;
 
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NIdFilter;
-import net.thevpc.nuts.NSearchId;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NFilter;
@@ -15,18 +12,18 @@ import java.util.Objects;
 public abstract class NIdFilterDelegate extends AbstractIdFilter {
     public abstract NIdFilter baseNIdFilter();
 
-    public NIdFilterDelegate(NSession session) {
-        super(session, NFilterOp.CUSTOM);
+    public NIdFilterDelegate(NWorkspace workspace) {
+        super(workspace, NFilterOp.CUSTOM);
     }
 
     @Override
-    public boolean acceptSearchId(NSearchId sid, NSession session) {
-        return baseNIdFilter().acceptSearchId(sid, session);
+    public boolean acceptSearchId(NSearchId sid) {
+        return baseNIdFilter().acceptSearchId(sid);
     }
 
     @Override
-    public boolean acceptId(NId id, NSession session) {
-        return baseNIdFilter().acceptId(id, session);
+    public boolean acceptId(NId id) {
+        return baseNIdFilter().acceptId(id);
     }
 
     @Override
@@ -37,11 +34,6 @@ public abstract class NIdFilterDelegate extends AbstractIdFilter {
     @Override
     public Class<? extends NFilter> getFilterType() {
         return baseNIdFilter().getFilterType();
-    }
-
-    @Override
-    public NSession getSession() {
-        return baseNIdFilter().getSession();
     }
 
     @Override
@@ -65,8 +57,8 @@ public abstract class NIdFilterDelegate extends AbstractIdFilter {
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return baseNIdFilter().describe(session);
+    public NElement describe() {
+        return baseNIdFilter().describe();
     }
 
     @Override

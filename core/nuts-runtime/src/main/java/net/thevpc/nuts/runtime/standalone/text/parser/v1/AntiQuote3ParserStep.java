@@ -23,13 +23,13 @@ public class AntiQuote3ParserStep extends ParserStep {
     int status = START_QUOTES;
     char antiQuote;
     boolean spreadLines;
-    NSession session;
+    NWorkspace NWorkspace;
     boolean exitOnBrace;
 
-    public AntiQuote3ParserStep(char c, boolean spreadLines, NSession session, boolean exitOnBrace) {
+    public AntiQuote3ParserStep(char c, boolean spreadLines, NWorkspace workspace, boolean exitOnBrace) {
         start.append(antiQuote = c);
         this.spreadLines = spreadLines;
-        this.session = session;
+        this.NWorkspace = workspace;
         this.exitOnBrace = exitOnBrace;
     }
 
@@ -165,7 +165,7 @@ public class AntiQuote3ParserStep extends ParserStep {
         char[] dst = new char[value2.length()];
         value2.getChars(0, value2.length(), dst, 0);
 
-        NTexts txt = NTexts.of(session);
+        NTexts txt = NTexts.of();
         DefaultNTexts factory0 = (DefaultNTexts) txt;
         int i = 0;
         int endOffset = -1;

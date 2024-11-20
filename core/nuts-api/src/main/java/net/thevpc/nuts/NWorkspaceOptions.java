@@ -598,6 +598,12 @@ public interface NWorkspaceOptions extends Serializable {
     NOptional<Boolean> getPreviewRepo();
 
     /**
+     * @since 0.8.5
+     * @return workspace is running as main Workspace (Singleton)
+     */
+    NOptional<Boolean> getMainInstance();
+
+    /**
      * default fetch strategy
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)

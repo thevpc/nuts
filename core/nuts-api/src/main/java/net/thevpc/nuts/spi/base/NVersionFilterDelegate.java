@@ -40,13 +40,13 @@ import java.util.List;
 public abstract class NVersionFilterDelegate extends AbstractVersionFilter {
     public abstract NVersionFilter baseVersionFilter();
 
-    public NVersionFilterDelegate(NSession session) {
-        super(session, NFilterOp.CUSTOM);
+    public NVersionFilterDelegate(NWorkspace workspace) {
+        super(workspace, NFilterOp.CUSTOM);
     }
 
     @Override
-    public boolean acceptVersion(NVersion version, NSession session) {
-        return baseVersionFilter().acceptVersion(version, session);
+    public boolean acceptVersion(NVersion version) {
+        return baseVersionFilter().acceptVersion(version);
     }
 
     @Override
@@ -60,18 +60,13 @@ public abstract class NVersionFilterDelegate extends AbstractVersionFilter {
     }
 
     @Override
-    public boolean acceptSearchId(NSearchId sid, NSession session) {
-        return baseVersionFilter().acceptSearchId(sid, session);
+    public boolean acceptSearchId(NSearchId sid) {
+        return baseVersionFilter().acceptSearchId(sid);
     }
 
     @Override
     public NFilterOp getFilterOp() {
         return baseVersionFilter().getFilterOp();
-    }
-
-    @Override
-    public NSession getSession() {
-        return baseVersionFilter().getSession();
     }
 
     @Override
@@ -95,8 +90,8 @@ public abstract class NVersionFilterDelegate extends AbstractVersionFilter {
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return baseVersionFilter().describe(session);
+    public NElement describe() {
+        return baseVersionFilter().describe();
     }
 
     @Override

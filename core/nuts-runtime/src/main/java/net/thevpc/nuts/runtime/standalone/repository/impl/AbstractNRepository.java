@@ -28,10 +28,9 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepoConfigManager;
 import net.thevpc.nuts.runtime.standalone.repository.config.NRepositoryConfigModel;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.NCachedValue;
 import net.thevpc.nuts.lib.common.collections.DefaultObservableMap;
-import net.thevpc.nuts.lib.common.collections.ObservableMap;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.spi.NRepositorySPI;
 
@@ -40,8 +39,6 @@ import java.util.*;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNRepositorySecurityManager;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNRepositorySecurityModel;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMapListener;
 
 /**
  * Created by vpc on 1/18/17.
@@ -56,45 +53,68 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     protected NWorkspace workspace;
     protected DefaultNRepositorySecurityModel securityModel;
     protected NRepositoryConfigModel configModel;
-    protected ObservableMap<String, Object> userProperties;
-    protected NSession initSession;
-    protected NCachedValue<Boolean> available = new NCachedValue<>(this::isAvailableImpl, 0);
+    protected NObservableMap<String, Object> userProperties;
+    protected NCachedValue<Boolean> available;
     protected boolean supportsDeploy;
-    protected boolean enabled=true;
+    protected boolean enabled = true;
 
-    public AbstractNRepository() {
+    public AbstractNRepository(NWorkspace workspace) {
+        this.workspace=workspace;
         userProperties = new DefaultObservableMap<>();
         securityModel = new DefaultNRepositorySecurityModel(this);
+        available = new NCachedValue<>(workspace, () -> isAvailableImpl(), 0);;
     }
 
-    protected void checkSession(NSession session) {
-        NSessionUtils.checkSession(getWorkspace(), session);
-    }
-
-    @Override
-    public boolean isAvailable(NSession session) {
-        return isAvailable(false, session);
+    public boolean isPreview() {
+        return configModel.containsTag(NConstants.RepoTags.PREVIEW);
     }
 
     @Override
-    public boolean isAvailable(boolean force, NSession session) {
+    public boolean containsTags(String tag) {
+        return configModel.containsTag(NStringUtils.trim(tag));
+    }
+
+    @Override
+    public Set<String> getTags() {
+        return configModel.getTags();
+    }
+
+    @Override
+    public NRepository addTag(String tag) {
+        configModel.addTag(NStringUtils.trim(tag));
+        return this;
+    }
+
+    @Override
+    public NRepository removeTag(String tag) {
+        this.configModel.removeTag(tag);
+        return this;
+    }
+
+    @Override
+    public boolean isAvailable() {
+        return isAvailable(false);
+    }
+
+    @Override
+    public boolean isAvailable(boolean force) {
         if (force) {
-            return available.update(session);
+            return available.update();
         }
-        return available.getValue(session);
+        return available.getValue();
     }
 
     @Override
-    public boolean isSupportedDeploy(NSession session) {
-        return isSupportedDeploy(false, session);
+    public boolean isSupportedDeploy() {
+        return isSupportedDeploy(false);
     }
 
     @Override
-    public boolean isSupportedDeploy(boolean force, NSession session) {
+    public boolean isSupportedDeploy(boolean force) {
         return supportsDeploy;
     }
 
-    protected boolean isAvailableImpl(NSession session) {
+    protected boolean isAvailableImpl() {
         return true;
     }
 
@@ -158,27 +178,27 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     }
 
     @Override
-    public NRepository addUserPropertyListener(NMapListener<String, Object> listener) {
-        userProperties.addListener(listener);
+    public NRepository addUserPropertyListener(NObservableMapListener<String, Object> listener) {
+        userProperties.addMapListener(listener);
         return this;
     }
 
     @Override
-    public NRepository removeUserPropertyListener(NMapListener<String, Object> listener) {
-        userProperties.removeListener(listener);
+    public NRepository removeUserPropertyListener(NObservableMapListener<String, Object> listener) {
+        userProperties.removeMapListener(listener);
         return this;
     }
 
     @Override
-    public List<NMapListener<String, Object>> getUserPropertyListeners() {
-        return userProperties.getListeners();
+    public List<NObservableMapListener<String, Object>> getUserPropertyListeners() {
+        return userProperties.getMapListeners();
     }
 
-    public boolean isEnabled(NSession session) {
-        return this.enabled && this.config().setSession(session).isEnabled();
+    public boolean isEnabled() {
+        return this.enabled && this.config().isEnabled();
     }
 
-    public NRepository setEnabled(boolean enabled, NSession session) {
+    public NRepository setEnabled(boolean enabled) {
         this.enabled = enabled;
         return this;
     }
@@ -211,19 +231,19 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
         return a.toString();
     }
 
-    protected String getIdExtension(NId id, NSession session) {
-        return NLocations.of(session).getDefaultIdExtension(id);
+    protected String getIdExtension(NId id) {
+        return NLocations.of().getDefaultIdExtension(id);
     }
 
-    public NPath getIdBasedir(NId id, NSession session) {
-        return NLocations.of(session).getDefaultIdBasedir(id);
+    public NPath getIdBasedir(NId id) {
+        return NLocations.of().getDefaultIdBasedir(id);
     }
 
-    public String getIdFilename(NId id, NSession session) {
-        return getIdFilename(id, getIdExtension(id, session), session);
+    public String getIdFilename(NId id) {
+        return getIdFilename(id, getIdExtension(id));
     }
 
-    public String getIdFilename(NId id, String ext, NSession session) {
+    public String getIdFilename(NId id, String ext) {
         String classifier = "";
         if (!ext.equals(NConstants.Files.DESCRIPTOR_FILE_EXTENSION) && !ext.equals(".pom")) {
             String c = id.getClassifier();

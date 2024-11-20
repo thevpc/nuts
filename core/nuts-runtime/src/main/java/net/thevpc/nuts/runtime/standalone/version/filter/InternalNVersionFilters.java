@@ -13,36 +13,31 @@ import net.thevpc.nuts.util.NOptional;
 public class InternalNVersionFilters extends InternalNTypedFilters<NVersionFilter> implements NVersionFilters {
 
 
-    public InternalNVersionFilters(NSession session) {
-        super(session, NVersionFilter.class);
+    public InternalNVersionFilters(NWorkspace workspace) {
+        super(workspace, NVersionFilter.class);
     }
 
     public NOptional<NVersionFilter> byValue(String version) {
-        checkSession();
-        return DefaultNVersionFilter.parse(version, getSession());
+        return DefaultNVersionFilter.parse(version, getWorkspace());
     }
 
     @Override
     public NVersionFilter always() {
-        checkSession();
-        return new NVersionFilterTrue(getSession());
+        return new NVersionFilterTrue(getWorkspace());
     }
 
     @Override
     public NVersionFilter never() {
-        checkSession();
-        return new NVersionFilterFalse(getSession());
+        return new NVersionFilterFalse(getWorkspace());
     }
 
     @Override
     public NVersionFilter not(NFilter other) {
-        checkSession();
-        return new NVersionFilterNone(getSession(), (NVersionFilter) other);
+        return new NVersionFilterNone(getWorkspace(), (NVersionFilter) other);
     }
 
     @Override
     public NVersionFilter as(NFilter a) {
-        checkSession();
         if (a instanceof NVersionFilter) {
             return (NVersionFilter) a;
         }
@@ -51,20 +46,18 @@ public class InternalNVersionFilters extends InternalNTypedFilters<NVersionFilte
 
     @Override
     public NVersionFilter from(NFilter a) {
-        checkSession();
         if (a == null) {
             return null;
         }
         NVersionFilter t = as(a);
         if (t == null) {
-            throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("not a VersionFilter"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("not a VersionFilter"));
         }
         return t;
     }
 
     @Override
     public NVersionFilter all(NFilter... others) {
-        checkSession();
         List<NVersionFilter> all = convertList(others);
         if (all.isEmpty()) {
             return always();
@@ -72,12 +65,11 @@ public class InternalNVersionFilters extends InternalNTypedFilters<NVersionFilte
         if (all.size() == 1) {
             return all.get(0);
         }
-        return new NVersionFilterAnd(getSession(), all.toArray(new NVersionFilter[0]));
+        return new NVersionFilterAnd(getWorkspace(), all.toArray(new NVersionFilter[0]));
     }
 
     @Override
     public NVersionFilter any(NFilter... others) {
-        checkSession();
         List<NVersionFilter> all = convertList(others);
         if (all.isEmpty()) {
             return always();
@@ -85,23 +77,21 @@ public class InternalNVersionFilters extends InternalNTypedFilters<NVersionFilte
         if (all.size() == 1) {
             return all.get(0);
         }
-        return new NVersionFilterOr(getSession(), all.toArray(new NVersionFilter[0]));
+        return new NVersionFilterOr(getWorkspace(), all.toArray(new NVersionFilter[0]));
     }
 
     @Override
     public NVersionFilter none(NFilter... others) {
-        checkSession();
         List<NVersionFilter> all = convertList(others);
         if (all.isEmpty()) {
             return always();
         }
-        return new NVersionFilterNone(getSession(), all.toArray(new NVersionFilter[0]));
+        return new NVersionFilterNone(getWorkspace(), all.toArray(new NVersionFilter[0]));
     }
 
     @Override
     public NVersionFilter parse(String expression) {
-        checkSession();
-        return new NVersionFilterParser(expression, getSession()).parse();
+        return new NVersionFilterParser(expression, getWorkspace()).parse();
     }
 
     @Override

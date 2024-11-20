@@ -26,20 +26,21 @@
 */
 package net.thevpc.nuts.lib.common.collections;
 
-import net.thevpc.nuts.util.NMapListener;
+import net.thevpc.nuts.util.NObservableMap;
+import net.thevpc.nuts.util.NObservableMapListener;
 
 import java.util.*;
 
 /**
  * Created by vpc on 1/21/17.
  */
-public class DefaultObservableMap<K, V> extends AbstractMap<K, V> implements ObservableMap<K, V> {
+public class DefaultObservableMap<K, V> extends AbstractMap<K, V> implements NObservableMap<K, V> {
 
     private Map<K, V> base = new HashMap<>();
-    private List<NMapListener<K, V>> listeners;
+    private List<NObservableMapListener<K, V>> listeners;
 
 
-    public void addListener(NMapListener<K, V> listener) {
+    public void addMapListener(NObservableMapListener<K, V> listener) {
         if (listener != null) {
             if (listeners == null) {
                 listeners = new ArrayList<>();
@@ -48,7 +49,7 @@ public class DefaultObservableMap<K, V> extends AbstractMap<K, V> implements Obs
         }
     }
 
-    public void removeListener(NMapListener<K, V> listener) {
+    public void removeMapListener(NObservableMapListener<K, V> listener) {
         if (listener != null) {
             if (listeners != null) {
                 listeners.remove(listener);
@@ -56,7 +57,7 @@ public class DefaultObservableMap<K, V> extends AbstractMap<K, V> implements Obs
         }
     }
 
-    public List<NMapListener<K, V>> getListeners() {
+    public List<NObservableMapListener<K, V>> getMapListeners() {
         return listeners;
     }
 
@@ -65,7 +66,7 @@ public class DefaultObservableMap<K, V> extends AbstractMap<K, V> implements Obs
         if (base.containsKey(key)) {
             V old = base.put(key, value);
             if (listeners != null) {
-                for (NMapListener<K, V> listener : listeners) {
+                for (NObservableMapListener<K, V> listener : listeners) {
                     listener.entryUpdated(key, value, old);
                 }
             }
@@ -73,7 +74,7 @@ public class DefaultObservableMap<K, V> extends AbstractMap<K, V> implements Obs
         } else {
             V old = base.put(key, value);
             if (listeners != null) {
-                for (NMapListener<K, V> listener : listeners) {
+                for (NObservableMapListener<K, V> listener : listeners) {
                     listener.entryAdded(key, value);
                 }
             }
@@ -87,7 +88,7 @@ public class DefaultObservableMap<K, V> extends AbstractMap<K, V> implements Obs
         boolean found = base.containsKey(kkey);
         V r = base.remove(key);
         if (found && listeners != null) {
-            for (NMapListener<K, V> listener : listeners) {
+            for (NObservableMapListener<K, V> listener : listeners) {
                 listener.entryRemoved(kkey, r);
             }
         }
@@ -143,7 +144,7 @@ public class DefaultObservableMap<K, V> extends AbstractMap<K, V> implements Obs
                     @Override
                     public void remove() {
                         baseIterator.remove();
-                        for (NMapListener<K, V> listener : listeners) {
+                        for (NObservableMapListener<K, V> listener : listeners) {
                             listener.entryRemoved(curr.getKey(), curr.getValue());
                         }
                     }
@@ -156,4 +157,5 @@ public class DefaultObservableMap<K, V> extends AbstractMap<K, V> implements Obs
             }
         };
     }
+
 }

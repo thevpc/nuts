@@ -70,13 +70,13 @@ public class CatCommand extends NShellBuiltinDefault {
             options.files.add(null);
             return true;
         } else if ((a = cmdLine.nextFlag("-n", "--number").orNull()) != null) {
-            options.n = a.getBooleanValue().get(session);
+            options.n = a.getBooleanValue().get();
             return true;
         } else if ((a = cmdLine.nextFlag("-t", "--show-tabs").orNull()) != null) {
-            options.T = a.getBooleanValue().get(session);
+            options.T = a.getBooleanValue().get();
             return true;
         } else if ((a = cmdLine.nextFlag("-E", "--show-ends").orNull()) != null) {
-            options.E = a.getBooleanValue().get(session);
+            options.E = a.getBooleanValue().get();
             return true;
         } else if ((a = cmdLine.next("-H", "--highlight", "--highlighter").orNull()) != null) {
             options.highlighter = NStringUtils.trim(a.getStringValue().orNull());
@@ -89,8 +89,8 @@ public class CatCommand extends NShellBuiltinDefault {
     protected boolean nextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
-        String path = cmdLine.next().flatMap(NLiteral::asString).get(session);
-        options.files.add(new FileInfo(NPath.of(path, session), options.highlighter));
+        String path = cmdLine.next().flatMap(NLiteral::asString).get();
+        options.files.add(new FileInfo(NPath.of(path), options.highlighter));
         return true;
     }
 
@@ -151,7 +151,7 @@ public class CatCommand extends NShellBuiltinDefault {
                 out.print(results);
             }
         } catch (IOException ex) {
-            throw new NExecutionException(context.getSession(), NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_3);
+            throw new NExecutionException(NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_3);
         }
     }
 
@@ -160,9 +160,9 @@ public class CatCommand extends NShellBuiltinDefault {
         NSession session = context.getSession();
         if (whole && info.getHighlighter() != null) {
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
-            NCp.of(session).from(in).to(bout).run();
+            NCp.of().from(in).to(bout).run();
             String text = bout.toString();
-            NTextBuilder nutsText = NTexts.of(session).ofCode(info.getHighlighter(), text).highlight(session)
+            NTextBuilder nutsText = NTexts.of().ofCode(info.getHighlighter(), text).highlight()
                     .builder()
                     .flatten();
             List<NText> children = nutsText.getChildren();
@@ -195,12 +195,12 @@ public class CatCommand extends NShellBuiltinDefault {
                 if (options.T) {
                     line = line.replace("\t", "^I");
                 }
-                NTextCode c = NTexts.of(session).ofCode(info.getHighlighter(), line);
-                line = c.highlight(session).toString();
+                NTextCode c = NTexts.of().ofCode(info.getHighlighter(), line);
+                line = c.highlight().toString();
                 if (options.E) {
                     line += "$";
                 }
-                r.line = NTexts.of(session).ofPlain(line);
+                r.line = NTexts.of().ofPlain(line);
                 options.currentNumber++;
             }
         }
@@ -217,12 +217,12 @@ public class CatCommand extends NShellBuiltinDefault {
         NSession session = context.getSession();
         if (whole && info.getHighlighter() != null) {
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
-            NCp.of(session).from(in).to(bout).run();
+            NCp.of().from(in).to(bout).run();
             String text = bout.toString();
-            NTextBuilder nutsText = NTexts.of(session).ofCode(info.getHighlighter(), text).highlight(session)
+            NTextBuilder nutsText = NTexts.of().ofCode(info.getHighlighter(), text).highlight()
                     .builder()
                     .flatten();
-            NPrintStream out = NPrintStream.of(os, session);
+            NPrintStream out = NPrintStream.of(os);
             List<NText> children = nutsText.getChildren();
             Tracker tracker = new Tracker();
             while (true) {
@@ -234,7 +234,7 @@ public class CatCommand extends NShellBuiltinDefault {
                 }
             }
         } else {
-            NPrintStream out = NPrintStream.of(os, session);
+            NPrintStream out = NPrintStream.of(os);
             try {
 
                 //do not close!!
@@ -249,8 +249,8 @@ public class CatCommand extends NShellBuiltinDefault {
                         line = line.replace("\t", "^I");
                     }
 
-                    NTextCode c = NTexts.of(session).ofCode(info.getHighlighter(), line);
-                    line = c.highlight(session).toString();
+                    NTextCode c = NTexts.of().ofCode(info.getHighlighter(), line);
+                    line = c.highlight().toString();
 
                     out.print(line);
 
@@ -267,7 +267,7 @@ public class CatCommand extends NShellBuiltinDefault {
     }
 
     private NText nextLine(List<NText> t, NSession session, Tracker tracker, Options options, boolean skipNewline) {
-        NTextBuilder b = NTexts.of(session).ofBuilder();
+        NTextBuilder b = NTexts.of().ofBuilder();
         while (!t.isEmpty()) {
             NText ii = t.remove(0);
             NText n = nextNode(ii, session, tracker, options);
@@ -287,7 +287,7 @@ public class CatCommand extends NShellBuiltinDefault {
         switch (t.getType()) {
             case PLAIN: {
                 String text = ((NTextPlain) t).getText();
-                NTextBuilder tb = NTexts.of(session).ofBuilder();
+                NTextBuilder tb = NTexts.of().ofBuilder();
                 if (options.n && tracker.wasNewline) {
                     tb.append(tracker.ruler.nextNum(tracker.line, session));
                 }
@@ -313,7 +313,7 @@ public class CatCommand extends NShellBuiltinDefault {
             }
             case STYLED: {
                 NTextStyled tt = (NTextStyled) t;
-                NTextBuilder tb = NTexts.of(session).ofBuilder();
+                NTextBuilder tb = NTexts.of().ofBuilder();
                 if (options.n && tracker.wasNewline) {
                     tb.append(tracker.ruler.nextNum(tracker.line, session));
                 }
@@ -334,11 +334,11 @@ public class CatCommand extends NShellBuiltinDefault {
                     tb.append(nextNode(pt,session, tracker, options), tt.getStyles());
                     return tb.build();
                 }else{
-                    throw new NUnsupportedOperationException(session);
+                    throw new NUnsupportedOperationException();
                 }
             }
         }
-        throw new NUnsupportedOperationException(session);
+        throw new NUnsupportedOperationException();
     }
 
     public static class CatResult {

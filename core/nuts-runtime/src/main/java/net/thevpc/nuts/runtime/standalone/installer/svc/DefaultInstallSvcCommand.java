@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.installer.svc;
 
-import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.NExecutionException;
-import net.thevpc.nuts.NInstallSvcCmd;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.env.NOsServiceType;
 import net.thevpc.nuts.io.NPath;
@@ -30,7 +27,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
     private String serviceName;
     private NPath root;
     private NPath workingDirectory;
-    private NSession session;
+    private NWorkspace workspace;
     private boolean verbose;
     private String[] startCommand;
     private String[] stopCommand;
@@ -40,8 +37,8 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
     private String nutsApiVersion = "0.8.4";
     private String serviceDescription = "System service";
 
-    public DefaultInstallSvcCommand(NSession session) {
-        this.session = session;
+    public DefaultInstallSvcCommand(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
     public DefaultInstallSvcCommand setServiceType(NOsServiceType serviceType) {
@@ -235,7 +232,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
 
     private NPath getCurrentWorkingDir() {
         if (workingDirectory == null) {
-            return NPath.ofUserDirectory(session);
+            return NPath.ofUserDirectory();
         }
         return workingDirectory;
     }
@@ -266,7 +263,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
                         .printlnEcho("systemctl start " + serviceName)
                         .printlnEcho("systemctl status " + serviceName);
             }
-            if (session.isDry()) {
+            if (NSession.of().get().isDry()) {
                 new File(serviceFilePath).getParentFile().mkdirs();
                 Files.copy(tempFile.toPath(), new File(serviceFilePath).toPath(), StandardCopyOption.REPLACE_EXISTING);
                 logInfo("[DRY] run script: ");
@@ -328,7 +325,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
             }
             // added to always return 0 code
             script.printlnEcho("echo 'end of script'");
-            if (session.isDry()) {
+            if (NSession.of().get().isDry()) {
                 serviceFilePath.getParent().mkdirs();
                 Files.copy(tempFile.toPath(), serviceFilePath.toPath().get(), StandardCopyOption.REPLACE_EXISTING);
                 logInfo("[DRY] run script: ");
@@ -360,6 +357,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
 
     private void logVerbose(String msg) {
         if (verbose) {
+            NSession session = workspace.currentSession();
             if (session.isTrace()) {
                 session.out().println(NMsg.ofC("[DEBUG] %s", msg));
             }
@@ -379,6 +377,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
     }
 
     private void logInfo(String msg) {
+        NSession session = workspace.currentSession();
         for (String line : SvcHelper.splitLines(msg)) {
             if (session.isTrace()) {
                 session.out().println(NMsg.ofC("[INFO ] %s", line));
@@ -387,6 +386,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
     }
 
     private void logWarn(String msg) {
+        NSession session = workspace.currentSession();
         for (String line : SvcHelper.splitLines(msg)) {
             if (session.isTrace()) {
                 session.out().println(NMsg.ofC("[WARN ] %s", line));
@@ -395,6 +395,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
     }
 
     private void logError(String msg) {
+        NSession session = workspace.currentSession();
         for (String line : SvcHelper.splitLines(msg)) {
             if (session.isTrace()) {
                 session.out().println(NMsg.ofC("[ERROR ] %s", line));
@@ -459,7 +460,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
             throw new UncheckedIOException(new IOException(e));
         }
         logVerbose("[RUNNING COMMAND] COMMAND FAILED : code " + ret);
-        throw new NExecutionException(session, NMsg.ofC("run command returned %s", ret), ret);
+        throw new NExecutionException(NMsg.ofC("run command returned %s", ret), ret);
     }
 
     private String formatCommand(String[] cmd) {
@@ -570,7 +571,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
     }
 
     private NPath rootFile(String path) {
-        NPath rootFolder = isRootOverridden() ? this.root : NPath.of("/", session);
+        NPath rootFolder = isRootOverridden() ? this.root : NPath.of("/");
         rootFolder = rootFolder.toAbsolute().normalize();
         if (path.startsWith("/")) {
             path = path.substring(1);
@@ -580,7 +581,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
 
     private NPath file(String path) {
 
-        NPath file = NPath.of(path, session);
+        NPath file = NPath.of(path);
         if (!file.isAbsolute()) {
             file = getCurrentWorkingDir().resolve(path);
         }
@@ -679,11 +680,6 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
         return NConstants.Support.DEFAULT_SUPPORT;
-    }
-
-    @Override
-    public NSession getSession() {
-        return session;
     }
 
     @Override

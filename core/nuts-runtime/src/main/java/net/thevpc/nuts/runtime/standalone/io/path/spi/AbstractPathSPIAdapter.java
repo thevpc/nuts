@@ -25,12 +25,16 @@ import java.util.Set;
 
 public abstract class AbstractPathSPIAdapter implements NPathSPI {
 
-    protected final NSession session;
+    protected final NWorkspace workspace;
     protected NPath ref;
 
-    protected AbstractPathSPIAdapter(NPath ref, NSession session) {
-        this.session = session;
+    protected AbstractPathSPIAdapter(NPath ref, NWorkspace workspace) {
+        this.workspace = workspace;
         this.ref = ref;
+    }
+
+    public NWorkspace getWorkspace() {
+        return workspace;
     }
 
     @Override
@@ -162,11 +166,6 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
 
     public OutputStream getOutputStream(NPath basePath, NPathOption... options) {
         return ref.getOutputStream(options);
-    }
-
-    @Override
-    public NSession getSession() {
-        return session;
     }
 
     @Override
@@ -309,7 +308,7 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
             if (child.startsWith("/") || child.startsWith("\\")) {
                 child = child.substring(1);
             }
-            return NPath.of(child, session);
+            return NPath.of(child);
         }
         return null;
     }
@@ -323,7 +322,7 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
         }
 
         public NString asFormattedString() {
-            NTextBuilder sb = NTextBuilder.of(p.getSession());
+            NTextBuilder sb = NTextBuilder.of();
             sb.append(p.ref);
             return sb.build();
         }

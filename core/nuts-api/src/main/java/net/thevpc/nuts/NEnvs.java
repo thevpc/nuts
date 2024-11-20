@@ -43,9 +43,9 @@ import java.util.function.Function;
  * @author thevpc
  * @app.category Base
  */
-public interface NEnvs extends NComponent,NSessionProvider {
-    static NEnvs of(NSession session) {
-        return NExtensions.of(session).createComponent(NEnvs.class).get();
+public interface NEnvs extends NComponent {
+    static NEnvs of() {
+        return NExtensions.of().createComponent(NEnvs.class).get();
     }
 
     /**
@@ -99,7 +99,6 @@ public interface NEnvs extends NComponent,NSessionProvider {
 
     NArchFamily getArchFamily();
 
-    NEnvs setSession(NSession session);
 
     boolean isGraphicalDesktopEnvironment();
 

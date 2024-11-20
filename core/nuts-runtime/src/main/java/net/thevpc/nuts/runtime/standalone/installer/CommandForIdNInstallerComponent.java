@@ -62,20 +62,19 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
     }
 
     public void runMode(NExecutionContext executionContext, String mode) {
-        NSession session = executionContext.getSession();
-        NWorkspaceUtils.of(session).checkReadOnly();
+        NWorkspaceUtils.of(executionContext.getWorkspace()).checkReadOnly();
         if (runnerId == null) {
             NDefinition definition = executionContext.getDefinition();
             NDescriptor descriptor = definition.getDescriptor();
             if (descriptor.isApplication()) {
-                DefaultNDefinition def2 = new DefaultNDefinition(definition, session)
+                DefaultNDefinition def2 = new DefaultNDefinition(definition, executionContext.getWorkspace())
                         .setInstallInformation(
-                                new DefaultNInstallInfo(definition.getInstallInformation().get(session))
+                                new DefaultNInstallInfo(definition.getInstallInformation().get())
                                         .setInstallStatus(
-                                                definition.getInstallInformation().get(session).getInstallStatus().withInstalled(true)
+                                                definition.getInstallInformation().get().getInstallStatus().withInstalled(true)
                                         )
                         );
-                NExecCmd cmd = NExecCmd.of(session)
+                NExecCmd cmd = NExecCmd.of()
                         .setCommandDefinition(def2)
                         .addCommand("--nuts-exec-mode=" + mode);
                 if (mode.equals("install")) {
@@ -84,7 +83,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                     cmd.addExecutorOptions("--nuts-auto-install=false");
                 }
                 cmd.addCommand(executionContext.getArguments())
-                        .setExecutionType(NBootManager.of(session).getBootOptions().getExecutionType().orNull())
+                        .setExecutionType(NBootManager.of().getBootOptions().getExecutionType().orNull())
                         .failFast()
                         .run();
             }
@@ -92,11 +91,11 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
             NDefinition definition = runnerId;
             NDescriptor descriptor = definition.getDescriptor();
             if (descriptor.isApplication()) {
-                DefaultNDefinition def2 = new DefaultNDefinition(definition, session)
+                DefaultNDefinition def2 = new DefaultNDefinition(definition, executionContext.getWorkspace())
                         .setInstallInformation(
-                                new DefaultNInstallInfo(definition.getInstallInformation().get(session))
+                                new DefaultNInstallInfo(definition.getInstallInformation().get())
                                         .setInstallStatus(
-                                                definition.getInstallInformation().get(session).getInstallStatus().withInstalled(true)
+                                                definition.getInstallInformation().get().getInstallStatus().withInstalled(true)
                                         )
                         );
                 List<String> eargs = new ArrayList<>();
@@ -104,10 +103,10 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                     eargs.add(evalString(a, mode, executionContext));
                 }
                 eargs.addAll(executionContext.getArguments());
-                NExecCmd.of(executionContext.getSession())
+                NExecCmd.of()
                         .setCommandDefinition(def2)
                         .addCommand(eargs)
-                        .setExecutionType(NBootManager.of(executionContext.getSession()).getBootOptions().getExecutionType().orNull())
+                        .setExecutionType(NBootManager.of().getBootOptions().getExecutionType().orNull())
                         .setExecutionType(
                                 "nsh".equals(def2.getId().getArtifactId()) ?
                                         NExecutionType.EMBEDDED : NExecutionType.SPAWN

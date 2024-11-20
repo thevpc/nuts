@@ -26,7 +26,6 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.reserved.util.NUnsafeFunctionFromJavaUnsafeFunction;
 import net.thevpc.nuts.reserved.util.NUnsafeFunctionWithDescription;
@@ -54,7 +53,7 @@ public interface NUnsafeFunction<T, R> extends UnsafeFunction<T, R>, NElementDes
     }
 
     @Override
-    default NElement describe(NSession session) {
-        return UnsafeFunction.super.describe(session);
+    default NElement describe() {
+        return UnsafeFunction.super.describe();
     }
 }

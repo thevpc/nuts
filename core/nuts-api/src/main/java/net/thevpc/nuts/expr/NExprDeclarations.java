@@ -6,9 +6,7 @@ import net.thevpc.nuts.NSessionProvider;
 
 import java.util.List;
 
-public interface NExprDeclarations extends NSessionProvider {
-
-    NExprDeclarations setSession(NSession session);
+public interface NExprDeclarations {
 
     NOptional<NExprFctDeclaration> getFunction(String fctName, Object... args);
 

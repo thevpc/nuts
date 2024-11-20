@@ -35,27 +35,27 @@ public class JarsRunner extends AbstractRunner {
         NArg c = cmdLine.peek().orNull();
         switch (c.key()) {
             case "--update-version": {
-                cmdLine.withNextFlag((v, a, s) -> context().updateVersion = v);
+                cmdLine.withNextFlag((v, a) -> context().updateVersion = v);
                 return true;
             }
             case "--keep-stamp": {
-                cmdLine.withNextFlag((v, a, s) -> context().keepStamp = v);
+                cmdLine.withNextFlag((v, a) -> context().keepStamp = v);
                 return true;
             }
             case "--production-mode": {
-                cmdLine.withNextFlag((v, a, s) -> context().productionMode = v);
+                cmdLine.withNextFlag((v, a) -> context().productionMode = v);
                 return true;
             }
             case "--stable-version": {
-                cmdLine.withNextEntry((v, a, s) -> context().nutsStableVersion = v);
+                cmdLine.withNextEntry((v, a) -> context().nutsStableVersion = v);
                 return true;
             }
             case "--stable-runtime-version": {
-                cmdLine.withNextEntry((v, a, s) -> context().runtimeStableVersion = v);
+                cmdLine.withNextEntry((v, a) -> context().runtimeStableVersion = v);
                 return true;
             }
             case "--remote-user": {
-                cmdLine.withNextEntry((v, a, s) -> context().user = v);
+                cmdLine.withNextEntry((v, a) -> context().user = v);
                 return true;
             }
 //            case "build-jars": {
@@ -97,7 +97,7 @@ public class JarsRunner extends AbstractRunner {
         String stableVersion = context().nutsStableVersion;
         String jarName = "nuts-" + stableVersion + ".jar";
         NAssert.requireNonBlank(stableVersion,"nutsStableVersion");
-        NPath.of("https://repo1.maven.org/maven2/net/thevpc/nuts/nuts/" + stableVersion + "/"+jarName, session)
+        NPath.of("https://repo1.maven.org/maven2/net/thevpc/nuts/nuts/" + stableVersion + "/"+jarName)
                         .copyTo(context().root.resolve("installers/nuts-release-tool/dist").resolve(jarName));
 
         upload(

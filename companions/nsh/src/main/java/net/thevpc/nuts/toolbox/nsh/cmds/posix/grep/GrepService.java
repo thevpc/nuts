@@ -45,11 +45,11 @@ public class GrepService {
 
             {
                 for (String fileName : options.fileNames) {
-                    patterns.add(NGlob.of(session).toPattern(fileName));
+                    patterns.add(NGlob.of().toPattern(fileName));
                 }
                 for (String fileName : options.fileNames) {
                     patterns.add(
-                            Pattern.compile(NGlob.of(session).toPatternString(fileName))
+                            Pattern.compile(NGlob.of().toPatternString(fileName))
                     );
                 }
             }
@@ -134,7 +134,7 @@ public class GrepService {
                 }
             }
         } catch (IOException ex) {
-            throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_3);
+            throw new NExecutionException(NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_3);
         }
     }
 
@@ -159,7 +159,7 @@ public class GrepService {
             }
             r.add(t);
         }
-        return NTexts.of(session).ofBuilder().appendAll(r);
+        return NTexts.of().ofBuilder().appendAll(r);
     }
 
     private boolean processByLine(GrepOptions options, GrepFilter p, FileInfo f, GrepResultCollector results, NSession session) throws IOException {
@@ -176,7 +176,7 @@ public class GrepService {
             //long nn, String line
             NTextBuilder coloredLine0 = coloredLine;
             if (coloredLine0 == null) {
-                coloredLine0 = NTexts.of(session).ofCode(f.getHighlighter(), line.getObject()).highlight(session).builder();
+                coloredLine0 = NTexts.of().ofCode(f.getHighlighter(), line.getObject()).highlight().builder();
             }
             results.acceptLine(line);
             if (i == wline.getPivotIndex()) {
@@ -191,11 +191,11 @@ public class GrepService {
     }
 
     private boolean processByText(GrepOptions options, GrepFilter p, FileInfo f, GrepResultCollector results, NSession session) throws IOException {
-        String text = new String(NCp.of(session).from(f.getPath()).getByteArrayResult());
+        String text = new String(NCp.of().from(f.getPath()).getByteArrayResult());
         if (NBlankable.isBlank(f.getHighlighter())) {
             f.setHighlighter(f.getPath().getContentType());
         }
-        NTextBuilder flattened = NTexts.of(session).ofCode(f.getHighlighter(), text).highlight(session)
+        NTextBuilder flattened = NTexts.of().ofCode(f.getHighlighter(), text).highlight()
                 .builder()
                 .flatten();
         try (Reader in = f.getPath().getReader()) {

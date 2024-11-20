@@ -17,23 +17,24 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmd;
  */
 public class DefaultNVersionInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNVersionInternalExecutable(String[] args, final DefaultNExecCmd execCommand) {
-        super("version", args, execCommand);
+    public DefaultNVersionInternalExecutable(NWorkspace workspace,String[] args, final DefaultNExecCmd execCommand) {
+        super(workspace,"version", args, execCommand);
     }
 
     @Override
     public int execute() {
-        if(getSession().isDry()){
+        NSession session = workspace.currentSession();
+        if(session.isDry()){
             dryExecute();
             return NExecutionException.SUCCESS;
         }
-        if (NAppUtils.processHelpOptions(args, getSession())) {
+        if (NAppUtils.processHelpOptions(args, session)) {
             showDefaultHelp();
             return NExecutionException.SUCCESS;
         }
-        NWorkspace ws = getSession().getWorkspace();
-        NPrintStream out = getSession().out();
-        NVersionFormat.of(getSession()).configure(false, args).println(out);
+        NWorkspace ws = session.getWorkspace();
+        NPrintStream out = session.out();
+        NVersionFormat.of().configure(false, args).println(out);
         return NExecutionException.SUCCESS;
     }
 

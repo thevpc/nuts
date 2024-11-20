@@ -26,7 +26,6 @@
 package net.thevpc.nuts.format;
 
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 
 /**
@@ -42,8 +41,8 @@ import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
  * @since 0.5.5
  */
 public interface NTreeFormat extends NContentTypeFormat {
-    static NTreeFormat of(NSession session) {
-       return NExtensions.of(session).createComponent(NTreeFormat.class).get();
+    static NTreeFormat of() {
+       return NExtensions.of().createComponent(NTreeFormat.class).get();
     }
 
     /**
@@ -86,14 +85,6 @@ public interface NTreeFormat extends NContentTypeFormat {
     @Override
     NTreeFormat setValue(Object value);
 
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this instance}
-     */
-    @Override
-    NTreeFormat setSession(NSession session);
 
     /**
      * configure the current command with the given arguments. This is an

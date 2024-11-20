@@ -39,7 +39,7 @@ interface XNodeFormatter {
     }
 
     default NString stringValue(Object o, NSession session) {
-        return NTextUtils.stringValueFormatted(o, false, session);
+        return NTextUtils.stringValueFormatted(o, false);
     }
     
 }

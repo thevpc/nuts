@@ -19,18 +19,21 @@ import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 
 public class NUncompressGzip implements NUncompressPackaging {
-    private NLog LOG;
+    private NWorkspace workspace;
+
+    public NUncompressGzip(NWorkspace workspace) {
+        this.workspace = workspace;
+    }
 
     @Override
     public void visitPackage(NUncompress uncompress, NInputSource source, NUncompressVisitor visitor) {
-        NSession session = uncompress.getSession();
         try {
             String baseName = source.getMetaData().getName().orElse("no-name");
             //get the zip file content
             InputStream _in = source.getInputStream();
             try {
                 try (GZIPInputStream zis = new GZIPInputStream(_in)) {
-                    String n = NPath.of(baseName, session).getName();
+                    String n = NPath.of(baseName).getName();
                     if (n.endsWith(".gz")) {
                         n = n.substring(0, n.length() - 3);
                     }
@@ -59,35 +62,32 @@ public class NUncompressGzip implements NUncompressPackaging {
                 _in.close();
             }
         } catch (IOException ex) {
-            _LOGOP(session).level(Level.CONFIG).verb(NLogVerb.FAIL)
+            _LOGOP().level(Level.CONFIG).verb(NLogVerb.FAIL)
                     .log(NMsg.ofJ("error uncompressing {0} to {1} : {2}", source,
                             uncompress.getTarget(), ex));
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
-    protected NLogOp _LOGOP(NSession session) {
-        return _LOG(session).with().session(session);
+    protected NLogOp _LOGOP() {
+        return _LOG().with();
     }
 
-    protected NLog _LOG(NSession session) {
-        if (LOG == null) {
-            LOG = NLog.of(NUncompressGzip.class, session);
-        }
-        return LOG;
+    protected NLog _LOG() {
+        NSession session = workspace.createSession();
+        return NLog.of(NUncompressGzip.class);
     }
 
     @Override
     public void uncompressPackage(NUncompress uncompress, NInputSource source) {
-        NSession session = uncompress.getSession();
         NOutputTarget target = uncompress.getTarget();
         try {
             NPath _target = asValidTargetPath(target);
             if (_target == null) {
-                throw new NIllegalArgumentException(session, NMsg.ofC("invalid target %s", target));
+                throw new NIllegalArgumentException(NMsg.ofC("invalid target %s", target));
             }
             Path folder = _target.toPath().get();
-            NPath.of(folder, session).mkdirs();
+            NPath.of(folder).mkdirs();
 
             String baseName = source.getMetaData().getName().orElse("no-name");
             byte[] buffer = new byte[1024];
@@ -96,7 +96,7 @@ public class NUncompressGzip implements NUncompressPackaging {
             InputStream _in = source.getInputStream();
             try {
                 try (GZIPInputStream zis = new GZIPInputStream(_in)) {
-                    String n = NPath.of(baseName, session).getName();
+                    String n = NPath.of(baseName).getName();
                     if (n.endsWith(".gz")) {
                         n = n.substring(0, n.length() - 3);
                     }
@@ -105,12 +105,12 @@ public class NUncompressGzip implements NUncompressPackaging {
                     }
                     //get the zipped file list entry
                     Path newFile = folder.resolve(n);
-                    _LOGOP(session).level(Level.FINEST).verb(NLogVerb.WARNING)
+                    _LOGOP().level(Level.FINEST).verb(NLogVerb.WARNING)
                             .log(NMsg.ofJ("file unzip : {0}", newFile));
                     //create all non exists folders
                     //else you will hit FileNotFoundException for compressed folder
                     if (newFile.getParent() != null) {
-                        NPath.of(newFile, session).mkParentDirs();
+                        NPath.of(newFile).mkParentDirs();
                     }
                     try (OutputStream fos = Files.newOutputStream(newFile)) {
                         int len;
@@ -123,10 +123,10 @@ public class NUncompressGzip implements NUncompressPackaging {
                 _in.close();
             }
         } catch (IOException ex) {
-            _LOGOP(session).level(Level.CONFIG).verb(NLogVerb.FAIL)
+            _LOGOP().level(Level.CONFIG).verb(NLogVerb.FAIL)
                     .log(NMsg.ofJ("error uncompressing {0} to {1} : {2}", source,
                             target, ex));
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 

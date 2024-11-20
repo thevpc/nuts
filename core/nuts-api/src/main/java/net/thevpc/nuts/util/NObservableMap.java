@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- * Nuts : Network Updatable Things Service
- * (universal package manager)
+ *            Nuts : Network Updatable Things Service
+ *                  (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- * <p>
+ *
  * Copyright [2020] [thevpc]
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
@@ -23,49 +23,20 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
- */
+*/
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NListener;
+import java.util.*;
 
 /**
- * Map Listener to catch updates
- *
- * @param <K> key type
- * @param <V> value type
- * @app.category Base
- * @since 0.2.0
+ * Created by vpc on 1/21/17.
  */
-public interface NMapListener<K, V> extends NListener {
+public interface NObservableMap<K, V> extends Map<K, V> {
 
-    /**
-     * Invoked when item added
-     *
-     * @param key   key
-     * @param value value
-     */
-    default void entryAdded(K key, V value) {
+    void addMapListener(NObservableMapListener<K, V> listener);
 
-    }
+    void removeMapListener(NObservableMapListener<K, V> listener);
 
-    /**
-     * Invoked when item removed
-     *
-     * @param key   key
-     * @param value value
-     */
-    default void entryRemoved(K key, V value) {
+    List<NObservableMapListener<K, V>> getMapListeners();
 
-    }
-
-    /**
-     * Invoked when item updated
-     *
-     * @param key      key
-     * @param newValue new value
-     * @param oldValue old value
-     */
-    default void entryUpdated(K key, V newValue, V oldValue) {
-
-    }
 }

@@ -43,9 +43,6 @@ public interface NSearchVersionsRepositoryCmd extends NRepositoryCmd {
 
     NSearchVersionsRepositoryCmd setId(NId id);
 
-    @Override
-    NSearchVersionsRepositoryCmd setSession(NSession session);
-
     /**
      * run this command and return {@code this} instance
      *

@@ -32,7 +32,7 @@ public class FileScanner {
 
 
     public static Predicate<RichPath> parseExpr(String anyStr, NSession session) {
-        NExprMutableDeclarations d = NExpr.of(session).newMutableDeclarations(true);
+        NExprMutableDeclarations d = NExpr.of().newMutableDeclarations(true);
         d.declareFunction("tag", new NExprFct() {
             @Override
             public Object eval(String name, List<Object> args, NExprDeclarations context) {
@@ -72,7 +72,7 @@ public class FileScanner {
         d.declareVar("writable", new RichVar());
         d.declareVar("owner", new RichVar());
         d.declareVar("lastModified", new RichVar());
-        NExprNode node = d.parse(anyStr).get(session);
+        NExprNode node = d.parse(anyStr).get();
         return richPath -> {
             d.removeDeclaration(d.getVar("this").orNull());
             d.declareConstant("this", richPath);

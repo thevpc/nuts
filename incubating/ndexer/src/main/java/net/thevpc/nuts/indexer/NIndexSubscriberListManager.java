@@ -19,9 +19,9 @@ public class NIndexSubscriberListManager {
             name = "default";
         }
         this.name = name.trim();
-        NPath file = getConfigFile(session);
+        NPath file = getConfigFile();
         if (file.exists()) {
-            this.config = NElements.of(defaultSession).json().parse(file, NIndexSubscriberListConfig.class);
+            this.config = NElements.of().json().parse(file, NIndexSubscriberListConfig.class);
             if (this.config.getSubscribers() != null) {
                 for (NIndexSubscriber var : this.config.getSubscribers()) {
                     this.subscribers.put(var.getUuid(), var);
@@ -31,13 +31,13 @@ public class NIndexSubscriberListManager {
             this.config = new NIndexSubscriberListConfig()
                     .setUuid(UUID.randomUUID().toString())
                     .setName("default-config");
-            this.save(session);
+            this.save();
         }
     }
 
-    private NPath getConfigFile(NSession session) {
-        return NLocations.of(session)
-                .getStoreLocation(NId.ofClass(NIndexSubscriberListManager.class,session).get(),
+    private NPath getConfigFile() {
+        return NLocations.of()
+                .getStoreLocation(NId.ofClass(NIndexSubscriberListManager.class).get(),
                         NStoreType.CONF).resolve(
                         name + "-nuts-subscriber-list.json");
     }
@@ -68,7 +68,7 @@ public class NIndexSubscriberListManager {
         return this;
     }
 
-    public NIndexSubscriber subscribe(String repositoryUuid, NWorkspaceLocation workspaceLocation, NSession session) {
+    public NIndexSubscriber subscribe(String repositoryUuid, NWorkspaceLocation workspaceLocation) {
         if (subscribers.containsKey(repositoryUuid)) {
             subscribers.get(repositoryUuid)
                     .getWorkspaceLocations().put(workspaceLocation.getUuid(), workspaceLocation.copy());
@@ -78,12 +78,12 @@ public class NIndexSubscriberListManager {
                     .setName(getRepositoryNameFromUuid(repositoryUuid))
                     .setWorkspaceLocations(Collections.singletonMap(workspaceLocation.getUuid(), workspaceLocation.copy())));
         }
-        this.save(session);
+        this.save();
         return subscribers.get(repositoryUuid);
     }
 
     private String getRepositoryNameFromUuid(String repositoryUuid) {
-        List<NRepository> repositories = NRepositories.of(defaultSession).getRepositories();
+        List<NRepository> repositories = NRepositories.of().getRepositories();
         for (NRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 return repository.getName();
@@ -93,23 +93,23 @@ public class NIndexSubscriberListManager {
         throw new NoSuchElementException();
     }
 
-    private void save(NSession session) {
+    private void save() {
         this.config.setSubscribers(this.subscribers.isEmpty()
                 ? null
                 : new ArrayList<>(this.subscribers.values()));
-        NPath file = getConfigFile(session);
-        NElements.of(defaultSession).json().setValue(this.config)
+        NPath file = getConfigFile();
+        NElements.of().json().setValue(this.config)
                 .setNtf(false).print(file);
     }
 
-    public boolean unsubscribe(String repositoryUuid, NWorkspaceLocation workspaceLocation, NSession session) {
+    public boolean unsubscribe(String repositoryUuid, NWorkspaceLocation workspaceLocation) {
         boolean b = subscribers.get(repositoryUuid)
                 .getWorkspaceLocations().remove(workspaceLocation.getUuid()) != null;
         if (subscribers.get(repositoryUuid).getWorkspaceLocations().isEmpty()) {
             b = subscribers.remove(repositoryUuid) != null;
         }
         if (b) {
-            save(session);
+            save();
         }
         return b;
     }

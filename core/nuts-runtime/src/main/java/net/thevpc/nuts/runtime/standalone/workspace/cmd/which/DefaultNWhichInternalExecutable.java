@@ -26,26 +26,26 @@ import java.util.List;
  */
 public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNWhichInternalExecutable(String[] args, NExecCmd execCommand) {
-        super("which", args, execCommand);
+    public DefaultNWhichInternalExecutable(NWorkspace workspace,String[] args, NExecCmd execCommand) {
+        super(workspace,"which", args, execCommand);
     }
 
     @Override
     public int execute() {
-        if(getSession().isDry()){
+        NSession session = workspace.currentSession();
+        if(session.isDry()){
             dryExecute();
             return NExecutionException.SUCCESS;
         }
-        NSession session = getSession();
         if (NAppUtils.processHelpOptions(args, session)) {
             showDefaultHelp();
             return NExecutionException.SUCCESS;
         }
         List<String> commands = new ArrayList<String>();
-//        NutsWorkspace ws = getSession().getWorkspace();
+//        NutsWorkspace ws = session.getWorkspace();
         NCmdLine cmdLine = NCmdLine.of(args);
         while (cmdLine.hasNext()) {
-            NArg a = cmdLine.peek().get(session);
+            NArg a = cmdLine.peek().get();
             if (a.isOption()) {
                 session.configureLast(cmdLine);
             } else {
@@ -55,13 +55,13 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                 cmdLine.skipAll();
             }
         }
-        NAssert.requireNonBlank(commands, "commands", session);
-        NTexts factory = NTexts.of(session);
+        NAssert.requireNonBlank(commands, "commands");
+        NTexts factory = NTexts.of();
         for (String arg : commands) {
             NPrintStream out = session.out();
-            NElements elem = NElements.of(session);
+            NElements elem = NElements.of();
             try {
-                try (NExecutableInformation p = getExecCommand().copy().setSession(session).clearCommand().configure(false, arg).which()){
+                try (NExecutableInformation p = getExecCommand().copy().clearCommand().configure(false, arg).which()){
                     switch (p.getType()) {
                         case SYSTEM: {
                             if (session.isPlainOut()) {
@@ -87,7 +87,7 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                                         factory.ofStyled(arg, NTextStyle.primary4()),
                                         factory.ofStyled("nuts alias", NTextStyle.primary6()),
                                         p.getId(),
-                                        NCmdLine.of(NCommands.of(session).findCommand(p.getName()).getCommand())
+                                        NCmdLine.of(NCommands.of().findCommand(p.getName()).getCommand())
                                 ));
                             } else {
                                 session.out().println(
@@ -103,11 +103,11 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                         }
                         case ARTIFACT: {
                             if (p.getId() == null) {
-                                NId nid = NId.of(arg).get(session);
+                                NId nid = NId.of(arg).get();
                                 if (nid != null) {
-                                    throw new NNotFoundException(session, nid);
+                                    throw new NNotFoundException(nid);
                                 } else {
-                                    throw new NNotFoundException(session, null, NMsg.ofC("artifact not found: %s%s", (arg == null ? "<null>" : arg)));
+                                    throw new NNotFoundException(null, NMsg.ofC("artifact not found: %s%s", (arg == null ? "<null>" : arg)));
                                 }
                             }
                             if (session.isPlainOut()) {

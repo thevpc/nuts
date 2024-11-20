@@ -41,9 +41,9 @@ public class NdbUtils {
         return "/home/" + name;
     }
 
-    public static String checkName(String name, NSession session) {
+    public static String checkName(String name) {
         if (!isName(name)) {
-            throw new NIllegalArgumentException(session, NMsg.ofC("invalid name %s", name));
+            throw new NIllegalArgumentException(NMsg.ofC("invalid name %s", name));
         }
         return name;
     }

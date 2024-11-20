@@ -4,17 +4,11 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.util.NFilter;
 
 public abstract class NTypedFiltersParser<T extends NFilter> extends AbstractFilterParser2<T> {
-    protected NWorkspace ws;
-    protected NSession session;
-    public NTypedFiltersParser(String str, NSession session) {
+    protected NWorkspace workspace;
+    public NTypedFiltersParser(String str, NWorkspace workspace) {
         super(str==null?"":str);
-        this.session=session;
-        this.ws=session.getWorkspace();
+        this.workspace =workspace;
         addBoolOps();
-    }
-
-    public NSession getSession() {
-        return session;
     }
 
     protected T nextDefault(){

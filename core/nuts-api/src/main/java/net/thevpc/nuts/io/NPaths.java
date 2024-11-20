@@ -2,7 +2,6 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.NRepository;
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
@@ -12,8 +11,8 @@ import java.net.URL;
 import java.nio.file.Path;
 
 public interface NPaths extends NComponent {
-    static NPaths of(NSession session) {
-       return NExtensions.of(session).createComponent(NPaths.class).get();
+    static NPaths of() {
+        return NExtensions.of().createComponent(NPaths.class).get();
     }
 
     /**
@@ -31,6 +30,7 @@ public interface NPaths extends NComponent {
     NPath createPath(URL path);
 
     NPath createPath(String path, ClassLoader classLoader);
+
     NPath createPath(NPathSPI path);
 
     NPaths addPathFactory(NPathFactorySPI pathFactory);

@@ -13,7 +13,7 @@ public class ClassloaderAwareCallable<V> {
     private Context context;
 
     public ClassloaderAwareCallable(NSession session, ExecutorService executorService, ClassLoader classLoader) {
-        this.context=new Context(session, executorService!=null?executorService: NScheduler.of(session).executorService(), classLoader);
+        this.context=new Context(session, executorService!=null?executorService: NScheduler.of().executorService(), classLoader);
     }
 
     public V runAndWaitFor(Function<Context,V> callable) {

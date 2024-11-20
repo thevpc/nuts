@@ -25,8 +25,6 @@
  */
 package net.thevpc.nuts.cmdline;
 
-import net.thevpc.nuts.NSession;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -39,12 +37,12 @@ import java.util.List;
  */
 public interface NArgName extends Serializable {
 
-    static NArgName of(String type, String label, NSession session) {
-        return NCmdLines.of(session).createName(type, label);
+    static NArgName of(String type, String label) {
+        return NCmdLines.of().createName(type, label);
     }
 
-    static NArgName of(String type, NSession session) {
-        return NCmdLines.of(session).createName(type);
+    static NArgName of(String type) {
+        return NCmdLines.of().createName(type);
     }
 
     /**

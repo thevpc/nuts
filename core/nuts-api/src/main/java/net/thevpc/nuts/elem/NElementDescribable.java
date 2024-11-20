@@ -24,8 +24,6 @@
  */
 package net.thevpc.nuts.elem;
 
-import net.thevpc.nuts.NSession;
-
 /**
  * Describable defines objects that define user friendly structured (NutsElement Base) toString
  * like method named @{describe}
@@ -34,11 +32,10 @@ public interface NElementDescribable<T> {
     /**
      * create an element that describes this instance
      *
-     * @param session elems builder
      * @return Structured NutsElement description
      */
-    default NElement describe(NSession session) {
-        return NEDesc.ofLateToString(this).apply(session);
+    default NElement describe() {
+        return NEDesc.ofLateToString(this).get();
     }
 
     T withDesc(NEDesc description);

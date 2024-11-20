@@ -44,14 +44,14 @@ public class DefaultNArrayElement extends AbstractNArrayElement {
 
     private final NElement[] values;
 
-    public DefaultNArrayElement(Collection<NElement> values, NSession session) {
-        super(session);
+    public DefaultNArrayElement(Collection<NElement> values, NWorkspace workspace) {
+        super(workspace);
         this.values = values.toArray(new NElement[0]);
     }
 
 
-    public DefaultNArrayElement(NElement[] values, NSession session) {
-        super(session);
+    public DefaultNArrayElement(NElement[] values, NWorkspace workspace) {
+        super(workspace);
         this.values = Arrays.copyOf(values, values.length);
     }
 
@@ -75,7 +75,7 @@ public class DefaultNArrayElement extends AbstractNArrayElement {
         if (index >= 0 && index < values.length) {
             return NOptional.of(values[index]);
         }
-        return NOptional.ofError(s -> NMsg.ofC("invalid array index %s not in [%s,%s[", index, 0, values.length));
+        return NOptional.ofError(() -> NMsg.ofC("invalid array index %s not in [%s,%s[", index, 0, values.length));
     }
 
     @Override
@@ -136,7 +136,7 @@ public class DefaultNArrayElement extends AbstractNArrayElement {
 
     @Override
     public NArrayElementBuilder builder() {
-        return NElements.of(session)
+        return NElements.of()
                 .ofArray()
                 .set(this);
     }
@@ -224,7 +224,7 @@ public class DefaultNArrayElement extends AbstractNArrayElement {
         return IntStream.range(0, size())
                 .boxed()
                 .map(x -> new DefaultNElementEntry(
-                        NElements.of(session).ofString(String.valueOf(x)),
+                        NElements.of().ofString(String.valueOf(x)),
                         get(x).orNull()
                 )).collect(Collectors.toList());
     }

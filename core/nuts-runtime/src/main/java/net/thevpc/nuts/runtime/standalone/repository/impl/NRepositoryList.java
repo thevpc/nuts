@@ -13,9 +13,9 @@ import java.util.List;
 public class NRepositoryList extends NCachedRepository {
     protected NRepository[] repoItems;
 
-    public NRepositoryList(NAddRepositoryOptions options, NRepository[] repoItems, NSession session, NRepository parentRepository,
+    public NRepositoryList(NAddRepositoryOptions options, NRepository[] repoItems, NWorkspace workspace, NRepository parentRepository,
                            NSpeedQualifier speed, boolean supportedMirroring, String repositoryType, boolean supportsDeploy) {
-        super(options, session, parentRepository, speed, supportedMirroring, repositoryType, supportsDeploy);
+        super(options, workspace, parentRepository, speed, supportedMirroring, repositoryType, supportsDeploy);
         this.repoItems = repoItems;
     }
 
@@ -30,9 +30,9 @@ public class NRepositoryList extends NCachedRepository {
     }
 
     @Override
-    public boolean isAcceptFetchMode(NFetchMode mode, NSession session) {
+    public boolean isAcceptFetchMode(NFetchMode mode) {
         for (NRepository repoItem : repoItems) {
-            if (((NRepositorySPI) repoItem).isAcceptFetchMode(mode, session)) {
+            if (((NRepositorySPI) repoItem).isAcceptFetchMode(mode)) {
                 return true;
             }
         }
@@ -40,9 +40,9 @@ public class NRepositoryList extends NCachedRepository {
     }
 
     @Override
-    protected boolean isAvailableImpl(NSession session) {
+    protected boolean isAvailableImpl() {
         for (NRepository repoItem : repoItems) {
-            if (repoItem.isAvailable(session)) {
+            if (repoItem.isAvailable()) {
                 return true;
             }
         }
@@ -50,7 +50,7 @@ public class NRepositoryList extends NCachedRepository {
     }
 
     @Override
-    public NIterator<NId> searchVersionsCore(final NId id, NIdFilter idFilter, NFetchMode fetchMode, final NSession session) {
+    public NIterator<NId> searchVersionsCore(final NId id, NIdFilter idFilter, NFetchMode fetchMode) {
         List<NIterator<? extends NId>> all = new ArrayList<>();
         for (NRepository repoItem : repoItems) {
             all.add(
@@ -58,23 +58,22 @@ public class NRepositoryList extends NCachedRepository {
                             .setId(id)
                             .setFilter(idFilter)
                             .setFetchMode(fetchMode)
-                            .setSession(session)
                             .getResult()
             );
         }
-        return IteratorBuilder.ofCoalesce(all, session).build();
+        NSession session = workspace.currentSession();
+        return IteratorBuilder.ofCoalesce(all).build();
     }
 
 
     @Override
-    public NPath fetchContentCore(NId id, NDescriptor descriptor, NFetchMode fetchMode, NSession session) {
+    public NPath fetchContentCore(NId id, NDescriptor descriptor, NFetchMode fetchMode) {
         for (NRepository repoItem : repoItems) {
             try {
                 NPath result = ((NRepositorySPI) repoItem).fetchContent()
                         .setId(id)
                         .setDescriptor(descriptor)
                         .setFetchMode(fetchMode)
-                        .setSession(session)
                         .getResult();
                 if (result != null) {
                     return result;
@@ -87,14 +86,13 @@ public class NRepositoryList extends NCachedRepository {
     }
 
     @Override
-    public NIterator<NId> searchCore(final NIdFilter filter, NPath[] basePaths, NId[] baseIds, NFetchMode fetchMode, NSession session) {
+    public NIterator<NId> searchCore(final NIdFilter filter, NPath[] basePaths, NId[] baseIds, NFetchMode fetchMode) {
         List<NIterator<? extends NId>> list = new ArrayList<>();
         for (NRepository repoItem : repoItems) {
             list.add(
                     ((NRepositorySPI) repoItem).search()
                             .setFilter(filter)
                             .setFetchMode(fetchMode)
-                            .setSession(session)
                             .getResult()
             );
         }
@@ -102,19 +100,18 @@ public class NRepositoryList extends NCachedRepository {
     }
 
     @Override
-    public void updateStatisticsImpl(NSession session) {
+    public void updateStatisticsImpl() {
         for (NRepository repoItem : repoItems) {
             ((NRepositorySPI) repoItem).updateStatistics().run();
         }
     }
 
-    public NDescriptor fetchDescriptorCore(NId id, NFetchMode fetchMode, NSession session) {
+    public NDescriptor fetchDescriptorCore(NId id, NFetchMode fetchMode) {
         for (NRepository repoItem : repoItems) {
             try {
                 NDescriptor result = ((NRepositorySPI) repoItem).fetchDescriptor()
                         .setId(id)
                         .setFetchMode(fetchMode)
-                        .setSession(session)
                         .getResult();
                 if (result != null) {
                     return result;
@@ -127,10 +124,10 @@ public class NRepositoryList extends NCachedRepository {
     }
 
 
-    public NId searchLatestVersionCore(NId id, NIdFilter filter, NFetchMode fetchMode, NSession session) {
+    public NId searchLatestVersionCore(NId id, NIdFilter filter, NFetchMode fetchMode) {
         for (NRepository repoItem : repoItems) {
             try {
-                NId nId = ((NRepositoryExt) repoItem).searchLatestVersion(id, filter, fetchMode, session);
+                NId nId = ((NRepositoryExt) repoItem).searchLatestVersion(id, filter, fetchMode);
                 if (nId != null) {
                     return nId;
                 }

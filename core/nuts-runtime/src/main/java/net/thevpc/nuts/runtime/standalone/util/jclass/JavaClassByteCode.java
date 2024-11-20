@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.jclass;
 
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.format.NVisitResult;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.NIllegalArgumentException;
@@ -36,24 +37,24 @@ public class JavaClassByteCode {
     private static final int FLAG_MODULE = 19;
     private static final int FLAG_PACKAGE = 20;
     private final DataInputStream stream;
-    private final NSession session;
+    private final NWorkspace workspace;
     private final Visitor visitor;
     private Constant[] constants = new Constant[32];
 
-    public JavaClassByteCode(InputStream stream, NSession session) {
-        this(stream, null, session);
+    public JavaClassByteCode(InputStream stream, NWorkspace workspace) {
+        this(stream, null, workspace);
     }
 
-    public JavaClassByteCode(DataInputStream stream, NSession session) {
-        this(stream, null, session);
+    public JavaClassByteCode(DataInputStream stream, NWorkspace workspace) {
+        this(stream, null, workspace);
     }
 
-    public JavaClassByteCode(InputStream stream, Visitor visitor, NSession session) {
-        this((stream instanceof DataInputStream) ? ((DataInputStream) stream) : new DataInputStream(stream), visitor, session);
+    public JavaClassByteCode(InputStream stream, Visitor visitor, NWorkspace workspace) {
+        this((stream instanceof DataInputStream) ? ((DataInputStream) stream) : new DataInputStream(stream), visitor, workspace);
     }
 
-    public JavaClassByteCode(DataInputStream stream, Visitor visitor, NSession session) {
-        this.session = session;
+    public JavaClassByteCode(DataInputStream stream, Visitor visitor, NWorkspace workspace) {
+        this.workspace = workspace;
         this.stream = stream;
         this.visitor = visitor;
         try {
@@ -61,7 +62,7 @@ public class JavaClassByteCode {
 
             int signature = stream.readInt();
             if (signature != 0xcafebabe) {
-                throw new NIllegalArgumentException(session, NMsg.ofPlain("invalid Java signature"));
+                throw new NIllegalArgumentException(NMsg.ofPlain("invalid Java signature"));
             }
             int minorVersion = stream.readUnsignedShort();
             int majorVersion = stream.readUnsignedShort();
@@ -125,7 +126,7 @@ public class JavaClassByteCode {
                 }
             }
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
 
     }
@@ -154,7 +155,7 @@ public class JavaClassByteCode {
             }
 
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
 
     }
@@ -173,7 +174,7 @@ public class JavaClassByteCode {
             }
             return visitField(accessFlags, name, descriptor, attributes);
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -191,7 +192,7 @@ public class JavaClassByteCode {
             }
             return visitMethod(accessFlags, name, descriptor, attributes);
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -394,7 +395,7 @@ public class JavaClassByteCode {
                         throw new IOException("Unknown constant tag: " + tag);
                 }
             } catch (IOException ex) {
-                throw new NIOException(s.session, ex);
+                throw new NIOException(ex);
             }
         }
 
@@ -568,7 +569,7 @@ public class JavaClassByteCode {
                 raw = new byte[n];
                 stream.readFully(raw);
             } catch (IOException ex) {
-                throw new NIOException(session, ex);
+                throw new NIOException(ex);
             }
         }
     }

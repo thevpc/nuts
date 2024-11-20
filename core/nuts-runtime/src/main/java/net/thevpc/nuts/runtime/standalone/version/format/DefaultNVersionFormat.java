@@ -27,15 +27,14 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
     private boolean all;
     private NVersion version;
 
-    public DefaultNVersionFormat(NSession session) {
-        super(session, "version");
+    public DefaultNVersionFormat(NWorkspace workspace) {
+        super(workspace, "version");
     }
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        checkSession();
-        NSession session = getSession();
-        NArg aa = cmdLine.peek().get(session);
+        NSession session=workspace.currentSession();
+        NArg aa = cmdLine.peek().get();
         if (aa == null) {
             return false;
         }
@@ -43,15 +42,15 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
         switch (aa.key()) {
             case "-a":
             case "--all": {
-                cmdLine.withNextFlag((v, a, s) -> this.all = v);
+                cmdLine.withNextFlag((v, a) -> this.all = v);
                 return true;
             }
             case "--add": {
-                NArg aa2 = cmdLine.nextEntry().get(session);
-                NArg r = NArg.of(aa2.getStringValue().get(session));
+                NArg aa2 = cmdLine.nextEntry().get();
+                NArg r = NArg.of(aa2.getStringValue().get());
                 if (enabled) {
                     this.all = true;
-                    this.extraProperties.put(r.key(), r.getStringValue().get(session));
+                    this.extraProperties.put(r.key(), r.getStringValue().get());
                 }
                 return true;
             }
@@ -102,15 +101,15 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
 
     @Override
     public void print(NPrintStream out) {
-        checkSession();
+        NSession session=workspace.currentSession();
         if (!isNtf()) {
             out = out.setTerminalMode(NTerminalMode.FILTERED);
         }
-        if (getSession().isPlainOut()) {
+        if (session.isPlainOut()) {
             if (isWorkspaceVersion()) {
-                out.print((NMsg.ofC("%s/%s", getSession().getWorkspace().getApiVersion(), getSession().getWorkspace().getRuntimeId().getVersion())));
+                out.print((NMsg.ofC("%s/%s", session.getWorkspace().getApiVersion(), session.getWorkspace().getRuntimeId().getVersion())));
             } else {
-                out.print(NTexts.of(getSession()).ofStyled(
+                out.print(NTexts.of().ofStyled(
                         getVersion().toString(), NTextStyle.version()
                 ));
             }
@@ -119,7 +118,7 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
                 out.print(buildProps());
             } else {
                 out.print(
-                        NTexts.of(getSession()).ofStyled(
+                        NTexts.of().ofStyled(
                                 getVersion().toString(), NTextStyle.version()
                         )
                 );
@@ -133,12 +132,12 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
         if (extraProperties != null) {
             extraKeys = new TreeSet(extraProperties.keySet());
         }
-        NSession session = getSession();
+        NSession session=workspace.currentSession();
         props.put("nuts-api-version", session.getWorkspace().getApiVersion().toString());
         props.put("nuts-runtime-version", session.getWorkspace().getRuntimeId().getVersion().toString());
         if (all) {
             props.put("java-version", System.getProperty("java.version"));
-            props.put("os-version", NEnvs.of(session).getOs().getVersion().toString());
+            props.put("os-version", NEnvs.of().getOs().getVersion().toString());
         }
         for (String extraKey : extraKeys) {
             props.put(extraKey, extraProperties.get(extraKey));

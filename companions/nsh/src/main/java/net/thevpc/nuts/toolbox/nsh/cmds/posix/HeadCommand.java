@@ -56,14 +56,14 @@ public class HeadCommand extends NShellBuiltinDefault {
     protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        NArg a = cmdLine.peek().get(session);
+        NArg a = cmdLine.peek().get();
         if (a.isOption() && a.getKey().isInt()) {
-            options.max = a.getKey().asInt().get(session);
+            options.max = a.getKey().asInt().get();
             cmdLine.skip();
             return true;
         } else if (!a.isOption()) {
-            String path = cmdLine.next().flatMap(NLiteral::asString).get(session);
-            String file = NPath.of(path, session).toAbsolute(context.getDirectory()).toString();
+            String path = cmdLine.next().flatMap(NLiteral::asString).get();
+            String file = NPath.of(path).toAbsolute(context.getDirectory()).toString();
             options.files.add(file);
             return true;
         }
@@ -87,7 +87,7 @@ public class HeadCommand extends NShellBuiltinDefault {
         NSession session = context.getSession();
         try {
             try {
-                r = new BufferedReader(new InputStreamReader(NPath.of(file, session)
+                r = new BufferedReader(new InputStreamReader(NPath.of(file)
                         .getInputStream()));
                 String line = null;
                 int count = 0;
@@ -101,7 +101,7 @@ public class HeadCommand extends NShellBuiltinDefault {
                 }
             }
         } catch (IOException ex) {
-            throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_3);
+            throw new NExecutionException(NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_3);
         }
     }
 

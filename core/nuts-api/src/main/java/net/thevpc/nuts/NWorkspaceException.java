@@ -40,13 +40,13 @@ public abstract class NWorkspaceException extends NException {
     /**
      * Constructs a new NutsWorkspaceException exception
      *
-     * @param session workspace
      * @param message message
      * @param ex      exception
      */
-    public NWorkspaceException(NSession session, NMsg message, Throwable ex) {
-        super(session,
+    public NWorkspaceException(NMsg message, Throwable ex) {
+        super(
                 message == null
-                        ? NMsg.ofC("workspace %s has encountered problem", session.getWorkspace().getName()) : message, ex);
+                        ? NMsg.ofC("workspace %s has encountered problem", NWorkspace.of().map(x->x.getName()).orNull()) : message, ex);
     }
+
 }

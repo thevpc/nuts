@@ -37,9 +37,9 @@ import java.util.List;
  * @author thevpc
  * @app.category Config
  */
-public interface NCommands extends NComponent,NSessionProvider {
-    static NCommands of(NSession session) {
-        return NExtensions.of(session).createComponent(NCommands.class).get();
+public interface NCommands extends NComponent {
+    static NCommands of() {
+        return NExtensions.of().createComponent(NCommands.class).get();
     }
 
     /**
@@ -152,13 +152,5 @@ public interface NCommands extends NComponent,NSessionProvider {
      * @return all registered and factory defined commands by owner
      */
     List<NCustomCmd> findCommandsByOwner(NId id);
-
-    /**
-     * update current session
-     *
-     * @param session current session
-     * @return {@code this} instance
-     */
-    NCommands setSession(NSession session);
 
 }

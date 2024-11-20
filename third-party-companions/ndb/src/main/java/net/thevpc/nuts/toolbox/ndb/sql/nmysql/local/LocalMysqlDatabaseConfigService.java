@@ -43,7 +43,7 @@ public class LocalMysqlDatabaseConfigService {
     }
 
     public NString getBracketsPrefix(String str) {
-        return NTexts.of(session).ofBuilder()
+        return NTexts.of().ofBuilder()
                 .append("[")
                 .append(str, NTextStyle.primary5())
                 .append("]");
@@ -58,7 +58,7 @@ public class LocalMysqlDatabaseConfigService {
     }
 
     public LocalMysqlDatabaseConfigService write(PrintStream out) {
-        NElements.of(session).json().setValue(getConfig()).setNtf(false).print(out);
+        NElements.of().json().setValue(getConfig()).setNtf(false).print(out);
         return this;
     }
 
@@ -75,14 +75,14 @@ public class LocalMysqlDatabaseConfigService {
         }
         path= Paths.get(path).toAbsolutePath().normalize().toString();
         String password = getConfig().getPassword();
-        char[] credentials = NWorkspaceSecurityManager.of(session).getCredentials(password.toCharArray());
+        char[] credentials = NWorkspaceSecurityManager.of().getCredentials(password.toCharArray());
         password = new String(credentials);
         if (path.endsWith(".sql")) {
             if (session.isPlainTrace()) {
                 session.out().println(NMsg.ofC("%s create archive %s", getDatabaseName(), path));
             }
 
-            NExecCmd cmd = NExecCmd.of(session)
+            NExecCmd cmd = NExecCmd.of()
                     .system()
                     .setCommand("sh", "-c",
                             "\"" + mysql.getMysqldumpCommand() + "\" -u \"$CMD_USER\" -p\"$CMD_PWD\" --databases \"$CMD_DB\" > \"$CMD_FILE\""
@@ -100,15 +100,15 @@ public class LocalMysqlDatabaseConfigService {
                 if (new File(path).exists()) {
                     new File(path).delete();
                 }
-                throw new NExecutionException(session, NMsg.ofNtf(cmd.getGrabbedOutString()), NExecutionException.ERROR_2);
+                throw new NExecutionException(NMsg.ofNtf(cmd.getGrabbedOutString()), NExecutionException.ERROR_2);
             }
         } else {
             if (session.isPlainTrace()) {
                 session.out().println(NMsg.ofC("%s create archive %s", getBracketsPrefix(getDatabaseName()),
-                        NTexts.of(session)
+                        NTexts.of()
                         .ofStyled(path, NTextStyle.path())));
             }
-            NExecCmd cmd = NExecCmd.of(session)
+            NExecCmd cmd = NExecCmd.of()
                     .system()
                     .setCommand("sh", "-c",
                             "set -o pipefail && \"" + mysql.getMysqldumpCommand() + "\" -u \"$CMD_USER\" -p" + password + " --databases \"$CMD_DB\" | gzip > \"$CMD_FILE\""
@@ -136,7 +136,7 @@ public class LocalMysqlDatabaseConfigService {
                 if (new File(path).exists()) {
                     new File(path).delete();
                 }
-                throw new NExecutionException(session, NMsg.ofNtf(cmd.getGrabbedOutString()), NExecutionException.ERROR_2);
+                throw new NExecutionException(NMsg.ofNtf(cmd.getGrabbedOutString()), NExecutionException.ERROR_2);
             }
         }
     }
@@ -145,13 +145,13 @@ public class LocalMysqlDatabaseConfigService {
 //        if(!path.endsWith(".sql") && !path.endsWith(".sql.zip") && !path.endsWith(".zip")){
 //            path=path+
 //        }
-        char[] password = NWorkspaceSecurityManager.of(session).getCredentials(getConfig().getPassword().toCharArray());
+        char[] password = NWorkspaceSecurityManager.of().getCredentials(getConfig().getPassword().toCharArray());
 
         if (path.endsWith(".sql")) {
             if (session.isPlainTrace()) {
                 session.out().println(NMsg.ofC("%s restore archive %s", getBracketsPrefix(getDatabaseName()), path));
             }
-            int result = NExecCmd.of(session)
+            int result = NExecCmd.of()
                     .system()
                     .setCommand("sh", "-c",
                             "cat \"$CMD_FILE\" | " + "\"" + mysql.getMysqlCommand() + "\" -h \"$CMD_HOST\" -u \"$CMD_USER\" \"-p$CMD_PWD\" \"$CMD_DB\""
@@ -170,7 +170,7 @@ public class LocalMysqlDatabaseConfigService {
                 session.out().println(NMsg.ofC("%s restore archive %s", getBracketsPrefix(getDatabaseName()), path));
             }
 
-            int result = NExecCmd.of(session)
+            int result = NExecCmd.of()
                     .system().setCommand("sh", "-c",
                             "gunzip -c \"$CMD_FILE\" | \"" + mysql.getMysqlCommand() + "\" -h \"$CMD_HOST\" -u \"$CMD_USER\" \"-p$CMD_PWD\" \"$CMD_DB\""
                     )

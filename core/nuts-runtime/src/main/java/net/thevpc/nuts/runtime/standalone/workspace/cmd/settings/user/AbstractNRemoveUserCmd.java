@@ -17,8 +17,8 @@ public abstract class AbstractNRemoveUserCmd extends NWorkspaceCmdBaseRepo<NRemo
 
     protected String login;
 
-    public AbstractNRemoveUserCmd(NSession session) {
-        super(session, "remove-user");
+    public AbstractNRemoveUserCmd(NWorkspace workspace) {
+        super(workspace, "remove-user");
     }
 
     @Override
@@ -35,7 +35,8 @@ public abstract class AbstractNRemoveUserCmd extends NWorkspaceCmdBaseRepo<NRemo
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NArg a = cmdLine.peek().get(session);
+        NSession session=getWorkspace().currentSession();
+        NArg a = cmdLine.peek().get();
         if (a == null) {
             return false;
         }

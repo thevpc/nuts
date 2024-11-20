@@ -12,33 +12,29 @@ import net.thevpc.nuts.util.NFilter;
 public class InternalNInstallStatusFilters extends InternalNTypedFilters<NInstallStatusFilter>
         implements NInstallStatusFilters {
 
-    public InternalNInstallStatusFilters(NSession session) {
-        super(session, NInstallStatusFilter.class);
+    public InternalNInstallStatusFilters(NWorkspace workspace) {
+        super(workspace, NInstallStatusFilter.class);
 //        localModel = model.getShared(LocalModel.class, () -> new LocalModel(ws));
     }
 
     @Override
     public NInstallStatusFilter not(NFilter other) {
-        checkSession();
         NInstallStatusFilter r = other.to(NInstallStatusFilter.class);
-        return new NInstallStatusFilterNone(getSession(), r);
+        return new NInstallStatusFilterNone(ws, r);
     }
 
     @Override
     public NInstallStatusFilter always() {
-        checkSession();
-        return new NInstallStatusFilter2(getSession(), 0, 0, 0, 0);
+        return new NInstallStatusFilter2(ws, 0, 0, 0, 0);
     }
 
     @Override
     public NInstallStatusFilter never() {
-        checkSession();
-        return new NInstallStatusFilterFalse(getSession());
+        return new NInstallStatusFilterFalse(ws);
     }
 
     @Override
     public NInstallStatusFilter all(NFilter... others) {
-        checkSession();
         List<NInstallStatusFilter> all = convertList(others);
         if (all.isEmpty()) {
             return always();
@@ -46,7 +42,7 @@ public class InternalNInstallStatusFilters extends InternalNTypedFilters<NInstal
         if (all.size() == 1) {
             return all.get(0);
         }
-        return new NInstallStatusFilterAnd(getSession(), all.toArray(new NInstallStatusFilter[0]));
+        return new NInstallStatusFilterAnd(ws, all.toArray(new NInstallStatusFilter[0]));
     }
 
     @Override
@@ -58,7 +54,7 @@ public class InternalNInstallStatusFilters extends InternalNTypedFilters<NInstal
         if (all.size() == 1) {
             return all.get(0);
         }
-        return new NInstallStatusFilterOr(getSession(), all.toArray(new NInstallStatusFilter[0]));
+        return new NInstallStatusFilterOr(ws, all.toArray(new NInstallStatusFilter[0]));
     }
 
     @Override
@@ -67,18 +63,16 @@ public class InternalNInstallStatusFilters extends InternalNTypedFilters<NInstal
         if (all.isEmpty()) {
             return always();
         }
-        return new NInstallStatusFilterNone(getSession(), all.toArray(new NInstallStatusFilter[0]));
+        return new NInstallStatusFilterNone(ws, all.toArray(new NInstallStatusFilter[0]));
     }
 
     @Override
     public NInstallStatusFilter from(NFilter a) {
-        checkSession();
         if (a == null) {
             return null;
         }
         NInstallStatusFilter t = as(a);
-        NSession session = getSession();
-        NAssert.requireNonNull(t, "InstallStatusFilter", session);
+        NAssert.requireNonNull(t, "InstallStatusFilter");
         return t;
     }
 
@@ -92,31 +86,27 @@ public class InternalNInstallStatusFilters extends InternalNTypedFilters<NInstal
 
     @Override
     public NInstallStatusFilter parse(String expression) {
-        checkSession();
-        return new NInstallStatusFilterParser(expression, getSession()).parse();
+        return new NInstallStatusFilterParser(expression, getWorkspace()).parse();
     }
 
     @Override
     public NInstallStatusFilter byInstalled(boolean value) {
-        checkSession();
-        return value ? new NInstallStatusFilter2(getSession(), 1, 0, 0, 0) : new NInstallStatusFilter2(getSession(), -1, 0, 0, 0);
+        return value ? new NInstallStatusFilter2(ws, 1, 0, 0, 0) : new NInstallStatusFilter2(ws, -1, 0, 0, 0);
     }
 
     @Override
     public NInstallStatusFilter byRequired(boolean value) {
-        checkSession();
-        return value ? new NInstallStatusFilter2(getSession(), 0, 1, 0, 0) : new NInstallStatusFilter2(getSession(), 0, -1, 0, 0);
+        return value ? new NInstallStatusFilter2(ws, 0, 1, 0, 0) : new NInstallStatusFilter2(ws, 0, -1, 0, 0);
     }
 
     @Override
     public NInstallStatusFilter byDefaultValue(boolean value) {
-        checkSession();
-        return value ? new NInstallStatusFilter2(getSession(), 0, 0, 0, 1) : new NInstallStatusFilter2(getSession(), 0, 0, 0, -1);
+        return value ? new NInstallStatusFilter2(ws, 0, 0, 0, 1) : new NInstallStatusFilter2(ws, 0, 0, 0, -1);
     }
 
     @Override
     public NInstallStatusFilter byObsolete(boolean value) {
-        return value ? new NInstallStatusFilter2(getSession(), 0, 0, 1, 0) : new NInstallStatusFilter2(getSession(), 0, 0, -1, 0);
+        return value ? new NInstallStatusFilter2(ws, 0, 0, 1, 0) : new NInstallStatusFilter2(ws, 0, 0, -1, 0);
     }
 
     @Override

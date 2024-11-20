@@ -26,8 +26,6 @@
  */
 package net.thevpc.nuts.format;
 
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NSessionProvider;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
@@ -51,14 +49,14 @@ import java.nio.file.Path;
  * @app.category Format
  * @since 0.5.5
  */
-public interface NFormat extends NCmdLineConfigurable, NComponent, NSessionProvider {
-    static NFormat of(NSession session, NFormatSPI spi) {
-        return NTexts.of(session).createFormat(spi);
+public interface NFormat extends NCmdLineConfigurable, NComponent {
+    static NFormat of(NFormatSPI spi) {
+        return NTexts.of().createFormat(spi);
     }
 
-    static <T> NFormat of(NSession session, T object, NTextFormat<T> format) {
-        NTexts texts = NTexts.of(session);
-        NAssert.requireNonNull(format, "format", session);
+    static <T> NFormat of(T object, NTextFormat<T> format) {
+        NTexts texts = NTexts.of();
+        NAssert.requireNonNull(format, "format");
         return texts.createFormat(object, format);
     }
 
@@ -202,13 +200,6 @@ public interface NFormat extends NCmdLineConfigurable, NComponent, NSessionProvi
      */
     void println(File file);
 
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this instance}
-     */
-    NFormat setSession(NSession session);
 
     /**
      * configure the current command with the given arguments. This is an

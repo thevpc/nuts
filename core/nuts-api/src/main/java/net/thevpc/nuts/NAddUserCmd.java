@@ -43,8 +43,8 @@ import java.util.List;
  */
 public interface NAddUserCmd extends NWorkspaceCmd {
 
-    static NAddUserCmd of(NSession session) {
-        return NExtensions.of(session).createComponent(NAddUserCmd.class).get();
+    static NAddUserCmd of() {
+        return NExtensions.of().createComponent(NAddUserCmd.class).get();
     }
 
     /**
@@ -202,23 +202,6 @@ public interface NAddUserCmd extends NWorkspaceCmd {
      * @return {@code this} instance
      */
     NAddUserCmd setRemoteCredentials(char[] password);
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
-    NAddUserCmd setSession(NSession session);
-
-    /**
-     * copy session
-     *
-     * @return {@code this} instance
-     */
-    @Override
-    NAddUserCmd copySession();
 
     /**
      * configure the current command with the given arguments. This is an

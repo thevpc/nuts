@@ -27,14 +27,14 @@ public class NPathFromSPI extends NPathBase {
     private final NPathSPI base;
     private List<String> items;
 
-    public NPathFromSPI(NPathSPI base) {
-        super(base.getSession());
+    public NPathFromSPI(NWorkspace workspace,NPathSPI base) {
+        super(workspace);
         this.base = base;
     }
 
     @Override
     public NPath copy() {
-        return new NPathFromSPI(base).copyExtraFrom(this);
+        return new NPathFromSPI(workspace,base).copyExtraFrom(this);
     }
 
     @Override
@@ -109,12 +109,12 @@ public class NPathFromSPI extends NPathBase {
                 }
                 return bos.toByteArray();
             } catch (IOException e) {
-                throw new NIOException(getSession(), NMsg.ofC("unable to read file %s", this), e);
+                throw new NIOException(NMsg.ofC("unable to read file %s", this), e);
             }
         }
         int ilen = (int) len;
         if (len > Integer.MAX_VALUE - 8) {
-            throw new NIOException(getSession(), NMsg.ofC("file is too large %s", this));
+            throw new NIOException(NMsg.ofC("file is too large %s", this));
         }
         byte[] buffer = new byte[ilen];
         try (InputStream is = getInputStream(options)) {
@@ -124,14 +124,14 @@ public class NPathFromSPI extends NPathBase {
                 offset += count;
             }
             if (offset < ilen) {
-                throw new NIOException(getSession(), NMsg.ofC("premature read stop %s", this));
+                throw new NIOException(NMsg.ofC("premature read stop %s", this));
             }
             if (is.read() >= 0) {
-                throw new NIOException(getSession(), NMsg.ofC("invalid %s", this));
+                throw new NIOException(NMsg.ofC("invalid %s", this));
             }
             return buffer;
         } catch (IOException e) {
-            throw new NIOException(getSession(), NMsg.ofC("unable to read file %s", this), e);
+            throw new NIOException(NMsg.ofC("unable to read file %s", this), e);
         }
     }
 
@@ -140,7 +140,8 @@ public class NPathFromSPI extends NPathBase {
         try (OutputStream os = getOutputStream()) {
             os.write(bytes);
         } catch (IOException ex) {
-            throw new NIOException(getSession(), NMsg.ofC("unable to write to %s", this));
+            NSession session = workspace.currentSession();
+            throw new NIOException(NMsg.ofC("unable to write to %s", this));
         }
         return this;
     }
@@ -189,19 +190,22 @@ public class NPathFromSPI extends NPathBase {
         if (p != null) {
             return p;
         }
-        return NStream.ofEmpty(getSession());
+        NSession session = workspace.currentSession();
+        return NStream.ofEmpty();
     }
 
     @Override
     public InputStream getInputStream(NPathOption... options) {
-        return NInputSourceBuilder.of(base.getInputStream(this, options),getSession())
+        NSession session = workspace.currentSession();
+        return NInputSourceBuilder.of(base.getInputStream(this, options))
                 .setMetadata(getMetaData())
                 .createInputStream();
     }
 
     @Override
     public OutputStream getOutputStream(NPathOption... options) {
-        return NOutputStreamBuilder.of(base.getOutputStream(this, options),getSession())
+        NSession session = workspace.currentSession();
+        return NOutputStreamBuilder.of(base.getOutputStream(this, options))
                 .setMetadata(this.getMetaData())
                 .createOutputStream()
                 ;
@@ -238,12 +242,11 @@ public class NPathFromSPI extends NPathBase {
     }
 
     public NPath expandPath(Function<String, String> resolver) {
-        NSession session = getSession();
-        resolver = new EffectiveResolver(resolver, session);
+        resolver = new EffectiveResolver(resolver, workspace);
         String s = StringPlaceHolderParser.replaceDollarPlaceHolders(toString(), resolver);
         if (s.length() > 0) {
             if (s.startsWith("~")) {
-                NLocations locations = NLocations.of(session);
+                NLocations locations = NLocations.of();
                 if (s.equals("~~")) {
                     NPath nutsHome = locations.getHomeLocation(NStoreType.CONF);
                     return nutsHome.normalize();
@@ -251,15 +254,15 @@ public class NPathFromSPI extends NPathBase {
                     NPath nutsHome = locations.getHomeLocation(NStoreType.CONF);
                     return nutsHome.resolve(s.substring(3)).normalize();
                 } else if (s.equals("~")) {
-                    return NPath.ofUserHome(session);
+                    return NPath.ofUserHome();
                 } else if (s.startsWith("~") && s.length() > 1 && (s.charAt(1) == '/' || s.charAt(1) == '\\')) {
-                    return NPath.ofUserHome(session).resolve(s.substring(2));
+                    return NPath.ofUserHome().resolve(s.substring(2));
                 } else {
-                    return NPath.of(s, session);
+                    return NPath.of(s);
                 }
             }
         }
-        return NPath.of(s, session);
+        return NPath.of(s);
     }
 
     @Override
@@ -348,7 +351,7 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public NPath toAbsolute(String rootPath) {
-        return toAbsolute(rootPath == null ? null : NPath.of(rootPath, getSession()));
+        return toAbsolute(rootPath == null ? null : NPath.of(rootPath));
     }
 
     @Override
@@ -423,7 +426,8 @@ public class NPathFromSPI extends NPathBase {
         }
         if (NUseDefaultUtils.isUseDefault(base.getClass(), "walk",
                 NPath.class, int.class, NPathOption[].class)) {
-            return NPathSPIHelper.walk(getSession(), this, maxDepth, options1);
+            NSession session = workspace.currentSession();
+            return NPathSPIHelper.walk(session, this, maxDepth, options1);
         } else {
             return base.walk(this, maxDepth, options);
         }
@@ -474,7 +478,8 @@ public class NPathFromSPI extends NPathBase {
         }
         if (NUseDefaultUtils.isUseDefault(base.getClass(), "walkDfs",
                 NPath.class, NTreeVisitor.class, int.class, NPathOption[].class)) {
-            NPathSPIHelper.walkDfs(getSession(), this, visitor, maxDepth, options);
+            NSession session = workspace.currentSession();
+            NPathSPIHelper.walkDfs(session, this, visitor, maxDepth, options);
         } else {
             base.walkDfs(this, visitor, maxDepth, options);
         }
@@ -483,11 +488,12 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public NStream<NPath> walkGlob(NPathOption... options) {
-        return new DirectoryScanner(this, getSession()).stream();
+        NSession session = workspace.currentSession();
+        return new DirectoryScanner(this, session).stream();
     }
 
     @Override
-    public NFormat formatter(NSession session) {
+    public NFormat formatter() {
         NFormatSPI fspi = null;
         if (NUseDefaultUtils.isUseDefault(base.getClass(), "formatter",
                 NPath.class)) {
@@ -495,9 +501,9 @@ public class NPathFromSPI extends NPathBase {
             fspi = base.formatter(this);
         }
         if (fspi != null) {
-            return new NFormatFromSPI(fspi, getSession());
+            return new NFormatFromSPI(fspi, workspace);
         }
-        return super.formatter(session != null ? session : getSession());
+        return super.formatter();
     }
 
     @Override
@@ -522,12 +528,11 @@ public class NPathFromSPI extends NPathBase {
     private static class EffectiveResolver implements Function<String, String> {
         NWorkspaceVarExpansionFunction fallback;
         Function<String, String> resolver;
-        NSession session;
+        NWorkspace workspace;
 
-        public EffectiveResolver(Function<String, String> resolver, NSession session) {
-            this.session = session;
-            this.resolver = resolver;
-            fallback = NWorkspaceVarExpansionFunction.of(session);
+        public EffectiveResolver(Function<String, String> resolver, NWorkspace workspace) {
+            this.workspace = workspace;
+            fallback = NWorkspaceVarExpansionFunction.of();
         }
 
         @Override

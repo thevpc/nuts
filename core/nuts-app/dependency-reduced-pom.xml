@@ -309,12 +309,12 @@
     </snapshotRepository>
   </distributionManagement>
   <properties>
-    <nuts.categories>/Settings/PackageManager/Nuts</nuts.categories>
-    <github.global.server>github</github.global.server>
     <nuts.api>true</nuts.api>
     <maven.compiler.source>1.8</maven.compiler.source>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.target>1.8</maven.compiler.target>
+    <nuts.categories>/Settings/PackageManager/Nuts</nuts.categories>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <nuts.genericName>Package Manager</nuts.genericName>
+    <github.global.server>github</github.global.server>
   </properties>
 </project>

@@ -125,9 +125,9 @@ public class CommonRootsByPathHelper {
             }
         }
         if(a_deep || b_deep){
-            return NPath.of(sb.toString(),session).resolve("*");
+            return NPath.of(sb.toString()).resolve("*");
         }
-        return NPath.of(sb.toString(),session);
+        return NPath.of(sb.toString());
     }
 
     private static Set<NPath> resolveRootId(String groupId, String artifactId, String version, NSession session) {
@@ -137,7 +137,7 @@ public class CommonRootsByPathHelper {
         }
         g = g.trim();
         if (g.isEmpty() || g.equals("*")) {
-            return new HashSet<>(Collections.singletonList(NPath.of("*", session)));
+            return new HashSet<>(Collections.singletonList(NPath.of("*")));
         }
         int i = g.indexOf("*");
         if (i >= 0) {
@@ -155,18 +155,18 @@ public class CommonRootsByPathHelper {
                 }
                 g+="*";
             }
-            return new HashSet<>(Collections.singletonList(NPath.of(g, session)));
+            return new HashSet<>(Collections.singletonList(NPath.of(g)));
         }
         if (artifactId.length() > 0) {
             if (!artifactId.contains("*")) {
                 if (version.length() > 0 && !version.contains("*") && !version.contains("[") && !version.contains("]")) {
-                    return new HashSet<>(Collections.singletonList(NPath.of(g.replace('.', '/') + "/" + artifactId + "/" + version, session)));
+                    return new HashSet<>(Collections.singletonList(NPath.of(g.replace('.', '/') + "/" + artifactId + "/" + version)));
                 } else {
-                    return new HashSet<>(Collections.singletonList(NPath.of(g.replace('.', '/') + "/" + artifactId, session)));
+                    return new HashSet<>(Collections.singletonList(NPath.of(g.replace('.', '/') + "/" + artifactId)));
                 }
             }
         }
-        return new HashSet<>(Collections.singletonList(NPath.of(g.replace('.', '/'), session)));
+        return new HashSet<>(Collections.singletonList(NPath.of(g.replace('.', '/'))));
     }
 
     public static List<NPath> resolveRootPaths(NIdFilter filter, NSession session) {
@@ -177,7 +177,7 @@ public class CommonRootsByPathHelper {
         Set<NPath> v = resolveRootId0(filter, session);
         if (v == null) {
             HashSet<NPath> s = new HashSet<>();
-            s.add(NPath.of("*",session));
+            s.add(NPath.of("*"));
             return s;
         }
         return v;

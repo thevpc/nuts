@@ -24,17 +24,17 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
-    private final NSession session;
+    private final NWorkspace workspace;
     private final NPath desktopPath;
 
-    public WindowFreeDesktopEntryWriter(NPath desktopPath, NSession session) {
-        this.session = session;
+    public WindowFreeDesktopEntryWriter(NPath desktopPath, NWorkspace workspace) {
+        this.workspace = workspace;
         this.desktopPath = desktopPath;
     }
 
     @Override
     public PathInfo[] writeShortcut(FreeDesktopEntry descriptor, NPath path, boolean doOverride, NId id) {
-        path = NPath.of(ensureName(path == null ? null : path.toString(), descriptor.getOrCreateDesktopEntry().getName(), "lnk"),session);
+        path = NPath.of(ensureName(path == null ? null : path.toString(), descriptor.getOrCreateDesktopEntry().getName(), "lnk"));
         FreeDesktopEntry.Group g = descriptor.getOrCreateDesktopEntry();
         if (g == null || g.getType() != FreeDesktopEntry.Type.APPLICATION) {
             throw new IllegalArgumentException("invalid entry");
@@ -48,7 +48,7 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
         if (alreadyExists && !doOverride) {
             return new PathInfo[]{new PathInfo("desktop-shortcut", id, q, PathInfo.Status.DISCARDED)};
         }
-        PathInfo.Status newStatus = new OptionalMsLinkHelper(g.getExec(), wd, g.getIcon(), q.toString(), session).write();
+        PathInfo.Status newStatus = new OptionalMsLinkHelper(g.getExec(), wd, g.getIcon(), q.toString(), workspace).write();
         return new PathInfo[]{new PathInfo("desktop-shortcut", id, q, newStatus)};
     }
 
@@ -70,7 +70,7 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
         if (wd == null) {
             wd = System.getProperty("user.home");
         }
-        String[] cmd = NCmdLine.parseDefault(root.getExec()).get(session).setExpandSimpleOptions(false).toStringArray();
+        String[] cmd = NCmdLine.parseDefault(root.getExec()).get().setExpandSimpleOptions(false).toStringArray();
         List<String> categories = new ArrayList<>(root.getCategories());
         if (categories.isEmpty()) {
             categories.add("/");
@@ -78,7 +78,7 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
         for (String category : categories) {
             List<String> part = Arrays.stream((category == null ? "" : category).split("/")).filter(x -> !x.isEmpty()).collect(Collectors.toList());
 
-            NPath m = NPath.ofUserHome(session).resolve("AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs");
+            NPath m = NPath.ofUserHome().resolve("AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs");
             if (!part.isEmpty() && part.get(0).equals("Applications")) {
                 part.remove(0);
             }
@@ -92,7 +92,7 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
             if (alreadyExists && !doOverride) {
                 result.add(new PathInfo("desktop-menu", id, q, PathInfo.Status.DISCARDED));
             } else {
-                PathInfo.Status newStatus = new OptionalMsLinkHelper(root.getExec(), wd, root.getIcon(), q.toString(), session).write();
+                PathInfo.Status newStatus = new OptionalMsLinkHelper(root.getExec(), wd, root.getIcon(), q.toString(), workspace).write();
                 result.add(new PathInfo("desktop-menu", id, q, newStatus));
             }
 
@@ -109,7 +109,7 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
         if (wd == null) {
             wd = System.getProperty("user.home");
         }
-        new OptionalMsLinkHelper(g.getExec(), wd, g.getIcon(), out.toString(), session).write();
+        new OptionalMsLinkHelper(g.getExec(), wd, g.getIcon(), out.toString(), workspace).write();
     }
 
     public boolean tryWrite(FreeDesktopEntry file, Path out) {
@@ -131,7 +131,7 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
         try (PrintStream p = new PrintStream(out)) {
             write(file, p);
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -144,9 +144,9 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
         for (FreeDesktopEntry.Group group : file.getGroups()) {
             out.println();
             String gn = group.getGroupName();
-            NAssert.requireNonBlank(gn, "group name", session);
+            NAssert.requireNonBlank(gn, "group name");
             FreeDesktopEntry.Type t = group.getType();
-            NAssert.requireNonBlank(t, "type", session);
+            NAssert.requireNonBlank(t, "type");
             out.println("[" + gn.trim() + "]");
             for (Map.Entry<String, Object> e : group.toMap().entrySet()) {
                 Object v = e.getValue();

@@ -56,7 +56,7 @@ public class LocalMysqlConfigService {
 
     public LocalMysqlConfigService saveConfig() {
         NPath f = getServerConfigPath();
-        NElements.of(session).setNtf(false).json().setValue(config).print(f);
+        NElements.of().setNtf(false).json().setValue(config).print(f);
         return this;
     }
 
@@ -89,7 +89,7 @@ public class LocalMysqlConfigService {
         String name = getName();
         NPath f = getServerConfigPath();
         if (f.exists()) {
-            config = NElements.of(session).json().parse(f, LocalMysqlConfig.class);
+            config = NElements.of().json().parse(f, LocalMysqlConfig.class);
             return this;
         } else if ("default".equals(name)) {
             //auto create default config
@@ -97,7 +97,7 @@ public class LocalMysqlConfigService {
             saveConfig();
             return this;
         }
-        throw new NIllegalArgumentException(session, NMsg.ofC("no such mysql config : %s",name));
+        throw new NIllegalArgumentException(NMsg.ofC("no such mysql config : %s",name));
     }
 
     public LocalMysqlConfigService removeConfig() {
@@ -106,7 +106,7 @@ public class LocalMysqlConfigService {
     }
 
     public LocalMysqlConfigService write(PrintStream out) {
-        NElements.of(session).json().setValue(getConfig()).setNtf(false).print(out);
+        NElements.of().json().setValue(getConfig()).setNtf(false).print(out);
         return this;
     }
 
@@ -123,7 +123,7 @@ public class LocalMysqlConfigService {
                 case OPEN_OR_NULL:
                     return null;
                 case OPEN_OR_ERROR:
-                    throw new NIllegalArgumentException(session, NMsg.ofC("local instance not found:%s@%s" ,dbName, getName()));
+                    throw new NIllegalArgumentException(NMsg.ofC("local instance not found:%s@%s" ,dbName, getName()));
                 case CREATE_OR_ERROR:
                 case OPEN_OR_CREATE: {
                     a = new LocalMysqlDatabaseConfig();
@@ -131,13 +131,13 @@ public class LocalMysqlConfigService {
                     return new LocalMysqlDatabaseConfigService(dbName, a, this);
                 }
                 default: {
-                    throw new NIllegalArgumentException(session, NMsg.ofPlain("unexpected error"));
+                    throw new NIllegalArgumentException(NMsg.ofPlain("unexpected error"));
                 }
             }
         }
         switch (action) {
             case CREATE_OR_ERROR: {
-                throw new NIllegalArgumentException(session, NMsg.ofC("local instance not found:%s@%s",dbName,getName()));
+                throw new NIllegalArgumentException(NMsg.ofC("local instance not found:%s@%s",dbName,getName()));
             }
             case OPEN_OR_ERROR:
             case OPEN_OR_NULL:
@@ -145,7 +145,7 @@ public class LocalMysqlConfigService {
                 return new LocalMysqlDatabaseConfigService(dbName, a, this);
             }
             default: {
-                throw new NIllegalArgumentException(session, NMsg.ofPlain("unexpected error"));
+                throw new NIllegalArgumentException(NMsg.ofPlain("unexpected error"));
             }
         }
     }

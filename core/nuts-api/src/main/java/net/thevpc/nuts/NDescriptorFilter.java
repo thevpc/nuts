@@ -38,21 +38,19 @@ public interface NDescriptorFilter extends NArtifactFilter {
      * return true if descriptor is accepted
      *
      * @param descriptor descriptor
-     * @param session    session
      * @return true if descriptor is accepted
      */
-    boolean acceptDescriptor(NDescriptor descriptor, NSession session);
+    boolean acceptDescriptor(NDescriptor descriptor);
 
     /**
      * default implementation of {@link NArtifactFilter}
      *
-     * @param sid     search id
-     * @param session session
+     * @param sid search id
      * @return true if accepted
      */
     @Override
-    default boolean acceptSearchId(NSearchId sid, NSession session) {
-        return acceptDescriptor(sid.getDescriptor(session), session);
+    default boolean acceptSearchId(NSearchId sid) {
+        return acceptDescriptor(sid.getDescriptor());
     }
 
     NDescriptorFilter or(NDescriptorFilter other);

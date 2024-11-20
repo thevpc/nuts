@@ -14,29 +14,30 @@ import java.io.IOException;
 import java.util.logging.Level;
 
 public abstract class NIdPathIteratorBase implements NIdPathIteratorModel {
-
-    public NId validate(NId id, NDescriptor t, NPath pathname, NPath rootPath, NIdFilter filter, NRepository repository, NSession session) throws IOException {
+    public abstract NWorkspace getWorkspace();
+    public NId validate(NId id, NDescriptor t, NPath pathname, NPath rootPath, NIdFilter filter, NRepository repository) throws IOException {
+        NSession session = getWorkspace().currentSession();
         if (t != null) {
             if (!CoreNUtils.isEffectiveId(t.getId())) {
                 NDescriptor nutsDescriptor = null;
                 try {
-                    nutsDescriptor = NWorkspaceExt.of(session.getWorkspace()).resolveEffectiveDescriptor(t, session);
+                    nutsDescriptor = NWorkspaceExt.of(session.getWorkspace()).resolveEffectiveDescriptor(t);
                 } catch (Exception ex) {
-                    NLogOp.of(NIdPathIteratorBase.class,session).level(Level.FINE).error(ex).log(
+                    NLogOp.of(NIdPathIteratorBase.class).level(Level.FINE).error(ex).log(
                             NMsg.ofJ("error resolving effective descriptor for {0} in url {1} : {2}", t.getId(),
                                     pathname,
                                     ex));//e.printStackTrace();
                 }
                 t = nutsDescriptor;
             }
-            if ((filter == null || filter.acceptSearchId(new NSearchIdByDescriptor(t), session))) {
+            if ((filter == null || filter.acceptSearchId(new NSearchIdByDescriptor(t)))) {
                 NId nutsId = t.getId().builder().setRepository(repository.getName()).build();
 //                        nutsId = nutsId.setAlternative(t.getAlternative());
                 return nutsId;
             }
         }
         if (id != null) {
-            if ((filter == null || filter.acceptSearchId(new NSearchIdById(id), session))) {
+            if ((filter == null || filter.acceptSearchId(new NSearchIdById(id)))) {
                 return id;
             }
         }
@@ -44,17 +45,18 @@ public abstract class NIdPathIteratorBase implements NIdPathIteratorModel {
     }
 
     @Override
-    public NId parseId(NPath pathname, NPath rootPath, NIdFilter filter, NRepository repository, NSession session) throws IOException {
+    public NId parseId(NPath pathname, NPath rootPath, NIdFilter filter, NRepository repository) throws IOException {
         NDescriptor t = null;
+        NSession session = getWorkspace().currentSession();
         try {
-            t = parseDescriptor(pathname, NInputStreamMonitor.of(session).setSource(pathname).create(),
-                    NFetchMode.LOCAL, repository, session, rootPath);
+            t = parseDescriptor(pathname, NInputStreamMonitor.of().setSource(pathname).create(),
+                    NFetchMode.LOCAL, repository, rootPath);
         } catch (Exception ex) {
-            NLogOp.of(NIdPathIteratorBase.class,session).level(Level.FINE).error(ex)
+            NLogOp.of(NIdPathIteratorBase.class).level(Level.FINE).error(ex)
                     .log(NMsg.ofJ("error parsing url : {0} : {1}", pathname, toString()));//e.printStackTrace();
         }
         if (t != null) {
-            return validate(null, t, pathname, rootPath, filter, repository, session);
+            return validate(null, t, pathname, rootPath, filter, repository);
         }
         return null;
     }

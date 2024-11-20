@@ -27,10 +27,10 @@ public class NElementMapperPrimitiveDoubleArray implements NElementMapper<double
     @Override
     public double[] createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
         NSession session = context.getSession();
-        NArrayElement earr = o.asArray().get(session);
+        NArrayElement earr = o.asArray().get();
         double[] arr = new double[earr.size()];
         for (int i = 0; i < arr.length; i++) {
-            arr[i] = (double) context.elementToObject(earr.get(i).get(session), double.class);
+            arr[i] = (double) context.elementToObject(earr.get(i).get(), double.class);
         }
         return arr;
     }

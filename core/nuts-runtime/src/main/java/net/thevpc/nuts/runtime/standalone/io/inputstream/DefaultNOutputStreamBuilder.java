@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.inputstream;
 
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.io.NContentMetadata;
 import net.thevpc.nuts.io.NOutputStreamBuilder;
 import net.thevpc.nuts.runtime.standalone.io.printstream.OutputStreamExt;
@@ -9,14 +10,14 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import java.io.OutputStream;
 
 public class DefaultNOutputStreamBuilder implements NOutputStreamBuilder {
-    private NSession session;
+    private NWorkspace workspace;
     private OutputStream base;
     private NContentMetadata metadata;
     private boolean closeBase = true;
     private Runnable closeAction;
 
-    public DefaultNOutputStreamBuilder(NSession session) {
-        this.session = session;
+    public DefaultNOutputStreamBuilder(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
     @Override
@@ -66,10 +67,10 @@ public class DefaultNOutputStreamBuilder implements NOutputStreamBuilder {
     @Override
     public OutputStream createOutputStream() {
         if(base==null){
-            return NWorkspaceExt.of(session).getModel().bootModel.nullOutputStream();
+            return NWorkspaceExt.of(workspace).getModel().bootModel.nullOutputStream();
         }
         OutputStreamExt o = new OutputStreamExt(
-                base, metadata, closeBase, closeAction, session
+                base, metadata, closeBase, closeAction, workspace
         );
         return o;
     }

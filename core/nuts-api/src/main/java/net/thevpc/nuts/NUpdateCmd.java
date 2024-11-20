@@ -37,8 +37,8 @@ import java.util.List;
  * @since 0.5.4
  */
 public interface NUpdateCmd extends NWorkspaceCmd {
-    static NUpdateCmd of(NSession session) {
-        return NExtensions.of(session).createComponent(NUpdateCmd.class).get();
+    static NUpdateCmd of() {
+        return NExtensions.of().createComponent(NUpdateCmd.class).get();
     }
 
     NUpdateCmd removeId(NId id);
@@ -186,23 +186,6 @@ public interface NUpdateCmd extends NWorkspaceCmd {
     NUpdateCmd addScopes(NDependencyScope... scopes);
 
     NUpdateCmd clearScopes();
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
-    NUpdateCmd setSession(NSession session);
-
-    /**
-     * copy session
-     *
-     * @return {@code this} instance
-     */
-    @Override
-    NUpdateCmd copySession();
 
     /**
      * configure the current command with the given arguments. This is an

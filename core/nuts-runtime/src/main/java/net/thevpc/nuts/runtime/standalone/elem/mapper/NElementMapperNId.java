@@ -13,7 +13,7 @@ public class NElementMapperNId implements NElementMapper<NId> {
     @Override
     public Object destruct(NId o, Type typeOfSrc, NElementFactoryContext context) {
         if (context.isNtf()) {
-            return o.formatter(context.getSession()).setNtf(true).format();
+            return o.formatter().setNtf(true).format();
         } else {
             return o.toString();
         }
@@ -26,7 +26,7 @@ public class NElementMapperNId implements NElementMapper<NId> {
 //                NutsText n = ws.text().toText(ws.id().formatter(o).setNtf(true).format());
 //                return ws.elem().forPrimitive().buildNutsString(n);
             NSession session = context.getSession();
-            return context.elem().ofString(o.formatter(session).setNtf(true).format().toString());
+            return context.elem().ofString(o.formatter().setNtf(true).format().toString());
         } else {
             return context.defaultObjectToElement(o.toString(), null);
         }
@@ -35,7 +35,7 @@ public class NElementMapperNId implements NElementMapper<NId> {
     @Override
     public NId createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
         NSession session = context.getSession();
-        return NId.of(o.asPrimitive().flatMap(NLiteral::asString).get(session)).get(session);
+        return NId.of(o.asPrimitive().flatMap(NLiteral::asString).get()).get();
     }
 
 }

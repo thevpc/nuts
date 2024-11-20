@@ -19,8 +19,8 @@ import net.thevpc.nuts.text.NString;
  */
 public class DefaultSearchFormatPlain extends DefaultSearchFormatBase {
 
-    public DefaultSearchFormatPlain(NSession session, NPrintStream writer, NFetchDisplayOptions options) {
-        super(session, writer, NContentType.PLAIN, options);
+    public DefaultSearchFormatPlain(NWorkspace workspace, NPrintStream writer, NFetchDisplayOptions options) {
+        super(workspace, writer, NContentType.PLAIN, options);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class DefaultSearchFormatPlain extends DefaultSearchFormatBase {
 
     @Override
     public void next(Object object, long index) {
-        NIdFormatHelper fid = NIdFormatHelper.of(object, getSession());
+        NIdFormatHelper fid = NIdFormatHelper.of(object);
         if (fid != null) {
             formatElement(fid, index);
         } else {

@@ -18,7 +18,7 @@ public class DefaultNScheduler implements NScheduler {
 
     @Override
     public ExecutorService executorService() {
-        return NWorkspaceExt.of(session).getModel().configModel.executorService(session);
+        return NWorkspaceExt.of(session).getModel().configModel.executorService();
     }
 
     @Override

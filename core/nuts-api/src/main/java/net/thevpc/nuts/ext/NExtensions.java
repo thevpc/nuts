@@ -26,13 +26,9 @@
  */
 package net.thevpc.nuts.ext;
 
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NSessionProvider;
-import net.thevpc.nuts.NWorkspaceOptions;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NServiceLoader;
 import net.thevpc.nuts.spi.NComponent;
-import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
@@ -43,9 +39,9 @@ import java.util.Set;
  * @app.category Extensions
  * @since 0.5.4
  */
-public interface NExtensions extends NComponent , NSessionProvider {
-    static NExtensions of(NSession session) {
-        return NAssert.requireSession(session).extensions();
+public interface NExtensions extends NComponent  {
+    static NExtensions of() {
+        return NWorkspace.of().get().extensions();
     }
 
     Set<NId> getCompanionIds();
@@ -117,8 +113,6 @@ public interface NExtensions extends NComponent , NSessionProvider {
      * @return extension ids
      */
     List<NId> getConfigExtensions();
-
-    NExtensions setSession(NSession session);
 
     boolean isExcludedExtension(String extensionId, NWorkspaceOptions options);
 

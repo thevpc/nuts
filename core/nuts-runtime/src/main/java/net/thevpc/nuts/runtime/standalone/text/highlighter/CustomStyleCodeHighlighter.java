@@ -8,11 +8,11 @@ import net.thevpc.nuts.text.NTexts;
 
 public class CustomStyleCodeHighlighter implements NCodeHighlighter {
 
-    private NSession session;
+    private NWorkspace workspace;
     private NTextStyle style;
 
-    public CustomStyleCodeHighlighter(NTextStyle style, NSession session) {
-        this.session = session;
+    public CustomStyleCodeHighlighter(NTextStyle style, NWorkspace workspace) {
+        this.workspace = workspace;
         this.style = style;
     }
 
@@ -22,12 +22,12 @@ public class CustomStyleCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText stringToText(String text, NTexts txt, NSession session) {
+    public NText stringToText(String text, NTexts txt) {
         return txt.ofStyled(text, style);
     }
 
     @Override
-    public NText tokenToText(String text, String nodeType, NTexts txt, NSession session) {
+    public NText tokenToText(String text, String nodeType, NTexts txt) {
         return txt.ofPlain(text);
     }
 

@@ -27,6 +27,7 @@
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 
 import java.util.Objects;
 
@@ -40,8 +41,8 @@ public abstract class NTextSpecialBase extends AbstractNText {
     private final String separator;
     private final String end;
 
-    public NTextSpecialBase(NSession session, String start, String kind, String separator, String end) {
-        super(session);
+    public NTextSpecialBase(NWorkspace workspace, String start, String kind, String separator, String end) {
+        super(workspace);
         this.start=start==null?"":start;
         this.end=end==null?"":end;
         this.kind = kind==null?"":kind;

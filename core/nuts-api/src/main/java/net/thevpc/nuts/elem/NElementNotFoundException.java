@@ -27,7 +27,6 @@ package net.thevpc.nuts.elem;
 
 import net.thevpc.nuts.NException;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 
 /**
  * Generic exception to be thrown when an element is not found.
@@ -43,12 +42,11 @@ public class NElementNotFoundException extends NException {
      * The cause is not initialized, and may subsequently be initialized by a
      * call to {@link #initCause}.
      *
-     * @param session the workspace of this Nuts Exception
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public NElementNotFoundException(NSession session, NMsg message) {
-        super(session, message);
+    public NElementNotFoundException(NMsg message) {
+        super(message);
     }
 
     /**
@@ -65,10 +63,9 @@ public class NElementNotFoundException extends NException {
      *                {@link #getCause()} method).  (A {@code null} value is
      *                permitted, and indicates that the cause is nonexistent or
      *                unknown.)
-     * @param session the workspace of this Nuts Exception
      */
-    public NElementNotFoundException(NSession session, NMsg message, Throwable cause) {
-        super(session, message, cause);
+    public NElementNotFoundException(NMsg message, Throwable cause) {
+        super(message, cause);
     }
 
     /**
@@ -83,9 +80,8 @@ public class NElementNotFoundException extends NException {
      *                           or disabled
      * @param writableStackTrace whether or not the stack trace should
      *                           be writable
-     * @param session            the workspace of this Nuts Exception
      */
-    public NElementNotFoundException(NSession session, NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(session, message, cause, enableSuppression, writableStackTrace);
+    public NElementNotFoundException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
     }
 }

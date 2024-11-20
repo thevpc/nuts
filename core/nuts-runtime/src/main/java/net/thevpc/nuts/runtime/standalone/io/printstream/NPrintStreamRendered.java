@@ -12,10 +12,10 @@ public abstract class NPrintStreamRendered extends NPrintStreamBase {
     protected FormatOutputStreamSupport support;
     protected NPrintStreamBase base;
 
-    public NPrintStreamRendered(NPrintStreamBase base, NSession session, NTerminalMode mode, Bindings bindings) {
-        super(true, mode, session, bindings, base.getTerminal());
+    public NPrintStreamRendered(NPrintStreamBase base, NWorkspace workspace, NTerminalMode mode, Bindings bindings) {
+        super(true, mode, workspace, bindings, base.getTerminal());
         this.base = base;
-        this.support = new FormatOutputStreamSupport(base, session, base.getTerminal(),
+        this.support = new FormatOutputStreamSupport(base, workspace, base.getTerminal(),
                 (mode != NTerminalMode.ANSI && mode != NTerminalMode.FORMATTED)
         );
     }
@@ -91,10 +91,10 @@ public abstract class NPrintStreamRendered extends NPrintStreamBase {
     protected NPrintStream convertImpl(NTerminalMode other) {
         switch (other) {
             case FILTERED: {
-                return new NPrintStreamFiltered(base, getSession(), bindings);
+                return new NPrintStreamFiltered(base, workspace, bindings);
             }
         }
-        throw new NIllegalArgumentException(base.getSession(), NMsg.ofC("unsupported %s -> %s", getTerminalMode(), other));
+        throw new NIllegalArgumentException(NMsg.ofC("unsupported %s -> %s", getTerminalMode(), other));
     }
 
 }

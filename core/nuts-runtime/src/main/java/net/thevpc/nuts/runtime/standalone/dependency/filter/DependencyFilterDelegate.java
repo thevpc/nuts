@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
-import net.thevpc.nuts.NDependency;
-import net.thevpc.nuts.NDependencyFilter;
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NFilter;
@@ -12,14 +9,14 @@ import net.thevpc.nuts.util.NFilterOp;
 import java.util.List;
 
 public abstract class DependencyFilterDelegate extends AbstractDependencyFilter{
-    public DependencyFilterDelegate(NSession session) {
-        super(session, NFilterOp.CUSTOM);
+    public DependencyFilterDelegate(NWorkspace workspace) {
+        super(workspace, NFilterOp.CUSTOM);
     }
     public abstract NDependencyFilter dependencyFilter();
 
     @Override
-    public boolean acceptDependency(NId from, NDependency dependency, NSession session) {
-        return dependencyFilter().acceptDependency(from, dependency, session);
+    public boolean acceptDependency(NId from, NDependency dependency) {
+        return dependencyFilter().acceptDependency(from, dependency);
     }
 
     @Override
@@ -35,11 +32,6 @@ public abstract class DependencyFilterDelegate extends AbstractDependencyFilter{
     @Override
     public NFilterOp getFilterOp() {
         return dependencyFilter().getFilterOp();
-    }
-
-    @Override
-    public NSession getSession() {
-        return dependencyFilter().getSession();
     }
 
     @Override
@@ -63,7 +55,7 @@ public abstract class DependencyFilterDelegate extends AbstractDependencyFilter{
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return dependencyFilter().describe(session);
+    public NElement describe() {
+        return dependencyFilter().describe();
     }
 }

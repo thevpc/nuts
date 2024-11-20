@@ -26,7 +26,7 @@ import java.util.jar.Manifest;
 public class JavaJarUtils {
 
 
-    public static NVersion[] parseJarClassVersions(InputStream jarStream, NSession session) {
+    public static NVersion[] parseJarClassVersions(InputStream jarStream) {
         if (!(jarStream instanceof BufferedInputStream)) {
             jarStream = new BufferedInputStream(jarStream);
         }
@@ -36,20 +36,20 @@ public class JavaJarUtils {
                 JavaClassByteCode.Visitor cl = new JavaClassByteCode.Visitor() {
                     @Override
                     public NVisitResult visitVersion(int major, int minor) {
-                        classes.add(JavaClassUtils.classVersionToSourceVersion(major, minor, session));
+                        classes.add(JavaClassUtils.classVersionToSourceVersion(major, minor));
                         return NVisitResult.TERMINATE;
                     }
 
                 };
-                JavaClassByteCode classReader = new JavaClassByteCode(new BufferedInputStream(inputStream), cl, session);
+                JavaClassByteCode classReader = new JavaClassByteCode(new BufferedInputStream(inputStream), cl, NWorkspace.of().get());
             }
             return NVisitResult.CONTINUE;
-        }, session);
-        return classes.stream().map(x -> NVersion.of(x).get(session)).toArray(NVersion[]::new);
+        });
+        return classes.stream().map(x -> NVersion.of(x).get()).toArray(NVersion[]::new);
     }
 
-    public static NVersion parseJarClassVersion(InputStream jarStream, NSession session) {
-        NVersion[] all = parseJarClassVersions(jarStream, session);
+    public static NVersion parseJarClassVersion(InputStream jarStream) {
+        NVersion[] all = parseJarClassVersions(jarStream);
         if (all.length == 0) {
             return null;
         }
@@ -62,14 +62,14 @@ public class JavaJarUtils {
         return nb;
     }
 
-    public static List<NExecutionEntry> parseJarExecutionEntries(InputStream jarStream, NSession session) {
+    public static List<NExecutionEntry> parseJarExecutionEntries(InputStream jarStream) {
         if (!(jarStream instanceof BufferedInputStream)) {
             jarStream = new BufferedInputStream(jarStream);
         }
         final LinkedHashSet<NExecutionEntry> classes = new LinkedHashSet<>();
         ZipUtils.visitZipStream(jarStream, (path, inputStream) -> {
             if (path.endsWith(".class")) {
-                NExecutionEntry mainClass = JavaClassUtils.parseClassExecutionEntry(inputStream, path, session);
+                NExecutionEntry mainClass = JavaClassUtils.parseClassExecutionEntry(inputStream, path);
                 if (mainClass != null) {
                     classes.add(mainClass);
                 }
@@ -84,7 +84,7 @@ public class JavaJarUtils {
                     }
                 }
             } else if (path.startsWith("META-INF/maven/") && path.endsWith("/pom.xml")) {
-                NPom pom = new NPomXmlParser(session).parse(inputStream, session);
+                NPom pom = new NPomXmlParser().parse(inputStream);
                 final Element ee = pom.getXml().getDocumentElement();
                 if (pom.getParent() != null && pom.getParent().getArtifactId().equals("spring-boot-starter-parent")) {
                     String springStartClass = NStringUtils.trim(pom.getProperties().get("start-class"));
@@ -98,7 +98,7 @@ public class JavaJarUtils {
                         if (XmlUtils.isNode(e, "build", "plugins", "plugin", "configuration", "archive", "manifest", "mainClass")) {
                             //              configuration   execution       executions      plugin
                             Node plugin = e.getParentNode().getParentNode().getParentNode().getParentNode();
-                            NId pluginId = parseMavenPluginElement(plugin, session);
+                            NId pluginId = parseMavenPluginElement(plugin);
                             if (
                                     pluginId.getShortName().equals("org.apache.maven.plugins:maven-assembly-plugin")
                                             || pluginId.getShortName().equals("org.apache.maven.plugins:maven-jar-plugin")
@@ -112,7 +112,7 @@ public class JavaJarUtils {
                         } else if (XmlUtils.isNode(e, "build", "plugins", "plugin", "executions", "execution", "configuration", "mainClass")) {
                             //              configuration   execution       executions      plugin
                             Node plugin = e.getParentNode().getParentNode().getParentNode().getParentNode();
-                            NId pluginId = parseMavenPluginElement(plugin, session);
+                            NId pluginId = parseMavenPluginElement(plugin);
                             if (
                                     pluginId.getArtifactId().equals("onejar-maven-plugin")
                                             || pluginId.getShortName().equals("org.springframework.boot:spring-boot-maven-plugin")
@@ -129,7 +129,7 @@ public class JavaJarUtils {
                         } else if (XmlUtils.isNode(e, "build", "plugins", "plugin", "configuration", "mainClass")) {
                             //              configuration   execution       executions      plugin
                             Node plugin = e.getParentNode().getParentNode();
-                            NId pluginId = parseMavenPluginElement(plugin, session);
+                            NId pluginId = parseMavenPluginElement(plugin);
                             if (pluginId.getShortName().equals("org.springframework.boot:spring-boot-maven-plugin")) {
                                 String s = NStringUtils.trim(e.getTextContent());
                                 if (s.length() > 0) {
@@ -140,7 +140,7 @@ public class JavaJarUtils {
                         } else if (XmlUtils.isNode(e, "build", "plugins", "plugin", "executions", "execution", "configuration", "transformers", "transformer", "mainClass")) {
                             //              configuration   execution       executions      plugin
                             Node plugin = e.getParentNode().getParentNode().getParentNode().getParentNode().getParentNode().getParentNode();
-                            NId pluginId = parseMavenPluginElement(plugin, session);
+                            NId pluginId = parseMavenPluginElement(plugin);
                             if (
                                     pluginId.getShortName().equals("org.apache.maven.plugins:maven-shade-plugin")
                             ) {
@@ -156,7 +156,7 @@ public class JavaJarUtils {
                     return true;
                 });
             } else if (path.startsWith("META-INF/nuts/") && path.endsWith("/nuts.json") || path.equals("META-INF/" + NConstants.Files.DESCRIPTOR_FILE_NAME)) {
-                NDescriptor descriptor = NDescriptorParser.of(session).parse(inputStream).get(session);
+                NDescriptor descriptor = NDescriptorParser.of().parse(inputStream).get();
                 NArtifactCall executor = descriptor.getExecutor();
                 if (executor != null) {
                     List<String> arguments = executor.getArguments();
@@ -176,7 +176,7 @@ public class JavaJarUtils {
                 }
                 NDescriptorProperty mc = descriptor.getProperty("nuts.mainClass").orNull();
                 if (mc != null) {
-                    String s = NStringUtils.trim(mc.getValue().asString().get(session));
+                    String s = NStringUtils.trim(mc.getValue().asString().get());
                     if (s.length() > 0) {
                         s = resolveMainClassString(s, descriptor);
                         classes.add(new DefaultNExecutionEntry(s, true, false));
@@ -184,7 +184,7 @@ public class JavaJarUtils {
                 }
             }
             return NVisitResult.CONTINUE;
-        }, session);
+        });
 
         Map<String, NExecutionEntry> found = new LinkedHashMap<>();
         for (NExecutionEntry entry : classes) {
@@ -242,7 +242,7 @@ public class JavaJarUtils {
         return nameOrVar;
     }
 
-    public static NId parseMavenPluginElement(Node plugin, NSession session) {
+    public static NId parseMavenPluginElement(Node plugin) {
         NIdBuilder ib = NIdBuilder.of();
         for (Node node : XmlUtils.iterable(plugin)) {
             Element ne = XmlUtils.asElement(node);
@@ -266,23 +266,23 @@ public class JavaJarUtils {
         return ib.build();
     }
 
-    public static NVersion parseJarClassVersion(NPath path, NSession session) {
+    public static NVersion parseJarClassVersion(NPath path) {
         try (InputStream is = path.getInputStream()) {
-            return parseJarClassVersion(is, session);
+            return parseJarClassVersion(is);
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
-    public static String parseDefaultModuleName(NPath jarStream, NSession session) {
+    public static String parseDefaultModuleName(NPath jarStream) {
         try (InputStream is = jarStream.getInputStream()) {
-            return parseDefaultModuleName(is, session);
+            return parseDefaultModuleName(is);
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
-    public static String parseDefaultModuleName(InputStream jarStream, NSession session) {
+    public static String parseDefaultModuleName(InputStream jarStream) {
         NRef<String> automaticModuleName = new NRef<>();
         ZipUtils.visitZipStream(jarStream, (path, inputStream) -> {
             if ("META-INF/MANIFEST.MF".equals(path)) {
@@ -302,19 +302,19 @@ public class JavaJarUtils {
                 return NVisitResult.TERMINATE;
             }
             return NVisitResult.CONTINUE;
-        }, session);
+        });
         return automaticModuleName.get();
     }
 
-    public static JavaClassByteCode.ModuleInfo parseModuleInfo(NPath jar, NSession session) {
+    public static JavaClassByteCode.ModuleInfo parseModuleInfo(NPath jar, NWorkspace workspace) {
         try (InputStream is = jar.getInputStream()) {
-            return parseModuleInfo(is, session);
+            return parseModuleInfo(is, workspace);
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
-    public static JavaClassByteCode.ModuleInfo parseModuleInfo(InputStream jarStream, NSession session) {
+    public static JavaClassByteCode.ModuleInfo parseModuleInfo(InputStream jarStream, NWorkspace workspace) {
         if (!(jarStream instanceof BufferedInputStream)) {
             jarStream = new BufferedInputStream(jarStream);
         }
@@ -327,11 +327,11 @@ public class JavaJarUtils {
                         ref.set(mi);
                         return NVisitResult.CONTINUE;
                     }
-                }, session);
+                }, workspace);
                 return NVisitResult.TERMINATE;
             }
             return NVisitResult.CONTINUE;
-        }, session);
+        });
         return ref.get();
     }
 }

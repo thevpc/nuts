@@ -19,7 +19,7 @@ public class DefaultNRepositoryDB implements NRepositoryDB {
 
     private DefaultNRepositoryDB(NSession session) {
         reg(false, "system", "nuts@" + NPath.of(
-                NPlatformHome.SYSTEM.getWorkspaceStore(NStoreType.LIB, NConstants.Names.DEFAULT_WORKSPACE_NAME), session
+                NPlatformHome.SYSTEM.getWorkspaceStore(NStoreType.LIB, NConstants.Names.DEFAULT_WORKSPACE_NAME)
         ).resolve(NConstants.Folders.ID).toString());
         reg(false, "maven", "maven");
         reg(false, "maven-central", "maven@https://repo.maven.apache.org/maven2");

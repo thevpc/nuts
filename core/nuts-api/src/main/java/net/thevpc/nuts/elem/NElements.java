@@ -25,7 +25,6 @@
  */
 package net.thevpc.nuts.elem;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.format.NContentType;
@@ -55,8 +54,8 @@ import java.util.function.Predicate;
 public interface NElements extends NContentTypeFormat {
 
 
-    static NElements of(NSession session) {
-       return NExtensions.of(session).createComponent(NElements.class).get();
+    static NElements of() {
+       return NExtensions.of().createComponent(NElements.class).get();
     }
 
     /**
@@ -97,15 +96,6 @@ public interface NElements extends NContentTypeFormat {
      */
     @Override
     NElements setValue(Object value);
-
-    /**
-     * set current session.
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
-    NElements setSession(NSession session);
 
     /**
      * configure the current command with the given arguments. This is an
@@ -391,11 +381,11 @@ public interface NElements extends NContentTypeFormat {
 
     NPrimitiveElement ofNumber(Number value);
 
-    Predicate<Class> getIndestructibleObjects();
+    Predicate<Class<?>> getIndestructibleObjects();
 
     NElements setIndestructibleFormat();
 
-    NElements setIndestructibleObjects(Predicate<Class> destructTypeFilter);
+    NElements setIndestructibleObjects(Predicate<Class<?>> destructTypeFilter);
 
     NIterableFormat iter(NPrintStream out);
 

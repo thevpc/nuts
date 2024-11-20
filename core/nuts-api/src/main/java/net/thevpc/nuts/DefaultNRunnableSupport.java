@@ -9,7 +9,7 @@ import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.util.NMsg;
 
 import java.util.NoSuchElementException;
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Default implementation of NutsSupported
@@ -19,9 +19,9 @@ import java.util.function.Function;
 public class DefaultNRunnableSupport implements NRunnableSupport {
     private final Runnable value;
     private final int supportLevel;
-    private final Function<NSession, NMsg> emptyMessage;
+    private final Supplier<NMsg> emptyMessage;
 
-    public DefaultNRunnableSupport(Runnable value, int supportLevel, Function<NSession, NMsg> emptyMessage) {
+    public DefaultNRunnableSupport(Runnable value, int supportLevel, Supplier<NMsg> emptyMessage) {
         this.value = value;
         if (this.value == null && supportLevel > 0) {
             throw new IllegalArgumentException("null runnable requires invalid support");
@@ -29,19 +29,15 @@ public class DefaultNRunnableSupport implements NRunnableSupport {
             throw new IllegalArgumentException("non null runnable requires valid support");
         }
         this.supportLevel = supportLevel;
-        this.emptyMessage = emptyMessage == null ? session -> NMsg.ofInvalidValue() : emptyMessage;
+        this.emptyMessage = emptyMessage == null ? () -> NMsg.ofInvalidValue() : emptyMessage;
     }
 
-    public void run(NSession session) {
+    public void run() {
         if (isValid()) {
             value.run();
         } else {
-            NMsg nMsg = NApiUtilsRPI.resolveValidErrorMessage(() -> emptyMessage.apply(session));
-            if (session == null) {
-                throw new NoSuchElementException(nMsg.toString());
-            } else {
-                throw new NNoSuchElementException(session, nMsg);
-            }
+            NMsg nMsg = NApiUtilsRPI.resolveValidErrorMessage(() -> emptyMessage.get());
+            throw new NNoSuchElementException(nMsg);
         }
     }
 

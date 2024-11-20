@@ -27,10 +27,10 @@ public class NAssert {
         return session;
     }
 
-    private static NMsg createMessage(Supplier<NMsg> msg, NSession session) {
-        requireNonNull(msg, "message supplier", session);
+    private static NMsg createMessage(Supplier<NMsg> msg) {
+        requireNonNull(msg, "message supplier");
         NMsg m = msg.get();
-        requireNonNull(m, "message", session);
+        requireNonNull(m, "message");
         return m;
     }
 
@@ -38,127 +38,82 @@ public class NAssert {
         return NBlankable.isBlank(name) ? "value" : name;
     }
 
-    public static <T> T requireNonNull(T object, Supplier<NMsg> msg, NSession session) {
+    public static <T> T requireNonNull(T object, Supplier<NMsg> msg) {
         if (object == null) {
-            throw creatIllegalArgumentException(session, createMessage(msg, null));
+            throw creatIllegalArgumentException(createMessage(msg));
         }
         return object;
     }
 
 
-    public static <T> T requireNonNull(T object, String name, NSession session) {
-        return requireNonNull(object, () -> NMsg.ofC("%s should not be null", createName(name)), session);
+    public static <T> T requireNonNull(T object, String name) {
+        return requireNonNull(object, () -> NMsg.ofC("%s should not be null", createName(name)));
     }
 
-    public static <T> T requireNonNull(T object, NSession session) {
-        return requireNonNull(object, "value", session);
+    public static <T> T requireNonNull(T object) {
+        return requireNonNull(object, "value");
     }
 
-    public static void requireNull(Object object, NSession session) {
-        requireNull(object, "value", session);
-    }
 
-    public static void requireNull(Object object, String name, NSession session) {
+    public static void requireNull(Object object, String name) {
         if (object != null) {
-            throw creatIllegalArgumentException(session, NMsg.ofC("%s must be null", createName(name)));
+            throw creatIllegalArgumentException(NMsg.ofC("%s must be null", createName(name)));
         }
     }
 
-    public static void requireNull(Object object, Supplier<NMsg> message, NSession session) {
+    public static void requireNull(Object object, Supplier<NMsg> message) {
         if (object != null) {
-            throw creatIllegalArgumentException(session, createMessage(message, session));
+            throw creatIllegalArgumentException(createMessage(message));
         }
     }
 
 
-    public static <T> T requireNonBlank(T object, String name, NSession session) {
+    public static <T> T requireNonBlank(T object, String name) {
         if (NBlankable.isBlank(object)) {
-            throw creatIllegalArgumentException(session, NMsg.ofC("%s should not be blank", createName(name)));
+            throw creatIllegalArgumentException(NMsg.ofC("%s should not be blank", createName(name)));
         }
         return object;
     }
 
 
-    public static <T> T requireNonBlank(T object, Supplier<NMsg> msg, NSession session) {
+    public static <T> T requireNonBlank(T object, Supplier<NMsg> msg) {
         if (NBlankable.isBlank(object)) {
-            throw creatIllegalArgumentException(session, createMessage(msg, session));
+            throw creatIllegalArgumentException(createMessage(msg));
         }
         return object;
     }
 
-    private static RuntimeException creatIllegalArgumentException(NSession session, NMsg m) {
-        if (session != null) {
-            throw new NIllegalArgumentException(session, m);
-        } else {
-            throw new IllegalArgumentException(m.toString());
-        }
+    private static RuntimeException creatIllegalArgumentException(NMsg m) {
+        throw new NIllegalArgumentException(m);
     }
 
     // NO SESSION
 
 
     public static void requireNull(Object object) {
-        requireNull(object, (String) null, null);
-    }
-
-    public static void requireNull(Object object, String name) {
-        requireNull(object, name, null);
-    }
-
-    public static void requireNull(Object object, Supplier<NMsg> message) {
-        requireNull(object, message, null);
-    }
-
-    public static <T> T requireNonNull(T object, String name) {
-        return requireNonNull(object, name, null);
-    }
-
-    public static <T> T requireNonNull(T object, Supplier<NMsg> msg) {
-        return requireNonNull(object, msg, null);
-    }
-
-    public static <T> T requireNonBlank(T object, String name) {
-        return requireNonBlank(object, name, null);
-    }
-
-    public static <T> T requireNonBlank(T object, Supplier<NMsg> msg) {
-        return requireNonBlank(object, msg, null);
-    }
-
-    public static boolean requireTrue(boolean value, Supplier<NMsg> msg) {
-        return requireTrue(value, msg, null);
+        requireNull(object, (String) null);
     }
 
     public static boolean requireTrue(boolean value, String name) {
-        return requireTrue(value, name, null);
+        return requireTrue(value, () -> NMsg.ofC("should be %s", createName(name)));
     }
 
-    public static <T> T requireTrue(T value, String name, NSession session) {
-        return requireNonNull(value, () -> NMsg.ofC("should be %s", createName(name)), session);
-    }
 
-    public static boolean requireTrue(boolean object, Supplier<NMsg> msg, NSession session) {
+    public static boolean requireTrue(boolean object, Supplier<NMsg> msg) {
         if (!object) {
-            throw creatIllegalArgumentException(session, createMessage(msg, session));
+            throw creatIllegalArgumentException(createMessage(msg));
         }
         return object;
     }
 
-    public static boolean requireFalse(boolean value, Supplier<NMsg> msg) {
-        return requireFalse(value, msg, null);
-    }
 
     public static boolean requireFalse(boolean value, String name) {
-        return requireFalse(value, name, null);
+        return requireFalse(value, () -> NMsg.ofC("should not be %s", createName(name)));
     }
 
-    public static <T> T requireFalse(T value, String name, NSession session) {
-        return requireNonNull(value, () -> NMsg.ofC("should not be %s", createName(name)), session);
-    }
-
-    public static boolean requireFalse(boolean object, Supplier<NMsg> msg, NSession session) {
+    public static boolean requireFalse(boolean object, Supplier<NMsg> msg) {
         if (!object) {
-            throw creatIllegalArgumentException(session, createMessage(msg, session));
+            throw creatIllegalArgumentException(createMessage(msg));
         }
         return object;
     }

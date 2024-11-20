@@ -1,20 +1,18 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
-import net.thevpc.nuts.NSession;
-
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 public interface NanoDBIndex<K> {
-    void put(K k, long position, NSession session);
+    void put(K k, long position);
 
-    LongStream get(K k, NSession session);
+    LongStream get(K k);
 
-    void flush(NSession session) ;
+    void flush() ;
 
-    void load(NSession session);
+    void load();
 
-    void clear(NSession session);
+    void clear();
 
-    Stream<K> findAll(NSession session);
+    Stream<K> findAll();
 }

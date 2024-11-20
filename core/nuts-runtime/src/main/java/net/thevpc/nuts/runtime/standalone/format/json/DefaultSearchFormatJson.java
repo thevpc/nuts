@@ -27,28 +27,27 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
     NTexts txt;
     private NCodeHighlighter codeFormat;
 
-    public DefaultSearchFormatJson(NSession session, NPrintStream writer, NFetchDisplayOptions options) {
-        super(session, writer, NContentType.JSON, options);
-        txt = NTexts.of(session);
-        codeFormat = NTexts.of(session).getCodeHighlighter("json");
+    public DefaultSearchFormatJson(NWorkspace workspace, NPrintStream writer, NFetchDisplayOptions options) {
+        super(workspace, writer, NContentType.JSON, options);
+        txt = NTexts.of();
+        codeFormat = NTexts.of().getCodeHighlighter("json");
     }
 
     @Override
     public void start() {
-        getWriter().println(codeFormat.tokenToText("[", "separator", txt, getSession()));
+        getWriter().println(codeFormat.tokenToText("[", "separator", txt));
         getWriter().flush();
     }
 
     @Override
     public void complete(long count) {
-        getWriter().println(codeFormat.tokenToText("]", "separator", txt, getSession()));
+        getWriter().println(codeFormat.tokenToText("]", "separator", txt));
         getWriter().flush();
     }
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NSession session = getSession();
-        NArg aa = cmdLine.peek().get(session);
+        NArg aa = cmdLine.peek().get();
         if (aa == null) {
             return false;
         }
@@ -57,7 +56,7 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
         }
         switch(aa.key()) {
             case "--compact": {
-                cmdLine.withNextFlag((v, a, s) -> this.compact=v);
+                cmdLine.withNextFlag((v, a) -> this.compact=v);
                 return true;
             }
         }
@@ -71,12 +70,12 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
         }else{
             getWriter().print("  ");
         }
-        String json = NElements.of(getSession())
+        String json = NElements.of()
                 .json().setNtf(false).setValue(object).setCompact(isCompact())
                 .format()
                 .filteredText()
                 ;
-        NText ee = codeFormat.stringToText(json, txt, getSession());
+        NText ee = codeFormat.stringToText(json, txt);
         getWriter().println(ee);
         getWriter().flush();
     }

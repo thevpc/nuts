@@ -11,10 +11,10 @@ import net.thevpc.nuts.util.NStringUtils;
 public class NewLineParserStep extends ParserStep {
 
     StringBuilder start = new StringBuilder();
-    private NSession session;
-    public NewLineParserStep(char c, NSession session) {
+    private NWorkspace workspace;
+    public NewLineParserStep(char c, NWorkspace workspace) {
         start.append(c);
-        this.session=session;
+        this.workspace =workspace;
     }
 
     @Override
@@ -35,12 +35,12 @@ public class NewLineParserStep extends ParserStep {
 
     @Override
     public void appendChild(ParserStep tt) {
-        throw new NUnsupportedOperationException(session);
+        throw new NUnsupportedOperationException();
     }
 
     @Override
     public NText toText() {
-        DefaultNTexts factory0 = (DefaultNTexts) NTexts.of(session);
+        DefaultNTexts factory0 = (DefaultNTexts) NTexts.of();
         return factory0.ofPlain(start.toString());
     }
 

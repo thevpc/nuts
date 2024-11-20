@@ -51,15 +51,15 @@ public class LoginCommand extends NShellBuiltinDefault {
     protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        NArg a = cmdLine.peek().get(session);
+        NArg a = cmdLine.peek().get();
         if (!a.isOption()) {
             if (options.login == null) {
-                options.login = cmdLine.next(NArgName.of("username", session))
-                        .flatMap(NLiteral::asString).get(session);
+                options.login = cmdLine.next(NArgName.of("username"))
+                        .flatMap(NLiteral::asString).get();
                 return true;
             } else if (options.password == null) {
-                options.password = cmdLine.next(NArgName.of("password", session))
-                        .flatMap(NLiteral::asString).get(session).toCharArray();
+                options.password = cmdLine.next(NArgName.of("password"))
+                        .flatMap(NLiteral::asString).get().toCharArray();
                 return true;
             }
         }
@@ -73,10 +73,10 @@ public class LoginCommand extends NShellBuiltinDefault {
                 && (options.password == null
                 || NBlankable.isBlank(new String(options.password)))) {
             NSession session = context.getSession();
-            options.password = NAsk.of(session)
+            options.password = NAsk.of()
                     .forPassword(NMsg.ofPlain("Password:")).getValue();
         }
-        NWorkspaceSecurityManager.of(context.getSession()).login(options.login, options.password);
+        NWorkspaceSecurityManager.of().login(options.login, options.password);
     }
 
     private static class Options {

@@ -132,15 +132,6 @@ public interface NDeployRepositoryCmd extends NRepositoryCmd {
     NDeployRepositoryCmd setId(NId id);
 
     /**
-     * session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
-    NDeployRepositoryCmd setSession(NSession session);
-
-    /**
      * run deploy command
      *
      * @return {@code this} instance

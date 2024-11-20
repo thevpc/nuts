@@ -18,10 +18,10 @@ import net.thevpc.nuts.text.*;
 
 public class BashCodeHighlighter implements NCodeHighlighter {
 
-    private NWorkspace ws;
+    private NWorkspace workspace;
 
-    public BashCodeHighlighter(NSession session) {
-        this.ws = session.getWorkspace();
+    public BashCodeHighlighter(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
     @Override
@@ -62,7 +62,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText tokenToText(String text, String nodeType, NTexts txt, NSession session) {
+    public NText tokenToText(String text, String nodeType, NTexts txt) {
         return txt.ofPlain(text);
     }
 
@@ -176,7 +176,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
         if (ar.hasNext()) {
             sb2.append(ar.readChar());
         }
-        NTexts factory = NTexts.of(session);
+        NTexts factory = NTexts.of();
         return new NText[]{factory.ofStyled(sb2.toString(), NTextStyle.separator())};
     }
 
@@ -709,7 +709,8 @@ public class BashCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText stringToText(String text, NTexts txt, NSession session) {
+    public NText stringToText(String text, NTexts txt) {
+        NSession session=workspace.currentSession();
         List<NText> all = new ArrayList<>();
         BufferedReader reader = new BufferedReader(new StringReader(text));
         String line = null;
@@ -720,7 +721,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
                     break;
                 }
             } catch (IOException ex) {
-                throw new NIOException(session,ex);
+                throw new NIOException(ex);
             }
             if (first) {
                 first = false;
@@ -735,7 +736,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
     public NText next(StringReaderExt reader, boolean exitOnClosedCurlBrace, boolean exitOnClosedPar, boolean exitOnDblQuote, boolean exitOnAntiQuote, NTexts txt, NSession session) {
         boolean lineStart = true;
         List<NText> all = new ArrayList<>();
-        NTexts factory = NTexts.of(session);
+        NTexts factory = NTexts.of();
         boolean exit = false;
         while (!exit && reader.hasNext()) {
             switch (reader.peekChar()) {
@@ -1085,7 +1086,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
     }
 
     private NText nextDollar(StringReaderExt reader, NTexts txt, NSession session) {
-        NTexts factory = NTexts.of(session);
+        NTexts factory = NTexts.of();
         if (reader.isAvailable(2)) {
             char c = reader.peekChar(1);
             switch (c) {

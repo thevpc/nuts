@@ -37,16 +37,28 @@ import java.io.PrintStream;
  */
 public interface NString extends NBlankable {
 
-    static NString of(NMsg str, NSession session) {
-        return NTexts.of(session).ofText(str);
+    static NString of(NMsg str) {
+        NSession s = NSession.of().orNull();
+        if (s == null) {
+            return new NImmutableString(str == null ? null : str.toString());
+        }
+        return NTexts.of().ofText(str);
     }
 
-    static NString of(String str, NSession session) {
-        return NTexts.of(session).parse(str);
+    static NString of(String str) {
+        NSession s = NSession.of().orNull();
+        if (s == null) {
+            return new NImmutableString(str);
+        }
+        return NTexts.of().parse(str);
     }
 
-    static NString ofPlain(String str, NSession session) {
-        return NTexts.of(session).ofPlain(str);
+    static NString ofPlain(String str) {
+        NSession s = NSession.of().orNull();
+        if (s == null) {
+            return new NImmutableString(str);
+        }
+        return NTexts.of().ofPlain(str);
     }
 
     NString immutable();

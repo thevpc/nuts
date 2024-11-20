@@ -43,11 +43,11 @@ public interface NExecutionEntry extends Comparable<NExecutionEntry> {
 
     static List<NExecutionEntry> parse(NPath path) {
         NAssert.requireNonNull(path, "path");
-        return NIORPI.of(path.getSession()).parseExecutionEntries(path);
+        return NIORPI.of().parseExecutionEntries(path);
     }
 
-    static List<NExecutionEntry> parse(InputStream inputStream, String type, String sourceName, NSession session) {
-        return NIORPI.of(session).parseExecutionEntries(inputStream, type, sourceName);
+    static List<NExecutionEntry> parse(InputStream inputStream, String type, String sourceName) {
+        return NIORPI.of().parseExecutionEntries(inputStream, type, sourceName);
     }
 
     /**

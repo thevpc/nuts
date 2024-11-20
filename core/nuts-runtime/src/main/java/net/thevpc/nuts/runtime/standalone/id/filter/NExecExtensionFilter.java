@@ -15,13 +15,13 @@ import net.thevpc.nuts.util.NFilterOp;
  */
 public class NExecExtensionFilter extends AbstractDescriptorFilter {
     private NId apiId;
-    public NExecExtensionFilter(NSession session, NId apiId) {
-        super(session, NFilterOp.CUSTOM);
+    public NExecExtensionFilter(NWorkspace workspace, NId apiId) {
+        super(workspace, NFilterOp.CUSTOM);
         this.apiId=apiId;
     }
 
     @Override
-    public boolean acceptDescriptor(NDescriptor other, NSession session) {
+    public boolean acceptDescriptor(NDescriptor other) {
         if(other.getIdType()!= NIdType.EXTENSION){
             return false;
         }

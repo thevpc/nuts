@@ -12,8 +12,8 @@ import java.util.List;
 
 public class RemoteNSearchCmd extends AbstractNSearchCmd {
 
-    public RemoteNSearchCmd(NSession session) {
-        super(session);
+    public RemoteNSearchCmd(NWorkspace workspace) {
+        super(workspace);
     }
 
     @Override
@@ -23,7 +23,8 @@ public class RemoteNSearchCmd extends AbstractNSearchCmd {
 
     @Override
     public NSearchCmd copy() {
-        RemoteNSearchCmd b = new RemoteNSearchCmd(getSession());
+        NSession session=workspace.currentSession();
+        RemoteNSearchCmd b = new RemoteNSearchCmd(getWorkspace());
         b.setAll(this);
         return b;
     }
@@ -35,7 +36,8 @@ public class RemoteNSearchCmd extends AbstractNSearchCmd {
 
     @Override
     protected NIterator<NId> getResultIdIteratorBase(Boolean forceInlineDependencies) {
-        NElements e = NElements.of(getSession()).setSession(getSession());
+        NSession session=workspace.currentSession();
+        NElements e = NElements.of();
         NObjectElementBuilder eb = e.ofObject()
                 .set("execType", getExecType())
                 .set("defaultVersions", getDefaultVersions())
@@ -49,7 +51,7 @@ public class RemoteNSearchCmd extends AbstractNSearchCmd {
             eb.set("idFilter", e.toElement(getIdFilter()));
         }
         if (getDescriptorFilter() != null) {
-            eb.set("descriptorFilter", NElements.of(getSession()).toElement(getDescriptorFilter()));
+            eb.set("descriptorFilter", NElements.of().toElement(getDescriptorFilter()));
         }
         if (getInstallStatus() != null) {
             eb.set("installStatus", e.ofString(getInstallStatus().toString()));
@@ -63,10 +65,10 @@ public class RemoteNSearchCmd extends AbstractNSearchCmd {
                 getWorkspace().remoteCall(
                         getWorkspace().createCall(
                                 "workspace.searchIds",
-                                eb.build(), getSession()
+                                eb.build()
                         ),
                         List.class
-                ).iterator(),session
+                ).iterator()
         ).withDesc(NEDesc.of("searchRemoteIds"));
     }
 

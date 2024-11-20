@@ -20,25 +20,25 @@ public class PlainNAuthenticationAgent implements NAuthenticationAgent {
     }
 
     @Override
-    public void checkCredentials(char[] credentialsId, char[] password, Map<String, String> envProvider, NSession session) {
+    public void checkCredentials(char[] credentialsId, char[] password, Map<String, String> envProvider) {
         if (password == null || NBlankable.isBlank(new String(password))) {
-            throw new NSecurityException(session, NMsg.ofPlain("missing old password"));
+            throw new NSecurityException(NMsg.ofPlain("missing old password"));
         }
-        char[] iid = extractId(credentialsId, session);
+        char[] iid = extractId(credentialsId);
         if (Arrays.equals(iid, password)) {
             return;
         }
-        throw new NSecurityException(session, NMsg.ofPlain("invalid login or password"));
+        throw new NSecurityException(NMsg.ofPlain("invalid login or password"));
     }
 
     @Override
-    public char[] getCredentials(char[] credentialsId, Map<String, String> envProvider, NSession session) {
-        return extractId(credentialsId, session);
+    public char[] getCredentials(char[] credentialsId, Map<String, String> envProvider) {
+        return extractId(credentialsId);
     }
 
     @Override
-    public boolean removeCredentials(char[] credentialsId, Map<String, String> envProvider, NSession session) {
-        extractId(credentialsId, session);
+    public boolean removeCredentials(char[] credentialsId, Map<String, String> envProvider) {
+        extractId(credentialsId);
         return true;
     }
 
@@ -47,8 +47,7 @@ public class PlainNAuthenticationAgent implements NAuthenticationAgent {
             char[] credentials,
             boolean allowRetrieve,
             char[] credentialId,
-            Map<String, String> envProvider,
-            NSession session) {
+            Map<String, String> envProvider) {
         if (credentials == null || NBlankable.isBlank(new String(credentials))) {
             return null;
         } else {
@@ -67,7 +66,7 @@ public class PlainNAuthenticationAgent implements NAuthenticationAgent {
         return NConstants.Support.DEFAULT_SUPPORT - 1;
     }
 
-    private char[] extractId(char[] a, NSession session) {
+    private char[] extractId(char[] a) {
         if (!(a == null || NBlankable.isBlank(new String(a)))) {
             char[] idc = (getId() + ":").toCharArray();
             if (a.length > idc.length + 1) {
@@ -83,6 +82,6 @@ public class PlainNAuthenticationAgent implements NAuthenticationAgent {
                 }
             }
         }
-        throw new NSecurityException(session, NMsg.ofC("credential id must start with '%s:'", getId()));
+        throw new NSecurityException(NMsg.ofC("credential id must start with '%s:'", getId()));
     }
 }

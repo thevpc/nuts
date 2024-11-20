@@ -27,6 +27,7 @@
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextTitle;
 import net.thevpc.nuts.text.NTextType;
@@ -42,8 +43,8 @@ public class DefaultNTextTitle extends AbstractNText implements NTextTitle {
     private NText child;
     private int level;
 
-    public DefaultNTextTitle(NSession session, String start, int level, NText child) {
-        super(session);
+    public DefaultNTextTitle(NWorkspace workspace, String start, int level, NText child) {
+        super(workspace);
         this.start = start;
         this.level = level;
         this.child = child;

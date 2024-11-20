@@ -1,9 +1,12 @@
 package net.thevpc.nuts.reserved.optional;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.reserved.NApiUtilsRPI;
+import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
+import net.thevpc.nuts.util.NOptionalErrorException;
 
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -13,13 +16,12 @@ import java.util.function.Supplier;
 
 public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneable {
 
-    private NSession session;
 
     public NReservedOptionalImpl() {
     }
 
     public T get() {
-        return get(null, null);
+        return get(null);
     }
 
     public <V> NOptional<V> flatMap(Function<T, NOptional<V>> mapper) {
@@ -181,7 +183,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     }
 
     @Override
-    public NOptional<T> filter(Predicate<T> predicate, Function<NSession, NMsg> message) {
+    public NOptional<T> filter(Predicate<T> predicate, Supplier<NMsg> message) {
         Objects.requireNonNull(predicate);
         if (isPresent()) {
             return predicate.test(get()) ? this : NOptional.ofEmpty(message);
@@ -191,7 +193,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
 
     @Override
     public NOptional<T> filter(Predicate<T> predicate) {
-        return filter(predicate, (Function<NSession, NMsg>) null);
+        return filter(predicate, (Supplier<NMsg>) null);
     }
 
     @Override
@@ -277,9 +279,9 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     }
 
     @Override
-    public NOptional<T> ifBlankEmpty(Function<NSession, NMsg> emptyMessage) {
+    public NOptional<T> ifBlankEmpty(Supplier<NMsg> emptyMessage) {
         if (emptyMessage == null) {
-            emptyMessage = session -> NMsg.ofPlain("blank value");
+            emptyMessage = () -> NMsg.ofPlain("blank value");
         }
         if (isPresent()) {
             T v = get();
@@ -363,7 +365,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     @Override
     public NOptional<T> ifEmpty(T other) {
         if (isEmpty()) {
-            return NOptional.ofNullable(other).setSession(getSession());
+            return NOptional.ofNullable(other);
         }
         return this;
     }
@@ -371,7 +373,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
     @Override
     public NOptional<T> ifError(T other) {
         if (isError()) {
-            return NOptional.ofNullable(other).setSession(getSession());
+            return NOptional.ofNullable(other);
         }
         return this;
     }
@@ -386,12 +388,5 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
         return !isPresent();
     }
 
-    public NSession getSession() {
-        return session;
-    }
 
-    public NOptional<T> setSession(NSession session) {
-        this.session = session;
-        return this;
-    }
 }

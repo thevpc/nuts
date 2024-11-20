@@ -21,8 +21,8 @@ public class NDescriptorFlagsIdFilter extends AbstractDescriptorFilter {
 
     private final Set<NDescriptorFlag> flags;
 
-    public NDescriptorFlagsIdFilter(NSession session, NDescriptorFlag...flags) {
-        super(session, NFilterOp.CUSTOM);
+    public NDescriptorFlagsIdFilter(NWorkspace workspace, NDescriptorFlag...flags) {
+        super(workspace, NFilterOp.CUSTOM);
         this.flags = new LinkedHashSet<>();
         for (NDescriptorFlag flag : flags) {
             if(flag!=null){
@@ -32,7 +32,7 @@ public class NDescriptorFlagsIdFilter extends AbstractDescriptorFilter {
     }
 
     @Override
-    public boolean acceptDescriptor(NDescriptor other, NSession session) {
+    public boolean acceptDescriptor(NDescriptor other) {
         Set<NDescriptorFlag> available = other.getFlags();
         for (NDescriptorFlag flag : this.flags) {
             if(!available.contains(flag)){

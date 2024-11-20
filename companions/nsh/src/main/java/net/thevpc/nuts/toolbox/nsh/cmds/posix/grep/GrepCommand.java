@@ -61,14 +61,14 @@ public class GrepCommand extends NShellBuiltinDefault {
         if (!options.withNutsOptions && options.expressions.isEmpty()) {
             options.expressions.add(
                     new ExpressionInfo()
-                            .setPattern(cmdLine.next().flatMap(NLiteral::asString).get(session))
+                            .setPattern(cmdLine.next().flatMap(NLiteral::asString).get())
                             .setIgnoreCase(options.ignoreCase)
                             .setInvertMatch(options.invertMatch)
                             .setWord(options.word)
             );
         } else {
-            String path = cmdLine.next().flatMap(NLiteral::asString).get(session);
-            options.files.add(new FileInfo(NPath.of(path, session), options.highlighter));
+            String path = cmdLine.next().flatMap(NLiteral::asString).get();
+            options.files.add(new FileInfo(NPath.of(path), options.highlighter));
         }
         return true;
     }
@@ -204,11 +204,11 @@ public class GrepCommand extends NShellBuiltinDefault {
             return true;
         } else if ((a = cmdLine.next("--@include").orNull()) != null) {
             processRequireNutsOption(a, cmdLine, options);
-            for (String s : NPath.of(NLiteral.of(a).asString().get(), session).getLines().collect(Collectors.toList())) {
+            for (String s : NPath.of(NLiteral.of(a).asString().get()).getLines().collect(Collectors.toList())) {
                 s = s.trim();
                 if (!s.isEmpty()) {
                     if (!s.startsWith("#")) {
-                        String[] found = NCmdLine.parse(s, session).get().toStringArray();
+                        String[] found = NCmdLine.parse(s).get().toStringArray();
                         cmdLine.pushBack(found);
                     }
                 }
@@ -233,11 +233,11 @@ public class GrepCommand extends NShellBuiltinDefault {
             return true;
         } else if ((a = cmdLine.next("-H", "--highlight", "--highlighter").orNull()) != null) {
             processRequireNutsOption(a, cmdLine, options);
-            options.highlighter = NStringUtils.trim(a.getStringValue().get(session));
+            options.highlighter = NStringUtils.trim(a.getStringValue().get());
             return true;
         } else if ((a = cmdLine.next("-S", "--selection-style").orNull()) != null) {
             processRequireNutsOption(a, cmdLine, options);
-            options.selectionStyle = NStringUtils.trimToNull(a.getStringValue().get(session));
+            options.selectionStyle = NStringUtils.trimToNull(a.getStringValue().get());
             return true;
         } else if (parseJex(cmdLine, options)) {
             return true;

@@ -1,19 +1,17 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
-import net.thevpc.nuts.NSession;
-
 class NanoDBSerializerForString extends NanoDBNonNullSerializer<String>{
     public NanoDBSerializerForString() {
         super(String.class);
     }
 
     @Override
-    public void write(String obj, NanoDBOutputStream out, NSession session) {
+    public void write(String obj, NanoDBOutputStream out) {
         out.writeUTF(obj);
     }
 
     @Override
-    public String read(NanoDBInputStream in, Class expectedType, NSession session) {
+    public String read(NanoDBInputStream in, Class expectedType) {
         return in.readUTF();
     }
 }

@@ -44,11 +44,9 @@ import java.util.stream.*;
  */
 public abstract class NStreamBase<T> implements NStream<T> {
 
-    protected NSession session;
     protected String nutsBase;
 
-    public NStreamBase(NSession session, String nutsBase) {
-        this.session = session;
+    public NStreamBase(String nutsBase) {
         this.nutsBase = nutsBase;
     }
 
@@ -91,7 +89,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
         while (it.hasNext()) {
             t = it.next();
         }
-        return NOptional.ofEmpty(s ->
+        return NOptional.ofEmpty(() ->
                 nutsBase == null ?
                         NMsg.ofPlain("missing last") :
                         NMsg.ofC("missing last %s", nutsBase)
@@ -105,13 +103,13 @@ public abstract class NStreamBase<T> implements NStream<T> {
             T t = it.next();
             if (it.hasNext()) {
                 return NOptional.ofError(
-                        s -> NMsg.ofC("too many results for %s", nutsBase),
-                        new NTooManyElementsException(session, NMsg.ofC("too many results for %s", nutsBase))
+                        () -> NMsg.ofC("too many results for %s", nutsBase),
+                        new NTooManyElementsException(NMsg.ofC("too many results for %s", nutsBase))
                 );
             }
             return NOptional.of(t);
         } else {
-            return NOptional.ofEmpty(s ->
+            return NOptional.ofEmpty(() ->
                     nutsBase == null ?
                             NMsg.ofPlain("missing") :
                             NMsg.ofC("missing %s", nutsBase)
@@ -137,11 +135,11 @@ public abstract class NStreamBase<T> implements NStream<T> {
 
     @Override
     public <R> NStream<R> map(Function<? super T, ? extends R> mapper) {
-        return new NStreamBase<R>(session, nutsBase) {
+        return new NStreamBase<R>(nutsBase) {
             @Override
             public NIterator<R> iterator() {
                 NIterator<T> it = NStreamBase.this.iterator();
-                return (NIterator) IteratorBuilder.of(it, session).map(NFunction.of(mapper)).build();
+                return (NIterator) IteratorBuilder.of(it).map(NFunction.of(mapper)).build();
             }
         };
     }
@@ -158,7 +156,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
 
     @Override
     public NStream<T> sorted() {
-        return new NStreamBase<T>(session, nutsBase) {
+        return new NStreamBase<T>(nutsBase) {
             @Override
             public NIterator<T> iterator() {
                 NIterator<T> it = NStreamBase.this.iterator();
@@ -170,7 +168,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
 
     @Override
     public NStream<T> sorted(NComparator<T> comp) {
-        return new NStreamBase<T>(session, nutsBase) {
+        return new NStreamBase<T>(nutsBase) {
             @Override
             public NIterator<T> iterator() {
                 NIterator<T> it = NStreamBase.this.iterator();
@@ -182,7 +180,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
 
     @Override
     public NStream<T> distinct() {
-        return new NStreamBase<T>(session, nutsBase) {
+        return new NStreamBase<T>(nutsBase) {
             @Override
             public NIterator<T> iterator() {
                 NIterator<T> it = NStreamBase.this.iterator();
@@ -194,7 +192,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
 
     @Override
     public <R> NStream<T> distinctBy(Function<T, R> condition) {
-        return new NStreamBase<T>(session, nutsBase) {
+        return new NStreamBase<T>(nutsBase) {
             @Override
             public NIterator<T> iterator() {
                 NIterator<T> it = NStreamBase.this.iterator();
@@ -231,11 +229,11 @@ public abstract class NStreamBase<T> implements NStream<T> {
     @Override
     public NStream<T> filter(Predicate<? super T> predicate) {
 //        NDescribables.cast(predicate);
-        return new NStreamBase<T>(session, nutsBase) {
+        return new NStreamBase<T>(nutsBase) {
             @Override
             public NIterator<T> iterator() {
                 NIterator<T> it = NStreamBase.this.iterator();
-                return IteratorBuilder.of(it, session).filter(NPredicate.of(predicate)).build()
+                return IteratorBuilder.of(it).filter(NPredicate.of(predicate)).build()
                         ;//,"mapped("+it+")"
             }
         };
@@ -253,7 +251,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
 
     @Override
     public NStream<T> coalesce(NIterator<? extends T> other) {
-        return new NStreamBase<T>(session, nutsBase) {
+        return new NStreamBase<T>(nutsBase) {
             @Override
             public NIterator<T> iterator() {
                 NIterator<T> it = NStreamBase.this.iterator();
@@ -289,22 +287,22 @@ public abstract class NStreamBase<T> implements NStream<T> {
 
     @Override
     public <R> NStream<R> flatMapIter(Function<? super T, ? extends Iterator<? extends R>> mapper) {
-        return new NStreamBase<R>(session, nutsBase) {
+        return new NStreamBase<R>(nutsBase) {
             @Override
             public NIterator<R> iterator() {
-                return IteratorBuilder.of(NStreamBase.this.iterator(), session).flatMap(mapper).build();
+                return IteratorBuilder.of(NStreamBase.this.iterator()).flatMap(mapper).build();
             }
         };
     }
 
     @Override
     public <R> NStream<R> flatMapList(Function<? super T, ? extends List<? extends R>> mapper) {
-        return new NStreamBase<R>(session, nutsBase) {
+        return new NStreamBase<R>(nutsBase) {
             @Override
             public NIterator<R> iterator() {
-                IteratorBuilder<T> r = IteratorBuilder.of(NStreamBase.this.iterator(), session);
+                IteratorBuilder<T> r = IteratorBuilder.of(NStreamBase.this.iterator());
                 return (NIterator<R>) r.flatMap(
-                        NFunction.of(tt -> mapper.apply((T) tt).iterator()).withDesc(s->NFunction.of(mapper).describe(s))
+                        NFunction.of(tt -> mapper.apply((T) tt).iterator()).withDesc(()->NFunction.of(mapper).describe())
                 ).build()
                         ;
             }
@@ -313,13 +311,13 @@ public abstract class NStreamBase<T> implements NStream<T> {
 
     @Override
     public <R> NStream<R> flatMapArray(Function<? super T, ? extends R[]> mapper) {
-        return new NStreamBase<R>(session, nutsBase) {
+        return new NStreamBase<R>(nutsBase) {
             @Override
             public NIterator<R> iterator() {
-                return IteratorBuilder.of(NStreamBase.this.iterator(), session)
+                return IteratorBuilder.of(NStreamBase.this.iterator())
                         .flatMap(
                                 NFunction.of(t -> Arrays.asList(mapper.apply((T) t)).iterator())
-                                        .withDesc(s->NFunction.of(mapper).describe(s))
+                                        .withDesc(()->NFunction.of(mapper).describe())
                         ).build()
                         ;
             }
@@ -328,25 +326,25 @@ public abstract class NStreamBase<T> implements NStream<T> {
 
     @Override
     public <R> NStream<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper) {
-        return new NStreamBase<R>(session, nutsBase) {
+        return new NStreamBase<R>(nutsBase) {
             @Override
             public NIterator<R> iterator() {
-                return (NIterator<R>) IteratorBuilder.of(NStreamBase.this.iterator(), session).flatMap(
+                return (NIterator<R>) IteratorBuilder.of(NStreamBase.this.iterator()).flatMap(
                         NFunction.of(t -> mapper.apply(t).iterator())
-                ).build().withDesc(s->NFunction.of(mapper).describe(s));
+                ).build().withDesc(()->NFunction.of(mapper).describe());
             }
         };
     }
 
     @Override
     public <R> NStream<R> flatMapStream(Function<? super T, ? extends NStream<? extends R>> mapper) {
-        return new NStreamBase<R>(session, nutsBase) {
+        return new NStreamBase<R>(nutsBase) {
             @Override
             public NIterator<R> iterator() {
-                return (NIterator<R>) IteratorBuilder.of(NStreamBase.this.iterator(), session)
+                return (NIterator<R>) IteratorBuilder.of(NStreamBase.this.iterator())
                         .flatMap(
                                 NFunction.of(t -> mapper.apply(t).iterator())
-                        ).build().withDesc(s->NFunction.of(mapper).describe(s))
+                        ).build().withDesc(()->NFunction.of(mapper).describe())
                         ;
             }
         };
@@ -363,11 +361,11 @@ public abstract class NStreamBase<T> implements NStream<T> {
         Stream<T> it = NStreamBase.this.stream();
         Set<Map.Entry<K, List<T>>> entries = (Set) it.collect(Collectors.groupingBy(classifier)).entrySet();
         return new NStreamFromNIterator<Map.Entry<K, List<T>>>(
-                session, nutsBase, NIterator.of(entries.iterator(),session).withDesc(
-                e -> NElements.of(e).ofObject()
+                nutsBase, NIterator.of(entries.iterator()).withDesc(
+                () -> NElements.of().ofObject()
                         .set("type", "GroupBy")
-                        .set("groupBy", NFunction.of(classifier).describe(e))
-                        .set("base", iterator().describe(e))
+                        .set("groupBy", NFunction.of(classifier).describe())
+                        .set("base", iterator().describe())
                         .build()
         )
         );
@@ -375,7 +373,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
 
     @Override
     public NOptional<T> findAny() {
-        return NOptional.ofOptional(stream().findAny(), s -> NMsg.ofC("missing : %s", nutsBase));
+        return NOptional.ofOptional(stream().findAny(), () -> NMsg.ofC("missing : %s", nutsBase));
     }
 
     @Override
@@ -384,7 +382,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
         if (it.hasNext()) {
             return NOptional.of(it.next());
         }
-        return NOptional.ofEmpty(s ->
+        return NOptional.ofEmpty(() ->
                 nutsBase == null ?
                         NMsg.ofPlain("missing first") :
                         NMsg.ofC("missing first %s", nutsBase)
@@ -418,7 +416,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
 
     @Override
     public NStream<T> limit(long maxSize) {
-        return NStream.of(stream().limit(maxSize), session);
+        return NStream.of(stream().limit(maxSize));
     }
 
     @Override
@@ -433,17 +431,17 @@ public abstract class NStreamBase<T> implements NStream<T> {
 
     @Override
     public NOptional<T> min(Comparator<? super T> comparator) {
-        return NOptional.ofOptional(stream().min(comparator), s -> NMsg.ofC("missing : %s", nutsBase));
+        return NOptional.ofOptional(stream().min(comparator), () -> NMsg.ofC("missing : %s", nutsBase));
     }
 
     @Override
     public NOptional<T> max(Comparator<? super T> comparator) {
-        return NOptional.ofOptional(stream().max(comparator), s -> NMsg.ofC("missing : %s", nutsBase));
+        return NOptional.ofOptional(stream().max(comparator), () -> NMsg.ofC("missing : %s", nutsBase));
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return iterator().describe(session);
+    public NElement describe() {
+        return iterator().describe();
     }
 
     public NStream<T> withDesc(NEDesc description) {

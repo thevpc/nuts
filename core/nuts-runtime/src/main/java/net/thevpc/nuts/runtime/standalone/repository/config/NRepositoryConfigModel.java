@@ -32,6 +32,7 @@ import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -39,110 +40,115 @@ import java.util.Map;
  */
 public interface NRepositoryConfigModel {
 
-    boolean save(boolean force, NSession session);
+    boolean save(boolean force);
 
     NRepository getRepository();
 
     NWorkspace getWorkspace();
 
-    void addMirror(NRepository repo, NSession session);
+    void addMirror(NRepository repo);
 
-    NRepository addMirror(NAddRepositoryOptions options, NSession session);
+    NRepository addMirror(NAddRepositoryOptions options);
 
-    NRepository findMirror(String repositoryIdOrName, NSession session);
+    NRepository findMirror(String repositoryIdOrName);
 
-    NRepository findMirrorById(String repositoryNameOrId, NSession session);
+    NRepository findMirrorById(String repositoryNameOrId);
 
-    NRepository findMirrorByName(String repositoryNameOrId, NSession session);
+    NRepository findMirrorByName(String repositoryNameOrId);
 
-    int getDeployWeight(NSession session);
+    int getDeployWeight();
 
-    String getGlobalName(NSession session);
+    String getGlobalName();
 
-    String getGroups(NSession session);
+    String getGroups();
 
-    NPath getLocationPath(NSession session);
-
-    NRepositoryLocation getLocation(NSession session);
-
-    NRepository getMirror(String repositoryIdOrName, NSession session);
-
-    List<NRepository> getMirrors(NSession session);
-
-    String getName();
-
-    NRepositoryRef getRepositoryRef(NSession session);
-
-    NSpeedQualifier getSpeed(NSession session);
-
-    NPath getStoreLocation();
-
-    NPath getStoreLocation(NStoreType folderType, NSession session);
-
-    NStoreStrategy getStoreStrategy(NSession session);
-
-    String getType(NSession session);
-
-    String getUuid();
+    NPath getLocationPath();
 
     NRepositoryLocation getLocation();
 
-    boolean isEnabled(NSession session);
+    NRepository getMirror(String repositoryIdOrName);
 
-    boolean isIndexEnabled(NSession session);
+    List<NRepository> getMirrors();
 
-    boolean isPreview(NSession session);
+    String getName();
 
-    boolean isIndexSubscribed(NSession session);
+    NRepositoryRef getRepositoryRef();
 
-    boolean isSupportedMirroring(NSession session);
+    NSpeedQualifier getSpeed();
+
+    NPath getStoreLocation();
+
+    NPath getStoreLocation(NStoreType folderType);
+
+    NStoreStrategy getStoreStrategy();
+
+    String getType();
+
+    String getUuid();
+
+    boolean isEnabled();
+
+    boolean isIndexEnabled();
+
+    boolean isPreview();
+
+    boolean isIndexSubscribed();
+
+    boolean isSupportedMirroring();
 
     //        @Override
     //        public void setEnv(String property, String value, NutsUpdateOptions options) {
     //            //
     //        }
-    boolean isTemporary(NSession session);
+    boolean isTemporary();
 
-    void removeMirror(String repositoryId, NSession session);
+    void removeMirror(String repositoryId);
 
-    void setEnabled(boolean enabled, NSession session);
+    void setEnabled(boolean enabled);
 
-    void setIndexEnabled(boolean enabled, NSession session);
+    void setIndexEnabled(boolean enabled);
 
-    void setMirrorEnabled(String repoName, boolean enabled, NSession session);
+    void setMirrorEnabled(String repoName, boolean enabled);
 
-    void setTemporary(boolean enabled, NSession session);
+    void setTemporary(boolean enabled);
 
-    void subscribeIndex(NSession session);
+    void subscribeIndex();
 
-    void unsubscribeIndex(NSession session);
+    void unsubscribeIndex();
 
-    NPath getTempMirrorsRoot(NSession session);
+    NPath getTempMirrorsRoot();
 
-    NPath getMirrorsRoot(NSession session);
+    NPath getMirrorsRoot();
 
-    NUserConfig[] findUsers(NSession session);
+    NUserConfig[] findUsers();
 
-    NOptional<NUserConfig> findUser(String userId, NSession session);
+    NOptional<NUserConfig> findUser(String userId);
 
-    NRepositoryConfig getStoredConfig(NSession session);
+    NRepositoryConfig getStoredConfig();
 
-    void fireConfigurationChanged(String configName, NSession session);
+    void fireConfigurationChanged(String configName);
 
-    void setUser(NUserConfig user, NSession session);
+    void setUser(NUserConfig user);
 
-    void removeUser(String userId, NSession session);
+    void removeUser(String userId);
 
-    NRepositoryConfig getConfig(NSession session);
+    NRepositoryConfig getConfig();
 
-    Map<String, String> toMap(boolean inherit, NSession session);
+    Map<String, String> toMap(boolean inherit);
 
-    Map<String, String> toMap(NSession session);
+    Map<String, String> toMap();
 
 
-    NOptional<NLiteral> get(String key, boolean inherit, NSession session);
+    NOptional<NLiteral> get(String key, boolean inherit);
 
-    void set(String property, String value, NSession session);
+    void set(String property, String value);
 
+    boolean containsTag(String tag);
+
+    public Set<String> getTags() ;
+
+    public void addTag(String tag) ;
+
+    public void removeTag(String tag) ;
 
 }

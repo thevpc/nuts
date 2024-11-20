@@ -1,7 +1,7 @@
 package net.thevpc.nuts.reserved.optional;
 
 import java.util.Objects;
-import net.thevpc.nuts.*;
+
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -10,18 +10,15 @@ import net.thevpc.nuts.util.NOptionalErrorException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import net.thevpc.nuts.util.NOptionalType;
-import static net.thevpc.nuts.util.NOptionalType.EMPTY;
-import static net.thevpc.nuts.util.NOptionalType.ERROR;
-import static net.thevpc.nuts.util.NOptionalType.PRESENT;
 
 public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> implements Cloneable {
 
-    private Function<NSession, NMsg> message;
+    private Supplier<NMsg> message;
     private Throwable error;
 
-    public NReservedOptionalError(Function<NSession, NMsg> message, Throwable error) {
+    public NReservedOptionalError(Supplier<NMsg> message, Throwable error) {
         if (message == null) {
-            message = (s) -> NMsg.ofInvalidValue(error, null);
+            message = () -> NMsg.ofInvalidValue(error, null);
         }
         this.message = message;
         this.error = error;
@@ -44,18 +41,13 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
     }
 
     @Override
-    public T get(NSession session) {
-        return get(this.message, session);
+    public T get() {
+        return get(this.message);
     }
 
     @Override
     public T get(Supplier<NMsg> message) {
-        return get(s -> message.get(), null);
-    }
-
-    @Override
-    public T get(Function<NSession, NMsg> message, NSession session) {
-        throwError(message, session, this.message);
+        throwError(message, this.message);
         //never reached!
         return null;
     }
@@ -86,7 +78,7 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
     }
 
     @Override
-    public Function<NSession, NMsg> getMessage() {
+    public Supplier<NMsg> getMessage() {
         return message;
     }
 
@@ -105,24 +97,16 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
         return super.clone();
     }
 
-    protected void throwError(Function<NSession, NMsg> message, NSession session, Function<NSession, NMsg> message0) {
-        if (session == null) {
-            session = getSession();
-        }
+    protected void throwError(Supplier<NMsg> message, Supplier<NMsg> message0) {
         if (message == null) {
             message = message0;
         }
         if (message == null) {
-            message = s -> NMsg.ofMissingValue();
+            message = () -> NMsg.ofMissingValue();
         }
-        Function<NSession, NMsg> finalMessage = message;
-        NSession finalSession = session;
-        NMsg eMsg = NApiUtilsRPI.resolveValidErrorMessage(() -> finalMessage == null ? null : finalMessage.apply(finalSession));
+        Supplier<NMsg> finalMessage = message;
+        NMsg eMsg = NApiUtilsRPI.resolveValidErrorMessage(() -> finalMessage == null ? null : finalMessage.get());
         NMsg m = prepareMessage(eMsg);
-        if (session == null) {
-            throw new NNoSessionOptionalErrorException(m);
-        } else {
-            throw new NOptionalErrorException(session, m);
-        }
+        throw new NOptionalErrorException(m);
     }
 }

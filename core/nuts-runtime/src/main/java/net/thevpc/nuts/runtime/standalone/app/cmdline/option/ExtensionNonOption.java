@@ -39,7 +39,7 @@ import java.util.List;
  */
 public class ExtensionNonOption extends DefaultNonOption {
 
-    public ExtensionNonOption(String name, NSession session) {
+    public ExtensionNonOption(String name) {
         super(name);
     }
 

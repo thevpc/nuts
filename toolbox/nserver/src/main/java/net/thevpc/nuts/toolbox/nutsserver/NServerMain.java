@@ -36,7 +36,8 @@ public class NServerMain implements NApplication {
     private CountDownLatch lock = new CountDownLatch(1);
 
     @Override
-    public void run(NSession session) {
+    public void run() {
+        NSession session = NSession.of().get();
         NCmdLine cmdLine = session.getAppCmdLine().setCommandName("nuts-server");
         cmdLine.setCommandName("nuts-server");
         while (cmdLine.hasNext()) {
@@ -68,7 +69,7 @@ public class NServerMain implements NApplication {
             if (servers.isEmpty()) {
                 out.print("No Server is Running by current instance\n");
             }
-            NTexts text = NTexts.of(session);
+            NTexts text = NTexts.of();
             for (NServer o : servers) {
                 if (o.isRunning()) {
                     out.println(NMsg.ofC("%s %s",
@@ -90,12 +91,12 @@ public class NServerMain implements NApplication {
         int count = 0;
         while (cmdLine.hasNext()) {
             if (count == 0) {
-                cmdLine.peek().get(session);
+                cmdLine.peek().get();
             } else if (cmdLine.isEmpty()) {
                 break;
             }
             count++;
-            s = cmdLine.nextNonOption(NArgName.of("ServerName", session)).flatMap(NLiteral::asString).get(session);
+            s = cmdLine.nextNonOption(NArgName.of("ServerName")).flatMap(NLiteral::asString).get();
             if (cmdLine.isExecMode()) {
                 serverManager.stopServer(s);
             }
@@ -114,13 +115,13 @@ public class NServerMain implements NApplication {
             } else if (cmdLine.next("--admin").isPresent()) {
                 servers.add().serverType = "admin";
             } else if ((a = cmdLine.nextFlag("-R", "--read-only").orNull()) != null) {
-                servers.current().readOnly = a.getBooleanValue().get(session);
+                servers.current().readOnly = a.getBooleanValue().get();
             } else if ((a = cmdLine.nextEntry("-n", "--name").orNull()) != null) {
-                servers.current().name = a.getStringValue().get(session);
+                servers.current().name = a.getStringValue().get();
             } else if ((a = cmdLine.nextEntry("-a", "--address").orNull()) != null) {
-                servers.current().addr = a.getStringValue().get(session);
+                servers.current().addr = a.getStringValue().get();
             } else if ((a = cmdLine.nextEntry("-p", "--port").orNull()) != null) {
-                servers.current().port = a.getValue().asInt().get(session);
+                servers.current().port = a.getValue().asInt().get();
             } else if ((a = cmdLine.nextEntry("-h", "--host").orNull()) != null || (a = cmdLine.nextNonOption().orNull()) != null) {
                 StringBuilder s = new StringBuilder();
                 if (a.key().equals("-h") || a.key().equals("--host")) {
@@ -134,20 +135,20 @@ public class NServerMain implements NApplication {
                 }
                 servers.add().set(u);
             } else if ((a = cmdLine.nextEntry("-l", "--backlog").orNull()) != null) {
-                servers.current().port = a.getValue().asInt().get(session);
+                servers.current().port = a.getValue().asInt().get();
             } else if ((a = cmdLine.nextEntry("--ssl-certificate").orNull()) != null) {
-                servers.current().sslCertificate = a.getStringValue().get(session);
+                servers.current().sslCertificate = a.getStringValue().get();
             } else if ((a = cmdLine.nextEntry("--ssl-passphrase").orNull()) != null) {
-                servers.current().sslPassphrase = a.getStringValue().get(session);
+                servers.current().sslPassphrase = a.getStringValue().get();
             } else if ((a = cmdLine.nextEntry("-w", "--workspace").orNull()) != null) {
-                String ws = a.asString().get(session);
+                String ws = a.asString().get();
                 String serverContext = "";
                 if (ws.contains("@")) {
                     serverContext = ws.substring(0, ws.indexOf('@'));
                     ws = ws.substring(ws.indexOf('@') + 1);
                 }
                 if (servers.current().workspaceLocations.containsKey(serverContext)) {
-                    throw new NIllegalArgumentException(session,
+                    throw new NIllegalArgumentException(
                             NMsg.ofC("nuts-server: server workspace context already defined %s", serverContext));
                 }
                 servers.current().workspaceLocations.put(serverContext, ws);
@@ -169,7 +170,7 @@ public class NServerMain implements NApplication {
                         wsContext = "";
                     }
                     if (NBlankable.isBlank(wsContext)) {
-                        NAssert.requireNonNull(session.getWorkspace(), "workspace", session);
+                        NAssert.requireNonNull(session.getWorkspace(), "workspace");
                         nSession = session;
                         server.workspaces.put(wsContext, nSession);
                     } else {
@@ -204,8 +205,8 @@ public class NServerMain implements NApplication {
                         config.getWorkspaces().putAll(server.workspaces);
                         if ("https".equals(server.serverType)) {
                             config.setTls(true);
-                            NAssert.requireNonBlank(server.sslCertificate, "SSL certificate", session);
-                            NAssert.requireNonBlank(server.sslPassphrase, "SSL passphrase", session);
+                            NAssert.requireNonBlank(server.sslCertificate, "SSL certificate");
+                            NAssert.requireNonBlank(server.sslPassphrase, "SSL passphrase");
                             try {
                                 config.setSslKeystoreCertificate(_IOUtils.loadByteArray(new File(server.sslCertificate)));
                             } catch (IOException e) {
@@ -230,7 +231,7 @@ public class NServerMain implements NApplication {
                         break;
                     }
                     default:
-                        throw new NIllegalArgumentException(session,
+                        throw new NIllegalArgumentException(
                                 NMsg.ofC("nuts-server: unsupported server type %s", server.serverType)
                         );
                 }
@@ -271,13 +272,13 @@ public class NServerMain implements NApplication {
                     v.port = Integer.parseInt(pattern.group("port"));
                 }
             } else {
-                throw new NIllegalArgumentException(session,
+                throw new NIllegalArgumentException(
                         NMsg.ofC("invalid Host : %s", v.protocol)
                 );
             }
             return v;
         } catch (Exception ex) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("invalid"), ex);
+            throw new NIllegalArgumentException(NMsg.ofPlain("invalid"), ex);
         }
     }
 
@@ -317,9 +318,9 @@ public class NServerMain implements NApplication {
             } else if (cmdLine.next("--admin").isPresent()) {
                 servers.add().serverType = "admin";
             } else if ((a = cmdLine.nextEntry("-a", "--address").orNull()) != null) {
-                servers.current().addr = a.getStringValue().get(session);
+                servers.current().addr = a.getStringValue().get();
             } else if ((a = cmdLine.nextEntry("-p", "--port").orNull()) != null) {
-                servers.current().port = a.getValue().asInt().get(session);
+                servers.current().port = a.getValue().asInt().get();
             } else if ((a = cmdLine.nextEntry("-h", "--host").orNull()) != null || (a = cmdLine.nextNonOption().orNull()) != null) {
                 StringBuilder s = new StringBuilder();
                 if (a.key().equals("-h") || a.key().equals("--host")) {
@@ -388,7 +389,7 @@ public class NServerMain implements NApplication {
                 }
             }
             if (session.isPlainOut()) {
-                NTexts text = NTexts.of(session);
+                NTexts text = NTexts.of();
                 for (StatusResult result : results) {
                     session.out().println(NMsg.ofC(
                             "%s server at %s is %s",
@@ -444,7 +445,7 @@ public class NServerMain implements NApplication {
         }
 
         SrvInfo current() {
-            NAssert.requireNonBlank(all, "server type", session);
+            NAssert.requireNonBlank(all, "server type");
             return all.get(all.size() - 1);
         }
     }

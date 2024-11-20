@@ -57,32 +57,32 @@ public class SshCommand extends NShellBuiltinDefault {
         NArg a;
         NSession session = context.getSession();
         if (!o.cmd.isEmpty()) {
-            o.cmd.add(cmdLine.next().flatMap(NLiteral::asString).get(session));
+            o.cmd.add(cmdLine.next().flatMap(NLiteral::asString).get());
             return true;
-        } else if (cmdLine.peek().get(session).isNonOption()) {
+        } else if (cmdLine.peek().get().isNonOption()) {
             if (o.address == null) {
-                o.address = cmdLine.next().flatMap(NLiteral::asString).get(session);
+                o.address = cmdLine.next().flatMap(NLiteral::asString).get();
             } else {
-                o.cmd.add(cmdLine.next().flatMap(NLiteral::asString).get(session));
+                o.cmd.add(cmdLine.next().flatMap(NLiteral::asString).get());
             }
             return true;
         } else if ((a = cmdLine.next("--nuts").orNull()) != null) {
             if (o.acceptDashNuts) {
                 o.invokeNuts = true;
             } else {
-                o.cmd.add(a.asString().get(session));
+                o.cmd.add(a.asString().get());
             }
             return true;
         } else if ((a = cmdLine.next("--nuts-jre").orNull()) != null) {
             if (o.acceptDashNuts) {
-                o.nutsJre = a.getStringValue().get(session);
+                o.nutsJre = a.getStringValue().get();
             } else {
-                o.cmd.add(a.asString().get(session));
+                o.cmd.add(a.asString().get());
             }
             return true;
-        } else if (o.address == null || cmdLine.peek().get(session).isNonOption()) {
+        } else if (o.address == null || cmdLine.peek().get().isNonOption()) {
             o.acceptDashNuts = false;
-            o.cmd.add(cmdLine.next().flatMap(NLiteral::asString).get(session));
+            o.cmd.add(cmdLine.next().flatMap(NLiteral::asString).get());
             return true;
         }
 
@@ -94,8 +94,8 @@ public class SshCommand extends NShellBuiltinDefault {
         Options o = context.getOptions();
         // address --nuts [nuts options] args
         NSession session = context.getSession();
-        NAssert.requireNonBlank(o.address, "ssh address", session);
-        NAssert.requireNonBlank(o.cmd, () -> NMsg.ofPlain("missing ssh command. Interactive ssh is not yet supported!"), session);
+        NAssert.requireNonBlank(o.address, "ssh address");
+        NAssert.requireNonBlank(o.cmd, () -> NMsg.ofPlain("missing ssh command. Interactive ssh is not yet supported!"));
         ShellHelper.WsSshListener listener = new ShellHelper.WsSshListener(session);
         try (SShConnection sshSession = new SShConnection(o.address,
                 session.in(),
@@ -110,7 +110,7 @@ public class SshCommand extends NShellBuiltinDefault {
                 NArg arg = null;
                 while (c.hasNext()) {
                     if ((arg = c.next("--workspace").orNull()) != null) {
-                        workspace = c.nextNonOption().get().asString().get(session);
+                        workspace = c.nextNonOption().get().asString().get();
                     } else if (c.peek().isPresent() && c.peek().get().isNonOption()) {
                         break;
                     } else {
@@ -137,8 +137,8 @@ public class SshCommand extends NShellBuiltinDefault {
                         nutsCommandFound = true;
                     }
                     if (!nutsCommandFound) {
-                        NPath from = NSearchCmd.of(session).addId(session.getWorkspace().getApiId()).getResultDefinitions().findFirst().get().getContent().orNull();
-                        NAssert.requireNonNull(from, "jar file", session);
+                        NPath from = NSearchCmd.of().addId(session.getWorkspace().getApiId()).getResultDefinitions().findFirst().get().getContent().orNull();
+                        NAssert.requireNonNull(from, "jar file");
                         context.out().println(NMsg.ofC("Detected nuts.jar location : %s", from));
                         String bootApiFileName = "nuts-" + session.getWorkspace().getApiId() + ".jar";
                         sshSession.failFast().copyLocalToRemote(from.toString(), workspace + "/" + bootApiFileName, true);

@@ -2,19 +2,12 @@ package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNSystemTerminalBase;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextCommand;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextStyled;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextTitle;
-import net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamHelper;
-import net.thevpc.nuts.runtime.standalone.io.outputstream.OutputHelper;
-import net.thevpc.nuts.runtime.standalone.io.outputstream.OutputStreamHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.*;
-
-import java.io.IOException;
-import java.io.OutputStream;
 
 public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
 
@@ -39,7 +32,7 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
             NTextNodeWriterRenderer.this.writeLater(buf);
         }
     };
-    private NSession session;
+    private NWorkspace workspace;
     private NSystemTerminalBase term;
 
 //    public NTextNodeWriterRenderer(NPrintStream rawOutput, NSession session) {
@@ -50,9 +43,9 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
 //        this(new OutputStreamHelper(rawOutput, session), session, term);
 //    }
 
-    public NTextNodeWriterRenderer(NPrintStream rawOutput, NSession session, NSystemTerminalBase term) {
+    public NTextNodeWriterRenderer(NPrintStream rawOutput, NWorkspace workspace, NSystemTerminalBase term) {
         this.rawOutput = rawOutput;
-        this.session = session;
+        this.workspace = workspace;
         this.term = term;
     }
 
@@ -90,7 +83,7 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
         if (formats == null) {
             formats = NTextStyles.of();
         }
-        NTexts txt = NTexts.of(session);
+        NTexts txt = NTexts.of();
         switch (node.getType()) {
             case PLAIN: {
                 NTextPlain p = (NTextPlain) node;
@@ -107,7 +100,7 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
             case STYLED: {
                 DefaultNTextStyled s = (DefaultNTextStyled) node;
                 NTextStyles styles = s.getStyles();
-                NTextStyles format = txt.getTheme().toBasicStyles(styles, session);
+                NTextStyles format = txt.getTheme().toBasicStyles(styles);
                 NTextStyles s2 = formats.append(format);
                 writeNode(s2, s.getChild(), ctx);
                 break;
@@ -115,7 +108,7 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
             case TITLE: {
                 DefaultNTextTitle s = (DefaultNTextTitle) node;
                 NTextStyles s2 = formats.append(txt.getTheme().toBasicStyles(
-                        NTextStyles.of(NTextStyle.title(s.getLevel())), session
+                        NTextStyles.of(NTextStyle.title(s.getLevel()))
                 ));
                 if (ctx.isProcessTitleNumbers()) {
                     NTitleSequence seq = ctx.getTitleNumberSequence();
@@ -144,7 +137,7 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
                 DefaultNTextCommand s = (DefaultNTextCommand) node;
                 if (term != null) {
                     if (!ctx.isFiltered()) {
-                        term.run(s.getCommand(), rawOutput, session);
+                        term.run(s.getCommand(), rawOutput);
                     }
                 }
                 break;
@@ -182,7 +175,7 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
                 if (ctx.isFiltered()) {
                     writeRaw(formats, node1.getText(), true);
                 } else {
-                    NText cn = node1.highlight(session);
+                    NText cn = node1.highlight();
                     writeNode(formats, cn, ctx);
                 }
                 break;
@@ -201,13 +194,13 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
                 } else {
                     flush();
                     if (term != null) {
-                        term.setStyles(format, rawOutput, session);
+                        term.setStyles(format, rawOutput);
                     }
                     try {
                         writeRaw(rawString);
                     } finally {
                         if (term != null) {
-                            term.setStyles(null, rawOutput, session);
+                            term.setStyles(null, rawOutput);
                         }
                     }
                 }

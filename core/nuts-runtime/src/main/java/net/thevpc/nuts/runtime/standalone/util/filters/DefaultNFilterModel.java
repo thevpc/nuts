@@ -30,193 +30,193 @@ public class DefaultNFilterModel {
         return (T) shared.computeIfAbsent(clz.getName(), (String t) -> s.get());
     }
 
-    public <T extends NFilter> T nonnull(Class<T> type, NFilter filter, NSession session) {
+    public <T extends NFilter> T nonnull(Class<T> type, NFilter filter) {
         if (filter == null) {
-            return always(type, session);
+            return always(type);
         }
         return filter.to(type);
     }
 
-    public NTypedFilters resolveNutsTypedFilters(Class type, NSession session) {
+    public NTypedFilters resolveNutsTypedFilters(Class type) {
         if (type == null) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("unable to detected Filter type"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("unable to detected Filter type"));
         }
         switch (type.getName()) {
             case "net.thevpc.nuts.NDependencyFilter": {
-                return NDependencyFilters.of(session);
+                return NDependencyFilters.of();
             }
             case "net.thevpc.nuts.NRepositoryFilter": {
-                return NRepositoryFilters.of(session);
+                return NRepositoryFilters.of();
             }
             case "net.thevpc.nuts.NIdFilter": {
-                return NIdFilters.of(session);
+                return NIdFilters.of();
             }
             case "net.thevpc.nuts.NVersionFilter": {
-                return NVersionFilters.of(session);
+                return NVersionFilters.of();
             }
             case "net.thevpc.nuts.NDescriptorFilter": {
-                return NDescriptorFilters.of(session);
+                return NDescriptorFilters.of();
             }
             case "net.thevpc.nuts.NInstallStatusFilter": {
-                return NInstallStatusFilters.of(session);
+                return NInstallStatusFilters.of();
             }
         }
-        throw new NIllegalArgumentException(session, NMsg.ofC("unsupported filter type: %s", type));
+        throw new NIllegalArgumentException(NMsg.ofC("unsupported filter type: %s", type));
     }
 
-    public <T extends NFilter> T always(Class<T> type, NSession session) {
-        return (T) resolveNutsTypedFilters(type, session).always();
+    public <T extends NFilter> T always(Class<T> type) {
+        return (T) resolveNutsTypedFilters(type).always();
     }
 
-    public <T extends NFilter> T never(Class<T> type, NSession session) {
-        return (T) resolveNutsTypedFilters(type, session).never();
+    public <T extends NFilter> T never(Class<T> type) {
+        return (T) resolveNutsTypedFilters(type).never();
     }
 
-    public <T extends NFilter> T all(Class<T> type, NFilter[] others, NSession session) {
+    public <T extends NFilter> T all(Class<T> type, NFilter[] others) {
         others = expandAll(others).toArray(new NFilter[0]);
         if (type == null || type.equals(NFilter.class)) {
             List<NFilter> all = new ArrayList<>();
             all.addAll(Arrays.asList(others));
-            type = detectType(all.toArray(new NFilter[0]), session);
+            type = detectType(all.toArray(new NFilter[0]));
             if (type == null) {
-                throw new NIllegalArgumentException(session, NMsg.ofPlain("unable to detected Filter type"));
+                throw new NIllegalArgumentException(NMsg.ofPlain("unable to detected Filter type"));
             }
         }
-        return (T) resolveNutsTypedFilters(type, session).all(others);
+        return (T) resolveNutsTypedFilters(type).all(others);
     }
 
-    public <T extends NFilter> T all(NFilter[] others, NSession session) {
-        return all(null, others, session);
+    public <T extends NFilter> T all(NFilter[] others) {
+        return all(null, others);
     }
 
-    public <T extends NFilter> T any(Class<T> type, NFilter[] others, NSession session) {
+    public <T extends NFilter> T any(Class<T> type, NFilter[] others) {
         others = expandAny(others).toArray(new NFilter[0]);
         if (type == null || type.equals(NFilter.class)) {
             List<NFilter> all = new ArrayList<>();
             all.addAll(Arrays.asList(others));
-            type = detectType(all.toArray(new NFilter[0]), session);
+            type = detectType(all.toArray(new NFilter[0]));
             if (type == null) {
-                throw new NIllegalArgumentException(session, NMsg.ofPlain("unable to detected Filter type"));
+                throw new NIllegalArgumentException(NMsg.ofPlain("unable to detected Filter type"));
             }
         }
-        return (T) resolveNutsTypedFilters(type, session).any(others);
+        return (T) resolveNutsTypedFilters(type).any(others);
     }
 
-    public <T extends NFilter> T not(NFilter other, NSession session) {
-        return not(null, other, session);
+    public <T extends NFilter> T not(NFilter other) {
+        return not(null, other);
     }
 
-    public <T extends NFilter> T not(Class<T> type, NFilter other, NSession session) {
+    public <T extends NFilter> T not(Class<T> type, NFilter other) {
         if (type == null || type.equals(NFilter.class)) {
-            type = (Class<T>) detectType(other, session);
+            type = (Class<T>) detectType(other);
             if (type == null) {
-                throw new NIllegalArgumentException(session, NMsg.ofPlain("unable to detected Filter type"));
+                throw new NIllegalArgumentException(NMsg.ofPlain("unable to detected Filter type"));
             }
         }
-        return (T) resolveNutsTypedFilters(type, session).not(other);
+        return (T) resolveNutsTypedFilters(type).not(other);
     }
 
-    public <T extends NFilter> T any(NFilter[] others, NSession session) {
-        return any(null, others, session);
+    public <T extends NFilter> T any(NFilter[] others) {
+        return any(null, others);
     }
 
-    public <T extends NFilter> T none(Class<T> type, NFilter[] others, NSession session) {
+    public <T extends NFilter> T none(Class<T> type, NFilter[] others) {
         others = expandAll(others).toArray(new NFilter[0]);
         if (type == null || type.equals(NFilter.class)) {
             List<NFilter> all = new ArrayList<>();
             all.addAll(Arrays.asList(others));
-            type = detectType(all.toArray(new NFilter[0]), session);
+            type = detectType(all.toArray(new NFilter[0]));
             if (type == null) {
-                throw new NIllegalArgumentException(session, NMsg.ofPlain("unable to detected Filter type"));
+                throw new NIllegalArgumentException(NMsg.ofPlain("unable to detected Filter type"));
             }
         }
         switch (type.getName()) {
             case "net.thevpc.nuts.NDependencyFilter": {
                 List<NDependencyFilter> all = new ArrayList<>();
                 for (NFilter other : others) {
-                    NDependencyFilter a = NDependencyFilters.of(session).from(other);
+                    NDependencyFilter a = NDependencyFilters.of().from(other);
                     if (a != null) {
                         all.add(a);
                     }
                 }
                 if (all.isEmpty()) {
-                    return (T) always(type, session);
+                    return (T) always(type);
                 }
-                return (T) new NDependencyFilterNone(session, all.toArray(new NDependencyFilter[0]));
+                return (T) new NDependencyFilterNone(workspace, all.toArray(new NDependencyFilter[0]));
             }
             case "net.thevpc.nuts.NRepositoryFilter": {
                 List<NRepositoryFilter> all = new ArrayList<>();
                 for (NFilter other : others) {
-                    NRepositoryFilter a = NRepositoryFilters.of(session).from(other);
+                    NRepositoryFilter a = NRepositoryFilters.of().from(other);
                     if (a != null) {
                         all.add(a);
                     }
                 }
                 if (all.isEmpty()) {
-                    return (T) always(type, session);
+                    return (T) always(type);
                 }
-                return (T) new NRepositoryFilterNone(session, all.toArray(new NRepositoryFilter[0]));
+                return (T) new NRepositoryFilterNone(workspace, all.toArray(new NRepositoryFilter[0]));
             }
             case "net.thevpc.nuts.NIdFilter": {
                 List<NIdFilter> all = new ArrayList<>();
                 for (NFilter other : others) {
-                    NIdFilter a = NIdFilters.of(session).from(other);
+                    NIdFilter a = NIdFilters.of().from(other);
                     if (a != null) {
                         all.add(a);
                     }
                 }
                 if (all.isEmpty()) {
-                    return (T) always(type, session);
+                    return (T) always(type);
                 }
-                return (T) new NIdFilterNone(session, all.toArray(new NIdFilter[0]));
+                return (T) new NIdFilterNone(workspace, all.toArray(new NIdFilter[0]));
             }
             case "net.thevpc.nuts.NVersionFilter": {
                 List<NVersionFilter> all = new ArrayList<>();
                 for (NFilter other : others) {
-                    NVersionFilter a = NVersionFilters.of(session).from(other);
+                    NVersionFilter a = NVersionFilters.of().from(other);
                     if (a != null) {
                         all.add(a);
                     }
                 }
                 if (all.isEmpty()) {
-                    return (T) always(type, session);
+                    return (T) always(type);
                 }
-                return (T) new NVersionFilterNone(session, all.toArray(new NVersionFilter[0]));
+                return (T) new NVersionFilterNone(workspace, all.toArray(new NVersionFilter[0]));
             }
             case "net.thevpc.nuts.NDescriptorFilter": {
                 List<NDescriptorFilter> all = new ArrayList<>();
                 for (NFilter other : others) {
-                    NDescriptorFilter a = NDescriptorFilters.of(session).from(other);
+                    NDescriptorFilter a = NDescriptorFilters.of().from(other);
                     if (a != null) {
                         all.add(a);
                     }
                 }
                 if (all.isEmpty()) {
-                    return (T) always(type, session);
+                    return (T) always(type);
                 }
-                return (T) new NDescriptorFilterNone(session, all.toArray(new NDescriptorFilter[0]));
+                return (T) new NDescriptorFilterNone(workspace, all.toArray(new NDescriptorFilter[0]));
             }
         }
-        throw new NIllegalArgumentException(session, NMsg.ofC("unsupported filter type: %s", type));
+        throw new NIllegalArgumentException(NMsg.ofC("unsupported filter type: %s", type));
     }
 
-    public <T extends NFilter> T none(NFilter[] others, NSession session) {
-        return none(null, others, session);
+    public <T extends NFilter> T none(NFilter[] others) {
+        return none(null, others);
     }
 
-    public <T extends NFilter> T to(Class<T> toFilterInterface, NFilter filter, NSession session) {
-        return (T) resolveNutsTypedFilters(toFilterInterface, session).from(filter);
+    public <T extends NFilter> T to(Class<T> toFilterInterface, NFilter filter) {
+        return (T) resolveNutsTypedFilters(toFilterInterface).from(filter);
     }
 
-    public <T extends NFilter> T as(Class<T> toFilterInterface, NFilter filter, NSession session) {
-        return (T) resolveNutsTypedFilters(toFilterInterface, session).as(filter);
+    public <T extends NFilter> T as(Class<T> toFilterInterface, NFilter filter) {
+        return (T) resolveNutsTypedFilters(toFilterInterface).as(filter);
     }
 
-    public Class<? extends NFilter> detectType(NFilter nFilter, NSession session) {
+    public Class<? extends NFilter> detectType(NFilter nFilter) {
         if (nFilter == null) {
             return null;
         }
-        return detectType(nFilter.getClass(), session);
+        return detectType(nFilter.getClass());
     }
 
     private Collection<NFilter> expandAny(NFilter... others) {
@@ -267,14 +267,14 @@ public class DefaultNFilterModel {
         return ok;
     }
 
-    public <T extends NFilter> Class<T> detectType(NFilter[] others, NSession session) {
+    public <T extends NFilter> Class<T> detectType(NFilter[] others) {
         Class c = null;
         for (NFilter other : others) {
             if (other != null) {
                 if (c == null) {
-                    c = detectType(other.getClass(), session);
+                    c = detectType(other.getClass());
                 } else {
-                    c = detectType(c, other.getClass(), session);
+                    c = detectType(c, other.getClass());
                 }
             }
         }
@@ -284,7 +284,7 @@ public class DefaultNFilterModel {
         return c;
     }
 
-    public <T extends NFilter> Class<T> detectType(Class<? extends NFilter> c1, NSession session) {
+    public <T extends NFilter> Class<T> detectType(Class<? extends NFilter> c1) {
         if (c1 == null) {
             return null;
         }
@@ -306,10 +306,10 @@ public class DefaultNFilterModel {
         if (NInstallStatusFilter.class.isAssignableFrom(c1)) {
             return (Class<T>) NInstallStatusFilter.class;
         }
-        throw new NIllegalArgumentException(session, NMsg.ofC("cannot detect filter type for %s", c1));
+        throw new NIllegalArgumentException(NMsg.ofC("cannot detect filter type for %s", c1));
     }
 
-    public <T extends NFilter> Class<T> detectType(Class<? extends NFilter> c1, Class<? extends NFilter> c2, NSession session) {
+    public <T extends NFilter> Class<T> detectType(Class<? extends NFilter> c1, Class<? extends NFilter> c2) {
         if (NVersionFilter.class.isAssignableFrom(c1)) {
             if (NVersionFilter.class.isAssignableFrom(c2)) {
                 return (Class<T>) NVersionFilter.class;
@@ -320,7 +320,7 @@ public class DefaultNFilterModel {
             if (NDescriptorFilter.class.isAssignableFrom(c2)) {
                 return (Class<T>) NDescriptorFilter.class;
             }
-            throw new NIllegalArgumentException(session, NMsg.ofC("cannot detect common type for %s and %s", c1, c2));
+            throw new NIllegalArgumentException(NMsg.ofC("cannot detect common type for %s and %s", c1, c2));
         }
         if (NIdFilter.class.isAssignableFrom(c1)) {
             if (NVersionFilter.class.isAssignableFrom(c2)) {
@@ -332,7 +332,7 @@ public class DefaultNFilterModel {
             if (NDescriptorFilter.class.isAssignableFrom(c2)) {
                 return (Class<T>) NDescriptorFilter.class;
             }
-            throw new NIllegalArgumentException(session, NMsg.ofC("cannot detect common type for %s and %s",c1,c2));
+            throw new NIllegalArgumentException(NMsg.ofC("cannot detect common type for %s and %s",c1,c2));
         }
         if (NDescriptorFilter.class.isAssignableFrom(c1)) {
             if (NVersionFilter.class.isAssignableFrom(c2)) {
@@ -344,27 +344,27 @@ public class DefaultNFilterModel {
             if (NDescriptorFilter.class.isAssignableFrom(c2)) {
                 return (Class<T>) NDescriptorFilter.class;
             }
-            throw new NIllegalArgumentException(session, NMsg.ofC("cannot detect common type for %s and %s",c1,c2));
+            throw new NIllegalArgumentException(NMsg.ofC("cannot detect common type for %s and %s",c1,c2));
         }
         if (NDependencyFilter.class.isAssignableFrom(c1)) {
             if (NDependencyFilter.class.isAssignableFrom(c2)) {
                 return (Class<T>) NDependencyFilter.class;
             }
-            throw new NIllegalArgumentException(session, NMsg.ofC("cannot detect common type for %s and %s",c1,c2));
+            throw new NIllegalArgumentException(NMsg.ofC("cannot detect common type for %s and %s",c1,c2));
         }
         if (NRepositoryFilter.class.isAssignableFrom(c1)) {
             if (NRepositoryFilter.class.isAssignableFrom(c2)) {
                 return (Class<T>) NRepositoryFilter.class;
             }
-            throw new NIllegalArgumentException(session, NMsg.ofC("cannot detect common type for %s and %s",c1,c2));
+            throw new NIllegalArgumentException(NMsg.ofC("cannot detect common type for %s and %s",c1,c2));
         }
         if (NInstallStatusFilter.class.isAssignableFrom(c1)) {
             if (NInstallStatusFilter.class.isAssignableFrom(c2)) {
                 return (Class<T>) NInstallStatusFilter.class;
             }
-            throw new NIllegalArgumentException(session, NMsg.ofC("cannot detect common type for %s and %s",c1,c2));
+            throw new NIllegalArgumentException(NMsg.ofC("cannot detect common type for %s and %s",c1,c2));
         }
-        throw new NIllegalArgumentException(session, NMsg.ofC("cannot detect common type for %s and %s",c1,c2));
+        throw new NIllegalArgumentException(NMsg.ofC("cannot detect common type for %s and %s",c1,c2));
     }
 
 }

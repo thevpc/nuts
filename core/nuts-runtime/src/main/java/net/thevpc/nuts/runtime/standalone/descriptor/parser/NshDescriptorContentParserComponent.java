@@ -48,11 +48,12 @@ public class NshDescriptorContentParserComponent implements NDescriptorContentPa
 
     public static NId NSH;
     public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("nsh", "sh", "bash"));
-
-    public NshDescriptorContentParserComponent(NSession session) {
+    private NWorkspace workspace;
+    public NshDescriptorContentParserComponent(NWorkspace workspace) {
         if(NSH==null){
-            NSH= NId.of("nsh").get(session);
+            NSH= NId.of("nsh").get();
         }
+        this.workspace=workspace;
     }
 
     @Override
@@ -154,12 +155,12 @@ public class NshDescriptorContentParserComponent implements NDescriptorContentPa
             }
             if (comment.toString().trim().isEmpty()) {
                 return new DefaultNDescriptorBuilder()
-                        .setId(NId.of("temp:nsh#1.0").get(session))
+                        .setId(NId.of("temp:nsh#1.0").get())
                         .setPackaging("nsh")
-                        .setExecutor(new DefaultNArtifactCall(NId.of("net.thevpc.nuts.toolbox:nsh").get(session)))
+                        .setExecutor(new DefaultNArtifactCall(NId.of("net.thevpc.nuts.toolbox:nsh").get()))
                         .build();
             }
-            return NDescriptorParser.of(session).parse(comment.getValidString()).get(session);
+            return NDescriptorParser.of().parse(comment.getValidString()).get();
         } finally {
             if (r != null) {
                 r.close();

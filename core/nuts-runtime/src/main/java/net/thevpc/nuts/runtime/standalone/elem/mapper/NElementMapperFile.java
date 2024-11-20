@@ -24,7 +24,7 @@ public class NElementMapperFile implements NElementMapper<File> {
             NSession session = context.getSession();
 //                NutsText n = ws.text().forStyled(o.toString(), NutsTextStyle.path());
 //                return ws.elem().forPrimitive().buildNutsString(n);
-            NText n = NTexts.of(session).ofStyled(o.toString(), NTextStyle.path());
+            NText n = NTexts.of().ofStyled(o.toString(), NTextStyle.path());
             return context.elem().ofString(n.toString());
         } else {
             return context.defaultObjectToElement(o.toString(), null);
@@ -34,6 +34,6 @@ public class NElementMapperFile implements NElementMapper<File> {
     @Override
     public File createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
         NSession session = context.getSession();
-        return new File(o.asString().get(session));
+        return new File(o.asString().get());
     }
 }

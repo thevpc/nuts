@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.contenttype;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NContentTypes;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
@@ -29,22 +30,22 @@ public class DefaultNContentTypes implements NContentTypes {
 
     @Override
     public String probeContentType(Path path) {
-        return probeContentType(path == null ? null : NPath.of(path, session));
+        return probeContentType(path == null ? null : NPath.of(path));
     }
 
     @Override
     public String probeContentType(File path) {
-        return probeContentType(path == null ? null : NPath.of(path, session));
+        return probeContentType(path == null ? null : NPath.of(path));
     }
 
     @Override
     public String probeContentType(URL path) {
-        return probeContentType(path == null ? null : NPath.of(path, session));
+        return probeContentType(path == null ? null : NPath.of(path));
     }
 
     @Override
     public String probeContentType(NPath path) {
-        List<NContentTypeResolver> allSupported = session.extensions()
+        List<NContentTypeResolver> allSupported = NExtensions.of()
                 .createComponents(NContentTypeResolver.class, path);
         NCallableSupport<String> best = null;
         for (NContentTypeResolver r : allSupported) {
@@ -58,12 +59,12 @@ public class DefaultNContentTypes implements NContentTypes {
         if (best == null) {
             return null;
         }
-        return best.call(session);
+        return best.call();
     }
 
     @Override
     public List<String> findExtensionsByContentType(String contentType) {
-        List<NContentTypeResolver> allSupported = session.extensions()
+        List<NContentTypeResolver> allSupported = NExtensions.of()
                 .createComponents(NContentTypeResolver.class, null);
         LinkedHashSet<String> all = new LinkedHashSet<>();
         for (NContentTypeResolver r : allSupported) {
@@ -77,7 +78,7 @@ public class DefaultNContentTypes implements NContentTypes {
 
     @Override
     public List<String> findContentTypesByExtension(String extension) {
-        List<NContentTypeResolver> allSupported = session.extensions()
+        List<NContentTypeResolver> allSupported = NExtensions.of()
                 .createComponents(NContentTypeResolver.class, null);
         LinkedHashSet<String> all = new LinkedHashSet<>();
         for (NContentTypeResolver r : allSupported) {
@@ -91,13 +92,13 @@ public class DefaultNContentTypes implements NContentTypes {
 
     @Override
     public String probeContentType(InputStream stream) {
-        byte[] buffer = CoreIOUtils.readBestEffort(4096, stream, session);
+        byte[] buffer = CoreIOUtils.readBestEffort(4096, stream);
         return probeContentType(buffer);
     }
 
     @Override
     public String probeContentType(byte[] bytes) {
-        List<NContentTypeResolver> allSupported = session.extensions()
+        List<NContentTypeResolver> allSupported = NExtensions.of()
                 .createComponents(NContentTypeResolver.class, bytes);
         NCallableSupport<String> best = null;
         for (NContentTypeResolver r : allSupported) {
@@ -111,27 +112,27 @@ public class DefaultNContentTypes implements NContentTypes {
         if (best == null) {
             return null;
         }
-        return best.call(session);
+        return best.call();
     }
 
     @Override
     public String probeCharset(URL path) {
-        return probeCharset(path == null ? null : NPath.of(path, session));
+        return probeCharset(path == null ? null : NPath.of(path));
     }
 
     @Override
     public String probeCharset(File path) {
-        return probeCharset(path == null ? null : NPath.of(path, session));
+        return probeCharset(path == null ? null : NPath.of(path));
     }
 
     @Override
     public String probeCharset(Path path) {
-        return probeCharset(path == null ? null : NPath.of(path, session));
+        return probeCharset(path == null ? null : NPath.of(path));
     }
 
     @Override
     public String probeCharset(NPath path) {
-        List<NCharsetResolver> allSupported = session.extensions()
+        List<NCharsetResolver> allSupported = NExtensions.of()
                 .createComponents(NCharsetResolver.class, path);
         NCallableSupport<String> best = null;
         for (NCharsetResolver r : allSupported) {
@@ -145,18 +146,18 @@ public class DefaultNContentTypes implements NContentTypes {
         if (best == null) {
             return null;
         }
-        return best.call(session);
+        return best.call();
     }
 
     @Override
     public String probeCharset(InputStream stream) {
-        byte[] buffer = CoreIOUtils.readBestEffort(4096*10, stream, session);
+        byte[] buffer = CoreIOUtils.readBestEffort(4096*10, stream);
         return probeCharset(buffer);
     }
 
     @Override
     public String probeCharset(byte[] bytes) {
-        List<NCharsetResolver> allSupported = session.extensions()
+        List<NCharsetResolver> allSupported = NExtensions.of()
                 .createComponents(NCharsetResolver.class, bytes);
         NCallableSupport<String> best = null;
         for (NCharsetResolver r : allSupported) {
@@ -170,7 +171,7 @@ public class DefaultNContentTypes implements NContentTypes {
         if (best == null) {
             return null;
         }
-        return best.call(session);
+        return best.call();
     }
 
     @Override

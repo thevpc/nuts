@@ -36,8 +36,12 @@ import java.util.List;
  * @app.category Format
  */
 public interface NTextBuilder extends NString {
-    static NTextBuilder of(NSession session) {
-        return NTexts.of(session).ofBuilder();
+    static NTextBuilder of() {
+        NSession s = NSession.of().orNull();
+        if(s==null){
+            return new NTextBuilderPlain();
+        }
+        return NTexts.of().ofBuilder();
     }
 
     NTextStyleGenerator getStyleGenerator();

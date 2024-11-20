@@ -43,9 +43,9 @@ public interface NCustomCmd {
 
     String getName();
 
-    int exec(String[] args, NCmdExecOptions options, NSession session) throws NExecutionException;
+    int exec(String[] args, NCmdExecOptions options) throws NExecutionException;
 
-    NText getHelpText(NSession session) throws NExecutionException;
+    NText getHelpText() throws NExecutionException;
 
     List<String> getCommand();
 

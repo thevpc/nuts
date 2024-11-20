@@ -15,7 +15,8 @@ public class CustomShell implements NApplication {
     }
 
     @Override
-    public void run(NSession session) {
+    public void run() {
+        NSession session = NSession.get();
         NShell sh = new NShell(
                 new NShellConfiguration()
                         .setSession(session)

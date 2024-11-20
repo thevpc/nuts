@@ -25,6 +25,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.filter;
 
 import net.thevpc.nuts.NRepositoryFilter;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.spi.base.AbstractNFilter;
 import net.thevpc.nuts.util.NFilter;
@@ -38,8 +39,8 @@ import net.thevpc.nuts.util.NSimplifiable;
  */
 public abstract class AbstractRepositoryFilter extends AbstractNFilter implements NRepositoryFilter, NSimplifiable<NRepositoryFilter> {
 
-    public AbstractRepositoryFilter(NSession session, NFilterOp op) {
-        super(session, op);
+    public AbstractRepositoryFilter(NWorkspace workspace, NFilterOp op) {
+        super(workspace, op);
     }
 
     @Override
@@ -62,6 +63,6 @@ public abstract class AbstractRepositoryFilter extends AbstractNFilter implement
         if(description==null){
             return this;
         }
-        return new NRepositoryFilterWithDescription(this,description);
+        return new NRepositoryFilterWithDescription(workspace,this,description);
     }
 }

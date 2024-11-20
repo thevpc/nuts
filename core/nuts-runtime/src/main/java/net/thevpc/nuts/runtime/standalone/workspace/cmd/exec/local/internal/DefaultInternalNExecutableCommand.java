@@ -22,8 +22,8 @@ import net.thevpc.nuts.util.NMsg;
 public abstract class DefaultInternalNExecutableCommand extends AbstractNExecutableInformationExt {
 
     protected String[] args;
-    public DefaultInternalNExecutableCommand(String name, String[] args, NExecCmd execCommand) {
-        super(name, name, NExecutableType.INTERNAL,execCommand);
+    public DefaultInternalNExecutableCommand(NWorkspace workspace,String name, String[] args, NExecCmd execCommand) {
+        super(workspace,name, name, NExecutableType.INTERNAL,execCommand);
         this.args = args;
     }
 
@@ -33,14 +33,16 @@ public abstract class DefaultInternalNExecutableCommand extends AbstractNExecuta
     }
 
     protected void showDefaultHelp() {
-        getSession().out().println(getHelpText());
+        NSession session = workspace.currentSession();
+        session.out().println(getHelpText());
     }
 
 
     @Override
     public NText getHelpText() {
-        NTexts txt = NTexts.of(getSession());
-        NPath path = NPath.of("classpath://net/thevpc/nuts/runtime/command/" + name + ".ntf", getClass().getClassLoader(), getSession());
+        NSession session = workspace.currentSession();
+        NTexts txt = NTexts.of();
+        NPath path = NPath.of("classpath://net/thevpc/nuts/runtime/command/" + name + ".ntf", getClass().getClassLoader());
         NText n = txt.parser().parse(path);
         if (n == null) {
             return super.getHelpText();
@@ -56,13 +58,13 @@ public abstract class DefaultInternalNExecutableCommand extends AbstractNExecuta
 
 
     public void dryExecute() {
-        NSession session = getSession();
-        if (NAppUtils.processHelpOptions(args, getSession())) {
+        NSession session = workspace.currentSession();
+        if (NAppUtils.processHelpOptions(args, session)) {
             session.out().println("[dry] ==show-help==");
             return;
         }
-        NTexts text = NTexts.of(session);
-        if (getSession().isPlainOut()) {
+        NTexts text = NTexts.of();
+        if (session.isPlainOut()) {
             session.out().println(NMsg.ofC("[dry] %s%n",
                     text.ofBuilder()
                             .append("internal", NTextStyle.pale())

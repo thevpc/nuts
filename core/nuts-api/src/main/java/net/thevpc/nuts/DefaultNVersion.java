@@ -223,8 +223,8 @@ public class DefaultNVersion implements NVersion {
     }
 
     @Override
-    public NVersionFilter filter(NSession session) {
-        return NVersionFilters.of(session).byValue(expression).get(session);
+    public NVersionFilter filter() {
+        return NVersionFilters.of().byValue(expression).get();
     }
 
     @Override
@@ -257,7 +257,7 @@ public class DefaultNVersion implements NVersion {
         int commas = 0;
         int seps = 0;
         String s = expression.trim();
-        NOptional<String> emptyVersion = NOptional.ofEmpty(session -> NMsg.ofC("not a single value : %s", expression));
+        NOptional<String> emptyVersion = NOptional.ofEmpty(() -> NMsg.ofC("not a single value : %s", expression));
         if (s.isEmpty()) {
             return emptyVersion;
         }
@@ -414,7 +414,7 @@ public class DefaultNVersion implements NVersion {
                 return NOptional.of(NLiteral.of(parts.get(x).string));
             }
         }
-        return NOptional.ofEmpty(session -> NMsg.ofC("version part not found : %s", index));
+        return NOptional.ofEmpty(() -> NMsg.ofC("version part not found : %s", index));
     }
 
     public NOptional<NLiteral> getNumber(int level) {
@@ -424,21 +424,21 @@ public class DefaultNVersion implements NVersion {
             VersionPart digit = parts.getDigit(level);
             return NOptional.of(
                     digit == null ? null : NLiteral.of(digit.string),
-                    s -> NMsg.ofC("missing number at %s", level)
+                    () -> NMsg.ofC("missing number at %s", level)
             );
         } else {
             int x = size + level;
             VersionPart digit = x >= 0 ? parts.getDigit(x) : null;
             return NOptional.of(
                     digit == null ? null : NLiteral.of(digit.string),
-                    s -> NMsg.ofC("missing number at %s", level)
+                    () -> NMsg.ofC("missing number at %s", level)
             );
         }
     }
 
     @Override
-    public NFormat formatter(NSession session) {
-        return NVersionFormat.of(session).setVersion(this);
+    public NFormat formatter() {
+        return NVersionFormat.of().setVersion(this);
     }
 
     private String toExplicitSingleValueOrNullString() {

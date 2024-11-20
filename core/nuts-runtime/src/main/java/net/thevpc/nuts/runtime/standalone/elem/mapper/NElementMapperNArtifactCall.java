@@ -5,7 +5,6 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
 import net.thevpc.nuts.elem.NObjectElement;
-import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
 import net.thevpc.nuts.DefaultNArtifactCall;
 
 import java.lang.reflect.Type;
@@ -29,7 +28,7 @@ public class NElementMapperNArtifactCall implements NElementMapper<NArtifactCall
     @Override
     public NArtifactCall createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
         NSession session = context.getSession();
-        NObjectElement object = o.asObject().get(session);
+        NObjectElement object = o.asObject().get();
         NId id = (NId) context.elementToObject(object.get(context.elem().ofString("id")).orNull(), NId.class);
         String[] arguments = (String[]) context.elementToObject(object.get(context.elem().ofString("arguments")).orNull(), String[].class);
         Type mapType = context.getReflectRepository().getParametrizedType(

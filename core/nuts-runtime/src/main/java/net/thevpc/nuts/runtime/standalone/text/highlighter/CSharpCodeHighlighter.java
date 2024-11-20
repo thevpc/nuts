@@ -10,10 +10,10 @@ import java.util.*;
 public class CSharpCodeHighlighter implements NCodeHighlighter {
 
     private Set<String> reservedWords = new HashSet<>();
-    private NWorkspace ws;
+    private NWorkspace workspace;
 
-    public CSharpCodeHighlighter(NWorkspace ws) {
-        this.ws = ws;
+    public CSharpCodeHighlighter(NWorkspace workspace) {
+        this.workspace = workspace;
         reservedWords.addAll(NCodeHighlighterHelper.loadNames("csharp.kw1",getClass()));
     }
 
@@ -23,7 +23,7 @@ public class CSharpCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText tokenToText(String text, String nodeType, NTexts txt, NSession session) {
+    public NText tokenToText(String text, String nodeType, NTexts txt) {
         return txt.ofPlain(text);
     }
     
@@ -47,9 +47,10 @@ public class CSharpCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText stringToText(String text, NTexts txt, NSession session) {
+    public NText stringToText(String text, NTexts txt) {
         List<NText> all = new ArrayList<>();
         StringReaderExt ar = new StringReaderExt(text);
+        NSession session=workspace.currentSession();
         while (ar.hasNext()) {
             switch (ar.peekChar()) {
                 case '{':

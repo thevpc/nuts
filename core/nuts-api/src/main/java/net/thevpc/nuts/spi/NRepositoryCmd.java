@@ -36,20 +36,7 @@ import net.thevpc.nuts.NSession;
  * @author thevpc
  * @app.category SPI Base
  */
-public interface NRepositoryCmd extends NCmdLineConfigurable, NSessionProvider {
-
-    /**
-     * return session
-     *
-     * @return {@code this} instance
-     */
-    /**
-     * set session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    NRepositoryCmd setSession(NSession session);
+public interface NRepositoryCmd extends NCmdLineConfigurable {
 
     /**
      * run this command and return {@code this} instance

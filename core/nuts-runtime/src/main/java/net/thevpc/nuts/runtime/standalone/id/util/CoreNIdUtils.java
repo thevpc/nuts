@@ -15,25 +15,25 @@ import java.util.Map;
 
 public class CoreNIdUtils {
     public static NId resolveOrGenerateIdFromFileName(NPath path, NSession session) {
-        List<NId> nIds = NId.findByPath(path,session);
+        List<NId> nIds = NId.findByPath(path);
         if (nIds.size() == 1) {
             return nIds.get(0);
         }
         if (nIds.isEmpty()) {
-            return CoreNIdUtils.generateIdFromFileName(path, session);
+            return CoreNIdUtils.generateIdFromFileName(path);
         }
         //multiple ids ...
-        return CoreNIdUtils.generateIdFromFileName(path, session);
+        return CoreNIdUtils.generateIdFromFileName(path);
     }
 
-    public static NId generateIdFromFileName(NPath path, NSession session) {
-        NDigest nDigest = NDigest.of(session);
-        String id0 = CoreNIdUtils.resolveValidIdStringFromFileName(path.getName(), session);
+    public static NId generateIdFromFileName(NPath path) {
+        NDigest nDigest = NDigest.of();
+        String id0 = CoreNIdUtils.resolveValidIdStringFromFileName(path.getName());
         nDigest.setSource(path);
         return NId.of("temp.url:" + id0 + "-" + nDigest.computeString() + "#1.0").get();
     }
 
-    public static String resolveValidIdStringFromFileName(String fileName, NSession session) {
+    public static String resolveValidIdStringFromFileName(String fileName) {
         int i0 = fileName.indexOf('.');
         String base="";
         if(i0>=0){
@@ -68,13 +68,13 @@ public class CoreNIdUtils {
 
     public static void checkLongId(NId id, NSession session) {
         checkShortId(id, session);
-        NAssert.requireNonBlank(id.getVersion(), () -> NMsg.ofC("missing version for %s", id), session);
+        NAssert.requireNonBlank(id.getVersion(), () -> NMsg.ofC("missing version for %s", id));
     }
 
     public static void checkShortId(NId id, NSession session) {
-        NAssert.requireNonBlank(id, "id", session);
-        NAssert.requireNonBlank(id.getGroupId(), () -> NMsg.ofC("missing groupId for %s", id), session);
-        NAssert.requireNonBlank(id.getArtifactId(), () -> NMsg.ofC("missing artifactId for %s", id), session);
+        NAssert.requireNonBlank(id, "id");
+        NAssert.requireNonBlank(id.getGroupId(), () -> NMsg.ofC("missing groupId for %s", id));
+        NAssert.requireNonBlank(id.getArtifactId(), () -> NMsg.ofC("missing artifactId for %s", id));
     }
 
     public static boolean isValidEffectiveId(NId id) {
@@ -88,9 +88,9 @@ public class CoreNIdUtils {
     }
 
     public static void checkValidEffectiveId(NId id, NSession session) {
-        NAssert.requireNonBlank(id, "id", session);
+        NAssert.requireNonBlank(id, "id");
         if (id.toString().contains("${")) {
-            throw new NIllegalArgumentException(session, NMsg.ofC("unable to evaluate effective id %s", id));
+            throw new NIllegalArgumentException(NMsg.ofC("unable to evaluate effective id %s", id));
         }
     }
 
@@ -109,45 +109,50 @@ public class CoreNIdUtils {
         return NId.ofRuntime("").get().equalsShortId(id);
     }
 
-    public static NId apiId(String apiVersion, NSession session) {
-        NAssert.requireNonBlank(apiVersion, "version", session);
-        if (apiVersion.equals(session.getWorkspace().getApiVersion().toString())) {
-            return session.getWorkspace().getApiId();
+    public static NId apiId(String apiVersion) {
+        NAssert.requireNonBlank(apiVersion, "version");
+        NWorkspace workspace = NWorkspace.of().get();
+        if (apiVersion.equals(workspace.getApiVersion().toString())) {
+            return workspace.getApiId();
         }
-        return NId.ofApi(apiVersion).get(session);
+        return NId.ofApi(apiVersion).get();
     }
 
-    public static NId runtimeId(String runtimeVersion, NSession session) {
-        NAssert.requireNonBlank(runtimeVersion, "runtimeVersion", session);
-        if (runtimeVersion.equals(session.getWorkspace().getApiVersion().toString())) {
-            return session.getWorkspace().getApiId();
+    public static NId runtimeId(String runtimeVersion) {
+        NAssert.requireNonBlank(runtimeVersion, "runtimeVersion");
+        NWorkspace workspace = NWorkspace.of().get();
+        if (runtimeVersion.equals(workspace.getApiVersion().toString())) {
+            return workspace.getApiId();
         }
-        return NId.ofRuntime(runtimeVersion).get(session);
+        return NId.ofRuntime(runtimeVersion).get();
     }
 
-    public static NId findRuntimeForApi(String apiVersion, NSession session) {
-        NAssert.requireNonBlank(apiVersion, "apiVersion", session);
-        if (apiVersion.equals(session.getWorkspace().getApiVersion().toString())) {
-            return session.getWorkspace().getRuntimeId();
+    public static NId findRuntimeForApi(String apiVersion) {
+        NAssert.requireNonBlank(apiVersion, "apiVersion");
+        NWorkspace workspace = NWorkspace.of().get();
+        if (apiVersion.equals(workspace.getApiVersion().toString())) {
+            return workspace.getRuntimeId();
         }
-        NPath apiBoot = NLocations.of(session).getStoreLocation(apiId(apiVersion, session), NStoreType.CONF).resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
+        NPath apiBoot = NLocations.of().getStoreLocation(apiId(apiVersion), NStoreType.CONF).resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
         if (apiBoot.isRegularFile()) {
-            NWorkspaceConfigApi c = NElements.of(session)
-                    .setSession(session)
+            NWorkspaceConfigApi c = NElements.of()
                     .json().parse(apiBoot, NWorkspaceConfigApi.class);
             if (!NBlankable.isBlank(c.getRuntimeId())) {
                 return c.getRuntimeId();
             }
         }
-        NId foundRT = NSearchCmd.of(session.copy().setFetchStrategy(NFetchStrategy.OFFLINE)).addId(NId.ofRuntime("").get())
+        NId foundRT = NSearchCmd.of()
+                .setFetchStrategy(NFetchStrategy.OFFLINE)
+                .addId(NId.ofRuntime("").get())
                 .setLatest(true)
-                .setTargetApiVersion(NVersion.of(apiVersion).get(session))
+                .setTargetApiVersion(NVersion.of(apiVersion).get())
                 .getResultIds().
                 findFirst().orNull();
+        NSession session = workspace.currentSession();
         if (foundRT == null && session.getFetchStrategy().orDefault() != NFetchStrategy.OFFLINE) {
-            foundRT = NSearchCmd.of(session).addId(NId.ofRuntime("").get())
+            foundRT = NSearchCmd.of().addId(NId.ofRuntime("").get())
                     .setLatest(true)
-                    .setTargetApiVersion(NVersion.of(apiVersion).get(session))
+                    .setTargetApiVersion(NVersion.of(apiVersion).get())
                     .getResultIds().
                     findFirst().orNull();
         }
@@ -166,7 +171,7 @@ public class CoreNIdUtils {
                 }
             }
         }
-        for (NDependency dependency : executionContext.getDefinition().getDependencies().get(session)) {
+        for (NDependency dependency : executionContext.getDefinition().getDependencies().get()) {
             if (dependency.toId().getShortName().equals(NConstants.Ids.NUTS_API)) {
                 return dependency.toId().getVersion().getValue();
             }

@@ -24,20 +24,24 @@ import java.util.List;
  * @author thevpc
  */
 public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
+    public NSettingsJavaSubCommand(NWorkspace workspace) {
+        super(workspace);
+    }
 
     @Override
-    public boolean exec(NCmdLine cmdLine, Boolean autoSave, NSession session) {
+    public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
         if (autoSave == null) {
             autoSave = false;
         }
+        NSession session=workspace.currentSession();
         NPrintStream out = session.out();
-        NConfigs conf = NConfigs.of(session);
-        NPlatforms platforms = NPlatforms.of(session);
+        NConfigs conf = NConfigs.of();
+        NPlatforms platforms = NPlatforms.of();
         if (cmdLine.next("add java").isPresent()) {
             if (cmdLine.next("--search").isPresent()) {
                 List<String> extraLocations = new ArrayList<>();
                 while (cmdLine.hasNext()) {
-                    extraLocations.add(cmdLine.next().flatMap(NLiteral::asString).get(session));
+                    extraLocations.add(cmdLine.next().flatMap(NLiteral::asString).get());
                 }
                 if (extraLocations.isEmpty()) {
                     for (NPlatformLocation loc : platforms.searchSystemPlatforms(NPlatformFamily.JAVA)) {
@@ -45,7 +49,7 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
                     }
                 } else {
                     for (String extraLocation : extraLocations) {
-                        for (NPlatformLocation loc : platforms.searchSystemPlatforms(NPlatformFamily.JAVA, NPath.of(extraLocation,session))) {
+                        for (NPlatformLocation loc : platforms.searchSystemPlatforms(NPlatformFamily.JAVA, NPath.of(extraLocation))) {
                             platforms.addPlatform(loc);
                         }
                     }
@@ -57,7 +61,7 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
             } else {
                 while (cmdLine.hasNext()) {
                     NPlatformLocation loc = platforms.resolvePlatform(NPlatformFamily.JAVA,
-                            NPath.of(cmdLine.next().flatMap(NLiteral::asString).get(session),session), null).orNull();
+                            NPath.of(cmdLine.next().flatMap(NLiteral::asString).get()), null).orNull();
                     if (loc != null) {
                         platforms.addPlatform(loc);
                     }
@@ -70,7 +74,7 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
         } else if (cmdLine.next("remove java").isPresent()) {
             while (cmdLine.hasNext()) {
                 String name = cmdLine.next()
-                        .flatMap(NLiteral::asString).get(session);
+                        .flatMap(NLiteral::asString).get();
                 NPlatformLocation loc = platforms.findPlatformByName(NPlatformFamily.JAVA, name).orNull();
                 if (loc == null) {
                     loc = platforms.findPlatformByName(NPlatformFamily.JAVA, name).orNull();
@@ -87,10 +91,10 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
             }
             return true;
         } else if (cmdLine.next("list java").isPresent()) {
-            NTableFormat t = NTableFormat.of(session)
+            NTableFormat t = NTableFormat.of()
                     //                    .setBorder(TableFormatter.SPACE_BORDER)
                     .setVisibleHeader(true);
-            NMutableTableModel m = NMutableTableModel.of(session);
+            NMutableTableModel m = NMutableTableModel.of();
             t.setValue(m);
             m.addHeaderCells("Name", "Version", "Path");
             while (cmdLine.hasNext()) {

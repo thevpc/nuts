@@ -55,7 +55,7 @@ public class LogoutCommand extends NShellBuiltinDefault {
 
     @Override
     protected void main(NCmdLine cmdLine, NShellExecutionContext context) {
-        NWorkspaceSecurityManager.of(context.getSession()).logout();
+        NWorkspaceSecurityManager.of().logout();
     }
     @Override
     protected boolean nextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {

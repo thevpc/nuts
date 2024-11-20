@@ -20,7 +20,7 @@ public class NStreamFromCollection<T> extends NStreamBase<T> {
     private final Collection<T> o;
 
     public NStreamFromCollection(NSession session, String nutsBase, Collection<T> o) {
-        super(session, nutsBase);
+        super(nutsBase);
         this.o = o;
     }
 
@@ -36,7 +36,7 @@ public class NStreamFromCollection<T> extends NStreamBase<T> {
 
     @Override
     public NIterator<T> iterator() {
-        return NIterator.of(((Collection<T>) o).iterator(),session);
+        return NIterator.of(((Collection<T>) o).iterator());
     }
 
     @Override

@@ -62,8 +62,8 @@ public class ChmodCommand extends NShellBuiltinDefault {
         if (context.configureFirst(cmdLine)) {
             return true;
         }
-        NArg a = cmdLine.peek().get(session);
-        String s = a.asString().get(session);
+        NArg a = cmdLine.peek().get();
+        String s = a.asString().get();
         if (s.equals("-R") || s.equals("--recursive")) {
             cmdLine.skip();
             options.m.recursive = true;

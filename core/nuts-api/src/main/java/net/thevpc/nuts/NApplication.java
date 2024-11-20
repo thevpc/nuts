@@ -58,7 +58,7 @@ package net.thevpc.nuts;
  *         new MyApplication1().runAndExit(args);
  *     }
  *
- *     public void run(NSession session) {
+ *     public void run() {
  *         session.runAppCmdLine(new NCmdLineRunner() {
  *             boolean noMoreOptions = false;
  *             boolean clean = false;
@@ -113,7 +113,7 @@ package net.thevpc.nuts;
  *     }
  *
  *     // do the main staff in launch method
- *     public void run(NSession session) {
+ *     public void run() {
  *         NCmdLine cmdLine = session.getCmdLine();
  *         boolean boolOption = false;
  *         String stringOption = null;
@@ -179,7 +179,7 @@ package net.thevpc.nuts;
  *     }
  *
  *     // do the main staff in launch method
- *     public void run(NSession session) {
+ *     public void run() {
  *         NCmdLine cmdLine = session.getCmdLine();
  *         NRef<Boolean> boolOption = NRef.of(false);
  *         NRef<String> stringOption = NRef.ofNull();
@@ -238,7 +238,7 @@ package net.thevpc.nuts;
  *     }
  *
  *     // do the main staff in launch method
- *     public void run(NSession session) {
+ *     public void run() {
  *         NCmdLine cmdLine = session.getCmdLine();
  *         NRef<Boolean> boolOption = NRef.of(false);
  *         NRef<String> stringOption = NRef.ofNull();
@@ -282,7 +282,7 @@ public interface NApplication {
      * @since 0.7.1
      */
     static <T extends NApplication> void main(Class<T> appType, String[] args) {
-        NApplications.createApplicationInstance(appType, null, args).run(args);
+        NApplications.createApplicationInstance(appType, args).run(args);
     }
 
     /**
@@ -297,7 +297,7 @@ public interface NApplication {
      * @since 0.7.1
      */
     static <T extends NApplication> void mainWithExit(Class<T> appType, String[] args) {
-        NApplications.createApplicationInstance(appType, null, args).runAndExit(args);
+        NApplications.createApplicationInstance(appType, args).runAndExit(args);
     }
 
     /**
@@ -306,7 +306,7 @@ public interface NApplication {
      * @param args arguments
      */
     default void runAndExit(String[] args) {
-        NApplications.runApplicationAndExit(this, null, args);
+        NApplications.runApplicationAndExit(this, args);
     }
 
     /**
@@ -317,55 +317,34 @@ public interface NApplication {
      * @param args application arguments. should not be null or contain nulls
      */
     default void run(String[] args) {
-        run(null, args);
-    }
-
-    /**
-     * run the application with the given arguments against the given workspace
-     * If the first arguments is in the form of --nuts-exec-mode=... the
-     * argument will be removed and the corresponding mode is activated.
-     *
-     * @param session session (can be null)
-     * @param args    application arguments. should not be null or contain nulls
-     * @since 0.6.0, first parameter changed from NutsWorkspace to NutsSession to enable passing session options
-     */
-    default void run(NSession session, String[] args) {
-        NApplications.runApplication(this, session, null, args);
+        NApplications.runApplication(this, null, args);
     }
 
     /**
      * this method should be overridden to perform specific business when
      * application is installed
-     *
-     * @param session context
      */
-    default void onInstallApplication(NSession session) {
+    default void onInstallApplication() {
     }
 
     /**
      * this method should be overridden to perform specific business when
      * application is updated
-     *
-     * @param session context
      */
-    default void onUpdateApplication(NSession session) {
+    default void onUpdateApplication() {
     }
 
     /**
      * this method should be overridden to perform specific business when
      * application is uninstalled
-     *
-     * @param session context
      */
-    default void onUninstallApplication(NSession session) {
+    default void onUninstallApplication() {
     }
 
 
     /**
      * run application within the given context
-     *
-     * @param session app context
      */
-    void run(NSession session);
+    void run();
 
 }

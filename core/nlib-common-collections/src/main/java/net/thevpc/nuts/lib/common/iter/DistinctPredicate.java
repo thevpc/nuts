@@ -1,6 +1,5 @@
 package net.thevpc.nuts.lib.common.iter;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.spi.base.AbstractNPredicate;
@@ -25,8 +24,8 @@ class DistinctPredicate<T> extends AbstractNPredicate<T> {
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return NElements.of(session).ofString("distinct");
+    public NElement describe() {
+        return NElements.of().ofString("distinct");
     }
 
 }

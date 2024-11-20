@@ -7,7 +7,6 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.text.NTextBuilder;
@@ -30,14 +29,14 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     private final Info info;
     private Object loaded;
 
-    public GithubfsPath(String url, NSession session) {
-        this(url, null, session);
+    public GithubfsPath(String url, NWorkspace workspace) {
+        this(url, null, workspace);
     }
 
-    private GithubfsPath(String url, Info info, NSession session) {
-        super(NPath.of(url.substring(PREFIX.length()), session), session);
+    private GithubfsPath(String url, Info info, NWorkspace workspace) {
+        super(NPath.of(url.substring(PREFIX.length())), workspace);
         if (!url.startsWith(PREFIX)) {
-            throw new NUnsupportedArgumentException(session, NMsg.ofC("expected prefix '%s'",PREFIX));
+            throw new NUnsupportedArgumentException(NMsg.ofC("expected prefix '%s'",PREFIX));
         }
         this.info = info;
     }
@@ -67,15 +66,15 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     public NStream<NPath> list(NPath basePath) {
         Object q = load();
         if (q instanceof Info[]) {
-            return NStream.of((Info[]) q, session)
+            return NStream.of((Info[]) q)
                     .map(NFunction.of(
                             (Info x) -> NPath.of(new GithubfsPath(
                                     PREFIX + ref.resolve(x.name).toString(),
-                                    x, session), session)
+                                    x, workspace))
                             ).withDesc(NEDesc.of("GithubfsPath::of"))
                     );
         }
-        return NStream.ofEmpty(session);
+        return NStream.ofEmpty();
     }
 
     @Override
@@ -90,22 +89,22 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
 
     @Override
     public NPath resolve(NPath basePath, String path) {
-        return NPath.of(PREFIX + ref.resolve(path), session);
+        return NPath.of(PREFIX + ref.resolve(path));
     }
 
     @Override
     public NPath resolve(NPath basePath, NPath path) {
-        return NPath.of(PREFIX + ref.resolve(path), session);
+        return NPath.of(PREFIX + ref.resolve(path));
     }
 
     @Override
     public NPath resolveSibling(NPath basePath, String path) {
-        return NPath.of(PREFIX + ref.resolveSibling(path), session);
+        return NPath.of(PREFIX + ref.resolveSibling(path));
     }
 
     @Override
     public NPath resolveSibling(NPath basePath, NPath path) {
-        return NPath.of(PREFIX + ref.resolveSibling(path), session);
+        return NPath.of(PREFIX + ref.resolveSibling(path));
     }
 
     public boolean isSymbolicLink(NPath basePath) {
@@ -170,12 +169,12 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         if (p != null) {
             return p.getInputStream(options);
         }
-        throw new NIOException(session, NMsg.ofC("not a file %s", basePath));
+        throw new NIOException(NMsg.ofC("not a file %s", basePath));
     }
 
     @Override
     public OutputStream getOutputStream(NPath basePath, NPathOption... options) {
-        throw new NIOException(session, NMsg.ofC("not writable %s", basePath));
+        throw new NIOException(NMsg.ofC("not writable %s", basePath));
     }
 
     @Override
@@ -205,7 +204,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         if (p == null) {
             return null;
         }
-        return NPath.of(PREFIX + p, session);
+        return NPath.of(PREFIX + p);
     }
 
     @Override
@@ -213,12 +212,12 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         if (isAbsolute(basePath)) {
             return basePath;
         }
-        return NPath.of(PREFIX + basePath.toAbsolute(rootPath), session);
+        return NPath.of(PREFIX + basePath.toAbsolute(rootPath));
     }
 
     @Override
     public NPath normalize(NPath basePath) {
-        return NPath.of(PREFIX + ref.normalize(), session);
+        return NPath.of(PREFIX + ref.normalize());
     }
 
     @Override
@@ -249,7 +248,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         if (isRoot(basePath)) {
             return basePath;
         }
-        return NPath.of(PREFIX + ref.getRoot(), session);
+        return NPath.of(PREFIX + ref.getRoot());
     }
 
     @NUseDefault
@@ -264,7 +263,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         if (p != null) {
             p.copyTo(other, options);
         } else {
-            NCp.of(session).from(basePath).to(other).addOptions(options).run();
+            NCp.of().from(basePath).to(other).addOptions(options).run();
         }
     }
 
@@ -282,11 +281,11 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     }
 
     private Object load(NPath p) {
-        NElements elems = NElements.of(session);
+        NElements elems = NElements.of();
         NElement e = elems.json().parse(ref);
         if (e != null) {
             if (e.isArray()) {
-                return NStream.of(elems.convert(e, Info[].class), session).toArray(Info[]::new);
+                return NStream.of(elems.convert(e, Info[].class)).toArray(Info[]::new);
             } else if (e.isObject()) {
                 return elems.convert(e, Info.class);
             }
@@ -325,7 +324,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         Info i = _fileInfo();
         if (i != null) {
             if (_type().equals("file")) {
-                return NPath.of(i.download_url, session);
+                return NPath.of(i.download_url);
             }
         }
         return null;
@@ -337,17 +336,16 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     }
 
     public static class GithubfsFactory implements NPathFactorySPI {
-        private final NWorkspace ws;
+        private final NWorkspace workspace;
 
-        public GithubfsFactory(NWorkspace ws) {
-            this.ws = ws;
+        public GithubfsFactory(NWorkspace workspace) {
+            this.workspace = workspace;
         }
 
         @Override
-        public NCallableSupport<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
-            NSessionUtils.checkSession(ws, session);
+        public NCallableSupport<NPathSPI> createPath(String path, ClassLoader classLoader) {
             if (path.startsWith(PREFIX)) {
-                return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, () -> new GithubfsPath(path, session));
+                return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, () -> new GithubfsPath(path, workspace));
             }
             return null;
         }
@@ -379,7 +377,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         }
 
         public NString asFormattedString() {
-            NTextBuilder sb = NTextBuilder.of(p.getSession());
+            NTextBuilder sb = NTextBuilder.of();
             sb.append(PROTOCOL, NTextStyle.primary1());
             sb.append(":", NTextStyle.separator());
             sb.append(p.ref);

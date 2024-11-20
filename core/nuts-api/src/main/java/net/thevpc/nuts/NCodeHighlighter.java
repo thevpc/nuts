@@ -48,7 +48,7 @@ public interface NCodeHighlighter extends NComponent {
      */
     int getSupportLevel(NSupportLevelContext context);
 
-    NText stringToText(String text, NTexts txt, NSession session);
+    NText stringToText(String text, NTexts txt);
 
-    NText tokenToText(String text, String tokenType, NTexts txt, NSession session);
+    NText tokenToText(String text, String tokenType, NTexts txt);
 }

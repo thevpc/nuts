@@ -4,19 +4,12 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
 import net.thevpc.nuts.runtime.standalone.io.printstream.*;
-import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNSessionTerminalFromSession;
-import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNSessionTerminalFromSystem;
 import net.thevpc.nuts.runtime.standalone.io.util.*;
-import net.thevpc.nuts.runtime.standalone.text.SimpleWriterOutputStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
-import net.thevpc.nuts.text.NString;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NMsg;
 
 import java.io.*;
 
@@ -27,7 +20,7 @@ public class DefaultNIO implements NIO {
 
     public DefaultNIO(NSession session) {
         this.session = session;
-        this.cmodel = ((DefaultNConfigs) NConfigs.of(session)).getModel();
+        this.cmodel = ((DefaultNConfigs) NConfigs.of()).getModel();
         bootModel = NWorkspaceExt.of(session.getWorkspace()).getModel().bootModel;
     }
 
@@ -112,7 +105,7 @@ public class DefaultNIO implements NIO {
     }
 
     private DefaultNWorkspaceConfigModel getConfigModel() {
-        return ((DefaultNConfigs) NConfigs.of(session)).getModel();
+        return ((DefaultNConfigs) NConfigs.of()).getModel();
     }
 
 
@@ -162,7 +155,7 @@ public class DefaultNIO implements NIO {
 
     @Override
     public NIO setSystemTerminal(NSystemTerminalBase terminal) {
-        NWorkspaceExt.of(session).getModel().bootModel.setSystemTerminal(terminal, session);
+        NWorkspaceExt.of(session).getModel().bootModel.setSystemTerminal(terminal);
         return this;
     }
 
@@ -173,7 +166,7 @@ public class DefaultNIO implements NIO {
 
     @Override
     public NIO setDefaultTerminal(NSessionTerminal terminal) {
-        cmodel.setTerminal(terminal, session);
+        cmodel.setTerminal(terminal);
         return this;
     }
 }

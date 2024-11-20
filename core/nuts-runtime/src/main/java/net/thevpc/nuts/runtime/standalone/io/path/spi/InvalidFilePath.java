@@ -24,16 +24,17 @@ import java.util.*;
 public class InvalidFilePath implements NPathSPI {
 
     private final String value;
-    private final NSession session;
+    private final NWorkspace workspace;
 
-    public InvalidFilePath(String value, NSession session) {
+    public InvalidFilePath(String value, NWorkspace workspace) {
         this.value = value == null ? "" : value;
-        this.session = session;
+        this.workspace = workspace;
     }
 
     @Override
     public NStream<NPath> list(NPath basePath) {
-        return NStream.ofEmpty(getSession());
+        NSession session=workspace.currentSession();
+        return NStream.ofEmpty();
     }
 
     @Override
@@ -55,13 +56,18 @@ public class InvalidFilePath implements NPathSPI {
         return "";
     }
 
+    public NWorkspace getWorkspace() {
+        return workspace;
+    }
+
     @Override
     public NPath resolve(NPath basePath, String path) {
         String b = value;
+        NSession session=workspace.currentSession();
         if (b.endsWith("/") || b.endsWith("\\")) {
-            return NPath.of(b + path, session);
+            return NPath.of(b + path);
         }
-        return NPath.of(b + "/" + path, session);
+        return NPath.of(b + "/" + path);
     }
 
     @Override
@@ -75,7 +81,8 @@ public class InvalidFilePath implements NPathSPI {
             return getParent(basePath);
         }
         if (isRoot(basePath)) {
-            return NPath.of("/" + path, session);
+            NSession session=workspace.currentSession();
+            return NPath.of("/" + path);
         }
         return getParent(basePath).resolve(path);
     }
@@ -160,26 +167,25 @@ public class InvalidFilePath implements NPathSPI {
     }
 
     public InputStream getInputStream(NPath basePath, NPathOption... options) {
-        throw new NIOException(session, NMsg.ofC("path not found %s", this));
+        NSession session=workspace.currentSession();
+        throw new NIOException(NMsg.ofC("path not found %s", this));
     }
 
     public OutputStream getOutputStream(NPath basePath, NPathOption... options) {
-        throw new NIOException(session, NMsg.ofC("path not found %s", this));
-    }
-
-    @Override
-    public NSession getSession() {
-        return session;
+        NSession session=workspace.currentSession();
+        throw new NIOException(NMsg.ofC("path not found %s", this));
     }
 
     @Override
     public void delete(NPath basePath, boolean recurse) {
-        throw new NIOException(getSession(), NMsg.ofC("unable to delete path %s", this));
+        NSession session=workspace.currentSession();
+        throw new NIOException(NMsg.ofC("unable to delete path %s", this));
     }
 
     @Override
     public void mkdir(boolean parents, NPath basePath) {
-        throw new NIOException(getSession(), NMsg.ofC("unable to create folder out of regular file %s", this));
+        NSession session=workspace.currentSession();
+        throw new NIOException(NMsg.ofC("unable to create folder out of regular file %s", this));
     }
 
     @Override
@@ -212,7 +218,8 @@ public class InvalidFilePath implements NPathSPI {
             x = y;
         }
         if (x >= 0) {
-            return NPath.of(sb.substring(0, x), getSession());
+            NSession session=workspace.currentSession();
+            return NPath.of(sb.substring(0, x));
         }
         return null;
     }
@@ -305,13 +312,15 @@ public class InvalidFilePath implements NPathSPI {
 
     @Override
     public NStream<NPath> walk(NPath basePath, int maxDepth, NPathOption[] options) {
-        return NStream.ofEmpty(getSession());
+        NSession session=workspace.currentSession();
+        return NStream.ofEmpty();
     }
 
     @Override
     public NPath subpath(NPath basePath, int beginIndex, int endIndex) {
         List<String> a = asPathArray();
-        return NPath.of(String.join("/", a.subList(beginIndex, endIndex)), getSession());
+        NSession session=workspace.currentSession();
+        return NPath.of(String.join("/", a.subList(beginIndex, endIndex)));
     }
 
     @Override
@@ -391,7 +400,8 @@ public class InvalidFilePath implements NPathSPI {
         }
 
         public NString asFormattedString() {
-            return NTexts.of(p.getSession()).ofText(p.value);
+            NSession session=p.workspace.currentSession();
+            return NTexts.of().ofText(p.value);
         }
 
         @Override
@@ -407,12 +417,14 @@ public class InvalidFilePath implements NPathSPI {
 
     @Override
     public void moveTo(NPath basePath, NPath other, NPathOption... options) {
-        throw new NIOException(session, NMsg.ofC("unable to move %s",this));
+        NSession session=workspace.currentSession();
+        throw new NIOException(NMsg.ofC("unable to move %s",this));
     }
 
     @Override
     public void copyTo(NPath basePath, NPath other, NPathOption... options) {
-        throw new NIOException(session, NMsg.ofC("unable to copy %s",this));
+        NSession session=workspace.currentSession();
+        throw new NIOException(NMsg.ofC("unable to copy %s",this));
     }
     @Override
     public NPath getRoot(NPath basePath) {
@@ -445,7 +457,8 @@ public class InvalidFilePath implements NPathSPI {
             if (child.startsWith("/") || child.startsWith("\\")) {
                 child = child.substring(1);
             }
-            return NPath.of(child,session);
+            NSession session=workspace.currentSession();
+            return NPath.of(child);
         }
         return null;
     }

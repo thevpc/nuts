@@ -26,7 +26,6 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.reserved.util.NUnsafeRunnableWithDescription;
 
@@ -50,10 +49,10 @@ public interface NUnsafeRunnable extends NElementDescribable<NUnsafeRunnable> {
     }
 
     @Override
-    default NElement describe(NSession session) {
-        return NEDesc.ofLateToString(session).apply(session);
+    default NElement describe() {
+        return NEDesc.ofLateToString(this).get();
     }
 
-    void run(NSession session) throws Exception;
+    void run() throws Exception;
 
 }

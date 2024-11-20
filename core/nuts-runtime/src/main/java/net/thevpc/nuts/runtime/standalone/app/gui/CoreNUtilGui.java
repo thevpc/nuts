@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.app.gui;
 
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.text.NTexts;
 
 import javax.swing.*;
@@ -34,9 +34,9 @@ public final class CoreNUtilGui {
         }
     }
 
-    public static String inputString(NMsg message, NMsg title, NSession session) {
+    public static String inputString(NMsg message, NMsg title) {
         try {
-            NTexts text = NTexts.of(session);
+            NTexts text = NTexts.of();
             if (title == null) {
                 title = NMsg.ofC("Nuts Package Manager - %s", Nuts.getVersion());
             }
@@ -50,19 +50,20 @@ public final class CoreNUtilGui {
             return line;
         } catch (UnsatisfiedLinkError e) {
             //exception may occur if the sdk is built in headless mode
+            NSession session = NSession.of().get();
             session.err().println(NMsg.ofC("[Graphical Environment Unsupported] %s", title));
             return session.getTerminal().readLine(NMsg.ofPlain(message.toString()));
         }
     }
 
-    public static String inputPassword(NMsg message, NMsg title, NSession session) {
+    public static String inputPassword(NMsg message, NMsg title) {
         if (title == null) {
             title = NMsg.ofC("Nuts Package Manager - %s", Nuts.getVersion());
         }
         if (message == null) {
             message = NMsg.ofPlain("");
         }
-        NTexts text = NTexts.of(session);
+        NTexts text = NTexts.of();
         String messageString = text.ofText(message).filteredText();
         String titleString = text.ofText(title).filteredText();
         try {
@@ -81,22 +82,24 @@ public final class CoreNUtilGui {
             return "";
         } catch (UnsatisfiedLinkError e) {
             //exception may occur if the sdk is built in headless mode
+            NSession session = NSession.of().get();
             session.err().println(NMsg.ofC("[Graphical Environment Unsupported] %s", title));
             return session.getTerminal().readLine(NMsg.ofPlain(message.toString()));
         }
     }
 
-    public static void showMessage(NMsg message, NMsg title, NSession session) {
+    public static void showMessage(NMsg message, NMsg title) {
         if (title == null) {
             title = NMsg.ofC("Nuts Package Manager - %s", Nuts.getVersion());
         }
-        NTexts text = NTexts.of(session);
+        NTexts text = NTexts.of();
         String messageString = text.ofText(message == null ? "" : message).filteredText();
         String titleString = text.ofText(title).filteredText();
         try {
             javax.swing.JOptionPane.showMessageDialog(null, messageString, titleString, JOptionPane.QUESTION_MESSAGE);
         } catch (UnsatisfiedLinkError e) {
             //exception may occur if the sdk is built in headless mode
+            NSession session = NSession.of().get();
             session.err().println(NMsg.ofC("[Graphical Environment Unsupported] %s", title));
         }
     }

@@ -27,12 +27,12 @@ import java.util.regex.Pattern;
 class SshNPath implements NPathSPI {
 
     private final NConnexionString path;
-    private final NSession session;
+    private final NWorkspace workspace;
     private SshListener listener;
 
-    public SshNPath(NConnexionString path, NSession session) {
+    public SshNPath(NConnexionString path, NWorkspace workspace) {
         this.path = path;
-        this.session = session;
+        this.workspace = workspace;
     }
 
     public static String getURLParentPath(String ppath) {
@@ -60,7 +60,7 @@ class SshNPath implements NPathSPI {
             int i = c.execStringCommand("ls " + path.getPath());
             if (i == 0) {
                 String[] s = c.getOutputString().split("[\n|\r]");
-                return NStream.of(s, session).map(
+                return NStream.of(s).map(
                         NFunction.of(
                                 x -> {
                                     String cc = path.getPath();
@@ -68,7 +68,7 @@ class SshNPath implements NPathSPI {
                                         cc += "/";
                                     }
                                     cc += x;
-                                    return NPath.of(path.setPath(cc).toString(), getSession());
+                                    return NPath.of(path.setPath(cc).toString());
                                 }
 
                         ).withDesc(NEDesc.of("NPath::of"))
@@ -77,25 +77,27 @@ class SshNPath implements NPathSPI {
         } catch (Exception e) {
             //return false;
         }
-        return NStream.ofEmpty(session);
+        return NStream.ofEmpty();
     }
 
     private SShConnection prepareSshConnexion() {
+        NSession session = workspace.currentSession();
         return new SShConnection(path
-                , getSession().in()
-                , getSession().out().asOutputStream()
-                , getSession().err().asOutputStream()
-                , getSession()
+                , session.in()
+                , session.out().asOutputStream()
+                , session.err().asOutputStream()
+                , session
         )
                 .addListener(listener);
     }
 
     private SShConnection prepareSshConnexionGrab() {
+        NSession session = workspace.currentSession();
         return new SShConnection(path
-                , getSession().in()
-                , getSession().out().asOutputStream()
-                , NIO.of(session).ofNullRawOutputStream()
-                , getSession()
+                , session.in()
+                , session.out().asOutputStream()
+                , NIO.of().ofNullRawOutputStream()
+                , session
         ).grabOutputString()
                 .addListener(listener);
     }
@@ -115,7 +117,7 @@ class SshNPath implements NPathSPI {
                 NTextStyle _path = NTextStyle.path();
                 NTextStyle _nbr = NTextStyle.number();
 //        if(true) {
-                NTexts text = NTexts.of(session);
+                NTexts text = NTexts.of();
                 NTextBuilder sb = text.ofBuilder();
                 String user = path.getUser();
                 String host = path.getHost();
@@ -188,13 +190,13 @@ class SshNPath implements NPathSPI {
         }
         if (isAbsolutePathString(path)) {
             c.setPath(path);
-            return NPath.of(c.toString(), getSession());
+            return NPath.of(c.toString());
         }
         List<String> a = splitPath(c.getPath());
         a.addAll(splitPath(path));
         a = normalize(a);
         c.setPath(joinPathString(a));
-        return NPath.of(c.toString(), getSession());
+        return NPath.of(c.toString());
     }
 
 
@@ -212,7 +214,7 @@ class SshNPath implements NPathSPI {
 
         if (isAbsolutePathString(path)) {
             c.setPath(path);
-            return NPath.of(c.toString(), getSession());
+            return NPath.of(c.toString());
         }
         List<String> a = splitPath(c.getPath());
         a.addAll(splitPath(path));
@@ -221,7 +223,7 @@ class SshNPath implements NPathSPI {
             a.remove(a.size() - 1);
         }
         c.setPath(joinPathString(a));
-        return NPath.of(this.path.toString(), getSession());
+        return NPath.of(this.path.toString());
     }
 
     @Override
@@ -263,9 +265,9 @@ class SshNPath implements NPathSPI {
 //                                    this.path.getUser(),
 //                                    this.path.getPassword(),
 //                                    this.path.getKeyFile()
-//                            ), getSession());
+//                            ), session);
 //        }
-//        return NPath.of(toString(), getSession());
+//        return NPath.of(toString(), session);
 //    }
     @Override
     public boolean isSymbolicLink(NPath basePath) {
@@ -440,23 +442,18 @@ class SshNPath implements NPathSPI {
     public InputStream getInputStream(NPath basePath, NPathOption... options) {
         SshFileType ft = detectType(basePath);
         if (ft == null) {
-            throw new NIOException(getSession(), NMsg.ofC("path not found %s", basePath));
+            throw new NIOException(NMsg.ofC("path not found %s", basePath));
         }
         if (ft == SshFileType.DIRECTORY) {
-            throw new NIOException(getSession(), NMsg.ofC("cannot open directory %s", basePath));
+            throw new NIOException(NMsg.ofC("cannot open directory %s", basePath));
         }
 
-        return new SshFileInputStream(path, session);
+        return new SshFileInputStream(path, workspace);
     }
 
     @Override
     public OutputStream getOutputStream(NPath basePath, NPathOption... options) {
-        return new SshFileOutputStream2(path, session, false);
-    }
-
-    @Override
-    public NSession getSession() {
-        return session;
+        return new SshFileOutputStream2(path, workspace, false);
     }
 
     public void delete(NPath basePath, boolean recurse) {
@@ -492,7 +489,7 @@ class SshNPath implements NPathSPI {
         if (loc == null) {
             return null;
         }
-        return NPath.of(path.copy().setPath(loc).toString(), getSession());
+        return NPath.of(path.copy().setPath(loc).toString());
     }
 
     @Override
@@ -502,7 +499,7 @@ class SshNPath implements NPathSPI {
 
     @Override
     public NPath normalize(NPath basePath) {
-        return NPath.of(toString(), getSession());
+        return NPath.of(toString());
     }
 
     @Override
@@ -548,7 +545,7 @@ class SshNPath implements NPathSPI {
         if (NBlankable.isBlank(location)) {
             return 0;
         }
-        return NPath.of(location, getSession()).getLocationItemsCount();
+        return NPath.of(location).getLocationItemsCount();
     }
 
     @Override
@@ -568,7 +565,7 @@ class SshNPath implements NPathSPI {
         if (isRoot(basePath)) {
             return basePath;
         }
-        return NPath.of(path.copy().setPath("/").toString(), session);
+        return NPath.of(path.copy().setPath("/").toString());
     }
 
     @Override
@@ -590,7 +587,7 @@ class SshNPath implements NPathSPI {
             int i = c.execStringCommand(cmd.toString());
             if (i == 0) {
                 String[] s = c.getOutputString().split("[\n|\r]");
-                return NStream.of(s, session).map(
+                return NStream.of(s).map(
                         NFunction.of(
                                 x -> {
                                     String cc = path.getPath();
@@ -598,7 +595,7 @@ class SshNPath implements NPathSPI {
                                         cc += "/";
                                     }
                                     cc += x;
-                                    return NPath.of(path.setPath(cc).toString(), getSession());
+                                    return NPath.of(path.setPath(cc).toString());
                                 }
 
                         ).withDesc(NEDesc.of("NPath::of"))
@@ -607,17 +604,17 @@ class SshNPath implements NPathSPI {
         } catch (Exception e) {
             //return false;
         }
-        return NStream.ofEmpty(session);
+        return NStream.ofEmpty();
     }
 
     @Override
     public NPath subpath(NPath basePath, int beginIndex, int endIndex) {
-        return NPath.of(this.path.toString(), getSession());
+        return NPath.of(this.path.toString());
     }
 
     @Override
     public List<String> getLocationItems(NPath basePath) {
-        return NPath.of(getLocation(basePath), getSession()).getLocationItems();
+        return NPath.of(getLocation(basePath)).getLocationItems();
     }
 
     @Override
@@ -633,7 +630,7 @@ class SshNPath implements NPathSPI {
                     r = c.execStringCommand("mv " + path.getPath() + " " + sp);
                 }
                 if (r != 0) {
-                    throw new NIOException(session, NMsg.ofC("unable to move %s", this));
+                    throw new NIOException(NMsg.ofC("unable to move %s", this));
                 }
                 return;
             }
@@ -644,14 +641,14 @@ class SshNPath implements NPathSPI {
 
     @Override
     public void copyTo(NPath basePath, NPath other, NPathOption... options) {
-        NCp.of(session).from(basePath).to(other).run();
+        NCp.of().from(basePath).to(other).run();
     }
 
     @Override
     public void walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {
         for (NPath x : walk(basePath, maxDepth, options)) {
             if (x.isDirectory()) {
-                NTreeVisitResult r = visitor.preVisitDirectory(x, session);
+                NTreeVisitResult r = visitor.preVisitDirectory(x);
                 switch (r) {
                     case CONTINUE: {
                         break;
@@ -661,11 +658,11 @@ class SshNPath implements NPathSPI {
                     }
                     case SKIP_SIBLINGS:
                     case SKIP_SUBTREE: {
-                        throw new NIllegalArgumentException(session, NMsg.ofC("unsupported %s", r));
+                        throw new NIllegalArgumentException(NMsg.ofC("unsupported %s", r));
                     }
                 }
             } else if (x.isRegularFile()) {
-                NTreeVisitResult r = visitor.visitFile(x, session);
+                NTreeVisitResult r = visitor.visitFile(x);
                 switch (r) {
                     case CONTINUE: {
                         break;
@@ -675,7 +672,7 @@ class SshNPath implements NPathSPI {
                     }
                     case SKIP_SIBLINGS:
                     case SKIP_SUBTREE: {
-                        throw new NIllegalArgumentException(session, NMsg.ofC("unsupported %s", r));
+                        throw new NIllegalArgumentException(NMsg.ofC("unsupported %s", r));
                     }
                 }
             }
@@ -704,7 +701,7 @@ class SshNPath implements NPathSPI {
             if (child.startsWith("/") || child.startsWith("\\")) {
                 child = child.substring(1);
             }
-            return NPath.of(child, session);
+            return NPath.of(child);
         }
         return null;
     }

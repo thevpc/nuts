@@ -217,7 +217,7 @@ public class NLogUtils {
         return session;
     }
 
-    public static void traceMessage(NLog log, Level lvl, String name, NSession session, NFetchMode fetchMode, NId id, NLogVerb tracePhase, String title, long startTime, NMsg extraMsg) {
+    public static void traceMessage(NLog log, Level lvl, String name, NFetchMode fetchMode, NId id, NLogVerb tracePhase, String title, long startTime, NMsg extraMsg) {
         if (!log.isLoggable(lvl)) {
             return;
         }
@@ -230,7 +230,7 @@ public class NLogUtils {
         }
         long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
         String modeString = NStringUtils.formatAlign(fetchMode.id(), 7, NPositionType.FIRST);
-        log.with().session(session).level(lvl).verb(tracePhase).time(time)
+        log.with().level(lvl).verb(tracePhase).time(time)
                 .log(NMsg.ofJ("[{0}] {1} {2} {3} {4}",
                         modeString,
                         NStringUtils.formatAlign(name, 20, NPositionType.FIRST),

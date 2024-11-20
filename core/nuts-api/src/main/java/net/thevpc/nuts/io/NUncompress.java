@@ -44,9 +44,9 @@ import java.util.Set;
  * @app.category Input Output
  * @since 0.5.8
  */
-public interface NUncompress extends NComponent, NSessionProvider {
-    static NUncompress of(NSession session) {
-        return NExtensions.of(session).createComponent(NUncompress.class).get();
+public interface NUncompress extends NComponent {
+    static NUncompress of() {
+        return NExtensions.of().createComponent(NUncompress.class).get();
     }
 
     /**
@@ -214,14 +214,6 @@ public interface NUncompress extends NComponent, NSessionProvider {
      * @return {@code this} instance
      */
     NUncompress from(NPath source);
-
-    /**
-     * update current session
-     *
-     * @param session current session
-     * @return {@code this} instance
-     */
-    NUncompress setSession(NSession session);
 
     /**
      * run this uncompress action

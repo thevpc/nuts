@@ -32,7 +32,7 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
                 NId id = NIdBuilder.of().setArtifactId(split.get(split.size() - 3))
                         .setGroupId(String.join(".", split.subList(0, split.size() - 3)))
                         .setVersion(split.get(split.size() - 2)).build();
-                NDefinition fetch = NFetchCmd.of(id,session)
+                NDefinition fetch = NFetchCmd.of(id)
                         .getResultDefinition();
                 NDescriptor d = fetch.getDescriptor();
                 if(context.isHeadMethod()){
@@ -60,7 +60,7 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
 
                     xml.push("properties");
                     for (NDescriptorProperty e : d.getProperties()) {
-                        xml.append(e.getName(), e.getValue().asString().get(session));
+                        xml.append(e.getName(), e.getValue().asString().get());
                     }
                     xml.pop();
 
@@ -110,7 +110,7 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
                 NId id = NIdBuilder.of().setArtifactId(split.get(split.size() - 3))
                         .setGroupId(String.join(".", split.subList(0, split.size() - 3)))
                         .setVersion(split.get(split.size() - 2)).build();
-                NDefinition fetch = NFetchCmd.of(id,session)
+                NDefinition fetch = NFetchCmd.of(id)
                         .getResultDefinition();
                 if(fetch.getContent().isPresent()) {
                     if (context.isHeadMethod()) {
@@ -128,7 +128,7 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
             if (split.size() >= 3) {
                 NId id = NIdBuilder.of().setArtifactId(split.get(split.size() - 2))
                         .setGroupId(String.join(".", split.subList(0, split.size() - 2))).build();
-                NStream<NId> resultIds = NSearchCmd.of(session).addId(id).setDistinct(true).setSorted(true).getResultIds();
+                NStream<NId> resultIds = NSearchCmd.of().addId(id).setDistinct(true).setSorted(true).getResultIds();
                 if(context.isHeadMethod()){
                     context.sendResponseHeaders(200,-1);
                     return;

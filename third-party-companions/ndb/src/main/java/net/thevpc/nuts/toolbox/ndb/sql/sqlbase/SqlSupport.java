@@ -49,21 +49,21 @@ public abstract class SqlSupport<C extends NdbConfig> extends NdbSupportBase<C> 
 //    }
 
 
-    public void runSQL(List<String> sql, AtName name, Boolean forceShowSQL, NSession session) {
+    public void runSQL(List<String> sql, AtName name, Boolean forceShowSQL) {
         C options = loadConfig(name).get();
-        runSQL(sql, options, session);
+        runSQL(sql, options);
     }
 
-    public void runSQL(List<String> sql, C options, NSession session) {
+    public void runSQL(List<String> sql, C options) {
         if (options == null) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("missing config"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("missing config"));
         }
         boolean forceShowSQL = session.isTrace();
         revalidateOptions(options);
         if (isRemoteCommand(options)) {
             //call self remotely
-            NPrepareCmd.of(session).setUserName(options.getRemoteUser()).setTargetServer(options.getRemoteServer()).addIds(Arrays.asList(NId.of(dbDriverPackage).get())).run();
-            run(sysSsh(options, session).addCommand("nuts").addCommand(session.getAppId().toString()).addCommand(dbType).addCommand("run-sql").addCommand("--host=" + options.getHost()).addCommand("--port=" + options.getPort()).addCommand("--dbname=" + options.getDatabaseName()).addCommand("--user=" + options.getUser()).addCommand("--password=" + options.getPassword()));
+            NPrepareCmd.of().setUserName(options.getRemoteUser()).setTargetServer(options.getRemoteServer()).addIds(Arrays.asList(NId.of(dbDriverPackage).get())).run();
+            run(sysSsh(options).addCommand("nuts").addCommand(session.getAppId().toString()).addCommand(dbType).addCommand("run-sql").addCommand("--host=" + options.getHost()).addCommand("--port=" + options.getPort()).addCommand("--dbname=" + options.getDatabaseName()).addCommand("--user=" + options.getUser()).addCommand("--password=" + options.getPassword()));
             return;
         }
         SqlHelper.runAndWaitFor(sql, createSqlConnectionInfo(options), forceShowSQL, session);
@@ -74,8 +74,8 @@ public abstract class SqlSupport<C extends NdbConfig> extends NdbSupportBase<C> 
     public abstract void revalidateOptions(C options);
 
 
-    public String createWhere(List<String> where, NSession session) {
-        NElements elements = NElements.of(session);
+    public String createWhere(List<String> where) {
+        NElements elements = NElements.of();
         StringBuilder whereSb = new StringBuilder();
         for (String s : where) {
             s = s.trim();
@@ -108,15 +108,15 @@ public abstract class SqlSupport<C extends NdbConfig> extends NdbSupportBase<C> 
         return NStringUtils.formatStringLiteral(String.valueOf(o), NQuoteType.SIMPLE);
     }
 
-    public List<Object> callSqlAndWaitGet(String sql, C options,Boolean forceShowSQL, NSession session) {
+    public List<Object> callSqlAndWaitGet(String sql, C options,Boolean forceShowSQL) {
         return SqlHelper.callSqlAndWaitGet(sql, createSqlConnectionInfo(options), forceShowSQL,session);
     }
-    public <T> T callInDb(SqlCallable<T> sql, C options, NSession session) {
+    public <T> T callInDb(SqlCallable<T> sql, C options) {
         SqlConnectionInfo jdbcUrl = createSqlConnectionInfo(options);
         return SqlHelper.callAndWaitFor(sql, jdbcUrl, session);
     }
 
-    public void runInDb(SqlRunnable sql, C options, NSession session) {
+    public void runInDb(SqlRunnable sql, C options) {
         SqlHelper.runAndWaitFor(sql, createSqlConnectionInfo(options), session);
     }
 

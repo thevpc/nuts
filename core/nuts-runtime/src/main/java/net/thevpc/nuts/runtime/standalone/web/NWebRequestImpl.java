@@ -349,7 +349,7 @@ public class NWebRequestImpl implements NWebRequest {
     }
 
     private Map<String, List<String>> _mapFromJsonFile(NPath path) {
-        Map<String, Object> map = NElements.of(session).parse(path.getReader(), Map.class);
+        Map<String, Object> map = NElements.of().parse(path.getReader(), Map.class);
         Map<String, List<String>> newHeaders = new LinkedHashMap<>();
         for (Map.Entry<String, Object> e : map.entrySet()) {
             String k = e.getKey();
@@ -452,8 +452,8 @@ public class NWebRequestImpl implements NWebRequest {
         if (body == null) {
             this.body = null;
         } else {
-            this.body = NInputSource.of(NElements.of(session).json()
-                    .setValue(body).setNtf(false).formatPlain().getBytes(),session
+            this.body = NInputSource.of(NElements.of().json()
+                    .setValue(body).setNtf(false).formatPlain().getBytes()
             );
         }
         setContentType("application/json");
@@ -462,7 +462,7 @@ public class NWebRequestImpl implements NWebRequest {
 
     @Override
     public NWebRequest setBody(byte[] body) {
-        this.body = body == null ? null : NInputSource.of(body,session);
+        this.body = body == null ? null : NInputSource.of(body);
         return this;
     }
 

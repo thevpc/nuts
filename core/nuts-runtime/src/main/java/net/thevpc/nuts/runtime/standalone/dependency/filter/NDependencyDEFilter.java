@@ -17,17 +17,17 @@ public class NDependencyDEFilter extends AbstractDependencyFilter  {
 
     private Set<NDesktopEnvironmentFamily> accepted = EnumSet.noneOf(NDesktopEnvironmentFamily.class);
 
-    public NDependencyDEFilter(NSession session) {
-        super(session, NFilterOp.CUSTOM);
+    public NDependencyDEFilter(NWorkspace workspace) {
+        super(workspace, NFilterOp.CUSTOM);
     }
 
-    private NDependencyDEFilter(NSession session, Collection<NDesktopEnvironmentFamily> accepted) {
-        super(session, NFilterOp.CUSTOM);
+    private NDependencyDEFilter(NWorkspace workspace, Collection<NDesktopEnvironmentFamily> accepted) {
+        super(workspace, NFilterOp.CUSTOM);
         this.accepted = EnumSet.copyOf(accepted);
     }
 
-    public NDependencyDEFilter(NSession session, String accepted) {
-        super(session, NFilterOp.CUSTOM);
+    public NDependencyDEFilter(NWorkspace workspace, String accepted) {
+        super(workspace, NFilterOp.CUSTOM);
         this.accepted = EnumSet.noneOf(NDesktopEnvironmentFamily.class);
         for (String e : StringTokenizerUtils.splitDefault(accepted)) {
             if (!e.isEmpty()) {
@@ -39,11 +39,11 @@ public class NDependencyDEFilter extends AbstractDependencyFilter  {
     public NDependencyDEFilter add(Collection<NDesktopEnvironmentFamily> os) {
         EnumSet<NDesktopEnvironmentFamily> s2 = EnumSet.copyOf(this.accepted);
         s2.addAll(os);
-        return new NDependencyDEFilter(getSession(), s2);
+        return new NDependencyDEFilter(workspace, s2);
     }
 
     @Override
-    public boolean acceptDependency(NId from, NDependency dependency, NSession session) {
+    public boolean acceptDependency(NId from, NDependency dependency) {
         List<String> current = dependency.getCondition().getDesktopEnvironment();
         boolean empty = true;
         if (current != null) {
@@ -68,6 +68,6 @@ public class NDependencyDEFilter extends AbstractDependencyFilter  {
 
     @Override
     public NDependencyFilter simplify() {
-        return accepted.isEmpty() ? NDependencyFilters.of(getSession()).always() : this;
+        return accepted.isEmpty() ? NDependencyFilters.of().always() : this;
     }
 }

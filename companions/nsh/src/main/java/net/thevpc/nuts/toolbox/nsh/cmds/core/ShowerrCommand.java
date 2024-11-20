@@ -53,14 +53,14 @@ public class ShowerrCommand extends NShellBuiltinCore {
     protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        NArg a = cmdLine.peek().get(session);
+        NArg a = cmdLine.peek().get();
         if (!a.isOption()) {
             if (options.login == null) {
-                options.login = cmdLine.next(NArgName.of("username", session)).flatMap(NLiteral::asString).get(session);
+                options.login = cmdLine.next(NArgName.of("username")).flatMap(NLiteral::asString).get();
                 return true;
             } else if (options.password == null) {
-                options.password = cmdLine.next(NArgName.of("password", session))
-                        .flatMap(NLiteral::asString).get(session).toCharArray();
+                options.password = cmdLine.next(NArgName.of("password"))
+                        .flatMap(NLiteral::asString).get().toCharArray();
                 return true;
             }
         }
@@ -71,14 +71,14 @@ public class ShowerrCommand extends NShellBuiltinCore {
     protected boolean nextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        NArg a = cmdLine.peek().get(session);
+        NArg a = cmdLine.peek().get();
         if (!a.isOption()) {
             if (options.login == null) {
-                options.login = cmdLine.next(NArgName.of("username", session)).flatMap(NLiteral::asString).get(session);
+                options.login = cmdLine.next(NArgName.of("username")).flatMap(NLiteral::asString).get();
                 return true;
             } else if (options.password == null) {
-                options.password = cmdLine.next(NArgName.of("password", session))
-                        .flatMap(NLiteral::asString).get(session).toCharArray();
+                options.password = cmdLine.next(NArgName.of("password"))
+                        .flatMap(NLiteral::asString).get().toCharArray();
                 return true;
             }
         }
@@ -93,22 +93,22 @@ public class ShowerrCommand extends NShellBuiltinCore {
             case PLAIN: {
                 if (r.getCode() == 0) {
                     out.println(
-                            NTexts.of(context.getSession()).ofStyled(
+                            NTexts.of().ofStyled(
                                     "last command ended successfully with no errors.", NTextStyle.success()
                             ));
                 } else {
                     out.println(
-                            NTexts.of(context.getSession())
+                            NTexts.of()
                                     .ofStyled("last command ended abnormally with the following error :", NTextStyle.error())
                     );
                     if (r.getMessage() != null) {
-                        out.println(NTexts.of(context.getSession())
+                        out.println(NTexts.of()
                                 .ofStyled(r.getMessage(), NTextStyle.error()
                                 ));
                     }
                     if (r.getStackTrace() != null) {
                         context.err().println(
-                                NTexts.of(context.getSession())
+                                NTexts.of()
                                         .ofStyled(r.getStackTrace(), NTextStyle.error())
                         );
                     }

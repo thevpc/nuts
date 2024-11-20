@@ -54,17 +54,18 @@ public class NSysExecUtils {
         return all.toArray(new Path[0]);
     }
 
-    public static PipeRunnable pipe(String name, String cmd, String desc, final NNonBlockingInputStream in, final OutputStream out, NSession session) {
-        return new PipeRunnable(name, cmd, desc, in, out, true, session);
+    public static PipeRunnable pipe(String name, String cmd, String desc, final NNonBlockingInputStream in, final OutputStream out) {
+        return new PipeRunnable(name, cmd, desc, in, out, true);
     }
 
-    public static String resolveRootUserName(NSession session) {
-        NOsFamily sysFamily = NEnvs.of(session).getOsFamily();
+    public static String resolveRootUserName() {
+        NOsFamily sysFamily = NEnvs.of().getOsFamily();
         switch (sysFamily) {
             case WINDOWS: {
+                NSession session = NSession.of().get();
                 String s = (String) session.getProperty("nuts.windows.root-user");
                 if (s == null) {
-                    s = NConfigs.of(session).getConfigProperty("nuts.windows.root-user").flatMap(NLiteral::asString).orNull();
+                    s = NConfigs.of().getConfigProperty("nuts.windows.root-user").flatMap(NLiteral::asString).orNull();
                 }
                 if (NBlankable.isBlank(s)) {
                     s = "Administrator";
@@ -77,12 +78,12 @@ public class NSysExecUtils {
         }
     }
 
-    public static String resolveRootUserName(NOsFamily sysFamily, NSession session) {
+    public static String resolveRootUserName(NOsFamily sysFamily) {
         switch (sysFamily) {
             case WINDOWS: {
-                String s = (String) session.getProperty("nuts.windows.root-user");
+                String s = (String) NSession.of().get().getProperty("nuts.windows.root-user");
                 if (s == null) {
-                    s = NConfigs.of(session).getConfigProperty("nuts.windows.root-user").flatMap(NLiteral::asString).orNull();
+                    s = NConfigs.of().getConfigProperty("nuts.windows.root-user").flatMap(NLiteral::asString).orNull();
                 }
                 if (NBlankable.isBlank(s)) {
                     s = "Administrator";
@@ -97,11 +98,11 @@ public class NSysExecUtils {
 
     public static List<String> buildEffectiveCommandLocal(String[] args,
                                                           NRunAs runAsMode,
-                                                          String[] executionOptions,
-                                                          NSession session
+                                                          String[] executionOptions
     ) {
+        NSession session = NSession.of().get();
         return NSysExecUtils.buildEffectiveCommand(args, runAsMode,
-                NEnvs.of(session).getDesktopEnvironmentFamilies(),
+                NEnvs.of().getDesktopEnvironmentFamilies(),
                 n -> {
                     Path path = NSysExecUtils.sysWhich(n);
                     if (path != null) {
@@ -109,11 +110,11 @@ public class NSysExecUtils {
                     }
                     return null;
                 },
-                session.isGui() && NEnvs.of(session).isGraphicalDesktopEnvironment(),
-                NSysExecUtils.resolveRootUserName(session),
+                session.isGui() && NEnvs.of().isGraphicalDesktopEnvironment(),
+                NSysExecUtils.resolveRootUserName(),
                 System.getProperty("user.name"),
-                executionOptions,
-                session);
+                executionOptions
+        );
     }
 
     public static List<String> buildEffectiveCommand(String[] cmd,
@@ -123,17 +124,17 @@ public class NSysExecUtils {
                                                      Boolean gui,
                                                      String rootName,
                                                      String userName,
-                                                     String[] executorOptions,
-                                                     NSession session
+                                                     String[] executorOptions
     ) {
         //String runAsEffective = null;
-        NOsFamily sysFamily = NEnvs.of(session).getOsFamily();
+        NOsFamily sysFamily = NEnvs.of().getOsFamily();
         List<String> command = new ArrayList<>(Arrays.asList(cmd));
         if (runAsMode == null) {
             runAsMode = NRunAs.CURRENT_USER;
         }
-        boolean runWithGui = gui != null ? gui : session.isGui() && NEnvs.of(session).isGraphicalDesktopEnvironment();
-        String rootUserName = rootName != null ? rootName : resolveRootUserName(session);
+        NSession session = NSession.of().get();
+        boolean runWithGui = gui != null ? gui : session.isGui() && NEnvs.of().isGraphicalDesktopEnvironment();
+        String rootUserName = rootName != null ? rootName : resolveRootUserName();
         String currentUserName = userName != null ? userName : System.getProperty("user.name");
         if (sysWhich == null) {
             sysWhich = n -> {
@@ -185,7 +186,7 @@ public class NSysExecUtils {
                         } else {
                             String su = sysWhich.apply("su");
                             if (NBlankable.isBlank(su)) {
-                                throw new NIllegalArgumentException(session, NMsg.ofPlain("unable to resolve su application"));
+                                throw new NIllegalArgumentException(NMsg.ofPlain("unable to resolve su application"));
                             }
                             cc.add(su);
                             cc.add(runAsEffective);
@@ -198,7 +199,7 @@ public class NSysExecUtils {
                         break;
                     }
                     default: {
-                        throw new NIllegalArgumentException(session, NMsg.ofC("cannot run as %s on unknown system OS family", runAsEffective));
+                        throw new NIllegalArgumentException(NMsg.ofC("cannot run as %s on unknown system OS family", runAsEffective));
                     }
                 }
                 cc.addAll(command);
@@ -222,7 +223,7 @@ public class NSysExecUtils {
                                 switch (ac.key()) {
                                     case "--sudo-prompt": {
                                         if (ac.getValue().isNull()) {
-                                            cmdLine.withNextFlag((v, a, s) -> {
+                                            cmdLine.withNextFlag((v, a) -> {
                                                 if (v) {
                                                     // --sudo-prompt will reset the prompt to its defaults!
                                                     changePrompt.set(false);
@@ -234,7 +235,7 @@ public class NSysExecUtils {
                                                 }
                                             });
                                         } else if (ac.getValue().isString()) {
-                                            cmdLine.withNextEntry((v, a, s) -> {
+                                            cmdLine.withNextEntry((v, a) -> {
                                                 changePrompt.set(true);
                                                 newPromptValue.set(v);
                                             });
@@ -250,7 +251,7 @@ public class NSysExecUtils {
                             }
                             String su = sysWhich.apply("sudo");
                             if (NBlankable.isBlank(su)) {
-                                throw new NIllegalArgumentException(session, NMsg.ofPlain("unable to resolve sudo application"));
+                                throw new NIllegalArgumentException(NMsg.ofPlain("unable to resolve sudo application"));
                             }
                             cc.add(su);
                             cc.add("-S");
@@ -266,19 +267,19 @@ public class NSysExecUtils {
                         break;
                     }
                     default: {
-                        throw new NIllegalArgumentException(session, NMsg.ofC("cannot run sudo %s on unknown system OS family", currentUserName));
+                        throw new NIllegalArgumentException(NMsg.ofC("cannot run sudo %s on unknown system OS family", currentUserName));
                     }
                 }
                 cc.addAll(command);
                 return cc;
             }
         }
-        throw new NIllegalArgumentException(session, NMsg.ofPlain("cannot run as admin/root on unknown system OS family"));
+        throw new NIllegalArgumentException(NMsg.ofPlain("cannot run as admin/root on unknown system OS family"));
     }
 
     private static NOptional<String> guiSu(Set<NDesktopEnvironmentFamily> de, Function<String, String> sysWhich, NSession session) {
         if (de == null) {
-            de = NEnvs.of(session).getDesktopEnvironmentFamilies();
+            de = NEnvs.of().getDesktopEnvironmentFamilies();
         }
         String currSu = null;
         if (de.contains(NDesktopEnvironmentFamily.KDE)) {
@@ -312,7 +313,7 @@ public class NSysExecUtils {
 
     private static NOptional<String> guiSudo(Set<NDesktopEnvironmentFamily> de, Function<String, String> sysWhich, NSession session) {
         if (de == null) {
-            de = NEnvs.of(session).getDesktopEnvironmentFamilies();
+            de = NEnvs.of().getDesktopEnvironmentFamilies();
         }
         String currSu = null;
         if (de.contains(NDesktopEnvironmentFamily.KDE)) {

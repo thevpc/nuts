@@ -23,17 +23,15 @@ import java.util.zip.ZipInputStream;
 public class NMetaInfIdResolver {
 
     //    private NutsWorkspace ws;
-    private NSession session;
 
-    public NMetaInfIdResolver(NSession session) {
-        this.session = session;
+    public NMetaInfIdResolver() {
     }
 
-    public NId[] resolvePomIds(NPath baseUrl, NSession session) {
-        return resolvePomIds(baseUrl, null, session);
+    public NId[] resolvePomIds(NPath baseUrl) {
+        return resolvePomIds(baseUrl, null);
     }
 
-    public NId[] resolvePomIds(NPath baseUrl, String referenceResourcePath, NSession session) {
+    public NId[] resolvePomIds(NPath baseUrl, String referenceResourcePath) {
         List<NId> all = new ArrayList<>();
         final URLPart aa = URLPart.of(baseUrl.toURL().get());
         String basePath = aa.getPath().substring(0, aa.getPath().length() - (referenceResourcePath == null ? 0 : referenceResourcePath.length()));
@@ -45,17 +43,17 @@ public class NMetaInfIdResolver {
 
         final URLPart p = aa.rootSibling(basePath + "META-INF/nuts");
         int beforeSize = all.size();
-        URLPart[] children = p.getChildren(false, true, new NJsonURLFilter(),session);
+        URLPart[] children = p.getChildren(false, true, new NJsonURLFilter());
         for (URLPart url : children) {
             if (url != null) {
-                try (InputStream is=url.getInputStream(session)){
-                    NDescriptor d = NDescriptorParser.of(session).parse(is).get(session);
+                try (InputStream is=url.getInputStream()){
+                    NDescriptor d = NDescriptorParser.of().parse(is).get();
                     NId id = d.getId();
                     if (id != null && id.getVersion() != null && !id.getVersion().isBlank()) {
                         all.add(id);
                     }
                 } catch (Exception ex) {
-                    NLogOp.of(NPomXmlParser.class, session)
+                    NLogOp.of(NPomXmlParser.class)
                             .verb(NLogVerb.WARNING)
                             .level(Level.FINEST)
                             .log(NMsg.ofC("failed to parse pom file %s : %s", url, ex));
@@ -63,13 +61,13 @@ public class NMetaInfIdResolver {
             }
         }
 
-        children = p.getChildren(false, true, new NPropsURLFilter(),session);
+        children = p.getChildren(false, true, new NPropsURLFilter());
         for (URLPart url : children) {
             if (url != null) {
                 try {
 
                     Properties prop = new Properties();
-                    try (InputStream is=url.getInputStream(session)){
+                    try (InputStream is=url.getInputStream()){
                         prop.load(is);
                     } catch (IOException e) {
                         //
@@ -82,7 +80,7 @@ public class NMetaInfIdResolver {
                         }
                     }
                 } catch (Exception ex) {
-                    NLogOp.of(NPomXmlParser.class, session)
+                    NLogOp.of(NPomXmlParser.class)
                             .verb(NLogVerb.WARNING)
                             .level(Level.FINEST)
                             .log(NMsg.ofC("failed to parse pom file %s : %s", url, ex));
@@ -115,10 +113,10 @@ public class NMetaInfIdResolver {
             final Enumeration<URL> r = clazz.getClassLoader().getResources(n);
             for (URL url : Collections.list(r)) {
                 all.addAll(Arrays.asList(resolvePomIds(
-                        NPath.of(url, session), n, session)));
+                        NPath.of(url), n)));
             }
         } catch (IOException ex) {
-            NLogOp.of(NPomXmlParser.class, session)
+            NLogOp.of(NPomXmlParser.class)
                     .verb(NLogVerb.WARNING)
                     .level(Level.FINEST)
                     .log(NMsg.ofC("failed to parse class %s : %s", clazz.getName(), ex));

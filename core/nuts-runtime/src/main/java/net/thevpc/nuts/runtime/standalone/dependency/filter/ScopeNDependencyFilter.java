@@ -11,8 +11,8 @@ public class ScopeNDependencyFilter extends AbstractDependencyFilter{
 
     private EnumSet<NDependencyScope> scopes = EnumSet.noneOf(NDependencyScope.class);
 
-    public ScopeNDependencyFilter(NSession session, NDependencyScopePattern... scopes) {
-        super(session, NFilterOp.CUSTOM);
+    public ScopeNDependencyFilter(NWorkspace workspace, NDependencyScopePattern... scopes) {
+        super(workspace, NFilterOp.CUSTOM);
         for (NDependencyScopePattern scope : scopes) {
             if(scope!=null) {
                 this.scopes.addAll(scope.toScopes());
@@ -21,7 +21,7 @@ public class ScopeNDependencyFilter extends AbstractDependencyFilter{
     }
 
     @Override
-    public boolean acceptDependency(NId from, NDependency dependency, NSession session) {
+    public boolean acceptDependency(NId from, NDependency dependency) {
 
         NDependencyScope d = NDependencyScope.parse(dependency.getScope()).orElse(NDependencyScope.API);
         return d != null && scopes.contains(d);

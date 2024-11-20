@@ -8,9 +8,9 @@ import net.thevpc.nuts.spi.NComponent;
 
 import java.util.Map;
 
-public interface NInstallSvcCmd extends NCmdLineConfigurable, NComponent, NSessionProvider{
-    static NInstallSvcCmd of(NSession session) {
-        return NExtensions.of(session).createComponent(NInstallSvcCmd.class).get();
+public interface NInstallSvcCmd extends NCmdLineConfigurable, NComponent{
+    static NInstallSvcCmd of() {
+        return NExtensions.of().createComponent(NInstallSvcCmd.class).get();
     }
 
     String[] getStartCommand();

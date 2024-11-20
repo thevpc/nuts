@@ -24,10 +24,10 @@
  */
 package net.thevpc.nuts.runtime.standalone.executor.system;
 
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NNonBlockingInputStream;
 import net.thevpc.nuts.runtime.standalone.io.util.StopMonitor;
 
@@ -43,19 +43,17 @@ public class PipeRunnable implements Runnable, StopMonitor {
     private long pipedBytesCount = 0;
     private boolean requestStop = false;
     private boolean stopped = false;
-    private final NSession session;
     private final String cmd;
     private final String desc;
     private final String name;
     private final boolean renameThread;
     private byte[] bytesBuffer = new byte[10240];
 
-    public PipeRunnable(String name, String cmd, String desc, NNonBlockingInputStream in, OutputStream out, boolean renameThread, NSession session) {
+    public PipeRunnable(String name, String cmd, String desc, NNonBlockingInputStream in, OutputStream out, boolean renameThread) {
         this.name = name;
         this.renameThread = renameThread;
         this.in = in;
         this.out = out;
-        this.session = session;
         this.cmd = cmd;
         this.desc = desc;
     }
@@ -101,7 +99,7 @@ public class PipeRunnable implements Runnable, StopMonitor {
                     return true;
                 }
             } catch (Exception ex) {
-                NLogOp.of(PipeRunnable.class, session)
+                NLogOp.of(PipeRunnable.class)
                         .error(ex)
                         .level(Level.FINEST)
                         .verb(NLogVerb.WARNING)

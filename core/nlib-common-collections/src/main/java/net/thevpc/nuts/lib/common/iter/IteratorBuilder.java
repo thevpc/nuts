@@ -30,96 +30,94 @@ public class IteratorBuilder<T> {
     public static final NPredicate NON_BLANK = NPredicates.blank().negate();
     static final NIteratorEmpty EMPTY_ITERATOR = new NIteratorEmpty<>();
     private final NIterator<T> it;
-    private final NSession session;
 
-    private IteratorBuilder(NIterator<T> it, NSession session) {
+    private IteratorBuilder(NIterator<T> it) {
         if (it == null) {
             it = emptyIterator();
         }
         this.it = it;
-        this.session = session;
     }
 
-    public static <T> IteratorBuilder<T> ofCoalesce(List<NIterator<? extends T>> t, NSession session) {
+    public static <T> IteratorBuilder<T> ofCoalesce(List<NIterator<? extends T>> t) {
         return new IteratorBuilder<>(
-                IteratorUtils.coalesce(t),
-                session);
+                IteratorUtils.coalesce(t)
+        );
     }
 
-    public static <T> IteratorBuilder<T> ofConcat(List<NIterator<? extends T>> t, NSession session) {
+    public static <T> IteratorBuilder<T> ofConcat(List<NIterator<? extends T>> t) {
         return new IteratorBuilder<>(
-                IteratorUtils.concat(t),
-                session);
+                IteratorUtils.concat(t)
+        );
     }
 
-    public static <T> IteratorBuilder<T> of(NIterator<T> t, NSession session) {
-        return new IteratorBuilder<>(t, session);
+    public static <T> IteratorBuilder<T> of(NIterator<T> t) {
+        return new IteratorBuilder<>(t);
     }
 
-    public static <T> IteratorBuilder<T> ofRunnable(NRunnable t, NSession session) {
+    public static <T> IteratorBuilder<T> ofRunnable(NRunnable t) {
         return (IteratorBuilder) of(
-                emptyIterator(),
-                session).onStart(t);
+                emptyIterator()
+        ).onStart(t);
     }
 
-//    public static <T> IteratorBuilder<T> ofRunnable(Runnable t, NElement n, NSession session) {
-//        return ofRunnable(NRunnable.of(t, n), session);
+//    public static <T> IteratorBuilder<T> ofRunnable(Runnable t, NElement n) {
+//        return ofRunnable(NRunnable.of(t, n));
 //    }
 
-    public static <T> IteratorBuilder<T> ofRunnable(Runnable t, String n, NSession session) {
-        return ofRunnable(NRunnable.of(t).withDesc(NEDesc.of(n)), session);
+    public static <T> IteratorBuilder<T> ofRunnable(Runnable t, String n) {
+        return ofRunnable(NRunnable.of(t).withDesc(NEDesc.of(n)));
     }
 //
 //    public static <T> IteratorBuilder<T> ofSupplier(Supplier<NutsIterator<T>> from) {
 //        return of(new SupplierIterator<T>(from, null));
 //    }
 
-    public static <T> IteratorBuilder<T> ofSupplier(Supplier<Iterator<T>> from, NEDesc name, NSession session) {
-        return of(new SupplierIterator2<T>(from,name,session).withDesc(name), session);
+    public static <T> IteratorBuilder<T> ofSupplier(Supplier<Iterator<T>> from, NEDesc name) {
+        return of(new SupplierIterator2<T>(from,name).withDesc(name));
     }
 
-    public static <T> IteratorBuilder<T> ofArrayValues(T[] t, NElement n, NSession session) {
-        return ofArrayValues(t, e -> n, session);
+    public static <T> IteratorBuilder<T> ofArrayValues(T[] t, NElement n) {
+        return ofArrayValues(t, () -> n);
     }
 
-    public static <T> IteratorBuilder<T> ofArrayValues(T[] t, String n, NSession session) {
-        return ofArrayValues(t, e -> NElements.of(e).ofString(n), session);
+    public static <T> IteratorBuilder<T> ofArrayValues(T[] t, String n) {
+        return ofArrayValues(t, () -> NElements.of().ofString(n));
     }
 
-    public static <T> IteratorBuilder<T> ofArrayValues(T[] t, Function<NSession, NElement> n, NSession session) {
+    public static <T> IteratorBuilder<T> ofArrayValues(T[] t, Supplier<NElement> n) {
         return of(t == null ? emptyIterator() :
                 new NIteratorAdapter<T>(
-                        Arrays.asList(t).iterator(), n),
-                session);
+                        Arrays.asList(t).iterator(), n)
+        );
     }
 
     public static <T> NIterator<T> emptyIterator() {
         return EMPTY_ITERATOR;
     }
 
-    public static <T> IteratorBuilder<T> emptyBuilder(NSession session) {
-        return of(EMPTY_ITERATOR, session);
+    public static <T> IteratorBuilder<T> emptyBuilder() {
+        return of(EMPTY_ITERATOR);
     }
 
-    public static <T> IteratorBuilder<T> ofFlatMap(NIterator<? extends Collection<T>> from, NSession session) {
+    public static <T> IteratorBuilder<T> ofFlatMap(NIterator<? extends Collection<T>> from) {
         if (from == null) {
-            return emptyBuilder(session);
+            return emptyBuilder();
         }
-        return of(new FlatMapIterator<>(from, Collection::iterator), session);
+        return of(new FlatMapIterator<>(from, Collection::iterator));
     }
 
     public IteratorBuilder<T> filter(Predicate<? super T> t, NEDesc e) {
         if (t == null) {
             return this;
         }
-        return of(new FilteredIterator<>(it, NPredicate.of(t).withDesc(e)), session);
+        return of(new FilteredIterator<>(it, NPredicate.of(t).withDesc(e)));
     }
 
     public IteratorBuilder<T> filter(NPredicate<? super T> t) {
         if (t == null) {
             return this;
         }
-        return new IteratorBuilder<>(new FilteredIterator<>(it, t), session);
+        return new IteratorBuilder<>(new FilteredIterator<>(it, t));
     }
 
     public IteratorBuilder<T> concat(IteratorBuilder<T> t) {
@@ -130,26 +128,26 @@ public class IteratorBuilder<T> {
         if (t == null) {
             return this;
         }
-        return new IteratorBuilder<>(IteratorUtils.concat(Arrays.asList(it, t)), session);
+        return new IteratorBuilder<>(IteratorUtils.concat(Arrays.asList(it, t)));
     }
 
     public <V> IteratorBuilder<V> map(NFunction<? super T, ? extends V> t) {
-        return new IteratorBuilder<>(new ConvertedIterator<>(it, t), session);
+        return new IteratorBuilder<>(new ConvertedIterator<>(it, t));
     }
 
 
     public <V> IteratorBuilder<V> flatMap(Function<? super T, ? extends Iterator<? extends V>> fun) {
-        return of(new FlatMapIterator<T, V>(it, fun), session);
+        return of(new FlatMapIterator<T, V>(it, fun));
     }
 
     public <V> IteratorBuilder<V> mapMulti(NFunction<T, List<V>> mapper) {
         return new IteratorBuilder<>(
-                new FlatMapIterator<>(it, t -> mapper.apply(t).iterator()),
-                session);
+                new FlatMapIterator<>(it, t -> mapper.apply(t).iterator())
+        );
     }
 
     public <V> IteratorBuilder<T> sort(NComparator<T> t, boolean removeDuplicates) {
-        return new IteratorBuilder<>(IteratorUtils.sort(it, t, removeDuplicates), session);
+        return new IteratorBuilder<>(IteratorUtils.sort(it, t, removeDuplicates));
     }
 
     public <V> IteratorBuilder<T> distinct() {
@@ -158,30 +156,30 @@ public class IteratorBuilder<T> {
 
     public <V> IteratorBuilder<T> distinct(NFunction<T, V> t) {
         if (t == null) {
-            return new IteratorBuilder<>(IteratorUtils.distinct(it), session);
+            return new IteratorBuilder<>(IteratorUtils.distinct(it));
         } else {
-            return new IteratorBuilder<>(IteratorUtils.distinct(it, t), session);
+            return new IteratorBuilder<>(IteratorUtils.distinct(it, t));
         }
     }
 
     public <V> IteratorBuilder<T> named(String n) {
         if (n != null) {
             return new IteratorBuilder<>(new NIteratorAdapter<T>(
-                    it, e -> NElements.of(e).ofString(n)), session);
+                    it, () -> NElements.of().ofString(n)));
         }
         return this;
     }
 
     public <V> IteratorBuilder<T> named(NObjectElement nfo) {
         if (nfo != null) {
-            return new IteratorBuilder<>(new NIteratorAdapter<T>(it, e -> nfo), session);
+            return new IteratorBuilder<>(new NIteratorAdapter<T>(it, () -> nfo));
         }
         return this;
     }
 
 
     public IteratorBuilder<T> safe(IteratorErrorHandlerType type) {
-        return new IteratorBuilder<>(new ErrorHandlerIterator(type, it,session), session);
+        return new IteratorBuilder<>(new ErrorHandlerIterator(type, it));
     }
 
     public IteratorBuilder<T> safeIgnore() {
@@ -220,7 +218,7 @@ public class IteratorBuilder<T> {
         if (r == null) {
             return this;
         }
-        return of(new NIteratorOnFinish<>(it,session, r), session);
+        return of(new NIteratorOnFinish<>(it, r));
     }
 
 
@@ -228,6 +226,6 @@ public class IteratorBuilder<T> {
         if (r == null) {
             return this;
         }
-        return of(new OnStartIterator<>(it,session, r), session);
+        return of(new OnStartIterator<>(it, r));
     }
 }

@@ -40,11 +40,10 @@ public class NRepositoryDisabledException extends NRepositoryException {
     /**
      * Constructs a new NutsRepositoryNotFoundException exception
      *
-     * @param session    workspace
      * @param repository repository
      */
-    public NRepositoryDisabledException(NSession session, String repository) {
-        super(session, repository,
+    public NRepositoryDisabledException(String repository) {
+        super(repository,
                 NMsg.ofC("repository %s is not enabled", (repository == null ? "<null>" : repository))
                 , null);
     }

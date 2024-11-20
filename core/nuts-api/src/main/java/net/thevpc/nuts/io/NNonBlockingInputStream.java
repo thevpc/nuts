@@ -26,7 +26,6 @@
  */
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.reserved.rpi.NIORPI;
 
 import java.io.Closeable;
@@ -35,8 +34,8 @@ import java.io.InputStream;
 
 public interface NNonBlockingInputStream extends Closeable {
 
-    static NNonBlockingInputStream of(InputStream base, NSession session) {
-        return NIORPI.of(session).ofNonBlockingInputStream(base);
+    static NNonBlockingInputStream of(InputStream base) {
+        return NIORPI.of().ofNonBlockingInputStream(base);
     }
 
     /**

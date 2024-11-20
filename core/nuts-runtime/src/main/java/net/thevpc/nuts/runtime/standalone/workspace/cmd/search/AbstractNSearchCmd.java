@@ -30,6 +30,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -73,8 +74,8 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     protected NVersion targetApiVersion = null;
     protected NInstallStatusFilter installStatus;
 
-    public AbstractNSearchCmd(NSession session) {
-        super(session, "search");
+    public AbstractNSearchCmd(NWorkspace workspace) {
+        super(workspace, "search");
     }
 
     @Override
@@ -90,9 +91,9 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NSearchCmd addId(String id) {
-        checkSession();
+        NSession session=getWorkspace().currentSession();
         if (!NBlankable.isBlank(id)) {
-            ids.add(NId.of(id).get(getSession()));
+            ids.add(NId.of(id).get());
         }
         return this;
     }
@@ -107,11 +108,11 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NSearchCmd addIds(String... values) {
-        checkSession();
+        NSession session=getWorkspace().currentSession();
         if (values != null) {
             for (String s : values) {
                 if (!NBlankable.isBlank(s)) {
-                    ids.add(NId.of(s).get(getSession()));
+                    ids.add(NId.of(s).get());
                 }
             }
         }
@@ -132,8 +133,8 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NSearchCmd removeId(String id) {
-        checkSession();
-        ids.remove(NId.of(id).get(getSession()));
+        NSession session=getWorkspace().currentSession();
+        ids.remove(NId.of(id).get());
         return this;
     }
 
@@ -261,11 +262,11 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NSearchCmd addLockedIds(String... values) {
-        checkSession();
+        NSession session=getWorkspace().currentSession();
         if (values != null) {
             for (String s : values) {
                 if (!NBlankable.isBlank(s)) {
-                    lockedIds.add(NId.of(s).get(getSession()));
+                    lockedIds.add(NId.of(s).get());
                 }
             }
         }
@@ -379,16 +380,16 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NSearchCmd removeLockedId(String id) {
-        checkSession();
-        lockedIds.remove(NId.of(id).get(getSession()));
+        NSession session=getWorkspace().currentSession();
+        lockedIds.remove(NId.of(id).get());
         return this;
     }
 
     @Override
     public NSearchCmd addLockedId(String id) {
-        checkSession();
+        NSession session=getWorkspace().currentSession();
         if (!NBlankable.isBlank(id)) {
-            lockedIds.add(NId.of(id).get(getSession()));
+            lockedIds.add(NId.of(id).get());
         }
         return this;
     }
@@ -480,8 +481,8 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NSearchCmd setDescriptorFilter(String filter) {
-        checkSession();
-        this.descriptorFilter = NDescriptorFilters.of(session).parse(filter);
+        NSession session=getWorkspace().currentSession();
+        this.descriptorFilter = NDescriptorFilters.of().parse(filter);
         return this;
     }
 
@@ -498,8 +499,8 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NSearchCmd setIdFilter(String filter) {
-        checkSession();
-        this.idFilter = NIdFilters.of(getSession()).parse(filter);
+        NSession session=getWorkspace().currentSession();
+        this.idFilter = NIdFilters.of().parse(filter);
         return this;
     }
 
@@ -604,16 +605,18 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<NDependencies> getResultDependencies() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(true, isEffective()), session)
-                .map(NFunction.of((NDefinition x) -> x.getDependencies().get(session))
+        NSession session=getWorkspace().currentSession();
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(true, isEffective()))
+                .map(NFunction.of((NDefinition x) -> x.getDependencies().get())
                         .withDesc(NEDesc.of("getDependencies")))
         );
     }
 
     @Override
     public NStream<NDependency> getResultInlineDependencies() {
+        NSession session=getWorkspace().currentSession();
         return buildCollectionResult(
-                IteratorBuilder.of(getResultIdIteratorBase(true), session).map(
+                IteratorBuilder.of(getResultIdIteratorBase(true)).map(
                                 NFunction.of(NId::toDependency)
                                         .withDesc(NEDesc.of("Id->Dependency")))
                         .build()
@@ -637,8 +640,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public ClassLoader getResultClassLoader(ClassLoader parent) {
-        checkSession();
-
         //force content and dependencies!
         setContent(true);
         setDependencies(true);
@@ -651,10 +652,11 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
             allURLs[i] = d.getContent().flatMap(NPath::toURL).orNull();
             allIds[i] = d.getId();
         }
-        DefaultNClassLoader cl = ((DefaultNExtensions) getSession().extensions())
-                .getModel().getNutsURLClassLoader("SEARCH-" + UUID.randomUUID(), parent, getSession());
+        NSession session=getWorkspace().currentSession();
+        DefaultNClassLoader cl = ((DefaultNExtensions) NExtensions.of())
+                .getModel().getNutsURLClassLoader("SEARCH-" + UUID.randomUUID(), parent);
         for (NDefinition def : nDefinitions) {
-            cl.add(NClassLoaderUtils.definitionToClassLoaderNode(def, getRepositoryFilter(), getSession()));
+            cl.add(NClassLoaderUtils.definitionToClassLoaderNode(def, getRepositoryFilter()));
         }
         return cl;
     }
@@ -702,7 +704,8 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<String> getResultPaths() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(true, isEffective()), session)
+        NSession session=workspace.currentSession();
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(true, isEffective()))
                 .map(
                         NFunction.of((NDefinition x) -> x.getContent().map(Object::toString).orNull())
                                 .withDesc(NEDesc.of("getPath"))
@@ -713,7 +716,8 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<String> getResultPathNames() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(true, isEffective()), session)
+        NSession session=workspace.currentSession();
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(true, isEffective()))
                 .map(NFunction.of((NDefinition x) -> x.getContent().map(NPath::getName).orNull())
                         .withDesc(NEDesc.of("getName")))
                 .notBlank());
@@ -721,21 +725,24 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<Instant> getResultInstallDates() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
+        NSession session=workspace.currentSession();
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .map(NFunction.of((NDefinition x) -> x.getInstallInformation().map(NInstallInformation::getCreatedInstant).orNull()).withDesc(NEDesc.of("getCreatedInstant")))
                 .notNull());
     }
 
     @Override
     public NStream<String> getResultInstallUsers() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
+        NSession session=workspace.currentSession();
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .map(NFunction.of((NDefinition x) -> x.getInstallInformation().map(NInstallInformation::getInstallUser).orNull()).withDesc(NEDesc.of("getInstallUser")))
                 .notBlank());
     }
 
     @Override
     public NStream<NPath> getResultInstallFolders() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
+        NSession session=workspace.currentSession();
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .map(NFunction.of((NDefinition x) -> x.getInstallInformation().map(NInstallInformation::getInstallFolder).orNull())
                         .withDesc(NEDesc.of("getInstallFolder"))
                 )
@@ -744,9 +751,9 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<NPath> getResultStoreLocations(NStoreType location) {
-        checkSession();
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
-                .map(NFunction.of((NDefinition x) -> NLocations.of(getSession()).getStoreLocation(x.getId(), location))
+        NSession session=workspace.currentSession();
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+                .map(NFunction.of((NDefinition x) -> NLocations.of().getStoreLocation(x.getId(), location))
                         .withDesc(NEDesc.of("getStoreLocation(" + location.id() + ")"))
                 )
                 .notNull());
@@ -754,12 +761,13 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<String[]> getResultStrings(String[] columns) {
-        NFetchDisplayOptions oo = new NFetchDisplayOptions(getSession());
+        NSession session=workspace.currentSession();
+        NFetchDisplayOptions oo = new NFetchDisplayOptions(workspace);
         oo.addDisplay(columns);
         oo.setIdFormat(getDisplayOptions().getIdFormat());
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .map(NFunction.of(x
-                                -> NIdFormatHelper.of(x, getSearchSession())
+                                -> NIdFormatHelper.of(x)
                                 .buildLong().getMultiColumnRowStrings(oo)
                         ).withDesc(NEDesc.of("getColumns"))
                 ));
@@ -767,7 +775,8 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<String> getResultNames() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
+        NSession session=workspace.currentSession();
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getName()))
                         .withDesc(NEDesc.of("getDescriptorName"))
                 )
@@ -776,7 +785,8 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<String> getResultOs() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
+        NSession session=workspace.currentSession();
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getCondition().getOs()))
                         .withDesc(NEDesc.of("getOs")))
                 .notBlank()
@@ -786,8 +796,8 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<NExecutionEntry> getResultExecutionEntries() {
-        checkSession();
-        IteratorBuilder<NDefinition> defIter = IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session);
+        NSession session=workspace.currentSession();
+        IteratorBuilder<NDefinition> defIter = IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()));
         return postProcessResult(defIter
                 .mapMulti(
                         NFunction.of(
@@ -798,7 +808,8 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<String> getResultOsDist() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
+        NSession session=workspace.currentSession();
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getCondition().getOsDist()))
                         .withDesc(NEDesc.of("getOsDist"))
                 )
@@ -809,7 +820,8 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<String> getResultPackaging() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
+        NSession session=workspace.currentSession();
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getPackaging()))
                         .withDesc(NEDesc.of("getPackaging"))
                 )
@@ -820,7 +832,8 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<String> getResultPlatform() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
+        NSession session=workspace.currentSession();
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getCondition().getPlatform()))
                         .withDesc(NEDesc.of("getPlatform"))
                 )
@@ -831,7 +844,8 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<String> getResultProfile() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
+        NSession session=workspace.currentSession();
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getCondition().getProfile()))
                         .withDesc(NEDesc.of("getProfile"))
                 )
@@ -842,7 +856,8 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<String> getResultDesktopEnvironment() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
+        NSession session=workspace.currentSession();
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getCondition().getDesktopEnvironment()))
                         .withDesc(NEDesc.of("getDesktopEnvironment"))
                 )
@@ -853,7 +868,8 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<String> getResultArch() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
+        NSession session=workspace.currentSession();
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getCondition().getArch()))
                         .withDesc(NEDesc.of("getArch"))
                 )
@@ -891,144 +907,140 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NArg a = cmdLine.peek().get(session);
+        NSession session=workspace.currentSession();
+        NArg a = cmdLine.peek().get();
         if (a == null) {
             return false;
         }
         boolean enabled = a.isActive();
         switch (a.key()) {
             case "--inline-dependencies": {
-                cmdLine.withNextFlag((v, r, s) -> this.setInlineDependencies(v));
+                cmdLine.withNextFlag((v, r) -> this.setInlineDependencies(v));
                 return true;
             }
             case "-L":
             case "--latest":
             case "--latest-versions": {
-                cmdLine.withNextFlag((v, r, s) -> this.setLatest(v));
+                cmdLine.withNextFlag((v, r) -> this.setLatest(v));
                 return true;
             }
             case "--distinct": {
-                cmdLine.withNextFlag((v, r, s) -> this.setDistinct(v));
+                cmdLine.withNextFlag((v, r) -> this.setDistinct(v));
                 return true;
             }
             case "--default":
             case "--default-versions": {
-                cmdLine.withNextOptionalFlag((v, r, s) -> this.setDefaultVersions(v.ifError(false).orElse(null)));
+                cmdLine.withNextOptionalFlag((v, r) -> this.setDefaultVersions(v.ifError(false).orElse(null)));
                 return true;
             }
             case "--duplicates": {
-                cmdLine.withNextFlag((v, r, s) -> this.setDistinct(!v));
+                cmdLine.withNextFlag((v, r) -> this.setDistinct(!v));
                 return true;
             }
             case "-s":
             case "--sort": {
-                cmdLine.withNextFlag((v, r, s) -> this.setSorted(v));
+                cmdLine.withNextFlag((v, r) -> this.setSorted(v));
                 return true;
             }
             case "--base": {
-                cmdLine.withNextFlag((v, r, s) -> this.includeBasePackage = v);
+                cmdLine.withNextFlag((v, r) -> this.includeBasePackage = v);
                 return true;
             }
             case "--lib":
             case "--libs": {
-                cmdLine.withNextFlag((v, r, s) -> this.setLib(v));
+                cmdLine.withNextFlag((v, r) -> this.setLib(v));
                 return true;
             }
             case "--app":
             case "--apps": {
-                cmdLine.withNextFlag((v, r, s) -> this.setExec(v));
+                cmdLine.withNextFlag((v, r) -> this.setExec(v));
                 return true;
             }
             case "--companion":
             case "--companions": {
-                cmdLine.withNextFlag((v, r, s) -> this.setCompanion(v));
+                cmdLine.withNextFlag((v, r) -> this.setCompanion(v));
                 return true;
             }
             case "--extension":
             case "--extensions": {
-                cmdLine.withNextFlag((v, r, s) -> this.setExtension(v));
+                cmdLine.withNextFlag((v, r) -> this.setExtension(v));
                 return true;
             }
             case "--runtime": {
-                cmdLine.withNextFlag((v, r, s) -> this.setRuntime(v));
+                cmdLine.withNextFlag((v, r) -> this.setRuntime(v));
                 return true;
             }
             case "--api-version": {
-                cmdLine.withNextEntry((v, r, s) -> this.setTargetApiVersion(NVersion.of(v).get(getSession())));
+                cmdLine.withNextEntry((v, r) -> this.setTargetApiVersion(NVersion.of(v).get()));
                 return true;
             }
             case "--nuts-app":
             case "--nuts-apps": {
-                cmdLine.withNextFlag((v, r, s) -> this.setApplication(v));
+                cmdLine.withNextFlag((v, r) -> this.setApplication(v));
                 return true;
             }
             case "--arch": {
-                cmdLine.withNextEntry((v, r, s) -> this.addArch(v));
+                cmdLine.withNextEntry((v, r) -> this.addArch(v));
                 return true;
             }
             case "--packaging": {
-                cmdLine.withNextEntry((v, r, s) -> this.addPackaging(v));
+                cmdLine.withNextEntry((v, r) -> this.addPackaging(v));
                 return true;
             }
             case "--optional": {
-                NArg val = cmdLine.nextEntry().get(session);
+                NArg val = cmdLine.nextEntry().get();
                 if (enabled) {
                     this.setOptional(val.getValue().asBoolean().orNull());
                 }
                 return true;
             }
             case "--script": {
-                cmdLine.withNextEntry((v, r, s) -> this.addScripts(v));
+                cmdLine.withNextEntry((v, r) -> this.addScripts(v));
                 return true;
             }
             case "--id": {
-                cmdLine.withNextEntry((v, r, s) -> this.addId(v));
+                cmdLine.withNextEntry((v, r) -> this.addId(v));
                 return true;
             }
             case "--locked-id": {
-                cmdLine.withNextEntry((v, r, s) -> this.addLockedId(v));
+                cmdLine.withNextEntry((v, r) -> this.addLockedId(v));
                 return true;
             }
             case "--deployed": {
-                NArg b = cmdLine.nextFlag().get(session);
+                NArg b = cmdLine.nextFlag().get();
                 if (enabled) {
-                    checkSession();
-                    this.setInstallStatus(NInstallStatusFilters.of(session).byDeployed(b.getBooleanValue().get(session)));
+                    this.setInstallStatus(NInstallStatusFilters.of().byDeployed(b.getBooleanValue().get()));
                 }
                 return true;
             }
             case "-i":
             case "--installed": {
-                NArg b = cmdLine.nextFlag().get(session);
+                NArg b = cmdLine.nextFlag().get();
                 if (enabled) {
-                    checkSession();
                     this.setInstallStatus(
-                            NInstallStatusFilters.of(session).byInstalled(b.getBooleanValue().get(session))
+                            NInstallStatusFilters.of().byInstalled(b.getBooleanValue().get())
                     );
                 }
                 return true;
             }
             case "--required": {
-                NArg b = cmdLine.nextFlag().get(session);
+                NArg b = cmdLine.nextFlag().get();
                 if (enabled) {
-                    checkSession();
-                    this.setInstallStatus(NInstallStatusFilters.of(session).byRequired(b.getBooleanValue().get(session)));
+                    this.setInstallStatus(NInstallStatusFilters.of().byRequired(b.getBooleanValue().get()));
                 }
                 return true;
             }
             case "--obsolete": {
-                NArg b = cmdLine.nextFlag().get(session);
+                NArg b = cmdLine.nextFlag().get();
                 if (enabled) {
-                    checkSession();
-                    this.setInstallStatus(NInstallStatusFilters.of(session).byObsolete(b.getBooleanValue().get(session)));
+                    this.setInstallStatus(NInstallStatusFilters.of().byObsolete(b.getBooleanValue().get()));
                 }
                 return true;
             }
             case "--status": {
-                NArg aa = cmdLine.nextEntry().get(session);
+                NArg aa = cmdLine.nextEntry().get();
                 if (enabled) {
-                    checkSession();
-                    this.setInstallStatus(NInstallStatusFilters.of(session).parse(aa.getStringValue().get(session)));
+                    this.setInstallStatus(NInstallStatusFilters.of().parse(aa.getStringValue().get()));
                 }
                 return true;
             }
@@ -1040,7 +1052,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
                     return false;
                 } else {
                     cmdLine.skip();
-                    addId(a.asString().get(session));
+                    addId(a.asString().get());
                     return true;
                 }
             }
@@ -1095,7 +1107,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     }
 
     public <T> NIterator<T> runIterator() {
-        checkSession();
         NDisplayProperty[] a = getDisplayOptions().getDisplayProperties();
         NStream r = null;
         if (isDependencies() && !isInlineDependencies()) {
@@ -1109,8 +1120,9 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
                 case XML:
                 case YAML:
                 case TREE: {
-                    return (NIterator) IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
-                            .flatMap(NFunction.of((NDefinition x) -> x.getDependencies().get(session).transitiveNodes().iterator())
+                    NSession session=workspace.currentSession();
+                    return (NIterator) IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+                            .flatMap(NFunction.of((NDefinition x) -> x.getDependencies().get().transitiveNodes().iterator())
                                     .withDesc(NEDesc.of("getDependencies"))
                             )
                             .map(NFunction.of((NDependencyTreeNode x) -> dependenciesToElement(x))
@@ -1266,10 +1278,11 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     @Override
     public NSearchCmd run() {
         NIterator<Object> it = runIterator();
+        NSession session=workspace.currentSession();
         if (session.isDry()) {
             displayDryQueryPlan(it);
         } else {
-            it = NWorkspaceUtils.of(getSearchSession()).decoratePrint(it, getSearchSession(), getDisplayOptions());
+            it = NWorkspaceUtils.of(getWorkspace()).decoratePrint(it, getSearchSession(), getDisplayOptions());
             while (it.hasNext()) {
                 it.next();
             }
@@ -1278,16 +1291,18 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     }
 
     private NElement toQueryPlan(NIterator it) {
-        NElements elem = NElements.of(session);
+        NSession session=workspace.currentSession();
+        NElements elem = NElements.of();
         return
                 elem.ofObject()
                         .set("SearchQueryPlan",
-                                NEDesc.describeResolveOrDestruct(it, session))
+                                NEDesc.describeResolveOrDestruct(it))
                         .build();
     }
 
     private void displayDryQueryPlan(NIterator it) {
         NElement n = toQueryPlan(it);
+        NSession session=workspace.currentSession();
         NContentType f = session.getOutputFormat().orDefault();
         if (f == NContentType.PLAIN) {
             f = NContentType.TREE;
@@ -1299,18 +1314,20 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     public NIterator<NDefinition> getResultDefinitionIteratorBase(boolean content, boolean effective) {
         NFetchCmd fetch = toFetch().setContent(content).setEffective(effective);
-        NFetchCmd ofetch = toFetch().setContent(content).setEffective(effective).setSession(getSession().copy().setFetchStrategy(NFetchStrategy.OFFLINE));
-        final boolean hasRemote = getSession().getFetchStrategy().orDefault() == null
-                || getSession().getFetchStrategy().orDefault().modes().stream()
+        NSession session=workspace.currentSession();
+//        NFetchCmd ofetch = toFetch().setContent(content).setEffective(effective)
+//                .setSession(session.copy().setFetchStrategy(NFetchStrategy.OFFLINE));
+        final boolean hasRemote = session.getFetchStrategy().orDefault() == null
+                || session.getFetchStrategy().orDefault().modes().stream()
                 .anyMatch(x -> x == NFetchMode.REMOTE);
-        return IteratorBuilder.of(getResultIdIteratorBase(null), session)
+        return IteratorBuilder.of(getResultIdIteratorBase(null))
                 .map(NFunction.of((NId next) -> {
 //                    NutsDefinition d = null;
 //                    if (isContent()) {
                     NDefinition d = fetch.setId(next).getResultDefinition();
                     if (d == null) {
                         if (isFailFast()) {
-                            throw new NNotFoundException(getSession(), next);
+                            throw new NNotFoundException(next);
                         }
                         return d;
                     }
@@ -1321,7 +1338,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 //                        }
 //                        d = ofetch.setId(next).getResultDefinition();
 //                        if(d==null){
-//                            _LOGOP(getSession())
+//                            _LOGOP(session)
 //                                    .verb(NutsLogVerb.FAIL)
 //                                    .log("inconsistent repository. id %s was found but its definition could not be resolved!",next);
 //                        }
@@ -1333,7 +1350,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     protected <T> NStream<T> buildCollectionResult(NIterator<T> o) {
         NSession ss = getSearchSession();
-        return new NStreamFromNIterator<T>(ss, resolveFindIdBase(), o);
+        return new NStreamFromNIterator<T>(resolveFindIdBase(), o);
     }
 
     protected String resolveFindIdBase() {
@@ -1341,9 +1358,10 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     }
 
     public NStream<String> getResultStatuses() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
+        NSession session=workspace.currentSession();
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .map(NFunction.of(
-                                x -> NIdFormatHelper.of(x, getSearchSession())
+                                x -> NIdFormatHelper.of(x)
                                         .buildLong().getStatusString())
                         .withDesc(NEDesc.of("getStatusString"))
                 )
@@ -1352,7 +1370,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     //    protected NutsStream<NutsDefinition> getResultDefinitionsBase(boolean print, boolean sort, boolean content, boolean effective) {
 //        checkSession();
-//        return new NutsDefinitionNutsResult(getSession(), resolveFindIdBase(), print, sort, content, effective);
+//        return new NutsDefinitionNutsResult(session, resolveFindIdBase(), print, sort, content, effective);
 //    }
 //
     protected abstract NIterator<NId> getResultIdIteratorBase(Boolean forceInlineDependencies);
@@ -1369,10 +1387,11 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     }
 
     protected NSession getSearchSession() {
-        return getSession();
+        NSession session=getWorkspace().currentSession();
+        return session;
     }
 
     protected NIterator<NId> applyPrintDecoratorIterOfNutsId(NIterator<NId> curr, boolean print) {
-        return print ? NWorkspaceUtils.of(getSearchSession()).decoratePrint(curr, getSearchSession(), getDisplayOptions()) : curr;
+        return print ? NWorkspaceUtils.of(getWorkspace()).decoratePrint(curr, getSearchSession(), getDisplayOptions()) : curr;
     }
 }

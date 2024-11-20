@@ -21,46 +21,47 @@ public class NDescriptorUtils {
         return desc != null && "pom".equals(desc.getPackaging());
     }
 
-    public static NDescriptor getEffectiveDescriptor(NDefinition def, NSession session) {
+    public static NDescriptor getEffectiveDescriptor(NDefinition def, NWorkspace workspace) {
         final NDescriptor d = def.getEffectiveDescriptor().orNull();
         if (d == null) {
-            return NWorkspaceExt.of(session).resolveEffectiveDescriptor(def.getDescriptor(), session);
+            return NWorkspaceExt.of(workspace).resolveEffectiveDescriptor(def.getDescriptor());
         }
         return d;
     }
 
-    public static Map<String, String> getPropertiesMap(List<NDescriptorProperty> list, NSession session) {
+    public static Map<String, String> getPropertiesMap(List<NDescriptorProperty> list) {
         Map<String, String> m = new LinkedHashMap<>();
         if (list != null) {
             for (NDescriptorProperty property : list) {
                 if (property.getCondition() == null || property.getCondition().isBlank()) {
                     m.put(property.getName(), property.getValue().asString().orNull());
                 } else {
-                    throw new NIllegalArgumentException(session, NMsg.ofPlain("unexpected properties with conditions. probably a bug"));
+                    throw new NIllegalArgumentException(NMsg.ofPlain("unexpected properties with conditions. probably a bug"));
                 }
             }
         }
         return m;
     }
 
-    public static NDescriptor checkDescriptor(NDescriptor nutsDescriptor, NSession session) {
+    public static NDescriptor checkDescriptor(NDescriptor nutsDescriptor, NWorkspace workspace) {
         NId id = nutsDescriptor.getId();
         String groupId = id == null ? null : id.getGroupId();
         String artifactId = id == null ? null : id.getArtifactId();
         NVersion version = id == null ? null : id.getVersion();
         if (groupId == null || artifactId == null || NBlankable.isBlank(version)) {
+            NSession session = workspace.currentSession();
             switch (session.getConfirm().orDefault()) {
                 case ASK:
                 case ERROR: {
                     if (groupId == null) {
-                        groupId = NAsk.of(session)
+                        groupId = NAsk.of()
                                 .forString(NMsg.ofPlain("group id"))
                                 .setDefaultValue(groupId)
                                 .setHintMessage(NBlankable.isBlank(groupId) ? null : NMsg.ofPlain(groupId))
                                 .getValue();
                     }
                     if (artifactId == null) {
-                        artifactId = NAsk.of(session)
+                        artifactId = NAsk.of()
                                 .forString(NMsg.ofPlain("artifact id"))
                                 .setDefaultValue(artifactId)
                                 .setHintMessage(NBlankable.isBlank(artifactId) ? null : NMsg.ofPlain(artifactId))
@@ -68,7 +69,7 @@ public class NDescriptorUtils {
                     }
                     if (NBlankable.isBlank(version)) {
                         String ov = version == null ? null : version.getValue();
-                        String v = NAsk.of(session)
+                        String v = NAsk.of()
                                 .forString(NMsg.ofPlain("version"))
                                 .setDefaultValue(ov)
                                 .setHintMessage(NBlankable.isBlank(ov) ? null : NMsg.ofPlain(ov))
@@ -84,7 +85,7 @@ public class NDescriptorUtils {
             }
         }
         if (groupId == null || artifactId == null || NBlankable.isBlank(version)) {
-            throw new NIllegalArgumentException(session, NMsg.ofC("invalid descriptor id %s:%s#%s", groupId, artifactId, version));
+            throw new NIllegalArgumentException(NMsg.ofC("invalid descriptor id %s:%s#%s", groupId, artifactId, version));
         }
         return nutsDescriptor.builder()
                 .setId(NIdBuilder.of(groupId, artifactId).setVersion(version).build())
@@ -92,7 +93,7 @@ public class NDescriptorUtils {
     }
 
     public static void checkValidEffectiveDescriptor(NDescriptor effectiveDescriptor, NSession session) {
-        NAssert.requireNonNull(effectiveDescriptor, "effective descriptor", session);
+        NAssert.requireNonNull(effectiveDescriptor, "effective descriptor");
         boolean topException = false;
         try {
             for (NId parent : effectiveDescriptor.getParents()) {
@@ -102,7 +103,7 @@ public class NDescriptorUtils {
             for (NDependency dependency : effectiveDescriptor.getDependencies()) {
                 if (!CoreNIdUtils.isValidEffectiveId(dependency.toId())) {
                     if (dependency.isOptional()) {
-                        NLogOp.of(NDescriptorUtils.class, session)
+                        NLogOp.of(NDescriptorUtils.class)
                                 .verb(NLogVerb.WARNING).level(Level.FINE)
                                 .log(NMsg.ofJ("{0} is using dependency {1} which defines an unresolved variable. This is a potential bug.",
                                         effectiveDescriptor.getId(),
@@ -110,7 +111,7 @@ public class NDescriptorUtils {
                                 ));
                     } else {
                         topException = true;
-                        throw new NIllegalArgumentException(session, NMsg.ofJ("{0} is using dependency {1} which defines an unresolved variable. This is a potential bug.",
+                        throw new NIllegalArgumentException(NMsg.ofJ("{0} is using dependency {1} which defines an unresolved variable. This is a potential bug.",
                                 effectiveDescriptor.getId(),
                                 dependency
                         ));
@@ -123,7 +124,7 @@ public class NDescriptorUtils {
                 if (!CoreNIdUtils.isValidEffectiveId(dependency.toId())) {
                     // sometimes the variable is defined later in the pom that uses this POM standard Dependencies
                     // so just log a warning, this is not an error but a very bad practice from the dependency maintainer!
-                    NLogOp.of(NDescriptorUtils.class, session)
+                    NLogOp.of(NDescriptorUtils.class)
                             .verb(NLogVerb.WARNING).level(Level.FINE)
                             .log(NMsg.ofJ("{0} is using standard-dependency {1} which defines an unresolved variable. This is a potential bug.",
                                     effectiveDescriptor.getId(),
@@ -135,9 +136,9 @@ public class NDescriptorUtils {
             if (topException) {
                 throw ex;
             }
-            throw new NIllegalArgumentException(session, NMsg.ofC("unable to evaluate effective descriptor for %s", effectiveDescriptor.getId()), ex);
+            throw new NIllegalArgumentException(NMsg.ofC("unable to evaluate effective descriptor for %s", effectiveDescriptor.getId()), ex);
         } catch (Exception ex) {
-            throw new NIllegalArgumentException(session, NMsg.ofC("unable to evaluate effective descriptor for %s", effectiveDescriptor.getId()), ex);
+            throw new NIllegalArgumentException(NMsg.ofC("unable to evaluate effective descriptor for %s", effectiveDescriptor.getId()), ex);
         }
 
     }
@@ -228,8 +229,8 @@ public class NDescriptorUtils {
     }
 
 
-    public static NDescriptorBuilder applyProperties(NDescriptorBuilder b, NSession session) {
-        Map<String, String> propertiesMap = NDescriptorUtils.getPropertiesMap(b.getProperties(), session);
+    public static NDescriptorBuilder applyProperties(NDescriptorBuilder b) {
+        Map<String, String> propertiesMap = NDescriptorUtils.getPropertiesMap(b.getProperties());
         if (b.getId() != null) {
             NId id = b.getId();
             String gid = id.getGroupId();
@@ -242,7 +243,7 @@ public class NDescriptorUtils {
             }
         }
         return applyProperties(b,
-                propertiesMap, session
+                propertiesMap
         );
     }
 
@@ -342,8 +343,8 @@ public class NDescriptorUtils {
     }
 
 
-    public static NDescriptorBuilder applyProperties(NDescriptorBuilder b, Map<String, String> properties, NSession session) {
-        properties = applyPropsToProps(b, properties, session);
+    public static NDescriptorBuilder applyProperties(NDescriptorBuilder b, Map<String, String> properties) {
+        properties = applyPropsToProps(b, properties);
         Function<String, String> map = new MapToFunction<>(properties);
 
         NId n_id = NDescriptorUtils.applyProperties(b.getId().builder(), map).build();
@@ -355,7 +356,7 @@ public class NDescriptorUtils {
         NArtifactCall n_installer = b.getInstaller();
         DefaultNProperties n_props = new DefaultNProperties();
         for (NDescriptorProperty property : b.getProperties()) {
-            String v = property.getValue().asString().get(session);
+            String v = property.getValue().asString().get();
             if (CoreStringUtils.containsVars("${")) {
                 n_props.add(property.builder().setValue(CoreNUtils.applyStringProperties(v, map))
                         .readOnly());
@@ -427,7 +428,7 @@ public class NDescriptorUtils {
         return global;
     }
 
-    private static Map<String, String> applyPropsToProps(NDescriptorBuilder b, Map<String, String> properties, NSession session) {
+    private static Map<String, String> applyPropsToProps(NDescriptorBuilder b, Map<String, String> properties) {
 
         Map<String, String> oldMap = new LinkedHashMap<>(properties);
 
@@ -455,7 +456,7 @@ public class NDescriptorUtils {
             }
             oldMap = newMap;
         }
-        throw new NIllegalArgumentException(session, NMsg.ofC("too many recursion applying properties %s", updated));
+        throw new NIllegalArgumentException(NMsg.ofC("too many recursion applying properties %s", updated));
     }
 
     private static Map<String, NDependency> depsAsMap(List<NDependency> arr, NSession session) {
@@ -468,12 +469,12 @@ public class NDescriptorUtils {
             } else {
                 NDependency a = m.get(e);
                 if (a.equals(d)) {
-                    NLogOp.of(DefaultNDescriptorBuilder.class, session)
+                    NLogOp.of(DefaultNDescriptorBuilder.class)
                             .level(Level.FINER)
                             .verb(NLogVerb.WARNING)
                             .log(NMsg.ofC("dependency %s is duplicated", d));
                 } else {
-                    NLogOp.of(DefaultNDescriptorBuilder.class, session)
+                    NLogOp.of(DefaultNDescriptorBuilder.class)
                             .level(Level.FINER)
                             .verb(NLogVerb.WARNING)
                             .log(NMsg.ofC("dependency %s is overridden by %s", a, d));

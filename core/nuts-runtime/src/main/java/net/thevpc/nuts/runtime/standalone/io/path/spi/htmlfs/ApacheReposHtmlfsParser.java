@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NCallableSupport;
 
 import java.io.BufferedReader;
@@ -9,13 +9,17 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ApacheReposHtmlfsParser extends AbstractHtmlfsParser {
+    public ApacheReposHtmlfsParser(NWorkspace workspace) {
+        super(workspace);
+    }
+
     @Override
-    public NCallableSupport<List<String>> parseHtmlTomcat(byte[] bytes, NSession session) {
+    public NCallableSupport<List<String>> parseHtmlTomcat(byte[] bytes) {
         int expected = 0;
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)))) {
             String line = null;
@@ -32,7 +36,7 @@ public class ApacheReposHtmlfsParser extends AbstractHtmlfsParser {
             //ignore
         }
         if (expected < 2) {
-            Function<NSession, NMsg> msg = s -> NMsg.ofInvalidValue("apache repo");
+            Supplier<NMsg> msg = () -> NMsg.ofInvalidValue("apache repo");
             return NCallableSupport.invalid(msg);
         }
         List<String> found = new ArrayList<>();

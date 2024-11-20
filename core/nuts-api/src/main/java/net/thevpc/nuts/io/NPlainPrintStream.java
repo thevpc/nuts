@@ -2,7 +2,6 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.format.NFormat;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NTerminalCmd;
@@ -18,8 +17,10 @@ import java.util.Date;
 
 public class NPlainPrintStream implements NPrintStream {
     private StringBuilder sb = new StringBuilder();
-    private NSession session;
     private DefaultNContentMetadata md = new DefaultNContentMetadata();
+
+    public NPlainPrintStream() {
+    }
 
     @Override
     public OutputStream getOutputStream() {
@@ -34,17 +35,6 @@ public class NPlainPrintStream implements NPrintStream {
     @Override
     public NContentMetadata getMetaData() {
         return md;
-    }
-
-    @Override
-    public NSession getSession() {
-        return session;
-    }
-
-    @Override
-    public NPrintStream setSession(NSession session) {
-        this.session = session;
-        return this;
     }
 
     @Override
@@ -280,7 +270,7 @@ public class NPlainPrintStream implements NPrintStream {
     }
 
     @Override
-    public NPrintStream run(NTerminalCmd command, NSession session) {
+    public NPrintStream run(NTerminalCmd command) {
         return this;
     }
 
@@ -414,7 +404,7 @@ public class NPlainPrintStream implements NPrintStream {
     }
 
     @Override
-    public NFormat formatter(NSession session) {
-        return NFormat.of(session, new NContentMetadataProviderFormatSPI(this, null, "print-stream"));
+    public NFormat formatter() {
+        return NFormat.of(new NContentMetadataProviderFormatSPI(this, null, "print-stream"));
     }
 }

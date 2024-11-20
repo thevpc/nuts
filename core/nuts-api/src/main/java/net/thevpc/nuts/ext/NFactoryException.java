@@ -27,7 +27,6 @@
 package net.thevpc.nuts.ext;
 
 import net.thevpc.nuts.NException;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NMsg;
 
 /**
@@ -42,34 +41,31 @@ public class NFactoryException extends NException {
     /**
      * Constructs a new NutsFactoryException exception
      *
-     * @param session workspace
      * @param message message
      */
-    public NFactoryException(NSession session, NMsg message) {
-        super(session, message);
+    public NFactoryException(NMsg message) {
+        super(message);
     }
 
     /**
      * Constructs a new NutsFactoryException exception
      *
-     * @param session workspace
      * @param message message
      * @param cause   cause
      */
-    public NFactoryException(NSession session, NMsg message, Throwable cause) {
-        super(session, message, cause);
+    public NFactoryException(NMsg message, Throwable cause) {
+        super(message, cause);
     }
 
     /**
      * Constructs a new NutsFactoryException exception
      *
-     * @param session            workspace
      * @param message            message
      * @param cause              cause cause
      * @param enableSuppression  whether or not suppression is enabled or disabled
      * @param writableStackTrace whether or not the stack trace should be writable
      */
-    public NFactoryException(NSession session, NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(session, message, cause, enableSuppression, writableStackTrace);
+    public NFactoryException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
     }
 }

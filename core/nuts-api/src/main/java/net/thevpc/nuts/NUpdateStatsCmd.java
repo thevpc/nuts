@@ -38,8 +38,8 @@ import java.util.Collection;
  * @since 0.5.5
  */
 public interface NUpdateStatsCmd extends NWorkspaceCmd {
-    static NUpdateStatsCmd of(NSession session) {
-        return NExtensions.of(session).createComponent(NUpdateStatsCmd.class).get();
+    static NUpdateStatsCmd of() {
+        return NExtensions.of().createComponent(NUpdateStatsCmd.class).get();
     }
 
     NUpdateStatsCmd clearRepos();
@@ -61,23 +61,6 @@ public interface NUpdateStatsCmd extends NWorkspaceCmd {
     NUpdateStatsCmd addPaths(Path... all);
 
     NUpdateStatsCmd addPaths(Collection<Path> all);
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
-    NUpdateStatsCmd setSession(NSession session);
-
-    /**
-     * copy session
-     *
-     * @return {@code this} instance
-     */
-    @Override
-    NUpdateStatsCmd copySession();
 
     /**
      * configure the current command with the given arguments. This is an

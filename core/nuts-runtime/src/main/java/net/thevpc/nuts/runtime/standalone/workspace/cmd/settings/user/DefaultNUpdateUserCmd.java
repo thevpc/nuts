@@ -43,15 +43,14 @@ import net.thevpc.nuts.util.NMsg;
  */
 public class DefaultNUpdateUserCmd extends AbstractNUpdateUserCmd {
 
-    public DefaultNUpdateUserCmd(NSession session) {
-        super(session);
+    public DefaultNUpdateUserCmd(NWorkspace workspace) {
+        super(workspace);
     }
 
     @Override
     public NUpdateUserCmd run() {
-        checkSession();
-        NSession session = getSession();
-        NWorkspaceSecurityManager sec = NWorkspaceSecurityManager.of(session);
+        NSession session=workspace.currentSession();
+        NWorkspaceSecurityManager sec = NWorkspaceSecurityManager.of();
         if (!(getCredentials()==null || NBlankable.isBlank(new String(getCredentials())))) {
             sec.checkAllowed(NConstants.Permissions.SET_PASSWORD, "set-user-credentials");
             String currentLogin = sec.getCurrentUsername();
@@ -59,37 +58,36 @@ public class DefaultNUpdateUserCmd extends AbstractNUpdateUserCmd {
                 if (!NConstants.Users.ANONYMOUS.equals(currentLogin)) {
                     login = currentLogin;
                 } else {
-                    throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("not logged in"));
+                    throw new NIllegalArgumentException(NMsg.ofPlain("not logged in"));
                 }
             }
             if (repository != null) {
                 NRepositoryConfigModel rconf = NRepositoryConfigManagerExt.of(repository.config()).getModel();
-                NUserConfig u = rconf.findUser(login, session).get();
+                NUserConfig u = rconf.findUser(login).get();
                 fillNutsUserConfig(u);
 
-                rconf.setUser(u, this.session);
+                rconf.setUser(u);
 
             } else {
-                DefaultNWorkspaceConfigModel wconf = NConfigsExt.of(NConfigs.of(this.session)).getModel();
-                NUserConfig u = wconf.getUser(login, session);
+                DefaultNWorkspaceConfigModel wconf = NConfigsExt.of(NConfigs.of()).getModel();
+                NUserConfig u = wconf.getUser(login);
                 if (u == null) {
-                    throw new NIllegalArgumentException(session, NMsg.ofC("no such user %s", login));
+                    throw new NIllegalArgumentException(NMsg.ofC("no such user %s", login));
                 }
 
                 fillNutsUserConfig(u);
-                wconf.setUser(u, this.session);
+                wconf.setUser(u);
             }
         }
         return this;
     }
 
     protected void fillNutsUserConfig(NUserConfig u) {
-        checkSession();
-        NSession session = getSession();
-        NWorkspaceSecurityManager wsec = NWorkspaceSecurityManager.of(session);
+        NSession session=workspace.currentSession();
+        NWorkspaceSecurityManager wsec = NWorkspaceSecurityManager.of();
         String currentLogin = wsec.getCurrentUsername();
         if (!currentLogin.equals(login)) {
-            repository.security().setSession(session).checkAllowed(NConstants.Permissions.ADMIN, "set-user-credentials");
+            repository.security().checkAllowed(NConstants.Permissions.ADMIN, "set-user-credentials");
         }
         if (!wsec.isAllowed(NConstants.Permissions.ADMIN)) {
             wsec.checkCredentials(u.getCredentials().toCharArray(),

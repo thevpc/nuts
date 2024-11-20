@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.text.NTextLink;
@@ -39,8 +40,8 @@ import java.util.Objects;
 public class DefaultNTextLink extends NTextSpecialBase implements NTextLink {
     private String value;
 
-    public DefaultNTextLink(NSession session, String separator, String value) {
-        super(session, "```!", "link", separator, "```");
+    public DefaultNTextLink(NWorkspace workspace, String separator, String value) {
+        super(workspace, "```!", "link", separator, "```");
         this.value = value;
     }
 

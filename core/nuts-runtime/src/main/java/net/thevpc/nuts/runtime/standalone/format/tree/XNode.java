@@ -103,9 +103,9 @@ public class XNode {
             return titleOrValueAsElement;
         } else {
             if (isList(value) || isMap(value)) {
-                return NTexts.of(session).ofBuilder().append(keyAsElement);
+                return NTexts.of().ofBuilder().append(keyAsElement);
             } else {
-                return NTexts.of(session).ofBuilder().append(keyAsElement).append("=").append(titleOrValueAsElement);
+                return NTexts.of().ofBuilder().append(keyAsElement).append("=").append(titleOrValueAsElement);
             }
         }
     }
@@ -221,7 +221,7 @@ public class XNode {
                 if (map == null) {
                     all.add(entryNode(keyStr, me.getValue(), session, format));
                 } else {
-                    all.add(entryNode(keyStr, NElements.of(session)
+                    all.add(entryNode(keyStr, NElements.of()
                             .toElement(Arrays.asList(map)), session, format));
                 }
             }
@@ -236,7 +236,7 @@ public class XNode {
                 if (map == null) {
                     all.add(entryNode(keyStr, me.getValue(), session, format));
                 } else {
-                    all.add(entryNode(keyStr, NElements.of(session)
+                    all.add(entryNode(keyStr, NElements.of()
                             .toElement(Arrays.asList(map)), session, format));
                 }
             }

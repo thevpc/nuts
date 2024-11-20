@@ -39,38 +39,38 @@ class WrapperNAuthenticationAgent {
 
     public boolean removeCredentials(char[] credentialsId, NSession session) {
         NSessionUtils.checkSession(ws, session);
-        return getCachedAuthenticationAgent(extractId(credentialsId,session),session).removeCredentials(credentialsId, envProvider.apply(session), session);
+        return getCachedAuthenticationAgent(extractId(credentialsId,session),session).removeCredentials(credentialsId, envProvider.apply(session));
     }
 
     public void checkCredentials(char[] credentialsId, char[] password, NSession session) {
         NSessionUtils.checkSession(ws, session);
-        getCachedAuthenticationAgent(extractId(credentialsId,session),session).checkCredentials(credentialsId, password, envProvider.apply(session), session);
+        getCachedAuthenticationAgent(extractId(credentialsId,session),session).checkCredentials(credentialsId, password, envProvider.apply(session));
     }
 
     protected String extractId(char[] a, NSession session) {
         String b = new String(a);
         int x = b.indexOf(':');
         if (x <= 0) {
-            if (NBootManager.of(session).getBootOptions().getRecover().orElse(false)) {
+            if (NBootManager.of().getBootOptions().getRecover().orElse(false)) {
                 //All stored passwords will be reset to 'secret'
                 session.err().println("```error RECOVER MODE : Password could no be parsed due a change in encryption spec. WIll use new default agent```");
                 return null;
             }
-            throw new NSecurityException(session, NMsg.ofPlain("credential id must start with authentication agent id"));
+            throw new NSecurityException(NMsg.ofPlain("credential id must start with authentication agent id"));
         }
         return b.substring(0, x);
     }
 
     public char[] getCredentials(char[] credentialsId, NSession session) {
-        return getCachedAuthenticationAgent(extractId(credentialsId,session),session).getCredentials(credentialsId, envProvider.apply(session), session);
+        return getCachedAuthenticationAgent(extractId(credentialsId,session),session).getCredentials(credentialsId, envProvider.apply(session));
     }
 
     public char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId, NSession session) {
         NSessionUtils.checkSession(ws, session);
         if (credentialId != null) {
-            return getCachedAuthenticationAgent(extractId(credentialId,session),session).createCredentials(credentials, allowRetrieve, credentialId, envProvider.apply(session), session);
+            return getCachedAuthenticationAgent(extractId(credentialId,session),session).createCredentials(credentials, allowRetrieve, credentialId, envProvider.apply(session));
         } else {
-            return getCachedAuthenticationAgent("",session).createCredentials(credentials, allowRetrieve, credentialId, envProvider.apply(session), session);
+            return getCachedAuthenticationAgent("",session).createCredentials(credentials, allowRetrieve, credentialId, envProvider.apply(session));
         }
     }
 }

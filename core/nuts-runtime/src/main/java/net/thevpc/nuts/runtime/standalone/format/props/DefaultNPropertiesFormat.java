@@ -35,32 +35,33 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
     private Object value;
     private Map<String, String> multilineProperties = new HashMap<>();
 
-    public DefaultNPropertiesFormat(NSession session) {
-        super(session, "props-format");
+    public DefaultNPropertiesFormat(NWorkspace workspace) {
+        super(workspace, "props-format");
     }
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
+        NSession session=workspace.currentSession();
         NArg a;
         if ((a = cmdLine.nextEntry(OPTION_MULTILINE_PROPERTY).orNull()) != null) {
-            NArg i = NArg.of(a.getStringValue().get(getSession()));
+            NArg i = NArg.of(a.getStringValue().get());
             if (i.isActive()) {
-                addMultilineProperty(i.getKey().asString().get(getSession()), i.getStringValue().get(getSession()));
+                addMultilineProperty(i.getKey().asString().get(), i.getStringValue().get());
             }
             return true;
         } else if ((a = cmdLine.nextFlag("--compact").orNull()) != null) {
             if (a.isActive()) {
-                this.compact = a.getBooleanValue().get(getSession());
+                this.compact = a.getBooleanValue().get();
             }
             return true;
         } else if ((a = cmdLine.nextFlag("--props").orNull()) != null) {
             if (a.isActive()) {
-                this.javaProps = a.getBooleanValue().get(getSession());
+                this.javaProps = a.getBooleanValue().get();
             }
             return true;
         } else if ((a = cmdLine.nextFlag("--escape-text").orNull()) != null) {
             if (a.isActive()) {
-                this.escapeText = a.getBooleanValue().get(getSession());
+                this.escapeText = a.getBooleanValue().get();
             }
             return true;
         }
@@ -73,9 +74,10 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
     }
 
     public Map buildModel() {
-        Object value = NElements.of(getSession()).setIndestructibleFormat().destruct(getValue());
+        NSession session=workspace.currentSession();
+        Object value = NElements.of().setIndestructibleFormat().destruct(getValue());
         LinkedHashMap<NString, NString> map = new LinkedHashMap<>();
-        fillMap(NString.of((rootName==null?"":rootName),getSession()), value, map);
+        fillMap(NString.of((rootName==null?"":rootName)), value, map);
         return map;
     }
 
@@ -113,7 +115,8 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
                 if(!entryKey.isEmpty()) {
                     map.put(entryKey, stringValue(entryValue));
                 }else{
-                    map.put(NString.of("value",getSession()), stringValue(entryValue));
+                    NSession session=workspace.currentSession();
+                    map.put(NString.of("value"), stringValue(entryValue));
                 }
             }
         }
@@ -144,7 +147,7 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
 
     @Override
     public void print(NPrintStream w) {
-        checkSession();
+        NSession session=workspace.currentSession();
         NPrintStream out = getValidPrintStream(w);
         Map<Object, Object> mm;
         Map model = buildModel();
@@ -162,9 +165,9 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
             mm = model;
         }
         if (javaProps) {
-            CoreIOUtils.storeProperties(ObjectOutputFormatWriterHelper.explodeMap(mm), w.asPrintStream(), sorted,getSession());
+            CoreIOUtils.storeProperties(ObjectOutputFormatWriterHelper.explodeMap(mm), w.asPrintStream(), sorted);
         } else {
-            printMap(out, NTexts.of(getSession()).ofBlank(), mm);
+            printMap(out, NTexts.of().ofBlank(), mm);
         }
     }
 
@@ -221,7 +224,8 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
     }
 
     private void printKeyValue(NPrintStream out, NString prefix, int len, String fancySep, NString key, NString value) {
-        NTexts txt = NTexts.of(getSession());
+        NSession session=workspace.currentSession();
+        NTexts txt = NTexts.of();
         if (prefix == null) {
             prefix = txt.ofBlank();
         }
@@ -279,10 +283,11 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
     }
 
     private NString stringValue(Object o) {
+        NSession session=workspace.currentSession();
         if (escapeText) {
-            return NTextUtils.stringValueFormatted(o, escapeText, getSession());
+            return NTextUtils.stringValueFormatted(o, escapeText);
         } else {
-            return NTexts.of(getSession()).ofText(o);
+            return NTexts.of().ofText(o);
         }
     }
 

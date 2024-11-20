@@ -46,19 +46,19 @@ public class CoreSecurityUtils {
     public static final String ENV_KEY_PASSPHRASE = "passphrase";
     public static final String DEFAULT_PASSPHRASE = NStringUtils.toHexString("It's completely nuts!!".getBytes());
 
-    public static char[] defaultDecryptChars(char[] data, String passphrase, NSession session) {
-        return decryptString(new String(data), passphrase,session).toCharArray();
+    public static char[] defaultDecryptChars(char[] data, String passphrase) {
+        return decryptString(new String(data), passphrase).toCharArray();
 //        return CoreIOUtils.bytesToChars(CoreSecurityUtils.httpDecrypt(CoreIOUtils.charsToBytes(data), passphrase));
     }
 
-    public static char[] defaultEncryptChars(char[] data, String passphrase, NSession session) {
-        return encryptString(new String(data), passphrase,session).toCharArray();
+    public static char[] defaultEncryptChars(char[] data, String passphrase) {
+        return encryptString(new String(data), passphrase).toCharArray();
 //        byte[] bytes = httpEncrypt(CoreIOUtils.charsToBytes(data), passphrase);
 //        return CoreIOUtils.bytesToChars(bytes);
     }
 
-    public static char[] defaultHashChars(char[] data, String passphrase, NSession session) {
-        return defaultEncryptChars(NDigestUtils.evalSHA1(data,session), passphrase,session);
+    public static char[] defaultHashChars(char[] data, String passphrase) {
+        return defaultEncryptChars(NDigestUtils.evalSHA1(data), passphrase);
     }
 
 //    public static byte[] httpDecrypt(byte[] data, String passphrase) {
@@ -90,7 +90,7 @@ public class CoreSecurityUtils {
 //        }
 //    }
 
-    private static String encryptString(String strToEncrypt, String secret, NSession session) {
+    private static String encryptString(String strToEncrypt, String secret) {
         try {
             //strToEncrypt must be multiple of 16 (bug in jdk11)
             byte[] bytes = strToEncrypt.getBytes(StandardCharsets.UTF_8);
@@ -108,20 +108,20 @@ public class CoreSecurityUtils {
             }
             bytes=out.toByteArray();
 
-            KeyInfo k = createKeyInfo(secret,session);
+            KeyInfo k = createKeyInfo(secret);
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
             cipher.init(Cipher.ENCRYPT_MODE, k.secretKey);
             return Base64.getEncoder().encodeToString(cipher.doFinal(bytes));
         } catch (NException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("encryption failed"),ex);
+            throw new NIllegalArgumentException(NMsg.ofPlain("encryption failed"),ex);
         }
     }
 
-    private static String decryptString(String strToDecrypt, String secret, NSession session) {
+    private static String decryptString(String strToDecrypt, String secret) {
         try {
-            KeyInfo k = createKeyInfo(secret,session);
+            KeyInfo k = createKeyInfo(secret);
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
             cipher.init(Cipher.DECRYPT_MODE, k.secretKey);
             byte[] bytes = cipher.doFinal(Base64.getDecoder().decode(strToDecrypt));
@@ -139,7 +139,7 @@ public class CoreSecurityUtils {
         } catch (NException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("decryption failed"),ex);
+            throw new NIllegalArgumentException(NMsg.ofPlain("decryption failed"),ex);
         }
     }
 
@@ -149,7 +149,7 @@ public class CoreSecurityUtils {
         byte[] key;
     }
 
-    private static KeyInfo createKeyInfo(String password, NSession session) {
+    private static KeyInfo createKeyInfo(String password) {
         if (password == null || password.length() == 0) {
             password = "password";
         }
@@ -161,7 +161,7 @@ public class CoreSecurityUtils {
             k.key = sha.digest(k.key);
             k.secretKey = new SecretKeySpec(k.key, "AES");
         } catch (NoSuchAlgorithmException ex) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("encryption key building failed"),ex);
+            throw new NIllegalArgumentException(NMsg.ofPlain("encryption key building failed"),ex);
         }
         return k;
     }

@@ -60,10 +60,10 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     public NPath getRunningFile() {
         String s = getConfig().getSourceFilePath();
         if (!NBlankable.isBlank(s)) {
-            return NPath.of(s,getSession());
+            return NPath.of(s);
         }
         String _runningFolder = tomcat.getConfig().getRunningFolder();
-        NPath runningFolder = (_runningFolder == null || _runningFolder.trim().isEmpty()) ? null : NPath.of(_runningFolder, getSession());
+        NPath runningFolder = (_runningFolder == null || _runningFolder.trim().isEmpty()) ? null : NPath.of(_runningFolder);
         if (runningFolder == null) {
             runningFolder = session.getAppSharedConfFolder().resolve("running");
         }
@@ -87,13 +87,13 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
         return null;
     }
     public NString getFormattedPath(String str) {
-        return NTexts.of(getSession()).ofStyled(str, NTextStyle.path());
+        return NTexts.of().ofStyled(str, NTextStyle.path());
     }
     public NString getFormattedVersion(String str) {
-        return NTexts.of(getSession()).ofStyled(str, NTextStyle.version());
+        return NTexts.of().ofStyled(str, NTextStyle.version());
     }
     public NString getFormattedPrefix(String str) {
-        return NTexts.of(getSession()).ofBuilder()
+        return NTexts.of().ofBuilder()
                 .append("[")
                 .append(str, NTextStyle.primary5())
                 .append("]");
@@ -111,7 +111,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
             getSession().out().println(NMsg.ofC("%s [LOG] updating version file %s to %s.", getFormattedPrefix(getFullName()), getFormattedVersion(_StringUtils.coalesce(version, "<DEFAULT>")), getFormattedPath(getVersionFile().toString())));
             getVersionFile().writeString(version);
             getSession().out().println(NMsg.ofC("%s [LOG] updating archive file %s -> %s.", getFormattedPrefix(getFullName()), getFormattedPath(getArchiveFile(version).toString()), getFormattedPath(getRunningFile().toString())));
-            NCp.of(getSession()).from(getArchiveFile(version))
+            NCp.of().from(getArchiveFile(version))
                     .to(getRunningFile())
                     .run();
         }
@@ -154,7 +154,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
         getSession().out().println(NMsg.ofC("%s deploy %s as file %s to %s.",
                 getFormattedPrefix(getFullName()), getFormattedVersion(_StringUtils.coalesce(version, "<DEFAULT>")),
                 getFormattedPath(runningFile.toString()), getFormattedPath(deployFile.toString())));
-        NCp.of(getSession())
+        NCp.of()
                 .from(runningFile)
                 .to(deployFile)
                 .addOptions(NPathOption.REPLACE_EXISTING)
@@ -222,7 +222,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
         result.put("runningfolder", getRunningFile());
         result.put("versionFolder", getVersionFile());
         NSession session = getSession();
-        NElements.of(session).json().setValue(result).print(out);
+        NElements.of().json().setValue(result).print(out);
         return this;
     }
 

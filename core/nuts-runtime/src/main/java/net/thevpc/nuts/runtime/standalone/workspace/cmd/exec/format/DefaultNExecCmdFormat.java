@@ -26,8 +26,8 @@ public class DefaultNExecCmdFormat extends DefaultFormatBase<NExecCmdFormat> imp
     private boolean redirectError=true;
     private NExecCmd value;
 
-    public DefaultNExecCmdFormat(NSession session) {
-        super(session, "exec-command");
+    public DefaultNExecCmdFormat(NWorkspace workspace) {
+        super(workspace, "exec-command");
     }
 
     @Override

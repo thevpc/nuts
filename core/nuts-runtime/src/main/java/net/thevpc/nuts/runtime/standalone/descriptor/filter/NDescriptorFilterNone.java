@@ -16,8 +16,8 @@ public class NDescriptorFilterNone extends AbstractDescriptorFilter {
 
     private NDescriptorFilter[] all;
 
-    public NDescriptorFilterNone(NSession session, NDescriptorFilter... all) {
-        super(session, NFilterOp.NOT);
+    public NDescriptorFilterNone(NWorkspace workspace, NDescriptorFilter... all) {
+        super(workspace, NFilterOp.NOT);
         List<NDescriptorFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NDescriptorFilter filter : all) {
@@ -30,12 +30,12 @@ public class NDescriptorFilterNone extends AbstractDescriptorFilter {
     }
 
     @Override
-    public boolean acceptDescriptor(NDescriptor id, NSession session) {
+    public boolean acceptDescriptor(NDescriptor id) {
         if (all.length == 0) {
             return true;
         }
         for (NDescriptorFilter filter : all) {
-            if (filter.acceptDescriptor(id, session)) {
+            if (filter.acceptDescriptor(id)) {
                 return false;
             }
         }
@@ -44,7 +44,7 @@ public class NDescriptorFilterNone extends AbstractDescriptorFilter {
 
     @Override
     public NDescriptorFilter simplify() {
-        return CoreFilterUtils.simplifyFilterNone(getSession(), NDescriptorFilter.class,this,all);
+        return CoreFilterUtils.simplifyFilterNone( NDescriptorFilter.class,this,all);
     }
 
     @Override

@@ -65,14 +65,14 @@ public class Test13_TerminalModeTest {
                 Assertions.assertThrows(NIllegalArgumentException.class,()->
 
                         {
-                            NSystemTerminal systemTerminal = NIO.of(session).getSystemTerminal();
+                            NSystemTerminal systemTerminal = NIO.of().getSystemTerminal();
                             NPrintStream sysInitMode = systemTerminal.out();
                             TestUtils.println(
                                     "sys-init="+(sysInitMode.getTerminalMode()==null?"default": sysInitMode.getTerminalMode().id())
                                             +", sys-fixed="+(systemMode==null?"default":systemMode.id())
                                             +" ->"+sessionMode.id());
 
-                            NSessionTerminal terminal = NSessionTerminal.of(session);
+                            NSessionTerminal terminal = NSessionTerminal.of();
                             NPrintStream out = terminal.out().setTerminalMode(systemMode);
                             NTerminalMode initMode = out.getTerminalMode();
                             Assertions.assertEquals(systemMode,initMode);
@@ -95,9 +95,9 @@ public class Test13_TerminalModeTest {
                 );
                 return;
             }else{
-                NSystemTerminal systemTerminal = NIO.of(session).getSystemTerminal();
+                NSystemTerminal systemTerminal = NIO.of().getSystemTerminal();
                 NPrintStream sysInitMode = systemTerminal.out();
-                NSessionTerminal terminal = NSessionTerminal.of(session);
+                NSessionTerminal terminal = NSessionTerminal.of();
                 NPrintStream out = terminal.out().setTerminalMode(systemMode);
                 NTerminalMode initMode = out.getTerminalMode();
                 Assertions.assertEquals(systemMode,initMode);
@@ -119,8 +119,8 @@ public class Test13_TerminalModeTest {
 
     @Test
     public void testBuilder(){
-        NText c = NTexts.of(session).ofCode("java", "public static void main(String[] args){}")
-                .highlight(session);
+        NText c = NTexts.of().ofCode("java", "public static void main(String[] args){}")
+                .highlight();
         session.out().println(c);
 
         NText word_static = c.builder().substring(7, 13);
@@ -130,7 +130,7 @@ public class Test13_TerminalModeTest {
         NText portion_npar = c.builder().substring(22, 24);
         session.out().println(portion_npar);
         Assertions.assertEquals("n##{separator:(}##\u001E",portion_npar.toString());
-        NText rep=c.builder().replace(23,24, NTexts.of(session).ofStyled("()(", NTextStyle.danger())).build();
+        NText rep=c.builder().replace(23,24, NTexts.of().ofStyled("()(", NTextStyle.danger())).build();
         session.out().println(rep);
         Assertions.assertEquals("##{keyword:public}##\u001E ##{keyword:static}##\u001E ##{keyword:void}##\u001E main##{danger:()(}##\u001EString##{separator:[}##\u001E##{separator:]}##\u001E args##{separator:)}##\u001E##{separator:{}##\u001E##{separator:}}##\u001E",
                 rep.toString());

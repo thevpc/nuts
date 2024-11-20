@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.format.table;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.format.NTableCellFormat;
 
 /**
@@ -16,7 +15,7 @@ public class DefaultTableCellFormat implements NTableCellFormat {
     }
 
     @Override
-    public String format(int row, int col, Object value, NSession session) {
+    public String format(int row, int col, Object value) {
         return String.valueOf(value);
     }
 

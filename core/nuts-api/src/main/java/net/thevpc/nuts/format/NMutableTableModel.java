@@ -26,7 +26,6 @@
 package net.thevpc.nuts.format;
 
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponent;
 
 /**
@@ -37,8 +36,8 @@ import net.thevpc.nuts.spi.NComponent;
  */
 public interface NMutableTableModel extends NTableModel, NComponent {
 
-    static NMutableTableModel of(NSession session) {
-        return NExtensions.of(session).createComponent(NMutableTableModel.class).get();
+    static NMutableTableModel of() {
+        return NExtensions.of().createComponent(NMutableTableModel.class).get();
     }
 
     /**

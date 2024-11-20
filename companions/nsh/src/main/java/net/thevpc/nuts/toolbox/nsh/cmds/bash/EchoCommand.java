@@ -50,39 +50,39 @@ public class EchoCommand extends NShellBuiltinDefault {
     protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        switch (cmdLine.peek().get(session).key()) {
+        switch (cmdLine.peek().get().key()) {
             case "-n": {
-                cmdLine.withNextFlag((v, a, s) -> options.newLine = v);
+                cmdLine.withNextFlag((v, a) -> options.newLine = v);
                 return true;
             }
             case "-e":
             case "--escape":
             {
-                cmdLine.withNextFlag((v, a, s) -> options.escape = v);
+                cmdLine.withNextFlag((v, a) -> options.escape = v);
                 return true;
             }
             case "-E": {
-                cmdLine.withNextFlag((v, a, s) -> options.escape = !v);
+                cmdLine.withNextFlag((v, a) -> options.escape = !v);
                 return true;
             }
             case "-p":
             case "--plain": {
-                cmdLine.withNextTrueFlag((v, a, s) -> options.highlighter = null);
+                cmdLine.withNextTrueFlag((v, a) -> options.highlighter = null);
                 return true;
             }
             case "-H":
             case "--highlight":
             case "--highlighter": {
-                cmdLine.withNextEntry((v, a, s) -> options.highlighter = NStringUtils.trim(v));
+                cmdLine.withNextEntry((v, a) -> options.highlighter = NStringUtils.trim(v));
                 return true;
             }
             default: {
-                if (cmdLine.peek().get(session).isNonOption()) {
+                if (cmdLine.peek().get().isNonOption()) {
                     while (cmdLine.hasNext()) {
                         if (options.tokensCount > 0) {
                             options.message.append(" ");
                         }
-                        options.message.append(cmdLine.next().get(session).toString());
+                        options.message.append(cmdLine.next().get().toString());
                         options.tokensCount++;
                     }
                     return true;
@@ -195,10 +195,10 @@ public class EchoCommand extends NShellBuiltinDefault {
         if (options.highlighter == null) {
             ns = options.message.toString();
         } else {
-            NTextCode c = NTexts.of(context.getSession()).ofCode(
+            NTextCode c = NTexts.of().ofCode(
                     options.highlighter.isEmpty() ? "ntf" : options.highlighter
                     , options.message.toString());
-            ns = c.highlight(context.getSession());
+            ns = c.highlight();
         }
         if (options.newLine) {
             context.getSession().out().println(ns);

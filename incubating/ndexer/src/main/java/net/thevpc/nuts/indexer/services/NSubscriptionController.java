@@ -42,11 +42,11 @@ public class NSubscriptionController {
     public ResponseEntity<Void> subscribe(@RequestParam("workspaceLocation") String workspaceLocation,
             @RequestParam("repositoryUuid") String repositoryUuid) {
         NSession session = workspacePool.openWorkspace(workspaceLocation);
-        List<NRepository> repositories = NRepositories.of(session).getRepositories();
+        List<NRepository> repositories = NRepositories.of().getRepositories();
         for (NRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 this.subscriberManager.subscribe(repositoryUuid,
-                        workspaceManager.getWorkspaceLocation(session.getWorkspace().getUuid()), this.subscriberManager.getDefaultWorkspace());
+                        workspaceManager.getWorkspaceLocation(session.getWorkspace().getUuid()));
 
                 return ResponseEntity.ok().build();
             }
@@ -58,11 +58,11 @@ public class NSubscriptionController {
     public ResponseEntity<Void> unsubscribe(@RequestParam("workspaceLocation") String workspaceLocation,
             @RequestParam("repositoryUuid") String repositoryUuid) {
         NSession session = workspacePool.openWorkspace(workspaceLocation);
-        List<NRepository> repositories = NRepositories.of(session).getRepositories();
+        List<NRepository> repositories = NRepositories.of().getRepositories();
         for (NRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 this.subscriberManager.unsubscribe(repositoryUuid,
-                        workspaceManager.getWorkspaceLocation(session.getWorkspace().getUuid()), this.subscriberManager.getDefaultWorkspace());
+                        workspaceManager.getWorkspaceLocation(session.getWorkspace().getUuid()));
                 return ResponseEntity.ok().build();
             }
         }
@@ -74,7 +74,7 @@ public class NSubscriptionController {
             @RequestParam("repositoryUuid") String repositoryUuid) {
         System.out.println(workspaceLocation + " " + repositoryUuid);
         NSession session = workspacePool.openWorkspace(workspaceLocation);
-        List<NRepository> repositories = NRepositories.of(session).getRepositories();
+        List<NRepository> repositories = NRepositories.of().getRepositories();
         for (NRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 boolean subscribed = this.subscriberManager.isSubscribed(repositoryUuid,

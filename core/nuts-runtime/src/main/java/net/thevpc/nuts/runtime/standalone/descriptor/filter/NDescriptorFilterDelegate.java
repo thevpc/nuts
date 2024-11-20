@@ -10,18 +10,18 @@ import java.util.Objects;
 public abstract class NDescriptorFilterDelegate extends AbstractDescriptorFilter{
     public abstract NDescriptorFilter baseDescriptorFilter();
 
-    public NDescriptorFilterDelegate(NSession session) {
-        super(session, NFilterOp.CUSTOM);
+    public NDescriptorFilterDelegate(NWorkspace workspace) {
+        super(workspace, NFilterOp.CUSTOM);
     }
 
     @Override
-    public boolean acceptSearchId(NSearchId sid, NSession session) {
-        return baseDescriptorFilter().acceptSearchId(sid, session);
+    public boolean acceptSearchId(NSearchId sid) {
+        return baseDescriptorFilter().acceptSearchId(sid);
     }
 
     @Override
-    public boolean acceptDescriptor(NDescriptor descriptor, NSession session) {
-        return baseDescriptorFilter().acceptDescriptor(descriptor, session);
+    public boolean acceptDescriptor(NDescriptor descriptor) {
+        return baseDescriptorFilter().acceptDescriptor(descriptor);
     }
 
     @Override

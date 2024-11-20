@@ -27,7 +27,6 @@
 package net.thevpc.nuts.security;
 
 import net.thevpc.nuts.NException;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NMsg;
 
 /**
@@ -40,34 +39,31 @@ public class NLoginException extends NException {
     /**
      * Constructs a new NutsLoginException exception
      *
-     * @param session workspace
      * @param message message
      */
-    public NLoginException(NSession session, NMsg message) {
-        super(session, message);
+    public NLoginException(NMsg message) {
+        super(message);
     }
 
     /**
      * Constructs a new NutsLoginException exception
      *
-     * @param session workspace
      * @param message message
      * @param cause   cause
      */
-    public NLoginException(NSession session, NMsg message, Throwable cause) {
-        super(session, message, cause);
+    public NLoginException(NMsg message, Throwable cause) {
+        super(message, cause);
     }
 
     /**
      * Constructs a new NutsLoginException exception
      *
-     * @param session            workspace
      * @param message            message
      * @param cause              cause
      * @param enableSuppression  whether or not suppression is enabled or disabled
      * @param writableStackTrace whether or not the stack trace should be writable
      */
-    public NLoginException(NSession session, NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(session, message, cause, enableSuppression, writableStackTrace);
+    public NLoginException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
     }
 }

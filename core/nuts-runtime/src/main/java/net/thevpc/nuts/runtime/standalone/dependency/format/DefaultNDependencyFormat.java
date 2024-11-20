@@ -24,8 +24,8 @@ public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyForma
     private NDependency value;
     private Set<String> queryPropertiesOmitted = new HashSet<>();
 
-    public DefaultNDependencyFormat(NSession session) {
-        super(session, "dependency-format");
+    public DefaultNDependencyFormat(NWorkspace workspace) {
+        super(workspace, "dependency-format");
     }
 
     public NDependencyFormat setNtf(boolean ntf) {
@@ -120,12 +120,11 @@ public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyForma
                 }
             }
         }
-        NIdFormat id1 = NIdFormat.of(getSession());
+        NIdFormat id1 = NIdFormat.of();
         for (String omitQueryProperty : getOmitQueryProperties()) {
             id1.setOmitProperty(omitQueryProperty,true);
         }
         return id1
-                .setSession(getSession())
                 .setValue(id.build())
                 .setHighlightImportedGroupId(isHighlightImportedGroup())
                 .setOmitOtherProperties(false)
@@ -217,15 +216,14 @@ public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyForma
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NSession session = getSession();
-        NArg aa = cmdLine.peek().get(session);
+        NArg aa = cmdLine.peek().get();
         if (aa == null) {
             return false;
         }
         boolean enabled=aa.isActive();
         switch(aa.key()) {
             case "--omit-env": {
-                cmdLine.withNextFlag((v, a, s) -> setOmitOtherProperties(v));
+                cmdLine.withNextFlag((v, a) -> setOmitOtherProperties(v));
                 return true;
             }
 //            case "--omit-face": {
@@ -233,19 +231,19 @@ public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyForma
 //                return true;
 //            }
             case "--omit-group": {
-                cmdLine.withNextFlag((v, a, s) -> setOmitGroupId(v));
+                cmdLine.withNextFlag((v, a) -> setOmitGroupId(v));
                 return true;
             }
             case "--omit-imported-group": {
-                cmdLine.withNextFlag((v, a, s) -> setOmitImportedGroup(v));
+                cmdLine.withNextFlag((v, a) -> setOmitImportedGroup(v));
                 return true;
             }
             case "--omit-repo": {
-                cmdLine.withNextFlag((v, a, s) -> setOmitRepository(v));
+                cmdLine.withNextFlag((v, a) -> setOmitRepository(v));
                 return true;
             }
             case "--highlight-imported-group": {
-                cmdLine.withNextFlag((v, a, s) -> setHighlightImportedGroup(v));
+                cmdLine.withNextFlag((v, a) -> setHighlightImportedGroup(v));
                 return true;
             }
         }

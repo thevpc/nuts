@@ -26,10 +26,8 @@
  */
 package net.thevpc.nuts.text;
 
-import net.thevpc.nuts.NSession;
-
 public interface NTextFormatTheme {
     String getName();
 
-    NTextStyles toBasicStyles(NTextStyles style, NSession session);
+    NTextStyles toBasicStyles(NTextStyles style);
 }

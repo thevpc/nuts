@@ -226,13 +226,13 @@ public class DefaultNWebCli implements NWebCli {
                 uc.setDoOutput(someBody);
                 if (someBody) {
                     uc.setRequestProperty("Content-Length", String.valueOf(bodyLength));
-                    NCp.of(session).from(requestBody).to(uc.getOutputStream()).run();
+                    NCp.of().from(requestBody).to(uc.getOutputStream()).run();
                 }
                 NInputSource bytes = null;
                 if (!r.isOneWay()) {
                     //TODO change me with a smart copy input source!
                     HttpURLConnection uc2 = uc;
-                    bytes = NInputSourceBuilder.of(uc.getInputStream(), session).setCloseAction(() -> {
+                    bytes = NInputSourceBuilder.of(uc.getInputStream()).setCloseAction(() -> {
                                 // close connexion when fully read!
                                 if (uc2 != null) {
                                     try {

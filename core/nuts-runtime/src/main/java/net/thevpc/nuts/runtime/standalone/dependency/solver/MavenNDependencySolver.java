@@ -16,17 +16,15 @@ public class MavenNDependencySolver implements NDependencySolver {
 
     private List<NDependencyTreeNodeBuild> defs = new ArrayList<>();
     private List<RootInfo> pending = new ArrayList<>();
-    private NWorkspace ws;
-    private NSession session;
+    private NWorkspace workspace;
     private NDependencyFilter dependencyFilter;
     private NRepositoryFilter repositoryFilter;
     private NDependencyFilter effDependencyFilter;
     private boolean shouldIncludeContent = false;//shouldIncludeContent(this);
     private boolean failFast;
 
-    public MavenNDependencySolver(NSession session) {
-        this.session = session;
-        this.ws = session.getWorkspace();
+    public MavenNDependencySolver(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
     ;
@@ -65,7 +63,7 @@ public class MavenNDependencySolver implements NDependencySolver {
     public NDependencies solve() {
         //session = NutsWorkspaceUtils.bindSession(ws, session);
         for (RootInfo rootInfo : pending) {
-            addRootDefinition0(rootInfo.dependency, rootInfo.def, session);
+            addRootDefinition0(rootInfo.dependency, rootInfo.def);
         }
         pending.clear();
         List<NDependencyTreeNodeBuild> mergedRootNodeBuilders = new ArrayList<>();
@@ -76,7 +74,7 @@ public class MavenNDependencySolver implements NDependencySolver {
         NDependencyInfoSet mergedVisitedSet = new NDependencyInfoSet();
         NDependencyInfoSet nonMergedVisitedSet = new NDependencyInfoSet();
         NDependencyFilter effDependencyFilter = null;
-        NDependencyFilters filter = NDependencyFilters.of(session);
+        NDependencyFilters filter = NDependencyFilters.of();
         if (dependencyFilter == null) {
             effDependencyFilter = filter.always();
         } else {
@@ -90,19 +88,19 @@ public class MavenNDependencySolver implements NDependencySolver {
                     mergedRootNodeBuilders.add(currentNode);
                     List<NDependency> immediate = CoreFilterUtils.filterDependencies(id,
                             currentNode.getEffectiveDescriptor().getDependencies(),
-                            effDependencyFilter, session);
+                            effDependencyFilter);
                     immediates.addAll(immediate);
-                    for (NDependency dependency : currentNode.def.getEffectiveDescriptor().get(session).getDependencies()) {
+                    for (NDependency dependency : currentNode.def.getEffectiveDescriptor().get().getDependencies()) {
                         dependency = dependency.builder().setProperty("provided-by", currentNode.id.toString()).build();
                         NDependency effDependency = dependency.builder()
                                 .setScope(combineScopes(currentNode.effDependency.getScope(), dependency.getScope()))
                                 .build();
-                        if (effDependencyFilter.acceptDependency(currentNode.def.getId(), effDependency, session)
+                        if (effDependencyFilter.acceptDependency(currentNode.def.getId(), effDependency)
                                 && !currentNode.exclusions.contains(dependency.toId().getShortId())
                         ) {
                             NDefinition def2 = null;
                             try {
-                                def2 = search(session)
+                                def2 = search()
                                         .addId(dependency.toId())
                                         .setEffective(true)
                                         .setContent(shouldIncludeContent)
@@ -115,7 +113,7 @@ public class MavenNDependencySolver implements NDependencySolver {
                                         .builder()
                                         .setVersion(def2.getId().getVersion());
                             }
-                            NDependencyTreeNodeBuild info = new NDependencyTreeNodeBuild(currentNode, def2, dependency, effDependency, currentNode.depth + 1, session);
+                            NDependencyTreeNodeBuild info = new NDependencyTreeNodeBuild(currentNode, def2, dependency, effDependency, currentNode.depth + 1, workspace);
                             info.exclusions.addAll(currentNode.exclusions);
                             for (NId exclusion : dependency.getExclusions()) {
                                 info.exclusions.add(exclusion.getShortId());
@@ -142,11 +140,11 @@ public class MavenNDependencySolver implements NDependencySolver {
                                 .setScope(combineScopes(currentNode.effDependency.getScope(), dependency.getScope()))
                                 .build();
                         if (effDependencyFilter.acceptDependency(
-                                currentNode.getEffectiveId(), effDependency, session
+                                currentNode.getEffectiveId(), effDependency
                         ) && !currentNode.exclusions.contains(dependency.toId().getShortId())) {
                             NDefinition def2 = null;
                             try {
-                                def2 = search(session)
+                                def2 = search()
                                         .addId(dependency.toId())
                                         .setEffective(true)
                                         .setContent(shouldIncludeContent)
@@ -159,7 +157,7 @@ public class MavenNDependencySolver implements NDependencySolver {
                                         .builder()
                                         .setVersion(def2.getId().getVersion());
                             }
-                            NDependencyTreeNodeBuild info = new NDependencyTreeNodeBuild(currentNode, def2, dependency, effDependency, currentNode.depth + 1, session);
+                            NDependencyTreeNodeBuild info = new NDependencyTreeNodeBuild(currentNode, def2, dependency, effDependency, currentNode.depth + 1, workspace);
                             info.exclusions.addAll(currentNode.exclusions);
                             for (NId exclusion : dependency.getExclusions()) {
                                 info.exclusions.add(exclusion.getShortId());
@@ -189,7 +187,7 @@ public class MavenNDependencySolver implements NDependencySolver {
                 nonMergedRootNodes.toArray(new NDependencyTreeNode[0]),
                 mergedDepsList,
                 mergedRootNodes.toArray(new NDependencyTreeNode[0]),
-                e -> NElements.of(e).ofString("solver"), session
+                () -> NElements.of().ofString("solver"), workspace
         );
     }
 
@@ -199,24 +197,24 @@ public class MavenNDependencySolver implements NDependencySolver {
         return this;
     }
 
-    public NDependencySolver addRootDefinition0(NDependency dependency, NDefinition def, NSession session) {
+    public NDependencySolver addRootDefinition0(NDependency dependency, NDefinition def) {
 
         if (dependency == null) {
             if (def != null) {
                 dependency = def.getId().toDependency();
             } else {
-                NAssert.requireNonNull(dependency, "dependency", session);
+                NAssert.requireNonNull(dependency, "dependency");
             }
         }
         if (def == null) {
-            def = search(session)
+            def = search()
                     .addId(dependency.toId()).setEffective(true)
                     .setContent(shouldIncludeContent)
                     .setEffective(true)
                     .setLatest(true).getResultDefinitions().findFirst().get();
         }
         if (def.getEffectiveDescriptor().isNotPresent()) {
-            throw new NIllegalArgumentException(session, NMsg.ofC("expected an effective definition for %s", def.getId()));
+            throw new NIllegalArgumentException(NMsg.ofC("expected an effective definition for %s", def.getId()));
         }
         NDependency effDependency = dependency;
         if (def != null) {
@@ -224,7 +222,7 @@ public class MavenNDependencySolver implements NDependencySolver {
                     .builder()
                     .setVersion(def.getId().getVersion());
         }
-        NDependencyTreeNodeBuild info = new NDependencyTreeNodeBuild(null, def, effDependency, dependency, 0, session);
+        NDependencyTreeNodeBuild info = new NDependencyTreeNodeBuild(null, def, effDependency, dependency, 0, workspace);
         for (NId exclusion : dependency.getExclusions()) {
             info.exclusions.add(exclusion.getShortId());
         }
@@ -232,8 +230,8 @@ public class MavenNDependencySolver implements NDependencySolver {
         return this;
     }
 
-    private NSearchCmd search(NSession session) {
-        return NSearchCmd.of(session)
+    private NSearchCmd search() {
+        return NSearchCmd.of()
                 .setRepositoryFilter(repositoryFilter);
     }
 
@@ -392,9 +390,9 @@ public class MavenNDependencySolver implements NDependencySolver {
         int depth;
         NDescriptor effDescriptor;
         NDependencyInfo key;
-        NSession session;
+        NWorkspace workspace;
 
-        public NDependencyTreeNodeBuild(NDependencyTreeNodeBuild parent, NDefinition def, NDependency dependency, NDependency effDependency, int depth, NSession session) {
+        public NDependencyTreeNodeBuild(NDependencyTreeNodeBuild parent, NDefinition def, NDependency dependency, NDependency effDependency, int depth, NWorkspace workspace) {
             this.parent = parent;
             this.def = def;
             this.dependency = dependency;
@@ -402,7 +400,7 @@ public class MavenNDependencySolver implements NDependencySolver {
             this.depth = depth;
             this.id = def != null ? def.getId() : dependency != null ? dependency.toId() : null;
             this.key = NDependencyInfo.of(this);
-            this.session = session;
+            this.workspace = workspace;
         }
 
         private NId getEffectiveId() {
@@ -413,7 +411,7 @@ public class MavenNDependencySolver implements NDependencySolver {
             if (effDescriptor == null && def != null) {
                 effDescriptor = def.getEffectiveDescriptor().orNull();
                 if (effDescriptor == null) {
-                    throw new NIllegalArgumentException(session,
+                    throw new NIllegalArgumentException(
                             NMsg.ofC("expected an effective definition for %s", def.getId()));
                 }
             }

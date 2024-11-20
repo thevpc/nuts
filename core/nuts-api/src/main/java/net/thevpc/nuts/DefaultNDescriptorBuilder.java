@@ -750,8 +750,8 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
     }
 
     @Override
-    public NDescriptorFormat formatter(NSession session) {
-        return build().formatter(session);
+    public NDescriptorFormat formatter() {
+        return build().formatter();
     }
 
     @Override

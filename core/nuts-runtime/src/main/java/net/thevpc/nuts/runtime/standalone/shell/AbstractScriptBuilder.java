@@ -11,14 +11,14 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base.BaseSy
 import java.nio.file.Path;
 
 public abstract class AbstractScriptBuilder implements ScriptBuilder {
-    private NSession session;
+    private NWorkspace workspace;
     private NId anyId;
     private String path;
     private String type;
     private NShellFamily shellFamily;
 
-    public AbstractScriptBuilder(NShellFamily shellFamily, String type, NId anyId, NSession session) {
-        this.session = session;
+    public AbstractScriptBuilder(NShellFamily shellFamily, String type, NId anyId, NWorkspace workspace) {
+        this.workspace = workspace;
         this.shellFamily = shellFamily;
         this.anyId = anyId.builder().setRepository(null).build();//remove repo!
         this.type = type;
@@ -28,8 +28,8 @@ public abstract class AbstractScriptBuilder implements ScriptBuilder {
         return shellFamily;
     }
 
-    public NSession getSession() {
-        return session;
+    public NWorkspace getWorkspace() {
+        return workspace;
     }
 
     public NId getAnyId() {
@@ -63,19 +63,19 @@ public abstract class AbstractScriptBuilder implements ScriptBuilder {
     public PathInfo buildAddLine(BaseSystemNdi ndi) {
         return ndi.addFileLine(type,
                 anyId,
-                NPath.of(path,session), ndi.getCommentLineConfigHeader(),buildString(), NShellHelper.of(getShellFamily()).getShebanSh(), shellFamily);
+                NPath.of(path), ndi.getCommentLineConfigHeader(),buildString(), NShellHelper.of(getShellFamily()).getShebanSh(), shellFamily);
     }
 
     public PathInfo build() {
         //Path script = getScriptFile(name);
-        NDefinition anyIdDef = NSearchCmd.of(session).addId(anyId).setLatest(true).setDistinct(true).getResultDefinitions().findSingleton().get();
+        NDefinition anyIdDef = NSearchCmd.of().addId(anyId).setLatest(true).setDistinct(true).getResultDefinitions().findSingleton().get();
         NId anyId = anyIdDef.getId();
         String path = NameBuilder.id(anyId,
-                this.path,"%n", anyIdDef.getDescriptor(),session).buildName();
-        NPath script = NPath.of(path,session);
+                this.path,"%n", anyIdDef.getDescriptor(), workspace).buildName();
+        NPath script = NPath.of(path);
         String newContent = buildString();
 //        PathInfo.Status update0 = NdiUtils.tryWriteStatus(newContent.getBytes(), script,session);
-        PathInfo.Status update = CoreIOUtils.tryWrite(newContent.getBytes(), script,session);
+        PathInfo.Status update = CoreIOUtils.tryWrite(newContent.getBytes(), script);
         script.addPermissions(NPathPermission.CAN_EXECUTE);
         return new PathInfo(type, anyId, script, update);
     }

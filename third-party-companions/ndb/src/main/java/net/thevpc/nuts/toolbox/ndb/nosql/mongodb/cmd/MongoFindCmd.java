@@ -1,8 +1,8 @@
 package net.thevpc.nuts.toolbox.ndb.nosql.mongodb.cmd;
 
 import com.mongodb.client.FindIterable;
-import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
 import net.thevpc.nuts.toolbox.ndb.base.cmd.FindCmd;
 import net.thevpc.nuts.toolbox.ndb.nosql.mongodb.NMongoConfig;
@@ -23,7 +23,7 @@ public class MongoFindCmd extends FindCmd<NMongoConfig> {
     }
 
     @Override
-    protected void run(ExtendedQuery eq, NMongoConfig options, NSession session) {
+    protected void run(ExtendedQuery eq, NMongoConfig options) {
         getSupport().doWithMongoCollection(options, eq.getTable(), mongoCollection -> {
             Document w = Document.parse("{}");
             for (String s : eq.getWhere()) {
@@ -52,6 +52,7 @@ public class MongoFindCmd extends FindCmd<NMongoConfig> {
             r.forEach(x -> {
                 values.add(x);
             });
+            NSession session = NSession.of().get();
             session.out().println(values);
         });
     }

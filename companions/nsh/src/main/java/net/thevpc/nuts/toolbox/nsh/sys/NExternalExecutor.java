@@ -48,9 +48,9 @@ public class NExternalExecutor implements NShellExternalExecutor {
             list.remove(0);
             command=list.toArray(new String[0]);
         }
-        return NExecCmd.of(context.getSession()).addCommand(command).failFast()
+        return NExecCmd.of().addCommand(command).failFast()
                 .setExecutionType(context.getSession().getExecutionType().orDefault())
-                .setDirectory(NPath.of(context.getDirectory(), context.getSession()))
+                .setDirectory(NPath.of(context.getDirectory()))
                 .run().getResultCode();
     }
 

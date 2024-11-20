@@ -40,7 +40,7 @@ public class TitleParserStep extends ParserStep {
     public NText toText() {
         String s = start.toString();
 //        NutsTexts text = ws.text();
-        DefaultNTexts factory0 = (DefaultNTexts) NTexts.of(session);
+        DefaultNTexts factory0 = (DefaultNTexts) NTexts.of();
         String s0=s.trim();
         NText child=null;
         if (children.size() == 1) {
@@ -50,7 +50,7 @@ public class TitleParserStep extends ParserStep {
             for (ParserStep a : children) {
                 all.add(a.toText());
             }
-            child= NTexts.of(session).ofList(all).simplify();
+            child= NTexts.of().ofList(all).simplify();
         }
         return factory0.createTitle(s,s0.length()-1 ,child,isComplete());
     }

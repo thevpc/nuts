@@ -33,9 +33,9 @@ import java.util.Set;
 /**
  * @app.category Base
  */
-public interface NImports extends NComponent, NSessionProvider {
-    static NImports of(NSession session) {
-        return NExtensions.of(session).createComponent(NImports.class).get();
+public interface NImports extends NComponent {
+    static NImports of() {
+        return NExtensions.of().createComponent(NImports.class).get();
     }
 
     NImports addImports(String... importExpression);
@@ -50,5 +50,4 @@ public interface NImports extends NComponent, NSessionProvider {
 
     boolean isImportedGroupId(String groupId);
 
-    NImports setSession(NSession session);
 }

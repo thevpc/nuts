@@ -1,9 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.event;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
-import net.thevpc.nuts.lib.common.collections.ObservableMap;
-import net.thevpc.nuts.util.NMapListener;
+import net.thevpc.nuts.util.NObservableMap;
+import net.thevpc.nuts.util.NObservableMapListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,18 +35,18 @@ public class DefaultNWorkspaceEventModel {
     }
 
     
-    public void addUserPropertyListener(NMapListener<String, Object> listener) {
-        ((ObservableMap<String, Object>) NEnvs.of(NSessionUtils.defaultSession(ws)).getProperties()).addListener(listener);
+    public void addUserPropertyListener(NObservableMapListener<String, Object> listener) {
+        ((NObservableMap<String, Object>) NEnvs.of().getProperties()).addMapListener(listener);
     }
 
     
-    public void removeUserPropertyListener(NMapListener<String, Object> listener) {
-        ((ObservableMap<String, Object>) NEnvs.of(NSessionUtils.defaultSession(ws)).getProperties()).removeListener(listener);
+    public void removeUserPropertyListener(NObservableMapListener<String, Object> listener) {
+        ((NObservableMap<String, Object>) NEnvs.of().getProperties()).removeMapListener(listener);
     }
 
     
-    public List<NMapListener<String, Object>> getUserPropertyListeners() {
-        return ((ObservableMap<String, Object>) NEnvs.of(NSessionUtils.defaultSession(ws)).getProperties()).getListeners();
+    public List<NObservableMapListener<String, Object>> getUserPropertyListeners() {
+        return ((NObservableMap<String, Object>) NEnvs.of().getProperties()).getMapListeners();
     }
 
     

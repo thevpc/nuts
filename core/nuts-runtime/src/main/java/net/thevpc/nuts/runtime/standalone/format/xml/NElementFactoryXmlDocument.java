@@ -62,7 +62,7 @@ public class NElementFactoryXmlDocument implements NElementMapper {
 
     @Override
     public Object createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        Document doc = XmlUtils.createDocument(context.getSession());
+        Document doc = XmlUtils.createDocument();
         Node source = NElementFactoryXmlElement.runWithDoc(
                 context,
                 () -> (Node) context.elementToObject(o, Element.class),

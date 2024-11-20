@@ -30,7 +30,6 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOp;
 import net.thevpc.nuts.runtime.standalone.repository.index.CacheDB;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.text.ExtendedFormatAware;
 import net.thevpc.nuts.runtime.standalone.text.ExtendedFormatAwarePrintWriter;
 import net.thevpc.nuts.runtime.standalone.text.RawOutputStream;
@@ -72,7 +71,7 @@ public class CoreIOUtils {
     public static String newLineString = null;
 
     @Deprecated
-    public static PrintWriter toPrintWriter(Writer writer, NSystemTerminalBase term, NSession session) {
+    public static PrintWriter toPrintWriter(Writer writer, NSystemTerminalBase term) {
         if (writer == null) {
             return null;
         }
@@ -81,8 +80,7 @@ public class CoreIOUtils {
                 return (PrintWriter) writer;
             }
         }
-        ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer, term, session);
-        NSessionUtils.setSession(s, session);
+        ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer, term, NWorkspace.of().get());
         return s;
     }
 
@@ -97,19 +95,19 @@ public class CoreIOUtils {
         return true;
     }
 
-    public static Stream<String> confLines(InputStream stream, NSession session) {
-        return lines(stream, session).filter(CoreIOUtils::isValidConfLine);
+    public static Stream<String> confLines(InputStream stream) {
+        return lines(stream).filter(CoreIOUtils::isValidConfLine);
     }
 
-    public static Stream<String> confLines(Reader stream, NSession session) {
-        return lines(stream, session).filter(CoreIOUtils::isValidConfLine);
+    public static Stream<String> confLines(Reader stream) {
+        return lines(stream).filter(CoreIOUtils::isValidConfLine);
     }
 
-    public static Stream<String> lines(InputStream stream, NSession session) {
-        return lines(new InputStreamReader(stream), session);
+    public static Stream<String> lines(InputStream stream) {
+        return lines(new InputStreamReader(stream));
     }
 
-    public static Stream<String> lines(Reader reader, NSession session) {
+    public static Stream<String> lines(Reader reader) {
         return CoreCollectionUtils.finiteStream(new Supplier<String>() {
             private BufferedReader r = new BufferedReader(reader);
 
@@ -117,30 +115,29 @@ public class CoreIOUtils {
                 try {
                     return r.readLine();
                 } catch (IOException e) {
-                    throw new NIOException(session, e);
+                    throw new NIOException(e);
                 }
             }
         });
     }
 
     @Deprecated
-    public static PrintWriter toPrintWriter(OutputStream writer, NSystemTerminalBase term, NSession session) {
+    public static PrintWriter toPrintWriter(OutputStream writer, NSystemTerminalBase term) {
         if (writer == null) {
             return null;
         }
-        ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer, term, session);
-        NSessionUtils.setSession(s, session);
+        ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer, term, NWorkspace.of().get());
         return s;
     }
 
     @Deprecated
-    public static OutputStream convertOutputStream(OutputStream out, NTerminalMode expected, NSystemTerminalBase term, NSession session) {
-        ExtendedFormatAware a = convertOutputStreamToExtendedFormatAware(out, expected, term, session);
+    public static OutputStream convertOutputStream(OutputStream out, NTerminalMode expected, NSystemTerminalBase term) {
+        ExtendedFormatAware a = convertOutputStreamToExtendedFormatAware(out, expected, term);
         return (OutputStream) a;
     }
 
     @Deprecated
-    public static ExtendedFormatAware convertOutputStreamToExtendedFormatAware(OutputStream out, NTerminalMode expected, NSystemTerminalBase term, NSession session) {
+    public static ExtendedFormatAware convertOutputStreamToExtendedFormatAware(OutputStream out, NTerminalMode expected, NSystemTerminalBase term) {
         if (out == null) {
             return null;
         }
@@ -148,7 +145,7 @@ public class CoreIOUtils {
         if (out instanceof ExtendedFormatAware) {
             aw = (ExtendedFormatAware) out;
         } else {
-            aw = new RawOutputStream(out, term, session);
+            aw = new RawOutputStream(out, term, NWorkspace.of().get());
         }
         switch (expected) {
             case INHERITED: {
@@ -161,13 +158,12 @@ public class CoreIOUtils {
                 return aw.convert(NTerminalModeOp.FILTER);
             }
             default: {
-                throw new NIllegalArgumentException(session, NMsg.ofC("unsupported terminal mode %s", expected));
+                throw new NIllegalArgumentException(NMsg.ofC("unsupported terminal mode %s", expected));
             }
         }
     }
 
-    public static String resolveRepositoryPath(NAddRepositoryOptions options, Path rootFolder, NSession session) {
-        NWorkspace ws = session.getWorkspace();
+    public static String resolveRepositoryPath(NAddRepositoryOptions options, Path rootFolder) {
         String loc = options.getLocation();
         String goodName = options.getName();
         if (NBlankable.isBlank(goodName)) {
@@ -192,7 +188,7 @@ public class CoreIOUtils {
                     goodName = goodName + "-repo";
                 }
                 loc = NPath
-                        .ofTempFolder(goodName + "-", session).toString();
+                        .ofTempFolder(goodName + "-").toString();
             } else {
                 if (NBlankable.isBlank(loc)) {
                     if (NBlankable.isBlank(goodName)) {
@@ -202,7 +198,7 @@ public class CoreIOUtils {
                 }
             }
         }
-        return NPath.of(loc, session).toAbsolute(rootFolder.toString())
+        return NPath.of(loc).toAbsolute(rootFolder.toString())
                 .toString();
     }
 
@@ -224,8 +220,9 @@ public class CoreIOUtils {
 //        return sb.toString();
 //    }
 
-    public static NPrintStream resolveOut(NSession session) {
-        return (session.getTerminal() == null) ? NPrintStream.ofNull(session)
+    public static NPrintStream resolveOut() {
+        NSession session = NSession.of().get();
+        return (session.getTerminal() == null) ? NPrintStream.NULL
                 : session.getTerminal().out();
     }
 
@@ -235,8 +232,8 @@ public class CoreIOUtils {
      * @param in  entree
      * @param out sortie
      */
-    public static void copy(Reader in, Writer out, NSession session) {
-        copy(in, out, DEFAULT_BUFFER_SIZE, session);
+    public static void copy(Reader in, Writer out) {
+        copy(in, out, DEFAULT_BUFFER_SIZE);
     }
 
     /**
@@ -246,8 +243,8 @@ public class CoreIOUtils {
      * @param out sortie
      * @return size copied
      */
-    public static long copy(java.io.InputStream in, OutputStream out, NSession session) {
-        return copy(in, out, DEFAULT_BUFFER_SIZE, session);
+    public static long copy(InputStream in, OutputStream out) {
+        return copy(in, out, DEFAULT_BUFFER_SIZE);
     }
 
     /**
@@ -258,7 +255,7 @@ public class CoreIOUtils {
      * @param bufferSize bufferSize
      * @return size copied
      */
-    public static long copy(java.io.InputStream in, OutputStream out, int bufferSize, NSession session) {
+    public static long copy(InputStream in, OutputStream out, int bufferSize) {
         byte[] buffer = new byte[bufferSize];
         int len;
         long count = 0;
@@ -269,7 +266,7 @@ public class CoreIOUtils {
             }
             return len;
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -280,7 +277,7 @@ public class CoreIOUtils {
      * @param out        sortie
      * @param bufferSize bufferSize
      */
-    public static void copy(Reader in, Writer out, int bufferSize, NSession session) {
+    public static void copy(Reader in, Writer out, int bufferSize) {
         char[] buffer = new char[bufferSize];
         int len;
         try {
@@ -288,14 +285,14 @@ public class CoreIOUtils {
                 out.write(buffer, 0, len);
             }
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
-    public static String loadString(java.io.InputStream is, boolean close, NSession session) {
+    public static String loadString(InputStream is, boolean close) {
         try {
             try {
-                byte[] bytes = loadByteArray(is, session);
+                byte[] bytes = loadByteArray(is);
                 return new String(bytes);
             } finally {
                 if (is != null && close) {
@@ -303,14 +300,14 @@ public class CoreIOUtils {
                 }
             }
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
-    public static String loadString(Reader is, boolean close, NSession session) {
+    public static String loadString(Reader is, boolean close) {
         try {
             try {
-                char[] bytes = loadCharArray(is, session);
+                char[] bytes = loadCharArray(is);
                 return new String(bytes);
             } finally {
                 if (is != null && close) {
@@ -318,16 +315,16 @@ public class CoreIOUtils {
                 }
             }
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
-    public static char[] loadCharArray(Reader r, NSession session) {
+    public static char[] loadCharArray(Reader r) {
         CharArrayWriter out = null;
 
         try {
             out = new CharArrayWriter();
-            copy(r, out, session);
+            copy(r, out);
             out.flush();
             return out.toCharArray();
         } finally {
@@ -338,13 +335,13 @@ public class CoreIOUtils {
 
     }
 
-    public static byte[] loadByteArray(java.io.InputStream r, NSession session) {
+    public static byte[] loadByteArray(InputStream r) {
         ByteArrayOutputStream out = null;
 
         try {
             try {
                 out = new ByteArrayOutputStream();
-                copy(r, out, session);
+                copy(r, out);
                 out.flush();
                 return out.toByteArray();
             } finally {
@@ -353,17 +350,17 @@ public class CoreIOUtils {
                 }
             }
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
-    public static byte[] loadByteArray(java.io.InputStream r, boolean close, NSession session) {
+    public static byte[] loadByteArray(InputStream r, boolean close) {
         ByteArrayOutputStream out = null;
 
         try {
             try {
                 out = new ByteArrayOutputStream();
-                copy(r, out, session);
+                copy(r, out);
                 out.flush();
                 return out.toByteArray();
             } finally {
@@ -375,11 +372,11 @@ public class CoreIOUtils {
                 }
             }
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
-    public static byte[] loadByteArray(java.io.InputStream stream, int maxSize, boolean close, NSession session) {
+    public static byte[] loadByteArray(InputStream stream, int maxSize, boolean close) {
         try {
             try {
                 if (maxSize > 0) {
@@ -401,7 +398,7 @@ public class CoreIOUtils {
                     return to.toByteArray();
                 } else {
                     ByteArrayOutputStream os = new ByteArrayOutputStream();
-                    copy(stream, os, close, true, session);
+                    copy(stream, os, close, true);
                     return os.toByteArray();
                 }
             } finally {
@@ -410,11 +407,11 @@ public class CoreIOUtils {
                 }
             }
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
-    public static long copy(java.io.InputStream from, OutputStream to, boolean closeInput, boolean closeOutput, NSession session) {
+    public static long copy(InputStream from, OutputStream to, boolean closeInput, boolean closeOutput) {
         byte[] bytes = new byte[1024];//
         int count;
         long all = 0;
@@ -437,22 +434,22 @@ public class CoreIOUtils {
                 }
             }
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
     //    public static void delete(File file) {
 //        delete(null, file);
 //    }
-    public static void delete(NSession session, File file) {
-        delete(session, file.toPath());
+    public static void delete(File file) {
+        delete(file.toPath());
     }
 //
 //    public static void delete(Path file) {
 //        delete(null, file);
 //    }
 
-    public static void delete(NSession session, Path file) {
+    public static void delete(Path file) {
         if (!Files.exists(file)) {
             return;
         }
@@ -464,7 +461,8 @@ public class CoreIOUtils {
             }
         }
         final int[] deleted = new int[]{0, 0, 0};
-        NLog LOG = session == null ? null : NLog.of(CoreIOUtils.class, session);
+        NSession session = NSession.of().orNull();
+        NLog LOG = session == null ? null : NLog.of(CoreIOUtils.class);
         try {
             Files.walkFileTree(file, new FileVisitor<Path>() {
                 @Override
@@ -477,13 +475,13 @@ public class CoreIOUtils {
                     try {
                         Files.delete(file);
                         if (LOG != null) {
-                            LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.WARNING).log(
+                            LOG.with().level(Level.FINEST).verb(NLogVerb.WARNING).log(
                                     NMsg.ofJ("delete file {0}", file));
                         }
                         deleted[0]++;
                     } catch (IOException e) {
                         if (LOG != null) {
-                            LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.WARNING)
+                            LOG.with().level(Level.FINEST).verb(NLogVerb.WARNING)
                                     .log(NMsg.ofJ("failed deleting file : {0}", file)
                                     );
                         }
@@ -502,13 +500,13 @@ public class CoreIOUtils {
                     try {
                         Files.delete(dir);
                         if (LOG != null) {
-                            LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.WARNING)
+                            LOG.with().level(Level.FINEST).verb(NLogVerb.WARNING)
                                     .log(NMsg.ofJ("delete folder {0}", dir));
                         }
                         deleted[1]++;
                     } catch (IOException e) {
                         if (LOG != null) {
-                            LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.WARNING)
+                            LOG.with().level(Level.FINEST).verb(NLogVerb.WARNING)
                                     .log(NMsg.ofJ("failed deleting folder: {0}", dir)
                                     );
                         }
@@ -518,7 +516,7 @@ public class CoreIOUtils {
                 }
             });
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -582,14 +580,14 @@ public class CoreIOUtils {
         }
     }
 
-    public static String urlEncodeString(String s, NSession session) {
+    public static String urlEncodeString(String s) {
         if (s == null || s.trim().length() == 0) {
             return "";
         }
         try {
             return URLEncoder.encode(s, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw new NIOException(session, e);
+            throw new NIOException(e);
         }
     }
 
@@ -601,9 +599,9 @@ public class CoreIOUtils {
         }
     }
 
-    public static URL resolveURLFromResource(Class cls, String urlPath, NSession session) {
+    public static URL resolveURLFromResource(Class cls, String urlPath) {
         if (!urlPath.startsWith("/")) {
-            throw new NIllegalArgumentException(session, NMsg.ofC("unable to resolve url from %s", urlPath));
+            throw new NIllegalArgumentException(NMsg.ofC("unable to resolve url from %s", urlPath));
         }
         URL url = cls.getResource(urlPath);
         String urlFile = url.getFile();
@@ -621,24 +619,24 @@ public class CoreIOUtils {
                 try {
                     return new URL("file:" + jarFile);
                 } catch (IOException ex2) {
-                    throw new NIOException(session, ex2);
+                    throw new NIOException(ex2);
                 }
             }
         } else {
-            String encoded = encodePath(urlPath, session);
+            String encoded = encodePath(urlPath);
             String url_tostring = url.toString();
             if (url_tostring.endsWith(encoded)) {
                 try {
                     return new URL(url_tostring.substring(0, url_tostring.length() - encoded.length()));
                 } catch (IOException ex) {
-                    throw new NIOException(session, ex);
+                    throw new NIOException(ex);
                 }
             }
-            throw new NIllegalArgumentException(session, NMsg.ofC("unable to resolve url from %s", urlPath));
+            throw new NIllegalArgumentException(NMsg.ofC("unable to resolve url from %s", urlPath));
         }
     }
 
-    private static String encodePath(String path, NSession session) {
+    private static String encodePath(String path) {
         StringTokenizer st = new StringTokenizer(path, "/", true);
         StringBuilder encoded = new StringBuilder();
         while (st.hasMoreTokens()) {
@@ -649,15 +647,15 @@ public class CoreIOUtils {
                 try {
                     encoded.append(URLEncoder.encode(t, "UTF-8"));
                 } catch (UnsupportedEncodingException ex) {
-                    throw new NIllegalArgumentException(session, NMsg.ofC("unable to encode %s", t), ex);
+                    throw new NIllegalArgumentException(NMsg.ofC("unable to encode %s", t), ex);
                 }
             }
         }
         return encoded.toString();
     }
 
-    public static File resolveLocalFileFromResource(Class cls, String url, NSession session) {
-        return resolveLocalFileFromURL(resolveURLFromResource(cls, url, session));
+    public static File resolveLocalFileFromResource(Class cls, String url) {
+        return resolveLocalFileFromURL(resolveURLFromResource(cls, url));
     }
 
     public static File resolveLocalFileFromURL(URL url) {
@@ -689,29 +687,30 @@ public class CoreIOUtils {
         return chars;
     }
 
-    public static InputStream getCachedUrlWithSHA1(String path, String sourceTypeName, boolean ignoreSha1NotFound, NSession session) {
-        final NPath cacheBasePath = NLocations.of(session).getStoreLocation(session.getWorkspace().getRuntimeId(), NStoreType.CACHE);
+    public static InputStream getCachedUrlWithSHA1(String path, String sourceTypeName, boolean ignoreSha1NotFound) {
+        NWorkspace workspace=NWorkspace.of().get();
+        final NPath cacheBasePath = NLocations.of().getStoreLocation(workspace.getRuntimeId(), NStoreType.CACHE);
         final NPath urlContent = cacheBasePath.resolve("urls-content");
         String sha1 = null;
         try {
             ByteArrayOutputStream t = new ByteArrayOutputStream();
-            NCp.of(session)
-                    .from(NPath.of(path + ".sha1", session)).to(t).run();
+            NCp.of()
+                    .from(NPath.of(path + ".sha1")).to(t).run();
             sha1 = t.toString().trim();
         } catch (NIOException ex) {
             if (!ignoreSha1NotFound) {
                 throw ex;
             }
         }
-        NanoDB cachedDB = CacheDB.of(session);
+        NanoDB cachedDB = CacheDB.of();
         NanoDBTableFile<CachedURL> cacheTable
-                = cachedDB.tableBuilder(CachedURL.class, session).setNullable(false)
+                = cachedDB.tableBuilder(CachedURL.class).setNullable(false)
                 .addAllFields()
                 .addIndices("url")
                 .getOrCreate();
 
 //        final PersistentMap<String, String> cu=getCachedUrls(session);
-        CachedURL old = cacheTable.findByIndex("url", path, session).findFirst().orNull();
+        CachedURL old = cacheTable.findByIndex("url", path).findFirst().orNull();
 //        String cachedSha1 = cu.get("sha1://" + path);
 //        String oldLastModified =cu.get("lastModified://" + path);
 //        String oldSize =cu.get("length://" + path);
@@ -727,7 +726,7 @@ public class CoreIOUtils {
             }
         }
 
-        NPath header = NPath.of(path, session);
+        NPath header = NPath.of(path);
         long size = header.getContentLength();
         Instant lastModifiedInstant = header.getLastModifiedInstant();
         long lastModified = lastModifiedInstant == null ? 0 : lastModifiedInstant.toEpochMilli();
@@ -752,15 +751,15 @@ public class CoreIOUtils {
         urlContent.mkdirs();
         OutputStream p = outPath.getOutputStream();
         long finalLastModified = lastModified;
-        NIO io = NIO.of(session);
-        InputStream ist = NInputSourceBuilder.of(header.getInputStream(), session)
+        NIO io = NIO.of();
+        InputStream ist = NInputSourceBuilder.of(header.getInputStream())
                 .setTee(p)
                 .setCloseAction(() -> {
                     if (outPath.exists()) {
                         CachedURL ccu = new CachedURL();
                         ccu.url = path;
                         ccu.path = s;
-                        ccu.sha1 = NDigestUtils.evalSHA1Hex(outPath, session);
+                        ccu.sha1 = NDigestUtils.evalSHA1Hex(outPath);
                         long newSize = outPath.getContentLength();
                         ccu.size = newSize;
                         ccu.lastModified = finalLastModified;
@@ -768,28 +767,28 @@ public class CoreIOUtils {
                         try {
                             Files.move(outPath.toPath().get(), newLocalPath.toPath().get(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
                         } catch (IOException ex) {
-                            throw new NIOException(session, ex);
+                            throw new NIOException(ex);
                         }
-                        cacheTable.add(ccu, session);
-                        cacheTable.flush(session);
+                        cacheTable.add(ccu);
+                        cacheTable.flush();
                     }
                 })
                 .createInputStream();
-        return NInputSourceBuilder.of(ist,session)
+        return NInputSourceBuilder.of(ist)
                 .setMetadata(new DefaultNContentMetadata(
                         path,
-                        NMsg.ofNtf(NTexts.of(session).ofStyled(path, NTextStyle.path())),
+                        NMsg.ofNtf(NTexts.of().ofStyled(path, NTextStyle.path())),
                         size, header.getContentType(), header.getCharset(), sourceTypeName
                 )).createInputStream()
                 ;
 
     }
 
-    public static void storeProperties(Map<String, String> props, OutputStream out, boolean sort, NSession session) {
-        storeProperties(props, new OutputStreamWriter(out), sort, session);
+    public static void storeProperties(Map<String, String> props, OutputStream out, boolean sort) {
+        storeProperties(props, new OutputStreamWriter(out), sort);
     }
 
-    public static void storeProperties(Map<String, String> props, Writer w, boolean sort, NSession session) {
+    public static void storeProperties(Map<String, String> props, Writer w, boolean sort) {
         try {
             Set<String> keys = props.keySet();
             if (sort) {
@@ -805,7 +804,7 @@ public class CoreIOUtils {
             }
             w.flush();
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -879,7 +878,7 @@ public class CoreIOUtils {
         return buffer.toString();
     }
 
-    public static Path toPathInputSource(NInputSource is, List<Path> tempPaths, boolean enforceExtension, NSession session) {
+    public static Path toPathInputSource(NInputSource is, List<Path> tempPaths, boolean enforceExtension) {
         boolean isPath = is instanceof NPath;
         if (isPath) {
             Path sf = ((NPath) is).toPath().orNull();
@@ -888,30 +887,30 @@ public class CoreIOUtils {
             }
         }
         String name = is.getMetaData().getName().orElse("no-name");
-        Path temp = NPath.ofTempFile(name, session).toPath().get();
-        NCp a = NCp.of(session).removeOptions(NPathOption.SAFE);
+        Path temp = NPath.ofTempFile(name).toPath().get();
+        NCp a = NCp.of().removeOptions(NPathOption.SAFE);
         if (isPath) {
             a.from(((NPath) is));
         } else {
             a.from(is.getInputStream());
         }
-        a.to(temp).setSession(session).run();
+        a.to(temp).run();
 
         if (enforceExtension) {
-            NPath pp = NPath.of(temp, session);
+            NPath pp = NPath.of(temp);
             String ext = pp.getLastExtension();
             if (ext.isEmpty()) {
-                NContentTypes ctt = NContentTypes.of(session);
+                NContentTypes ctt = NContentTypes.of();
                 String ct = ctt.probeContentType(temp);
                 if (ct != null) {
                     List<String> e = ctt.findExtensionsByContentType(ct);
                     if (!e.isEmpty()) {
-                        NPath newFile = NPath.ofTempFile(name + "." + e.get(0), session);
+                        NPath newFile = NPath.ofTempFile(name + "." + e.get(0));
                         Path newFilePath = newFile.toPath().get();
                         try {
                             Files.move(temp, newFilePath, StandardCopyOption.REPLACE_EXISTING);
                         } catch (IOException ex) {
-                            throw new NIOException(session, ex);
+                            throw new NIOException(ex);
                         }
                         tempPaths.add(newFilePath);
                         return newFilePath;
@@ -940,12 +939,12 @@ public class CoreIOUtils {
         return new File(path).toPath().toAbsolutePath().normalize().toString();
     }
 
-    public static void copyFolder(Path src, Path dest, NSession session) {
+    public static void copyFolder(Path src, Path dest) {
         try {
             Files.walk(src)
                     .forEach(source -> copy(source, dest.resolve(src.relativize(source))));
         } catch (IOException e) {
-            throw new NIOException(session, e);
+            throw new NIOException(e);
         }
     }
 
@@ -957,29 +956,30 @@ public class CoreIOUtils {
         }
     }
 
-    public static boolean isObsoletePath(NSession session, Path path) {
+    public static boolean isObsoletePath(Path path) {
         try {
-            return isObsoleteInstant(session, Files.getLastModifiedTime(path).toInstant());
+            return isObsoleteInstant(Files.getLastModifiedTime(path).toInstant());
         } catch (IOException e) {
             return true;
         }
     }
 
-    public static boolean isObsoletePath(NSession session, NPath path) {
+    public static boolean isObsoletePath(NPath path) {
         try {
             Instant i = path.getLastModifiedInstant();
             if (i == null) {
                 return false;
             }
-            return isObsoleteInstant(session, i);
+            return isObsoleteInstant(i);
         } catch (Exception e) {
             return true;
         }
     }
 
-    public static boolean isObsoleteInstant(NSession session, Instant instant) {
-        if (session.getExpireTime() != null) {
-            return instant == null || instant.isBefore(session.getExpireTime());
+    public static boolean isObsoleteInstant(Instant instant) {
+        NSession session=NSession.of().get();
+        if (session.getExpireTime().isPresent()) {
+            return instant == null || instant.isBefore(session.getExpireTime().orNull());
         }
         return false;
     }
@@ -995,7 +995,7 @@ public class CoreIOUtils {
         return new byte[0];
     }
 
-    public static byte[] readBestEffort(int len, java.io.InputStream in, NSession session) {
+    public static byte[] readBestEffort(int len, InputStream in) {
         if (len < 0) {
             throw new IndexOutOfBoundsException();
         }
@@ -1003,7 +1003,7 @@ public class CoreIOUtils {
             return new byte[0];
         }
         byte[] buf = new byte[len];
-        int count = readBestEffort(buf, 0, len, in, session);
+        int count = readBestEffort(buf, 0, len, in);
         if (count == len) {
             return buf;
         }
@@ -1012,7 +1012,7 @@ public class CoreIOUtils {
         return buf2;
     }
 
-    public static int readBestEffort(byte[] b, int off, int len, java.io.InputStream in, NSession session) {
+    public static int readBestEffort(byte[] b, int off, int len, InputStream in) {
         if (len < 0) {
             throw new IndexOutOfBoundsException();
         }
@@ -1022,7 +1022,7 @@ public class CoreIOUtils {
             try {
                 count = in.read(b, off + n, len - n);
             } catch (IOException e) {
-                throw new NIOException(session, e);
+                throw new NIOException(e);
             }
             if (count < 0) {
                 break;
@@ -1049,7 +1049,7 @@ public class CoreIOUtils {
         return true;
     }
 
-    public static boolean compareContent(Path file1, Path file2, NSession session) {
+    public static boolean compareContent(Path file1, Path file2) {
         if (Files.isRegularFile(file1) && Files.isRegularFile(file2)) {
             try {
                 if (Files.size(file1) == Files.size(file2)) {
@@ -1059,8 +1059,8 @@ public class CoreIOUtils {
                     try (java.io.InputStream in1 = Files.newInputStream(file1)) {
                         try (java.io.InputStream in2 = Files.newInputStream(file1)) {
                             while (true) {
-                                int c1 = readBestEffort(b1, 0, b1.length, in1, session);
-                                int c2 = readBestEffort(b2, 0, b2.length, in2, session);
+                                int c1 = readBestEffort(b1, 0, b1.length, in1);
+                                int c2 = readBestEffort(b2, 0, b2.length, in2);
                                 if (c1 != c2) {
                                     return false;
                                 }
@@ -1078,14 +1078,14 @@ public class CoreIOUtils {
                     }
                 }
             } catch (IOException e) {
-                throw new NIOException(session, e);
+                throw new NIOException(e);
             }
         }
         return false;
     }
 
-    public static InputStream createBytesStream(byte[] bytes, NMsg message, String contentType, String encoding, String kind, NSession session) {
-        return NInputSourceBuilder.of(new ByteArrayInputStream(bytes),session)
+    public static InputStream createBytesStream(byte[] bytes, NMsg message, String contentType, String encoding, String kind) {
+        return NInputSourceBuilder.of(new ByteArrayInputStream(bytes))
                 .setMetadata(new DefaultNContentMetadata(
                                 message,
                                 (long) bytes.length,
@@ -1153,17 +1153,17 @@ public class CoreIOUtils {
         return path1.substring(0, latestSlash + 1);
     }
 
-    public static PathInfo.Status tryWriteStatus(byte[] content, NPath out, NSession session) {
-        return tryWrite(content, out, DoWhenExist.IGNORE, DoWhenNotExists.IGNORE, session);
+    public static PathInfo.Status tryWriteStatus(byte[] content, NPath out) {
+        return tryWrite(content, out, DoWhenExist.IGNORE, DoWhenNotExists.IGNORE);
     }
 
-    public static PathInfo.Status tryWrite(byte[] content, NPath out, NSession session) {
-        return tryWrite(content, out, DoWhenExist.ASK, DoWhenNotExists.CREATE, session);
+    public static PathInfo.Status tryWrite(byte[] content, NPath out) {
+        return tryWrite(content, out, DoWhenExist.ASK, DoWhenNotExists.CREATE);
     }
 
-    public static PathInfo.Status tryWrite(byte[] content, NPath out, /*boolean doNotWrite*/ DoWhenExist doWhenExist, DoWhenNotExists doWhenNotExist, NSession session) {
-        NAssert.requireNonNull(doWhenExist, "doWhenExist", session);
-        NAssert.requireNonNull(doWhenNotExist, "doWhenNotExist", session);
+    public static PathInfo.Status tryWrite(byte[] content, NPath out, /*boolean doNotWrite*/ DoWhenExist doWhenExist, DoWhenNotExists doWhenNotExist) {
+        NAssert.requireNonNull(doWhenExist, "doWhenExist");
+        NAssert.requireNonNull(doWhenNotExist, "doWhenNotExist");
 //        System.err.println("[DEBUG] try write "+out);
         out = out.toAbsolute().normalize();
         byte[] old = null;
@@ -1174,6 +1174,7 @@ public class CoreIOUtils {
                 //ignore
             }
         }
+        NSession session=NSession.of().get();
         if (old == null) {
             switch (doWhenNotExist) {
                 case IGNORE: {
@@ -1188,10 +1189,10 @@ public class CoreIOUtils {
                     return PathInfo.Status.CREATED;
                 }
                 case ASK: {
-                    if (NAsk.of(session)
-                            .setDefaultValue(true).setSession(session)
+                    if (NAsk.of()
+                            .setDefaultValue(true)
                             .forBoolean(NMsg.ofC("create %s ?",
-                                    NTexts.of(session).ofStyled(
+                                    NTexts.of().ofStyled(
                                             betterPath(out.toString()), NTextStyle.path()
                                     ))
                             ).getBooleanValue()) {
@@ -1206,7 +1207,7 @@ public class CoreIOUtils {
                     }
                 }
                 default: {
-                    throw new NUnsupportedEnumException(session, doWhenNotExist);
+                    throw new NUnsupportedEnumException(doWhenNotExist);
                 }
             }
         } else {
@@ -1225,10 +1226,10 @@ public class CoreIOUtils {
                     return PathInfo.Status.OVERRIDDEN;
                 }
                 case ASK: {
-                    if (NAsk.of(session)
-                            .setDefaultValue(true).setSession(session)
+                    if (NAsk.of()
+                            .setDefaultValue(true)
                             .forBoolean(NMsg.ofC("override %s ?",
-                                    NTexts.of(session).ofStyled(
+                                    NTexts.of().ofStyled(
                                             betterPath(out.toString()), NTextStyle.path()
                                     ))
                             ).getBooleanValue()) {
@@ -1242,7 +1243,7 @@ public class CoreIOUtils {
                     }
                 }
                 default: {
-                    throw new NUnsupportedEnumException(session, doWhenExist);
+                    throw new NUnsupportedEnumException(doWhenExist);
                 }
             }
         }
@@ -1293,7 +1294,7 @@ public class CoreIOUtils {
 //        return writable;
 //    }
 
-    public static NStream<String> safeLines(byte[] bytes, NSession session) {
+    public static NStream<String> safeLines(byte[] bytes) {
         return NStream.of(
                 new Iterator<String>() {
                     BufferedReader br;
@@ -1317,7 +1318,7 @@ public class CoreIOUtils {
                     public String next() {
                         return line;
                     }
-                }, session
+                }
         );
     }
 
@@ -1325,18 +1326,19 @@ public class CoreIOUtils {
         return new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)));
     }
 
-    public static NExecOutput validateErr(NExecOutput err, NSession session) {
+    public static NExecOutput validateErr(NExecOutput err) {
+        NSession session=NSession.of().get();
         if (err == null) {
             err = NExecOutput.ofStream(session.err());
         }
         if (err.getType() == NRedirectType.INHERIT) {
-            if (NIO.of(session).isStderr(session.err())) {
+            if (NIO.of().isStderr(session.err())) {
                 err = NExecOutput.ofInherit();
             } else {
                 err = NExecOutput.ofStream(session.err());
             }
         } else if (err.getType() == NRedirectType.STREAM) {
-            if (NIO.of(session).isStderr(session.err())) {
+            if (NIO.of().isStderr(session.err())) {
                 err = NExecOutput.ofStream(session.err());
             }
         }
@@ -1377,36 +1379,39 @@ public class CoreIOUtils {
         return new DefaultNContentMetadata();
     }
 
-    public static NExecInput validateIn(NExecInput in, NSession session) {
+    public static NExecInput validateIn(NExecInput in) {
         if (in == null) {
+            NSession session=NSession.of().get();
             in = NExecInput.ofStream(session.in());
         }
         if (in.getType() == NRedirectType.INHERIT) {
-            if (NIO.of(session).isStdin(session.in())) {
+            NSession session=NSession.of().get();
+            if (NIO.of().isStdin(session.in())) {
                 in = NExecInput.ofInherit();
             } else {
                 in = NExecInput.ofStream(session.in());
             }
         } else if (in.getType() == NRedirectType.STREAM) {
-            if (NIO.of(session).isStdin(in.getStream())) {
+            if (NIO.of().isStdin(in.getStream())) {
                 in = NExecInput.ofInherit();
             }
         }
         return in;
     }
 
-    public static NExecOutput validateOut(NExecOutput out, NSession session) {
+    public static NExecOutput validateOut(NExecOutput out) {
+        NSession session=NSession.of().get();
         if (out == null) {
             out = NExecOutput.ofStream(session.out());
         }
         if (out.getType() == NRedirectType.INHERIT) {
-            if (NIO.of(session).isStdout(session.out())) {
+            if (NIO.of().isStdout(session.out())) {
                 out = NExecOutput.ofInherit();
             } else {
                 out = NExecOutput.ofStream(session.out());
             }
         } else if (out.getType() == NRedirectType.STREAM) {
-            if (NIO.of(session).isStdout(session.out())) {
+            if (NIO.of().isStdout(session.out())) {
                 out = NExecOutput.ofStream(session.out());
             }
         }

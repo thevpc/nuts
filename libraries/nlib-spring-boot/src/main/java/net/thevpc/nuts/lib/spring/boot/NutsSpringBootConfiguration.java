@@ -69,7 +69,6 @@ public class NutsSpringBootConfiguration {
     @Bean
     public CommandLineRunner nutsCommandLineRunner(ApplicationArguments applicationArguments) {
         return args -> NApplications.runApplication(nutsApplication(),
-                nutsSession(applicationArguments),
                 NCmdLine.parseDefault(env.getProperty("nuts.args")).get().toStringArray(),
                 applicationArguments.getSourceArgs()
                 );

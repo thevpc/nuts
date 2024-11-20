@@ -1,10 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.dependency.solver;
 
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 
 public class GradleFirstNDependencySolver extends MavenNDependencySolver {
-    public GradleFirstNDependencySolver(NSession session) {
-        super(session);
+    public GradleFirstNDependencySolver(NWorkspace workspace) {
+        super(workspace);
     }
 
     @Override

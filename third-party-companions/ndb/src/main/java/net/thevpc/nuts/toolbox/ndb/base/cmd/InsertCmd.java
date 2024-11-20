@@ -20,7 +20,7 @@ public class InsertCmd<C extends NdbConfig> extends NdbCmd<C> {
     }
 
     @Override
-    public void run(NSession session, NCmdLine cmdLine) {
+    public void run(NCmdLine cmdLine) {
         NRef<AtName> name = NRef.ofNull(AtName.class);
         ExtendedQuery eq = new ExtendedQuery(getName());
         C otherOptions = createConfigInstance();
@@ -29,26 +29,26 @@ public class InsertCmd<C extends NdbConfig> extends NdbCmd<C> {
         while (cmdLine.hasNext()) {
             switch (status) {
                 case "": {
-                    switch (cmdLine.peek().get(session).key()) {
+                    switch (cmdLine.peek().get().key()) {
                         case "--config": {
-                            readConfigNameOption(cmdLine, session, name);
+                            readConfigNameOption(cmdLine, name);
                             break;
                         }
                         case "--entity":
                         case "--table":
                         case "--collection": {
-                            cmdLine.withNextEntry((v, a, s) -> eq.setTable(v));
+                            cmdLine.withNextEntry((v, a) -> eq.setTable(v));
                             break;
                         }
                         case "--where": {
                             status = "--where";
-                            cmdLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a) -> {
                             });
                             break;
                         }
                         case "--set": {
                             status = "--set";
-                            cmdLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a) -> {
                             });
                             break;
                         }
@@ -59,10 +59,10 @@ public class InsertCmd<C extends NdbConfig> extends NdbCmd<C> {
                     break;
                 }
                 case "--where": {
-                    switch (cmdLine.peek().get(session).key()) {
+                    switch (cmdLine.peek().get().key()) {
                         case "--set": {
                             status = "--set";
-                            cmdLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a) -> {
                             });
                             break;
                         }
@@ -73,10 +73,10 @@ public class InsertCmd<C extends NdbConfig> extends NdbCmd<C> {
                     break;
                 }
                 case "--set": {
-                    switch (cmdLine.peek().get(session).key()) {
+                    switch (cmdLine.peek().get().key()) {
                         case "--where": {
                             status = "--where";
-                            cmdLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a) -> {
                             });
                             break;
                         }
@@ -97,11 +97,11 @@ public class InsertCmd<C extends NdbConfig> extends NdbCmd<C> {
         if (NBlankable.isBlank(eq.getTable())) {
             cmdLine.throwMissingArgument("--table");
         }
-        runInsert(eq, options, session);
+        runInsert(eq, options);
     }
 
-    protected void runInsert(ExtendedQuery eq, C options, NSession session) {
-        throw new NIllegalArgumentException(session, NMsg.ofPlain("invalid"));
+    protected void runInsert(ExtendedQuery eq, C options) {
+        throw new NIllegalArgumentException(NMsg.ofPlain("invalid"));
     }
 
 

@@ -1,6 +1,5 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NElementDescribable;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
@@ -14,7 +13,7 @@ public interface NFunction3<A, B, C, V> extends NElementDescribable<NFunction3<A
         return new NFunction3WithDescription<>(this,description);
     }
 
-    default NElement describe(NSession session) {
-        return NElements.of(session).toElement("custom function 3");
+    default NElement describe() {
+        return NElements.of().toElement("custom function 3");
     }
 }

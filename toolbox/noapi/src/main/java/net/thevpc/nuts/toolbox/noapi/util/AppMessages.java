@@ -17,7 +17,7 @@ public class AppMessages {
 
     public AppMessages(AppMessages parent, URL is, NSession session) {
         this.parent = parent;
-        NElement e = NElements.of(session).json().parse(is);
+        NElement e = NElements.of().json().parse(is);
         for (NElementEntry entry : e.asObject().get().entries()) {
             values.put(entry.getKey().asString().get(), entry.getValue().asString().get());
         }
@@ -30,7 +30,7 @@ public class AppMessages {
             if(parent != null) {
                 return parent.get(key);
             }
-            return NOptional.ofError(s -> NMsg.ofC("key not found : %s", key));
+            return NOptional.ofError(() -> NMsg.ofC("key not found : %s", key));
         }
         return NOptional.of(value);
     }

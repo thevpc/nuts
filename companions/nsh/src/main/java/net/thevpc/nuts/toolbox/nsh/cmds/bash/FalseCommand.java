@@ -59,7 +59,7 @@ public class FalseCommand extends NShellBuiltinDefault {
     @Override
     protected void main(NCmdLine cmdLine, NShellExecutionContext context) {
         //do nothing, return true
-        throw new NExecutionException(context.getSession(), NMsg.ofPlain(""), NExecutionException.ERROR_1);
+        throw new NExecutionException(NMsg.ofPlain(""), NExecutionException.ERROR_1);
     }
 
     @Override

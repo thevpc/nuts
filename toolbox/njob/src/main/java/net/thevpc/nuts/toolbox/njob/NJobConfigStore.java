@@ -22,7 +22,7 @@ public class NJobConfigStore {
 
     public NJobConfigStore(NSession session) {
         this.session = session;
-        json = NElements.of(session).json().setNtf(false);
+        json = NElements.of().json().setNtf(false);
         json.setCompact(false);
         //ensure we always consider the latest config version
         dbPath = session.getAppVersionFolder(NStoreType.CONF, NJobConfigVersions.CURRENT)

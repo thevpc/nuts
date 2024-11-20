@@ -7,8 +7,8 @@ import net.thevpc.nuts.util.NMsg;
 
 public class RemoteNExecCmd extends AbstractNExecCmd {
 
-    public RemoteNExecCmd(NSession session) {
-        super(session);
+    public RemoteNExecCmd(NWorkspace workspace) {
+        super(workspace);
     }
 
     @Override
@@ -18,11 +18,12 @@ public class RemoteNExecCmd extends AbstractNExecCmd {
 
     @Override
     public NExecutableInformation which() {
-        NElements e = NElements.of(getSession());
+        NSession session=workspace.currentSession();
+        NElements e = NElements.of();
         return getWorkspace().remoteCall(
                 getWorkspace().createCall("workspace.which",
                         e.ofObject()
-                                .build(), getSession()
+                                .build()
                 ),
                 NExecutableInformation.class
         );
@@ -30,15 +31,15 @@ public class RemoteNExecCmd extends AbstractNExecCmd {
 
     @Override
     public NExecCmd run() {
-        NElements e = NElements.of(getSession());
+        NSession session=workspace.currentSession();
+        NElements e = NElements.of();
         try {
             int r = getWorkspace().remoteCall(
                     getWorkspace().createCall("workspace.exec",
                             e.ofObject()
                                     .set("dry", session.isDry())
                                     .set("failFast", failFast)
-                                    .build(),
-                            getSession()
+                                    .build()
                     ),
                     Integer.class
             );
@@ -47,11 +48,11 @@ public class RemoteNExecCmd extends AbstractNExecCmd {
         } catch (Exception ex) {
             String p = getExtraErrorMessage();
             if (p != null) {
-                resultException = new NExecutionException(session,
+                resultException = new NExecutionException(
                         NMsg.ofC("execution failed with code %d and message : %s", NExecutionException.ERROR_255, p),
                         ex, NExecutionException.ERROR_255);
             } else {
-                resultException = new NExecutionException(session, NMsg.ofPlain("remote command failed"), ex, NExecutionException.ERROR_255);
+                resultException = new NExecutionException(NMsg.ofPlain("remote command failed"), ex, NExecutionException.ERROR_255);
             }
         }
         executed = true;

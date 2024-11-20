@@ -35,8 +35,8 @@ import java.util.stream.Collectors;
  */
 public class DefaultNDeployCmd extends AbstractNDeployCmd {
 
-    public DefaultNDeployCmd(NSession session) {
-        super(session);
+    public DefaultNDeployCmd(NWorkspace workspace) {
+        super(workspace);
     }
 
     private static CharacterizedDeployFile characterizeForDeploy(NInputSource contentFile, NFetchCmd options, List<String> parseOptions, NSession session) {
@@ -45,19 +45,19 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
         }
         CharacterizedDeployFile c = new CharacterizedDeployFile(session);
         try {
-            c.setBaseFile(CoreIOUtils.toPathInputSource(contentFile, c.getTemps(), true, session));
+            c.setBaseFile(CoreIOUtils.toPathInputSource(contentFile, c.getTemps(), true));
             c.setContentStreamOrPath(contentFile);
             if (!Files.exists(c.getBaseFile())) {
-                throw new NIllegalArgumentException(session, NMsg.ofC("file does not exists %s", c.getBaseFile()));
+                throw new NIllegalArgumentException(NMsg.ofC("file does not exists %s", c.getBaseFile()));
             }
             if (c.getDescriptor() == null) {
                 NInputSource p = c.getContentStreamOrPath();
                 if(p instanceof NPath) {
                     NPath pp=(NPath) p;
                     try {
-                        c.setDescriptor(NDescriptorParser.of(session).parse(
+                        c.setDescriptor(NDescriptorParser.of().parse(
                                 pp.resolve(NConstants.Files.DESCRIPTOR_FILE_NAME)
-                        ).get(session));
+                        ).get());
                     } catch (Exception ex) {
                         //ignore
                     }
@@ -67,36 +67,36 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
                 if (c.getDescriptor() == null) {
                     Path ext = c.getBaseFile().resolve(NConstants.Files.DESCRIPTOR_FILE_NAME);
                     if (Files.exists(ext)) {
-                        c.setDescriptor(NDescriptorParser.of(session).parse(ext).get(session));
+                        c.setDescriptor(NDescriptorParser.of().parse(ext).get());
                     } else {
-                        c.setDescriptor(NDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.getBaseFile(), parseOptions, session));
+                        c.setDescriptor(NDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.getBaseFile(), parseOptions, session.getWorkspace()));
                     }
                 }
                 if (c.getDescriptor() != null) {
                     if ("zip".equals(c.getDescriptor().getPackaging())) {
-                        Path zipFilePath = Paths.get(NPath.of(c.getBaseFile().toString() + ".zip", session).toAbsolute().toString());
+                        Path zipFilePath = Paths.get(NPath.of(c.getBaseFile().toString() + ".zip").toAbsolute().toString());
                         ZipUtils.zip(session, c.getBaseFile().toString(), new ZipOptions(), zipFilePath.toString());
-                        c.setContentStreamOrPath(NPath.of(zipFilePath, session));
+                        c.setContentStreamOrPath(NPath.of(zipFilePath));
                         c.addTemp(zipFilePath);
                     } else {
-                        throw new NIllegalArgumentException(session, NMsg.ofPlain("invalid Nut Folder source. expected 'zip' ext in descriptor"));
+                        throw new NIllegalArgumentException(NMsg.ofPlain("invalid Nut Folder source. expected 'zip' ext in descriptor"));
                     }
                 }
             } else if (Files.isRegularFile(c.getBaseFile())) {
                 if (c.getDescriptor() == null) {
-                    NPath ext = NPath.of(c.getBaseFile().toString() + "." + NConstants.Files.DESCRIPTOR_FILE_NAME, session)
+                    NPath ext = NPath.of(c.getBaseFile().toString() + "." + NConstants.Files.DESCRIPTOR_FILE_NAME)
                             .toAbsolute();
                     if (ext.exists()) {
-                        c.setDescriptor(NDescriptorParser.of(session).parse(ext).get(session));
+                        c.setDescriptor(NDescriptorParser.of().parse(ext).get());
                     } else {
-                        c.setDescriptor(NDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.getBaseFile(), parseOptions, session));
+                        c.setDescriptor(NDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.getBaseFile(), parseOptions, session.getWorkspace()));
                     }
                 }
             } else {
-                throw new NIllegalArgumentException(session, NMsg.ofC("path does not denote a valid file or folder %s", c.getContentStreamOrPath()));
+                throw new NIllegalArgumentException(NMsg.ofC("path does not denote a valid file or folder %s", c.getContentStreamOrPath()));
             }
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
         return c;
     }
@@ -104,36 +104,36 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
     @Override
     public NDeployCmd run() {
 //        checkSession();
-        checkSession();
+        NSession session=workspace.currentSession();
 //        NutsWorkspace ws = getSession().getWorkspace();
         if (getContent() != null || getDescriptor() != null || getSha1() != null || getDescSha1() != null) {
             runDeployFile();
         }
         if (ids.size() > 0) {
-            for (NId nutsId : NSearchCmd.of(session)
+            for (NId nutsId : NSearchCmd.of()
                     .addIds(ids.toArray(new NId[0])).setLatest(true).setRepositoryFilter(fromRepository).getResultIds()) {
-                NDefinition fetched = NFetchCmd.of(nutsId,getSession()).setContent(true).getResultDefinition();
+                NDefinition fetched = NFetchCmd.of(nutsId).setContent(true).getResultDefinition();
                 if (fetched.getContent().isPresent()) {
-                    runDeployFile(fetched.getContent().get(session), fetched.getDescriptor(), null);
+                    runDeployFile(fetched.getContent().get(), fetched.getDescriptor(), null);
                 }
             }
         }
-        NAssert.requireNonBlank(result, "package to deploy", session);
-        if (getSession().isTrace()) {
-            switch (getSession().getOutputFormat().orDefault()) {
+        NAssert.requireNonBlank(result, "package to deploy");
+        if (session.isTrace()) {
+            switch (session.getOutputFormat().orDefault()) {
                 case PLAIN: {
                     for (Result nid : result) {
-                        getSession().out().resetLine().println(NMsg.ofC(
+                        session.out().resetLine().println(NMsg.ofC(
                                 "%s deployed successfully as %s to %s",
                                 nid.source,
                                 nid.id,
-                                NTexts.of(session).ofStyled(nid.repository, NTextStyle.primary3())
+                                NTexts.of().ofStyled(nid.repository, NTextStyle.primary3())
                         ));
                     }
                     break;
                 }
                 default: {
-                    getSession().out().println(result);
+                    session.out().println(result);
                 }
             }
         }
@@ -145,28 +145,27 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
     }
 
     private NDeployCmd runDeployFile(NInputSource content, Object descriptor0, String descSHA1) {
-        checkSession();
-        NSession session = getSession();
+        NSession session=workspace.currentSession();
         NWorkspaceExt dws = NWorkspaceExt.of(session.getWorkspace());
-        NWorkspaceUtils wu = NWorkspaceUtils.of(this.session);
+        NWorkspaceUtils wu = NWorkspaceUtils.of(workspace);
         wu.checkReadOnly();
 
         Path tempFile = null;
-        NInputSource contentSource = NInputSource.ofMultiRead(content,session);
+        NInputSource contentSource = NInputSource.ofMultiRead(content);
         NDescriptor descriptor = buildDescriptor(descriptor0, descSHA1);
 
         CharacterizedDeployFile characterizedFile = null;
         Path contentFile2 = null;
         try {
             if (descriptor == null) {
-                NFetchCmd p = NFetchCmd.of(session.copy().setTransitive(true));
+                NFetchCmd p = NFetchCmd.of();
                 characterizedFile = characterizeForDeploy(contentSource, p, getParseOptions(), session);
-                NAssert.requireNonBlank(characterizedFile.getDescriptor(), "descriptor", session);
+                NAssert.requireNonBlank(characterizedFile.getDescriptor(), "descriptor");
                 descriptor = characterizedFile.getDescriptor();
             }
-            String name = NLocations.of(this.session).getDefaultIdFilename(descriptor.getId().builder().setFaceDescriptor().build());
-            tempFile = NPath.ofTempFile(name,session).toPath().get();
-            NCp.of(this.session).setSession(session).from(contentSource.getInputStream()).to(tempFile).addOptions(NPathOption.SAFE).run();
+            String name = NLocations.of().getDefaultIdFilename(descriptor.getId().builder().setFaceDescriptor().build());
+            tempFile = NPath.ofTempFile(name).toPath().get();
+            NCp.of().from(contentSource.getInputStream()).to(tempFile).addOptions(NPathOption.SAFE).run();
             contentFile2 = tempFile;
 
             Path contentFile0 = contentFile2;
@@ -180,50 +179,50 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
                     Path descFile = contentFile.resolve(NConstants.Files.DESCRIPTOR_FILE_NAME);
                     NDescriptor descriptor2;
                     if (Files.exists(descFile)) {
-                        descriptor2 = NDescriptorParser.of(session).parse(descFile).get(session);
+                        descriptor2 = NDescriptorParser.of().parse(descFile).get();
                     } else {
                         descriptor2 = NDescriptorContentResolver.resolveNutsDescriptorFromFileContent(
                                 contentFile,
-                                getParseOptions(), session);
+                                getParseOptions(), session.getWorkspace());
                     }
                     if (descriptor == null) {
                         descriptor = descriptor2;
                     } else {
                         if (descriptor2 != null && !descriptor2.equals(descriptor)) {
-                            descriptor.formatter(session).print(descFile);
+                            descriptor.formatter().print(descFile);
                         }
                     }
                     if (descriptor != null) {
                         if ("zip".equals(descriptor.getPackaging())) {
-                            Path zipFilePath = Paths.get(NPath.of(contentFile.toString() + ".zip", this.session)
+                            Path zipFilePath = Paths.get(NPath.of(contentFile.toString() + ".zip")
                                     .toAbsolute().toString());
                             try {
                                 ZipUtils.zip(session, contentFile.toString(), new ZipOptions(), zipFilePath.toString());
                             } catch (IOException ex) {
-                                throw new NIOException(session, ex);
+                                throw new NIOException(ex);
                             }
                             contentFile = zipFilePath;
                             tempFile2 = contentFile;
                         } else {
-                            throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("invalid nuts folder source; expected 'zip' ext in descriptor"));
+                            throw new NIllegalArgumentException(NMsg.ofPlain("invalid nuts folder source; expected 'zip' ext in descriptor"));
                         }
                     }
                 } else {
                     if (descriptor == null) {
                         descriptor = NDescriptorContentResolver.resolveNutsDescriptorFromFileContent(
-                                contentFile, getParseOptions(), session);
+                                contentFile, getParseOptions(), session.getWorkspace());
                     }
                 }
                 if (descriptor == null) {
-                    throw new NNotFoundException(getSession(), null, NMsg.ofC("artifact not found at %s", contentFile));
+                    throw new NNotFoundException(null, NMsg.ofC("artifact not found at %s", contentFile));
                 }
                 //remove workspace
                 descriptor = descriptor.builder().setId(descriptor.getId().builder().setRepository(null).build()).build();
                 if (NStringUtils.trim(descriptor.getId().getVersion().getValue()).endsWith(CoreNConstants.Versions.CHECKED_OUT_EXTENSION)) {
-                    throw new NIllegalArgumentException(getSession(), NMsg.ofC("invalid version %s", descriptor.getId().getVersion()));
+                    throw new NIllegalArgumentException(NMsg.ofC("invalid version %s", descriptor.getId().getVersion()));
                 }
 
-                NId effId = dws.resolveEffectiveId(descriptor, session);
+                NId effId = dws.resolveEffectiveId(descriptor);
                 CorePlatformUtils.checkAcceptCondition(descriptor.getCondition(), false, session);
                 if (NBlankable.isBlank(repository)) {
                     effId = CoreNIdUtils.createContentFaceId(effId.builder().setPropertiesQuery("").build(), descriptor, session);
@@ -235,36 +234,34 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
                         int deployOrder = repo.config().getDeployWeight();
                         NRepositorySPI repoSPI = wu.repoSPI(repo);
                         repoSPI.deploy()
-                                .setSession(session)
                                 //.setFetchMode(NutsFetchMode.LOCAL)
                                 .setId(effId).setContent(contentFile).setDescriptor(descriptor)
                                 .run();
-                        addResult(effId, repo.getName(), NTexts.of(session).ofText(content));
+                        addResult(effId, repo.getName(), NTexts.of().ofText(content));
                         return this;
                     }
                 } else {
-                    NRepository repo = NRepositories.of(getSession()).findRepository(repository).get();
-                    if (!repo.isEnabled(session)) {
-                        throw new NRepositoryDisabledException(getSession(), repository);
+                    NRepository repo = NRepositories.of().findRepository(repository).get();
+                    if (!repo.isEnabled()) {
+                        throw new NRepositoryDisabledException(repository);
                     }
                     effId = CoreNIdUtils.createContentFaceId(effId.builder().setPropertiesQuery("").build(), descriptor, session);
                     NRepositorySPI repoSPI = wu.repoSPI(repo);
                     repoSPI.deploy()
-                            .setSession(session)
                             .setId(effId)
                             .setContent(contentFile)
                             .setDescriptor(descriptor)
                             .run();
-                    addResult(effId, repo.getName(), NTexts.of(this.session).ofText(content));
+                    addResult(effId, repo.getName(), NTexts.of().ofText(content));
                     return this;
                 }
-                throw new NRepositoryNotFoundException(getSession(), repository);
+                throw new NRepositoryNotFoundException(repository);
             } finally {
                 if (tempFile2 != null) {
                     try {
                         Files.delete(tempFile2);
                     } catch (IOException ex) {
-                        throw new NIOException(session, ex);
+                        throw new NIOException(ex);
                     }
                 }
             }
@@ -273,7 +270,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
                 characterizedFile.close();
             }
             if (tempFile != null) {
-                CoreIOUtils.delete(getSession(), tempFile);
+                CoreIOUtils.delete(tempFile);
             }
         }
 
@@ -283,52 +280,50 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
         if (descriptor == null) {
             return null;
         }
-        checkSession();
-        NSession session = getSession();
+        NSession session=workspace.currentSession();
         NDescriptor mdescriptor = null;
         if (descriptor instanceof NDescriptor) {
             mdescriptor = (NDescriptor) descriptor;
-            if (descSHA1 != null && !NDigest.of(session).sha1().setSource(mdescriptor).computeString().equalsIgnoreCase(descSHA1)) {
-                throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("invalid content Hash"));
+            if (descSHA1 != null && !NDigest.of().sha1().setSource(mdescriptor).computeString().equalsIgnoreCase(descSHA1)) {
+                throw new NIllegalArgumentException(NMsg.ofPlain("invalid content Hash"));
             }
             return mdescriptor;
         } else {
             InputStream inputStream = (InputStream) descriptor;
-            NInputSource nutsStreamOrPath = NInputSource.of(inputStream,session);
+            NInputSource nutsStreamOrPath = NInputSource.of(inputStream);
             if (nutsStreamOrPath != null) {
-                NInputSource d = NInputSource.ofMultiRead(nutsStreamOrPath,session);
+                NInputSource d = NInputSource.ofMultiRead(nutsStreamOrPath);
                 try {
                     if (descSHA1 != null) {
                         try (InputStream is = d.getInputStream()) {
-                            if (!NDigest.of(session).sha1().setSource(is).computeString().equalsIgnoreCase(descSHA1)) {
-                                throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("invalid content Hash"));
+                            if (!NDigest.of().sha1().setSource(is).computeString().equalsIgnoreCase(descSHA1)) {
+                                throw new NIllegalArgumentException(NMsg.ofPlain("invalid content Hash"));
                             }
                         } catch (IOException ex) {
-                            throw new NIOException(session, ex);
+                            throw new NIOException(ex);
                         }
                     }
                     try (InputStream is = d.getInputStream()) {
-                        return NDescriptorParser.of(session).parse(is).get(session);
+                        return NDescriptorParser.of().parse(is).get();
                     } catch (IOException ex) {
-                        throw new NIOException(session, ex);
+                        throw new NIOException(ex);
                     }
                 } finally {
                     d.dispose();
                 }
             } else {
-                throw new NException(getSession(), NMsg.ofC("unexpected type %s", descriptor.getClass().getName()));
+                throw new NException(NMsg.ofC("unexpected type %s", descriptor.getClass().getName()));
             }
         }
     }
 
     @Override
     public NDeployCmd addIds(String... values) {
-        checkSession();
-        NWorkspace ws = getSession().getWorkspace();
+        NSession session=workspace.currentSession();
         if (values != null) {
             for (String s : values) {
                 if (!NBlankable.isBlank(s)) {
-                    ids.add(NId.of(s).get(session));
+                    ids.add(NId.of(s).get());
                 }
             }
         }

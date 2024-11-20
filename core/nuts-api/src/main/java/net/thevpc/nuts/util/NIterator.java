@@ -26,7 +26,6 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.reserved.rpi.NCollectionsRPI;
 
@@ -38,16 +37,16 @@ import java.util.*;
  * @param <T> T
  */
 public interface NIterator<T> extends Iterator<T>, NElementDescribable<NIterator<T>> {
-    static <T> NIterator<T> of(Iterator<T> o, NSession session) {
-        return NCollectionsRPI.of(session).toIterator(o);
+    static <T> NIterator<T> of(Iterator<T> o) {
+        return NCollectionsRPI.of().toIterator(o);
     }
 
-    static <T> NIterator<T> ofEmpty(NSession session) {
-        return NCollectionsRPI.of(session).emptyIterator();
+    static <T> NIterator<T> ofEmpty() {
+        return NCollectionsRPI.of().emptyIterator();
     }
 
-    static <T> NIterator<T> ofSingleton(T element, NSession session) {
-        return NCollectionsRPI.of(session).toIterator(Collections.singletonList(element).iterator());
+    static <T> NIterator<T> ofSingleton(T element) {
+        return NCollectionsRPI.of().toIterator(Collections.singletonList(element).iterator());
     }
 
     default List<T> toList() {

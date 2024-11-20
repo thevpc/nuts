@@ -20,7 +20,7 @@ class LocalTomcatLogLineVisitor {
     }
 
     public void visit() {
-        NPath.of(path,session).getLines()
+        NPath.of(path).getLines()
                 .forEach(this::nextLine);
     }
 

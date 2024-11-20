@@ -57,7 +57,7 @@ public class SimpleHttpClient {
             this.url = new URL(url);
             this.session=session;
         } catch (MalformedURLException e) {
-            throw new NIOException(session,e);
+            throw new NIOException(e);
         }
     }
 
@@ -96,7 +96,7 @@ public class SimpleHttpClient {
     }
 
     private void readHeader() {
-        NPath info = NPath.of(url,session);
+        NPath info = NPath.of(url);
         this.contentEncoding = info.getContentEncoding();
         this.contentType = info.getContentType();
         this.contentLength = info.getContentLength();
@@ -141,7 +141,7 @@ public class SimpleHttpClient {
             }
             return conn;
         } catch (IOException e) {
-            throw new NIOException(session,e);
+            throw new NIOException(e);
         }
     }
 
@@ -154,7 +154,7 @@ public class SimpleHttpClient {
                 return url.openStream();
             }
         } catch (IOException ex) {
-            throw new NIOException(session,ex);
+            throw new NIOException(ex);
         }
     }
 }

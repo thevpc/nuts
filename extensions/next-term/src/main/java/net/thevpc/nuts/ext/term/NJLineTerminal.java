@@ -67,13 +67,15 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     private NCmdLineHistory commandHistory;
     private String commandHighlighter;
 
-    public NJLineTerminal() {
+    public NJLineTerminal(NWorkspace workspace) {
+        super(workspace);
     }
 
-    private AttributedString toAttributedString(NText n, NTextStyles styles, NSession session) {
+    private AttributedString toAttributedString(NText n, NTextStyles styles) {
+        NSession session = getWorkspace().currentSession();
         switch (n.getType()) {
             case PLAIN: {
-                styles = NTexts.of(session).getTheme().toBasicStyles(styles, session);
+                styles = NTexts.of().getTheme().toBasicStyles(styles);
                 NTextPlain p = (NTextPlain) n;
                 if (styles.isPlain()) {
                     return new AttributedString(p.getText());
@@ -133,54 +135,54 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
             }
             case CODE: {
                 NTextCode p = (NTextCode) n;
-                NText nn = p.highlight(session);
-                return toAttributedString(nn, NTextStyles.PLAIN, session);
+                NText nn = p.highlight();
+                return toAttributedString(nn, NTextStyles.PLAIN);
             }
             case TITLE: {
                 NTextTitle p = (NTextTitle) n;
-                return toAttributedString(p.getChild(), NTextStyles.PLAIN, session);
+                return toAttributedString(p.getChild(), NTextStyles.PLAIN);
             }
             case LINK: {
                 NTextLink p = (NTextLink) n;
                 return toAttributedString(
-                        NTexts.of(session).ofPlain(p.getText()),
-                        styles.append(NTextStyle.underlined()),
-                        session);
+                        NTexts.of().ofPlain(p.getText()),
+                        styles.append(NTextStyle.underlined())
+                );
             }
             case INCLUDE: {
                 NTextLink p = (NTextLink) n;
                 return toAttributedString(
-                        NTexts.of(session).ofList(
-                                NTexts.of(session).ofPlain("include"),
-                                NTexts.of(session).ofPlain(p.getText())
+                        NTexts.of().ofList(
+                                NTexts.of().ofPlain("include"),
+                                NTexts.of().ofPlain(p.getText())
                         ),
-                        styles.append(NTextStyle.danger()),
-                        session);
+                        styles.append(NTextStyle.danger())
+                );
             }
             case LIST: {
                 NTextList p = (NTextList) n;
                 AttributedStringBuilder b = new AttributedStringBuilder();
                 for (NText a : p) {
-                    b.append(toAttributedString(a, styles, session));
+                    b.append(toAttributedString(a, styles));
                 }
                 return b.toAttributedString();
             }
             case STYLED: {
                 NTextStyled p = (NTextStyled) n;
                 if (styles.isPlain()) {
-                    return toAttributedString(p.getChild(), p.getStyles(), session);
+                    return toAttributedString(p.getChild(), p.getStyles());
                 } else {
                     return toAttributedString(
                             p.getChild(),
-                            styles.append(p.getStyles()),
-                            session);
+                            styles.append(p.getStyles())
+                    );
                 }
             }
         }
         return new AttributedString(n.toString());
     }
 
-    public void prepare(NSession session) {
+    public void prepare() {
         if (terminal != null) {
             return;
         }
@@ -196,18 +198,19 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
             //Logger.getLogger(NutsJLineTerminal.class.getName()).log(Level.SEVERE, null, ex);
             throw new UncheckedIOException(new IOException("unable to create JLine system terminal: " + ex.getMessage(), ex));
         }
+        NSession session = getWorkspace().currentSession();
         reader = LineReaderBuilder.builder()
-                .completer(new NJLineCompleter(session, this))
+                .completer(new NJLineCompleter(getWorkspace(), this))
                 .highlighter(new Highlighter() {
                     @Override
                     public AttributedString highlight(LineReader reader, String buffer) {
-                        NTexts text = NTexts.of(session);
+                        NTexts text = NTexts.of();
                         String ct = getCommandHighlighter();
                         if (NBlankable.isBlank(ct)) {
                             ct = "system";
                         }
-                        NText n = NTexts.of(session).ofCode(ct, buffer).highlight(session);
-                        return toAttributedString(n, NTextStyles.PLAIN, session);
+                        NText n = NTexts.of().ofCode(ct, buffer).highlight();
+                        return toAttributedString(n, NTextStyles.PLAIN);
                     }
 
                     @Override
@@ -226,7 +229,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
                 //                .parse(parse)
                 .build();
         reader.unsetOpt(LineReader.Option.INSERT_TAB);
-        reader.setVariable(LineReader.HISTORY_FILE, NLocations.of(session).getWorkspaceLocation().resolve("history").normalize().toPath().get());
+        reader.setVariable(LineReader.HISTORY_FILE, NLocations.of().getWorkspaceLocation().resolve("history").normalize().toPath().get());
         if (reader instanceof LineReaderImpl) {
             ((LineReaderImpl) reader).setHistory(new NJLineHistory(reader, session, this));
         }
@@ -235,13 +238,13 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
                         new PrintStream(reader.getTerminal().output(), true),
                         System.out
                 ),
-                NTerminalMode.FORMATTED, this, session);
+                NTerminalMode.FORMATTED, this);
         this.err = NPrintStream.of(
                 new TransparentPrintStream(
                         new PrintStream(reader.getTerminal().output(), true),
                         System.err
                 ),
-                NTerminalMode.FORMATTED, this, session);//.setColor(NutsPrintStream.RED);
+                NTerminalMode.FORMATTED, this);//.setColor(NutsPrintStream.RED);
         this.in = new TransparentInputStream(reader.getTerminal().input(), System.in);
     }
 
@@ -259,9 +262,9 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     public int getSupportLevel(NSupportLevelContext criteria) {
         NSession session = criteria.getSession();
         try {
-            prepare(session);
+            prepare();
         } catch (Exception ex) {
-            NLog.of(NJLineTerminal.class, session)
+            NLog.of(NJLineTerminal.class)
                     .with().level(Level.FINEST).verb(NLogVerb.FAIL).error(ex)
                     .log(NMsg.ofPlain("unable to create NutsJLineTerminal. ignored."));
             return NConstants.Support.NO_SUPPORT;
@@ -270,17 +273,18 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public String readLine(NPrintStream out, NMsg message, NSession session) {
-        prepare(session);
+    public String readLine(NPrintStream out, NMsg message) {
+        prepare();
+        NSession session = getWorkspace().currentSession();
         if (out == null) {
             out = getOut();
         }
         if (out == null) {
-            out = NIO.of(session).stdout();
+            out = NIO.of().stdout();
         }
         String readLine = null;
         try {
-            readLine = reader.readLine(NTexts.of(session).ofText(message).toString());
+            readLine = reader.readLine(NTexts.of().ofText(message).toString());
         } catch (UserInterruptException e) {
             throw new NJLineInterruptException();
         }
@@ -293,14 +297,15 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public char[] readPassword(NPrintStream out, NMsg message, NSession session) {
-        prepare(session);
+    public char[] readPassword(NPrintStream out, NMsg message) {
+        prepare();
+        NSession session = getWorkspace().currentSession();
         if (out == null) {
-            return reader.readLine(NTexts.of(session).ofText(message).toString(), '*').toCharArray();
+            return reader.readLine(NTexts.of().ofText(message).toString(), '*').toCharArray();
         } else {
             //should I use some out??
         }
-        return reader.readLine(NTexts.of(session).ofText(message).toString(), '*').toCharArray();
+        return reader.readLine(NTexts.of().ofText(message).toString(), '*').toCharArray();
     }
 
     @Override
@@ -355,7 +360,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public Object run(NTerminalCmd command, NPrintStream printStream, NSession session) {
+    public Object run(NTerminalCmd command, NPrintStream printStream) {
         switch (command.getName()) {
             case NTerminalCmd.Ids.GET_CURSOR: {
                 org.jline.terminal.Cursor c = terminal.getCursorPosition(new IntConsumer() {
@@ -381,7 +386,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
                 return null;
             }
             default: {
-                String s = NAnsiTermHelper.of(session).command(command, session);
+                String s = NAnsiTermHelper.of(getWorkspace()).command(command);
                 if (s != null) {
                     byte[] bytes = s.getBytes();
                     printStream.writeRaw(bytes,0,bytes.length);
@@ -396,8 +401,8 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
         }
     }
 
-    public void setStyles(NTextStyles styles, NPrintStream printStream, NSession session) {
-        String s = NAnsiTermHelper.of(session).styled(styles, session);
+    public void setStyles(NTextStyles styles, NPrintStream printStream) {
+        String s = NAnsiTermHelper.of(getWorkspace()).styled(styles);
         if (s != null) {
             byte[] bytes = s.getBytes();
             printStream.writeRaw(bytes,0,bytes.length);

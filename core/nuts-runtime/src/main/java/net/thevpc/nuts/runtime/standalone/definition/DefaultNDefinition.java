@@ -46,26 +46,26 @@ public class DefaultNDefinition implements NDefinition {
     private NDependencies dependencies;
     private NDescriptor effectiveDescriptor;
     private NId apiId = null;
-    private transient NSession session;
+    private transient NWorkspace workspace;
 
     public DefaultNDefinition() {
     }
 
-    public DefaultNDefinition(String repoUuid, String repoName, NId id, NDescriptor descriptor, NPath content, NInstallInformation install, NId apiId, NSession session) {
+    public DefaultNDefinition(String repoUuid, String repoName, NId id, NDescriptor descriptor, NPath content, NInstallInformation install, NId apiId, NWorkspace workspace) {
         this.descriptor = descriptor;
         this.content = content;
         this.id = id;
         if (!id.isLongId()) {
-            throw new NIllegalArgumentException(session, NMsg.ofC("id should not have query defined in descriptors : %s",id));
+            throw new NIllegalArgumentException(NMsg.ofC("id should not have query defined in descriptors : %s",id));
         }
         this.installInformation = install;
         this.repositoryUuid = repoUuid;
         this.repositoryName = repoName;
         this.apiId = apiId;
-        this.session = session;
+        this.workspace = workspace;
     }
 
-    public DefaultNDefinition(NDefinition other, NSession session) {
+    public DefaultNDefinition(NDefinition other, NWorkspace workspace) {
         if (other != null) {
             this.descriptor = other.getDescriptor();
             this.id = other.getId();
@@ -78,7 +78,7 @@ public class DefaultNDefinition implements NDefinition {
             this.dependencies = other.getDependencies().orNull();
             this.apiId = other.getApiId();
         }
-        this.session = session;
+        this.workspace = workspace;
     }
 
     @Override
@@ -118,31 +118,27 @@ public class DefaultNDefinition implements NDefinition {
     }
 
     public DefaultNDefinition copy() {
-        return new DefaultNDefinition(this, session);
+        return new DefaultNDefinition(this, workspace);
     }
 
     @Override
     public NOptional<NPath> getContent() {
-        return NOptional.of(content, s-> NMsg.ofC("content not found for id %s",getId()))
-                .setSession(session);
+        return NOptional.of(content, ()-> NMsg.ofC("content not found for id %s",getId()));
     }
 
     @Override
     public NOptional<NDescriptor> getEffectiveDescriptor() {
-        return NOptional.of(effectiveDescriptor, s-> NMsg.ofC("unable to get effectiveDescriptor for id %s. You need to call search.setEffective(...) first.",getId()))
-                .setSession(session);
+        return NOptional.of(effectiveDescriptor, ()-> NMsg.ofC("unable to get effectiveDescriptor for id %s. You need to call search.setEffective(...) first.",getId()));
     }
 
     @Override
     public NOptional<NInstallInformation> getInstallInformation() {
-        return NOptional.of(installInformation, s-> NMsg.ofC("unable to get install information for id %s.",getId()))
-                .setSession(session);
+        return NOptional.of(installInformation, ()-> NMsg.ofC("unable to get install information for id %s.",getId()));
     }
 
     @Override
     public NOptional<NDependencies> getDependencies() {
-        return NOptional.of(dependencies, s-> NMsg.ofC("unable to get dependencies for id %s. You need to call search.setDependencies(...) first.",getId()))
-                .setSession(session);
+        return NOptional.of(dependencies, ()-> NMsg.ofC("unable to get dependencies for id %s. You need to call search.setDependencies(...) first.",getId()));
     }
 
     public DefaultNDefinition setContent(NPath content) {

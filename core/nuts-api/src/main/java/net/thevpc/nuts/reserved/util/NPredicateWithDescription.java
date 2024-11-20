@@ -1,6 +1,5 @@
 package net.thevpc.nuts.reserved.util;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.spi.base.NPredicateDelegate;
@@ -16,9 +15,8 @@ public class NPredicateWithDescription<T> extends NPredicateDelegate<T> {
     }
 
     @Override
-    public NElement describe(NSession session) {
+    public NElement describe() {
         return NEDesc.safeDescribe(
-                session,
                 description,
                 NEDesc.ofPossibleDescribable(base),
                 NEDesc.ofLateToString(this)

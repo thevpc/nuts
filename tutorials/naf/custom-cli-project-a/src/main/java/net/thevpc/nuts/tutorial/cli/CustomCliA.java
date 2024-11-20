@@ -20,7 +20,8 @@ public class CustomCliA implements NApplication {
     }
 
     @Override
-    public void run(NSession session) {
+    public void run() {
+        NSession session = NSession.get();
         session.runAppCmdLine(new NCmdLineRunner() {
             boolean noMoreOptions = false;
             boolean clean = false;
@@ -53,7 +54,8 @@ public class CustomCliA implements NApplication {
             @Override
             public void run(NCmdLine cmdLine, NCmdLineContext context) {
                 if (clean) {
-                    cmdLine.getSession().out().println("cleaned!");
+                    NSession session = NSession.of().get();
+                    session.out().println("cleaned!");
                 }
             }
         });

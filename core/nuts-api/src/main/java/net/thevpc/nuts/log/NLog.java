@@ -27,7 +27,6 @@
 package net.thevpc.nuts.log;
 
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -46,113 +45,102 @@ public interface NLog {
      * create an instance of {@link NLog}
      *
      * @param clazz logger clazz
-     * @param session session
      * @return new instance of {@link NLog}
      */
-    static NLog of(Class clazz, NSession session) {
-        return NLogs.of(session).createLogger(clazz, session);
+    static NLog of(Class<?> clazz) {
+        return NLogs.of().createLogger(clazz);
     }
 
     /**
      * create an instance of {@link NLog}
      *
      * @param name logger name
-     * @param session session
      * @return new instance of {@link NLog}
      */
-    static NLog of(String name, NSession session) {
-        return NLogs.of(session).createLogger(name, session);
+    static NLog of(String name) {
+        return NLogs.of().createLogger(name);
     }
 
     /**
      * Log handler
      *
-     * @param session session
      * @return Log handler
      */
-    static List<Handler> getHandlers(NSession session) {
-        return NLogs.of(session).getHandlers(session);
+    static List<Handler> getHandlers() {
+        return NLogs.of().getHandlers();
     }
 
     /**
      * remove the given handler
      *
      * @param handler handler to remove
-     * @param session session
      */
-    static void removeHandler(Handler handler, NSession session) {
-        NLogs.of(session).removeHandler(handler, session);
+    static void removeHandler(Handler handler) {
+        NLogs.of().removeHandler(handler);
     }
 
     /**
      * add the given handler
      *
      * @param handler handler to add
-     * @param session session
      */
-    static void addHandler(Handler handler, NSession session) {
-        NLogs.of(session).addHandler(handler, session);
+    static void addHandler(Handler handler) {
+        NLogs.of().addHandler(handler);
     }
 
     /**
      * terminal handler
      *
-     * @param session session
      * @return terminal handler
      */
-    static Handler getTermHandler(NSession session) {
-        return NLogs.of(session).getTermHandler(session);
+    static Handler getTermHandler() {
+        return NLogs.of().getTermHandler();
     }
 
     /**
      * file handler
      *
-     * @param session session
      * @return file handler
      */
-    static Handler getFileHandler(NSession session) {
-        return NLogs.of(session).getFileHandler(session);
+    static Handler getFileHandler() {
+        return NLogs.of().getFileHandler();
     }
 
 
     /**
      * return terminal logger level
      *
-     * @param session session
      * @return terminal logger level
      */
-    static Level getTermLevel(NSession session) {
-        return NLogs.of(session).getTermLevel(session);
+    static Level getTermLevel() {
+        return NLogs.of().getTermLevel();
     }
 
     /**
      * set terminal logger level
      *
-     * @param session session
      * @param level new level
      */
-    static void setTermLevel(Level level, NSession session) {
-        NLogs.of(session).setTermLevel(level, session);
+    static void setTermLevel(Level level) {
+        NLogs.of().setTermLevel(level);
     }
 
     /**
      * return file logger level
      *
-     * @param session session
      * @return file logger level
      */
-    static Level getFileLevel(NSession session) {
-        return NLogs.of(session).getFileLevel(session);
+    static Level getFileLevel() {
+        return NLogs.of().getFileLevel();
     }
 
     /**
      * set file logger level
      *
      * @param level new level
-     * @param session session
      */
-    static void setFileLevel(Level level, NSession session) {
-        NLogs.of(session).setFileLevel(level, session);
+    static void setFileLevel(Level level) {
+        NLogs.of().setFileLevel(level);
     }
 
 
@@ -169,24 +157,22 @@ public interface NLog {
     /**
      * log message using the given verb and level
      *
-     * @param session session
-     * @param level   message level
-     * @param verb    message verb / category
-     * @param msg     message
-     * @param thrown  thrown exception
+     * @param level  message level
+     * @param verb   message verb / category
+     * @param msg    message
+     * @param thrown thrown exception
      */
-    void log(NSession session, Level level, NLogVerb verb, NMsg msg, Throwable thrown);
+    void log(Level level, NLogVerb verb, NMsg msg, Throwable thrown);
 
     /**
      * log message using the given verb and level
      *
-     * @param session       session
      * @param level         message level
      * @param verb          message verb / category
      * @param msgSupplier   message supplier
      * @param errorSupplier message error
      */
-    void log(NSession session, Level level, NLogVerb verb, Supplier<NMsg> msgSupplier, Supplier<Throwable> errorSupplier);
+    void log(Level level, NLogVerb verb, Supplier<NMsg> msgSupplier, Supplier<Throwable> errorSupplier);
 
     /**
      * create a logger op.

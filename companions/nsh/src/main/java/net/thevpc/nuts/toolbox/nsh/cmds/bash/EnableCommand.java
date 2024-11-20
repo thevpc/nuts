@@ -53,7 +53,7 @@ public class EnableCommand extends NShellBuiltinDefault {
     protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        final NArg a = cmdLine.peek().get(session);
+        final NArg a = cmdLine.peek().get();
         if (a.isOption()) {
             if (a.key().equals("--sort")) {
                 options.displayOptions.add(a.toString());
@@ -62,32 +62,32 @@ public class EnableCommand extends NShellBuiltinDefault {
         } else if (a.isOption()) {
             switch(a.key()) {
                 case "-a": {
-                    cmdLine.withNextFlag((v, r, s) -> options.a = v);
+                    cmdLine.withNextFlag((v, r) -> options.a = v);
                     return true;
                 }
                 case "-d": {
-                    cmdLine.withNextFlag((v, r, s) -> options.d = v);
+                    cmdLine.withNextFlag((v, r) -> options.d = v);
                     return true;
                 }
                 case "-n": {
-                    cmdLine.withNextFlag((v, r, s) -> options.n = v);
+                    cmdLine.withNextFlag((v, r) -> options.n = v);
                     return true;
                 }
                 case "-p": {
-                    cmdLine.withNextFlag((v, r, s) -> options.p = v);
+                    cmdLine.withNextFlag((v, r) -> options.p = v);
                     return true;
                 }
                 case "-s": {
-                    cmdLine.withNextFlag((v, r, s) -> options.s = v);
+                    cmdLine.withNextFlag((v, r) -> options.s = v);
                     return true;
                 }
                 case "-f": {
-                    cmdLine.withNextEntry((v, r, s) -> options.file = v);
+                    cmdLine.withNextEntry((v, r) -> options.file = v);
                     return true;
                 }
             }
         } else {
-            options.names.add(cmdLine.next().flatMap(NLiteral::asString).get(session));
+            options.names.add(cmdLine.next().flatMap(NLiteral::asString).get());
             return true;
         }
         return false;

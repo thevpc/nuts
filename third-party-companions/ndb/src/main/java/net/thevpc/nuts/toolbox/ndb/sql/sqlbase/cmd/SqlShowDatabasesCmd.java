@@ -2,7 +2,6 @@ package net.thevpc.nuts.toolbox.ndb.sql.sqlbase.cmd;
 
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;
 import net.thevpc.nuts.toolbox.ndb.base.cmd.ShowDatabasesCmd;
@@ -20,11 +19,11 @@ public class SqlShowDatabasesCmd<C extends NdbConfig> extends ShowDatabasesCmd<C
     }
 
     @Override
-    protected void runShowDatabases(ExtendedQuery eq, C options, NSession session) {
-        ((SqlSupport<C>)support).runSQL(Arrays.asList(createShowDatabasesSQL(options, session)), options, session);
+    protected void runShowDatabases(ExtendedQuery eq, C options) {
+        ((SqlSupport<C>)support).runSQL(Arrays.asList(createShowDatabasesSQL(options)), options);
     }
 
-    protected String createShowDatabasesSQL(C options, NSession session) {
-        throw new NIllegalArgumentException(session, NMsg.ofPlain("unsupported createShowDatabasesSQL"));
+    protected String createShowDatabasesSQL(C options) {
+        throw new NIllegalArgumentException(NMsg.ofPlain("unsupported createShowDatabasesSQL"));
     }
 }

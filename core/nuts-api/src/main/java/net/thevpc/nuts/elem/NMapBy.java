@@ -6,7 +6,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.PARAMETER, ElementType.CONSTRUCTOR, ElementType.FIELD, ElementType.METHOD, ElementType.TYPE})
 public @interface NMapBy {
-    Class mapClass() default void.class;
+    Class<?> mapClass() default void.class;
 
     String name() default "";
 }

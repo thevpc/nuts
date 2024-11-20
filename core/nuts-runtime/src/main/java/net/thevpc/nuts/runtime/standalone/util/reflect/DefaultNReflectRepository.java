@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.util.reflect;
 
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.reflect.NReflectConfiguration;
 import net.thevpc.nuts.reflect.NReflectConfigurationBuilder;
 import net.thevpc.nuts.reflect.NReflectRepository;
@@ -44,13 +45,15 @@ public class DefaultNReflectRepository implements NReflectRepository {
 
     private final Map<Type, NReflectType> beans = new HashMap<>();
     private NReflectConfiguration configuration;
+    private NWorkspace workspace;
 
-    public DefaultNReflectRepository(NSession session) {
-        this(NReflectConfigurationBuilder.of(session).build());
+    public DefaultNReflectRepository(NWorkspace workspace) {
+        this(workspace,NReflectConfigurationBuilder.of().build());
     }
 
-    public DefaultNReflectRepository(NReflectConfiguration configuration) {
+    public DefaultNReflectRepository(NWorkspace workspace,NReflectConfiguration configuration) {
         this.configuration = configuration;
+        this.workspace = workspace;
     }
 
     @Override
@@ -85,7 +88,7 @@ public class DefaultNReflectRepository implements NReflectRepository {
     }
 
     private NReflectType create(Type clz) {
-        return new DefaultNReflectType(clz, this);
+        return new DefaultNReflectType(workspace, clz, this);
     }
 
     @Override

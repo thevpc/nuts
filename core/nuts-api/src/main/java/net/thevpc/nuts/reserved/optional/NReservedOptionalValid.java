@@ -3,7 +3,6 @@ package net.thevpc.nuts.reserved.optional;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.NSession;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -11,10 +10,6 @@ import net.thevpc.nuts.util.NOptionalType;
 
 public abstract class NReservedOptionalValid<T> extends NReservedOptionalImpl<T> implements Cloneable {
 
-    @Override
-    public T get(Function<NSession, NMsg> message, NSession session) {
-        return get(session);
-    }
 
     @Override
     public <V> NOptional<V> then(Function<T, V> mapper) {
@@ -57,14 +52,14 @@ public abstract class NReservedOptionalValid<T> extends NReservedOptionalImpl<T>
 
     public NOptional<T> ifBlankEmpty() {
         if (isBlank()) {
-            return NOptional.ofEmpty((session) -> NMsg.ofMissingValue());
+            return NOptional.ofEmpty(NMsg::ofMissingValue);
         }
         return this;
     }
 
     @Override
-    public Function<NSession, NMsg> getMessage() {
-        return (session) -> NMsg.ofMissingValue();
+    public Supplier<NMsg> getMessage() {
+        return NMsg::ofMissingValue;
     }
 
     @Override

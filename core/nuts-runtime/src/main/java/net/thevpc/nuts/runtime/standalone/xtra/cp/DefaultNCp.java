@@ -14,8 +14,6 @@ import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.runtime.standalone.io.progress.NProgressUtils;
 import net.thevpc.nuts.runtime.standalone.io.progress.SingletonNInputStreamProgressFactory;
 import net.thevpc.nuts.runtime.standalone.io.util.*;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -41,14 +39,12 @@ import java.util.logging.Level;
 @NComponentScope(NScopeType.PROTOTYPE)
 public class DefaultNCp implements NCp {
 
-    private final NWorkspace ws;
-    private NLog LOG;
+    private final NWorkspace workspace;
     private NCpValidator checker;
     private boolean skipRoot = false;
     private int maxRepeatCount = 3;
     private NInputSource source;
     private NOutputTarget target;
-    private NSession session;
     private NProgressFactory progressMonitorFactory;
     private boolean interrupted;
     private boolean recursive;
@@ -60,9 +56,8 @@ public class DefaultNCp implements NCp {
     private NMsg actionMsg;
     private Set<NPathOption> options = new LinkedHashSet<>();
 
-    public DefaultNCp(NSession session) {
-        this.session = session;
-        this.ws = session.getWorkspace();
+    public DefaultNCp(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
     private static Path transformPath(Path f, Path sourceBase, Path targetBase) {
@@ -84,19 +79,12 @@ public class DefaultNCp implements NCp {
         return NConstants.Support.DEFAULT_SUPPORT;
     }
 
-    protected NLogOp _LOGOP(NSession session) {
-        return _LOG(session).with().session(session);
+    protected NLogOp _LOGOP() {
+        return _LOG().with();
     }
 
-    protected NLog _LOG(NSession session) {
-        if (LOG == null) {
-            LOG = NLog.of(DefaultNCp.class, session);
-        }
-        return LOG;
-    }
-
-    protected void checkSession() {
-        NSessionUtils.checkSession(ws, session);
+    protected NLog _LOG() {
+        return NLog.of(DefaultNCp.class);
     }
 
     @Override
@@ -112,40 +100,37 @@ public class DefaultNCp implements NCp {
 
     @Override
     public NCp setSource(InputStream source) {
-        checkSession();
-        this.source = source == null ? null : NInputSource.of(source, session);
+        this.source = source == null ? null : NInputSource.of(source);
         return this;
     }
 
     @Override
     public NCp setSource(File source) {
-        checkSession();
-        this.source = source == null ? null : NPath.of(source, session);
+        this.source = source == null ? null : NPath.of(source);
         return this;
     }
 
     @Override
     public NCp setSource(Path source) {
-        this.source = source == null ? null : NPath.of(source, session);
+        this.source = source == null ? null : NPath.of(source);
         return this;
     }
 
     @Override
     public NCp setSource(URL source) {
-        this.source = source == null ? null : NPath.of(source, session);
+        this.source = source == null ? null : NPath.of(source);
         return this;
     }
 
     @Override
     public NCp setSource(String source) {
-        this.source = source == null ? null : NPath.of(source, session);
+        this.source = source == null ? null : NPath.of(source);
         return this;
     }
 
     @Override
     public NCp setSource(byte[] source) {
-        checkSession();
-        this.source = source == null ? null : NInputSource.of(source, session);
+        this.source = source == null ? null : NInputSource.of(source);
         return this;
     }
 
@@ -199,8 +184,7 @@ public class DefaultNCp implements NCp {
 
     @Override
     public NCp setTarget(OutputStream target) {
-        checkSession();
-        this.target = target == null ? null : NOutputTarget.of(target,session);
+        this.target = target == null ? null : NOutputTarget.of(target);
         return this;
     }
 
@@ -218,13 +202,13 @@ public class DefaultNCp implements NCp {
 
     @Override
     public NCp setTarget(Path target) {
-        this.target = target == null ? null : NPath.of(target, session);
+        this.target = target == null ? null : NPath.of(target);
         return this;
     }
 
     @Override
     public NCp setTarget(File target) {
-        this.target = target == null ? null : NPath.of(target, session);
+        this.target = target == null ? null : NPath.of(target);
         return this;
     }
 
@@ -335,20 +319,8 @@ public class DefaultNCp implements NCp {
     }
 
     @Override
-    public NSession getSession() {
-        return session;
-    }
-
-    @Override
-    public NCp setSession(NSession session) {
-        this.session = NWorkspaceUtils.bindSession(ws, session);
-        return this;
-    }
-
-    @Override
     public byte[] getByteArrayResult() {
-        checkSession();
-        NMemoryPrintStream b = NPrintStream.ofMem(session);
+        NMemoryPrintStream b = NPrintStream.ofMem();
         to(b);
         removeOptions(NPathOption.SAFE);
         run();
@@ -362,15 +334,15 @@ public class DefaultNCp implements NCp {
 
     @Override
     public NCp run() {
-        checkSession();
-        NAssert.requireNonBlank(source, "source", session);
-        NAssert.requireNonBlank(target, "target", session);
+        NSession session = workspace.currentSession();
+        NAssert.requireNonBlank(source, "source");
+        NAssert.requireNonBlank(target, "target");
 
         NInputSource _source = source;
         if ((_source instanceof NPath) && ((NPath) _source).isDirectory()) {
             // this is a directory!!!
             if (!(target instanceof NPath)) {
-                throw new NIllegalArgumentException(getSession(), NMsg.ofC("unsupported copy of directory to %s", target));
+                throw new NIllegalArgumentException(NMsg.ofC("unsupported copy of directory to %s", target));
             }
             Path fromPath = ((NPath) _source).toPath().get();
             Path toPath = ((NPath) target).toPath().get();
@@ -476,7 +448,7 @@ public class DefaultNCp implements NCp {
 
     private void checkInterrupted() {
         if (interrupted) {
-            throw new NInterruptException(session);
+            throw new NInterruptException();
         }
     }
 
@@ -510,24 +482,23 @@ public class DefaultNCp implements NCp {
                 }
             });
         } catch (IOException exc) {
-            throw new NIOException(session, exc);
+            throw new NIOException(exc);
         }
     }
 
     private void copyFolderWithMonitor(Path srcBase, Path targetBase, CopyData f) {
-        checkSession();
-        NSession session = getSession();
+        NSession session = workspace.currentSession();
         long start = System.nanoTime();
         Object origin = getSourceOrigin();
         NProgressListener m = NProgressUtils.createProgressMonitor(
-                NProgressUtils.MonitorType.DEFAULT, NPath.of(srcBase, session), origin, session,
+                NProgressUtils.MonitorType.DEFAULT, NPath.of(srcBase), origin, workspace,
                 options.contains(NPathOption.LOG),
                 options.contains(NPathOption.TRACE),
                 getProgressFactory());
-        NText srcBaseMessage = NTexts.of(session).ofText(srcBase);
+        NText srcBaseMessage = NTexts.of().ofText(srcBase);
         m.onProgress(NProgressEvent.ofStart(srcBase,
                 NMsg.ofNtf(srcBaseMessage)
-                , f.files + f.folders, session));
+                , f.files + f.folders));
         try {
             NSession finalSession = session;
             Files.walkFileTree(srcBase, new FileVisitor<Path>() {
@@ -535,10 +506,10 @@ public class DefaultNCp implements NCp {
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                     checkInterrupted();
                     f.doneFolders++;
-                    NPath.of(transformPath(dir, srcBase, targetBase), session).mkdirs();
+                    NPath.of(transformPath(dir, srcBase, targetBase)).mkdirs();
                     m.onProgress(NProgressEvent.ofProgress(srcBase, NMsg.ofNtf(srcBaseMessage),
                             f.doneFiles + f.doneFolders, System.nanoTime() - start, null,
-                            0, 0, f.files + f.folders, null, finalSession));
+                            0, 0, f.files + f.folders, null));
                     return FileVisitResult.CONTINUE;
                 }
 
@@ -549,7 +520,7 @@ public class DefaultNCp implements NCp {
                     copy(file, transformPath(file, srcBase, targetBase), options);
                     m.onProgress(NProgressEvent.ofProgress(srcBase, NMsg.ofNtf(srcBaseMessage),
                             f.doneFiles + f.doneFolders, System.nanoTime() - start,
-                            null, 0, 0, f.files + f.folders, null, finalSession));
+                            null, 0, 0, f.files + f.folders, null));
                     return FileVisitResult.CONTINUE;
                 }
 
@@ -566,11 +537,11 @@ public class DefaultNCp implements NCp {
                 }
             });
         } catch (IOException exc) {
-            throw new NIOException(session, exc);
+            throw new NIOException(exc);
         } finally {
             m.onProgress(NProgressEvent.ofComplete(srcBase, NMsg.ofNtf(srcBaseMessage), f.files + f.folders,
                     System.nanoTime() - start, null, 0, 0,
-                    f.files + f.folders, null, session));
+                    f.files + f.folders, null));
         }
     }
 
@@ -581,7 +552,7 @@ public class DefaultNCp implements NCp {
                     return null;
                 }
             }
-            try (InputStream in = NInputSourceBuilder.of(Files.newInputStream(source),session).setInterruptible(true).createInputStream()) {
+            try (InputStream in = NInputSourceBuilder.of(Files.newInputStream(source)).setInterruptible(true).createInputStream()) {
                 interruptibleInstance = (NInterruptible) in;
                 try (OutputStream out = Files.newOutputStream(target)) {
                     transferTo(in, out);
@@ -595,7 +566,7 @@ public class DefaultNCp implements NCp {
     public long copy(InputStream in, Path target, Set<NPathOption> options)
             throws IOException {
         if (options.contains(NPathOption.INTERRUPTIBLE)) {
-            in = NInputSourceBuilder.of(in,session).setInterruptible(true).createInputStream();
+            in = NInputSourceBuilder.of(in).setInterruptible(true).createInputStream();
             interruptibleInstance = (NInterruptible) in;
             try (OutputStream out = Files.newOutputStream(target)) {
                 return transferTo(in, out);
@@ -606,17 +577,18 @@ public class DefaultNCp implements NCp {
 
     public long copy(InputStream in, OutputStream out, Set<NPathOption> options)
             throws IOException {
+        NSession session = workspace.currentSession();
         if (options.contains(NPathOption.INTERRUPTIBLE)) {
-            in = NInputSourceBuilder.of(in,session).setInterruptible(true).createInputStream();
+            in = NInputSourceBuilder.of(in).setInterruptible(true).createInputStream();
             interruptibleInstance = (NInterruptible) in;
             return transferTo(in, out);
         }
-        return CoreIOUtils.copy(in, out, session);
+        return CoreIOUtils.copy(in, out);
     }
 
     public long copy(Path source, OutputStream out) throws IOException {
         if (options.contains(NPathOption.INTERRUPTIBLE)) {
-            try (InputStream in = NInputSourceBuilder.of(Files.newInputStream(source),session).setInterruptible(true).createInputStream()) {
+            try (InputStream in = NInputSourceBuilder.of(Files.newInputStream(source)).setInterruptible(true).createInputStream()) {
                 interruptibleInstance = (NInterruptible) in;
                 try {
                     return transferTo(in, out);
@@ -644,13 +616,14 @@ public class DefaultNCp implements NCp {
     }
 
     private void copyFolderNoMonitor(Path srcBase, Path targetBase, CopyData f) {
+        NSession session = workspace.currentSession();
         try {
             Files.walkFileTree(srcBase, new FileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
                     checkInterrupted();
                     f.doneFolders++;
-                    NPath.of(transformPath(dir, srcBase, targetBase), session).mkdirs();
+                    NPath.of(transformPath(dir, srcBase, targetBase)).mkdirs();
                     return FileVisitResult.CONTINUE;
                 }
 
@@ -675,14 +648,14 @@ public class DefaultNCp implements NCp {
                 }
             });
         } catch (IOException exc) {
-            throw new NIOException(session, exc);
+            throw new NIOException(exc);
         }
     }
 
     private void copyStream() {
-        checkSession();
-        NAssert.requireNonBlank(source, "source", session);
-        NAssert.requireNonBlank(target, "target", session);
+        NSession session = workspace.currentSession();
+        NAssert.requireNonBlank(source, "source");
+        NAssert.requireNonBlank(target, "target");
         boolean safe = options.contains(NPathOption.SAFE);
         if (safe) {
             copyStreamSafe(source, target);
@@ -707,7 +680,7 @@ public class DefaultNCp implements NCp {
         }
         for (int i = repeatCount; i <= maxRepeatCount; i++) {
             try {
-                NLogOp lop = _LOGOP(session);
+                NLogOp lop = _LOGOP();
                 if (i > 1 && lop.isLoggable(Level.FINEST)) {
                     lop.level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofC("repeat download #%s %s",
                             i,
@@ -755,13 +728,14 @@ public class DefaultNCp implements NCp {
     }
 
     private void copyStreamOnce(NInputSource source, NOutputTarget target) {
-        NAssert.requireNonNull(source, "source", getSession());
-        NAssert.requireNonNull(target, "target", getSession());
+        NSession session = workspace.currentSession();
+        NAssert.requireNonNull(source, "source");
+        NAssert.requireNonNull(target, "target");
         NOutputTarget2 _target2 = new NOutputTarget2(target);
         NInputSource2 _source2 = new NInputSource2(source);
         boolean safe = options.contains(NPathOption.SAFE);
         if (checker != null && _target2.jpath == null && !safe) {
-            throw new NIllegalArgumentException(getSession(), NMsg.ofNtf("unsupported validation if neither safeCopy is armed nor path is defined"));
+            throw new NIllegalArgumentException(NMsg.ofNtf("unsupported validation if neither safeCopy is armed nor path is defined"));
         }
         NMsg loggedSrc = _source2.source.getMetaData().getMessage().orElse(NMsg.ofPlain("unknown-source"));
         NMsg loggedTarget = target.getMetaData().getMessage().orElse(NMsg.ofPlain("unknown-target"));
@@ -776,7 +750,7 @@ public class DefaultNCp implements NCp {
                 || options.contains(NPathOption.TRACE)
                 || getProgressFactory() != null
         ) {
-            NInputStreamMonitor monitor = NInputStreamMonitor.of(session);
+            NInputStreamMonitor monitor = NInputStreamMonitor.of();
             monitor.setSource(_source2.source);
             monitor.setLogProgress(options.contains(NPathOption.LOG));
             monitor.setTraceProgress(options.contains(NPathOption.TRACE));
@@ -786,9 +760,9 @@ public class DefaultNCp implements NCp {
                     monitor.setProgressFactory(getProgressFactory())
                             .setLength(_source2.source.getMetaData().getContentLength().orElse(-1L))
                             .setLogProgress(options.contains(NPathOption.LOG))
-                            .create(), session);
+                            .create());
         }
-        NLogOp lop = _LOGOP(session);
+        NLogOp lop = _LOGOP();
         if (lop.isLoggable(Level.FINEST)) {
             lop.level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofC("%s %s to %s",
                     m,
@@ -799,10 +773,10 @@ public class DefaultNCp implements NCp {
             if (safe) {
                 Path temp = null;
                 if (_target2.jpath != null) {
-                    NPath.of(_target2.jpath, session).mkParentDirs();
+                    NPath.of(_target2.jpath).mkParentDirs();
                     temp = _target2.jpath.resolveSibling(_target2.jpath.getFileName() + "~");
                 } else {
-                    temp = NPath.ofTempFile("temp~", getSession()).toPath().get();
+                    temp = NPath.ofTempFile("temp~").toPath().get();
                 }
                 try {
                     if (_source2.jpath != null) {
@@ -820,7 +794,7 @@ public class DefaultNCp implements NCp {
                             // happens when the file is used by another process
                             // in that case try to check if the file needs to be copied
                             //if not, return safely!
-                            if (CoreIOUtils.compareContent(temp, _target2.jpath, session)) {
+                            if (CoreIOUtils.compareContent(temp, _target2.jpath)) {
                                 //cannot write the file (used by another process), but no pbm because does not need to
                                 return;
                             }
@@ -840,7 +814,7 @@ public class DefaultNCp implements NCp {
             } else {
                 if (_target2.jpath != null) {
                     Path to = _target2.jpath;
-                    NPath.of(to, session).mkParentDirs();
+                    NPath.of(to).mkParentDirs();
                     if (_source2.jpath != null) {
                         copy(_source2.jpath, to, new HashSet<>(Collections.singletonList(NPathOption.REPLACE_EXISTING)));
                     } else {
@@ -882,7 +856,7 @@ public class DefaultNCp implements NCp {
         } catch (IOException ex) {
             lop.level(Level.CONFIG).verb(NLogVerb.FAIL)
                     .log(NMsg.ofC("error copying %s to %s : %s", _source2.source, target, ex));
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -893,7 +867,8 @@ public class DefaultNCp implements NCp {
             } catch (NCpValidatorException ex) {
                 throw ex;
             } catch (Exception ex) {
-                throw new NCpValidatorException(session, NMsg.ofC("validate file %s failed", temp), ex);
+                NSession session = workspace.currentSession();
+                throw new NCpValidatorException(NMsg.ofC("validate file %s failed", temp), ex);
             }
         }
     }
@@ -905,7 +880,8 @@ public class DefaultNCp implements NCp {
             } catch (NCpValidatorException ex) {
                 throw ex;
             } catch (Exception ex) {
-                throw new NCpValidatorException(session, NMsg.ofPlain("validate file failed"), ex);
+                NSession session = workspace.currentSession();
+                throw new NCpValidatorException(NMsg.ofPlain("validate file failed"), ex);
             }
         }
     }

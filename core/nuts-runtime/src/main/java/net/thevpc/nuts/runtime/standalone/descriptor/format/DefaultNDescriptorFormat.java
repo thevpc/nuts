@@ -16,8 +16,8 @@ public class DefaultNDescriptorFormat extends DefaultFormatBase<NDescriptorForma
     private boolean compact;
     private NDescriptor desc;
 
-    public DefaultNDescriptorFormat(NSession session) {
-        super(session, "descriptor-format");
+    public DefaultNDescriptorFormat(NWorkspace workspace) {
+        super(workspace, "descriptor-format");
     }
 
     public NDescriptorFormat setNtf(boolean ntf) {
@@ -66,17 +66,17 @@ public class DefaultNDescriptorFormat extends DefaultFormatBase<NDescriptorForma
 
     @Override
     public void print(NPrintStream out) {
-        checkSession();
+        NSession session=workspace.currentSession();
         if (isNtf()) {
             ByteArrayOutputStream os=new ByteArrayOutputStream();
-            NElements.of(getSession())
+            NElements.of()
                     .setNtf(true).json()
                     .setValue(desc).setCompact(isCompact())
                     .print(os);
-            NTextCode r = NTexts.of(getSession()).ofCode("json", os.toString());
+            NTextCode r = NTexts.of().ofCode("json", os.toString());
             out.print(r);
         } else {
-            NElements.of(getSession()).setNtf(false).json()
+            NElements.of().setNtf(false).json()
                     .setValue(desc).setCompact(isCompact())
                     .print(out);
         }

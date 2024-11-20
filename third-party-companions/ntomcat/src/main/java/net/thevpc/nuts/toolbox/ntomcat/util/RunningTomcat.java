@@ -18,14 +18,14 @@ public class RunningTomcat {
     public RunningTomcat(NPsInfo r, NSession session) {
         pid =r.getPid();
         argsLine=r.getCmdLine();
-        NCmdLine cmdline = NCmdLine.parse(r.getCmdLine(),session)
-                .get(session).setExpandSimpleOptions(false);
+        NCmdLine cmdline = NCmdLine.parse(r.getCmdLine())
+                .get().setExpandSimpleOptions(false);
         NArg a=null;
         while(cmdline.hasNext()){
             if((a=cmdline.nextEntry("-Dcatalina.home").orNull())!=null) {
-                home = NPath.of(a.getStringValue().get(session),session);
+                home = NPath.of(a.getStringValue().get());
             }else if((a=cmdline.nextEntry("-Dcatalina.base").orNull())!=null){
-                base=a.getStringValue().get(session);
+                base=a.getStringValue().get();
             }else{
                 cmdline.skip();
             }

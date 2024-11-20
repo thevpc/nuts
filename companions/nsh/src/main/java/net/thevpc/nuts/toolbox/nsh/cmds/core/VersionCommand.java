@@ -46,7 +46,7 @@ public class VersionCommand extends NShellBuiltinCore {
     protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.version == null) {
-            options.version = NVersionFormat.of(context.getSession());
+            options.version = NVersionFormat.of();
         }
         return options.version.configureFirst(cmdLine);
     }
@@ -55,7 +55,7 @@ public class VersionCommand extends NShellBuiltinCore {
     protected boolean nextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.version == null) {
-            options.version = NVersionFormat.of(context.getSession());
+            options.version = NVersionFormat.of();
         }
         return options.version.configureFirst(cmdLine);
     }
@@ -65,13 +65,12 @@ public class VersionCommand extends NShellBuiltinCore {
         NSession session = context.getSession();
         Options options = context.getOptions();
         if (options.version == null) {
-            options.version = NVersionFormat.of(context.getSession());
+            options.version = NVersionFormat.of();
         }
         if(context.getSession().isPlainOut()){
             context.out().println( context.getSession().getAppId().getVersion().getValue());
         }else {
             options.version
-                    .setSession(session)
                     .addProperty("app-version", context.getSession().getAppId().getVersion().getValue())
                     .println(context.out());
         }

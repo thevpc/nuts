@@ -130,7 +130,7 @@ public class DefaultOpNode implements NExprOpNode {
         try {
             return context.evalOperator(getName(), op, args.toArray(new NExprNode[0]));
         } catch (Exception ex) {
-            return NOptional.ofError(x -> NMsg.ofC("error %s ", ex));
+            return NOptional.ofError(() -> NMsg.ofC("error %s ", ex));
         }
     }
 }

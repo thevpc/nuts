@@ -1,6 +1,5 @@
 package net.thevpc.nuts.toolbox.ndb.sql.sqlbase.cmd;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;
 import net.thevpc.nuts.toolbox.ndb.base.cmd.DeleteCmd;
@@ -19,15 +18,15 @@ public class SqlDeleteCmd<C extends NdbConfig> extends DeleteCmd<C> {
     }
 
     @Override
-    protected void runDelete(ExtendedQuery eq, C options, NSession session) {
+    protected void runDelete(ExtendedQuery eq, C options) {
         StringBuilder sql = new StringBuilder();
         sql.append("delete  from ").append(options.getName());
-        String whereSQL = getSupport().createWhere(eq.getWhere(), session);
+        String whereSQL = getSupport().createWhere(eq.getWhere());
         if (!whereSQL.isEmpty()) {
             sql.append(" where ");
             sql.append(whereSQL);
         }
-        getSupport().runSQL(Arrays.asList(sql.toString()), options, session);
+        getSupport().runSQL(Arrays.asList(sql.toString()), options);
     }
 
 }

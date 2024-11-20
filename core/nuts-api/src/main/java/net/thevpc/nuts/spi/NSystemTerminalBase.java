@@ -24,7 +24,6 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.io.NPrintStream;
@@ -44,9 +43,9 @@ import java.util.Objects;
  * @since 0.5.4
  */
 public interface NSystemTerminalBase extends NComponent {
-    String readLine(NPrintStream out, NMsg message, NSession session);
+    String readLine(NPrintStream out, NMsg message);
 
-    char[] readPassword(NPrintStream out, NMsg message, NSession session);
+    char[] readPassword(NPrintStream out, NMsg message);
 
     InputStream getIn();
 
@@ -98,17 +97,17 @@ public interface NSystemTerminalBase extends NComponent {
      */
     NSystemTerminalBase setCommandHighlighter(String commandHighlighter);
 
-    Object run(NTerminalCmd command, NPrintStream printStream, NSession session);
+    Object run(NTerminalCmd command, NPrintStream printStream);
 
-    Cursor getTerminalCursor(NSession session);
+    Cursor getTerminalCursor();
 
-    Size getTerminalSize(NSession session);
+    Size getTerminalSize();
 
-    NSystemTerminalBase resetLine(NSession session);
+    NSystemTerminalBase resetLine();
 
-    NSystemTerminalBase clearScreen(NSession session);
+    NSystemTerminalBase clearScreen();
 
-    void setStyles(NTextStyles styles, NPrintStream printStream, NSession session);
+    void setStyles(NTextStyles styles, NPrintStream printStream);
 
     class Cursor implements Serializable {
         private int x;

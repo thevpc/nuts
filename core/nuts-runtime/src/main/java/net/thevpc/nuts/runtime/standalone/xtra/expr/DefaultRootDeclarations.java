@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.NSession;
@@ -19,8 +20,8 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
     final Map<NExprOpNameAndType, NExprOpDeclaration> ops = new HashMap<>();
     final Map<String, NExprVarDeclaration> defaultVars = new HashMap<>();
 
-    public DefaultRootDeclarations(NSession session) {
-        setSession(session);
+    public DefaultRootDeclarations(NWorkspace workspace) {
+        super(workspace);
         addDefaultOp(new AndFctNode(), "and", "&", "&&");
         addDefaultOp(new OrFctNode(), "or", "|", "||");
         addDefaultOp(new NotFctNode(), "not", "!");
@@ -410,7 +411,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
     public NOptional<NExprFctDeclaration> getFunction(String fctName, Object... args) {
         return NOptional.of(
                 defaultFunctions.get(fctName),
-                s -> NMsg.ofC("function not found %s", fctName)
+                () -> NMsg.ofC("function not found %s", fctName)
         );
     }
 
@@ -418,7 +419,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
     public NOptional<NExprConstructDeclaration> getConstruct(String constructName, NExprNode... args) {
         return NOptional.of(
                 defaultConstructs.get(constructName),
-                s -> NMsg.ofC("construct not found %s", constructName)
+                () -> NMsg.ofC("construct not found %s", constructName)
         );
     }
 
@@ -426,7 +427,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
     public NOptional<NExprOpDeclaration> getOperator(String opName, NExprOpType type, NExprNode... args) {
         return NOptional.of(
                 ops.get(new NExprOpNameAndType(opName, type)),
-                s -> NMsg.ofC("operator not found %s", opName)
+                () -> NMsg.ofC("operator not found %s", opName)
         );
     }
 
@@ -434,7 +435,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
     public NOptional<NExprVarDeclaration> getVar(String varName) {
         return NOptional.of(
                 defaultVars.get(varName),
-                s -> NMsg.ofC("var not found %s", varName)
+                () -> NMsg.ofC("var not found %s", varName)
         );
     }
 

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.ndb.base.cmd;
 
-import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
@@ -21,14 +21,15 @@ public class AddConfigCmd<C extends NdbConfig> extends NdbCmd<C> {
     }
 
     @Override
-    public void run(NSession session, NCmdLine cmdLine) {
+    public void run(NCmdLine cmdLine) {
         C options = createConfigInstance();
         NRef<Boolean> update = NRef.of(false);
+        NSession session = NSession.of().get();
         while (cmdLine.hasNext()) {
             if (fillOption(cmdLine, options)) {
                 //
             } else if (
-                    cmdLine.withNextFlag((v, a, s) -> {
+                    cmdLine.withNextFlag((v, a) -> {
                         update.set(v);
                     }, "--update")
             ) {
@@ -42,7 +43,7 @@ public class AddConfigCmd<C extends NdbConfig> extends NdbCmd<C> {
         }
 
         NPath file = getSharedConfigFolder().resolve(asFullName(options.getName()) + NdbUtils.SERVER_CONFIG_EXT);
-        NElements json = NElements.of(cmdLine.getSession()).setNtf(false).json();
+        NElements json = NElements.of().setNtf(false).json();
         if (file.exists()) {
             if (update.get()) {
                 C old = json.parse(file, support.getConfigClass());

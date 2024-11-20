@@ -57,11 +57,11 @@ public class WgetCommand extends NShellBuiltinDefault {
         Options options = context.getOptions();
         NSession session = context.getSession();
         if (cmdLine.next("-O", "--output-document").isPresent()) {
-            options.outputDocument = cmdLine.nextNonOption().get(session).asString().orNull();
+            options.outputDocument = cmdLine.nextNonOption().get().asString().orNull();
             return true;
         } else if (!cmdLine.isNextOption()) {
             while (cmdLine.hasNext()) {
-                options.files.add(cmdLine.next().flatMap(NLiteral::asString).get(session));
+                options.files.add(cmdLine.next().flatMap(NLiteral::asString).get());
             }
             return true;
         }
@@ -72,7 +72,7 @@ public class WgetCommand extends NShellBuiltinDefault {
     protected void main(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.files.isEmpty()) {
-            throw new NExecutionException(context.getSession(), NMsg.ofPlain("wget: Missing Files"), NExecutionException.ERROR_2);
+            throw new NExecutionException(NMsg.ofPlain("wget: Missing Files"), NExecutionException.ERROR_2);
         }
         for (String file : options.files) {
             download(file, options.outputDocument, context);
@@ -82,13 +82,13 @@ public class WgetCommand extends NShellBuiltinDefault {
     protected void download(String path, String output, NShellExecutionContext context) {
         String output2 = output;
         NSession session = context.getSession();
-        String urlName = NPath.of(path,session).getName();
+        String urlName = NPath.of(path).getName();
         if (!NBlankable.isBlank(output2)) {
             output2 = output2.replace("{}", urlName);
         }
-        NPath file = NPath.of(context.getAbsolutePath(NBlankable.isBlank(output2) ? urlName : output2),session);
-        NCp.of(session)
-                .from(NPath.of(path,session)).to(file).setSession(session)
+        NPath file = NPath.of(context.getAbsolutePath(NBlankable.isBlank(output2) ? urlName : output2));
+        NCp.of()
+                .from(NPath.of(path)).to(file)
                 .addOptions(NPathOption.LOG, NPathOption.TRACE).run();
     }
 

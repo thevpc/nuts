@@ -17,17 +17,17 @@ public class NDependencyArchFamilyFilter extends AbstractDependencyFilter {
 
     private Set<NArchFamily> archs = EnumSet.noneOf(NArchFamily.class);
 
-    public NDependencyArchFamilyFilter(NSession session) {
-        super(session, NFilterOp.CUSTOM);
+    public NDependencyArchFamilyFilter(NWorkspace workspace) {
+        super(workspace, NFilterOp.CUSTOM);
     }
 
-    private NDependencyArchFamilyFilter(NSession session, Collection<NArchFamily> os) {
-        super(session, NFilterOp.CUSTOM);
+    private NDependencyArchFamilyFilter(NWorkspace workspace, Collection<NArchFamily> os) {
+        super(workspace, NFilterOp.CUSTOM);
         this.archs = EnumSet.copyOf(os);
     }
 
-    public NDependencyArchFamilyFilter(NSession session, String os) {
-        super(session, NFilterOp.CUSTOM);
+    public NDependencyArchFamilyFilter(NWorkspace workspace, String os) {
+        super(workspace, NFilterOp.CUSTOM);
         this.archs = EnumSet.noneOf(NArchFamily.class);
         for (String e : StringTokenizerUtils.splitDefault( os)) {
             if (!e.isEmpty()) {
@@ -39,11 +39,11 @@ public class NDependencyArchFamilyFilter extends AbstractDependencyFilter {
     public NDependencyArchFamilyFilter add(Collection<NArchFamily> os) {
         EnumSet<NArchFamily> s2 = EnumSet.copyOf(this.archs);
         s2.addAll(os);
-        return new NDependencyArchFamilyFilter(getSession(), s2);
+        return new NDependencyArchFamilyFilter(workspace, s2);
     }
 
     @Override
-    public boolean acceptDependency(NId from, NDependency dependency, NSession session) {
+    public boolean acceptDependency(NId from, NDependency dependency) {
         List<String> current = dependency.getCondition().getArch();
         boolean empty = true;
         if (current != null) {
@@ -69,6 +69,6 @@ public class NDependencyArchFamilyFilter extends AbstractDependencyFilter {
 
     @Override
     public NDependencyFilter simplify() {
-        return archs.isEmpty() ? NDependencyFilters.of(getSession()).always() : this;
+        return archs.isEmpty() ? NDependencyFilters.of().always() : this;
     }
 }

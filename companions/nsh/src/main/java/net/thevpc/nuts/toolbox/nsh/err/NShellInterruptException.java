@@ -32,7 +32,6 @@
 package net.thevpc.nuts.toolbox.nsh.err;
 
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 
 /**
  * @author thevpc (taha.bensalah@gmail.com)
@@ -40,7 +39,7 @@ import net.thevpc.nuts.NSession;
  * Time: 17:53:11
  */
 public class NShellInterruptException extends NShellException {
-    public NShellInterruptException(NSession session) {
-        super(session, NMsg.ofPlain("user interruption"),100);
+    public NShellInterruptException() {
+        super(NMsg.ofPlain("user interruption"),100);
     }
 }

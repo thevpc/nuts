@@ -55,7 +55,7 @@ public class JpsCommand extends NShellBuiltinDefault {
     }
 
     public static String resolveJavaToolCommand(NSession session, String javaHome, String javaCommand) {
-        String exe = NEnvs.of(session).getOsFamily().equals(NOsFamily.WINDOWS) ? (javaCommand + ".exe") : javaCommand;
+        String exe = NEnvs.of().getOsFamily().equals(NOsFamily.WINDOWS) ? (javaCommand + ".exe") : javaCommand;
         if (javaHome == null) {
             javaHome = System.getProperty("java.home");
         }
@@ -104,7 +104,7 @@ public class JpsCommand extends NShellBuiltinDefault {
             //
         } else {
             if (options.host == null) {
-                options.host = cmdLine.next().get(session).toString();
+                options.host = cmdLine.next().get().toString();
                 return true;
             }
         }
@@ -116,7 +116,7 @@ public class JpsCommand extends NShellBuiltinDefault {
         Options options = context.getOptions();
         List<JpsRow> results = new ArrayList<>();
 
-        NExecCmd e = NExecCmd.of(context.getSession())
+        NExecCmd e = NExecCmd.of()
                 .system()
                 .addCommand(resolveJpsCommand(context.getSession()), "-l", "-v", "-m")
                 .grabAll()

@@ -46,11 +46,9 @@ import java.util.stream.Collectors;
 public class DerbyService {
 
     NSession session;
-    NLog LOG;
 
     public DerbyService(NSession session) {
         this.session = session;
-        LOG = NLog.of(getClass(), session);
     }
 
     public boolean isRunning() {
@@ -132,28 +130,31 @@ public class DerbyService {
         }
     }
 
+    private NLog LOG(){
+        return NLog.of(getClass());
+    }
     private Path download(String id, Path folder, boolean optional) {
-        final NId iid = NId.of(id).get(session);
+        final NId iid = NId.of(id).get();
 //        Path downloadBaseFolder = folder//.resolve(iid.getVersion().getValue());
         Path targetFile = folder.resolve(iid.getArtifactId() + ".jar");
         if (!Files.exists(targetFile)) {
-            NPath targetPath=NPath.of(targetFile,session);
-            NPath r = NFetchCmd.of(id,session).setFailFast(!optional).getResultPath();
+            NPath targetPath=NPath.of(targetFile);
+            NPath r = NFetchCmd.of(id).setFailFast(!optional).getResultPath();
             if (r != null) {
                 r.copyTo(targetPath);
-                LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.READ).log(NMsg.ofC("downloading %s to %s", id, targetFile));
+                LOG().with().level(Level.FINEST).verb(NLogVerb.READ).log(NMsg.ofC("downloading %s to %s", id, targetFile));
             }
         } else {
-            LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.READ).log(NMsg.ofC("using %s form %s", id, targetFile));
+            LOG().with().level(Level.FINEST).verb(NLogVerb.READ).log(NMsg.ofC("using %s form %s", id, targetFile));
         }
         return targetFile;
     }
 
     public Set<String> findVersions() {
-        NId java = NEnvs.of(session).getPlatform();
-        List<String> all = NSearchCmd.of(session.copy()).addId("org.apache.derby:derbynet").setDistinct(true)
+        NId java = NEnvs.of().getPlatform();
+        List<String> all = NSearchCmd.of().addId("org.apache.derby:derbynet").setDistinct(true)
                 .setIdFilter(
-                        (java.getVersion().compareTo("1.9") < 0) ? NVersionFilters.of(session).byValue("[,10.15.1.3[").get().to(NIdFilter.class) :
+                        (java.getVersion().compareTo("1.9") < 0) ? NVersionFilters.of().byValue("[,10.15.1.3[").get().to(NIdFilter.class) :
                                 null)
                 .getResultIds().stream().map(x -> x.getVersion().toString()).collect(Collectors.toList());
         TreeSet<String> lastFirst = new TreeSet<>(new Comparator<String>() {
@@ -171,10 +172,10 @@ public class DerbyService {
         List<String> executorOptions = new ArrayList<>();
         String currentDerbyVersion = options.getDerbyVersion();
         if (currentDerbyVersion == null) {
-            NId java = NEnvs.of(session).getPlatform();
-            NId best = NSearchCmd.of(session.copy()).addId("org.apache.derby:derbynet").setDistinct(true).setLatest(true)
+            NId java = NEnvs.of().getPlatform();
+            NId best = NSearchCmd.of().addId("org.apache.derby:derbynet").setDistinct(true).setLatest(true)
                     .setIdFilter(
-                            (java.getVersion().compareTo("1.9") < 0) ? NVersionFilters.of(session).byValue("[,10.15.1.3[").get().to(NIdFilter.class) :
+                            (java.getVersion().compareTo("1.9") < 0) ? NVersionFilters.of().byValue("[,10.15.1.3[").get().to(NIdFilter.class) :
                                     null)
                     .getResultIds().findSingleton().get();
             currentDerbyVersion = best.getVersion().toString();
@@ -185,14 +186,14 @@ public class DerbyService {
             derbyDataHome = session.getAppSharedVarFolder();
         } else {
             if (options.getDerbyDataHomeRoot() != null && options.getDerbyDataHomeRoot().trim().length() > 0) {
-                derbyDataHome = NPath.of(options.getDerbyDataHomeRoot(),session).toAbsolute(session.getAppSharedVarFolder());
+                derbyDataHome = NPath.of(options.getDerbyDataHomeRoot()).toAbsolute(session.getAppSharedVarFolder());
             } else {
                 derbyDataHome = session.getAppSharedVarFolder().resolve("derby-db");
             }
         }
         NPath derbyDataHomeRoot = derbyDataHome.getParent();
         derbyDataHome.mkdirs();
-        Path derbyBinHome = NLocations.of(session).getStoreLocation(session.getAppId(), NStoreType.BIN).resolve(currentDerbyVersion).toPath().get();
+        Path derbyBinHome = NLocations.of().getStoreLocation(session.getAppId(), NStoreType.BIN).resolve(currentDerbyVersion).toPath().get();
         Path derbyLibHome = derbyBinHome.resolve("lib");
         Path derby = download("org.apache.derby:derby#" + currentDerbyVersion, derbyLibHome, false);
         Path derbynet = download("org.apache.derby:derbynet#" + currentDerbyVersion, derbyLibHome, false);
@@ -206,7 +207,7 @@ public class DerbyService {
                         .replace("${{DB_PATH}}", derbyDataHomeRoot.toString());
                 Files.write(policy, permissions.getBytes());
             } catch (IOException ex) {
-                throw new NExecutionException(session, NMsg.ofC("unable to create %s",policy), NExecutionException.ERROR_1);
+                throw new NExecutionException(NMsg.ofC("unable to create %s",policy), NExecutionException.ERROR_1);
             }
         }
         //use named jar because derby does test upon jar names at runtime (what a shame !!!)
@@ -241,10 +242,10 @@ public class DerbyService {
         if (options.getExtraArg() != null) {
             command.add(options.getExtraArg());
         }
-        return NExecCmd.of(session)
+        return NExecCmd.of()
                 .addExecutorOptions(executorOptions)
                 .addCommand(command)
-                .setDirectory(NPath.of(derbyBinHome,session))
+                .setDirectory(NPath.of(derbyBinHome))
                 .failFast()
                 ;
     }

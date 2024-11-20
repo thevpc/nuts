@@ -21,22 +21,22 @@ public class RenameTableCmd<C extends NdbConfig> extends NdbCmd<C> {
     }
 
     @Override
-    public void run(NSession session, NCmdLine cmdLine) {
+    public void run(NCmdLine cmdLine) {
         NRef<AtName> name = NRef.ofNull(AtName.class);
         C otherOptions = createConfigInstance();
         ExtendedQuery eq = new ExtendedQuery(getName());
         NRef<String> table = new NRef<>();
         while (cmdLine.hasNext()) {
-            NArg arg = cmdLine.peek().get(session);
+            NArg arg = cmdLine.peek().get();
             switch (arg.key()) {
                 case "--config": {
-                    readConfigNameOption(cmdLine, session, name);
+                    readConfigNameOption(cmdLine, name);
                     break;
                 }
                 case "--entity":
                 case "--table":
                 case "--collection": {
-                    cmdLine.withNextEntry((v, a, s) -> table.set(v));
+                    cmdLine.withNextEntry((v, a) -> table.set(v));
                     break;
                 }
                 default: {
@@ -60,13 +60,13 @@ public class RenameTableCmd<C extends NdbConfig> extends NdbCmd<C> {
         if (NBlankable.isBlank(otherOptions.getDatabaseName())) {
             cmdLine.throwMissingArgument("--dbname");
         }
-        runRenameTable(eq, options, session);
+        runRenameTable(eq, options);
     }
 
 
 
-    protected void runRenameTable(ExtendedQuery eq, C options, NSession session) {
-        throw new NIllegalArgumentException(session, NMsg.ofPlain("invalid"));
+    protected void runRenameTable(ExtendedQuery eq, C options) {
+        throw new NIllegalArgumentException(NMsg.ofPlain("invalid"));
     }
 
 }

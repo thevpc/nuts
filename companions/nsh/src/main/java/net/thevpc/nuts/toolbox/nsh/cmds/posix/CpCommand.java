@@ -60,15 +60,15 @@ public class CpCommand extends NShellBuiltinDefault {
     protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        switch (cmdLine.peek().get(session).key()) {
+        switch (cmdLine.peek().get().key()) {
             case "--mkdir": {
-                cmdLine.withNextFlag((v, a, s) -> options.mkdir = v);
+                cmdLine.withNextFlag((v, a) -> options.mkdir = v);
                 return true;
             }
             case "-r":
             case "-R":
             case "--recursive": {
-                cmdLine.withNextFlag((v, a, s) -> options.recursive = v);
+                cmdLine.withNextFlag((v, a) -> options.recursive = v);
                 return true;
             }
         }
@@ -80,13 +80,13 @@ public class CpCommand extends NShellBuiltinDefault {
         Options options = context.getOptions();
         NSession session = context.getSession();
         for (String value : options.files) {
-            NAssert.requireNonBlank(value, "file path", session);
+            NAssert.requireNonBlank(value, "file path");
             options.xfiles.add(NPath.of((value.contains("://") ? value :
-                    NPath.of(value, session).toAbsolute(NLocations.of(session).getWorkspaceLocation()).toString()
-            ), session));
+                    NPath.of(value).toAbsolute(NLocations.of().getWorkspaceLocation()).toString()
+            )));
         }
         if (options.xfiles.size() < 2) {
-            throw new NExecutionException(session, NMsg.ofPlain("missing parameters"), NExecutionException.ERROR_2);
+            throw new NExecutionException(NMsg.ofPlain("missing parameters"), NExecutionException.ERROR_2);
         }
 
         options.sshlistener = new ShellHelper.WsSshListener(session);
@@ -97,7 +97,7 @@ public class CpCommand extends NShellBuiltinDefault {
 
     public void copy(NPath from, NPath to, Options o, NShellExecutionContext context) {
         NSession session = context.getSession();
-        NCp ccp = NCp.of(session)
+        NCp ccp = NCp.of()
                 .from(from)
                 .to(to)
                 .setRecursive(o.recursive)

@@ -65,11 +65,11 @@ public class UnzipCommand extends NShellBuiltinDefault {
             switch (mode) {
                 case "zip": {
                     if ((a = cmdLine.nextFlag("-l").orNull()) != null) {
-                        options.l = a.getBooleanValue().get(session);
+                        options.l = a.getBooleanValue().get();
                     } else if ((a = cmdLine.nextEntry("-d").orNull()) != null) {
-                        options.dir = a.getStringValue().get(session);
+                        options.dir = a.getStringValue().get();
                     } else if (!cmdLine.isNextOption()) {
-                        String s = cmdLine.next().get(session).toString();
+                        String s = cmdLine.next().get().toString();
                         if (options.zfiles.isEmpty() || s.toLowerCase().endsWith(".zip")) {
                             options.zfiles.add(s);
                         } else {
@@ -83,14 +83,14 @@ public class UnzipCommand extends NShellBuiltinDefault {
                 }
                 case "internFiles": {
                     if ((a = cmdLine.nextFlag("-l").orNull()) != null) {
-                        options.l = a.getBooleanValue().get(session);
+                        options.l = a.getBooleanValue().get();
                     } else if ((a = cmdLine.nextEntry("-d").orNull()) != null) {
-                        options.dir = a.getStringValue().get(session);
+                        options.dir = a.getStringValue().get();
                     } else if ((a = cmdLine.nextEntry("-x").orNull()) != null) {
-                        options.xFiles.add(a.getStringValue().get(session));
+                        options.xFiles.add(a.getStringValue().get());
                         mode = "xFiles";
                     } else if (!cmdLine.isNextOption()) {
-                        options.xFiles.add(cmdLine.next().get(session).toString());
+                        options.xFiles.add(cmdLine.next().get().toString());
                     } else {
                         cmdLine.throwUnexpectedArgument();
                     }
@@ -98,11 +98,11 @@ public class UnzipCommand extends NShellBuiltinDefault {
                 }
                 case "xFiles": {
                     if ((a = cmdLine.nextFlag("-l").orNull()) != null) {
-                        options.l = a.getBooleanValue().get(session);
+                        options.l = a.getBooleanValue().get();
                     } else if ((a = cmdLine.nextEntry("-d").orNull()) != null) {
-                        options.dir = a.getStringValue().get(session);
+                        options.dir = a.getStringValue().get();
                     } else if (!cmdLine.isNextOption()) {
-                        options.xFiles.add(cmdLine.next().get(session).toString());
+                        options.xFiles.add(cmdLine.next().get().toString());
                     } else {
                         cmdLine.throwUnexpectedArgument();
                     }
@@ -124,10 +124,10 @@ public class UnzipCommand extends NShellBuiltinDefault {
             cmdLine.throwMissingArgument();
         }
         for (String path : options.zfiles) {
-            NPath file = NPath.of(path, session).toAbsolute(context.getDirectory());
+            NPath file = NPath.of(path).toAbsolute(context.getDirectory());
             try {
                 if (options.l) {
-                    NUncompress.of(session)
+                    NUncompress.of()
                             .from(file)
                             .visit(new NUncompressVisitor() {
                                 @Override
@@ -147,14 +147,14 @@ public class UnzipCommand extends NShellBuiltinDefault {
                         dir = context.getDirectory();
                     }
                     dir = context.getAbsolutePath(dir);
-                    NUncompress.of(session)
+                    NUncompress.of()
                             .from(file)
-                            .to(NPath.of(dir, session))
+                            .to(NPath.of(dir))
                             .setSkipRoot(options.skipRoot)
                             .run();
                 }
             } catch (UncheckedIOException | NIOException ex) {
-                throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_1);
+                throw new NExecutionException(NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_1);
             }
         }
     }

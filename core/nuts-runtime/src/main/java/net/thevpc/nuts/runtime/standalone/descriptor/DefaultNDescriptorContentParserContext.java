@@ -51,7 +51,7 @@ public class DefaultNDescriptorContentParserContext implements NDescriptorConten
     private final List<String> parseOptions;
 
     public DefaultNDescriptorContentParserContext(NSession session, Path file, String fileExtension, String mimeType, List<String> parseOptions) {
-        this.file = NPath.of(file, session);
+        this.file = NPath.of(file);
         this.session = session;
         this.fileExtension = fileExtension;
         this.mimeType = mimeType;
@@ -73,14 +73,14 @@ public class DefaultNDescriptorContentParserContext implements NDescriptorConten
         if (bytes == null) {
             try {
                 try (InputStream is = file.getInputStream()) {
-                    bytes = CoreIOUtils.loadByteArray(is, 1024 * 1024 * 10, true, session);
+                    bytes = CoreIOUtils.loadByteArray(is, 1024 * 1024 * 10, true);
                 }
             } catch (IOException e) {
-                throw new NIOException(session, e);
+                throw new NIOException(e);
             }
         }
         return CoreIOUtils.createBytesStream(bytes, NMsg.ofC("%s", file), file.getContentType(),
-                file.getCharset(), file.getMetaData().getKind().orNull(), session);
+                file.getCharset(), file.getMetaData().getKind().orNull());
     }
 
     @Override

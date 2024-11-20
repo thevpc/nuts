@@ -41,36 +41,43 @@ import java.util.List;
  */
 @NComponentScope(NScopeType.WORKSPACE)
 public class MavenRepositoryFactoryComponent implements NRepositoryFactoryComponent {
+    private NWorkspace workspace;
+
+    public MavenRepositoryFactoryComponent(NWorkspace workspace) {
+        this.workspace = workspace;
+    }
 
     @Override
-    public List<NAddRepositoryOptions> getDefaultRepositories(NSession session) {
+    public List<NAddRepositoryOptions> getDefaultRepositories() {
+        NSession session = workspace.currentSession();
         return Arrays.asList(
                 NRepositorySelectorHelper.createRepositoryOptions(
-                        NRepositoryLocation.of("maven", NRepositoryDB.of(session), session).get(),
+                        NRepositoryLocation.of("maven", NRepositoryDB.of()).get(),
                         true, session)
         );
     }
 
     @Override
-    public NRepository create(NAddRepositoryOptions options, NSession session, NRepository parentRepository) {
+    public NRepository create(NAddRepositoryOptions options, NRepository parentRepository) {
+        NSession session = workspace.currentSession();
         if(MavenUtils.isMavenSettingsRepository(options)){
-            return new MavenSettingsRepository(options, session, parentRepository);
+            return new MavenSettingsRepository(options, workspace, parentRepository);
         }
         final NRepositoryConfig config = options.getConfig();
-        String type = NRepositoryUtils.getRepoType(config, session);
+        String type = NRepositoryUtils.getRepoType(config);
         if (NBlankable.isBlank(type)) {
             return null;
         }
-        NPath p = NPath.of(config.getLocation().getPath(), session);
+        NPath p = NPath.of(config.getLocation().getPath());
         String pr = NStringUtils.trim(p.getProtocol());
         switch (pr) {
             //non traversable!
             case "http":
             case "https": {
-                return new MavenRemoteXmlRepository(options, session, parentRepository);
+                return new MavenRemoteXmlRepository(options,workspace, parentRepository);
             }
         }
-        return new MavenFolderRepository(options, session, parentRepository);
+        return new MavenFolderRepository(options, workspace, parentRepository);
     }
 
     @Override
@@ -81,7 +88,7 @@ public class MavenRepositoryFactoryComponent implements NRepositoryFactoryCompon
         NSession session = criteria.getSession();
         NRepositoryConfig r = criteria.getConstraints(NRepositoryConfig.class);
         if (r != null) {
-            String type = NRepositoryUtils.getRepoType(r, session);
+            String type = NRepositoryUtils.getRepoType(r);
             if (NBlankable.isBlank(type)) {
                 return NConstants.Support.NO_SUPPORT;
             }

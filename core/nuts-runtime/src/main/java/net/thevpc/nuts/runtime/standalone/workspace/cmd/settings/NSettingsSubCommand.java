@@ -6,7 +6,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponent;
 
 /**
@@ -21,8 +20,7 @@ public interface NSettingsSubCommand extends NComponent {
      *
      * @param cmdLine  command line
      * @param autoSave auto save
-     * @param session application context
      * @return true if the sub command is supported and executed
      */
-    boolean exec(NCmdLine cmdLine, Boolean autoSave, NSession session);
+    boolean exec(NCmdLine cmdLine, Boolean autoSave);
 }

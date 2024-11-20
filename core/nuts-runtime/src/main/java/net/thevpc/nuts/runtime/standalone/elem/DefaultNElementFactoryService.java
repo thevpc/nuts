@@ -107,14 +107,15 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
     private final Map<Class, NElementMapper> coreMappers = new HashMap<>();
     private final ClassMap<NElementMapper> customMappers = new ClassMap<>(null, NElementMapper.class);
     private NReflectRepository typesRepository;
-    private final NSession session;
+    private final NWorkspace workspace;
     private final NElementMapper F_OBJ = new NElementMapperObjReflect(this);
 
     private final NElementMapper F_COLLECTION = new NElementMapperCollection(this);
     private final NElementMapper F_MAP = new NElementMapperMap(this);
 
-    public DefaultNElementFactoryService(NSession session) {
-        typesRepository = NWorkspaceUtils.of(session).getReflectRepository();
+    public DefaultNElementFactoryService(NWorkspace workspace) {
+        typesRepository = NWorkspaceUtils.of(workspace).getReflectRepository();
+        this.workspace=workspace;
         addDefaultMapper(Boolean.class, F_BOOLEANS);
         addDefaultMapper(boolean.class, F_BOOLEANS);
         addDefaultMapper(byte.class, F_NUMBERS);
@@ -189,7 +190,6 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
         setCoreMapper(NEnum.class, F_NUTS_ENUM);
         setCoreMapper(NRepositoryLocation.class, F_NUTS_REPO_LOCATION);
         setCoreMapper(NLiteral.class, new NElementMapperNLiteral());
-        this.session = session;
     }
 
     public final void addDefaultMapper(Class cls, NElementMapper instance) {
@@ -220,8 +220,9 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
             return F_NULL;
         }
         Class cls = ReflectUtils.getRawClass(type);
+        NSession session = workspace.currentSession();
         if(NSession.class.isAssignableFrom(cls)){
-            throw new NIllegalArgumentException(session, NMsg.ofC(
+            throw new NIllegalArgumentException(NMsg.ofC(
                     "%s is not serializable", type
             ));
         }
@@ -242,7 +243,7 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
         if (r != null) {
             return r;
         }
-        throw new NIllegalArgumentException(session, NMsg.ofC(
+        throw new NIllegalArgumentException(NMsg.ofC(
                 "unable to find serialization factory for %s", type
         ));
     }
@@ -309,7 +310,7 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
                     return null;
                 }
                 default:{
-                    throw new NUnsupportedEnumException(context.getSession(), o.type());
+                    throw new NUnsupportedEnumException(o.type());
                 }
             }
         }
@@ -401,11 +402,11 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
             for (int i = 0; i < length; i++) {
                 preloaded.add(context.objectToElement(Array.get(array, i), null));
             }
-            return new DefaultNArrayElement(preloaded,context.getSession());
+            return new DefaultNArrayElement(preloaded,context.getWorkspace());
         } else {
             return new DefaultNArrayElement(
                     Arrays.stream((Object[]) array).map(x -> context.objectToElement(x, null)).collect(Collectors.toList())
-                    ,context.getSession()
+                    ,context.getWorkspace()
             );
         }
     }

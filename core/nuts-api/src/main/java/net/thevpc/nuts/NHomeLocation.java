@@ -75,7 +75,7 @@ public class NHomeLocation implements NEnum {
             value = value.trim().toLowerCase();
         }
         if(value.isEmpty()){
-            return NOptional.ofEmpty(s -> NMsg.ofC("%s is empty", NHomeLocation.class.getSimpleName()));
+            return NOptional.ofEmpty(() -> NMsg.ofC("%s is empty", NHomeLocation.class.getSimpleName()));
         }
         String e = value.replace(':', '_').replace('-', '_');
         String finalValue = value;
@@ -87,17 +87,17 @@ public class NHomeLocation implements NEnum {
             NStoreType loc = s2.equals("system") ? null : NStoreType.parse(s2).orNull();
             if (osf == null) {
                 if (!s1.equals("system") && s1.length() > 0) {
-                    return NOptional.ofError(s -> NMsg.ofC(NHomeLocation.class.getSimpleName() + " invalid value : %s", finalValue));
+                    return NOptional.ofError(() -> NMsg.ofC(NHomeLocation.class.getSimpleName() + " invalid value : %s", finalValue));
                 }
             }
             if (loc == null) {
                 if (!s2.equals("system") && s2.length() > 0) {
-                    return NOptional.ofError(s -> NMsg.ofC(NHomeLocation.class.getSimpleName() + " invalid value : %s", finalValue));
+                    return NOptional.ofError(() -> NMsg.ofC(NHomeLocation.class.getSimpleName() + " invalid value : %s", finalValue));
                 }
             }
             return NOptional.of(of(osf, loc));
         }
-        return NOptional.ofError(s -> NMsg.ofC(NHomeLocation.class.getSimpleName() + " invalid value : %s", finalValue));
+        return NOptional.ofError(() -> NMsg.ofC(NHomeLocation.class.getSimpleName() + " invalid value : %s", finalValue));
     }
 
 

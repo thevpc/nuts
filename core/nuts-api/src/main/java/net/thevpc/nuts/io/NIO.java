@@ -27,17 +27,15 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Writer;
 
 public interface NIO extends NComponent {
-    static NIO of(NSession session) {
-        return NExtensions.of(session).createComponent(NIO.class).get();
+    static NIO of() {
+        return NExtensions.of().createComponent(NIO.class).get();
     }
 
     InputStream ofNullRawInputStream();

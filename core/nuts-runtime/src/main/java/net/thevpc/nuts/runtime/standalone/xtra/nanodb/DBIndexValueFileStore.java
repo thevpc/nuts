@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
 import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.NSession;
 
 import java.io.*;
 import java.util.PrimitiveIterator;
@@ -38,7 +37,7 @@ public class DBIndexValueFileStore implements DBIndexValueStore {
         return file;
     }
 
-    public void add(long position, NSession session) {
+    public void add(long position) {
         if (out == null) {
             try {
                 File pf = getFile().getParentFile();
@@ -48,24 +47,24 @@ public class DBIndexValueFileStore implements DBIndexValueStore {
                 out = new DataOutputStream(new FileOutputStream(getFile(), true));
                 out.writeUTF(NANODB_INDEX_STORE_0_8_1);
             } catch (IOException e) {
-                throw new NIOException(session, e);
+                throw new NIOException(e);
             }
         }
         try {
             out.writeLong(position);
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
         try {
             out.close();
             out = null;
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
     @Override
-    public void addAll(long[] positions, NSession session) {
+    public void addAll(long[] positions) {
         if (out == null) {
             try {
                 File pf = getFile().getParentFile();
@@ -82,18 +81,18 @@ public class DBIndexValueFileStore implements DBIndexValueStore {
                 out.writeLong(position);
             }
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
         try {
             out.close();
             out = null;
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
     @Override
-    public LongStream stream(NSession session) {
+    public LongStream stream() {
         final PrimitiveIterator.OfLong iterator = new PrimitiveIterator.OfLong() {
             final DataInputStream in;
             long nextValue;
@@ -104,7 +103,7 @@ public class DBIndexValueFileStore implements DBIndexValueStore {
                     in = new DataInputStream(new FileInputStream(getFile()));
                     header = in.readUTF();
                 } catch (IOException e) {
-                    throw new NIOException(session, e);
+                    throw new NIOException(e);
                 }
             }
 
@@ -118,7 +117,7 @@ public class DBIndexValueFileStore implements DBIndexValueStore {
                 } catch (EOFException ex) {
                     return false;
                 } catch (IOException ex) {
-                    throw new NIOException(session, ex);
+                    throw new NIOException(ex);
                 }
                 return true;
             }
@@ -139,7 +138,7 @@ public class DBIndexValueFileStore implements DBIndexValueStore {
     }
 
     @Override
-    public void flush(NSession session) {
+    public void flush() {
 
     }
 }

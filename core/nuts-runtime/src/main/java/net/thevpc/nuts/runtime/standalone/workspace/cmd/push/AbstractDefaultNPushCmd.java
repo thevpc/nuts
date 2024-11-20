@@ -47,8 +47,8 @@ public abstract class AbstractDefaultNPushCmd extends NWorkspaceCmdBase<NPushCmd
     protected List<NId> lockedIds;
     protected String repository;
 
-    public AbstractDefaultNPushCmd(NSession session) {
-        super(session, "push");
+    public AbstractDefaultNPushCmd(NWorkspace workspace) {
+        super(workspace, "push");
     }
 
     @Override
@@ -58,23 +58,21 @@ public abstract class AbstractDefaultNPushCmd extends NWorkspaceCmdBase<NPushCmd
 
     @Override
     public NPushCmd addId(String id) {
-        checkSession();
-        NSession session = getSession();
-        return addId(id == null ? null : NId.of(id).get(session));
+        NSession session=getWorkspace().currentSession();
+        return addId(id == null ? null : NId.of(id).get());
     }
 
     @Override
     public NPushCmd addLockedId(String id) {
-        checkSession();
-        NSession session = getSession();
-        return addLockedId(id == null ? null : NId.of(id).get(session));
+        NSession session=getWorkspace().currentSession();
+        return addLockedId(id == null ? null : NId.of(id).get());
     }
 
     @Override
     public NPushCmd addId(NId id) {
         if (id == null) {
-            checkSession();
-            throw new NNotFoundException(getSession(), id);
+            NSession session=getWorkspace().currentSession();
+            throw new NNotFoundException(id);
         } else {
             ids.add(id);
         }
@@ -92,9 +90,8 @@ public abstract class AbstractDefaultNPushCmd extends NWorkspaceCmdBase<NPushCmd
     @Override
     public NPushCmd removeId(String id) {
         if (id != null) {
-            checkSession();
-            NSession session = getSession();
-            ids.remove(NId.of(id).get(session));
+            NSession session=getWorkspace().currentSession();
+            ids.remove(NId.of(id).get());
         }
         return this;
     }
@@ -111,11 +108,10 @@ public abstract class AbstractDefaultNPushCmd extends NWorkspaceCmdBase<NPushCmd
 
     @Override
     public NPushCmd removeLockedId(String id) {
-        checkSession();
-        NSession session = getSession();
+        NSession session=getWorkspace().currentSession();
         if (id != null) {
             if (lockedIds != null) {
-                lockedIds.remove(NId.of(id).get(session));
+                lockedIds.remove(NId.of(id).get());
             }
         }
         return this;
@@ -124,8 +120,8 @@ public abstract class AbstractDefaultNPushCmd extends NWorkspaceCmdBase<NPushCmd
     @Override
     public NPushCmd addLockedId(NId id) {
         if (id == null) {
-            checkSession();
-            throw new NNotFoundException(getSession(), id);
+            NSession session=getWorkspace().currentSession();
+            throw new NNotFoundException(id);
         } else {
             if (lockedIds == null) {
                 lockedIds = new ArrayList<>();
@@ -262,19 +258,20 @@ public abstract class AbstractDefaultNPushCmd extends NWorkspaceCmdBase<NPushCmd
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NArg a = cmdLine.peek().get(session);
+        NSession session=getWorkspace().currentSession();
+        NArg a = cmdLine.peek().get();
         if (a == null) {
             return false;
         }
         switch (a.key()) {
             case "-o":
             case "--offline": {
-                cmdLine.withNextFlag((v, r, s) -> setOffline(v));
+                cmdLine.withNextFlag((v, r) -> setOffline(v));
                 return true;
             }
             case "-x":
             case "--freeze": {
-                cmdLine.withNextEntry((v, r, s) -> {
+                cmdLine.withNextEntry((v, r) -> {
                     for (String id : v.split(",")) {
                         addLockedId(id);
                     }
@@ -284,12 +281,12 @@ public abstract class AbstractDefaultNPushCmd extends NWorkspaceCmdBase<NPushCmd
             case "-r":
             case "-repository":
             case "--from": {
-                cmdLine.withNextEntry((v, r, s) -> setRepository(v));
+                cmdLine.withNextEntry((v, r) -> setRepository(v));
                 return true;
             }
             case "-g":
             case "--args": {
-                cmdLine.withNextTrueFlag((v, r, s) -> {
+                cmdLine.withNextTrueFlag((v, r) -> {
                     this.addArgs(cmdLine.toStringArray());
                     cmdLine.skipAll();
                 });
@@ -303,7 +300,7 @@ public abstract class AbstractDefaultNPushCmd extends NWorkspaceCmdBase<NPushCmd
                     cmdLine.throwUnexpectedArgument();
                 } else {
                     cmdLine.skip();
-                    addId(a.asString().get(session));
+                    addId(a.asString().get());
                     return true;
                 }
             }

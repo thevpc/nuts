@@ -7,11 +7,9 @@ import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamSystem;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.NTerminalCmd;
 import net.thevpc.nuts.text.NTextStyles;
-import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.InputStream;
@@ -24,16 +22,12 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
     private final NPrintStream out;
     private final NPrintStream err;
     private final InputStream in;
-    private final NWorkspace workspace;
-    private final NSession session;
-    private NLog LOG;
     private NCmdLineHistory history;
     private String commandHighlighter;
     private NCmdLineAutoCompleteResolver commandAutoCompleteResolver;
 
     public DefaultNSystemTerminalBaseBoot(DefaultNBootModel bootModel) {
-        this.session = bootModel.bootSession();
-        this.workspace = session.getWorkspace();
+        super(bootModel.getWorkspace());
         NWorkspaceOptions bo = bootModel.getBootUserOptions();
         NWorkspaceTerminalOptions bootStdFd = new NWorkspaceTerminalOptions(
                 bo.getStdin().orElse(System.in),
@@ -58,32 +52,27 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
             terminalMode = NTerminalMode.FORMATTED;
         }
         this.out = new NPrintStreamSystem(bootStdFd.getOut(), null, null, bootStdFdAnsi,
-                bootModel.getBootSession(), this).setTerminalMode(terminalMode);
+                bootModel.getWorkspace(), this).setTerminalMode(terminalMode);
         this.err = new NPrintStreamSystem(bootStdFd.getErr(), null, null, bootStdFdAnsi,
-                bootModel.getBootSession(), this).setTerminalMode(terminalMode);
+                bootModel.getWorkspace(), this).setTerminalMode(terminalMode);
         this.in = bootStdFd.getIn();
         this.scanner = new Scanner(this.in);
     }
 
 
-    private NLog _LOG() {
-        if (LOG == null && session != null) {
-            LOG = NLog.of(NSystemTerminalBase.class, session);
-        }
-        return LOG;
-    }
 
     @Override
     public int getSupportLevel(NSupportLevelContext criteria) {
         return NConstants.Support.DEFAULT_SUPPORT;
     }
 
-    public String readLine(NPrintStream out, NMsg message, NSession session) {
+    public String readLine(NPrintStream out, NMsg message) {
         if (out == null) {
             out = getOut();
         }
         if (out == null) {
-            out = NIO.of(session).stdout();
+            NSession session = getWorkspace().currentSession();
+            out = NIO.of().stdout();
         }
         if (message != null) {
             out.print(message);
@@ -93,12 +82,13 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public char[] readPassword(NPrintStream out, NMsg message, NSession session) {
+    public char[] readPassword(NPrintStream out, NMsg message) {
         if (out == null) {
             out = getOut();
         }
         if (out == null) {
-            out = NIO.of(session).stdout();
+            NSession session = getWorkspace().currentSession();
+            out = NIO.of().stdout();
         }
         if (message != null) {
             out.print(message);
@@ -162,25 +152,23 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
 
 
     @Override
-    public Object run(NTerminalCmd command, NPrintStream printStream, NSession session) {
+    public Object run(NTerminalCmd command, NPrintStream printStream) {
         return null;
     }
 
     @Override
-    public Cursor getTerminalCursor(NSession session) {
-        NSessionUtils.checkSession(session.getWorkspace(), session);
-        return (Cursor) run(NTerminalCmd.GET_CURSOR, getOut(), session);
+    public Cursor getTerminalCursor() {
+        return (Cursor) run(NTerminalCmd.GET_CURSOR, getOut());
     }
 
     @Override
-    public Size getTerminalSize(NSession session) {
-        NSessionUtils.checkSession(session.getWorkspace(), session);
-        return (Size) run(NTerminalCmd.GET_SIZE, getOut(), session);
+    public Size getTerminalSize() {
+        return (Size) run(NTerminalCmd.GET_SIZE, getOut());
     }
 
     @Override
-    public void setStyles(NTextStyles styles, NPrintStream printStream, NSession session) {
-        String s = NAnsiTermHelper.of(session).styled(styles, session);
+    public void setStyles(NTextStyles styles, NPrintStream printStream) {
+        String s = NAnsiTermHelper.of(getWorkspace()).styled(styles);
         if (s != null) {
             //try {
                 byte[] bytes = s.getBytes();

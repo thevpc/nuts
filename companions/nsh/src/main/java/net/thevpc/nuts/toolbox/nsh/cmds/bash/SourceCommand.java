@@ -53,7 +53,7 @@ public class SourceCommand extends NShellBuiltinDefault {
     protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        final NArg a = cmdLine.peek().get(session);
+        final NArg a = cmdLine.peek().get();
         if (!a.isOption()) {
             options.args.addAll(Arrays.asList(cmdLine.toStringArray()));
             cmdLine.skipAll();
@@ -71,10 +71,10 @@ public class SourceCommand extends NShellBuiltinDefault {
             throwExecutionException("missing command", 1, session);
         }
         final String[] paths = context.vars().get("PATH", "").split(":|;");
-        NPath file = NPath.of(options.args.remove(0), session);
+        NPath file = NPath.of(options.args.remove(0));
         if (file.isName()) {
             for (String path : paths) {
-                NPath basePathFolder = NPath.of(path, session);
+                NPath basePathFolder = NPath.of(path);
                 if (basePathFolder.resolve(file).isRegularFile()) {
                     file = basePathFolder.resolve(file);
                     break;

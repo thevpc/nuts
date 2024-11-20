@@ -49,7 +49,7 @@ public class DefaultNAskFormat<T> implements NAskFormat<T> {
                 return null;
             }
             default: {
-                throw new NUnsupportedArgumentException(session, NMsg.ofC("unsupported type %s", type.getName()));
+                throw new NUnsupportedArgumentException(NMsg.ofC("unsupported type %s", type.getName()));
             }
         }
     }

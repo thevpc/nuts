@@ -52,12 +52,12 @@ public class RepositoryNonOption extends DefaultNonOption {
         NRepository repository=context.get(NRepository.class);
         if(repository!=null){
             if (repository.config().isSupportedMirroring()) {
-                for (NRepository repo : repository.config().setSession(context.getSession()).getMirrors()) {
+                for (NRepository repo : repository.config().getMirrors()) {
                     all.add(new DefaultNArgCandidate(repo.getName()));
                 }
             }
         }else{
-            for (NRepository repo : NRepositories.of(context.getSession()).getRepositories()) {
+            for (NRepository repo : NRepositories.of().getRepositories()) {
                 all.add(new DefaultNArgCandidate(repo.getName()));
             }
 

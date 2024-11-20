@@ -37,7 +37,7 @@ public class Test03_CreateLayoutTest {
                 )
         );
         for (NStoreType value : NStoreType.values()) {
-            sessionOne.out().println(NMsg.ofC("%s %s", value, NLocations.of(sessionOne).getStoreLocation(value)));
+            sessionOne.out().println(NMsg.ofC("%s %s", value, NLocations.of().getStoreLocation(value)));
         }
 
         NSession sessionAgain = TestUtils.openExistingTestWorkspace(
@@ -51,8 +51,8 @@ public class Test03_CreateLayoutTest {
 
         for (NStoreType value : NStoreType.values()) {
             Assertions.assertEquals(
-                    NLocations.of(sessionOne).getStoreLocation(value),
-                    NLocations.of(sessionAgain).getStoreLocation(value)
+                    NLocations.of().getStoreLocation(value),
+                    NLocations.of().getStoreLocation(value)
             );
         }
     }
@@ -93,30 +93,30 @@ public class Test03_CreateLayoutTest {
         if (NDI_COMPANIONS > 0) {
             NId nshId = null;
             try {
-                nshId = NSearchCmd.of(session).setInstallStatus(NInstallStatusFilters.of(session).byInstalled(true)).addId("nsh")
+                nshId = NSearchCmd.of().setInstallStatus(NInstallStatusFilters.of().byInstalled(true)).addId("nsh")
                         .setDistinct(true).getResultIds()
                         .findSingleton().get();
             } catch (Exception ex) {
-                nshId = NSearchCmd.of(session).setInstallStatus(NInstallStatusFilters.of(session).byInstalled(true)).addId("nsh")
+                nshId = NSearchCmd.of().setInstallStatus(NInstallStatusFilters.of().byInstalled(true)).addId("nsh")
                         .setDistinct(true).getResultIds()
                         .findSingleton().get();
             }
             Assertions.assertTrue(nshId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
         }
-        NPath c = NLocations.of(session).getStoreLocation(NStoreType.CONF);
+        NPath c = NLocations.of().getStoreLocation(NStoreType.CONF);
         TestUtils.println(c);
         File base = session.getWorkspace().getLocation().toFile().get();
         TestUtils.println(new File(base, "config").getPath());
         for (NStoreType value : NStoreType.values()) {
-            session.out().println(NMsg.ofC("%s %s", value, NLocations.of(session).getStoreLocation(value)));
+            session.out().println(NMsg.ofC("%s %s", value, NLocations.of().getStoreLocation(value)));
         }
         Assertions.assertEquals(
-                NPath.of(base, session).resolve("bin"),
-                NLocations.of(session).getStoreLocation(NStoreType.BIN)
+                NPath.of(base).resolve("bin"),
+                NLocations.of().getStoreLocation(NStoreType.BIN)
         );
         Assertions.assertEquals(
-                NPath.of(base, session).resolve("cache"),
-                NLocations.of(session).getStoreLocation(NStoreType.CACHE)
+                NPath.of(base).resolve("cache"),
+                NLocations.of().getStoreLocation(NStoreType.CACHE)
         );
     }
 
@@ -142,41 +142,41 @@ public class Test03_CreateLayoutTest {
         NSession w = TestUtils.runExistingTestWorkspace("--system-conf-home", new File(base, "system.conf.ignored").getPath(),
                 "info");
         TestUtils.println("==========================");
-        NInfoCmd.of(w).println();
+        NInfoCmd.of().println();
         TestUtils.println("==========================");
         TestUtils.println(new File(base, "system.bin").getPath());
-        NLocations locations = NLocations.of(w);
+        NLocations locations = NLocations.of();
         TestUtils.println(locations.getStoreLocation(NStoreType.BIN));
         Assertions.assertEquals(
-                NPath.of(new File(base, "system.bin"), w),
+                NPath.of(new File(base, "system.bin")),
                 locations.getStoreLocation(NStoreType.BIN)
         );
         Assertions.assertEquals(
-                NPath.of(new File(base, "system.conf"), w),
+                NPath.of(new File(base, "system.conf")),
                 locations.getStoreLocation(NStoreType.CONF)
         );
         Assertions.assertEquals(
-                NPath.of(new File(base, "system.var"), w),
+                NPath.of(new File(base, "system.var")),
                 locations.getStoreLocation(NStoreType.VAR)
         );
         Assertions.assertEquals(
-                NPath.of(new File(base, "system.log"), w),
+                NPath.of(new File(base, "system.log")),
                 locations.getStoreLocation(NStoreType.LOG)
         );
         Assertions.assertEquals(
-                NPath.of(new File(base, "system.temp"), w),
+                NPath.of(new File(base, "system.temp")),
                 locations.getStoreLocation(NStoreType.TEMP)
         );
         Assertions.assertEquals(
-                NPath.of(new File(base, "system.cache"), w),
+                NPath.of(new File(base, "system.cache")),
                 locations.getStoreLocation(NStoreType.CACHE)
         );
         Assertions.assertEquals(
-                NPath.of(new File(base, "system.lib"), w),
+                NPath.of(new File(base, "system.lib")),
                 locations.getStoreLocation(NStoreType.LIB)
         );
         Assertions.assertEquals(
-                NPath.of(new File(base, "system.run"), w),
+                NPath.of(new File(base, "system.run")),
                 locations.getStoreLocation(NStoreType.RUN)
         );
 
@@ -185,35 +185,35 @@ public class Test03_CreateLayoutTest {
                 "info");
         TestUtils.println(locations.getStoreLocation(NStoreType.BIN));
         Assertions.assertEquals(
-                NPath.of(new File(base, "system.bin"), w),
+                NPath.of(new File(base, "system.bin")),
                 locations.getStoreLocation(NStoreType.BIN)
         );
         Assertions.assertEquals(
-                NPath.of(new File(base, "system.conf"), w),
+                NPath.of(new File(base, "system.conf")),
                 locations.getStoreLocation(NStoreType.CONF)
         );
         Assertions.assertEquals(
-                NPath.of(new File(base, "system.var"), w),
+                NPath.of(new File(base, "system.var")),
                 locations.getStoreLocation(NStoreType.VAR)
         );
         Assertions.assertEquals(
-                NPath.of(new File(base, "system.log"), w),
+                NPath.of(new File(base, "system.log")),
                 locations.getStoreLocation(NStoreType.LOG)
         );
         Assertions.assertEquals(
-                NPath.of(new File(base, "system.temp"), w),
+                NPath.of(new File(base, "system.temp")),
                 locations.getStoreLocation(NStoreType.TEMP)
         );
         Assertions.assertEquals(
-                NPath.of(new File(base, "system.cache"), w),
+                NPath.of(new File(base, "system.cache")),
                 locations.getStoreLocation(NStoreType.CACHE)
         );
         Assertions.assertEquals(
-                NPath.of(new File(base, "system.lib"), w),
+                NPath.of(new File(base, "system.lib")),
                 locations.getStoreLocation(NStoreType.LIB)
         );
         Assertions.assertEquals(
-                NPath.of(new File(base, "system.run"), w),
+                NPath.of(new File(base, "system.run")),
                 locations.getStoreLocation(NStoreType.RUN)
         );
     }

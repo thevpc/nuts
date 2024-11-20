@@ -27,7 +27,6 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NSessionProvider;
 import net.thevpc.nuts.util.NStream;
 import net.thevpc.nuts.spi.NComponent;
 
@@ -38,9 +37,9 @@ import net.thevpc.nuts.spi.NComponent;
  * @app.category Toolkit
  * @since 0.5.8
  */
-public interface NPs extends NComponent, NSessionProvider {
-    static NPs of(NSession session) {
-        return NExtensions.of(session).createComponent(NPs.class).get();
+public interface NPs extends NComponent {
+    static NPs of() {
+        return NExtensions.of().createComponent(NPs.class).get();
     }
 
     /**
@@ -74,14 +73,6 @@ public interface NPs extends NComponent, NSessionProvider {
      * @return list all processes of type {@link #getType()}
      */
     NStream<NPsInfo> getResultList();
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    NPs setSession(NSession session);
 
     /**
      * return true if fail fast.

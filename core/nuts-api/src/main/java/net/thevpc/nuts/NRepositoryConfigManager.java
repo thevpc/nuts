@@ -37,7 +37,7 @@ import java.util.Map;
  * @app.category Config
  * @since 0.5.4
  */
-public interface NRepositoryConfigManager extends NSessionProvider {
+public interface NRepositoryConfigManager{
 
     /**
      * global name is independent from workspace
@@ -134,8 +134,6 @@ public interface NRepositoryConfigManager extends NSessionProvider {
     NRepositoryConfigManager removeMirror(String repositoryId);
 
     NStoreStrategy getStoreStrategy();
-
-    NRepositoryConfigManager setSession(NSession session);
 
     Map<String, String> getConfigMap(boolean inherit);
 

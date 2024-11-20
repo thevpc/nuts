@@ -52,10 +52,10 @@ public class UnaliasCommand extends NShellBuiltinDefault {
     protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        NArg aa = cmdLine.peek().get(session);
+        NArg aa = cmdLine.peek().get();
         if (aa.isOption()) {
             if (aa.key().equals("-a")) {
-                cmdLine.withNextFlag((v, a, s) -> options.all= v);
+                cmdLine.withNextFlag((v, a) -> options.all= v);
                 return true;
             }
         } else {

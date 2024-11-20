@@ -55,47 +55,47 @@ public class DateCommand extends NShellBuiltinDefault {
     protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        NArg a = cmdLine.peek().get(session);
+        NArg a = cmdLine.peek().get();
         switch(a.key()) {
             case "-d":
             case "--date": {
                 if (context.getShell().getOptions().isNsh()) {
-                    a = cmdLine.nextEntry().get(session);
+                    a = cmdLine.nextEntry().get();
                     if (a.isActive()) {
-                        options.date = a.getStringValue().get(session);
+                        options.date = a.getStringValue().get();
                     }
                 } else {
-                    a = cmdLine.next().get(session);
-                    options.date = a.getStringValue().get(session);
+                    a = cmdLine.next().get();
+                    options.date = a.getStringValue().get();
                 }
                 return true;
             }
             case "-f":
             case "--file": {
                 if (context.getShell().getOptions().isNsh()) {
-                    a = cmdLine.nextEntry().get(session);
+                    a = cmdLine.nextEntry().get();
                     if (a.isActive()) {
-                        options.file = a.getStringValue().get(session);
+                        options.file = a.getStringValue().get();
                     }
                 } else {
-                    a = cmdLine.next().get(session);
-                    options.file = a.getStringValue().get(session);
+                    a = cmdLine.next().get();
+                    options.file = a.getStringValue().get();
                 }
                 return true;
             }
             case "--rfc-3339": {
                 if (context.getShell().getOptions().isNsh()) {
-                    a = cmdLine.next().get(session);
+                    a = cmdLine.next().get();
                     if (a.isActive()) {
-                        String s = a.getStringValue().get(session);
+                        String s = a.getStringValue().get();
                         if (s == null) {
                             s = "";
                         }
                         options.rfc3339 = s;
                     }
                 } else {
-                    a = cmdLine.next().get(session);
-                    String s = a.getStringValue().get(session);
+                    a = cmdLine.next().get();
+                    String s = a.getStringValue().get();
                     if (s == null) {
                         s = "";
                     }
@@ -105,17 +105,17 @@ public class DateCommand extends NShellBuiltinDefault {
             }
             case "--iso-8601": {
                 if (context.getShell().getOptions().isNsh()) {
-                    a = cmdLine.next().get(session);
+                    a = cmdLine.next().get();
                     if (a.isActive()) {
-                        String s = a.getStringValue().get(session);
+                        String s = a.getStringValue().get();
                         if (s == null) {
                             s = "";
                         }
                         options.rfc8601 = s;
                     }
                 } else {
-                    a = cmdLine.next().get(session);
-                    String s = a.getStringValue().get(session);
+                    a = cmdLine.next().get();
+                    String s = a.getStringValue().get();
                     if (s == null) {
                         s = "";
                     }
@@ -126,17 +126,17 @@ public class DateCommand extends NShellBuiltinDefault {
             case "-s":
             case "--set": {
                 if (context.getShell().getOptions().isNsh()) {
-                    a = cmdLine.next().get(session);
+                    a = cmdLine.next().get();
                     if (a.isActive()) {
-                        String s = a.getStringValue().get(session);
+                        String s = a.getStringValue().get();
                         if (s == null) {
                             s = "";
                         }
                         options.setdate = s;
                     }
                 } else {
-                    a = cmdLine.next().get(session);
-                    String s = a.getStringValue().get(session);
+                    a = cmdLine.next().get();
+                    String s = a.getStringValue().get();
                     if (s == null) {
                         s = "";
                     }
@@ -154,24 +154,24 @@ public class DateCommand extends NShellBuiltinDefault {
             case "-Iseconds":
             case "-Ins": {
                 if (context.getShell().getOptions().isNsh()) {
-                    a = cmdLine.next().get(session);
+                    a = cmdLine.next().get();
                     if (a.isActive()) {
-                        options.rfc8601 = a.asString().get(session).substring(2);
+                        options.rfc8601 = a.asString().get().substring(2);
                     }
                 } else {
-                    a = cmdLine.next().get(session);
-                    options.rfc8601 = a.asString().get(session).substring(2);
+                    a = cmdLine.next().get();
+                    options.rfc8601 = a.asString().get().substring(2);
                 }
                 return true;
             }
             case "--debug": {
                 if (context.getShell().getOptions().isNsh()) {
-                    a = cmdLine.nextFlag().get(session);
+                    a = cmdLine.nextFlag().get();
                     if (a.isActive()) {
-                        options.debug = a.getBooleanValue().get(session);
+                        options.debug = a.getBooleanValue().get();
                     }
                 } else {
-                    a = cmdLine.next().get(session);
+                    a = cmdLine.next().get();
                     options.debug = true;
                 }
                 return true;
@@ -180,12 +180,12 @@ public class DateCommand extends NShellBuiltinDefault {
             case "--utc":
             case "--universal": {
                 if (context.getShell().getOptions().isNsh()) {
-                    a = cmdLine.nextFlag().get(session);
+                    a = cmdLine.nextFlag().get();
                     if (a.isActive()) {
-                        options.utc = a.getBooleanValue().get(session);
+                        options.utc = a.getBooleanValue().get();
                     }
                 } else {
-                    a = cmdLine.next().get(session);
+                    a = cmdLine.next().get();
                     options.utc = true;
                 }
                 return true;
@@ -193,12 +193,12 @@ public class DateCommand extends NShellBuiltinDefault {
             case "-R":
             case "--rfc-email": {
                 if (context.getShell().getOptions().isNsh()) {
-                    a = cmdLine.nextFlag().get(session);
+                    a = cmdLine.nextFlag().get();
                     if (a.isActive()) {
-                        options.rfcMail = a.getBooleanValue().get(session);
+                        options.rfcMail = a.getBooleanValue().get();
                     }
                 } else {
-                    a = cmdLine.next().get(session);
+                    a = cmdLine.next().get();
                     options.rfcMail = true;
                 }
                 return true;

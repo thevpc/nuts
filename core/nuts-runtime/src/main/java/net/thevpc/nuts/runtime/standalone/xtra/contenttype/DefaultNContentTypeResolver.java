@@ -85,13 +85,13 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
                     //ignore
                 }
                 if (contentType == null || "text/plain".equals(contentType)) {
-                    String e = NPath.of(Paths.get(name), session).getLastExtension();
+                    String e = NPath.of(Paths.get(name)).getLastExtension();
                     if (e != null && e.equalsIgnoreCase("ntf")) {
                         return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT + 10, "text/x-nuts-text-format");
                     }
                 }
                 if (contentType == null || "text/plain".equals(contentType)) {
-                    String e = NPath.of(Paths.get(name), session).getLastExtension();
+                    String e = NPath.of(Paths.get(name)).getLastExtension();
                     if (e != null && e.equalsIgnoreCase("nuts")) {
                         return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT + 10, "application/json");
                     }
@@ -102,7 +102,7 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
             }
         }
 
-        return NCallableSupport.invalid(s -> NMsg.ofInvalidValue("content-type"));
+        return NCallableSupport.invalid(() -> NMsg.ofInvalidValue("content-type"));
     }
 
     private String probeFile(Path file) {
@@ -135,7 +135,7 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
                             }
                         }
                         return NVisitResult.CONTINUE;
-                    }, session);
+                    });
                     if (isWar.get()) {
                         return "application/x-webarchive";
                     }
@@ -173,7 +173,7 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
         if (contentType != null) {
             return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, contentType);
         }
-        return NCallableSupport.invalid(s ->NMsg.ofInvalidValue("content-type"));
+        return NCallableSupport.invalid(() ->NMsg.ofInvalidValue("content-type"));
     }
 
     @Override
@@ -197,7 +197,7 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
         synchronized (session) {
             return session.getOrComputeProperty(
                     DefaultNContentTypeResolverModel.class.getName(), NScopeType.WORKSPACE,
-                    s -> new DefaultNContentTypeResolverModel()
+                    () -> new DefaultNContentTypeResolverModel()
             );
         }
     }

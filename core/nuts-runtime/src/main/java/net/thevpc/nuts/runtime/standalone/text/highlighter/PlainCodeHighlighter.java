@@ -7,10 +7,10 @@ import net.thevpc.nuts.text.NTexts;
 
 public class PlainCodeHighlighter implements NCodeHighlighter {
 
-    NWorkspace ws;
+    NWorkspace workspace;
 
-    public PlainCodeHighlighter(NWorkspace ws) {
-        this.ws = ws;
+    public PlainCodeHighlighter(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
     @Override
@@ -19,12 +19,12 @@ public class PlainCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText tokenToText(String text, String nodeType, NTexts txt, NSession session) {
+    public NText tokenToText(String text, String nodeType, NTexts txt) {
         return txt.ofPlain(text);
     }
 
     @Override
-    public NText stringToText(String text, NTexts txt, NSession session) {
+    public NText stringToText(String text, NTexts txt) {
         return txt.ofPlain(text);
     }
 

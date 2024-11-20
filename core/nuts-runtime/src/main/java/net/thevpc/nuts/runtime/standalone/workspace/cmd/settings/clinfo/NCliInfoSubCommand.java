@@ -13,33 +13,38 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettin
  * @author thevpc
  */
 public class NCliInfoSubCommand extends AbstractNSettingsSubCommand {
+    public NCliInfoSubCommand(NWorkspace workspace) {
+        super(workspace);
+    }
 
     @Override
-    public boolean exec(NCmdLine cmdLine, Boolean autoSave, NSession session) {
+    public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
         if (cmdLine.next("cli-id").isPresent()) {
             if(cmdLine.isEmpty()){
-                doLoadCliId(session);
+                doLoadCliId();
             }else{
                 String value = cmdLine.nextNonOption().get().toString();
-                doSaveCliId(session, value);
+                doSaveCliId(value);
             }
         }else if (cmdLine.next("get cli-id").isPresent()) {
-            doLoadCliId(session);
+            doLoadCliId();
             return true;
         }else if (cmdLine.next("set cli-id").isPresent()) {
             String value = cmdLine.nextNonOption().get().toString();
-            doSaveCliId(session, value);
+            doSaveCliId(value);
             return true;
         }
         return false;
     }
 
-    private void doSaveCliId(NSession session, String value) {
-        session.out().println(NCliInfo.saveCliId(value, session));
+    private void doSaveCliId(String value) {
+        NSession session=workspace.currentSession();
+        session.out().println(NCliInfo.saveCliId(value));
         session.out().println("cli-id updated.");
     }
 
-    private void doLoadCliId(NSession session) {
-        session.out().println(NCliInfo.loadCliId(session));
+    private void doLoadCliId() {
+        NSession session=workspace.currentSession();
+        session.out().println(NCliInfo.loadCliId());
     }
 }

@@ -41,16 +41,15 @@ import java.util.List;
  *
  * @author thevpc
  */
-@NComponentScope(NScopeType.SESSION)
+@NComponentScope(NScopeType.WORKSPACE)
 public class DefaultNWorkspaceSecurityManager implements NWorkspaceSecurityManager {
 
     public final DefaultNWorkspaceSecurityModel model;
-    public NSession session;
+    public NWorkspace workspace;
 
-    public DefaultNWorkspaceSecurityManager(NSession session) {
-        this.session = session;
-        NWorkspace w = this.session.getWorkspace();
-        NWorkspaceExt e = (NWorkspaceExt) w;
+    public DefaultNWorkspaceSecurityManager(NWorkspace workspace) {
+        this.workspace = workspace;
+        NWorkspaceExt e = (NWorkspaceExt) workspace;
         this.model = e.getModel().securityModel;
     }
 
@@ -60,154 +59,122 @@ public class DefaultNWorkspaceSecurityManager implements NWorkspaceSecurityManag
     }
 
     @Override
-    public NSession getSession() {
-        return session;
-    }
-
-    @Override
     public NWorkspaceSecurityManager login(final String username, final char[] password) {
-        checkSession();
-        model.login(username, password, session);
+        model.login(username, password);
         return this;
-    }
-
-    private void checkSession() {
-        NSessionUtils.checkSession(model.getWorkspace(), session);
     }
 
     @Override
     public boolean setSecureMode(boolean secure, char[] adminPassword) {
-        checkSession();
-        return model.setSecureMode(secure, adminPassword, session);
+        return model.setSecureMode(secure, adminPassword);
     }
 
     public boolean switchUnsecureMode(char[] adminPassword) {
-        checkSession();
-        return model.switchUnsecureMode(adminPassword, session);
+        return model.switchUnsecureMode(adminPassword);
     }
 
     public boolean switchSecureMode(char[] adminPassword) {
-        checkSession();
-        return model.switchSecureMode(adminPassword, session);
+        return model.switchSecureMode(adminPassword);
     }
 
     @Override
     public boolean isAdmin() {
-        checkSession();
-        return model.isAdmin(session);
+        return model.isAdmin();
     }
 
     @Override
     public NWorkspaceSecurityManager logout() {
-        checkSession();
-        model.logout(session);
+        model.logout();
         return this;
     }
 
     @Override
     public NUser findUser(String username) {
-        checkSession();
-        return model.findUser(username, session);
+        return model.findUser(username);
     }
 
     @Override
     public List<NUser> findUsers() {
-        checkSession();
-        return model.findUsers(session);
+        return model.findUsers();
     }
 
     @Override
     public NAddUserCmd addUser(String name) {
-        checkSession();
-        return model.addUser(name, session);
+        return model.addUser(name);
     }
 
     @Override
     public NUpdateUserCmd updateUser(String name) {
-        checkSession();
-        return model.updateUser(name, session);
+        return model.updateUser(name);
     }
 
     @Override
     public NRemoveUserCmd removeUser(String name) {
-        checkSession();
-        return model.removeUser(name, session);
+        return model.removeUser(name);
     }
 
     @Override
     public NWorkspaceSecurityManager checkAllowed(String permission, String operationName) {
-        checkSession();
-        model.checkAllowed(permission, operationName, session);
+        model.checkAllowed(permission, operationName);
         return this;
     }
 
     @Override
     public boolean isAllowed(String permission) {
-        checkSession();
-        return model.isAllowed(permission, session);
+        return model.isAllowed(permission);
     }
 
     @Override
     public String[] getCurrentLoginStack() {
-        checkSession();
-        return model.getCurrentLoginStack(session);
+        return model.getCurrentLoginStack();
     }
 
     @Override
     public String getCurrentUsername() {
-        checkSession();
-        return model.getCurrentUsername(session);
+        return model.getCurrentUsername();
     }
 
     @Override
     public NWorkspaceSecurityManager login(CallbackHandler handler) {
-        checkSession();
-        model.login(handler, session);
+        model.login(handler);
         return this;
     }
 
     @Override
     public NAuthenticationAgent getAuthenticationAgent(String authenticationAgentId) {
-        checkSession();
-        return model.getAuthenticationAgent(authenticationAgentId, session);
+        return model.getAuthenticationAgent(authenticationAgentId);
     }
 
     @Override
     public NWorkspaceSecurityManager setAuthenticationAgent(String authenticationAgentId) {
-        checkSession();
-        model.setAuthenticationAgent(authenticationAgentId, session);
+        model.setAuthenticationAgent(authenticationAgentId);
         return this;
     }
 
     @Override
     public boolean isSecure() {
-        checkSession();
-        return model.isSecure(session);
+        return model.isSecure();
     }
 
     @Override
     public NWorkspaceSecurityManager checkCredentials(char[] credentialsId, char[] password) throws NSecurityException {
-        checkSession();
-        model.checkCredentials(credentialsId, password, session);
+        model.checkCredentials(credentialsId, password);
         return this;
     }
 
     @Override
     public char[] getCredentials(char[] credentialsId) {
-        checkSession();
-        return model.getCredentials(credentialsId, session);
+        return model.getCredentials(credentialsId);
     }
 
     @Override
     public boolean removeCredentials(char[] credentialsId) {
-        checkSession();
-        return model.removeCredentials(credentialsId, session);
+        return model.removeCredentials(credentialsId);
     }
 
     @Override
     public char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId) {
-        checkSession();
-        return model.createCredentials(credentials, allowRetrieve, credentialId, session);
+        return model.createCredentials(credentials, allowRetrieve, credentialId);
     }
 
 }

@@ -16,8 +16,8 @@ public class NRepositoryFilterAnd extends AbstractRepositoryFilter implements NC
 
     private NRepositoryFilter[] all;
 
-    public NRepositoryFilterAnd(NSession session, NRepositoryFilter... all) {
-        super(session, NFilterOp.AND);
+    public NRepositoryFilterAnd(NWorkspace workspace, NRepositoryFilter... all) {
+        super(workspace, NFilterOp.AND);
         List<NRepositoryFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NRepositoryFilter filter : all) {
@@ -44,7 +44,7 @@ public class NRepositoryFilterAnd extends AbstractRepositoryFilter implements NC
 
     @Override
     public NRepositoryFilter simplify() {
-        return CoreFilterUtils.simplifyFilterAnd(getSession(), NRepositoryFilter.class,this,all);
+        return CoreFilterUtils.simplifyFilterAnd(NRepositoryFilter.class,this,all);
     }
 
     @Override

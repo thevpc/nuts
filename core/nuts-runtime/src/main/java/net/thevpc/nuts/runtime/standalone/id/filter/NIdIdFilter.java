@@ -23,26 +23,26 @@ public class NIdIdFilter extends AbstractIdFilter implements NIdFilter, NSimplif
     private NLog LOG;
     private final NId filter;
 
-    public NIdIdFilter(NId filter, NSession session) {
-        super(session, NFilterOp.CUSTOM);
+    public NIdIdFilter(NId filter, NWorkspace workspace) {
+        super(workspace, NFilterOp.CUSTOM);
         this.filter = filter;
     }
 
     @Override
-    public boolean acceptSearchId(NSearchId sid, NSession session) {
-        return filter == null || acceptId(sid.getId(session), session);
+    public boolean acceptSearchId(NSearchId sid) {
+        return filter == null || acceptId(sid.getId());
     }
 
     @Override
-    public boolean acceptId(NId id, NSession session) {
+    public boolean acceptId(NId id) {
         if (filter == null) {
             return true;
         }
         if(LOG==null){
-            LOG= NLog.of(NIdIdFilter.class,session);
+            LOG= NLog.of(NIdIdFilter.class);
         }
         if(id.getShortName().equals(filter.getShortName())){
-            if (!filter.getVersion().filter(session).acceptVersion(id.getVersion(), session)) {
+            if (!filter.getVersion().filter().acceptVersion(id.getVersion())) {
                 return false;
             }
             Map<String, String> e = filter.getProperties();

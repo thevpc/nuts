@@ -8,8 +8,6 @@ import net.thevpc.nuts.io.NMemoryPrintStream;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.app.gui.CoreNUtilGui;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.*;
@@ -23,7 +21,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
 
     private final NSessionTerminal terminal;
     private final NPrintStream out;
-    private final NWorkspace ws;
+    private final NWorkspace workspace;
     private NMsg message;
     private NMsg cancelMessage;
     private List<Object> acceptedValues;
@@ -34,23 +32,21 @@ public class DefaultNAsk<T> implements NAsk<T> {
     private NAskFormat<T> format;
     private NAskParser<T> parser;
     private NAskValidator<T> validator;
-    private NSession session;
     private boolean traceConfirmation = false;
     private boolean executed = false;
     private boolean password = false;
     private Object lastResult = null;
 
-    public DefaultNAsk(NSession session, NSessionTerminal terminal, NPrintStream out) {
-        this.session = session;
-        this.ws = session.getWorkspace();
+    public DefaultNAsk(NWorkspace workspace, NSessionTerminal terminal, NPrintStream out) {
+        this.workspace = workspace;
         this.terminal = terminal;
         this.out = out;
     }
 
     private T execute() {
-        checkSession();
+        NSession session= workspace.currentSession();
         if (!traceConfirmation && (this.getValueType().equals(Boolean.class) || this.getValueType().equals(Boolean.TYPE))) {
-            switch (getSession().getConfirm().orDefault()) {
+            switch (session.getConfirm().orDefault()) {
                 case YES: {
                     return (T) Boolean.TRUE;
                 }
@@ -59,30 +55,29 @@ public class DefaultNAsk<T> implements NAsk<T> {
                 }
                 case ERROR: {
                     if (cancelMessage != null) {
-                        NMemoryPrintStream os = NMemoryPrintStream.of(getSession());
+                        NMemoryPrintStream os = NMemoryPrintStream.of();
                         os.print(cancelMessage);
                         os.flush();
-                        throw new NCancelException(getSession(), NMsg.ofNtf(os.toString()));
+                        throw new NCancelException(NMsg.ofNtf(os.toString()));
                     } else {
-                        NMemoryPrintStream os = NMemoryPrintStream.of(getSession());
+                        NMemoryPrintStream os = NMemoryPrintStream.of();
                         os.print(message);
                         os.flush();
-                        throw new NCancelException(getSession(), NMsg.ofC("cancelled : %s", NMsg.ofNtf(os.toString())));
+                        throw new NCancelException(NMsg.ofC("cancelled : %s", NMsg.ofNtf(os.toString())));
                     }
                 }
             }
         }
-        if (!getSession().isPlainOut()) {
-            NMemoryPrintStream os = NMemoryPrintStream.of(getSession());
+        if (!session.isPlainOut()) {
+            NMemoryPrintStream os = NMemoryPrintStream.of();
             os.print(message);
             os.flush();
-            throw new NExecutionException(getSession(), NMsg.ofC(
+            throw new NExecutionException(NMsg.ofC(
                     "unable to switch to interactive mode for non plain text output format. "
                             + "You need to provide default response (-y|-n) for question : %s", os
             ), NExecutionException.ERROR_255);
         }
-
-        boolean gui = session.isGui() && NEnvs.of(session).isGraphicalDesktopEnvironment();
+        boolean gui = session.isGui() && NEnvs.of().isGraphicalDesktopEnvironment();
 
         NMsg message = this.getMessage();
 //        if (message.endsWith("\n")) {
@@ -91,11 +86,11 @@ public class DefaultNAsk<T> implements NAsk<T> {
         boolean extraInfo = false;
         NAskParser<T> p = this.getParser();
         if (p == null) {
-            p = new DefaultNResponseParser<>(getSession(), this.getValueType());
+            p = new DefaultNResponseParser<>(session, this.getValueType());
         }
         NAskFormat<T> ff = this.getFormat();
         if (ff == null) {
-            ff = new DefaultNAskFormat<>(getSession());
+            ff = new DefaultNAskFormat<>(session);
         }
         List<Object> _acceptedValues = this.getAcceptedValues();
         if (_acceptedValues == null) {
@@ -109,7 +104,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
             ByteArrayOutputStream bos = null;
             if (gui) {
                 bos = new ByteArrayOutputStream();
-                out = NPrintStream.of(bos, session);
+                out = NPrintStream.of(bos);
             }
             if (resetLine) {
                 out.resetLine();
@@ -123,7 +118,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
                 } else {
                     out.print(", ");
                 }
-                out.print(NMsg.ofC("default is %s", NTexts.of(session).ofStyled(ff.format(this.getDefaultValue(), this), NTextStyle.primary1())));
+                out.print(NMsg.ofC("default is %s", NTexts.of().ofStyled(ff.format(this.getDefaultValue(), this), NTextStyle.primary1())));
             }
             if (getHintMessage() != null) {
                 out.print(" (");
@@ -145,7 +140,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
                         }
                         sb.append(ff.format(acceptedValue, this));
                     }
-                    out.print(NMsg.ofC("accepts %s", NTexts.of(session).ofStyled(sb.toString(), NTextStyle.primary4())));
+                    out.print(NMsg.ofC("accepts %s", NTexts.of().ofStyled(sb.toString(), NTextStyle.primary4())));
                 }
                 if (!first) {
                     out.print(")");
@@ -153,24 +148,24 @@ public class DefaultNAsk<T> implements NAsk<T> {
             }
 
             out.flush();
-            switch (getSession().getConfirm().orDefault()) {
+            switch (session.getConfirm().orDefault()) {
                 case ERROR: {
                     out.flush();
                     out.println(" : cancel");
-                    throw new NCancelException(getSession());
+                    throw new NCancelException();
                 }
             }
             if (this.getValueType().equals(Boolean.class) || this.getValueType().equals(Boolean.TYPE)) {
-                switch (getSession().getConfirm().orDefault()) {
+                switch (session.getConfirm().orDefault()) {
                     case YES: {
                         out.flush();
                         out.println(" : yes");
-                        throw new NCancelException(getSession());
+                        throw new NCancelException();
                     }
                     case NO: {
                         out.flush();
                         out.println(" : no");
-                        throw new NCancelException(getSession());
+                        throw new NCancelException();
                     }
                 }
             }
@@ -205,7 +200,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
                     }
                 }
                 if (Arrays.equals("cancel!".toCharArray(), v)) {
-                    throw new NCancelException(getSession());
+                    throw new NCancelException();
                 }
                 try {
                     if (this.validator != null) {
@@ -264,17 +259,18 @@ public class DefaultNAsk<T> implements NAsk<T> {
     }
 
     private String showGuiInput(String str, boolean pwd) {
-        String ft = NTexts.of(getSession()).parse(str).filteredText();
-        NMsg title = NMsg.ofC("Nuts Package Manager - %s", getSession().getWorkspace().getApiId().getVersion());
+        NSession session= workspace.currentSession();
+        String ft = NTexts.of().parse(str).filteredText();
+        NMsg title = NMsg.ofC("Nuts Package Manager - %s", session.getWorkspace().getApiId().getVersion());
         if (session.getAppId() != null) {
             try {
-                NDefinition def = NSearchCmd.of(session).setId(session.getAppId())
+                NDefinition def = NSearchCmd.of().setId(session.getAppId())
                         .setEffective(true).setLatest(true).getResultDefinitions()
                         .findFirst().orNull();
                 if (def != null) {
-                    String n = def.getEffectiveDescriptor().get(session).getName();
+                    String n = def.getEffectiveDescriptor().get().getName();
                     if (!NBlankable.isBlank(n)) {
-                        title = NMsg.ofC("%s - %s", n, def.getEffectiveDescriptor().get(session).getId().getVersion());
+                        title = NMsg.ofC("%s - %s", n, def.getEffectiveDescriptor().get().getId().getVersion());
                     }
                 }
             } catch (Exception ex) {
@@ -282,9 +278,9 @@ public class DefaultNAsk<T> implements NAsk<T> {
             }
         }
         if (password) {
-            return CoreNUtilGui.inputPassword(NMsg.ofNtf(str), title, getSession());
+            return CoreNUtilGui.inputPassword(NMsg.ofNtf(str), title);
         } else {
-            return CoreNUtilGui.inputString(NMsg.ofNtf(str), title, getSession());
+            return CoreNUtilGui.inputString(NMsg.ofNtf(str), title);
         }
     }
 
@@ -461,17 +457,6 @@ public class DefaultNAsk<T> implements NAsk<T> {
         return (T) lastResult;
     }
 
-    @Override
-    public NSession getSession() {
-        return session;
-    }
-
-    @Override
-    public NAsk<T> setSession(NSession session) {
-        this.session = NWorkspaceUtils.bindSession(ws, session);
-        return this;
-    }
-
     /**
      * configure the current command with the given arguments. This is an
      * override of the {@link NCmdLineConfigurable#configure(boolean, java.lang.String...)
@@ -483,8 +468,8 @@ public class DefaultNAsk<T> implements NAsk<T> {
      */
     @Override
     public final NAsk<T> configure(boolean skipUnsupported, String... args) {
-        checkSession();
-        return NCmdLineConfigurable.configure(this, skipUnsupported, args,"question",getSession());
+        NSession session= workspace.currentSession();
+        return NCmdLineConfigurable.configure(this, skipUnsupported, args,"question");
     }
 
     @Override
@@ -495,21 +480,19 @@ public class DefaultNAsk<T> implements NAsk<T> {
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NArg aa = cmdLine.peek().get(session);
+        NSession session= workspace.currentSession();
+        NArg aa = cmdLine.peek().get();
         if (aa == null) {
             return false;
         }
         switch (aa.key()) {
             case "trace-confirmation": {
-                cmdLine.withNextFlag((v, a, s) -> this.traceConfirmation = v);
+                cmdLine.withNextFlag((v, a) -> this.traceConfirmation = v);
                 break;
             }
         }
         return false;
     }
 
-    private void checkSession() {
-        NSessionUtils.checkSession(ws, session);
-    }
 
 }

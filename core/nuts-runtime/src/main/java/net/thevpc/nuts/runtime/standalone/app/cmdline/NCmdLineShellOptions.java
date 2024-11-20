@@ -7,7 +7,6 @@ public class NCmdLineShellOptions implements Cloneable{
     private NCmdLineFormatStrategy formatStrategy;
     private boolean expectEnv;
     private boolean expectOption;
-    private NSession session;
 
     public boolean isExpectOption() {
         return expectOption;
@@ -36,14 +35,7 @@ public class NCmdLineShellOptions implements Cloneable{
         return this;
     }
 
-    public NSession getSession() {
-        return session;
-    }
 
-    public NCmdLineShellOptions setSession(NSession session) {
-        this.session = session;
-        return this;
-    }
     public NCmdLineShellOptions copy(){
         try {
             return (NCmdLineShellOptions) clone();

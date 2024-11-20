@@ -32,7 +32,6 @@
 package net.thevpc.nuts.toolbox.nsh.err;
 
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 
 /**
  * @author thevpc (taha.bensalah@gmail.com)
@@ -40,11 +39,11 @@ import net.thevpc.nuts.NSession;
  */
 public class NShellCmdSyntaxError extends NShellException {
 
-    public NShellCmdSyntaxError(NSession session, int result, String[] args, String cmd, String desc, String message) {
-        super(session, buildMessage(args, cmd, desc, message,session),result);
+    public NShellCmdSyntaxError(int result, String[] args, String cmd, String desc, String message) {
+        super(buildMessage(args, cmd, desc, message),result);
     }
 
-    private static NMsg buildMessage(String[] args, String cmd, String desc, String message, NSession session) {
+    private static NMsg buildMessage(String[] args, String cmd, String desc, String message) {
         StringBuilder s = new StringBuilder();
         if (cmd != null) {
             s.append(cmd);

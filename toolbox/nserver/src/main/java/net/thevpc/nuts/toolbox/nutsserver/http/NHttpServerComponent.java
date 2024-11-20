@@ -174,8 +174,8 @@ public class NHttpServerComponent implements NServerComponent {
         }
         server.setExecutor(executor);
         if (httpConfig.isTls()) {
-            NAssert.requireNonBlank(httpConfig.getSslKeystorePassphrase(), "sslKeystorePassphrase", invokerSession);
-            NAssert.requireNonBlank(httpConfig.getSslKeystoreCertificate(), "sslKeystoreCertificate", invokerSession);
+            NAssert.requireNonBlank(httpConfig.getSslKeystorePassphrase(), "sslKeystorePassphrase");
+            NAssert.requireNonBlank(httpConfig.getSslKeystoreCertificate(), "sslKeystoreCertificate");
             try {
                 SSLContext sslContext = SSLContext.getInstance("TLS");
 
@@ -220,7 +220,7 @@ public class NHttpServerComponent implements NServerComponent {
                     }
                 });
             } catch (GeneralSecurityException e) {
-                throw new NIllegalArgumentException(invokerSession, NMsg.ofPlain("start server failed"), e);
+                throw new NIllegalArgumentException(NMsg.ofPlain("start server failed"), e);
             }
         }
 
@@ -233,7 +233,7 @@ public class NHttpServerComponent implements NServerComponent {
         });
         server.start();
         NPrintStream out = session.out();
-        NTexts factory = NTexts.of(session);
+        NTexts factory = NTexts.of();
         out.println(NMsg.ofC("Nuts Http Service '%s' running %s at %s", serverId,
                 factory.ofStyled(
                         (httpConfig.isTls() ? "https" : "http"), NTextStyle.primary1()
@@ -245,9 +245,9 @@ public class NHttpServerComponent implements NServerComponent {
                 String k = entry.getKey();
                 NSession ksession = entry.getValue();
                 if (k.equals("")) {
-                    out.println(NLocations.of(ksession).getWorkspaceLocation());
+                    out.println(NLocations.of().getWorkspaceLocation());
                 } else {
-                    out.println((NMsg.ofC("%s : %s", k, NLocations.of(ksession).getWorkspaceLocation())));
+                    out.println((NMsg.ofC("%s : %s", k, NLocations.of().getWorkspaceLocation())));
                 }
             }
         } else {
@@ -257,7 +257,7 @@ public class NHttpServerComponent implements NServerComponent {
                 if (k.equals("")) {
                     k = "<default>";
                 }
-                out.println(NMsg.ofC("\t%s : %s", k, NLocations.of(entry.getValue()).getWorkspaceLocation()));
+                out.println(NMsg.ofC("\t%s : %s", k, NLocations.of().getWorkspaceLocation()));
             }
         }
         final String finalServerId = serverId;

@@ -27,7 +27,6 @@
 package net.thevpc.nuts.format;
 
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 
 import java.util.Map;
@@ -42,8 +41,8 @@ import java.util.Map;
  */
 public interface NObjectFormat extends NContentTypeFormat {
 
-    static NObjectFormat of(NSession session) {
-       return NExtensions.of(session).createComponent(NObjectFormat.class).get();
+    static NObjectFormat of() {
+       return NExtensions.of().createComponent(NObjectFormat.class).get();
     }
 
     String getFormatMode();
@@ -79,14 +78,6 @@ public interface NObjectFormat extends NContentTypeFormat {
      */
     NObjectFormat setValue(Object value);
 
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this instance}
-     */
-    @Override
-    NObjectFormat setSession(NSession session);
 
     /**
      * configure the current command with the given arguments. This is an

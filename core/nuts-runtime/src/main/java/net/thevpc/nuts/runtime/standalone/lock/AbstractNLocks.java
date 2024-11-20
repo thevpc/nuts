@@ -11,19 +11,14 @@ import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 
 public abstract class AbstractNLocks implements NLocks {
-    private NWorkspace ws;
+    private NWorkspace workspace;
     private Object source;
     private Object resource;
-    private NSession session;
 
-    public AbstractNLocks(NSession session) {
-        this.session = session;
-        this.ws = session.getWorkspace();
+    public AbstractNLocks(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
-    protected void checkSession() {
-        NSessionUtils.checkSession(ws, getSession());
-    }
 
     @Override
     public Object getSource() {
@@ -59,19 +54,8 @@ public abstract class AbstractNLocks implements NLocks {
         return this;
     }
 
-    @Override
-    public NSession getSession() {
-        return session;
-    }
-
-    @Override
-    public NLocks setSession(NSession session) {
-        this.session = NWorkspaceUtils.bindSession(ws, session);
-        return this;
-    }
-
-    public NWorkspace getWs() {
-        return ws;
+    public NWorkspace getWorkspace() {
+        return workspace;
     }
 
 }

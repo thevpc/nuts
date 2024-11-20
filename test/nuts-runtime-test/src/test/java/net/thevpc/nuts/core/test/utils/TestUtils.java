@@ -157,7 +157,7 @@ public class TestUtils {
         File path;
         try {
             path = new File("./runtime/test/" + test_id+"/"+a).getCanonicalFile();
-            CoreIOUtils.delete(null, path);
+            CoreIOUtils.delete(path);
             return path.toPath();
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
@@ -201,7 +201,7 @@ public class TestUtils {
             try {
                 path = new File("./runtime/test/" + test_id).getCanonicalFile();
                 if (deleteFolder) {
-                    CoreIOUtils.delete(null, path);
+                    CoreIOUtils.delete(path);
                 }
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
@@ -250,7 +250,7 @@ public class TestUtils {
         String test_id = TestUtils.getCallerMethodId(2);
         try {
             File path = new File("./runtime/test/" + test_id).getCanonicalFile();
-            CoreIOUtils.delete(null, path);
+            CoreIOUtils.delete(path);
             return path;
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
@@ -324,7 +324,7 @@ public class TestUtils {
             File[] c = new File(string).listFiles();
             if (c != null) {
                 for (File file : c) {
-                    CoreIOUtils.delete(null, file);
+                    CoreIOUtils.delete(file);
                 }
             }
         }

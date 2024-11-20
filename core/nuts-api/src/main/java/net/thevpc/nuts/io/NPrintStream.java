@@ -26,7 +26,6 @@
  */
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.text.NTerminalCmd;
@@ -41,29 +40,26 @@ import java.io.Writer;
 import java.time.temporal.Temporal;
 import java.util.Date;
 
-public interface NPrintStream extends NOutputTarget, NSessionProvider {
+public interface NPrintStream extends NOutputTarget {
 
-    static NPrintStream ofNull(NSession session) {
-        return NIORPI.of(session).ofNullPrintStream();
-    }
+    NPrintStream NULL=NullNPrintStream.NULL;
 
     /**
      * return new in-memory NutsPrintStream implementation.
      * this is equivalent to {@code NutsMemoryPrintStream.of(session)}
      *
-     * @param session session
      * @return new in-memory NutsPrintStream implementation
      */
-    static NMemoryPrintStream ofMem(NSession session) {
-        return NIORPI.of(session).ofInMemoryPrintStream();
+    static NMemoryPrintStream ofMem() {
+        return NIORPI.of().ofInMemoryPrintStream();
     }
 
-    static NMemoryPrintStream ofMem(NTerminalMode mode, NSession session) {
-        return NIORPI.of(session).ofInMemoryPrintStream(mode);
+    static NMemoryPrintStream ofMem(NTerminalMode mode) {
+        return NIORPI.of().ofInMemoryPrintStream(mode);
     }
 
-    static NPrintStream of(OutputStream out, NSession session) {
-        return NIORPI.of(session).ofPrintStream(out);
+    static NPrintStream of(OutputStream out) {
+        return NIORPI.of().ofPrintStream(out);
     }
 
     /**
@@ -74,32 +70,22 @@ public interface NPrintStream extends NOutputTarget, NSessionProvider {
      * @param out      stream to wrap
      * @param mode     mode to support
      * @param terminal terminal
-     * @param session  session
      * @return {@code mode} supporting PrintStream
      */
-    static NPrintStream of(OutputStream out, NTerminalMode mode, NSystemTerminalBase terminal, NSession session) {
-        return NIORPI.of(session).ofPrintStream(out, mode, terminal);
+    static NPrintStream of(OutputStream out, NTerminalMode mode, NSystemTerminalBase terminal) {
+        return NIORPI.of().ofPrintStream(out, mode, terminal);
     }
 
-    static NPrintStream of(OutputStream out, NTerminalMode mode, NSession session) {
-        return NIORPI.of(session).ofPrintStream(out, mode);
+    static NPrintStream of(OutputStream out, NTerminalMode mode) {
+        return NIORPI.of().ofPrintStream(out, mode);
     }
 
-    static NPrintStream of(Writer out, NSession session) {
-        return NIORPI.of(session).ofPrintStream(out);
+    static NPrintStream of(Writer out) {
+        return NIORPI.of().ofPrintStream(out);
     }
-    static NPrintStream of(NPath path, NSession session) {
-        return NIORPI.of(session).ofPrintStream(path);
+    static NPrintStream of(NPath path) {
+        return NIORPI.of().ofPrintStream(path);
     }
-
-
-    /**
-     * update session and return a new instance
-     *
-     * @param session new session
-     * @return a new instance of NutsPrintStream
-     */
-    NPrintStream setSession(NSession session);
 
     NPrintStream flush();
 
@@ -201,7 +187,7 @@ public interface NPrintStream extends NOutputTarget, NSessionProvider {
      */
     NPrintStream setTerminalMode(NTerminalMode other);
 
-    NPrintStream run(NTerminalCmd command, NSession session);
+    NPrintStream run(NTerminalCmd command);
 
     OutputStream asOutputStream();
 

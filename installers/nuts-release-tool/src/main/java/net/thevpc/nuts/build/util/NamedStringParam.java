@@ -39,23 +39,23 @@ public class NamedStringParam {
 
     public NamedStringParam ensureDirectory(NSession session) {
         ensureNonBlank(session);
-        if (!NPath.of(value, session).isDirectory()) {
-            throw new NIllegalArgumentException(session, NMsg.ofC("not a valid folder %s : %s", getName(), getValue()));
+        if (!NPath.of(value).isDirectory()) {
+            throw new NIllegalArgumentException(NMsg.ofC("not a valid folder %s : %s", getName(), getValue()));
         }
         return this;
     }
 
     public NamedStringParam ensureRegularFile(NSession session) {
         ensureNonBlank(session);
-        if (!NPath.of(value, session).isRegularFile()) {
-            throw new NIllegalArgumentException(session, NMsg.ofC("not a valid folder %s : %s", getName(), getValue()));
+        if (!NPath.of(value).isRegularFile()) {
+            throw new NIllegalArgumentException(NMsg.ofC("not a valid folder %s : %s", getName(), getValue()));
         }
         return this;
     }
 
     public NamedStringParam ensureNonBlank(NSession session) {
         if (NBlankable.isBlank(getValue())) {
-            throw new NIllegalArgumentException(session, NMsg.ofC("missing %s", getName()));
+            throw new NIllegalArgumentException(NMsg.ofC("missing %s", getName()));
         }
         return this;
     }

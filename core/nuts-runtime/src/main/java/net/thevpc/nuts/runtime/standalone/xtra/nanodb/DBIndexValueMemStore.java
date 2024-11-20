@@ -1,7 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
-import net.thevpc.nuts.NSession;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.stream.LongStream;
@@ -21,7 +19,7 @@ public class DBIndexValueMemStore implements DBIndexValueStore {
     }
 
     @Override
-    public void add(long position, NSession session) {
+    public void add(long position) {
         if (fallback == null && val.length + 1 < max) {
             if (val.length == 0) {
                 val = new long[]{position};
@@ -34,16 +32,16 @@ public class DBIndexValueMemStore implements DBIndexValueStore {
         } else {
             if (fallback == null) {
                 fallback = new DBIndexValueFileStore(index, indexKey);
-                fallback.addAll(val, session);
+                fallback.addAll(val);
                 val = null;
             }
-            fallback.add(position, session);
+            fallback.add(position);
         }
     }
 
 
     @Override
-    public void addAll(long[] position, NSession session) {
+    public void addAll(long[] position) {
         if (fallback == null && val.length + position.length < max) {
             if (val.length == 0) {
                 val = Arrays.copyOf(position, position.length);
@@ -56,19 +54,19 @@ public class DBIndexValueMemStore implements DBIndexValueStore {
         } else {
             if (fallback == null) {
                 fallback = new DBIndexValueFileStore(index, indexKey);
-                fallback.addAll(val, session);
+                fallback.addAll(val);
                 val = null;
             }
-            fallback.addAll(position, session);
+            fallback.addAll(position);
         }
     }
 
     @Override
-    public LongStream stream(NSession session) {
+    public LongStream stream() {
         if (fallback == null) {
             return Arrays.stream(val);
         } else {
-            return fallback.stream(session);
+            return fallback.stream();
         }
     }
 
@@ -77,9 +75,9 @@ public class DBIndexValueMemStore implements DBIndexValueStore {
         return fallback == null;
     }
 
-    public void flush(NSession session) {
+    public void flush() {
         if (fallback != null) {
-            fallback.flush(session);
+            fallback.flush();
         }
     }
 }

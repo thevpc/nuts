@@ -13,11 +13,11 @@ import java.util.List;
 
 class NJLineCompleter implements Completer {
 
-    private final NSession session;
+    private final NWorkspace workspace;
     private final NJLineTerminal nutsJLineTerminal;
 
-    public NJLineCompleter(NSession session, NJLineTerminal nutsJLineTerminal) {
-        this.session = session;
+    public NJLineCompleter(NWorkspace workspace, NJLineTerminal nutsJLineTerminal) {
+        this.workspace = workspace;
         this.nutsJLineTerminal = nutsJLineTerminal;
     }
 
@@ -30,7 +30,7 @@ class NJLineCompleter implements Completer {
             if (line.words().size() > 0) {
                 cmdLine.setCommandName(line.words().get(0));
             }
-            List<NArgCandidate> nArgCandidates = autoCompleteResolver.resolveCandidates(cmdLine, line.wordIndex(), session);
+            List<NArgCandidate> nArgCandidates = autoCompleteResolver.resolveCandidates(cmdLine, line.wordIndex());
             if (nArgCandidates != null) {
                 for (NArgCandidate cmdCandidate : nArgCandidates) {
                     if (cmdCandidate != null) {

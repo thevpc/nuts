@@ -4,13 +4,13 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.filters.NTypedFiltersParser;
 
 public class NRepositoryFilterParser extends NTypedFiltersParser<NRepositoryFilter> {
-    public NRepositoryFilterParser(String str, NSession session) {
-        super(str,session);
+    public NRepositoryFilterParser(String str, NWorkspace workspace) {
+        super(str,workspace);
     }
 
     @Override
     protected NRepositoryFilters getTManager() {
-        return NRepositoryFilters.of(getSession());
+        return NRepositoryFilters.of();
     }
 
     protected NRepositoryFilter wordToPredicate(String word){

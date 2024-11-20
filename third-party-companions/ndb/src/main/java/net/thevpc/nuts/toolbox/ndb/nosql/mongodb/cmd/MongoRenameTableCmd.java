@@ -19,10 +19,11 @@ public class MongoRenameTableCmd extends RenameTableCmd<NMongoConfig> {
 
 
     @Override
-    protected void runRenameTable(ExtendedQuery eq, NMongoConfig options, NSession session) {
+    protected void runRenameTable(ExtendedQuery eq, NMongoConfig options) {
         getSupport().doWithMongoCollection(options, eq.getTable(), mongoCollection -> {
             String dbn = options.getDatabaseName();
             mongoCollection.renameCollection(new MongoNamespace(dbn, eq.getNewName()));
+            NSession session = NSession.of().get();
             session.out().println(true);
         });
     }

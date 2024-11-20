@@ -51,7 +51,6 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
     private final Predicate<T> filter;
     private final NSession session;
     private final FolderIteratorModel<T> model;
-    private final NLog LOG;
     private final String name;
     private final NPath folder;
     private T last;
@@ -59,6 +58,7 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
     private long visitedFoldersCount;
     private long visitedFilesCount;
     private final int maxDepth;
+
     public FolderObjectIterator(String name, NPath folder, Predicate<T> filter, int maxDepth, NSession session, FolderIteratorModel<T> model) {
         this.session = session;
         this.filter = filter;
@@ -73,18 +73,21 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
         }
         this.folder = folder;
         stack.push(new PathAndDepth(folder, 0));
-        LOG = NLog.of(DefaultNInstalledRepository.class, session);
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return NElements.of(session).ofObject()
+    public NElement describe() {
+        return NElements.of().ofObject()
                 .set("type", "ScanPath")
                 .set("name", name)
-                .set("path", NEDesc.describeResolveOrDestruct(folder, session))
+                .set("path", NEDesc.describeResolveOrDestruct(folder))
                 .set("maxDepth", maxDepth)
-                .set("filter", NEDesc.describeResolveOrDestruct(filter, session))
+                .set("filter", NEDesc.describeResolveOrDestruct(filter))
                 .build();
+    }
+
+    private NLog LOG() {
+        return NLog.of(DefaultNInstalledRepository.class);
     }
 
     @Override
@@ -99,27 +102,27 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
                 if (file.path.isDirectory()) {
                     try {
                         file.path.stream().filter(
-                                pathname -> {
-                                    try {
-                                        return (deep && pathname.isDirectory()) || model.isObjectFile(pathname);
-                                    } catch (Exception ex) {
-                                        NLogOp.of(FolderObjectIterator.class, session).level(Level.FINE).error(ex)
-                                                .log(NMsg.ofJ("unable to test desk file {0}", pathname));
-                                        return false;
-                                    }
-                                }
-                        ).withDesc(NEDesc.of("isDirectory || isObjectFile"))
+                                        pathname -> {
+                                            try {
+                                                return (deep && pathname.isDirectory()) || model.isObjectFile(pathname);
+                                            } catch (Exception ex) {
+                                                NLogOp.of(FolderObjectIterator.class).level(Level.FINE).error(ex)
+                                                        .log(NMsg.ofJ("unable to test desk file {0}", pathname));
+                                                return false;
+                                            }
+                                        }
+                                ).withDesc(NEDesc.of("isDirectory || isObjectFile"))
                                 .forEach(item -> {
-                            if (item.isDirectory()) {
-                                if (maxDepth < 0 || file.depth < maxDepth) {
-                                    stack.push(new PathAndDepth(item, file.depth + 1));
-                                }
-                            } else {
-                                stack.push(new PathAndDepth(item, file.depth));
-                            }
-                        });
+                                    if (item.isDirectory()) {
+                                        if (maxDepth < 0 || file.depth < maxDepth) {
+                                            stack.push(new PathAndDepth(item, file.depth + 1));
+                                        }
+                                    } else {
+                                        stack.push(new PathAndDepth(item, file.depth));
+                                    }
+                                });
                     } catch (Exception ex) {
-                        LOG.with().error(ex).log(
+                        LOG().with().error(ex).log(
                                 NMsg.ofJ("unable to parse {0}", file.path));
                     }
                 }
@@ -156,7 +159,7 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
         if (last != null) {
             model.remove(last, lastPath, session);
         } else {
-            throw new NUnsupportedOperationException(session, NMsg.ofPlain("unsupported remove"));
+            throw new NUnsupportedOperationException(NMsg.ofPlain("unsupported remove"));
         }
     }
 

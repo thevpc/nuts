@@ -102,20 +102,20 @@ public interface NId extends Comparable<NId>, NFormattable, NBlankable {
         return NReservedUtils.parseId(value);
     }
 
-    static NOptional<NId> ofClass(Class<?> value, NSession session) {
-        return NLibPaths.of(session).resolveId(value);
+    static NOptional<NId> ofClass(Class<?> value) {
+        return NLibPaths.of().resolveId(value);
     }
 
-    static NOptional<NId> ofPath(NPath value, NSession session) {
-        return NLibPaths.of(session).resolveId(value);
+    static NOptional<NId> ofPath(NPath value) {
+        return NLibPaths.of().resolveId(value);
     }
 
-    static List<NId> findAllByClass(Class<?> value, NSession session) {
-        return NLibPaths.of(session).resolveIds(value);
+    static List<NId> findAllByClass(Class<?> value) {
+        return NLibPaths.of().resolveIds(value);
     }
 
-    static List<NId> findByPath(NPath value, NSession session) {
-        return NLibPaths.of(session).resolveIds(value);
+    static List<NId> findByPath(NPath value) {
+        return NLibPaths.of().resolveIds(value);
     }
 
     /**
@@ -268,7 +268,7 @@ public interface NId extends Comparable<NId>, NFormattable, NBlankable {
 
     NDependency toDependency();
 
-    NIdFilter filter(NSession session);
+    NIdFilter filter();
 
     /**
      * filter accepted any id with the defined version or greater

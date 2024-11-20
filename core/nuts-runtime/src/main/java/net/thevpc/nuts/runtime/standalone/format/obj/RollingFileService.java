@@ -40,7 +40,7 @@ public class RollingFileService {
         doubleFormat = new DecimalFormat(df.toString());
         this.folder = folder.toAbsolute().getParent();
         if (this.folder == null) {
-            this.folder = NPath.ofUserDirectory(session);
+            this.folder = NPath.ofUserDirectory();
         }
         this.fileName = folder.getName();
         if (this.fileName.indexOf('#') < 0) {
@@ -95,7 +95,7 @@ public class RollingFileService {
                     case '?':
                     case '^':
                     case '$': {
-                        throw new NIllegalArgumentException(session, NMsg.ofC("unsupported %s", c));
+                        throw new NIllegalArgumentException(NMsg.ofC("unsupported %s", c));
                     }
                     case '.': {
                         sb1.append("[.]");

@@ -61,10 +61,10 @@ public class HelpCommand extends NShellBuiltinCore {
         if (cmdLine.next("--ntf").isPresent()) {
             options.code = true;
             return true;
-        } else if (cmdLine.peek().get(session).isNonOption()) {
+        } else if (cmdLine.peek().get().isNonOption()) {
             options.commandNames.add(
                     cmdLine.nextNonOption(new CommandNonOption("command", context.getShellContext()))
-                            .get().asString().get(session));
+                            .get().asString().get());
             return true;
         } else {
             return false;
@@ -78,10 +78,10 @@ public class HelpCommand extends NShellBuiltinCore {
         if (cmdLine.next("--ntf").isPresent()) {
             options.code = true;
             return true;
-        } else if (cmdLine.peek().get(session).isNonOption()) {
+        } else if (cmdLine.peek().get().isNonOption()) {
             options.commandNames.add(
                     cmdLine.nextNonOption(new CommandNonOption("command", context.getShellContext()))
-                            .get().asString().get(session));
+                            .get().asString().get());
             return true;
         } else {
             return false;
@@ -97,7 +97,7 @@ public class HelpCommand extends NShellBuiltinCore {
                     session.getTerminal().out().setTerminalMode(NTerminalMode.INHERITED)
             );
         }
-        final NTexts text = NTexts.of(session);
+        final NTexts text = NTexts.of();
         Function<String, String> ss = options.code ? new Function<String, String>() {
             @Override
             public String apply(String t) {
@@ -127,7 +127,7 @@ public class HelpCommand extends NShellBuiltinCore {
 //                );
                 String helpText = (n == null ? "no help found" : n.toString());
                 context.out().println(ss.apply(helpText));
-                context.out().println(NTexts.of(session).ofStyled("AVAILABLE COMMANDS ARE:", NTextStyle.primary1()));
+                context.out().println(NTexts.of().ofStyled("AVAILABLE COMMANDS ARE:", NTextStyle.primary1()));
                 NShellBuiltin[] commands = context.builtins().getAll();
                 Arrays.sort(commands, new Comparator<NShellBuiltin>() {
                     @Override

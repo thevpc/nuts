@@ -47,7 +47,7 @@ public class NIdFilterToPredicate extends AbstractNPredicate<NId> {
 
     @Override
     public boolean test(NId x) {
-        return ff.acceptId(x, session);
+        return ff.acceptId(x);
     }
 
     @Override

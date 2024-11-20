@@ -7,6 +7,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.updatestats;
 
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NUpdateStatsCmd;
@@ -25,8 +26,8 @@ public abstract class AbstractNUpdateStatsCmd extends NWorkspaceCmdBase<NUpdateS
     private LinkedHashSet<Path> paths = new LinkedHashSet<>();
     private LinkedHashSet<String> repositories = new LinkedHashSet<>();
 
-    public AbstractNUpdateStatsCmd(NSession session) {
-        super(session, "update-statistics");
+    public AbstractNUpdateStatsCmd(NWorkspace workspace) {
+        super(workspace, "update-statistics");
     }
 
     @Override
@@ -128,7 +129,8 @@ public abstract class AbstractNUpdateStatsCmd extends NWorkspaceCmdBase<NUpdateS
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NArg a = cmdLine.peek().get(session);
+        NSession session=getWorkspace().currentSession();
+        NArg a = cmdLine.peek().get();
         if (a == null) {
             return false;
         }

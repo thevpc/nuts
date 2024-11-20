@@ -37,16 +37,16 @@ import java.util.List;
  */
 public interface NDependencySolver {
 
-    static NDependencySolver of(NSession session) {
-        return NDependencySolvers.of(session).createSolver(session);
+    static NDependencySolver of() {
+        return NDependencySolvers.of().createSolver();
     }
 
-    static NDependencySolver of(String solverName, NSession session) {
-        return NDependencySolvers.of(session).createSolver(solverName, session);
+    static NDependencySolver of(String solverName) {
+        return NDependencySolvers.of().createSolver(solverName);
     }
 
-    static List<String> getSolverNames(NSession session) {
-        return NDependencySolvers.of(session).getSolverNames(session);
+    static List<String> getSolverNames() {
+        return NDependencySolvers.of().getSolverNames();
     }
 
 

@@ -32,7 +32,7 @@ public class DefaultNRepositorySecurityModel {
 
     public DefaultNRepositorySecurityModel(final NRepository repo) {
         this.repository = repo;
-        this.agent = new WrapperNAuthenticationAgent(repo.getWorkspace(), (session) -> repo.config().setSession(session).getConfigMap(), (x, s) -> getAuthenticationAgent(x, s));
+        this.agent = new WrapperNAuthenticationAgent(repo.getWorkspace(), (session) -> repo.config().getConfigMap(), (x, s) -> getAuthenticationAgent(x));
         this.repository.addRepositoryListener(new NRepositoryListener() {
 
             public void onConfigurationChanged(NRepositoryEvent event) {
@@ -42,38 +42,42 @@ public class DefaultNRepositorySecurityModel {
 //        LOG = repo.getWorkspace().log().of(DefaultNRepositorySecurityModel.class);
     }
 
-    public void checkAllowed(String right, String operationName, NSession session) {
+    public void checkAllowed(String right, String operationName) {
+        NSession session=repository.getWorkspace().currentSession();
         NSessionUtils.checkSession(repository.getWorkspace(), session);
-        if (!isAllowed(right, session)) {
+        if (!isAllowed(right)) {
             if (NBlankable.isBlank(operationName)) {
-                throw new NSecurityException(session, NMsg.ofC("%s not allowed!",right));
+                throw new NSecurityException(NMsg.ofC("%s not allowed!",right));
             } else {
-                throw new NSecurityException(session, NMsg.ofC("%s : %s not allowed!",operationName,right));
+                throw new NSecurityException(NMsg.ofC("%s : %s not allowed!",operationName,right));
             }
         }
 //        return this;
     }
 
-    public NAddUserCmd addUser(String name, NSession session) {
-        return NAddUserCmd.of(session).setRepository(repository).setUsername(name);
+    public NAddUserCmd addUser(String name) {
+        NSession session=repository.getWorkspace().currentSession();
+        return NAddUserCmd.of().setRepository(repository).setUsername(name);
     }
 
-    public NUpdateUserCmd updateUser(String name, NSession session) {
-        return NUpdateUserCmd.of(session).setRepository(repository).setUsername(name);
+    public NUpdateUserCmd updateUser(String name) {
+        NSession session=repository.getWorkspace().currentSession();
+        return NUpdateUserCmd.of().setRepository(repository).setUsername(name);
     }
 
-    public NRemoveUserCmd removeUser(String name, NSession session) {
-        return NRemoveUserCmd.of(session).setRepository(repository).setUsername(name);
+    public NRemoveUserCmd removeUser(String name) {
+        NSession session=repository.getWorkspace().currentSession();
+        return NRemoveUserCmd.of().setRepository(repository).setUsername(name);
     }
 
-    private NAuthorizations getAuthorizations(String n, NSession session) {
+    private NAuthorizations getAuthorizations(String n) {
         NAuthorizations aa = authorizations.get(n);
         if (aa != null) {
             return aa;
         }
         NUserConfig s = NRepositoryConfigManagerExt.of(repository.config())
                 .getModel()
-                .findUser(n, session).orNull();
+                .findUser(n).orNull();
         if (s != null) {
             List<String> rr = s.getPermissions();
             aa = new NAuthorizations(
@@ -86,8 +90,9 @@ public class DefaultNRepositorySecurityModel {
         return aa;
     }
 
-    public boolean isAllowed(String right, NSession session) {
-        NWorkspaceSecurityManager sec = NWorkspaceSecurityManager.of(session);
+    public boolean isAllowed(String right) {
+        NSession session=repository.getWorkspace().currentSession();
+        NWorkspaceSecurityManager sec = NWorkspaceSecurityManager.of();
         if (!sec.isSecure()) {
             return true;
         }
@@ -101,14 +106,14 @@ public class DefaultNRepositorySecurityModel {
         items.push(name);
         while (!items.isEmpty()) {
             String n = items.pop();
-            NAuthorizations s = getAuthorizations(n, session);
+            NAuthorizations s = getAuthorizations(n);
             Boolean ea = s.explicitAccept(right);
             if (ea != null) {
                 return ea;
             }
             NUserConfig uc = NRepositoryConfigManagerExt.of(repository.config())
                     .getModel()
-                    .findUser(n, session).orNull();
+                    .findUser(n).orNull();
             if (uc != null && uc.getGroups() != null) {
                 for (String g : uc.getGroups()) {
                     if (!visitedGroups.contains(g)) {
@@ -122,20 +127,20 @@ public class DefaultNRepositorySecurityModel {
                 .isAllowed(right);
     }
 
-    public List<NUser> findUsers(NSession session) {
+    public List<NUser> findUsers() {
         List<NUser> all = new ArrayList<>();
         for (NUserConfig secu : NRepositoryConfigManagerExt.of(repository.config())
                 .getModel()
-                .findUsers(session)) {
-            all.add(getEffectiveUser(secu.getUser(), session));
+                .findUsers()) {
+            all.add(getEffectiveUser(secu.getUser()));
         }
         return all;
     }
 
-    public NUser getEffectiveUser(String username, NSession session) {
+    public NUser getEffectiveUser(String username) {
         NUserConfig u = NRepositoryConfigManagerExt.of(repository.config())
                 .getModel()
-                .findUser(username, session).orNull();
+                .findUser(username).orNull();
         Stack<String> inherited = new Stack<>();
         if (u != null) {
             Stack<String> visited = new Stack<>();
@@ -147,7 +152,7 @@ public class DefaultNRepositorySecurityModel {
                 visited.add(s);
                 NUserConfig ss = NRepositoryConfigManagerExt.of(repository.config())
                         .getModel()
-                        .findUser(s, session).orNull();
+                        .findUser(s).orNull();
                 if (ss != null) {
                     inherited.addAll(ss.getPermissions());
                     for (String group : ss.getGroups()) {
@@ -161,52 +166,54 @@ public class DefaultNRepositorySecurityModel {
         return u == null ? null : new DefaultNUser(u, inherited);
     }
 
-    public NAuthenticationAgent getAuthenticationAgent(String id, NSession session) {
+    public NAuthenticationAgent getAuthenticationAgent(String id) {
         id = NStringUtils.trim(id);
         if (id.isEmpty()) {
             id = ((DefaultNRepoConfigManager) repository.config())
                     .getModel()
-                    .getStoredConfig(session).getAuthenticationAgent();
+                    .getStoredConfig().getAuthenticationAgent();
         }
-        NAuthenticationAgent a = NConfigsExt.of(NConfigs.of(session))
+        NSession session = getWorkspace().currentSession();
+        NAuthenticationAgent a = NConfigsExt.of(NConfigs.of())
                 .getModel()
-                .createAuthenticationAgent(id, session);
+                .createAuthenticationAgent(id);
         return a;
     }
 
-    public void setAuthenticationAgent(String authenticationAgent, NSession session) {
+    public void setAuthenticationAgent(String authenticationAgent) {
 //        options = CoreNutsUtils.validate(options, repository.getWorkspace());
-        DefaultNRepoConfigManager cc = (DefaultNRepoConfigManager) repository.config().setSession(session);
+        DefaultNRepoConfigManager cc = (DefaultNRepoConfigManager) repository.config();
+        NSession session=repository.getWorkspace().currentSession();
 
-        if (NConfigsExt.of(NConfigs.of(session))
-                .getModel().createAuthenticationAgent(authenticationAgent, session) == null) {
-            throw new NIllegalArgumentException(session,
+        if (NConfigsExt.of(NConfigs.of())
+                .getModel().createAuthenticationAgent(authenticationAgent) == null) {
+            throw new NIllegalArgumentException(
                     NMsg.ofC("unsupported Authentication Agent %s", authenticationAgent)
             );
         }
 
-        NRepositoryConfig conf = cc.getModel().getStoredConfig(session);
+        NRepositoryConfig conf = cc.getModel().getStoredConfig();
         if (!Objects.equals(conf.getAuthenticationAgent(), authenticationAgent)) {
             conf.setAuthenticationAgent(authenticationAgent);
-            cc.getModel().fireConfigurationChanged("authentication-agent", session);
+            cc.getModel().fireConfigurationChanged("authentication-agent");
         }
 //        return this;
     }
 
-    public void checkCredentials(char[] credentialsId, char[] password, NSession session) throws NSecurityException {
-        agent.checkCredentials(credentialsId, password, session);
+    public void checkCredentials(char[] credentialsId, char[] password) throws NSecurityException {
+        agent.checkCredentials(credentialsId, password, repository.getWorkspace().currentSession());
     }
 
-    public char[] getCredentials(char[] credentialsId, NSession session) {
-        return agent.getCredentials(credentialsId, session);
+    public char[] getCredentials(char[] credentialsId) {
+        return agent.getCredentials(credentialsId, repository.getWorkspace().currentSession());
     }
 
-    public boolean removeCredentials(char[] credentialsId, NSession session) {
-        return agent.removeCredentials(credentialsId, session);
+    public boolean removeCredentials(char[] credentialsId) {
+        return agent.removeCredentials(credentialsId, repository.getWorkspace().currentSession());
     }
 
-    public char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId, NSession session) {
-        return agent.createCredentials(credentials, allowRetrieve, credentialId, session);
+    public char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId) {
+        return agent.createCredentials(credentials, allowRetrieve, credentialId, repository.getWorkspace().currentSession());
     }
 
     public NRepository getRepository() {

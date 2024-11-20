@@ -75,8 +75,8 @@ public class DefaultCachedSupplier<T> implements CachedSupplier<T> {
             if (key.getStoreType() != NStoreType.CACHE) {
                 throw new IllegalArgumentException("expected cache store");
             }
-            NLocations nLocations = NLocations.of(session);
-            this.elems = NElements.of(session);
+            NLocations nLocations = NLocations.of();
+            this.elems = NElements.of();
             this.cachePath = nLocations.getStoreLocation(key.getId(), key.getStoreType(), key.getRepoUuid())
                     .resolve(nLocations.getDefaultIdFilename(key.getId().builder().setFace(key.getName() + ".value.cache").build()));
             this.cacheIdPath = nLocations.getStoreLocation(key.getId(), key.getStoreType(), key.getRepoUuid())
@@ -137,7 +137,7 @@ public class DefaultCachedSupplier<T> implements CachedSupplier<T> {
             if (currentCacheId != null) {
                 String loadCacheId = loadCachedId();
                 if (validator == null || validator.isValidCacheId(loadCacheId)) {
-                    if (CoreIOUtils.isObsoletePath(session, cachePath)) {
+                    if (CoreIOUtils.isObsoletePath(cachePath)) {
                         //this is invalid cache!
                         if(cachePath.isRegularFile()) {
                             cachePath.delete();

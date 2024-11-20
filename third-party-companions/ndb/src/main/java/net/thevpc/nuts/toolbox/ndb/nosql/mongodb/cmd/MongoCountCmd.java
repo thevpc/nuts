@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.ndb.nosql.mongodb.cmd;
 
-import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
 import net.thevpc.nuts.toolbox.ndb.base.cmd.CountCmd;
 import net.thevpc.nuts.toolbox.ndb.nosql.mongodb.NMongoConfig;
@@ -18,7 +18,7 @@ public class MongoCountCmd extends CountCmd<NMongoConfig> {
         return (NMongoSupport) super.getSupport();
     }
 
-    protected void runCount(ExtendedQuery eq, NMongoConfig options, NSession session) {
+    protected void runCount(ExtendedQuery eq, NMongoConfig options) {
         getSupport().doWithMongoCollection(options, eq.getTable(), mongoCollection -> {
             Document docWhere = Document.parse("{}");
             for (String s : eq.getWhere()) {
@@ -26,6 +26,7 @@ public class MongoCountCmd extends CountCmd<NMongoConfig> {
                     docWhere.putAll(Document.parse(s));
                 }
             }
+            NSession session = NSession.of().get();
             session.out().println(mongoCollection.countDocuments(docWhere));
         });
     }

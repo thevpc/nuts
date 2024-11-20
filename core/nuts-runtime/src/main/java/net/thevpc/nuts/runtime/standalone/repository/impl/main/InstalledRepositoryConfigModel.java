@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.main;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.repository.config.NRepositoryConfigModel;
+import net.thevpc.nuts.runtime.standalone.repository.config.AbstractNRepositoryConfigModel;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class InstalledRepositoryConfigModel implements NRepositoryConfigModel {
+class InstalledRepositoryConfigModel extends AbstractNRepositoryConfigModel {
 
     private final NWorkspace ws;
     private final NRepository repo;
@@ -24,7 +24,7 @@ class InstalledRepositoryConfigModel implements NRepositoryConfigModel {
     }
 
     @Override
-    public boolean save(boolean force, NSession session) {
+    public boolean save(boolean force) {
         return false;
     }
 
@@ -39,63 +39,57 @@ class InstalledRepositoryConfigModel implements NRepositoryConfigModel {
     }
 
     @Override
-    public void addMirror(NRepository repo, NSession session) {
-        throw new NIllegalArgumentException(session, NMsg.ofPlain("not supported : addMirror"));
+    public void addMirror(NRepository repo) {
+        throw new NIllegalArgumentException(NMsg.ofPlain("not supported : addMirror"));
     }
 
     @Override
-    public NRepository addMirror(NAddRepositoryOptions options, NSession session) {
-        throw new NIllegalArgumentException(session, NMsg.ofPlain("not supported : addMirror"));
+    public NRepository addMirror(NAddRepositoryOptions options) {
+        throw new NIllegalArgumentException(NMsg.ofPlain("not supported : addMirror"));
     }
 
     @Override
-    public NRepository findMirror(String repositoryIdOrName, NSession session) {
+    public NRepository findMirror(String repositoryIdOrName) {
         return null;
     }
 
     @Override
-    public NRepository findMirrorById(String repositoryNameOrId, NSession session) {
+    public NRepository findMirrorById(String repositoryNameOrId) {
         return null;
     }
 
     @Override
-    public NRepository findMirrorByName(String repositoryNameOrId, NSession session) {
+    public NRepository findMirrorByName(String repositoryNameOrId) {
         return null;
     }
 
     @Override
-    public int getDeployWeight(NSession session) {
+    public int getDeployWeight() {
         return -1;
     }
 
     @Override
-    public String getGlobalName(NSession session) {
+    public String getGlobalName() {
         return DefaultNInstalledRepository.INSTALLED_REPO_UUID;
     }
 
     @Override
-    public String getGroups(NSession session) {
+    public String getGroups() {
         return null;
     }
 
     @Override
-    public NPath getLocationPath(NSession session) {
+    public NPath getLocationPath() {
         return null;
     }
 
     @Override
-    public NRepositoryLocation getLocation(NSession session) {
-        return null;
-    }
-    
-
-    @Override
-    public NRepository getMirror(String repositoryIdOrName, NSession session) {
+    public NRepository getMirror(String repositoryIdOrName) {
         return null;
     }
 
     @Override
-    public List<NRepository> getMirrors(NSession session) {
+    public List<NRepository> getMirrors() {
         return Collections.emptyList();
     }
 
@@ -105,12 +99,12 @@ class InstalledRepositoryConfigModel implements NRepositoryConfigModel {
     }
 
     @Override
-    public NRepositoryRef getRepositoryRef(NSession session) {
+    public NRepositoryRef getRepositoryRef() {
         return null;
     }
 
     @Override
-    public NSpeedQualifier getSpeed(NSession session) {
+    public NSpeedQualifier getSpeed() {
         return NSpeedQualifier.UNAVAILABLE;
     }
 
@@ -120,17 +114,17 @@ class InstalledRepositoryConfigModel implements NRepositoryConfigModel {
     }
 
     @Override
-    public NPath getStoreLocation(NStoreType folderType, NSession session) {
+    public NPath getStoreLocation(NStoreType folderType) {
         return null;
     }
 
     @Override
-    public NStoreStrategy getStoreStrategy(NSession session) {
-        return NLocations.of(session).getRepositoryStoreStrategy();
+    public NStoreStrategy getStoreStrategy() {
+        return NLocations.of().getRepositoryStoreStrategy();
     }
 
     @Override
-    public String getType(NSession session) {
+    public String getType() {
         return DefaultNInstalledRepository.INSTALLED_REPO_UUID;
     }
 
@@ -145,27 +139,27 @@ class InstalledRepositoryConfigModel implements NRepositoryConfigModel {
     }
 
     @Override
-    public boolean isEnabled(NSession session) {
+    public boolean isEnabled() {
         return false;
     }
 
     @Override
-    public boolean isIndexEnabled(NSession session) {
+    public boolean isIndexEnabled() {
         return false;
     }
 
     @Override
-    public boolean isPreview(NSession session) {
+    public boolean isPreview() {
         return false;
     }
 
     @Override
-    public boolean isIndexSubscribed(NSession session) {
+    public boolean isIndexSubscribed() {
         return false;
     }
 
     @Override
-    public boolean isSupportedMirroring(NSession session) {
+    public boolean isSupportedMirroring() {
         return false;
     }
 
@@ -174,110 +168,110 @@ class InstalledRepositoryConfigModel implements NRepositoryConfigModel {
 //            //
 //        }
     @Override
-    public boolean isTemporary(NSession session) {
+    public boolean isTemporary() {
         return false;
     }
 
     @Override
-    public void removeMirror(String repositoryId, NSession session) {
-        throw new NIllegalArgumentException(session, NMsg.ofPlain("not supported : removeMirror"));
+    public void removeMirror(String repositoryId) {
+        throw new NIllegalArgumentException(NMsg.ofPlain("not supported : removeMirror"));
     }
 
     @Override
-    public void setEnabled(boolean enabled, NSession options) {
+    public void setEnabled(boolean enabled) {
     }
 
     @Override
-    public void setIndexEnabled(boolean enabled, NSession session) {
+    public void setIndexEnabled(boolean enabled) {
     }
 
     @Override
-    public void setMirrorEnabled(String repoName, boolean enabled, NSession session) {
+    public void setMirrorEnabled(String repoName, boolean enabled) {
     }
 
     @Override
-    public void setTemporary(boolean enabled, NSession options) {
+    public void setTemporary(boolean enabled) {
 
     }
 
     @Override
-    public void subscribeIndex(NSession session) {
+    public void subscribeIndex() {
     }
 
     @Override
-    public void unsubscribeIndex(NSession session) {
+    public void unsubscribeIndex() {
     }
 
     @Override
-    public NPath getTempMirrorsRoot(NSession session) {
+    public NPath getTempMirrorsRoot() {
         return null;
     }
 
     @Override
-    public NPath getMirrorsRoot(NSession session) {
+    public NPath getMirrorsRoot() {
         return null;
     }
 
     @Override
-    public NUserConfig[] findUsers(NSession session) {
-        throw new NIllegalArgumentException(session, NMsg.ofPlain("not supported : findUsers"));
+    public NUserConfig[] findUsers() {
+        throw new NIllegalArgumentException(NMsg.ofPlain("not supported : findUsers"));
     }
 
     @Override
-    public NOptional<NUserConfig> findUser(String userId, NSession session) {
-        return NOptional.ofError(s->NMsg.ofPlain("not supported : findUser"));
+    public NOptional<NUserConfig> findUser(String userId) {
+        return NOptional.ofError(()->NMsg.ofPlain("not supported : findUser"));
     }
 
     @Override
-    public NRepositoryConfig getStoredConfig(NSession session) {
-        throw new NIllegalArgumentException(session, NMsg.ofPlain("not supported : getStoredConfig"));
+    public NRepositoryConfig getStoredConfig() {
+        throw new NIllegalArgumentException(NMsg.ofPlain("not supported : getStoredConfig"));
     }
 
     @Override
-    public void fireConfigurationChanged(String configName, NSession session) {
-        throw new NIllegalArgumentException(session, NMsg.ofPlain("not supported : fireConfigurationChanged"));
+    public void fireConfigurationChanged(String configName) {
+        throw new NIllegalArgumentException(NMsg.ofPlain("not supported : fireConfigurationChanged"));
     }
 
     @Override
-    public void setUser(NUserConfig user, NSession session) {
-        throw new NIllegalArgumentException(session, NMsg.ofPlain("not supported : setUser"));
+    public void setUser(NUserConfig user) {
+        throw new NIllegalArgumentException(NMsg.ofPlain("not supported : setUser"));
     }
 
     @Override
-    public void removeUser(String userId, NSession session) {
-        throw new NIllegalArgumentException(session, NMsg.ofPlain("not supported : removeUser"));
+    public void removeUser(String userId) {
+        throw new NIllegalArgumentException(NMsg.ofPlain("not supported : removeUser"));
     }
 
     @Override
-    public NRepositoryConfig getConfig(NSession session) {
-        throw new NIllegalArgumentException(session, NMsg.ofPlain("not supported : getConfig"));
+    public NRepositoryConfig getConfig() {
+        throw new NIllegalArgumentException(NMsg.ofPlain("not supported : getConfig"));
     }
 
     @Override
-    public Map<String, String> toMap(boolean inherit, NSession session) {
+    public Map<String, String> toMap(boolean inherit) {
         if (inherit) {
-            return NConfigs.of(session).getConfigMap();
+            return NConfigs.of().getConfigMap();
         }
         return new HashMap<>();
     }
 
     @Override
-    public Map<String, String> toMap(NSession session) {
+    public Map<String, String> toMap() {
         return new HashMap<>();
     }
 
     @Override
-    public NOptional<NLiteral> get(String key, boolean inherit, NSession session) {
-        NOptional<NLiteral> o = NOptional.ofEmpty(s -> NMsg.ofC("repo config property not found : %s", key));
+    public NOptional<NLiteral> get(String key, boolean inherit) {
+        NOptional<NLiteral> o = NOptional.ofEmpty(() -> NMsg.ofC("repo config property not found : %s", key));
         if (inherit) {
-            return o.orElseUse(()->NConfigs.of(session).getConfigProperty(key));
+            return o.orElseUse(()->NConfigs.of().getConfigProperty(key));
         }
         return o;
     }
 
 
     @Override
-    public void set(String property, String value, NSession session) {
+    public void set(String property, String value) {
 
     }
 }

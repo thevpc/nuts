@@ -30,14 +30,14 @@ import java.util.stream.Collectors;
 public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public static final ReplaceString COMMENT_LINE_CONFIG_HEADER = new ReplaceString("net.thevpc.nuts configuration", "((net[.]thevpc[.]nuts)|(net[.]thevpc[.]nuts.toolbox[.]ndi)|(net[.]vpc[.]app[.]nuts)) configuration");
 
-    public BaseSystemNdi(NSession session) {
-        super(session);
+    public BaseSystemNdi(NWorkspace workspace) {
+        super(workspace);
     }
 
     public NdiScriptInfo[] getSysRC(NdiScriptOptions options) {
         List<NdiScriptInfo> scriptInfos = new ArrayList<>();
         Set<String> visited = new LinkedHashSet<>();
-        for (NShellFamily sf : NEnvs.of(session).getShellFamilies()) {
+        for (NShellFamily sf : NEnvs.of().getShellFamilies()) {
             String z = NShellHelper.of(sf).getSysRcName();
             if (!visited.contains(z)) {
                 visited.add(z);
@@ -154,7 +154,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
 
     public NPath getBinScriptFile(String name, NdiScriptOptions options) {
-        NPath pp = NPath.of(name, options.getSession());
+        NPath pp = NPath.of(name);
         if (!pp.isName()) {
             return pp.toAbsolute();
         }
@@ -168,7 +168,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     @Override
     public PathInfo[] createArtifactScript(NdiScriptOptions options) {
-        NId nid = NId.of(options.getId()).get(session);
+        NId nid = NId.of(options.getId()).get();
         List<PathInfo> r = new ArrayList<>();
         if (isNutsBootId(nid)) {
             r.addAll(Arrays.asList(
@@ -181,7 +181,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
             NDefinition fetched = null;
             if (nid.getVersion().isBlank()) {
-                fetched = NSearchCmd.of(session.copy())
+                fetched = NSearchCmd.of()
                         .addId(options.getId()).setLatest(true).getResultDefinitions().findFirst().get();
                 nid = fetched.getId().getShortId();
                 //nutsId=fetched.getId().getLongNameId();
@@ -192,15 +192,15 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 String s = options.getLauncher().getCustomScriptPath();
                 if (NBlankable.isBlank(s)) {
                     NDefinition appDef = loadIdDefinition(nid);
-                    s = NameBuilder.id(appDef.getId(), "%n", null, appDef.getDescriptor(), session).buildName();
+                    s = NameBuilder.id(appDef.getId(), "%n", null, appDef.getDescriptor(), workspace).buildName();
                     s = getBinScriptFile(s, options).toString();
-                } else if (NPath.of(s, session).isName()) {
+                } else if (NPath.of(s).isName()) {
                     NDefinition appDef = loadIdDefinition(nid);
-                    s = NameBuilder.id(appDef.getId(), s, null, appDef.getDescriptor(), session).buildName();
+                    s = NameBuilder.id(appDef.getId(), s, null, appDef.getDescriptor(), workspace).buildName();
                     s = getBinScriptFile(s, options).toString();
                 } else {
                     NDefinition appDef = loadIdDefinition(nid);
-                    s = s + File.separator + NameBuilder.id(appDef.getId(), getExecFileName("%n"), null, appDef.getDescriptor(), session).buildName();
+                    s = s + File.separator + NameBuilder.id(appDef.getId(), getExecFileName("%n"), null, appDef.getDescriptor(), workspace).buildName();
                 }
                 NShellFamily shellFamily = getShellGroups()[0];
                 r.add(scriptBuilderTemplate("body", shellFamily, "artifact", nid, options)
@@ -222,21 +222,21 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     @Override
-    public void removeNutsScript(String id, String switchWorkspaceLocation, NSession session) {
-        NdiScriptOptions options = new NdiScriptOptions().setSession(session);
+    public void removeNutsScript(String id, String switchWorkspaceLocation) {
+        NdiScriptOptions options = new NdiScriptOptions();
         options.getLauncher().setSwitchWorkspaceLocation(switchWorkspaceLocation);
-        NId nid = NId.of(id).get( session);
+        NId nid = NId.of(id).get();
         NPath f = getBinScriptFile(nid.getArtifactId(), options);
-        NTexts factory = NTexts.of(this.session);
+        NTexts factory = NTexts.of();
         if (f.isRegularFile()) {
-            if (NAsk.of(session)
+            if (NAsk.of()
                     .forBoolean(NMsg.ofC("tool %s will be removed. Confirm?",
                             factory.ofStyled(CoreIOUtils.betterPath(f.toString()), NTextStyle.path())
                     ))
                     .setDefaultValue(true)
-                    .setSession(session)
                     .getBooleanValue()) {
                 f.delete();
+                NSession session = workspace.currentSession();
                 if (session.isPlainTrace()) {
                     session.out().println(NMsg.ofC("tool %s removed.", factory.ofStyled(CoreIOUtils.betterPath(f.toString()), NTextStyle.path())));
                 }
@@ -249,7 +249,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         options = options.copy();
         options.getLauncher().setSwitchWorkspace(true);
         PathInfo[] v = createBootScripts(options);
-
+        NSession session = workspace.currentSession();
         if (session.isPlainTrace()) {
             session.out().println(NMsg.ofC("```sh nuts``` switched to workspace %s to point to %s",
                     options.getWorkspaceLocation(),
@@ -275,9 +275,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     @Override
     public PathInfo[] addScript(NdiScriptOptions options, String[] all) {
         List<String> idsToInstall = Arrays.asList(all);
-        NSession session = options.getSession();
-        NSessionUtils.checkSession(getSession().getWorkspace(), options.getSession());
-        Path workspaceLocation = NLocations.of(session).getWorkspaceLocation().toPath().get();
+        NSession session = workspace.currentSession();
+        Path workspaceLocation = NLocations.of().getWorkspaceLocation().toPath().get();
         List<PathInfo> result = new ArrayList<>();
         Boolean systemWideConfig = options.getLauncher().getSwitchWorkspace();
         if (!idsToInstall.isEmpty()) {
@@ -286,9 +285,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
             boolean includeEnv = options.isIncludeEnv();
             for (String id : idsToInstall) {
-                NId nid = NId.of(id).get( session);
+                NId nid = NId.of(id).get();
                 if (nid == null) {
-                    throw new NExecutionException(session, NMsg.ofC("unable to create script for %s : invalid id", id), NExecutionException.ERROR_1);
+                    throw new NExecutionException(NMsg.ofC("unable to create script for %s : invalid id", id), NExecutionException.ERROR_1);
                 }
                 if (!nid.getVersion().isBlank()) {
                     includeEnv = true;
@@ -298,12 +297,12 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 //            if (includeEnv) {
 //                linkNameCurrent = prepareLinkName(linkNameCurrent);
 //            }
-            List<String> nutsIds = idsToInstall.stream().filter(x -> isNutsBootId(NId.of(x).get( session))).collect(Collectors.toList());
-            List<String> nonNutsIds = idsToInstall.stream().filter(x -> !isNutsBootId(NId.of(x).get( session))).collect(Collectors.toList());
+            List<String> nutsIds = idsToInstall.stream().filter(x -> isNutsBootId(NId.of(x).get())).collect(Collectors.toList());
+            List<String> nonNutsIds = idsToInstall.stream().filter(x -> !isNutsBootId(NId.of(x).get())).collect(Collectors.toList());
             boolean bootAlreadyProcessed = false;
             for (String id : nutsIds) {
                 try {
-                    NId nid = NId.of(id).get(session);
+                    NId nid = NId.of(id).get();
                     bootAlreadyProcessed = true;
                     if (!nid.getVersion().isBlank()) {
                         String verString = nid.getVersion().toString();
@@ -319,7 +318,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
                     result.addAll(Arrays.asList(createArtifactScript(oo)));
                 } catch (UncheckedIOException | NIOException e) {
-                    throw new NExecutionException(session, NMsg.ofC("unable to add launcher for %s : %s", id, e), e);
+                    throw new NExecutionException(NMsg.ofC("unable to add launcher for %s : %s", id, e), e);
                 }
             }
             if (!bootAlreadyProcessed && !nonNutsIds.isEmpty()) {
@@ -332,19 +331,18 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
             for (String id : nonNutsIds) {
                 try {
-                    NId nid = NId.of(id).get(session);
+                    NId nid = NId.of(id).get();
                     if (nid == null) {
-                        throw new NExecutionException(session, NMsg.ofC("unable to create script for %s : invalid id", id), NExecutionException.ERROR_1);
+                        throw new NExecutionException(NMsg.ofC("unable to create script for %s : invalid id", id), NExecutionException.ERROR_1);
                     }
                     NdiScriptOptions oo = options.copy()
                             .setId(id);
                     oo.getLauncher().setCustomScriptPath(linkNameCurrent);
                     oo.getLauncher().setSwitchWorkspace(systemWideConfig != null && systemWideConfig);
                     oo.setIncludeEnv(includeEnv);
-                    oo.setSession(session);
                     result.addAll(Arrays.asList(createArtifactScript(oo)));
                 } catch (UncheckedIOException | NIOException e) {
-                    throw new NExecutionException(session, NMsg.ofC("unable to add launcher for %s : %s", id, e), e);
+                    throw new NExecutionException(NMsg.ofC("unable to add launcher for %s : %s", id, e), e);
                 }
             }
 //            result.addAll(Arrays.asList(configurePath(
@@ -371,7 +369,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         String scriptPath = options.getLauncher().getCustomScriptPath();
         all.add(scriptBuilderTemplate("nuts", getShellGroups()[0], "nuts", options.resolveNutsApiId(), options)
                 .setPath(getBinScriptFile(NameBuilder.id(options.resolveNutsApiId(), scriptPath, "%n",
-                        options.resolveNutsApiDef().getDescriptor(), session).buildName(), options))
+                        options.resolveNutsApiDef().getDescriptor(), workspace).buildName(), options))
                 .build());
         for (NdiScriptInfo i : getIncludeNutsTermInit(options)) {
             all.add(i.create());
@@ -420,18 +418,18 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     private NDefinition loadIdDefinition(NId nid) {
-        return NSearchCmd.of(session).addId(nid).setLatest(true).setEffective(true).setDistinct(true).getResultDefinitions().findSingleton().get();
+        return NSearchCmd.of().addId(nid).setLatest(true).setEffective(true).setDistinct(true).getResultDefinitions().findSingleton().get();
     }
 
     public NSupportMode getDesktopIntegrationSupport(NDesktopIntegrationItem target) {
-        return NEnvs.of(session).getDesktopIntegrationSupport(target);
+        return NEnvs.of().getDesktopIntegrationSupport(target);
     }
 
     protected boolean matchCondition(NSupportMode createDesktop, NSupportMode desktopIntegrationSupport) {
         if (desktopIntegrationSupport == null) {
             desktopIntegrationSupport = NSupportMode.NEVER;
         }
-        return desktopIntegrationSupport.acceptCondition(createDesktop, session);
+        return desktopIntegrationSupport.acceptCondition(createDesktop);
     }
 
     public void onPostGlobal(NdiScriptOptions options, PathInfo[] updatedPaths) {
@@ -439,9 +437,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     public NWorkspaceBootConfig loadSwitchWorkspaceLocationConfig(String switchWorkspaceLocation) {
-        NWorkspaceBootConfig bootConfig = NConfigs.of(session).loadBootConfig(switchWorkspaceLocation, false, true);
+        NWorkspaceBootConfig bootConfig = NConfigs.of().loadBootConfig(switchWorkspaceLocation, false, true);
         if (bootConfig == null) {
-            throw new NIllegalArgumentException(session, NMsg.ofC("invalid workspace: %s", switchWorkspaceLocation));
+            throw new NIllegalArgumentException(NMsg.ofC("invalid workspace: %s", switchWorkspaceLocation));
         }
         return bootConfig;
     }
@@ -471,7 +469,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
             return false;
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -486,7 +484,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 lines.add(line);
             }
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
         return lines;
     }
@@ -581,7 +579,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         byte[] newContent = (String.join(sh.newlineString(), newFileContentRows)).getBytes();
 //        String newContentString = new String(newContent);
 //        PathInfo.Status s = NdiUtils.tryWriteStatus(newContent, filePath,session);
-        return new PathInfo(type, id, filePath, CoreIOUtils.tryWrite(newContent, filePath, session));
+        return new PathInfo(type, id, filePath, CoreIOUtils.tryWrite(newContent, filePath));
     }
 
     public PathInfo removeFileCommented2Lines(String type, NId id, NPath filePath, String commentLine, boolean force, NShellFamily shellFamily) {
@@ -630,9 +628,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         } else if (nDesktopIntegrationItem == NDesktopIntegrationItem.MENU) {
             results.addAll(Arrays.asList(ww.writeMenu(shortcut, path, true, id)));
         } else if (nDesktopIntegrationItem == NDesktopIntegrationItem.USER) {
-            results.addAll(Arrays.asList(ww.writeShortcut(shortcut, path == null ? null : NPath.of(path, session), true, id)));
+            results.addAll(Arrays.asList(ww.writeShortcut(shortcut, path == null ? null : NPath.of(path), true, id)));
         } else {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("unsupported"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("unsupported"));
         }
         return results.toArray(new PathInfo[0]);
     }
@@ -670,8 +668,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     protected int compareIconPaths(String a, String b) {
-        String n1 = NPath.of(a, session).getLastExtension();
-        String n2 = NPath.of(b, session).getLastExtension();
+        String n1 = NPath.of(a).getLastExtension();
+        String n2 = NPath.of(b).getLastExtension();
         return compareIconExtensions(n1, n2);
     }
 
@@ -681,7 +679,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             List<String> all = iconPaths.stream().map(x -> (x == null) ? "" : x.trim())
                     .filter(x -> !x.isEmpty())
                     .filter(x ->
-                            resolveIconExtensionPriority(NPath.of(x, session).getLastExtension()) >= 0
+                            resolveIconExtensionPriority(NPath.of(x).getLastExtension()) >= 0
                     )
                     .sorted(this::compareIconPaths).collect(Collectors.toList());
             if (all.size() > 0) {
@@ -718,13 +716,13 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public String getPreferredIconPath(NId appId) {
         if (CoreNIdUtils.isApiId(appId)) {
             //apiId does not define any icon, will load icon from the runtime
-            NId rt = CoreNIdUtils.findRuntimeForApi(appId.getVersion().getValue(), getSession());
+            NId rt = CoreNIdUtils.findRuntimeForApi(appId.getVersion().getValue());
             if (rt == null) {
-                rt = session.getWorkspace().getRuntimeId();
+                rt = workspace.getRuntimeId();
             }
             return getPreferredIconPath(rt);
         }
-        NDefinition appDef = NSearchCmd.of(session).addId(appId).setLatest(true).setEffective(true).setDistinct(true).getResultDefinitions()
+        NDefinition appDef = NSearchCmd.of().addId(appId).setLatest(true).setEffective(true).setDistinct(true).getResultDefinitions()
                 .findSingleton().get();
         String descAppIcon = resolveBestIcon(appDef.getId(),appDef.getDescriptor().getIcons());
         if (descAppIcon == null) {
@@ -733,7 +731,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     || appDef.getId().getGroupId().startsWith("net.thevpc.nuts.")
             ) {
                 //get default icon
-                NId rid = session.getWorkspace().getRuntimeId();
+                NId rid = workspace.getRuntimeId();
                 descAppIcon =
                         resolveBestIcon(rid,
                                 Arrays.asList(
@@ -744,7 +742,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                         );
             } else if (appDef.getId().getGroupId().startsWith("net.thevpc.nuts")) {
                 //get default icon
-                NId rid = session.getWorkspace().getRuntimeId();
+                NId rid = workspace.getRuntimeId();
                 descAppIcon =
                         resolveBestIcon(rid,
                                 Arrays.asList(
@@ -758,19 +756,19 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         String iconPath = null;
         if (descAppIcon != null) {
             String descAppIcon0 = descAppIcon;
-            String descAppIconDigest = NDigest.of(session).md5().setSource(new ByteArrayInputStream(descAppIcon0.getBytes())).computeString();
-            NPath p0 = NPath.of(descAppIcon, session);
+            String descAppIconDigest = NDigest.of().md5().setSource(new ByteArrayInputStream(descAppIcon0.getBytes())).computeString();
+            NPath p0 = NPath.of(descAppIcon);
             descAppIcon=toAbsoluteIconPath(appId, descAppIcon);
             String bestName = descAppIconDigest + "." + p0.getLastExtension();
-            NPath localIconPath = NLocations.of(session).getStoreLocation(appDef.getId(), NStoreType.CACHE)
+            NPath localIconPath = NLocations.of().getStoreLocation(appDef.getId(), NStoreType.CACHE)
                     .resolve("icons")
                     .resolve(bestName);
             if (localIconPath.isRegularFile()) {
                 iconPath = localIconPath.toString();
             } else {
-                NPath p = NPath.of(descAppIcon, session);
+                NPath p = NPath.of(descAppIcon);
                 if (p.exists()) {
-                    NCp.of(session)
+                    NCp.of()
                             .from(p)
                             .to(localIconPath).addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE)
                             .run();
@@ -785,7 +783,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     public Path getShortcutPath(NdiScriptOptions options) {
-        NDefinition appDef = NSearchCmd.of(options.getSession())
+        NDefinition appDef = NSearchCmd.of()
                 .addId(options.getId())
                 .setLatest(true)
                 .setEffective(true)
@@ -800,16 +798,15 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     public PathInfo[] createShortcut(NDesktopIntegrationItem nDesktopIntegrationItem, NdiScriptOptions options) {
         String apiVersion = options.getNutsApiVersion().toString();
-        NAssert.requireNonBlank(apiVersion, "nuts-api version to link to", session);
-        NId apiId = session.getWorkspace().getApiId().builder().setVersion(apiVersion).build();
-        NDefinition apiDefinition = NSearchCmd.of(session).addId(apiId).failFast().latest()
+        NAssert.requireNonBlank(apiVersion, "nuts-api version to link to");
+        NId apiId = workspace.getApiId().builder().setVersion(apiVersion).build();
+        NDefinition apiDefinition = NSearchCmd.of().addId(apiId).failFast().latest()
                 .content()
                 .distinct()
                 .getResultDefinitions()
                 .findSingleton().get();
 
-        NSession session = options.getSession();
-        NId appId = NId.of(options.getId()).get(session);
+        NId appId = NId.of(options.getId()).get();
         NDefinition appDef = loadIdDefinition(appId);
         List<String> cmd = new ArrayList<>();
 
@@ -840,7 +837,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             shortcutName = "%N";
         }
         shortcutName += "%s%v%s%h";
-        shortcutName = NameBuilder.label(appDef.getId(), shortcutName, null, appDef.getDescriptor(), this.session).buildName();
+        shortcutName = NameBuilder.label(appDef.getId(), shortcutName, null, appDef.getDescriptor(), this.workspace).buildName();
 
         String execCmd = NCmdLine.of(cmd).toString();
         FreeDesktopEntry.Group sl = FreeDesktopEntry.Group.desktopEntry(shortcutName, execCmd, cwd);
@@ -887,8 +884,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         }
         fileName =
                 (isShortcutFileNameUserFriendly() ?
-                        NameBuilder.label(id, fileName, null, descriptor, session)
-                        : NameBuilder.id(id, fileName, null, descriptor, session)
+                        NameBuilder.label(id, fileName, null, descriptor, workspace)
+                        : NameBuilder.id(id, fileName, null, descriptor, workspace)
                 )
                         .buildName();
         return fileName;
@@ -901,7 +898,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         String cmd = getNutsTerm(options)[0].path().toString();
         fileName = resolveShortcutFileName(options.resolveNutsApiId(), options.resolveNutsApiDef().getDescriptor(), fileName, name);
         if (name == null) {
-            name = NameBuilder.label(options.resolveNutsApiId(), "Nuts Terminal%s%v%s%h", null, options.resolveNutsApiDef().getDescriptor(), session)
+            name = NameBuilder.label(options.resolveNutsApiId(), "Nuts Terminal%s%v%s%h", null, options.resolveNutsApiDef().getDescriptor(), workspace)
                     .buildName();
         }
         String execCmd = NCmdLine.of(new String[]{cmd}).toString();
@@ -979,7 +976,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             if (bashrcName == null) {
                 return null;
             }
-            return NPath.of(System.getProperty("user.home"), session).resolve(bashrcName);
+            return NPath.of(System.getProperty("user.home")).resolve(bashrcName);
         }
 
         @Override

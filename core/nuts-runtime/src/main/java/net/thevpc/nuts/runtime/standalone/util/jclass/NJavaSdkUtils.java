@@ -5,12 +5,10 @@ import net.thevpc.nuts.boot.NClassLoaderNode;
 import net.thevpc.nuts.concurrent.NScheduler;
 import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.env.NPlatformFamily;
-import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NSdkLocationComparator;
@@ -19,11 +17,6 @@ import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.*;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -34,15 +27,10 @@ import java.util.logging.Level;
 
 public class NJavaSdkUtils {
 
-    private final NWorkspace ws;
-    private NLog LOG;
+    private final NWorkspace workspace;
 
-    private NJavaSdkUtils(NWorkspace ws) {
-        this.ws = ws;
-    }
-
-    public static NJavaSdkUtils of(NSession session) {
-        return of(session.getWorkspace());
+    private NJavaSdkUtils(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
     public static NJavaSdkUtils of(NWorkspace ws) {
@@ -55,21 +43,21 @@ public class NJavaSdkUtils {
 //        return wp;
     }
 
-    public static List<NClassLoaderNodeExt> loadNutsClassLoaderNodeExts(NClassLoaderNode[] n, boolean java9, NSession session) {
+    public static List<NClassLoaderNodeExt> loadNutsClassLoaderNodeExts(NClassLoaderNode[] n, boolean java9, NWorkspace workspace) {
         List<NClassLoaderNodeExt> list = new ArrayList<>();
         for (NClassLoaderNode nn : n) {
-            fillNodes(nn, list, java9, session);
+            fillNodes(nn, list, java9, workspace);
         }
         return list;
     }
 
-    private static void fillNodes(NClassLoaderNode n, List<NClassLoaderNodeExt> list, boolean java9, NSession session) {
+    private static void fillNodes(NClassLoaderNode n, List<NClassLoaderNodeExt> list, boolean java9, NWorkspace workspace) {
         NClassLoaderNodeExt k = new NClassLoaderNodeExt();
         k.node = n;
-        k.id = NId.of(n.getId()).get(session);
-        k.path = NPath.of(n.getURL(), session);
+        k.id = NId.of(n.getId()).get();
+        k.path = NPath.of(n.getURL());
         if (java9) {
-            k.moduleInfo = JavaJarUtils.parseModuleInfo(k.path, session);
+            k.moduleInfo = JavaJarUtils.parseModuleInfo(k.path, workspace);
             if (k.moduleInfo != null) {
                 k.moduleName = k.moduleInfo.module_name;
                 for (JavaClassByteCode.ModuleInfoRequired r : k.moduleInfo.required) {
@@ -78,7 +66,7 @@ public class NJavaSdkUtils {
                     }
                 }
             } else {
-                k.moduleName = JavaJarUtils.parseDefaultModuleName(k.path, session);
+                k.moduleName = JavaJarUtils.parseDefaultModuleName(k.path);
             }
             k.jfx = k.moduleName != null && k.moduleName.startsWith("javafx");
 
@@ -88,42 +76,39 @@ public class NJavaSdkUtils {
         }
         list.add(k);
         for (NClassLoaderNode d : n.getDependencies()) {
-            fillNodes(d, list, java9, session);
+            fillNodes(d, list, java9, workspace);
         }
     }
 
-    protected NLogOp _LOGOP(NSession session) {
-        return _LOG(session).with().session(session);
+    protected NLogOp _LOGOP() {
+        return _LOG().with();
     }
 
-    protected NLog _LOG(NSession session) {
-        if (LOG == null) {
-            LOG = NLog.of(NJavaSdkUtils.class, session);
-        }
-        return LOG;
+    protected NLog _LOG() {
+        return NLog.of(NJavaSdkUtils.class);
     }
 
-    public NPlatformLocation resolveJdkLocation(String requestedJavaVersion, NSession session) {
+    public NPlatformLocation resolveJdkLocation(String requestedJavaVersion) {
         String _requestedJavaVersion = requestedJavaVersion;
         requestedJavaVersion = NStringUtils.trim(requestedJavaVersion);
-        NVersion vv = NVersion.of(requestedJavaVersion).get(session);
+        NVersion vv = NVersion.of(requestedJavaVersion).get();
         String singleVersion = vv.asSingleValue().orNull();
         if (singleVersion != null) {
             requestedJavaVersion = "[" + singleVersion + ",[";
         }
-        NVersionFilter requestedVersionFilter = NVersionFilters.of(session).byValue(requestedJavaVersion).get();
-        NPlatforms platforms = NPlatforms.of(session);
+        NVersionFilter requestedVersionFilter = NVersionFilters.of().byValue(requestedJavaVersion).get();
+        NPlatforms platforms = NPlatforms.of();
         NPlatformLocation bestJava = platforms
                 .findPlatformByVersion(NPlatformFamily.JAVA, requestedVersionFilter).orNull();
         if (bestJava == null) {
-            String appSuffix = NEnvs.of(session).getOsFamily() == NOsFamily.WINDOWS ? ".exe" : "";
+            String appSuffix = NEnvs.of().getOsFamily() == NOsFamily.WINDOWS ? ".exe" : "";
             String packaging = "jre";
             if (new File(System.getProperty("java.home"), "bin" + File.separator + "javac" + (appSuffix)).isFile()) {
                 packaging = "jdk";
             }
             String product = "JDK";
             NPlatformLocation current = new NPlatformLocation(
-                    NEnvs.of(session).getPlatform(),
+                    NEnvs.of().getPlatform(),
                     product,
                     product + "-" + System.getProperty("java.version"),
                     System.getProperty("java.home"),
@@ -132,23 +117,23 @@ public class NJavaSdkUtils {
                     0
             );
             current.setConfigVersion(DefaultNWorkspace.VERSION_SDK_LOCATION);
-            NVersionFilter requestedJavaVersionFilter = vv.filter(session);
-            if (requestedJavaVersionFilter == null || requestedJavaVersionFilter.acceptVersion(NVersion.of(current.getVersion()).get(session), session)) {
+            NVersionFilter requestedJavaVersionFilter = vv.filter();
+            if (requestedJavaVersionFilter == null || requestedJavaVersionFilter.acceptVersion(NVersion.of(current.getVersion()).get())) {
                 bestJava = current;
             }
             if (bestJava == null) {
                 if (!NBlankable.isBlank(requestedJavaVersion)) {
-                    _LOGOP(session).level(Level.FINE).verb(NLogVerb.WARNING)
+                    _LOGOP().level(Level.FINE).verb(NLogVerb.WARNING)
                             .log(NMsg.ofJ("no valid JRE found. recommended {0} . Using default java.home at {1}", requestedJavaVersion, System.getProperty("java.home")));
                 } else {
-                    _LOGOP(session).level(Level.FINE).verb(NLogVerb.WARNING)
+                    _LOGOP().level(Level.FINE).verb(NLogVerb.WARNING)
                             .log(NMsg.ofJ("no valid JRE found. Using default java.home at {0}", System.getProperty("java.home")));
                 }
                 bestJava = current;
             }
         }
         String sVersion = bestJava.getVersion();
-        if (requestedVersionFilter.acceptVersion(NVersion.of(sVersion).get(session), session)) {
+        if (requestedVersionFilter.acceptVersion(NVersion.of(sVersion).get())) {
             return bestJava;
         }
         // replace 1.6 by 6, and 1.8 by 8
@@ -157,20 +142,20 @@ public class NJavaSdkUtils {
             NLiteral p = NLiteral.of(sVersion.substring(0, a));
             if (p.isInt() && p.asInt().get() == 1) {
                 String sVersion2 = sVersion.substring(a + 1);
-                NVersion version2 = NVersion.of(sVersion2).get(session);
-                if (requestedVersionFilter.acceptVersion(version2, session)) {
+                NVersion version2 = NVersion.of(sVersion2).get();
+                if (requestedVersionFilter.acceptVersion(version2)) {
                     return bestJava;
                 }
             }
         }
-        _LOGOP(session).level(Level.FINE).verb(NLogVerb.WARNING)
+        _LOGOP().level(Level.FINE).verb(NLogVerb.WARNING)
                 .log(NMsg.ofJ("no valid JRE found for version {0}", _requestedJavaVersion));
         return null;
     }
 
     public NPlatformLocation[] searchJdkLocations(NSession session) {
         String[] conf = {};
-        switch (NEnvs.of(session).getOsFamily()) {
+        switch (NEnvs.of().getOsFamily()) {
             case LINUX:
             case UNIX:
             case UNKNOWN: {
@@ -191,20 +176,20 @@ public class NJavaSdkUtils {
         }
         List<NPlatformLocation> all = new ArrayList<>();
         for (String s : conf) {
-            all.addAll(Arrays.asList(searchJdkLocations(NPath.of(s, session), session)));
+            all.addAll(Arrays.asList(searchJdkLocations(NPath.of(s), session)));
         }
         return all.toArray(new NPlatformLocation[0]);
     }
 
-    public Future<NPlatformLocation[]> searchJdkLocationsFuture(NSession session) {
+    public Future<NPlatformLocation[]> searchJdkLocationsFuture() {
         LinkedHashSet<String> conf = new LinkedHashSet<>();
-        NPath file = NPath.of(System.getProperty("java.home"), session).normalize();
+        NPath file = NPath.of(System.getProperty("java.home")).normalize();
         List<Future<NPlatformLocation[]>> all = new ArrayList<>();
-        NPlatformLocation base = resolveJdkLocation(file, null, session);
+        NPlatformLocation base = resolveJdkLocation(file, null);
         if (base != null) {
             all.add(CompletableFuture.completedFuture(new NPlatformLocation[]{base}));
         }
-        switch (NEnvs.of(session).getOsFamily()) {
+        switch (NEnvs.of().getOsFamily()) {
             case LINUX:
             case UNIX:
             case UNKNOWN: {
@@ -224,9 +209,9 @@ public class NJavaSdkUtils {
             }
         }
         for (String s : conf) {
-            all.add(searchJdkLocationsFuture(NPath.of(s, session), session));
+            all.add(searchJdkLocationsFuture(NPath.of(s)));
         }
-        return NScheduler.of(session).executorService().submit(() -> {
+        return NScheduler.of().executorService().submit(() -> {
             List<NPlatformLocation> locs = new ArrayList<>();
             for (Future<NPlatformLocation[]> nutsSdkLocationFuture : all) {
                 NPlatformLocation[] e = nutsSdkLocationFuture.get();
@@ -234,7 +219,7 @@ public class NJavaSdkUtils {
                     locs.addAll(Arrays.asList(e));
                 }
             }
-            locs.sort(new NSdkLocationComparator(session));
+            locs.sort(new NSdkLocationComparator());
             return locs.toArray(new NPlatformLocation[0]);
         });
     }
@@ -243,7 +228,7 @@ public class NJavaSdkUtils {
         List<NPlatformLocation> all = new ArrayList<>();
         if (loc.isDirectory()) {
             for (NPath d : loc.list()) {
-                NPlatformLocation r = resolveJdkLocation(d, null, session);
+                NPlatformLocation r = resolveJdkLocation(d, null);
                 if (r != null) {
                     all.add(r);
                     if (session != null && session.isPlainTrace()) {
@@ -256,25 +241,25 @@ public class NJavaSdkUtils {
                 }
             }
         }
-        all.sort(new NSdkLocationComparator(session));
+        all.sort(new NSdkLocationComparator());
         return all.toArray(new NPlatformLocation[0]);
     }
 
-    public Future<NPlatformLocation[]> searchJdkLocationsFuture(NPath s, NSession session) {
+    public Future<NPlatformLocation[]> searchJdkLocationsFuture(NPath s) {
         List<Future<NPlatformLocation>> all = new ArrayList<>();
         if (s == null) {
             return CompletableFuture.completedFuture(new NPlatformLocation[0]);
         } else if (s.isDirectory()) {
             for (NPath d : s.list()) {
                 all.add(
-                        NScheduler.of(session).executorService().submit(() -> {
+                        NScheduler.of().executorService().submit(() -> {
                             NPlatformLocation r = null;
                             try {
-                                r = resolveJdkLocation(d, null, session);
+                                r = resolveJdkLocation(d, null);
                                 if (r != null) {
-                                    synchronized (session.getWorkspace()) {
-                                        NTexts factory = NTexts.of(session);
-                                        session.getTerminal().printProgress(
+                                    synchronized (workspace) {
+                                        NTexts factory = NTexts.of();
+                                        workspace.currentSession().getTerminal().printProgress(
                                                 NMsg.ofC("detected java %s %s at %s", r.getPackaging(),
                                                         factory.ofStyled(r.getVersion(), NTextStyle.version()),
                                                         factory.ofStyled(r.getPath(), NTextStyle.path()))
@@ -282,14 +267,14 @@ public class NJavaSdkUtils {
                                     }
                                 }
                             } catch (Exception ex) {
-                                LOG.with().error(ex).log(NMsg.ofC("error: %s", ex));
+                                _LOG().with().error(ex).log(NMsg.ofC("error: %s", ex));
                             }
                             return r;
                         })
                 );
             }
         }
-        return NScheduler.of(session).executorService().submit(() -> {
+        return NScheduler.of().executorService().submit(() -> {
             List<NPlatformLocation> locs = new ArrayList<>();
             for (Future<NPlatformLocation> nutsSdkLocationFuture : all) {
                 NPlatformLocation e = nutsSdkLocationFuture.get();
@@ -298,12 +283,12 @@ public class NJavaSdkUtils {
                 }
             }
             //just reset the line!
-            session.getTerminal().printProgress(NMsg.ofPlain(""));
+            workspace.currentSession().getTerminal().printProgress(NMsg.ofPlain(""));
             return locs.toArray(new NPlatformLocation[0]);
         });
     }
 
-    public String detectJdkProvider(String name, NSession session) {
+    public String detectJdkProvider(String name) {
         for (String s : new String[]{
                 "bellsoft:Bellsoft",
                 "oracle:Oracle",
@@ -329,10 +314,9 @@ public class NJavaSdkUtils {
         return null;
     }
 
-    public NPlatformLocation resolveJdkLocation(NPath path, String preferredName, NSession session) {
-        NSessionUtils.checkSession(ws, session);
-        NAssert.requireNonBlank(path, "path", session);
-        String appSuffix = NEnvs.of(session).getOsFamily() == NOsFamily.WINDOWS ? ".exe" : "";
+    public NPlatformLocation resolveJdkLocation(NPath path, String preferredName) {
+        NAssert.requireNonBlank(path, "path");
+        String appSuffix = NEnvs.of().getOsFamily() == NOsFamily.WINDOWS ? ".exe" : "";
         NPath bin = path.resolve("bin");
         NPath javaExePath = bin.resolve("java" + appSuffix);
         if (!javaExePath.isRegularFile()) {
@@ -347,7 +331,7 @@ public class NJavaSdkUtils {
             //I do not know why but sometimes, the process exists before receiving stdout result!!
             final int MAX_ITER = 5;
             for (int i = 0; i < MAX_ITER; i++) {
-                NExecCmd cmd = NExecCmd.of(session)
+                NExecCmd cmd = NExecCmd.of()
                         .system()
                         .addCommand(javaExePath.toString(), "-version")
                         .grabAll().failFast().run();
@@ -356,7 +340,7 @@ public class NJavaSdkUtils {
                 if (!cmdOutputString.isEmpty()) {
                     break;
                 } else {
-                    _LOGOP(session).level(i == (MAX_ITER - 1) ? Level.WARNING : Level.FINER).verb(NLogVerb.WARNING)
+                    _LOGOP().level(i == (MAX_ITER - 1) ? Level.WARNING : Level.FINER).verb(NLogVerb.WARNING)
                             .log(NMsg.ofJ("unable to execute {0}. returned empty string ({1}/{2})", javaExePath, i + 1, MAX_ITER));
                 }
             }
@@ -383,19 +367,19 @@ public class NJavaSdkUtils {
                         }
                     }
                 }
-                String uu = detectJdkProvider(path.getName(), session);
-                if(uu!=null){
-                    product+=" "+uu.trim();
+                String uu = detectJdkProvider(path.getName());
+                if (uu != null) {
+                    product += " " + uu.trim();
                 }
             }
         } catch (Exception ex) {
             loggedError = true;
-            _LOGOP(session).error(ex).level(Level.SEVERE).verb(NLogVerb.WARNING)
+            _LOGOP().error(ex).level(Level.SEVERE).verb(NLogVerb.WARNING)
                     .log(NMsg.ofJ("unable to execute {0}. JDK Home ignored", javaExePath));
         }
         if (jdkVersion == null) {
             if (!loggedError) {
-                _LOGOP(session).level(Level.SEVERE).verb(NLogVerb.WARNING)
+                _LOGOP().level(Level.SEVERE).verb(NLogVerb.WARNING)
                         .log(NMsg.ofJ("execute {0} failed with result code {1} and result string \"{2}\". JDK Home ignored", javaExePath.toString(), cmdRresult, cmdOutputString));
             }
             return null;
@@ -410,7 +394,7 @@ public class NJavaSdkUtils {
             preferredName = NStringUtils.trim(preferredName);
         }
         NPlatformLocation r = new NPlatformLocation(
-                NWorkspaceUtils.of(session).createSdkId("java", jdkVersion),
+                NWorkspaceUtils.of(workspace).createSdkId("java", jdkVersion),
                 product,
                 preferredName,
                 path.toString(),
@@ -422,9 +406,9 @@ public class NJavaSdkUtils {
         return r;
     }
 
-    public NId createJdkId(String version, NSession session) {
-        NAssert.requireNonBlank(version, "version", session);
-        NVersion jv = NVersion.of(version).get(session);
+    public NId createJdkId(String version) {
+        NAssert.requireNonBlank(version, "version");
+        NVersion jv = NVersion.of(version).get();
         long n1 = jv.getNumber(0).flatMap(NLiteral::asLong).orElse(0L);
         long n2 = jv.getNumber(1).flatMap(NLiteral::asLong).orElse(0L);
         long classFileId = 0;
@@ -442,20 +426,20 @@ public class NJavaSdkUtils {
                 .build();
     }
 
-    public String resolveJavaCommandByVersion(String requestedJavaVersion, boolean javaw, NSession session) {
-        NPlatformLocation nutsPlatformLocation = resolveJdkLocation(requestedJavaVersion, session);
-        return resolveJavaCommandByVersion(nutsPlatformLocation, javaw, session);
+    public String resolveJavaCommandByVersion(String requestedJavaVersion, boolean javaw) {
+        NPlatformLocation nutsPlatformLocation = resolveJdkLocation(requestedJavaVersion);
+        return resolveJavaCommandByVersion(nutsPlatformLocation, javaw);
     }
 
-    public String resolveJavaCommandByVersion(NPlatformLocation nutsPlatformLocation, boolean javaw, NSession session) {
+    public String resolveJavaCommandByVersion(NPlatformLocation nutsPlatformLocation, boolean javaw) {
         if (nutsPlatformLocation == null) {
             return null;
         }
         String bestJavaPath = nutsPlatformLocation.getPath();
         //if (bestJavaPath.contains("/") || bestJavaPath.contains("\\") || bestJavaPath.equals(".") || bestJavaPath.equals("..")) {
-        NPath file = NPath.of(bestJavaPath, session).toAbsolute(NLocations.of(session).getWorkspaceLocation());
+        NPath file = NPath.of(bestJavaPath).toAbsolute(NLocations.of().getWorkspaceLocation());
         //if (file.isDirectory() && file.resolve("bin").isDirectory()) {
-        boolean winOs = NEnvs.of(session).getOsFamily() == NOsFamily.WINDOWS;
+        boolean winOs = NEnvs.of().getOsFamily() == NOsFamily.WINDOWS;
         if (winOs) {
             if (javaw) {
                 bestJavaPath = file.resolve("bin").resolve("javaw.exe").toString();
@@ -470,8 +454,8 @@ public class NJavaSdkUtils {
         return bestJavaPath;
     }
 
-    public String resolveJavaCommandByHome(String javaHome, NSession session) {
-        String appSuffix = NEnvs.of(session).getOsFamily() == NOsFamily.WINDOWS ? ".exe" : "";
+    public String resolveJavaCommandByHome(String javaHome) {
+        String appSuffix = NEnvs.of().getOsFamily() == NOsFamily.WINDOWS ? ".exe" : "";
         String exe = "java" + appSuffix;
         if (javaHome == null || javaHome.isEmpty()) {
             javaHome = System.getProperty("java.home");

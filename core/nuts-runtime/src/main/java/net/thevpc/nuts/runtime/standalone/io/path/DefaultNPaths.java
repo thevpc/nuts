@@ -6,7 +6,6 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.FilePath;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.URLPath;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
 import net.thevpc.nuts.spi.NPathFactorySPI;
@@ -22,65 +21,59 @@ import java.net.URL;
 import java.nio.file.Path;
 
 public class DefaultNPaths implements NPaths {
-    private final NSession session;
+    private final NWorkspace workspace;
 
-    public DefaultNPaths(NSession session) {
-        this.session = session;
+    public DefaultNPaths(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
     @Override
     public NPath createPath(String path) {
-        checkSession(session);
         return createPath(path, null);
     }
 
     @Override
     public NPath createPath(File path) {
-        checkSession(session);
         if (path == null) {
             return null;
         }
-        return createPath(new FilePath(path.toPath(), session));
+        return createPath(new FilePath(path.toPath(), workspace));
     }
 
     @Override
     public NPath createPath(Path path) {
-        checkSession(session);
         if (path == null) {
             return null;
         }
-        return createPath(new FilePath(path, session));
+        return createPath(new FilePath(path, workspace));
     }
 
     @Override
     public NPath createPath(URL path) {
-        checkSession(session);
         if (path == null) {
             return null;
         }
-        return createPath(new URLPath(path, session));
+        return createPath(new URLPath(path, workspace));
     }
 
     @Override
     public NPath createPath(String path, ClassLoader classLoader) {
-        checkSession(session);
         if (path == null || path.trim().isEmpty()) {
             return null;
         }
-        NPath p = getModel().resolve(path, session, classLoader);
+        NPath p = getModel().resolve(path, classLoader);
         if (p == null) {
-            throw new NIllegalArgumentException(session, NMsg.ofC("unable to resolve path from %s", path));
+            throw new NIllegalArgumentException(NMsg.ofC("unable to resolve path from %s", path));
         }
         return p;
     }
 
     @Override
     public NPath createPath(NPathSPI path) {
-        checkSession(session);
         if (path == null) {
             return null;
         }
-        return new NPathFromSPI(path);
+        return new NPathFromSPI(workspace, path);
     }
 
     @Override
@@ -95,12 +88,8 @@ public class DefaultNPaths implements NPaths {
         return this;
     }
 
-    private void checkSession(NSession session) {
-        NSessionUtils.checkSession(this.session.getWorkspace(), session);
-    }
-
     private DefaultNWorkspaceConfigModel getModel() {
-        return ((DefaultNConfigs) NConfigs.of(session)).getModel();
+        return ((DefaultNConfigs) NConfigs.of()).getModel();
     }
 
     @Override
@@ -152,18 +141,19 @@ public class DefaultNPaths implements NPaths {
     public NPath createAnyTempFile(String name, boolean folder, NRepository repositoryId) {
         NPath rootFolder = null;
         NRepository repositoryById = null;
+        NSession session = workspace.currentSession();
         if (repositoryId == null) {
-            rootFolder = NLocations.of(session).getStoreLocation(NStoreType.TEMP);
+            rootFolder = NLocations.of().getStoreLocation(NStoreType.TEMP);
         } else {
             repositoryById = repositoryId;
-            rootFolder = repositoryById.config().setSession(session).getStoreLocation(NStoreType.TEMP);
+            rootFolder = repositoryById.config().getStoreLocation(NStoreType.TEMP);
         }
         NId appId = session.getAppId();
         if (appId == null) {
             appId = session.getWorkspace().getRuntimeId();
         }
         if (appId != null) {
-            rootFolder = rootFolder.resolve(NConstants.Folders.ID).resolve(NLocations.of(session).getDefaultIdBasedir(appId));
+            rootFolder = rootFolder.resolve(NConstants.Folders.ID).resolve(NLocations.of().getDefaultIdBasedir(appId));
         }
         if (name == null) {
             name = "";
@@ -203,20 +193,20 @@ public class DefaultNPaths implements NPaths {
                 try {
                     temp = File.createTempFile(prefix.toString(), ext.toString(), rootFolder.toFile().get());
                     if (temp.delete() && temp.mkdir()) {
-                        return NPath.of(temp.toPath(), session)
+                        return NPath.of(temp.toPath())
                                 .setUserTemporary(true);
                     }
                 } catch (IOException ex) {
                     //
                 }
             }
-            throw new NIOException(session, NMsg.ofC("could not create temp directory: %s*%s", rootFolder + File.separator + prefix, ext));
+            throw new NIOException(NMsg.ofC("could not create temp directory: %s*%s", rootFolder + File.separator + prefix, ext));
         } else {
             try {
-                return NPath.of(File.createTempFile(prefix.toString(), ext.toString(), rootFolder.toFile().get()).toPath(), session)
+                return NPath.of(File.createTempFile(prefix.toString(), ext.toString(), rootFolder.toFile().get()).toPath())
                         .setUserTemporary(true);
             } catch (IOException e) {
-                throw new NIOException(session, e);
+                throw new NIOException(e);
             }
         }
     }

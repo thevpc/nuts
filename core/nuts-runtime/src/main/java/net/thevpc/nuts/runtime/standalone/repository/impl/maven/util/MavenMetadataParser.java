@@ -34,7 +34,7 @@ public class MavenMetadataParser {
 
     public MavenMetadataParser(NSession session) {
         this.session = session;
-        LOG= NLog.of(MavenMetadataParser.class,session);
+        LOG= NLog.of(MavenMetadataParser.class);
     }
 
     public String toXmlString(MavenMetadata m) {
@@ -43,7 +43,7 @@ public class MavenMetadataParser {
             writeMavenMetaData(m, new StreamResult(s));
             w.flush();
         } catch (TransformerException | ParserConfigurationException | IOException e) {
-            throw new NIOException(session,e);
+            throw new NIOException(e);
         }
         return new String(s.toByteArray());
     }
@@ -52,12 +52,12 @@ public class MavenMetadataParser {
         try (Writer w = Files.newBufferedWriter(path)) {
             writeMavenMetaData(m, new StreamResult(path.toFile()));
         } catch (TransformerException | ParserConfigurationException | IOException e) {
-            throw new NIOException(session,e);
+            throw new NIOException(e);
         }
     }
 
     public void writeMavenMetaData(MavenMetadata m, StreamResult writer) throws TransformerException, ParserConfigurationException {
-        Document document = XmlUtils.createDocument(session);
+        Document document = XmlUtils.createDocument();
 
         Element metadata = document.createElement("metadata");
         document.appendChild(metadata);
@@ -104,14 +104,14 @@ public class MavenMetadataParser {
             lastUpdated.appendChild(document.createTextNode(new SimpleDateFormat("yyyyMMddHHmmss").format(m.getLastUpdated())));
             versioning.appendChild(lastUpdated);
         }
-        XmlUtils.writeDocument(document, writer, false,true,session);
+        XmlUtils.writeDocument(document, writer, false,true);
     }
 
     public MavenMetadata parseMavenMetaData(Path stream) {
         try (InputStream s = Files.newInputStream(stream)) {
             return parseMavenMetaData(s);
         } catch (IOException ex) {
-            throw new NIOException(session,ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -181,7 +181,7 @@ public class MavenMetadataParser {
 
             info.setLastUpdated(lastUpdated.toString().trim().isEmpty() ? null : new SimpleDateFormat("yyyyMMddHHmmss").parse(lastUpdated.toString().trim()));
         } catch (Exception ex) {
-            LOG.with().session(session).level(Level.SEVERE).error(ex)
+            LOG.with().level(Level.SEVERE).error(ex)
                     .log(NMsg.ofJ("failed to parse date {0} : {1}", lastUpdated, ex));
         }
         for (String version : versions) {

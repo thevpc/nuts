@@ -13,18 +13,16 @@ import java.io.OutputStream;
 
 public class EscapeOutputStream extends BaseTransparentFilterOutputStream implements ExtendedFormatAware {
 
-    NWorkspace ws;
-    NSession session;
+    NWorkspace workspace;
     NSystemTerminalBase term;
 
-    public EscapeOutputStream(OutputStream out, NSystemTerminalBase term, NSession session) {
+    public EscapeOutputStream(OutputStream out, NSystemTerminalBase term, NWorkspace workspace) {
         super(out);
-        this.session = session;
+        this.workspace = workspace;
         this.term = term;
-        this.ws = session.getWorkspace();
         NTerminalModeOp t = NTerminalModeOpUtils.resolveNutsTerminalModeOp(out);
         if (t.in() != NTerminalMode.FORMATTED && t.in() != NTerminalMode.FILTERED) {
-            throw new NIllegalArgumentException(session, NMsg.ofPlain("illegal Formatted"));
+            throw new NIllegalArgumentException(NMsg.ofPlain("illegal Formatted"));
         }
     }
 
@@ -60,13 +58,13 @@ public class EscapeOutputStream extends BaseTransparentFilterOutputStream implem
                 if (out instanceof ExtendedFormatAware) {
                     return ((ExtendedFormatAware) out).convert(NTerminalModeOp.NOP);
                 }
-                return new RawOutputStream(out, term,session);
+                return new RawOutputStream(out, term, workspace);
             }
             case FORMAT: {
                 if (out instanceof ExtendedFormatAware) {
                     return ((ExtendedFormatAware) out).convert(NTerminalModeOp.FORMAT);
                 }
-                return new FormatOutputStream(out, term,session);
+                return new FormatOutputStream(out, term, workspace);
             }
             case FILTER: {
                 if (out instanceof ExtendedFormatAware) {
@@ -81,6 +79,6 @@ public class EscapeOutputStream extends BaseTransparentFilterOutputStream implem
                 return ((ExtendedFormatAware) out);
             }
         }
-        throw new NUnsupportedEnumException(session, other);
+        throw new NUnsupportedEnumException(other);
     }
 }

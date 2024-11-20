@@ -33,7 +33,6 @@ package net.thevpc.nuts.toolbox.nsh.err;
 
 import net.thevpc.nuts.NExecutionException;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 
 /**
  * @author thevpc (taha.bensalah@gmail.com)
@@ -41,23 +40,23 @@ import net.thevpc.nuts.NSession;
  */
 public class NShellException extends NExecutionException {
 
-    public NShellException(NSession session, NMsg message, int exitCode) {
-        super(session, message, exitCode);
+    public NShellException(NMsg message, int exitCode) {
+        super(message, exitCode);
     }
 
-    public NShellException(NSession session, NMsg message, Throwable cause) {
-        super(session, message, cause);
+    public NShellException(NMsg message, Throwable cause) {
+        super(message, cause);
     }
 
-    public NShellException(NSession session, NMsg message, Throwable cause, int exitCode) {
-        super(session, message, cause, exitCode);
+    public NShellException(NMsg message, Throwable cause, int exitCode) {
+        super(message, cause, exitCode);
     }
 
-    public NShellException(NSession session, Throwable cause, int exitCode) {
-        super(session, NMsg.ofPlain("error"), cause, exitCode);
+    public NShellException(Throwable cause, int exitCode) {
+        super(NMsg.ofPlain("error"), cause, exitCode);
     }
 
-    public NShellException(NSession session, NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, int exitCode) {
-        super(session, message, cause, enableSuppression, writableStackTrace, exitCode);
+    public NShellException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, int exitCode) {
+        super(message, cause, enableSuppression, writableStackTrace, exitCode);
     }
 }

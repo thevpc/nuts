@@ -1,14 +1,13 @@
 package net.thevpc.nuts.web;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 
 import java.util.function.Function;
 
 public interface NWebCli extends NComponent {
-    static NWebCli of(NSession session) {
-        return NExtensions.of(session).createComponent(NWebCli.class).get();
+    static NWebCli of() {
+        return NExtensions.of().createComponent(NWebCli.class).get();
     }
 
     Function<NWebResponse, NWebResponse> getResponsePostProcessor();

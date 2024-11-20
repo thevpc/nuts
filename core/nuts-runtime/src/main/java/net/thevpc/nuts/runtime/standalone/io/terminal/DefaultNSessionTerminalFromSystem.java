@@ -15,31 +15,26 @@ import java.util.Scanner;
 //@NutsPrototype
 public class DefaultNSessionTerminalFromSystem extends AbstractNSessionTerminal {
 
-    protected NWorkspace ws;
-    protected NSession session;
+    protected NWorkspace workspace;
     protected NPrintStream out;
     protected NPrintStream err;
-    protected NPrintStreamCache outCache=new NPrintStreamCache();
-    protected NPrintStreamCache errCache=new NPrintStreamCache();
     protected InputStream in;
     protected BufferedReader inReader;
     protected NSystemTerminalBase parent;
     protected CProgressBar progressBar;
 
-    public DefaultNSessionTerminalFromSystem(NSession session, DefaultNSessionTerminalFromSystem other) {
-        this.session = session;
+    public DefaultNSessionTerminalFromSystem(NWorkspace workspace, DefaultNSessionTerminalFromSystem other) {
         this.parent = other.parent;
-        this.ws = session.getWorkspace();
+        this.workspace = workspace;
         this.in = other.in;
         this.inReader = other.inReader;
         setOut(other.out);
         setErr(other.err);
     }
 
-    public DefaultNSessionTerminalFromSystem(NSession session, NSystemTerminalBase parent) {
-        this.session = session;
+    public DefaultNSessionTerminalFromSystem(NWorkspace workspace, NSystemTerminalBase parent) {
         this.parent = parent;
-        this.ws = session.getWorkspace();
+        this.workspace = workspace;
     }
 
     public BufferedReader getReader() {
@@ -55,21 +50,19 @@ public class DefaultNSessionTerminalFromSystem extends AbstractNSessionTerminal 
 
 
     @Override
-    public String readLine(NPrintStream out, NMsg message, NSession session) {
-        if (session == null) {
-            session = this.session;
-        }
+    public String readLine(NPrintStream out, NMsg message) {
+        NSession session = workspace.currentSession();
         if (out == null) {
             out = out();
         }
         if (out == null) {
-            out = NIO.of(session).stdout();
+            out = NIO.of().stdout();
         }
         if (this.in == null && parent != null) {
             if (this.out == null) {
-                return parent.readLine(out, message, session);
+                return parent.readLine(out, message);
             } else {
-                return parent.readLine(out, message, session);
+                return parent.readLine(out, message);
             }
         }
         out.print(message);
@@ -77,27 +70,25 @@ public class DefaultNSessionTerminalFromSystem extends AbstractNSessionTerminal 
         try {
             return getReader().readLine();
         } catch (IOException e) {
-            throw new NIOException(session,e);
+            throw new NIOException(e);
         }
     }
 
     @Override
-    public char[] readPassword(NPrintStream out, NMsg prompt, NSession session) {
-        if (session == null) {
-            session = this.session;
-        }
+    public char[] readPassword(NPrintStream out, NMsg prompt) {
+        NSession session = workspace.currentSession();
         if (out == null) {
             out = out();
         }
         if (out == null) {
-            out = NIO.of(session).stdout();
+            out = NIO.of().stdout();
         }
 
         if (this.in == null && parent != null) {
             if (this.out == null) {
-                return parent.readPassword(out, prompt, session);
+                return parent.readPassword(out, prompt);
             } else {
-                return parent.readPassword(out, prompt, session);
+                return parent.readPassword(out, prompt);
             }
         }
 
@@ -105,12 +96,12 @@ public class DefaultNSessionTerminalFromSystem extends AbstractNSessionTerminal 
         Console cons = null;
         char[] passwd = null;
         if (in == null) {
-            in = NIO.of(session).stdin();
+            in = NIO.of().stdin();
         }
         if ((
-                in == NIO.of(session).stdin()
+                in == NIO.of().stdin()
         ) && ((cons = System.console()) != null)) {
-            String txt = NTexts.of(session).ofText(prompt).toString();
+            String txt = NTexts.of().ofText(prompt).toString();
             if ((passwd = cons.readPassword("%s", txt)) != null) {
                 return passwd;
             } else {
@@ -147,8 +138,8 @@ public class DefaultNSessionTerminalFromSystem extends AbstractNSessionTerminal 
             NSystemTerminalBase p = getParent();
             if (p != null) {
                 NPrintStream o = p.getOut();
-                if(o!=null){
-                    return outCache.get(o,getSession());
+                if (o != null) {
+                    return o;
                 }
             }
         }
@@ -157,9 +148,6 @@ public class DefaultNSessionTerminalFromSystem extends AbstractNSessionTerminal 
 
     @Override
     public void setOut(NPrintStream out) {
-        if (out != null) {
-            out = out.setSession(session);
-        }
         this.out = out;
     }
 
@@ -169,8 +157,8 @@ public class DefaultNSessionTerminalFromSystem extends AbstractNSessionTerminal 
             NSystemTerminalBase p = getParent();
             if (p != null) {
                 NPrintStream o = p.getErr();
-                if(o!=null){
-                    return errCache.get(o,getSession());
+                if (o != null) {
+                    return o;
                 }
             }
         }
@@ -179,22 +167,19 @@ public class DefaultNSessionTerminalFromSystem extends AbstractNSessionTerminal 
 
     @Override
     public void setErr(NPrintStream err) {
-        if (err != null) {
-            err = err.setSession(session);
-        }
         this.err = err;
     }
 
     @Override
     public NSessionTerminal copy() {
-        final DefaultNSessionTerminalFromSystem r = new DefaultNSessionTerminalFromSystem(session, parent);
+        final DefaultNSessionTerminalFromSystem r = new DefaultNSessionTerminalFromSystem(workspace, parent);
         r.setAll(this);
         return r;
     }
 
     @Override
     public <T> NAsk<T> ask() {
-        return new DefaultNAsk<T>(session, this, out());
+        return new DefaultNAsk<T>(workspace, this, out());
     }
 
     @Override
@@ -214,14 +199,15 @@ public class DefaultNSessionTerminalFromSystem extends AbstractNSessionTerminal 
 
     @Override
     public NSessionTerminal printProgress(float progress, NMsg message) {
+        NSession session = workspace.currentSession();
         if (session.isProgress()) {
             if (getParent() instanceof NSystemTerminal) {
-                ((NSystemTerminal) getParent()).printProgress(progress, message, session);
+                ((NSystemTerminal) getParent()).printProgress(progress, message);
             } else {
                 getProgressBar().printProgress(
                         Float.isNaN(progress) ? -1 :
                                 (int) (progress * 100),
-                        NTexts.of(session).ofText(message),
+                        NTexts.of().ofText(message),
                         err()
                 );
             }
@@ -247,13 +233,14 @@ public class DefaultNSessionTerminalFromSystem extends AbstractNSessionTerminal 
 
     private CProgressBar getProgressBar() {
         if (progressBar == null) {
-            progressBar = CProgressBar.of(session);
+            NSession session = workspace.currentSession();
+            progressBar = CProgressBar.of();
         }
         return progressBar;
     }
 
     protected void setAll(DefaultNSessionTerminalFromSystem other) {
-        this.ws = other.ws;
+        this.workspace = other.workspace;
         this.parent = other.parent;
         this.out = other.out;
         this.err = other.err;
@@ -261,8 +248,4 @@ public class DefaultNSessionTerminalFromSystem extends AbstractNSessionTerminal 
         this.inReader = other.inReader;
     }
 
-    @Override
-    public NSession getSession() {
-        return session;
-    }
 }

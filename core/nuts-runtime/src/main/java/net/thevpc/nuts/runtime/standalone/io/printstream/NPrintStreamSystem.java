@@ -15,13 +15,13 @@ import java.io.UnsupportedEncodingException;
 public class NPrintStreamSystem extends NPrintStreamBase {
     private final OutputStream out;
     private PrintStream base;
-    public NPrintStreamSystem(OutputStream out, Boolean autoFlush, String encoding, Boolean ansi, NSession session, NSystemTerminalBase term) {
-        this(out, autoFlush, encoding, ansi, session, new Bindings(), term);
+    public NPrintStreamSystem(OutputStream out, Boolean autoFlush, String encoding, Boolean ansi, NWorkspace workspace, NSystemTerminalBase term) {
+        this(out, autoFlush, encoding, ansi, workspace, new Bindings(), term);
     }
 
     protected NPrintStreamSystem(OutputStream out, PrintStream base, Boolean autoFlush,
-                                 NTerminalMode mode, NSession session, Bindings bindings, NSystemTerminalBase term) {
-        super(autoFlush == null || autoFlush.booleanValue(), mode/*resolveMode(out,ansi, session)*/, session, bindings, term);
+                                 NTerminalMode mode, NWorkspace workspace, Bindings bindings, NSystemTerminalBase term) {
+        super(autoFlush == null || autoFlush.booleanValue(), mode/*resolveMode(out,ansi, workspace)*/, workspace, bindings, term);
         //Do not use NutsTexts, not yet initialized!
         getMetaData().setMessage(NMsg.ofStyled("<system-stream>", NTextStyle.path()));
         this.out = out;
@@ -32,8 +32,8 @@ public class NPrintStreamSystem extends NPrintStreamBase {
         return base;
     }
 
-    public NPrintStreamSystem(OutputStream out, Boolean autoFlush, String encoding, Boolean ansi, NSession session, Bindings bindings, NSystemTerminalBase term) {
-        super(true, resolveMode(out, ansi, session), session, bindings, term);
+    public NPrintStreamSystem(OutputStream out, Boolean autoFlush, String encoding, Boolean ansi, NWorkspace workspace, Bindings bindings, NSystemTerminalBase term) {
+        super(true, resolveMode(out, ansi, workspace), workspace, bindings, term);
         //Do not use NutsTexts, not yet initialized!
         getMetaData().setMessage(NMsg.ofStyled("<system-stream>", NTextStyle.path()));
         this.out = out;
@@ -74,11 +74,11 @@ public class NPrintStreamSystem extends NPrintStreamBase {
 //        }
     }
 
-    private static NTerminalMode resolveMode(OutputStream out, Boolean ansi, NSession session) {
+    private static NTerminalMode resolveMode(OutputStream out, Boolean ansi, NWorkspace workspace) {
         if (ansi != null) {
             return ansi ? NTerminalMode.ANSI : NTerminalMode.INHERITED;
         }
-        NWorkspaceTerminalOptions b = NBootManager.of(session).getBootTerminal();
+        NWorkspaceTerminalOptions b = NBootManager.of().getBootTerminal();
         if (b.getFlags().contains("ansi")) {
             return NTerminalMode.ANSI;
         } else {
@@ -142,28 +142,20 @@ public class NPrintStreamSystem extends NPrintStreamBase {
 
 
     @Override
-    public NPrintStream setSession(NSession session) {
-        if (session == null || session == this.session) {
-            return this;
-        }
-        return new NPrintStreamSystem(out, base, autoFlash, getTerminalMode(), session, new Bindings(), getTerminal());
-    }
-
-    @Override
     protected NPrintStream convertImpl(NTerminalMode other) {
         switch (other) {
             case FORMATTED: {
-                return new NPrintStreamFormatted(this, getSession(), bindings);
+                return new NPrintStreamFormatted(this, workspace, bindings);
             }
             case FILTERED: {
-                return new NPrintStreamFiltered(this, getSession(), bindings);
+                return new NPrintStreamFiltered(this, workspace, bindings);
             }
         }
-        throw new NIllegalArgumentException(getSession(), NMsg.ofC("unsupported %s -> %s", getTerminalMode(), other));
+        throw new NIllegalArgumentException(NMsg.ofC("unsupported %s -> %s", getTerminalMode(), other));
     }
 
     @Override
-    public NPrintStream run(NTerminalCmd command, NSession session) {
+    public NPrintStream run(NTerminalCmd command) {
         switch (command.getName()) {
             case NTerminalCmd.Ids.GET_SIZE: {
                 break;

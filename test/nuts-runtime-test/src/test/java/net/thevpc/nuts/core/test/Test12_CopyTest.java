@@ -37,8 +37,8 @@ public class Test12_CopyTest {
 
     @Test
     public void copy01() throws Exception {
-        NPath from = NPath.ofTempFolder("source",session);
-        NPath to = NPath.ofTempFolder("target",session);
+        NPath from = NPath.ofTempFolder("source");
+        NPath to = NPath.ofTempFolder("target");
         TestUtils.println("from="+from);
         TestUtils.println("to="+to);
         long collect = from.stream().count();
@@ -59,7 +59,7 @@ public class Test12_CopyTest {
         }
         TestUtils.println("start-----------");
 
-        NCp.of(session).from(from).to(to)
+        NCp.of().from(from).to(to)
                 .addOptions(NPathOption.LOG, NPathOption.TRACE)
                 .setProgressMonitor(new NProgressListener() {
             @Override

@@ -19,8 +19,11 @@ import java.io.InputStream;
 public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseImpl implements NSystemTerminal {
 
     protected CProgressBar progressBar;
-    private NWorkspace ws;
     private String commandHighlighter;
+
+    public AbstractSystemTerminalAdapter(NWorkspace workspace) {
+        super(workspace);
+    }
 
     @Override
     public NCmdLineAutoCompleteResolver getAutoCompleteResolver() {
@@ -56,22 +59,22 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
     }
 
     @Override
-    public String readLine(NMsg message, NSession session) {
+    public String readLine(NMsg message) {
         NSystemTerminalBase p = getBase();
         if (p instanceof NSystemTerminal) {
-            return ((NSystemTerminal) p).readLine(message,session);
+            return ((NSystemTerminal) p).readLine(message);
         } else {
-            return getBase().readLine(out(), message,session);
+            return getBase().readLine(out(), message);
         }
     }
 
     @Override
-    public char[] readPassword(NMsg message, NSession session) {
+    public char[] readPassword(NMsg message) {
         NSystemTerminalBase p = getBase();
         if (p instanceof NSystemTerminal) {
-            return ((NSystemTerminal) p).readPassword(message,session);
+            return ((NSystemTerminal) p).readPassword(message);
         } else {
-            return p.readPassword(out(), message,session);
+            return p.readPassword(out(), message);
         }
     }
 
@@ -135,15 +138,16 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
 //    }
 
     @Override
-    public NSystemTerminal printProgress(float progress, NMsg message, NSession session) {
+    public NSystemTerminal printProgress(float progress, NMsg message) {
+        NSession session=getWorkspace().currentSession();
         if (session.isProgress()) {
             if (getBase() instanceof NSystemTerminal) {
-                ((NSystemTerminal) getBase()).printProgress(progress, message,session);
+                ((NSystemTerminal) getBase()).printProgress(progress, message);
             } else {
                 getProgressBar(session).printProgress(
                         Float.isNaN(progress) ? -1
                                 : (int) (progress * 100),
-                        NTexts.of(session).ofText(message),
+                        NTexts.of().ofText(message),
                         err()
                 );
             }
@@ -152,7 +156,7 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
     }
     private CProgressBar getProgressBar(NSession session) {
         if (progressBar == null) {
-            progressBar = CProgressBar.of(session);
+            progressBar = CProgressBar.of();
         }
         return progressBar;
     }
@@ -163,13 +167,13 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
     }
 
     @Override
-    public String readLine(NPrintStream out, NMsg message, NSession session) {
-        return getBase().readLine(out, message,session);
+    public String readLine(NPrintStream out, NMsg message) {
+        return getBase().readLine(out, message);
     }
 
     @Override
-    public char[] readPassword(NPrintStream out, NMsg message, NSession session) {
-        return getBase().readPassword(out, message, session);
+    public char[] readPassword(NPrintStream out, NMsg message) {
+        return getBase().readPassword(out, message);
     }
 
     @Override
@@ -201,12 +205,12 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
     }
 
     @Override
-    public Object run(NTerminalCmd command, NPrintStream printStream, NSession session) {
-        return getBase().run(command, printStream, session);
+    public Object run(NTerminalCmd command, NPrintStream printStream) {
+        return getBase().run(command, printStream);
     }
 
     @Override
-    public void setStyles(NTextStyles styles, NPrintStream printStream, NSession session) {
-        getBase().setStyles(styles, printStream, session);
+    public void setStyles(NTextStyles styles, NPrintStream printStream) {
+        getBase().setStyles(styles, printStream);
     }
 }

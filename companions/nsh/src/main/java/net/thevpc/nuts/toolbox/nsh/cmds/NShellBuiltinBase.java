@@ -127,9 +127,9 @@ public abstract class NShellBuiltinBase implements NShellBuiltin {
         context.getShellContext().setAutoComplete(autoComplete);
         try {
             if (autoComplete == null) {
-                throw new NIllegalArgumentException(context.getSession(), NMsg.ofPlain("missing auto-complete"));
+                throw new NIllegalArgumentException(NMsg.ofPlain("missing auto-complete"));
             }
-            NCommandAutoCompleteComponent best = context.getSession().extensions().createServiceLoader(NCommandAutoCompleteComponent.class, NShellBuiltin.class, NCommandAutoCompleteComponent.class.getClassLoader())
+            NCommandAutoCompleteComponent best = NWorkspace.of().get().extensions().createServiceLoader(NCommandAutoCompleteComponent.class, NShellBuiltin.class, NCommandAutoCompleteComponent.class.getClassLoader())
                     .loadBest(NShellBuiltinBase.this);
             if (best != null) {
                 best.autoComplete(this, context);
@@ -203,13 +203,13 @@ public abstract class NShellBuiltinBase implements NShellBuiltin {
 
     protected void throwExecutionException(Object errObject, int errorCode, NSession session) {
         session = session.copy();
-        NPrintStream printStream = NMemoryPrintStream.of(session);
+        NPrintStream printStream = NMemoryPrintStream.of();
         if (errObject != null) {
             printStream.print(errObject);
         } else {
             printStream.println(NMsg.ofC("%s: command failed with code %s", getName(), errorCode));
         }
-        throw new NExecutionException(session, NMsg.ofNtf(printStream.toString()), errorCode);
+        throw new NExecutionException(NMsg.ofNtf(printStream.toString()), errorCode);
     }
 
     public final void exec(String[] args, NShellExecutionContext context) {
@@ -270,21 +270,21 @@ public abstract class NShellBuiltinBase implements NShellBuiltin {
                 return;
             }
             if (context.isAskHelp()) {
-                session.out().println(NString.of(getHelp(), session));
+                session.out().println(NString.of(getHelp()));
                 return;
             }
             if (context.isAskVersion()) {
-                session.out().println(NId.ofClass(getClass(),session).get().getVersion());
+                session.out().println(NId.ofClass(getClass()).get().getVersion());
                 return;
             }
             main(cmdLine, context);
         } catch (NExecutionException ex) {
             throw ex;
         } catch (NException ex) {
-            throw new NExecutionException(context.getSession(), ex.getFormattedMessage(), ex, NExecutionException.ERROR_255);
+            throw new NExecutionException(ex.getFormattedMessage(), ex, NExecutionException.ERROR_255);
         } catch (Exception ex) {
-            throw new NExecutionException(context.getSession(),
-                    NMsg.ofNtf(NTexts.of(context.getSession()).ofText(ex).toString())
+            throw new NExecutionException(
+                    NMsg.ofNtf(NTexts.of().ofText(ex).toString())
                     , ex, NExecutionException.ERROR_255);
         }
     }

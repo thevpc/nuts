@@ -2,7 +2,6 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.reserved.rpi.NIORPI;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.time.NProgressListener;
 
 import java.io.InputStream;
@@ -10,8 +9,8 @@ import java.io.OutputStream;
 
 public interface NInputSourceBuilder {
 
-    static NInputSourceBuilder of(InputStream is, NSession session) {
-        return NIORPI.of(session).ofInputSourceBuilder(is);
+    static NInputSourceBuilder of(InputStream is) {
+        return NIORPI.of().ofInputSourceBuilder(is);
     }
 
     NInputSourceBuilder setBase(InputStream baseInputStream);

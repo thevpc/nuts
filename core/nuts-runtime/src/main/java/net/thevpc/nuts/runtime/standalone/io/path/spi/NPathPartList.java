@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -13,19 +12,17 @@ import java.util.stream.Stream;
 
 public class NPathPartList implements Iterable<NPathPart> {
     private List<NPathPart> list = new ArrayList<>();
-    private NSession session;
 
-    public NPathPartList(List<NPathPart> list, NSession session) {
-        this.session = session;
+    public NPathPartList(List<NPathPart> list) {
         for (int i = 0; i < list.size(); i++) {
             NPathPart p = list.get(i);
             if (p.isName()) {
                 if (i > 0) {
-                    throw new NIllegalArgumentException(session, NMsg.ofC("invalid part %s at %i", p, i));
+                    throw new NIllegalArgumentException(NMsg.ofC("invalid part %s at %i", p, i));
                 }
             } else if (p.isTrailingSeparator()) {
                 if (i != list.size() - 1) {
-                    throw new NIllegalArgumentException(session, NMsg.ofC("invalid part %s at %i", p, i));
+                    throw new NIllegalArgumentException(NMsg.ofC("invalid part %s at %i", p, i));
                 }
             }
         }
@@ -33,7 +30,7 @@ public class NPathPartList implements Iterable<NPathPart> {
     }
 
     public NPathPartList concat(NPathPartList other) {
-        return new NPathPartList(concat(list, other.list), session);
+        return new NPathPartList(concat(list, other.list));
     }
 
     private List<NPathPart> concat(List<NPathPart> a, List<NPathPart> b) {
@@ -120,7 +117,7 @@ public class NPathPartList implements Iterable<NPathPart> {
     }
 
     public NPathPartList subList(int beginIndex, int endIndex) {
-        return new NPathPartList(list.subList(beginIndex, endIndex), session);
+        return new NPathPartList(list.subList(beginIndex, endIndex));
     }
 
     public List<String> toStringList() {

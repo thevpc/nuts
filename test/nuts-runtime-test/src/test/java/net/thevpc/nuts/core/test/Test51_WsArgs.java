@@ -15,7 +15,7 @@ public class Test51_WsArgs {
                 new String[]{"--args", "--bot"}
         );
         while (cmdLine.hasNext()) {
-            NOptional<List<NArg>> e = NWorkspaceCmdLineParser.nextNutsArgument(cmdLine, null, null);
+            NOptional<List<NArg>> e = NWorkspaceCmdLineParser.nextNutsArgument(cmdLine, null);
             if (e.isPresent()) {
                 System.out.println("ACCEPT " + e.get());
             } else {

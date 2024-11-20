@@ -40,9 +40,8 @@ public interface NArtifactFilter extends NFilter {
     /**
      * true if search id is accepted
      *
-     * @param sid     search id
-     * @param session session
+     * @param sid search id
      * @return true if search id is accepted
      */
-    boolean acceptSearchId(NSearchId sid, NSession session);
+    boolean acceptSearchId(NSearchId sid);
 }

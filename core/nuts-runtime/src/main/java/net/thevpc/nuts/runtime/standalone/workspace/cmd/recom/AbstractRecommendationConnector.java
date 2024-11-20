@@ -15,36 +15,45 @@ import java.util.TimeZone;
 public abstract class AbstractRecommendationConnector implements RecommendationConnector {
 
     private String localUserUUID;
+    private NWorkspace workspace;
 
-    public AbstractRecommendationConnector() {
+    public AbstractRecommendationConnector(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
-    private String getLocalUserUUID(NSession session) {
+    private String getLocalUserUUID() {
         if (localUserUUID != null) {
             return localUserUUID;
         }
-        localUserUUID = NCliInfo.loadCliId(session, true);
+        NSession session= workspace.currentSession();
+        localUserUUID = NCliInfo.loadCliId(true);
         return localUserUUID;
     }
 
+    public NWorkspace getWorkspace() {
+        return workspace;
+    }
+
     @Override
-    public Map getRecommendations(RequestQueryInfo ri, NRecommendationPhase phase, boolean failure, NSession session) {
-        validateRequest(ri, session);
-        NId id = NId.of(ri.q.getId()).ifBlankEmpty().get(session);
+    public Map getRecommendations(RequestQueryInfo ri, NRecommendationPhase phase, boolean failure) {
+        validateRequest(ri);
+        NSession session= workspace.currentSession();
+        NId id = NId.of(ri.q.getId()).ifBlankEmpty().get();
         String name = phase.name().toLowerCase() + (failure ? "-failure" : "") + "-recommendations.json";
         String url = "/repo/" + NIdUtils.resolveIdPath(id) + '/' + name;
-        return post(url, ri, Map.class, session);
+        return post(url, ri, Map.class);
     }
 
 
-    public abstract <T> T post(String url, RequestQueryInfo ri, Class<T> resultType, NSession session);
+    public abstract <T> T post(String url, RequestQueryInfo ri, Class<T> resultType);
 
-    public void validateRequest(RequestQueryInfo ri, NSession session) {
-        NEnvs envs = NEnvs.of(session);
+    public void validateRequest(RequestQueryInfo ri) {
+        NSession session= workspace.currentSession();
+        NEnvs envs = NEnvs.of();
         NLiteral endPointURL = envs.getProperty("nuts-endpoint-url").orNull();
         if (NBlankable.isBlank(ri.server)) {
             if (endPointURL == null || endPointURL.isBlank()) {
-                String defaultURL = resolveDefaultEndpointURL(session);
+                String defaultURL = resolveDefaultEndpointURL();
                 envs.setProperty("nuts-endpoint-url", defaultURL);
             } else {
                 ri.server = endPointURL.asString().get();
@@ -78,7 +87,7 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
             agent.setShell(env.getShellFamily().toString());
         }
         if (agent.getUserDigest() == null) {
-            agent.setUserDigest(getLocalUserUUID(session));
+            agent.setUserDigest(getLocalUserUUID());
         }
         if (agent.getUserLocale() == null) {
             String loc = session.getLocale().orDefault();
@@ -92,7 +101,7 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
         }
     }
 
-    private String resolveDefaultEndpointURL(NSession session) {
+    private String resolveDefaultEndpointURL() {
         String p = NStringUtils.trim(System.getProperty("nuts-endpoint-url"));
         if (!p.isEmpty()) {
             if (p.equals("dev") || p.equals("debug")) {
@@ -108,7 +117,8 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
             }
         } else {
             try {
-                String s = NStringUtils.trimToNull(NPath.of("https://raw.githubusercontent.com/thevpc/nuts/master/.endpoint", session).readString());
+                NSession session= workspace.currentSession();
+                String s = NStringUtils.trimToNull(NPath.of("https://raw.githubusercontent.com/thevpc/nuts/master/.endpoint").readString());
                 if (s != null && s.startsWith("https://")) {
                     return s;
                 }

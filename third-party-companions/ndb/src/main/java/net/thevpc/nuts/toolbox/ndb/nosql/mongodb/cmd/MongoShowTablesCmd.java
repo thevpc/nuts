@@ -22,12 +22,12 @@ public class MongoShowTablesCmd extends ShowTablesCmd<NMongoConfig> {
         return (NMongoSupport) super.getSupport();
     }
 
-    protected void runShowTables(ExtendedQuery eq, NMongoConfig options, NSession session) {
+    protected void runShowTables(ExtendedQuery eq, NMongoConfig options) {
         getSupport().doWithMongoClient(options, mongoClient -> {
             getSupport().doWithMongoDB(options, db -> {
                 List<NElement> databases = db.listCollections()
                         .into(new ArrayList<>())
-                        .stream().map(x -> NElements.of(session).parse(x.toJson(), NElement.class))
+                        .stream().map(x -> NElements.of().parse(x.toJson(), NElement.class))
                         .map(x->{
                             if(eq.isLongMode()){
                                 return x;
@@ -35,6 +35,7 @@ public class MongoShowTablesCmd extends ShowTablesCmd<NMongoConfig> {
                             return x.asObject().get().get("name").get();
                         })
                         .collect(Collectors.toList());
+                NSession session = NSession.of().get();
                 session.out().println(databases);
             });
         });

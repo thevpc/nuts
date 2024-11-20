@@ -44,11 +44,10 @@ public class NNotExecutableException extends NExecutionException {
     /**
      * Constructs a new NutsNotExecutableException exception
      *
-     * @param session workspace
-     * @param id      artifact id
+     * @param id artifact id
      */
-    public NNotExecutableException(NSession session, NId id) {
-        super(session, NMsg.ofC("not executable %s", (id == null ? "<null>" : id)), NExecutionException.ERROR_255);
+    public NNotExecutableException(NId id) {
+        super(NMsg.ofC("not executable %s", (id == null ? "<null>" : id)), NExecutionException.ERROR_255);
         this.id = id;
     }
 

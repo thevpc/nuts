@@ -12,8 +12,8 @@ import java.util.*;
 
 public class HalfaCodeHighlighter extends TsonCodeHighlighter {
 
-    public HalfaCodeHighlighter(NWorkspace ws) {
-        super(ws);
+    public HalfaCodeHighlighter(NWorkspace workspace) {
+        super(workspace);
     }
 
     @Override

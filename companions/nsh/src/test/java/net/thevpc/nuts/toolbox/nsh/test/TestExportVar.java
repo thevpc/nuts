@@ -43,13 +43,13 @@ public class TestExportVar {
     @Test
     public void testVars1() {
         NSession session = TestUtils.openNewTestWorkspace();
-        NPath tempFolder = NPath.ofTempFolder(session);
+        NPath tempFolder = NPath.ofTempFolder();
         NPath a = tempFolder.resolve("a.nsh");
         NPath b = tempFolder.resolve("b.nsh");
         System.out.println("----------------------------------------------");
-        NCp.of(session).from("echo 'run a' ; a=1; echo a0=$a ; source b.nsh ; echo 'back-to a' ; echo a1=$a ; echo b1=$b".getBytes())
+        NCp.of().from("echo 'run a' ; a=1; echo a0=$a ; source b.nsh ; echo 'back-to a' ; echo a1=$a ; echo b1=$b".getBytes())
                 .to(a).run();
-        NCp.of(session).from("echo 'run b' ; echo a2=$a ; a=2; b=3 ; echo a2=$a ; echo b2=$b".getBytes())
+        NCp.of().from("echo 'run b' ; echo a2=$a ; a=2; b=3 ; echo a2=$a ; echo b2=$b".getBytes())
                 .to(b).run();
         NShell c = new NShell(
                 new NShellConfiguration()
@@ -58,7 +58,7 @@ public class TestExportVar {
                         .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)
         );
         NSession shellSession = c.getRootContext().getSession();
-        shellSession.setTerminal(NSessionTerminal.ofMem(shellSession));
+        shellSession.setTerminal(NSessionTerminal.ofMem());
         c.getRootContext().setDirectory(tempFolder.toString());
         c.run();
         System.out.println("-------------------------------------");

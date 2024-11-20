@@ -29,7 +29,6 @@ package net.thevpc.nuts.lib.common.iter;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.NSession;
 
 import java.util.Iterator;
 import java.util.function.Predicate;
@@ -55,12 +54,12 @@ public class FilteredIterator<T> extends NIteratorBase<T> {
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return NElements.of(session)
+    public NElement describe() {
+        return NElements.of()
                 .ofObject()
                 .set("type","Filter")
-                .set("base", NEDesc.describeResolveOrDestruct(base, session))
-                .set("accept", NEDesc.describeResolveOrToString(filter, session))
+                .set("base", NEDesc.describeResolveOrDestruct(base))
+                .set("accept", NEDesc.describeResolveOrToString(filter))
                 .build()
                 ;
     }

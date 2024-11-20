@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.util;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.NPomXmlParser;
 
 import java.util.HashMap;
@@ -45,7 +44,7 @@ public class XmlEscaper {
     }
 
 
-    public static String escapeToCode(String any, NSession session) {
+    public static String escapeToCode(String any) {
         Matcher m = ENTITY_PATTERN.matcher(any);
         StringBuffer sb = new StringBuffer();
         while (m.find()) {
@@ -54,7 +53,7 @@ public class XmlEscaper {
             if (z != null) {
                 m.appendReplacement(sb, z);
             } else {
-                NLogOp.of(NPomXmlParser.class, session)
+                NLogOp.of(NPomXmlParser.class)
                         .verb(NLogVerb.WARNING)
                         .level(Level.FINEST)
                         .log(NMsg.ofC("unsupported  xml entity declaration : %s", g));
@@ -65,7 +64,7 @@ public class XmlEscaper {
         return sb.toString();
     }
 
-    public static String escapeToUnicode(String any, NSession session) {
+    public static String escapeToUnicode(String any) {
         Matcher m = ENTITY_PATTERN.matcher(any);
         StringBuffer sb = new StringBuffer();
         while (m.find()) {
@@ -74,7 +73,7 @@ public class XmlEscaper {
             if (z != null) {
                 m.appendReplacement(sb, z);
             } else {
-                NLogOp.of(NPomXmlParser.class, session)
+                NLogOp.of(NPomXmlParser.class)
                         .verb(NLogVerb.WARNING)
                         .level(Level.FINEST)
                         .log(NMsg.ofC("unsupported  xml entity declaration : %s", g));

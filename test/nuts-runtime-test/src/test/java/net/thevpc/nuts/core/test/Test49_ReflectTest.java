@@ -17,7 +17,7 @@ public class Test49_ReflectTest {
     @Test
     public void test01() {
         NSession session = Nuts.openWorkspace();
-        NReflectRepository typesRepository = NWorkspaceUtils.of(session).getReflectRepository();
+        NReflectRepository typesRepository = NWorkspaceUtils.of(session.getWorkspace()).getReflectRepository();
         {
             NReflectType type = typesRepository.getParametrizedType(C.class, null, new Type[]{String.class, String.class, String.class});
             List<NReflectProperty> declaredProperties = type.getDeclaredProperties();

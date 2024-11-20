@@ -25,10 +25,11 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NMapListener;
+import net.thevpc.nuts.util.NObservableMapListener;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Nuts repository manages a set of packages
@@ -118,13 +119,23 @@ public interface NRepository {
      */
     Map<String, Object> getUserProperties();
 
+    boolean containsTags(String tag);
+
+    Set<String> getTags();
+
+    boolean isPreview();
+
+    NRepository addTag(String tag);
+
+    NRepository removeTag(String tag);
+
     /**
      * add listener to user properties
      *
      * @param listener listener
      * @return this
      */
-    NRepository addUserPropertyListener(NMapListener<String, Object> listener);
+    NRepository addUserPropertyListener(NObservableMapListener<String, Object> listener);
 
     /**
      * remove listener from user properties
@@ -132,64 +143,59 @@ public interface NRepository {
      * @param listener listener
      * @return this
      */
-    NRepository removeUserPropertyListener(NMapListener<String, Object> listener);
+    NRepository removeUserPropertyListener(NObservableMapListener<String, Object> listener);
 
     /**
      * return array of registered user properties listeners
      *
      * @return array of registered user properties listeners
      */
-    List<NMapListener<String, Object>> getUserPropertyListeners();
+    List<NObservableMapListener<String, Object>> getUserPropertyListeners();
 
     /**
      * available if local and the folder exists or remote and could ping the repository
      *
      * @return true if config is enabled and runtime is enabled
-     * @param session session
      */
-    boolean isAvailable(NSession session);
+    boolean isAvailable();
 
     /**
      * available if local and the folder exists or remote and could ping the repository
      *
      * @param force when force, check immediate availability and do not rely on cache
-     * @param session session
      * @return true if config is enabled and runtime is enabled
      */
-    boolean isAvailable(boolean force, NSession session);
+    boolean isAvailable(boolean force);
 
     /**
      * available if local or remote repo exists and could deploy to
      *
      * @return true if config is enabled and runtime is enabled
-     * @param session session
      */
-    boolean isSupportedDeploy(NSession session);
+    boolean isSupportedDeploy();
 
     /**
      * available if local or remote repo exists and could deploy to
      *
      * @param force when force, check immediate availability and do not rely on cache
-     * @param session session
      * @return true if config is enabled and runtime is enabled
      */
-    boolean isSupportedDeploy(boolean force, NSession session);
+    boolean isSupportedDeploy(boolean force);
 
     /**
      * enabled if config is enabled and runtime is enabled
      *
      * @return true if config is enabled and runtime is enabled
      */
-    boolean isEnabled(NSession session);
+    boolean isEnabled();
 
     /**
      * set runtime enabled
      *
      * @param enabled runtime enabled value
-     * @param session
      * @return {@code this} instance
      */
-    NRepository setEnabled(boolean enabled, NSession session);
+    NRepository setEnabled(boolean enabled);
 
     boolean isRemote();
 }

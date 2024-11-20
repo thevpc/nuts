@@ -39,31 +39,27 @@ public class NCancelException extends NExecutionException {
 
     /**
      * Constructs a new NutsUserCancelException exception
-     *
-     * @param session workspace
      */
-    public NCancelException(NSession session) {
-        this(session, null);
+    public NCancelException() {
+        this(null);
     }
 
     /**
      * Constructs a new NutsUserCancelException exception
      *
-     * @param session workspace
      * @param message message
      */
-    public NCancelException(NSession session, NMsg message) {
-        this(session, message, DEFAULT_CANCEL_EXIT_CODE);
+    public NCancelException(NMsg message) {
+        this(message, DEFAULT_CANCEL_EXIT_CODE);
     }
 
     /**
      * Constructs a new NutsUserCancelException exception
      *
-     * @param session  workspace
      * @param message  message
      * @param exitCode exit code
      */
-    public NCancelException(NSession session, NMsg message, int exitCode) {
-        super(session, (message == null) ? NMsg.ofPlain("operation cancelled") : message, exitCode);
+    public NCancelException(NMsg message, int exitCode) {
+        super((message == null) ? NMsg.ofPlain("operation cancelled") : message, exitCode);
     }
 }

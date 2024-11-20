@@ -25,7 +25,6 @@
 package net.thevpc.nuts.elem;
 
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.NSession;
 
 import java.time.Instant;
 import java.util.Collection;
@@ -40,8 +39,8 @@ import java.util.stream.Stream;
  * @since 0.5.6
  */
 public interface NArrayElement extends NNavigatableElement, Iterable<NElement> {
-    static NArrayElement ofEmpty(NSession session) {
-        return NElements.of(session).ofEmptyArray();
+    static NArrayElement ofEmpty() {
+        return NElements.of().ofEmptyArray();
     }
 
     /**

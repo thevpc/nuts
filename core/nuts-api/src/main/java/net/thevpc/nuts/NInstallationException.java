@@ -44,13 +44,12 @@ public abstract class NInstallationException extends NException {
     /**
      * Custom Constructor
      *
-     * @param session workspace
-     * @param id      nuts id
-     * @param msg     message
-     * @param ex      exception
+     * @param id  nuts id
+     * @param msg message
+     * @param ex  exception
      */
-    public NInstallationException(NSession session, NId id, NMsg msg, Throwable ex) {
-        super(session, msg == null ? NMsg.ofC("failed to install %s", (id == null ? "<null>" : id)) : msg, ex);
+    public NInstallationException(NId id, NMsg msg, Throwable ex) {
+        super(msg == null ? NMsg.ofC("failed to install %s", (id == null ? "<null>" : id)) : msg, ex);
         this.id = id;
     }
 

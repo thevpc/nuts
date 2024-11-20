@@ -45,7 +45,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     //    public static final NutsPrimitiveElement NULL = new DefaultNPrimitiveElement(NutsElementType.NULL, null);
 //    public static final NutsPrimitiveElement TRUE = new DefaultNPrimitiveElement(NutsElementType.BOOLEAN, true);
 //    public static final NutsPrimitiveElement FALSE = new DefaultNPrimitiveElement(NutsElementType.BOOLEAN, false);
-    private static Predicate<Class> DEFAULT_INDESTRUCTIBLE_FORMAT = new Predicate<Class>() {
+    private static Predicate<Class<?>> DEFAULT_INDESTRUCTIBLE_FORMAT = new Predicate<Class<?>>() {
         @Override
         public boolean test(Class x) {
             switch (x.getName()) {
@@ -92,11 +92,11 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     private boolean logProgress;
     private boolean traceProgress;
     private NProgressFactory progressFactory;
-    private Predicate<Class> indestructibleObjects;
+    private Predicate<Class<?>> indestructibleObjects;
 
-    public DefaultNElements(NSession session) {
-        super(session, "element-format");
-        this.model = NWorkspaceExt.of(session).getModel().textModel;
+    public DefaultNElements(NWorkspace workspace) {
+        super(workspace, "element-format");
+        this.model = NWorkspaceExt.of(workspace).getModel().textModel;
     }
 
 
@@ -133,7 +133,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 //                case TREE:
 //                case TABLE:
 //                case PLAIN: {
-//                    throw new NutsIllegalArgumentException(getSession(), "invalid content type " + contentType + ". Only structured content types are allowed.");
+//                    throw new NutsIllegalArgumentException(session, "invalid content type " + contentType + ". Only structured content types are allowed.");
 //                }
 //            }
             this.contentType = contentType;
@@ -159,8 +159,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
     @Override
     public NElementPath compilePath(String pathExpression) {
-        checkSession();
-        return NElementPathFilter.compile(pathExpression, getSession());
+        return NElementPathFilter.compile(pathExpression, workspace);
     }
 
     @Override
@@ -176,13 +175,12 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
     @Override
     public <T> T parse(URL url, Class<T> clazz) {
-        checkSession();
-        return parse(NPath.of(url, getSession()), clazz);
+        return parse(NPath.of(url), clazz);
     }
 
     private InputStream prepareInputStream(InputStream is, Object origin) {
         if (isLogProgress() || isTraceProgress()) {
-            return NInputStreamMonitor.of(getSession())
+            return NInputStreamMonitor.of()
                     .setSource(is)
                     .setOrigin(origin)
                     .setLogProgress(isLogProgress())
@@ -195,7 +193,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
     private InputStream prepareInputStream(NPath path) {
         if (isLogProgress()) {
-            return NInputStreamMonitor.of(getSession())
+            return NInputStreamMonitor.of()
                     .setSource(path)
                     .setOrigin(path)
                     .setLogProgress(isLogProgress())
@@ -208,7 +206,6 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
     @Override
     public <T> T parse(NPath path, Class<T> clazz) {
-        checkSession();
         switch (contentType) {
             case JSON:
             case YAML:
@@ -220,21 +217,20 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
                     } catch (NException ex) {
                         throw ex;
                     } catch (UncheckedIOException ex) {
-                        throw new NIOException(getSession(), ex);
+                        throw new NIOException(ex);
                     } catch (RuntimeException ex) {
-                        throw new NParseException(getSession(), NMsg.ofC("unable to parse path %s", path), ex);
+                        throw new NParseException(NMsg.ofC("unable to parse path %s", path), ex);
                     }
                 } catch (IOException ex) {
-                    throw new NParseException(getSession(), NMsg.ofC("unable to parse path %s", path), ex);
+                    throw new NParseException(NMsg.ofC("unable to parse path %s", path), ex);
                 }
             }
         }
-        throw new NIllegalArgumentException(getSession(), NMsg.ofC("invalid content type %s. Only structured content types are allowed.", contentType));
+        throw new NIllegalArgumentException(NMsg.ofC("invalid content type %s. Only structured content types are allowed.", contentType));
     }
 
     @Override
     public <T> T parse(InputStream inputStream, Class<T> clazz) {
-        checkSession();
         switch (contentType) {
             case JSON:
             case YAML:
@@ -243,12 +239,11 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
                 return parse(new InputStreamReader(prepareInputStream(inputStream, null)), clazz);
             }
         }
-        throw new NIllegalArgumentException(getSession(), NMsg.ofC("invalid content type %s. Only structured content types are allowed.", contentType));
+        throw new NIllegalArgumentException(NMsg.ofC("invalid content type %s. Only structured content types are allowed.", contentType));
     }
 
     @Override
     public <T> T parse(String string, Class<T> clazz) {
-        checkSession();
         switch (contentType) {
             case JSON:
             case YAML:
@@ -257,12 +252,11 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
                 return parse(new StringReader(string), clazz);
             }
         }
-        throw new NIllegalArgumentException(getSession(), NMsg.ofC("invalid content type %s. Only structured content types are allowed.", contentType));
+        throw new NIllegalArgumentException(NMsg.ofC("invalid content type %s. Only structured content types are allowed.", contentType));
     }
 
     @Override
     public <T> T parse(byte[] bytes, Class<T> clazz) {
-        checkSession();
         switch (contentType) {
             case JSON:
             case YAML:
@@ -271,7 +265,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
                 return parse(new InputStreamReader(prepareInputStream(new ByteArrayInputStream(bytes), null)), clazz);
             }
         }
-        throw new NIllegalArgumentException(getSession(), NMsg.ofC("invalid content type %s. Only structured content types are allowed.", contentType));
+        throw new NIllegalArgumentException(NMsg.ofC("invalid content type %s. Only structured content types are allowed.", contentType));
     }
 
     @Override
@@ -281,14 +275,12 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
     @Override
     public <T> T parse(Path file, Class<T> clazz) {
-        checkSession();
-        return parse(NPath.of(file, getSession()), clazz);
+        return parse(NPath.of(file), clazz);
     }
 
     @Override
     public <T> T parse(File file, Class<T> clazz) {
-        checkSession();
-        return parse(NPath.of(file, getSession()), clazz);
+        return parse(NPath.of(file), clazz);
     }
 
     @Override
@@ -372,16 +364,16 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
     //    @Override
 //    public NutsPrimitiveElementBuilder forPrimitive() {
-//        return new DefaultNPrimitiveElementBuilder(getSession());
+//        return new DefaultNPrimitiveElementBuilder(session);
 //    }
     @Override
     public NObjectElementBuilder ofObject() {
-        return new DefaultNObjectElementBuilder(getSession());
+        return new DefaultNObjectElementBuilder(workspace);
     }
 
     @Override
     public NArrayElementBuilder ofArray() {
-        return new DefaultNArrayElementBuilder(getSession());
+        return new DefaultNArrayElementBuilder(workspace);
     }
 
     @Override
@@ -408,26 +400,22 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 //    }
     @Override
     public NPrimitiveElement ofBoolean(boolean value) {
-        checkSession();
         //TODO: perhaps we can optimize this
         if (value) {
-            return new DefaultNPrimitiveElement(NElementType.BOOLEAN, true, getSession());
+            return new DefaultNPrimitiveElement(NElementType.BOOLEAN, true, workspace);
         } else {
-            return new DefaultNPrimitiveElement(NElementType.BOOLEAN, false, getSession());
+            return new DefaultNPrimitiveElement(NElementType.BOOLEAN, false, workspace);
         }
     }
 
     public NPrimitiveElement ofString(String str) {
-        checkSession();
-        return str == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.STRING, str, getSession());
+        return str == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.STRING, str, workspace);
     }
 
     @Override
     public NCustomElement ofCustom(Object object) {
-        checkSession();
-        NSession session = getSession();
-        NAssert.requireNonNull(object, "custom element", session);
-        return new DefaultNCustomElement(object, session);
+        NAssert.requireNonNull(object, "custom element");
+        return new DefaultNCustomElement(object, workspace);
     }
 
     @Override
@@ -442,38 +430,32 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
     @Override
     public NPrimitiveElement ofInstant(Instant instant) {
-        checkSession();
-        return instant == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.INSTANT, instant, getSession());
+        return instant == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.INSTANT, instant, workspace);
     }
 
     @Override
     public NPrimitiveElement ofFloat(Float value) {
-        checkSession();
-        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.FLOAT, value, getSession());
+        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.FLOAT, value, workspace);
     }
 
     @Override
     public NPrimitiveElement ofInt(Integer value) {
-        checkSession();
-        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.INTEGER, value, getSession());
+        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.INTEGER, value, workspace);
     }
 
     @Override
     public NPrimitiveElement ofLong(Long value) {
-        checkSession();
-        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.LONG, value, getSession());
+        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.LONG, value, workspace);
     }
 
     @Override
     public NPrimitiveElement ofNull() {
-        checkSession();
         //perhaps we can optimize this?
-        return new DefaultNPrimitiveElement(NElementType.NULL, null, getSession());
+        return new DefaultNPrimitiveElement(NElementType.NULL, null, workspace);
     }
 
     @Override
     public NPrimitiveElement ofNumber(String value) {
-        checkSession();
         if (value == null) {
             return ofNull();
         }
@@ -505,74 +487,68 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
             }
         }
-        throw new NParseException(getSession(), NMsg.ofC("unable to parse number %s", value));
+        throw new NParseException(NMsg.ofC("unable to parse number %s", value));
     }
 
     @Override
     public NPrimitiveElement ofInstant(Date value) {
-        checkSession();
         if (value == null) {
             return ofNull();
         }
-        return new DefaultNPrimitiveElement(NElementType.INSTANT, value.toInstant(), getSession());
+        return new DefaultNPrimitiveElement(NElementType.INSTANT, value.toInstant(), workspace);
     }
 
     @Override
     public NPrimitiveElement ofInstant(String value) {
-        checkSession();
         if (value == null) {
             return ofNull();
         }
-        return new DefaultNPrimitiveElement(NElementType.INSTANT, DefaultNLiteral.parseInstant(value).get(getSession()), getSession());
+        return new DefaultNPrimitiveElement(NElementType.INSTANT, DefaultNLiteral.parseInstant(value).get(), workspace);
     }
 
     @Override
     public NPrimitiveElement ofByte(Byte value) {
-        checkSession();
-        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.BYTE, value, getSession());
+        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.BYTE, value, workspace);
     }
 
     @Override
     public NPrimitiveElement ofDouble(Double value) {
-        checkSession();
-        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.DOUBLE, value, getSession());
+        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.DOUBLE, value, workspace);
     }
 
     @Override
     public NPrimitiveElement ofFloat(Short value) {
-        checkSession();
-        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.SHORT, value, getSession());
+        return value == null ? ofNull() : new DefaultNPrimitiveElement(NElementType.SHORT, value, workspace);
     }
 
     @Override
     public NPrimitiveElement ofNumber(Number value) {
-        checkSession();
         if (value == null) {
             return ofNull();
         }
         switch (value.getClass().getName()) {
             case "java.lang.Byte":
-                return new DefaultNPrimitiveElement(NElementType.BYTE, value, getSession());
+                return new DefaultNPrimitiveElement(NElementType.BYTE, value, workspace);
             case "java.lang.Short":
-                return new DefaultNPrimitiveElement(NElementType.SHORT, value, getSession());
+                return new DefaultNPrimitiveElement(NElementType.SHORT, value, workspace);
             case "java.lang.Integer":
-                return new DefaultNPrimitiveElement(NElementType.INTEGER, value, getSession());
+                return new DefaultNPrimitiveElement(NElementType.INTEGER, value, workspace);
             case "java.lang.Long":
-                return new DefaultNPrimitiveElement(NElementType.LONG, value, getSession());
+                return new DefaultNPrimitiveElement(NElementType.LONG, value, workspace);
             case "java.math.BigInteger":
-                return new DefaultNPrimitiveElement(NElementType.BIG_INTEGER, value, getSession());
+                return new DefaultNPrimitiveElement(NElementType.BIG_INTEGER, value, workspace);
             case "java.lang.float":
-                return new DefaultNPrimitiveElement(NElementType.FLOAT, value, getSession());
+                return new DefaultNPrimitiveElement(NElementType.FLOAT, value, workspace);
             case "java.lang.Double":
-                return new DefaultNPrimitiveElement(NElementType.DOUBLE, value, getSession());
+                return new DefaultNPrimitiveElement(NElementType.DOUBLE, value, workspace);
             case "java.math.BigDecimal":
-                return new DefaultNPrimitiveElement(NElementType.BIG_DECIMAL, value, getSession());
+                return new DefaultNPrimitiveElement(NElementType.BIG_DECIMAL, value, workspace);
         }
         // ???
-        return new DefaultNPrimitiveElement(NElementType.FLOAT, value, getSession());
+        return new DefaultNPrimitiveElement(NElementType.FLOAT, value, workspace);
     }
 
-    public Predicate<Class> getIndestructibleObjects() {
+    public Predicate<Class<?>> getIndestructibleObjects() {
         return indestructibleObjects;
     }
 
@@ -581,7 +557,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
         return setIndestructibleObjects(DEFAULT_INDESTRUCTIBLE_FORMAT);
     }
 
-    public NElements setIndestructibleObjects(Predicate<Class> destructTypeFilter) {
+    public NElements setIndestructibleObjects(Predicate<Class<?>> destructTypeFilter) {
         this.indestructibleObjects = destructTypeFilter;
         return this;
     }
@@ -590,51 +566,49 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     public NIterableFormat iter(NPrintStream writer) {
         switch (getContentType()) {
             case JSON:
-                return new DefaultSearchFormatJson(getSession(), writer, new NFetchDisplayOptions(getSession()));
+                return new DefaultSearchFormatJson(workspace, writer, new NFetchDisplayOptions(workspace));
             case XML:
-                return new DefaultSearchFormatXml(getSession(), writer, new NFetchDisplayOptions(getSession()));
+                return new DefaultSearchFormatXml(workspace, writer, new NFetchDisplayOptions(workspace));
             case PLAIN:
-                return new DefaultSearchFormatPlain(getSession(), writer, new NFetchDisplayOptions(getSession()));
+                return new DefaultSearchFormatPlain(workspace, writer, new NFetchDisplayOptions(workspace));
             case TABLE:
-                return new DefaultSearchFormatTable(getSession(), writer, new NFetchDisplayOptions(getSession()));
+                return new DefaultSearchFormatTable(workspace, writer, new NFetchDisplayOptions(workspace));
             case TREE:
-                return new DefaultSearchFormatTree(getSession(), writer, new NFetchDisplayOptions(getSession()));
+                return new DefaultSearchFormatTree(workspace, writer, new NFetchDisplayOptions(workspace));
             case PROPS:
-                return new DefaultSearchFormatProps(getSession(), writer, new NFetchDisplayOptions(getSession()));
+                return new DefaultSearchFormatProps(workspace, writer, new NFetchDisplayOptions(workspace));
         }
-        throw new NUnsupportedOperationException(getSession(), NMsg.ofC("unsupported iterator for %s", getContentType()));
+        throw new NUnsupportedOperationException(NMsg.ofC("unsupported iterator for %s", getContentType()));
     }
 
     @Override
     public <T> NElements setMapper(Class<T> type, NElementMapper<T> mapper) {
-        checkSession();
         ((DefaultNElementFactoryService) getElementFactoryService())
                 .setMapper(type, mapper);
         return this;
     }
 
     private NElementStreamFormat resolveStructuredFormat() {
-        checkSession();
         switch (contentType) {
             case JSON: {
-                return model.getJsonMan(getSession());
+                return model.getJsonMan();
             }
             case YAML: {
-                return model.getYamlMan(getSession());
+                return model.getYamlMan();
             }
             case XML: {
-                return model.getXmlMan(getSession());
+                return model.getXmlMan();
             }
             case TSON: {
-                throw new NUnsupportedEnumException(getSession(), contentType);
+                throw new NUnsupportedEnumException(contentType);
             }
         }
-        throw new NIllegalArgumentException(getSession(), NMsg.ofC("invalid content type %s. Only structured content types are allowed.", contentType));
+        throw new NIllegalArgumentException(NMsg.ofC("invalid content type %s. Only structured content types are allowed.", contentType));
     }
 
     private DefaultNElementFactoryContext createFactoryContext() {
-        NReflectRepository reflectRepository = NWorkspaceUtils.of(getSession()).getReflectRepository();
-        DefaultNElementFactoryContext c = new DefaultNElementFactoryContext(this, reflectRepository);
+        NReflectRepository reflectRepository = NWorkspaceUtils.of(workspace).getReflectRepository();
+        DefaultNElementFactoryContext c = new DefaultNElementFactoryContext(workspace,this, reflectRepository);
         switch (getContentType()) {
             case XML:
             case JSON:
@@ -653,12 +627,11 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
     private void print(NPrintStream out, NElementStreamFormat format) {
-        checkSession();
         NElement elem = toElement(value);
         if (out.isNtf()) {
-            NPrintStream bos = NMemoryPrintStream.of(getSession());
+            NPrintStream bos = NMemoryPrintStream.of();
             format.printElement(elem, bos, compact, createFactoryContext());
-            out.print(NTexts.of(getSession()).ofCode(getContentType().id(), bos.toString()));
+            out.print(NTexts.of().ofCode(getContentType().id(), bos.toString()));
         } else {
             format.printElement(elem, out, compact, createFactoryContext());
         }
@@ -668,7 +641,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     @Override
     public void print(NPrintStream out) {
         if (contentType == NContentType.PLAIN) {
-            print(out, model.getJsonMan(getSession()));
+            print(out, model.getJsonMan());
         } else {
             print(out, resolveStructuredFormat());
         }
@@ -679,7 +652,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
     public NElementFactoryService getElementFactoryService() {
-        return model.getElementFactoryService(getSession());
+        return model.getElementFactoryService();
     }
 
     @Override

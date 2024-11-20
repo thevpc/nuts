@@ -29,7 +29,9 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.util.NOptional;
 
+import java.time.Instant;
 import java.util.Set;
 
 /**
@@ -42,29 +44,56 @@ import java.util.Set;
  */
 public interface NFetchCmd extends NWorkspaceCmd {
 
-    static NFetchCmd of(NSession session) {
-        return NExtensions.of(session).createComponent(NFetchCmd.class).get();
+    static NFetchCmd of() {
+        return NExtensions.of().createComponent(NFetchCmd.class).get();
     }
 
-    static NFetchCmd of(NId id, NSession session) {
-        return of(session).setId(id);
+    static NFetchCmd of(NId id) {
+        return of().setId(id);
     }
 
-    static NFetchCmd of(String id, NSession session) {
-        return of(session).setId(id);
+    static NFetchCmd of(String id) {
+        return of().setId(id);
     }
 
-    static NFetchCmd ofNutsApi(NSession session) {
-        return of(session).setId(session.getWorkspace().getApiId());
+    static NFetchCmd ofNutsApi() {
+        return of().setId(NWorkspace.of().get().getApiId());
     }
 
-    static NFetchCmd ofNutsRuntime(NSession session) {
-        return of(session).setId(session.getWorkspace().getRuntimeId());
+    static NFetchCmd ofNutsRuntime() {
+        return of().setId(NWorkspace.of().get().getRuntimeId());
     }
 
     ////////////////////////////////////////////////////////
     // Setters
     ////////////////////////////////////////////////////////
+
+    NOptional<NFetchStrategy> getFetchStrategy();
+
+    NOptional<Boolean> getTransitive();
+
+    NFetchCmd setFetchStrategy(NFetchStrategy fetchStrategy);
+
+    NFetchCmd setTransitive(Boolean transitive);
+
+    /**
+     * return expired date/time or zero if not set. Expire time is used to
+     * expire any cached file that was downloaded before the given date/time
+     *
+     * @return expired date/time or zero
+     * @since 0.8.0
+     */
+    NOptional<Instant> getExpireTime();
+
+    /**
+     * set expire instant. Expire time is used to expire any cached file that
+     * was downloaded before the given date/time.
+     *
+     * @param value value
+     * @return {@code this} instance
+     * @since 0.8.0
+     */
+    NFetchCmd setExpireTime(Instant value);
 
     /**
      * when true, NutsNotFoundException instances are ignored
@@ -342,57 +371,6 @@ public interface NFetchCmd extends NWorkspaceCmd {
     NFetchCmd setRepositoryFilter(NRepositoryFilter filter);
 
     NFetchCmd addRepositoryFilter(NRepositoryFilter filter);
-
-//    /**
-//     * add repository filter
-//     * @param value repository filter
-//     * @return {@code this} instance
-//     */
-//    NutsFetchCommand addRepositories(Collection<String> value);
-//
-//    /**
-//     * remove repository filter
-//     * @param value repository filter
-//     * @return {@code this} instance
-//     */
-//    NutsFetchCommand removeRepository(String value);
-//
-//    /**
-//     * add repository filter
-//     * @param values repository filter
-//     * @return {@code this} instance
-//     */
-//    NutsFetchCommand addRepositories(String... values);
-//
-//    /**
-//     * remove all repository filters
-//     * @return {@code this} instance
-//     */
-//    NutsFetchCommand clearRepositories();
-//
-//    /**
-//     * add repository filter
-//     * @param value repository filter
-//     * @return {@code this} instance
-//     */
-//    NutsFetchCommand addRepository(String value);
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
-    NFetchCmd setSession(NSession session);
-
-    /**
-     * copy session
-     *
-     * @return {@code this} instance
-     */
-    @Override
-    NFetchCmd copySession();
 
     /**
      * configure the current command with the given arguments. This is an

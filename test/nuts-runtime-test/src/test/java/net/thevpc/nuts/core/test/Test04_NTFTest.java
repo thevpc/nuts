@@ -47,14 +47,14 @@ public class Test04_NTFTest {
 
     @Test
     public void test01() {
-        NTexts txt = NTexts.of(session);
+        NTexts txt = NTexts.of();
         NText parsed = txt.parse("##:error0:n#01##");
         TestUtils.println(parsed);
     }
 
     @Test
     public void test02() {
-        NTexts txt = NTexts.of(session);
+        NTexts txt = NTexts.of();
 
 //        String str="missing command. try ```sh ndocusaurus pdf | start | build```";
         String str = "##:p2:╭───╮##\u001E\n##:p3:│##";
@@ -69,7 +69,7 @@ public class Test04_NTFTest {
 
     @Test
     public void test03() {
-        NTexts txt = NTexts.of(session);
+        NTexts txt = NTexts.of();
 
 //        String str="missing command. try ```sh ndocusaurus pdf | start | build```";
         String str = "##:p2:╭───╮##\u001E\n##:p3:│##";
@@ -82,7 +82,7 @@ public class Test04_NTFTest {
 
     @Test
     public void test04() {
-        NTexts txt = NTexts.of(session);
+        NTexts txt = NTexts.of();
 
 //        String str="missing command. try ```sh ndocusaurus pdf | start | build```";
         //String str="##{error0:##{error0:not installed : ##:p1:ntomcat##\u001E}}##\u001E}##\u001E";
@@ -95,7 +95,7 @@ public class Test04_NTFTest {
 
     @Test
     public void test05() {
-        NTexts txt = NTexts.of(session);
+        NTexts txt = NTexts.of();
 
         String str = "##:separator0:{##\u001E\n" +
                 "  ##:string0:\"id\"##\u001E##:separator0::##\u001E ##:string0:\"<main>://com.github.vatbub:mslinks#1.0.5\"##\u001E##:separator0:,##\u001E\n" +
@@ -145,7 +145,7 @@ public class Test04_NTFTest {
 
     @Test
     public void test06() {
-        NTexts txt = NTexts.of(session);
+        NTexts txt = NTexts.of();
 
         String str = "##:separator0:{##\u001E\n" +
                 "  ##:string0:\"id\"##\u001E##:separator0::##\u001E ##{string0:\"<main>://com.github.vatbub:mslinks#1.0.5\"}##\u001E##:separator0:,##\u001E\n" +
@@ -195,7 +195,7 @@ public class Test04_NTFTest {
 
     @Test
     public void test07() {
-        NTexts txt = NTexts.of(session);
+        NTexts txt = NTexts.of();
 
 //        String str = "##{string0:\"<main>://com.github.vatbub:mslinks#1.0.5\"}##";
         String str = "##{string:a#b}##";
@@ -207,7 +207,7 @@ public class Test04_NTFTest {
 
     @Test
     public void test08() {
-        NTexts txt = NTexts.of(session);
+        NTexts txt = NTexts.of();
 
 //        String str = "##{string0:\"<main>://com.github.vatbub:mslinks#1.0.5\"}##";
         String str = "##:string:\"a#b\"##";
@@ -218,7 +218,7 @@ public class Test04_NTFTest {
 
     @Test
     public void test09() {
-        NTexts text = NTexts.of(session);
+        NTexts text = NTexts.of();
         NText q = text.ofStyled("re-install", NTextStyles.of(NTextStyle.success(), NTextStyle.underlined()));
         TestUtils.println(q.toString());
     }
@@ -921,7 +921,7 @@ public class Test04_NTFTest {
 
     @Test
     public void test11() {
-        NTexts text = NTexts.of(session);
+        NTexts text = NTexts.of();
         NText str = text.ofStyled("re-install", NTextStyles.of(NTextStyle.success(), NTextStyle.underlined()));
         TestUtils.println(str.toString());
         Assertions.assertEquals("##{_,success:re-install}##\u001E", str.toString());
@@ -929,7 +929,7 @@ public class Test04_NTFTest {
 
     @Test
     public void test12() {
-        NTexts text = NTexts.of(session);
+        NTexts text = NTexts.of();
         String str = "```system \"C:\\U\\v\" ```";
         NText t = text.parse(str);
         Assertions.assertEquals("\"C:\\U\\v\" ", t.filteredText());
@@ -937,7 +937,7 @@ public class Test04_NTFTest {
 
     @Test
     public void test13() {
-        NTexts text = NTexts.of(session);
+        NTexts text = NTexts.of();
         String str = "```system \\``````";
         NText t = text.parse(str);
         Assertions.assertEquals("```", t.filteredText());
@@ -955,7 +955,7 @@ public class Test04_NTFTest {
     }
 
     private NTFParser2 createParser() {
-        return new NTFParser2(session);
+        return new NTFParser2(session.getWorkspace());
     }
 
     @Test
@@ -1188,7 +1188,7 @@ public class Test04_NTFTest {
 
     @Test
     public void test30() {
-        NTextBuilder b = NTexts.of(session).ofBuilder()
+        NTextBuilder b = NTexts.of().ofBuilder()
                 .append("a")
                 .appendCode("sh", "b")
                 .append("c");
@@ -1197,7 +1197,7 @@ public class Test04_NTFTest {
 
     @Test
     public void test31() {
-        NString s = NString.of("a```sh b```\u001Ec", session);
+        NString s = NString.of("a```sh b```\u001Ec");
         NText t = s.toText();
         Assertions.assertEquals(NTextType.LIST, t.getType());
         Assertions.assertEquals(3, ((NTextList) t).size());
@@ -1206,7 +1206,7 @@ public class Test04_NTFTest {
     @Test
     public void test32() {
         NString s = NString.of(
-                "##:_:location##:##:path:/home## (Tan Type)\n", session);
+                "##:_:location##:##:path:/home## (Tan Type)\n");
         NText t = s.toText();
         Assertions.assertEquals(NTextType.LIST, t.getType());
         Assertions.assertEquals(4, ((NTextList) t).size());
@@ -1220,7 +1220,7 @@ public class Test04_NTFTest {
                 "```\n" +
                 "    manage tasks, jobs, projects\n";
         NText s = NString.of(
-                q, session).toText();
+                q).toText();
         NString im = s.immutable();
         Assertions.assertEquals(NTextType.LIST, s.getType());
         Assertions.assertEquals(q, s.toString());
@@ -1228,7 +1228,7 @@ public class Test04_NTFTest {
     @Test
     public void test34() {
         NText s = NString.of(
-                "```!clear-line``````!move-line-start```", session).toText();
+                "```!clear-line``````!move-line-start```").toText();
         Assertions.assertEquals(NTextType.LIST, s.getType());
         Assertions.assertEquals(2, ((NTextList)s).size());
         Assertions.assertEquals(true, ((NTextList)s).get(0) instanceof NTextCmd);
@@ -1245,7 +1245,7 @@ public class Test04_NTFTest {
         //String str = "##{s12:AA##:12:BB##u##:12:BB##}##";
         //String str = "##{s1:A##:1:B##C##:1:D##}##";
         //String str = "##{s12:AA##:12:BB##}##";
-        NText parsed = NString.of(str, session).toText();
+        NText parsed = NString.of(str).toText();
         TestUtils.println(parsed);
         Assertions.assertEquals(NTextType.LIST, parsed.getType());
         Assertions.assertEquals(12, ((NTextList)parsed).size());
@@ -1254,7 +1254,7 @@ public class Test04_NTFTest {
     public void test36() {
         String str = "##:fxd787af:Text##";
 
-        NText parsed = NString.of(str, session).toText();
+        NText parsed = NString.of(str).toText();
         TestUtils.println(parsed);
 //        Assertions.assertEquals(NTextType.LIST, parsed.getType());
 //        Assertions.assertEquals(12, ((NTextList)parsed).size());
@@ -1271,7 +1271,7 @@ public class Test04_NTFTest {
                 "```##:b158:Text##```                           | ##:b158:Text##                          | background 158 (8bits)\n" +
                 "```##:bxd787af:Text##```                       | ##:bxd787af:Text##                | background Pink (24bits)";
 
-        NText parsed = NString.of(str, session).toText();
+        NText parsed = NString.of(str).toText();
         TestUtils.println(parsed);
         Assertions.assertEquals(NTextType.LIST, parsed.getType());
         Assertions.assertEquals(40, ((NTextList)parsed).size());
@@ -1279,7 +1279,7 @@ public class Test04_NTFTest {
     @Test
     public void test38() {
         String str = "```##:bxd787af:Text##```";
-        NText parsed = NString.of(str, session).toText();
+        NText parsed = NString.of(str).toText();
         TestUtils.println(parsed);
 //        Assertions.assertEquals(NTextType.LIST, parsed.getType());
 //        Assertions.assertEquals(12, ((NTextList)parsed).size());
@@ -1287,7 +1287,7 @@ public class Test04_NTFTest {
     @Test
     public void test39() {
         String str = "\\```underlined underlined\\```";
-        NText parsed = NString.of(str, session).toText();
+        NText parsed = NString.of(str).toText();
         TestUtils.println(parsed);
         Assertions.assertEquals(NTextType.PLAIN, parsed.getType());
         String text = ((NTextPlain) parsed).getText();
@@ -1299,7 +1299,7 @@ public class Test04_NTFTest {
     @Test
     public void test40() {
         String str = "```#) Title 1```";
-        NText parsed = NString.of(str, session).toText();
+        NText parsed = NString.of(str).toText();
         TestUtils.println(parsed);
         Assertions.assertEquals(NTextType.CODE, parsed.getType());
         String text = ((NTextCode) parsed).getText();
@@ -1314,7 +1314,7 @@ public class Test04_NTFTest {
         String str = "###) Xml format\n" +
                 "####) NTF syntax\n"
         ;
-        NText parsed = NString.of(str, session).toText();
+        NText parsed = NString.of(str).toText();
         TestUtils.println(parsed);
         Assertions.assertEquals(NTextType.LIST, parsed.getType());
         Assertions.assertEquals(2, ((NTextList) parsed).size());
@@ -1325,7 +1325,7 @@ public class Test04_NTFTest {
     public void test42() {
         String str = "##{pale:2024-06-07 23:28:39.328}##\u001E ##{config:CONFIG}##\u001E ##{info:START  }##\u001E : start ```sh nuts``` ```primary3 ##{version:0.8.4}##\u001E``` at 2024-06-07 23:28:28.660";
         session.out().println(str);
-        NText parsed = NString.of(str, session).toText();
+        NText parsed = NString.of(str).toText();
         TestUtils.println(parsed);
 //        Assertions.assertEquals(NTextType.LIST, parsed.getType());
 //        Assertions.assertEquals(2, ((NTextList) parsed).size());

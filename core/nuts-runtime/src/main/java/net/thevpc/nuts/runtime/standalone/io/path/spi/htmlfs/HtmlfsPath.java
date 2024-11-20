@@ -24,18 +24,13 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
 
     public static final String PROTOCOL = "htmlfs";
     public static final String PREFIX = PROTOCOL + ":";
-    public static final HtmlfsParser[] PARSERS = {
-            new MavenCentralHtmlfsParser(),
-            new ApacheReposHtmlfsParser(),
-            new TomcatWebServerHtmlfsParser(),
-            new JettyWebServerHtmlfsParser(),
-    };
+
     private String url;
 
-    public HtmlfsPath(String url, NSession session) {
-        super(NPath.of(url.substring(PREFIX.length()), session), session);
+    public HtmlfsPath(String url, NWorkspace workspace) {
+        super(NPath.of(url.substring(PREFIX.length())), workspace);
         if (!url.startsWith(PREFIX)) {
-            throw new NUnsupportedArgumentException(session, NMsg.ofC("expected prefix '%s'", PREFIX));
+            throw new NUnsupportedArgumentException(NMsg.ofC("expected prefix '%s'", PREFIX));
         }
         this.url = url;
     }
@@ -71,12 +66,12 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
                             if (!a.endsWith("/")) {
                                 a += "/";
                             }
-                            return NPath.of(new HtmlfsPath(a, session), session);
+                            return NPath.of(new HtmlfsPath(a, workspace));
                         }
                         return ref.resolve(x);
-                    }), session);
+                    }));
         } catch (IOException|NIOException e) {
-            return NStream.ofEmpty(getSession());
+            return NStream.ofEmpty();
         }
     }
 
@@ -102,7 +97,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         if (!a.endsWith("/")) {
             a += "/";
         }
-        return NPath.of(new HtmlfsPath(a, session), session);
+        return NPath.of(new HtmlfsPath(a, workspace));
     }
 
     @Override
@@ -113,7 +108,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         if (!path.toString().endsWith("/")) {
             return ref.resolve(path);
         }
-        return NPath.of(PREFIX + ref.resolve(path), session);
+        return NPath.of(PREFIX + ref.resolve(path));
     }
 
     @Override
@@ -128,7 +123,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         if (!a.endsWith("/")) {
             a += "/";
         }
-        return NPath.of(new HtmlfsPath(a, session), session);
+        return NPath.of(new HtmlfsPath(a, workspace));
     }
 
     @Override
@@ -139,7 +134,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         if (!path.toString().endsWith("/")) {
             return ref.resolveSibling(path);
         }
-        return NPath.of(PREFIX + ref.resolveSibling(path), session);
+        return NPath.of(PREFIX + ref.resolveSibling(path));
     }
 
     public boolean isSymbolicLink(NPath basePath) {
@@ -186,7 +181,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         if (p == null) {
             return null;
         }
-        return NPath.of(PREFIX + p, session);
+        return NPath.of(PREFIX + p);
     }
 
     @Override
@@ -194,12 +189,12 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         if (isAbsolute(basePath)) {
             return basePath;
         }
-        return NPath.of(PREFIX + basePath.toAbsolute(rootPath), session);
+        return NPath.of(PREFIX + basePath.toAbsolute(rootPath));
     }
 
     @Override
     public NPath normalize(NPath basePath) {
-        return NPath.of(PREFIX + ref.normalize(), session);
+        return NPath.of(PREFIX + ref.normalize());
     }
 
     @Override
@@ -212,7 +207,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         if (isRoot(basePath)) {
             return basePath;
         }
-        return NPath.of(PREFIX + ref.getRoot(), session);
+        return NPath.of(PREFIX + ref.getRoot());
     }
 
     @NUseDefault
@@ -227,13 +222,21 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
 
     }
 
+    public final HtmlfsParser[] PARSERS() {
+            return new HtmlfsParser[]{
+                    new MavenCentralHtmlfsParser(workspace),
+                    new ApacheReposHtmlfsParser(workspace),
+                    new TomcatWebServerHtmlfsParser(workspace),
+                    new JettyWebServerHtmlfsParser(workspace),
+            };
+    };
     public List<String> parseHtml(InputStream html) {
-        byte[] bytes = NCp.of(session).from(html).getByteArrayResult();
-        NCallableSupport<List<String>> best = Arrays.stream(PARSERS).map(p -> {
+        byte[] bytes = NCp.of().from(html).getByteArrayResult();
+        NCallableSupport<List<String>> best = Arrays.stream(PARSERS()).map(p -> {
                     try {
-                        return p.parseHtmlTomcat(bytes, session);
+                        return p.parseHtmlTomcat(bytes);
                     } catch (Exception ex) {
-                        NLogOp.of(HtmlfsPath.class, session)
+                        NLogOp.of(HtmlfsPath.class)
                                 .verb(NLogVerb.FAIL)
                                 .level(Level.FINEST)
                                 .error(ex)
@@ -243,7 +246,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
                 }).filter(p -> NCallableSupport.isValid(p)).max(Comparator.comparing(NCallableSupport::getSupportLevel))
                 .orElse(null);
         if (best != null) {
-            List<String> value = best.call(session);
+            List<String> value = best.call();
             if (value != null) {
                 return value;
             }
@@ -264,10 +267,9 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         }
 
         @Override
-        public NCallableSupport<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
-            NSessionUtils.checkSession(ws, session);
+        public NCallableSupport<NPathSPI> createPath(String path, ClassLoader classLoader) {
             if (path.startsWith(PREFIX)) {
-                return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, () -> new HtmlfsPath(path, session));
+                return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT, () -> new HtmlfsPath(path,ws));
             }
             return null;
         }
@@ -300,7 +302,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         }
 
         public NString asFormattedString() {
-            NTextBuilder sb = NTextBuilder.of(p.getSession());
+            NTextBuilder sb = NTextBuilder.of();
             sb.append(PROTOCOL, NTextStyle.primary1());
             sb.append(":", NTextStyle.separator());
             sb.append(p.ref);

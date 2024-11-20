@@ -32,13 +32,14 @@ public class Nsh implements NApplication {
     ));
 
     public static void main(String[] args) {
-        new Nsh().runAndExit(args);
+        new Nsh().run(args);
     }
 
     @Override
-    public void onInstallApplication(NSession session) {
-        NLogOp log = NLogOp.of(Nsh.class, session);
+    public void onInstallApplication() {
+        NLogOp log = NLogOp.of(Nsh.class);
         log.level(Level.CONFIG).verb(NLogVerb.START).log(NMsg.ofPlain("[nsh] Installation..."));
+        NSession session = NSession.of().get();
         session.runAppCmdLine(new NCmdLineRunner() {
             @Override
             public void init(NCmdLine cmdLine, NCmdLineContext context) {
@@ -52,7 +53,7 @@ public class Nsh implements NApplication {
                 }
                 //id will not include version or
                 String nshIdStr = session.getAppId().getShortName();
-                NConfigs cfg = NConfigs.of(session);
+                NConfigs cfg = NConfigs.of();
 //        HashMap<String, String> parameters = new HashMap<>();
 //        parameters.put("forList", nshIdStr + " --!color -c find-forCommand");
 //        parameters.put("find", nshIdStr + " --!color -c find-forCommand %n");
@@ -77,8 +78,7 @@ public class Nsh implements NApplication {
                     if (!CONTEXTUAL_BUILTINS.contains(command.getName())) {
                         // avoid recursive definition!
                         // disable trace, summary will be traced later!
-                        if (NCommands.of(session.copy().setTrace(false)
-                                        .setConfirm(NConfirmationMode.YES)
+                        if (NCommands.of(
                                 )
                                 .addCommand(new NCommandConfig()
                                         .setFactoryId("nsh")
@@ -103,7 +103,7 @@ public class Nsh implements NApplication {
                             String.join(", ", reinstalled)));
                 }
                 if (session.isPlainTrace()) {
-                    NTexts factory = NTexts.of(session);
+                    NTexts factory = NTexts.of();
                     if (!firstInstalled.isEmpty()) {
                         session.out().println(NMsg.ofC("registered %s nsh commands : %s",
                                 factory.ofStyled("" + firstInstalled.size(), NTextStyle.primary3()),
@@ -118,13 +118,13 @@ public class Nsh implements NApplication {
                     }
                 }
                 cfg.save(false);
-                if (NBootManager.of(session).getBootOptions().getInitScripts()
+                if (NBootManager.of().getBootOptions().getInitScripts()
                         .ifEmpty(true)
                         .orElse(false)) {
-                    boolean initLaunchers = NBootManager.of(session).getBootOptions().getInitLaunchers()
+                    boolean initLaunchers = NBootManager.of().getBootOptions().getInitLaunchers()
                             .ifEmpty(true)
                             .orElse(false);
-                    NEnvs.of(session).addLauncher(
+                    NEnvs.of().addLauncher(
                             new NLauncherOptions()
                                     .setId(session.getAppId())
                                     .setCreateScript(true)
@@ -138,35 +138,35 @@ public class Nsh implements NApplication {
     }
 
     @Override
-    public void onUpdateApplication(NSession session) {
-        NLogOp log = NLogOp.of(Nsh.class, session);
+    public void onUpdateApplication() {
+        NLogOp log = NLogOp.of(Nsh.class);
         log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofPlain("[nsh] update..."));
+        NSession session = NSession.of().get();
         NVersion currentVersion = session.getAppVersion();
         NVersion previousVersion = session.getAppPreviousVersion();
-        onInstallApplication(session);
+        onInstallApplication();
     }
 
     @Override
-    public void onUninstallApplication(NSession session) {
-        NLogOp log = NLogOp.of(Nsh.class, session);
+    public void onUninstallApplication() {
+        NLogOp log = NLogOp.of(Nsh.class);
         log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofPlain("[nsh] uninstallation..."));
+        NSession session = NSession.of().get();
         try {
             try {
-                NCommands.of(session).removeCommandFactory("nsh");
+                NCommands.of().removeCommandFactory("nsh");
             } catch (Exception notFound) {
                 //ignore!
             }
             Set<String> uninstalled = new TreeSet<>();
-            for (NCustomCmd command : NCommands.of(session).findCommandsByOwner(session.getAppId())) {
+            for (NCustomCmd command : NCommands.of().findCommandsByOwner(session.getAppId())) {
                 try {
                     NCommands.of(
-                            session.copy().setTrace(false)
-                                    .setConfirm(NConfirmationMode.YES)
                     ).removeCommand(command.getName());
                     uninstalled.add(command.getName());
                 } catch (Exception ex) {
                     if (session.isPlainTrace()) {
-                        NTexts factory = NTexts.of(session);
+                        NTexts factory = NTexts.of();
                         session.err().println(NMsg.ofC("unable to unregister %s.",
                                 factory.ofStyled(command.getName(), NTextStyle.primary3())
                         ));
@@ -183,9 +183,10 @@ public class Nsh implements NApplication {
     }
 
     @Override
-    public void run(NSession session) {
+    public void run() {
 
         //before loading NShell check if we need to activate rich term
+        NSession session = NSession.of().get();
         DefaultNShellOptionsParser options = new DefaultNShellOptionsParser(session);
         NShellOptions o = options.parse(session.getAppCmdLine().toStringArray());
 

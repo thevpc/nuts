@@ -8,8 +8,6 @@ package net.thevpc.nuts.runtime.standalone.format;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 
 /**
  *
@@ -17,8 +15,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
  */
 public abstract class DefaultFormatBase0<T> implements NCmdLineConfigurable {
 
-    private final NWorkspace workspace;
-    private NSession session;
+    protected final NWorkspace workspace;
+//    private NSession session;
     private final String name;
     private boolean ntf=true;
 
@@ -26,15 +24,12 @@ public abstract class DefaultFormatBase0<T> implements NCmdLineConfigurable {
         this.workspace = workspace;
         this.name = name;
     }
-    public DefaultFormatBase0(NSession session, String name) {
-        this.session = session;
-        this.workspace = session.getWorkspace();
-        this.name = name;
-    }
+//    public DefaultFormatBase0(NSession session, String name) {
+//        this.session = session;
+//        this.workspace = session.getWorkspace();
+//        this.name = name;
+//    }
 
-    protected void checkSession() {
-        NSessionUtils.checkSession(getWorkspace(), getSession());
-    }
 
     public NWorkspace getWorkspace() {
         return workspace;
@@ -52,9 +47,9 @@ public abstract class DefaultFormatBase0<T> implements NCmdLineConfigurable {
 //    }
 
     public NPrintStream getValidPrintStream(NPrintStream out) {
-        checkSession();
         if (out == null) {
-            out = getSession().getTerminal().getOut();
+            NSession session=workspace.currentSession();
+            out = session.getTerminal().getOut();
         }
         return out;
     }
@@ -63,16 +58,16 @@ public abstract class DefaultFormatBase0<T> implements NCmdLineConfigurable {
         return getValidPrintStream(null);
     }
 
-    public NSession getSession() {
-        return session;
-    }
-
-    public T setSession(NSession session) {
-        //should copy because will change outputformat
-        session = NWorkspaceUtils.bindSession(workspace, session);
-        this.session =session == null ? null : session.copy();
-        return (T) this;
-    }
+//    public NSession getSession() {
+//        return session;
+//    }
+//
+//    public T setSession(NSession session) {
+//        //should copy because will change outputformat
+//        session = NWorkspaceUtils.bindSession(workspace, session);
+//        this.session =session == null ? null : session.copy();
+//        return (T) this;
+//    }
 
     public String getName() {
         return name;
@@ -89,7 +84,8 @@ public abstract class DefaultFormatBase0<T> implements NCmdLineConfigurable {
      */
     @Override
     public T configure(boolean skipUnsupported, String... args) {
-        return NCmdLineConfigurable.configure(this, skipUnsupported, args,getName(),getSession());
+        NSession session=workspace.currentSession();
+        return NCmdLineConfigurable.configure(this, skipUnsupported, args,getName());
     }
 
     public boolean isNtf() {

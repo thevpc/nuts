@@ -1,10 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.dependency.solver;
 
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 
 public class DescriptorNDependencySolver extends MavenNDependencySolver {
-    public DescriptorNDependencySolver(NSession session) {
-        super(session);
+    public DescriptorNDependencySolver(NWorkspace workspace) {
+        super(workspace);
     }
 
     @Override

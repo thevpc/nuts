@@ -25,8 +25,6 @@
  */
 package net.thevpc.nuts.format;
 
-import net.thevpc.nuts.NSession;
-
 /**
  * @author thevpc
  * @app.category Format
@@ -34,8 +32,8 @@ import net.thevpc.nuts.NSession;
  */
 public interface NTableModel {
 
-    static NMutableTableModel of(NSession session) {
-        return NMutableTableModel.of(session);
+    static NMutableTableModel of() {
+        return NMutableTableModel.of();
     }
 
     int getColumnsCount();

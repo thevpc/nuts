@@ -31,8 +31,8 @@ import net.thevpc.nuts.ext.NExtensions;
  * @app.category Base
  */
 public interface NInstallStatusFilters extends NTypedFilters<NInstallStatusFilter> {
-    static NInstallStatusFilters of(NSession session) {
-       return NExtensions.of(session).createComponent(NInstallStatusFilters.class).get();
+    static NInstallStatusFilters of() {
+       return NExtensions.of().createComponent(NInstallStatusFilters.class).get();
     }
 
     NInstallStatusFilter byInstalled(boolean value);

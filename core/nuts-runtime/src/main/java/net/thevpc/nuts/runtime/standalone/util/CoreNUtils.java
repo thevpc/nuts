@@ -304,7 +304,7 @@ public class CoreNUtils {
             x.put("temporary", def.getContent().get().isUserTemporary());
         }
         if (def.getInstallInformation().isPresent()) {
-            NInstallInformation nInstallInformation = def.getInstallInformation().get(session);
+            NInstallInformation nInstallInformation = def.getInstallInformation().get();
             if (nInstallInformation.getInstallFolder() != null) {
                 x.put("install-folder", nInstallInformation.getInstallFolder());
             }
@@ -319,9 +319,9 @@ public class CoreNUtils {
             x.put("repository-uuid", def.getRepositoryUuid());
         }
         if (def.getDescriptor() != null) {
-            x.put("descriptor", def.getDescriptor().formatter(session).format());
-            x.put("effective-descriptor", NDescriptorUtils.getEffectiveDescriptor(def, session)
-                    .formatter(session).format());
+            x.put("descriptor", def.getDescriptor().formatter().format());
+            x.put("effective-descriptor", NDescriptorUtils.getEffectiveDescriptor(def, session.getWorkspace())
+                    .formatter().format());
         }
         return x;
     }
@@ -513,7 +513,7 @@ public class CoreNUtils {
     }
 
 
-    public static NIdType detectIdType(NId depId, NSession session) {
+    public static NIdType detectIdType(NId depId) {
         switch (depId.getShortName()) {
             case NConstants.Ids.NUTS_API: {
                 return NIdType.API;
@@ -522,11 +522,11 @@ public class CoreNUtils {
                 return NIdType.RUNTIME;
             }
             default: {
-                String rt = session.getWorkspace().getRuntimeId().getShortName();
+                String rt = NWorkspace.of().get().getRuntimeId().getShortName();
                 if (rt.equals(depId.getShortName())) {
                     return NIdType.RUNTIME;
                 } else {
-                    for (NClassLoaderNode n : NBootManager.of(session).getBootExtensionClassLoaderNode()) {
+                    for (NClassLoaderNode n : NBootManager.of().getBootExtensionClassLoaderNode()) {
                         if (NId.of(n.getId()).orElse(NId.BLANK).equalsShortId(depId)) {
                             return NIdType.EXTENSION;
                         }
@@ -537,21 +537,21 @@ public class CoreNUtils {
         }
     }
 
-    public static List<NId> resolveNutsApiIdsFromId(NId id, NSession session) {
-        List<NDependency> deps = NFetchCmd.of(id,session).setDependencies(true).getResultDefinition()
-                .getDependencies().get(session).transitive().toList();
-        return resolveNutsApiIdsFromDependencyList(deps, session);
+    public static List<NId> resolveNutsApiIdsFromId(NId id) {
+        List<NDependency> deps = NFetchCmd.of(id).setDependencies(true).getResultDefinition()
+                .getDependencies().get().transitive().toList();
+        return resolveNutsApiIdsFromDependencyList(deps);
     }
 
-    public static List<NId> resolveNutsApiIdsFromDefinition(NDefinition def, NSession session) {
-        return resolveNutsApiFromFromDependencies(def.getDependencies().get(session), session);
+    public static List<NId> resolveNutsApiIdsFromDefinition(NDefinition def) {
+        return resolveNutsApiFromFromDependencies(def.getDependencies().get());
     }
 
-    public static List<NId> resolveNutsApiFromFromDependencies(NDependencies deps, NSession session) {
-        return resolveNutsApiIdsFromDependencyList(deps.transitiveWithSource().toList(), session);
+    public static List<NId> resolveNutsApiFromFromDependencies(NDependencies deps) {
+        return resolveNutsApiIdsFromDependencyList(deps.transitiveWithSource().toList());
     }
 
-    public static List<NId> resolveNutsApiIdsFromDependencyList(List<NDependency> deps, NSession session) {
+    public static List<NId> resolveNutsApiIdsFromDependencyList(List<NDependency> deps) {
         return deps.stream()
                 .map(NDependency::toId)
                 .filter(x -> NId.ofApi("").get().equalsShortId(x))
@@ -595,21 +595,21 @@ public class CoreNUtils {
         }
     }
 
-    public static boolean isCustomTrue(String name, NSession session) {
-        return NBootManager.of(session).getCustomBootOption(name)
+    public static boolean isCustomTrue(String name) {
+        return NBootManager.of().getCustomBootOption(name)
                 .ifEmpty(NLiteral.of("true"))
                 .flatMap(NLiteral::asBoolean)
                 .orElse(false);
     }
 
-    public static boolean isCustomFalse(String name, NSession session) {
-        return NBootManager.of(session).getCustomBootOption(name)
+    public static boolean isCustomFalse(String name) {
+        return NBootManager.of().getCustomBootOption(name)
                 .flatMap(NLiteral::asBoolean)
                 .orElse(false);
     }
 
-    public static boolean isShowCommand(NSession session) {
-        return NBootManager.of(session).getCustomBootOption("---show-command")
+    public static boolean isShowCommand() {
+        return NBootManager.of().getCustomBootOption("---show-command")
                 .flatMap(NLiteral::asBoolean)
                 .orElse(false);
     }

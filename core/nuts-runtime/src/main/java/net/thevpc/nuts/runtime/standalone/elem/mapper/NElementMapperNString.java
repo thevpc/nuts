@@ -27,6 +27,6 @@ public class NElementMapperNString implements NElementMapper<NString> {
     @Override
     public NString createObject(NElement o, Type to, NElementFactoryContext context) {
         String i = context.defaultElementToObject(o, String.class);
-        return NTexts.of(context.getSession()).parse(i);
+        return NTexts.of().parse(i);
     }
 }

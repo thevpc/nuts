@@ -5,7 +5,6 @@ import net.thevpc.nuts.NParseException;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.thevpc.nuts.NSession;
 
 public class NCmdLineUtils {
     public static class OptionsAndArgs {
@@ -93,7 +92,7 @@ public class NCmdLineUtils {
         return sb.toString();
     }
 
-    public static String[] parseCmdLine(String commandLineString, NSession session) {
+    public static String[] parseCmdLine(String commandLineString) {
         if (commandLineString == null) {
             return new String[0];
         }
@@ -147,10 +146,10 @@ public class NCmdLineUtils {
                             break;
                         }
                         case '\'': {
-                            throw new NParseException(session, NMsg.ofC("illegal char %s", c));
+                            throw new NParseException(NMsg.ofC("illegal char %s", c));
                         }
                         case '"': {
-                            throw new NParseException(session, NMsg.ofC("illegal char %s", c));
+                            throw new NParseException(NMsg.ofC("illegal char %s", c));
                         }
                         case '\\': {
                             i++;
@@ -214,7 +213,7 @@ public class NCmdLineUtils {
                 break;
             }
             case IN_QUOTED_WORD: {
-                throw new NParseException(session, NMsg.ofPlain("expected '"));
+                throw new NParseException(NMsg.ofPlain("expected '"));
             }
         }
         return args.toArray(new String[0]);

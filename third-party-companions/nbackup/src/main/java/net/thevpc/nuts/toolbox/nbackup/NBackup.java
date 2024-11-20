@@ -25,7 +25,8 @@ public class NBackup implements NApplication {
     }
 
     @Override
-    public void run(NSession session) {
+    public void run() {
+        NSession session = NSession.of().get();
         session.out().println(NMsg.ofC("%s Backup Tool.", NMsg.ofStyled("Nuts", NTextStyle.keyword())));
         session.runAppCmdLine(new NCmdLineRunner() {
 
@@ -34,7 +35,7 @@ public class NBackup implements NApplication {
                 NArg a = cmdLine.next().get();
                 switch (a.toString()) {
                     case "pull": {
-                        runPull(cmdLine, session);
+                        runPull(cmdLine);
                         return true;
                     }
                 }
@@ -48,7 +49,8 @@ public class NBackup implements NApplication {
         });
     }
 
-    public void runPull(NCmdLine cmdLine, NSession session) {
+    public void runPull(NCmdLine cmdLine) {
+        NSession session = NSession.of().get();
         cmdLine.forEachPeek(new NCmdLineRunner() {
             private Options options = new Options();
 
@@ -58,7 +60,7 @@ public class NBackup implements NApplication {
                 Config config = null;
                 if (configFile.isRegularFile()) {
                     try {
-                        config = NElements.of(cmdLine.getSession()).parse(
+                        config = NElements.of().parse(
                                 configFile, Config.class
                         );
                     } catch (Exception ex) {
@@ -71,40 +73,41 @@ public class NBackup implements NApplication {
             }
 
             private NPath getConfigFile() {
+                NSession session = NSession.of().get();
                 return session.getAppConfFolder().resolve("backup.json");
             }
 
             @Override
             public boolean nextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
-                if (cmdLine.withNextEntry((v, a, s) -> {
+                if (cmdLine.withNextEntry((v, a) -> {
                     options.config.setRemoteServer(v);
                 }, "--server")) {
                     return true;
-                } else if (cmdLine.withNextEntry((v, a, s) -> {
+                } else if (cmdLine.withNextEntry((v, a) -> {
                     options.config.setRemoteUser(v);
                 }, "--user")) {
                     return true;
-                } else if (cmdLine.withNextEntry((v, a, s) -> {
+                } else if (cmdLine.withNextEntry((v, a) -> {
                     options.config.setLocalPath(v);
                 }, "--local")) {
                     return true;
-                } else if (cmdLine.withNextEntry((v, a, s) -> {
+                } else if (cmdLine.withNextEntry((v, a) -> {
                     addPath(v);
                 }, "--add-path")) {
                     return true;
-                } else if (cmdLine.withNextEntry((v, a, s) -> {
+                } else if (cmdLine.withNextEntry((v, a) -> {
                     options.config.getPaths().removeIf(x -> Objects.equals(String.valueOf(x).trim(), v.trim()));
                 }, "--remove-path")) {
                     return true;
-                } else if (cmdLine.withNextFlag((v, a, s) -> {
+                } else if (cmdLine.withNextFlag((v, a) -> {
                     options.config.getPaths().clear();
                 }, "--clear-paths")) {
                     return true;
-                } else if (cmdLine.withNextFlag((v, a, s) -> {
+                } else if (cmdLine.withNextFlag((v, a) -> {
                     options.cmd = Cmd.SAVE;
                 }, "--save")) {
                     return true;
-                } else if (cmdLine.withNextFlag((v, a, s) -> {
+                } else if (cmdLine.withNextFlag((v, a) -> {
                     options.cmd = Cmd.SHOW;
                 }, "--show")) {
                     return true;
@@ -136,15 +139,16 @@ public class NBackup implements NApplication {
                 if (config == null) {
                     config = new Config();
                 }
+                NSession session = NSession.of().get();
                 session.out().println(NMsg.ofC("Config File %s", getConfigFile()));
 
                 switch (options.cmd) {
                     case SAVE: {
-                        NElements.of(cmdLine.getSession()).setValue(config).print(getConfigFile());
+                        NElements.of().setValue(config).print(getConfigFile());
                         break;
                     }
                     case SHOW: {
-                        NElements.of(cmdLine.getSession()).setValue(config).println();
+                        NElements.of().setValue(config).println();
                         break;
                     }
                     case RUN: {
@@ -187,14 +191,14 @@ public class NBackup implements NApplication {
                         "--delete",
                         config.getRemoteUser() + "@" + config.getRemoteServer() + ":" + remotePath,
                         localPath};
-                NPath.of(localPath, session).getParent().mkdirs();
+                NPath.of(localPath).getParent().mkdirs();
                 session.out().println(NMsg.ofC("[%s] Backup %s from %s.",
                         NMsg.ofStyled(config.getRemoteServer(), NTextStyle.warn()),
                         NMsg.ofStyled(name, NTextStyle.keyword()),
                         NMsg.ofStyled(remotePath, NTextStyle.path())
                 ));
                 session.out().println(NCmdLine.of(cmd));
-                NExecCmd.of(session).addCommand(cmd).failFast().run();
+                NExecCmd.of().addCommand(cmd).failFast().run();
             }
         }, new DefaultNCmdLineContext(session));
     }

@@ -25,6 +25,7 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.filter;
 
 import net.thevpc.nuts.NDescriptorFilter;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.spi.base.AbstractNFilter;
 import net.thevpc.nuts.util.NFilter;
@@ -38,8 +39,8 @@ import net.thevpc.nuts.util.NSimplifiable;
  */
 public abstract class AbstractDescriptorFilter extends AbstractNFilter implements NDescriptorFilter, NSimplifiable<NDescriptorFilter> {
 
-    public AbstractDescriptorFilter(NSession session, NFilterOp op) {
-        super(session, op);
+    public AbstractDescriptorFilter(NWorkspace workspace, NFilterOp op) {
+        super(workspace, op);
     }
 
     @Override
@@ -62,6 +63,6 @@ public abstract class AbstractDescriptorFilter extends AbstractNFilter implement
         if (description == null) {
             return this;
         }
-        return new NDescriptorFilterDelegateWithDescription(this, description);
+        return new NDescriptorFilterDelegateWithDescription(workspace, this, description);
     }
 }

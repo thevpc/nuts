@@ -11,33 +11,26 @@ import net.thevpc.nuts.util.NMsg;
 import java.io.OutputStream;
 
 public class NPrintStreamFormatted extends NPrintStreamRendered {
-    public NPrintStreamFormatted(NPrintStreamBase base, NSession session, Bindings bindings) {
-        super(base, session, NTerminalMode.FORMATTED, bindings);
+    public NPrintStreamFormatted(NPrintStreamBase base, NWorkspace workspace, Bindings bindings) {
+        super(base, workspace, NTerminalMode.FORMATTED, bindings);
         getMetaData().setMessage(NMsg.ofStyled("<formatted-stream>", NTextStyle.path()));
     }
 
-    @Override
-    public NPrintStream setSession(NSession session) {
-        if (session == null || session == this.session) {
-            return this;
-        }
-        return new NPrintStreamFormatted(base, session, new Bindings());
-    }
 
     @Override
     protected NPrintStream convertImpl(NTerminalMode other) {
         switch (other) {
             case FILTERED: {
-                return new NPrintStreamFiltered(base, getSession(), bindings);
+                return new NPrintStreamFiltered(base, workspace, bindings);
             }
         }
-        throw new NIllegalArgumentException(base.getSession(), NMsg.ofC("unsupported %s -> %s", getTerminalMode(), other));
+        throw new NIllegalArgumentException(NMsg.ofC("unsupported %s -> %s", getTerminalMode(), other));
     }
 
     @Override
-    public NPrintStream run(NTerminalCmd command, NSession session) {
+    public NPrintStream run(NTerminalCmd command) {
         flush();
-        print(NTexts.of(this.session).ofCommand(command));
+        print(NTexts.of().ofCommand(command));
         flush();
         return this;
     }

@@ -44,28 +44,28 @@ import java.util.stream.*;
  * @since 0.5.4
  */
 public interface NStream<T> extends Iterable<T>, NElementDescribable<NStream<T>> {
-    static <T> NStream<T> of(T[] str, NSession session) {
-        return NCollectionsRPI.of(session).arrayToStream(str);
+    static <T> NStream<T> of(T[] str) {
+        return NCollectionsRPI.of().arrayToStream(str);
     }
 
-    static <T> NStream<T> of(Iterable<T> str, NSession session) {
-        return NCollectionsRPI.of(session).iterableToStream(str);
+    static <T> NStream<T> of(Iterable<T> str) {
+        return NCollectionsRPI.of().iterableToStream(str);
     }
 
-    static <T> NStream<T> of(Iterator<T> str, NSession session) {
-        return NCollectionsRPI.of(session).iteratorToStream(str);
+    static <T> NStream<T> of(Iterator<T> str) {
+        return NCollectionsRPI.of().iteratorToStream(str);
     }
 
-    static <T> NStream<T> of(Stream<T> str, NSession session) {
-        return NCollectionsRPI.of(session).toStream(str);
+    static <T> NStream<T> of(Stream<T> str) {
+        return NCollectionsRPI.of().toStream(str);
     }
 
-    static <T> NStream<T> ofEmpty(NSession session) {
-        return NCollectionsRPI.of(session).emptyStream();
+    static <T> NStream<T> ofEmpty() {
+        return NCollectionsRPI.of().emptyStream();
     }
 
-    static <T> NStream<T> ofSingleton(T element, NSession session) {
-        return of(Arrays.asList(element), session);
+    static <T> NStream<T> ofSingleton(T element) {
+        return of(Arrays.asList(element));
     }
 
     /**

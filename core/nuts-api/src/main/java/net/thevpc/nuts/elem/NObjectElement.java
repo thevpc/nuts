@@ -24,8 +24,6 @@
  */
 package net.thevpc.nuts.elem;
 
-import net.thevpc.nuts.NSession;
-
 import java.util.stream.Stream;
 
 /**
@@ -37,8 +35,8 @@ import java.util.stream.Stream;
  * @since 0.5.6
  */
 public interface NObjectElement extends NNavigatableElement, Iterable<NElementEntry> {
-    static NObjectElement ofEmpty(NSession session) {
-        return NElements.of(session).ofEmptyObject();
+    static NObjectElement ofEmpty() {
+        return NElements.of().ofEmptyObject();
     }
 
     Stream<NElementEntry> stream();

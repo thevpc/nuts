@@ -36,35 +36,33 @@ import net.thevpc.nuts.util.NMsg;
  */
 public class NParseEnumException extends NException {
     private final String invalidValue;
-    private final Class enumType;
+    private final Class<?> enumType;
 
     /**
      * create new instance of NutsUnexpectedEnumException
      *
-     * @param session      workspace
-     * @param enumType     java Enum or NutsEnum type (cannot be null)
      * @param invalidValue invalid value
+     * @param enumType     java Enum or NutsEnum type (cannot be null)
      */
-    public NParseEnumException(NSession session, String invalidValue, Class enumType) {
-        this(session, null, invalidValue, enumType);
+    public NParseEnumException(String invalidValue, Class<?> enumType) {
+        this(null, invalidValue, enumType);
     }
 
     /**
      * create new instance of NutsUnexpectedEnumException
      *
-     * @param session      workspace
-     * @param enumType     java Enum or NutsEnum type (cannot be null)
-     * @param invalidValue invalid value
      * @param message      message
+     * @param invalidValue invalid value
+     * @param enumType     java Enum or NutsEnum type (cannot be null)
      */
-    public NParseEnumException(NSession session, NMsg message, String invalidValue, Class enumType) {
-        super(session,
+    public NParseEnumException(NMsg message, String invalidValue, Class<?> enumType) {
+        super(
                 message == null ? (
                         NMsg.ofC("invalid value %s of type %s", invalidValue, enumType.getName()))
                         : message
         );
         if (enumType == null || (!Enum.class.isAssignableFrom(enumType) && !NEnum.class.isAssignableFrom(enumType))) {
-            throw new NIllegalArgumentException(session, NMsg.ofC("failed creating NutsParseEnumException for %s", (enumType == null ? null : enumType.getName())));
+            throw new NIllegalArgumentException(NMsg.ofC("failed creating NutsParseEnumException for %s", (enumType == null ? null : enumType.getName())));
         }
         this.enumType = enumType;
         this.invalidValue = invalidValue;

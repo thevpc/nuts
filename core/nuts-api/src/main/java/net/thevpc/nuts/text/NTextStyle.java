@@ -321,7 +321,7 @@ public class NTextStyle implements NEnum {
     public static NOptional<NTextStyle> parse(String value) {
         value = value == null ? "" : value.trim();
         if (value.isEmpty()) {
-            return NOptional.ofEmpty(s -> NMsg.ofC("%s is empty", NTextStyle.class.getSimpleName()));
+            return NOptional.ofEmpty(() -> NMsg.ofC("%s is empty", NTextStyle.class.getSimpleName()));
         }
         switch (value) {
             case "/":
@@ -382,9 +382,9 @@ public class NTextStyle implements NEnum {
         NTextStyleType t = NTextStyleType.parse(key).orNull();
         if (t == null) {
             if (NBlankable.isBlank(key)) {
-                return NOptional.ofEmpty(s -> NMsg.ofC("%s is empty", NTextStyle.class.getSimpleName()));
+                return NOptional.ofEmpty(() -> NMsg.ofC("%s is empty", NTextStyle.class.getSimpleName()));
             }
-            return NOptional.ofError(s -> NMsg.ofC("%s invalid value : %s", NTextStyle.class.getSimpleName(), finalValue));
+            return NOptional.ofError(() -> NMsg.ofC("%s invalid value : %s", NTextStyle.class.getSimpleName(), finalValue));
         }
         switch (t) {
             case FORE_TRUE_COLOR:
@@ -394,7 +394,7 @@ public class NTextStyle implements NEnum {
                     if (NBlankable.isBlank(key)) {
                         ii = 0;
                     } else {
-                        return NOptional.ofError(s -> NMsg.ofC(NTextStyle.class.getSimpleName() + " invalid value : %s", finalValue));
+                        return NOptional.ofError(() -> NMsg.ofC(NTextStyle.class.getSimpleName() + " invalid value : %s", finalValue));
                     }
                 }
                 return NOptional.of(NTextStyle.of(t, ii));
@@ -405,7 +405,7 @@ public class NTextStyle implements NEnum {
                     if (NBlankable.isBlank(key)) {
                         ii = 0;
                     } else {
-                        return NOptional.ofError(s -> NMsg.ofC(NTextStyle.class.getSimpleName() + " invalid value : %s", finalValue));
+                        return NOptional.ofError(() -> NMsg.ofC(NTextStyle.class.getSimpleName() + " invalid value : %s", finalValue));
                     }
                 }
                 return NOptional.of(NTextStyle.of(t, ii));

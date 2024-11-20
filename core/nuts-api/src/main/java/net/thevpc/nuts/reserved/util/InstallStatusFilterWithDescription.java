@@ -3,6 +3,7 @@ package net.thevpc.nuts.reserved.util;
 import net.thevpc.nuts.NInstallStatus;
 import net.thevpc.nuts.NInstallStatusFilter;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.spi.base.AbstractInstallStatusFilter;
@@ -15,16 +16,16 @@ public class InstallStatusFilterWithDescription extends AbstractInstallStatusFil
     private NInstallStatusFilter base;
     private NEDesc description;
 
-    public InstallStatusFilterWithDescription(NInstallStatusFilter base, NEDesc description) {
-        super(base.getSession(), NFilterOp.CUSTOM);
+    public InstallStatusFilterWithDescription(NWorkspace workspace, NInstallStatusFilter base, NEDesc description) {
+        super(workspace, NFilterOp.CUSTOM);
         this.base = base;
         this.description = description;
     }
 
 
     @Override
-    public boolean acceptInstallStatus(NInstallStatus status, NSession session) {
-        return base.acceptInstallStatus(status,session );
+    public boolean acceptInstallStatus(NInstallStatus status) {
+        return base.acceptInstallStatus(status);
     }
 
     @Override
@@ -36,11 +37,6 @@ public class InstallStatusFilterWithDescription extends AbstractInstallStatusFil
     @Override
     public NFilterOp getFilterOp() {
         return base.getFilterOp();
-    }
-
-    @Override
-    public NSession getSession() {
-        return base.getSession();
     }
 
     @Override
@@ -69,7 +65,7 @@ public class InstallStatusFilterWithDescription extends AbstractInstallStatusFil
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return NEDesc.safeDescribeOfBase(session, description,base);
+    public NElement describe() {
+        return NEDesc.safeDescribeOfBase(description,base);
     }
 }

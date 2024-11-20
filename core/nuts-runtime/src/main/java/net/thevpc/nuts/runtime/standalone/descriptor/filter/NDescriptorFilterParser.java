@@ -4,13 +4,13 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.filters.NTypedFiltersParser;
 
 public class NDescriptorFilterParser extends NTypedFiltersParser<NDescriptorFilter> {
-    public NDescriptorFilterParser(String str, NSession session) {
-        super(str,session);
+    public NDescriptorFilterParser(String str, NWorkspace workspace) {
+        super(str,workspace);
     }
 
     @Override
     protected NDescriptorFilters getTManager() {
-        return NDescriptorFilters.of(getSession());
+        return NDescriptorFilters.of();
     }
 
     protected NDescriptorFilter wordToPredicate(String word){

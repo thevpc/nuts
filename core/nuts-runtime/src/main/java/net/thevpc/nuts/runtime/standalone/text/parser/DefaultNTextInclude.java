@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.text.NTextInclude;
@@ -39,8 +40,8 @@ import java.util.Objects;
 public class DefaultNTextInclude extends NTextSpecialBase implements NTextInclude {
     private String value;
 
-    public DefaultNTextInclude(NSession session, String separator, String value) {
-        super(session, "```!", "include", separator, "```");
+    public DefaultNTextInclude(NWorkspace workspace, String separator, String value) {
+        super(workspace, "```!", "include", separator, "```");
         this.value = value == null ? "" : value;
     }
 

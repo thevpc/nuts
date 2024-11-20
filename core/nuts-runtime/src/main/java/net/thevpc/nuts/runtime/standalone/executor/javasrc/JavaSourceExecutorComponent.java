@@ -65,7 +65,7 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
             Path javaFile = nutMainFile.getContent().flatMap(NPath::toPath).orNull();
             String folder = "__temp_folder";
             NPrintStream out = executionContext.getSession().out();
-            out.println(NTexts.of(executionContext.getSession()).ofStyled("compile", NTextStyle.primary4()));
+            out.println(NTexts.of().ofStyled("compile", NTextStyle.primary4()));
             out.println(
                     NCmdLine.of(
                             new String[]{
@@ -78,9 +78,9 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
             );
             JavaExecutorComponent cc = new JavaExecutorComponent();
             NDefinition d = executionContext.getDefinition();
-            d = new DefaultNDefinition(d, executionContext.getSession());
+            d = new DefaultNDefinition(d, executionContext.getWorkspace());
             ((DefaultNDefinition) d).setContent(
-                    NPath.of(folder, executionContext.getSession()).setUserCache(false).setUserTemporary(true)
+                    NPath.of(folder).setUserCache(false).setUserTemporary(true)
             );
             String fileName = javaFile.getFileName().toString();
             List<String> z = new ArrayList<>(executionContext.getExecutorOptions());
@@ -103,15 +103,15 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
             JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
             NSession session = executionContext.getSession();
             Path folder = NPath
-                    .ofTempFolder("jj",session).toPath().get();
+                    .ofTempFolder("jj").toPath().get();
             int res = compiler.run(null, null, null, "-d", folder.toString(), javaFile.toString());
             if (res != NExecutionException.SUCCESS) {
-                throw new NExecutionException(session, NMsg.ofPlain("compilation failed"), res);
+                throw new NExecutionException(NMsg.ofPlain("compilation failed"), res);
             }
             JavaExecutorComponent cc = new JavaExecutorComponent();
             NDefinition d = executionContext.getDefinition();
-            d = new DefaultNDefinition(d, session);
-            ((DefaultNDefinition) d).setContent(NPath.of(folder, session).setUserCache(false).setUserTemporary(true));
+            d = new DefaultNDefinition(d, executionContext.getWorkspace());
+            ((DefaultNDefinition) d).setContent(NPath.of(folder).setUserCache(false).setUserTemporary(true));
             String fileName = javaFile.getFileName().toString();
             List<String> z = new ArrayList<>(executionContext.getExecutorOptions());
             z.addAll(Arrays.asList("--main-class",
@@ -134,7 +134,7 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
     public int getSupportLevel(NSupportLevelContext context) {
         this.session = context.getSession();
         if (ID == null) {
-            ID = NId.of("net.thevpc.nuts.exec:exec-java-src").get(session);
+            ID = NId.of("net.thevpc.nuts.exec:exec-java-src").get();
         }
         NDefinition def = context.getConstraints(NDefinition.class);
         if (def != null) {

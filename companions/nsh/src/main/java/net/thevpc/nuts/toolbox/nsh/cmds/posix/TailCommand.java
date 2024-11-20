@@ -55,20 +55,20 @@ public class TailCommand extends NShellBuiltinDefault {
     protected boolean nextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        NArg a = cmdLine.peek().get(session);
+        NArg a = cmdLine.peek().get();
         if (a.isOption()) {
             if (ShellHelper.isInt(a.asString()
-                    .get(session).substring(1))) {
+                    .get().substring(1))) {
                 options.max = Integer.parseInt(cmdLine.next()
-                        .get(session).asString()
-                        .get(session).substring(1));
+                        .get().asString()
+                        .get().substring(1));
                 return true;
             } else {
                 return false;
             }
         } else {
-            String path = a.asString().get(session);
-            NPath file = NPath.of(path, session).toAbsolute(context.getDirectory());
+            String path = a.asString().get();
+            NPath file = NPath.of(path).toAbsolute(context.getDirectory());
             options.files.add(file);
             return true;
         }
@@ -80,7 +80,7 @@ public class TailCommand extends NShellBuiltinDefault {
         NSession session = context.getSession();
 
         if (options.files.isEmpty()) {
-            throw new NExecutionException(session, NMsg.ofPlain("not yet supported"), NExecutionException.ERROR_2);
+            throw new NExecutionException(NMsg.ofPlain("not yet supported"), NExecutionException.ERROR_2);
         }
         for (NPath file : options.files) {
             tail(file, options.max, context);
@@ -112,7 +112,7 @@ public class TailCommand extends NShellBuiltinDefault {
                 }
             }
         } catch (IOException ex) {
-            throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_3);
+            throw new NExecutionException(NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_3);
         }
     }
 

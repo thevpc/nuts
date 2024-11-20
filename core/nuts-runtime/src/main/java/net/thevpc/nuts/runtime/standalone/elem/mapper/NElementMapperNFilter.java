@@ -30,25 +30,25 @@ public class NElementMapperNFilter implements NElementMapper<NFilter> {
         if(to instanceof Class) {
             switch (((Class) to).getName()) {
                 case "net.thevpc.nuts.NIdFilter": {
-                    return NIdFilters.of(context.getSession()).parse(s);
+                    return NIdFilters.of().parse(s);
                 }
                 case "net.thevpc.nuts.NDescriptorFilter": {
-                    return NDescriptorFilters.of(context.getSession()).parse(s);
+                    return NDescriptorFilters.of().parse(s);
                 }
                 case "net.thevpc.nuts.NVersionFilter": {
-                    return NVersionFilters.of(context.getSession()).parse(s);
+                    return NVersionFilters.of().parse(s);
                 }
                 case "net.thevpc.nuts.NDependencyFilter": {
-                    return NDependencyFilters.of(context.getSession()).parse(s);
+                    return NDependencyFilters.of().parse(s);
                 }
                 case "net.thevpc.nuts.NInstallStatusFilter": {
-                    return NInstallStatusFilters.of(context.getSession()).parse(s);
+                    return NInstallStatusFilters.of().parse(s);
                 }
                 case "net.thevpc.nuts.NRepositoryFilter": {
-                    return NRepositoryFilters.of(context.getSession()).parse(s);
+                    return NRepositoryFilters.of().parse(s);
                 }
             }
         }
-        throw new NUnsupportedArgumentException(context.getSession(), NMsg.ofC("unsupported parse of %s",to));
+        throw new NUnsupportedArgumentException(NMsg.ofC("unsupported parse of %s",to));
     }
 }

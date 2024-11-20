@@ -24,26 +24,24 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class NCompressZip implements NCompressPackaging {
-    private NLog LOG;
-
-    public NCompressZip() {
+    private NWorkspace workspace;
+    public NCompressZip(NWorkspace workspace) {
+        this.workspace=workspace;
     }
 
     public void compressPackage(NCompress compress) {
-        //checkSession();
-        NSession session = compress.getSession();
         List<NInputSource> sources = compress.getSources();
-        NAssert.requireNonBlank(sources, "source", session);
+        NAssert.requireNonBlank(sources, "source");
         NOutputTarget target = compress.getTarget();
-        NAssert.requireNonBlank(target, "target", session);
-        _LOG(session).with().level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofJ("compress {0} to {1}", sources, target));
+        NAssert.requireNonBlank(target, "target");
+        _LOG().with().level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofJ("compress {0} to {1}", sources, target));
         try {
             OutputStream fW = null;
             ZipOutputStream zip = null;
             if (target instanceof NPath) {
                 Path tempPath = null;
                 if (compress.isSafe()) {
-                    tempPath = NPath.ofTempFile("zip", session).toPath().get();
+                    tempPath = NPath.ofTempFile("zip").toPath().get();
                 }
                 if (target instanceof NPath) {
                     ((NPath) target).mkParentDirs();
@@ -61,15 +59,15 @@ public class NCompressZip implements NCompressPackaging {
                                 DefaultNCompress.Item file1 = new DefaultNCompress.Item(s, compress);
                                 if (file1.isSourceDirectory()) {
                                     for (DefaultNCompress.Item c : file1.list()) {
-                                        add("", c, zip, session);
+                                        add("", c, zip);
                                     }
                                 } else {
-                                    add("", file1, zip, session);
+                                    add("", file1, zip);
                                 }
                             }
                         } else {
                             for (NInputSource s : sources) {
-                                add("", new DefaultNCompress.Item(s, compress), zip, session);
+                                add("", new DefaultNCompress.Item(s, compress), zip);
                             }
                         }
                     } finally {
@@ -89,55 +87,52 @@ public class NCompressZip implements NCompressPackaging {
                     } else if (target instanceof NPath) {
                         try (InputStream ii = Files.newInputStream(tempPath)) {
                             try (OutputStream jj = target.getOutputStream()) {
-                                CoreIOUtils.copy(ii, jj, session);
+                                CoreIOUtils.copy(ii, jj);
                             }
                         }
                     } else {
                         CoreIOUtils.copy(
                                 Files.newInputStream(tempPath),
-                                target.getOutputStream(), session
+                                target.getOutputStream()
                         );
                     }
                 }
             } else {
-                throw new NIllegalArgumentException(session, NMsg.ofC("unsupported target %s", target));
+                throw new NIllegalArgumentException(NMsg.ofC("unsupported target %s", target));
             }
         } catch (IOException ex) {
-            _LOG(session).with().level(Level.CONFIG).verb(NLogVerb.FAIL)
+            _LOG().with().level(Level.CONFIG).verb(NLogVerb.FAIL)
                     .log(NMsg.ofJ("error compressing {0} to {1} : {2}",
                             sources, target, ex));
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 
-    protected NLog _LOG(NSession session) {
-        if (LOG == null) {
-            LOG = NLog.of(NCompressZip.class, session);
-        }
-        return LOG;
+    protected NLog _LOG() {
+        return NLog.of(NCompressZip.class);
     }
 
 
-    private void add(String path, DefaultNCompress.Item srcFolder, ZipOutputStream zip, NSession session) {
+    private void add(String path, DefaultNCompress.Item srcFolder, ZipOutputStream zip) {
         if (srcFolder.isSourceDirectory()) {
-            addFolderToZip(path, srcFolder, zip, session);
+            addFolderToZip(path, srcFolder, zip);
         } else {
-            addFileToZip(path, srcFolder, zip, false, session);
+            addFileToZip(path, srcFolder, zip, false);
         }
     }
 
-    private void addFolderToZip(String path, DefaultNCompress.Item srcFolder, ZipOutputStream zip, NSession session) throws UncheckedIOException {
+    private void addFolderToZip(String path, DefaultNCompress.Item srcFolder, ZipOutputStream zip) throws UncheckedIOException {
         DefaultNCompress.Item[] dirChildren = srcFolder.list();
         if (dirChildren.length == 0) {
-            addFileToZip(path, srcFolder, zip, true, session);
+            addFileToZip(path, srcFolder, zip, true);
         } else {
             for (DefaultNCompress.Item c : dirChildren) {
                 if (path.equals("")) {
-                    addFileToZip(srcFolder.getName(), c, zip, false, session);
+                    addFileToZip(srcFolder.getName(), c, zip, false);
                 } else {
                     addFileToZip(
                             concatPath(path, srcFolder.getName()),
-                            c, zip, false, session);
+                            c, zip, false);
                 }
             }
         }
@@ -152,7 +147,7 @@ public class NCompressZip implements NCompressPackaging {
         return path;
     }
 
-    private void addFileToZip(String path, DefaultNCompress.Item srcFile, ZipOutputStream zip, boolean flag, NSession session) throws UncheckedIOException {
+    private void addFileToZip(String path, DefaultNCompress.Item srcFile, ZipOutputStream zip, boolean flag) throws UncheckedIOException {
 //        File folder = new File(srcFile);
         String pathPrefix = path;
         if (!pathPrefix.endsWith("/")) {
@@ -167,7 +162,7 @@ public class NCompressZip implements NCompressPackaging {
                 zip.putNextEntry(new ZipEntry(stripZipPath(pathPrefix + srcFile.getName() + "/")));
             } else {
                 if (srcFile.isSourceDirectory()) {
-                    addFolderToZip(pathPrefix, srcFile, zip, session);
+                    addFolderToZip(pathPrefix, srcFile, zip);
                 } else {
                     byte[] buf = new byte[1024];
                     int len;
@@ -179,7 +174,7 @@ public class NCompressZip implements NCompressPackaging {
                 }
             }
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
     }
 

@@ -26,16 +26,15 @@
  */
 package net.thevpc.nuts.format;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.text.NString;
 
 /**
  * @app.category Format
  */
 public interface NFormattable extends NStringFormattable {
-    NFormat formatter(NSession session);
+    NFormat formatter();
 
-    default NString format(NSession session) {
-        return formatter(session).format();
+    default NString format() {
+        return formatter().format();
     }
 }

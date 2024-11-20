@@ -5,7 +5,6 @@
  */
 package net.thevpc.nuts.lib.common.iter;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
@@ -26,15 +25,15 @@ public class CoalesceIterator<T> extends NIteratorBase<T> {
     private int size = 0;
 
     @Override
-    public NElement describe(NSession session) {
-        return NElements.of(session).ofObject()
+    public NElement describe() {
+        return NElements.of().ofObject()
                 .set("type", "Coalesce")
                 .set("items",
-                        NElements.of(session).ofArray()
+                        NElements.of().ofArray()
                                 .addAll(
                                         new ArrayList<>(children)
                                                 .stream().map(
-                                                        x-> NEDesc.describeResolveOrDestruct(x, session)
+                                                        x-> NEDesc.describeResolveOrDestruct(x)
                                                 ).collect(Collectors.toList())
                                 )
                                 .build()

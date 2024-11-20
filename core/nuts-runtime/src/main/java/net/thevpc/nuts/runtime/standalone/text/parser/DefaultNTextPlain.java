@@ -27,6 +27,7 @@
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.text.NTextPlain;
 import net.thevpc.nuts.text.NTextType;
 
@@ -39,8 +40,8 @@ public class DefaultNTextPlain extends AbstractNText implements NTextPlain {
 
     private String text;
 
-    public DefaultNTextPlain(NSession session, String text) {
-        super(session);
+    public DefaultNTextPlain(NWorkspace workspace, String text) {
+        super(workspace);
         this.text = text == null ? "" : text;
     }
 

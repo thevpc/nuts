@@ -52,11 +52,11 @@ public class RefreshDataService {
             NWorkspaceLocation workspaceLocation = iterator.next();
             NSession session = workspacePool.openWorkspace(workspaceLocation.getLocation());
             Map<String, NId> oldData = this.dataService
-                    .getAllData(NIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()))
+                    .getAllData(NIndexerUtils.getCacheDir(subscriber.cacheFolderName()))
                     .stream()
-                    .collect(Collectors.toMap(map -> map.get("stringId"), map -> NIndexerUtils.mapToNutsId(map, session), (v1, v2) -> v1));
-            Iterator<NDefinition> definitions = NSearchCmd.of(session)
-                    .setRepositoryFilter(NRepositories.of(session).filter().byUuid(subscriber.getUuid()))
+                    .collect(Collectors.toMap(map -> map.get("stringId"), map -> NIndexerUtils.mapToNutsId(map), (v1, v2) -> v1));
+            Iterator<NDefinition> definitions = NSearchCmd.of()
+                    .setRepositoryFilter(NRepositories.of().filter().byUuid(subscriber.getUuid()))
                     .setFailFast(false)
                     .setContent(false)
                     .setEffective(true)
@@ -77,15 +77,15 @@ public class RefreshDataService {
                 }
                 visited.put(id.get("stringId"), true);
 
-                List<NDependency> directDependencies = definition.getEffectiveDescriptor().get(session).getDependencies();
+                List<NDependency> directDependencies = definition.getEffectiveDescriptor().get().getDependencies();
                 id.put("dependencies",
-                        NElements.of(session).json().setValue(directDependencies.stream().map(Object::toString).collect(Collectors.toList()))
+                        NElements.of().json().setValue(directDependencies.stream().map(Object::toString).collect(Collectors.toList()))
                                 .setNtf(false).format().filteredText()
                 );
                 dataToIndex.add(id);
             }
-            this.dataService.indexMultipleData(NIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()), dataToIndex);
-            this.dataService.deleteMultipleData(NIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()),
+            this.dataService.indexMultipleData(NIndexerUtils.getCacheDir(subscriber.cacheFolderName()), dataToIndex);
+            this.dataService.deleteMultipleData(NIndexerUtils.getCacheDir(subscriber.cacheFolderName()),
                     oldData.values().stream()
                             .map(NIndexerUtils::nutsIdToMap)
                             .collect(Collectors.toList()));

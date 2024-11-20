@@ -39,8 +39,8 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
     private NExecOutput out;
     private NExecOutput err;
 
-    public ProcessExecHelper(NDefinition definition, ProcessBuilder2 pb, NSession session, NPrintStream trace, NExecInput in, NExecOutput out, NExecOutput err) {
-        super(session);
+    public ProcessExecHelper(NDefinition definition, ProcessBuilder2 pb, NWorkspace workspace, NPrintStream trace, NExecInput in, NExecOutput out, NExecOutput err) {
+        super(workspace);
         this.pb = pb;
         this.trace = trace;
         this.definition = definition;
@@ -53,35 +53,36 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                                            boolean showCommand, boolean failFast, long sleep,
                                            NExecInput in, NExecOutput out, NExecOutput err,
                                            NRunAs runAs, String[] executorOptions,
-                                           NSession session) {
-        List<String> newCommands = NSysExecUtils.buildEffectiveCommandLocal(args, runAs, executorOptions, session);
-        ProcessBuilder2 pb = new ProcessBuilder2(session);
+                                           NWorkspace workspace) {
+        List<String> newCommands = NSysExecUtils.buildEffectiveCommandLocal(args, runAs, executorOptions);
+        ProcessBuilder2 pb = new ProcessBuilder2(workspace);
         pb.setCommand(newCommands)
                 .setEnv(env)
                 .setDirectory(directory == null ? null : directory.toFile())
                 .setSleepMillis(sleep)
                 .setFailFast(failFast);
-        pb.setIn(CoreIOUtils.validateIn(in, session));
-        pb.setOut(CoreIOUtils.validateOut(out, session));
-        pb.setErr(CoreIOUtils.validateErr(err, session));
-        NLog _LL = NLog.of(NWorkspaceUtils.class, session);
+        pb.setIn(CoreIOUtils.validateIn(in));
+        pb.setOut(CoreIOUtils.validateOut(out));
+        pb.setErr(CoreIOUtils.validateErr(err));
+        NLog _LL = NLog.of(NWorkspaceUtils.class);
         if (_LL.isLoggable(Level.FINEST)) {
             _LL.with().level(Level.FINE).verb(NLogVerb.START).log(
                     NMsg.ofC("[exec] %s",
-                            NTexts.of(session).ofCode("system",
+                            NTexts.of().ofCode("system",
                                     pb.getCommandString()
                             )));
         }
-        if (showCommand || CoreNUtils.isShowCommand(session)) {
+        NSession session = workspace.currentSession();
+        if (showCommand || CoreNUtils.isShowCommand()) {
             if (session.out().getTerminalMode() == NTerminalMode.FORMATTED) {
-                session.out().print(NMsg.ofC("%s ", NTexts.of(session).ofStyled("[exec]", NTextStyle.primary4())));
-                session.out().println(NTexts.of(session).ofCode("system", pb.getCommandString()));
+                session.out().print(NMsg.ofC("%s ", NTexts.of().ofStyled("[exec]", NTextStyle.primary4())));
+                session.out().println(NTexts.of().ofCode("system", pb.getCommandString()));
             } else {
                 session.out().print("exec ");
                 session.out().println(NMsg.ofPlain(pb.getCommandString()));
             }
         }
-        return new ProcessExecHelper(definition, pb, session, session.out(), in, out, err);
+        return new ProcessExecHelper(definition, pb, workspace, session.out(), in, out, err);
     }
 
     public static ProcessExecHelper ofDefinition(NDefinition nutMainFile,
@@ -91,26 +92,27 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                                                  String[] executorOptions,
                                                  NSession session
     ) throws NExecutionException {
+        NWorkspace workspace = session.getWorkspace();
         NId id = nutMainFile.getId();
         Path installerFile = nutMainFile.getContent().flatMap(NPath::toPath).orNull();
-        NPath storeFolder = nutMainFile.getInstallInformation().get(session).getInstallFolder();
+        NPath storeFolder = nutMainFile.getInstallInformation().get().getInstallFolder();
         HashMap<String, String> map = new HashMap<>();
         HashMap<String, String> envmap = new HashMap<>();
-        NPath nutsJarFile = NFetchCmd.ofNutsApi(session).getResultPath();
+        NPath nutsJarFile = NFetchCmd.ofNutsApi().getResultPath();
         if (nutsJarFile != null) {
             map.put("nuts.jar", nutsJarFile.normalize().toString());
         }
         map.put("nuts.artifact", id.toString());
         map.put("nuts.file", nutMainFile.getContent().flatMap(NPath::toPath).map(Object::toString).orNull());
-        String defaultJavaCommand = NJavaSdkUtils.of(session).resolveJavaCommandByVersion("", false, session);
+        String defaultJavaCommand = NJavaSdkUtils.of(workspace).resolveJavaCommandByVersion("", false);
         if (defaultJavaCommand == null) {
-            throw new NExecutionException(session, NMsg.ofPlain("no java version was found"), NExecutionException.ERROR_1);
+            throw new NExecutionException(NMsg.ofPlain("no java version was found"), NExecutionException.ERROR_1);
         }
         map.put("nuts.java", defaultJavaCommand);
         if (map.containsKey("nuts.jar")) {
             map.put("nuts.cmd", map.get("nuts.java") + " -jar " + map.get("nuts.jar"));
         }
-        map.put("nuts.workspace", NLocations.of(session).getWorkspaceLocation().toString());
+        map.put("nuts.workspace", NLocations.of().getWorkspaceLocation().toString());
         if (installerFile != null) {
             map.put("nuts.installer", installerFile.toString());
         }
@@ -130,9 +132,9 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                     if (NBlankable.isBlank(javaVer)) {
                         return defaultJavaCommand;
                     }
-                    String s = NJavaSdkUtils.of(session).resolveJavaCommandByVersion(javaVer, false, session);
+                    String s = NJavaSdkUtils.of(workspace).resolveJavaCommandByVersion(javaVer, false);
                     if (s == null) {
-                        throw new NExecutionException(session, NMsg.ofC("no java version %s was found", javaVer), NExecutionException.ERROR_1);
+                        throw new NExecutionException(NMsg.ofC("no java version %s was found", javaVer), NExecutionException.ERROR_1);
                     }
                     return s;
                 } else if (skey.equals("javaw") || skey.startsWith("javaw#")) {
@@ -140,14 +142,14 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                     if (NBlankable.isBlank(javaVer)) {
                         return defaultJavaCommand;
                     }
-                    String s = NJavaSdkUtils.of(session).resolveJavaCommandByVersion(javaVer, true, session);
+                    String s = NJavaSdkUtils.of(workspace).resolveJavaCommandByVersion(javaVer, true);
                     if (s == null) {
-                        throw new NExecutionException(session, NMsg.ofC("no java version %s was found", javaVer), NExecutionException.ERROR_1);
+                        throw new NExecutionException(NMsg.ofC("no java version %s was found", javaVer), NExecutionException.ERROR_1);
                     }
                     return s;
                 } else if (skey.equals("nuts")) {
                     NDefinition nDefinition;
-                    nDefinition = NFetchCmd.ofNutsApi(session)
+                    nDefinition = NFetchCmd.ofNutsApi()
                             .getResultDefinition();
                     if (nDefinition.getContent().isPresent()) {
                         return ("<::expand::> " + apply("java") + " -jar " + nDefinition.getContent());
@@ -170,17 +172,17 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         for (String arg : args) {
             String s = NStringUtils.trim(StringPlaceHolderParser.replaceDollarPlaceHolders(arg, mapper));
             if (s.startsWith("<::expand::>")) {
-                Collections.addAll(args2, NCmdLine.of(s, NShellFamily.BASH, session).setExpandSimpleOptions(false).toStringArray());
+                Collections.addAll(args2, NCmdLine.of(s, NShellFamily.BASH).setExpandSimpleOptions(false).toStringArray());
             } else {
                 args2.add(s);
             }
         }
         args = args2.toArray(new String[0]);
 
-        Path wsLocation = NLocations.of(session).getWorkspaceLocation().toPath().get();
+        Path wsLocation = NLocations.of().getWorkspaceLocation().toPath().get();
         Path path = wsLocation.resolve(args[0]).normalize();
         if (Files.exists(path)) {
-            NPath.of(path, session).addPermissions(NPathPermission.CAN_EXECUTE);
+            NPath.of(path).addPermissions(NPathPermission.CAN_EXECUTE);
         }
         Path pdirectory = null;
         if (NBlankable.isBlank(directory)) {
@@ -193,14 +195,15 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 in, out, err,
                 runAs,
                 executorOptions,
-                session);
+                workspace);
     }
 
     public int exec() {
-        if (getSession().isDry()) {
+        NSession session = workspace.currentSession();
+        if (session.isDry()) {
             if (trace.getTerminalMode() == NTerminalMode.FORMATTED) {
                 trace.print("[dry] ==[exec]== ");
-                trace.println(pb.getFormattedCommandString(getSession()));
+                trace.println(pb.getFormattedCommandString());
             } else {
                 trace.print("[dry] exec ");
                 trace.println(NMsg.ofPlain(pb.getCommandString()));
@@ -214,7 +217,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 ProcessBuilder2 p = pb.start();
                 return waitResult(p);
             } catch (IOException ex) {
-                throw new NIOException(getSession(), ex);
+                throw new NIOException(ex);
             }
         }
     }
@@ -222,12 +225,12 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
     public Future<Integer> execAsync() {
         try {
             if (trace != null) {
-                trace.run(NTerminalCmd.MOVE_LINE_START, getSession());
+                trace.run(NTerminalCmd.MOVE_LINE_START);
             }
             ProcessBuilder2 p = pb.start();
             return new FutureTask<Integer>(() -> waitResult(p));
         } catch (IOException ex) {
-            throw new NIOException(getSession(), ex);
+            throw new NIOException(ex);
         }
     }
 
@@ -236,7 +239,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         try {
             int a = p.waitFor().getResult();
             if (a != 0) {
-                err = new NExecutionException(getSession(), NMsg.ofC("process returned error code %s", a), err);
+                err = new NExecutionException(NMsg.ofC("process returned error code %s", a), err);
             }
             return a;
         } catch (Exception ex) {
@@ -244,11 +247,11 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
             if (ex instanceof RuntimeException) {
                 throw (RuntimeException) err;
             }
-            throw new NExecutionException(getSession(), NMsg.ofPlain("error executing process"), err);
+            throw new NExecutionException(NMsg.ofPlain("error executing process"), err);
         } finally {
             if (err != null) {
                 if (definition != null) {
-                    NWorkspaceExt.of(getSession()).getModel().recomm.getRecommendations(new RequestQueryInfo(definition.getId().toString(), err), NRecommendationPhase.EXEC, false, getSession());
+                    NWorkspaceExt.of(workspace).getModel().recomm.getRecommendations(new RequestQueryInfo(definition.getId().toString(), err), NRecommendationPhase.EXEC, false);
                 }
             }
         }

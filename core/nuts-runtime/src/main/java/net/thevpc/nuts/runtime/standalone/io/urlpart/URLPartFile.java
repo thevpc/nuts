@@ -25,11 +25,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.urlpart;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NIOException;
 
 import java.io.*;
-import java.net.URL;
 import java.util.function.Predicate;
 
 class URLPartFile extends URLPart {
@@ -41,15 +39,15 @@ class URLPartFile extends URLPart {
         return of(path);
     }
 
-    public InputStream getInputStream(NSession session) {
+    public InputStream getInputStream() {
         try {
             return new FileInputStream(((File) obj));
         } catch (IOException e) {
-            throw new NIOException(session, e);
+            throw new NIOException(e);
         }
     }
 
-    public URLPart[] getChildren(boolean includeFolders, boolean deep, final Predicate<URLPart> filter, NSession session) {
-        return URLPartHelper.searchFile((File) obj, includeFolders, deep, filter,session);
+    public URLPart[] getChildren(boolean includeFolders, boolean deep, final Predicate<URLPart> filter) {
+        return URLPartHelper.searchFile((File) obj, includeFolders, deep, filter);
     }
 }

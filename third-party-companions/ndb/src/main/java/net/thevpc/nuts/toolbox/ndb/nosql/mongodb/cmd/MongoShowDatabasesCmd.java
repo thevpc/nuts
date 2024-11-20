@@ -22,11 +22,11 @@ public class MongoShowDatabasesCmd extends ShowDatabasesCmd<NMongoConfig> {
         return (NMongoSupport) super.getSupport();
     }
 
-    protected void runShowDatabases(ExtendedQuery eq, NMongoConfig options, NSession session) {
+    protected void runShowDatabases(ExtendedQuery eq, NMongoConfig options) {
         getSupport().doWithMongoClient(options, mongoClient -> {
             List<NElement> databases = mongoClient.listDatabases()
                     .into(new ArrayList<>())
-                    .stream().map(x -> NElements.of(session).parse(x.toJson(), NElement.class))
+                    .stream().map(x -> NElements.of().parse(x.toJson(), NElement.class))
                     .map(x->{
                         if(eq.isLongMode()){
                             return x;
@@ -34,6 +34,7 @@ public class MongoShowDatabasesCmd extends ShowDatabasesCmd<NMongoConfig> {
                         return x.asObject().get().get("name").get();
                     })
                     .collect(Collectors.toList());
+            NSession session = NSession.of().get();
             session.out().println(databases);
         });
     }

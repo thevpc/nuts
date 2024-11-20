@@ -29,6 +29,7 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogConfig;
+import net.thevpc.nuts.spi.NScopeType;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -51,7 +52,6 @@ public class DefaultNLogModel {
     private List<Handler> extraHandlers = new ArrayList<>();
     private Path logFolder;
     private NSession defaultSession;
-    private Map<String, NLog> loaded = new LinkedHashMap<>();
 
     public DefaultNLogModel(NWorkspace ws, NWorkspaceOptions bOptions) {
         this.workspace = ws;
@@ -111,14 +111,16 @@ public class DefaultNLogModel {
         return fileHandler;
     }
 
+    private Map<String, NLog> loaded(NSession session) {
+        return session.getOrComputeProperty(NLog.class.getName() + "#Map", NScopeType.SESSION, () -> new HashMap<String, NLog>());
+    }
 
-    public NLog createLogger(String name, NSession session) {
+    public NLog createLogger(String name) {
+        NSession session = workspace.currentSession();
+        Map<String, NLog> loaded = loaded(session);
         NLog y = loaded.get(name);
         if (y == null) {
-            if (session == null) {
-                session = defaultSession;
-            }
-            y = new DefaultNLog(workspace, session, name);
+            y = new DefaultNLog(workspace, name);
             loaded.put(name, y);
         }
         return y;
@@ -126,12 +128,10 @@ public class DefaultNLogModel {
 
 
     public NLog createLogger(Class clazz, NSession session) {
+        Map<String, NLog> loaded = loaded(session);
         NLog y = loaded.get(clazz.getName());
         if (y == null) {
-            if (session == null) {
-                session = defaultSession;
-            }
-            y = new DefaultNLog(workspace, session, clazz);
+            y = new DefaultNLog(workspace, clazz);
             loaded.put(clazz.getName(), y);
         }
         return y;
@@ -143,7 +143,7 @@ public class DefaultNLogModel {
     }
 
 
-    public void setTermLevel(Level level, NSession session) {
+    public void setTermLevel(Level level) {
         if (level == null) {
             level = Level.INFO;
         }
@@ -159,7 +159,7 @@ public class DefaultNLogModel {
     }
 
 
-    public void setFileLevel(Level level, NSession session) {
+    public void setFileLevel(Level level) {
         if (level == null) {
             level = Level.INFO;
         }

@@ -33,7 +33,7 @@ public class DefaultFileNLock implements NLock {
 
     public TimePeriod getDefaultTimePeriod() {
         return TimePeriod.parse(
-                NConfigs.of(session).getConfigProperty("nuts.file-lock.timeout").flatMap(NLiteral::asString).get(session),
+                NConfigs.of().getConfigProperty("nuts.file-lock.timeout").flatMap(NLiteral::asString).get(),
                 TimeUnit.SECONDS
         ).orElse(FIVE_MINUTES);
     }
@@ -42,7 +42,7 @@ public class DefaultFileNLock implements NLock {
     public void lockInterruptibly() throws InterruptedException {
         TimePeriod tp = getDefaultTimePeriod();
         if (!tryLockInterruptibly(tp.getCount(), tp.getUnit())) {
-            throw new NLockAcquireException(session, null, lockedObject, this, null);
+            throw new NLockAcquireException(null, lockedObject, this, null);
         }
     }
 
@@ -50,13 +50,13 @@ public class DefaultFileNLock implements NLock {
     public synchronized void lock() {
         TimePeriod tp = getDefaultTimePeriod();
         if (!tryLock(tp.getCount(), tp.getUnit())) {
-            throw new NLockAcquireException(session, null, lockedObject, this, null);
+            throw new NLockAcquireException(null, lockedObject, this, null);
         }
     }
 
     public void checkFree() {
         if (!isFree()) {
-            throw new NLockBarrierException(session, null, lockedObject, this);
+            throw new NLockBarrierException(null, lockedObject, this);
         }
     }
 
@@ -69,7 +69,7 @@ public class DefaultFileNLock implements NLock {
         try {
             Files.delete(path);
         } catch (IOException ex) {
-            throw new NLockReleaseException(session, null, lockedObject, this, ex);
+            throw new NLockReleaseException(null, lockedObject, this, ex);
         }
     }
 
@@ -144,7 +144,7 @@ public class DefaultFileNLock implements NLock {
 
     @Override
     public synchronized boolean tryLock(long time, TimeUnit unit) {
-        NAssert.requireNonNull(unit, "unit", session);
+        NAssert.requireNonNull(unit, "unit");
         long now = System.currentTimeMillis();
         PollTime ptime = preferredPollTime(time, unit);
         do {
@@ -164,7 +164,7 @@ public class DefaultFileNLock implements NLock {
     }
 
     public synchronized boolean tryLockInterruptibly(long time, TimeUnit unit) throws InterruptedException {
-        NAssert.requireNonNull(unit, "unit", session);
+        NAssert.requireNonNull(unit, "unit");
         long now = System.currentTimeMillis();
         PollTime ptime = preferredPollTime(time, unit);
         do {
@@ -193,10 +193,10 @@ public class DefaultFileNLock implements NLock {
     public boolean tryLockImmediately() {
         try {
             if (!Files.exists(path)) {
-                NPath p = NPath.of(path, session);
+                NPath p = NPath.of(path);
                 p.mkParentDirs();
                 Files.createFile(path);
-                NEnvs e = NEnvs.of(session);
+                NEnvs e = NEnvs.of();
                 Date now = new Date();
                 Files.write(path,
                         (
@@ -215,6 +215,6 @@ public class DefaultFileNLock implements NLock {
 
     @Override
     public Condition newCondition() {
-        throw new NUnsupportedOperationException(session, NMsg.ofPlain("unsupported Lock.newCondition"));
+        throw new NUnsupportedOperationException(NMsg.ofPlain("unsupported Lock.newCondition"));
     }
 }

@@ -157,16 +157,16 @@ public class TestUtils {
         }
     }
 
-    public static NSession openNewTestWorkspace(String... args) {
+    public static NWorkspace openNewTestWorkspace(String... args) {
         return openOrReOpenTestWorkspace(true,false,args);
     }
-    public static NSession openExistingTestWorkspace(String... args) {
+    public static NWorkspace openExistingTestWorkspace(String... args) {
         return openOrReOpenTestWorkspace(false,false,args);
     }
-    public static NSession runNewTestWorkspace(String... args) {
+    public static NWorkspace runNewTestWorkspace(String... args) {
         return openOrReOpenTestWorkspace(true,true,args);
     }
-    public static NSession runExistingTestWorkspace(String... args) {
+    public static NWorkspace runExistingTestWorkspace(String... args) {
         return openOrReOpenTestWorkspace(false,true,args);
     }
 
@@ -180,7 +180,7 @@ public class TestUtils {
         }
     }
 
-    private static NSession openOrReOpenTestWorkspace(boolean deleteFolder, boolean run, String... args) {
+    private static NWorkspace openOrReOpenTestWorkspace(boolean deleteFolder, boolean run, String... args) {
         String test_id = TestUtils.getCallerMethodId(2);
         File path;
         try {
@@ -217,6 +217,7 @@ public class TestUtils {
         argsList.add("--yes");
         //disable companions
         argsList.add("--install-companions=false");
+        argsList.add("--main-instance=true");
 //        argsList.add("--embedded");
         argsList.addAll(Arrays.asList(args));
         if(run){

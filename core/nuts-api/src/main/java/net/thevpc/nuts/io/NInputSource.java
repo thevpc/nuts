@@ -25,7 +25,6 @@
  */
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.format.NFormattable;
 import net.thevpc.nuts.reserved.rpi.NIORPI;
 
@@ -45,37 +44,37 @@ import java.util.stream.Stream;
  */
 public interface NInputSource extends NFormattable, NContentMetadataProvider, NInputContentProvider {
 
-    static NInputSource of(File file, NSession session) {
-        return file == null ? null : NPath.of(file, session);
+    static NInputSource of(File file) {
+        return file == null ? null : NPath.of(file);
     }
 
-    static NInputSource of(Path file, NSession session) {
-        return file == null ? null :NPath.of(file, session);
+    static NInputSource of(Path file) {
+        return file == null ? null :NPath.of(file);
     }
 
-    static NInputSource of(URL file, NSession session) {
-        return file == null ? null :NPath.of(file, session);
+    static NInputSource of(URL file) {
+        return file == null ? null :NPath.of(file);
     }
 
-    static NInputSource of(byte[] bytes, NSession session) {
-        return bytes == null ? null : NIORPI.of(session).ofInputSource(bytes);
+    static NInputSource of(byte[] bytes) {
+        return bytes == null ? null : NIORPI.of().ofInputSource(bytes);
     }
 
-    static NInputSource of(InputStream inputSource, NSession session) {
-        return inputSource == null ? null : NIORPI.of(session).ofInputSource(inputSource);
+    static NInputSource of(InputStream inputSource) {
+        return inputSource == null ? null : NIORPI.of().ofInputSource(inputSource);
     }
 
-    static NInputSource ofMultiRead(NInputSource source,NSession session) {
-        return source==null?null: NIORPI.of(session).ofMultiRead(source);
+    static NInputSource ofMultiRead(NInputSource source) {
+        return source==null?null: NIORPI.of().ofMultiRead(source);
     }
 
-    static NInputSource of(InputStream inputStream, NContentMetadata metadata,NSession session){
-        return inputStream==null?null: NIORPI.of(session).ofInputSource(inputStream,metadata);
+    static NInputSource of(InputStream inputStream, NContentMetadata metadata){
+        return inputStream==null?null: NIORPI.of().ofInputSource(inputStream,metadata);
     }
 
 
-    static NInputSource of(byte[] bytes, NContentMetadata metadata,NSession session){
-        return bytes==null?null: NIORPI.of(session).ofInputSource(bytes,metadata);
+    static NInputSource of(byte[] bytes, NContentMetadata metadata){
+        return bytes==null?null: NIORPI.of().ofInputSource(bytes,metadata);
     }
 
     byte[] readBytes();

@@ -6,7 +6,6 @@
 package net.thevpc.nuts.toolbox.nsh.err;
 
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 
 /**
  *
@@ -16,8 +15,8 @@ public class NShellUniformException extends NShellException {
 
     private boolean quit;
 
-    public NShellUniformException(NSession session, int code, boolean quit, Throwable cause) {
-        super(session, NMsg.ofPlain("error"),cause,code);
+    public NShellUniformException(int code, boolean quit, Throwable cause) {
+        super(NMsg.ofPlain("error"),cause,code);
         this.quit = quit;
     }
 
@@ -28,7 +27,7 @@ public class NShellUniformException extends NShellException {
         if (getCause() instanceof RuntimeException) {
             throw (RuntimeException) getCause();
         }
-        throw new NShellQuitException(getSession(), getCause(), getExitCode());
+        throw new NShellQuitException(getCause(), getExitCode());
     }
 
     public void throwAny() {
@@ -38,7 +37,7 @@ public class NShellUniformException extends NShellException {
         if (getCause() instanceof RuntimeException) {
             throw (RuntimeException) getCause();
         }
-        throw new NShellException(getSession(),getFormattedMessage(), getCause(),getExitCode());
+        throw new NShellException(getFormattedMessage(), getCause(),getExitCode());
     }
 
     public boolean isQuit() {

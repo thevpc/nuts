@@ -8,7 +8,6 @@ import net.thevpc.nuts.runtime.standalone.dependency.util.NDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.descriptor.util.NDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinition;
@@ -34,15 +33,16 @@ import java.util.logging.Level;
 public class DefaultNFetchCmd extends AbstractNFetchCmd {
 
 
-    public DefaultNFetchCmd(NSession session) {
-        super(session);
+    public DefaultNFetchCmd(NWorkspace workspace) {
+        super(workspace);
     }
 
     @Override
     public NPath getResultContent() {
         try {
+            NSession session=getWorkspace().currentSession();
             NDefinition def = fetchDefinition(getId(), copy().setContent(true).setEffective(false), true, false);
-            return def.getContent().get(session);
+            return def.getContent().get();
         } catch (NNotFoundException ex) {
             if (!isFailFast()) {
                 return null;
@@ -54,11 +54,10 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
     @Override
     public NId getResultId() {
         try {
-            checkSession();
-            NWorkspace ws = getSession().getWorkspace();
+            NSession session=getWorkspace().currentSession();
             NDefinition def = fetchDefinition(getId(), this, false, false);
             if (isEffective()) {
-                return NWorkspaceExt.of(ws).resolveEffectiveId(def.getEffectiveDescriptor().get(session), getSession());
+                return NWorkspaceExt.of(getWorkspace()).resolveEffectiveId(def.getEffectiveDescriptor().get());
             }
             return def.getId();
         } catch (NNotFoundException ex) {
@@ -72,10 +71,9 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
     @Override
     public String getResultContentHash() {
         try {
-            checkSession();
-            NSession session = getSession();
-            Path f = getResultDefinition().getContent().flatMap(NPath::toPath).get(this.session);
-            return NDigest.of(session).setSource(f).computeString();
+            NSession session=getWorkspace().currentSession();
+            Path f = getResultDefinition().getContent().flatMap(NPath::toPath).get();
+            return NDigest.of().setSource(f).computeString();
         } catch (NNotFoundException ex) {
             if (!isFailFast()) {
                 return null;
@@ -87,8 +85,8 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
     @Override
     public String getResultDescriptorHash() {
         try {
-            checkSession();
-            return NDigest.of(getSession()).setSource(getResultDescriptor()).computeString();
+            NSession session=getWorkspace().currentSession();
+            return NDigest.of().setSource(getResultDescriptor()).computeString();
         } catch (NNotFoundException ex) {
             if (!isFailFast()) {
                 return null;
@@ -113,8 +111,9 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
     public NDescriptor getResultDescriptor() {
         try {
             NDefinition def = fetchDefinition(getId(), copy().setContent(false), false, false);
+            NSession session=getWorkspace().currentSession();
             if (isEffective()) {
-                return def.getEffectiveDescriptor().get(session);
+                return def.getEffectiveDescriptor().get();
             }
             return def.getDescriptor();
         } catch (NNotFoundException ex) {
@@ -127,10 +126,9 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
 
     @Override
     public NInstallInformation getResultInstallInformation() {
-        checkSession();
-        NWorkspace ws = getSession().getWorkspace();
-        NWorkspaceExt dws = NWorkspaceExt.of(ws);
-        NInstallInformation ii = dws.getInstalledRepository().getInstallInformation(getId(), session);
+        NSession session=getWorkspace().currentSession();
+        NWorkspaceExt dws = NWorkspaceExt.of(getWorkspace());
+        NInstallInformation ii = dws.getInstalledRepository().getInstallInformation(getId());
         if (ii != null) {
             return ii;
         } else {
@@ -152,8 +150,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
 
     @Override
     public NFetchCmd copy() {
-        checkSession();
-        DefaultNFetchCmd b = new DefaultNFetchCmd(getSession());
+        DefaultNFetchCmd b = new DefaultNFetchCmd(getWorkspace());
         b.setAll(this);
         return b;
     }
@@ -171,17 +168,16 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
 
     public NDefinition fetchDefinitionNoCache(NId id, NFetchCmd options, boolean includeContent, boolean includeInstallInfo) {
         long startTime = System.currentTimeMillis();
-        checkSession();
-        NWorkspaceUtils wu = NWorkspaceUtils.of(session);
+        NWorkspace workspace = getWorkspace();
+        NSession session= workspace.currentSession();
+        NWorkspaceUtils wu = NWorkspaceUtils.of(workspace);
         CoreNIdUtils.checkLongId(id, session);
 //        checkSession();
-        NSession _ws = getSession();
-        NSessionUtils.checkSession(this.ws, options.getSession());
-        NWorkspaceExt dws = NWorkspaceExt.of(_ws);
-        NFetchStrategy nutsFetchModes = NWorkspaceHelper.validate(_ws.getFetchStrategy().orDefault());
+        NWorkspaceExt dws = NWorkspaceExt.of(session);
+        NFetchStrategy nutsFetchModes = NWorkspaceHelper.validate(session.getFetchStrategy().orDefault());
         NRepositoryFilter repositoryFilter = this.getRepositoryFilter();
         if (!NBlankable.isBlank(id.getRepository())) {
-            NRepositoryFilter repositoryFilter2 = NRepositoryFilters.of(_ws).byName(id.getRepository());
+            NRepositoryFilter repositoryFilter2 = NRepositoryFilters.of().byName(id.getRepository());
             repositoryFilter = repositoryFilter2.and(repositoryFilter);
         }
         NRepositoryAndFetchModeTracker descTracker = new NRepositoryAndFetchModeTracker(
@@ -199,7 +195,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
             DefaultNDefinition result = null;
             for (NRepositoryAndFetchMode location : descTracker.available()) {
                 try {
-                    result = fetchDescriptorAsDefinition(id, session, nutsFetchModes, location.getFetchMode(), location.getRepository());
+                    result = fetchDescriptorAsDefinition(id, nutsFetchModes, location.getFetchMode(), location.getRepository());
                     successfulDescriptorLocation = location;
                     break;
                 } catch (NNotFoundException exc) {
@@ -207,10 +203,10 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                     descTracker.addFailure(location);
                 } catch (Exception ex) {
                     //ignore
-                    _LOGOP(getSession()).error(ex).level(Level.SEVERE)
+                    _LOGOP().error(ex).level(Level.SEVERE)
                             .log(NMsg.ofC("unexpected error while fetching descriptor for %s", id));
-                    if (_LOG(getSession()).isLoggable(Level.FINEST)) {
-                        NLogUtils.traceMessage(_LOG(getSession()), nutsFetchModes, id.getLongId(), NLogVerb.FAIL, "fetch def", startTime);
+                    if (_LOG().isLoggable(Level.FINEST)) {
+                        NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.getLongId(), NLogVerb.FAIL, "fetch def", startTime);
                     }
                     descTracker.addFailure(location);
                 }
@@ -219,10 +215,10 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
             if (foundDefinition != null) {
                 if (options.isEffective() || isDependencies()) {
                     try {
-                        foundDefinition.setEffectiveDescriptor(dws.resolveEffectiveDescriptor(foundDefinition.getDescriptor(), session));
+                        foundDefinition.setEffectiveDescriptor(dws.resolveEffectiveDescriptor(foundDefinition.getDescriptor()));
                     } catch (NNotFoundException ex) {
                         //ignore
-                        _LOGOP(getSession()).level(Level.WARNING).verb(NLogVerb.WARNING)
+                        _LOGOP().level(Level.WARNING).verb(NLogVerb.WARNING)
                                 .log(NMsg.ofC("artifact descriptor found, but one of its parents or dependencies is not: %s : missing %s", id,
                                         ex.getId()));
                         foundDefinition = null;
@@ -231,7 +227,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                 if (foundDefinition != null) {
                     if (isDependencies()) {
                         foundDefinition.setDependencies(
-                                NDependencySolver.of(getSession())
+                                NDependencySolver.of()
                                         .setDependencyFilter(buildActualDependencyFilter())
                                         .add(id.toDependency(), foundDefinition)
                                         .setRepositoryFilter(this.getRepositoryFilter())
@@ -289,25 +285,28 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                                 if (loadedFromInstallRepo && successfulContentLocation != successfulDescriptorLocation) {
                                     //this happens if the jar content is no more installed while its descriptor is still installed.
                                     NRepositorySPI installedRepositorySPI = wu.repoSPI(installedRepository);
-                                    installedRepositorySPI.deploy()
-                                            .setId(foundDefinition.getId())
-                                            .setDescriptor(foundDefinition.getDescriptor())
-                                            .setSession(this.session.copy().setConfirm(NConfirmationMode.YES))
-                                            //.setFetchMode(mode)
-                                            .setContent(foundDefinition.getContent().get(session))
-                                            .run();
+
+                                    DefaultNDefinition finalFoundDefinition = foundDefinition;
+                                    session.copy().setConfirm(NConfirmationMode.YES).runWith(()->{
+                                        installedRepositorySPI.deploy()
+                                                .setId(finalFoundDefinition.getId())
+                                                .setDescriptor(finalFoundDefinition.getDescriptor())
+                                                //.setFetchMode(mode)
+                                                .setContent(finalFoundDefinition.getContent().get())
+                                                .run();
+                                    });
 
                                 }
                             }
                             if (!contentSuccessful /*&& includedRemote*/) {
-                                NLogUtils.traceMessage(_LOG(getSession()), nutsFetchModes, id.getLongId(), NLogVerb.FAIL,
+                                NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.getLongId(), NLogVerb.FAIL,
                                         "fetched descriptor but failed to fetch artifact binaries", startTime);
                             }
                         }
                     }
                     if (includeInstallInfo) {
                         //will always load install information
-                        NInstallInformation ii = installedRepository.getInstallInformation(id, this.session);
+                        NInstallInformation ii = installedRepository.getInstallInformation(id);
                         if (ii != null) {
 //                            ((DefaultNInstalledRepository) (dws.getInstalledRepository())).updateInstallInfoConfigInstallDate(id, Instant.now(), session);
                             foundDefinition.setInstallInformation(ii);
@@ -319,46 +318,45 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
             }
         } catch (NNotFoundException ex) {
             reasons.add(ex);
-            NLogUtils.traceMessage(_LOG(getSession()), nutsFetchModes, id.getLongId(), NLogVerb.FAIL, "fetch definition", startTime);
+            NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.getLongId(), NLogVerb.FAIL, "fetch definition", startTime);
             throw ex;
         } catch (RuntimeException ex) {
-            NLogUtils.traceMessage(_LOG(getSession()), nutsFetchModes, id.getLongId(), NLogVerb.FAIL, "[unexpected] fetch definition", startTime);
+            NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.getLongId(), NLogVerb.FAIL, "[unexpected] fetch definition", startTime);
             throw ex;
         }
         if (foundDefinition != null) {
-//            if (getSession().isTrace()) {
-//                NutsIterableOutput ff = CoreNutsUtils.getValidOutputFormat(getSession())
-//                        .session(getSession());
+//            if (session.isTrace()) {
+//                NutsIterableOutput ff = CoreNutsUtils.getValidOutputFormat(session)
+//                        .session(session);
 //                ff.start();
 //                ff.next(foundDefinition);
 //                ff.complete();
 //            }
             return foundDefinition;
         }
-        throw new NNotFoundException(getSession(), id);
+        throw new NNotFoundException(id);
     }
 
     private NDependencyFilter buildActualDependencyFilter() {
-        checkSession();
-        NDependencyFilters ff = NDependencyFilters.of(getSession());
+        NSession session=getWorkspace().currentSession();
+        NDependencyFilters ff = NDependencyFilters.of();
         return ff.byScope(getScope())
                 .and(ff.byOptional(getOptional())
                 ).and(getDependencyFilter());
     }
 
     protected NPath fetchContent(NId id1, DefaultNDefinition foundDefinition, NRepository repo0, NFetchStrategy nutsFetchModes, List<Exception> reasons) {
-        NRepositorySPI repoSPI = NWorkspaceUtils.of(session).repoSPI(repo0);
+        NSession session=getWorkspace().currentSession();
+        NRepositorySPI repoSPI = NWorkspaceUtils.of(getWorkspace()).repoSPI(repo0);
         for (NFetchMode mode : nutsFetchModes) {
             try {
                 NPath content = repoSPI.fetchContent()
                         .setId(id1).setDescriptor(foundDefinition.getDescriptor())
-                        .setSession(session)
                         .setFetchMode(mode)
                         .getResult();
                 if (content != null) {
                     content = repoSPI.fetchContent()
                             .setId(id1).setDescriptor(foundDefinition.getDescriptor())
-                            .setSession(session)
                             .setFetchMode(mode)
                             .getResult();
                     foundDefinition.setContent(content);
@@ -374,11 +372,11 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
     }
 
     protected NPath fetchContent(NId id1, DefaultNDefinition foundDefinition, NRepositoryAndFetchMode repo, List<Exception> reasons) {
-        NRepositorySPI repoSPI = NWorkspaceUtils.of(getSession()).repoSPI(repo.getRepository());
+        NSession session=getWorkspace().currentSession();
+        NRepositorySPI repoSPI = NWorkspaceUtils.of(getWorkspace()).repoSPI(repo.getRepository());
         try {
             NPath content = repoSPI.fetchContent()
                     .setId(id1).setDescriptor(foundDefinition.getDescriptor())
-                    .setSession(session)
                     .setFetchMode(repo.getFetchMode())
                     .getResult();
             if (content != null) {
@@ -394,23 +392,22 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
     }
 
     protected NDescriptor resolveExecProperties(NDescriptor nutsDescriptor, NPath jar) {
-        checkSession();
+        NSession session=getWorkspace().currentSession();
         boolean executable = nutsDescriptor.isExecutable();
         boolean nutsApp = nutsDescriptor.isApplication();
-        NSession session = getSession();
         if (jar.getName().toLowerCase().endsWith(".jar") && jar.isRegularFile()) {
-            NPath cachePath = NLocations.of(session).getStoreLocation(nutsDescriptor.getId(), NStoreType.CACHE)
-                    .resolve(NLocations.of(session).getDefaultIdFilename(nutsDescriptor.getId()
+            NPath cachePath = NLocations.of().getStoreLocation(nutsDescriptor.getId(), NStoreType.CACHE)
+                    .resolve(NLocations.of().getDefaultIdFilename(nutsDescriptor.getId()
                                     .builder()
                                     .setFace("info.cache")
                                     .build()
                             )
                     );
             Map<String, String> map = null;
-            NElements elem = NElements.of(session);
+            NElements elem = NElements.of();
             try {
                 if (cachePath.isRegularFile()) {
-                    map = elem.setSession(this.session)
+                    map = elem
                             .json().parse(cachePath, Map.class);
                 }
             } catch (Exception ex) {
@@ -432,7 +429,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                         map = new LinkedHashMap<>();
                         map.put("executable", String.valueOf(executable));
                         map.put("nutsApplication", String.valueOf(nutsApp));
-                        elem.json().setSession(getSession()).setValue(map)
+                        elem.json().setValue(map)
                                 .setNtf(false)
                                 .print(cachePath);
                     } catch (Exception ex) {
@@ -453,34 +450,33 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
         return nb.build();
     }
 
-    protected DefaultNDefinition fetchDescriptorAsDefinition(NId id, NSession session, NFetchStrategy nutsFetchModes, NFetchMode mode, NRepository repo) {
-        checkSession();
-        NSessionUtils.checkSession(this.ws, session);
+    protected DefaultNDefinition fetchDescriptorAsDefinition(NId id, NFetchStrategy nutsFetchModes, NFetchMode mode, NRepository repo) {
+        NSession session=getWorkspace().currentSession();
         NWorkspaceExt dws = NWorkspaceExt.of(session);
         boolean withCache = !(repo instanceof DefaultNInstalledRepository) && session.isCached();
         NPath cachePath = null;
-        NWorkspaceUtils wu = NWorkspaceUtils.of(session);
-        NElements elem = NElements.of(session);
+        NWorkspaceUtils wu = NWorkspaceUtils.of(getWorkspace());
+        NElements elem = NElements.of();
         if (withCache) {
-            cachePath = NLocations.of(session).getStoreLocation(id, NStoreType.CACHE, repo.getUuid())
-                    .resolve(NLocations.of(session).getDefaultIdFilename(id.builder().setFace("def.cache").build()));
+            cachePath = NLocations.of().getStoreLocation(id, NStoreType.CACHE, repo.getUuid())
+                    .resolve(NLocations.of().getDefaultIdFilename(id.builder().setFace("def.cache").build()));
             if (cachePath.isRegularFile()) {
                 try {
-                    if (CoreIOUtils.isObsoletePath(session, cachePath)) {
+                    if (CoreIOUtils.isObsoletePath(cachePath)) {
                         //this is invalid cache!
                         cachePath.delete();
                     } else {
-                        DefaultNDefinition d = elem.setSession(session)
+                        DefaultNDefinition d = elem
                                 .json().parse(cachePath, DefaultNDefinition.class);
                         if (d != null) {
-                            NRepositories rr = NRepositories.of(session.copy().setTransitive(true));
+                            NRepositories rr = NRepositories.of();
                             NRepository repositoryById = rr.findRepositoryById(d.getRepositoryUuid()).orNull();
                             NRepository repositoryByName = rr.findRepositoryByName(d.getRepositoryName()).orNull();
                             if (repositoryById == null || repositoryByName == null) {
                                 //this is invalid cache!
                                 cachePath.delete();
                             } else {
-                                NLogUtils.traceMessage(_LOG(getSession()), nutsFetchModes, id.getLongId(), NLogVerb.CACHE, "fetch definition", 0);
+                                NLogUtils.traceMessage(_LOG(), nutsFetchModes, id.getLongId(), NLogVerb.CACHE, "fetch definition", 0);
                                 return d;
                             }
                         }
@@ -493,10 +489,10 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
 
         NRepositorySPI repoSPI = wu.repoSPI(repo);
         NDescriptor descriptor = repoSPI.fetchDescriptor().setId(id)
-                .setSession(session).setFetchMode(mode)
+                .setFetchMode(mode)
                 .getResult();
         if (descriptor != null) {
-            NId nutsId = dws.resolveEffectiveId(descriptor, session);
+            NId nutsId = dws.resolveEffectiveId(descriptor);
             NIdBuilder newIdBuilder = nutsId.builder();
             if (NBlankable.isBlank(newIdBuilder.getRepository())) {
                 newIdBuilder.setRepository(repo.getName());
@@ -548,7 +544,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                     descriptor,
                     null,
                     null,
-                    apiId, session
+                    apiId, getWorkspace()
             );
             if (withCache) {
                 try {
@@ -560,7 +556,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
             }
             return result;
         }
-        throw new NNotFoundException(session, id, new NNotFoundException.NIdInvalidDependency[0], new NNotFoundException.NIdInvalidLocation[]{
+        throw new NNotFoundException(id, new NNotFoundException.NIdInvalidDependency[0], new NNotFoundException.NIdInvalidLocation[]{
                 new NNotFoundException.NIdInvalidLocation(repo.getName(), null, id + " not found")
         }, null);
     }

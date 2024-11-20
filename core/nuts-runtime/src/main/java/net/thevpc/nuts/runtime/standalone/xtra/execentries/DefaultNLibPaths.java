@@ -10,29 +10,23 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NPomId;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaJarUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.idresolver.NMetaInfIdResolver;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class DefaultNLibPaths implements NLibPaths {
-    private final NWorkspace ws;
-    private NSession session;
+    private final NWorkspace workspace;
 
-    public DefaultNLibPaths(NSession session) {
-        this.ws = session.getWorkspace();
-        this.session = session;
+    public DefaultNLibPaths(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
     @Override
@@ -43,7 +37,7 @@ public class DefaultNLibPaths implements NLibPaths {
                     return parseExecutionEntries(in, "jar", file.toAbsolute().normalize().toString());
                 }
             } catch (IOException ex) {
-                throw new NIOException(session, ex);
+                throw new NIOException(ex);
             }
         } else if (file.getName().toLowerCase().endsWith(".class")) {
             try {
@@ -51,7 +45,7 @@ public class DefaultNLibPaths implements NLibPaths {
                     return parseExecutionEntries(in, "class", file.toAbsolute().normalize().toString());
                 }
             } catch (IOException ex) {
-                throw new NIOException(session, ex);
+                throw new NIOException(ex);
             }
         } else {
             return Collections.emptyList();
@@ -61,23 +55,12 @@ public class DefaultNLibPaths implements NLibPaths {
     @Override
     public List<NExecutionEntry> parseExecutionEntries(InputStream inputStream, String type, String sourceName) {
         if ("jar".equals(type)) {
-            return JavaJarUtils.parseJarExecutionEntries(inputStream, session);
+            return JavaJarUtils.parseJarExecutionEntries(inputStream);
         } else if ("class".equals(type)) {
-            NExecutionEntry u = JavaClassUtils.parseClassExecutionEntry(inputStream, sourceName, getSession());
+            NExecutionEntry u = JavaClassUtils.parseClassExecutionEntry(inputStream, sourceName);
             return u == null ? Collections.emptyList() : Arrays.asList(u);
         }
         return Collections.emptyList();
-    }
-
-    @Override
-    public NSession getSession() {
-        return session;
-    }
-
-    @Override
-    public NLibPaths setSession(NSession session) {
-        this.session = NWorkspaceUtils.bindSession(ws, session);
-        return this;
     }
 
     @Override
@@ -87,7 +70,7 @@ public class DefaultNLibPaths implements NLibPaths {
 
     @Override
     public List<NPath> resolveLibPaths(Class<?> clazz) {
-        return JavaClassUtils.resolveURLs(clazz).stream().map(x->NPath.of(x,session)).collect(Collectors.toList());
+        return JavaClassUtils.resolveURLs(clazz).stream().map(x->NPath.of(x)).collect(Collectors.toList());
     }
 
     @Override
@@ -106,7 +89,7 @@ public class DefaultNLibPaths implements NLibPaths {
             return NOptional.ofNamedEmpty("Id fo "+clazz);
         }
         if (pomIds.size() > 1) {
-            NLogOp.of(NPomXmlParser.class, session)
+            NLogOp.of(NPomXmlParser.class)
                     .verb(NLogVerb.WARNING)
                     .level(Level.FINEST)
                     .log(NMsg.ofC(
@@ -125,7 +108,7 @@ public class DefaultNLibPaths implements NLibPaths {
             return NOptional.ofNamedEmpty("Id fo "+path);
         }
         if (pomIds.size() > 1) {
-            NLogOp.of(NPomXmlParser.class, session)
+            NLogOp.of(NPomXmlParser.class)
                     .verb(NLogVerb.WARNING)
                     .level(Level.FINEST)
                     .log(NMsg.ofC(
@@ -139,12 +122,12 @@ public class DefaultNLibPaths implements NLibPaths {
     @Override
     public List<NId> resolveIds(NPath path) {
         LinkedHashSet<NId> all = new LinkedHashSet<>();
-        NPomId[] u = MavenUtils.createPomIdResolver(session).resolvePomIds(path, session);
+        NPomId[] u = MavenUtils.createPomIdResolver(workspace).resolvePomIds(path);
         all.addAll(
-                Arrays.asList(new NMetaInfIdResolver(session).resolvePomIds(path, session))
+                Arrays.asList(new NMetaInfIdResolver().resolvePomIds(path))
         );
         for (NPomId uu : u) {
-            all.add(NId.of(uu.getGroupId() + ":" + uu.getArtifactId() + "#" + uu.getVersion()).get(session));
+            all.add(NId.of(uu.getGroupId() + ":" + uu.getArtifactId() + "#" + uu.getVersion()).get());
         }
         return new ArrayList<>(all);
     }
@@ -158,12 +141,12 @@ public class DefaultNLibPaths implements NLibPaths {
                 all.add(NId.of(annotation.id()).get());
             }
         }
-        NPomId[] u = MavenUtils.createPomIdResolver(session).resolvePomIds(clazz);
+        NPomId[] u = MavenUtils.createPomIdResolver(workspace).resolvePomIds(clazz);
         all.addAll(
-                Arrays.asList(new NMetaInfIdResolver(session).resolvePomIds(clazz))
+                Arrays.asList(new NMetaInfIdResolver().resolvePomIds(clazz))
         );
         for (NPomId uu : u) {
-            all.add(NId.of(uu.getGroupId() + ":" + uu.getArtifactId() + "#" + uu.getVersion()).get(session));
+            all.add(NId.of(uu.getGroupId() + ":" + uu.getArtifactId() + "#" + uu.getVersion()).get());
         }
         return new ArrayList<>(all);
     }

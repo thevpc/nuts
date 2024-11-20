@@ -53,7 +53,7 @@ public class ProcessExecutorComponent implements NExecutorComponent {
     public int getSupportLevel(NSupportLevelContext nutsDefinition) {
         this.session =nutsDefinition.getSession();
         if(ID==null){
-            ID= NId.of("net.thevpc.nuts.exec:exec-native").get(session);
+            ID= NId.of("net.thevpc.nuts.exec:exec-native").get();
         }
         return NConstants.Support.DEFAULT_SUPPORT;
     }
@@ -65,7 +65,7 @@ public class ProcessExecutorComponent implements NExecutorComponent {
 
     public IProcessExecHelper execHelper(NExecutionContext executionContext) {
         NDefinition nutMainFile = executionContext.getDefinition();
-        NPath storeFolder = nutMainFile.getInstallInformation().get(session).getInstallFolder();
+        NPath storeFolder = nutMainFile.getInstallInformation().get().getInstallFolder();
         List<String> execArgs = executionContext.getExecutorOptions();
         List<String> appArgs = executionContext.getArguments();
 
@@ -84,7 +84,7 @@ public class ProcessExecutorComponent implements NExecutorComponent {
                 .toString();
         osEnv.put("nuts_boot_args", bootArgumentsString);
         String dir = null;
-        boolean showCommand = CoreNUtils.isShowCommand(session);
+        boolean showCommand = CoreNUtils.isShowCommand();
         for (int i = 0; i < execArgs.size(); i++) {
             String arg = execArgs.get(i);
             if (arg.equals("--show-command") || arg.equals("-show-command")) {
@@ -97,7 +97,7 @@ public class ProcessExecutorComponent implements NExecutorComponent {
             }
         }
         String directory = NBlankable.isBlank(dir) ? null :
-                NPath.of(dir,executionContext.getSession()).toAbsolute().toString();
+                NPath.of(dir).toAbsolute().toString();
         return ProcessExecHelper.ofDefinition(nutMainFile,
                 app.toArray(new String[0]), osEnv, directory,
                 showCommand, true,

@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings;
 
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
 /**
@@ -13,6 +14,11 @@ import net.thevpc.nuts.spi.NSupportLevelContext;
  * @author thevpc
  */
 public abstract class AbstractNSettingsSubCommand implements NSettingsSubCommand {
+    protected NWorkspace workspace;
+
+    public AbstractNSettingsSubCommand(NWorkspace workspace) {
+        this.workspace = workspace;
+    }
 
     @Override
     public int getSupportLevel(NSupportLevelContext criteria) {

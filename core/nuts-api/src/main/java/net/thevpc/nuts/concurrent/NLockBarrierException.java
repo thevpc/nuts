@@ -26,7 +26,6 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 
 /**
  * Exception Thrown when a locked object is invoked.
@@ -38,24 +37,22 @@ public class NLockBarrierException extends NLockException {
     /**
      * Constructs a new lock exception.
      *
-     * @param session      workspace
      * @param lockedObject locked Object
      * @param lockObject   lock Object
      */
-    public NLockBarrierException(NSession session, Object lockedObject, Object lockObject) {
-        this(session, null, lockedObject, lockObject);
+    public NLockBarrierException(Object lockedObject, Object lockObject) {
+        this(null, lockedObject, lockObject);
     }
 
     /**
      * Constructs a new lock exception.
      *
-     * @param session      workspace
      * @param message      message or null
      * @param lockedObject locked Object
      * @param lockObject   lock Object
      */
-    public NLockBarrierException(NSession session, NMsg message, Object lockedObject, Object lockObject) {
-        super(session,
+    public NLockBarrierException(NMsg message, Object lockedObject, Object lockObject) {
+        super(
                 message == null ? NMsg.ofC("item already locked %s", lockedObject)
                         : message, lockedObject, lockObject
         );
@@ -64,14 +61,13 @@ public class NLockBarrierException extends NLockException {
     /**
      * Constructs a new lock exception.
      *
-     * @param session      workspace
      * @param message      message or null
      * @param lockedObject locked Object
      * @param lockObject   lock Object
      * @param cause        cause
      */
-    public NLockBarrierException(NSession session, NMsg message, Object lockedObject, Object lockObject, Throwable cause) {
-        super(session,
+    public NLockBarrierException(NMsg message, Object lockedObject, Object lockObject, Throwable cause) {
+        super(
                 message == null ? NMsg.ofC("item already locked %s", lockedObject)
                         : message, lockObject, cause
         );

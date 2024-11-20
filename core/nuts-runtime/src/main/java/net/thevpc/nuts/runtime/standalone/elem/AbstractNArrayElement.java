@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.NArrayElement;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementType;
@@ -43,8 +44,8 @@ public abstract class AbstractNArrayElement
         extends AbstractNNavigatableElement
         implements NArrayElement {
 
-    public AbstractNArrayElement(NSession session) {
-        super(NElementType.ARRAY, session);
+    public AbstractNArrayElement(NWorkspace workspace) {
+        super(NElementType.ARRAY, workspace);
     }
 
     @Override
@@ -61,7 +62,7 @@ public abstract class AbstractNArrayElement
     @Override
     public List<NElement> resolveAll(String pattern) {
         pattern = NStringUtils.trimToNull(pattern);
-        NElementPathImpl pp = new NElementPathImpl(pattern, session);
+        NElementPathImpl pp = new NElementPathImpl(pattern, workspace);
         NElement[] nElements = pp.resolveReversed(this);
         return new ArrayList<>(Arrays.asList(nElements));
     }

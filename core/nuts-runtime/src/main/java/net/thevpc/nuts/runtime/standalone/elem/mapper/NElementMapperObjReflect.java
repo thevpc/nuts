@@ -138,21 +138,16 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
                 break;
             }
             case CUSTOM:{
-                return c.cast(o.asCustom().get(session).getValue());
+                return c.cast(o.asCustom().get().getValue());
             }
         }
         int mod = c.getModifiers();
         if (Modifier.isAbstract(mod)) {
-            throw new NIllegalArgumentException(session, NMsg.ofC("cannot instantiate abstract class %s", typeOfResult));
+            throw new NIllegalArgumentException(NMsg.ofC("cannot instantiate abstract class %s", typeOfResult));
         }
         NReflectType m = defaultNutsElementFactoryService.getTypesRepository().getType(typeOfResult);
-        Object instance;
-        if (m.hasSessionConstructor()) {
-            instance = m.newInstance(session);
-        } else {
-            instance = m.newInstance();
-        }
-        NObjectElement eobj = o.asObject().get(session);
+        Object instance = m.newInstance();
+        NObjectElement eobj = o.asObject().get();
         NElements prv = context.elem();
         for (NReflectProperty property : m.getProperties()) {
             if (property.isWrite()) {

@@ -116,7 +116,7 @@ public class SshFileOutputStream extends OutputStream {
 
         // send "C0644 filesize filename", where filename should not include '/'
         command = "C0644 " + filesize + " ";
-        command += NPath.of(to, session).getName();
+        command += NPath.of(to).getName();
 
         command += "\n";
         out.write(command.getBytes());

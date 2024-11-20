@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 import java.util.function.Predicate;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -14,12 +13,11 @@ import net.thevpc.nuts.util.NStream;
 public class DefaultNPlatforms implements NPlatforms {
 
     private DefaultNPlatformModel model;
-    private NSession session;
+    private NWorkspace workspace;
 
-    public DefaultNPlatforms(NSession session) {
-        this.session = session;
-        NWorkspace w = this.session.getWorkspace();
-        NWorkspaceExt e = (NWorkspaceExt) w;
+    public DefaultNPlatforms(NWorkspace workspace) {
+        this.workspace = workspace;
+        NWorkspaceExt e = (NWorkspaceExt) workspace;
         this.model = e.getModel().sdkModel;
     }
 
@@ -32,97 +30,70 @@ public class DefaultNPlatforms implements NPlatforms {
         return model;
     }
 
-    @Override
-    public NSession getSession() {
-        return session;
-    }
-
-    @Override
-    public NPlatforms setSession(NSession session) {
-        this.session = NWorkspaceUtils.bindSession(model.getWorkspace(), session);
-        return this;
-    }
 
     @Override
     public boolean addPlatform(NPlatformLocation location) {
-        checkSession();
-        return model.addPlatform(location, session);
-    }
-
-    private void checkSession() {
-        NSessionUtils.checkSession(model.getWorkspace(), session);
+        return model.addPlatform(location);
     }
 
     @Override
     public boolean updatePlatform(NPlatformLocation oldLocation, NPlatformLocation newLocation) {
-        checkSession();
-        return model.updatePlatform(oldLocation, newLocation, session);
+        return model.updatePlatform(oldLocation, newLocation);
     }
 
     @Override
     public boolean removePlatform(NPlatformLocation location) {
-        checkSession();
-        return model.removePlatform(location, session);
+        return model.removePlatform(location);
     }
 
     @Override
     public NOptional<NPlatformLocation> findPlatformByName(NPlatformFamily platformType, String locationName) {
-        checkSession();
-        return model.findPlatformByName(platformType, locationName, session);
+        return model.findPlatformByName(platformType, locationName);
     }
 
     @Override
     public NOptional<NPlatformLocation> findPlatformByPath(NPlatformFamily platformType, NPath path) {
-        checkSession();
-        return model.findPlatformByPath(platformType, path, session);
+        return model.findPlatformByPath(platformType, path);
     }
 
     @Override
     public NOptional<NPlatformLocation> findPlatformByVersion(NPlatformFamily platformType, String version) {
-        checkSession();
-        return model.findPlatformByVersion(platformType, version, session);
+        return model.findPlatformByVersion(platformType, version);
     }
 
     @Override
     public NOptional<NPlatformLocation> findPlatform(NPlatformLocation location) {
-        checkSession();
-        return model.findPlatform(location, session);
+        return model.findPlatform(location);
     }
 
     @Override
     public NOptional<NPlatformLocation> findPlatformByVersion(NPlatformFamily platformType, NVersionFilter requestedVersion) {
-        checkSession();
-        return model.findPlatformByVersion(platformType, requestedVersion, session);
+        return model.findPlatformByVersion(platformType, requestedVersion);
     }
 
     @Override
     public NStream<NPlatformLocation> searchSystemPlatforms(NPlatformFamily platformFamily) {
-        checkSession();
-        return model.searchSystemPlatforms(platformFamily, session);
+        return model.searchSystemPlatforms(platformFamily);
     }
 
     @Override
     public NStream<NPlatformLocation> searchSystemPlatforms(NPlatformFamily platformFamily, NPath path) {
-        checkSession();
-        return model.searchSystemPlatforms(platformFamily, path, session);
+        return model.searchSystemPlatforms(platformFamily, path);
     }
 
     @Override
     public NOptional<NPlatformLocation> resolvePlatform(NPlatformFamily platformFamily, NPath path, String preferredName) {
-        checkSession();
-        return model.resolvePlatform(platformFamily, path, preferredName, session);
+        return model.resolvePlatform(platformFamily, path, preferredName);
     }
 
     @Override
     public NOptional<NPlatformLocation> findPlatform(NPlatformFamily platformFamily, Predicate<NPlatformLocation> filter) {
-        checkSession();
-        return model.findOnePlatform(platformFamily, filter, session);
+        return model.findOnePlatform(platformFamily, filter);
     }
 
     @Override
     public NStream<NPlatformLocation> findPlatforms(NPlatformFamily platformFamily, Predicate<NPlatformLocation> filter) {
-        checkSession();
-        return model.findPlatforms(platformFamily, filter, session);
+        return model.findPlatforms(platformFamily, filter);
     }
 
     @Override
@@ -133,7 +104,7 @@ public class DefaultNPlatforms implements NPlatforms {
     @Override
     public void addDefaultPlatforms(NPlatformFamily type) {
         if(type==NPlatformFamily.JAVA) {
-            NWorkspaceUtils.of(session).installAllJVM();
+            NWorkspaceUtils.of(workspace).installAllJVM();
         }
     }
 
@@ -141,13 +112,12 @@ public class DefaultNPlatforms implements NPlatforms {
     public void addDefaultPlatform(NPlatformFamily type) {
         if(type==NPlatformFamily.JAVA) {
             //at least add current vm
-            NWorkspaceUtils.of(session).installCurrentJVM();
+            NWorkspaceUtils.of(workspace).installCurrentJVM();
         }
     }
 
     @Override
     public NStream<NPlatformLocation> findPlatforms(NPlatformFamily type) {
-        checkSession();
-        return model.findPlatforms(type, null, session);
+        return model.findPlatforms(type, null);
     }
 }

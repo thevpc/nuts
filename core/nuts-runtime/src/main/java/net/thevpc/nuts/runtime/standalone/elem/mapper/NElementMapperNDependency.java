@@ -18,11 +18,10 @@ public class NElementMapperNDependency implements NElementMapper<NDependency> {
         if (o.getExclusions().isEmpty()) {
             //use compact form
             if (context.isNtf()) {
-                return NDependencyFormat.of(session).setNtf(true).setValue(o).format();
+                return NDependencyFormat.of().setNtf(true).setValue(o).format();
             } else {
 
-                return context.defaultDestruct(o.formatter(session)
-                                .setSession(session)
+                return context.defaultDestruct(o.formatter()
                         .setNtf(context.isNtf())
                         .format(), null);
             }
@@ -43,7 +42,7 @@ public class NElementMapperNDependency implements NElementMapper<NDependency> {
 //                    return ws.elem().forString(ws.dependency().formatter().setNtf(true).setValue(o).format());
 //                } else {
 
-        NString format = o.formatter(context.getSession())
+        NString format = o.formatter()
                 .setNtf(context.isNtf())
                 .format();
         return context.defaultObjectToElement(
@@ -57,7 +56,7 @@ public class NElementMapperNDependency implements NElementMapper<NDependency> {
     public NDependency createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
         NSession session = context.getSession();
         if (o.type() == NElementType.STRING) {
-            return NDependency.of(o.asString().get(session)).get(session);
+            return NDependency.of(o.asString().get()).get();
         }
         NDependencyBuilder builder = context.defaultElementToObject(o, DefaultNDependencyBuilder.class);
         return NDependencyBuilder.of().setAll(builder).build();

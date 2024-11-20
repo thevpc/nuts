@@ -36,8 +36,8 @@ import net.thevpc.nuts.util.NFilter;
  * @since 0.8.0
  */
 public interface NFilters extends NComponent {
-    static NFilters of(NSession session) {
-       return NExtensions.of(session).createComponent(NFilters.class).get();
+    static NFilters of() {
+       return NExtensions.of().createComponent(NFilters.class).get();
     }
 
 

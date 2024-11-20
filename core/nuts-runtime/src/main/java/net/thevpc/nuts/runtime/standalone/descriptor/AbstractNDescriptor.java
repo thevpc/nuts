@@ -31,10 +31,10 @@ import net.thevpc.nuts.*;
  * Created by vpc on 2/19/17.
  */
 public abstract class AbstractNDescriptor implements NDescriptor {
-    protected transient NSession session;
+    protected transient NWorkspace workspace;
 
-    public AbstractNDescriptor(NSession session) {
-        this.session = session;
+    public AbstractNDescriptor(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
     @Override
@@ -43,7 +43,7 @@ public abstract class AbstractNDescriptor implements NDescriptor {
     }
 
     @Override
-    public NDescriptorFormat formatter(NSession session) {
-        return NDescriptorFormat.of(session!=null?session:this.session).setValue(this);
+    public NDescriptorFormat formatter() {
+        return NDescriptorFormat.of().setValue(this);
     }
 }

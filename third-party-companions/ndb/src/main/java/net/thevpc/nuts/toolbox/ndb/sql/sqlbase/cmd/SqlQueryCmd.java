@@ -1,6 +1,5 @@
 package net.thevpc.nuts.toolbox.ndb.sql.sqlbase.cmd;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;
 import net.thevpc.nuts.toolbox.ndb.base.cmd.QueryCmd;
@@ -19,7 +18,7 @@ public class SqlQueryCmd<C extends NdbConfig> extends QueryCmd<C> {
     }
 
     @Override
-    protected void runRawQuery(ExtendedQuery eq, C options, NSession session) {
-        getSupport().runSQL(Arrays.asList(eq.getRawQuery()), options, session);
+    protected void runRawQuery(ExtendedQuery eq, C options) {
+        getSupport().runSQL(Arrays.asList(eq.getRawQuery()), options);
     }
 }

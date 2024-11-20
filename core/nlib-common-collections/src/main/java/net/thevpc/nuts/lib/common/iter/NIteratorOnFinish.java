@@ -2,7 +2,6 @@ package net.thevpc.nuts.lib.common.iter;
 
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NRunnable;
 
 import java.util.Iterator;
@@ -11,19 +10,17 @@ class NIteratorOnFinish<T> extends NIteratorBase<T> {
 
     private final Iterator<T> base;
     private final NRunnable r;
-    private final NSession session;
 
-    public NIteratorOnFinish(Iterator<T> base, NSession session,NRunnable r) {
+    public NIteratorOnFinish(Iterator<T> base, NRunnable r) {
         this.base = base;
         this.r = r;
-        this.session = session;
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return NEDesc.describeResolveOrDestructAsObject(base, session)
+    public NElement describe() {
+        return NEDesc.describeResolveOrDestructAsObject(base)
                 .builder()
-                .set("onFinish", NEDesc.describeResolveOrToString(r, session))
+                .set("onFinish", NEDesc.describeResolveOrToString(r))
                 .build()
                 ;
     }
@@ -32,7 +29,7 @@ class NIteratorOnFinish<T> extends NIteratorBase<T> {
     public boolean hasNext() {
         boolean n = base.hasNext();
         if (!n) {
-            r.run(session);
+            r.run();
         }
         return n;
     }

@@ -28,6 +28,8 @@ import net.thevpc.nuts.NId;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.LinkedHashMap;
+
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.boot.NClassLoaderNode;
 
 import net.thevpc.nuts.NSession;
@@ -35,13 +37,13 @@ import net.thevpc.nuts.NSession;
 public class DefaultNClassLoader extends URLClassLoader {
 
     private String name;
-    private NSession session;
+    private NWorkspace workspace;
     private LinkedHashMap<String, NClassLoaderNode> nodes = new LinkedHashMap<>();
     private LinkedHashMap<String, NClassLoaderNode> effective = new LinkedHashMap<>();
-    public DefaultNClassLoader(String name, NSession session, ClassLoader parent) {
+    public DefaultNClassLoader(String name, NWorkspace workspace, ClassLoader parent) {
         super(new URL[0], parent);
         this.name = name;
-        this.session = session;
+        this.workspace = workspace;
     }
 
     public String getName() {
@@ -53,7 +55,8 @@ public class DefaultNClassLoader extends URLClassLoader {
     }
 
     public NClassLoaderNode search(NClassLoaderNode node, boolean deep) {
-        NId ii = NId.of(node.getId()).get(session);
+        NSession session = workspace.currentSession();
+        NId ii = NId.of(node.getId()).get();
         String sn = ii.getShortName();
         NClassLoaderNode o = nodes.get(sn);
         if (o != null) {
@@ -73,7 +76,8 @@ public class DefaultNClassLoader extends URLClassLoader {
     }
 
     public boolean add(NClassLoaderNode node) {
-        NId ii = NId.of(node.getId()).get(session);
+        NSession session = workspace.currentSession();
+        NId ii = NId.of(node.getId()).get();
         String sn = ii.getShortName();
         if (!nodes.containsKey(sn)) {
             nodes.put(sn, node);
@@ -83,8 +87,9 @@ public class DefaultNClassLoader extends URLClassLoader {
     }
 
     protected boolean add(NClassLoaderNode node, boolean deep) {
+        NSession session = workspace.currentSession();
         String s = node.getId();
-        NId ii = NId.of(s).get(session);
+        NId ii = NId.of(s).get();
         String sn = ii.getShortName();
         if (!effective.containsKey(sn)) {
             effective.put(sn, node);

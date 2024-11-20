@@ -25,8 +25,6 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NSession;
-
 /**
  * Nuts descriptors solver factory responsible to building traversable dependency tree
  *
@@ -35,7 +33,7 @@ import net.thevpc.nuts.NSession;
  */
 public interface NDependencySolverFactory extends NComponent {
 
-    NDependencySolver create(NSession session);
+    NDependencySolver create();
 
     String getName();
 }

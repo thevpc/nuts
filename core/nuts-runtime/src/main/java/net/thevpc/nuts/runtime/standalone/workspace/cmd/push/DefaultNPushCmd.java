@@ -48,32 +48,30 @@ import net.thevpc.nuts.util.NStringUtils;
  */
 public class DefaultNPushCmd extends AbstractDefaultNPushCmd {
 
-    public DefaultNPushCmd(NSession session) {
-        super(session);
+    public DefaultNPushCmd(NWorkspace workspace) {
+        super(workspace);
     }
 
     @Override
     public NPushCmd run() {
-        checkSession();
-        NWorkspace ws = getSession().getWorkspace();
-        NSession session = this.getSession();
+        NSession session=getWorkspace().currentSession();
         NRepositoryFilter repositoryFilter = null;
         Map<NId, NDefinition> toProcess = new LinkedHashMap<>();
         for (NId id : this.getIds()) {
             if (NStringUtils.trim(id.getVersion().getValue()).endsWith(CoreNConstants.Versions.CHECKED_OUT_EXTENSION)) {
-                throw new NIllegalArgumentException(getSession(), NMsg.ofC("invalid version %s", id.getVersion()));
+                throw new NIllegalArgumentException(NMsg.ofC("invalid version %s", id.getVersion()));
             }
-            NDefinition file = NFetchCmd.of(id,session.copy().setTransitive(false)).setContent(true).getResultDefinition();
-            NAssert.requireNonNull(file, "content to push", session);
+            NDefinition file = NFetchCmd.of(id).setTransitive(false).setContent(true).getResultDefinition();
+            NAssert.requireNonNull(file, "content to push");
             toProcess.put(id, file);
         }
-        NWorkspaceExt dws = NWorkspaceExt.of(ws);
-        NAssert.requireNonBlank(toProcess, "package tp push", session);
+        NWorkspaceExt dws = NWorkspaceExt.of(getWorkspace());
+        NAssert.requireNonBlank(toProcess, "package tp push");
         for (Map.Entry<NId, NDefinition> entry : toProcess.entrySet()) {
             NId id = entry.getKey();
             NDefinition file = entry.getValue();
             NFetchMode fetchMode = this.isOffline() ? NFetchMode.LOCAL : NFetchMode.REMOTE;
-            NWorkspaceUtils wu = NWorkspaceUtils.of(session);
+            NWorkspaceUtils wu = NWorkspaceUtils.of(workspace);
             if (NBlankable.isBlank(this.getRepository())) {
                 Set<String> errors = new LinkedHashSet<>();
                 //TODO : CHECK ME, why offline?
@@ -82,20 +80,18 @@ public class DefaultNPushCmd extends AbstractDefaultNPushCmd {
                     NDescriptor descr = null;
                     NRepositorySPI repoSPI = wu.repoSPI(repo);
                     try {
-                        descr = repoSPI.fetchDescriptor().setSession(session).setFetchMode(fetchMode).setId(file.getId()).getResult();
+                        descr = repoSPI.fetchDescriptor().setFetchMode(fetchMode).setId(file.getId()).getResult();
                     } catch (Exception e) {
                         errors.add(CoreStringUtils.exceptionToString(e));
                         //
                     }
                     if (descr != null && repo.config().isSupportedMirroring()) {
-                        NId id2 = CoreNIdUtils.createContentFaceId(dws.resolveEffectiveId(descr, session), descr,session);
+                        NId id2 = CoreNIdUtils.createContentFaceId(dws.resolveEffectiveId(descr), descr,session);
                         try {
                             repoSPI.push().setId(id2)
                                     .setOffline(offline)
                                     .setRepository(getRepository())
                                     .setArgs(args.toArray(new String[0]))
-                                    .setSession(session)
-                                    //                                    .setFetchMode(fetchMode)
                                     .run();
                             ok = true;
                             break;
@@ -106,7 +102,7 @@ public class DefaultNPushCmd extends AbstractDefaultNPushCmd {
                     }
                 }
                 if (!ok) {
-                    throw new NPushException(session,id, NMsg.ofC(
+                    throw new NPushException(id, NMsg.ofC(
                             "unable to push %s to repository %s : %s",
                             id == null ? "<null>" : id,
                             this.getRepository(),
@@ -114,14 +110,14 @@ public class DefaultNPushCmd extends AbstractDefaultNPushCmd {
                             ));
                 }
             } else {
-                NRepository repo = NRepositories.of(session).findRepository(this.getRepository()).get();
+                NRepository repo = NRepositories.of().findRepository(this.getRepository()).get();
                 if (!repo.config().isEnabled()) {
-                    throw new NIllegalArgumentException(getSession(), NMsg.ofC("repository %s is disabled", repo.getName()));
+                    throw new NIllegalArgumentException(NMsg.ofC("repository %s is disabled", repo.getName()));
                 }
                 NId effId = CoreNIdUtils.createContentFaceId(id.builder().setPropertiesQuery("").build(), file.getDescriptor(),session) //                        .setAlternative(NutsUtilStrings.trim(file.getDescriptor().getAlternative()))
                         ;
                 NRepositorySPI repoSPI = wu.repoSPI(repo);
-                repoSPI.deploy().setSession(session)
+                repoSPI.deploy()
                         .setId(effId)
                         .setContent(file.getContent().orNull())
                         .setDescriptor(file.getDescriptor())

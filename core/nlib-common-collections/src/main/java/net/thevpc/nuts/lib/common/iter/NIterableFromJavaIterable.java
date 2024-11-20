@@ -16,7 +16,7 @@ public class NIterableFromJavaIterable<T> implements NIterable<T> {
 
     @Override
     public NIterator<T> iterator() {
-        return NIterator.of(base.iterator(),session);
+        return NIterator.of(base.iterator());
     }
 
     @Override
@@ -25,8 +25,8 @@ public class NIterableFromJavaIterable<T> implements NIterable<T> {
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return NEDesc.describeResolveOr(base, session, () -> NElements.of(session).ofObject().build())
-                .asObject().get(session);
+    public NElement describe() {
+        return NEDesc.describeResolveOr(base, () -> NElements.of().ofObject().build())
+                .asObject().get();
     }
 }

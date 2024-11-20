@@ -51,8 +51,8 @@ public class JarPathVersionResolver implements PathVersionResolver {
             return null;
         }
         Set<VersionDescriptor> all = new HashSet<>();
-        try (InputStream is = (NPath.of(filePath, session).toAbsolute()).getInputStream()) {
-            NUncompress.of(session)
+        try (InputStream is = (NPath.of(filePath).toAbsolute()).getInputStream()) {
+            NUncompress.of()
                     .from(is)
                     .visit(new NUncompressVisitor() {
                         @Override
@@ -67,7 +67,7 @@ public class JarPathVersionResolver implements PathVersionResolver {
                                 try {
                                     manifest = new Manifest(inputStream);
                                 } catch (IOException e) {
-                                    throw new NIOException(session, e);
+                                    throw new NIOException(e);
                                 }
                                 Attributes attrs = manifest.getMainAttributes();
                                 String Bundle_SymbolicName = null;
@@ -102,7 +102,7 @@ public class JarPathVersionResolver implements PathVersionResolver {
 
                             } else if (("META-INF/" + NConstants.Files.DESCRIPTOR_FILE_NAME).equals(path)) {
                                 try {
-                                    NDescriptor d = NDescriptorParser.of(session).parse(inputStream).get(session);
+                                    NDescriptor d = NDescriptorParser.of().parse(inputStream).get();
                                     inputStream.close();
                                     Properties properties = new Properties();
                                     properties.setProperty("parents", d.getParents().stream().map(Object::toString).collect(Collectors.joining(",")));
@@ -119,7 +119,7 @@ public class JarPathVersionResolver implements PathVersionResolver {
                                     if (d.getDescription() != null) {
                                         properties.setProperty("description", d.getDescription());
                                     }
-                                    properties.setProperty("locations", NElements.of(session).json()
+                                    properties.setProperty("locations", NElements.of().json()
                                             .setValue(d.getLocations()).setNtf(false).format().filteredText()
                                     );
                                     properties.setProperty(NConstants.IdProperties.ARCH, String.join(";", d.getCondition().getArch()));
@@ -143,9 +143,9 @@ public class JarPathVersionResolver implements PathVersionResolver {
 
                                 Properties properties = new Properties();
                                 try {
-                                    NDescriptor d = NDescriptorParser.of(session)
+                                    NDescriptor d = NDescriptorParser.of()
                                             .setDescriptorStyle(NDescriptorStyle.MAVEN)
-                                            .parse(inputStream).get(session);
+                                            .parse(inputStream).get();
                                     properties.put("groupId", d.getId().getGroupId());
                                     properties.put("artifactId", d.getId().getArtifactId());
                                     properties.put("version", d.getId().getVersion().toString());
@@ -194,7 +194,7 @@ public class JarPathVersionResolver implements PathVersionResolver {
                         }
                     }).run();
         } catch (IOException ex) {
-            throw new NIOException(session, ex);
+            throw new NIOException(ex);
         }
         return all;
     }

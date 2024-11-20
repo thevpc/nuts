@@ -5,7 +5,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.NMapListener;
+import net.thevpc.nuts.util.NObservableMapListener;
 
 import java.util.List;
 
@@ -13,12 +13,11 @@ import java.util.List;
 public class DefaultNEvents implements NEvents {
 
     private DefaultNWorkspaceEventModel model;
-    private NSession session;
+    private NWorkspace workspace;
 
-    public DefaultNEvents(NSession session) {
-        this.session = session;
-        NWorkspace w = this.session.getWorkspace();
-        NWorkspaceExt e = (NWorkspaceExt) w;
+    public DefaultNEvents(NWorkspace workspace) {
+        this.workspace = workspace;
+        NWorkspaceExt e = NWorkspaceExt.of(workspace);
         this.model = e.getModel().eventsModel;
     }
 
@@ -33,11 +32,6 @@ public class DefaultNEvents implements NEvents {
 
     public void setModel(DefaultNWorkspaceEventModel model) {
         this.model = model;
-    }
-
-    @Override
-    public NSession getSession() {
-        return session;
     }
 
     @Override
@@ -58,19 +52,19 @@ public class DefaultNEvents implements NEvents {
     }
 
     @Override
-    public NEvents addUserPropertyListener(NMapListener<String, Object> listener) {
+    public NEvents addUserPropertyListener(NObservableMapListener<String, Object> listener) {
         model.addUserPropertyListener(listener);
         return this;
     }
 
     @Override
-    public NEvents removeUserPropertyListener(NMapListener<String, Object> listener) {
+    public NEvents removeUserPropertyListener(NObservableMapListener<String, Object> listener) {
         model.removeUserPropertyListener(listener);
         return this;
     }
 
     @Override
-    public List<NMapListener<String, Object>> getUserPropertyListeners() {
+    public List<NObservableMapListener<String, Object>> getUserPropertyListeners() {
         return model.getUserPropertyListeners();
     }
 

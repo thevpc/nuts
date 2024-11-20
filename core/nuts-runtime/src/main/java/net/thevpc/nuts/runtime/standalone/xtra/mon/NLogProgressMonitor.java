@@ -18,7 +18,7 @@ public class NLogProgressMonitor implements NProgressHandler {
 
     public NLogProgressMonitor(NLog logger, NSession session) {
         if (logger == null) {
-            logger = NLog.of(NLogProgressMonitor.class,session);
+            logger = NLog.of(NLogProgressMonitor.class);
         }
         this.logger = logger;
     }

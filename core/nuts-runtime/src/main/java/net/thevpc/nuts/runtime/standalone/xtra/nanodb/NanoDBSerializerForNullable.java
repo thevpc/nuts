@@ -1,7 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
-import net.thevpc.nuts.NSession;
-
 public class NanoDBSerializerForNullable<T> extends NanoDBNullSerializer<T>{
     private NanoDBSerializer<T> nonNullSer;
 
@@ -11,12 +9,12 @@ public class NanoDBSerializerForNullable<T> extends NanoDBNullSerializer<T>{
     }
 
     @Override
-    public void writeNonNull(T obj, NanoDBOutputStream out, NSession session) {
-        nonNullSer.write(obj,out, session);
+    public void writeNonNull(T obj, NanoDBOutputStream out) {
+        nonNullSer.write(obj,out);
     }
 
     @Override
-    public T readNonNull(NanoDBInputStream in, Class expectedType, NSession session) {
-        return nonNullSer.read(in, expectedType, session);
+    public T readNonNull(NanoDBInputStream in, Class expectedType) {
+        return nonNullSer.read(in, expectedType);
     }
 }

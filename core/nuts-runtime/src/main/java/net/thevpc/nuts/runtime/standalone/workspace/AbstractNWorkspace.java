@@ -25,17 +25,29 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.reserved.NWorkspaceScopes;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.util.NCallable;
+import net.thevpc.nuts.util.NRunnable;
+
+import java.util.Stack;
 
 /**
  * Created by vpc on 1/6/17.
  */
 public abstract class AbstractNWorkspace implements NWorkspace {
-
-
     public AbstractNWorkspace() {
     }
 
+    @Override
+    public void runWith(NRunnable runnable) {
+        NWorkspaceScopes.runWith(this,runnable);
+    }
+
+    @Override
+    public <T> T callWith(NCallable<T> callable) {
+        return NWorkspaceScopes.callWith(this,callable);
+    }
 
     @Override
     public int getSupportLevel(NSupportLevelContext criteria) {
@@ -49,5 +61,8 @@ public abstract class AbstractNWorkspace implements NWorkspace {
                 + '}';
     }
 
+    @Override
+    public void close() {
 
+    }
 }

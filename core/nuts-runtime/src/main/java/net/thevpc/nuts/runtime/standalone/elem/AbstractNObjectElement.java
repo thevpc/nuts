@@ -24,6 +24,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.elem;
 
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementType;
 import net.thevpc.nuts.elem.NObjectElement;
@@ -39,14 +40,14 @@ import java.util.List;
  * @author thevpc
  */
 public abstract class AbstractNObjectElement extends AbstractNNavigatableElement implements NObjectElement {
-    public AbstractNObjectElement(NSession session) {
-        super(NElementType.OBJECT,session);
+    public AbstractNObjectElement(NWorkspace workspace) {
+        super(NElementType.OBJECT,workspace);
     }
 
     @Override
     public List<NElement> resolveAll(String pattern) {
         pattern = NStringUtils.trimToNull(pattern);
-        NElementPathImpl pp = new NElementPathImpl(pattern, session);
+        NElementPathImpl pp = new NElementPathImpl(pattern, workspace);
         NElement[] nElements = pp.resolveReversed(this);
         return new ArrayList<>(Arrays.asList(nElements));
     }

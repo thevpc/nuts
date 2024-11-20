@@ -41,11 +41,10 @@ public interface NInstallStatusFilter extends NFilter {
     /**
      * true if search id is accepted
      *
-     * @param status  search id
-     * @param session session
+     * @param status search id
      * @return true if search id is accepted
      */
-    boolean acceptInstallStatus(NInstallStatus status, NSession session);
+    boolean acceptInstallStatus(NInstallStatus status);
 
     NInstallStatusFilter or(NInstallStatusFilter other);
 
@@ -54,11 +53,6 @@ public interface NInstallStatusFilter extends NFilter {
     NInstallStatusFilter neg();
 
     @Override
-    default NFilter withDesc(NEDesc description) {
-        if(description==null){
-            return this;
-        }
-        return new InstallStatusFilterWithDescription(this,description);
-    }
+    NFilter withDesc(NEDesc description) ;
 
 }

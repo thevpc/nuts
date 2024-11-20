@@ -75,7 +75,7 @@ public class DefaultIfNode implements NExprIfNode {
                 }
             }
         } catch (Exception ex) {
-            return NOptional.ofError(x -> NMsg.ofC("error %s ", ex));
+            return NOptional.ofError(() -> NMsg.ofC("error %s ", ex));
         }
     }
 

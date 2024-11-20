@@ -26,7 +26,6 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 
 /**
  * Exception Thrown when a locked object is invoked.
@@ -38,24 +37,22 @@ public class NLockReleaseException extends NLockException {
     /**
      * Constructs a new ock exception.
      *
-     * @param session      workspace
      * @param lockedObject locked Object
      * @param lockObject   lock Object
      */
-    public NLockReleaseException(NSession session, Object lockedObject, Object lockObject) {
-        this(session, null, lockedObject, lockObject);
+    public NLockReleaseException(Object lockedObject, Object lockObject) {
+        this(null, lockedObject, lockObject);
     }
 
     /**
      * Constructs a new ock exception.
      *
-     * @param session      workspace
      * @param message      message or null
      * @param lockedObject locked Object
      * @param lockObject   lock Object
      */
-    public NLockReleaseException(NSession session, NMsg message, Object lockedObject, Object lockObject) {
-        super(session,
+    public NLockReleaseException(NMsg message, Object lockedObject, Object lockObject) {
+        super(
                 message == null ? NMsg.ofC("unable to release lock for %s", lockedObject)
                         : message, lockedObject, lockObject
         );
@@ -64,14 +61,13 @@ public class NLockReleaseException extends NLockException {
     /**
      * Constructs a new ock exception.
      *
-     * @param session      workspace
      * @param message      message or null
      * @param lockedObject locked Object
      * @param lockObject   lock Object
      * @param cause        cause
      */
-    public NLockReleaseException(NSession session, NMsg message, Object lockedObject, Object lockObject, Throwable cause) {
-        super(session,
+    public NLockReleaseException(NMsg message, Object lockedObject, Object lockObject, Throwable cause) {
+        super(
                 message == null ? NMsg.ofC("unable to release lock for %s", lockedObject)
                         : message, lockObject, cause
         );

@@ -16,8 +16,8 @@ public class NRepositoryFilterNone extends AbstractRepositoryFilter {
 
     private NRepositoryFilter[] all;
 
-    public NRepositoryFilterNone(NSession session, NRepositoryFilter... all) {
-        super(session, NFilterOp.NOT);
+    public NRepositoryFilterNone(NWorkspace workspace, NRepositoryFilter... all) {
+        super(workspace, NFilterOp.NOT);
         List<NRepositoryFilter> valid = new ArrayList<>();
         if (all != null) {
             for (NRepositoryFilter filter : all) {
@@ -44,7 +44,7 @@ public class NRepositoryFilterNone extends AbstractRepositoryFilter {
 
     @Override
     public NRepositoryFilter simplify() {
-        return CoreFilterUtils.simplifyFilterNone(getSession(), NRepositoryFilter.class,this,all);
+        return CoreFilterUtils.simplifyFilterNone( NRepositoryFilter.class,this,all);
     }
 
     @Override

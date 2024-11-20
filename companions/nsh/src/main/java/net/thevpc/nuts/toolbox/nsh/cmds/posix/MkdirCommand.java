@@ -53,9 +53,9 @@ public class MkdirCommand extends NShellBuiltinDefault {
         Options options = context.getOptions();
         NArg a;
         if ((a = cmdLine.nextFlag("--parent", "-p").orNull()) != null) {
-            options.p = a.getBooleanValue().get(session);
+            options.p = a.getBooleanValue().get();
             return true;
-        } else if (cmdLine.peek().get(session).isNonOption()) {
+        } else if (cmdLine.peek().get().isNonOption()) {
             options.files.addAll(Arrays.asList(cmdLine.toStringArray()));
             cmdLine.skipAll();
             return true;

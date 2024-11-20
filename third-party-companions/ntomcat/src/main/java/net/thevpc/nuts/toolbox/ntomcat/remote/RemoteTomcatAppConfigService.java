@@ -38,7 +38,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
         RemoteTomcatConfig cconfig = client.getConfig();
         String localWarPath = this.config.getPath();
         if (!new File(localWarPath).exists()) {
-            throw new NExecutionException(session, NMsg.ofC("missing source war file %s", localWarPath), NExecutionException.ERROR_2);
+            throw new NExecutionException(NMsg.ofC("missing source war file %s", localWarPath), NExecutionException.ERROR_2);
         }
         String remoteTempPath = cconfig.getRemoteTempPath();
         if (NBlankable.isBlank(remoteTempPath)) {
@@ -52,7 +52,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
         if (!server.startsWith("ssh://")) {
             server = "ssh://" + server;
         }
-        NExecCmd.of(session)
+        NExecCmd.of()
                 .addCommand(
                         "nsh",
                         "--bot",
@@ -67,7 +67,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
         if (NBlankable.isBlank(v)) {
             v = "nsh nversion --color=never %file";
         }
-        List<String> cmd = NCmdLine.parseDefault(v).get(session).toStringList();
+        List<String> cmd = NCmdLine.parseDefault(v).get().toStringList();
         boolean fileAdded = false;
         for (int i = 0; i < cmd.size(); i++) {
             if ("%file".equals(cmd.get(i))) {
@@ -78,7 +78,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
         if (!fileAdded) {
             cmd.add(config.getPath());
         }
-        NExecCmd s = NExecCmd.of(session)
+        NExecCmd s = NExecCmd.of()
                 .grabAll()
                 .addCommand(cmd).run();
         if (s.getResultCode() == 0) {
@@ -101,7 +101,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
                     remoteFilePath
             );
         } else {
-            throw new NExecutionException(session, NMsg.ofC("unable to detect file version of %s.\n%s",localWarPath ,
+            throw new NExecutionException(NMsg.ofC("unable to detect file version of %s.\n%s",localWarPath ,
                     s.getGrabbedOutString()), NExecutionException.ERROR_2);
         }
     }
@@ -130,8 +130,8 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
     public RemoteTomcatAppConfigService print(NPrintStream out) {
         Map<String, Object> m = new LinkedHashMap<>();
         m.put("config-name", getName());
-        m.putAll(NElements.of(session).convert(getConfig(), Map.class));
-        NObjectFormat.of(session).setValue(m).print(out);
+        m.putAll(NElements.of().convert(getConfig(), Map.class));
+        NObjectFormat.of().setValue(m).print(out);
         return this;
     }
 
@@ -143,7 +143,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
     }
 
     public NString getBracketsPrefix(String str) {
-        return NTexts.of(session).ofBuilder()
+        return NTexts.of().ofBuilder()
                 .append("[")
                 .append(str, NTextStyle.primary5())
                 .append("]");

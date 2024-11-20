@@ -33,8 +33,8 @@ import net.thevpc.nuts.util.NOptional;
  * @app.category Base
  */
 public interface NVersionFilters extends NTypedFilters<NVersionFilter> {
-    static NVersionFilters of(NSession session) {
-       return NExtensions.of(session).createComponent(NVersionFilters.class).get();
+    static NVersionFilters of() {
+       return NExtensions.of().createComponent(NVersionFilters.class).get();
     }
 
     NOptional<NVersionFilter> byValue(String version);

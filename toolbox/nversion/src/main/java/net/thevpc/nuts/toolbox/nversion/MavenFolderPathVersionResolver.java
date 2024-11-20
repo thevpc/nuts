@@ -45,9 +45,9 @@ public class MavenFolderPathVersionResolver implements PathVersionResolver {
             Properties properties = new Properties();
             Set<VersionDescriptor> all = new HashSet<>();
             try (InputStream inputStream = Files.newInputStream(Paths.get(filePath).resolve("pom.xml"))) {
-                NDescriptor d = NDescriptorParser.of(session)
+                NDescriptor d = NDescriptorParser.of()
                         .setDescriptorStyle(NDescriptorStyle.MAVEN)
-                        .parse(inputStream).get(session);
+                        .parse(inputStream).get();
 
                 putNonNull(properties,"groupId", d.getId().getGroupId());
                 putNonNull(properties,"artifactId", d.getId().getArtifactId());

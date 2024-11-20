@@ -31,34 +31,33 @@ import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.Collection;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public interface NCallableSupport<T> {
 
-    static <T> NCallableSupport<T> resolve(Collection<NCallableSupport<T>> source, Function<NSession, NMsg> emptyMessage) {
+    static <T> NCallableSupport<T> resolve(Collection<NCallableSupport<T>> source, Supplier<NMsg> emptyMessage) {
         if (source == null) {
             return invalid(emptyMessage);
         }
         return resolve(source.stream(), emptyMessage);
     }
 
-    static <T> NCallableSupport<T> resolve(Stream<NCallableSupport<T>> source, Function<NSession, NMsg> emptyMessage) {
+    static <T> NCallableSupport<T> resolve(Stream<NCallableSupport<T>> source, Supplier<NMsg> emptyMessage) {
         if (source == null) {
             return invalid(emptyMessage);
         }
         return resolveSupplier(source.map(x -> () -> x), emptyMessage);
     }
 
-    static <T> NCallableSupport<T> resolveSupplier(Collection<Supplier<NCallableSupport<T>>> source, Function<NSession, NMsg> emptyMessage) {
+    static <T> NCallableSupport<T> resolveSupplier(Collection<Supplier<NCallableSupport<T>>> source, Supplier<NMsg> emptyMessage) {
         if (source == null) {
             return invalid(emptyMessage);
         }
         return resolveSupplier(source.stream(), emptyMessage);
     }
 
-    static <T> NCallableSupport<T> resolveSupplier(Stream<Supplier<NCallableSupport<T>>> source, Function<NSession, NMsg> emptyMessage) {
+    static <T> NCallableSupport<T> resolveSupplier(Stream<Supplier<NCallableSupport<T>>> source, Supplier<NMsg> emptyMessage) {
         Object[] track = new Object[2];
         if (source != null) {
             source.forEach(i -> {
@@ -91,7 +90,7 @@ public interface NCallableSupport<T> {
         return of(supportLevel, value, null);
     }
 
-    static <T> NCallableSupport<T> of(int supportLevel, T value, Function<NSession, NMsg> emptyMessage) {
+    static <T> NCallableSupport<T> of(int supportLevel, T value, Supplier<NMsg> emptyMessage) {
         return supportLevel <= 0 ? invalid(emptyMessage) : new DefaultNCallableSupport<>(() -> value, supportLevel, emptyMessage);
     }
 
@@ -99,14 +98,14 @@ public interface NCallableSupport<T> {
         return of(supportLevel, supplier, null);
     }
 
-    static <T> NCallableSupport<T> of(int supportLevel, Supplier<T> supplier, Function<NSession, NMsg> emptyMessage) {
+    static <T> NCallableSupport<T> of(int supportLevel, Supplier<T> supplier, Supplier<NMsg> emptyMessage) {
         return (supportLevel <= 0 || supplier == null) ? invalid(emptyMessage)
                 : new DefaultNCallableSupport<>(supplier, supportLevel, emptyMessage)
                 ;
     }
 
     @SuppressWarnings("unchecked")
-    static <T> NCallableSupport<T> invalid(Function<NSession, NMsg> emptyMessage) {
+    static <T> NCallableSupport<T> invalid(Supplier<NMsg> emptyMessage) {
         return new DefaultNCallableSupport<>(null, NConstants.Support.NO_SUPPORT, emptyMessage);
     }
 
@@ -114,7 +113,7 @@ public interface NCallableSupport<T> {
         return s != null && s.isValid();
     }
 
-    T call(NSession session);
+    T call();
 
     default boolean isValid() {
         return getSupportLevel() > 0;

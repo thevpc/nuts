@@ -18,16 +18,16 @@ public class NIdLocationUtils {
         for (NIdLocation location : locations) {
             if (CoreFilterUtils.acceptClassifier(location, id.getClassifier())) {
                 try {
-                    NPath locationPath = NPath.of(location.getUrl(), session);
+                    NPath locationPath = NPath.of(location.getUrl());
                     if(locationPath.isLocal()){
                         return locationPath;
                     }else{
-                        NPath localPath = NPath.ofTempRepositoryFile(new File(repository.getIdFilename(id, session)).getName(), repository, session);
-                        NCp.of(session).from(locationPath).to(localPath).addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE).run();
+                        NPath localPath = NPath.ofTempRepositoryFile(new File(repository.getIdFilename(id)).getName(), repository);
+                        NCp.of().from(locationPath).to(localPath).addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE).run();
                         return localPath;
                     }
                 } catch (Exception ex) {
-                    NLogOp.of(NIdLocationUtils.class, session)
+                    NLogOp.of(NIdLocationUtils.class)
                             .level(Level.SEVERE).error(ex)
                             .log(NMsg.ofC("unable to download location for id %s in location %s : %s", id, location.getUrl(), ex));
                 }

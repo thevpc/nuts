@@ -41,10 +41,9 @@ public interface NDependencyFilter extends NFilter {
      *
      * @param from       parent (dependent) id
      * @param dependency dependency id
-     * @param session    session
      * @return true if the {@code dependency} is accepted
      */
-    boolean acceptDependency(NId from, NDependency dependency, NSession session);
+    boolean acceptDependency(NId from, NDependency dependency);
 
     NDependencyFilter or(NDependencyFilter other);
 

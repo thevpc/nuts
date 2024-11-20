@@ -30,11 +30,11 @@ public class ReposRunner extends AbstractRunner {
         NArg c = cmdLine.peek().orNull();
         switch (c.key()) {
             case "build-repo-nuts-preview": {
-                cmdLine.withNextFlag((v, a, s) -> repoPreview = v);
+                cmdLine.withNextFlag((v, a) -> repoPreview = v);
                 return true;
             }
             case "build-repo-nuts-public": {
-                cmdLine.withNextFlag((v, a, s) -> repoPublic = v);
+                cmdLine.withNextFlag((v, a) -> repoPublic = v);
                 return true;
             }
         }
@@ -54,7 +54,7 @@ public class ReposRunner extends AbstractRunner {
     public void run() {
         if (repoPreview) {
             echo("**** $v (nuts settings update stats)...", NMaps.of("v", NMsg.ofStyled("build-nuts-preview", NTextStyle.keyword())));
-            NExecCmd.of(session)
+            NExecCmd.of()
                     .addCommand("settings", "update", "stats")
                     .addCommand(context().root.resolve("../nuts-preview"))
                     .failFast()
@@ -62,7 +62,7 @@ public class ReposRunner extends AbstractRunner {
         }
         if (repoPublic) {
             echo("**** $v (nuts settings update stats)...", NMaps.of("v", NMsg.ofStyled("build-nuts-public", NTextStyle.keyword())));
-            NExecCmd.of(session)
+            NExecCmd.of()
                     .addCommand("settings", "update", "stats")
                     .addCommand(context().root.resolve("../nuts-public"))
                     .failFast()

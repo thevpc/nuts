@@ -1,6 +1,5 @@
 package net.thevpc.nuts.lib.common.iter;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.util.NIterator;
 
@@ -18,11 +17,11 @@ public class SupplierIterator<T> extends NIteratorBase<T> {
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return NElements.of(session).ofObject()
+    public NElement describe() {
+        return NElements.of().ofObject()
                 .set("type","Supplier")
                 .set("template",
-                        NEDesc.describeResolveOr(from, session,()-> NElements.of(session).ofObject().set("type","compiled").addAll(name).build())
+                        NEDesc.describeResolveOr(from, ()-> NElements.of().ofObject().set("type","compiled").addAll(name).build())
                 )
                 .build();
     }

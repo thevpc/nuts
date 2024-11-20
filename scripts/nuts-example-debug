@@ -1,0 +1,32 @@
+#!/bin/bash
+export TWS="/home/vpc/xprojects/nuts/nuts-community/test/nuts-runtime-test/runtime/test/Test23_PerfTest_testPerfLocalNoSystem"
+export NUTS_JAR="${TWS}/lib/id/net/thevpc/nuts/nuts-api/0.8.5/nuts-api-0.8.5.jar"
+export NUTS_FILE="${TWS}/lib/id/net/thevpc/nuts/toolbox/nsh/0.8.5.0/nsh-0.8.5.0.jar"
+export NUTS_JAVA="/usr/lib64/jvm/java-1.8.0-openjdk-1.8.0/jre/bin/java"
+export NUTS_CMD="/usr/lib64/jvm/java-1.8.0-openjdk-1.8.0/jre/bin/java -jar ${TWS}/lib/id/net/thevpc/nuts/nuts-api/0.8.5/nuts-api-0.8.5.jar"
+export NUTS_ARTIFACT="net.thevpc.nuts.toolbox:nsh#0.8.5.0"
+export NUTS_BOOT_ARGS="-w=${TWS} --color=filtered --log-finest -r=-maven-central,-system -P=%n -k -K -y --plain -L=en_US --!init-launchers --!init-platforms --!init-java --!init-scripts --desktop-launcher=never --menu-launcher=never --user-launcher=never --isolation-level=system net.thevpc.nuts.toolbox:nsh#0.8.5.0"
+export NUTS_INSTALLER="${TWS}/lib/id/net/thevpc/nuts/toolbox/nsh/0.8.5.0/nsh-0.8.5.0.jar"
+export NUTS_WORKSPACE="${TWS}"
+export NUTS_STORE="${TWS}/bin/id/net/thevpc/nuts/toolbox/nsh/0.8.5.0"
+
+NUTS_DEBUG_ARG="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
+
+
+cd /home/vpc/xprojects/nuts/nuts-community/test/nuts-runtime-test
+echo "/usr/lib64/jvm/java-1.8.0-openjdk-1.8.0/jre/bin/java" \
+ $NUTS_DEBUG_ARG \
+ "-Dnuts.boot.args=-w=${TWS} --color=filtered --log-finest -r=-maven-central,-system -P=%n -k -K -y --plain -L=en_US --!init-launchers --!init-platforms --!init-java --!init-scripts --desktop-launcher=never --menu-launcher=never --user-launcher=never --isolation-level=system net.thevpc.nuts.toolbox:nsh#0.8.5.0" \
+ "-classpath" \
+ "${TWS}/lib/id/net/thevpc/nuts/toolbox/nsh/0.8.5.0/nsh-0.8.5.0.jar:${TWS}/lib/id/net/thevpc/nuts/nuts-api/0.8.5/nuts-api-0.8.5.jar:${TWS}/lib/id/net/thevpc/nuts/lib/nlib-common-collections/0.8.5.0/nlib-common-collections-0.8.5.0.jar:${TWS}/lib/id/net/thevpc/nuts/ext/next-ssh/0.8.5.0/next-ssh-0.8.5.0.jar:${TWS}/lib/id/net/thevpc/nuts/lib/nlib-common-strings/0.8.5.0/nlib-common-strings-0.8.5.0.jar:${TWS}/lib/id/net/thevpc/nuts/lib/nlib-common-utils/0.8.5.0/nlib-common-utils-0.8.5.0.jar:${TWS}/lib/id/com/jcraft/jsch/0.1.55/jsch-0.1.55.jar" \
+ "net.thevpc.nuts.toolbox.nsh.Nsh" \
+ "--nuts-exec-mode=install"
+
+
+"/usr/lib64/jvm/java-1.8.0-openjdk-1.8.0/jre/bin/java" \
+ $NUTS_DEBUG_ARG \
+ "-Dnuts.boot.args=-w=${TWS} --color=filtered --log-finest -r=-maven-central,-system -P=%n -k -K -y --plain -L=en_US --!init-launchers --!init-platforms --!init-java --!init-scripts --desktop-launcher=never --menu-launcher=never --user-launcher=never --isolation-level=system net.thevpc.nuts.toolbox:nsh#0.8.5.0" \
+ "-classpath" \
+ "${TWS}/lib/id/net/thevpc/nuts/toolbox/nsh/0.8.5.0/nsh-0.8.5.0.jar:${TWS}/lib/id/net/thevpc/nuts/nuts-api/0.8.5/nuts-api-0.8.5.jar:${TWS}/lib/id/net/thevpc/nuts/lib/nlib-common-collections/0.8.5.0/nlib-common-collections-0.8.5.0.jar:${TWS}/lib/id/net/thevpc/nuts/ext/next-ssh/0.8.5.0/next-ssh-0.8.5.0.jar:${TWS}/lib/id/net/thevpc/nuts/lib/nlib-common-strings/0.8.5.0/nlib-common-strings-0.8.5.0.jar:${TWS}/lib/id/net/thevpc/nuts/lib/nlib-common-utils/0.8.5.0/nlib-common-utils-0.8.5.0.jar:${TWS}/lib/id/com/jcraft/jsch/0.1.55/jsch-0.1.55.jar" \
+ "net.thevpc.nuts.toolbox.nsh.Nsh" \
+ "--nuts-exec-mode=install"

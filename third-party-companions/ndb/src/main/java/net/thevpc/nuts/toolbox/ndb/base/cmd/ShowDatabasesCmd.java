@@ -2,7 +2,6 @@ package net.thevpc.nuts.toolbox.ndb.base.cmd;
 
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;
@@ -20,19 +19,19 @@ public class ShowDatabasesCmd<C extends NdbConfig> extends NdbCmd<C> {
     }
 
 
-    public void run(NSession session, NCmdLine cmdLine) {
+    public void run(NCmdLine cmdLine) {
         NRef<AtName> name = NRef.ofNull(AtName.class);
         C otherOptions = createConfigInstance();
         ExtendedQuery eq = new ExtendedQuery(getName());
         while (cmdLine.hasNext()) {
             if (cmdLine.isNextOption()) {
-                switch (cmdLine.peek().get(session).key()) {
+                switch (cmdLine.peek().get().key()) {
                     case "--config": {
-                        readConfigNameOption(cmdLine, session, name);
+                        readConfigNameOption(cmdLine, name);
                         break;
                     }
                     case "--long": {
-                        cmdLine.withNextFlag((v, a, s)-> eq.setLongMode(v));
+                        cmdLine.withNextFlag((v, a)-> eq.setLongMode(v));
                         break;
                     }
                     default: {
@@ -46,11 +45,11 @@ public class ShowDatabasesCmd<C extends NdbConfig> extends NdbCmd<C> {
 
         C options = loadFromName(name, otherOptions);
         revalidateOptions(options);
-        runShowDatabases(eq, options, session);
+        runShowDatabases(eq, options);
     }
 
-    protected void runShowDatabases(ExtendedQuery eq, C options, NSession session) {
-        throw new NIllegalArgumentException(session, NMsg.ofPlain("invalid"));
+    protected void runShowDatabases(ExtendedQuery eq, C options) {
+        throw new NIllegalArgumentException(NMsg.ofPlain("invalid"));
     }
 
 

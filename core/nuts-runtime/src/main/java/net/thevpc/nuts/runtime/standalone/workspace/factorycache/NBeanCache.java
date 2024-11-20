@@ -39,7 +39,7 @@ public class NBeanCache {
         return ctrl;
     }
 
-    public <T> CachedConstructor<T> findConstructor(Class<T> t, Class[] argTypes, NSession session) {
+    public <T> CachedConstructor<T> findConstructor(Class<T> t, Class[] argTypes) {
         TypeAndArgTypes tt = new TypeAndArgTypes(t, argTypes);
         synchronized (cachedConstructors) {
             CachedConstructor<T> o = cachedConstructors.get(tt);
@@ -49,13 +49,13 @@ public class NBeanCache {
             if (cachedConstructors.containsKey(tt)) {
                 return null;
             }
-            CachedConstructor<T> c = createConstructor(tt, session);
+            CachedConstructor<T> c = createConstructor(tt);
             cachedConstructors.put(tt, c);
             return c;
         }
     }
 
-    public <T> CachedConstructor<T> createConstructor(TypeAndArgTypes tt, NSession session) {
+    public <T> CachedConstructor<T> createConstructor(TypeAndArgTypes tt) {
         Class<?>[] baseArgTypes = tt.getArgTypes();
         Constructor<T> c;
         Class<T> typeToInstantiate = tt.getType();

@@ -20,10 +20,10 @@ public class BaseConfRunner extends AbstractRunner {
     @Override
     public void configureAfterOptions() {
         if (NBlankable.isBlank(context().root)) {
-            context().root = NPath.ofUserDirectory(session()).normalize();
+            context().root = NPath.ofUserDirectory().normalize();
         }
         if (!isValidRoot(context().root)) {
-            throw new NIllegalArgumentException(session(), NMsg.ofC("invalid nuts repository root %s", context().root));
+            throw new NIllegalArgumentException(NMsg.ofC("invalid nuts repository root %s", context().root));
         }
     }
 
@@ -31,7 +31,7 @@ public class BaseConfRunner extends AbstractRunner {
         if (!NUTS_ROOT_BASE.resolve("pom.xml").isRegularFile()) {
             return false;
         }
-        NId id = NDescriptorParser.of(session())
+        NId id = NDescriptorParser.of()
                 .setDescriptorStyle(NDescriptorStyle.MAVEN)
                 .parse(NUTS_ROOT_BASE.resolve("pom.xml")).get().getId();
         if (!id.getShortName().endsWith("net.thevpc.nuts.builders:nuts-builder")) {
@@ -45,30 +45,30 @@ public class BaseConfRunner extends AbstractRunner {
         NArg c = cmdLine.peek().orNull();
         switch (c.key()) {
             case "--root": {
-                cmdLine.withNextEntry((v, a, s) -> context().root = NPath.of(v, session()).toAbsolute().normalize());
+                cmdLine.withNextEntry((v, a) -> context().root = NPath.of(v).toAbsolute().normalize());
                 return true;
             }
             case "--conf": {
-                cmdLine.withNextEntry((v, a, s) -> context().loadConfig(NPath.of(v, session()), cmdLine));
+                cmdLine.withNextEntry((v, a) -> context().loadConfig(NPath.of(v), cmdLine));
                 return true;
             }
             case "--debug": {
-                cmdLine.withNextFlag((v, a, s)
+                cmdLine.withNextFlag((v, a)
                         -> context().NUTS_DEBUG_ARG = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
                 );
                 return true;
             }
             case "--trace": {
-                cmdLine.withNextFlag((v, a, s) -> context().trace = v);
+                cmdLine.withNextFlag((v, a) -> context().trace = v);
                 return true;
             }
             case "--verbose": {
-                cmdLine.withNextFlag((v, a, s) -> context().verbose = v);
+                cmdLine.withNextFlag((v, a) -> context().verbose = v);
                 return true;
             }
             // actions
             case "publish": {
-                cmdLine.withNextFlag((v, a, s) -> context().publish = v);
+                cmdLine.withNextFlag((v, a) -> context().publish = v);
                 return true;
             }
         }
@@ -81,7 +81,7 @@ public class BaseConfRunner extends AbstractRunner {
 
     @Override
     public void configureBeforeOptions(NCmdLine cmdLine) {
-        NPath conf = NPath.of("nuts-release.conf", session());
+        NPath conf = NPath.of("nuts-release.conf");
         if (conf.exists()) {
             context().loadConfig(conf, cmdLine);
         }

@@ -56,7 +56,7 @@ public class AutocompleteCommand extends NShellBuiltinDefault {
         NSession session = context.getSession();
         if (!cmdLine.isNextOption()) {
             while (cmdLine.hasNext()) {
-                String s = cmdLine.next().flatMap(NLiteral::asString).get(session);
+                String s = cmdLine.next().flatMap(NLiteral::asString).get();
                 if (options.cmd == null) {
                     options.cmd = s;
                 } else {
@@ -83,7 +83,7 @@ public class AutocompleteCommand extends NShellBuiltinDefault {
         Options options = context.getOptions();
         NSession session = context.getSession();
         if (options.cmd == null) {
-            throw new NExecutionException(session, NMsg.ofPlain("missing NShellCommandNode"), NExecutionException.ERROR_1);
+            throw new NExecutionException(NMsg.ofPlain("missing NShellCommandNode"), NExecutionException.ERROR_1);
         }
         if (options.index < 0) {
             options.index = options.items.size();
@@ -104,7 +104,7 @@ public class AutocompleteCommand extends NShellBuiltinDefault {
         }
         switch (session.getOutputFormat().orDefault()) {
             case PLAIN: {
-                NTexts text = NTexts.of(session);
+                NTexts text = NTexts.of();
                 for (String o : new TreeSet<String>((Set) p.keySet())) {
                     if (o.startsWith("-")) {
                         // option

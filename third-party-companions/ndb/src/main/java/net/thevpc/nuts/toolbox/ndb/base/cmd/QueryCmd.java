@@ -19,7 +19,7 @@ public class QueryCmd<C extends NdbConfig> extends NdbCmd<C> {
         this.names.addAll(Arrays.asList(names));
     }
 
-    public void run(NSession session, NCmdLine cmdLine) {
+    public void run(NCmdLine cmdLine) {
         NRef<AtName> name = NRef.ofNull(AtName.class);
         ExtendedQuery eq = new ExtendedQuery(getName());
         C otherOptions = createConfigInstance();
@@ -27,40 +27,40 @@ public class QueryCmd<C extends NdbConfig> extends NdbCmd<C> {
         while (cmdLine.hasNext()) {
             switch (status) {
                 case "": {
-                    switch (cmdLine.peek().get(session).key()) {
+                    switch (cmdLine.peek().get().key()) {
                         case "--config": {
-                            readConfigNameOption(cmdLine, session, name);
+                            readConfigNameOption(cmdLine, name);
                             break;
                         }
                         case "--command": {
-                            cmdLine.withNextEntry((v, a, s) -> eq.setCommand(v));
+                            cmdLine.withNextEntry((v, a) -> eq.setCommand(v));
                             break;
                         }
                         case "--entity":
                         case "--table":
                         case "--collection": {
-                            cmdLine.withNextEntry((v, a, s) -> eq.setTable(v));
+                            cmdLine.withNextEntry((v, a) -> eq.setTable(v));
                             break;
                         }
                         case "--where": {
                             status = "--where";
-                            cmdLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a) -> {
                             });
                             break;
                         }
                         case "--one": {
-                            cmdLine.withNextFlag((v, a, s) -> eq.setOne(v));
+                            cmdLine.withNextFlag((v, a) -> eq.setOne(v));
                             break;
                         }
                         case "--set": {
                             status = "--set";
-                            cmdLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a) -> {
                             });
                             break;
                         }
                         case "--sort": {
                             status = "--sort";
-                            cmdLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a) -> {
                             });
                             break;
                         }
@@ -71,16 +71,16 @@ public class QueryCmd<C extends NdbConfig> extends NdbCmd<C> {
                     break;
                 }
                 case "--where": {
-                    switch (cmdLine.peek().get(session).key()) {
+                    switch (cmdLine.peek().get().key()) {
                         case "--set": {
                             status = "--set";
-                            cmdLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a) -> {
                             });
                             break;
                         }
                         case "--sort": {
                             status = "--sort";
-                            cmdLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a) -> {
                             });
                             break;
                         }
@@ -91,16 +91,16 @@ public class QueryCmd<C extends NdbConfig> extends NdbCmd<C> {
                     break;
                 }
                 case "--set": {
-                    switch (cmdLine.peek().get(session).key()) {
+                    switch (cmdLine.peek().get().key()) {
                         case "--where": {
                             status = "--where";
-                            cmdLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a) -> {
                             });
                             break;
                         }
                         case "--sort": {
                             status = "--sort";
-                            cmdLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a) -> {
                             });
                             break;
                         }
@@ -111,16 +111,16 @@ public class QueryCmd<C extends NdbConfig> extends NdbCmd<C> {
                     break;
                 }
                 case "--sort": {
-                    switch (cmdLine.peek().get(session).key()) {
+                    switch (cmdLine.peek().get().key()) {
                         case "--where": {
                             status = "--where";
-                            cmdLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a) -> {
                             });
                             break;
                         }
                         case "--set": {
                             status = "--set";
-                            cmdLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a) -> {
                             });
                             break;
                         }
@@ -184,17 +184,17 @@ public class QueryCmd<C extends NdbConfig> extends NdbCmd<C> {
 //                break;
 //            }
             case "query": {
-                runRawQuery(eq, options, session);
+                runRawQuery(eq, options);
                 break;
             }
             default: {
-                throw new NIllegalArgumentException(session, NMsg.ofC("unsupported %s", eq.getCommand()));
+                throw new NIllegalArgumentException(NMsg.ofC("unsupported %s", eq.getCommand()));
             }
         }
     }
 
-    protected void runRawQuery(ExtendedQuery eq, C options, NSession session) {
-        throw new NIllegalArgumentException(session, NMsg.ofPlain("invalid"));
+    protected void runRawQuery(ExtendedQuery eq, C options) {
+        throw new NIllegalArgumentException(NMsg.ofPlain("invalid"));
     }
 
 }

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.ndb.base.cmd;
 
-import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
@@ -20,8 +20,9 @@ public class UpdateConfigCmd<C extends NdbConfig> extends NdbCmd<C> {
     }
 
     @Override
-    public void run(NSession session, NCmdLine cmdLine) {
+    public void run(NCmdLine cmdLine) {
         C options = createConfigInstance();
+        NSession session = NSession.of().get();
         while (cmdLine.hasNext()) {
             if (fillOption(cmdLine, options)) {
                 //
@@ -40,7 +41,7 @@ public class UpdateConfigCmd<C extends NdbConfig> extends NdbCmd<C> {
         if (!file.exists()) {
             throw new RuntimeException("not found");
         }
-        NElements json = NElements.of(cmdLine.getSession()).setNtf(false).json();
+        NElements json = NElements.of().setNtf(false).json();
         C old = json.parse(file, getConfigClass());
         String oldName = old.getName();
         old.setNonNull(options);

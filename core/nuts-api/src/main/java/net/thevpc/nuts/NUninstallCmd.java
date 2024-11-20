@@ -38,8 +38,8 @@ import java.util.List;
  * @since 0.5.4
  */
 public interface NUninstallCmd extends NWorkspaceCmd {
-    static NUninstallCmd of(NSession session) {
-        return NExtensions.of(session).createComponent(NUninstallCmd.class).get();
+    static NUninstallCmd of() {
+        return NExtensions.of().createComponent(NUninstallCmd.class).get();
     }
 
     NUninstallCmd addId(NId id);
@@ -72,22 +72,6 @@ public interface NUninstallCmd extends NWorkspaceCmd {
 
     NUninstallCmd setErase(boolean erase);
 
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
-    NUninstallCmd setSession(NSession session);
-
-    /**
-     * copy session
-     *
-     * @return {@code this} instance
-     */
-    @Override
-    NUninstallCmd copySession();
 
     /**
      * configure the current command with the given arguments. This is an

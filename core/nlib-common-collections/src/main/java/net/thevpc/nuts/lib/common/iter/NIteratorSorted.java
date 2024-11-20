@@ -1,6 +1,5 @@
 package net.thevpc.nuts.lib.common.iter;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
@@ -25,12 +24,12 @@ class NIteratorSorted<T> extends NIteratorBase<T> {
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return NEDesc.describeResolveOrDestructAsObject(base, session)
+    public NElement describe() {
+        return NEDesc.describeResolveOrDestructAsObject(base)
                 .builder()
                 .set("sort",
-                        NElements.of(session).ofObject()
-                                .set("comparator", NEDesc.describeResolveOrDestruct(c, session))
+                        NElements.of().ofObject()
+                                .set("comparator", NEDesc.describeResolveOrDestruct(c))
                                 .set("distinct", removeDuplicates)
                                 .build()
                         )

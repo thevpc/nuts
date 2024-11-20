@@ -52,7 +52,7 @@ public class NComponentController {
                 NWorkspaceLocation workspaceLocation = iterator.next();
                 NSession session = Nuts.openWorkspace("--workspace", workspaceLocation.getLocation());
                 List<Map<String, String>> rows = this.dataService.
-                        getAllData(NIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()));
+                        getAllData(NIndexerUtils.getCacheDir(subscriber.cacheFolderName()));
                 List<Map<String, Object>> resData = cleanNutsIdMap(session, rows);
                 return ResponseEntity.ok(resData);
             }
@@ -94,9 +94,9 @@ public class NComponentController {
                         .build();
                 List<Map<String, String>> result;
                 if (all) {
-                    result = this.dataService.getAllDependencies(session, NIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()), id);
+                    result = this.dataService.getAllDependencies(session, NIndexerUtils.getCacheDir(subscriber.cacheFolderName()), id);
                 } else {
-                    result = this.dataService.getDependencies(session, NIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()), id);
+                    result = this.dataService.getDependencies(session, NIndexerUtils.getCacheDir(subscriber.cacheFolderName()), id);
                 }
                 return ResponseEntity.ok(result);
             }
@@ -137,7 +137,7 @@ public class NComponentController {
                         .setFace(face)
 //                        .setAlternative(alternative)
                         .build();
-                List<Map<String, String>> rows = this.dataService.getAllVersions(session, NIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()), id);
+                List<Map<String, String>> rows = this.dataService.getAllVersions(session, NIndexerUtils.getCacheDir(subscriber.cacheFolderName()), id);
                 List<Map<String, Object>> resData = cleanNutsIdMap(session, rows);
                 return ResponseEntity.ok(resData);
             }
@@ -184,7 +184,7 @@ public class NComponentController {
                                 .setFace(face)
 //                                .setAlternative(alternative)
                                 .build());
-                this.dataService.deleteData(NIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()), data);
+                this.dataService.deleteData(NIndexerUtils.getCacheDir(subscriber.cacheFolderName()), data);
                 return ResponseEntity.ok(true);
             }
         }
@@ -229,11 +229,11 @@ public class NComponentController {
 //                        .setAlternative(alternative)
                         .build();
                 Map<String, String> data = NIndexerUtils.nutsIdToMap(id);
-                List<Map<String, String>> list = this.dataService.searchData(NIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()), data, null);
+                List<Map<String, String>> list = this.dataService.searchData(NIndexerUtils.getCacheDir(subscriber.cacheFolderName()), data, null);
                 if (list.isEmpty()) {
-                    Iterator<NDefinition> it = NSearchCmd.of(session)
+                    Iterator<NDefinition> it = NSearchCmd.of()
                             .setRepositoryFilter(
-                                    NRepositories.of(session).filter().byUuid(subscriber.getUuid())
+                                    NRepositories.of().filter().byUuid(subscriber.getUuid())
                             )
                             .addId(id)
                             .setFailFast(false)
@@ -242,8 +242,8 @@ public class NComponentController {
                             .getResultDefinitions().iterator();
                     if (it.hasNext()) {
                         NDefinition definition = it.next();
-                        List<NDependency> directDependencies = definition.getEffectiveDescriptor().get(session).getDependencies();
-                        data.put("dependencies", NElements.of(session).json()
+                        List<NDependency> directDependencies = definition.getEffectiveDescriptor().get().getDependencies();
+                        data.put("dependencies", NElements.of().json()
                                 .setValue(directDependencies.stream().map(Object::toString)
                                         .collect(Collectors.toList()))
                                 .setNtf(false)
@@ -251,7 +251,7 @@ public class NComponentController {
                                 .toString()
                         );
 
-                        this.dataService.indexData(NIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()), data);
+                        this.dataService.indexData(NIndexerUtils.getCacheDir(subscriber.cacheFolderName()), data);
                     } else {
                         ResponseEntity.ok(false);
                     }
@@ -268,18 +268,18 @@ public class NComponentController {
         for (Map<String, String> row : rows) {
             Map<String, Object> d = new HashMap<>(row);
             if (d.containsKey("dependencies")) {
-                String[] array = NElements.of(session).json().parse(new StringReader(row.get("dependencies")), String[].class);
+                String[] array = NElements.of().json().parse(new StringReader(row.get("dependencies")), String[].class);
                 List<Map<String, String>> dependencies = new ArrayList<>();
                 for (String s : array) {
-                    dependencies.add(NIndexerUtils.nutsIdToMap(NId.of(s).get(session)));
+                    dependencies.add(NIndexerUtils.nutsIdToMap(NId.of(s).get()));
                 }
                 d.put("dependencies", dependencies);
             }
             if (d.containsKey("allDependencies")) {
-                String[] array = NElements.of(session).json().parse(new StringReader(row.get("allDependencies")), String[].class);
+                String[] array = NElements.of().json().parse(new StringReader(row.get("allDependencies")), String[].class);
                 List<Map<String, String>> allDependencies = new ArrayList<>();
                 for (String s : array) {
-                    allDependencies.add(NIndexerUtils.nutsIdToMap(NId.of(s).get(session)));
+                    allDependencies.add(NIndexerUtils.nutsIdToMap(NId.of(s).get()));
                 }
                 d.put("allDependencies", allDependencies);
             }

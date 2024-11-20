@@ -12,7 +12,7 @@ public class ExamplesOfExec {
 
     public void executeSomeCommand(NSession session) {
         session.out().println("Example of ## Exec ##");
-        int result = NExecCmd.of(session)
+        int result = NExecCmd.of()
                 .addCommand("ls", "-l")
                 .system()
                 .run()
@@ -22,7 +22,7 @@ public class ExamplesOfExec {
 
     public void executeSomeCommandRedirect(NSession session) {
         session.out().println("Example of ## Exec with String Grab ##");
-        String result = NExecCmd.of(session)
+        String result = NExecCmd.of()
                 .addCommand("ls", "-l")
                 .system()
                 .run()
@@ -31,8 +31,7 @@ public class ExamplesOfExec {
     }
 
     public void executeSshCommand(NSession session) {
-        String result = NExecCmd.of(session.copy()
-                        .setBot(true).json())
+        String result = NExecCmd.of()
                 .setTarget("ssh://remoteUserName:remoteUserPassword@192.168.1.98")
                 .addCommand("hostname", "-I")
                 .system()
@@ -44,8 +43,7 @@ public class ExamplesOfExec {
 
     public void executeSshSudoCommand(NSession session) {
         session.out().println("Example of ## Exec ssh command ##");
-        String result = NExecCmd.of(session.copy()
-                        .setBot(true).json())
+        String result = NExecCmd.of()
                 .setTarget("ssh://remoteUserName:remoteUserPassword@192.168.1.98")
                 .addCommand("hostname", "-I")
                 .addExecutorOptions("--!sudo-prompt")

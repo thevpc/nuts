@@ -12,10 +12,11 @@ public abstract class AbstractNFetchCmd extends DefaultNQueryBaseOptions<NFetchC
     private NId id;
 //    protected Boolean installedOrNot;
 
-    public AbstractNFetchCmd(NSession session) {
-        super(session, "fetch");
+    public AbstractNFetchCmd(NWorkspace workspace) {
+        super(workspace, "fetch");
         failFast();
     }
+
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
@@ -24,23 +25,22 @@ public abstract class AbstractNFetchCmd extends DefaultNQueryBaseOptions<NFetchC
 
     @Override
     public NFetchCmd setId(String id) {
-        checkSession();
-        NId nid = NId.of(id).get(session);
+        NSession session=getWorkspace().currentSession();
+        NId nid = NId.of(id).get();
         return setId(nid);
     }
 
     @Override
     public NFetchCmd setId(NId id) {
+        NSession session=getWorkspace().currentSession();
         if (id == null) {
-            checkSession();
-            throw new NParseException(session, NMsg.ofNtf("invalid Id format : null"));
+            throw new NParseException(NMsg.ofNtf("invalid Id format : null"));
         }
         if (
                 id.getVersion().isBlank()
                         || !id.getVersion().isSingleValue()
         ) {
-            checkSession();
-            throw new NParseException(session, NMsg.ofC("invalid Id format : %s", id));
+            throw new NParseException(NMsg.ofC("invalid Id format : %s", id));
         }
         this.id = id;
         return this;
@@ -69,12 +69,13 @@ public abstract class AbstractNFetchCmd extends DefaultNQueryBaseOptions<NFetchC
             return false;
         }
         boolean enabled = a.isActive();
+        NSession session=getWorkspace().currentSession();
         switch (a.key()) {
             case "--not-installed": {
                 cmdLine.skip();
                 if (enabled) {
                     setRepositoryFilter(
-                            NRepositoryFilters.of(getSession()).installedRepo().neg()
+                            NRepositoryFilters.of().installedRepo().neg()
                                     .and(this.getRepositoryFilter())
                     );
                 }
@@ -85,7 +86,7 @@ public abstract class AbstractNFetchCmd extends DefaultNQueryBaseOptions<NFetchC
                 cmdLine.skip();
                 if (enabled) {
                     setRepositoryFilter(
-                            NRepositoryFilters.of(session).installedRepo()
+                            NRepositoryFilters.of().installedRepo()
                                     .and(this.getRepositoryFilter())
                     );
                 }
@@ -113,7 +114,6 @@ public abstract class AbstractNFetchCmd extends DefaultNQueryBaseOptions<NFetchC
                 + ", repos=" + getRepositoryFilter()
                 + ", displayOptions=" + getDisplayOptions()
                 + ", id=" + getId()
-                + ", session=" + getSession()
                 + '}';
     }
 }

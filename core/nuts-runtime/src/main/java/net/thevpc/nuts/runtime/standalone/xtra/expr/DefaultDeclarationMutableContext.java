@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -20,9 +21,9 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
 
     private NExprDeclarations parent;
 
-    public DefaultDeclarationMutableContext(NExprDeclarations parent) {
+    public DefaultDeclarationMutableContext(NWorkspace workspace,NExprDeclarations parent) {
+        super(workspace);
         this.parent = parent;
-        setSession(parent.getSession());
     }
 
     @Override
@@ -35,7 +36,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
         } else if (parent != null) {
             return parent.getVar(name);
         }
-        return NOptional.ofEmpty(s -> NMsg.ofC("var not found %s", name));
+        return NOptional.ofEmpty(() -> NMsg.ofC("var not found %s", name));
     }
 
     @Override
@@ -48,7 +49,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
         } else if (parent != null) {
             return parent.getFunction(name, args);
         }
-        return NOptional.ofEmpty(s -> NMsg.ofC("function not found %s", name));
+        return NOptional.ofEmpty(() -> NMsg.ofC("function not found %s", name));
     }
 
     @Override
@@ -61,7 +62,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
         } else if (parent != null) {
             return parent.getConstruct(name, args);
         }
-        return NOptional.ofEmpty(s -> NMsg.ofC("construct not found %s", name));
+        return NOptional.ofEmpty(() -> NMsg.ofC("construct not found %s", name));
     }
 
     @Override
@@ -70,7 +71,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
             if (varImpl == null) {
                 userFunctions.put(name, REMOVED);
             } else {
-                DefaultNExprVarDeclaration r = new DefaultNExprVarDeclaration(name, varImpl);
+                DefaultNExprVarDeclaration r = new DefaultNExprVarDeclaration(workspace,name, varImpl);
                 userVars.put(name, new DecInfo<>(r));
                 return r;
             }
@@ -383,7 +384,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
         } else if (parent != null) {
             return parent.getOperator(opName, type);
         }
-        return NOptional.ofEmpty(s -> NMsg.ofC("operator not found %s", opName));
+        return NOptional.ofEmpty(() -> NMsg.ofC("operator not found %s", opName));
     }
 
     @Override

@@ -39,9 +39,6 @@ public interface NSearchRepositoryCmd extends NRepositoryCmd {
 
     NSearchRepositoryCmd setFilter(NIdFilter filter);
 
-    @Override
-    NSearchRepositoryCmd setSession(NSession session);
-
     /**
      * this method should return immediately after initializing a valid iterator to be
      * retrieved by {@code getResult()}

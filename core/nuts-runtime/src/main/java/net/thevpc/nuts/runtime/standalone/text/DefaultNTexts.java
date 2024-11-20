@@ -15,7 +15,6 @@ import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.reflect.NReflectUtils;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.io.path.NFormatFromSPI;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.text.highlighter.CustomStyleCodeHighlighter;
 import net.thevpc.nuts.runtime.standalone.text.parser.*;
 import net.thevpc.nuts.runtime.standalone.text.util.DefaultNDurationFormat2;
@@ -47,25 +46,23 @@ import java.util.logging.Level;
 @NComponentScope(NScopeType.SESSION)
 public class DefaultNTexts implements NTexts {
 
-    private final NWorkspace ws;
+    private final NWorkspace workspace;
     private final DefaultNTextManagerModel shared;
-    private NSession session;
     private ClassMap<NTextMapper> textMapper = new ClassMap<>(NTextMapper.class);
 
-    public DefaultNTexts(NSession session) {
-        this.session = session;
-        this.ws = session.getWorkspace();
-        this.shared = NWorkspaceExt.of(ws).getModel().textModel;
+    public DefaultNTexts(NWorkspace workspace) {
+        this.workspace = workspace;
+        this.shared = NWorkspaceExt.of(workspace).getModel().textModel;
         registerDefaults();
     }
 
     private void registerDefaults() {
-        register(NFormattable.class, (o, t, s) -> (((NFormattable) o).formatter(session).setSession(getSession()).setNtf(true).format()).toText());
-        register(NStringFormattable.class, (o, t, s) -> (((NStringFormattable) o).format(session)).toText());
+        register(NFormattable.class, (o, t, s) -> (((NFormattable) o).formatter().setNtf(true).format()).toText());
+        register(NStringFormattable.class, (o, t, s) -> (((NStringFormattable) o).format()).toText());
         register(NMsgFormattable.class, (o, t, s) -> _NMsg_toString((((NMsgFormattable) o).toMsg())));
         register(NMsg.class, (o, t, s) -> _NMsg_toString((NMsg) o));
         register(NString.class, (o, t, s) -> ((NString) o).toText());
-        register(InputStream.class, (o, t, s) -> t.ofStyled(NInputSource.of((InputStream) o,s).getMetaData().getName().orElse(o.toString()), NTextStyle.path()));
+        register(InputStream.class, (o, t, s) -> t.ofStyled(NInputSource.of((InputStream) o).getMetaData().getName().orElse(o.toString()), NTextStyle.path()));
         register(OutputStream.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
         register(NPrintStream.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
         register(Writer.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
@@ -185,10 +182,6 @@ public class DefaultNTexts implements NTexts {
         return sb.toString();
     }
 
-    private void checkSession() {
-        NSessionUtils.checkSession(ws, getSession());
-    }
-
     private boolean isSpecialLiteral(Object m) {
         if (m == null) {
             return true;
@@ -254,7 +247,6 @@ public class DefaultNTexts implements NTexts {
 
 
     private NText _NMsg_toString(NMsg m) {
-        checkSession();
         NTextFormatType format = m.getFormat();
         if (format == null) {
             format = NTextFormatType.JFORMAT;
@@ -264,14 +256,15 @@ public class DefaultNTexts implements NTexts {
             params = new Object[0];
         }
         Object msg = m.getMessage();
-        String sLocale = getSession() == null ? null : getSession().getLocale().orDefault();
+        NSession session=workspace.currentSession();
+        String sLocale = session.getLocale().orDefault();
         Locale locale = NBlankable.isBlank(sLocale) ? null : new Locale(sLocale);
-        NTexts txt = NTexts.of(getSession());
+        NTexts txt = NTexts.of();
         switch (format) {
             case CFORMAT: {
                 String smsg = (String) msg;
                 NFormattedTextParts r = NFormattedTextParts.parseCFormat(smsg);
-                NTextBuilder sb = NTextBuilder.of(session);
+                NTextBuilder sb = NTextBuilder.of();
                 int paramIndex = 0;
                 for (NFormattedTextPart part : r.getParts()) {
                     if (part.isFormat()) {
@@ -281,7 +274,7 @@ public class DefaultNTexts implements NTexts {
                             sb.append("\n");
                         } else {
                             if (paramIndex < 0 || paramIndex >= params.length) {
-                                throw new NIllegalArgumentException(session, NMsg.ofPlain("invalid index in message"));
+                                throw new NIllegalArgumentException(NMsg.ofPlain("invalid index in message"));
                             }
                             Object a = params[paramIndex];
                             if (a == null) {
@@ -379,7 +372,7 @@ public class DefaultNTexts implements NTexts {
                 return txt.ofCodeOrCommand(m.getCodeLang(), (String) msg);
             }
         }
-        throw new NUnsupportedEnumException(getSession(), format);
+        throw new NUnsupportedEnumException(format);
     }
 
 
@@ -393,14 +386,8 @@ public class DefaultNTexts implements NTexts {
     }
 
     @Override
-    public NSession getSession() {
-        return session;
-    }
-
-    @Override
     public NTextBuilder ofBuilder() {
-        checkSession();
-        return new DefaultNTextNodeBuilder(getSession());
+        return new DefaultNTextNodeBuilder(workspace);
     }
 
     @Override
@@ -410,7 +397,6 @@ public class DefaultNTexts implements NTexts {
 
     @Override
     public NText ofText(Object t) {
-        checkSession();
         if (t == null) {
             return ofBlank();
         }
@@ -435,7 +421,7 @@ public class DefaultNTexts implements NTexts {
         }
         NTextMapper e = textMapper.get(c);
         if (e != null) {
-            return e.ofText(t, this, session);
+            return e.ofText(t, this, workspace);
         }
         if (c.isArray()) {
 
@@ -445,8 +431,7 @@ public class DefaultNTexts implements NTexts {
 
     @Override
     public NTextPlain ofPlain(String t) {
-        checkSession();
-        return new DefaultNTextPlain(getSession(), t);
+        return new DefaultNTextPlain(workspace, t);
     }
 
     @Override
@@ -456,11 +441,10 @@ public class DefaultNTexts implements NTexts {
 
     @Override
     public NTextList ofList(Collection<NText> nodes) {
-        checkSession();
         if (nodes == null) {
-            return new DefaultNTextList(getSession());
+            return new DefaultNTextList(workspace);
         }
-        return new DefaultNTextList(getSession(), nodes.toArray(new NText[0]));
+        return new DefaultNTextList(workspace, nodes.toArray(new NText[0]));
     }
 
     @Override
@@ -470,7 +454,6 @@ public class DefaultNTexts implements NTexts {
 
     @Override
     public NText ofStyled(NString other, NTextStyles styles) {
-        checkSession();
         return ofStyled(other == null ? null : other.toText(), styles);
     }
 
@@ -482,8 +465,7 @@ public class DefaultNTexts implements NTexts {
         if (styles == null || styles.isPlain()) {
             return other;
         }
-        checkSession();
-        return new DefaultNTextStyled(getSession(),
+        return new DefaultNTextStyled(workspace,
                 "##:" + styles.id() + ":", "##",
                 other, true, styles);
     }
@@ -522,8 +504,7 @@ public class DefaultNTexts implements NTexts {
 
     @Override
     public NTextCmd ofCommand(NTerminalCmd command) {
-        checkSession();
-        return new DefaultNTextCommand(getSession(), "```!", command, "", "```");
+        return new DefaultNTextCommand(workspace, "```!", command, "", "```");
     }
 
     @Override
@@ -622,7 +603,7 @@ public class DefaultNTexts implements NTexts {
 
     private void checkValidSeparator(char sep) {
         if (sep != ':' && !Character.isWhitespace(sep)) {
-            throw new NIllegalArgumentException(session, NMsg.ofC("invalid separator '%s'", sep));
+            throw new NIllegalArgumentException(NMsg.ofC("invalid separator '%s'", sep));
         }
     }
 
@@ -634,11 +615,10 @@ public class DefaultNTexts implements NTexts {
     @Override
     public NTextCode ofCode(String lang, String text, char sep) {
         checkValidSeparator(sep);
-        checkSession();
         if (text == null) {
             text = "";
         }
-        DefaultNTexts factory0 = (DefaultNTexts) NTexts.of(session);
+        DefaultNTexts factory0 = (DefaultNTexts) NTexts.of();
         return factory0.createCode("```",
                 lang, "" + sep, "```", text
         );
@@ -646,13 +626,11 @@ public class DefaultNTexts implements NTexts {
 
     @Override
     public NTitleSequence ofNumbering() {
-        checkSession();
         return new DefaultNTitleSequence("");
     }
 
     @Override
     public NTitleSequence ofNumbering(String pattern) {
-        checkSession();
         return new DefaultNTitleSequence((pattern == null || pattern.isEmpty()) ? "1.1.1.a.1" : pattern);
     }
 
@@ -678,7 +656,7 @@ public class DefaultNTexts implements NTexts {
     @Override
     public NTextLink ofLink(String value, char sep) {
         checkValidSeparator(sep);
-        return new DefaultNTextLink(getSession(), "" + sep, value);
+        return new DefaultNTextLink(workspace, "" + sep, value);
     }
 
     @Override
@@ -689,54 +667,46 @@ public class DefaultNTexts implements NTexts {
     @Override
     public NTextInclude ofInclude(String value, char sep) {
         checkValidSeparator(sep);
-        checkSession();
-        return new DefaultNTextInclude(getSession(), "" + sep, value);
+        return new DefaultNTextInclude(workspace, "" + sep, value);
     }
 
     @Override
     public NTextFormatTheme getTheme() {
-        checkSession();
-        return shared.getTheme(getSession());
+        return shared.getTheme();
     }
 
     @Override
     public NTexts setTheme(NTextFormatTheme theme) {
-        checkSession();
-        shared.setTheme(theme, getSession());
+        shared.setTheme(theme);
         return this;
     }
 
     @Override
     public NTexts setTheme(String theme) {
-        checkSession();
-        shared.setTheme(theme, getSession());
+        shared.setTheme(theme);
         return this;
     }
 
     @Override
     public NCodeHighlighter getCodeHighlighter(String kind) {
-        checkSession();
-        return shared.getCodeHighlighter(kind, getSession());
+        return shared.getCodeHighlighter(kind);
     }
 
     @Override
     public NTexts addCodeHighlighter(NCodeHighlighter format) {
-        checkSession();
-        shared.addCodeHighlighter(format, getSession());
+        shared.addCodeHighlighter(format);
         return this;
     }
 
     @Override
     public NTexts removeCodeHighlighter(String id) {
-        checkSession();
-        shared.removeCodeHighlighter(id, getSession());
+        shared.removeCodeHighlighter(id);
         return this;
     }
 
     @Override
     public List<NCodeHighlighter> getCodeHighlighters() {
-        checkSession();
-        return Arrays.asList(shared.getCodeHighlighters(getSession()));
+        return Arrays.asList(shared.getCodeHighlighters());
     }
 
     @Override
@@ -746,8 +716,7 @@ public class DefaultNTexts implements NTexts {
 
     @Override
     public NTextParser parser() {
-        checkSession();
-        return AbstractNTextNodeParserDefaults.createDefault(getSession());
+        return AbstractNTextNodeParserDefaults.createDefault(workspace);
     }
 
     public NText bg(String t, int level) {
@@ -808,7 +777,6 @@ public class DefaultNTexts implements NTexts {
     }
 
     public NCodeHighlighter resolveCodeHighlighter(String kind) {
-        checkSession();
         if (kind == null) {
             kind = "";
         }
@@ -827,10 +795,10 @@ public class DefaultNTexts implements NTexts {
                     NTextStyle found = NTextStyle.of(NTextStyleType.valueOf(expandAlias(kind.toUpperCase().substring(0, x))),
                             NLiteral.of(kind.substring(x)).asInt().orElse(0)
                     );
-                    return new CustomStyleCodeHighlighter(found, session);
+                    return new CustomStyleCodeHighlighter(found, workspace);
                 } else {
                     NTextStyle found = NTextStyle.of(NTextStyleType.valueOf(expandAlias(kind.toUpperCase())));
-                    return new CustomStyleCodeHighlighter(found, session);
+                    return new CustomStyleCodeHighlighter(found, workspace);
                 }
             } catch (Exception ex) {
                 //ignore
@@ -857,7 +825,7 @@ public class DefaultNTexts implements NTexts {
     public NTextTitle ofTitle(NText other, int level) {
         String prefix = CoreStringUtils.fillString('#', level) + ")";
         return new DefaultNTextTitle(
-                session,
+                workspace,
                 prefix, level, other
         );
     }
@@ -873,23 +841,19 @@ public class DefaultNTexts implements NTexts {
     }
 
     public NTextCode createCode(String start, String kind, String separator, String end, String text) {
-        checkSession();
-        return new DefaultNTextCode(getSession(), start, kind, separator, end, text);
+        return new DefaultNTextCode(workspace, start, kind, separator, end, text);
     }
 
     public NTextCmd createCommand(String start, NTerminalCmd command, String separator, String end) {
-        checkSession();
-        return new DefaultNTextCommand(getSession(), start, command, separator, end);
+        return new DefaultNTextCommand(workspace, start, command, separator, end);
     }
 
     public NTextAnchor createAnchor(String start, String separator, String end, String value) {
-        checkSession();
-        return new DefaultNTextAnchor(getSession(), start, separator, end, value);
+        return new DefaultNTextAnchor(workspace, start, separator, end, value);
     }
 
     public NText createTitle(String start, int level, NText child, boolean complete) {
-        checkSession();
-        return new DefaultNTextTitle(getSession(), start, level, child);
+        return new DefaultNTextTitle(workspace, start, level, child);
     }
 
     @Override
@@ -970,7 +934,7 @@ public class DefaultNTexts implements NTexts {
                 refactorNext();
                 return queue.remove();
             }
-        },session).withDesc(NEDesc.of("flattened text"));
+        }).withDesc(NEDesc.of("flattened text"));
     }
 
     @Override
@@ -1010,7 +974,7 @@ public class DefaultNTexts implements NTexts {
             NTextTransformConfig iconfig = new NTextTransformConfig();
             iconfig.setProcessIncludes(true);
             iconfig.setImportClassLoader(config.getImportClassLoader());
-            NTextTransformerContext c = new DefaultNTextTransformerContext(iconfig, session);
+            NTextTransformerContext c = new DefaultNTextTransformerContext(iconfig, workspace);
             text = transform(text, c.getDefaultTransformer(), c);
             config = config.copy().setProcessIncludes(false).setImportClassLoader(null);
         }
@@ -1026,7 +990,7 @@ public class DefaultNTexts implements NTexts {
             int level = resolveRootLevel(text);
             if (level != rootLevel) {
                 int offset = rootLevel - level;
-                NTextTransformerContext c = new DefaultNTextTransformerContext(new NTextTransformConfig(), session);
+                NTextTransformerContext c = new DefaultNTextTransformerContext(new NTextTransformConfig(), workspace);
                 text = transform(text, (text1, context) -> {
                     if (text1.getType() == NTextType.TITLE) {
                         NTextTitle t = (NTextTitle) text1;
@@ -1047,7 +1011,7 @@ public class DefaultNTexts implements NTexts {
         }
 
         if (transformer != null || !config.isBlank()) {
-            NTextTransformerContext c = new DefaultNTextTransformerContext(config, session);
+            NTextTransformerContext c = new DefaultNTextTransformerContext(config, workspace);
             if (transformer == null) {
                 transformer = c.getDefaultTransformer();
             }
@@ -1251,11 +1215,11 @@ public class DefaultNTexts implements NTexts {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             NText parsed = this.parser().parse(new StringReader(text));
-            parsed = NTexts.of(session).transform(parsed, new NTextTransformConfig().setFiltered(true));
+            parsed = NTexts.of().transform(parsed, new NTextTransformConfig().setFiltered(true));
             writeFilteredText(parsed, out);
             return out.toString();
         } catch (Exception ex) {
-            NLogOp.of(AbstractNTextNodeParser.class, session)
+            NLogOp.of(AbstractNTextNodeParser.class)
                     .verb(NLogVerb.WARNING)
                     .level(Level.FINEST)
                     .log(NMsg.ofC("error parsing : %s", text));
@@ -1265,15 +1229,15 @@ public class DefaultNTexts implements NTexts {
 
     @Override
     public NFormat createFormat(NFormatSPI format) {
-        return new NFormatFromSPI(format, getSession());
+        return new NFormatFromSPI(format, workspace);
     }
 
     @Override
     public <T> NFormat createFormat(T object, NTextFormat<T> format) {
-        return new DefaultFormatBase<NFormat>(getSession(), "NTextFormat") {
+        return new DefaultFormatBase<NFormat>(workspace, "NTextFormat") {
             @Override
             public void print(NPrintStream out) {
-                NText u = format.toText(object, getSession());
+                NText u = format.toText(object);
                 out.print(u);
             }
 
@@ -1298,29 +1262,29 @@ public class DefaultNTexts implements NTexts {
     public <T> NOptional<NStringFormat<T>> createStringFormat(String type, String pattern, Class<T> expectedType) {
         NOptional<NTextFormat<T>> e = createTextFormat(type, pattern, expectedType);
         if (e.isEmpty()) {
-            return NOptional.ofEmpty(s -> NMsg.ofC("unknown %s format with type %s. Expected %s.", type, expectedType, "Double"));
+            return NOptional.ofEmpty(() -> NMsg.ofC("unknown %s format with type %s. Expected %s.", type, expectedType, "Double"));
         }
         return e.map(x -> x);
     }
 
     public <T> NOptional<NTextFormat<T>> createTextFormat(String type, String pattern, Class<T> expectedType) {
-        NSession session = getSession();
         Class<T> finalExpectedType = expectedType;
-        NAssert.requireNonNull(type, "type", session);
-        NAssert.requireNonNull(expectedType, "expectedType", session);
-        NAssert.requireNonNull(pattern, "pattern", session);
+        NAssert.requireNonNull(type, "type");
+        NAssert.requireNonNull(expectedType, "expectedType");
+        NAssert.requireNonNull(pattern, "pattern");
         if (expectedType.isPrimitive()) {
             expectedType = (Class) NReflectUtils.toBoxedType(expectedType).get();
         }
+        NSession session = workspace.currentSession();
         switch (type.toLowerCase().trim()) {
             case "duration": {
-                DefaultNDurationFormat2 d = new DefaultNDurationFormat2(pattern);
+                DefaultNDurationFormat2 d = new DefaultNDurationFormat2(workspace, pattern);
                 if (NDuration.class.equals(expectedType)) {
                     return NOptional.of(
                             (NTextFormat<T>) new NTextFormat<NDuration>() {
                                 @Override
-                                public NText toText(NDuration object, NSession session) {
-                                    return d.format(object, session);
+                                public NText toText(NDuration object) {
+                                    return d.format(object);
                                 }
                             }
                     );
@@ -1329,13 +1293,13 @@ public class DefaultNTexts implements NTexts {
                     return NOptional.of(
                             (NTextFormat<T>) new NTextFormat<Duration>() {
                                 @Override
-                                public NText toText(Duration object, NSession session) {
-                                    return d.format(object, session);
+                                public NText toText(Duration object) {
+                                    return d.format(object);
                                 }
                             }
                     );
                 }
-                return NOptional.ofEmpty(s -> NMsg.ofC("unknown duration format with type %s. Expected Duration or NDuration.", finalExpectedType));
+                return NOptional.ofEmpty(() -> NMsg.ofC("unknown duration format with type %s. Expected Duration or NDuration.", finalExpectedType));
             }
             case "double":
             case "decimal":
@@ -1346,11 +1310,11 @@ public class DefaultNTexts implements NTexts {
                         return NOptional.of(
                                 (NTextFormat<T>) new NTextFormat<Number>() {
                                     @Override
-                                    public NText toText(Number object, NSession session) {
+                                    public NText toText(Number object) {
                                         if (object == null) {
-                                            return NTextBuilder.of(session).toText();
+                                            return NTextBuilder.of().toText();
                                         }
-                                        return NTextBuilder.of(session)
+                                        return NTextBuilder.of()
                                                 .append(d.format(object.doubleValue() * 100.0), NTextStyle.number())
                                                 .append("%", NTextStyle.separator())
                                                 .toText()
@@ -1359,18 +1323,18 @@ public class DefaultNTexts implements NTexts {
                                 }
                         );
                     }
-                    return NOptional.ofEmpty(s -> NMsg.ofC("unknown %s format with type %s. Expected .", type, finalExpectedType, "Number"));
+                    return NOptional.ofEmpty(() -> NMsg.ofC("unknown %s format with type %s. Expected .", type, finalExpectedType, "Number"));
                 } else if (pattern.endsWith("'°'")) {
                     DecimalFormat d = new DecimalFormat(pattern.substring(0, pattern.length() - 3));
                     if (Number.class.isAssignableFrom(expectedType)) {
                         return NOptional.of(
                                 (NTextFormat<T>) new NTextFormat<Number>() {
                                     @Override
-                                    public NText toText(Number object, NSession session) {
+                                    public NText toText(Number object) {
                                         if (object == null) {
-                                            return NTextBuilder.of(session).toText();
+                                            return NTextBuilder.of().toText();
                                         }
-                                        return NTextBuilder.of(session)
+                                        return NTextBuilder.of()
                                                 .append(d.format(object), NTextStyle.number())
                                                 .append("°", NTextStyle.separator())
                                                 .toText()
@@ -1379,18 +1343,18 @@ public class DefaultNTexts implements NTexts {
                                 }
                         );
                     }
-                    return NOptional.ofEmpty(s -> NMsg.ofC("unknown %s format with type %s. Expected .", type, finalExpectedType, "Number"));
+                    return NOptional.ofEmpty(() -> NMsg.ofC("unknown %s format with type %s. Expected .", type, finalExpectedType, "Number"));
                 } else {
                     DecimalFormat d = new DecimalFormat(pattern);
                     if (Number.class.isAssignableFrom(expectedType)) {
                         return NOptional.of(
                                 (NTextFormat<T>) new NTextFormat<Number>() {
                                     @Override
-                                    public NText toText(Number object, NSession session) {
+                                    public NText toText(Number object) {
                                         if (object == null) {
-                                            return NTextBuilder.of(session).toText();
+                                            return NTextBuilder.of().toText();
                                         }
-                                        return NTextBuilder.of(session)
+                                        return NTextBuilder.of()
                                                 .append(d.format(object), NTextStyle.number())
                                                 .toText()
                                                 ;
@@ -1398,7 +1362,7 @@ public class DefaultNTexts implements NTexts {
                                 }
                         );
                     }
-                    return NOptional.ofEmpty(s -> NMsg.ofC("unknown %s format with type %s. Expected .", type, finalExpectedType, "Number"));
+                    return NOptional.ofEmpty(() -> NMsg.ofC("unknown %s format with type %s. Expected .", type, finalExpectedType, "Number"));
                 }
             }
             case "m":
@@ -1410,13 +1374,13 @@ public class DefaultNTexts implements NTexts {
                     return NOptional.of(
                             (NTextFormat<T>) new NTextFormat<Number>() {
                                 @Override
-                                public NText toText(Number object, NSession session) {
+                                public NText toText(Number object) {
                                     return d.format(object.doubleValue(), session);
                                 }
                             }
                     );
                 }
-                return NOptional.ofEmpty(s -> NMsg.ofC("unknown %s format with type %s. Expected .", type, finalExpectedType, "Number"));
+                return NOptional.ofEmpty(() -> NMsg.ofC("unknown %s format with type %s. Expected .", type, finalExpectedType, "Number"));
             }
             case "memory":
             case "bytes":
@@ -1427,13 +1391,13 @@ public class DefaultNTexts implements NTexts {
                     return NOptional.of(
                             (NTextFormat<T>) new NTextFormat<Number>() {
                                 @Override
-                                public NText toText(Number object, NSession session) {
+                                public NText toText(Number object) {
                                     return d.formatText(object.longValue(), session);
                                 }
                             }
                     );
                 }
-                return NOptional.ofEmpty(s -> NMsg.ofC("unknown %s format with type %s. Expected .", type, finalExpectedType, "Number"));
+                return NOptional.ofEmpty(() -> NMsg.ofC("unknown %s format with type %s. Expected .", type, finalExpectedType, "Number"));
             }
             case "freq":
             case "frequency":
@@ -1444,13 +1408,13 @@ public class DefaultNTexts implements NTexts {
                     return NOptional.of(
                             (NTextFormat<T>) new NTextFormat<Number>() {
                                 @Override
-                                public NText toText(Number object, NSession session) {
+                                public NText toText(Number object) {
                                     return d.format(object.longValue(), session);
                                 }
                             }
                     );
                 }
-                return NOptional.ofEmpty(s -> NMsg.ofC("unknown %s format with type %s. Expected .", type, finalExpectedType, "Number"));
+                return NOptional.ofEmpty(() -> NMsg.ofC("unknown %s format with type %s. Expected .", type, finalExpectedType, "Number"));
             }
             default: {
                 String p = NStringUtils.trim(pattern);
@@ -1459,18 +1423,18 @@ public class DefaultNTexts implements NTexts {
                     return NOptional.of(
                             (NTextFormat<T>) new NTextFormat<Number>() {
                                 @Override
-                                public NText toText(Number object, NSession session) {
+                                public NText toText(Number object) {
                                     return d.format(object.doubleValue(), session);
                                 }
                             }
                     );
                 }
-                return NOptional.ofEmpty(s -> NMsg.ofC("unknown %s format with type %s. Expected %s.", type, finalExpectedType, "Number"));
+                return NOptional.ofEmpty(() -> NMsg.ofC("unknown %s format with type %s. Expected %s.", type, finalExpectedType, "Number"));
             }
         }
     }
 
     private interface NTextMapper {
-        NText ofText(Object t, NTexts texts, NSession session);
+        NText ofText(Object t, NTexts texts, NWorkspace workspace);
     }
 }

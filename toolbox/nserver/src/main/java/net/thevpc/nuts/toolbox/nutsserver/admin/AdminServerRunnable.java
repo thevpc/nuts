@@ -124,17 +124,17 @@ public class AdminServerRunnable implements NServer, Runnable {
                             try {
                                 try {
                                     PrintStream out = new PrintStream(finalAccept.getOutputStream());
-                                    NPrintStream eout = NPrintStream.of(out, NTerminalMode.FORMATTED, null, invokerSession);
+                                    NPrintStream eout = NPrintStream.of(out, NTerminalMode.FORMATTED, null);
                                     NSession session = invokerSession;
                                     session.setTerminal(
                                             NSessionTerminal.of(
                                                     finalAccept.getInputStream(),
-                                                    eout, eout, invokerSession)
+                                                    eout, eout)
                                     );
                                     cli = new NShell(
                                             new NShellConfiguration()
                                                     .setSession(session)
-                                                    .setAppId(NId.ofClass(AdminServerRunnable.class,invokerSession).get())
+                                                    .setAppId(NId.ofClass(AdminServerRunnable.class).get())
                                                     .setServiceName(serverId)
                                                     .setArgs(new String[0])
                                     );
@@ -196,7 +196,7 @@ public class AdminServerRunnable implements NServer, Runnable {
             try {
                 socket.close();
             } catch (IOException ex) {
-                throw new NExecutionException(context.getSession(), NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_2);
+                throw new NExecutionException(NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_2);
             }
         }
     }

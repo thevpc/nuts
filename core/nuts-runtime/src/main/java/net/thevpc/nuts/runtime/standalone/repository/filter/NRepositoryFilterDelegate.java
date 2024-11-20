@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.repository.filter;
 import net.thevpc.nuts.NRepository;
 import net.thevpc.nuts.NRepositoryFilter;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NFilter;
 import net.thevpc.nuts.util.NFilterOp;
@@ -11,19 +12,14 @@ import java.util.List;
 import java.util.Objects;
 
 public abstract class NRepositoryFilterDelegate extends AbstractRepositoryFilter {
-    public NRepositoryFilterDelegate(NSession session) {
-        super(session, NFilterOp.CUSTOM);
+    public NRepositoryFilterDelegate(NWorkspace workspace) {
+        super(workspace, NFilterOp.CUSTOM);
     }
     public abstract NRepositoryFilter baseRepositoryFilter();
 
     @Override
     public NFilterOp getFilterOp() {
         return baseRepositoryFilter().getFilterOp();
-    }
-
-    @Override
-    public NSession getSession() {
-        return baseRepositoryFilter().getSession();
     }
 
     @Override
@@ -42,8 +38,8 @@ public abstract class NRepositoryFilterDelegate extends AbstractRepositoryFilter
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return baseRepositoryFilter().describe(session);
+    public NElement describe() {
+        return baseRepositoryFilter().describe();
     }
 
     @Override

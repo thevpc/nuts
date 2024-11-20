@@ -7,12 +7,12 @@ import net.thevpc.nuts.text.NTexts;
 
 public class SettingsRepoUtils {
     public static void showRepo(NSession session, NRepository repository, String prefix) {
-        boolean active = repository.isEnabled(session);
+        boolean active = repository.isEnabled();
         boolean enabled = repository.config().isEnabled();
         String disabledString = active ? "" : enabled ? "<ENABLED>" : " <DISABLED>";
         NPrintStream out = session.out();
         out.print(prefix);
-        NTexts factory = NTexts.of(session);
+        NTexts factory = NTexts.of();
         if (enabled) {
             out.print(factory.ofStyled(repository.getName() + disabledString, NTextStyle.primary2()));
         } else {

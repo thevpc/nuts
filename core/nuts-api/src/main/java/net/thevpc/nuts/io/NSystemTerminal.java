@@ -28,7 +28,6 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.reserved.rpi.NIORPI;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 
 import java.io.InputStream;
@@ -39,33 +38,31 @@ import java.io.InputStream;
  * @since 0.5.4
  */
 public interface NSystemTerminal extends NSystemTerminalBase {
-    static void enableRichTerm(NSession session) {
-        NIORPI.of(session).enableRichTerm();
+    static void enableRichTerm() {
+        NIORPI.of().enableRichTerm();
     }
 
     /**
      * Reads a single line of text from the terminal's input stream.
      *
      * @param message message
-     * @param session session
      * @return A string containing the line read from the terminal's input
      * stream, not including any line-termination characters, or {@code null}
      * if an end of stream has been reached.
      * @throws java.io.UncheckedIOException If an I/O error occurs.
      */
-    String readLine(NMsg message, NSession session);
+    String readLine(NMsg message);
 
     /**
      * Reads password as a single line of text from the terminal's input stream.
      *
      * @param message message
-     * @param session session
      * @return A string containing the line read from the terminal's input
      * stream, not including any line-termination characters, or {@code null}
      * if an end of stream has been reached.
      * @throws java.io.UncheckedIOException If an I/O error occurs.
      */
-    char[] readPassword(NMsg message, NSession session);
+    char[] readPassword(NMsg message);
 
     /**
      * return terminal's input stream
@@ -93,10 +90,9 @@ public interface NSystemTerminal extends NSystemTerminalBase {
      *
      * @param progress 0.0f-1.0f value
      * @param message  message
-     * @param session  session
      * @return {@code this} instance
      */
-    NSystemTerminal printProgress(float progress, NMsg message, NSession session);
+    NSystemTerminal printProgress(float progress, NMsg message);
 
     NSystemTerminalBase getBase();
 }

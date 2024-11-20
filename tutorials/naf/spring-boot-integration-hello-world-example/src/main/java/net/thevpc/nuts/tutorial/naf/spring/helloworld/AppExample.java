@@ -12,7 +12,8 @@ public class AppExample implements NApplication {
     }
 
     @Override
-    public void run(NSession session) {
+    public void run() {
+        NSession session = NSession.get();
         NPrintStream out = session.out();
         out.println("Hello ##World##");
     }

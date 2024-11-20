@@ -25,7 +25,7 @@ public class InputStreamExt extends InputStream implements NInterruptible<InputS
 
     private InputStream base;
     private NContentMetadata md;
-    private NSession session;
+    private NWorkspace workspace;
 
     //
     private Runnable onClose;
@@ -52,10 +52,10 @@ public class InputStreamExt extends InputStream implements NInterruptible<InputS
                           Object source,
                           NMsg sourceName,
                           Long length,
-                          NSession session) {
+                          NWorkspace workspace) {
         this.base = base;
         this.closeBase = closeBase;
-        this.session = session;
+        this.workspace = workspace;
         this.onClose = onClose;
         this.md = CoreIOUtils.createContentMetadata(md0, base);
         this.monitor = monitor;
@@ -199,7 +199,7 @@ public class InputStreamExt extends InputStream implements NInterruptible<InputS
             try {
                 base.close();
             } catch (IOException e) {
-                throw new NIOException(session, NMsg.ofPlain("error closing base stream"), e);
+                throw new NIOException(NMsg.ofPlain("error closing base stream"), e);
             }
         }
         if (onClose != null) {
@@ -239,7 +239,7 @@ public class InputStreamExt extends InputStream implements NInterruptible<InputS
                 this.count = 0;
                 monitor.onProgress(NProgressEvent.ofStart(source, sourceName,
                         length==null?-1:length
-                        , session));
+                ));
             }
         }
     }
@@ -252,7 +252,7 @@ public class InputStreamExt extends InputStream implements NInterruptible<InputS
                     this.count, now - startTime, null,
                     this.count - lastCount, now - lastTime,
                     length==null?-1:length,
-                    null, session))) {
+                    null))) {
                 this.lastCount = this.count;
                 this.lastTime = now;
             }
@@ -267,13 +267,13 @@ public class InputStreamExt extends InputStream implements NInterruptible<InputS
                     this.count, now - startTime, null,
                     this.count - lastCount, now - lastTime,
                     length==null?-1:length,
-                    ex, session));
+                    ex));
         }
     }
 
     private void checkInterrupted() {
         if (interrupted) {
-            throw new NIOException(session, NMsg.ofPlain("stream is interrupted"));
+            throw new NIOException(NMsg.ofPlain("stream is interrupted"));
         }
     }
 
@@ -284,8 +284,8 @@ public class InputStreamExt extends InputStream implements NInterruptible<InputS
 
 
     @Override
-    public NFormat formatter(NSession session) {
-        return NFormat.of(session, new NContentMetadataProviderFormatSPI(this, sourceName,"input-stream"));
+    public NFormat formatter() {
+        return NFormat.of(new NContentMetadataProviderFormatSPI(this, sourceName,"input-stream"));
     }
 
     @Override

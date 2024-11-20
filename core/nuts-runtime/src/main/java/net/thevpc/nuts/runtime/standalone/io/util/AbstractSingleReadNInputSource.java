@@ -1,10 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 
 public abstract class AbstractSingleReadNInputSource extends AbstractNInputSource{
-    public AbstractSingleReadNInputSource(NSession session) {
-        super(session);
+    public AbstractSingleReadNInputSource(NWorkspace workspace) {
+        super(workspace);
     }
 
     @Override

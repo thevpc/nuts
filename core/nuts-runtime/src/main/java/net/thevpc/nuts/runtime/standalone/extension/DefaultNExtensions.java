@@ -8,10 +8,7 @@ package net.thevpc.nuts.runtime.standalone.extension;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NServiceLoader;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NIdUtils;
@@ -25,16 +22,12 @@ import java.util.*;
  */
 public class DefaultNExtensions implements NExtensions {
 
-    private DefaultNWorkspaceExtensionModel model;
-    private NSession session;
-    private final DefaultNWorkspaceConfigModel cmodel;
+    private NWorkspaceModel wsModel;
+    private NWorkspace workspace;
 
-    public DefaultNExtensions(NSession session) {
-        this.session = session;
-        NWorkspace w = this.session.getWorkspace();
-        NWorkspaceExt e = (NWorkspaceExt) w;
-        this.model = e.getModel().extensionModel;
-        this.cmodel = e.getModel().configModel;
+    public DefaultNExtensions(NWorkspaceModel wsModel) {
+        this.workspace = wsModel.workspace;
+        this.wsModel = wsModel;
     }
 
     @Override
@@ -43,26 +36,25 @@ public class DefaultNExtensions implements NExtensions {
     }
 
     public DefaultNWorkspaceExtensionModel getModel() {
-        return model;
+        return wsModel.extensionModel;
     }
 
     @Override
     public Set<NId> getCompanionIds() {
-        NSessionUtils.checkSession(model.getWorkspace(), getSession());
         return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(NId.of("net.thevpc.nuts.toolbox:nsh").get())));
     }
 
 
     @Override
     public <T extends NComponent> boolean installWorkspaceExtensionComponent(Class<T> extensionPointType, T extensionImpl) {
-        checkSession();
-        return model.installWorkspaceExtensionComponent(extensionPointType, extensionImpl, session);
+        NSession session = workspace.currentSession();
+        return wsModel.extensionModel.installWorkspaceExtensionComponent(extensionPointType, extensionImpl);
     }
 
     @Override
     public Set<Class<? extends NComponent>> discoverTypes(NId id, ClassLoader classLoader) {
-        checkSession();
-        return model.discoverTypes(id, classLoader, session);
+        NSession session = workspace.currentSession();
+        return wsModel.extensionModel.discoverTypes(id, classLoader);
     }
 
     //    @Override
@@ -71,14 +63,12 @@ public class DefaultNExtensions implements NExtensions {
 //    }
     @Override
     public <T extends NComponent, B> NServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType) {
-        checkSession();
-        return model.createServiceLoader(serviceType, criteriaType, session);
+        return wsModel.extensionModel.createServiceLoader(serviceType, criteriaType);
     }
 
     @Override
     public <T extends NComponent, B> NServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader) {
-        checkSession();
-        return model.createServiceLoader(serviceType, criteriaType, classLoader, session);
+        return wsModel.extensionModel.createServiceLoader(serviceType, criteriaType, classLoader);
     }
 
     @Override
@@ -87,8 +77,7 @@ public class DefaultNExtensions implements NExtensions {
     }
 
     public <T extends NComponent, V> NOptional<T> createComponent(Class<T> serviceType, V criteriaType) {
-        checkSession();
-        return model.createSupported(serviceType, criteriaType, session);
+        return wsModel.extensionModel.createSupported(serviceType, criteriaType);
     }
 
 
@@ -100,62 +89,52 @@ public class DefaultNExtensions implements NExtensions {
 
     @Override
     public <T extends NComponent, V> List<T> createComponents(Class<T> serviceType, V criteriaType) {
-        checkSession();
-        return model.createAllSupported(serviceType, criteriaType, session);
+        return wsModel.extensionModel.createAllSupported(serviceType, criteriaType);
     }
 
     @Override
     public <T extends NComponent> List<T> createAll(Class<T> serviceType) {
-        checkSession();
-        return model.createAll(serviceType, session);
+        return wsModel.extensionModel.createAll(serviceType);
     }
 
     @Override
     public <T extends NComponent> Set<Class<? extends T>> getExtensionTypes(Class<T> extensionPoint) {
-        checkSession();
-        return model.getExtensionTypes(extensionPoint, session);
+        return wsModel.extensionModel.getExtensionTypes(extensionPoint);
     }
 
     @Override
     public <T extends NComponent> List<T> getExtensionObjects(Class<T> extensionPoint) {
-        checkSession();
-        return model.getExtensionObjects(extensionPoint, session);
+        return wsModel.extensionModel.getExtensionObjects(extensionPoint);
     }
 
     @Override
     public <T extends NComponent> boolean isRegisteredType(Class<T> extensionPointType, String name) {
-        checkSession();
-        return model.isRegisteredType(extensionPointType, name, session);
+        return wsModel.extensionModel.isRegisteredType(extensionPointType, name);
     }
 
     @Override
     public <T extends NComponent> boolean isRegisteredInstance(Class<T> extensionPointType, T extensionImpl) {
-        checkSession();
-        return model.isRegisteredInstance(extensionPointType, extensionImpl, session);
+        return wsModel.extensionModel.isRegisteredInstance(extensionPointType, extensionImpl);
     }
 
     @Override
     public <T extends NComponent> boolean registerInstance(Class<T> extensionPointType, T extensionImpl) {
-        checkSession();
-        return model.registerInstance(extensionPointType, extensionImpl, session);
+        return wsModel.extensionModel.registerInstance(extensionPointType, extensionImpl);
     }
 
     @Override
     public <T extends NComponent> boolean registerType(Class<T> extensionPointType, Class<? extends T> implementation, NId source) {
-        checkSession();
-        return model.registerType(extensionPointType, implementation, source, session);
+        return wsModel.extensionModel.registerType(extensionPointType, implementation, source);
     }
 
     @Override
     public <T extends NComponent> boolean isRegisteredType(Class<T> extensionPointType, Class<? extends T> implementation) {
-        checkSession();
-        return model.isRegisteredType(extensionPointType, implementation, session);
+        return wsModel.extensionModel.isRegisteredType(extensionPointType, implementation);
     }
 
     @Override
     public boolean isLoadedExtensions(NId id) {
-        checkSession();
-        return model.isLoadedExtensions(id, session);
+        return wsModel.extensionModel.isLoadedExtensions(id);
     }
 
     @Override
@@ -168,12 +147,13 @@ public class DefaultNExtensions implements NExtensions {
         if (id == null) {
             return false;
         }
+        NSession session= wsModel.extensionModel.getWorkspace().currentSession();
         if (classLoader == null) {
             classLoader = Thread.currentThread().getContextClassLoader();
         }
         URL pomXml = classLoader.getResource("META-INF/maven/" + id.getGroupId() + "/" + id.getArtifactId() + "/pom.xml");
         if (pomXml != null) {
-            NDescriptor e = NDescriptorParser.of(getSession())
+            NDescriptor e = NDescriptorParser.of()
                     .setDescriptorStyle(NDescriptorStyle.MAVEN)
                     .parse(pomXml).orNull();
             if (e != null) {
@@ -193,7 +173,7 @@ public class DefaultNExtensions implements NExtensions {
         URL nuts = classLoader.getResource("META-INF/nuts/"
                 + NIdUtils.resolveIdPath(id.getShortId()) + "/nuts.json");
         if (nuts != null) {
-            NDescriptor e = NDescriptorParser.of(getSession())
+            NDescriptor e = NDescriptorParser.of()
                     .setDescriptorStyle(NDescriptorStyle.NUTS)
                     .parse(nuts).orNull();
             if (e != null) {
@@ -214,46 +194,28 @@ public class DefaultNExtensions implements NExtensions {
 
     @Override
     public List<NId> getLoadedExtensions() {
-        checkSession();
-        return model.getLoadedExtensions(session);
+        return wsModel.extensionModel.getLoadedExtensions();
     }
 
     @Override
     public NExtensions loadExtension(NId extension) {
-        checkSession();
-        model.loadExtension(extension, session);
+        wsModel.extensionModel.loadExtension(extension);
         return this;
     }
 
     @Override
     public NExtensions unloadExtension(NId extension) {
-        checkSession();
-        model.unloadExtension(extension, session);
+        wsModel.extensionModel.unloadExtension(extension);
         return this;
     }
 
     @Override
     public List<NId> getConfigExtensions() {
-        checkSession();
-        return model.getConfigExtensions(session);
-    }
-
-    public NSession getSession() {
-        return session;
-    }
-
-    public NExtensions setSession(NSession session) {
-        this.session = NWorkspaceUtils.bindSession(model.getWorkspace(), session);
-        return this;
-    }
-
-    private void checkSession() {
-        NSessionUtils.checkSession(model.getWorkspace(), session);
+        return wsModel.extensionModel.getConfigExtensions();
     }
 
     @Override
     public boolean isExcludedExtension(String extensionId, NWorkspaceOptions options) {
-        checkSession();
-        return cmodel.isExcludedExtension(extensionId, options, session);
+        return wsModel.configModel.isExcludedExtension(extensionId, options);
     }
 }

@@ -12,10 +12,10 @@ import net.thevpc.nuts.text.*;
 public class JavaCodeHighlighter implements NCodeHighlighter {
 
     private Set<String> reservedWords = new HashSet<>();
-    private NWorkspace ws;
+    private NWorkspace workspace;
 
-    public JavaCodeHighlighter(NWorkspace ws) {
-        this.ws = ws;
+    public JavaCodeHighlighter(NWorkspace workspace) {
+        this.workspace = workspace;
         reservedWords.addAll(NCodeHighlighterHelper.loadNames("java.kw1",getClass()));
     }
 
@@ -25,7 +25,7 @@ public class JavaCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText tokenToText(String text, String nodeType, NTexts txt, NSession session) {
+    public NText tokenToText(String text, String nodeType, NTexts txt) {
         return txt.ofPlain(text);
     }
     
@@ -48,7 +48,8 @@ public class JavaCodeHighlighter implements NCodeHighlighter {
     }
 
     @Override
-    public NText stringToText(String text, NTexts txt, NSession session) {
+    public NText stringToText(String text, NTexts txt) {
+        NSession session=workspace.currentSession();
         List<NText> all = new ArrayList<>();
         StringReaderExt ar = new StringReaderExt(text);
         while (ar.hasNext()) {

@@ -143,11 +143,11 @@ public class NMongoSupport extends NdbSupportBase<NMongoConfig> {
     }
 
 
-    public <C extends NdbConfig> String getDumpExt(C options, NSession session) {
+    public <C extends NdbConfig> String getDumpExt(C options) {
         return ""; //folder
     }
 
-    public CmdRedirect createDumpCommand(NPath remoteSql, NMongoConfig options, NSession session) {
+    public CmdRedirect createDumpCommand(NPath remoteSql, NMongoConfig options) {
         List<String> cmd = new ArrayList<>();
         cmd.add("mongodump");
         //cmd.add("--quiet");
@@ -166,7 +166,7 @@ public class NMongoSupport extends NdbSupportBase<NMongoConfig> {
     }
 
 
-    public CmdRedirect createRestoreCommand(NPath remoteSql, NMongoConfig options, NSession session) {
+    public CmdRedirect createRestoreCommand(NPath remoteSql, NMongoConfig options) {
         List<String> cmd = new ArrayList<>();
         cmd.add("mongorestore");
         //cmd.add("--quiet");
@@ -186,7 +186,7 @@ public class NMongoSupport extends NdbSupportBase<NMongoConfig> {
     }
 
     @Override
-    public DumpRestoreMode getDumpRestoreMode(NMongoConfig options, NSession session) {
+    public DumpRestoreMode getDumpRestoreMode(NMongoConfig options) {
         return DumpRestoreMode.FOLDER;
     }
 

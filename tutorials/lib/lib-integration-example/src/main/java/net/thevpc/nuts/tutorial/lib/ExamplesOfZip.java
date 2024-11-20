@@ -17,9 +17,9 @@ public class ExamplesOfZip {
 
     public void executeCompress(NSession session) {
         session.out().println("Example of ## Compress ##");
-        NPath example = NPath.ofUserDirectory(session).resolve("example");
+        NPath example = NPath.ofUserDirectory().resolve("example");
         if (example.isDirectory()) {
-            NCompress.of(session)
+            NCompress.of()
                     .addSource(example)
                     .setTarget(example.resolveSibling(example.getBaseName() + ".zip"))
                     .setPackaging("zip")
@@ -29,10 +29,10 @@ public class ExamplesOfZip {
 
     public void executeUncompress(NSession session) {
         session.out().println("Example of ## Uncompress ##");
-        NPath example = NPath.ofUserDirectory(session).resolve("example.zip");
+        NPath example = NPath.ofUserDirectory().resolve("example.zip");
         if (example.isRegularFile()) {
             session.out().println(NMsg.ofC("Listing %s", example));
-            NUncompress.of(session)
+            NUncompress.of()
                     .setSource(example)
                     .visit(new NUncompressVisitor() {
                         @Override
@@ -48,7 +48,7 @@ public class ExamplesOfZip {
                     })
                     .run();
             session.out().println(NMsg.ofC("Uncompressing %s", example));
-            NUncompress.of(session)
+            NUncompress.of()
                     .setSource(example)
                     .setTarget(example.resolveSibling("example-uncompressed"))
                     .run();

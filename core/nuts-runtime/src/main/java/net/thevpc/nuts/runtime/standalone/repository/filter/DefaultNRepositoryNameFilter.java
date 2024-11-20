@@ -1,13 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.filter;
 
-import net.thevpc.nuts.NRepositories;
-import net.thevpc.nuts.NRepository;
-import net.thevpc.nuts.NRepositoryFilter;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
-import net.thevpc.nuts.spi.NRepositoryDB;
-import net.thevpc.nuts.spi.NRepositoryLocation;
-import net.thevpc.nuts.spi.NRepositorySelectorList;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NFilterOp;
 
@@ -19,8 +13,8 @@ public class DefaultNRepositoryNameFilter extends AbstractRepositoryFilter{
     private final Set<String> exactRepos;
     private final Set<Pattern> wildcardRepos;
 
-    public DefaultNRepositoryNameFilter(NSession session, Collection<String> exactRepos) {
-        super(session, NFilterOp.CUSTOM);
+    public DefaultNRepositoryNameFilter(NWorkspace workspace, Collection<String> exactRepos) {
+        super(workspace, NFilterOp.CUSTOM);
         this.exactRepos = new HashSet<>();
         this.wildcardRepos = new HashSet<>();
         for (String repo : (exactRepos==null?new ArrayList<String>():exactRepos)) {
@@ -56,7 +50,7 @@ public class DefaultNRepositoryNameFilter extends AbstractRepositoryFilter{
     @Override
     public NRepositoryFilter simplify() {
         if(exactRepos.isEmpty() && wildcardRepos.isEmpty()){
-            return NRepositories.of(getSession()).filter().always();
+            return NRepositories.of().filter().always();
         }
         return this;
     }

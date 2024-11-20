@@ -9,14 +9,14 @@ import net.thevpc.nuts.spi.NSupportLevelContext;
 
 public class DefaultNExpr implements NExpr {
 
-    private final NSession session;
+    private final NWorkspace workspace;
 
-    public DefaultNExpr(NSession session) {
-        this.session = session;
+    public DefaultNExpr(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
     public NExprDeclarations newDeclarations(boolean includeDefaults) {
-        return includeDefaults ? new DefaultRootDeclarations(session) : new EmptyRootDeclarations(session);
+        return includeDefaults ? new DefaultRootDeclarations(workspace) : new EmptyRootDeclarations(workspace);
     }
 
     public NExprDeclarations newDeclarations(boolean includeDefaults, NExprEvaluator evaluator) {
@@ -36,9 +36,8 @@ public class DefaultNExpr implements NExpr {
         return newDeclarations(includeDefaults, evaluator).newMutableDeclarations();
     }
 
-    @Override
-    public NSession getSession() {
-        return session;
+    public NWorkspace getWorkspace() {
+        return workspace;
     }
 
     @Override

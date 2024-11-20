@@ -24,7 +24,7 @@
  */
 package net.thevpc.nuts.reflect;
 
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 
 import java.util.function.Function;
@@ -36,8 +36,8 @@ import java.util.function.Function;
  */
 public interface NReflectConfigurationBuilder extends NComponent {
 
-    static NReflectConfigurationBuilder of(NSession session) {
-        return session.extensions().createComponent(NReflectConfigurationBuilder.class).get();
+    static NReflectConfigurationBuilder of() {
+        return NExtensions.of().createComponent(NReflectConfigurationBuilder.class).get();
     }
 
     NReflectConfiguration build();

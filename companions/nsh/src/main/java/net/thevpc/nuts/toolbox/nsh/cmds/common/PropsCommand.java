@@ -56,13 +56,13 @@ public class PropsCommand extends NShellBuiltinDefault {
         Options o = context.getOptions();
         NSession session = context.getSession();
         if (cmdLine.next("get").isPresent()) {
-            o.property = cmdLine.next().flatMap(NLiteral::asString).get(session);
+            o.property = cmdLine.next().flatMap(NLiteral::asString).get();
             o.action = "get";
             while (cmdLine.hasNext()) {
                 if (cmdLine.next("--xml").isPresent()) {
                     o.sourceFormat = Format.XML;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = cmdLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
+                    o.sourceFile = cmdLine.nextNonOption(NArgName.of("file")).flatMap(NLiteral::asString).get();
 
                 } else if (cmdLine.next("--system").isPresent()) {
                     o.sourceFormat = Format.PROPS;
@@ -72,12 +72,12 @@ public class PropsCommand extends NShellBuiltinDefault {
                 } else if (cmdLine.next("--props").isPresent()) {
                     o.sourceFormat = Format.PROPS;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = cmdLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
+                    o.sourceFile = cmdLine.nextNonOption(NArgName.of("file")).flatMap(NLiteral::asString).get();
 
                 } else if (cmdLine.next("--file").isPresent()) {
                     o.sourceFormat = Format.AUTO;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = cmdLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
+                    o.sourceFile = cmdLine.nextNonOption(NArgName.of("file")).flatMap(NLiteral::asString).get();
                 } else {
                     cmdLine.setCommandName(getName()).throwUnexpectedArgument();
                 }
@@ -85,26 +85,26 @@ public class PropsCommand extends NShellBuiltinDefault {
             }
             return true;
         } else if (cmdLine.next("set").isPresent()) {
-            String k = cmdLine.next().flatMap(NLiteral::asString).get(session);
-            String v = cmdLine.next().flatMap(NLiteral::asString).get(session);
+            String k = cmdLine.next().flatMap(NLiteral::asString).get();
+            String v = cmdLine.next().flatMap(NLiteral::asString).get();
             o.updates.put(k, v);
             o.action = "set";
             while (cmdLine.hasNext()) {
                 if (cmdLine.next("--comments").isPresent()) {
-                    o.comments = cmdLine.next().get(session).getStringValue().get(session);
+                    o.comments = cmdLine.next().get().getStringValue().get();
                 } else if (cmdLine.next("--to-props-file").isPresent()) {
                     o.targetFormat = Format.PROPS;
                     o.targetType = TargetType.FILE;
-                    o.targetFile = cmdLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
+                    o.targetFile = cmdLine.nextNonOption(NArgName.of("file")).flatMap(NLiteral::asString).get();
 
                 } else if (cmdLine.next("--to-xml-file").isPresent()) {
                     o.targetFormat = Format.XML;
                     o.targetType = TargetType.FILE;
-                    o.targetFile = cmdLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
+                    o.targetFile = cmdLine.nextNonOption(NArgName.of("file")).flatMap(NLiteral::asString).get();
                 } else if (cmdLine.next("--to-file").isPresent()) {
                     o.targetFormat = Format.AUTO;
                     o.targetType = TargetType.FILE;
-                    o.targetFile = cmdLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
+                    o.targetFile = cmdLine.nextNonOption(NArgName.of("file")).flatMap(NLiteral::asString).get();
 
                 } else if (cmdLine.next("--print-props").isPresent()) {
                     o.targetFormat = Format.PROPS;
@@ -126,7 +126,7 @@ public class PropsCommand extends NShellBuiltinDefault {
                 } else if (cmdLine.next("--xml").isPresent()) {
                     o.sourceFormat = Format.XML;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = cmdLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
+                    o.sourceFile = cmdLine.nextNonOption(NArgName.of("file")).flatMap(NLiteral::asString).get();
 
                 } else if (cmdLine.next("--system").isPresent()) {
                     o.sourceFormat = Format.PROPS;
@@ -136,11 +136,11 @@ public class PropsCommand extends NShellBuiltinDefault {
                 } else if (cmdLine.next("--props").isPresent()) {
                     o.sourceFormat = Format.PROPS;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = cmdLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
+                    o.sourceFile = cmdLine.nextNonOption(NArgName.of("file")).flatMap(NLiteral::asString).get();
                 } else if (cmdLine.next("--file").isPresent()) {
                     o.sourceFormat = Format.AUTO;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = cmdLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
+                    o.sourceFile = cmdLine.nextNonOption(NArgName.of("file")).flatMap(NLiteral::asString).get();
                 } else {
                     cmdLine.setCommandName(getName()).throwUnexpectedArgument();
                 }
@@ -152,7 +152,7 @@ public class PropsCommand extends NShellBuiltinDefault {
                 if (cmdLine.next("--xml").isPresent()) {
                     o.sourceFormat = Format.XML;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = cmdLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
+                    o.sourceFile = cmdLine.nextNonOption(NArgName.of("file")).flatMap(NLiteral::asString).get();
 
                 } else if (cmdLine.next("--system").isPresent()) {
                     o.sourceFormat = Format.PROPS;
@@ -162,12 +162,12 @@ public class PropsCommand extends NShellBuiltinDefault {
                 } else if (cmdLine.next("--props").isPresent()) {
                     o.sourceFormat = Format.PROPS;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = cmdLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
+                    o.sourceFile = cmdLine.nextNonOption(NArgName.of("file")).flatMap(NLiteral::asString).get();
 
                 } else if (cmdLine.next("--file").isPresent()) {
                     o.sourceFormat = Format.AUTO;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = cmdLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
+                    o.sourceFile = cmdLine.nextNonOption(NArgName.of("file")).flatMap(NLiteral::asString).get();
                 } else if (cmdLine.next("--sort").isPresent()) {
                     o.sort = true;
                     session.addOutputFormatOptions("--sort");
@@ -187,13 +187,13 @@ public class PropsCommand extends NShellBuiltinDefault {
         NSession session = context.getSession();
         cmdLine.setCommandName(getName());
         if (o.sourceType != SourceType.FILE && o.sourceFile != null) {
-            throw new NExecutionException(session, NMsg.ofPlain("props: Should not use file with --system flag"), NExecutionException.ERROR_2);
+            throw new NExecutionException(NMsg.ofPlain("props: Should not use file with --system flag"), NExecutionException.ERROR_2);
         }
         if (o.sourceType == SourceType.FILE && o.sourceFile == null) {
-            throw new NExecutionException(session, NMsg.ofPlain("props: Missing file"), NExecutionException.ERROR_3);
+            throw new NExecutionException(NMsg.ofPlain("props: Missing file"), NExecutionException.ERROR_3);
         }
         if (o.action == null) {
-            throw new NExecutionException(session, NMsg.ofPlain("props: Missing action"), NExecutionException.ERROR_4);
+            throw new NExecutionException(NMsg.ofPlain("props: Missing action"), NExecutionException.ERROR_4);
         }
         switch (o.action) {
             case "get": {
@@ -208,7 +208,7 @@ public class PropsCommand extends NShellBuiltinDefault {
                     }
                     storeProperties(p, o, context);
                 } catch (Exception ex) {
-                    throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_2);
+                    throw new NExecutionException(NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_2);
                 }
                 return;
             }
@@ -217,7 +217,7 @@ public class PropsCommand extends NShellBuiltinDefault {
                 return;
             }
             default: {
-                throw new NExecutionException(session, NMsg.ofC("props: Unsupported action %s", o.action), NExecutionException.ERROR_2);
+                throw new NExecutionException(NMsg.ofC("props: Unsupported action %s", o.action), NExecutionException.ERROR_2);
             }
         }
     }
@@ -229,13 +229,13 @@ public class PropsCommand extends NShellBuiltinDefault {
     }
 
     private void action_list(NShellExecutionContext context, Options o) {
-        NObjectFormat.of(context.getSession()).setValue(getProperties(o, context)).print();
+        NObjectFormat.of().setValue(getProperties(o, context)).print();
     }
 
     private int action_get(NShellExecutionContext context, Options o) {
         Map<String, String> p = getProperties(o, context);
         String v = p.get(o.property);
-        NObjectFormat.of(context.getSession()).setValue(v == null ? "" : v).print();
+        NObjectFormat.of().setValue(v == null ? "" : v).print();
         return 0;
     }
 
@@ -261,7 +261,7 @@ public class PropsCommand extends NShellBuiltinDefault {
         } else if (file.toLowerCase().endsWith(".xml")) {
             return Format.XML;
         }
-        throw new NExecutionException(context.getSession(), NMsg.ofC("unknown file format %s", file), NExecutionException.ERROR_2);
+        throw new NExecutionException(NMsg.ofC("unknown file format %s", file), NExecutionException.ERROR_2);
     }
 
     private Map<String, String> readProperties(Options o, NShellExecutionContext context) {
@@ -289,7 +289,7 @@ public class PropsCommand extends NShellBuiltinDefault {
                 }
             }
         } catch (Exception ex) {
-            throw new NExecutionException(context.getSession(), NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_2);
+            throw new NExecutionException(NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_2);
         }
         return p;
     }
@@ -314,8 +314,8 @@ public class PropsCommand extends NShellBuiltinDefault {
             Format format = o.targetFormat;
             switch (format) {
                 case AUTO: {
-                    NObjectFormat f = NObjectFormat.of(session).setValue(p);
-                    f.configure(true, NBootManager.of(session).getBootOptions().getOutputFormatOptions().orElseGet(Collections::emptyList).toArray(new String[0]));
+                    NObjectFormat f = NObjectFormat.of().setValue(p);
+                    f.configure(true, NBootManager.of().getBootOptions().getOutputFormatOptions().orElseGet(Collections::emptyList).toArray(new String[0]));
                     f.configure(true, session.getOutputFormatOptions().toArray(new String[0]));
                     f.println(session.out());
                     break;

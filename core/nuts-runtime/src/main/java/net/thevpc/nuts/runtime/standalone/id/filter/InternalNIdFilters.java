@@ -12,30 +12,28 @@ import net.thevpc.nuts.util.NFilter;
 
 public class InternalNIdFilters extends InternalNTypedFilters<NIdFilter> implements NIdFilters {
 
-    public InternalNIdFilters(NSession session) {
-        super(session, NIdFilter.class);
+    public InternalNIdFilters(NWorkspace workspace) {
+        super(workspace, NIdFilter.class);
     }
 
     @Override
     public NIdFilter byValue(NId id) {
-        return new NIdIdFilter(id,getSession());
+        return new NIdIdFilter(id, getWorkspace());
     }
 
     @Override
     public NIdFilter always() {
-        checkSession();
-        return new NIdFilterTrue(getSession());
+        return new NIdFilterTrue(getWorkspace());
     }
 
     @Override
     public NIdFilter not(NFilter other) {
-        return new NIdFilterNone(getSession(), (NIdFilter) other);
+        return new NIdFilterNone(getWorkspace(), (NIdFilter) other);
     }
 
     @Override
     public NIdFilter never() {
-        checkSession();
-        return new NIdFilterFalse(getSession());
+        return new NIdFilterFalse(getWorkspace());
     }
 
     @Override
@@ -43,26 +41,25 @@ public class InternalNIdFilters extends InternalNTypedFilters<NIdFilter> impleme
         if (defaultVersion == null) {
             return always();
         }
-        return new NDefaultVersionIdFilter(getSession(), defaultVersion);
+        return new NDefaultVersionIdFilter(getWorkspace(), defaultVersion);
     }
 
     @Override
     public NIdFilter byInstallStatus(NInstallStatusFilter installStatus) {
-        return new NInstallStatusIdFilter(getSession(), installStatus);
+        return new NInstallStatusIdFilter(getWorkspace(), installStatus);
     }
 
     @Override
     public NIdFilter byName(String... names) {
-        checkSession();
         if (names == null || names.length == 0) {
             return always();
         }
         NIdFilter f = null;
         for (String wildcardId : names) {
             if (f == null) {
-                f = new NPatternIdFilter(getSession(), NId.of(wildcardId).get(getSession()));
+                f = new NPatternIdFilter(getWorkspace(), NId.of(wildcardId).get());
             } else {
-                f = (NIdFilter) f.or(new NPatternIdFilter(getSession(), NId.of(wildcardId).get(getSession())));
+                f = (NIdFilter) f.or(new NPatternIdFilter(getWorkspace(), NId.of(wildcardId).get()));
             }
         }
         return f;
@@ -70,28 +67,25 @@ public class InternalNIdFilters extends InternalNTypedFilters<NIdFilter> impleme
 
     @Override
     public NIdFilter as(NFilter a) {
-        checkSession();
         if (a instanceof NIdFilter) {
             return (NIdFilter) a;
         }
         if (a instanceof NDescriptorFilter) {
-            return new NDescriptorIdFilter((NDescriptorFilter) a,getSession());
+            return new NDescriptorIdFilter((NDescriptorFilter) a, getWorkspace());
         }
         if (a instanceof NVersionFilter) {
-            return new NVersionIdFilter((NVersionFilter) a,getSession());
+            return new NVersionIdFilter((NVersionFilter) a, getWorkspace());
         }
         return null;
     }
 
     @Override
     public NIdFilter from(NFilter a) {
-        checkSession();
         if (a == null) {
             return null;
         }
         NIdFilter t = as(a);
-        NSession session = getSession();
-        NAssert.requireNonNull(t, "IdFilter", session);
+        NAssert.requireNonNull(t, "IdFilter");
         return t;
     }
 
@@ -104,7 +98,7 @@ public class InternalNIdFilters extends InternalNTypedFilters<NIdFilter> impleme
         if (all.size() == 1) {
             return all.get(0);
         }
-        return new NIdFilterAnd(getSession(), all.toArray(new NIdFilter[0]));
+        return new NIdFilterAnd(getWorkspace(), all.toArray(new NIdFilter[0]));
     }
 
     @Override
@@ -116,7 +110,7 @@ public class InternalNIdFilters extends InternalNTypedFilters<NIdFilter> impleme
         if (all.size() == 1) {
             return all.get(0);
         }
-        return new NIdFilterOr(getSession(), all.toArray(new NIdFilter[0]));
+        return new NIdFilterOr(getWorkspace(), all.toArray(new NIdFilter[0]));
     }
 
     @Override
@@ -125,12 +119,12 @@ public class InternalNIdFilters extends InternalNTypedFilters<NIdFilter> impleme
         if (all.isEmpty()) {
             return always();
         }
-        return new NIdFilterNone(getSession(), all.toArray(new NIdFilter[0]));
+        return new NIdFilterNone(getWorkspace(), all.toArray(new NIdFilter[0]));
     }
 
     @Override
     public NIdFilter parse(String expression) {
-        return new NIdFilterParser(expression, getSession()).parse();
+        return new NIdFilterParser(expression, getWorkspace()).parse();
     }
 
     @Override

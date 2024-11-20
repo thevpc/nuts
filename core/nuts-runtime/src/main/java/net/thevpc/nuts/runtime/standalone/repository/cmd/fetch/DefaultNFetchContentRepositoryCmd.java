@@ -46,50 +46,46 @@ import java.util.logging.Level;
  */
 public class DefaultNFetchContentRepositoryCmd extends AbstractNFetchContentRepositoryCmd {
 
-    private NLog LOG;
 
     public DefaultNFetchContentRepositoryCmd(NRepository repo) {
         super(repo);
     }
 
-    protected NLogOp _LOGOP(NSession session) {
-        return _LOG(session).with().session(session);
+    protected NLogOp _LOGOP() {
+        return _LOG().with();
     }
 
-    protected NLog _LOG(NSession session) {
-        if (LOG == null) {
-            LOG = NLog.of(DefaultNFetchContentRepositoryCmd.class,session);
-        }
-        return LOG;
+    protected NLog _LOG() {
+        return NLog.of(DefaultNFetchContentRepositoryCmd.class);
     }
 
     @Override
     public NFetchContentRepositoryCmd run() {
         NRepository repo = getRepo();
-        NSession session = getSession();
+        NSession session = repo.getWorkspace().currentSession();
         NSessionUtils.checkSession(repo.getWorkspace(), session);
         NDescriptor descriptor0 = descriptor;
         if (descriptor0 == null) {
-            NRepositorySPI repoSPI = NWorkspaceUtils.of(session).repoSPI(repo);
-            descriptor0 = repoSPI.fetchDescriptor().setId(id).setSession(session)
+            NRepositorySPI repoSPI = NWorkspaceUtils.of(getRepo().getWorkspace()).repoSPI(repo);
+            descriptor0 = repoSPI.fetchDescriptor().setId(id)
                     .setFetchMode(getFetchMode())
                     .getResult();
         }
         id = id.builder().setFaceContent().build();
-        repo.security().setSession(getSession()).checkAllowed(NConstants.Permissions.FETCH_CONTENT, "fetch-content");
+        repo.security().checkAllowed(NConstants.Permissions.FETCH_CONTENT, "fetch-content");
         NRepositoryExt xrepo = NRepositoryExt.of(repo);
-        xrepo.checkAllowedFetch(id, session);
+        xrepo.checkAllowedFetch(id);
         long startTime = System.currentTimeMillis();
         try {
-            NPath f = xrepo.fetchContentImpl(id, descriptor0, getFetchMode(), session);
+            NPath f = xrepo.fetchContentImpl(id, descriptor0, getFetchMode());
             if (f == null) {
-                throw new NNotFoundException(getSession(), id);
+                throw new NNotFoundException(id);
             }
-            NLogUtils.traceMessage(_LOG(session), Level.FINER, repo.getName(), session, getFetchMode(), id.getLongId(), NLogVerb.SUCCESS, "fetch package", startTime, null);
+            NLogUtils.traceMessage(_LOG(), Level.FINER, repo.getName(), getFetchMode(), id.getLongId(), NLogVerb.SUCCESS, "fetch package", startTime, null);
             result = f;
         } catch (RuntimeException ex) {
             if (!CoreNUtils.isUnsupportedFetchModeException(ex)) {
-                NLogUtils.traceMessage(_LOG(session), Level.FINEST, repo.getName(), session, getFetchMode(), id.getLongId(), NLogVerb.FAIL, "fetch package", startTime, CoreStringUtils.exceptionToMessage(ex));
+                NLogUtils.traceMessage(_LOG(), Level.FINEST, repo.getName(), getFetchMode(), id.getLongId(), NLogVerb.FAIL, "fetch package", startTime, CoreStringUtils.exceptionToMessage(ex));
             }
             throw ex;
         }

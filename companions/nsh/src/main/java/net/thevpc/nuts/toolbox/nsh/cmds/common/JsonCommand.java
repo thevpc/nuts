@@ -69,15 +69,15 @@ public class JsonCommand extends NShellBuiltinDefault {
         NSession session = context.getSession();
         NArg a;
         if ((a = cmdLine.nextEntry("-f", "--file").orNull()) != null) {
-            options.input = a.getStringValue().get(session);
+            options.input = a.getStringValue().get();
             return true;
         } else if ((a = cmdLine.nextEntry("-q").orNull()) != null) {
             options.queryType = "jpath";
-            options.queries.add(a.getStringValue().get(session));
+            options.queries.add(a.getStringValue().get());
             return true;
         } else if ((a = cmdLine.nextEntry("--xpath").orNull()) != null) {
             options.queryType = "xpath";
-            options.queries.add(a.getStringValue().get(session));
+            options.queries.add(a.getStringValue().get());
             return true;
         }
         return false;
@@ -94,7 +94,7 @@ public class JsonCommand extends NShellBuiltinDefault {
         if (options.queries.isEmpty()) {
             NElement inputDocument = readJsonConvertElement(options.input, context.getShellContext());
             if (session.getOutputFormat().orDefault() == NContentType.PLAIN) {
-                session.out().println(NElements.of(session).json().setValue(inputDocument).format());
+                session.out().println(NElements.of().json().setValue(inputDocument).format());
             } else {
                 session.out().println(inputDocument);
             }
@@ -108,7 +108,7 @@ public class JsonCommand extends NShellBuiltinDefault {
                     try {
                         resultDocument = documentFactory.newDocumentBuilder().newDocument();
                     } catch (ParserConfigurationException ex) {
-                        throw new NExecutionException(session, NMsg.ofPlain("failed to create xml document"), ex, NExecutionException.ERROR_1);
+                        throw new NExecutionException(NMsg.ofPlain("failed to create xml document"), ex, NExecutionException.ERROR_1);
                     }
                     Element resultElement = resultDocument.createElement("result");
                     resultDocument.appendChild(resultElement);
@@ -121,10 +121,10 @@ public class JsonCommand extends NShellBuiltinDefault {
                                 resultElement.appendChild(o);
                             }
                         } catch (XPathExpressionException ex) {
-                            throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_2);
+                            throw new NExecutionException(NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_2);
                         }
                     }
-                    NElement json = NElements.of(session).toElement(resultDocument);
+                    NElement json = NElements.of().toElement(resultDocument);
                     session.out().println(json);
                     break;
                 }
@@ -132,13 +132,13 @@ public class JsonCommand extends NShellBuiltinDefault {
                     NElement inputDocument = readJsonConvertElement(options.input, context.getShellContext());
                     List<NElement> all = new ArrayList<>();
                     for (String query : options.queries) {
-                        all.addAll(NElements.of(session)
+                        all.addAll(NElements.of()
                                 .compilePath(query)
                                 .filter(inputDocument)
                         );
                     }
                     Object result = all.size() == 1 ? all.get(0) : all;
-                    NElement json = NElements.of(session).toElement(result);
+                    NElement json = NElements.of().toElement(result);
                     session.out().println(json);
                     break;
                 }
@@ -157,14 +157,14 @@ public class JsonCommand extends NShellBuiltinDefault {
 
     private <T> T readJsonConvertAny(String path, Class<T> cls, NShellContext context) {
         NSession session = context.getSession();
-        NElements njson = NElements.of(session).json();
+        NElements njson = NElements.of().json();
         T inputDocument = null;
         if (path != null) {
-            NPath file = NPath.of(path, session).toAbsolute(context.getDirectory());
+            NPath file = NPath.of(path).toAbsolute(context.getDirectory());
             if (file.exists()) {
                 inputDocument = njson.parse(file, cls);
             } else {
-                throw new NExecutionException(session, NMsg.ofC("invalid path %s", path), NExecutionException.ERROR_1);
+                throw new NExecutionException(NMsg.ofC("invalid path %s", path), NExecutionException.ERROR_1);
             }
         } else {
             StringBuilder sb = new StringBuilder();
@@ -174,7 +174,7 @@ public class JsonCommand extends NShellBuiltinDefault {
                 try {
                     line = reader.readLine();
                 } catch (IOException ex) {
-                    throw new NExecutionException(session, NMsg.ofPlain("broken Input"), NExecutionException.ERROR_2);
+                    throw new NExecutionException(NMsg.ofPlain("broken Input"), NExecutionException.ERROR_2);
                 }
                 if (line == null) {
                     inputDocument = njson.parse(new StringReader(sb.toString()), cls);

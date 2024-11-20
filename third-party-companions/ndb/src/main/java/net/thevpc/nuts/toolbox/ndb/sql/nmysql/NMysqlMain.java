@@ -37,10 +37,10 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
     }
 
     @Override
-    public void run(NSession session, NCmdLine cmdLine) {
+    public void run(NCmdLine cmdLine) {
         NMySqlService service = new NMySqlService(session);
         while (cmdLine.hasNext()) {
-            switch (cmdLine.peek().get(session).key()) {
+            switch (cmdLine.peek().get().key()) {
                 case "add":
                 case "create": {
                     cmdLine.skip();
@@ -125,9 +125,9 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
         Data d = new Data();
         while (cmdLine.hasNext()) {
             if (cmdLine.isNextOption()) {
-                switch (cmdLine.peek().get(session).key()) {
+                switch (cmdLine.peek().get().key()) {
                     case "--name": {
-                        cmdLine.withNextEntry((v, aa, s) -> {
+                        cmdLine.withNextEntry((v, aa) -> {
                             if (d.name == null) {
                                 d.name = new AtName(v);
                             } else {
@@ -137,7 +137,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                         break;
                     }
                     case "--path": {
-                        cmdLine.withNextEntry((v, aa, s) -> {
+                        cmdLine.withNextEntry((v, aa) -> {
                             if (d.path == null) {
                                 d.path = v;
                             } else {
@@ -180,11 +180,11 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
         NRef<Boolean> forceShowSQL = NRef.ofNull(Boolean.class);
         while (cmdLine.hasNext()) {
             if (cmdLine.isNextOption()) {
-                switch (cmdLine.peek().get(session).key()) {
+                switch (cmdLine.peek().get().key()) {
                     case "--name": {
-                        cmdLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a) -> {
                             if (name.isNull()) {
-                                name.set(new AtName(a.getStringValue().get(session)));
+                                name.set(new AtName(a.getStringValue().get()));
                             } else {
                                 cmdLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
                             }
@@ -192,7 +192,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                         break;
                     }
                     case "--show-sql": {
-                        cmdLine.withNextFlag((v, a, s) -> {
+                        cmdLine.withNextFlag((v, a) -> {
                             forceShowSQL.set(v);
                         });
                         break;
@@ -203,9 +203,9 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                 }
             } else {
                 if (name.isNull()) {
-                    name.set(new AtName(cmdLine.next().get(session).asString().get(session)));
+                    name.set(new AtName(cmdLine.next().get().asString().get()));
                 } else {
-                    sql.add(cmdLine.next().flatMap(NLiteral::asString).get(session));
+                    sql.add(cmdLine.next().flatMap(NLiteral::asString).get());
                 }
             }
         }
@@ -252,11 +252,11 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
         NRef<String> path = NRef.ofNull(String.class);
         while (cmdLine.hasNext()) {
             if (cmdLine.isNextOption()) {
-                switch (cmdLine.peek().get(session).key()) {
+                switch (cmdLine.peek().get().key()) {
                     case "--name": {
-                        cmdLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a) -> {
                             if (name.isNull()) {
-                                name.set(new AtName(a.getStringValue().get(session)));
+                                name.set(new AtName(a.getStringValue().get()));
                             } else {
                                 cmdLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
                             }
@@ -264,7 +264,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                         break;
                     }
                     case "--path": {
-                        cmdLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a) -> {
                             if (path.isNull()) {
                                 path.set(v);
                             } else {
@@ -279,9 +279,9 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                 }
             } else {
                 if (name.isNull()) {
-                    name.set(new AtName(cmdLine.next().get(session).asString().get(session)));
+                    name.set(new AtName(cmdLine.next().get().asString().get()));
                 } else if (path.isNull()) {
-                    path.set(cmdLine.next().flatMap(NLiteral::asString).get(session));
+                    path.set(cmdLine.next().flatMap(NLiteral::asString).get());
                 } else {
                     cmdLine.throwUnexpectedArgument();
                 }
@@ -336,9 +336,9 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
         Data d = new Data();
         while (cmdLine.hasNext()) {
             if (cmdLine.isNextOption()) {
-                switch (cmdLine.peek().get(session).key()) {
+                switch (cmdLine.peek().get().key()) {
                     case "--name": {
-                        cmdLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a) -> {
                             if (d.name == null) {
                                 d.name = new AtName(v);
                             } else {
@@ -348,30 +348,30 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                         break;
                     }
                     case "--shutdown-wait-time": {
-                        cmdLine.withNextEntryValue((v, a, s) -> {
+                        cmdLine.withNextEntryValue((v, a) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = false;
                             } else if (d.expectedRemote) {
                                 cmdLine.throwUnexpectedArgument();
                             }
-                            d.c_shutdown_wait_time = v.asInt().get(session);
+                            d.c_shutdown_wait_time = v.asInt().get();
                         });
 
                         break;
                     }
                     case "--startup-wait-time": {
-                        cmdLine.withNextEntryValue((v, a, s) -> {
+                        cmdLine.withNextEntryValue((v, a) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = false;
                             } else if (d.expectedRemote) {
                                 cmdLine.throwUnexpectedArgument();
                             }
-                            d.c_startup_wait_time = v.asInt().get(session);
+                            d.c_startup_wait_time = v.asInt().get();
                         });
                         break;
                     }
                     case "--backup-folder": {
-                        cmdLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = false;
                             } else if (d.expectedRemote) {
@@ -382,7 +382,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                         break;
                     }
                     case "--running-folder": {
-                        cmdLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = false;
                             } else if (d.expectedRemote) {
@@ -393,7 +393,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                         break;
                     }
                     case "--log-file": {
-                        cmdLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = false;
                             } else if (d.expectedRemote) {
@@ -404,7 +404,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                         break;
                     }
                     case "--mysql-command": {
-                        cmdLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = false;
                             } else if (d.expectedRemote) {
@@ -415,7 +415,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                         break;
                     }
                     case "--mysqldump-command": {
-                        cmdLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = false;
                             } else if (d.expectedRemote) {
@@ -426,7 +426,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                         break;
                     }
                     case "--kill": {
-                        cmdLine.withNextFlag((v, a, s) -> {
+                        cmdLine.withNextFlag((v, a) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = false;
                             } else if (d.expectedRemote) {
@@ -437,7 +437,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                         break;
                     }
                     case "--user": {
-                        cmdLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = false;
                             } else if (d.expectedRemote) {
@@ -448,7 +448,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                         break;
                     }
                     case "--password": {
-                        cmdLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = false;
                             } else if (d.expectedRemote) {
@@ -459,7 +459,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                         break;
                     }
                     case "--ask-password": {
-                        cmdLine.withNextFlag((v, a, s) -> {
+                        cmdLine.withNextFlag((v, a) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = false;
                             } else if (d.expectedRemote) {
@@ -470,7 +470,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                         break;
                     }
                     case "--db": {
-                        cmdLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = false;
                             } else if (d.expectedRemote) {
@@ -481,7 +481,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                         break;
                     }
                     case "--local-name": {
-                        cmdLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = true;
                             } else if (!d.expectedRemote) {
@@ -496,7 +496,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                         break;
                     }
                     case "--remote-name": {
-                        cmdLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = true;
                             } else if (!d.expectedRemote) {
@@ -511,7 +511,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                         break;
                     }
                     case "--server": {
-                        cmdLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = true;
                             } else if (!d.expectedRemote) {
@@ -526,7 +526,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                         break;
                     }
                     case "--local": {
-                        cmdLine.withNextFlag((v, a, s) -> {
+                        cmdLine.withNextFlag((v, a) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = !v;
                             } else if (d.expectedRemote) {
@@ -536,7 +536,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                         break;
                     }
                     case "--remote": {
-                        cmdLine.withNextFlag((v, a, s) -> {
+                        cmdLine.withNextFlag((v, a) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = v;
                             } else if (!d.expectedRemote) {
@@ -546,7 +546,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                         break;
                     }
                     default: {
-                        if (cmdLine.peek().get(session).isNonOption()) {
+                        if (cmdLine.peek().get().isNonOption()) {
                             if (d.name == null) {
                                 d.name = AtName.nextAppOption(cmdLine, session);
                             } else {
@@ -575,7 +575,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
         if (d.expectedRemote && d.forRemote_server == null) {
             cmdLine.throwMissingArgument("--server");
         }
-        NTexts factory = NTexts.of(session);
+        NTexts factory = NTexts.of();
         if (cmdLine.isExecMode()) {
             NPrintStream out = session.out();
             if (!d.expectedRemote) {
@@ -585,7 +585,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                     if (d.name.getDatabaseName().isEmpty()) {
                         if (c.getDatabase(d.name.getDatabaseName(), NOpenMode.OPEN_OR_NULL) != null) {
                             overrideExisting = true;
-                            if (!NAsk.of(session)
+                            if (!NAsk.of()
                                     .forBoolean(
                                             NMsg.ofC(
                                                     "already exists %s. override?", factory.ofStyled(d.name.toString(),
@@ -593,29 +593,29 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                                                     ))
                                     )
                                     .setDefaultValue(false).getBooleanValue()) {
-                                throw new NExecutionException(session, NMsg.ofC("already exists %s", d.name), NExecutionException.ERROR_2);
+                                throw new NExecutionException(NMsg.ofC("already exists %s", d.name), NExecutionException.ERROR_2);
                             }
                         }
                     } else {
                         if (c.getDatabase(d.name.getDatabaseName(), NOpenMode.OPEN_OR_NULL) != null) {
                             overrideExisting = true;
-                            if (!NAsk.of(session)
+                            if (!NAsk.of()
                                     .forBoolean(
                                             NMsg.ofC("already exists %s. override?", factory.ofStyled(d.name.toString(), NTextStyle.primary3()
                                             )))
                                     .setDefaultValue(false).getBooleanValue()) {
-                                throw new NExecutionException(session, NMsg.ofC("already exists %s", d.name), NExecutionException.ERROR_2);
+                                throw new NExecutionException(NMsg.ofC("already exists %s", d.name), NExecutionException.ERROR_2);
                             }
                         }
                     }
                 } else {
                     if (d.name.getDatabaseName().isEmpty()) {
                         if (c.getDatabase(d.name.getDatabaseName(), NOpenMode.OPEN_OR_NULL) == null) {
-                            throw new NExecutionException(session, NMsg.ofC("not found %s", d.name), NExecutionException.ERROR_2);
+                            throw new NExecutionException(NMsg.ofC("not found %s", d.name), NExecutionException.ERROR_2);
                         }
                     } else {
                         if (c.getDatabase(d.name.getDatabaseName(), NOpenMode.OPEN_OR_NULL) == null) {
-                            throw new NExecutionException(session, NMsg.ofC("not found  %s", d.name), NExecutionException.ERROR_2);
+                            throw new NExecutionException(NMsg.ofC("not found  %s", d.name), NExecutionException.ERROR_2);
                         }
                     }
                 }
@@ -685,7 +685,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                     if (d.password != null) {
                         someUpdates = true;
                         r.getConfig().setPassword(
-                                new String(NWorkspaceSecurityManager.of(session).createCredentials(d.password.toCharArray(), true,
+                                new String(NWorkspaceSecurityManager.of().createCredentials(d.password.toCharArray(), true,
                                         null))
                         );
                     }
@@ -697,20 +697,20 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                         r.getConfig().setDatabaseName(d.dbname);
                     }
                     if (d.askPassword || (!add && d.password == null)) {
-                        r.getConfig().setPassword(new String(NWorkspaceSecurityManager.of(session)
+                        r.getConfig().setPassword(new String(NWorkspaceSecurityManager.of()
                                         .createCredentials(session.getTerminal().readPassword(NMsg.ofPlain("Password")), true,
                                                 null)
                                 )
                         );
                     }
                     if (r.getConfig().getUser() == null) {
-                        throw new NExecutionException(session, NMsg.ofPlain("missing --user"), NExecutionException.ERROR_2);
+                        throw new NExecutionException(NMsg.ofPlain("missing --user"), NExecutionException.ERROR_2);
                     }
                     if (r.getConfig().getPassword() == null) {
-                        throw new NExecutionException(session, NMsg.ofPlain("missing --password"), NExecutionException.ERROR_2);
+                        throw new NExecutionException(NMsg.ofPlain("missing --password"), NExecutionException.ERROR_2);
                     }
                     if (r.getConfig().getDatabaseName() == null) {
-                        throw new NExecutionException(session, NMsg.ofPlain("missing --name"), NExecutionException.ERROR_2);
+                        throw new NExecutionException(NMsg.ofPlain("missing --name"), NExecutionException.ERROR_2);
                     }
                     if (someUpdates && session.isPlainTrace()) {
                         if (add) {
@@ -735,7 +735,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                     }
                 }
                 if (!someUpdates) {
-                    throw new NExecutionException(session, NMsg.ofPlain("nothing to save"), NExecutionException.ERROR_2);
+                    throw new NExecutionException(NMsg.ofPlain("nothing to save"), NExecutionException.ERROR_2);
                 }
 
                 c.saveConfig();
@@ -757,34 +757,34 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                     if (d.name.getDatabaseName().isEmpty()) {
                         if (c.getDatabase(d.name.getDatabaseName(), NOpenMode.OPEN_OR_NULL) != null) {
                             overrideExisting = true;
-                            if (!NAsk.of(session)
+                            if (!NAsk.of()
                                     .forBoolean(
                                             NMsg.ofC("already exists %s. override?", factory.ofStyled(d.name.toString(), NTextStyle.primary3())
                                             ))
                                     .setDefaultValue(false).getBooleanValue()) {
-                                throw new NExecutionException(session, NMsg.ofC("already exists %s", d.name), NExecutionException.ERROR_2);
+                                throw new NExecutionException(NMsg.ofC("already exists %s", d.name), NExecutionException.ERROR_2);
                             }
                         }
                     } else {
                         if (c.getDatabase(d.name.getDatabaseName(), NOpenMode.OPEN_OR_NULL) != null) {
                             overrideExisting = true;
-                            if (!NAsk.of(session)
+                            if (!NAsk.of()
                                     .forBoolean(
                                             NMsg.ofC("already exists %s. override?", factory.ofStyled(d.name.toString(), NTextStyle.primary3())
                                             ))
                                     .setDefaultValue(false).getBooleanValue()) {
-                                throw new NExecutionException(session, NMsg.ofC("already exists %s", d.name), NExecutionException.ERROR_2);
+                                throw new NExecutionException(NMsg.ofC("already exists %s", d.name), NExecutionException.ERROR_2);
                             }
                         }
                     }
                 } else {
                     if (d.name.getDatabaseName().isEmpty()) {
                         if (c.getDatabase(d.name.getDatabaseName(), NOpenMode.OPEN_OR_NULL) == null) {
-                            throw new NExecutionException(session, NMsg.ofC("not found %s", d.name), NExecutionException.ERROR_2);
+                            throw new NExecutionException(NMsg.ofC("not found %s", d.name), NExecutionException.ERROR_2);
                         }
                     } else {
                         if (c.getDatabase(d.name.getDatabaseName(), NOpenMode.OPEN_OR_NULL) == null) {
-                            throw new NExecutionException(session, NMsg.ofPlain("not found  %s" + d.name), NExecutionException.ERROR_2);
+                            throw new NExecutionException(NMsg.ofPlain("not found  %s" + d.name), NExecutionException.ERROR_2);
                         }
                     }
                 }
@@ -849,7 +849,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                     }
                 }
                 if (!someUpdates) {
-                    throw new NExecutionException(session, NMsg.ofPlain("nothing to save"), NExecutionException.ERROR_2);
+                    throw new NExecutionException(NMsg.ofPlain("nothing to save"), NExecutionException.ERROR_2);
                 }
 
                 c.saveConfig();
@@ -867,7 +867,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
 
         while (cmdLine.hasNext()) {
             if (cmdLine.isNextOption()) {
-                switch (cmdLine.peek().get(session).key()) {
+                switch (cmdLine.peek().get().key()) {
                     case "--remote": {
                         cmdLine.nextFlag();
                         currentLocal = false;
@@ -899,7 +899,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
             }
         }
         if (localNames.isEmpty() && remoteNames.isEmpty()) {
-            cmdLine.peek().get(session);
+            cmdLine.peek().get();
         }
         for (AtName localName : localNames) {
             if (localName.getDatabaseName().isEmpty()) {
@@ -935,7 +935,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
     }
 
     public Object toObject(String dbName, String confName, LocalMysqlDatabaseConfig config, boolean describe, boolean plain, NSession session) {
-        NTexts text = NTexts.of(session);
+        NTexts text = NTexts.of();
         if (!describe) {
             if (plain) {
                 return text.ofBuilder()
@@ -959,7 +959,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
     }
 
     public Object toObject(String dbName, String confName, RemoteMysqlDatabaseConfig config, boolean describe, boolean plain, NSession session) {
-        NTexts text = NTexts.of(session);
+        NTexts text = NTexts.of();
         if (!describe) {
             if (plain) {
                 return text.ofBuilder()
@@ -992,7 +992,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
         Boolean expectedLocal = null;
         while (cmdLine.hasNext()) {
             if (cmdLine.isNextOption()) {
-                switch (cmdLine.peek().get(session).key()) {
+                switch (cmdLine.peek().get().key()) {
                     case "--local": {
                         cmdLine.nextFlag();
                         expectedLocal = true;
@@ -1105,12 +1105,12 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
     }
 
     @Override
-    public CmdRedirect createDumpCommand(NPath remoteSql, NMySqlConfig options, NSession session) {
+    public CmdRedirect createDumpCommand(NPath remoteSql, NMySqlConfig options) {
         throw new RuntimeException("unsupported dump");
     }
 
     @Override
-    public CmdRedirect createRestoreCommand(NPath remoteSql, NMySqlConfig options, NSession session) {
+    public CmdRedirect createRestoreCommand(NPath remoteSql, NMySqlConfig options) {
         throw new RuntimeException("unsupported restore");
     }
 }

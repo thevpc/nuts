@@ -33,12 +33,12 @@ import net.thevpc.nuts.util.NFilterOp;
  */
 public class NDescriptorFilterFalse extends AbstractDescriptorFilter  {
 
-    public NDescriptorFilterFalse(NSession session) {
-        super(session, NFilterOp.FALSE);
+    public NDescriptorFilterFalse(NWorkspace workspace) {
+        super(workspace, NFilterOp.FALSE);
     }
 
     @Override
-    public boolean acceptDescriptor(NDescriptor descriptor, NSession session) {
+    public boolean acceptDescriptor(NDescriptor descriptor) {
         return false;
     }
 

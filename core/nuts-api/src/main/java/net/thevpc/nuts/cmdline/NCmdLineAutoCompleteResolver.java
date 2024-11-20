@@ -25,8 +25,6 @@
  */
 package net.thevpc.nuts.cmdline;
 
-import net.thevpc.nuts.NSession;
-
 import java.util.List;
 
 /**
@@ -41,10 +39,9 @@ public interface NCmdLineAutoCompleteResolver {
     /**
      * resolve possible candidates
      *
-     * @param cmdLine command line
-     * @param wordIndex   cursor index where to complete
-     * @param session     session
+     * @param cmdLine   command line
+     * @param wordIndex cursor index where to complete
      * @return possible candidates
      */
-    List<NArgCandidate> resolveCandidates(NCmdLine cmdLine, int wordIndex, NSession session);
+    List<NArgCandidate> resolveCandidates(NCmdLine cmdLine, int wordIndex);
 }

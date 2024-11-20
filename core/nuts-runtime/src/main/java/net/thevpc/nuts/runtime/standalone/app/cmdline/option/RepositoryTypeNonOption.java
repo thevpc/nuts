@@ -52,12 +52,10 @@ public class RepositoryTypeNonOption extends DefaultNonOption {
         TreeSet<String> allValid = new TreeSet<>();
         allValid.add(NConstants.RepoTypes.NUTS);
         allValid.add(NConstants.RepoTypes.MAVEN);
-        NSession session = context.getSession();
-        for (NAddRepositoryOptions repo : NConfigs.of(session)
-                .setSession(session)
+        for (NAddRepositoryOptions repo : NConfigs.of()
                 .getDefaultRepositories()) {
             if(repo.getConfig()!=null) {
-                String t = NRepositoryUtils.getRepoType(repo.getConfig(), session);
+                String t = NRepositoryUtils.getRepoType(repo.getConfig());
                 if(!NBlankable.isBlank(t)){
                     allValid.add(t.trim());
                 }

@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.util.NMsg;
@@ -13,15 +14,16 @@ public class NanoDB implements AutoCloseable {
     private Map<String, NanoDBTableFile> tables = new HashMap<>();
     private File dir;
     private NanoDBSerializers serializers = new NanoDBSerializers();
-
+    private NWorkspace workspace;
     public NanoDB(File dir) {
         this.dir = dir;
+        this.workspace = NWorkspace.of().get();
         dir.mkdirs();
     }
 
     public void flush(NSession session) {
         for (NanoDBTableFile value : tables.values()) {
-            value.flush(session);
+            value.flush();
         }
     }
 
@@ -36,31 +38,31 @@ public class NanoDB implements AutoCloseable {
         return serializers;
     }
 
-    public NanoDBTableFile findTable(String name, NSession session) {
+    public NanoDBTableFile findTable(String name) {
         return tables.get(name);
     }
 
-    public NanoDBTableFile getTable(String name, NSession session) {
+    public NanoDBTableFile getTable(String name) {
         NanoDBTableFile tableFile = tables.get(name);
         if (tableFile == null) {
-            throw new NIllegalArgumentException(session, NMsg.ofC("table does not exists: %s", name));
+            throw new NIllegalArgumentException(NMsg.ofC("table does not exists: %s", name));
         }
         return tableFile;
     }
 
-    public <T> NanoDBTableDefinitionBuilderFromBean<T> tableBuilder(Class<T> type, NSession session) {
-        return new NanoDBTableDefinitionBuilderFromBean<>(type, this, session);
+    public <T> NanoDBTableDefinitionBuilderFromBean<T> tableBuilder(Class<T> type) {
+        return new NanoDBTableDefinitionBuilderFromBean<>(type, this, workspace);
     }
 
-    public <T> NanoDBTableFile<T> createTable(NanoDBTableDefinition<T> def, NSession session) {
-        return createTable(def, false, session);
+    public <T> NanoDBTableFile<T> createTable(NanoDBTableDefinition<T> def) {
+        return createTable(def, false);
     }
 
-    public <T> NanoDBTableFile<T> getOrCreateTable(NanoDBTableDefinition<T> def, NSession session) {
-        return createTable(def, true, session);
+    public <T> NanoDBTableFile<T> getOrCreateTable(NanoDBTableDefinition<T> def) {
+        return createTable(def, true);
     }
 
-    public <T> NanoDBTableFile<T> createTable(NanoDBTableDefinition<T> def, boolean getOrCreate, NSession session) {
+    public <T> NanoDBTableFile<T> createTable(NanoDBTableDefinition<T> def, boolean getOrCreate) {
         if (def == null) {
             throw new IllegalArgumentException("null table definition");
         }
@@ -108,18 +110,18 @@ public class NanoDB implements AutoCloseable {
                 def.getType(),
                 dir, name, serializer,
                 this,
-                indices, session
+                indices, workspace
         );
         tables.put(name, f);
         return f;
     }
 
 
-    public boolean containsTable(String tableName, NSession session) {
+    public boolean containsTable(String tableName) {
         return tables.containsKey(tableName);
     }
 
-    public <T> NanoDBIndex<T> createIndexFor(Class<T> type, NanoDBSerializer<T> ser, File file, NSession session) {
-        return new NanoDBDefaultIndex<T>(type,ser, new DBIndexValueStoreDefaultFactory(), new HashMap<>(), file);
+    public <T> NanoDBIndex<T> createIndexFor(Class<T> type, NanoDBSerializer<T> ser, File file) {
+        return new NanoDBDefaultIndex<T>(workspace,type,ser, new DBIndexValueStoreDefaultFactory(), new HashMap<>(), file);
     }
 }

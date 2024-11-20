@@ -28,20 +28,21 @@ public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt 
     List<String> executorOptions;
     private boolean showCommand = false;
 
-    public DefaultNSystemExecutable(String[] cmd,
+    public DefaultNSystemExecutable(NWorkspace workspace,String[] cmd,
                                     List<String> executorOptions,
                                     NExecCmd execCommand) {
-        super(cmd[0],
+        super(workspace,cmd[0],
                 NCmdLine.of(cmd).toString(),
                 NExecutableType.SYSTEM, execCommand);
         this.cmd = cmd;
         this.executorOptions = CoreCollectionUtils.nonNullList(executorOptions);
+        NSession session = workspace.currentSession();
         NCmdLine cmdLine = NCmdLine.of(this.executorOptions);
         while (cmdLine.hasNext()) {
-            NArg aa = cmdLine.peek().get(getSession());
+            NArg aa = cmdLine.peek().get();
             switch (aa.key()) {
                 case "--show-command": {
-                    cmdLine.withNextFlag((v, a, s) -> this.showCommand = (v));
+                    cmdLine.withNextFlag((v, a) -> this.showCommand = (v));
                     break;
                 }
                 default: {
@@ -73,7 +74,7 @@ public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt 
                 execCommand.getErr(),
                 execCommand.getRunAs(),
                 executorOptions.toArray(new String[0]),
-                execCommand.getSession()
+                workspace
         );
     }
 
@@ -86,16 +87,17 @@ public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt 
 
     @Override
     public NText getHelpText() {
-        switch (NEnvs.of(getSession()).getOsFamily()) {
+        NSession session = workspace.currentSession();
+        switch (NEnvs.of().getOsFamily()) {
             case WINDOWS: {
-                return NTexts.of(getSession()).ofStyled(
+                return NTexts.of().ofStyled(
                         "No help available. Try " + getName() + " /help",
                         NTextStyle.error()
                 );
             }
             default: {
                 return
-                        NTexts.of(getSession()).ofStyled(
+                        NTexts.of().ofStyled(
                                 "No help available. Try 'man " + getName() + "' or '" + getName() + " --help'",
                                 NTextStyle.error()
                         );

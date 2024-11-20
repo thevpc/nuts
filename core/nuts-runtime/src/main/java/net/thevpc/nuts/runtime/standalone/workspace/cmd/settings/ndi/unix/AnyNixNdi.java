@@ -23,12 +23,12 @@ import java.util.stream.Collectors;
 
 public class AnyNixNdi extends BaseSystemNdi {
 
-    public AnyNixNdi(NSession session) {
-        super(session);
+    public AnyNixNdi(NWorkspace workspace) {
+        super(workspace);
     }
 
     protected NShellFamily[] getShellGroups() {
-        Set<NShellFamily> all=new LinkedHashSet<>(NEnvs.of(session).getShellFamilies());
+        Set<NShellFamily> all=new LinkedHashSet<>(NEnvs.of().getShellFamilies());
         all.retainAll(Arrays.asList(NShellFamily.SH, NShellFamily.FISH));
         return all.toArray(new NShellFamily[0]);
     }
@@ -53,7 +53,8 @@ public class AnyNixNdi extends BaseSystemNdi {
     }
 
     public void onPostGlobal(NdiScriptOptions options, PathInfo[] updatedPaths) {
-        NTexts factory = NTexts.of(session);
+        NTexts factory = NTexts.of();
+        NSession session = workspace.currentSession();
         if (Arrays.stream(updatedPaths).anyMatch(x -> x.getStatus() != PathInfo.Status.DISCARDED) && session.isTrace()) {
             if (session.isPlainTrace()) {
                 session.out().resetLine().println(NMsg.ofC("%s %s to point to workspace %s",
@@ -64,11 +65,11 @@ public class AnyNixNdi extends BaseSystemNdi {
                         factory.ofBuilder().appendJoined(", ",
                                 Arrays.stream(updatedPaths).map(x ->
                                         factory.ofStyled(x.getPath().getName(), NTextStyle.path())).collect(Collectors.toList())),
-                        NLocations.of(session).getWorkspaceLocation()
+                        NLocations.of().getWorkspaceLocation()
                 ));
             }
-            final String sysRcName = NShellHelper.of(NEnvs.of(session).getShellFamily()).getSysRcName();
-            NAsk.of(session)
+            final String sysRcName = NShellHelper.of(NEnvs.of().getShellFamily()).getSysRcName();
+            NAsk.of()
                     .forBoolean(NMsg.ofC(
                             "```error ATTENTION``` You may need to re-run terminal or issue \"%s\" in your current terminal for new environment to take effect.%n"
                                     + "Please type %s if you agree, %s if you need more explanation or %s to cancel updates.",
@@ -78,7 +79,6 @@ public class AnyNixNdi extends BaseSystemNdi {
                             factory.ofStyled("cancel!", NTextStyle.comments())
                     ))
                     .setHintMessage(NMsg.ofPlain("you must enter your confirmation"))
-                    .setSession(session)
                     .setParser(new NAskParser<Boolean>() {
                         @Override
                         public Boolean parse(Object response, Boolean defaultValue, NAsk<Boolean> question) {
@@ -89,7 +89,7 @@ public class AnyNixNdi extends BaseSystemNdi {
                                 response = defaultValue;
                             }
                             if (response == null) {
-                                throw new NValidationException(session, NMsg.ofPlain("sorry... but you need to type 'ok', 'why' or 'cancel'"));
+                                throw new NValidationException(NMsg.ofPlain("sorry... but you need to type 'ok', 'why' or 'cancel'"));
                             }
                             String r = response.toString();
                             if ("ok".equalsIgnoreCase(r)) {
@@ -104,11 +104,11 @@ public class AnyNixNdi extends BaseSystemNdi {
                                 out.println(NMsg.ofC("However updating \\\"%s\\\" does not affect the running process/terminal. So you have basically two choices :", factory.ofStyled(sysRcName, NTextStyle.path())));
                                 out.print(" - Either to restart the process/terminal (konsole, term, xterm, sh, bash, ...)%n");
                                 out.println(NMsg.ofC(" - Or to run by your self the \\\"%s\\\" script (don\\'t forget the leading dot)", factory.ofStyled(". ~/" + sysRcName, NTextStyle.path())));
-                                throw new NValidationException(session, NMsg.ofPlain("Try again..."));
+                                throw new NValidationException(NMsg.ofPlain("Try again..."));
                             } else if ("cancel".equalsIgnoreCase(r) || "cancel!".equalsIgnoreCase(r)) {
-                                throw new NCancelException(session);
+                                throw new NCancelException();
                             } else {
-                                throw new NValidationException(session, NMsg.ofPlain("sorry... but you need to type 'ok', 'why' or 'cancel'"));
+                                throw new NValidationException(NMsg.ofPlain("sorry... but you need to type 'ok', 'why' or 'cancel'"));
                             }
                         }
                     })
@@ -124,8 +124,8 @@ public class AnyNixNdi extends BaseSystemNdi {
 
     @Override
     protected FreeDesktopEntryWriter createFreeDesktopEntryWriter() {
-        return new UnixFreeDesktopEntryWriter(session,
-                NEnvs.of(session).getDesktopPath()==null?null: NPath.of(NEnvs.of(session).getDesktopPath(),getSession())
+        return new UnixFreeDesktopEntryWriter(workspace,
+                NEnvs.of().getDesktopPath()==null?null: NPath.of(NEnvs.of().getDesktopPath())
         );
     }
 

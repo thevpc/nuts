@@ -51,53 +51,56 @@ import java.util.Map;
  */
 public class MavenFolderRepository extends NFolderRepositoryBase {
 
-    private final NLog LOG;
     private MvnClient wrapper;
 
-    public MavenFolderRepository(NAddRepositoryOptions options, NSession session, NRepository parentRepository) {
-        super(options, session, parentRepository,null,false, NConstants.RepoTypes.MAVEN,false);
+    public MavenFolderRepository(NAddRepositoryOptions options, NWorkspace workspace, NRepository parentRepository) {
+        super(options, workspace, parentRepository,null,false, NConstants.RepoTypes.MAVEN,false);
         repoIter = new MavenRepoIter(this);
-        LOG = NLog.of(MavenFolderRepository.class, session);
+    }
+
+    protected NLog _LOG(){
+        return NLog.of(MavenFolderRepository.class);
     }
 
     @Override
-    public NIterator<NId> searchCore(final NIdFilter filter, NPath[] basePaths, NId[] baseIds, NFetchMode fetchMode, NSession session) {
+    public NIterator<NId> searchCore(final NIdFilter filter, NPath[] basePaths, NId[] baseIds, NFetchMode fetchMode) {
         if (!acceptedFetchNoCache(fetchMode)) {
             return null;
         }
         MavenSolrSearchCommand cmd=new MavenSolrSearchCommand(this);
-        NIterator<NId> aa=cmd.search(filter, baseIds, fetchMode, session);
+        NIterator<NId> aa=cmd.search(filter, baseIds, fetchMode);
         if(aa!=null){
             return aa;
         }
-        return super.searchCore(filter, basePaths, baseIds, fetchMode, session);
+        return super.searchCore(filter, basePaths, baseIds, fetchMode);
     }
 
 
-    public NPath fetchContentCoreUsingRepoHelper(NId id, NDescriptor descriptor, NFetchMode fetchMode, NSession session) {
-        NPath cc = fetchContentCoreUsingWrapper(id, descriptor, fetchMode, session);
+    public NPath fetchContentCoreUsingRepoHelper(NId id, NDescriptor descriptor, NFetchMode fetchMode) {
+        NPath cc = fetchContentCoreUsingWrapper(id, descriptor, fetchMode);
         if (cc != null) {
             return cc;
         }
-        return super.fetchContentCoreUsingRepoHelper(id, descriptor, fetchMode, session);
+        return super.fetchContentCoreUsingRepoHelper(id, descriptor, fetchMode);
     }
 
-    public NIterator<NId> findNonSingleVersionImpl(final NId id, NIdFilter idFilter, NFetchMode fetchMode, final NSession session) {
+    public NIterator<NId> findNonSingleVersionImpl(final NId id, NIdFilter idFilter, NFetchMode fetchMode) {
         MavenSolrSearchCommand cmd = new MavenSolrSearchCommand(this);
-        NIterator<NId> aa = cmd.search(idFilter, new NId[]{id}, fetchMode, session);
+        NIterator<NId> aa = cmd.search(idFilter, new NId[]{id}, fetchMode);
         if (aa != null) {
             return aa;
         }
-        return super.findNonSingleVersionImpl(id, idFilter, fetchMode,session);
+        return super.findNonSingleVersionImpl(id, idFilter, fetchMode);
     }
 
-    private NRepository getLocalMavenRepo(NSession session) {
-        for (NRepository nRepository : NRepositories.of(session).getRepositories()) {
+    private NRepository getLocalMavenRepo() {
+        NSession session = getWorkspace().currentSession();
+        for (NRepository nRepository : NRepositories.of().getRepositories()) {
             if (nRepository.getRepositoryType().equals(NConstants.RepoTypes.MAVEN)
                     && nRepository.config().getLocationPath() != null
                     && nRepository.config().getLocationPath().toString()
                     .equals(
-                            Paths.get(NPath.of("~/.m2", session).toAbsolute(NLocations.of(session).getWorkspaceLocation()).toString()).toString()
+                            Paths.get(NPath.of("~/.m2").toAbsolute(NLocations.of().getWorkspaceLocation()).toString()).toString()
                     )) {
                 return nRepository;
             }
@@ -106,31 +109,31 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
     }
 
     protected NPath getMavenLocalFolderContent(NId id, NSession session) {
-        NPath p = getIdRelativePath(id, session);
+        NPath p = getIdRelativePath(id);
         if (p != null) {
-            return NPath.ofUserHome(session).resolve(".m2").resolve(p);
+            return NPath.ofUserHome().resolve(".m2").resolve(p);
         }
         return null;
     }
-    private MvnClient getWrapper(NSession session) {
+    private MvnClient getWrapper() {
         if (true) {
             return null;
         }
-        return new MvnClient(session);
+        return new MvnClient(getWorkspace());
     }
 
-    public NPath fetchContentCoreUsingWrapper(NId id, NDescriptor descriptor, NFetchMode fetchMode, NSession session) {
+    public NPath fetchContentCoreUsingWrapper(NId id, NDescriptor descriptor, NFetchMode fetchMode) {
         if (wrapper == null) {
-            wrapper = getWrapper(session);
+            wrapper = getWrapper();
         }
-        if (wrapper != null && wrapper.get(id, config().setSession(session).getLocationPath().toString(), session)) {
-            NRepository repo = getLocalMavenRepo(session);
+        NSession session = getWorkspace().currentSession();
+        if (wrapper != null && wrapper.get(id, config().getLocationPath().toString())) {
+            NRepository repo = getLocalMavenRepo();
             if (repo != null) {
-                NRepositorySPI repoSPI = NWorkspaceUtils.of(session).repoSPI(repo);
+                NRepositorySPI repoSPI = NWorkspaceUtils.of(workspace).repoSPI(repo);
                 return repoSPI.fetchContent()
                         .setId(id)
                         .setDescriptor(descriptor)
-                        .setSession(session)
                         .setFetchMode(NFetchMode.LOCAL)
                         .run()
                         .getResult();
@@ -145,10 +148,10 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
     }
 
 
-    public String getIdExtension(NId id, NSession session) {
-        checkSession(session);
+    public String getIdExtension(NId id) {
         Map<String, String> q = id.getProperties();
         String f = NStringUtils.trim(q.get(NConstants.IdProperties.FACE));
+        NSession session = getWorkspace().currentSession();
         switch (f) {
             case NConstants.QueryFaces.DESCRIPTOR: {
                 return ".pom";
@@ -160,22 +163,22 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
                 return ".catalog";
             }
             case NConstants.QueryFaces.CONTENT_HASH: {
-                return getIdExtension(id.builder().setFaceContent().build(), session) + ".sha1";
+                return getIdExtension(id.builder().setFaceContent().build()) + ".sha1";
             }
             case NConstants.QueryFaces.CONTENT: {
                 String packaging = q.get(NConstants.IdProperties.PACKAGING);
-                return NLocations.of(session).getDefaultIdContentExtension(packaging);
+                return NLocations.of().getDefaultIdContentExtension(packaging);
             }
             default: {
-                throw new NUnsupportedArgumentException(session, NMsg.ofC("unsupported fact %s", f));
+                throw new NUnsupportedArgumentException(NMsg.ofC("unsupported fact %s", f));
             }
         }
     }
 
-    public NDescriptor fetchDescriptorCore(NId id, NFetchMode fetchMode, NSession session) {
-        checkSession(session);
+    public NDescriptor fetchDescriptorCore(NId id, NFetchMode fetchMode) {
+        NSession session = getWorkspace().currentSession();
         if (!acceptedFetchNoCache(fetchMode)) {
-            throw new NNotFoundException(session, id, new NFetchModeNotSupportedException(session, this, fetchMode, id.toString(), null));
+            throw new NNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
         }
         InputStream stream = null;
         try {
@@ -184,23 +187,23 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
             String name = null;
             NId idDesc = id.builder().setFaceDescriptor().build();
             try {
-                stream = getStream(idDesc, "artifact descriptor", "retrieve", session);
-                name = NInputSource.of(stream,session).getMetaData().getName().orElse("no-name");
-                bytes = CoreIOUtils.loadByteArray(stream, true, session);
-                nutsDescriptor = MavenUtils.of(session).parsePomXmlAndResolveParents(
-                        CoreIOUtils.createBytesStream(bytes, name == null ? null : NMsg.ofNtf(name), "text/xml", StandardCharsets.UTF_8.name(), "pom.xml", session)
-                        , fetchMode, getIdRemotePath(id, session).toString(), this);
+                stream = getStream(idDesc, "artifact descriptor", "retrieve");
+                name = NInputSource.of(stream).getMetaData().getName().orElse("no-name");
+                bytes = CoreIOUtils.loadByteArray(stream, true);
+                nutsDescriptor = MavenUtils.of().parsePomXmlAndResolveParents(
+                        CoreIOUtils.createBytesStream(bytes, name == null ? null : NMsg.ofNtf(name), "text/xml", StandardCharsets.UTF_8.name(), "pom.xml")
+                        , fetchMode, getIdRemotePath(id).toString(), this);
             } finally {
                 if (stream != null) {
                     stream.close();
                 }
             }
             checkSHA1Hash(id.builder().setFace(NConstants.QueryFaces.DESCRIPTOR_HASH).build(),
-                    CoreIOUtils.createBytesStream(bytes, name == null ? null : NMsg.ofNtf(name), "text/xml", StandardCharsets.UTF_8.name(), "pom.xml", session)
-                    , "artifact descriptor", session);
+                    CoreIOUtils.createBytesStream(bytes, name == null ? null : NMsg.ofNtf(name), "text/xml", StandardCharsets.UTF_8.name(), "pom.xml")
+                    , "artifact descriptor");
             return nutsDescriptor;
         } catch (IOException | UncheckedIOException | NIOException ex) {
-            throw new NNotFoundException(session, id, ex);
+            throw new NNotFoundException(id, ex);
         }
     }
 }

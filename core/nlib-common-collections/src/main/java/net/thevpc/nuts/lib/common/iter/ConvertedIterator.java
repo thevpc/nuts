@@ -28,7 +28,6 @@ package net.thevpc.nuts.lib.common.iter;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.NSession;
 
 import java.util.Iterator;
 import java.util.function.Function;
@@ -50,11 +49,11 @@ public class ConvertedIterator<F, T> extends NIteratorBase<T> {
     }
 
     @Override
-    public NElement describe(NSession session) {
-        return NElements.of(session).ofObject()
+    public NElement describe() {
+        return NElements.of().ofObject()
                 .set("type", "Map")
-                .set("mapper", NEDesc.describeResolveOrDestruct(converter, session))
-                .set("base", NEDesc.describeResolveOrDestruct(base, session))
+                .set("mapper", NEDesc.describeResolveOrDestruct(converter))
+                .set("base", NEDesc.describeResolveOrDestruct(base))
                 .build();
     }
 

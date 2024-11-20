@@ -28,18 +28,18 @@ public class GenericFilePath implements NPathSPI {
 
     private final String value;
     private final NPathPartList parts;
-    private final NSession session;
+    private final NWorkspace workspace;
 
 
-    public GenericFilePath(String value, NSession session) {
+    public GenericFilePath(String value, NWorkspace workspace) {
         this.value = value == null ? "" : value;
-        this.parts = NPathPartParser.parseParts(this.value, session);
-        this.session = session;
+        this.parts = NPathPartParser.parseParts(this.value);
+        this.workspace = workspace;
     }
 
     @Override
     public NStream<NPath> list(NPath basePath) {
-        return NStream.ofEmpty(getSession());
+        return NStream.ofEmpty();
     }
 
     @Override
@@ -69,12 +69,12 @@ public class GenericFilePath implements NPathSPI {
 
     @Override
     public NPath resolve(NPath basePath, String path) {
-        NPathPartList newParts = NPathPartParser.parseParts(path, session);
+        NPathPartList newParts = NPathPartParser.parseParts(path);
         if (newParts.isEmpty()) {
             return basePath;
         }
         if (parts.isEmpty() || newParts.get(0).getSeparator().length() > 0) {
-            return NPath.of(path, session);
+            return NPath.of(path);
         }
         return partsToPath(parts.concat(newParts));
     }
@@ -96,7 +96,7 @@ public class GenericFilePath implements NPathSPI {
             } else {
                 a.add(new NPathPart(File.separator, ""));
             }
-            return partsToPath(new NPathPartList(a, session).concat(NPathPartParser.parseParts(path, session)));
+            return partsToPath(new NPathPartList(a).concat(NPathPartParser.parseParts(path)));
         } else {
             return getParent(basePath).resolve(path);
         }
@@ -182,26 +182,21 @@ public class GenericFilePath implements NPathSPI {
     }
 
     public InputStream getInputStream(NPath basePath, NPathOption... options) {
-        throw new NIOException(session, NMsg.ofC("path not found %s", this));
+        throw new NIOException(NMsg.ofC("path not found %s", this));
     }
 
     public OutputStream getOutputStream(NPath basePath, NPathOption... options) {
-        throw new NIOException(session, NMsg.ofC("path not found %s", this));
-    }
-
-    @Override
-    public NSession getSession() {
-        return session;
+        throw new NIOException(NMsg.ofC("path not found %s", this));
     }
 
     @Override
     public void delete(NPath basePath, boolean recurse) {
-        throw new NIOException(getSession(), NMsg.ofC("unable to delete path %s", this));
+        throw new NIOException(NMsg.ofC("unable to delete path %s", this));
     }
 
     @Override
     public void mkdir(boolean parents, NPath basePath) {
-        throw new NIOException(getSession(), NMsg.ofC("unable to create folder out of regular file %s", this));
+        throw new NIOException(NMsg.ofC("unable to create folder out of regular file %s", this));
     }
 
     @Override
@@ -235,7 +230,7 @@ public class GenericFilePath implements NPathSPI {
             if (p.isName()) {
                 return null;
             }
-            return partsToPath(new NPathPartList(Arrays.asList(new NPathPart(p.getSeparator(), "")), session));
+            return partsToPath(new NPathPartList(Arrays.asList(new NPathPart(p.getSeparator(), ""))));
         }
         if (parts.get(parts.size() - 1).isTrailingSeparator()) {
             return partsToPath(parts.subList(0, parts.size() - 2));
@@ -249,7 +244,7 @@ public class GenericFilePath implements NPathSPI {
             return basePath;
         }
         if (rootPath == null) {
-            return partsToPath(NPathPartParser.parseParts(System.getProperty("user.dir"), session).concat(parts));
+            return partsToPath(NPathPartParser.parseParts(System.getProperty("user.dir")).concat(parts));
         }
         return rootPath.toAbsolute().resolve(toString());
     }
@@ -299,13 +294,12 @@ public class GenericFilePath implements NPathSPI {
                 p2.add(p);
             }
         }
-        return partsToPath(new NPathPartList(p2, session));
+        return partsToPath(new NPathPartList(p2));
     }
 
     private NPath partsToPath(NPathPartList p2) {
         return NPath.of(
-                p2.toString(),
-                session
+                p2.toString()
         );
     }
 
@@ -316,7 +310,7 @@ public class GenericFilePath implements NPathSPI {
             if (f.getSeparator().length() > 0) {
                 return true;
             }
-            if (NEnvs.of(session).getOsFamily() == NOsFamily.WINDOWS) {
+            if (NEnvs.of().getOsFamily() == NOsFamily.WINDOWS) {
                 String n = f.getName();
                 //test if the name is a drive name
                 if (n.length() == 2 && n.charAt(1) == ':') {
@@ -408,7 +402,7 @@ public class GenericFilePath implements NPathSPI {
 
     @Override
     public NStream<NPath> walk(NPath basePath, int maxDepth, NPathOption[] options) {
-        return NStream.ofEmpty(getSession());
+        return NStream.ofEmpty();
     }
 
     @Override
@@ -468,7 +462,7 @@ public class GenericFilePath implements NPathSPI {
         }
 
         public NString asFormattedString() {
-            return NTexts.of(p.getSession()).ofText(p.value);
+            return NTexts.of().ofText(p.value);
         }
 
         @Override
@@ -484,12 +478,12 @@ public class GenericFilePath implements NPathSPI {
 
     @Override
     public void moveTo(NPath basePath, NPath other, NPathOption... options) {
-        throw new NIOException(session, NMsg.ofC("unable to move %s", this));
+        throw new NIOException(NMsg.ofC("unable to move %s", this));
     }
 
     @Override
     public void copyTo(NPath basePath, NPath other, NPathOption... options) {
-        throw new NIOException(session, NMsg.ofC("unable to copy %s", this));
+        throw new NIOException(NMsg.ofC("unable to copy %s", this));
     }
 
     @Override
@@ -523,7 +517,7 @@ public class GenericFilePath implements NPathSPI {
             if (child.startsWith("/") || child.startsWith("\\")) {
                 child = child.substring(1);
             }
-            return NPath.of(child, session);
+            return NPath.of(child);
         }
         return null;
     }
@@ -536,8 +530,7 @@ public class GenericFilePath implements NPathSPI {
         }
 
         @Override
-        public NCallableSupport<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
-            NSessionUtils.checkSession(ws, session);
+        public NCallableSupport<NPathSPI> createPath(String path, ClassLoader classLoader) {
             if (path != null) {
                 if (path.trim().length() > 0) {
                     for (char c : path.toCharArray()) {
@@ -545,7 +538,7 @@ public class GenericFilePath implements NPathSPI {
                             return null;
                         }
                     }
-                    return NCallableSupport.of(1, () -> new GenericFilePath(path, session));
+                    return NCallableSupport.of(1, () -> new GenericFilePath(path, ws));
                 }
             }
             return null;

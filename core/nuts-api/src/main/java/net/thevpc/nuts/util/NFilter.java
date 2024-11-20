@@ -41,8 +41,6 @@ public interface NFilter extends NElementDescribable<NFilter> {
 
     Class<? extends NFilter> getFilterType();
 
-    NSession getSession();
-
     NFilter simplify();
 
     <T extends NFilter> NFilter simplify(Class<T> type);

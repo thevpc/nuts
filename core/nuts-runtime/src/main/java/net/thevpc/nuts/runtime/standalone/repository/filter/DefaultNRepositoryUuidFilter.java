@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.repository.filter;
 
-import net.thevpc.nuts.NRepositories;
-import net.thevpc.nuts.NRepository;
-import net.thevpc.nuts.NRepositoryFilter;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.util.NFilterOp;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -14,8 +11,8 @@ public class DefaultNRepositoryUuidFilter extends AbstractRepositoryFilter{
 
     private final Set<String> exactRepos;
 
-    public DefaultNRepositoryUuidFilter(NSession session, Collection<String> exactRepos) {
-        super(session, NFilterOp.CUSTOM);
+    public DefaultNRepositoryUuidFilter(NWorkspace workspace, Collection<String> exactRepos) {
+        super(workspace, NFilterOp.CUSTOM);
         this.exactRepos = new HashSet<>(
                 exactRepos==null?new ArrayList<>() :
                         exactRepos.stream().map(x-> NStringUtils.trimToNull(x))
@@ -31,7 +28,7 @@ public class DefaultNRepositoryUuidFilter extends AbstractRepositoryFilter{
     @Override
     public NRepositoryFilter simplify() {
         if(exactRepos.isEmpty()){
-            return NRepositories.of(getSession()).filter().always();
+            return NRepositories.of().filter().always();
         }
         return this;
     }

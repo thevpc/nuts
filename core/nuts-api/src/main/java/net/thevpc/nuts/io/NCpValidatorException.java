@@ -26,7 +26,6 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 
 /**
  * Exception thrown when copy validation fails
@@ -38,22 +37,20 @@ public class NCpValidatorException extends NIOException {
     /**
      * Constructs a new Validation Exception
      *
-     * @param session workspace
      * @param message message
      */
-    public NCpValidatorException(NSession session, NMsg message) {
-        super(session, message);
+    public NCpValidatorException(NMsg message) {
+        super(message);
     }
 
     /**
      * Constructs a new Validation Exception
      *
-     * @param session workspace
      * @param message message
      * @param cause   cause
      */
-    public NCpValidatorException(NSession session, NMsg message, Throwable cause) {
-        super(session, message, cause);
+    public NCpValidatorException(NMsg message, Throwable cause) {
+        super(message, cause);
     }
 
 }

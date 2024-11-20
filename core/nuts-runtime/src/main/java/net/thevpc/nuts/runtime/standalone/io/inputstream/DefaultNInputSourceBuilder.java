@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.inputstream;
 
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NContentMetadata;
 import net.thevpc.nuts.io.NInputSourceBuilder;
 import net.thevpc.nuts.io.NInterruptible;
@@ -14,12 +14,12 @@ import net.thevpc.nuts.time.NProgressListener;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import net.thevpc.nuts.io.NIO;
+
 import net.thevpc.nuts.io.NInputSource;
 
 public class DefaultNInputSourceBuilder implements NInputSourceBuilder {
 
-    private NSession session;
+    private NWorkspace workspace;
     private InputStream baseInputStream;
     private boolean closeBase = true;
     private Runnable closeAction;
@@ -32,8 +32,8 @@ public class DefaultNInputSourceBuilder implements NInputSourceBuilder {
     private boolean nonBlocking;
     private OutputStream tee;
 
-    public DefaultNInputSourceBuilder(NSession session) {
-        this.session = session;
+    public DefaultNInputSourceBuilder(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
     @Override
@@ -159,7 +159,7 @@ public class DefaultNInputSourceBuilder implements NInputSourceBuilder {
             return (NNonBlockingInputStream) u;
         }
         return new NNonBlockingInputStreamAdapter(
-                u, metadata, sourceName, session
+                u, metadata, sourceName, workspace
         );
     }
 
@@ -174,27 +174,27 @@ public class DefaultNInputSourceBuilder implements NInputSourceBuilder {
         if (baseInputStream == null) {
             InputStream b = NullInputStream.INSTANCE;
             if (nonBlocking) {
-                return new NNonBlockingInputStreamAdapter(b, metadata, sourceName, session);
+                return new NNonBlockingInputStreamAdapter(b, metadata, sourceName, workspace);
             }
         }
         InputStream a = baseInputStream;
         Runnable currentOnClose = closeAction;
         if (tee != null) {
-            a = new InputStreamTee(a, tee, currentOnClose, metadata, session);
+            a = new InputStreamTee(a, tee, currentOnClose, metadata, workspace);
             currentOnClose = null;
         }
         a = new InputStreamExt(a, metadata, closeBase, currentOnClose, monitoringListener, source,
-                sourceName, expectedLength, session);
+                sourceName, expectedLength, workspace);
         currentOnClose = null;
         if (nonBlocking) {
-            a = new NNonBlockingInputStreamAdapter(a, metadata, sourceName, session);
+            a = new NNonBlockingInputStreamAdapter(a, metadata, sourceName, workspace);
         }
         return a;
     }
 
     @Override
     public NInputSource createInputSource() {
-        return NInputSource.of(createInputStream(),session);
+        return NInputSource.of(createInputStream());
     }
 
 }

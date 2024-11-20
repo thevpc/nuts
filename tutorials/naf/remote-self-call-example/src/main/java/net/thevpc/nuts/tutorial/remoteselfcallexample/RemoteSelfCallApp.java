@@ -39,26 +39,27 @@ public class RemoteSelfCallApp implements NApplication {
     }
 
     @Override
-    public void run(NSession session) {
+    public void run() {
+        NSession session = NSession.get();
         NCmdLine cmdLine = session.getAppCmdLine();
-        log(NMsg.ofC("%s", cmdLine), session);
+        log(NMsg.ofC("%s", cmdLine));
         Options options = new Options();
         while (cmdLine.hasNext()) {
             switch (cmdLine.peek().get().key()) {
                 case "--host": {
-                    cmdLine.withNextEntry((v, a, s) -> {
+                    cmdLine.withNextEntry((v, a) -> {
                         options.host = v;
                     });
                     break;
                 }
                 case "--on-call-self": {
-                    cmdLine.withNextFlag((v, a, s) -> {
+                    cmdLine.withNextFlag((v, a) -> {
                         options.command = "on-call-self";
                     });
                     break;
                 }
                 case "--call-self": {
-                    cmdLine.withNextFlag((v, a, s) -> {
+                    cmdLine.withNextFlag((v, a) -> {
                         options.command = "call-self";
                     });
                     break;
@@ -73,12 +74,12 @@ public class RemoteSelfCallApp implements NApplication {
             }
         }
         if (cmdLine.isExecMode()) {
-            log(NMsg.ofC("start"), session);
-            log(NMsg.ofC("arguments-count : %s", options.nonOptions.size()), session);
+            log(NMsg.ofC("start"));
+            log(NMsg.ofC("arguments-count : %s", options.nonOptions.size()));
             List<String> nonOptions = options.nonOptions;
             for (int i = 0; i < nonOptions.size(); i++) {
                 String nonOption = nonOptions.get(i);
-                log(NMsg.ofC("\t[%s] %s", i + 1, nonOption), session);
+                log(NMsg.ofC("\t[%s] %s", i + 1, nonOption));
             }
             switch (options.command) {
                 case "call-self": {
@@ -87,7 +88,7 @@ public class RemoteSelfCallApp implements NApplication {
                         cmdLine.throwMissingArgument("--host");
                     }
                     String e = NStringUtils.trim(
-                            NExecCmd.of(session)
+                            NExecCmd.of()
                                     // host is ion the form
                                     // ssh://user@machine
                                     .setTarget(options.host)
@@ -95,17 +96,17 @@ public class RemoteSelfCallApp implements NApplication {
                                             session.getAppId().toString(),
                                             "--on-call-self"
                                     )
-                                    .addCommand("from=" + NEnvs.of(session).getHostName())
+                                    .addCommand("from=" + NEnvs.of().getHostName())
                                     .addCommand(options.nonOptions)
                                     .failFast()
                                     .getGrabbedAllString()
                     );
-                    log(NMsg.ofC("received"), session);
+                    log(NMsg.ofC("received"));
                     session.out().println(e);
                     break;
                 }
                 case "on-call-self": {
-                    log(NMsg.ofC("executing here!!"), session);
+                    log(NMsg.ofC("executing here!!"));
                     break;
                 }
                 default: {
@@ -115,8 +116,9 @@ public class RemoteSelfCallApp implements NApplication {
         }
     }
 
-    private void log(NMsg m, NSession session) {
-        String hostName = NEnvs.of(session).getHostName();
+    private void log(NMsg m) {
+        NSession session = NSession.get();
+        String hostName = NEnvs.of().getHostName();
         session.out().println(NMsg.ofC("[%s] %s", hostName, m));
     }
 

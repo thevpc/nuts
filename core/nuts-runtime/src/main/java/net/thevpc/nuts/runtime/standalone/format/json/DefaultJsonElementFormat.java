@@ -371,7 +371,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                         break;
                     }
                     default: {
-                        name = k.asString().get(session);
+                        name = k.asString().get();
                     }
                 }
                 skipWhiteSpaceAndComments();
@@ -761,7 +761,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                         reader.reset();
                     }
                 } catch (IOException ex) {
-                    throw new NIOException(context.getSession(), ex);
+                    throw new NIOException(ex);
                 }
             }
             return sb.toString();
@@ -792,7 +792,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                     }
                 }
             } catch (IOException ex) {
-                throw new NIOException(context.getSession(), ex);
+                throw new NIOException(ex);
             }
         }
 
@@ -808,7 +808,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
         }
 
         private RuntimeException error(String message) {
-            return new NParseException(context.getSession(), NMsg.ofC("%s : %s", message, getLocation().toString()));
+            return new NParseException(NMsg.ofC("%s : %s", message, getLocation().toString()));
         }
 
         private boolean isHexDigit() {
@@ -819,7 +819,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
 
         public NElements builder() {
             if (ebuilder == null) {
-                ebuilder = NElements.of(context.getSession());
+                ebuilder = NElements.of();
             }
             return ebuilder;
         }

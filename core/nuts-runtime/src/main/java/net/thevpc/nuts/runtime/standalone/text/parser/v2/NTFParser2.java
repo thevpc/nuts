@@ -58,9 +58,9 @@ public class NTFParser2 extends AbstractNTextNodeParser {
         }
     }
 
-    public NTFParser2(NSession session) {
-        super(session);
-        this.txt = new DefaultNTexts(session);//NutsTexts.of(
+    public NTFParser2(NWorkspace workspace) {
+        super(workspace);
+        this.txt = new DefaultNTexts(workspace);//NutsTexts.of(
     }
 
     @Override
@@ -479,7 +479,7 @@ public class NTFParser2 extends AbstractNTextNodeParser {
     }
 
     private void pushSimpleStyle(int level) {
-        stackedStyles.push(new Embedded(StepEnum.SIMPLE_STYLE, NTextStyles.parse("p" + level).get(session), level));
+        stackedStyles.push(new Embedded(StepEnum.SIMPLE_STYLE, NTextStyles.parse("p" + level).get(), level));
     }
 
     private void pushSimpleStyle(NTextStyles s) {

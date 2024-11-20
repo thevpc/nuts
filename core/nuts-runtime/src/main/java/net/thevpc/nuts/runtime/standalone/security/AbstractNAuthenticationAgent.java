@@ -34,8 +34,8 @@ public abstract class AbstractNAuthenticationAgent implements NAuthenticationAge
     }
 
     @Override
-    public boolean removeCredentials(char[] credentialsId, Map<String, String> envProvider, NSession session) {
-        extractId(credentialsId,session);
+    public boolean removeCredentials(char[] credentialsId, Map<String, String> envProvider) {
+        extractId(credentialsId);
         return true;
     }
 
@@ -45,26 +45,26 @@ public abstract class AbstractNAuthenticationAgent implements NAuthenticationAge
     }
 
     @Override
-    public void checkCredentials(char[] credentialsId, char[] password, Map<String, String> envProvider, NSession session) {
+    public void checkCredentials(char[] credentialsId, char[] password, Map<String, String> envProvider) {
         if (password==null || NBlankable.isBlank(new String(password))) {
-            throw new NSecurityException(session, NMsg.ofPlain("missing old password"));
+            throw new NSecurityException(NMsg.ofPlain("missing old password"));
         }
-        CredentialsId iid = extractId(credentialsId,session);
+        CredentialsId iid = extractId(credentialsId);
         switch (iid.type) {
             case 'H': {
-                if (Arrays.equals(iid.value, hashChars(password, getPassphrase(envProvider), session))) {
+                if (Arrays.equals(iid.value, hashChars(password, getPassphrase(envProvider)))) {
                     return;
                 }
                 break;
             }
             case 'B': {
-                char[] encPwd = encryptChars(password, getPassphrase(envProvider), session);
+                char[] encPwd = encryptChars(password, getPassphrase(envProvider));
                 if (Arrays.equals(iid.value, encPwd)) {
                     return;
                 }
             }
         }
-        throw new NSecurityException(session, NMsg.ofPlain("invalid login or password"));
+        throw new NSecurityException(NMsg.ofPlain("invalid login or password"));
     }
 
     private static class CredentialsId {
@@ -79,7 +79,7 @@ public abstract class AbstractNAuthenticationAgent implements NAuthenticationAge
 
     }
 
-    private CredentialsId extractId(char[] a, NSession session) {
+    private CredentialsId extractId(char[] a) {
         if (!(a==null || NBlankable.isBlank(new String(a)))) {
             char[] idc = (getId() + ":").toCharArray();
             if (a.length > idc.length + 1) {
@@ -97,17 +97,17 @@ public abstract class AbstractNAuthenticationAgent implements NAuthenticationAge
                 }
             }
         }
-        throw new NSecurityException(session, NMsg.ofC("credential id must start with '%s:'",getId()));
+        throw new NSecurityException(NMsg.ofC("credential id must start with '%s:'",getId()));
     }
 
     @Override
-    public char[] getCredentials(char[] credentialsId, Map<String, String> envProvider, NSession session) {
+    public char[] getCredentials(char[] credentialsId, Map<String, String> envProvider) {
         //credentials are already encrypted with default passphrase!
-        CredentialsId validCredentialsId = extractId(credentialsId,session);
+        CredentialsId validCredentialsId = extractId(credentialsId);
         if (validCredentialsId.type == 'B') {
-            return decryptChars(validCredentialsId.value, getPassphrase(envProvider), session);
+            return decryptChars(validCredentialsId.value, getPassphrase(envProvider));
         }
-        throw new NSecurityException(session, NMsg.ofPlain("credential is hashed and cannot be retrived"));
+        throw new NSecurityException(NMsg.ofPlain("credential is hashed and cannot be retrived"));
     }
 
     @Override
@@ -115,18 +115,17 @@ public abstract class AbstractNAuthenticationAgent implements NAuthenticationAge
             char[] credentials,
             boolean allowRetrieve,
             char[] credentialId,
-            Map<String, String> envProvider,
-            NSession session) {
+            Map<String, String> envProvider) {
         if (credentials==null || NBlankable.isBlank(new String(credentials))) {
             return null;
         } else {
             char[] val;
             char type;
             if (allowRetrieve) {
-                val = encryptChars(credentials, getPassphrase(envProvider), session);
+                val = encryptChars(credentials, getPassphrase(envProvider));
                 type = 'B';
             } else {
-                val = hashChars(credentials, getPassphrase(envProvider), session);
+                val = hashChars(credentials, getPassphrase(envProvider));
                 type = 'H';
             }
             String id = getId();
@@ -154,10 +153,10 @@ public abstract class AbstractNAuthenticationAgent implements NAuthenticationAge
         return defVal;
     }
 
-    protected abstract char[] decryptChars(char[] data, String passphrase, NSession session);
+    protected abstract char[] decryptChars(char[] data, String passphrase);
 
-    protected abstract char[] encryptChars(char[] data, String passphrase, NSession session);
+    protected abstract char[] encryptChars(char[] data, String passphrase);
 
-    protected abstract char[] hashChars(char[] data, String passphrase, NSession session);
+    protected abstract char[] hashChars(char[] data, String passphrase);
 
 }

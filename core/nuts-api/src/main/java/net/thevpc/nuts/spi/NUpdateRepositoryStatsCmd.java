@@ -39,15 +39,6 @@ import net.thevpc.nuts.NSession;
 public interface NUpdateRepositoryStatsCmd extends NRepositoryCmd {
 
     /**
-     * set session
-     *
-     * @param session session
-     * @return {@code} this instance
-     */
-    @Override
-    NUpdateRepositoryStatsCmd setSession(NSession session);
-
-    /**
      * run this command and return {@code this} instance
      *
      * @return {@code this} instance

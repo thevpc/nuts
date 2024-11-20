@@ -26,34 +26,32 @@
  */
 package net.thevpc.nuts.text;
 
-import net.thevpc.nuts.NSession;
-
 /**
  * @app.category Format
  */
 public interface NTextStyled extends NText {
-    static NText of(String str, NTextStyle style, NSession session) {
-        return NTexts.of(session).ofStyled(str, style);
+    static NText of(String str, NTextStyle style) {
+        return NTexts.of().ofStyled(str, style);
     }
 
-    static NText of(NString str, NTextStyle style, NSession session) {
-        return NTexts.of(session).ofStyled(str, style);
+    static NText of(NString str, NTextStyle style) {
+        return NTexts.of().ofStyled(str, style);
     }
 
-    static NText of(NText str, NTextStyle style, NSession session) {
-        return NTexts.of(session).ofStyled(str, style);
+    static NText of(NText str, NTextStyle style) {
+        return NTexts.of().ofStyled(str, style);
     }
 
-    static NText of(String str, NTextStyles styles, NSession session) {
-        return NTexts.of(session).ofStyled(str, styles);
+    static NText of(String str, NTextStyles styles) {
+        return NTexts.of().ofStyled(str, styles);
     }
 
-    static NText of(NString str, NTextStyles styles, NSession session) {
-        return NTexts.of(session).ofStyled(str, styles);
+    static NText of(NString str, NTextStyles styles) {
+        return NTexts.of().ofStyled(str, styles);
     }
 
-    static NText of(NText str, NTextStyles styles, NSession session) {
-        return NTexts.of(session).ofStyled(str, styles);
+    static NText of(NText str, NTextStyles styles) {
+        return NTexts.of().ofStyled(str, styles);
     }
 
     NText getChild();

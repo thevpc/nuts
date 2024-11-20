@@ -17,13 +17,14 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.Defa
  */
 public class DefaultNInfoInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNInfoInternalExecutable(String[] args, NExecCmd execCommand) {
-        super("info", args, execCommand);
+    public DefaultNInfoInternalExecutable(NWorkspace workspace,String[] args, NExecCmd execCommand) {
+        super(workspace,"info", args, execCommand);
     }
 
     @Override
     public int execute() {
-        NSession session = NSessionUtils.configureCopyOfSession(getSession(), getExecCommand().getIn(), getExecCommand().getOut(),getExecCommand().getErr());
+        NSession session = workspace.currentSession();
+        session = NSessionUtils.configureCopyOfSession(session, getExecCommand().getIn(), getExecCommand().getOut(),getExecCommand().getErr());
         if(session.isDry()){
             dryExecute();
             return NExecutionException.SUCCESS;
@@ -34,7 +35,7 @@ public class DefaultNInfoInternalExecutable extends DefaultInternalNExecutableCo
 
         }
         NPrintStream out = session.out();
-        NInfoCmd.of(session).configure(false, args).println(out);
+        NInfoCmd.of().configure(false, args).println(out);
         return NExecutionException.SUCCESS;
     }
 

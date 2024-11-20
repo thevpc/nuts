@@ -38,24 +38,24 @@ import net.thevpc.nuts.NSessionProvider;
  */
 public interface NProgressEvent extends NSessionProvider {
 
-    static NProgressEvent ofStart(Object source, NMsg message, long length, NSession session) {
+    static NProgressEvent ofStart(Object source, NMsg message, long length) {
         return new DefaultNProgressEvent(source, message, 0, 0, null, 0, 0,
-                length, null, session, null, NProgressEventType.START);
+                length, null, NSession.of().get(), null, NProgressEventType.START);
     }
 
     static NProgressEvent ofComplete(Object source, NMsg message, long globalCount, long globalDurationNanos,
                                      Double percent,
-                                     long partialCount, long partialDurationNanos, long length, Throwable exception, NSession session) {
+                                     long partialCount, long partialDurationNanos, long length, Throwable exception) {
         return new DefaultNProgressEvent(source, message, globalCount, globalDurationNanos, percent, partialCount, partialDurationNanos,
-                length, exception, session, null, NProgressEventType.COMPLETE);
+                length, exception, NSession.of().get(), null, NProgressEventType.COMPLETE);
     }
 
     static NProgressEvent ofProgress(Object source, NMsg message,
                                      long globalCount, long globalDurationNanos,
                                      Double percent,
-                                     long partialCount, long partialDurationNanos, long length, Throwable exception, NSession session) {
+                                     long partialCount, long partialDurationNanos, long length, Throwable exception) {
         return new DefaultNProgressEvent(source, message, globalCount, globalDurationNanos, percent, partialCount, partialDurationNanos,
-                length, exception, session, null, NProgressEventType.PROGRESS);
+                length, exception, NSession.of().get(), null, NProgressEventType.PROGRESS);
     }
 
     /**

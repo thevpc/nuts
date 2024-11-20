@@ -38,8 +38,8 @@ import java.util.List;
  * @since 0.5.5
  */
 public interface NUpdateUserCmd extends NWorkspaceCmd {
-    static NUpdateUserCmd of(NSession session) {
-        return NExtensions.of(session).createComponent(NUpdateUserCmd.class).get();
+    static NUpdateUserCmd of() {
+        return NExtensions.of().createComponent(NUpdateUserCmd.class).get();
     }
 
     NUpdateUserCmd removeGroup(String group);
@@ -141,23 +141,6 @@ public interface NUpdateUserCmd extends NWorkspaceCmd {
     NRepository getRepository();
 
     NUpdateUserCmd setRepository(NRepository repository);
-
-    /**
-     * update session
-     *
-     * @param session session
-     * @return {@code this} instance
-     */
-    @Override
-    NUpdateUserCmd setSession(NSession session);
-
-    /**
-     * copy session
-     *
-     * @return {@code this} instance
-     */
-    @Override
-    NUpdateUserCmd copySession();
 
     /**
      * configure the current command with the given arguments. This is an

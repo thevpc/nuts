@@ -31,7 +31,7 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
         ArrayList<String> cmd = new ArrayList<>();
         switch (executionType) {
             case OPEN: {
-                throw new NIllegalArgumentException(session, NMsg.ofPlain("unsupported remote open execution type"));
+                throw new NIllegalArgumentException(NMsg.ofPlain("unsupported remote open execution type"));
             }
             case EMBEDDED:
             case SPAWN: {
@@ -40,7 +40,7 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
                 wOptions.setConfirm(session.getConfirm().orDefault());
                 wOptions.setDry(session.isDry());
                 wOptions.setShowStacktrace(session.getShowStacktrace().orDefault());
-                wOptions.setExpireTime(session.getExpireTime());
+                wOptions.setExpireTime(session.getExpireTime().orNull());
                 wOptions.setGui(session.isGui());
                 wOptions.setLocale(session.getLocale().orDefault());
                 wOptions.setTerminalMode(session.getTerminal().getOut().getTerminalMode());
@@ -98,7 +98,7 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
                     NCmdLine executorOptionsCmdLine = NCmdLine.of(executorOptions);
                     //copy all nuts options here...
                     while (executorOptionsCmdLine.hasNext()) {
-                        NOptional<List<NArg>> o = NWorkspaceCmdLineParser.nextNutsArgument(executorOptionsCmdLine, null, context.getSession());
+                        NOptional<List<NArg>> o = NWorkspaceCmdLineParser.nextNutsArgument(executorOptionsCmdLine, null);
                         if (o.isPresent()) {
                             switch (o.get().get(0).key()) {
                                 case "--exec": {
@@ -132,7 +132,7 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
                 return context.getCommand();
             }
             default: {
-                throw new NUnsupportedEnumException(session, executionType);
+                throw new NUnsupportedEnumException(executionType);
             }
         }
     }
@@ -148,8 +148,8 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
         NAssert.requireNonBlank(target, "target");
         NConnexionString z = NConnexionString.of(target).orNull();
         NAssert.requireNonBlank(z, "target");
-        NLog log = NLog.of(SshNExecCmdExtension.class, session);
-        log.with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("[%s] %s", z, NCmdLine.of(context.getCommand(), session)));
+        NLog log = NLog.of(SshNExecCmdExtension.class);
+        log.with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("[%s] %s", z, NCmdLine.of(context.getCommand())));
         String[] command = resolveNutsExecutableCommand(context);
         try (SShConnection c = new SShConnection(
                 target,
@@ -167,8 +167,8 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
         NConnexionString z = NConnexionString.of(target).orNull();
         NAssert.requireNonBlank(z, "target");
         NSession session = context.getSession();
-        NLog log = NLog.of(SshNExecCmdExtension.class, session);
-        log.with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("[%s] %s", z, NCmdLine.of(context.getCommand(), session)));
+        NLog log = NLog.of(SshNExecCmdExtension.class);
+        log.with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("[%s] %s", z, NCmdLine.of(context.getCommand())));
         try (SShConnection c = new SShConnection(
                 target,
                 context.in(),

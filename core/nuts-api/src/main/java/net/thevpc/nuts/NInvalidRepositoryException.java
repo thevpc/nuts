@@ -39,12 +39,11 @@ public class NInvalidRepositoryException extends NRepositoryException {
     /**
      * Constructs a new NutsInvalidRepositoryException exception
      *
-     * @param session    workspace
      * @param repository repository
      * @param message    message
      */
-    public NInvalidRepositoryException(NSession session, String repository, NMsg message) {
-        super(session, repository,
+    public NInvalidRepositoryException(String repository, NMsg message) {
+        super(repository,
                 NMsg.ofC("invalid repository %s : %s", (repository == null ? "<null>" : repository), message)
                 , null);
     }

@@ -54,11 +54,11 @@ public class NshEvaluator extends DefaultNShellEvaluator {
         final JavaShellNonBlockingInputStream in2;
         try {
             out = new PipedOutputStream();
-            nout = NPrintStream.of(out, NTerminalMode.FORMATTED,null, context.getSession());
+            nout = NPrintStream.of(out, NTerminalMode.FORMATTED,null);
             in = new PipedInputStream(out, 1024);
             in2 = (in instanceof JavaShellNonBlockingInputStream) ? (JavaShellNonBlockingInputStream) in : new JavaShellNonBlockingInputStreamAdapter("jpipe-" + right.toString(), in);
         } catch (IOException ex) {
-            throw new NShellException(context.getSession(), ex, 1);
+            throw new NShellException(ex, 1);
         }
         final NShellContext leftContext = context.getShell().createNewContext(context).setOut(nout.asPrintStream());
         final NShellUniformException[] a = new NShellUniformException[2];
@@ -107,7 +107,7 @@ public class NshEvaluator extends DefaultNShellEvaluator {
         newCtx.setSession(session);
         session.setLogTermLevel(Level.OFF);
 
-        NSessionTerminal out = NSessionTerminal.ofMem(session);
+        NSessionTerminal out = NSessionTerminal.ofMem();
         session.setTerminal(out);
         context.getShell().evalNode(command, newCtx);
         String str = evalFieldSubstitutionAfterCommandSubstitution(out.out().toString(), context);
