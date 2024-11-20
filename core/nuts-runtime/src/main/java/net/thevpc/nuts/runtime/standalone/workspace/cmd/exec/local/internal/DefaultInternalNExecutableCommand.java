@@ -40,7 +40,6 @@ public abstract class DefaultInternalNExecutableCommand extends AbstractNExecuta
 
     @Override
     public NText getHelpText() {
-        NSession session = workspace.currentSession();
         NTexts txt = NTexts.of();
         NPath path = NPath.of("classpath://net/thevpc/nuts/runtime/command/" + name + ".ntf", getClass().getClassLoader());
         NText n = txt.parser().parse(path);
@@ -59,7 +58,7 @@ public abstract class DefaultInternalNExecutableCommand extends AbstractNExecuta
 
     public void dryExecute() {
         NSession session = workspace.currentSession();
-        if (NAppUtils.processHelpOptions(args, session)) {
+        if (NAppUtils.processHelpOptions(args)) {
             session.out().println("[dry] ==show-help==");
             return;
         }

@@ -22,11 +22,9 @@ import java.util.Map;
  */
 public class Test32_Id {
 
-    static NSession session;
-
     @BeforeAll
     public static void init() {
-        session = TestUtils.openNewMinTestWorkspace();
+        TestUtils.openNewMinTestWorkspace();
     }
 
     @Test

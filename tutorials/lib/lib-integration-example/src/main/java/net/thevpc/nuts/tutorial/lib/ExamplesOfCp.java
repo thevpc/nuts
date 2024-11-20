@@ -11,12 +11,13 @@ import net.thevpc.nuts.time.NProgressListener;
 import java.text.DecimalFormat;
 
 public class ExamplesOfCp {
-    public void executeAll(NSession session) {
-        executeSomeCommand(session);
-        executeCustomMonitor(session);
+    public void executeAll() {
+        executeSomeCommand();
+        executeCustomMonitor();
     }
 
-    public void executeSomeCommand(NSession session) {
+    public void executeSomeCommand() {
+        NSession session = NSession.get();
         session.out().println("Example of ## Cp ##");
         NCp.of()
                 .from(NPath.of("http://www.google.com"))
@@ -25,7 +26,8 @@ public class ExamplesOfCp {
                 .run();
     }
 
-    public void executeCustomMonitor(NSession session) {
+    public void executeCustomMonitor() {
+        NSession session = NSession.get();
         session.out().println("Example of ## Cp ##");
         NCp.of()
                 .from(NPath.of("http://www.google.com"))

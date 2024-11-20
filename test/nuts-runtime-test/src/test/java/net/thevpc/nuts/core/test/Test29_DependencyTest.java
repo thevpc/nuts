@@ -18,12 +18,11 @@ import org.junit.jupiter.api.Test;
  * @author thevpc
  */
 public class Test29_DependencyTest {
-    static NSession session;
 
     @BeforeAll
     public static void init() {
         System.out.println(new DefaultNBootOptionsBuilder().toString());
-        session = TestUtils.openNewMinTestWorkspace();
+        TestUtils.openNewMinTestWorkspace();
     }
 
     @Test

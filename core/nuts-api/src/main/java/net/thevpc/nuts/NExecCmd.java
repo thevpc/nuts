@@ -391,6 +391,9 @@ public interface NExecCmd extends NWorkspaceCmd {
 
     NExecCmd setRunAs(NRunAs runAs);
 
+    Boolean getDry() ;
+
+    public NExecCmd setDry(Boolean dry);
     NExecCmd sudo();
 
     NExecCmd root();

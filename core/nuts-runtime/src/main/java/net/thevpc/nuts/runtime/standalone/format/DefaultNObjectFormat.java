@@ -32,7 +32,7 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.io.NSessionTerminal;
+import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.lib.common.str.NMemorySize;
 import net.thevpc.nuts.runtime.standalone.format.obj.RollingFileService;
 import net.thevpc.nuts.runtime.standalone.format.plain.NFormatPlain;
@@ -304,7 +304,7 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
     }
 
     @Override
-    public void print(NSessionTerminal terminal) {
+    public void print(NTerminal terminal) {
         getBase().print(terminal);
     }
 
@@ -324,7 +324,7 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
     }
 
     @Override
-    public void println(NSessionTerminal terminal) {
+    public void println(NTerminal terminal) {
         getBase().println(terminal);
     }
 

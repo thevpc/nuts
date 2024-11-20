@@ -5,7 +5,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
 
 public class NAppUtils {
-    public static boolean processHelpOptions(String[] args, NSession session) {
+    public static boolean processHelpOptions(String[] args) {
         if (isIncludesHelpOption(args)) {
             NCmdLine cmdLine = NCmdLine.of(args);
             while (cmdLine.hasNext()) {
@@ -17,7 +17,7 @@ public class NAppUtils {
                             break;
                         }
                         default: {
-                            session.configureLast(cmdLine);
+                            NSession.get().configureLast(cmdLine);
                         }
                     }
                 } else {

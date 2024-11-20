@@ -46,6 +46,10 @@ public class NWorkspaceUtils {
         this.workspace = workspace;
     }
 
+    public static NWorkspaceUtils of() {
+        return of(NWorkspace.get());
+    }
+
     public static NWorkspaceUtils of(NWorkspace workspace) {
         return new NWorkspaceUtils(workspace);
     }
@@ -57,9 +61,9 @@ public class NWorkspaceUtils {
         return session;
     }
 
-    public static boolean isUserDefaultWorkspace(NSession session) {
+    public static boolean isUserDefaultWorkspace() {
         String defaultWorkspaceLocation = NPlatformHome.USER.getWorkspaceLocation(null);
-        return defaultWorkspaceLocation.equals(session.getWorkspace().getLocation().toString());
+        return defaultWorkspaceLocation.equals(NWorkspace.get().getLocation().toString());
     }
 
     protected NLogOp _LOGOP() {
@@ -67,18 +71,15 @@ public class NWorkspaceUtils {
     }
 
     protected NLog _LOG() {
-        NSession session = workspace.currentSession();
         return NLog.of(NWorkspaceUtils.class);
     }
 
     public NRepositorySPI repoSPI(NRepository repo) {
-        NSession session = workspace.currentSession();
         DefaultNRepositories repos = (DefaultNRepositories) NRepositories.of();
         return repos.getModel().toRepositorySPI(repo);
     }
 
     public NReflectRepository getReflectRepository() {
-        NSession session = workspace.currentSession();
         NEnvs env = NEnvs.of();
         //do not call env.getProperty(...). It will end up with a stack overflow
         NReflectRepository o = (NReflectRepository) (env.getProperties().get(NReflectRepository.class.getName()));
@@ -105,22 +106,12 @@ public class NWorkspaceUtils {
     }
 
     public void checkReadOnly() {
-        NSession session = workspace.currentSession();
         if (NConfigs.of().isReadOnly()) {
             throw new NReadOnlyException(NLocations.of().getWorkspaceLocation().toString());
         }
     }
 
-    public NSession validateSession(NSession session) {
-        if (session == null) {
-            session = workspace.createSession();
-        } else {
-            if (session.getWorkspace() != workspace) {
-                throw new NIllegalArgumentException(NMsg.ofPlain("session was created with a different Workspace"));
-            }
-        }
-        return session;
-    }
+
 
     public NId configureFetchEnv(NId id) {
         Map<String, String> qm = id.getProperties();
@@ -131,7 +122,6 @@ public class NWorkspaceUtils {
                 && qm.get(NConstants.IdProperties.PLATFORM) == null
                 && qm.get(NConstants.IdProperties.DESKTOP) == null
         ) {
-            NSession session = workspace.currentSession();
             NEnvs env = NEnvs.of();
             qm.put(NConstants.IdProperties.ARCH, env.getArchFamily().id());
             qm.put(NConstants.IdProperties.OS, env.getOs().toString());
@@ -150,14 +140,12 @@ public class NWorkspaceUtils {
     }
 
     public List<NRepository> filterRepositoriesDeploy(NId id, NRepositoryFilter repositoryFilter) {
-        NSession session = workspace.currentSession();
         NRepositoryFilter f = NRepositoryFilters.of().installedRepo().neg().and(repositoryFilter);
         return filterRepositories(NRepositorySupportedAction.DEPLOY, id, f, NFetchMode.LOCAL);
     }
 
     public List<NRepositoryAndFetchMode> filterRepositoryAndFetchModes(
-            NRepositorySupportedAction fmode, NId id, NRepositoryFilter repositoryFilter, NFetchStrategy fetchStrategy,
-            NSession session) {
+            NRepositorySupportedAction fmode, NId id, NRepositoryFilter repositoryFilter, NFetchStrategy fetchStrategy) {
         List<NRepositoryAndFetchMode> ok = new ArrayList<>();
         for (NFetchMode nutsFetchMode : fetchStrategy) {
             for (NRepository nRepositoryAndFetchMode : filterRepositories(fmode, id, repositoryFilter, nutsFetchMode)) {
@@ -185,7 +173,7 @@ public class NWorkspaceUtils {
                 int d = 0;
                 if (fmode == NRepositorySupportedAction.DEPLOY) {
                     try {
-                        d = NRepositoryHelper.getSupportDeployLevel(repository, fmode, id, mode, session.isTransitive(), session);
+                        d = NRepositoryHelper.getSupportDeployLevel(repository, fmode, id, mode, session.isTransitive());
                     } catch (Exception ex) {
                         _LOGOP().level(Level.FINE).error(ex)
                                 .log(NMsg.ofJ("unable to resolve support deploy level for : {0}", repository.getName()));
@@ -220,7 +208,7 @@ public class NWorkspaceUtils {
         return ret;
     }
 
-    public void validateRepositoryName(String repositoryName, Set<String> registered, NSession session) {
+    public void validateRepositoryName(String repositoryName, Set<String> registered) {
         if (!repositoryName.matches("[a-zA-Z][.a-zA-Z0-9_-]*")) {
             throw new NIllegalArgumentException(NMsg.ofC("invalid repository id %s", repositoryName));
         }
@@ -229,9 +217,9 @@ public class NWorkspaceUtils {
         }
     }
 
-    public <T> NIterator<T> decoratePrint(NIterator<T> it, NSession session, NFetchDisplayOptions displayOptions) {
-        final NPrintStream out = validateSession(session).getTerminal().getOut();
-        return new NPrintIterator<>(it, workspace, out, displayOptions, session);
+    public <T> NIterator<T> decoratePrint(NIterator<T> it, NFetchDisplayOptions displayOptions) {
+        final NPrintStream out = NSession.get().out();
+        return new NPrintIterator<>(it, workspace, out, displayOptions);
     }
 
     public Events events() {

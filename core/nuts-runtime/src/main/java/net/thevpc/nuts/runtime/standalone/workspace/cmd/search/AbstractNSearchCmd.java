@@ -108,7 +108,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NSearchCmd addIds(String... values) {
-        NSession session=getWorkspace().currentSession();
         if (values != null) {
             for (String s : values) {
                 if (!NBlankable.isBlank(s)) {
@@ -133,7 +132,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NSearchCmd removeId(String id) {
-        NSession session=getWorkspace().currentSession();
         ids.remove(NId.of(id).get());
         return this;
     }
@@ -262,7 +260,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NSearchCmd addLockedIds(String... values) {
-        NSession session=getWorkspace().currentSession();
         if (values != null) {
             for (String s : values) {
                 if (!NBlankable.isBlank(s)) {
@@ -380,14 +377,12 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NSearchCmd removeLockedId(String id) {
-        NSession session=getWorkspace().currentSession();
         lockedIds.remove(NId.of(id).get());
         return this;
     }
 
     @Override
     public NSearchCmd addLockedId(String id) {
-        NSession session=getWorkspace().currentSession();
         if (!NBlankable.isBlank(id)) {
             lockedIds.add(NId.of(id).get());
         }
@@ -481,7 +476,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NSearchCmd setDescriptorFilter(String filter) {
-        NSession session=getWorkspace().currentSession();
         this.descriptorFilter = NDescriptorFilters.of().parse(filter);
         return this;
     }
@@ -499,7 +493,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NSearchCmd setIdFilter(String filter) {
-        NSession session=getWorkspace().currentSession();
         this.idFilter = NIdFilters.of().parse(filter);
         return this;
     }
@@ -605,7 +598,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<NDependencies> getResultDependencies() {
-        NSession session=getWorkspace().currentSession();
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(true, isEffective()))
                 .map(NFunction.of((NDefinition x) -> x.getDependencies().get())
                         .withDesc(NEDesc.of("getDependencies")))
@@ -614,7 +606,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<NDependency> getResultInlineDependencies() {
-        NSession session=getWorkspace().currentSession();
         return buildCollectionResult(
                 IteratorBuilder.of(getResultIdIteratorBase(true)).map(
                                 NFunction.of(NId::toDependency)
@@ -652,7 +643,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
             allURLs[i] = d.getContent().flatMap(NPath::toURL).orNull();
             allIds[i] = d.getId();
         }
-        NSession session=getWorkspace().currentSession();
         DefaultNClassLoader cl = ((DefaultNExtensions) NExtensions.of())
                 .getModel().getNutsURLClassLoader("SEARCH-" + UUID.randomUUID(), parent);
         for (NDefinition def : nDefinitions) {
@@ -704,7 +694,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<String> getResultPaths() {
-        NSession session=workspace.currentSession();
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(true, isEffective()))
                 .map(
                         NFunction.of((NDefinition x) -> x.getContent().map(Object::toString).orNull())
@@ -716,7 +705,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<String> getResultPathNames() {
-        NSession session=workspace.currentSession();
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(true, isEffective()))
                 .map(NFunction.of((NDefinition x) -> x.getContent().map(NPath::getName).orNull())
                         .withDesc(NEDesc.of("getName")))
@@ -725,7 +713,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<Instant> getResultInstallDates() {
-        NSession session=workspace.currentSession();
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .map(NFunction.of((NDefinition x) -> x.getInstallInformation().map(NInstallInformation::getCreatedInstant).orNull()).withDesc(NEDesc.of("getCreatedInstant")))
                 .notNull());
@@ -733,7 +720,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<String> getResultInstallUsers() {
-        NSession session=workspace.currentSession();
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .map(NFunction.of((NDefinition x) -> x.getInstallInformation().map(NInstallInformation::getInstallUser).orNull()).withDesc(NEDesc.of("getInstallUser")))
                 .notBlank());
@@ -741,7 +727,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<NPath> getResultInstallFolders() {
-        NSession session=workspace.currentSession();
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .map(NFunction.of((NDefinition x) -> x.getInstallInformation().map(NInstallInformation::getInstallFolder).orNull())
                         .withDesc(NEDesc.of("getInstallFolder"))
@@ -751,7 +736,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<NPath> getResultStoreLocations(NStoreType location) {
-        NSession session=workspace.currentSession();
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .map(NFunction.of((NDefinition x) -> NLocations.of().getStoreLocation(x.getId(), location))
                         .withDesc(NEDesc.of("getStoreLocation(" + location.id() + ")"))
@@ -761,7 +745,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<String[]> getResultStrings(String[] columns) {
-        NSession session=workspace.currentSession();
         NFetchDisplayOptions oo = new NFetchDisplayOptions(workspace);
         oo.addDisplay(columns);
         oo.setIdFormat(getDisplayOptions().getIdFormat());
@@ -775,7 +758,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<String> getResultNames() {
-        NSession session=workspace.currentSession();
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getName()))
                         .withDesc(NEDesc.of("getDescriptorName"))
@@ -785,7 +767,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<String> getResultOs() {
-        NSession session=workspace.currentSession();
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getCondition().getOs()))
                         .withDesc(NEDesc.of("getOs")))
@@ -796,7 +777,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<NExecutionEntry> getResultExecutionEntries() {
-        NSession session=workspace.currentSession();
         IteratorBuilder<NDefinition> defIter = IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()));
         return postProcessResult(defIter
                 .mapMulti(
@@ -808,7 +788,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<String> getResultOsDist() {
-        NSession session=workspace.currentSession();
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getCondition().getOsDist()))
                         .withDesc(NEDesc.of("getOsDist"))
@@ -820,7 +799,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<String> getResultPackaging() {
-        NSession session=workspace.currentSession();
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getPackaging()))
                         .withDesc(NEDesc.of("getPackaging"))
@@ -832,7 +810,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<String> getResultPlatform() {
-        NSession session=workspace.currentSession();
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getCondition().getPlatform()))
                         .withDesc(NEDesc.of("getPlatform"))
@@ -844,7 +821,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<String> getResultProfile() {
-        NSession session=workspace.currentSession();
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getCondition().getProfile()))
                         .withDesc(NEDesc.of("getProfile"))
@@ -856,7 +832,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<String> getResultDesktopEnvironment() {
-        NSession session=workspace.currentSession();
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getCondition().getDesktopEnvironment()))
                         .withDesc(NEDesc.of("getDesktopEnvironment"))
@@ -868,7 +843,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NStream<String> getResultArch() {
-        NSession session=workspace.currentSession();
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getCondition().getArch()))
                         .withDesc(NEDesc.of("getArch"))
@@ -907,7 +881,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NSession session=workspace.currentSession();
         NArg a = cmdLine.peek().get();
         if (a == null) {
             return false;
@@ -1120,7 +1093,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
                 case XML:
                 case YAML:
                 case TREE: {
-                    NSession session=workspace.currentSession();
                     return (NIterator) IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                             .flatMap(NFunction.of((NDefinition x) -> x.getDependencies().get().transitiveNodes().iterator())
                                     .withDesc(NEDesc.of("getDependencies"))
@@ -1282,7 +1254,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
         if (session.isDry()) {
             displayDryQueryPlan(it);
         } else {
-            it = NWorkspaceUtils.of(getWorkspace()).decoratePrint(it, getSearchSession(), getDisplayOptions());
+            it = NWorkspaceUtils.of(getWorkspace()).decoratePrint(it, getDisplayOptions());
             while (it.hasNext()) {
                 it.next();
             }
@@ -1291,7 +1263,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     }
 
     private NElement toQueryPlan(NIterator it) {
-        NSession session=workspace.currentSession();
         NElements elem = NElements.of();
         return
                 elem.ofObject()
@@ -1349,7 +1320,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     }
 
     protected <T> NStream<T> buildCollectionResult(NIterator<T> o) {
-        NSession ss = getSearchSession();
         return new NStreamFromNIterator<T>(resolveFindIdBase(), o);
     }
 
@@ -1358,7 +1328,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     }
 
     public NStream<String> getResultStatuses() {
-        NSession session=workspace.currentSession();
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .map(NFunction.of(
                                 x -> NIdFormatHelper.of(x)
@@ -1392,6 +1361,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     }
 
     protected NIterator<NId> applyPrintDecoratorIterOfNutsId(NIterator<NId> curr, boolean print) {
-        return print ? NWorkspaceUtils.of(getWorkspace()).decoratePrint(curr, getSearchSession(), getDisplayOptions()) : curr;
+        return print ? NWorkspaceUtils.of(getWorkspace()).decoratePrint(curr, getDisplayOptions()) : curr;
     }
 }

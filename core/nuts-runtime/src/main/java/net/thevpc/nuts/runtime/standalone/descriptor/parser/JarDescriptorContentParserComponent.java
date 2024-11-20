@@ -78,7 +78,6 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
         if (!POSSIBLE_EXT.contains(parserContext.getFileExtension())) {
             return null;
         }
-        NSession session = parserContext.getSession();
         final NId JAVA = NId.of("java").get();
         final NRef<NDescriptor> nutsjson = new NRef<>();
         final NRef<NDescriptor> metainf = new NRef<>();
@@ -166,7 +165,7 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
             baseNutsDescriptor = metainf.get();
         }
         if (baseNutsDescriptor == null) {
-            CoreDigestHelper d = new CoreDigestHelper(session);
+            CoreDigestHelper d = new CoreDigestHelper();
             d.append(parserContext.getFullStream());
             String artifactId = d.getDigest();
             baseNutsDescriptor = new DefaultNDescriptorBuilder()

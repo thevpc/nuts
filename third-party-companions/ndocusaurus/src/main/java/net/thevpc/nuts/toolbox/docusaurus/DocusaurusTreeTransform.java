@@ -22,12 +22,10 @@ import java.util.*;
  * @author thevpc
  */
 public class DocusaurusTreeTransform extends MdElementTransformBase {
-    private NSession session;
     private int minDepth;
     private String fromPath;
     private String toPath;
-    public DocusaurusTreeTransform(NSession session, int minDepth, String fromPath, String toPath) {
-        this.session=session;
+    public DocusaurusTreeTransform(int minDepth, String fromPath, String toPath) {
         this.minDepth=minDepth;
         this.fromPath=fromPath;
         this.toPath=toPath;

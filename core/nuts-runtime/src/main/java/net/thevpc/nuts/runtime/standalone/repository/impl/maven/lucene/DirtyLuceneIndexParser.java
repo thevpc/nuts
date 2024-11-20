@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.maven.lucene;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.lib.common.collections.EvictingIntQueue;
 import net.thevpc.nuts.lib.common.iter.NIteratorBase;
 
@@ -15,11 +14,9 @@ public class DirtyLuceneIndexParser extends NIteratorBase<String> implements Clo
     private EvictingIntQueue whites = new EvictingIntQueue(10);
     private long count = 0;
     private boolean closed=false;
-    private NSession session;
     private InputStream source0;
 
-    public DirtyLuceneIndexParser(InputStream reader, NSession session) {
-        this.session = session;
+    public DirtyLuceneIndexParser(InputStream reader) {
         this.source0 = reader;
         this.reader = new PushbackReader(new InputStreamReader(reader));
     }

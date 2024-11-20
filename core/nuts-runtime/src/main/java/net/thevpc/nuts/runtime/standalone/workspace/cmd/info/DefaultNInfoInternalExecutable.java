@@ -10,6 +10,7 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
+import net.thevpc.nuts.util.NUtils;
 
 /**
  *
@@ -25,18 +26,22 @@ public class DefaultNInfoInternalExecutable extends DefaultInternalNExecutableCo
     public int execute() {
         NSession session = workspace.currentSession();
         session = NSessionUtils.configureCopyOfSession(session, getExecCommand().getIn(), getExecCommand().getOut(),getExecCommand().getErr());
-        if(session.isDry()){
-            dryExecute();
-            return NExecutionException.SUCCESS;
-        }
-        if (NAppUtils.processHelpOptions(args, session)) {
-            showDefaultHelp();
-            return NExecutionException.SUCCESS;
+        NSession finalSession = session;
+        return session.callWith(()->{
+            boolean dry = NUtils.asBoolean(getExecCommand().getDry());
+            if(dry){
+                dryExecute();
+                return NExecutionException.SUCCESS;
+            }
+            if (NAppUtils.processHelpOptions(args)) {
+                showDefaultHelp();
+                return NExecutionException.SUCCESS;
 
-        }
-        NPrintStream out = session.out();
-        NInfoCmd.of().configure(false, args).println(out);
-        return NExecutionException.SUCCESS;
+            }
+            NPrintStream out = finalSession.out();
+            NInfoCmd.of().configure(false, args).println(out);
+            return NExecutionException.SUCCESS;
+        });
     }
 
 }

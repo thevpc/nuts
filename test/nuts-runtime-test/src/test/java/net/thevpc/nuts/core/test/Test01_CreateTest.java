@@ -45,7 +45,7 @@ public class Test01_CreateTest {
 
         String wsPath = TestUtils.getTestBaseFolder().getPath();
 
-        NSession session = TestUtils.openNewTestWorkspace("--workspace", wsPath,
+        TestUtils.openNewTestWorkspace("--workspace", wsPath,
                 "--standalone",
                 "--archetype", "minimal",
                 "--verbose",
@@ -112,7 +112,7 @@ public class Test01_CreateTest {
     public void default1() throws Exception {
         String wsPath = TestUtils.getTestBaseFolder().getPath();
 
-        NSession session = TestUtils.openNewTestWorkspace(
+        TestUtils.openNewTestWorkspace(
                 "--reset", // required for exploded repos
                 "--exploded",
                 "--archetype", "default",
@@ -174,7 +174,7 @@ public class Test01_CreateTest {
 
     @Test
     public void createUtilTypes() {
-        NSession s = TestUtils.runNewTestWorkspace("--verbose","-b");
+        TestUtils.runNewTestWorkspace("--verbose","-b");
 
         {
             NPath home = NPath.of(new File(System.getProperty("user.home")));

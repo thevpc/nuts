@@ -590,7 +590,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                         NIdFilter filter = CoreFilterUtils.simplify(CoreFilterUtils.idFilterOf(nutsIdNonLatest.getProperties(),
                                 idFilter2, sDescriptorFilter));
                         List<NRepositoryAndFetchMode> repositoryAndFetchModes = wu.filterRepositoryAndFetchModes(
-                                NRepositorySupportedAction.SEARCH, nutsIdNonLatest, sRepositoryFilter, fetchMode, session
+                                NRepositorySupportedAction.SEARCH, nutsIdNonLatest, sRepositoryFilter, fetchMode
                         );
 
                         List<NIterator<? extends NId>> idLocal = new ArrayList<>();
@@ -647,7 +647,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
             List<NIterator<? extends NId>> all = new ArrayList<>();
             for (NRepositoryAndFetchMode repoAndMode : wu.filterRepositoryAndFetchModes(
                     NRepositorySupportedAction.SEARCH, null, sRepositoryFilter,
-                    fetchMode, session
+                    fetchMode
             )) {
                 consideredRepos.add(repoAndMode.getRepository());
                 NSession finalSession1 = session;

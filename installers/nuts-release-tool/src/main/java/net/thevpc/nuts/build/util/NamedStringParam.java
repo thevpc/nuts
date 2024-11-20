@@ -5,7 +5,6 @@
 package net.thevpc.nuts.build.util;
 
 import net.thevpc.nuts.NIllegalArgumentException;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.build.NutsBuildRunnerContext;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NBlankable;
@@ -37,23 +36,23 @@ public class NamedStringParam {
         this.value = value;
     }
 
-    public NamedStringParam ensureDirectory(NSession session) {
-        ensureNonBlank(session);
+    public NamedStringParam ensureDirectory() {
+        ensureNonBlank();
         if (!NPath.of(value).isDirectory()) {
             throw new NIllegalArgumentException(NMsg.ofC("not a valid folder %s : %s", getName(), getValue()));
         }
         return this;
     }
 
-    public NamedStringParam ensureRegularFile(NSession session) {
-        ensureNonBlank(session);
+    public NamedStringParam ensureRegularFile() {
+        ensureNonBlank();
         if (!NPath.of(value).isRegularFile()) {
             throw new NIllegalArgumentException(NMsg.ofC("not a valid folder %s : %s", getName(), getValue()));
         }
         return this;
     }
 
-    public NamedStringParam ensureNonBlank(NSession session) {
+    public NamedStringParam ensureNonBlank() {
         if (NBlankable.isBlank(getValue())) {
             throw new NIllegalArgumentException(NMsg.ofC("missing %s", getName()));
         }

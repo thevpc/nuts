@@ -18,7 +18,6 @@ public class RemoteNExecCmd extends AbstractNExecCmd {
 
     @Override
     public NExecutableInformation which() {
-        NSession session=workspace.currentSession();
         NElements e = NElements.of();
         return getWorkspace().remoteCall(
                 getWorkspace().createCall("workspace.which",

@@ -74,7 +74,6 @@ public class ZipDescriptorContentParserComponent implements NDescriptorContentPa
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         try {
             if (ZipUtils.extractFirstPath(parserContext.getFullStream(), POSSIBLE_PATHS, buffer, true)) {
-                NSession session = parserContext.getSession();
                 return NDescriptorParser.of()
                         .parse(buffer.toByteArray()).get();
             }

@@ -124,12 +124,12 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
 
 
     private String evalString(String s, String mode, NExecutionContext executionContext) {
-        return StringPlaceHolderParser.replaceDollarPlaceHolders(s, executionContext, executionContext.getSession(),
-                (key, context, session) -> {
+        return StringPlaceHolderParser.replaceDollarPlaceHolders(s, executionContext,
+                (key, context) -> {
                     if ("NUTS_MODE".equals(key)) {
                         return mode;
                     }
-                    return NExecutionContextUtils.EXECUTION_CONTEXT_PLACEHOLDER.get(key, context, session);
+                    return NExecutionContextUtils.EXECUTION_CONTEXT_PLACEHOLDER.get(key, context);
                 }
         );
     }

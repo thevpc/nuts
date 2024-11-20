@@ -5,12 +5,13 @@ import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.util.NMsg;
 
 public class ExamplesOfExec {
-    public void executeAll(NSession session) {
-        executeSomeCommand(session);
-        executeSomeCommandRedirect(session);
+    public void executeAll() {
+        executeSomeCommand();
+        executeSomeCommandRedirect();
     }
 
-    public void executeSomeCommand(NSession session) {
+    public void executeSomeCommand() {
+        NSession session = NSession.get();
         session.out().println("Example of ## Exec ##");
         int result = NExecCmd.of()
                 .addCommand("ls", "-l")
@@ -20,7 +21,8 @@ public class ExamplesOfExec {
         session.out().println(NMsg.ofC("result was %s", result));
     }
 
-    public void executeSomeCommandRedirect(NSession session) {
+    public void executeSomeCommandRedirect() {
+        NSession session = NSession.get();
         session.out().println("Example of ## Exec with String Grab ##");
         String result = NExecCmd.of()
                 .addCommand("ls", "-l")
@@ -30,7 +32,8 @@ public class ExamplesOfExec {
         session.out().println(NMsg.ofC("result was %s", result));
     }
 
-    public void executeSshCommand(NSession session) {
+    public void executeSshCommand() {
+        NSession session = NSession.get();
         String result = NExecCmd.of()
                 .setTarget("ssh://remoteUserName:remoteUserPassword@192.168.1.98")
                 .addCommand("hostname", "-I")
@@ -41,7 +44,8 @@ public class ExamplesOfExec {
 
     }
 
-    public void executeSshSudoCommand(NSession session) {
+    public void executeSshSudoCommand() {
+        NSession session = NSession.get();
         session.out().println("Example of ## Exec ssh command ##");
         String result = NExecCmd.of()
                 .setTarget("ssh://remoteUserName:remoteUserPassword@192.168.1.98")

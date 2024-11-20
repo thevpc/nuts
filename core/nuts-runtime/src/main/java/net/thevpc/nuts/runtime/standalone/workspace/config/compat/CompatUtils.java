@@ -137,7 +137,7 @@ public class CompatUtils {
         return pp;
     }
 
-    public static byte[] readAllBytes(Path file, NSession session) {
+    public static byte[] readAllBytes(Path file) {
         if (!Files.isRegularFile(file)) {
             return null;
         }
@@ -147,7 +147,7 @@ public class CompatUtils {
             throw new NIOException(ex);
         }
     }
-    public static byte[] readAllBytes(NPath file, NSession session) {
+    public static byte[] readAllBytes(NPath file) {
         if (!file.isRegularFile()) {
             return null;
         }

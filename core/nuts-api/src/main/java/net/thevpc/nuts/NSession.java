@@ -29,12 +29,11 @@ import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.cmdline.NCmdLineRunner;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
-import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.format.NIterableFormat;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.io.NSessionTerminal;
+import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.time.NClock;
@@ -543,7 +542,7 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      *
      * @return current terminal
      */
-    NSessionTerminal getTerminal();
+    NTerminal getTerminal();
 
     /**
      * set session terminal
@@ -551,7 +550,7 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      * @param terminal session terminal
      * @return {@code this} instance
      */
-    NSession setTerminal(NSessionTerminal terminal);
+    NSession setTerminal(NTerminal terminal);
 
     /**
      * current workspace

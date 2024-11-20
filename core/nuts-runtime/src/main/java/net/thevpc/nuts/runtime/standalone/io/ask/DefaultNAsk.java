@@ -6,7 +6,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.io.NMemoryPrintStream;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.io.NSessionTerminal;
+import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.runtime.standalone.app.gui.CoreNUtilGui;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -19,7 +19,7 @@ import java.util.List;
 
 public class DefaultNAsk<T> implements NAsk<T> {
 
-    private final NSessionTerminal terminal;
+    private final NTerminal terminal;
     private final NPrintStream out;
     private final NWorkspace workspace;
     private NMsg message;
@@ -37,7 +37,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
     private boolean password = false;
     private Object lastResult = null;
 
-    public DefaultNAsk(NWorkspace workspace, NSessionTerminal terminal, NPrintStream out) {
+    public DefaultNAsk(NWorkspace workspace, NTerminal terminal, NPrintStream out) {
         this.workspace = workspace;
         this.terminal = terminal;
         this.out = out;

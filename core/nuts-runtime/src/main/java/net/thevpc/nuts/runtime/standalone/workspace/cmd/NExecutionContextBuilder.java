@@ -41,7 +41,7 @@ import java.util.Map;
  * @author thevpc
  * @since 0.5.4 %category Base
  */
-public interface NExecutionContextBuilder extends NSessionProvider{
+public interface NExecutionContextBuilder{
 
     /**
      * command name
@@ -143,8 +143,6 @@ public interface NExecutionContextBuilder extends NSessionProvider{
 
     NExecutionContextBuilder setArguments(String[] arguments);
 
-    NExecutionContextBuilder setSession(NSession session);
-
     NExecutionContextBuilder setWorkspace(NWorkspace workspace);
 
     NExecutionContextBuilder setExecutorDescriptor(NArtifactCall executorDescriptor);
@@ -173,4 +171,9 @@ public interface NExecutionContextBuilder extends NSessionProvider{
     NExecutionContextBuilder setOut(NExecOutput out);
 
     NExecutionContextBuilder setErr(NExecOutput err);
+
+    boolean isDry();
+
+    NExecutionContextBuilder setDry(boolean dry);
+
 }

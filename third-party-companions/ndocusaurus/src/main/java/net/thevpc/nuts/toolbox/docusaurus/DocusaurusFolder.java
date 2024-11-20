@@ -1,6 +1,5 @@
 package net.thevpc.nuts.toolbox.docusaurus;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
@@ -71,15 +70,15 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
         Arrays.sort(children, DFOF_COMPARATOR);
     }
 
-    public static DocusaurusFileOrFolder ofFileOrFolder(NSession session, Path path, Path root, Path configRoot) {
-        return ofFileOrFolder(session, path, root, configRoot, -1);
+    public static DocusaurusFileOrFolder ofFileOrFolder(Path path, Path root, Path configRoot) {
+        return ofFileOrFolder(path, root, configRoot, -1);
     }
 
-    public static DocusaurusFileOrFolder ofFileOrFolder(NSession session, Path path, Path root, Path configRoot, int maxDepth) {
-        return Files.isDirectory(path) ? DocusaurusFolder.ofFolder(session, path, root, configRoot, maxDepth) : DocusaurusPathFile.ofFile(path, root, session);
+    public static DocusaurusFileOrFolder ofFileOrFolder(Path path, Path root, Path configRoot, int maxDepth) {
+        return Files.isDirectory(path) ? DocusaurusFolder.ofFolder(path, root, configRoot, maxDepth) : DocusaurusPathFile.ofFile(path, root);
     }
 
-    public static DocusaurusFolder ofFolder(NSession session, Path path, Path root, Path configRoot, int maxDepth) {
+    public static DocusaurusFolder ofFolder(Path path, Path root, Path configRoot, int maxDepth) {
         if (Files.isDirectory(path) && path.equals(root)) {
             try {
                 DocusaurusFile baseContent = null;
@@ -87,17 +86,17 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
                 int nexDepth = maxDepth < 0 ? -1 : maxDepth - 1;
                 for (Path path1 : Files.list(path).collect(Collectors.toList())) {
                     if (Files.isRegularFile(path1) && path1.getFileName().toString().equals(FOLDER_INFO_NAME)) {
-                        baseContent = (DocusaurusFile) DocusaurusFolder.ofFileOrFolder(session, path1, root, configRoot, nexDepth);
+                        baseContent = (DocusaurusFile) DocusaurusFolder.ofFileOrFolder(path1, root, configRoot, nexDepth);
                     } else if (maxDepth != 0 && (Files.isDirectory(path1) || path1.getFileName().toString().endsWith(".md"))) {
-                        DocusaurusFileOrFolder cc = DocusaurusFolder.ofFileOrFolder(session, path1, root, configRoot, nexDepth);
+                        DocusaurusFileOrFolder cc = DocusaurusFolder.ofFileOrFolder(path1, root, configRoot, nexDepth);
                         if (cc != null) {
                             children.add(cc);
                         }
                     }
                 }
 
-                return DocusaurusFolder.ofRoot(session, children.toArray(new DocusaurusFileOrFolder[0]),
-                        baseContent == null ? null : baseContent.getContent(session), path.toString()
+                return DocusaurusFolder.ofRoot(children.toArray(new DocusaurusFileOrFolder[0]),
+                        baseContent == null ? null : baseContent.getContent(), path.toString()
                 );
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
@@ -110,7 +109,7 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
             NElement config = null;
             String title = null;
             if (Files.isRegularFile(dfi)) {
-                DocusaurusFile ff = DocusaurusPathFile.ofFile(dfi, root, session);
+                DocusaurusFile ff = DocusaurusPathFile.ofFile(dfi, root);
                 if (ff != null) {
                     order = ff.getOrder();
                     title = ff.getTitle();
@@ -132,9 +131,9 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
                 int nexDepth = maxDepth < 0 ? -1 : maxDepth - 1;
                 for (Path path1 : Files.list(path).collect(Collectors.toList())) {
                     if (Files.isRegularFile(path1) && path1.getFileName().toString().equals(FOLDER_INFO_NAME)) {
-                        baseContent = (DocusaurusFile) DocusaurusFolder.ofFileOrFolder(session, path1, root, configRoot, nexDepth);
+                        baseContent = (DocusaurusFile) DocusaurusFolder.ofFileOrFolder(path1, root, configRoot, nexDepth);
                     } else if (maxDepth != 0 && (Files.isDirectory(path1) || path1.getFileName().toString().endsWith(".md"))) {
-                        DocusaurusFileOrFolder cc = DocusaurusFolder.ofFileOrFolder(session, path1, root, configRoot, nexDepth);
+                        DocusaurusFileOrFolder cc = DocusaurusFolder.ofFileOrFolder(path1, root, configRoot, nexDepth);
                         if (cc != null) {
                             children.add(cc);
                         }
@@ -146,7 +145,7 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
                         order,
                         config.asObject().get(),
                         children.toArray(new DocusaurusFileOrFolder[0]),
-                        baseContent == null ? null : baseContent.getContent(session),
+                        baseContent == null ? null : baseContent.getContent(),
                         path.toString()
                 );
             } catch (IOException ex) {
@@ -157,7 +156,7 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
         }
     }
 
-    public static DocusaurusFolder ofRoot(NSession session, DocusaurusFileOrFolder[] children, MdElement tree, String path) {
+    public static DocusaurusFolder ofRoot(DocusaurusFileOrFolder[] children, MdElement tree, String path) {
         return new DocusaurusFolder("/", "/", 0, NElements.of().ofObject().build(), children, tree, path);
     }
 
@@ -202,7 +201,7 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
         return true;
     }
 
-    public MdElement getContent(NSession session) {
+    public MdElement getContent() {
         return tree;
     }
 

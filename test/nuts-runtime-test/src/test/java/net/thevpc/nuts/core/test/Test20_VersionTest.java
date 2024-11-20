@@ -34,51 +34,49 @@ import org.junit.jupiter.api.*;
  * @author thevpc
  */
 public class Test20_VersionTest {
-    static NSession session;
-
     @BeforeAll
     public static void init() {
-        session = TestUtils.openNewTestWorkspace();
+        TestUtils.openNewTestWorkspace();
     }
 
     @Test
     public void test1() {
-        checkEq("1.0", "[1.0]", session);
+        checkEq("1.0", "[1.0]");
     }
 
     @Test
     public void test2() {
-        checkEq("[1.0]", "[1.0]", session);
+        checkEq("[1.0]", "[1.0]");
     }
 
     @Test
     public void test3() {
-        checkEq("[1.0,[", "[1.0,[", session);
+        checkEq("[1.0,[", "[1.0,[");
     }
 
     @Test
     public void test4() {
-        checkEq("[1.0,1.0[", "[1.0[", session);
+        checkEq("[1.0,1.0[", "[1.0[");
     }
 
     @Test
     public void test5() {
-        checkEq("]1.0,1.0[", "]1.0[", session);
+        checkEq("]1.0,1.0[", "]1.0[");
     }
 
     @Test
     public void test6() {
-        checkEq("[,1.0[", "],1.0[", session);
+        checkEq("[,1.0[", "],1.0[");
     }
 
     @Test
     public void test7() {
-        checkEq("[,[", "],[", session);
+        checkEq("[,[", "],[");
     }
 
     @Test
     public void test8() {
-        checkEq("[1,2[  ,  [1,3]", "[1,2[, [1,3]", session);
+        checkEq("[1,2[  ,  [1,3]", "[1,2[, [1,3]");
     }
 
     @Test
@@ -115,10 +113,10 @@ public class Test20_VersionTest {
 
     @Test
     public void test13() {
-        checkEq("[1,2[  ,  [1,2],  [1,3]", "[1,2[, [1,2], [1,3]", session);
+        checkEq("[1,2[  ,  [1,2],  [1,3]", "[1,2[, [1,2], [1,3]");
     }
 
-    private void checkEq(String a, String b, NSession session) {
+    private void checkEq(String a, String b) {
         NVersionFilter u = NVersionFilters.of().parse(a);
         String b2 = u.toString();
         Assertions.assertEquals(b, b2);

@@ -7,7 +7,6 @@ package net.thevpc.nuts.toolbox.docusaurus;
 
 
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.lib.md.MdElement;
 import net.thevpc.nuts.lib.md.docusaurus.DocusaurusUtils;
 import net.thevpc.nuts.lib.md.util.MdUtils;
@@ -62,7 +61,7 @@ public abstract class DocusaurusFile implements DocusaurusFileOrFolder {
     }
 
 
-    public abstract MdElement getContent(NSession session);
+    public abstract MdElement getContent();
 
     @Override
     public String toString() {

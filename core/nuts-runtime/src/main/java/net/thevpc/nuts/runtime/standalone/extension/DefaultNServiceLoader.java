@@ -33,8 +33,7 @@ public class DefaultNServiceLoader<T extends NComponent, B> implements NServiceL
     @Override
     public List<T> loadAll(Object criteria) {
         List<T> all = new ArrayList<>();
-        NSession session = workspace.currentSession();
-        NSupportLevelContext c=new NDefaultSupportLevelContext(session,criteria);
+        NSupportLevelContext c=new NDefaultSupportLevelContext(criteria);
         for (T t : loader) {
             int p = t.getSupportLevel(c);
             if (p > NConstants.Support.NO_SUPPORT) {
@@ -48,8 +47,7 @@ public class DefaultNServiceLoader<T extends NComponent, B> implements NServiceL
     public T loadBest(Object criteria) {
         T best = null;
         int bestVal = NConstants.Support.NO_SUPPORT;
-        NSession session = workspace.currentSession();
-        NSupportLevelContext c=new NDefaultSupportLevelContext(session,criteria);
+        NSupportLevelContext c=new NDefaultSupportLevelContext(criteria);
         for (T t : loader) {
             int p = t.getSupportLevel(c);
             if (p > NConstants.Support.NO_SUPPORT) {

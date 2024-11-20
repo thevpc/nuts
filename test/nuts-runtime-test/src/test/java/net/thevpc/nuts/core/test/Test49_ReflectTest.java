@@ -1,12 +1,14 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.reflect.NReflectProperty;
 import net.thevpc.nuts.reflect.NReflectRepository;
 import net.thevpc.nuts.reflect.NReflectType;
 import net.thevpc.nuts.util.NStringBuilder;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Type;
@@ -14,10 +16,14 @@ import java.util.List;
 
 public class Test49_ReflectTest {
 
+    @BeforeAll
+    static void init(){
+        TestUtils.openNewTestWorkspace();
+    }
+
     @Test
     public void test01() {
-        NSession session = Nuts.openWorkspace();
-        NReflectRepository typesRepository = NWorkspaceUtils.of(session.getWorkspace()).getReflectRepository();
+        NReflectRepository typesRepository = NWorkspaceUtils.of().getReflectRepository();
         {
             NReflectType type = typesRepository.getParametrizedType(C.class, null, new Type[]{String.class, String.class, String.class});
             List<NReflectProperty> declaredProperties = type.getDeclaredProperties();

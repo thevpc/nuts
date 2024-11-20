@@ -23,6 +23,10 @@ public interface NWorkspaceExt {
         return of(session.getWorkspace());
     }
 
+    static NWorkspaceExt of() {
+        return of(NWorkspace.get());
+    }
+
     static NWorkspaceExt of(NWorkspace ws) {
         return (NWorkspaceExt) ws;
     }

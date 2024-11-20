@@ -18,22 +18,19 @@ import java.util.List;
 public class ProjectService {
 
     private ProjectConfig config;
-    private final NSession session;
     private final RepositoryAddress defaultRepositoryAddress;
     private final NPath sharedConfigFolder;
 
-    public ProjectService(NSession session, RepositoryAddress defaultRepositoryAddress, NPath file) throws IOException {
-        this.session = session;
+    public ProjectService(RepositoryAddress defaultRepositoryAddress, NPath file) throws IOException {
         this.defaultRepositoryAddress = defaultRepositoryAddress == null ? new RepositoryAddress() : defaultRepositoryAddress;
         config = NElements.of().json().parse(file, ProjectConfig.class);
-        sharedConfigFolder = session.getAppVersionFolder(NStoreType.CONF, NWorkConfigVersions.CURRENT);
+        sharedConfigFolder = NSession.get().getAppVersionFolder(NStoreType.CONF, NWorkConfigVersions.CURRENT);
     }
 
-    public ProjectService(NSession session, RepositoryAddress defaultRepositoryAddress, ProjectConfig config) {
+    public ProjectService(RepositoryAddress defaultRepositoryAddress, ProjectConfig config) {
         this.config = config;
-        this.session = session;
         this.defaultRepositoryAddress = defaultRepositoryAddress;
-        sharedConfigFolder = session.getAppVersionFolder(NStoreType.CONF, NWorkConfigVersions.CURRENT);
+        sharedConfigFolder = NSession.get().getAppVersionFolder(NStoreType.CONF, NWorkConfigVersions.CURRENT);
     }
 
     public ProjectConfig getConfig() {
@@ -200,15 +197,17 @@ public class ProjectService {
                                     .setOpenMode(NOpenMode.OPEN_OR_ERROR)
                                     .setReadOnly(true)
                                     .setWorkspace(a.getNutsWorkspace())
-                    );
-                    s.setAll(session);
+                    ).currentSession();
+                    s.setAll(NSession.get());
                 } else {
-                    s = session;
+                    s = NSession.get();
                 }
-                List<NDefinition> found = NSearchCmd.of()
+
+                List<NDefinition> found = s.callWith(() -> NSearchCmd.of()
                         .addId(sid)
                         .addRepositoryFilter(NRepositoryFilters.of().byName(nutsRepository))
-                        .setLatest(true).setContent(true).getResultDefinitions().toList();
+                        .setLatest(true).setContent(true).getResultDefinitions().toList()
+                );
                 if (found.size() > 0) {
                     NPath p = found.get(0).getContent().orNull();
                     if (p == null) {
@@ -250,15 +249,15 @@ public class ProjectService {
                                             .setOpenMode(NOpenMode.OPEN_OR_ERROR)
                                             .setReadOnly(true)
                                             .setWorkspace(a.getNutsWorkspace())
-                            );
-                            s.setAll(session);
+                            ).currentSession();
+                            s.setAll(NSession.get());
                         } else {
-                            s = session;
+                            s = NSession.get();
                         }
-                        List<NId> found = NSearchCmd.of()
+                        List<NId> found = s.callWith(()->NSearchCmd.of()
                                 .addId(g.getId().getGroupId() + ":" + g.getId().getArtifactId())
                                 .addRepositoryFilter(NRepositoryFilters.of().byName(nutsRepository))
-                                .setLatest(true).getResultIds().toList();
+                                .setLatest(true).getResultIds().toList());
                         if (found.size() > 0) {
                             return found.get(0).getVersion().toString();
                         }

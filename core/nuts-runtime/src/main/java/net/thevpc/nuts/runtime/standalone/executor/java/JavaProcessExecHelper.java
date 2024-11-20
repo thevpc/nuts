@@ -39,9 +39,7 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
 
     @Override
     public int exec() {
-        NSession session = workspace.currentSession();
-
-        if (session.isDry()) {
+        if (executionContext.isDry()) {
             NPrintStream out = executionContext.getSession().out();
             out.println("[dry] ==[nuts-exec]== ");
             for (int i = 0; i < xargs.size(); i++) {
@@ -64,7 +62,7 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
                     executionContext.getErr(),
                     executionContext.getRunAs(),
                     executionContext.getExecutorOptions().toArray(new String[0]),
-                    executionContext.getSession()
+                    executionContext.isDry(), executionContext.getSession()
             ).exec();
         }
         return preExec().exec();
@@ -92,7 +90,7 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 executionContext.getErr(),
                 executionContext.getRunAs(),
                 executionContext.getExecutorOptions().toArray(new String[0]),
-                executionContext.getSession()
+                executionContext.isDry(), executionContext.getSession()
         );
     }
 

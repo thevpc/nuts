@@ -32,7 +32,7 @@ class DefaultNWorkspaceBootConfig implements NWorkspaceBootConfig {
 
     private List<Extension> extensions;
 
-    public DefaultNWorkspaceBootConfig(NSession session, String bootPath, String effectiveWorkspace, String effectiveWorkspaceName, boolean immediateLocation, NWorkspaceConfigBoot bootModel) {
+    public DefaultNWorkspaceBootConfig(String bootPath, String effectiveWorkspace, String effectiveWorkspaceName, boolean immediateLocation, NWorkspaceConfigBoot bootModel) {
         this.bootPath = bootPath;
         this.effectiveWorkspace = effectiveWorkspace;
         this.immediateLocation = immediateLocation;

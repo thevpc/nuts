@@ -71,7 +71,7 @@ public class DefaultNFetchDescriptorRepositoryCmd extends AbstractNFetchDescript
     public NFetchDescriptorRepositoryCmd run() {
 //        NutsWorkspace ws = getRepo().getWorkspace();
         NSession session = getRepo().getWorkspace().currentSession();
-        CoreNIdUtils.checkLongId(id, session);
+        CoreNIdUtils.checkLongId(id);
         NSessionUtils.checkSession(getRepo().getWorkspace(), session);
         getRepo().security().checkAllowed(NConstants.Permissions.FETCH_DESC, "fetch-descriptor");
         Map<String, String> queryMap = id.getProperties();

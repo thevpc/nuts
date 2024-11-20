@@ -25,13 +25,11 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NSessionProvider;
-
 /**
  * @author thevpc
  * @app.category SPI Base
  */
-public interface NSupportLevelContext extends NSessionProvider {
+public interface NSupportLevelContext  {
 
     /**
      * return constraints casted to T, throws CCE if not compatible

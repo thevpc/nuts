@@ -51,7 +51,6 @@ import java.util.List;
 public class JavaSourceExecutorComponent implements NExecutorComponent {
 
     public static NId ID;
-    NSession session;
 
     @Override
     public NId getId() {
@@ -60,7 +59,7 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
 
     @Override
     public int exec(NExecutionContext executionContext) {
-        if(executionContext.getSession().isDry()){
+        if(executionContext.isDry()){
             NDefinition nutMainFile = executionContext.getDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
             Path javaFile = nutMainFile.getContent().flatMap(NPath::toPath).orNull();
             String folder = "__temp_folder";
@@ -132,7 +131,6 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        this.session = context.getSession();
         if (ID == null) {
             ID = NId.of("net.thevpc.nuts.exec:exec-java-src").get();
         }

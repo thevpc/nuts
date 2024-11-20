@@ -23,11 +23,9 @@ import java.io.PrintStream;
  * @author thevpc
  */
 public class Test37_NProgressMonitor {
-    static NSession session;
-
     @BeforeAll
     public static void init() {
-        session = TestUtils.openNewTestWorkspace();
+        TestUtils.openNewTestWorkspace();
     }
 
     @Test

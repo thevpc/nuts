@@ -11,11 +11,10 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 
 public class Test26_NanoDBTest {
-    static NSession session;
 
     @BeforeAll
     public static void init() {
-        session = TestUtils.openNewMinTestWorkspace();
+        TestUtils.openNewMinTestWorkspace();
     }
 
     @Test

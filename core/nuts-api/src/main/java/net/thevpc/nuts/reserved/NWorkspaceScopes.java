@@ -11,24 +11,38 @@ import java.util.Stack;
 public class NWorkspaceScopes {
     public static InheritableThreadLocal<Stack<NWorkspace>> workspaceScopes = new InheritableThreadLocal<>();
     public static NWorkspace mainWorkspace;
+    public static InheritableThreadLocal<NWorkspace> threadMainWorkspaceScopes=new InheritableThreadLocal<>();
 
     public static NWorkspace getMainWorkspace() {
+        NWorkspace workspace = threadMainWorkspaceScopes.get();
+        if(workspace!=null){
+            return workspace;
+        }
         return mainWorkspace;
     }
 
     public static NWorkspace setMainWorkspace(NWorkspace mainWorkspace) {
+        NWorkspace wold = threadMainWorkspaceScopes.get();
         NWorkspace old = NWorkspaceScopes.mainWorkspace;
         NWorkspaceScopes.mainWorkspace = mainWorkspace;
-        if(old==mainWorkspace){
+        threadMainWorkspaceScopes.set(mainWorkspace);
+        if(old==mainWorkspace && wold==mainWorkspace){
             return null;
         }
-        return old;
+        if(old!=mainWorkspace) {
+            return old;
+        }
+        return wold;
     }
 
     public static NOptional<NWorkspace> currentWorkspace() {
         Stack<NWorkspace> workspaces = workspaceScopes();
         NMsg emptyMessage = NMsg.ofPlain("missing current context workspace");
         if (workspaces.isEmpty()) {
+            NWorkspace mainWorkspace0 = mainWorkspace;
+            if(mainWorkspace0 !=null){
+                return NOptional.of(mainWorkspace0);
+            }
             return NOptional.ofEmpty(emptyMessage);
         }
         NWorkspace w = workspaces.peek();
@@ -55,17 +69,23 @@ public class NWorkspaceScopes {
 
     public static void runWith(NWorkspace ws, NRunnable runnable) {
         if (runnable != null) {
+            runWith0(ws, ()->ws.currentSession().runWith(runnable));
+        }
+    }
+
+    public static void runWith0(NWorkspace ws, NRunnable runnable) {
+        if (runnable != null) {
             Stack<NWorkspace> workspaceScopes = workspaceScopes();
             if (!workspaceScopes.isEmpty()) {
                 NWorkspace l = workspaceScopes.peek();
                 if (l == ws) {
-                    ws.currentSession().runWith(runnable);
+                    runnable.run();
                     return;
                 }
             }
             try {
                 workspaceScopes.push(ws);
-                ws.currentSession().runWith(runnable);
+                runnable.run();
             } finally {
                 workspaceScopes.pop();
             }
@@ -74,16 +94,23 @@ public class NWorkspaceScopes {
 
     public static <T> T callWith(NWorkspace ws, NCallable<T> callable) {
         if (callable != null) {
+            return callWith0(ws, ()->ws.currentSession().callWith(callable));
+        }
+        return null;
+    }
+
+    public static <T> T callWith0(NWorkspace ws, NCallable<T> callable) {
+        if (callable != null) {
             Stack<NWorkspace> workspaceScopes = workspaceScopes();
             if (!workspaceScopes.isEmpty()) {
                 NWorkspace l = workspaceScopes.peek();
                 if (l == ws) {
-                    return ws.currentSession().callWith(callable);
+                    return callable.call();
                 }
             }
             try {
                 workspaceScopes.push(ws);
-                return ws.currentSession().callWith(callable);
+                return callable.call();
             } finally {
                 workspaceScopes.pop();
             }

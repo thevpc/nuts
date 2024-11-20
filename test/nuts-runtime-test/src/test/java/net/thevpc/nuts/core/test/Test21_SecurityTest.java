@@ -14,11 +14,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Test21_SecurityTest {
-    static NSession session;
-
     @BeforeAll
     public static void init() {
-        session = TestUtils.openNewMinTestWorkspace();
+        TestUtils.openNewMinTestWorkspace();
     }
 
     @Test
@@ -32,7 +30,6 @@ public class Test21_SecurityTest {
     private void testHelperRetrievable(NAuthenticationAgent a) {
         String mySecret = "my-secret";
         Map<String,String> envProvider = new LinkedHashMap<>();
-        NSession session = TestUtils.openNewTestWorkspace();
         String withAllowRetreiveId = new String(a.createCredentials(mySecret.toCharArray(), true, null, envProvider));
         TestUtils.println(withAllowRetreiveId);
         Assertions.assertTrue(withAllowRetreiveId.startsWith(a.getId() + ":"));
@@ -53,7 +50,6 @@ public class Test21_SecurityTest {
     private void testHelperHashed(NAuthenticationAgent a, boolean alwaysRetrievable) {
         String mySecret = "my-secret";
         Map<String,String> envProvider = new LinkedHashMap<>();
-        NSession session = TestUtils.openNewTestWorkspace();
         String withoutAllowRetreiveId = new String(a.createCredentials(mySecret.toCharArray(), false, null, envProvider));
         TestUtils.println(withoutAllowRetreiveId);
         Assertions.assertTrue(withoutAllowRetreiveId.startsWith(a.getId() + ":"));

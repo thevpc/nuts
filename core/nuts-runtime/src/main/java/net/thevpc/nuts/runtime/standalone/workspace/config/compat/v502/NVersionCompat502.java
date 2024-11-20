@@ -9,22 +9,22 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.compat.CompatUtils;
 import java.util.List;
 
 public class NVersionCompat502 extends AbstractNVersionCompat {
-    public NVersionCompat502(NSession session, NVersion apiVersion) {
-        super(session,apiVersion, 502);
+    public NVersionCompat502(NVersion apiVersion) {
+        super(apiVersion, 502);
     }
 
     @Override
-    public NWorkspaceConfigBoot parseConfig(byte[] bytes, NSession session) {
-        return parseConfig502(bytes, session).toWorkspaceConfig();
+    public NWorkspaceConfigBoot parseConfig(byte[] bytes) {
+        return parseConfig502(bytes).toWorkspaceConfig();
     }
 
     @Override
-    public NWorkspaceConfigApi parseApiConfig(NId nutsApiId, NSession session) {
+    public NWorkspaceConfigApi parseApiConfig(NId nutsApiId) {
         NWorkspaceConfigApi cc = new NWorkspaceConfigApi();
         cc.setApiVersion(getApiVersion());
         NWorkspaceConfigBoot502 c = parseConfig502(CompatUtils.readAllBytes(
                 NLocations.of().getWorkspaceLocation().toPath().get()
-                .resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME),session), session);
+                .resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
         if (c != null) {
             cc.setApiVersion(c.getBootApiVersion());
             cc.setRuntimeId(c.getBootRuntime());
@@ -35,12 +35,12 @@ public class NVersionCompat502 extends AbstractNVersionCompat {
     }
 
     @Override
-    public NWorkspaceConfigRuntime parseRuntimeConfig(NSession session) {
+    public NWorkspaceConfigRuntime parseRuntimeConfig() {
         NWorkspaceConfigRuntime cc = new NWorkspaceConfigRuntime();
 //        cc.setApiVersion(getApiVersion());
         NWorkspaceConfigBoot502 c = parseConfig502(CompatUtils.readAllBytes(
                 NLocations.of().getWorkspaceLocation().toPath().get()
-                        .resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME),session), session);
+                        .resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
         if (c != null) {
             cc.setDependencies(c.getBootRuntimeDependencies());
             cc.setId(c.getBootRuntime());
@@ -49,11 +49,11 @@ public class NVersionCompat502 extends AbstractNVersionCompat {
     }
 
     @Override
-    public NWorkspaceConfigSecurity parseSecurityConfig(NId nutsApiId, NSession session) {
+    public NWorkspaceConfigSecurity parseSecurityConfig(NId nutsApiId) {
         NWorkspaceConfigSecurity cc = new NWorkspaceConfigSecurity();
         NWorkspaceConfigBoot502 c = parseConfig502(CompatUtils.readAllBytes(
                 NLocations.of().getWorkspaceLocation().toPath().get()
-                        .resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME),session), session);
+                        .resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
         if (c != null) {
             cc.setSecure(c.isSecure());
             cc.setAuthenticationAgent(c.getAuthenticationAgent());
@@ -64,11 +64,11 @@ public class NVersionCompat502 extends AbstractNVersionCompat {
     }
 
     @Override
-    public NWorkspaceConfigMain parseMainConfig(NId nutsApiId, NSession session) {
+    public NWorkspaceConfigMain parseMainConfig(NId nutsApiId) {
         NWorkspaceConfigMain cc = new NWorkspaceConfigMain();
         NWorkspaceConfigBoot502 c = parseConfig502(CompatUtils.readAllBytes(
                 NLocations.of().getWorkspaceLocation().toPath().get()
-                        .resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME),session), session);
+                        .resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
         if (c != null) {
             c.setRepositories(CompatUtils.copyNutsRepositoryRefList(c.getRepositories()));
             c.setCommandFactories(CompatUtils.copyNutsCommandAliasFactoryConfigList(c.getCommandFactories()));
@@ -79,7 +79,7 @@ public class NVersionCompat502 extends AbstractNVersionCompat {
         return cc;
     }
 
-    private NWorkspaceConfigBoot502 parseConfig502(byte[] bytes, NSession session) {
+    private NWorkspaceConfigBoot502 parseConfig502(byte[] bytes) {
         return NElements.of().json().parse(bytes, NWorkspaceConfigBoot502.class);
     }
 

@@ -36,11 +36,10 @@ import org.junit.jupiter.api.Test;
  * @author thevpc
  */
 public class Test16_TerminalProgressTest {
-    static NSession session;
 
     @BeforeAll
     public static void init() {
-        session = TestUtils.openNewMinTestWorkspace("--progress");
+        TestUtils.openNewMinTestWorkspace("--progress");
     }
 
 
@@ -48,7 +47,7 @@ public class Test16_TerminalProgressTest {
     public void test1() throws Exception {
         for (int i = 0; i < 100; i++) {
             Thread.sleep(100);
-            session.getTerminal().printProgress((i / 100f), NMsg.ofC("message %s", i));
+            NSession.get().getTerminal().printProgress((i / 100f), NMsg.ofC("message %s", i));
         }
     }
 
@@ -78,6 +77,7 @@ public class Test16_TerminalProgressTest {
     public void test3() {
         CProgressBar rr = new CProgressBar();
         rr.setMinPeriod(-1);
+        NSession session = NSession.get();
         for (String formatter : rr.getFormatterNames()) {
             rr.setFormatter(formatter);
             for (int i = 0; i < 100; i++) {

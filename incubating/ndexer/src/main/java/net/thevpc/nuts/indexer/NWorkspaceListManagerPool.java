@@ -11,14 +11,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class NWorkspaceListManagerPool {
 
-    @Autowired
-    private NIndexerApplication.Config app;
     private final Map<String, NWorkspaceList> pool = new LinkedHashMap<>();
 
     public synchronized NWorkspaceList openListManager(String name) {
         NWorkspaceList o = pool.get(name);
         if (o == null) {
-            NSession session = app.getSession();
             o = NWorkspaceList.of().setName(name);
             pool.put(name, o);
         }

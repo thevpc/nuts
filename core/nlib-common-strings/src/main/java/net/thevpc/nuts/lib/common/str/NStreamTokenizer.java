@@ -399,6 +399,9 @@ public class NStreamTokenizer {
     public void doNotParseNumbers() {
     }
 
+    public void acceptTokenType(int tt) {
+        acceptTokenType(tt,true);
+    }
     public void acceptTokenType(int tt, boolean b) {
         if (tt <= 0 && tt > -parsableTokenTypes.length) {
             parsableTokenTypes[-tt] = b;

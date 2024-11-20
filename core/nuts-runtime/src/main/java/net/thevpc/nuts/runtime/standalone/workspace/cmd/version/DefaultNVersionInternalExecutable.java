@@ -10,6 +10,7 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmd;
+import net.thevpc.nuts.util.NUtils;
 
 /**
  *
@@ -24,11 +25,12 @@ public class DefaultNVersionInternalExecutable extends DefaultInternalNExecutabl
     @Override
     public int execute() {
         NSession session = workspace.currentSession();
-        if(session.isDry()){
+        boolean dry = NUtils.asBoolean(getExecCommand().getDry());
+        if(dry){
             dryExecute();
             return NExecutionException.SUCCESS;
         }
-        if (NAppUtils.processHelpOptions(args, session)) {
+        if (NAppUtils.processHelpOptions(args)) {
             showDefaultHelp();
             return NExecutionException.SUCCESS;
         }

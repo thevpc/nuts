@@ -6,6 +6,7 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 
 import java.io.IOException;
@@ -20,8 +21,8 @@ public class Test02_LoadTest {
     @Test
     public void load1() throws Exception {
 
-        NSession w1 = TestUtils.openNewTestWorkspace("--install-companions=false");
-        NSession w2 = TestUtils.openNewTestWorkspace("--install-companions=false");
+        NWorkspace w1 = TestUtils.openNewTestWorkspace("--install-companions=false");
+        NWorkspace w2 = TestUtils.openNewTestWorkspace("--install-companions=false");
     }
 
     @BeforeAll

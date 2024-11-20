@@ -5,8 +5,8 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
 import net.thevpc.nuts.runtime.standalone.io.ask.DefaultNAsk;
 import net.thevpc.nuts.runtime.standalone.io.printstream.*;
-import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNSessionTerminalFromSession;
-import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNSessionTerminalFromSystem;
+import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNSessionTerminalFrom;
+import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNTerminalFromSystem;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.NInputStreamSource;
 import net.thevpc.nuts.runtime.standalone.text.SimpleWriterOutputStream;
@@ -47,7 +47,7 @@ public class DefaultNIORPI implements NIORPI {
     }
 
     @Override
-    public <T> NAsk<T> createQuestion(NSessionTerminal terminal) {
+    public <T> NAsk<T> createQuestion(NTerminal terminal) {
         return new DefaultNAsk<>(workspace, terminal, terminal.out());
     }
 
@@ -250,38 +250,38 @@ public class DefaultNIORPI implements NIORPI {
     }
 
     @Override
-    public NSessionTerminal createTerminal() {
+    public NTerminal createTerminal() {
         return cmodel.createTerminal();
     }
 
     @Override
-    public NSessionTerminal createTerminal(InputStream in, NPrintStream out, NPrintStream err) {
+    public NTerminal createTerminal(InputStream in, NPrintStream out, NPrintStream err) {
         return cmodel.createTerminal(in, out, err);
     }
 
     @Override
-    public NSessionTerminal createTerminal(NSessionTerminal terminal) {
+    public NTerminal createTerminal(NTerminal terminal) {
         if (terminal == null) {
             return createTerminal();
         }
-        if (terminal instanceof DefaultNSessionTerminalFromSystem) {
-            DefaultNSessionTerminalFromSystem t = (DefaultNSessionTerminalFromSystem) terminal;
-            return new DefaultNSessionTerminalFromSystem(workspace, t);
+        if (terminal instanceof DefaultNTerminalFromSystem) {
+            DefaultNTerminalFromSystem t = (DefaultNTerminalFromSystem) terminal;
+            return new DefaultNTerminalFromSystem(workspace, t);
         }
-        if (terminal instanceof DefaultNSessionTerminalFromSession) {
-            DefaultNSessionTerminalFromSession t = (DefaultNSessionTerminalFromSession) terminal;
-            return new DefaultNSessionTerminalFromSession(workspace, t);
+        if (terminal instanceof DefaultNSessionTerminalFrom) {
+            DefaultNSessionTerminalFrom t = (DefaultNSessionTerminalFrom) terminal;
+            return new DefaultNSessionTerminalFrom(workspace, t);
         }
-        return new DefaultNSessionTerminalFromSession(workspace, terminal);
+        return new DefaultNSessionTerminalFrom(workspace, terminal);
     }
 
     @Override
-    public NSessionTerminal createInMemoryTerminal() {
+    public NTerminal createInMemoryTerminal() {
         return createInMemoryTerminal(false);
     }
 
     @Override
-    public NSessionTerminal createInMemoryTerminal(boolean mergeErr) {
+    public NTerminal createInMemoryTerminal(boolean mergeErr) {
         ByteArrayInputStream in = new ByteArrayInputStream(new byte[0]);
         NSession session = workspace.currentSession();
         NMemoryPrintStream out = NMemoryPrintStream.of();

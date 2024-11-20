@@ -37,11 +37,9 @@ import java.io.StringReader;
  * @author thevpc
  */
 public class Test19_ExprTest {
-    static NSession session;
-
     @BeforeAll
     public static void init() {
-        session = TestUtils.openNewTestWorkspace();
+        TestUtils.openNewTestWorkspace();
     }
 
     private boolean accept(NExprOpDeclaration d, String pattern) {
@@ -154,6 +152,7 @@ public class Test19_ExprTest {
     @Test
     public void testTokenize2() {
         NStreamTokenizer st = new NStreamTokenizer("<<");
+        st.acceptTokenType(NToken.TT_LEFT_SHIFT);
         int i = st.nextToken();
         Assertions.assertEquals(NToken.TT_LEFT_SHIFT, i);
         System.out.println(i);

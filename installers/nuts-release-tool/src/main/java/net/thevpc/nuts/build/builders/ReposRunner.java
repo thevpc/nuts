@@ -41,8 +41,8 @@ public class ReposRunner extends AbstractRunner {
         return false;
     }
 
-    public ReposRunner(NSession session) {
-        super(session);
+    public ReposRunner() {
+        super();
     }
 
     @Override

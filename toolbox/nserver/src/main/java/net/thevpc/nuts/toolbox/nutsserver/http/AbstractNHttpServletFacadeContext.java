@@ -10,22 +10,23 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nutsserver.http;
 
 import net.thevpc.nuts.io.NCp;
+import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.nutsserver.bundled._IOUtils;
 
@@ -38,38 +39,54 @@ import java.nio.file.Path;
  */
 public abstract class AbstractNHttpServletFacadeContext implements NHttpServletFacadeContext {
 
-    public void sendResponseText(int code, String text) throws IOException {
+    public void sendResponseText(int code, String text) {
         byte[] bytes = text.getBytes();
         sendResponseHeaders(code, bytes.length);
-        getResponseBody().write(bytes);
+        try {
+            getResponseBody().write(bytes);
+        } catch (IOException ex) {
+            throw new NIOException(ex);
+        }
     }
 
-    public void sendResponseFile(int code, File file) throws IOException {
+    public void sendResponseFile(int code, File file) {
         if (file != null && file.exists() && file.isFile()) {
             sendResponseHeaders(code, file.length());
-            _IOUtils.copy(new FileInputStream(file), getResponseBody(), true, false);
+            try {
+                _IOUtils.copy(new FileInputStream(file), getResponseBody(), true, false);
+            } catch (IOException ex) {
+                throw new NIOException(ex);
+            }
         } else {
             sendError(404, "File not found");
         }
     }
 
-    public void sendResponseBytes(int code, byte[] bytes) throws IOException {
+    public void sendResponseBytes(int code, byte[] bytes) {
         sendResponseHeaders(code, bytes.length);
-        getResponseBody().write(bytes);
+        try {
+            getResponseBody().write(bytes);
+        } catch (IOException ex) {
+            throw new NIOException(ex);
+        }
     }
 
     @Override
-    public void sendResponseFile(int code, Path file) throws IOException {
+    public void sendResponseFile(int code, Path file) {
         if (file != null && Files.isRegularFile(file)) {
-            sendResponseHeaders(code, Files.size(file));
-            Files.copy(file, getResponseBody());
+            try {
+                sendResponseHeaders(code, Files.size(file));
+                Files.copy(file, getResponseBody());
+            } catch (IOException ex) {
+                throw new NIOException(ex);
+            }
         } else {
             sendError(404, "File not found");
         }
     }
 
     @Override
-    public void sendResponseFile(int code, NPath file) throws IOException {
+    public void sendResponseFile(int code, NPath file) {
         if (file != null && file.isRegularFile()) {
             sendResponseHeaders(code, file.getContentLength());
             NCp.of().from(file).to(getResponseBody()).run();
@@ -79,17 +96,17 @@ public abstract class AbstractNHttpServletFacadeContext implements NHttpServletF
     }
 
     @Override
-    public boolean isGetMethod() throws IOException {
+    public boolean isGetMethod() {
         return "GET".equalsIgnoreCase(getRequestMethod());
     }
 
     @Override
-    public boolean isPostMethod() throws IOException {
+    public boolean isPostMethod() {
         return "POST".equalsIgnoreCase(getRequestMethod());
     }
 
     @Override
-    public boolean isHeadMethod() throws IOException {
+    public boolean isHeadMethod() {
         return "HEAD".equalsIgnoreCase(getRequestMethod());
     }
 }

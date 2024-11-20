@@ -74,7 +74,7 @@ public interface NIO extends NComponent {
      *
      * @return workspace default terminal
      */
-    NSessionTerminal getDefaultTerminal();
+    NTerminal getDefaultTerminal();
 
     /**
      * update workspace wide terminal
@@ -82,7 +82,7 @@ public interface NIO extends NComponent {
      * @param terminal terminal
      * @return {@code this} instance
      */
-    NIO setDefaultTerminal(NSessionTerminal terminal);
+    NIO setDefaultTerminal(NTerminal terminal);
 
 
 }

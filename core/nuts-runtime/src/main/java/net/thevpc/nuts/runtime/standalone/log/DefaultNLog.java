@@ -181,7 +181,7 @@ public class DefaultNLog implements NLog {
         this.log.log(record);
     }
 
-    public void resumeTerminal(NSession session) {
+    public void resumeTerminal() {
         suspendTerminalMode = false;
         Handler ch = NLog.getTermHandler();
         DefaultNLogs logManager = (DefaultNLogs) NLogs.of();

@@ -38,24 +38,24 @@ import java.io.InputStream;
  * @app.category Base
  * @since 0.5.4
  */
-public interface NSessionTerminal {
-    static NSessionTerminal of() {
+public interface NTerminal {
+    static NTerminal of() {
         return NIORPI.of().createTerminal();
     }
 
-    static NSessionTerminal of(NSessionTerminal parent) {
+    static NTerminal of(NTerminal parent) {
         return NIORPI.of().createTerminal(parent);
     }
 
-    static NSessionTerminal of(InputStream in, NPrintStream out, NPrintStream err) {
+    static NTerminal of(InputStream in, NPrintStream out, NPrintStream err) {
         return NIORPI.of().createTerminal(in, out, err);
     }
 
-    static NSessionTerminal ofMem() {
+    static NTerminal ofMem() {
         return NIORPI.of().createInMemoryTerminal();
     }
 
-    static NSessionTerminal ofMem(boolean mergeError) {
+    static NTerminal ofMem(boolean mergeError) {
         return NIORPI.of().createInMemoryTerminal(mergeError);
     }
 
@@ -100,7 +100,7 @@ public interface NSessionTerminal {
 //
 //    void seTerminalBase(NutsSystemTerminalBase terminalBase);
 //
-    NSessionTerminal copy();
+    NTerminal copy();
 
 
     /**
@@ -153,7 +153,7 @@ public interface NSessionTerminal {
      * @param message  message
      * @return {@code this} instance
      */
-    NSessionTerminal printProgress(float progress, NMsg message);
+    NTerminal printProgress(float progress, NMsg message);
 
     /**
      * print indefinite progress with a message
@@ -161,6 +161,6 @@ public interface NSessionTerminal {
      * @param message message
      * @return {@code this} instance
      */
-    NSessionTerminal printProgress(NMsg message);
+    NTerminal printProgress(NMsg message);
 
 }

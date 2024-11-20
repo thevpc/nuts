@@ -5,10 +5,13 @@
  */
 package net.thevpc.nuts.core.test;
 
+import net.thevpc.nuts.NNoSuchElementException;
+import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NNoSessionOptionalErrorException;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.util.NOptionalErrorException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -20,11 +23,9 @@ import java.util.NoSuchElementException;
  */
 public class Test33_Optional {
 
-    static NSession session;
-
     @BeforeAll
     public static void init() {
-//        session = TestUtils.openNewMinTestWorkspace();
+        TestUtils.openNewMinTestWorkspace();
     }
 
     @Test
@@ -40,7 +41,7 @@ public class Test33_Optional {
         }
         {
             NOptional<String> a = NOptional.of(null);
-            Assertions.assertThrows(NoSuchElementException.class, () -> a.get());
+            Assertions.assertThrows(NNoSuchElementException.class, () -> a.get());
             Assertions.assertEquals(true, a.isEmpty());
             Assertions.assertEquals(false, a.isError());
             Assertions.assertEquals(false, a.isPresent());
@@ -65,7 +66,7 @@ public class Test33_Optional {
             Assertions.assertEquals(false, a.isNotPresent());
 
             NOptional<String> b=a.ifBlankEmpty();
-            Assertions.assertThrows(NoSuchElementException.class, () -> b.get());
+            Assertions.assertThrows(NNoSuchElementException.class, () -> b.get());
             Assertions.assertEquals(true, b.isEmpty());
             Assertions.assertEquals(false, b.isError());
             Assertions.assertEquals(false, b.isPresent());
@@ -74,7 +75,7 @@ public class Test33_Optional {
 
         {
             NOptional<String> a = NOptional.ofError(NMsg.ofPlain("error"));
-            Assertions.assertThrows(NNoSessionOptionalErrorException.class, () -> a.get());
+            Assertions.assertThrows(NOptionalErrorException.class, () -> a.get());
             Assertions.assertEquals(false, a.isEmpty());
             Assertions.assertEquals(true, a.isError());
             Assertions.assertEquals(false, a.isPresent());

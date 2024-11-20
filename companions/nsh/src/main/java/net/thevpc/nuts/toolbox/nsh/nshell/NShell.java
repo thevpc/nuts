@@ -105,7 +105,7 @@ public class NShell {
         NShellErrorHandler errorHandler = configuration.getErrorHandler();
         NShellExternalExecutor externalExecutor = configuration.getExternalExecutor();
         NId appId = configuration.getAppId();
-        NSession session = configuration.getSession();
+        NSession session = NSession.get();
 
         args = resolveArgs(session, args);
         this.appId = appId;
@@ -177,13 +177,12 @@ public class NShell {
 
         if (session != null) {
             NShellContext _rootContext = getRootContext();
-            NSession rSession = _rootContext.getSession();
 
             NEnvs.of().setProperty(NShellContext.class.getName(), _rootContext);
             _rootContext.setSession(session);
             //add default commands
             List<NShellBuiltin> allCommand = new ArrayList<>();
-            NSupportLevelContext constraints = new NDefaultSupportLevelContext(session, this);
+            NSupportLevelContext constraints = new NDefaultSupportLevelContext(this);
 
             Predicate<NShellBuiltin> filter = new NShellBuiltinPredicate(configuration);
             for (NShellBuiltin command : NWorkspace.of().get().extensions()
@@ -594,7 +593,7 @@ public class NShell {
     }
 
     protected String readInteractiveLine(NShellContext context) {
-        NSessionTerminal terminal = context.getSession().getTerminal();
+        NTerminal terminal = context.getSession().getTerminal();
         return terminal.readLine(getPromptString(context));
     }
 

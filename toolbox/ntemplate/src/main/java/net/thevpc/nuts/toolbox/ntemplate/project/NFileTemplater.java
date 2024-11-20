@@ -1,14 +1,13 @@
 package net.thevpc.nuts.toolbox.ntemplate.project;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.FileTemplater;
 
 import java.nio.file.Path;
 
 public class NFileTemplater extends FileTemplater {
-    public NFileTemplater(NSession session) {
-        super(session);
-        this.setDefaultExecutor("text/ntemplate-nsh-project", new NshEvaluator(session, this));
+    public NFileTemplater() {
+        super();
+        this.setDefaultExecutor("text/ntemplate-nsh-project", new NshEvaluator(this));
         setProjectFileName("project.nsh");
     }
 

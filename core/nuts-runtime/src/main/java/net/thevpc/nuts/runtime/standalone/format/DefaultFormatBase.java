@@ -148,7 +148,7 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
     }
 
     @Override
-    public void print(NSessionTerminal terminal) {
+    public void print(NTerminal terminal) {
         NSession session=workspace.currentSession();
         print(terminal == null ? session.getTerminal().out() : terminal.out());
     }
@@ -203,7 +203,7 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
     }
 
     @Override
-    public void println(NSessionTerminal terminal) {
+    public void println(NTerminal terminal) {
         NSession session=workspace.currentSession();
         println(terminal == null ? session.getTerminal().out() : terminal.out());
     }

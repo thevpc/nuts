@@ -69,13 +69,13 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
                     if (Files.exists(ext)) {
                         c.setDescriptor(NDescriptorParser.of().parse(ext).get());
                     } else {
-                        c.setDescriptor(NDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.getBaseFile(), parseOptions, session.getWorkspace()));
+                        c.setDescriptor(NDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.getBaseFile(), parseOptions));
                     }
                 }
                 if (c.getDescriptor() != null) {
                     if ("zip".equals(c.getDescriptor().getPackaging())) {
                         Path zipFilePath = Paths.get(NPath.of(c.getBaseFile().toString() + ".zip").toAbsolute().toString());
-                        ZipUtils.zip(session, c.getBaseFile().toString(), new ZipOptions(), zipFilePath.toString());
+                        ZipUtils.zip(c.getBaseFile().toString(), new ZipOptions(), zipFilePath.toString());
                         c.setContentStreamOrPath(NPath.of(zipFilePath));
                         c.addTemp(zipFilePath);
                     } else {
@@ -89,7 +89,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
                     if (ext.exists()) {
                         c.setDescriptor(NDescriptorParser.of().parse(ext).get());
                     } else {
-                        c.setDescriptor(NDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.getBaseFile(), parseOptions, session.getWorkspace()));
+                        c.setDescriptor(NDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.getBaseFile(), parseOptions));
                     }
                 }
             } else {
@@ -183,7 +183,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
                     } else {
                         descriptor2 = NDescriptorContentResolver.resolveNutsDescriptorFromFileContent(
                                 contentFile,
-                                getParseOptions(), session.getWorkspace());
+                                getParseOptions());
                     }
                     if (descriptor == null) {
                         descriptor = descriptor2;
@@ -197,7 +197,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
                             Path zipFilePath = Paths.get(NPath.of(contentFile.toString() + ".zip")
                                     .toAbsolute().toString());
                             try {
-                                ZipUtils.zip(session, contentFile.toString(), new ZipOptions(), zipFilePath.toString());
+                                ZipUtils.zip(contentFile.toString(), new ZipOptions(), zipFilePath.toString());
                             } catch (IOException ex) {
                                 throw new NIOException(ex);
                             }
@@ -210,7 +210,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
                 } else {
                     if (descriptor == null) {
                         descriptor = NDescriptorContentResolver.resolveNutsDescriptorFromFileContent(
-                                contentFile, getParseOptions(), session.getWorkspace());
+                                contentFile, getParseOptions());
                     }
                 }
                 if (descriptor == null) {
@@ -225,7 +225,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
                 NId effId = dws.resolveEffectiveId(descriptor);
                 CorePlatformUtils.checkAcceptCondition(descriptor.getCondition(), false, session);
                 if (NBlankable.isBlank(repository)) {
-                    effId = CoreNIdUtils.createContentFaceId(effId.builder().setPropertiesQuery("").build(), descriptor, session);
+                    effId = CoreNIdUtils.createContentFaceId(effId.builder().setPropertiesQuery("").build(), descriptor);
                     for (NRepository repo : wu.filterRepositoriesDeploy(effId, null)
                             .stream()
                             .filter(x -> x.config().getDeployWeight() > 0)
@@ -245,7 +245,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
                     if (!repo.isEnabled()) {
                         throw new NRepositoryDisabledException(repository);
                     }
-                    effId = CoreNIdUtils.createContentFaceId(effId.builder().setPropertiesQuery("").build(), descriptor, session);
+                    effId = CoreNIdUtils.createContentFaceId(effId.builder().setPropertiesQuery("").build(), descriptor);
                     NRepositorySPI repoSPI = wu.repoSPI(repo);
                     repoSPI.deploy()
                             .setId(effId)

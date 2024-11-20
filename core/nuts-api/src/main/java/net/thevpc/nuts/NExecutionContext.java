@@ -132,7 +132,9 @@ public interface NExecutionContext extends NSessionProvider {
     NExecutionType getExecutionType();
 
     NRunAs getRunAs();
+    boolean isDry() ;
 
+    public NExecutionContext setDry(boolean dry);
 
     NExecInput getIn() ;
 

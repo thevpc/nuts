@@ -17,11 +17,9 @@ import org.junit.jupiter.api.*;
  * @author thevpc
  */
 public class Test05_FindTest {
-    static NSession session;
-
     @BeforeAll
     public static void init() {
-        session = TestUtils.openNewMinTestWorkspace();
+        TestUtils.openNewMinTestWorkspace();
     }
 
     @Test

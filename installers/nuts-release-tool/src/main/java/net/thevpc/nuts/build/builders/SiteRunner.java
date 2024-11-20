@@ -33,8 +33,8 @@ public class SiteRunner extends AbstractRunner {
 
     boolean NUTS_FLAG_SITE = false;
 
-    public SiteRunner(NSession session) {
-        super(session);
+    public SiteRunner() {
+        super();
     }
 
     @Override
@@ -103,7 +103,7 @@ public class SiteRunner extends AbstractRunner {
                         .setContextName("nuts-release-tool")
                         .setProjectPath(context().root.resolve(".dir-template").toString())
                         .setTargetFolder(context().root.toString())
-                ,session
+
         );
         for (Map.Entry<String, Object> e : prepareVars().entrySet()) {
             templateProject.setVar(e.getKey(), e.getValue());
@@ -118,9 +118,8 @@ public class SiteRunner extends AbstractRunner {
         echo("**** $v (nuts)...", NMaps.of("v", NMsg.ofStyled("ndocusaurus", NTextStyle.keyword())));
         String workdir = context().NUTS_WEBSITE_BASE.toString();
         DocusaurusProject docusaurusProject = new DocusaurusProject(workdir,
-                Paths.get(workdir).resolve(".dir-template").resolve("src").toString(),
-                session());
-        DocusaurusCtrl docusaurusCtrl = new DocusaurusCtrl(docusaurusProject, session)
+                Paths.get(workdir).resolve(".dir-template").resolve("src").toString());
+        DocusaurusCtrl docusaurusCtrl = new DocusaurusCtrl(docusaurusProject)
                 .setBuildWebSite(true)
                 .setStartWebSite(false)
                 .setBuildPdf(true)

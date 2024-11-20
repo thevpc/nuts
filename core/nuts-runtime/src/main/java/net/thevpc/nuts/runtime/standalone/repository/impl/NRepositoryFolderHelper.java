@@ -97,7 +97,7 @@ public class NRepositoryFolderHelper {
     }
 
     public NPath getLongIdLocalFolder(NId id, NSession session) {
-        CoreNIdUtils.checkLongId(id, session);
+        CoreNIdUtils.checkLongId(id);
         if (repo == null) {
             return getStoreLocation().resolve(NLocations.of().getDefaultIdBasedir(id));
         }
@@ -113,7 +113,7 @@ public class NRepositoryFolderHelper {
     }
 
     public NPath getShortIdLocalFolder(NId id, NSession session) {
-        CoreNIdUtils.checkShortId(id, session);
+        CoreNIdUtils.checkShortId(id);
         if (repo == null) {
             return getStoreLocation().resolve(NLocations.of().getDefaultIdBasedir(id.builder().setVersion("").build()));
         }
@@ -235,16 +235,15 @@ public class NRepositoryFolderHelper {
         return null;
     }
 
-    public NPath getRelativeLocalGroupAndArtifactFile(NId id, NSession session) {
-        CoreNIdUtils.checkShortId(id, session);
+    public NPath getRelativeLocalGroupAndArtifactFile(NId id) {
+        CoreNIdUtils.checkShortId(id);
         return NPath.of(
                 net.thevpc.nuts.util.NIdUtils.resolveIdPath(id.getShortId())
         );
     }
 
     public NPath getLocalGroupAndArtifactFile(NId id) {
-        NSession session = workspace.currentSession();
-        CoreNIdUtils.checkShortId(id, session);
+        CoreNIdUtils.checkShortId(id);
         return getStoreLocation().resolve(net.thevpc.nuts.util.NIdUtils.resolveIdPath(id.getShortId()));
     }
 
@@ -257,7 +256,6 @@ public class NRepositoryFolderHelper {
                         id.getVersion().isReleaseVersion() ? null :
                                 id.getVersion().asSingleValue().orNull();
         if (singleVersion != null) {
-            NSession session = workspace.currentSession();
             return IteratorBuilder.ofSupplier(
                     () -> {
                         if (NConstants.Versions.LATEST.equals(singleVersion) || NConstants.Versions.RELEASE.equals(singleVersion)) {
@@ -281,23 +279,22 @@ public class NRepositoryFolderHelper {
                             .build()
             ).build();
         }
-        NSession session = workspace.currentSession();
         NIdFilter filter2 = NIdFilters.of().all(filter,
                 NIdFilters.of().byName(id.getShortName())
         );
-        return findInFolder(getRelativeLocalGroupAndArtifactFile(id, session), filter2,
-                deep ? Integer.MAX_VALUE : 1,
-                session);
+        return findInFolder(getRelativeLocalGroupAndArtifactFile(id), filter2,
+                deep ? Integer.MAX_VALUE : 1
+        );
     }
 
     public NIterator<NId> searchImpl(NIdFilter filter, NSession session) {
         if (!isReadEnabled()) {
             return null;
         }
-        return findInFolder(null, filter, Integer.MAX_VALUE, session);
+        return findInFolder(null, filter, Integer.MAX_VALUE);
     }
 
-    public NIterator<NId> findInFolder(NPath folder, final NIdFilter filter, int maxDepth, NSession session) {
+    public NIterator<NId> findInFolder(NPath folder, final NIdFilter filter, int maxDepth) {
         if (!isReadEnabled()) {
             return null;
         }
@@ -309,7 +306,7 @@ public class NRepositoryFolderHelper {
             @Override
             public void undeploy(NId id) throws NExecutionException {
                 if (repo == null) {
-                    NRepositoryFolderHelper.this.undeploy(new DefaultNRepositoryUndeployCmd(session.getWorkspace())
+                    NRepositoryFolderHelper.this.undeploy(new DefaultNRepositoryUndeployCmd(workspace)
                             .setFetchMode(NFetchMode.LOCAL)
                             .setId(id));
                 } else {
@@ -353,7 +350,6 @@ public class NRepositoryFolderHelper {
                     .withDesc(NEDesc.of("idDirectory"))
                     .toArray(NPath[]::new);
             if (versionFolders != null) {
-                NSession session = workspace.currentSession();
                 for (NPath versionFolder : versionFolders) {
                     if (pathExists(versionFolder)) {
                         NId id2 = id.builder().setVersion(versionFolder.getName()).build();
@@ -381,7 +377,7 @@ public class NRepositoryFolderHelper {
         if (id == null) {
             id = descriptor.getId();
         }
-        CoreNIdUtils.checkLongId(id, session);
+        CoreNIdUtils.checkLongId(id);
         NInputSource inputSource = null;
         if (deployment.getContent() == null) {
             if (!NDescriptorUtils.isNoContent(descriptor)) {
@@ -391,7 +387,7 @@ public class NRepositoryFolderHelper {
             inputSource = NInputSource.ofMultiRead(deployment.getContent());
             inputSource.getMetaData().setKind("package content");
             if (descriptor == null) {
-                try (final CharacterizedExecFile c = DefaultNExecCmd.characterizeForExec(inputSource, session, null)) {
+                try (final CharacterizedExecFile c = DefaultNExecCmd.characterizeForExec(inputSource, null)) {
 //                    NutsUtils.requireNonNull(c.getDescriptor(),session,s->NMsg.ofC("invalid deployment; missing descriptor for %s", deployment.getContent()));
                     if (c.getDescriptor() == null) {
                         throw new NNotFoundException(null,
@@ -439,7 +435,7 @@ public class NRepositoryFolderHelper {
         if (!isWriteEnabled()) {
             throw new NIllegalArgumentException(NMsg.ofPlain("read only repository"));
         }
-        CoreNIdUtils.checkLongId(id, session);
+        CoreNIdUtils.checkLongId(id);
         NPath descFile = getLongIdLocalFile(id.builder().setFaceDescriptor().build());
         if (descFile.exists()) {
             if (!DefaultWriteTypeProcessor
@@ -485,7 +481,7 @@ public class NRepositoryFolderHelper {
             return null;
         }
         NSession session = repo.getWorkspace().currentSession();
-        CoreNIdUtils.checkLongId(id, session);
+        CoreNIdUtils.checkLongId(id);
         NPath pckFile = getLongIdLocalFile(id.builder().setFaceContent().setPackaging(descriptor.getPackaging()).build());
         if (pckFile.exists()) {
             if (content instanceof NPath) {
@@ -610,7 +606,6 @@ public class NRepositoryFolderHelper {
     }
 
     private boolean pathExists(NPath p) {
-        NSession session = workspace.currentSession();
         return p.exists() &&
                 !(cacheFolder && CoreIOUtils.isObsoletePath(p));
     }

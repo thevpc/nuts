@@ -25,7 +25,7 @@ public class DefaultNDeployInternalExecutable extends DefaultInternalNExecutable
             dryExecute();
             return NExecutionException.SUCCESS;
         }
-        if (NAppUtils.processHelpOptions(args, session)) {
+        if (NAppUtils.processHelpOptions(args)) {
             showDefaultHelp();
             return NExecutionException.SUCCESS;
         }

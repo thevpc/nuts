@@ -27,7 +27,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
     private static final String SERVICES_PREFIX = "/META-INF/services/";
     private static final org.apache.juli.logging.Log log
             = org.apache.juli.logging.LogFactory.getLog(WebappClassLoaderBase.class);
-    protected NSession nutsSession;
+    protected NWorkspace workspace;
     protected ClassLoader nutsClassLoader;
     protected boolean nutsClassLoaderUnderConstruction;
     protected String nutsPath;
@@ -109,8 +109,9 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
                 String nutsPath = getNutsPath();
                 String[] pathList = splitString(nutsPath, "; ,");
                 try {
-                    NSession session = resolveNutsWorkspace();
-                    nutsClassLoader = NSearchCmd.of().addIds(pathList).setInlineDependencies(true).getResultClassLoader();
+                    resolveWorkspace().runWith(()->{
+                        nutsClassLoader = NSearchCmd.of().addIds(pathList).setInlineDependencies(true).getResultClassLoader();
+                    });
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     nutsClassLoader = Thread.currentThread().getContextClassLoader();
@@ -122,9 +123,9 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
         return nutsClassLoader;
     }
 
-    public synchronized NSession resolveNutsWorkspace() {
-        if (nutsSession == null) {
-            nutsSession
+    public synchronized NWorkspace resolveWorkspace() {
+        if (workspace == null) {
+            workspace
                     = Nuts.openWorkspace(
                         new DefaultNWorkspaceOptionsBuilder()
                                     .setRuntimeId(getWorkspaceBootRuntime())
@@ -138,7 +139,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
                                     )
                     );
         }
-        return nutsSession;
+        return workspace;
     }
 
 //    @Override

@@ -26,6 +26,8 @@ package net.thevpc.nuts.toolbox.nutsserver.http;
 
 import net.thevpc.nuts.NSearchCmd;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.toolbox.nutsserver.http.commands.*;
 import net.thevpc.nuts.toolbox.nutsserver.util.NServerUtils;
 import net.thevpc.nuts.NId;
@@ -44,11 +46,11 @@ import java.util.logging.Logger;
 public class NHttpServletFacade {
 
     private static final Logger LOG = Logger.getLogger(NHttpServletFacade.class.getName());
-    private Map<String, NSession> workspaces;
+    private Map<String, NWorkspace> workspaces;
     private String serverId;
     private Map<String, FacadeCommand> commands = new HashMap<>();
 
-    public NHttpServletFacade(String serverId, Map<String, NSession> workspaces) {
+    public NHttpServletFacade(String serverId, Map<String, NWorkspace> workspaces) {
         this.workspaces = workspaces;
         this.serverId = serverId;
         register(new VersionFacadeCommand());
@@ -65,11 +67,11 @@ public class NHttpServletFacade {
         register(new GetBootFacadeCommand());
     }
 
-    public Map<String, NSession> getWorkspaces() {
+    public Map<String, NWorkspace> getWorkspaces() {
         return workspaces;
     }
 
-    public NHttpServletFacade setWorkspaces(Map<String, NSession> workspaces) {
+    public NHttpServletFacade setWorkspaces(Map<String, NWorkspace> workspaces) {
         this.workspaces = workspaces;
         return this;
     }
@@ -121,17 +123,17 @@ public class NHttpServletFacade {
         return ii;
     }
 
-    public void execute(NHttpServletFacadeContext context) throws IOException {
+    public void execute(NHttpServletFacadeContext context)  {
         String requestPath = context.getRequestURI().getPath();
         URLInfo ii = parse(requestPath, false);
-        NSession session = workspaces.get(ii.context);
-        if (session == null) {
-            session = workspaces.get("");
-            if (session != null) {
+        NWorkspace workspace = workspaces.get(ii.context);
+        if (workspace == null) {
+            workspace = workspaces.get("");
+            if (workspace != null) {
                 ii = parse(requestPath, true);
             }
         }
-        if (session == null) {
+        if (workspace == null) {
             context.sendError(404, "workspace not found");
             return;
         }
@@ -143,28 +145,32 @@ public class NHttpServletFacade {
                 context.sendError(404, "NShellCommandNode Not found : " + ii.command);
             }
         } else {
-            try {
+            NWorkspace finalWorkspace = workspace;
+            URLInfo finalIi = ii;
+            workspace.runWith(()->{
                 try {
-                    facadeCommand.execute(new FacadeCommandContext(context, serverId, ii.command, ii.path, session));
-                } catch (SecurityException ex) {
-                    LOG.log(Level.SEVERE, "SERVER ERROR : " + ex, ex);
-//                    ex.printStackTrace();
-                    context.sendError(403, ex.toString());
-                } catch (Exception ex) {
-                    LOG.log(Level.SEVERE, "SERVER ERROR : " + ex, ex);
-//                    ex.printStackTrace();
-                    context.sendError(500, ex.toString());
-                }
-            } finally {
-                if (!context.isHeadMethod()) {
                     try {
-                        context.getResponseBody().flush();
-                        context.getResponseBody().close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                        facadeCommand.execute(new FacadeCommandContext(context, serverId, finalIi.command, finalIi.path, finalWorkspace));
+                    } catch (SecurityException ex) {
+                        LOG.log(Level.SEVERE, "SERVER ERROR : " + ex, ex);
+//                    ex.printStackTrace();
+                        context.sendError(403, ex.toString());
+                    } catch (Exception ex) {
+                        LOG.log(Level.SEVERE, "SERVER ERROR : " + ex, ex);
+//                    ex.printStackTrace();
+                        context.sendError(500, ex.toString());
+                    }
+                } finally {
+                    if (!context.isHeadMethod()) {
+                        try {
+                            context.getResponseBody().flush();
+                            context.getResponseBody().close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-            }
+            });
         }
     }
 

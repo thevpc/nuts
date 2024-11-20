@@ -61,7 +61,7 @@ public class NServerMain implements NApplication {
     }
 
     private void list(NSession session, NCmdLine cmdLine) {
-        NWorkspaceServerManager serverManager = new DefaultNWorkspaceServerManager(session);
+        NWorkspaceServerManager serverManager = new DefaultNWorkspaceServerManager(session.getWorkspace());
         cmdLine.setCommandName("nuts-server list").throwUnexpectedArgument();
         if (cmdLine.isExecMode()) {
             List<NServer> servers = serverManager.getServers();
@@ -86,7 +86,7 @@ public class NServerMain implements NApplication {
     }
 
     private void stop(NSession session, NCmdLine cmdLine) {
-        NWorkspaceServerManager serverManager = new DefaultNWorkspaceServerManager(session);
+        NWorkspaceServerManager serverManager = new DefaultNWorkspaceServerManager(session.getWorkspace());
         String s;
         int count = 0;
         while (cmdLine.hasNext()) {
@@ -104,7 +104,7 @@ public class NServerMain implements NApplication {
     }
 
     private void start(NSession session, NCmdLine cmdLine) {
-        NWorkspaceServerManager serverManager = new DefaultNWorkspaceServerManager(session);
+        NWorkspaceServerManager serverManager = new DefaultNWorkspaceServerManager(session.getWorkspace());
         SrvInfoList servers = new SrvInfoList(session);
         NArg a;
         while (cmdLine.hasNext()) {
@@ -163,7 +163,7 @@ public class NServerMain implements NApplication {
             }
             for (SrvInfo server : servers.all) {
                 for (Map.Entry<String, String> entry : server.workspaceLocations.entrySet()) {
-                    NSession nSession = null;
+                    NWorkspace nSession = null;
                     String wsContext = entry.getKey();
                     String wsLocation = entry.getValue();
                     if (NBlankable.isBlank(wsContext) || wsContext.equals(".")) {
@@ -171,7 +171,7 @@ public class NServerMain implements NApplication {
                     }
                     if (NBlankable.isBlank(wsContext)) {
                         NAssert.requireNonNull(session.getWorkspace(), "workspace");
-                        nSession = session;
+                        nSession = session.getWorkspace();
                         server.workspaces.put(wsContext, nSession);
                     } else {
                         nSession = server.workspaces.get(wsContext);
@@ -307,7 +307,7 @@ public class NServerMain implements NApplication {
     }
 
     private void status(NSession session, NCmdLine cmdLine) {
-        NWorkspaceServerManager serverManager = new DefaultNWorkspaceServerManager(session);
+        NWorkspaceServerManager serverManager = new DefaultNWorkspaceServerManager(session.getWorkspace());
         SrvInfoList servers = new SrvInfoList(session);
         NArg a;
         while (cmdLine.hasNext()) {
@@ -460,7 +460,7 @@ public class NServerMain implements NApplication {
         String sslCertificate = null;
         String sslPassphrase = null;
         Map<String, String> workspaceLocations = new LinkedHashMap<>();
-        Map<String, NSession> workspaces = new HashMap<>();
+        Map<String, NWorkspace> workspaces = new HashMap<>();
         boolean readOnly = false;
 
         public void set(HostStr s) {

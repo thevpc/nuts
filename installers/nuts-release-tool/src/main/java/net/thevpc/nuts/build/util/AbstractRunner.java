@@ -23,8 +23,6 @@ import net.thevpc.nuts.spi.NScopeType;
 
 public abstract class AbstractRunner implements NCmdLineConfigurable {
 
-    protected NSession session;
-    protected NPrintStream out;
     protected NPath INIT_FOLDER;
     protected NPath CURRENT_FOLDER;
     private String remoteSshConnexion;
@@ -32,9 +30,7 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
     private boolean preferRsync = true;
     private boolean explodedUpload = true;
 
-    public AbstractRunner(NSession session) {
-        this.session = session;
-        this.out = this.session.out();
+    public AbstractRunner() {
         INIT_FOLDER = NPath.ofUserDirectory();
         CURRENT_FOLDER = INIT_FOLDER;
     }
@@ -48,6 +44,7 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
     }
 
     public NutsBuildRunnerContext context() {
+        NSession session = NSession.get();
         NutsBuildRunnerContext s = (NutsBuildRunnerContext) session.getProperty(NutsBuildRunnerContext.class.getName(), NScopeType.SESSION).orNull();
         if (s == null) {
             s = new NutsBuildRunnerContext();
@@ -73,6 +70,7 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
     }
 
     public void writeString(NPath path, String str) {
+        NSession session = NSession.get();
         if (session.isDry() || session.isTrace()) {
             traceCmd("write", String.valueOf(path), str);
         }
@@ -127,6 +125,7 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
     }
 
     public void mkdir(NPath path) {
+        NSession session = NSession.get();
         if (session.isDry() || session.isTrace()) {
             traceCmd("mkdir", "-p", path.toString());
         }
@@ -136,6 +135,7 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
     }
 
     public void rmDir(NPath path) {
+        NSession session = NSession.get();
         if (session.isDry() || session.isTrace()) {
             traceCmd("rm", "-r", path.toString());
         }
@@ -145,6 +145,7 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
     }
 
     public void rm(NPath path) {
+        NSession session = NSession.get();
         if (session.isDry() || session.isTrace()) {
             traceCmd("rm", path.toString());
         }
@@ -154,6 +155,7 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
     }
 
     public void cp(NPath from, NPath to) {
+        NSession session = NSession.get();
         if (session.isDry() || session.isTrace()) {
             traceCmd("cp", from.toString(), to.toString());
         }
@@ -180,6 +182,7 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
     }
 
     public String execAsString(String... cmd) {
+        NSession session = NSession.get();
         if (session.isDry() || session.isTrace()) {
             traceCmd(cmd);
         }
@@ -193,6 +196,7 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
     }
 
     public void copyWithHeader(NPath from, NPath to, String header) {
+        NSession session = NSession.get();
         if (session.isDry() || session.isTrace()) {
             traceCmd("copy-with-header", from.toString(), to.toString(), "**header...**");
         }
@@ -205,6 +209,7 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
     }
 
     public void sed(String fromExpr, String to, NPath path) {
+        NSession session = NSession.get();
         if (session.isDry() || session.isTrace()) {
             traceCmd("sed", fromExpr, to, path.toString());
         }
@@ -225,6 +230,8 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
     }
 
     public void trace(String message, Map<String, ?> vars) {
+        NSession session = NSession.get();
+        NPrintStream out = session.out();
         out.print("[trace ]");
         if (timestampTrace) {
             out.print("[" + new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS").format(new Date()) + "] ");
@@ -237,6 +244,8 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
     }
 
     public void trace(NCmdLine cmdLine) {
+        NSession session = NSession.get();
+        NPrintStream out = session.out();
         if (session.isDry()) {
             out.print("[dry] ");
         } else {
@@ -253,14 +262,20 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
     }
 
     public void echo(String message, Map<String, ?> vars) {
+        NSession session = NSession.get();
+        NPrintStream out = session.out();
         out.println(NMsg.ofV(message, vars));
     }
 
     public void echo(String message) {
+        NSession session = NSession.get();
+        NPrintStream out = session.out();
         out.println(NMsg.ofV(message, new HashMap<>()));
     }
 
     public void sleep(int seconds) {
+        NSession session = NSession.get();
+        NPrintStream out = session.out();
         if (session.isDry() || session.isTrace()) {
             traceCmd("sleep", String.valueOf(seconds));
         }
@@ -280,6 +295,8 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
     }
 
     public void cd(NPath p) {
+        NSession session = NSession.get();
+        NPrintStream out = session.out();
         if (session.isDry() || session.isTrace()) {
             traceCmd("cd", String.valueOf(p));
         }
@@ -391,10 +408,6 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
     protected NPath removeMvn() {
         String remoteUser = "vpc";
         return NPath.of("/home/" + remoteUser + "/.m2/repository");
-    }
-
-    public NSession session() {
-        return session;
     }
 
     public void pushIdFiles(String... ids) {

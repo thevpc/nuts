@@ -27,12 +27,14 @@
 package net.thevpc.nuts.toolbox.nsh.test;
 
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NSessionTerminal;
+import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.toolbox.nsh.nshell.NShell;
 import net.thevpc.nuts.toolbox.nsh.nshell.NShellConfiguration;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -40,9 +42,13 @@ import org.junit.jupiter.api.Test;
  * @author thevpc
  */
 public class TestExportVar {
+    @BeforeAll
+    static void openWorkspace(){
+        TestUtils.openNewTestWorkspace("--verbose");
+    }
+
     @Test
     public void testVars1() {
-        NSession session = TestUtils.openNewTestWorkspace();
         NPath tempFolder = NPath.ofTempFolder();
         NPath a = tempFolder.resolve("a.nsh");
         NPath b = tempFolder.resolve("b.nsh");
@@ -53,12 +59,11 @@ public class TestExportVar {
                 .to(b).run();
         NShell c = new NShell(
                 new NShellConfiguration()
-                        .setSession(session)
                         .setArgs(a.toString())
                         .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)
         );
         NSession shellSession = c.getRootContext().getSession();
-        shellSession.setTerminal(NSessionTerminal.ofMem());
+        shellSession.setTerminal(NTerminal.ofMem());
         c.getRootContext().setDirectory(tempFolder.toString());
         c.run();
         System.out.println("-------------------------------------");

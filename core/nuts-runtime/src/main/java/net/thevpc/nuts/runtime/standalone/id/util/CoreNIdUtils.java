@@ -66,12 +66,12 @@ public class CoreNIdUtils {
         return sb.toString();
     }
 
-    public static void checkLongId(NId id, NSession session) {
-        checkShortId(id, session);
+    public static void checkLongId(NId id) {
+        checkShortId(id);
         NAssert.requireNonBlank(id.getVersion(), () -> NMsg.ofC("missing version for %s", id));
     }
 
-    public static void checkShortId(NId id, NSession session) {
+    public static void checkShortId(NId id) {
         NAssert.requireNonBlank(id, "id");
         NAssert.requireNonBlank(id.getGroupId(), () -> NMsg.ofC("missing groupId for %s", id));
         NAssert.requireNonBlank(id.getArtifactId(), () -> NMsg.ofC("missing artifactId for %s", id));
@@ -87,14 +87,14 @@ public class CoreNIdUtils {
         return true;
     }
 
-    public static void checkValidEffectiveId(NId id, NSession session) {
+    public static void checkValidEffectiveId(NId id) {
         NAssert.requireNonBlank(id, "id");
         if (id.toString().contains("${")) {
             throw new NIllegalArgumentException(NMsg.ofC("unable to evaluate effective id %s", id));
         }
     }
 
-    public static NId createContentFaceId(NId id, NDescriptor desc, NSession session) {
+    public static NId createContentFaceId(NId id, NDescriptor desc) {
         Map<String, String> q = id.getProperties();
         q.put(NConstants.IdProperties.PACKAGING, NStringUtils.trim(desc.getPackaging()));
         q.put(NConstants.IdProperties.FACE, NConstants.QueryFaces.CONTENT);
@@ -162,7 +162,6 @@ public class CoreNIdUtils {
 
 
     public static String getNutsApiVersion(NExecutionContext executionContext) {
-        NSession session = executionContext.getSession();
         NDescriptor descriptor = executionContext.getDefinition().getDescriptor();
         if (descriptor.isApplication()) {
             for (NDependency dependency : descriptor.getDependencies()) {

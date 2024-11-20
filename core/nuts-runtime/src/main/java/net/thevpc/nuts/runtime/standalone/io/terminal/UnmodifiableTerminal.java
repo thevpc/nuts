@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.io.NSessionTerminal;
+import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
@@ -10,13 +10,13 @@ import net.thevpc.nuts.util.NAsk;
 
 import java.io.InputStream;
 
-public class UnmodifiableSessionTerminal extends AbstractNSessionTerminal {
+public class UnmodifiableTerminal extends AbstractNTerminal {
 
-    private final NSessionTerminal base;
+    private final NTerminal base;
     protected CProgressBar progressBar;
     protected NWorkspace workspace;
 
-    public UnmodifiableSessionTerminal(NSessionTerminal base, NWorkspace workspace) {
+    public UnmodifiableTerminal(NTerminal base, NWorkspace workspace) {
         this.base = base;
         this.workspace = workspace;
     }
@@ -62,7 +62,7 @@ public class UnmodifiableSessionTerminal extends AbstractNSessionTerminal {
     }
 
     @Override
-    public NSessionTerminal copy() {
+    public NTerminal copy() {
         return getBase().copy();
     }
 
@@ -94,7 +94,7 @@ public class UnmodifiableSessionTerminal extends AbstractNSessionTerminal {
 //    }
 
     @Override
-    public NSessionTerminal printProgress(float progress, NMsg message) {
+    public NTerminal printProgress(float progress, NMsg message) {
         NSession session=workspace.currentSession();
         if (session.isProgress()) {
             if (getBase() != null) {
@@ -118,7 +118,7 @@ public class UnmodifiableSessionTerminal extends AbstractNSessionTerminal {
         return progressBar;
     }
 
-    public NSessionTerminal getBase() {
+    public NTerminal getBase() {
         return base;
     }
 

@@ -187,7 +187,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
     public final NIterator<NId> searchVersionsImpl(NId id, NIdFilter idFilter, NFetchMode fetchMode) {
 
         List<NIterator<? extends NId>> all = new ArrayList<>();
-        NSession session = getWorkspace().currentSession();
+//        NSession session = getWorkspace().currentSession();
         if (fetchMode != NFetchMode.REMOTE) {
             if (lib.isReadEnabled()) {
                 all.add(IteratorBuilder.of(
@@ -338,16 +338,16 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         for (NPath basePath : basePaths) {
             if (fetchMode != NFetchMode.REMOTE) {
                 if (basePath.getName().equals("*")) {
-                    li.add(lib.findInFolder(basePath.getParent(), filter, Integer.MAX_VALUE, session));
+                    li.add(lib.findInFolder(basePath.getParent(), filter, Integer.MAX_VALUE));
                 } else {
-                    li.add(lib.findInFolder(basePath, filter, 2, session));
+                    li.add(lib.findInFolder(basePath, filter, 2));
                 }
             }
             if (cache.isReadEnabled() && session.isCached()) {
                 if (basePath.getName().equals("*")) {
-                    li.add(cache.findInFolder(basePath.getParent(), filter, Integer.MAX_VALUE, session));
+                    li.add(cache.findInFolder(basePath.getParent(), filter, Integer.MAX_VALUE));
                 } else {
-                    li.add(cache.findInFolder(basePath, filter, 2, session));
+                    li.add(cache.findInFolder(basePath, filter, 2));
                 }
             }
         }

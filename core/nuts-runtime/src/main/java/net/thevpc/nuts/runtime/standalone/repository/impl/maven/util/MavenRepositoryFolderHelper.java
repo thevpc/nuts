@@ -65,12 +65,9 @@ public class MavenRepositoryFolderHelper {
     private NWorkspace ws;
     private NPath rootPath;
 
-    public MavenRepositoryFolderHelper(NRepository repo, NSession session, NPath rootPath) {
+    public MavenRepositoryFolderHelper(NRepository repo, NPath rootPath) {
         this.repo = repo;
-        this.ws = session != null ? session.getWorkspace() : repo == null ? null : repo.getWorkspace();
-        if (repo == null && session == null) {
-            throw new NIllegalArgumentException(NMsg.ofPlain("both workspace and repo are null"));
-        }
+        this.ws = NWorkspace.get();
         this.rootPath = rootPath;
     }
 
@@ -107,7 +104,7 @@ public class MavenRepositoryFolderHelper {
     }
 
     public NPath getLocalGroupAndArtifactFile(NId id, NSession session) {
-        CoreNIdUtils.checkShortId(id, session);
+        CoreNIdUtils.checkShortId(id);
         return getStoreLocation().resolve(net.thevpc.nuts.util.NIdUtils.resolveIdPath(id.getShortId()));
     }
 

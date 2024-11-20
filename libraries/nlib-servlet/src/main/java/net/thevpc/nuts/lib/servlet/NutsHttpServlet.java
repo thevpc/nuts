@@ -10,23 +10,24 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.lib.servlet;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
+import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.toolbox.nutsserver.AdminServerConfig;
 import net.thevpc.nuts.toolbox.nutsserver.DefaultNWorkspaceServerManager;
 import net.thevpc.nuts.toolbox.nutsserver.NServer;
@@ -136,20 +137,20 @@ public class NutsHttpServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-        Map<String, NSession> workspacesByLocation = new HashMap<>();
-        Map<String, NSession> workspacesByWebContextPath = new HashMap<>();
-        NSession session = Nuts.openWorkspace(
+        Map<String, NWorkspace> workspacesByLocation = new HashMap<>();
+        Map<String, NWorkspace> workspacesByWebContextPath = new HashMap<>();
+        NWorkspace ws = Nuts.openWorkspace(
                 new DefaultNWorkspaceOptionsBuilder()
                         .setRuntimeId(runtimeId)
                         .setWorkspace(workspaceLocation)
                         .setOpenMode(NOpenMode.OPEN_OR_CREATE)
                         .setArchetype("server")
         );
-        DefaultNWorkspaceServerManager serverManager = new DefaultNWorkspaceServerManager(session);
+        DefaultNWorkspaceServerManager serverManager = new DefaultNWorkspaceServerManager(ws);
         if (workspaces.isEmpty()) {
             String wl = workspaceLocation == null ? "" : workspaceLocation;
             workspaces.put("", wl);
-            workspacesByLocation.put(wl, session);
+            workspacesByLocation.put(wl, ws);
         }
         for (Map.Entry<String, String> w : workspaces.entrySet()) {
             String webContext = w.getKey();
@@ -157,18 +158,18 @@ public class NutsHttpServlet extends HttpServlet {
             if (location == null) {
                 location = "";
             }
-            NSession session2 = workspacesByLocation.get(location);
-            if (session2 == null) {
-                session2 = Nuts.openWorkspace(
+            NWorkspace ws2 = workspacesByLocation.get(location);
+            if (ws2 == null) {
+                ws2 = Nuts.openWorkspace(
                         new DefaultNWorkspaceOptionsBuilder()
-                        .setRuntimeId(runtimeId)
-                        .setWorkspace(location)
-                        .setOpenMode(NOpenMode.OPEN_OR_CREATE)
-                        .setArchetype("server")
+                                .setRuntimeId(runtimeId)
+                                .setWorkspace(location)
+                                .setOpenMode(NOpenMode.OPEN_OR_CREATE)
+                                .setArchetype("server")
                 );
-                workspacesByLocation.put(location, session2);
+                workspacesByLocation.put(location, ws2);
             }
-            workspacesByWebContextPath.put(webContext, session2);
+            workspacesByWebContextPath.put(webContext, ws2);
         }
 
         if (NBlankable.isBlank(serverId)) {
@@ -224,12 +225,12 @@ public class NutsHttpServlet extends HttpServlet {
         }
 
         @Override
-        public String getRequestMethod() throws IOException {
+        public String getRequestMethod() {
             return req.getMethod();
         }
 
         @Override
-        public URI getRequestURI() throws IOException {
+        public URI getRequestURI() {
             try {
                 String cp = req.getContextPath();
                 String uri = req.getRequestURI();
@@ -241,51 +242,62 @@ public class NutsHttpServlet extends HttpServlet {
                 }
                 return new URI(uri);
             } catch (URISyntaxException e) {
-                throw new IOException(e);
+                throw new NIOException(e);
             }
         }
 
         @Override
-        public OutputStream getResponseBody() throws IOException {
-            return resp.getOutputStream();
+        public OutputStream getResponseBody() {
+            try {
+                return resp.getOutputStream();
+            } catch (IOException ex) {
+                throw new NIOException(ex);
+            }
         }
 
         @Override
-        public void sendError(int code, String msg) throws IOException {
-            resp.sendError(code, msg);
+        public void sendError(int code, String msg) {
+            try {
+                resp.sendError(code, msg);
+            } catch (IOException ex) {
+                throw new NIOException(ex);
+            }
         }
 
         @Override
-        public void sendResponseHeaders(int code, long length) throws IOException {
+        public void sendResponseHeaders(int code, long length) {
             if (length > 0) {
-
                 resp.setHeader("Content-length", Long.toString(length));
             }
             resp.setStatus(code);
         }
 
         @Override
-        public Set<String> getRequestHeaderKeys(String header) throws IOException {
+        public Set<String> getRequestHeaderKeys(String header) {
             return new HashSet<>(Collections.list(req.getHeaderNames()));
         }
 
         @Override
-        public String getRequestHeaderFirstValue(String header) throws IOException {
+        public String getRequestHeaderFirstValue(String header) {
             return req.getHeader(header);
         }
 
         @Override
-        public List<String> getRequestHeaderAllValues(String header) throws IOException {
+        public List<String> getRequestHeaderAllValues(String header) {
             return Collections.list(req.getHeaders(header));
         }
 
         @Override
-        public InputStream getRequestBody() throws IOException {
-            return req.getInputStream();
+        public InputStream getRequestBody() {
+            try {
+                return req.getInputStream();
+            } catch (IOException ex) {
+                throw new NIOException(ex);
+            }
         }
 
         @Override
-        public Map<String, List<String>> getParameters() throws IOException {
+        public Map<String, List<String>> getParameters() {
             Map<String, List<String>> m = new LinkedHashMap<>();
             for (String s : Collections.list(req.getParameterNames())) {
                 for (String v : req.getParameterValues(s)) {
@@ -297,7 +309,7 @@ public class NutsHttpServlet extends HttpServlet {
         }
 
         @Override
-        public void addResponseHeader(String name, String value) throws IOException {
+        public void addResponseHeader(String name, String value) {
             resp.addHeader(name, value);
         }
     }

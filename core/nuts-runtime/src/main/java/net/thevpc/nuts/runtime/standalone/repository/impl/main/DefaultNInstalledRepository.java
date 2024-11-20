@@ -125,14 +125,14 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         NPath rootFolder = NLocations.of().getStoreLocation(NStoreType.CONF).resolve(NConstants.Folders.ID);
         return new FolderObjectIterator<NInstallInformation>("NutsInstallInformation",
                 rootFolder,
-                null, -1, session, new FolderObjectIterator.FolderIteratorModel<NInstallInformation>() {
+                null, -1, new FolderObjectIterator.FolderIteratorModel<NInstallInformation>() {
             @Override
             public boolean isObjectFile(NPath pathname) {
                 return pathname.getName().equals(NUTS_INSTALL_FILE);
             }
 
             @Override
-            public NInstallInformation parseObject(NPath path, NSession session) throws IOException {
+            public NInstallInformation parseObject(NPath path) throws IOException {
                 try {
                     InstallInfoConfig c = getInstallInfoConfig(null, path);
                     if (c != null) {
@@ -157,7 +157,6 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                 return p;
             }
         }
-        NSession session = workspace.currentSession();
         NPath pp = NLocations.of().getStoreLocation(id
                         //.setAlternative("")
                         .builder().setVersion("ANY").build(), NStoreType.CONF)
@@ -180,7 +179,6 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     public void setDefaultVersion(NId id) {
         NId baseVersion = id.getShortId();
         String version = id.getVersion().getValue();
-        NSession session = workspace.currentSession();
         NPath pp = NLocations.of().getStoreLocation(id
                         //                .setAlternative("")
                         .builder().setVersion("ANY").build(), NStoreType.CONF)
@@ -216,11 +214,10 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     @Override
     public void install(NId id, NId forId) {
         boolean succeeded = false;
-        NSession session = workspace.currentSession();
         NWorkspaceUtils.of(workspace).checkReadOnly();
         InstallInfoConfig ii = getInstallInfoConfig(id, null);
         try {
-            invalidateInstallationDigest(session);
+            invalidateInstallationDigest();
             String repository = id.getRepository();
             NRepository r = NRepositories.of().findRepository(repository).orNull();
             if (ii == null) {
@@ -268,7 +265,6 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     @Override
     public void uninstall(NDefinition def) {
         boolean succeeded = false;
-        NSession session = workspace.currentSession();
         NWorkspaceUtils.of(workspace).checkReadOnly();
         NId id = def.getId();
         NInstallStatus installStatus = getInstallStatus(id);
@@ -280,7 +276,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
             undeploy().setId(id.builder().setPackaging(NBlankable.isBlank(pck) ? "jar" : pck).build())
                     //.setFetchMode(NutsFetchMode.LOCAL)
                     .run();
-            remove(id, NUTS_INSTALL_FILE, session);
+            remove(id, NUTS_INSTALL_FILE);
             String v = getDefaultVersion(id);
             if (v != null && v.equals(id.getVersion().getValue())) {
                 Iterator<NId> versions = searchVersions().setId(id)
@@ -431,9 +427,8 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
 
 
     public InstallInfoConfig getInstallInfoConfig(NId id, NPath path) {
-        NSession session = workspace.currentSession();
         if (id == null && path == null) {
-            CoreNIdUtils.checkShortId(id, session);
+            CoreNIdUtils.checkShortId(id);
         }
         if (path == null) {
             path = getPath(id, NUTS_INSTALL_FILE);
@@ -491,18 +486,17 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     public NIterator<InstallInfoConfig> searchInstallConfig() {
-        NSession session = workspace.currentSession();
         NPath rootFolder = NLocations.of().getStoreLocation(NStoreType.CONF).resolve(NConstants.Folders.ID);
         return new FolderObjectIterator<InstallInfoConfig>("InstallInfoConfig",
                 rootFolder,
-                null, -1, session, new FolderObjectIterator.FolderIteratorModel<InstallInfoConfig>() {
+                null, -1, new FolderObjectIterator.FolderIteratorModel<InstallInfoConfig>() {
             @Override
             public boolean isObjectFile(NPath pathname) {
                 return pathname.getName().equals(NUTS_INSTALL_FILE);
             }
 
             @Override
-            public InstallInfoConfig parseObject(NPath path, NSession session) throws IOException {
+            public InstallInfoConfig parseObject(NPath path) throws IOException {
                 try {
                     InstallInfoConfig c = getInstallInfoConfig(null, path);
                     if (c != null) {
@@ -551,7 +545,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
 
     private NInstallInformation updateInstallInformation(NDefinition def, Boolean install, Boolean require, boolean deploy) {
         NSession session = workspace.currentSession();
-        invalidateInstallationDigest(session);
+        invalidateInstallationDigest();
         NId id1 = def.getId();
         InstallInfoConfig ii = getInstallInfoConfig(id1, null);
         boolean wasInstalled = false;
@@ -677,7 +671,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                 .print(getPath(id, name));
     }
 
-    public void remove(NId id, String name, NSession session) {
+    public void remove(NId id, String name) {
         NPath path = getPath(id, name);
         path.delete();
     }
@@ -703,8 +697,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         return new AbstractNDeployRepositoryCmd(this) {
             @Override
             public NDeployRepositoryCmd run() {
-                NSession session = workspace.currentSession();
-                invalidateInstallationDigest(session);
+                invalidateInstallationDigest();
                 boolean succeeded = false;
                 try {
                     NDescriptor rep = deployments.deploy(this, NConfirmationMode.YES);
@@ -724,8 +717,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         return new AbstractNRepositoryUndeployCmd(this) {
             @Override
             public NRepositoryUndeployCmd run() {
-                NSession session = workspace.currentSession();
-                invalidateInstallationDigest(session);
+                invalidateInstallationDigest();
                 boolean succeeded = false;
                 try {
                     deployments.undeploy(this);
@@ -738,9 +730,9 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         };
     }
 
-    private static void invalidateInstallationDigest(NSession session) {
+    private static void invalidateInstallationDigest() {
         String uuid = UUID.randomUUID().toString();
-        NWorkspaceExt.of(session).setInstallationDigest(uuid);
+        NWorkspaceExt.of().setInstallationDigest(uuid);
     }
 
     @Override
@@ -748,7 +740,6 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         return new AbstractNPushRepositoryCmd(this) {
             @Override
             public NPushRepositoryCmd run() {
-                NSession session = workspace.currentSession();
                 throw new NIllegalArgumentException(
                         NMsg.ofC("unsupported push() for %s repository", getName())
                 );
@@ -790,7 +781,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                         .build();
                 NIdFilter ff = getFilter();
                 if (ff != null) {
-                    idIter = IteratorBuilder.of(idIter).filter(new NIdFilterToPredicate(ff, session)).build();
+                    idIter = IteratorBuilder.of(idIter).filter(new NIdFilterToPredicate(ff)).build();
                 }
                 result = idIter; //deployments.searchImpl(getFilter(), session)
                 if (result == null) {
@@ -808,7 +799,6 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
             @Override
             public NSearchVersionsRepositoryCmd run() {
                 if (getFilter() instanceof NInstallStatusIdFilter) {
-                    NSession session = workspace.currentSession();
                     NPath installFolder
                             = NLocations.of().getStoreLocation(getId()
                             .builder().setVersion("ANY").build(), NStoreType.CONF).getParent();
@@ -838,7 +828,6 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                         result = IteratorBuilder.emptyIterator();
                     }
                 } else {
-                    NSession session = workspace.currentSession();
                     this.result = IteratorBuilder.of(deployments.searchVersions(getId(), getFilter(), true))
                             .named("searchVersionsInMain()")
                             .build()
@@ -854,8 +843,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         return new AbstractNUpdateRepositoryStatsCmd(this) {
             @Override
             public NUpdateRepositoryStatsCmd run() {
-                NSession session = workspace.currentSession();
-                invalidateInstallationDigest(session);
+                invalidateInstallationDigest();
                 deployments.reindexFolder();
                 return this;
             }

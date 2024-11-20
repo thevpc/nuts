@@ -14,6 +14,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutable
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +37,6 @@ public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt 
                 NExecutableType.SYSTEM, execCommand);
         this.cmd = cmd;
         this.executorOptions = CoreCollectionUtils.nonNullList(executorOptions);
-        NSession session = workspace.currentSession();
         NCmdLine cmdLine = NCmdLine.of(this.executorOptions);
         while (cmdLine.hasNext()) {
             NArg aa = cmdLine.peek().get();
@@ -74,7 +74,7 @@ public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt 
                 execCommand.getErr(),
                 execCommand.getRunAs(),
                 executorOptions.toArray(new String[0]),
-                workspace
+                NUtils.asBooleanOr(execCommand.getDry(),NSession.get().isDry()), workspace
         );
     }
 
@@ -87,7 +87,6 @@ public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt 
 
     @Override
     public NText getHelpText() {
-        NSession session = workspace.currentSession();
         switch (NEnvs.of().getOsFamily()) {
             case WINDOWS: {
                 return NTexts.of().ofStyled(

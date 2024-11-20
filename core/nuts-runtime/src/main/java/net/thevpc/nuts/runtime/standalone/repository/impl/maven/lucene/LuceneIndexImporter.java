@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.lucene;
 
 import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
@@ -15,14 +14,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class LuceneIndexImporter {
-    private NSession session;
-
-    public LuceneIndexImporter(NSession session) {
-        this.session = session;
-
+    public LuceneIndexImporter() {
     }
 
-    public long importGzURL(URL url, String repository, NSession session) {
+    public long importGzURL(URL url, String repository) {
 //        NutsWorkspace ws = session.getWorkspace();
         String tempGzFile = NPath.ofTempFile("lucene-repository.gz").toString();
         NCp.of()
@@ -35,7 +30,7 @@ public class LuceneIndexImporter {
             long[] ref=new long[1];
             Files.list(Paths.get(tempFolder)).forEach(
                     x -> {
-                        ref[0]+=importFile(x.toString(),repository,session);
+                        ref[0]+=importFile(x.toString(),repository);
                     }
             );
             return ref[0];
@@ -44,23 +39,23 @@ public class LuceneIndexImporter {
         }
     }
 
-    public long importFile(String filePath, String repository, NSession session) {
-        ArtifactsIndexDB adb = ArtifactsIndexDB.of(session);
+    public long importFile(String filePath, String repository) {
+        ArtifactsIndexDB adb = ArtifactsIndexDB.of();
         int addedCount=0;
         int allCount=0;
-        try (DirtyLuceneIndexParser p = new DirtyLuceneIndexParser(new FileInputStream(filePath),session)) {
+        try (DirtyLuceneIndexParser p = new DirtyLuceneIndexParser(new FileInputStream(filePath))) {
             while (p.hasNext()) {
                 NId id = NId.of(p.next()).get().builder().setRepository(repository).build();
-                if (!adb.contains(id,session)) {
+                if (!adb.contains(id)) {
                     addedCount++;
-                    adb.add(id,session);
+                    adb.add(id);
                 }
                 allCount++;
             }
         } catch (IOException ex) {
             throw new NIOException(ex);
         } finally {
-            adb.flush(session);
+            adb.flush();
         }
         return addedCount;
     }

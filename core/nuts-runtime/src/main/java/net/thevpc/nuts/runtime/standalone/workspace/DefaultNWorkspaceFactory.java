@@ -97,8 +97,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     @Override
     public Set<Class<? extends NComponent>> discoverTypes(NId id, URL url, ClassLoader bootClassLoader, Class<? extends NComponent>[] extensionPoints) {
         if (!discoveredCacheById.containsKey(id)) {
-            NSession session = workspace.currentSession();
-            IdCache value = new IdCache(id, url, bootClassLoader, LOG, extensionPoints, session, workspace);
+            IdCache value = new IdCache(id, url, bootClassLoader, LOG, extensionPoints, workspace);
             discoveredCacheById.put(id, value);
             Set<Class<? extends NComponent>> all = new HashSet<>();
             for (ClassClassMap m : value.classes.values()) {
@@ -113,7 +112,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     @Override
     public <T extends NComponent> NOptional<T> createComponent(Class<T> type, Object supportCriteria) {
         NSession session = workspace.currentSession();
-        NSupportLevelContext context = new NDefaultSupportLevelContext(session, supportCriteria);
+        NSupportLevelContext context = new NDefaultSupportLevelContext(supportCriteria);
         List<T> all = createAll(type);
         NCallableSupport<T> s = NCallableSupport.resolve(all.stream().map(x -> NCallableSupport.of(x.getSupportLevel(context), x)),
                 () -> NMsg.ofMissingValue(NMsg.ofC("extensions component %s", type).toString())
@@ -237,8 +236,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             }
         }
         List<TypeAndLevel> r = new ArrayList<>();
-        NSession session = workspace.currentSession();
-        NDefaultSupportLevelContext context = new NDefaultSupportLevelContext(session, supportCriteria);
+        NDefaultSupportLevelContext context = new NDefaultSupportLevelContext(supportCriteria);
         for (Iterator<T> iterator = list.iterator(); iterator.hasNext(); ) {
             T t = iterator.next();
             int supportLevel = t.getSupportLevel(context);
@@ -415,7 +413,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         if (ctrl0 == null) {
             if (isBootstrapLogType(apiType)) {
                 //do not use log. this is a bug that must be resolved fast!
-                safeLog(NMsg.ofC("error when instantiating %s as %s : no constructor found", apiType, t), null, session);
+                safeLog(NMsg.ofC("error when instantiating %s as %s : no constructor found", apiType, t), null);
             } else {
                 if (LOG.isLoggable(Level.FINEST)) {
                     LOG.with().level(Level.FINEST).verb(NLogVerb.FAIL).error(null)
@@ -438,7 +436,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         } catch (Exception e) {
             if (isBootstrapLogType(apiType)) {
                 //do not use log. this is a bug that must be resolved fast!
-                safeLog(NMsg.ofC("error when instantiating %s as %s : %s", apiType, t, e), e, session);
+                safeLog(NMsg.ofC("error when instantiating %s as %s : %s", apiType, t, e), e);
             } else {
 
                 if (LOG.isLoggable(Level.FINEST)) {
@@ -500,9 +498,9 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         return scope;
     }
 
-    public void safeLog(NMsg msg, Throwable any, NSession session) {
+    public void safeLog(NMsg msg, Throwable any) {
         //TODO: should we use boot stdio?
-        PrintStream err = NWorkspaceExt.of(session).getModel().bootModel.getBootTerminal().getErr();
+        PrintStream err = NWorkspaceExt.of().getModel().bootModel.getBootTerminal().getErr();
         if (err == null) {
             err = System.err;
         }

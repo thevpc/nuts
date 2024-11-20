@@ -28,14 +28,14 @@ public class NPrintIterator<T> extends NIteratorBase<T> {
     NFetchDisplayOptions displayOptions;
     long count = 0;
 
-    public NPrintIterator(Iterator<T> curr, NWorkspace ws, NPrintStream out, NFetchDisplayOptions displayOptions, NSession session) {
+    public NPrintIterator(Iterator<T> curr, NWorkspace ws, NPrintStream out, NFetchDisplayOptions displayOptions) {
         this.curr = curr;
         this.ws = ws;
         this.out = out;
-        this.listFormat = session.getIterableOutput();
+        this.listFormat = NSession.get().getIterableOutput();
         this.displayOptions = displayOptions;
         if (this.listFormat == null) {
-            this.listFormat = NElements.of().setContentType(session.getOutputFormat().orDefault()).iter(out);
+            this.listFormat = NElements.of().setContentType(NSession.get().getOutputFormat().orDefault()).iter(out);
         }
         this.listFormat
                 .configure(true, displayOptions.toCmdLineOptions())

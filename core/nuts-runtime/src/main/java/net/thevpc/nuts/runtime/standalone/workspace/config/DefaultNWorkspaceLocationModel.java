@@ -160,8 +160,7 @@ public class DefaultNWorkspaceLocationModel {
 
 
     public NPath getDefaultIdBasedir(NId id) {
-        NSession session = getWorkspace().currentSession();
-        CoreNIdUtils.checkShortId(id,session);
+        CoreNIdUtils.checkShortId(id);
         String groupId = id.getGroupId();
         String artifactId = id.getArtifactId();
         String plainIdPath = groupId.replace('.', '/') + "/" + artifactId;

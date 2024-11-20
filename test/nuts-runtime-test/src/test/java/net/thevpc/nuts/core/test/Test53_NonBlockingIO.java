@@ -5,16 +5,19 @@ import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.io.NInputSourceBuilder;
 import net.thevpc.nuts.io.NNonBlockingInputStream;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 public class Test53_NonBlockingIO {
-
+    @BeforeAll
+    public static void init() {
+        TestUtils.openNewTestWorkspace("-byZSKk");
+    }
     @Test
     public void test1() {
-        NSession session = TestUtils.openNewTestWorkspace("-byZSKk");
         ByteArrayInputStream bis=new ByteArrayInputStream("Hello".getBytes());
         NNonBlockingInputStream s = NInputSourceBuilder.of(bis).createNonBlockingInputStream();
         try {

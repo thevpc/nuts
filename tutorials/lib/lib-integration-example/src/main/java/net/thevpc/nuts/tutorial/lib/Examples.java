@@ -5,10 +5,10 @@ import net.thevpc.nuts.*;
 public class Examples {
 
     public static void main(String[] args) {
-        NSession session = Nuts.openWorkspace("-ZyS");
-        new ExamplesOfCp().executeAll(session);
-        new ExamplesOfZip().executeAll(session);
-        new ExamplesOfExec().executeAll(session);
-        new ExamplesOfSearch().executeAll(session);
+        Nuts.openWorkspace("-ZyS");
+        new ExamplesOfCp().executeAll();
+        new ExamplesOfZip().executeAll();
+        new ExamplesOfExec().executeAll();
+        new ExamplesOfSearch().executeAll();
     }
 }

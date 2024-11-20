@@ -16,13 +16,12 @@ import java.util.*;
  */
 public class DefaultNWorkspaceList implements NWorkspaceList {
 
-    private final NSession defaultSession;
     private String name;
     private Map<String, NWorkspaceLocation> workspaces = new LinkedHashMap<>();
     private NWorkspaceListConfig config;
 
-    public DefaultNWorkspaceList(NSession session) {
-        this.defaultSession = session;
+    public DefaultNWorkspaceList() {
+        NWorkspace ws = NWorkspace.of().get();
         setName(null);
         NPath file = getConfigFile();
         if (file.exists()) {
@@ -34,9 +33,9 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
             this.config = new NWorkspaceListConfig()
                     .setUuid(UUID.randomUUID().toString())
                     .setName("default-config");
-            this.workspaces.put(session.getWorkspace().getUuid(),
+            this.workspaces.put(ws.getUuid(),
                     new NWorkspaceLocation()
-                            .setUuid(session.getWorkspace().getUuid())
+                            .setUuid(ws.getUuid())
                             .setName(NConstants.Names.DEFAULT_WORKSPACE_NAME)
                             .setLocation(NLocations.of().getWorkspaceLocation().toString())
             );
@@ -85,14 +84,14 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
     }
 
     @Override
-    public NSession addWorkspace(String path) {
-        NSession ss = this.createWorkspace(path);
+    public NWorkspace addWorkspace(String path) {
+        NWorkspace ss = this.createWorkspace(path);
         NLocations locations = NLocations.of();
         NWorkspaceLocation workspaceLocation = new NWorkspaceLocation()
-                .setUuid(ss.getWorkspace().getUuid())
+                .setUuid(ss.getUuid())
                 .setName(locations.getWorkspaceLocation().getName())
                 .setLocation(locations.getWorkspaceLocation().toString());
-        workspaces.put(ss.getWorkspace().getUuid(), workspaceLocation);
+        workspaces.put(ss.getUuid(), workspaceLocation);
         this.save();
         return ss;
     }
@@ -122,7 +121,7 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
         return this;
     }
 
-    private NSession createWorkspace(String path) {
+    private NWorkspace createWorkspace(String path) {
         return Nuts.openWorkspace(
                 NWorkspaceOptionsBuilder.of()
                         .setWorkspace(path)

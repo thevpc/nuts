@@ -171,7 +171,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
         NWorkspace workspace = getWorkspace();
         NSession session= workspace.currentSession();
         NWorkspaceUtils wu = NWorkspaceUtils.of(workspace);
-        CoreNIdUtils.checkLongId(id, session);
+        CoreNIdUtils.checkLongId(id);
 //        checkSession();
         NWorkspaceExt dws = NWorkspaceExt.of(session);
         NFetchStrategy nutsFetchModes = NWorkspaceHelper.validate(session.getFetchStrategy().orDefault());
@@ -182,7 +182,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
         }
         NRepositoryAndFetchModeTracker descTracker = new NRepositoryAndFetchModeTracker(
                 wu.filterRepositoryAndFetchModes(NRepositorySupportedAction.SEARCH, id, repositoryFilter,
-                        nutsFetchModes, session)
+                        nutsFetchModes)
         );
 
         DefaultNDefinition foundDefinition = null;
@@ -241,7 +241,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                         if (!NDescriptorUtils.isNoContent(foundDefinition.getDescriptor())) {
                             boolean loadedFromInstallRepo = DefaultNInstalledRepository.INSTALLED_REPO_UUID.equals(successfulDescriptorLocation
                                     .getRepository().getUuid());
-                            NId id1 = CoreNIdUtils.createContentFaceId(foundDefinition.getId(), foundDefinition.getDescriptor(), session);
+                            NId id1 = CoreNIdUtils.createContentFaceId(foundDefinition.getId(), foundDefinition.getDescriptor());
 //                        boolean escalateMode = false;
                             boolean contentSuccessful = false;
                             NRepositoryAndFetchModeTracker contentTracker = new NRepositoryAndFetchModeTracker(descTracker.available());

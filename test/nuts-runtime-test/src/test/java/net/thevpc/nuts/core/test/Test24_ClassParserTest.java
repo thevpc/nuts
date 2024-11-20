@@ -16,7 +16,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 
 import net.thevpc.nuts.NExecutionEntry;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.format.NVisitResult;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.time.NChronometer;
@@ -29,11 +29,9 @@ import org.junit.jupiter.api.*;
  */
 public class Test24_ClassParserTest {
 
-    static NSession session;
-
     @BeforeAll
     public static void init() {
-        session = TestUtils.openNewMinTestWorkspace();
+        TestUtils.openNewMinTestWorkspace();
     }
 
     private static final java.util.logging.Logger log = java.util.logging.Logger.getLogger(Test24_ClassParserTest.class.getName());
@@ -43,25 +41,25 @@ public class Test24_ClassParserTest {
     public void test1() throws Exception {
         Path path = Paths.get(System.getProperty("user.home")).resolve(".m2/repository/org/ow2/asm/asm-commons/7.0/asm-commons-7.0.jar");
         if (Files.exists(path)) {
-            parseAnyFile(path, session);
+            parseAnyFile(path);
         }
     }
 
-    private static void parseAnyFile(Path file, NSession session) throws IOException {
+    private static void parseAnyFile(Path file) throws IOException {
         if (Files.isDirectory(file)) {
-            parseFolder(file, session);
+            parseFolder(file);
         } else {
-            parseRegularFile(file, session);
+            parseRegularFile(file);
         }
     }
 
-    private static void parseRegularFile(Path file, NSession session) throws IOException {
+    private static void parseRegularFile(Path file) throws IOException {
         NChronometer from = NChronometer.startNow();
         if (file.getFileName().toString().endsWith(".class")) {
-            parseClassFile(file.toAbsolutePath().normalize(), session);
+            parseClassFile(file.toAbsolutePath().normalize());
         }
         if (file.getFileName().toString().endsWith(".jar")) {
-            parseJarFile(file.toAbsolutePath().normalize(), session);
+            parseJarFile(file.toAbsolutePath().normalize());
         }
         NDuration to = from.getDuration();
         if (max < to.getTimeAsNanos()) {
@@ -70,11 +68,11 @@ public class Test24_ClassParserTest {
         TestUtils.println("### TIME [" + file + "] " + to + " -- " + max);
     }
 
-    private static void parseFolder(Path file, NSession session) throws IOException {
+    private static void parseFolder(Path file) throws IOException {
         Files.walkFileTree(file, new FileVisitor<Path>() {
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                        parseRegularFile(file, session);
+                        parseRegularFile(file);
                         return FileVisitResult.CONTINUE;
                     }
 
@@ -96,7 +94,7 @@ public class Test24_ClassParserTest {
         );
     }
 
-    private static void parseJarFile(Path file, NSession session) throws IOException {
+    private static void parseJarFile(Path file) throws IOException {
         TestUtils.println("parse jar " + file + " ... ");
         try (InputStream in = Files.newInputStream(file)) {
             TestUtils.println("parse jar " + file + " :: " + Arrays.asList(
@@ -105,7 +103,7 @@ public class Test24_ClassParserTest {
         }
     }
 
-    private static void parseClassFile(Path file, NSession session) throws IOException {
+    private static void parseClassFile(Path file) throws IOException {
         TestUtils.println(file);
 
         JavaClassByteCode scs = new JavaClassByteCode(Files.newInputStream(file), new JavaClassByteCode.Visitor() {
@@ -132,7 +130,7 @@ public class Test24_ClassParserTest {
                 return NVisitResult.CONTINUE;
             }
 
-        }, session.getWorkspace()
+        }, NWorkspace.get()
         );
     }
 }

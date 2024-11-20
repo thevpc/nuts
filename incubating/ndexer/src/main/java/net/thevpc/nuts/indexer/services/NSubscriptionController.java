@@ -2,12 +2,9 @@ package net.thevpc.nuts.indexer.services;
 
 import javax.annotation.PostConstruct;
 
-import net.thevpc.nuts.NRepositories;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.indexer.NIndexSubscriberListManager;
 import net.thevpc.nuts.indexer.NWorkspacePool;
-import net.thevpc.nuts.NRepository;
-import net.thevpc.nuts.NWorkspaceList;
 import net.thevpc.nuts.indexer.NIndexSubscriberListManagerPool;
 import net.thevpc.nuts.indexer.NWorkspaceListManagerPool;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,12 +38,12 @@ public class NSubscriptionController {
     @RequestMapping("subscribe")
     public ResponseEntity<Void> subscribe(@RequestParam("workspaceLocation") String workspaceLocation,
             @RequestParam("repositoryUuid") String repositoryUuid) {
-        NSession session = workspacePool.openWorkspace(workspaceLocation);
+        NWorkspace workspace = workspacePool.openWorkspace(workspaceLocation);
         List<NRepository> repositories = NRepositories.of().getRepositories();
         for (NRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 this.subscriberManager.subscribe(repositoryUuid,
-                        workspaceManager.getWorkspaceLocation(session.getWorkspace().getUuid()));
+                        workspaceManager.getWorkspaceLocation(workspace.getUuid()));
 
                 return ResponseEntity.ok().build();
             }
@@ -57,12 +54,12 @@ public class NSubscriptionController {
     @RequestMapping("unsubscribe")
     public ResponseEntity<Void> unsubscribe(@RequestParam("workspaceLocation") String workspaceLocation,
             @RequestParam("repositoryUuid") String repositoryUuid) {
-        NSession session = workspacePool.openWorkspace(workspaceLocation);
+        NWorkspace workspace = workspacePool.openWorkspace(workspaceLocation);
         List<NRepository> repositories = NRepositories.of().getRepositories();
         for (NRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 this.subscriberManager.unsubscribe(repositoryUuid,
-                        workspaceManager.getWorkspaceLocation(session.getWorkspace().getUuid()));
+                        workspaceManager.getWorkspaceLocation(workspace.getUuid()));
                 return ResponseEntity.ok().build();
             }
         }
@@ -73,12 +70,12 @@ public class NSubscriptionController {
     public ResponseEntity<Boolean> isSubscribed(@RequestParam("workspaceLocation") String workspaceLocation,
             @RequestParam("repositoryUuid") String repositoryUuid) {
         System.out.println(workspaceLocation + " " + repositoryUuid);
-        NSession session = workspacePool.openWorkspace(workspaceLocation);
+        NWorkspace workspace = workspacePool.openWorkspace(workspaceLocation);
         List<NRepository> repositories = NRepositories.of().getRepositories();
         for (NRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 boolean subscribed = this.subscriberManager.isSubscribed(repositoryUuid,
-                        workspaceManager.getWorkspaceLocation(session.getWorkspace().getUuid()));
+                        workspaceManager.getWorkspaceLocation(workspace.getUuid()));
                 return ResponseEntity.ok(subscribed);
             }
         }

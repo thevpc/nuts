@@ -14,16 +14,16 @@ import java.util.Objects;
 
 public class NRepositorySelectorHelper {
 
-    public static NAddRepositoryOptions createRepositoryOptions(String s, boolean requireName, NSession session) {
+    public static NAddRepositoryOptions createRepositoryOptions(String s, boolean requireName) {
         NRepositorySelectorList r = NRepositorySelectorList.of(s, NRepositoryDB.of()).get();
         NRepositoryLocation[] all = r.resolve(null, NRepositoryDB.of());
         if (all.length != 1) {
             throw new IllegalArgumentException("unexpected");
         }
-        return createRepositoryOptions(all[0], requireName, session);
+        return createRepositoryOptions(all[0], requireName);
     }
 
-    public static NAddRepositoryOptions createRepositoryOptions(NRepositoryLocation loc, boolean requireName, NSession session) {
+    public static NAddRepositoryOptions createRepositoryOptions(NRepositoryLocation loc, boolean requireName) {
         String defaultName = null;
         NRepositoryDB db = NRepositoryDB.of();
         if (db.isDefaultRepositoryName(loc.getName())) {
@@ -35,7 +35,7 @@ public class NRepositorySelectorHelper {
             }
         }
         if (defaultName != null) {
-            NAddRepositoryOptions u = createDefaultRepositoryOptions(defaultName, session);
+            NAddRepositoryOptions u = createDefaultRepositoryOptions(defaultName);
             if (u != null
                     && (loc.getPath().isEmpty()
                     || Objects.equals(loc.getPath(), u.getConfig().getLocation().getPath())
@@ -49,10 +49,10 @@ public class NRepositorySelectorHelper {
                 return u;
             }
         }
-        return createCustomRepositoryOptions(loc.getName(), loc.getFullLocation(), requireName, session);
+        return createCustomRepositoryOptions(loc.getName(), loc.getFullLocation(), requireName);
     }
 
-    public static NAddRepositoryOptions createCustomRepositoryOptions(String name, String url, boolean requireName, NSession session) {
+    public static NAddRepositoryOptions createCustomRepositoryOptions(String name, String url, boolean requireName) {
         if ((name == null || name.isEmpty()) && requireName) {
             NAssert.requireNonBlank(name, "repository name (<name>=<url>)");
         }
@@ -90,7 +90,7 @@ public class NRepositorySelectorHelper {
                 );
     }
 
-    public static NAddRepositoryOptions createDefaultRepositoryOptions(String nameOrURL, NSession session) {
+    public static NAddRepositoryOptions createDefaultRepositoryOptions(String nameOrURL) {
         switch (nameOrURL) {
             case "local": {
                 return new NAddRepositoryOptions()

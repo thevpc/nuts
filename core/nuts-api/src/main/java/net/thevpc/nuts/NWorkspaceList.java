@@ -57,7 +57,7 @@ public interface NWorkspaceList extends NComponent {
 
     NWorkspaceList setConfig(NWorkspaceListConfig config);
 
-    NSession addWorkspace(String path);
+    NWorkspace addWorkspace(String path);
 
     boolean removeWorkspace(String name);
 

@@ -18,11 +18,9 @@ import org.junit.jupiter.api.Test;
  */
 public class Test31_PathParts {
 
-    static NSession session;
-
     @BeforeAll
     public static void init() {
-        session = TestUtils.openNewMinTestWorkspace();
+        TestUtils.openNewMinTestWorkspace();
     }
 
     @Test

@@ -28,7 +28,6 @@ package net.thevpc.nuts.runtime.standalone.util.filters;
 import java.util.Objects;
 import net.thevpc.nuts.NId;
 import net.thevpc.nuts.NIdFilter;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.base.AbstractNPredicate;
 
 /**
@@ -38,11 +37,9 @@ import net.thevpc.nuts.spi.base.AbstractNPredicate;
 public class NIdFilterToPredicate extends AbstractNPredicate<NId> {
     
     private final NIdFilter ff;
-    private final NSession session;
 
-    public NIdFilterToPredicate(NIdFilter ff, NSession session) {
+    public NIdFilterToPredicate(NIdFilter ff) {
         this.ff = ff;
-        this.session = session;
     }
 
     @Override
@@ -55,12 +52,12 @@ public class NIdFilterToPredicate extends AbstractNPredicate<NId> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         NIdFilterToPredicate that = (NIdFilterToPredicate) o;
-        return Objects.equals(ff, that.ff) && Objects.equals(session, that.session);
+        return Objects.equals(ff, that.ff) ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ff, session);
+        return Objects.hash(ff);
     }
 
     @Override

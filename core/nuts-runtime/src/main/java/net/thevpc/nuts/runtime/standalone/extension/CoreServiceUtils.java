@@ -49,7 +49,7 @@ public final class CoreServiceUtils {
     private CoreServiceUtils() {
     }
 
-    private static Set<String> loadZipServiceClassNamesFromJarStream(InputStream jarStream, Class service, NSession session) {
+    private static Set<String> loadZipServiceClassNamesFromJarStream(InputStream jarStream, Class service) {
         LinkedHashSet<String> found = new LinkedHashSet<>();
         if (jarStream != null) {
             ZipUtils.visitZipStream(jarStream, (path, inputStream) -> {
@@ -67,7 +67,7 @@ public final class CoreServiceUtils {
         return found;
     }
 
-    public static Set<String> loadZipServiceClassNamesFromClassLoader(ClassLoader classLoader, Class service, NSession session) {
+    public static Set<String> loadZipServiceClassNamesFromClassLoader(ClassLoader classLoader, Class service) {
         LinkedHashSet<String> found = new LinkedHashSet<>();
         try {
             List<URL> found2 = NCollections.list(classLoader.getResources("META-INF/services/" + service.getName()));
@@ -86,7 +86,7 @@ public final class CoreServiceUtils {
         return found;
     }
 
-    private static Set<String> loadZipServiceClassNamesFromFolder(File file, Class service, NSession session) {
+    private static Set<String> loadZipServiceClassNamesFromFolder(File file, Class service) {
         LinkedHashSet<String> found = new LinkedHashSet<>();
         File dir = new File(file, "META-INF/services/");
         File[] files = dir.listFiles();
@@ -104,23 +104,23 @@ public final class CoreServiceUtils {
         return found;
     }
 
-    public static Set<String> loadZipServiceClassNames(URL url, Class service, NSession session) {
+    public static Set<String> loadZipServiceClassNames(URL url, Class service) {
         LinkedHashSet<String> found = new LinkedHashSet<>();
         URLPart lastPart = URLPart.of(url);
         File file = lastPart.getFile().orNull();
         if (file!=null) {
             if (file.isDirectory()) {
-                return loadZipServiceClassNamesFromFolder(file, service, session);
+                return loadZipServiceClassNamesFromFolder(file, service);
             } else if (file.isFile()) {
                 try (final InputStream jarStream = new FileInputStream(file)) {
-                    return loadZipServiceClassNamesFromJarStream(jarStream, service, session);
+                    return loadZipServiceClassNamesFromJarStream(jarStream, service);
                 } catch (IOException ex) {
                     throw new NIOException(ex);
                 }
             }
         } else {
             try (final InputStream jarStream = url.openStream()) {
-                return loadZipServiceClassNamesFromJarStream(jarStream, service, session);
+                return loadZipServiceClassNamesFromJarStream(jarStream, service);
             } catch (IOException ex) {
                 throw new NIOException(ex);
             }

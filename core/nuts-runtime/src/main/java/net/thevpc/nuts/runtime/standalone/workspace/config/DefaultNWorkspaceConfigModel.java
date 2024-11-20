@@ -49,8 +49,8 @@ import net.thevpc.nuts.runtime.standalone.io.path.NPathFromSPI;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.*;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs.HtmlfsPath;
 import net.thevpc.nuts.runtime.standalone.io.terminal.AbstractSystemTerminalAdapter;
-import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNSessionTerminalFromSystem;
-import net.thevpc.nuts.runtime.standalone.io.terminal.UnmodifiableSessionTerminal;
+import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNTerminalFromSystem;
+import net.thevpc.nuts.runtime.standalone.io.terminal.UnmodifiableTerminal;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
@@ -126,7 +126,7 @@ public class DefaultNWorkspaceConfigModel {
     private NRepositorySelectorList parsedBootRepositoriesList;
     //    private NutsRepositorySelector[] parsedBootRepositoriesArr;
     private ExecutorService executorService;
-    private NSessionTerminal terminal;
+    private NTerminal terminal;
     private Map<String, NId> protocolToExtensionMap = new HashMap<>(
             NMaps.of(
                     "ssh", NId.of("net.thevpc.nuts.ext:next-ssh").get()
@@ -336,7 +336,7 @@ public class DefaultNWorkspaceConfigModel {
             lastConfigPath = plocs.getWorkspaceLocation(CoreNUtils.resolveValidWorkspaceName(effWorkspaceName));
             lastConfigLoaded = parseBootConfig(NPath.of(lastConfigPath));
             defaultLocation = true;
-            return new DefaultNWorkspaceBootConfig(session, _ws0, lastConfigPath, effWorkspaceName, defaultLocation, lastConfigLoaded);
+            return new DefaultNWorkspaceBootConfig(_ws0, lastConfigPath, effWorkspaceName, defaultLocation, lastConfigLoaded);
         } else if (followLinks) {
             defaultLocation = CoreNUtils.isValidWorkspaceName(_ws);
             int maxDepth = 36;
@@ -364,7 +364,7 @@ public class DefaultNWorkspaceConfigModel {
                 return null;
             }
             effWorkspaceName = CoreNUtils.resolveValidWorkspaceName(_ws);
-            return new DefaultNWorkspaceBootConfig(session, _ws0, lastConfigPath, effWorkspaceName, defaultLocation, lastConfigLoaded);
+            return new DefaultNWorkspaceBootConfig(_ws0, lastConfigPath, effWorkspaceName, defaultLocation, lastConfigLoaded);
         } else {
             defaultLocation = CoreNUtils.isValidWorkspaceName(_ws);
             lastConfigPath
@@ -377,7 +377,7 @@ public class DefaultNWorkspaceConfigModel {
                 return null;
             }
             effWorkspaceName = CoreNUtils.resolveValidWorkspaceName(_ws);
-            return new DefaultNWorkspaceBootConfig(session, _ws0, lastConfigPath, effWorkspaceName, defaultLocation, lastConfigLoaded);
+            return new DefaultNWorkspaceBootConfig(_ws0, lastConfigPath, effWorkspaceName, defaultLocation, lastConfigLoaded);
         }
     }
 
@@ -591,7 +591,6 @@ public class DefaultNWorkspaceConfigModel {
     }
 
     public boolean loadWorkspace() {
-        NSession session = workspace.currentSession();
         try {
             boolean _storeModelBootChanged = false;
             boolean _storeModelApiChanged = false;
@@ -619,21 +618,21 @@ public class DefaultNWorkspaceConfigModel {
             if (cConfig.getBootRepositories() == null) {
                 cConfig.setBootRepositories(bOptions.getBootRepositories().orNull());
             }
-            cConfig.merge(getBootUserOptions(), session);
+            cConfig.merge(getBootUserOptions());
 
             setCurrentConfig(cConfig.build(NLocations.of().getWorkspaceLocation()));
 
             NVersionCompat compat = createNutsVersionCompat(Nuts.getVersion());
-            NId apiId = session.getWorkspace().getApiId();
-            NWorkspaceConfigApi aconfig = compat.parseApiConfig(apiId, session);
+            NId apiId = workspace.getApiId();
+            NWorkspaceConfigApi aconfig = compat.parseApiConfig(apiId);
             NId toImportOlderId = null;
             if (aconfig != null) {
-                cConfig.merge(aconfig, session);
+                cConfig.merge(aconfig);
             } else {
                 // will try to find older versions
                 List<NId> olderIds = findOlderNutsApiIds();
                 for (NId olderId : olderIds) {
-                    aconfig = compat.parseApiConfig(olderId, session);
+                    aconfig = compat.parseApiConfig(olderId);
                     if (aconfig != null) {
                         // ask
                         if (NAsk.of().forBoolean(NMsg.ofC("import older config %s into %s", olderId, apiId))
@@ -643,7 +642,7 @@ public class DefaultNWorkspaceConfigModel {
                             toImportOlderId = olderId;
                             aconfig.setRuntimeId(null);
                             aconfig.setApiVersion(null);
-                            cConfig.merge(aconfig, session);
+                            cConfig.merge(aconfig);
                             _storeModelApiChanged = true;
                         }
                         break;
@@ -656,20 +655,20 @@ public class DefaultNWorkspaceConfigModel {
             if (cConfig.getRuntimeId() == null) {
                 cConfig.setRuntimeId(bOptions.getRuntimeId().orNull());
             }
-            NWorkspaceConfigRuntime rconfig = compat.parseRuntimeConfig(session);
+            NWorkspaceConfigRuntime rconfig = compat.parseRuntimeConfig();
             if (rconfig != null) {
                 cConfig.merge(rconfig);
             }
-            NWorkspaceConfigSecurity sconfig = compat.parseSecurityConfig(apiId, session);
+            NWorkspaceConfigSecurity sconfig = compat.parseSecurityConfig(apiId);
             if (sconfig == null) {
                 if (toImportOlderId != null) {
-                    sconfig = compat.parseSecurityConfig(toImportOlderId, session);
+                    sconfig = compat.parseSecurityConfig(toImportOlderId);
                 }
             }
-            NWorkspaceConfigMain mconfig = compat.parseMainConfig(apiId, session);
+            NWorkspaceConfigMain mconfig = compat.parseMainConfig(apiId);
             if (mconfig == null) {
                 if (toImportOlderId != null) {
-                    mconfig = compat.parseMainConfig(toImportOlderId, session);
+                    mconfig = compat.parseMainConfig(toImportOlderId);
                 }
             }
 
@@ -715,7 +714,6 @@ public class DefaultNWorkspaceConfigModel {
     }
 
     private List<NId> findOlderNutsApiIds() {
-        NSession session = workspace.currentSession();
         NId apiId = workspace.getApiId();
         NPath path = NLocations.of().getStoreLocation(apiId, NStoreType.CONF)
                 .getParent();
@@ -1265,7 +1263,7 @@ public class DefaultNWorkspaceConfigModel {
 
         NSession session = getWorkspace().currentSession();
         NInstalledRepository ins = NWorkspaceExt.of(session.getWorkspace()).getInstalledRepository();
-        NDescriptor descriptor = NDescriptorContentResolver.resolveNutsDescriptorFromFileContent(tmp, null, getWorkspace());
+        NDescriptor descriptor = NDescriptorContentResolver.resolveNutsDescriptorFromFileContent(tmp, null);
         if (descriptor != null) {
             DefaultNDefinition b = new DefaultNDefinition(
                     null, null,
@@ -1315,7 +1313,6 @@ public class DefaultNWorkspaceConfigModel {
         DefaultNWorkspaceCurrentConfig d = currentConfig;
         d.setUserStoreLocations(new NStoreLocationsMap(storeModelBoot.getStoreLocations()).toMapOrNull());
         d.setHomeLocations(new NHomeLocationsMap(storeModelBoot.getHomeLocations()).toMapOrNull());
-        NSession session = workspace.currentSession();
         d.build(NLocations.of().getWorkspaceLocation());
         NStoreLocationsMap newSL = new NStoreLocationsMap(currentConfig.getStoreLocations());
         for (NStoreType sl : NStoreType.values()) {
@@ -1388,14 +1385,12 @@ public class DefaultNWorkspaceConfigModel {
     }
 
     private NWorkspaceConfigBoot parseBootConfig() {
-        NSession session = workspace.currentSession();
         return parseBootConfig(NLocations.of().getWorkspaceLocation());
     }
 
     private NWorkspaceConfigBoot parseBootConfig(NPath path) {
         Path file = path.toPath().get().resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
-        NSession session = workspace.currentSession();
-        byte[] bytes = CompatUtils.readAllBytes(file, session);
+        byte[] bytes = CompatUtils.readAllBytes(file);
         if (bytes == null) {
             return null;
         }
@@ -1408,7 +1403,7 @@ public class DefaultNWorkspaceConfigModel {
                     version = Nuts.getVersion();
                 }
             }
-            return createNutsVersionCompat(version).parseConfig(bytes, session);
+            return createNutsVersionCompat(version).parseConfig(bytes);
         } catch (Exception ex) {
             _LOGOP().level(Level.SEVERE).verb(NLogVerb.FAIL)
                     .log(NMsg.ofC("erroneous workspace config file. Unable to load file %s : %s",
@@ -1421,13 +1416,13 @@ public class DefaultNWorkspaceConfigModel {
         NSession session = getWorkspace().currentSession();
         int buildNumber = CoreNUtils.getApiVersionOrdinalNumber(apiVersion);
         if (buildNumber >= 803) {
-            return new NVersionCompat803(session, apiVersion);
+            return new NVersionCompat803(apiVersion);
         } else if (buildNumber >= 507) {
-            return new NVersionCompat507(session, apiVersion);
+            return new NVersionCompat507(apiVersion);
         } else if (buildNumber >= 506) {
-            return new NVersionCompat506(session, apiVersion);
+            return new NVersionCompat506(apiVersion);
         } else {
-            return new NVersionCompat502(session, apiVersion);
+            return new NVersionCompat502(apiVersion);
         }
     }
 
@@ -1447,7 +1442,6 @@ public class DefaultNWorkspaceConfigModel {
             return parsedBootRepositoriesList;
         }
         NBootOptions bOptions = NWorkspaceExt.of(workspace).getModel().bootModel.getBootEffectiveOptions();
-        NSession session = workspace.currentSession();
         parsedBootRepositoriesList = NRepositorySelectorList.of(
                 bOptions.getUserOptions().get().getRepositories().orNull(), NRepositoryDB.of()).get();
         return parsedBootRepositoriesList;
@@ -1512,22 +1506,22 @@ public class DefaultNWorkspaceConfigModel {
         return executorService;
     }
 
-    public NSessionTerminal getTerminal() {
+    public NTerminal getTerminal() {
         return terminal;
     }
 
-    public void setTerminal(NSessionTerminal terminal) {
+    public void setTerminal(NTerminal terminal) {
         if (terminal == null) {
             terminal = createTerminal();
         }
-        if (!(terminal instanceof UnmodifiableSessionTerminal)) {
-            terminal = new UnmodifiableSessionTerminal(terminal, workspace);
+        if (!(terminal instanceof UnmodifiableTerminal)) {
+            terminal = new UnmodifiableTerminal(terminal, workspace);
         }
         this.terminal = terminal;
     }
 
-    public NSessionTerminal createTerminal(InputStream in, NPrintStream out, NPrintStream err) {
-        NSessionTerminal t = createTerminal();
+    public NTerminal createTerminal(InputStream in, NPrintStream out, NPrintStream err) {
+        NTerminal t = createTerminal();
         if (in != null) {
             t.setIn(in);
         }
@@ -1540,8 +1534,8 @@ public class DefaultNWorkspaceConfigModel {
         return t;
     }
 
-    public NSessionTerminal createTerminal() {
-        return new DefaultNSessionTerminalFromSystem(
+    public NTerminal createTerminal() {
+        return new DefaultNTerminalFromSystem(
                 workspace, workspaceSystemTerminalAdapter
         );
 //        return createTerminal(null, session);
@@ -1722,8 +1716,6 @@ public class DefaultNWorkspaceConfigModel {
         @Override
         public NId getApiId() {
             NVersion v = getStoredConfigApi().getApiVersion();
-            NSession session = NSessionUtils.defaultSession(DefaultNWorkspaceConfigModel.this.workspace);
-
             return (v == null || v.isBlank()) ? null : NId.ofApi(v).get();
         }
 

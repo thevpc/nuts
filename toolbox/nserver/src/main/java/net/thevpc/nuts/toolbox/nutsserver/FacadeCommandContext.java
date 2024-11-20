@@ -31,7 +31,6 @@ import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
@@ -50,19 +49,17 @@ public class FacadeCommandContext implements NHttpServletFacadeContext {
     private String serverId;
     private String command;
     private String path;
-    private NSession session;
 
-    public FacadeCommandContext(NHttpServletFacadeContext base, String serverId, String command, String path, NSession session) {
+    public FacadeCommandContext(NHttpServletFacadeContext base, String serverId, String command, String path, NWorkspace workspace) {
         this.base = base;
-        this.workspace = session.getWorkspace();
+        this.workspace = workspace;
         this.serverId = serverId;
         this.command = command;
         this.path = path;
-        this.session = session;
     }
 
     public NSession getSession() {
-        return session;
+        return workspace.currentSession();
     }
 
     public String getPath() {
@@ -82,96 +79,96 @@ public class FacadeCommandContext implements NHttpServletFacadeContext {
     }
 
     @Override
-    public URI getRequestURI() throws IOException {
+    public URI getRequestURI()  {
         return base.getRequestURI();
     }
 
     @Override
-    public OutputStream getResponseBody() throws IOException {
+    public OutputStream getResponseBody()  {
         return base.getResponseBody();
     }
 
     @Override
-    public void sendResponseHeaders(int code, long length) throws IOException {
+    public void sendResponseHeaders(int code, long length)  {
         base.sendResponseHeaders(code, length);
     }
 
     @Override
-    public void sendError(int code, String msg) throws IOException {
+    public void sendError(int code, String msg)  {
         base.sendError(code, msg);
     }
 
     @Override
-    public void sendResponseText(int code, String text) throws IOException {
+    public void sendResponseText(int code, String text)  {
         base.sendResponseText(code, text);
     }
 
     @Override
-    public void sendResponseFile(int code, File file) throws IOException {
+    public void sendResponseFile(int code, File file)  {
         base.sendResponseFile(code, file);
     }
 
-    public void sendResponseBytes(int code, byte[] bytes) throws IOException {
+    public void sendResponseBytes(int code, byte[] bytes)  {
         base.sendResponseBytes(code, bytes);
     }
 
     @Override
-    public void sendResponseFile(int code, Path file) throws IOException {
+    public void sendResponseFile(int code, Path file)  {
         base.sendResponseFile(code, file);
     }
 
     @Override
-    public void sendResponseFile(int code, NPath file) throws IOException {
+    public void sendResponseFile(int code, NPath file)  {
         base.sendResponseFile(code, file);
     }
 
     @Override
-    public Set<String> getRequestHeaderKeys(String header) throws IOException {
+    public Set<String> getRequestHeaderKeys(String header)  {
         return base.getRequestHeaderKeys(header);
     }
 
     @Override
-    public String getRequestHeaderFirstValue(String header) throws IOException {
+    public String getRequestHeaderFirstValue(String header)  {
         return base.getRequestHeaderFirstValue(header);
     }
 
     @Override
-    public List<String> getRequestHeaderAllValues(String header) throws IOException {
+    public List<String> getRequestHeaderAllValues(String header)  {
         return base.getRequestHeaderAllValues(header);
     }
 
     @Override
-    public InputStream getRequestBody() throws IOException {
+    public InputStream getRequestBody()  {
         return base.getRequestBody();
     }
 
     @Override
-    public Map<String, List<String>> getParameters() throws IOException {
+    public Map<String, List<String>> getParameters()  {
         return base.getParameters();
     }
 
     @Override
-    public void addResponseHeader(String name, String value) throws IOException {
+    public void addResponseHeader(String name, String value)  {
         base.addResponseHeader(name, value);
     }
 
     @Override
-    public String getRequestMethod() throws IOException {
+    public String getRequestMethod()  {
         return base.getRequestMethod();
     }
 
     @Override
-    public boolean isGetMethod() throws IOException {
+    public boolean isGetMethod()  {
         return base.isGetMethod();
     }
 
     @Override
-    public boolean isPostMethod() throws IOException {
+    public boolean isPostMethod()  {
         return base.isPostMethod();
     }
 
     @Override
-    public boolean isHeadMethod() throws IOException {
+    public boolean isHeadMethod()  {
         return base.isHeadMethod();
     }
 }

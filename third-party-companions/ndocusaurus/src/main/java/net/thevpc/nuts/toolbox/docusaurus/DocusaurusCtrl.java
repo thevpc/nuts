@@ -12,7 +12,7 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NSessionTerminal;
+import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellContext;
 import net.thevpc.nuts.toolbox.nsh.nshell.*;
 import net.thevpc.nuts.toolbox.nsh.nodes.NShellVar;
@@ -42,12 +42,10 @@ public class DocusaurusCtrl {
     private boolean autoInstallNutsPackages;
     private String ndocVersion;
     private String npmCommandPath;
-    private NSession session;
-    private Map<String,Object> vars=new HashMap<>();
+    private Map<String, Object> vars = new HashMap<>();
 
-    public DocusaurusCtrl(DocusaurusProject project, NSession session) {
+    public DocusaurusCtrl(DocusaurusProject project) {
         this.project = project;
-        this.session = session;
     }
 
     public boolean isBuildPdf() {
@@ -78,7 +76,6 @@ public class DocusaurusCtrl {
     }
 
     public void run() {
-        NSession session = project.getSession();
         Path base = null;
         try {
             base = Paths.get(project.getDocusaurusBaseFolder()).toAbsolutePath().normalize().toRealPath();
@@ -91,7 +88,8 @@ public class DocusaurusCtrl {
                 .orElse(false);
         Path basePath = base;
         Path preProcessor = getPreProcessorBaseDir();
-        if (preProcessor!=null && Files.isDirectory(preProcessor)) {
+        NSession session = NSession.get();
+        if (preProcessor != null && Files.isDirectory(preProcessor)) {
 //            Files.walk(base).filter(x->Files.isDirectory(base))
             Path docs = basePath.resolve("docs");
             if (Files.isDirectory(basePath.resolve("node_modules"))
@@ -105,9 +103,8 @@ public class DocusaurusCtrl {
                     .setProjectPath(preProcessor.toString())
                     .setTargetFolder(getTargetBaseDir().toString())
                     .setContextName("ndocusaurus")
-                    .setVars(vars)
-                    ;
-            FileTemplater ftex = new NFileTemplater(session)
+                    .setVars(vars);
+            FileTemplater ftex = new NFileTemplater()
                     .setWorkingDir(base.toString())
                     .setMimeTypeResolver(
                             new DefaultMimeTypeResolver()
@@ -122,7 +119,7 @@ public class DocusaurusCtrl {
             DocusaurusFolder root = project.getPhysicalDocsFolder();
             root = new DocusaurusFolder(
                     "someSidebar", "someSidebar", 0, NElements.of().ofObject().build(), root.getChildren(),
-                    root.getContent(session),
+                    root.getContent(),
                     project.getPhysicalDocsFolderBasePath().toString()
             );
             String s = "module.exports = {\n" +
@@ -161,7 +158,7 @@ public class DocusaurusCtrl {
                 }
                 Path toPath = FileProcessorUtils.toAbsolute(Paths.get(copyBuildPath), base);
                 deleteFolderIfFound(toPath, "index.html", "404.html", "sitemap.xml");
-                new FileTemplater(session)
+                new FileTemplater()
                         .setWorkingDir(fromPath)
                         .setTargetPath(toPath)
                         .setMimeTypeResolver((String path) -> MimeTypeConstants.ANY_TYPE)
@@ -207,15 +204,12 @@ public class DocusaurusCtrl {
     }
 
     private void runCommand(Path workFolder, boolean yes, String... cmd) {
-        NSession s = session.copy();
-        if (yes) {
-            s = s.setConfirm(NConfirmationMode.YES);
-        } else {
-            s = s.setConfirm(NConfirmationMode.ERROR);
-        }
-        NExecCmd.of().addCommand(cmd).setDirectory(NPath.of(workFolder))
-                .setExecutionType(NExecutionType.EMBEDDED)
-                .failFast().getResultCode();
+        NSession.get().copy().setConfirm(yes ? NConfirmationMode.YES : NConfirmationMode.ERROR)
+                .runWith(() -> {
+                    NExecCmd.of().addCommand(cmd).setDirectory(NPath.of(workFolder))
+                            .setExecutionType(NExecutionType.EMBEDDED)
+                            .failFast().getResultCode();
+                });
     }
 
     private boolean deleteFolderIfFound(Path toPath, String... names) {
@@ -278,14 +272,12 @@ public class DocusaurusCtrl {
     }
 
     private static class NshEvaluator implements ExprEvaluator {
-        private NSession session;
         private NShell shell;
         private FileTemplater fileTemplater;
 
-        public NshEvaluator(NSession session, FileTemplater fileTemplater) {
-            this.session = session;
+        public NshEvaluator(FileTemplater fileTemplater) {
             this.fileTemplater = fileTemplater;
-            shell = new NShell(new NShellConfiguration().setSession(session).setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true));
+            shell = new NShell(new NShellConfiguration().setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true));
             shell.getRootContext().setSession(shell.getRootContext().getSession().copy());
             shell.getRootContext().vars().addVarListener(
                     new NShellVarListener() {
@@ -317,15 +309,19 @@ public class DocusaurusCtrl {
 
         @Override
         public Object eval(String content, FileTemplater context) {
-            NSession session = context.getSession().copy();
-            session.setTerminal(NSessionTerminal.ofMem());
-            NShellContext ctx = shell.createInlineContext(
-                    shell.getRootContext(),
-                    context.getSourcePath().orElseGet(() -> "nsh"), new String[0]
-            );
-            ctx.setSession(session);
-            shell.executeScript(content, ctx);
-            return session.out().toString();
+            return NSession.get().copy()
+                    .setTerminal(NTerminal.ofMem())
+                    .callWith(
+                            () -> {
+                                NShellContext ctx = shell.createInlineContext(
+                                        shell.getRootContext(),
+                                        context.getSourcePath().orElseGet(() -> "nsh"), new String[0]
+                                );
+                                shell.executeScript(content, ctx);
+                                return NSession.get().out().toString();
+                            }
+                    );
+
         }
 
         @Override
@@ -336,9 +332,9 @@ public class DocusaurusCtrl {
     }
 
     private static class NFileTemplater extends FileTemplater {
-        public NFileTemplater(NSession session) {
-            super(session.copy().setAppId(null).setAppArguments(new String[0]));
-            this.setDefaultExecutor("text/ntemplate-nsh-project", new NshEvaluator(getSession(), this));
+        public NFileTemplater() {
+            super();
+            this.setDefaultExecutor("text/ntemplate-nsh-project", new NshEvaluator(this));
             setProjectFileName("project.nsh");
         }
 
@@ -362,7 +358,6 @@ public class DocusaurusCtrl {
 
         @Override
         public Object apply(String varName) {
-            NSession session = project.getSession();
             switch (varName) {
                 case "projectName": {
                     return projectName;
@@ -373,8 +368,8 @@ public class DocusaurusCtrl {
                 default: {
                     String[] a = Arrays.stream(varName.split("[./]")).map(String::trim).filter(x -> !x.isEmpty())
                             .toArray(String[]::new);
-                    NElement config=this.config;
-                    if(config!=null) {
+                    NElement config = this.config;
+                    if (config != null) {
                         for (String s : a) {
                             config = config.asObject().orElse(NObjectElement.ofEmpty()).get(s).orNull();
                             if (config == null) {
@@ -382,7 +377,7 @@ public class DocusaurusCtrl {
                             }
                         }
                     }
-                    if(config==null){
+                    if (config == null) {
                         return null;
                     }
                     if (config.isNull()) {
@@ -411,8 +406,7 @@ public class DocusaurusCtrl {
 
         @Override
         public void processPath(Path source, String mimeType, FileTemplater context) {
-            NSession session = context.getSession();
-            NObjectElement config = DocusaurusFolder.ofFolder(session, source.getParent(),
+            NObjectElement config = DocusaurusFolder.ofFolder(source.getParent(),
                             Paths.get(context.getRootDirRequired()).resolve("docs"),
                             getPreProcessorBaseDir().resolve("src"),
                             0)
@@ -462,14 +456,14 @@ public class DocusaurusCtrl {
     }
 
     public DocusaurusCtrl setVar(String name, Object value) {
-        vars.put(name,value);
+        vars.put(name, value);
         return this;
     }
 
-    public DocusaurusCtrl setVars(Map<String,Object> vars) {
-        if(vars!=null){
+    public DocusaurusCtrl setVars(Map<String, Object> vars) {
+        if (vars != null) {
             for (Map.Entry<String, Object> e : vars.entrySet()) {
-                setVar(e.getKey(),e.getValue());
+                setVar(e.getKey(), e.getValue());
             }
         }
         return this;

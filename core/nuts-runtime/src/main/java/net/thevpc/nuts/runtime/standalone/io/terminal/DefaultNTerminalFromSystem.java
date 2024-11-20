@@ -13,7 +13,7 @@ import java.io.*;
 import java.util.Scanner;
 
 //@NutsPrototype
-public class DefaultNSessionTerminalFromSystem extends AbstractNSessionTerminal {
+public class DefaultNTerminalFromSystem extends AbstractNTerminal {
 
     protected NWorkspace workspace;
     protected NPrintStream out;
@@ -23,7 +23,7 @@ public class DefaultNSessionTerminalFromSystem extends AbstractNSessionTerminal 
     protected NSystemTerminalBase parent;
     protected CProgressBar progressBar;
 
-    public DefaultNSessionTerminalFromSystem(NWorkspace workspace, DefaultNSessionTerminalFromSystem other) {
+    public DefaultNTerminalFromSystem(NWorkspace workspace, DefaultNTerminalFromSystem other) {
         this.parent = other.parent;
         this.workspace = workspace;
         this.in = other.in;
@@ -32,7 +32,7 @@ public class DefaultNSessionTerminalFromSystem extends AbstractNSessionTerminal 
         setErr(other.err);
     }
 
-    public DefaultNSessionTerminalFromSystem(NWorkspace workspace, NSystemTerminalBase parent) {
+    public DefaultNTerminalFromSystem(NWorkspace workspace, NSystemTerminalBase parent) {
         this.parent = parent;
         this.workspace = workspace;
     }
@@ -171,8 +171,8 @@ public class DefaultNSessionTerminalFromSystem extends AbstractNSessionTerminal 
     }
 
     @Override
-    public NSessionTerminal copy() {
-        final DefaultNSessionTerminalFromSystem r = new DefaultNSessionTerminalFromSystem(workspace, parent);
+    public NTerminal copy() {
+        final DefaultNTerminalFromSystem r = new DefaultNTerminalFromSystem(workspace, parent);
         r.setAll(this);
         return r;
     }
@@ -198,7 +198,7 @@ public class DefaultNSessionTerminalFromSystem extends AbstractNSessionTerminal 
     }
 
     @Override
-    public NSessionTerminal printProgress(float progress, NMsg message) {
+    public NTerminal printProgress(float progress, NMsg message) {
         NSession session = workspace.currentSession();
         if (session.isProgress()) {
             if (getParent() instanceof NSystemTerminal) {
@@ -239,7 +239,7 @@ public class DefaultNSessionTerminalFromSystem extends AbstractNSessionTerminal 
         return progressBar;
     }
 
-    protected void setAll(DefaultNSessionTerminalFromSystem other) {
+    protected void setAll(DefaultNTerminalFromSystem other) {
         this.workspace = other.workspace;
         this.parent = other.parent;
         this.out = other.out;

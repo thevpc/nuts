@@ -4,11 +4,12 @@ import net.thevpc.nuts.*;
 
 public class ExamplesOfSearch {
 
-    public void executeAll(NSession session) {
-        executeSearch(session);
+    public void executeAll() {
+        executeSearch();
     }
 
-    public void executeSearch(NSession session) {
+    public void executeSearch() {
+        NSession session = NSession.get();
         session.out().println("Example of ## Search ##");
         for (NDefinition def : NSearchCmd.of()
                 .addId(NConstants.Ids.NUTS_API)

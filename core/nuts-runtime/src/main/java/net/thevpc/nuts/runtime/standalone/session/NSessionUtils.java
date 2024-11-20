@@ -10,16 +10,6 @@ import net.thevpc.nuts.util.NMsg;
 import java.util.Objects;
 
 public class NSessionUtils {
-    /**
-     * used only for exceptions and logger when a session is not available
-     *
-     * @param ws workspace
-     * @return default session
-     */
-    public static NSession defaultSession(NWorkspace ws) {
-        return ((NWorkspaceExt) ws).defaultSession();
-    }
-
     public static void checkSession(NWorkspace ws, NSession session) {
         NAssert.requireSession(session);
         if (!Objects.equals(session.getWorkspace().getUuid(), ws.getUuid())) {

@@ -24,7 +24,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.util;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NVisitResult;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
@@ -48,7 +47,7 @@ import java.util.zip.ZipOutputStream;
 public class ZipUtils {
 
     //    private static final Logger LOG = Logger.getLogger(ZipUtils.class.getName());
-    public static void zip(NSession session, String target, ZipOptions options, String... source) throws IOException {
+    public static void zip(String target, ZipOptions options, String... source) throws IOException {
         if (options == null) {
             options = new ZipOptions();
         }

@@ -72,9 +72,9 @@ public class NDocusaurusMain implements NApplication {
                     workdir = ".";
                 }
                 DocusaurusProject docusaurusProject = new DocusaurusProject(workdir,
-                        Paths.get(workdir).resolve(".dir-template").resolve("src").toString(),
-                        session);
-                new DocusaurusCtrl(docusaurusProject, session)
+                        Paths.get(workdir).resolve(".dir-template").resolve("src").toString()
+                );
+                new DocusaurusCtrl(docusaurusProject)
                         .setBuildWebSite(build)
                         .setStartWebSite(start)
                         .setBuildPdf(buildPdf)

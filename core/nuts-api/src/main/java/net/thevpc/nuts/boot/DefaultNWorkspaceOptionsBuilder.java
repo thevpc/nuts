@@ -1502,6 +1502,8 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         this.setDesktopLauncher(other.getDesktopLauncher().orNull());
         this.setMenuLauncher(other.getMenuLauncher().orNull());
         this.setUserLauncher(other.getUserLauncher().orNull());
+        this.setMainInstance(other.getMainInstance().orNull());
+        this.setPreviewRepo(other.getPreviewRepo().orNull());
         return this;
     }
 
@@ -1721,6 +1723,12 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
             }
             if (other.getUserLauncher().isPresent()) {
                 this.setUserLauncher(other.getUserLauncher().orNull());
+            }
+            if (other.getPreviewRepo().isPresent()) {
+                this.setPreviewRepo(other.getPreviewRepo().orNull());
+            }
+            if (other.getMainInstance().isPresent()) {
+                this.setMainInstance(other.getMainInstance().orNull());
             }
         }
         return this;

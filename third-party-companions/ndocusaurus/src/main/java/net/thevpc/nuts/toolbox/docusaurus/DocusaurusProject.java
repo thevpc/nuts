@@ -36,18 +36,16 @@ public class DocusaurusProject {
     private String docusaurusConfigBaseFolder;
     private String docusaurusBaseFolder;
 
-    private NSession session;
     private boolean jsConfig;
     private boolean tsConfig;
 
-    public DocusaurusProject(String docusaurusBaseFolder, String docusaurusConfigBaseFolder, NSession session) {
+    public DocusaurusProject(String docusaurusBaseFolder, String docusaurusConfigBaseFolder) {
         this.docusaurusBaseFolder = Paths.get(docusaurusBaseFolder).toAbsolutePath().toString();
         if (docusaurusConfigBaseFolder == null) {
             this.docusaurusConfigBaseFolder = docusaurusBaseFolder;
         } else {
             this.docusaurusConfigBaseFolder = docusaurusConfigBaseFolder;
         }
-        this.session = session;
         if (Files.exists(Paths.get(resolvePath("docusaurus.config.js")))) {
             jsConfig = true;
         } else if (Files.exists(Paths.get(resolvePath("docusaurus.config.ts")))) {
@@ -55,10 +53,6 @@ public class DocusaurusProject {
         } else {
             throw new IllegalArgumentException("Invalid docusaurus v2 folder : " + toCanonicalPath(this.docusaurusBaseFolder));
         }
-    }
-
-    public NSession getSession() {
-        return session;
     }
 
     private static String extractPartialPathParentString(Path p, Path rootPath) {
@@ -360,8 +354,8 @@ public class DocusaurusProject {
         }
         Path in = path.resolve(DocusaurusFolder.FOLDER_INFO_NAME);
         if (Files.isRegularFile(in)) {
-            DocusaurusFile baseContent = (DocusaurusFile) DocusaurusFolder.ofFileOrFolder(session, in, getPhysicalDocsFolderBasePath(), getPhysicalDocsFolderConfigPath(), -1);
-            return baseContent == null ? null : baseContent.getContent(session);
+            DocusaurusFile baseContent = (DocusaurusFile) DocusaurusFolder.ofFileOrFolder(in, getPhysicalDocsFolderBasePath(), getPhysicalDocsFolderConfigPath(), -1);
+            return baseContent == null ? null : baseContent.getContent();
         }
         return null;
     }
@@ -376,7 +370,7 @@ public class DocusaurusProject {
 
     public DocusaurusFolder getPhysicalDocsFolder() {
         Path docs = getPhysicalDocsFolderBasePath();
-        DocusaurusFolder root = (DocusaurusFolder) DocusaurusFolder.ofFileOrFolder(session, docs, docs, getPhysicalDocsFolderConfigPath());
+        DocusaurusFolder root = (DocusaurusFolder) DocusaurusFolder.ofFileOrFolder(docs, docs, getPhysicalDocsFolderConfigPath());
         return root;
     }
 

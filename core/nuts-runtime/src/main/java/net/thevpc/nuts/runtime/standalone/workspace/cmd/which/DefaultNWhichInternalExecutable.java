@@ -16,6 +16,7 @@ import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,11 +34,12 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
     @Override
     public int execute() {
         NSession session = workspace.currentSession();
-        if(session.isDry()){
+        boolean dry = NUtils.asBoolean(getExecCommand().getDry());
+        if(dry){
             dryExecute();
             return NExecutionException.SUCCESS;
         }
-        if (NAppUtils.processHelpOptions(args, session)) {
+        if (NAppUtils.processHelpOptions(args)) {
             showDefaultHelp();
             return NExecutionException.SUCCESS;
         }

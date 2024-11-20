@@ -32,7 +32,6 @@ public class Docusaurus2Adoc {
     protected String projectName;
     protected String projectTitle;
     protected DocusaurusFolder rootFolder;
-    protected NSession session;
 
 //    public Docusaurus2Adoc(String projectName, String projectTitle, String[] headers, DocusaurusFolder docs,NutsSession session) {
 //        this.projectName = projectName;
@@ -43,7 +42,6 @@ public class Docusaurus2Adoc {
 //    }
 
     public Docusaurus2Adoc(DocusaurusProject project) {
-        session = project.getSession();
         NObjectElement asciidoctorConfig = project.getConfigAsciiDoctor();
         if (asciidoctorConfig == null) {
             throw new IllegalArgumentException("missing asciidoctor condig");
@@ -63,7 +61,7 @@ public class Docusaurus2Adoc {
     }
 
     public Docusaurus2Adoc(File project, NSession session) {
-        this(new DocusaurusProject(project.getPath(), null, session));
+        this(new DocusaurusProject(project.getPath(), null));
     }
 
     public String runToString() {
@@ -114,9 +112,9 @@ public class Docusaurus2Adoc {
             if (item instanceof DocusaurusPathFile) {
                 fromPath = resolvePathParent(((DocusaurusPathFile) item).getPath().toString());
             }
-            MdElement tree = item.getContent(session);
+            MdElement tree = item.getContent();
             if (tree != null) {
-                MdElement tree2 = new DocusaurusTreeTransform(session, minDepth + 1, fromPath, toPath).transformDocument(tree);
+                MdElement tree2 = new DocusaurusTreeTransform(minDepth + 1, fromPath, toPath).transformDocument(tree);
                 if (tree2 != null) {
                     out.println();
                     asciiDoctorWriter.write(new MdBody(new MdElement[]{
@@ -130,11 +128,11 @@ public class Docusaurus2Adoc {
             out.println();
 //                out.println("# " + entry.getKey());
             out.println("");
-            MdElement tree = folder.getContent(session);
+            MdElement tree = folder.getContent();
             MdElement tree2 = tree;
             if (tree != null) {
                 String p = folder.getPath();
-                tree2 = new DocusaurusTreeTransform(session, minDepth, p, toPath).transformDocument(tree);
+                tree2 = new DocusaurusTreeTransform(minDepth, p, toPath).transformDocument(tree);
             }
             List<MdElement> b = new ArrayList<>();
 //            if (tree2 == null || !startsWithTitle(tree2, minDepth)) {

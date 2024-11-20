@@ -119,7 +119,7 @@ public final class NApplications {
                     ) {
                         if (appType.isAssignableFrom(declaredMethod.getReturnType())) {
                             declaredMethod.setAccessible(true);
-                            Object o = declaredMethod.invoke(null, (Object)args);
+                            Object o = declaredMethod.invoke(null, (Object) args);
                             if (o != null) {
                                 return appType.cast(o);
                             }
@@ -134,7 +134,7 @@ public final class NApplications {
             for (Constructor<?> constructor : appType.getConstructors()) {
                 if (constructor.getParameterCount() == 1
                         && constructor.getParameterTypes()[0].equals(String[].class)) {
-                    return (T) constructor.newInstance((Object)args);
+                    return (T) constructor.newInstance((Object) args);
                 } else if (constructor.getParameterCount() == 0) {
                     dconstructor = (Constructor<T>) constructor;
                 }
@@ -170,67 +170,71 @@ public final class NApplications {
         NClock now = NClock.now();
         NWorkspace ws = NWorkspace.of().orNull();
         if (ws == null) {
-            ws = Nuts.openInheritedWorkspace(nutsArgs, args).getWorkspace();
+            ws = Nuts.openInheritedWorkspace(nutsArgs, args);
             NWorkspace finalWs = ws;
-            ws.runWith(()->{
+            ws.runWith(() -> {
                 finalWs.currentSession().prepareApplication(args, applicationInstance.getClass(), null, now);
                 runApplication(applicationInstance);
             });
-        }else {
-            ws.currentSession().prepareApplication(args, applicationInstance.getClass(), null, now);
-            runApplication(applicationInstance);
+        } else {
+            ws.runWith(() -> {
+                NSession.get().prepareApplication(args, applicationInstance.getClass(), null, now);
+                runApplication(applicationInstance);
+            });
         }
     }
 
     public static void runApplication(NApplication applicationInstance) {
         NWorkspace ws = NWorkspace.of().orNull();
         if (ws == null) {
-            ws = Nuts.openInheritedWorkspace(new String[0], new String[0]).getWorkspace();
+            ws = Nuts.openInheritedWorkspace(new String[0], new String[0]);
             ws.runWith(() -> {
                 runApplication(applicationInstance);
             });
             return;
         }
-        NSession session=NSession.of().get();
-        boolean inherited = NBootManager.of().getBootOptions().getInherited().orElse(false);
-        NLog.of(NApplications.class).with().level(Level.FINE).verb(NLogVerb.START)
-                .log(
-                        NMsg.ofC(
-                                "running application %s: %s %s",
-                                inherited ? "(inherited)" : "",
-                                applicationInstance.getClass().getName(),
-                                session.getAppCmdLine()
-                        )
-                );
-        try {
-            switch (session.getAppMode()) {
-                //both RUN and AUTO_COMPLETE execute the run branch. Later
-                //session.isExecMode()
-                case RUN:
-                case AUTO_COMPLETE: {
-                    applicationInstance.run();
+        ws.runWith(() -> {
+            NSession session = NSession.of().get();
+            boolean inherited = NBootManager.of().getBootOptions().getInherited().orElse(false);
+            NLog.of(NApplications.class).with().level(Level.FINE).verb(NLogVerb.START)
+                    .log(
+                            NMsg.ofC(
+                                    "running application %s: %s %s",
+                                    inherited ? "(inherited)" : "",
+                                    applicationInstance.getClass().getName(),
+                                    session.getAppCmdLine()
+                            )
+                    );
+            try {
+                switch (session.getAppMode()) {
+                    //both RUN and AUTO_COMPLETE execute the run branch. Later
+                    //session.isExecMode()
+                    case RUN:
+                    case AUTO_COMPLETE: {
+                        applicationInstance.run();
+                        return;
+                    }
+                    case INSTALL: {
+                        applicationInstance.onInstallApplication();
+                        return;
+                    }
+                    case UPDATE: {
+                        applicationInstance.onUpdateApplication();
+                        return;
+                    }
+                    case UNINSTALL: {
+                        applicationInstance.onUninstallApplication();
+                        return;
+                    }
+                }
+            } catch (NExecutionException e) {
+                if (e.getExitCode() == NExecutionException.SUCCESS) {
                     return;
                 }
-                case INSTALL: {
-                    applicationInstance.onInstallApplication();
-                    return;
-                }
-                case UPDATE: {
-                    applicationInstance.onUpdateApplication();
-                    return;
-                }
-                case UNINSTALL: {
-                    applicationInstance.onUninstallApplication();
-                    return;
-                }
+                throw e;
             }
-        } catch (NExecutionException e) {
-            if (e.getExitCode() == NExecutionException.SUCCESS) {
-                return;
-            }
-            throw e;
-        }
-        throw new NExecutionException(NMsg.ofC("unsupported execution mode %s", session.getAppMode()), NExecutionException.ERROR_255);
+            throw new NExecutionException(NMsg.ofC("unsupported execution mode %s", session.getAppMode()), NExecutionException.ERROR_255);
+        });
     }
 
     /**

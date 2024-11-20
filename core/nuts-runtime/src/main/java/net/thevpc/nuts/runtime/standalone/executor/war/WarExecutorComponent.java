@@ -43,7 +43,6 @@ import net.thevpc.nuts.util.NStringUtils;
 public class WarExecutorComponent implements NExecutorComponent {
 
     public static NId ID;
-    NSession session;
 
     @Override
     public NId getId() {
@@ -52,7 +51,6 @@ public class WarExecutorComponent implements NExecutorComponent {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        this.session =context.getSession();
         if(ID==null){
             ID = NId.of("net.thevpc.nuts.exec:war").get();
         }

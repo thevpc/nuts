@@ -37,11 +37,9 @@ import java.util.List;
 public class ArtifactExecutorComponent implements NExecutorComponent {
 
     private NId id;
-    NSession session;
 
-    public ArtifactExecutorComponent(NId id, NSession session) {
+    public ArtifactExecutorComponent(NId id) {
         this.id = id;
-        this.session = session;
     }
 
     @Override

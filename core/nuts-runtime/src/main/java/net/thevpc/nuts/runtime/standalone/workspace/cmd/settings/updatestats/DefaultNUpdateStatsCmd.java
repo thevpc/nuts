@@ -58,7 +58,7 @@ public class DefaultNUpdateStatsCmd extends AbstractNUpdateStatsCmd {
                     || x.getName().equals("project-summary.html")
             );
             if (mavenRepoRootFiles != null && mavenRepoRootFiles.length > 3) {
-                new MavenRepositoryFolderHelper(null, session, NPath.of(repositoryPath)).reindexFolder(session);
+                new MavenRepositoryFolderHelper(null, NPath.of(repositoryPath)).reindexFolder(session);
                 if (session.isPlainTrace()) {
                     session.getTerminal().out().resetLine().println(NMsg.ofC("[%s] updated maven index %s", NLocations.of().getWorkspaceLocation(), repositoryPath));
                 }

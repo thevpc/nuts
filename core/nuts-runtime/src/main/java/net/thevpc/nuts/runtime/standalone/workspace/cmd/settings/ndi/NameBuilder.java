@@ -143,8 +143,7 @@ public class NameBuilder {
                         break;
                     }
                     case 'h': {
-                        NSession session = workspace.currentSession();
-                        if (!NWorkspaceUtils.isUserDefaultWorkspace(session)) {
+                        if (!NWorkspaceUtils.isUserDefaultWorkspace()) {
                             h.append(workspace.getHashName());
                         }
                         break;

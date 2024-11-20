@@ -399,6 +399,14 @@ public final class NWorkspaceCmdLineParser {
                         }
                         return NOptional.of(Collections.singletonList(a));
                     }
+                    case "--main-instance": {
+                        a = cmdLine.nextFlag().get();
+                        if (active && options != null) {
+                            options.setMainInstance(a.getBooleanValue().get());
+                            return NOptional.of(Collections.singletonList(a));
+                        }
+                        return NOptional.of(Collections.singletonList(a));
+                    }
 
                     case "--gui": {
                         a = cmdLine.nextFlag().get();

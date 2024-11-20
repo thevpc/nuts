@@ -41,11 +41,9 @@ import java.util.Set;
  */
 public class Test18_PathTest {
 
-    static NSession session;
-
     @BeforeAll
     public static void init() {
-        session = TestUtils.openNewTestWorkspace();
+        TestUtils.openNewTestWorkspace();
     }
 
 

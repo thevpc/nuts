@@ -5,9 +5,14 @@ import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.env.NPlatformFamily;
 import net.thevpc.nuts.util.NPlatformHome;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class Test41_NPlatformHome {
+    @BeforeAll
+    public static void init() {
+        TestUtils.openNewTestWorkspace();
+    }
 
     @Test
     public void test01() {
@@ -19,7 +24,6 @@ public class Test41_NPlatformHome {
 
     @Test
     public void test02() {
-        NSession session = TestUtils.openNewMinTestWorkspace();
         NPlatformLocation z = NPlatforms.of().findPlatformByVersion(NPlatformFamily.JAVA, "[1.8,6]").orNull();
         System.out.println(z);
     }

@@ -450,7 +450,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                     NPath path = null;
                     try {
                         path = NPath.of(cmdName);
-                        c = characterizeForExec(path, session, executorOptions);
+                        c = characterizeForExec(path, executorOptions);
                     } catch (Exception ex) {
                         //
                     }
@@ -942,7 +942,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                         if (availableExecutors.length > 1) {
                             throw new NTooManyElementsException(NMsg.ofC("too many results for executor %s", eid));
                         } else if (availableExecutors.length == 1) {
-                            execComponent = new ArtifactExecutorComponent(availableExecutors[0].getId(), session);
+                            execComponent = new ArtifactExecutorComponent(availableExecutors[0].getId());
                         } else {
                             // availableExecutors.length=0;
                             throw new NNotFoundException(eid, NMsg.ofC("executor not found %s", eid));
@@ -956,7 +956,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
             if (executorCall != null) {
                 for (String argument : executorCall.getArguments()) {
                     executorArgs.add(StringPlaceHolderParser.replaceDollarPlaceHolders(argument,
-                            def, session, NExecutionContextUtils.DEFINITION_PLACEHOLDER
+                            def, NExecutionContextUtils.DEFINITION_PLACEHOLDER
                     ));
                 }
             }
@@ -976,7 +976,6 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                     .setEnv(env)
                     .setDirectory(dir)
                     .setWorkspace(session.getWorkspace())
-                    .setSession(session)
                     .setFailFast(failFast)
                     .setTemporary(temporary)
                     .setExecutionType(executionType)
@@ -986,6 +985,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                     .setIn(in)
                     .setOut(out)
                     .setErr(err)
+                    .setDry(session.isDry())
                     .build();
             return new NExecutorComponentAndContext(execComponent, executionContext);
         }
@@ -998,9 +998,9 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
         KEYWORD,
     }
 
-    public static CharacterizedExecFile characterizeForExec(NInputSource contentFile, NSession session, List<String> execOptions) {
+    public static CharacterizedExecFile characterizeForExec(NInputSource contentFile, List<String> execOptions) {
         String classifier = null;//TODO how to get classifier?
-        CharacterizedExecFile c = new CharacterizedExecFile(session);
+        CharacterizedExecFile c = new CharacterizedExecFile(NSession.get());
         try {
             c.setStreamOrPath(contentFile);
             c.setContentFile(CoreIOUtils.toPathInputSource(contentFile, c.getTemps(), true));
@@ -1013,13 +1013,13 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                 if (Files.exists(ext)) {
                     c.setDescriptor(NDescriptorParser.of().parse(ext).get());
                 } else {
-                    c.setDescriptor(NDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.getContentFile(), execOptions, session.getWorkspace()));
+                    c.setDescriptor(NDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.getContentFile(), execOptions));
                 }
                 if (c.getDescriptor() != null) {
                     if ("zip".equals(c.getDescriptor().getPackaging())) {
                         Path zipFilePath = NPath.of(fileSource + ".zip")
                                 .toAbsolute().toPath().get();
-                        ZipUtils.zip(session, fileSource.toString(), new ZipOptions(), zipFilePath.toString());
+                        ZipUtils.zip(fileSource.toString(), new ZipOptions(), zipFilePath.toString());
                         c.setContentFile(zipFilePath);
                         c.addTemp(zipFilePath);
                     } else {
@@ -1077,9 +1077,9 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                         throw new NIllegalArgumentException(NMsg.ofC("unable to locale package for %s", c.getStreamOrPath()));
                     }
                 } else {
-                    c.setDescriptor(NDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.getContentFile(), execOptions, session.getWorkspace()));
+                    c.setDescriptor(NDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.getContentFile(), execOptions));
                     if (c.getDescriptor() == null) {
-                        CoreDigestHelper d = new CoreDigestHelper(session);
+                        CoreDigestHelper d = new CoreDigestHelper();
                         d.append(c.getContentFile());
                         String artifactId = d.getDigest();
                         c.setDescriptor(new DefaultNDescriptorBuilder()

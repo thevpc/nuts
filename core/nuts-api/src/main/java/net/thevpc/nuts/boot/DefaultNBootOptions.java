@@ -126,7 +126,7 @@ public class DefaultNBootOptions extends DefaultNWorkspaceOptions implements NBo
                                List<NDescriptor> extensionBootDescriptors, List<NClassLoaderNode> extensionBootDependencyNodes,
                                List<URL> classWorldURLs, Set<String> extensionsSet, NBootWorkspaceFactory bootWorkspaceFactory, NDescriptor runtimeBootDescriptor, ClassLoader classWorldLoader,
                                NWorkspaceOptions userOptions,
-                               NSupportMode desktopLauncher, NSupportMode menuLauncher, NSupportMode userLauncher, Boolean previewRepo) {
+                               NSupportMode desktopLauncher, NSupportMode menuLauncher, NSupportMode userLauncher, Boolean previewRepo,Boolean mainInstance) {
         super(apiVersion, runtimeId, workspace, name, javaCommand, javaOptions, outLinePrefix,
                 errLinePrefix, userName, credentials, progressOptions, dependencySolver, debug, archetype,
                 locale, theme, logConfig, confirm, outputFormat, openMode, executionType, storeStrategy,
@@ -139,7 +139,7 @@ public class DefaultNBootOptions extends DefaultNWorkspaceOptions implements NBo
                 executorOptions,
                 errors, storeLocations,
                 homeLocations,
-                desktopLauncher, menuLauncher, userLauncher, previewRepo);
+                desktopLauncher, menuLauncher, userLauncher, previewRepo,mainInstance);
         this.bootRepositories = bootRepositories;
         this.runtimeBootDependencyNode = runtimeBootDependencyNode;
         this.extensionBootDescriptors = NReservedLangUtils.unmodifiableOrNullList(extensionBootDescriptors);

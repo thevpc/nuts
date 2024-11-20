@@ -7,7 +7,6 @@ package net.thevpc.nuts.lib.common.iter;
 
 import net.thevpc.nuts.util.NComparator;
 import net.thevpc.nuts.util.NIterator;
-import net.thevpc.nuts.NSession;
 
 import java.util.*;
 import java.util.function.Function;
@@ -22,15 +21,15 @@ public class IteratorUtils {
 //        return new FileDepthFirstIterator(file);
 //    }
 
-    public static <T> NIterator<T> safe(IteratorErrorHandlerType type, NIterator<T> t, NSession session) {
+    public static <T> NIterator<T> safe(IteratorErrorHandlerType type, NIterator<T> t) {
         return new ErrorHandlerIterator(type, t);
     }
 
-    public static <T> NIterator<T> safeIgnore(NIterator<T> t, NSession session) {
+    public static <T> NIterator<T> safeIgnore(NIterator<T> t) {
         return new ErrorHandlerIterator(IteratorErrorHandlerType.IGNORE, t);
     }
 
-    public static <T> NIterator<T> safePospone(NIterator<T> t, NSession session) {
+    public static <T> NIterator<T> safePospone(NIterator<T> t) {
         return new ErrorHandlerIterator(IteratorErrorHandlerType.POSTPONE, t);
     }
 

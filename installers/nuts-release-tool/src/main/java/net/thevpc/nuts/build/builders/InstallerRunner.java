@@ -34,9 +34,9 @@ public class InstallerRunner extends AbstractRunner {
     @Override
     public void configureAfterOptions() {
         context().NUTS_WEBSITE_BASE = context().root.resolve("documentation/website");
-        NUTS_JAVA_HOME.update(context()).ensureDirectory(session);
-        NUTS_INSTALLER_BUILD_JAVA_HOME.update(context()).ensureDirectory(session);
-        NUTS_GRAALVM_DIR.update(context()).ensureDirectory(session);
+        NUTS_JAVA_HOME.update(context()).ensureDirectory();
+        NUTS_INSTALLER_BUILD_JAVA_HOME.update(context()).ensureDirectory();
+        NUTS_GRAALVM_DIR.update(context()).ensureDirectory();
     }
 
     @Override
@@ -64,7 +64,7 @@ public class InstallerRunner extends AbstractRunner {
     }
 
     public InstallerRunner(NSession session) {
-        super(session);
+        super();
     }
 
     @Override
@@ -74,7 +74,7 @@ public class InstallerRunner extends AbstractRunner {
 
     @Override
     public void run() {
-        NativeBuilder r = new NativeBuilder(session);
+        NativeBuilder r = new NativeBuilder();
         r.setJpackageHome(NUTS_INSTALLER_BUILD_JAVA_HOME.update(context()).getValue());
         r.setGraalvmHome(NUTS_GRAALVM_DIR.update(context()).getValue());
         r.setJre8Linux64(INSTALLER_JRE8_LINUX64.update(context()).getValue());

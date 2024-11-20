@@ -260,7 +260,6 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
 
     @Override
     public int getSupportLevel(NSupportLevelContext criteria) {
-        NSession session = criteria.getSession();
         try {
             prepare();
         } catch (Exception ex) {
@@ -275,13 +274,12 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     @Override
     public String readLine(NPrintStream out, NMsg message) {
         prepare();
-        NSession session = getWorkspace().currentSession();
-        if (out == null) {
-            out = getOut();
-        }
-        if (out == null) {
-            out = NIO.of().stdout();
-        }
+//        if (out == null) {
+//            out = getOut();
+//        }
+//        if (out == null) {
+//            out = NIO.of().stdout();
+//        }
         String readLine = null;
         try {
             readLine = reader.readLine(NTexts.of().ofText(message).toString());
@@ -299,7 +297,6 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     @Override
     public char[] readPassword(NPrintStream out, NMsg message) {
         prepare();
-        NSession session = getWorkspace().currentSession();
         if (out == null) {
             return reader.readLine(NTexts.of().ofText(message).toString(), '*').toCharArray();
         } else {

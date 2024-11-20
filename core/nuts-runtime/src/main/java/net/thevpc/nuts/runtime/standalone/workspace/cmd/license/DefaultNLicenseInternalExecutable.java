@@ -12,6 +12,7 @@ import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.util.NUtils;
 
 /**
  * @author thevpc
@@ -24,12 +25,13 @@ public class DefaultNLicenseInternalExecutable extends DefaultInternalNExecutabl
 
     @Override
     public int execute() {
+        boolean dry = NUtils.asBoolean(getExecCommand().getDry());
         NSession session = workspace.currentSession();
-        if (session.isDry()) {
+        if (dry) {
             dryExecute();
             return NExecutionException.SUCCESS;
         }
-        if (NAppUtils.processHelpOptions(args, session)) {
+        if (NAppUtils.processHelpOptions(args)) {
             showDefaultHelp();
             return NExecutionException.SUCCESS;
         }

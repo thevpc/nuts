@@ -49,7 +49,6 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
 
     private final Stack<PathAndDepth> stack = new Stack<>();
     private final Predicate<T> filter;
-    private final NSession session;
     private final FolderIteratorModel<T> model;
     private final String name;
     private final NPath folder;
@@ -59,17 +58,13 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
     private long visitedFilesCount;
     private final int maxDepth;
 
-    public FolderObjectIterator(String name, NPath folder, Predicate<T> filter, int maxDepth, NSession session, FolderIteratorModel<T> model) {
-        this.session = session;
+    public FolderObjectIterator(String name, NPath folder, Predicate<T> filter, int maxDepth, FolderIteratorModel<T> model) {
         this.filter = filter;
         this.model = model;
         this.name = name;
         this.maxDepth = maxDepth;
         if (folder == null) {
             throw new NullPointerException("could not iterate over null folder");
-        }
-        if (session == null) {
-            throw new NullPointerException("null session");
         }
         this.folder = folder;
         stack.push(new PathAndDepth(folder, 0));
@@ -96,7 +91,7 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.pop();
             if (file.path.isDirectory()) {
-                session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "browse", file.path.toCompressedForm()));
+                NSession.get().getTerminal().printProgress(NMsg.ofC("%-8s %s", "browse", file.path.toCompressedForm()));
                 visitedFoldersCount++;
                 boolean deep = maxDepth < 0 || file.depth < maxDepth;
                 if (file.path.isDirectory()) {
@@ -130,7 +125,7 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
                 visitedFilesCount++;
                 T t = null;
                 try {
-                    t = model.parseObject(file.path, session);
+                    t = model.parseObject(file.path);
                 } catch (Exception e) {
                     //e.printStackTrace();
                 }
@@ -157,7 +152,7 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
     @Override
     public void remove() {
         if (last != null) {
-            model.remove(last, lastPath, session);
+            model.remove(last, lastPath);
         } else {
             throw new NUnsupportedOperationException(NMsg.ofPlain("unsupported remove"));
         }
@@ -178,13 +173,13 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
 
     public interface FolderIteratorModel<T> {
 
-        default void remove(T object, NPath objectPath, NSession session) throws NExecutionException {
+        default void remove(T object, NPath objectPath) throws NExecutionException {
 
         }
 
         boolean isObjectFile(NPath pathname);
 
-        T parseObject(NPath pathname, NSession session) throws IOException;
+        T parseObject(NPath pathname) throws IOException;
     }
 
     private static class PathAndDepth {

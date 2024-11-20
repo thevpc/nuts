@@ -38,11 +38,10 @@ import org.junit.jupiter.api.Test;
  * @author thevpc
  */
 public class Test04_NTFTest {
-    static NSession session;
 
     @BeforeAll
     public static void init() {
-        session = TestUtils.openNewMinTestWorkspace();
+        TestUtils.openNewMinTestWorkspace();
     }
 
     @Test
@@ -247,10 +246,7 @@ public class Test04_NTFTest {
 
     private static void writeColors(String s) {
         TestUtils.println(s);
-        NSession session = TestUtils.openNewTestWorkspace("--verbose", "--install-companions=false");
-        {
-            session.out().println(s);
-        }
+        NSession.get().out().println(s);
     }
 
 //    @Test
@@ -955,7 +951,7 @@ public class Test04_NTFTest {
     }
 
     private NTFParser2 createParser() {
-        return new NTFParser2(session.getWorkspace());
+        return new NTFParser2(NWorkspace.get());
     }
 
     @Test
@@ -1225,15 +1221,17 @@ public class Test04_NTFTest {
         Assertions.assertEquals(NTextType.LIST, s.getType());
         Assertions.assertEquals(q, s.toString());
     }
+
     @Test
     public void test34() {
         NText s = NString.of(
                 "```!clear-line``````!move-line-start```").toText();
         Assertions.assertEquals(NTextType.LIST, s.getType());
-        Assertions.assertEquals(2, ((NTextList)s).size());
-        Assertions.assertEquals(true, ((NTextList)s).get(0) instanceof NTextCmd);
-        Assertions.assertEquals(true, ((NTextCmd)((NTextList)s).get(0)).getCommand().getName().equals("clear-line"));
+        Assertions.assertEquals(2, ((NTextList) s).size());
+        Assertions.assertEquals(true, ((NTextList) s).get(0) instanceof NTextCmd);
+        Assertions.assertEquals(true, ((NTextCmd) ((NTextList) s).get(0)).getCommand().getName().equals("clear-line"));
     }
+
     @Test
     public void test35() {
         String str = "```##{s12:AA##:12:BB##\\u001E##:6:CC##DD}##```       | ##{s12:AA##:12:BB##\\u001E##:6:CC##DD}##                      | composed colors, note the \\\\u001E separator\n" +
@@ -1248,8 +1246,9 @@ public class Test04_NTFTest {
         NText parsed = NString.of(str).toText();
         TestUtils.println(parsed);
         Assertions.assertEquals(NTextType.LIST, parsed.getType());
-        Assertions.assertEquals(12, ((NTextList)parsed).size());
+        Assertions.assertEquals(12, ((NTextList) parsed).size());
     }
+
     @Test
     public void test36() {
         String str = "##:fxd787af:Text##";
@@ -1259,6 +1258,7 @@ public class Test04_NTFTest {
 //        Assertions.assertEquals(NTextType.LIST, parsed.getType());
 //        Assertions.assertEquals(12, ((NTextList)parsed).size());
     }
+
     @Test
     public void test37() {
         String str = "```##:primary3:Text##```                       | ##:primary3:Text##                          | primary3\n" +
@@ -1274,8 +1274,9 @@ public class Test04_NTFTest {
         NText parsed = NString.of(str).toText();
         TestUtils.println(parsed);
         Assertions.assertEquals(NTextType.LIST, parsed.getType());
-        Assertions.assertEquals(40, ((NTextList)parsed).size());
+        Assertions.assertEquals(40, ((NTextList) parsed).size());
     }
+
     @Test
     public void test38() {
         String str = "```##:bxd787af:Text##```";
@@ -1284,6 +1285,7 @@ public class Test04_NTFTest {
 //        Assertions.assertEquals(NTextType.LIST, parsed.getType());
 //        Assertions.assertEquals(12, ((NTextList)parsed).size());
     }
+
     @Test
     public void test39() {
         String str = "\\```underlined underlined\\```";
@@ -1312,8 +1314,7 @@ public class Test04_NTFTest {
     @Test
     public void test41() {
         String str = "###) Xml format\n" +
-                "####) NTF syntax\n"
-        ;
+                "####) NTF syntax\n";
         NText parsed = NString.of(str).toText();
         TestUtils.println(parsed);
         Assertions.assertEquals(NTextType.LIST, parsed.getType());
@@ -1321,10 +1322,11 @@ public class Test04_NTFTest {
         Assertions.assertEquals(NTextType.TITLE, ((NTextList) parsed).get(0).getType());
         Assertions.assertEquals(NTextType.TITLE, ((NTextList) parsed).get(1).getType());
     }
+
     @Test
     public void test42() {
         String str = "##{pale:2024-06-07 23:28:39.328}##\u001E ##{config:CONFIG}##\u001E ##{info:START  }##\u001E : start ```sh nuts``` ```primary3 ##{version:0.8.4}##\u001E``` at 2024-06-07 23:28:28.660";
-        session.out().println(str);
+        NSession.get().out().println(str);
         NText parsed = NString.of(str).toText();
         TestUtils.println(parsed);
 //        Assertions.assertEquals(NTextType.LIST, parsed.getType());

@@ -27,11 +27,9 @@ import java.nio.file.Paths;
  * @author thevpc
  */
 public class Test12_CopyTest {
-    static NSession session;
-
     @BeforeAll
     public static void init() {
-        session = TestUtils.openNewMinTestWorkspace();
+        TestUtils.openNewMinTestWorkspace();
     }
 
 

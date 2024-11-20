@@ -37,7 +37,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.io.NSessionTerminal;
+import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
@@ -127,7 +127,7 @@ public class AdminServerRunnable implements NServer, Runnable {
                                     NPrintStream eout = NPrintStream.of(out, NTerminalMode.FORMATTED, null);
                                     NSession session = invokerSession;
                                     session.setTerminal(
-                                            NSessionTerminal.of(
+                                            NTerminal.of(
                                                     finalAccept.getInputStream(),
                                                     eout, eout)
                                     );

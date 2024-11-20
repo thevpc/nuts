@@ -32,7 +32,6 @@ import net.thevpc.nuts.env.NDesktopEnvironmentFamily;
 import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.env.NPlatformFamily;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.lib.common.collections.DefaultObservableMap;
 import net.thevpc.nuts.util.NObservableMap;
@@ -74,8 +73,8 @@ public class DefaultNWorkspaceEnvManagerModel {
     public DefaultNWorkspaceEnvManagerModel(NWorkspace ws) {
         this.workspace = ws;
         userProperties = new DefaultObservableMap<>();
-        os = NId.of(CorePlatformUtils.getPlatformOs(NSessionUtils.defaultSession(workspace))).get();
-        String platformOsDist = CorePlatformUtils.getPlatformOsDist(NSessionUtils.defaultSession(workspace));
+        os = NId.of(CorePlatformUtils.getPlatformOs()).get();
+        String platformOsDist = CorePlatformUtils.getPlatformOsDist();
         if (platformOsDist == null) {
             platformOsDist = "default";
         }

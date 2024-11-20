@@ -11,10 +11,8 @@ public class NIndexSubscriberListManager {
     private String name;
     private Map<String, NIndexSubscriber> subscribers = new LinkedHashMap<>();
     private NIndexSubscriberListConfig config;
-    private NSession defaultSession;
 
-    public NIndexSubscriberListManager(NSession session, String name) {
-        this.defaultSession = session;
+    public NIndexSubscriberListManager(String name) {
         if (name == null || name.trim().isEmpty()) {
             name = "default";
         }
@@ -117,9 +115,5 @@ public class NIndexSubscriberListManager {
     public boolean isSubscribed(String repositoryUuid, NWorkspaceLocation workspaceLocation) {
         return this.subscribers.containsKey(repositoryUuid)
                 && this.subscribers.get(repositoryUuid).getWorkspaceLocations().containsKey(workspaceLocation.getUuid());
-    }
-
-    public NSession getDefaultWorkspace() {
-        return defaultSession;
     }
 }

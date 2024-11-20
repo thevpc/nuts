@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.repository.index;
 
 import net.thevpc.nuts.NEnvs;
 import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NStream;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDB;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBDefaultIndexDefinition;
@@ -17,18 +17,18 @@ public class ArtifactsIndexDB {
     private final NanoDBTableFile<NId> table;
 
 
-    public ArtifactsIndexDB(String tableName, NanoDB db, NSession session) {
+    public ArtifactsIndexDB(String tableName, NanoDB db) {
 //        this.tableName = tableName;
 //        this.db = db;
 //        this.ws = ws;
         table = db.createTable(def(tableName, db), true);
     }
 
-    public static ArtifactsIndexDB of(NSession session) {
-        synchronized (session.getWorkspace()) {
+    public static ArtifactsIndexDB of() {
+        synchronized (NWorkspace.get()) {
             ArtifactsIndexDB o = (ArtifactsIndexDB) NEnvs.of().getProperties().get(ArtifactsIndexDB.class.getName());
             if (o == null) {
-                o = new ArtifactsIndexDB(DEFAULT_ARTIFACT_TABLE_NAME, CacheDB.of(), session);
+                o = new ArtifactsIndexDB(DEFAULT_ARTIFACT_TABLE_NAME, CacheDB.of());
                 NEnvs.of().getProperties().put(ArtifactsIndexDB.class.getName(), o);
             }
             return o;
@@ -47,28 +47,28 @@ public class ArtifactsIndexDB {
         );
     }
 
-    public NStream<NId> findAll(NSession session) {
+    public NStream<NId> findAll() {
         return table.stream();
     }
 
-    public NStream<NId> findByGroupId(String groupId, NSession session) {
+    public NStream<NId> findByGroupId(String groupId) {
         return table.findByIndex("groupId", groupId);
     }
 
-    public NStream<NId> findByArtifactId(String artifactId, NSession session) {
+    public NStream<NId> findByArtifactId(String artifactId) {
         return table.findByIndex("artifactId", artifactId);
     }
 
-    public void add(NId id, NSession session) {
+    public void add(NId id) {
         table.add(id);
     }
 
-    public void flush(NSession session) {
+    public void flush() {
         table.flush();
     }
 
 
-    public boolean contains(NId id, NSession session) {
+    public boolean contains(NId id) {
         return table.findByIndex("id",
                 id.getLongId()
                         .builder().setRepository(id.getRepository())

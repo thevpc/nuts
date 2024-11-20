@@ -16,8 +16,8 @@ import net.thevpc.nuts.build.util.MvnArtifactType;
 public class JarsRunner extends AbstractRunner {
 
     public boolean buildJars = false;
-    public JarsRunner(NSession context) {
-        super(context);
+    public JarsRunner() {
+        super();
     }
 
     @Override
@@ -79,7 +79,6 @@ public class JarsRunner extends AbstractRunner {
 
     private void runNutsPublishMaven() {
         echo("**** publish $nuts maven...", NMaps.of("nuts", NMsg.ofStyled("nuts", NTextStyle.keyword())));
-        NId nid = session.getWorkspace().getApiId();
         String nutsFolder = Mvn.folder(NId.of("net.thevpc:nuts").get());
         upload(localMvn().resolve(nutsFolder), removeMvn().resolve(nutsFolder));
         remoteCopyFolder(removeMvn().resolve(nutsFolder), removeThevpcMaven().resolve(nutsFolder));
@@ -87,7 +86,7 @@ public class JarsRunner extends AbstractRunner {
 
     private void runNutsPublishPreview() {
         echo("**** publish $nuts preview...", NMaps.of("nuts", NMsg.ofStyled("nuts", NTextStyle.keyword())));
-        NId nid = session.getWorkspace().getApiId();
+        NId nid = NWorkspace.get().getApiId();
         remoteCopyFile(localMvn().resolve(Mvn.file(nid, MvnArtifactType.JAR)), remoteTheVpcNuts().resolve("nuts-preview.jar"));
     }
 

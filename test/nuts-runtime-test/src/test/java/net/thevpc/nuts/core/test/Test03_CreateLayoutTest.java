@@ -28,7 +28,7 @@ public class Test03_CreateLayoutTest {
 //        CoreIOUtils.delete(null, base);
 //        TestUtils.resetLinuxFolders();
         File testBaseFolder = TestUtils.getTestBaseFolder();
-        NSession sessionOne = TestUtils.openNewTestWorkspace(
+        TestUtils.openNewTestWorkspace(
                 TestUtils.sarr(
                         TestUtils.createSysDirs(testBaseFolder),
                         //            "--verbose",
@@ -37,10 +37,10 @@ public class Test03_CreateLayoutTest {
                 )
         );
         for (NStoreType value : NStoreType.values()) {
-            sessionOne.out().println(NMsg.ofC("%s %s", value, NLocations.of().getStoreLocation(value)));
+            NSession.get().out().println(NMsg.ofC("%s %s", value, NLocations.of().getStoreLocation(value)));
         }
 
-        NSession sessionAgain = TestUtils.openExistingTestWorkspace(
+        TestUtils.openExistingTestWorkspace(
                 TestUtils.sarr(
                         TestUtils.createSysDirs(testBaseFolder),
                         //            "--verbose",
@@ -89,7 +89,7 @@ public class Test03_CreateLayoutTest {
 
     @Test
     public void customLayout_use_standalone() {
-        NSession session = TestUtils.openNewTestWorkspace("--embedded", "--standalone");
+        TestUtils.openNewTestWorkspace("--embedded", "--standalone");
         if (NDI_COMPANIONS > 0) {
             NId nshId = null;
             try {
@@ -105,10 +105,10 @@ public class Test03_CreateLayoutTest {
         }
         NPath c = NLocations.of().getStoreLocation(NStoreType.CONF);
         TestUtils.println(c);
-        File base = session.getWorkspace().getLocation().toFile().get();
+        File base = NWorkspace.get().getLocation().toFile().get();
         TestUtils.println(new File(base, "config").getPath());
         for (NStoreType value : NStoreType.values()) {
-            session.out().println(NMsg.ofC("%s %s", value, NLocations.of().getStoreLocation(value)));
+            NSession.get().out().println(NMsg.ofC("%s %s", value, NLocations.of().getStoreLocation(value)));
         }
         Assertions.assertEquals(
                 NPath.of(base).resolve("bin"),
@@ -139,7 +139,7 @@ public class Test03_CreateLayoutTest {
                 "--install-companions=false",
                 "info");
 
-        NSession w = TestUtils.runExistingTestWorkspace("--system-conf-home", new File(base, "system.conf.ignored").getPath(),
+        TestUtils.runExistingTestWorkspace("--system-conf-home", new File(base, "system.conf.ignored").getPath(),
                 "info");
         TestUtils.println("==========================");
         NInfoCmd.of().println();
@@ -180,7 +180,7 @@ public class Test03_CreateLayoutTest {
                 locations.getStoreLocation(NStoreType.RUN)
         );
 
-        w = TestUtils.openNewTestWorkspace(//            "--workspace", "default-workspace",
+        TestUtils.openNewTestWorkspace(//            "--workspace", "default-workspace",
 //            "--workspace", new File(base, "system.config/default-workspace").getPath(),
                 "info");
         TestUtils.println(locations.getStoreLocation(NStoreType.BIN));

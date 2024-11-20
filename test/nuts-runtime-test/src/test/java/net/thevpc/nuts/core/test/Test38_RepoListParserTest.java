@@ -5,12 +5,16 @@ import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.spi.NRepositorySelectorList;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
 public class Test38_RepoListParserTest {
-
+    @BeforeAll
+    public static void init() {
+        TestUtils.openNewTestWorkspace();
+    }
 
     @Test
     public void test01() {
@@ -110,7 +114,6 @@ public class Test38_RepoListParserTest {
 
     @Test
     public void test13() {
-        NSession session = TestUtils.openNewTestWorkspace();
         NRepositorySelectorList li = NRepositorySelectorList.of(Arrays.asList("+/toto")).get();
         System.out.println(li);
     }

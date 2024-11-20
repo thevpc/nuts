@@ -616,7 +616,7 @@ public class WorkspaceService {
             for (NPath file : storeLocation.list()) {
                 if (file.isRegularFile() && file.getName().endsWith(".config")) {
                     try {
-                        all.add(new ProjectService(session, config.getDefaultRepositoryAddress(), file));
+                        all.add(new ProjectService(config.getDefaultRepositoryAddress(), file));
                     } catch (IOException e) {
                         //ignore
                     }
@@ -651,10 +651,10 @@ public class WorkspaceService {
             if (folder.isDirectory()) {
                 if (isScanEnabled(folder)) {
                     NTexts text = NTexts.of();
-                    ProjectConfig p2 = new ProjectService(session, config.getDefaultRepositoryAddress(), new ProjectConfig().setPath(folder.getPath())
+                    ProjectConfig p2 = new ProjectService(config.getDefaultRepositoryAddress(), new ProjectConfig().setPath(folder.getPath())
                     ).rebuildProjectMetadata();
                     if (p2.getTechnologies().size() > 0) {
-                        ProjectService projectService = new ProjectService(session, config.getDefaultRepositoryAddress(), p2);
+                        ProjectService projectService = new ProjectService(config.getDefaultRepositoryAddress(), p2);
                         boolean loaded = false;
                         try {
                             loaded = projectService.load();
@@ -706,7 +706,7 @@ public class WorkspaceService {
 //                if (!StringUtils.isEmpty(repo)) {
 //                    p2.setAddress(new );
 //                }
-                                ProjectService ps = new ProjectService(session, null, p2);
+                                ProjectService ps = new ProjectService(null, p2);
                                 try {
                                     ps.save();
                                 } catch (IOException e) {
@@ -735,7 +735,7 @@ public class WorkspaceService {
 //                if (!StringUtils.isEmpty(repo)) {
 //                    p2.setAddress(new );
 //                }
-                            ProjectService ps = new ProjectService(session, null, p2);
+                            ProjectService ps = new ProjectService(null, p2);
                             try {
                                 ps.save();
                             } catch (IOException e) {

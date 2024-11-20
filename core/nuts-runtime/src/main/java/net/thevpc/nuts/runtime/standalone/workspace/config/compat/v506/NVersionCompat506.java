@@ -9,22 +9,22 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.compat.CompatUtils;
 import java.util.List;
 
 public class NVersionCompat506 extends AbstractNVersionCompat {
-    public NVersionCompat506(NSession session, NVersion apiVersion) {
-        super(session, apiVersion, 506);
+    public NVersionCompat506(NVersion apiVersion) {
+        super(apiVersion, 506);
     }
 
     @Override
-    public NWorkspaceConfigBoot parseConfig(byte[] bytes, NSession session) {
+    public NWorkspaceConfigBoot parseConfig(byte[] bytes) {
         return parseConfig506(bytes).toWorkspaceConfig();
     }
 
     @Override
-    public NWorkspaceConfigApi parseApiConfig(NId nutsApiId, NSession session) {
+    public NWorkspaceConfigApi parseApiConfig(NId nutsApiId) {
         NWorkspaceConfigApi cc = new NWorkspaceConfigApi();
         cc.setApiVersion(getApiVersion());
         NWorkspaceConfigBoot506 c = parseConfig506(CompatUtils.readAllBytes(
                 NLocations.of().getWorkspaceLocation().toPath().get()
-                .resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME),session));
+                .resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
         if (c != null) {
 //            cc.setConfigVersion(???);
             cc.setApiVersion(c.getApiVersion());
@@ -37,12 +37,12 @@ public class NVersionCompat506 extends AbstractNVersionCompat {
     }
 
     @Override
-    public NWorkspaceConfigRuntime parseRuntimeConfig(NSession session) {
+    public NWorkspaceConfigRuntime parseRuntimeConfig() {
         NWorkspaceConfigRuntime cc = new NWorkspaceConfigRuntime();
 //        cc.setApiVersion(getApiVersion());
         NWorkspaceConfigBoot506 c = parseConfig506(CompatUtils.readAllBytes(
                 NLocations.of().getWorkspaceLocation().toPath().get()
-                        .resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME),session));
+                        .resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
         if (c != null) {
 //            cc.setConfigVersion(???);
             cc.setDependencies(c.getRuntimeDependencies());
@@ -56,11 +56,11 @@ public class NVersionCompat506 extends AbstractNVersionCompat {
     }
 
     @Override
-    public NWorkspaceConfigSecurity parseSecurityConfig(NId nutsApiId, NSession session) {
+    public NWorkspaceConfigSecurity parseSecurityConfig(NId nutsApiId) {
         NWorkspaceConfigSecurity cc = new NWorkspaceConfigSecurity();
         NWorkspaceConfigBoot506 c = parseConfig506(CompatUtils.readAllBytes(
                 NLocations.of().getWorkspaceLocation().toPath().get()
-                        .resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME),session));
+                        .resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
         if (c != null) {
 //            cc.setConfigVersion(???);
             cc.setSecure(c.isSecure());
@@ -72,11 +72,11 @@ public class NVersionCompat506 extends AbstractNVersionCompat {
     }
 
     @Override
-    public NWorkspaceConfigMain parseMainConfig(NId nutsApiId, NSession session) {
+    public NWorkspaceConfigMain parseMainConfig(NId nutsApiId) {
         NWorkspaceConfigMain cc = new NWorkspaceConfigMain();
         NWorkspaceConfigBoot506 c = parseConfig506(CompatUtils.readAllBytes(
                 NLocations.of().getWorkspaceLocation().toPath().get()
-                        .resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME),session));
+                        .resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
         if (c != null) {
             c.setRepositories(CompatUtils.copyNutsRepositoryRefList(c.getRepositories()));
             c.setCommandFactories(CompatUtils.copyNutsCommandAliasFactoryConfigList(c.getCommandFactories()));

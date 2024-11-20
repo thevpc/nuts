@@ -53,13 +53,12 @@ public class MavenRepositoryFactoryComponent implements NRepositoryFactoryCompon
         return Arrays.asList(
                 NRepositorySelectorHelper.createRepositoryOptions(
                         NRepositoryLocation.of("maven", NRepositoryDB.of()).get(),
-                        true, session)
+                        true)
         );
     }
 
     @Override
     public NRepository create(NAddRepositoryOptions options, NRepository parentRepository) {
-        NSession session = workspace.currentSession();
         if(MavenUtils.isMavenSettingsRepository(options)){
             return new MavenSettingsRepository(options, workspace, parentRepository);
         }
@@ -85,7 +84,6 @@ public class MavenRepositoryFactoryComponent implements NRepositoryFactoryCompon
         if (criteria == null) {
             return NConstants.Support.NO_SUPPORT;
         }
-        NSession session = criteria.getSession();
         NRepositoryConfig r = criteria.getConstraints(NRepositoryConfig.class);
         if (r != null) {
             String type = NRepositoryUtils.getRepoType(r);

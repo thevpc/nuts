@@ -22,11 +22,10 @@ import java.util.stream.Collectors;
  * @author thevpc
  */
 public class Test14_CmdLineTest {
-    static NSession session;
 
     @BeforeAll
     public static void init() {
-        session = TestUtils.openNewMinTestWorkspace();
+        TestUtils.openNewMinTestWorkspace();
     }
 
 

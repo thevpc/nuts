@@ -46,6 +46,7 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
     protected NExecInput in = NExecInput.ofInherit();
     protected NExecutionType executionType = NExecutionType.SPAWN;
     protected NRunAs runAs = NRunAs.CURRENT_USER;
+    protected Boolean dry = null;
     protected boolean failFast;
     private long sleepMillis = 1000;
     private String target;
@@ -58,8 +59,6 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
     public int getSupportLevel(NSupportLevelContext context) {
         return NConstants.Support.DEFAULT_SUPPORT;
     }
-
-
 
     @Override
     public NString format() {
@@ -103,7 +102,6 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
     public NExecCmd setCommandDefinition(NDefinition definition) {
         this.commandDefinition = definition;
         if (this.commandDefinition != null) {
-            NSession session = workspace.createSession();
             this.commandDefinition.getContent().get();
             this.commandDefinition.getDependencies().get();
             this.commandDefinition.getEffectiveDescriptor().get();
@@ -369,7 +367,6 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
 
     @Override
     public String getGrabbedOutString() {
-        NSession session = workspace.createSession();
         if (!executed) {
             if (out.getType() != NRedirectType.GRAB_STREAM) {
                 grabOut();
@@ -391,7 +388,6 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
 
     @Override
     public String getGrabbedErrString() {
-        NSession session = workspace.createSession();
         if (!executed) {
             if (err.getType() != NRedirectType.GRAB_STREAM) {
                 grabErr();
@@ -486,6 +482,15 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
         return this;
     }
 
+    public Boolean getDry() {
+        return dry;
+    }
+
+    public NExecCmd setDry(Boolean dry) {
+        this.dry = dry;
+        return this;
+    }
+
     @Override
     public NExecCmd setAll(NExecCmd other) {
         super.copyFromWorkspaceCommandBase((NWorkspaceCmdBase) other);
@@ -500,6 +505,7 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
         setExecutionType(other.getExecutionType());
         setRunAs(other.getRunAs());
         setTarget(other.getTarget());
+        setDry(other.getDry());
         return this;
     }
 
@@ -577,7 +583,6 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
         if (a == null) {
             return false;
         }
-        NSession session = workspace.createSession();
         if (command == null) {
             command = new ArrayList<>();
         }
@@ -648,12 +653,9 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
                 }
                 return true;
             }
-            case "-dry":
+            case "--dry":
             case "-d": {
-                boolean val = cmdLine.nextFlag().get().getBooleanValue().get();
-                if (enabled) {
-                    session.setDry(val);
-                }
+                cmdLine.withNextFlag((v,ar)->setDry(v),"--dry","-d");
                 return true;
             }
             case "--target": {
@@ -809,7 +811,6 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
 
     @Override
     public NExecCmdFormat formatter() {
-        NSession session = workspace.createSession();
         return NExecCmdFormat.of().setValue(this);
     }
 

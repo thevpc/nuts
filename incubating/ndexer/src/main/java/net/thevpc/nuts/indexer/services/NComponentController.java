@@ -3,6 +3,7 @@ package net.thevpc.nuts.indexer.services;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.indexer.*;
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NRef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,10 +51,10 @@ public class NComponentController {
             Iterator<NWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
             if (iterator.hasNext()) {
                 NWorkspaceLocation workspaceLocation = iterator.next();
-                NSession session = Nuts.openWorkspace("--workspace", workspaceLocation.getLocation());
+                NWorkspace workspace = Nuts.openWorkspace("--workspace", workspaceLocation.getLocation());
                 List<Map<String, String>> rows = this.dataService.
                         getAllData(NIndexerUtils.getCacheDir(subscriber.cacheFolderName()));
-                List<Map<String, Object>> resData = cleanNutsIdMap(session, rows);
+                List<Map<String, Object>> resData = cleanNutsIdMap(rows);
                 return ResponseEntity.ok(resData);
             }
         }
@@ -79,7 +80,7 @@ public class NComponentController {
             Iterator<NWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
             if (iterator.hasNext()) {
                 NWorkspaceLocation workspaceLocation = iterator.next();
-                NSession session = Nuts.openWorkspace("--workspace", workspaceLocation.getLocation());
+                NWorkspace workspace = Nuts.openWorkspace("--workspace", workspaceLocation.getLocation());
                 NId id = NIdBuilder.of(group,name)
                         .setRepository(namespace)
                         .setVersion(version)
@@ -92,12 +93,13 @@ public class NComponentController {
                         .setFace(face)
 //                        .setAlternative(alternative)
                         .build();
-                List<Map<String, String>> result;
-                if (all) {
-                    result = this.dataService.getAllDependencies(session, NIndexerUtils.getCacheDir(subscriber.cacheFolderName()), id);
-                } else {
-                    result = this.dataService.getDependencies(session, NIndexerUtils.getCacheDir(subscriber.cacheFolderName()), id);
-                }
+                List<Map<String, String>> result=workspace.callWith(()->{
+                    if (all) {
+                        return this.dataService.getAllDependencies(NIndexerUtils.getCacheDir(subscriber.cacheFolderName()), id);
+                    } else {
+                        return this.dataService.getDependencies(NIndexerUtils.getCacheDir(subscriber.cacheFolderName()), id);
+                    }
+                });
                 return ResponseEntity.ok(result);
             }
         }
@@ -124,7 +126,7 @@ public class NComponentController {
             Iterator<NWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
             if (iterator.hasNext()) {
                 NWorkspaceLocation workspaceLocation = iterator.next();
-                NSession session = Nuts.openWorkspace("--workspace", workspaceLocation.getLocation());
+                NWorkspace workspace = Nuts.openWorkspace("--workspace", workspaceLocation.getLocation());
                 NId id = NIdBuilder.of(group,name)
                         .setRepository(namespace)
                         .setCondition(new DefaultNEnvConditionBuilder()
@@ -137,8 +139,9 @@ public class NComponentController {
                         .setFace(face)
 //                        .setAlternative(alternative)
                         .build();
-                List<Map<String, String>> rows = this.dataService.getAllVersions(session, NIndexerUtils.getCacheDir(subscriber.cacheFolderName()), id);
-                List<Map<String, Object>> resData = cleanNutsIdMap(session, rows);
+                List<Map<String, String>> rows
+                        =workspace.callWith(()-> this.dataService.getAllVersions(NIndexerUtils.getCacheDir(subscriber.cacheFolderName()), id));
+                List<Map<String, Object>> resData = cleanNutsIdMap(rows);
                 return ResponseEntity.ok(resData);
             }
         }
@@ -166,8 +169,7 @@ public class NComponentController {
             Iterator<NWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
             if (iterator.hasNext()) {
                 NWorkspaceLocation workspaceLocation = iterator.next();
-                NSession session = Nuts.openWorkspace("--workspace", workspaceLocation.getLocation());
-                NWorkspace ws = session.getWorkspace();
+                NWorkspace workspace = Nuts.openWorkspace("--workspace", workspaceLocation.getLocation());
                 Map<String, String> data = NIndexerUtils.nutsIdToMap(
                         NIdBuilder.of()
                                 .setArtifactId(name)
@@ -184,7 +186,9 @@ public class NComponentController {
                                 .setFace(face)
 //                                .setAlternative(alternative)
                                 .build());
-                this.dataService.deleteData(NIndexerUtils.getCacheDir(subscriber.cacheFolderName()), data);
+                workspace.runWith(()-> {
+                    this.dataService.deleteData(NIndexerUtils.getCacheDir(subscriber.cacheFolderName()), data);
+                });
                 return ResponseEntity.ok(true);
             }
         }
@@ -212,7 +216,7 @@ public class NComponentController {
             Iterator<NWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
             if (iterator.hasNext()) {
                 NWorkspaceLocation workspaceLocation = iterator.next();
-                NSession session = Nuts.openWorkspace("--workspace", workspaceLocation.getLocation());
+                NWorkspace workspace = Nuts.openWorkspace("--workspace", workspaceLocation.getLocation());
                 NId id = NIdBuilder.of()
                         .setArtifactId(name)
                         .setRepository(namespace)
@@ -228,42 +232,45 @@ public class NComponentController {
                         .setFace(face)
 //                        .setAlternative(alternative)
                         .build();
-                Map<String, String> data = NIndexerUtils.nutsIdToMap(id);
-                List<Map<String, String>> list = this.dataService.searchData(NIndexerUtils.getCacheDir(subscriber.cacheFolderName()), data, null);
-                if (list.isEmpty()) {
-                    Iterator<NDefinition> it = NSearchCmd.of()
-                            .setRepositoryFilter(
-                                    NRepositories.of().filter().byUuid(subscriber.getUuid())
-                            )
-                            .addId(id)
-                            .setFailFast(false)
-                            .setContent(false)
-                            .setEffective(true)
-                            .getResultDefinitions().iterator();
-                    if (it.hasNext()) {
-                        NDefinition definition = it.next();
-                        List<NDependency> directDependencies = definition.getEffectiveDescriptor().get().getDependencies();
-                        data.put("dependencies", NElements.of().json()
-                                .setValue(directDependencies.stream().map(Object::toString)
-                                        .collect(Collectors.toList()))
-                                .setNtf(false)
-                                .format()
-                                .toString()
-                        );
+                NRef<Boolean> ret=NRef.of(false);
+                workspace.runWith(()->{
+                    Map<String, String> data = NIndexerUtils.nutsIdToMap(id);
+                    List<Map<String, String>> list = this.dataService.searchData(NIndexerUtils.getCacheDir(subscriber.cacheFolderName()), data, null);
+                    if (list.isEmpty()) {
+                        Iterator<NDefinition> it = NSearchCmd.of()
+                                .setRepositoryFilter(
+                                        NRepositories.of().filter().byUuid(subscriber.getUuid())
+                                )
+                                .addId(id)
+                                .setFailFast(false)
+                                .setContent(false)
+                                .setEffective(true)
+                                .getResultDefinitions().iterator();
+                        if (it.hasNext()) {
+                            NDefinition definition = it.next();
+                            List<NDependency> directDependencies = definition.getEffectiveDescriptor().get().getDependencies();
+                            data.put("dependencies", NElements.of().json()
+                                    .setValue(directDependencies.stream().map(Object::toString)
+                                            .collect(Collectors.toList()))
+                                    .setNtf(false)
+                                    .format()
+                                    .toString()
+                            );
 
-                        this.dataService.indexData(NIndexerUtils.getCacheDir(subscriber.cacheFolderName()), data);
-                    } else {
-                        ResponseEntity.ok(false);
+                            this.dataService.indexData(NIndexerUtils.getCacheDir(subscriber.cacheFolderName()), data);
+                        } else {
+                            ret.set(false);
+                        }
                     }
-                }
-                return ResponseEntity.ok(true);
+                });
+                return ResponseEntity.ok(ret.get());
             }
         }
         LOG.error("Error in deleting the component " + name + " data for subscriber " + repositoryUuid);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
-    private List<Map<String, Object>> cleanNutsIdMap(NSession session, List<Map<String, String>> rows) {
+    private List<Map<String, Object>> cleanNutsIdMap(List<Map<String, String>> rows) {
         List<Map<String, Object>> resData = new ArrayList<>();
         for (Map<String, String> row : rows) {
             Map<String, Object> d = new HashMap<>(row);

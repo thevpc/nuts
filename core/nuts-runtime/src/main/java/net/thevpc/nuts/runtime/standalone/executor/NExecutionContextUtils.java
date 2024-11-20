@@ -7,7 +7,7 @@ import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 public class NExecutionContextUtils {
     public static StringPlaceHolderParser.PlaceHolderProvider<NDefinition> DEFINITION_PLACEHOLDER=new StringPlaceHolderParser.PlaceHolderProvider<NDefinition>() {
         @Override
-        public String get(String key, NDefinition definition, NSession session) {
+        public String get(String key, NDefinition definition) {
             switch (key) {
                 case "NUTS_ID": {
                     return (definition.getId().toString());
@@ -51,8 +51,8 @@ public class NExecutionContextUtils {
 
     public static StringPlaceHolderParser.PlaceHolderProvider<NExecutionContext> EXECUTION_CONTEXT_PLACEHOLDER=new StringPlaceHolderParser.PlaceHolderProvider<NExecutionContext>() {
         @Override
-        public String get(String key, NExecutionContext executionContext, NSession session) {
-            return DEFINITION_PLACEHOLDER.get(key, executionContext.getDefinition(), session);
+        public String get(String key, NExecutionContext executionContext) {
+            return DEFINITION_PLACEHOLDER.get(key, executionContext.getDefinition());
         }
     };
 

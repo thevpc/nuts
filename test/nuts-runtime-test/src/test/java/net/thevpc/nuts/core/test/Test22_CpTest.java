@@ -22,11 +22,10 @@ import net.thevpc.nuts.core.test.utils.*;
  * @author thevpc
  */
 public class Test22_CpTest {
-    static NSession session;
 
     @BeforeAll
     public static void init() {
-        session = TestUtils.openNewMinTestWorkspace();
+        TestUtils.openNewMinTestWorkspace();
     }
 
     @Test

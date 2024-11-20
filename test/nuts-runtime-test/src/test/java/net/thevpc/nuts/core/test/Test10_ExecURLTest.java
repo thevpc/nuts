@@ -20,31 +20,10 @@ import java.util.List;
  * @author thevpc
  */
 public class Test10_ExecURLTest {
-    static NSession session;
 
     @BeforeAll
     public static void init() {
-        session = TestUtils.openNewMinTestWorkspace("--verbose");
-    }
-
-    @Test
-    public void execURLLs() {
-        TestUtils.println(NVersionFormat.of());
-        NInstallCmd.of().addId("nsh").run();
-
-        for (int i = 0; i < 3; i++) {
-            session.out().println("------------------------");
-            NChronometer c1 = NChronometer.startNow();
-            String result = NExecCmd.of()
-                    .addWorkspaceOptions(new DefaultNWorkspaceOptionsBuilder().setBot(true))
-//                    .addCommand("nsh","-c","ls")
-                    .addCommand("com.cts.probots.server:probots-server","--version")
-//                    .system().addCommand("sh","-c","ls")
-                    .failFast().getGrabbedAllString();
-            TestUtils.println("Result:");
-            TestUtils.println(result);
-            TestUtils.println(c1.stop());
-        }
+        TestUtils.openNewMinTestWorkspace("--verbose");
     }
 
     @Test
@@ -52,9 +31,11 @@ public class Test10_ExecURLTest {
         TestUtils.println(NVersionFormat.of());
         NSearchCmd q = NSearchCmd.of()
                 .setId("net.thevpc.hl:hadra-build-tool#0.1.0")
-                //.setRepositoryFilter("maven-central")
+//                .setRepositoryFilter("maven-central")
+//                .setRepositoryFilter(NRepositoryFilters.of().byName("maven"))
+//                .setFetchStrategy(NFetchStrategy.REMOTE)
                 .setLatest(true);
-        session.out().println(q.getResultQueryPlan());
+        NSession.get().out().println(q.getResultQueryPlan());
         List<NId> nutsIds = q
                 .getResultIds()
                 .toList();
@@ -104,7 +85,7 @@ public class Test10_ExecURLTest {
         String result = NExecCmd.of()
                 .addCommand("info")
                 .getGrabbedAllString();
-        session.out().println(result);
+            NSession.get().out().println(result);
         Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
     }
 
@@ -145,16 +126,16 @@ public class Test10_ExecURLTest {
     //@Test
     public void testCallSpecialId() {
         TestUtils.println(NVersionFormat.of());
-        NSession nSession = Nuts.openWorkspace("-y","--verbose");
         String result = NExecCmd.of()
                 .addExecutorOptions("--bot")
                 //.setExecutionType(NExecutionType.EMBEDDED)
                 .addCommand("com.cts.nuts.enterprise.postgres:pgcli")
-                .addCommand("list","-i")
+                .addCommand("list", "-i")
                 .getGrabbedAllString();
-        nSession.out().println(result);
-        Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
+        NSession.get().out().println(result);
+        Assertions.assertFalse(result.contains("[0m"), "Message should not contain terminal format");
     }
+
 
 
 }

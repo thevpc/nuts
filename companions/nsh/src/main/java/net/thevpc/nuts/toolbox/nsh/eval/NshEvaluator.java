@@ -27,7 +27,7 @@ package net.thevpc.nuts.toolbox.nsh.eval;
 
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.io.NSessionTerminal;
+import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.toolbox.nsh.err.NShellException;
 import net.thevpc.nuts.toolbox.nsh.err.NShellUniformException;
@@ -107,7 +107,7 @@ public class NshEvaluator extends DefaultNShellEvaluator {
         newCtx.setSession(session);
         session.setLogTermLevel(Level.OFF);
 
-        NSessionTerminal out = NSessionTerminal.ofMem();
+        NTerminal out = NTerminal.ofMem();
         session.setTerminal(out);
         context.getShell().evalNode(command, newCtx);
         String str = evalFieldSubstitutionAfterCommandSubstitution(out.out().toString(), context);

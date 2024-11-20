@@ -14,10 +14,10 @@ public class NutsReleaseToolMain implements NApplication {
     public void run() {
         NSession session = NSession.get();
         NutsReleaseToolRunner nutsBuildRunner = new NutsReleaseToolRunner(
-                new BaseConfRunner(session),
-                new JarsRunner(session),
-                new ReposRunner(session),
-                new SiteRunner(session),
+                new BaseConfRunner(),
+                new JarsRunner(),
+                new ReposRunner(),
+                new SiteRunner(),
                 new InstallerRunner(session)
         );
         nutsBuildRunner.run(

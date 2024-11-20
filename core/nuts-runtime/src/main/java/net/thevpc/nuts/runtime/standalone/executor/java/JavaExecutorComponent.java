@@ -11,14 +11,14 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
@@ -75,7 +75,6 @@ import java.util.stream.Collectors;
 public class JavaExecutorComponent implements NExecutorComponent {
 
     public static NId ID;
-    NSession session;
 
     @Override
     public NId getId() {
@@ -90,7 +89,6 @@ public class JavaExecutorComponent implements NExecutorComponent {
 
     @Override
     public int getSupportLevel(NSupportLevelContext ctx) {
-        this.session = ctx.getSession();
         if (ID == null) {
             ID = NId.of("net.thevpc.nuts.exec:java").get();
         }
@@ -114,9 +112,9 @@ public class JavaExecutorComponent implements NExecutorComponent {
     public static NWorkspaceOptionsBuilder createChildOptions(NExecutionContext executionContext) {
         NSession session = executionContext.getSession();
         NWorkspaceOptionsBuilder options = NBootManager.of().getBootOptions().builder();
+        options.setDry(executionContext.isDry());
 
         //copy session parameters to the newly created workspace
-        options.setDry(session.isDry());
         options.setShowStacktrace(session.getShowStacktrace().orDefault());
         options.setGui(session.isGui());
         options.setOutLinePrefix(session.getOutLinePrefix());
@@ -202,7 +200,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 executionContext.getArguments(),
                 executionContext.getExecutorOptions(),
                 NBlankable.isBlank(executionContext.getDirectory()) ?
-                NPath.ofUserDirectory()
+                        NPath.ofUserDirectory()
                         : executionContext.getDirectory(),
                 executionContext.getWorkspace());
         switch (executionContext.getExecutionType()) {
@@ -251,18 +249,18 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 }
 
                 NCmdLine ncmdLine = options.toCmdLine(config);
-                if(!joptions.getExtraNutsOptions().isEmpty()){
+                if (!joptions.getExtraNutsOptions().isEmpty()) {
                     NCmdLine zzz = NCmdLine.of(joptions.getExtraNutsOptions());
-                    while(!zzz.isEmpty()) {
+                    while (!zzz.isEmpty()) {
                         List<NArg> z = NWorkspaceCmdLineParser.nextNutsArgument(zzz, options).orNull();
-                        if(z==null){
+                        if (z == null) {
                             zzz.skip();
                         }
                     }
                 }
-                List<String> extraStartWithAppArgs=new ArrayList<>();
+                List<String> extraStartWithAppArgs = new ArrayList<>();
 
-                if(def.getId().equalsShortId(session.getWorkspace().getApiId())){
+                if (def.getId().equalsShortId(session.getWorkspace().getApiId())) {
                     extraStartWithAppArgs.addAll(ncmdLine.toStringList());
                 }
                 String bootArgumentsString = ncmdLine
@@ -415,7 +413,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
         @Override
         public int exec() {
             NSession session = workspace.currentSession();
-            if (session.isDry()) {
+            if (executionContext.isDry()) {
                 NTexts text = NTexts.of();
                 List<String> cmdLine = new ArrayList<>();
                 cmdLine.add("embedded-java");
@@ -433,12 +431,11 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 return NExecutionException.SUCCESS;
             }
             //we must make a copy not to alter caller session
-            session = session.copy();
 
             if (session.out() != null) {
                 session.out().resetLine();
             }
-            DefaultNClassLoader classLoader = null;
+            DefaultNClassLoader classLoader;
             Throwable th = null;
             try {
                 classLoader = ((DefaultNExtensions) NExtensions.of()).getModel().getNutsURLClassLoader(
@@ -456,14 +453,21 @@ public class JavaExecutorComponent implements NExecutorComponent {
                     }
                 }
                 Class<?> cls = Class.forName(joptions.getMainClass(), true, classLoader);
-                new ClassloaderAwareRunnableImpl(def.getId(), classLoader, cls, session, joptions, executionContext).runAndWaitFor();
-                return NExecutionException.SUCCESS;
-            } catch (InvocationTargetException e) {
-                th = e.getTargetException();
-            } catch (MalformedURLException | NoSuchMethodException | SecurityException
-                     | IllegalAccessException | IllegalArgumentException
-                     | ClassNotFoundException e) {
-                th = e;
+                th = session.copy().callWith(() -> {
+                    Throwable th2 = null;
+                    try {
+                        new ClassloaderAwareRunnableImpl(def.getId(), classLoader, cls, session, joptions, executionContext).runAndWaitFor();
+                    } catch (InvocationTargetException e) {
+                        th2 = e.getTargetException();
+                    } catch (MalformedURLException | NoSuchMethodException | SecurityException
+                             | IllegalAccessException | IllegalArgumentException
+                             | ClassNotFoundException e) {
+                        th2 = e;
+                    } catch (Throwable ex) {
+                        th2 = ex;
+                    }
+                    return th2;
+                });
             } catch (Throwable ex) {
                 th = ex;
             }

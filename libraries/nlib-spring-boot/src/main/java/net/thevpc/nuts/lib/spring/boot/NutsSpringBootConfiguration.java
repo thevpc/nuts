@@ -3,7 +3,7 @@ package net.thevpc.nuts.lib.spring.boot;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.io.NSessionTerminal;
+import net.thevpc.nuts.io.NTerminal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.CommandLineRunner;
@@ -14,8 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Configuration
 @ConditionalOnClass(Nuts.class)
@@ -26,23 +25,23 @@ public class NutsSpringBootConfiguration {
     private Environment env;
 
     @Bean
-    public NSessionTerminal nutsSessionTerminal(ApplicationArguments applicationArguments) {
+    public NTerminal nTerminal(ApplicationArguments applicationArguments) {
         return nutsSession(applicationArguments).getTerminal();
     }
 
     @Bean
-    public NPrintStream nutsOut(ApplicationArguments applicationArguments) {
+    public NPrintStream nOut(ApplicationArguments applicationArguments) {
         return nutsSession(applicationArguments).out();
     }
 
     @Bean
     public NWorkspace nutsWorkspace(ApplicationArguments applicationArguments) {
-        return nutsSession(applicationArguments).getWorkspace();
+        return Nuts.openInheritedWorkspace(resolveNutsArgs(), applicationArguments.getSourceArgs());
     }
 
     @Bean
     public NSession nutsSession(ApplicationArguments applicationArguments) {
-        return Nuts.openInheritedWorkspace(NCmdLine.parseDefault(env.getProperty("nuts.args")).get().toStringArray(), applicationArguments.getSourceArgs());
+        return nutsWorkspace(applicationArguments).currentSession();
     }
 
     @Bean
@@ -69,9 +68,16 @@ public class NutsSpringBootConfiguration {
     @Bean
     public CommandLineRunner nutsCommandLineRunner(ApplicationArguments applicationArguments) {
         return args -> NApplications.runApplication(nutsApplication(),
-                NCmdLine.parseDefault(env.getProperty("nuts.args")).get().toStringArray(),
+                resolveNutsArgs(),
                 applicationArguments.getSourceArgs()
-                );
+        );
+    }
+
+    private String[] resolveNutsArgs(){
+        List<String> args = NCmdLine.parseDefault(env.getProperty("nuts.args")).get().toStringList();
+        //always enable main instance in spring apps
+        args.add("--main-instance=true");
+        return args.toArray(new String[0]);
     }
 
 }

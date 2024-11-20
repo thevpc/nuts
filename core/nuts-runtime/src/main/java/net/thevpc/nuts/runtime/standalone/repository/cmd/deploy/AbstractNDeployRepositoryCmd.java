@@ -127,7 +127,7 @@ public abstract class AbstractNDeployRepositoryCmd extends NRepositoryCmdBase<ND
     protected void checkParameters() {
         NSession session = getRepo().getWorkspace().currentSession();
         getRepo().security().checkAllowed(NConstants.Permissions.DEPLOY, "deploy");
-        CoreNIdUtils.checkLongId(getId(), session);
+        CoreNIdUtils.checkLongId(getId());
         NAssert.requireNonNull(this.getContent(), "content");
         NAssert.requireNonNull(this.getDescriptor(), "descriptor");
         if (this.getId().getVersion().isReleaseVersion()

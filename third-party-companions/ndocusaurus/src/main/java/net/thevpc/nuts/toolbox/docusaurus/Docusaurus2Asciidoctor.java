@@ -32,7 +32,7 @@ public class Docusaurus2Asciidoctor {
     }
 
     public Docusaurus2Asciidoctor(File project, NSession session) {
-        this.project = new DocusaurusProject(project.getPath(),null,session);
+        this.project = new DocusaurusProject(project.getPath(),null);
     }
 
     public Path getPdfFile() {
@@ -40,7 +40,6 @@ public class Docusaurus2Asciidoctor {
     }
 
     public Path getAdocFile() {
-        NSession session = project.getSession();
         String asciiDoctorBaseFolder = getAsciiDoctorBaseFolder();
         String pdfOutput = project.getConfigAsciiDoctor()
                 .getObject("pdf")
@@ -98,9 +97,7 @@ public class Docusaurus2Asciidoctor {
     }
 
     public Adoc2PdfConfig getAdoc2PdfConfig() {
-        NSession session = project.getSession();
         Adoc2PdfConfig config = new Adoc2PdfConfig();
-        config.setSession(session);
         NObjectElement asciiDoctorConfig = project.getConfigAsciiDoctor();
         config.setBin(asciiDoctorConfig.getStringByPath("pdf","command","bin").get());
         config.setArgs(asciiDoctorConfig.getArrayByPath("pdf","command","args").get()
@@ -153,7 +150,6 @@ public class Docusaurus2Asciidoctor {
     }
 
     private String getAsciiDoctorBaseFolder() {
-        NSession session = project.getSession();
         String s = project.getConfigAsciiDoctor().getString("path").get();
         if (!new File(s).isAbsolute()) {
             s = project.getDocusaurusBaseFolder() + "/" + s;

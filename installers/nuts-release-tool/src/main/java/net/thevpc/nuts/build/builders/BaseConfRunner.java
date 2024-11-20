@@ -75,8 +75,8 @@ public class BaseConfRunner extends AbstractRunner {
         return false;
     }
 
-    public BaseConfRunner(NSession session) {
-        super(session);
+    public BaseConfRunner() {
+        super();
     }
 
     @Override

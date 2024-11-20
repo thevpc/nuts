@@ -66,7 +66,7 @@ public final class JavaExecutorOptions {
 //            }
             id = descriptor.getId();
         } else {
-            descriptor = NDescriptorUtils.getEffectiveDescriptor(def, workspace);
+            descriptor = NDescriptorUtils.getEffectiveDescriptor(def);
             if (!CoreNUtils.isEffectiveId(id)) {
                 id = descriptor.getId();
             }
@@ -211,9 +211,14 @@ public final class JavaExecutorOptions {
 
         List<NDefinition> nDefinitions = new ArrayList<>();
         NSearchCmd se = NSearchCmd.of();
+        NDependencyFilters dependencyFilters = NDependencyFilters.of();
+        NDependencyFilter defFilter = dependencyFilters.byScope(NDependencyScopePattern.RUN)
+                .and(dependencyFilters.byOptional(false));
         if (tempId) {
             for (NDependency dependency : descriptor.getDependencies()) {
-                se.addId(dependency.toId());
+                if(defFilter.acceptDependency(null,dependency)) {
+                    se.addId(dependency.toId());
+                }
             }
         } else {
             se.addId(id);
@@ -229,7 +234,7 @@ public final class JavaExecutorOptions {
                             //
                             .setOptional(false)
                             .addScope(NDependencyScopePattern.RUN)
-                            .setDependencyFilter(NDependencyFilters.of().byRunnable())
+                            .setDependencyFilter(dependencyFilters.byRunnable())
                             //
                             .getResultDefinitions().toList()
             );

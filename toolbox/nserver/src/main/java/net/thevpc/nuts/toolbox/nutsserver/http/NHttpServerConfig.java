@@ -27,6 +27,7 @@
 package net.thevpc.nuts.toolbox.nutsserver.http;
 
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.toolbox.nutsserver.ServerConfig;
 
 import java.net.InetAddress;
@@ -51,9 +52,9 @@ public final class NHttpServerConfig extends ServerConfig {
     private boolean tls;
     private byte[] sslKeystoreCertificate;
     private char[] sslKeystorePassphrase;
-    private Map<String, NSession> workspaces = new HashMap<>();
+    private Map<String, NWorkspace> workspaces = new HashMap<>();
 
-    public NHttpServerConfig setWorkspaces(Map<String, NSession> workspaces) {
+    public NHttpServerConfig setWorkspaces(Map<String, NWorkspace> workspaces) {
         this.workspaces = workspaces;
         return this;
     }
@@ -67,7 +68,7 @@ public final class NHttpServerConfig extends ServerConfig {
         return this;
     }
 
-    public Map<String, NSession> getWorkspaces() {
+    public Map<String, NWorkspace> getWorkspaces() {
         return workspaces;
     }
 

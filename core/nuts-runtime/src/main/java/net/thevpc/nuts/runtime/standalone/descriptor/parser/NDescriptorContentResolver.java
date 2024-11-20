@@ -21,16 +21,15 @@ public class NDescriptorContentResolver {
      * @param localPath    localPath
      * @param parseOptions may include --all-mains to force lookup of all main
      *                     classes if available
-     * @param workspace      workspace
      * @return descriptor
      */
-    public static NDescriptor resolveNutsDescriptorFromFileContent(Path localPath, List<String> parseOptions, NWorkspace workspace) {
+    public static NDescriptor resolveNutsDescriptorFromFileContent(Path localPath, List<String> parseOptions) {
         if (parseOptions == null) {
             parseOptions = new ArrayList<>();
         }
         if (localPath != null) {
             String fileExtension = CoreIOUtils.getFileExtension(localPath.getFileName().toString());
-            NDescriptorContentParserContext ctx = new DefaultNDescriptorContentParserContext(workspace.currentSession(),
+            NDescriptorContentParserContext ctx = new DefaultNDescriptorContentParserContext(
                     localPath, fileExtension, null, parseOptions);
             List<NDescriptorContentParserComponent> allParsers = NExtensions.of()
                     .createComponents(NDescriptorContentParserComponent.class, ctx);
@@ -51,7 +50,7 @@ public class NDescriptorContentResolver {
                         if (!desc.isBlank()) {
                             return desc;
                         }
-                        return NDescriptorUtils.checkDescriptor(desc, workspace);
+                        return NDescriptorUtils.checkDescriptor(desc);
                     }
                 }
             }

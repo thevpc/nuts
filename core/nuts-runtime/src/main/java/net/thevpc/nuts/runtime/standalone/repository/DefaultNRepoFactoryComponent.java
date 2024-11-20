@@ -53,7 +53,6 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
         if (criteria == null) {
             return NConstants.Support.NO_SUPPORT;
         }
-        NSession session = criteria.getSession();
         NRepositoryConfig r = criteria.getConstraints(NRepositoryConfig.class);
         if (r != null) {
             String type = NRepositoryUtils.getRepoType(r);
@@ -79,18 +78,18 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
         if (!NConfigs.of().isSystemWorkspace()) {
             all.add(NRepositorySelectorHelper.createRepositoryOptions(
                     NRepositoryLocation.of("system", NRepositoryDB.of()).get(),
-                    true, session));
+                    true));
         }
         all.add(NRepositorySelectorHelper.createRepositoryOptions(
                 NRepositoryLocation.of("nuts-public", NRepositoryDB.of()).get(),
-                true, session));
+                true));
         if(session.isPreviewRepo()){
             all.add(NRepositorySelectorHelper.createRepositoryOptions(
                     NRepositoryLocation.of("preview", NRepositoryDB.of()).get(),
-                    true, session));
+                    true));
             all.add(NRepositorySelectorHelper.createRepositoryOptions(
                     NRepositoryLocation.of("dev", NRepositoryDB.of()).get(),
-                    true, session));
+                    true));
         }
         return all;
     }

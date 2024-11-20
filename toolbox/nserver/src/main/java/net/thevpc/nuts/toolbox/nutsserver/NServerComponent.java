@@ -25,7 +25,6 @@
 */
 package net.thevpc.nuts.toolbox.nutsserver;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
@@ -37,12 +36,8 @@ import net.thevpc.nuts.spi.NScopeType;
 public interface NServerComponent extends NComponent {
 
     /**
-     *
-     * @param session invoker workspace session. Note that a workspace may run a
-     * server on another workspace (because server implementation may be
-     * workspace dependent
      * @param config server configuration
      * @return started server instance
      */
-    NServer start(NSession session, ServerConfig config);
+    NServer start(ServerConfig config);
 }

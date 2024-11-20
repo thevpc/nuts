@@ -26,10 +26,12 @@
  */
 package net.thevpc.nuts.toolbox.nsh.test;
 
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.toolbox.nsh.nshell.NShell;
 import net.thevpc.nuts.toolbox.nsh.nshell.NShellConfiguration;
 import net.thevpc.nuts.toolbox.nsh.util.MemResult;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -38,10 +40,14 @@ import org.junit.jupiter.api.Test;
  */
 public class TestCommands {
 
+    @BeforeAll
+    static void openWorkspace(){
+        TestUtils.openNewTestWorkspace("--verbose");
+    }
+
     @Test
     public void testDirname() {
         NShell c = new NShell(new NShellConfiguration()
-                .setSession(TestUtils.openNewTestWorkspace("--verbose"))
                 .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)
                 .setArgs()
                 );
@@ -53,10 +59,10 @@ public class TestCommands {
                         + "/", r.out().trim());
     }
 
+
     @Test
     public void testBasename() {
         NShell c = new NShell(new NShellConfiguration()
-                .setSession(TestUtils.openNewTestWorkspace("--verbose"))
                 .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)
                 .setArgs()
         );
@@ -71,7 +77,6 @@ public class TestCommands {
     @Test
     public void testEnv() {
         NShell c = new NShell(new NShellConfiguration()
-                .setSession(TestUtils.openNewTestWorkspace("--verbose"))
                 .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)
                 .setArgs()
         );
@@ -88,7 +93,7 @@ public class TestCommands {
     @Test
     public void testCheck() {
         NShell c = new NShell(
-                new NShellConfiguration().setSession(TestUtils.openNewTestWorkspace())
+                new NShellConfiguration()
                         .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)
                         .setArgs()
         );

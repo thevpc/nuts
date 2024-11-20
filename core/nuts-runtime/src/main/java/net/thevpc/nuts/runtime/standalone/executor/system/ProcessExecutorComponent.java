@@ -42,7 +42,6 @@ import java.util.*;
 public class ProcessExecutorComponent implements NExecutorComponent {
 
     public static NId ID;
-    NSession session;
 
     @Override
     public NId getId() {
@@ -51,7 +50,6 @@ public class ProcessExecutorComponent implements NExecutorComponent {
 
     @Override
     public int getSupportLevel(NSupportLevelContext nutsDefinition) {
-        this.session =nutsDefinition.getSession();
         if(ID==null){
             ID= NId.of("net.thevpc.nuts.exec:exec-native").get();
         }
@@ -105,7 +103,7 @@ public class ProcessExecutorComponent implements NExecutorComponent {
                 executionContext.getIn(), executionContext.getOut(), executionContext.getErr(),
                 executionContext.getRunAs(),
                 executionContext.getExecutorOptions().toArray(new String[0]),
-                executionContext.getSession()
+                executionContext.isDry(), executionContext.getSession()
         );
     }
 }

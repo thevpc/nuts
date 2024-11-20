@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.security.util;
 
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.ByteArrayInputStream;
@@ -23,10 +22,8 @@ public class CoreDigestHelper {
     private final MessageDigest md;
     private boolean collected;
     private String collectedString;
-    private NSession session;
 
-    public CoreDigestHelper(NSession session) {
-        this.session=session;
+    public CoreDigestHelper() {
         try {
             md = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {

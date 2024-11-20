@@ -31,7 +31,6 @@ import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nutsserver.*;
-import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 
@@ -56,9 +55,10 @@ public class NAdminServerComponent implements NServerComponent {
         return (c == null || c instanceof AdminServerConfig) ? NConstants.Support.DEFAULT_SUPPORT : NConstants.Support.NO_SUPPORT;
     }
 
-    public NServer start(NSession session, ServerConfig config) {
+    public NServer start(ServerConfig config) {
+        NWorkspace ws = NWorkspace.of().get();
+        NSession session = ws.currentSession();
         AdminServerConfig httpConfig = (AdminServerConfig) config;
-        NAssert.requireSession(session);
         String serverId = httpConfig.getServerId();
         InetAddress address = httpConfig.getAddress();
         int port = httpConfig.getPort();

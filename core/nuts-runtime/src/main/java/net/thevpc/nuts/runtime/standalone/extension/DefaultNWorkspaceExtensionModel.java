@@ -13,14 +13,14 @@ import net.thevpc.nuts.ext.NExtensionAlreadyRegisteredException;
 import net.thevpc.nuts.ext.NExtensionInformation;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NServiceLoader;
-import net.thevpc.nuts.io.NSessionTerminal;
+import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NClassLoaderUtils;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NFormattedPrintStream;
-import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNSessionTerminalFromSystem;
+import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNTerminalFromSystem;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.lib.common.collections.ListMap;
@@ -67,7 +67,7 @@ public class DefaultNWorkspaceExtensionModel {
                     //                    NutsPrintStreamFormattedNull.class,
                     NFormattedPrintStream.class,
                     NSystemTerminalBase.class,
-                    NSessionTerminal.class,
+                    NTerminal.class,
                     NDescriptorContentParserComponent.class,
                     NExecutorComponent.class,
                     NInstallerComponent.class,
@@ -564,7 +564,7 @@ public class DefaultNWorkspaceExtensionModel {
         if (session.getTerminal() != null) {
             spec.setProperty("ignoreClass", session.getTerminal().getClass());
         }
-        NSessionTerminal newTerminal = createTerminal(spec);
+        NTerminal newTerminal = createTerminal(spec);
         if (newTerminal != null) {
             _LOGOP().level(Level.FINE).verb(NLogVerb.UPDATE)
                     .log(NMsg.ofJ("extension {0} changed Terminal configuration. Reloading Session Terminal", id));
@@ -663,12 +663,12 @@ public class DefaultNWorkspaceExtensionModel {
 //        }
 //        throw new ClassCastException(NutsComponent.class.getName());
 //    }
-    public NSessionTerminal createTerminal(NTerminalSpec spec) {
+    public NTerminal createTerminal(NTerminalSpec spec) {
         NSystemTerminalBase termb = createSupported(NSystemTerminalBase.class, spec).get();
         if (spec != null && spec.get("ignoreClass") != null && spec.get("ignoreClass").equals(termb.getClass())) {
             return null;
         }
-        return new DefaultNSessionTerminalFromSystem(workspace, termb);
+        return new DefaultNTerminalFromSystem(workspace, termb);
     }
 
     //@Override

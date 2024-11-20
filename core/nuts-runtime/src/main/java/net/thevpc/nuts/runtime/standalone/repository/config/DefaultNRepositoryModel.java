@@ -324,7 +324,7 @@ public class DefaultNRepositoryModel {
     public NRepository addRepository(String repositoryNamedUrl) {
         NSession session = workspace.currentSession();
         NRepositoryLocation r = NRepositoryLocation.of(repositoryNamedUrl, NRepositoryDB.of()).get();
-        NAddRepositoryOptions options = NRepositorySelectorHelper.createRepositoryOptions(r, true, session);
+        NAddRepositoryOptions options = NRepositorySelectorHelper.createRepositoryOptions(r, true);
         return addRepository(options);
     }
 

@@ -67,7 +67,7 @@ public class Test06_UpdateTest {
         String rt = NConstants.Ids.NUTS_RUNTIME;
     }
 
-    private void prepareCustomUpdateRepository(boolean implOnly, Data data, NSession session) {
+    private void prepareCustomUpdateRepository(boolean implOnly, Data data) {
         TestUtils.println("\n------------------------------------------");
 //        uws.config().save();
         //NutsRepository updateRepo1 = uws.config().getRepository("local", session);
@@ -77,7 +77,7 @@ public class Test06_UpdateTest {
         data.apiFromTo = new FromTo(data.apiId1.getVersion().toString(), data.apiId2.getVersion().toString());
 
         if (!data.apiFromTo.isIdentity()) {
-            Path path = replaceAPIJar(data.apiDef1.getContent().flatMap(NPath::toPath).get(), data.apiFromTo, session);
+            Path path = replaceAPIJar(data.apiDef1.getContent().flatMap(NPath::toPath).get(), data.apiFromTo);
             NPath.of(path)
                     .copyTo(NPath.of(data.updateRepoPath).resolve(NIdUtils.resolveJarPath(data.apiId2)));
             data.apiDef1.getDescriptor().builder().setId(data.apiId2).build()
@@ -95,8 +95,8 @@ public class Test06_UpdateTest {
 
         if (!data.rtFromTo.isIdentity()) {
             replaceRuntimeJar(data.rtDef1.getContent().flatMap(NPath::toPath).get(), data.apiFromTo, data.rtFromTo,
-                    NPath.of(data.updateRepoPath).resolve(NIdUtils.resolveJarPath(data.rtId2)).toPath().get(),
-                    session);
+                    NPath.of(data.updateRepoPath).resolve(NIdUtils.resolveJarPath(data.rtId2)).toPath().get()
+            );
             data.rtDef1.getDescriptor()
                     .builder()
                     .setId(data.rtId2)
@@ -111,9 +111,9 @@ public class Test06_UpdateTest {
         }
     }
 
-    private NSession prepareWorkspaceToUpdate(boolean implOnly, Data data) {
+    private void prepareWorkspaceToUpdate(boolean implOnly, Data data) {
         TestUtils.println("\n------------------------------------------");
-        NSession session = TestUtils.openNewTestWorkspace(
+        TestUtils.openNewTestWorkspace(
                 "--standalone",
                 "--standalone-repositories",
                 "--yes",
@@ -150,16 +150,14 @@ public class Test06_UpdateTest {
         TestUtils.println(NSearchCmd.of().addId(data.api).getResultIds().toList());
         TestUtils.println(NSearchCmd.of().addId(data.rt).getResultIds().toList());
         TestUtils.println("========================");
-
-        return session;
     }
 
     private void testUpdate(boolean implOnly, String callerName) throws Exception {
 //        CoreIOUtils.delete(null, new File(baseFolder));
 //        final String workspacePath = baseFolder + "/" + callerName;
         Data data = new Data();
-        NSession session = prepareWorkspaceToUpdate(implOnly, data);
-        prepareCustomUpdateRepository(implOnly, data, session);
+        prepareWorkspaceToUpdate(implOnly, data);
+        prepareCustomUpdateRepository(implOnly, data);
 
         List<NId> foundApis = NSearchCmd.of().addId(data.api).getResultIds().toList();
         List<NId> foundRts = NSearchCmd.of().addId(data.rt).getResultIds().toList();
@@ -196,7 +194,7 @@ public class Test06_UpdateTest {
         NExecCmd ee = NExecCmd.of().setExecutionType(NExecutionType.SPAWN)
                 .addCommand(
                         "nuts#" + newApiVersion,
-                        "--workspace", session.getWorkspace().getLocation().toString(),
+                        "--workspace", NWorkspace.get().getLocation().toString(),
                         "--boot-version=" + newApiVersion,
                         "--bot",
                         "--color=never",
@@ -222,7 +220,7 @@ public class Test06_UpdateTest {
         Assertions.assertEquals(newRuntimeVersion, m.get("nuts-runtime-version"));
     }
 
-    private Path replaceAPIJar(Path p, FromTo api, NSession session) {
+    private Path replaceAPIJar(Path p, FromTo api) {
         try {
             Path zipFilePath = NPath.ofTempFile(".zip").toPath().get();
             Files.copy(p, zipFilePath, StandardCopyOption.REPLACE_EXISTING);
@@ -260,7 +258,7 @@ public class Test06_UpdateTest {
         }
     }
 
-    private Path replaceRuntimeJar(Path p, FromTo api, FromTo rt, Path to,NSession session) {
+    private Path replaceRuntimeJar(Path p, FromTo api, FromTo rt, Path to) {
         try {
             Path zipFilePath = NPath.ofTempFile(p.getFileName().toString()).toPath().get();
             Files.copy(p, zipFilePath, StandardCopyOption.REPLACE_EXISTING);

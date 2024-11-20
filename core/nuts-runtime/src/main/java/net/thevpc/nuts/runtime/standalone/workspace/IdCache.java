@@ -32,7 +32,7 @@ class IdCache {
         this.workspace = workspace;
     }
 
-    public IdCache(NId id, URL url, ClassLoader bootClassLoader, NLog LOG, Class<?>[] extensionPoints, NSession session, NWorkspace workspace) {
+    public IdCache(NId id, URL url, ClassLoader bootClassLoader, NLog LOG, Class<?>[] extensionPoints, NWorkspace workspace) {
         NAssert.requireNonBlank(extensionPoints, "extensionPoints");
         if((id==null)!=(url==null)){
             NAssert.requireNonNull(id,"id");
@@ -47,14 +47,14 @@ class IdCache {
         NRef<Boolean> logStart = NRef.of(false);
         int count = 0;
         if (url != null) {
-            for (String n : CoreServiceUtils.loadZipServiceClassNames(url, serviceClass, session)) {
-                count += _addOne(n, bootClassLoader, extensionPoints, lop, session, logStart, serviceClass);
+            for (String n : CoreServiceUtils.loadZipServiceClassNames(url, serviceClass)) {
+                count += _addOne(n, bootClassLoader, extensionPoints, lop, logStart, serviceClass);
             }
             lop.verb(NLogVerb.INFO).level(Level.FINE)
                     .log(NMsg.ofC("found %s extensions from %s (id=%s) (classloader %s). looking for %s", count, url, id, bootClassLoader, extensionPointStrings));
         } else {
-            for (String n : CoreServiceUtils.loadZipServiceClassNamesFromClassLoader(bootClassLoader, serviceClass, session)) {
-                count += _addOne(n, bootClassLoader, extensionPoints, lop, session, logStart, serviceClass);
+            for (String n : CoreServiceUtils.loadZipServiceClassNamesFromClassLoader(bootClassLoader, serviceClass)) {
+                count += _addOne(n, bootClassLoader, extensionPoints, lop, logStart, serviceClass);
             }
             lop.verb(NLogVerb.INFO).level(Level.FINE)
                     .log(NMsg.ofC("found %s extensions from classloader %s (id=%s) . looking for %s", count, bootClassLoader, id, extensionPointStrings));
@@ -62,7 +62,6 @@ class IdCache {
     }
 
     private int _addOne(String className, ClassLoader bootClassLoader, Class<?>[] extensionPoints, NLogOp lop,
-                        NSession session,
                         NRef<Boolean> logStart,
                         Class<?> serviceClass
     ) {
@@ -105,11 +104,11 @@ class IdCache {
     private NSession validLogSession(NSession session) {
         if (session == null) {
             //this is a bug
-            return NSessionUtils.defaultSession(workspace);
+            return workspace.currentSession();
         }
         if (session.getTerminal() == null) {
             //chances are that we are creating the session or the session's Terminal
-            return NSessionUtils.defaultSession(workspace);
+            return workspace.currentSession();
         }
         return session;
     }

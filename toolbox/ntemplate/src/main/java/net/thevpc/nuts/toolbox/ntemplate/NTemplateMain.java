@@ -20,8 +20,7 @@ public class NTemplateMain implements NApplication {
 
     @Override
     public void run() {
-        NSession session = NSession.of().get();
-        session.runAppCmdLine(new NCmdLineRunner() {
+        NSession.get().runAppCmdLine(new NCmdLineRunner() {
 
             @Override
             public boolean nextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
@@ -60,7 +59,7 @@ public class NTemplateMain implements NApplication {
 
             @Override
             public void run(NCmdLine cmdLine, NCmdLineContext context) {
-                new NTemplateProject(config,session);
+                new NTemplateProject(config);
             }
         });
     }

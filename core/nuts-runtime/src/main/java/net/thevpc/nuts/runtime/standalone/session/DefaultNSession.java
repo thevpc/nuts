@@ -28,20 +28,19 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.*;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.format.NIterableFormat;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.io.NSessionTerminal;
+import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.log.NLogUtils;
+import net.thevpc.nuts.reserved.NWorkspaceScopes;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineUtils;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNArrayElementBuilder;
-import net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions;
 import net.thevpc.nuts.runtime.standalone.io.progress.ProgressOptions;
-import net.thevpc.nuts.runtime.standalone.io.terminal.AbstractNSessionTerminal;
+import net.thevpc.nuts.runtime.standalone.io.terminal.AbstractNTerminal;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.lib.common.collections.NPropertiesHolder;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
@@ -72,7 +71,7 @@ public class DefaultNSession implements Cloneable, NSession {
 //    protected NutsIterableOutput iterFormat = null;
     protected NWorkspace workspace = null;
     protected List<String> outputFormatOptions = new ArrayList<>();
-    private NSessionTerminal terminal;
+    private NTerminal terminal;
     private NPropertiesHolder sharedProperties = new NPropertiesHolder();
     private NPropertiesHolder refProperties = new NPropertiesHolder();
     private Map<Class, LinkedHashSet<NListener>> listeners = new HashMap<>();
@@ -132,40 +131,44 @@ public class DefaultNSession implements Cloneable, NSession {
 
     @Override
     public void runWith(NRunnable runnable) {
-        if(runnable!=null){
-            Stack<NSession> nSessions = NWorkspaceExt.of(workspace).sessionScopes();
-            if (!nSessions.isEmpty()) {
-                NSession l = nSessions.peek();
-                if (l == this) {
-                    runnable.run();
-                    return;
+        if (runnable != null) {
+            NWorkspaceScopes.runWith0(workspace, () -> {
+                Stack<NSession> nSessions = NWorkspaceExt.of(workspace).sessionScopes();
+                if (!nSessions.isEmpty()) {
+                    NSession l = nSessions.peek();
+                    if (l == this) {
+                        runnable.run();
+                        return;
+                    }
                 }
-            }
-            try{
-                nSessions.push(this);
-                runnable.run();
-            }finally {
-                nSessions.pop();
-            }
+                try {
+                    nSessions.push(this);
+                    runnable.run();
+                } finally {
+                    nSessions.pop();
+                }
+            });
         }
     }
 
     @Override
     public <T> T callWith(NCallable<T> callable) {
-        if(callable!=null){
-            Stack<NSession> nSessions = NWorkspaceExt.of(workspace).sessionScopes();
-            if (!nSessions.isEmpty()) {
-                NSession l = nSessions.peek();
-                if (l == this) {
-                    return callable.call();
+        if (callable != null) {
+            return NWorkspaceScopes.callWith0(workspace,()->{
+                Stack<NSession> nSessions = NWorkspaceExt.of(workspace).sessionScopes();
+                if (!nSessions.isEmpty()) {
+                    NSession l = nSessions.peek();
+                    if (l == this) {
+                        return callable.call();
+                    }
                 }
-            }
-            try{
-                nSessions.push(this);
-                return callable.call();
-            }finally {
-                nSessions.pop();
-            }
+                try {
+                    nSessions.push(this);
+                    return callable.call();
+                } finally {
+                    nSessions.pop();
+                }
+            });
         }
         return null;
     }
@@ -458,8 +461,7 @@ public class DefaultNSession implements Cloneable, NSession {
                     return true;
                 }
                 case "-U":
-                case "--preview-repo":
-                {
+                case "--preview-repo": {
                     a = cmdLine.nextFlag().get();
                     if (active) {
                         setPreviewRepo(a.getBooleanValue().get());
@@ -850,7 +852,7 @@ public class DefaultNSession implements Cloneable, NSession {
     public NSession copy() {
         try {
             DefaultNSession cloned = (DefaultNSession) clone();
-            cloned.terminal = terminal == null ? null : NSessionTerminal.of(terminal);
+            cloned.terminal = terminal == null ? null : NTerminal.of(terminal);
             cloned.sharedProperties = sharedProperties == null ? null : sharedProperties.copy();
             cloned.refProperties = new NPropertiesHolder();
             cloned.outputFormatOptions = outputFormatOptions == null ? null : new ArrayList<>(outputFormatOptions);
@@ -888,7 +890,7 @@ public class DefaultNSession implements Cloneable, NSession {
     @Override
     public NSession setAll(NSession other) {
         //boolean withDefaults = false;
-        this.terminal = other.getTerminal() == null ? null : NSessionTerminal.of(terminal);
+        this.terminal = other.getTerminal() == null ? null : NTerminal.of(terminal);
         this.terminal = other.getTerminal();
         this.sharedProperties.setProperties(other.getProperties(NScopeType.SHARED_SESSION));
         this.listeners.clear();
@@ -1229,15 +1231,15 @@ public class DefaultNSession implements Cloneable, NSession {
     }
 
     @Override
-    public NSessionTerminal getTerminal() {
+    public NTerminal getTerminal() {
         return terminal;
     }
 
     @Override
-    public NSession setTerminal(NSessionTerminal terminal) {
+    public NSession setTerminal(NTerminal terminal) {
         this.terminal = terminal;
         if (terminal != null) {
-            AbstractNSessionTerminal a = (AbstractNSessionTerminal) terminal;
+            AbstractNTerminal a = (AbstractNTerminal) terminal;
             NPrintStream o = a.getOut();
         }
 //        this.out0 = (terminal.fout());
@@ -1307,7 +1309,7 @@ public class DefaultNSession implements Cloneable, NSession {
 
     @Override
     public NOptional<Instant> getExpireTime() {
-        return NOptional.ofNamed(expireTime,"expireTime");
+        return NOptional.ofNamed(expireTime, "expireTime");
     }
 
     @Override
@@ -1633,7 +1635,7 @@ public class DefaultNSession implements Cloneable, NSession {
     public String toString() {
         StringBuilder sb = new StringBuilder("NutsSession(");
         NWorkspace ws = getWorkspace();
-        sb.append(ws==null?"null":ws.getLocation());
+        sb.append(ws == null ? "null" : ws.getLocation());
         if (sharedProperties.size() > 0) {
             sb.append(", properties=").append(sharedProperties);
         }
@@ -1934,7 +1936,7 @@ public class DefaultNSession implements Cloneable, NSession {
             if (wordIndex < 0) {
                 wordIndex = args.size();
             }
-            this.appAutoComplete = new AppCmdLineAutoComplete(this, args, wordIndex, out());
+            this.appAutoComplete = new AppCmdLineAutoComplete(args, wordIndex, out());
         } else {
             this.appAutoComplete = null;
         }
@@ -2220,11 +2222,9 @@ public class DefaultNSession implements Cloneable, NSession {
 
         private final ArrayList<String> words;
         private final NPrintStream out0;
-        private final NSession session;
         private final int wordIndex;
 
-        public AppCmdLineAutoComplete(NSession session, List<String> args, int wordIndex, NPrintStream out0) {
-            this.session = session;
+        public AppCmdLineAutoComplete(List<String> args, int wordIndex, NPrintStream out0) {
             words = new ArrayList<>(args);
             this.wordIndex = wordIndex;
             this.out0 = out0;

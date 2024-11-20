@@ -89,7 +89,7 @@ public class DefaultNBootModel implements NBootModel {
         workspaceModel.name = Paths.get(bOptions.getWorkspace().get()).getFileName().toString();
         DefaultSystemTerminal sys = new DefaultSystemTerminal(workspace, new DefaultNSystemTerminalBaseBoot(this));
         this.systemTerminal = new NSystemTerminalRef(getWorkspace(), NutsSystemTerminal_of_NutsSystemTerminalBase(sys));
-        this.bootSession.setTerminal(new DefaultNSessionTerminalFromSystem(workspace, this.systemTerminal));
+        this.bootSession.setTerminal(new DefaultNTerminalFromSystem(workspace, this.systemTerminal));
         this.nullOut = NullNPrintStream.NULL_NPRINTSTREAM;
         this.nullOutputStream = NullOutputStream.INSTANCE;
     }

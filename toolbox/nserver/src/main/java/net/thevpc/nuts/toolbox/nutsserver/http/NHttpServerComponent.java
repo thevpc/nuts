@@ -28,6 +28,7 @@ package net.thevpc.nuts.toolbox.nutsserver.http;
 
 import com.sun.net.httpserver.*;
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTextStyle;
@@ -39,6 +40,7 @@ import net.thevpc.nuts.toolbox.nutsserver.ServerConfig;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NStringUtils;
 
 import javax.net.ssl.*;
 import java.io.*;
@@ -104,12 +106,14 @@ public class NHttpServerComponent implements NServerComponent {
     }
 
     @Override
-    public NServer start(NSession invokerSession, ServerConfig config) {
+    public NServer start(ServerConfig config) {
+        NWorkspace ws = NWorkspace.of().get();
+        NSession invokerSession = ws.currentSession();
         NHttpServerConfig httpConfig = (NHttpServerConfig) config;
-        Map<String, NSession> workspaces = httpConfig.getWorkspaces();
+        Map<String, NWorkspace> workspaces = httpConfig.getWorkspaces();
         NAssert.requireSession(invokerSession);
         if (workspaces.isEmpty()) {
-            workspaces.put("", invokerSession);
+            workspaces.put("", invokerSession.getWorkspace());
         }
         String serverId = httpConfig.getServerId();
         InetAddress address = httpConfig.getAddress();
@@ -226,7 +230,7 @@ public class NHttpServerComponent implements NServerComponent {
 
         server.createContext("/", new HttpHandler() {
             @Override
-            public void handle(final HttpExchange httpExchange) throws IOException {
+            public void handle(final HttpExchange httpExchange) {
 
                 facade.execute(new EmbeddedNHttpServletFacadeContext(httpExchange));
             }
@@ -241,23 +245,25 @@ public class NHttpServerComponent implements NServerComponent {
                 inetSocketAddress));
         if (workspaces.size() == 1) {
             out.print("Serving workspace : ");
-            for (Map.Entry<String, NSession> entry : workspaces.entrySet()) {
+            for (Map.Entry<String, NWorkspace> entry : workspaces.entrySet()) {
                 String k = entry.getKey();
-                NSession ksession = entry.getValue();
-                if (k.equals("")) {
-                    out.println(NLocations.of().getWorkspaceLocation());
-                } else {
-                    out.println((NMsg.ofC("%s : %s", k, NLocations.of().getWorkspaceLocation())));
-                }
+                NWorkspace ws2 = entry.getValue();
+                ws2.runWith(() -> {
+                    if ("".equals(k)) {
+                        out.println(NLocations.of().getWorkspaceLocation());
+                    } else {
+                        out.println((NMsg.ofC("%s : %s", k, NLocations.of().getWorkspaceLocation())));
+                    }
+                });
             }
         } else {
             out.println("Serving workspaces:");
-            for (Map.Entry<String, NSession> entry : workspaces.entrySet()) {
-                String k = entry.getKey();
-                if (k.equals("")) {
-                    k = "<default>";
-                }
-                out.println(NMsg.ofC("\t%s : %s", k, NLocations.of().getWorkspaceLocation()));
+            for (Map.Entry<String, NWorkspace> entry : workspaces.entrySet()) {
+                String k = NStringUtils.firstNonBlank(entry.getKey(), "<default>");
+                NWorkspace ws2 = entry.getValue();
+                ws2.runWith(() -> {
+                    out.println(NMsg.ofC("\t%s : %s", k, NLocations.of().getWorkspaceLocation()));
+                });
             }
         }
         final String finalServerId = serverId;
@@ -303,17 +309,17 @@ public class NHttpServerComponent implements NServerComponent {
         }
 
         @Override
-        public void sendResponseBytes(int code, byte[] bytes) throws IOException {
+        public void sendResponseBytes(int code, byte[] bytes) {
             super.sendResponseBytes(code, bytes);
         }
 
         @Override
-        public String getRequestMethod() throws IOException {
+        public String getRequestMethod() {
             return httpExchange.getRequestMethod();
         }
 
         @Override
-        public URI getRequestURI() throws IOException {
+        public URI getRequestURI() {
             return httpExchange.getRequestURI();
         }
 
@@ -323,37 +329,45 @@ public class NHttpServerComponent implements NServerComponent {
         }
 
         @Override
-        public void sendError(int code, String msg) throws IOException {
+        public void sendError(int code, String msg) {
             if (msg == null) {
                 msg = "error";
             }
             byte[] bytes = msg.getBytes();
-            httpExchange.sendResponseHeaders(code, bytes.length);
-            httpExchange.getResponseBody().write(bytes);
+            try {
+                httpExchange.sendResponseHeaders(code, bytes.length);
+                httpExchange.getResponseBody().write(bytes);
+            } catch (IOException ex) {
+                throw new NIOException(ex);
+            }
         }
 
         @Override
-        public void sendResponseHeaders(int code, long length) throws IOException {
-            httpExchange.sendResponseHeaders(code, length);
+        public void sendResponseHeaders(int code, long length) {
+            try {
+                httpExchange.sendResponseHeaders(code, length);
+            } catch (IOException ex) {
+                throw new NIOException(ex);
+            }
         }
 
         @Override
-        public Set<String> getRequestHeaderKeys(String header) throws IOException {
+        public Set<String> getRequestHeaderKeys(String header) {
             return httpExchange.getRequestHeaders().keySet();
         }
 
         @Override
-        public String getRequestHeaderFirstValue(String header) throws IOException {
+        public String getRequestHeaderFirstValue(String header) {
             return httpExchange.getRequestHeaders().getFirst(header);
         }
 
         @Override
-        public List<String> getRequestHeaderAllValues(String header) throws IOException {
+        public List<String> getRequestHeaderAllValues(String header) {
             return httpExchange.getRequestHeaders().get(header);
         }
 
         @Override
-        public InputStream getRequestBody() throws IOException {
+        public InputStream getRequestBody() {
             return httpExchange.getRequestBody();
         }
 
@@ -362,7 +376,7 @@ public class NHttpServerComponent implements NServerComponent {
         }
 
         @Override
-        public void addResponseHeader(String name, String value) throws IOException {
+        public void addResponseHeader(String name, String value) {
             httpExchange.getResponseHeaders().add(name, value);
         }
     }

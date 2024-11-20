@@ -4,6 +4,18 @@ import java.util.Arrays;
 import java.util.List;
 
 public class NUtils {
+
+    public static boolean asBoolean(Boolean value) {
+        return asBooleanOr(value, false);
+    }
+
+    public static boolean asBooleanOr(Boolean value, boolean defaultValue) {
+        if (value == null) {
+            return defaultValue;
+        }
+        return value.booleanValue();
+    }
+
     public static <T> T firstNonNull(T a, T b) {
         if (a != null) {
             return a;

@@ -134,12 +134,11 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         NWorkspaceExt dws = NWorkspaceExt.of(session);
 //        NutsWorkspaceCurrentConfig actualBootConfig = ws.config().current();
 //        NutsWorkspaceCurrentConfig jsonBootConfig = getConfigManager().getBootContext();
-        NSession session2 = NWorkspaceUtils.of(workspace).validateSession(session);
         Map<String, NUpdateResult> allUpdates = new LinkedHashMap<>();
         Map<String, NUpdateResult> extUpdates = new LinkedHashMap<>();
         Map<String, NUpdateResult> regularUpdates = new HashMap<>();
         NUpdateResult apiUpdate = null;
-        NVersion bootVersion0 = session2.getWorkspace().getApiVersion();
+        NVersion bootVersion0 = session.getWorkspace().getApiVersion();
         NVersion bootVersion = bootVersion0;
         if (!(this.getApiVersion() == null || this.getApiVersion().isBlank())) {
             bootVersion = this.getApiVersion();
@@ -157,7 +156,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         NUpdateResult runtimeUpdate = null;
         if (this.isRuntime()) {
             if (dws.requiresRuntimeExtension()) {
-                runtimeUpdate = checkCoreUpdate(NId.of(session2.getWorkspace().getRuntimeId().getShortName()).get(),
+                runtimeUpdate = checkCoreUpdate(NId.of(session.getWorkspace().getRuntimeId().getShortName()).get(),
                         apiUpdate != null && apiUpdate.getAvailable() != null && apiUpdate.getAvailable().getId() != null ? apiUpdate.getAvailable().getId().getVersion()
                                 : bootVersion, Type.RUNTIME, now);
                 if (runtimeUpdate.isUpdatable()) {

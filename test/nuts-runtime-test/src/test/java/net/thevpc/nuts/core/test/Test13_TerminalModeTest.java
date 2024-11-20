@@ -21,11 +21,9 @@ import org.junit.jupiter.api.Test;
  * @author thevpc
  */
 public class Test13_TerminalModeTest {
-    static NSession session;
-
     @BeforeAll
     public static void init() {
-        session = TestUtils.openNewMinTestWorkspace();
+        TestUtils.openNewMinTestWorkspace();
     }
 
 
@@ -38,27 +36,27 @@ public class Test13_TerminalModeTest {
 //        testMode(session,NutsTerminalMode.INHERITED,NutsTerminalMode.ANSI,Result.FAIL);
 
 //        testMode(session,NutsTerminalMode.FORMATTED,NutsTerminalMode.INHERITED,Result.SUCCESS);
-        testMode(session, NTerminalMode.FORMATTED, NTerminalMode.FORMATTED,Result.SUCCESS);
-        testMode(session, NTerminalMode.FORMATTED, NTerminalMode.FILTERED,Result.SUCCESS);
-        testMode(session, NTerminalMode.FORMATTED, NTerminalMode.ANSI,Result.FAIL);
+        testMode(NTerminalMode.FORMATTED, NTerminalMode.FORMATTED,Result.SUCCESS);
+        testMode(NTerminalMode.FORMATTED, NTerminalMode.FILTERED,Result.SUCCESS);
+        testMode(NTerminalMode.FORMATTED, NTerminalMode.ANSI,Result.FAIL);
 
 //        testMode(session,NutsTerminalMode.FILTERED,NutsTerminalMode.INHERITED,Result.SUCCESS);
-        testMode(session, NTerminalMode.FILTERED, NTerminalMode.FORMATTED,Result.SUCCESS);
-        testMode(session, NTerminalMode.FILTERED, NTerminalMode.FILTERED,Result.SUCCESS);
-        testMode(session, NTerminalMode.FILTERED, NTerminalMode.ANSI,Result.FAIL);
+        testMode(NTerminalMode.FILTERED, NTerminalMode.FORMATTED,Result.SUCCESS);
+        testMode(NTerminalMode.FILTERED, NTerminalMode.FILTERED,Result.SUCCESS);
+        testMode(NTerminalMode.FILTERED, NTerminalMode.ANSI,Result.FAIL);
 
 //        testMode(session,NutsTerminalMode.ANSI,NutsTerminalMode.INHERITED,Result.FAIL);
-        testMode(session, NTerminalMode.ANSI, NTerminalMode.FORMATTED,Result.FAIL);
-        testMode(session, NTerminalMode.ANSI, NTerminalMode.FILTERED,Result.FAIL);
+        testMode(NTerminalMode.ANSI, NTerminalMode.FORMATTED,Result.FAIL);
+        testMode(NTerminalMode.ANSI, NTerminalMode.FILTERED,Result.FAIL);
         // How could we create in a save manner an ansi  sys terminal??
-        testMode(session, NTerminalMode.ANSI, NTerminalMode.ANSI,Result.FAIL);
+        testMode(NTerminalMode.ANSI, NTerminalMode.ANSI,Result.FAIL);
     }
     private enum Result{
         SUCCESS,
         FAIL
     }
 
-    public static void testMode(NSession session, NTerminalMode systemMode, NTerminalMode sessionMode, Result result) {
+    public static void testMode(NTerminalMode systemMode, NTerminalMode sessionMode, Result result) {
 
         if(sessionMode!=null) {
             if(result==Result.FAIL){
@@ -72,7 +70,7 @@ public class Test13_TerminalModeTest {
                                             +", sys-fixed="+(systemMode==null?"default":systemMode.id())
                                             +" ->"+sessionMode.id());
 
-                            NSessionTerminal terminal = NSessionTerminal.of();
+                            NTerminal terminal = NTerminal.of();
                             NPrintStream out = terminal.out().setTerminalMode(systemMode);
                             NTerminalMode initMode = out.getTerminalMode();
                             Assertions.assertEquals(systemMode,initMode);
@@ -85,7 +83,12 @@ public class Test13_TerminalModeTest {
 //        }
 
                             terminal.setOut(out.setTerminalMode(sessionMode));
-
+                            NTerminalMode newMode = terminal.getOut().getTerminalMode();
+                            TestUtils.println(
+                                    "sys-init="+(sysInitMode.getTerminalMode()==null?"default": sysInitMode.getTerminalMode().id())
+                                            +", sys-fixed="+(systemMode==null?"default":systemMode.id())
+                                            +" ->"+sessionMode.id()+"->"+newMode.id());
+                            Assertions.assertEquals(sessionMode,newMode);
                             TestUtils.print("      ");
                             out.print("{**aa");
                             out.print("aa**}");
@@ -97,7 +100,7 @@ public class Test13_TerminalModeTest {
             }else{
                 NSystemTerminal systemTerminal = NIO.of().getSystemTerminal();
                 NPrintStream sysInitMode = systemTerminal.out();
-                NSessionTerminal terminal = NSessionTerminal.of();
+                NTerminal terminal = NTerminal.of();
                 NPrintStream out = terminal.out().setTerminalMode(systemMode);
                 NTerminalMode initMode = out.getTerminalMode();
                 Assertions.assertEquals(systemMode,initMode);
@@ -121,6 +124,7 @@ public class Test13_TerminalModeTest {
     public void testBuilder(){
         NText c = NTexts.of().ofCode("java", "public static void main(String[] args){}")
                 .highlight();
+        NSession session = NSession.get();
         session.out().println(c);
 
         NText word_static = c.builder().substring(7, 13);

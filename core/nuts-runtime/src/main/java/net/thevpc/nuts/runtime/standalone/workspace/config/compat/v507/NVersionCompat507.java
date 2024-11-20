@@ -12,20 +12,20 @@ public class NVersionCompat507 extends AbstractNVersionCompat {
 
     public static final NVersion CONFIG_VERSION_507 = NVersion.of("5.0.7").get();
 
-    public NVersionCompat507(NSession session, NVersion apiVersion) {
-        super(session, apiVersion, 507);
+    public NVersionCompat507(NVersion apiVersion) {
+        super(apiVersion, 507);
     }
 
     @Override
-    public NWorkspaceConfigBoot parseConfig(byte[] bytes, NSession session) {
+    public NWorkspaceConfigBoot parseConfig(byte[] bytes) {
         return bytes==null?null: NElements.of().json().parse(bytes, NWorkspaceConfigBoot.class);
     }
 
     @Override
-    public NWorkspaceConfigApi parseApiConfig(NId nutsApiId, NSession session) {
+    public NWorkspaceConfigApi parseApiConfig(NId nutsApiId) {
         NPath path = NLocations.of().getStoreLocation(nutsApiId, NStoreType.CONF)
                 .resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
-        byte[] bytes = CompatUtils.readAllBytes(path,session);
+        byte[] bytes = CompatUtils.readAllBytes(path);
         NWorkspaceConfigApi c = bytes==null?null: NElements.of()
                 .json().parse(bytes, NWorkspaceConfigApi.class);
         // Removed test because we would have incoherence between ApiVersion and RuntimeVersion
@@ -37,32 +37,32 @@ public class NVersionCompat507 extends AbstractNVersionCompat {
     }
 
     @Override
-    public NWorkspaceConfigRuntime parseRuntimeConfig(NSession session) {
-        NPath path = NLocations.of().getStoreLocation(session.getWorkspace().getRuntimeId(), NStoreType.CONF)
+    public NWorkspaceConfigRuntime parseRuntimeConfig() {
+        NPath path = NLocations.of().getStoreLocation(NWorkspace.get().getRuntimeId(), NStoreType.CONF)
                 .resolve(NConstants.Files.RUNTIME_BOOT_CONFIG_FILE_NAME);
-        byte[] bytes = CompatUtils.readAllBytes(path,session);
+        byte[] bytes = CompatUtils.readAllBytes(path);
         NWorkspaceConfigRuntime c = bytes==null?null: NElements.of()
                 .json().parse(bytes, NWorkspaceConfigRuntime.class);
         return c;
     }
 
     @Override
-    public NWorkspaceConfigSecurity parseSecurityConfig(NId nutsApiId, NSession session) {
+    public NWorkspaceConfigSecurity parseSecurityConfig(NId nutsApiId) {
         NPath path = NLocations.of().getStoreLocation(nutsApiId
                 , NStoreType.CONF)
                 .resolve(CoreNConstants.Files.WORKSPACE_SECURITY_CONFIG_FILE_NAME);
-        byte[] bytes = CompatUtils.readAllBytes(path,session);
+        byte[] bytes = CompatUtils.readAllBytes(path);
         NWorkspaceConfigSecurity c = bytes==null?null: NElements.of()
                 .json().parse(bytes, NWorkspaceConfigSecurity.class);
         return c;
     }
 
     @Override
-    public NWorkspaceConfigMain parseMainConfig(NId nutsApiId, NSession session) {
+    public NWorkspaceConfigMain parseMainConfig(NId nutsApiId) {
         NPath path = NLocations.of().getStoreLocation(
                         nutsApiId, NStoreType.CONF)
                 .resolve(CoreNConstants.Files.WORKSPACE_MAIN_CONFIG_FILE_NAME);
-        byte[] bytes = CompatUtils.readAllBytes(path,session);
+        byte[] bytes = CompatUtils.readAllBytes(path);
         NWorkspaceConfigMain507 c = bytes==null?null: NElements.of()
                 .json().parse(bytes, NWorkspaceConfigMain507.class);
         if(c==null){

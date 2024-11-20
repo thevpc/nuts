@@ -64,7 +64,7 @@ public class NRepositoryHelper {
         return NSpeedQualifiers.max(speeds.toArray(new NSpeedQualifier[0]));
     }
 
-    public static int getSupportDeployLevel(NRepository repository, NRepositorySupportedAction supportedAction, NId id, NFetchMode mode, boolean transitive, NSession session) {
+    public static int getSupportDeployLevel(NRepository repository, NRepositorySupportedAction supportedAction, NId id, NFetchMode mode, boolean transitive) {
         if (repository instanceof NInstalledRepository) {
             return 0;
         }
@@ -79,7 +79,7 @@ public class NRepositoryHelper {
         if (transitive) {
             for (NRepository remote : repository.config()
                     .getMirrors()) {
-                int r = getSupportDeployLevel(remote, supportedAction, id, mode, transitive, session);
+                int r = getSupportDeployLevel(remote, supportedAction, id, mode, transitive);
                 if (r > 0 && r > result) {
                     result = r;
                 }

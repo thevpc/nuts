@@ -7,13 +7,11 @@ import java.util.Map;
 
 public class NTemplateProject {
     private TemplateConfig config;
-    private NSession session;
     private NFileTemplater fileTemplater;
 
-    public NTemplateProject(TemplateConfig config, NSession session) {
+    public NTemplateProject(TemplateConfig config) {
         this.config=config;
-        this.session=session;
-        this.fileTemplater = new NFileTemplater(session);
+        this.fileTemplater = new NFileTemplater();
     }
 
     public void setVars(Map<String,Object> vars) {

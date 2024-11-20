@@ -58,22 +58,23 @@ public class DefaultNExecutionContext implements NExecutionContext {
     private NExecInput in;
     private NExecOutput out;
     private NExecOutput err;
+    private boolean dry;
 
     public DefaultNExecutionContext(NDefinition definition,
                                     List<String> arguments, List<String> executorArgs, List<String> workspaceOptions, Map<String, String> env,
-                                    NPath cwd, NSession session, NWorkspace workspace, boolean failFast,
+                                    NPath cwd, NWorkspace workspace, boolean failFast,
                                     boolean temporary,
                                     NExecutionType executionType,
                                     String commandName,
                                     long sleepMillis,
                                     NExecInput in,
                                     NExecOutput out,
-                                    NExecOutput err
+                                    NExecOutput err,
+                                    boolean dry
     ) {
         this.commandName = commandName;
         this.definition = definition;
         this.arguments = CoreCollectionUtils.unmodifiableList(arguments);
-        this.session = session;
         this.workspace = workspace;
         this.executorOptions = CoreCollectionUtils.unmodifiableList(executorArgs);
         this.workspaceOptions = CoreCollectionUtils.unmodifiableList(workspaceOptions);
@@ -90,6 +91,7 @@ public class DefaultNExecutionContext implements NExecutionContext {
         this.in = in;
         this.out = out;
         this.err = err;
+        this.dry = dry;
     }
 
     public DefaultNExecutionContext(NExecutionContext other) {
@@ -110,6 +112,16 @@ public class DefaultNExecutionContext implements NExecutionContext {
         this.in = other.getIn();
         this.out = other.getOut();
         this.err = other.getErr();
+        this.dry = other.isDry();
+    }
+
+    public boolean isDry() {
+        return dry;
+    }
+
+    public NExecutionContext setDry(boolean dry) {
+        this.dry = dry;
+        return this;
     }
 
     public NExecInput getIn() {

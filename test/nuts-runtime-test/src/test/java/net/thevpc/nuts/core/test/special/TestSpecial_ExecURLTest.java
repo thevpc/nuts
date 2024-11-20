@@ -16,11 +16,8 @@ import org.junit.jupiter.api.BeforeAll;
  * @author thevpc
  */
 public class TestSpecial_ExecURLTest {
-    static NSession session;
-
     @BeforeAll
     public static void init() {
-        session = TestUtils.openNewMinTestWorkspace();
     }
 
 
@@ -42,7 +39,7 @@ public class TestSpecial_ExecURLTest {
                 .failFast()
                 //.system()
                 .getGrabbedAllString();
-        session.out().println(result);
+        NSession.get().out().println(result);
         Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
     }
 

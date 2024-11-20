@@ -8,11 +8,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class Test28_Argument {
-    static NSession session;
-
     @BeforeAll
     public static void init() {
-        session = TestUtils.openNewMinTestWorkspace();
+        TestUtils.openNewMinTestWorkspace();
     }
 
     @Test
@@ -82,7 +80,6 @@ public class Test28_Argument {
 
     @Test
     public void test06() {
-        NSession session= TestUtils.openNewMinTestWorkspace();
         DefaultNArg a = new DefaultNArg("-!=");
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isActive());

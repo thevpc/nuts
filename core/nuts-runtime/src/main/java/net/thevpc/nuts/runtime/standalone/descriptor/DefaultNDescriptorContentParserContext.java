@@ -25,8 +25,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.descriptor;
 
-import net.thevpc.nuts.*;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -43,24 +41,17 @@ import net.thevpc.nuts.util.NMsg;
  */
 public class DefaultNDescriptorContentParserContext implements NDescriptorContentParserContext {
 
-    private final NSession session;
     private final NPath file;
     private final String fileExtension;
     private final String mimeType;
     private byte[] bytes;
     private final List<String> parseOptions;
 
-    public DefaultNDescriptorContentParserContext(NSession session, Path file, String fileExtension, String mimeType, List<String> parseOptions) {
+    public DefaultNDescriptorContentParserContext(Path file, String fileExtension, String mimeType, List<String> parseOptions) {
         this.file = NPath.of(file);
-        this.session = session;
         this.fileExtension = fileExtension;
         this.mimeType = mimeType;
         this.parseOptions = parseOptions;
-    }
-
-    @Override
-    public NSession getSession() {
-        return session;
     }
 
     @Override

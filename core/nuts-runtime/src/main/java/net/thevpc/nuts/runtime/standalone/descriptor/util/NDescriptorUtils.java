@@ -21,10 +21,10 @@ public class NDescriptorUtils {
         return desc != null && "pom".equals(desc.getPackaging());
     }
 
-    public static NDescriptor getEffectiveDescriptor(NDefinition def, NWorkspace workspace) {
+    public static NDescriptor getEffectiveDescriptor(NDefinition def) {
         final NDescriptor d = def.getEffectiveDescriptor().orNull();
         if (d == null) {
-            return NWorkspaceExt.of(workspace).resolveEffectiveDescriptor(def.getDescriptor());
+            return NWorkspaceExt.of().resolveEffectiveDescriptor(def.getDescriptor());
         }
         return d;
     }
@@ -43,13 +43,13 @@ public class NDescriptorUtils {
         return m;
     }
 
-    public static NDescriptor checkDescriptor(NDescriptor nutsDescriptor, NWorkspace workspace) {
+    public static NDescriptor checkDescriptor(NDescriptor nutsDescriptor) {
         NId id = nutsDescriptor.getId();
         String groupId = id == null ? null : id.getGroupId();
         String artifactId = id == null ? null : id.getArtifactId();
         NVersion version = id == null ? null : id.getVersion();
         if (groupId == null || artifactId == null || NBlankable.isBlank(version)) {
-            NSession session = workspace.currentSession();
+            NSession session = NSession.get();
             switch (session.getConfirm().orDefault()) {
                 case ASK:
                 case ERROR: {
@@ -92,14 +92,14 @@ public class NDescriptorUtils {
                 .build();
     }
 
-    public static void checkValidEffectiveDescriptor(NDescriptor effectiveDescriptor, NSession session) {
+    public static void checkValidEffectiveDescriptor(NDescriptor effectiveDescriptor) {
         NAssert.requireNonNull(effectiveDescriptor, "effective descriptor");
         boolean topException = false;
         try {
             for (NId parent : effectiveDescriptor.getParents()) {
-                CoreNIdUtils.checkValidEffectiveId(parent, session);
+                CoreNIdUtils.checkValidEffectiveId(parent);
             }
-            CoreNIdUtils.checkValidEffectiveId(effectiveDescriptor.getId(), session);
+            CoreNIdUtils.checkValidEffectiveId(effectiveDescriptor.getId());
             for (NDependency dependency : effectiveDescriptor.getDependencies()) {
                 if (!CoreNIdUtils.isValidEffectiveId(dependency.toId())) {
                     if (dependency.isOptional()) {
@@ -145,7 +145,7 @@ public class NDescriptorUtils {
 
     public static boolean isValidEffectiveDescriptor(NDescriptor effectiveDescriptor, NSession session) {
         try {
-            checkValidEffectiveDescriptor(effectiveDescriptor, session);
+            checkValidEffectiveDescriptor(effectiveDescriptor);
             return true;
         } catch (Exception ex) {
             //
@@ -260,7 +260,7 @@ public class NDescriptorUtils {
         return m;
     }
 
-    public static NDescriptorBuilder applyParents(NDescriptorBuilder b, List<NDescriptor> parentDescriptors, NSession session) {
+    public static NDescriptorBuilder applyParents(NDescriptorBuilder b, List<NDescriptor> parentDescriptors) {
         NId n_id = b.getId();
         String n_packaging = b.getPackaging();
         LinkedHashSet<NDescriptorFlag> flags = new LinkedHashSet<>(b.getFlags());
@@ -312,14 +312,14 @@ public class NDescriptorUtils {
             n_name = CoreNUtils.applyStringInheritance(n_name, parentDescriptor.getName());
             n_genericName = CoreNUtils.applyStringInheritance(n_genericName, parentDescriptor.getGenericName());
             n_desc = CoreNUtils.applyStringInheritance(n_desc, parentDescriptor.getDescription());
-            n_deps.putAll(depsAsMap(parentDescriptor.getDependencies(), session));
-            n_sdeps.putAll(depsAsMap(parentDescriptor.getStandardDependencies(), session));
+            n_deps.putAll(depsAsMap(parentDescriptor.getDependencies()));
+            n_sdeps.putAll(depsAsMap(parentDescriptor.getStandardDependencies()));
             b2.addAll(parentDescriptor.getCondition());
             n_icons.addAll(parentDescriptor.getIcons());
             n_categories.addAll(parentDescriptor.getCategories());
         }
-        n_deps.putAll(depsAsMap(b.getDependencies(), session));
-        n_sdeps.putAll(depsAsMap(b.getStandardDependencies(), session));
+        n_deps.putAll(depsAsMap(b.getDependencies()));
+        n_sdeps.putAll(depsAsMap(b.getStandardDependencies()));
         b2.addAll(b.getCondition());
         List<NId> n_parents = new ArrayList<>();
 
@@ -459,7 +459,7 @@ public class NDescriptorUtils {
         throw new NIllegalArgumentException(NMsg.ofC("too many recursion applying properties %s", updated));
     }
 
-    private static Map<String, NDependency> depsAsMap(List<NDependency> arr, NSession session) {
+    private static Map<String, NDependency> depsAsMap(List<NDependency> arr) {
         Map<String, NDependency> m = new LinkedHashMap<>();
         //first is Best
         for (NDependency d : arr) {

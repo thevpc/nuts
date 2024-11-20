@@ -295,7 +295,7 @@ public class CoreNUtils {
         return true;
     }
 
-    public static Map<String, Object> traceJsonNutsDefinition(NSession session, NDefinition def) {
+    public static Map<String, Object> traceJsonNutsDefinition(NDefinition def) {
         Map<String, Object> x = new LinkedHashMap<>();
         x.put("id", def.getId());
         if (def.getContent().isPresent()) {
@@ -320,7 +320,7 @@ public class CoreNUtils {
         }
         if (def.getDescriptor() != null) {
             x.put("descriptor", def.getDescriptor().formatter().format());
-            x.put("effective-descriptor", NDescriptorUtils.getEffectiveDescriptor(def, session.getWorkspace())
+            x.put("effective-descriptor", NDescriptorUtils.getEffectiveDescriptor(def)
                     .formatter().format());
         }
         return x;

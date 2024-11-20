@@ -29,7 +29,7 @@ package net.thevpc.nuts.format;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.io.NSessionTerminal;
+import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.text.NString;
@@ -142,7 +142,7 @@ public interface NFormat extends NCmdLineConfigurable, NComponent {
      *
      * @param terminal recipient terminal
      */
-    void print(NSessionTerminal terminal);
+    void print(NTerminal terminal);
 
     /**
      * format current value and write result to {@code out} and finally appends
@@ -190,7 +190,7 @@ public interface NFormat extends NCmdLineConfigurable, NComponent {
      *
      * @param terminal recipient terminal
      */
-    void println(NSessionTerminal terminal);
+    void println(NTerminal terminal);
 
     /**
      * format current value and write result to {@code out} and finally appends

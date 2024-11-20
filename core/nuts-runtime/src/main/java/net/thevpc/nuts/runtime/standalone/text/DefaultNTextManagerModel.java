@@ -75,7 +75,6 @@ public class DefaultNTextManagerModel {
         this.workspace = workspace;
     }
     public void loadExtensions(){
-        NSession session = workspace.currentSession();
         List<NCodeHighlighter> all = NExtensions.of().createComponents(NCodeHighlighter.class, null);
         for (NCodeHighlighter h : all) {
             highlighters.put(h.getId().toLowerCase(), h);
@@ -118,7 +117,6 @@ public class DefaultNTextManagerModel {
         if ("default".equals(y)) {
             //default always refers to this implementation
             if (defaultTheme == null) {
-                NSession session = workspace.currentSession();
                 if (NEnvs.of().getOsFamily() == NOsFamily.WINDOWS) {
                     //dark blue and red are very ugly under windows, replace them with green tones !
                     defaultTheme = new NTextFormatThemeWrapper(new NTextFormatPropertiesTheme("grass", null, workspace));
@@ -168,10 +166,9 @@ public class DefaultNTextManagerModel {
             return h;
         }
         int best = -1;
-        NSession session = workspace.currentSession();
         for (NCodeHighlighter hh : highlighters.values()) {
             int lvl = hh.getSupportLevel(new NDefaultSupportLevelContext(
-                    session, lc
+                    lc
             ));
             if (lvl > 0 && best < lvl) {
                 best = lvl;

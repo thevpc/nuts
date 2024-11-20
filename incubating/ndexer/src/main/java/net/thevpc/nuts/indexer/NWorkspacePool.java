@@ -1,6 +1,7 @@
 package net.thevpc.nuts.indexer;
 
 import net.thevpc.nuts.NLocations;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NSession;
@@ -14,14 +15,14 @@ import java.util.Map;
 public class NWorkspacePool {
 
     @Autowired
-    private NIndexerApplication.Config app;
-    private final Map<String, NSession> pool = new LinkedHashMap<>();
+    private NWorkspace workspace;
+    private final Map<String, NWorkspace> pool = new LinkedHashMap<>();
 
-    public NSession openWorkspace(String ws) {
-        NSession o = pool.get(ws);
+    public NWorkspace openWorkspace(String ws) {
+        NWorkspace o = pool.get(ws);
         if (o == null) {
             if (NLocations.of().getWorkspaceLocation().toString().equals(ws)) {
-                o = app.getSession();
+                o = workspace;
             } else {
                 o = Nuts.openWorkspace(new DefaultNWorkspaceOptionsBuilder()
                         .setInstallCompanions(false)
@@ -29,7 +30,7 @@ public class NWorkspacePool {
                 );
             }
             pool.put(ws, o);
-            pool.put(o.getWorkspace().getUuid(), o);
+            pool.put(o.getUuid(), o);
         }
         return o;
     }

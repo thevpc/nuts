@@ -16,8 +16,8 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.Nuts;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NVersion;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 
@@ -164,23 +164,23 @@ public class TestUtils {
         }
     }
 
-    public static NSession openNewMinTestWorkspace(String... args) {
+    public static NWorkspace openNewMinTestWorkspace(String... args) {
         List<String> a=new ArrayList<>();
         a.addAll(Arrays.asList("-byZSKk"));
         a.addAll(Arrays.asList(args));
         return openOrReOpenTestWorkspace(true,false,a.toArray(new String[0]));
     }
 
-    public static NSession openNewTestWorkspace(String... args) {
+    public static NWorkspace openNewTestWorkspace(String... args) {
         return openOrReOpenTestWorkspace(true,false,args);
     }
-    public static NSession openExistingTestWorkspace(String... args) {
+    public static NWorkspace openExistingTestWorkspace(String... args) {
         return openOrReOpenTestWorkspace(false,false,args);
     }
-    public static NSession runNewTestWorkspace(String... args) {
+    public static NWorkspace runNewTestWorkspace(String... args) {
         return openOrReOpenTestWorkspace(true,true,args);
     }
-    public static NSession runExistingTestWorkspace(String... args) {
+    public static NWorkspace runExistingTestWorkspace(String... args) {
         return openOrReOpenTestWorkspace(false,true,args);
     }
 
@@ -194,7 +194,7 @@ public class TestUtils {
         }
     }
 
-    private static NSession openOrReOpenTestWorkspace(boolean deleteFolder, boolean run, String... args) {
+    private static NWorkspace openOrReOpenTestWorkspace(boolean deleteFolder, boolean run, String... args) {
         try {
             String test_id = TestUtils.getCallerMethodId(2);
             File path;
@@ -233,6 +233,7 @@ public class TestUtils {
             //disable installing nsh
             argsList.add("--install-companions=true");
             argsList.add("--skip-welcome");
+            argsList.add("--main-instance");
 //        argsList.add("--embedded");
             argsList.addAll(Arrays.asList(args));
             if (run) {

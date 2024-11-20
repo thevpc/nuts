@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.ntemplate.project;
 
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.io.NSessionTerminal;
+import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellContext;
 import net.thevpc.nuts.toolbox.nsh.nodes.NShellVar;
 import net.thevpc.nuts.toolbox.nsh.nodes.NShellVarListener;
@@ -14,14 +14,12 @@ import net.thevpc.nuts.toolbox.ntemplate.filetemplate.ProcessCmd;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.StringUtils;
 
 class NshEvaluator implements ExprEvaluator {
-    private final NSession session;
     private final NShell shell;
     private final FileTemplater fileTemplater;
 
-    public NshEvaluator(NSession session, FileTemplater fileTemplater) {
-        this.session = session;
+    public NshEvaluator(FileTemplater fileTemplater) {
         this.fileTemplater = fileTemplater;
-        shell = new NShell(new NShellConfiguration().setSession(session)
+        shell = new NShell(new NShellConfiguration()
                 .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)
                 .setArgs()
         );
@@ -58,8 +56,8 @@ class NshEvaluator implements ExprEvaluator {
     @Override
     public Object eval(String content, FileTemplater context) {
         NShellContext ctx = shell.createInlineContext(shell.getRootContext(), context.getSourcePath().orElse("nsh"), new String[0]);
-        NSession session = context.getSession().copy();
-        session.setTerminal(NSessionTerminal.ofMem());
+        NSession session = NSession.get();
+        session.setTerminal(NTerminal.ofMem());
         ctx.setSession(session);
         shell.executeScript(content, ctx);
         return session.out().toString();

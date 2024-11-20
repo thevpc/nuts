@@ -130,7 +130,7 @@ public class DataService {
         return result;
     }
 
-    public List<Map<String, String>> getAllDependencies(NSession session, Path dirPath, NId id) {
+    public List<Map<String, String>> getAllDependencies(Path dirPath, NId id) {
         List<Map<String, String>> rows = searchData(dirPath, NIndexerUtils.nutsIdToMap(id), null);
         if (rows.isEmpty()) {
             return null;
@@ -161,7 +161,7 @@ public class DataService {
         return allDependencies;
     }
 
-    public List<Map<String, String>> getDependencies(NSession session, Path dirPath, NId id) {
+    public List<Map<String, String>> getDependencies(Path dirPath, NId id) {
         List<Map<String, String>> rows = searchData(dirPath, NIndexerUtils.nutsIdToMap(id), null);
         if (rows.isEmpty()) {
             return null;
@@ -174,7 +174,7 @@ public class DataService {
         return dependencies;
     }
 
-    public List<Map<String, String>> getAllVersions(NSession session, Path dirPath, NId id) {
+    public List<Map<String, String>> getAllVersions(Path dirPath, NId id) {
         Map<String, String> data = NIndexerUtils.nutsIdToMap(id);
         List<Map<String, String>> rows =
                 searchData(dirPath, null, NIndexerUtils.mapToQuery(data, "version"));

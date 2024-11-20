@@ -26,7 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NSessionTerminal;
+import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
@@ -82,8 +82,8 @@ public class CorePlatformUtils {
         SUPPORTS_UTF_ENCODING = _e;
     }
 
-    private static String buildUnixOsNameAndVersion(String name, NSession session) {
-        Map<String, String> m = getOsDistMap(session);
+    private static String buildUnixOsNameAndVersion(String name) {
+        Map<String, String> m = getOsDistMap();
         String v = m.get("osVersion");
         if (NBlankable.isBlank(v)) {
             return name;
@@ -91,29 +91,29 @@ public class CorePlatformUtils {
         return name + "#" + v;
     }
 
-    public static Map<String, String> getOsDistMap(NSession session) {
+    public static Map<String, String> getOsDistMap() {
         String property = System.getProperty("os.name").toLowerCase();
         if (property.startsWith("linux")) {
             if (LOADED_OS_DIST_MAP == null) {
-                LOADED_OS_DIST_MAP = getOsDistMapLinux(session);
+                LOADED_OS_DIST_MAP = getOsDistMapLinux();
             }
             return Collections.unmodifiableMap(LOADED_OS_DIST_MAP);
         }
         if (property.startsWith("mac")) {
             if (LOADED_OS_DIST_MAP == null) {
-                LOADED_OS_DIST_MAP = getOsDistMapLinux(session);
+                LOADED_OS_DIST_MAP = getOsDistMapLinux();
             }
             return Collections.unmodifiableMap(LOADED_OS_DIST_MAP);
         }
         if (property.startsWith("sunos")) {
             if (LOADED_OS_DIST_MAP == null) {
-                LOADED_OS_DIST_MAP = getOsDistMapLinux(session);
+                LOADED_OS_DIST_MAP = getOsDistMapLinux();
             }
             return Collections.unmodifiableMap(LOADED_OS_DIST_MAP);
         }
         if (property.startsWith("freebsd")) {
             if (LOADED_OS_DIST_MAP == null) {
-                LOADED_OS_DIST_MAP = getOsDistMapLinux(session);
+                LOADED_OS_DIST_MAP = getOsDistMapLinux();
             }
             return Collections.unmodifiableMap(LOADED_OS_DIST_MAP);
         }
@@ -126,10 +126,9 @@ public class CorePlatformUtils {
      * http://stackoverflow.com/questions/15018474/getting-linux-distro-from-java
      * thanks to //PbxMan//
      *
-     * @param session session
      * @return os distribution map including keys distId, distName, distVersion,osVersion
      */
-    public static Map<String, String> getOsDistMapLinux(NSession session) {
+    public static Map<String, String> getOsDistMapLinux() {
         File dir = new File("/etc/");
         List<File> fileList = new ArrayList<>();
         if (dir.exists()) {
@@ -218,7 +217,7 @@ public class CorePlatformUtils {
                     }
                 }
             } catch (Exception e) {
-                session.err().println(NMsg.ofC("error: %s", CoreStringUtils.exceptionToMessage(e)));
+                NSession.get().err().println(NMsg.ofC("error: %s", CoreStringUtils.exceptionToMessage(e)));
             }
         }
         Map<String, String> m = new HashMap<>();
@@ -229,10 +228,10 @@ public class CorePlatformUtils {
         return m;
     }
 
-    public static String getPlatformOsDist(NSession session) {
-        String osInfo = getPlatformOs(session);
+    public static String getPlatformOsDist() {
+        String osInfo = getPlatformOs();
         if (osInfo.startsWith("linux")) {
-            Map<String, String> m = getOsDistMap(session);
+            Map<String, String> m = getOsDistMap();
             String distId = m.get("distId");
             String distVersion = m.get("distVersion");
             if (!NBlankable.isBlank(distId)) {
@@ -249,13 +248,12 @@ public class CorePlatformUtils {
     /**
      * https://en.wikipedia.org/wiki/List_of_Microsoft_Windows_versions
      *
-     * @param session workspace
      * @return platform os name
      */
-    public static String getPlatformOs(NSession session) {
+    public static String getPlatformOs() {
         String property = System.getProperty("os.name").toLowerCase();
         if (property.startsWith("linux")) {
-            return buildUnixOsNameAndVersion("linux", session);
+            return buildUnixOsNameAndVersion("linux");
         }
         if (property.startsWith("win")) {
             if (property.startsWith("windows 10")) {
@@ -285,31 +283,31 @@ public class CorePlatformUtils {
             if (property.startsWith("mac os x") || property.startsWith("macosx")) {
                 return "macos#10";
             }
-            return buildUnixOsNameAndVersion("macos", session);
+            return buildUnixOsNameAndVersion("macos");
         }
         if (property.startsWith("sunos") || property.startsWith("solaris")) {
-            return buildUnixOsNameAndVersion("sunos", session);
+            return buildUnixOsNameAndVersion("sunos");
         }
         if (property.startsWith("zos")) {
-            return buildUnixOsNameAndVersion("zos", session);
+            return buildUnixOsNameAndVersion("zos");
         }
         if (property.startsWith("freebsd")) {
-            return buildUnixOsNameAndVersion("freebsd", session);
+            return buildUnixOsNameAndVersion("freebsd");
         }
         if (property.startsWith("openbsd")) {
-            return buildUnixOsNameAndVersion("openbsd", session);
+            return buildUnixOsNameAndVersion("openbsd");
         }
         if (property.startsWith("netbsd")) {
-            return buildUnixOsNameAndVersion("netbsd", session);
+            return buildUnixOsNameAndVersion("netbsd");
         }
         if (property.startsWith("aix")) {
-            return buildUnixOsNameAndVersion("aix", session);
+            return buildUnixOsNameAndVersion("aix");
         }
         if (property.startsWith("hpux")) {
-            return buildUnixOsNameAndVersion("hpux", session);
+            return buildUnixOsNameAndVersion("hpux");
         }
         if (property.startsWith("os400") && property.length() <= 5 || !Character.isDigit(property.charAt(5))) {
-            return buildUnixOsNameAndVersion("os400", session);
+            return buildUnixOsNameAndVersion("os400");
         }
         return "unknown";
 //        return property;
@@ -323,7 +321,7 @@ public class CorePlatformUtils {
         return true;
     }
 
-    public static boolean isLoadedClassPath(File file, ClassLoader classLoader, NSessionTerminal terminal) {
+    public static boolean isLoadedClassPath(File file, ClassLoader classLoader, NTerminal terminal) {
         try {
             if (file != null) {
                 ZipFile zipFile = null;
@@ -364,7 +362,7 @@ public class CorePlatformUtils {
         return false;
     }
 
-    public static <T> T runWithinLoader(Callable<T> callable, ClassLoader loader, NSession session) {
+    public static <T> T runWithinLoader(Callable<T> callable, ClassLoader loader) {
         NRef<T> ref = new NRef<>();
         Thread thread = new Thread(() -> {
             try {

@@ -2,7 +2,6 @@ package net.thevpc.nuts.toolbox.docusaurus;
 
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.lib.md.MdElement;
 import net.thevpc.nuts.lib.md.docusaurus.DocusaurusMdParser;
 import net.thevpc.nuts.lib.md.docusaurus.DocusaurusUtils;
@@ -15,7 +14,7 @@ import java.util.Map;
 
 public class DocusaurusContentFile extends DocusaurusFile{
     private final MdElement tree;
-    public static DocusaurusFile ofTreeFile(Reader reader, String partialPath, String location, NSession session, boolean loadContent) {
+    public static DocusaurusFile ofTreeFile(Reader reader, String partialPath, String location, boolean loadContent) {
 //        int from = root.getNameCount();
 //        int to = path.getNameCount() - 1;
 //        String partialPath = from == to ? "" : path.subpath(from, to).toString();
@@ -106,7 +105,7 @@ public class DocusaurusContentFile extends DocusaurusFile{
         this.tree=tree;
     }
 
-    public MdElement getContent(NSession session) {
+    public MdElement getContent() {
         return this.tree;
     }
 }

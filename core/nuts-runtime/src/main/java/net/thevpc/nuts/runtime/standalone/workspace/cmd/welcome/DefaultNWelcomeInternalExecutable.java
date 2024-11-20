@@ -15,6 +15,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NUtils;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -31,11 +32,12 @@ public class DefaultNWelcomeInternalExecutable extends DefaultInternalNExecutabl
     @Override
     public int execute() {
         NSession session = workspace.currentSession();
-        if(session.isDry()){
+        boolean dry = NUtils.asBoolean(getExecCommand().getDry());
+        if(dry){
             dryExecute();
             return NExecutionException.SUCCESS;
         }
-        if (NAppUtils.processHelpOptions(args, session)) {
+        if (NAppUtils.processHelpOptions(args)) {
             showDefaultHelp();
             return NExecutionException.SUCCESS;
         }

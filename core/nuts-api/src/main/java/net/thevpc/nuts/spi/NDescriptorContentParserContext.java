@@ -36,7 +36,7 @@ import java.util.List;
  * @app.category SPI Base
  * @since 0.5.4
  */
-public interface NDescriptorContentParserContext extends NSessionProvider {
+public interface NDescriptorContentParserContext {
 
     /**
      * command line options that can be parsed to

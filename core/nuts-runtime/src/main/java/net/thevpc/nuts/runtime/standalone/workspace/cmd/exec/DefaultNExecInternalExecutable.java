@@ -11,6 +11,7 @@ import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
+import net.thevpc.nuts.util.NUtils;
 
 /**
  *
@@ -25,11 +26,11 @@ public class DefaultNExecInternalExecutable extends DefaultInternalNExecutableCo
     @Override
     public int execute() {
         NSession session = workspace.currentSession();
-        if (session.isDry()) {
+        if (NUtils.asBoolean(getExecCommand().getDry())) {
             dryExecute();
             return NExecutionException.SUCCESS;
         }
-        if (NAppUtils.processHelpOptions(args, session)) {
+        if (NAppUtils.processHelpOptions(args)) {
             showDefaultHelp();
             return NExecutionException.SUCCESS;
         }
@@ -41,18 +42,17 @@ public class DefaultNExecInternalExecutable extends DefaultInternalNExecutableCo
     @Override
     public void dryExecute() {
         NSession session = workspace.currentSession();
-        if (NAppUtils.processHelpOptions(args, session)) {
+        if (NAppUtils.processHelpOptions(args)) {
             session.out().println("[dry] ==show-help==");
             return;
         }
 
-        session.copy().setDry(true).runWith(() ->
-                getExecCommand()
-                        .copy()
-                        .clearCommand().configure(false, args)
-                        .failFast()
-                        .run()
-        );
+        getExecCommand()
+                .copy()
+                .clearCommand().configure(false, args)
+                .failFast()
+                .setDry(true)
+                .run();
 
     }
 }

@@ -10,7 +10,7 @@ import java.util.StringTokenizer;
 import net.thevpc.nuts.io.NInputStreamMonitor;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.io.NSessionTerminal;
+import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.ext.ssh.SshListener;
 import net.thevpc.nuts.toolbox.nsh.util.bundles._IOUtils;
 import net.thevpc.nuts.util.NMsg;
@@ -95,7 +95,7 @@ public class ShellHelper {
         }
     }
 
-    public static boolean readAccept(NSessionTerminal t) {
+    public static boolean readAccept(NTerminal t) {
         while (true) {
             String v = t.readLine(NMsg.ofPlain("Accept (y/n) : ?"));
             if (v == null) {

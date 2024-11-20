@@ -81,11 +81,9 @@ public class FileTemplater {
     private boolean userParentProperties;
     private PathTranslator pathTranslator;
     private String projectFileName = PROJECT_FILENAME;
-    private NSession session;
     private String contextName;
 
-    public FileTemplater(NSession session) {
-        this.session = session;
+    public FileTemplater() {
         this.setLog(new TemplateLog() {
             NLogOp logOp;
 
@@ -119,7 +117,7 @@ public class FileTemplater {
     }
 
     public FileTemplater(FileTemplater parent) {
-        this(parent.session);
+        this();
         this.parent = parent;
     }
 
@@ -145,11 +143,6 @@ public class FileTemplater {
         }
         return pp;
     }
-
-    public NSession getSession() {
-        return session;
-    }
-
     public boolean isUserParentProperties() {
         return userParentProperties;
     }

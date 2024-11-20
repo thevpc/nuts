@@ -1,6 +1,5 @@
 package net.thevpc.nuts.toolbox.docusaurus;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.lib.md.MdElement;
 
 public interface DocusaurusFileOrFolder {
@@ -16,7 +15,7 @@ public interface DocusaurusFileOrFolder {
 
     boolean isFolder();
 
-    MdElement getContent(NSession session);
+    MdElement getContent();
 
     String toJSON(int indent);
 }

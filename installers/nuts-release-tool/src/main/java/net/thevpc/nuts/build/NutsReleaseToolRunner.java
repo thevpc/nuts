@@ -33,10 +33,11 @@ public class NutsReleaseToolRunner {
     }
 
     public NutsBuildRunnerContext context() {
-        NutsBuildRunnerContext s = (NutsBuildRunnerContext) session().getProperty(NutsBuildRunnerContext.class.getName(), NScopeType.SESSION).orNull();
+        NSession session = NSession.get();
+        NutsBuildRunnerContext s = (NutsBuildRunnerContext) session.getProperty(NutsBuildRunnerContext.class.getName(), NScopeType.SESSION).orNull();
         if (s == null) {
             s = new NutsBuildRunnerContext();
-            session().setProperty(NutsBuildRunnerContext.class.getName(), NScopeType.SESSION, s);
+            session.setProperty(NutsBuildRunnerContext.class.getName(), NScopeType.SESSION, s);
         }
         return s;
     }
@@ -44,16 +45,15 @@ public class NutsReleaseToolRunner {
 
     public void run(NCmdLine args) {
         NChronometer chrono = NChronometer.startNow();
-        session().out().println("Process started");
+        NSession session = NSession.get();
+        session.out().println("Process started");
         configure(args);
         for (AbstractRunner runner : runners) {
             runner.run();
         }
-        session().out().println("Process finished in " + chrono.stop());
+        session.out().println("Process finished in " + chrono.stop());
     }
 
-    private NSession session() {
-        return runners[0].session();
-    }
+
 
 }

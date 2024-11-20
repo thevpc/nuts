@@ -1,7 +1,7 @@
 package net.thevpc.nuts.tutorial.lib;
 
-import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.io.NCompress;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NUncompress;
@@ -10,12 +10,13 @@ import net.thevpc.nuts.io.NUncompressVisitor;
 import java.io.InputStream;
 
 public class ExamplesOfZip {
-    public void executeAll(NSession session) {
-        executeCompress(session);
-        executeUncompress(session);
+    public void executeAll() {
+        executeCompress();
+        executeUncompress();
     }
 
-    public void executeCompress(NSession session) {
+    public void executeCompress() {
+        NSession session = NSession.get();
         session.out().println("Example of ## Compress ##");
         NPath example = NPath.ofUserDirectory().resolve("example");
         if (example.isDirectory()) {
@@ -27,7 +28,8 @@ public class ExamplesOfZip {
         }
     }
 
-    public void executeUncompress(NSession session) {
+    public void executeUncompress() {
+        NSession session = NSession.get();
         session.out().println("Example of ## Uncompress ##");
         NPath example = NPath.ofUserDirectory().resolve("example.zip");
         if (example.isRegularFile()) {

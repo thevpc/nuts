@@ -32,7 +32,7 @@ public class DefaultNRepositorySecurityModel {
 
     public DefaultNRepositorySecurityModel(final NRepository repo) {
         this.repository = repo;
-        this.agent = new WrapperNAuthenticationAgent(repo.getWorkspace(), (session) -> repo.config().getConfigMap(), (x, s) -> getAuthenticationAgent(x));
+        this.agent = new WrapperNAuthenticationAgent(repo.getWorkspace(), () -> repo.config().getConfigMap(), (x) -> getAuthenticationAgent(x));
         this.repository.addRepositoryListener(new NRepositoryListener() {
 
             public void onConfigurationChanged(NRepositoryEvent event) {
@@ -56,17 +56,14 @@ public class DefaultNRepositorySecurityModel {
     }
 
     public NAddUserCmd addUser(String name) {
-        NSession session=repository.getWorkspace().currentSession();
         return NAddUserCmd.of().setRepository(repository).setUsername(name);
     }
 
     public NUpdateUserCmd updateUser(String name) {
-        NSession session=repository.getWorkspace().currentSession();
         return NUpdateUserCmd.of().setRepository(repository).setUsername(name);
     }
 
     public NRemoveUserCmd removeUser(String name) {
-        NSession session=repository.getWorkspace().currentSession();
         return NRemoveUserCmd.of().setRepository(repository).setUsername(name);
     }
 
@@ -201,19 +198,19 @@ public class DefaultNRepositorySecurityModel {
     }
 
     public void checkCredentials(char[] credentialsId, char[] password) throws NSecurityException {
-        agent.checkCredentials(credentialsId, password, repository.getWorkspace().currentSession());
+        agent.checkCredentials(credentialsId, password);
     }
 
     public char[] getCredentials(char[] credentialsId) {
-        return agent.getCredentials(credentialsId, repository.getWorkspace().currentSession());
+        return agent.getCredentials(credentialsId);
     }
 
     public boolean removeCredentials(char[] credentialsId) {
-        return agent.removeCredentials(credentialsId, repository.getWorkspace().currentSession());
+        return agent.removeCredentials(credentialsId);
     }
 
     public char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId) {
-        return agent.createCredentials(credentials, allowRetrieve, credentialId, repository.getWorkspace().currentSession());
+        return agent.createCredentials(credentials, allowRetrieve, credentialId);
     }
 
     public NRepository getRepository() {

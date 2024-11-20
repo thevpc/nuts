@@ -38,8 +38,9 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
     private NExecInput in;
     private NExecOutput out;
     private NExecOutput err;
+    private boolean dry;
 
-    public ProcessExecHelper(NDefinition definition, ProcessBuilder2 pb, NWorkspace workspace, NPrintStream trace, NExecInput in, NExecOutput out, NExecOutput err) {
+    public ProcessExecHelper(NDefinition definition, ProcessBuilder2 pb, NWorkspace workspace, NPrintStream trace, NExecInput in, NExecOutput out, NExecOutput err, boolean dry) {
         super(workspace);
         this.pb = pb;
         this.trace = trace;
@@ -47,13 +48,14 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         this.in = in;
         this.out = out;
         this.err = err;
+        this.dry = dry;
     }
 
     public static ProcessExecHelper ofArgs(NDefinition definition, String[] args, Map<String, String> env, Path directory,
                                            boolean showCommand, boolean failFast, long sleep,
                                            NExecInput in, NExecOutput out, NExecOutput err,
                                            NRunAs runAs, String[] executorOptions,
-                                           NWorkspace workspace) {
+                                           boolean dry, NWorkspace workspace) {
         List<String> newCommands = NSysExecUtils.buildEffectiveCommandLocal(args, runAs, executorOptions);
         ProcessBuilder2 pb = new ProcessBuilder2(workspace);
         pb.setCommand(newCommands)
@@ -82,7 +84,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 session.out().println(NMsg.ofPlain(pb.getCommandString()));
             }
         }
-        return new ProcessExecHelper(definition, pb, workspace, session.out(), in, out, err);
+        return new ProcessExecHelper(definition, pb, workspace, session.out(), in, out, err, dry);
     }
 
     public static ProcessExecHelper ofDefinition(NDefinition nutMainFile,
@@ -90,7 +92,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                                                  NExecInput in, NExecOutput out, NExecOutput err,
                                                  NRunAs runAs,
                                                  String[] executorOptions,
-                                                 NSession session
+                                                 boolean dry, NSession session
     ) throws NExecutionException {
         NWorkspace workspace = session.getWorkspace();
         NId id = nutMainFile.getId();
@@ -195,7 +197,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 in, out, err,
                 runAs,
                 executorOptions,
-                workspace);
+                dry, workspace);
     }
 
     public int exec() {

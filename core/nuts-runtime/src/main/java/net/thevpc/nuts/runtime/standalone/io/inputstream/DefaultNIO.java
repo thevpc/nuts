@@ -160,12 +160,12 @@ public class DefaultNIO implements NIO {
     }
 
     @Override
-    public NSessionTerminal getDefaultTerminal() {
+    public NTerminal getDefaultTerminal() {
         return cmodel.getTerminal();
     }
 
     @Override
-    public NIO setDefaultTerminal(NSessionTerminal terminal) {
+    public NIO setDefaultTerminal(NTerminal terminal) {
         cmodel.setTerminal(terminal);
         return this;
     }

@@ -22,7 +22,7 @@ public interface NIORPI extends NComponent {
 
     <T> NAsk<T> createQuestion();
 
-    <T> NAsk<T> createQuestion(NSessionTerminal terminal);
+    <T> NAsk<T> createQuestion(NTerminal terminal);
 
     NMemoryPrintStream ofInMemoryPrintStream();
 
@@ -81,7 +81,7 @@ public interface NIORPI extends NComponent {
      *
      * @return new terminal
      */
-    NSessionTerminal createTerminal();
+    NTerminal createTerminal();
 
     /**
      * return new terminal
@@ -91,7 +91,7 @@ public interface NIORPI extends NComponent {
      * @param err err
      * @return new terminal
      */
-    NSessionTerminal createTerminal(InputStream in, NPrintStream out, NPrintStream err);
+    NTerminal createTerminal(InputStream in, NPrintStream out, NPrintStream err);
 
     /**
      * return new terminal bound to the given parent terminal and session.
@@ -99,7 +99,7 @@ public interface NIORPI extends NComponent {
      * @param terminal parent terminal (or null)
      * @return new terminal bound to the given parent terminal and session.
      */
-    NSessionTerminal createTerminal(NSessionTerminal terminal);
+    NTerminal createTerminal(NTerminal terminal);
 
     /**
      * return a new terminal with empty input and byte-array output/error.
@@ -108,7 +108,7 @@ public interface NIORPI extends NComponent {
      *
      * @return a new terminal with empty input and byte-array output/error.
      */
-    NSessionTerminal createInMemoryTerminal();
+    NTerminal createInMemoryTerminal();
 
     /**
      * return a new terminal with empty input and byte-array output/error.
@@ -117,7 +117,7 @@ public interface NIORPI extends NComponent {
      * @param mergeErr when true out and err are merged into a single stream
      * @return a new terminal with empty input and byte-array output/error.
      */
-    NSessionTerminal createInMemoryTerminal(boolean mergeErr);
+    NTerminal createInMemoryTerminal(boolean mergeErr);
 
     /**
      * Checks for the current system terminal and does best effort

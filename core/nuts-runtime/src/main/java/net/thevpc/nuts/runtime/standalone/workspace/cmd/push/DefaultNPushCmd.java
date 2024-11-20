@@ -86,7 +86,7 @@ public class DefaultNPushCmd extends AbstractDefaultNPushCmd {
                         //
                     }
                     if (descr != null && repo.config().isSupportedMirroring()) {
-                        NId id2 = CoreNIdUtils.createContentFaceId(dws.resolveEffectiveId(descr), descr,session);
+                        NId id2 = CoreNIdUtils.createContentFaceId(dws.resolveEffectiveId(descr), descr);
                         try {
                             repoSPI.push().setId(id2)
                                     .setOffline(offline)
@@ -114,7 +114,7 @@ public class DefaultNPushCmd extends AbstractDefaultNPushCmd {
                 if (!repo.config().isEnabled()) {
                     throw new NIllegalArgumentException(NMsg.ofC("repository %s is disabled", repo.getName()));
                 }
-                NId effId = CoreNIdUtils.createContentFaceId(id.builder().setPropertiesQuery("").build(), file.getDescriptor(),session) //                        .setAlternative(NutsUtilStrings.trim(file.getDescriptor().getAlternative()))
+                NId effId = CoreNIdUtils.createContentFaceId(id.builder().setPropertiesQuery("").build(), file.getDescriptor()) //                        .setAlternative(NutsUtilStrings.trim(file.getDescriptor().getAlternative()))
                         ;
                 NRepositorySPI repoSPI = wu.repoSPI(repo);
                 repoSPI.deploy()

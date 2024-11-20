@@ -145,7 +145,7 @@ public class NRepositoryMirroringHelper {
         for (NRepository remote : rconfig.getMirrors()) {
             NRepositorySPI repoSPI = NWorkspaceUtils.of(getWorkspace()).repoSPI(remote);
             all.add(IteratorUtils.safeIgnore(
-                    repoSPI.search().setFilter(filter).setFetchMode(fetchMode).getResult(), session
+                    repoSPI.search().setFilter(filter).setFetchMode(fetchMode).getResult()
             ));
         }
         return IteratorUtils.concat(all);
@@ -193,7 +193,7 @@ public class NRepositoryMirroringHelper {
             });
         }
         if (repo != null) {
-            NId effId = CoreNIdUtils.createContentFaceId(id.builder().setPropertiesQuery("").build(), desc, session)
+            NId effId = CoreNIdUtils.createContentFaceId(id.builder().setPropertiesQuery("").build(), desc)
 //                    .setAlternative(NutsUtilStrings.trim(desc.getAlternative()))
                     ;
             NDeployRepositoryCmd dep = NWorkspaceUtils.of(getWorkspace()).repoSPI(repo).deploy()

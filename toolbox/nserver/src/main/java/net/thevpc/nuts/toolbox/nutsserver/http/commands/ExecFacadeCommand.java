@@ -3,7 +3,7 @@ package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 import net.thevpc.nuts.NExecCmd;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.io.NSessionTerminal;
+import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.toolbox.nutsserver.AbstractFacadeCommand;
 import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;
@@ -56,7 +56,7 @@ public class ExecFacadeCommand extends AbstractFacadeCommand {
             cmd = new ArrayList<>();
         }
         NSession session = context.getSession().copy();
-        session.setTerminal(NSessionTerminal.of(
+        session.setTerminal(NTerminal.of(
                 new ByteArrayInputStream(new byte[0]),
                 NPrintStream.ofMem().setTerminalMode(NTerminalMode.FILTERED),
                 NPrintStream.ofMem()

@@ -36,11 +36,10 @@ import org.junit.jupiter.api.*;
  * @author thevpc
  */
 public class Test17_JsonTest {
-    static NSession session;
 
     @BeforeAll
     public static void init() {
-        session = TestUtils.openNewTestWorkspace("-byZSKk");
+        TestUtils.openNewTestWorkspace("-byZSKk");
     }
 
     @Test

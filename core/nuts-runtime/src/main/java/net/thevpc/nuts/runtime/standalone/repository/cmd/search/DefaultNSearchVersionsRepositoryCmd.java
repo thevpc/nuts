@@ -47,7 +47,7 @@ public class DefaultNSearchVersionsRepositoryCmd extends AbstractNSearchVersions
         //id = id.builder().setFaceContent().build();
         getRepo().security().checkAllowed(NConstants.Permissions.FETCH_DESC, "find-versions");
         NRepositoryExt xrepo = NRepositoryExt.of(getRepo());
-        CoreNIdUtils.checkShortId(id,session);
+        CoreNIdUtils.checkShortId(id);
         xrepo.checkAllowedFetch(id);
         try {
             List<NIterator<? extends NId>> resultList = new ArrayList<>();

@@ -45,7 +45,7 @@ public final class DefaultNWorkspaceCurrentConfig {
         this.workspace = workspace;
     }
 
-    public DefaultNWorkspaceCurrentConfig merge(NWorkspaceOptions c, NSession session) {
+    public DefaultNWorkspaceCurrentConfig merge(NWorkspaceOptions c) {
         if (c.getName() != null) {
             this.name = c.getName().orNull();
         }
@@ -128,7 +128,7 @@ public final class DefaultNWorkspaceCurrentConfig {
         return this;
     }
 
-    public DefaultNWorkspaceCurrentConfig merge(NWorkspaceConfigApi c, NSession session) {
+    public DefaultNWorkspaceCurrentConfig merge(NWorkspaceConfigApi c) {
         if (c.getApiVersion() != null && !c.getApiVersion().isBlank()) {
             this.apiId = NId.ofApi(c.getApiVersion()).get();
         }

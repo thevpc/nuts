@@ -71,7 +71,7 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
         defaults.add(NRepositoryLocation.ofName(NConstants.Names.DEFAULT_REPOSITORY_NAME));
         NRepositoryLocation[] br = rm.getModel().resolveBootRepositoriesList().resolve(defaults.toArray(new NRepositoryLocation[0]), NRepositoryDB.of());
         for (NRepositoryLocation s : br) {
-            NAddRepositoryOptions oo = NRepositorySelectorHelper.createRepositoryOptions(s, false, session);
+            NAddRepositoryOptions oo = NRepositorySelectorHelper.createRepositoryOptions(s, false);
             String sloc = NPath.of(oo.getConfig().getLocation().getPath()).toAbsolute().toString();
             if (def.containsKey(sloc)) {
                 NAddRepositoryOptions r = def.get(sloc).copy();

@@ -13,29 +13,30 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author thevpc
  */
 public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutableCommand {
 
-    public DefaultNSettingsInternalExecutable(NWorkspace workspace,String[] args, NExecCmd execCommand) {
-        super(workspace,"settings", args, execCommand);
+    public DefaultNSettingsInternalExecutable(NWorkspace workspace, String[] args, NExecCmd execCommand) {
+        super(workspace, "settings", args, execCommand);
     }
 
     private List<NSettingsSubCommand> subCommands;
+
     @Override
     public int execute() {
-        NSession session = workspace.currentSession();
-        if(session.isDry()){
+        boolean dry = NUtils.asBoolean(getExecCommand().getDry());
+        if (dry) {
             dryExecute();
             return NExecutionException.SUCCESS;
         }
-        if (NAppUtils.processHelpOptions(args, session)) {
+        if (NAppUtils.processHelpOptions(args)) {
             showDefaultHelp();
             return NExecutionException.SUCCESS;
         }
@@ -49,53 +50,54 @@ public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutab
         NArg a;
         do {
             a = cmd.peek().get();
-            if(a==null){
+            if (a == null) {
                 break;
             }
             boolean enabled = a.isActive();
-            if(a.isOption() &&
+            if (a.isOption() &&
                     (
                             a.key().equals("-?")
-                            ||a.key().equals("-h")
-                                    ||a.key().equals("-help")
+                                    || a.key().equals("-h")
+                                    || a.key().equals("-help")
                     )
-                    ){
-                    cmd.skip();
-                    if (enabled) {
-                        if (cmd.isExecMode()) {
-                            showDefaultHelp();
-                        }
-                        cmd.skipAll();
-                        throw new NExecutionException(NMsg.ofPlain("help"), NExecutionException.SUCCESS);
+            ) {
+                cmd.skip();
+                if (enabled) {
+                    if (cmd.isExecMode()) {
+                        showDefaultHelp();
                     }
-                    break;
-                } else{
-                    NSettingsSubCommand selectedSubCommand = null;
-                    for (NSettingsSubCommand subCommand : getSubCommands()) {
-                        if (subCommand.exec(cmd, autoSave)) {
-                            selectedSubCommand = subCommand;
-                            empty = false;
-                            break;
-                        }
-                    }
-                    if(selectedSubCommand==null){
-                        session.configureLast(cmd);
-                    }else{
-                        if (!cmd.isExecMode()) {
-                            return NExecutionException.SUCCESS;
-                        }
-                        if (cmd.hasNext()) {
-                            NPrintStream out = session.err();
-                            out.println(NMsg.ofC("unexpected %s", cmd.peek()));
-                            out.println("type for more help : nuts settings -h");
-                            throw new NExecutionException(NMsg.ofC("unexpected %s", cmd.peek()), NExecutionException.ERROR_1);
-                        }
+                    cmd.skipAll();
+                    throw new NExecutionException(NMsg.ofPlain("help"), NExecutionException.SUCCESS);
+                }
+                break;
+            } else {
+                NSettingsSubCommand selectedSubCommand = null;
+                for (NSettingsSubCommand subCommand : getSubCommands()) {
+                    if (subCommand.exec(cmd, autoSave)) {
+                        selectedSubCommand = subCommand;
+                        empty = false;
                         break;
                     }
                 }
+                NSession session = workspace.currentSession();
+                if (selectedSubCommand == null) {
+                    session.configureLast(cmd);
+                } else {
+                    if (!cmd.isExecMode()) {
+                        return NExecutionException.SUCCESS;
+                    }
+                    if (cmd.hasNext()) {
+                        NPrintStream out = session.err();
+                        out.println(NMsg.ofC("unexpected %s", cmd.peek()));
+                        out.println("type for more help : nuts settings -h");
+                        throw new NExecutionException(NMsg.ofC("unexpected %s", cmd.peek()), NExecutionException.ERROR_1);
+                    }
+                    break;
+                }
+            }
         } while (cmd.hasNext());
         if (empty) {
-            NPrintStream out = session.err();
+            NPrintStream out = NSession.get().err();
             out.println("missing settings command");
             out.println("type for more help : nuts settings -h");
             throw new NExecutionException(NMsg.ofPlain("missing settings command"), NExecutionException.ERROR_1);
@@ -105,7 +107,6 @@ public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutab
 
     public List<NSettingsSubCommand> getSubCommands() {
         if (subCommands == null) {
-            NSession session = workspace.currentSession();
             subCommands = new ArrayList<>(
                     NExtensions.of().createComponents(NSettingsSubCommand.class, this)
             );

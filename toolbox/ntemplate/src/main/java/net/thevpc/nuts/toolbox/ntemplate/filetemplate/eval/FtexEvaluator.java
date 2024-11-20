@@ -231,7 +231,6 @@ public class FtexEvaluator implements ExprEvaluator {
     }
 
     private Object evalAntiQuotesString(String value, FileTemplater ctx) {
-        NSession session = ctx.getSession();
         return NExecCmd.of().addCommand(
                         NCmdLine.parseDefault(value).get().toStringArray()
                 ).setDirectory(

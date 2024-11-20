@@ -10,7 +10,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class NativeBuilder {
-    private NSession session;
     private String jpackageHome;
     private String graalvmHome;
 
@@ -74,8 +73,7 @@ public class NativeBuilder {
         return this;
     }
 
-    public NativeBuilder(NSession session) {
-        this.session = session;
+    public NativeBuilder() {
     }
 
 
@@ -119,7 +117,7 @@ public class NativeBuilder {
     }
 
     public void echo(String message, Map<String, ?> vars) {
-        session.out().println(NMsg.ofV(message, vars));
+        NSession.get().out().println(NMsg.ofV(message, vars));
     }
 
 
@@ -487,15 +485,6 @@ public class NativeBuilder {
 
     private boolean isSupported(PackageType packageType) {
         return packageType != null && this.supported == null || this.supported.contains(packageType);
-    }
-
-    public NSession getSession() {
-        return session;
-    }
-
-    public NativeBuilder setSession(NSession session) {
-        this.session = session;
-        return this;
     }
 
     public String getJpackageHome() {

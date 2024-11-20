@@ -10,21 +10,22 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nutsserver.http;
 
+import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 
 import java.io.File;
@@ -42,41 +43,42 @@ import java.util.Set;
  */
 public interface NHttpServletFacadeContext {
 
-    String getRequestMethod() throws IOException;
+    String getRequestMethod() throws NIOException;
 
-    boolean isGetMethod() throws IOException;
+    boolean isGetMethod() throws NIOException;
 
-    boolean isPostMethod() throws IOException;
+    boolean isPostMethod() throws NIOException;
 
-    boolean isHeadMethod() throws IOException;
+    boolean isHeadMethod() throws NIOException;
 
-    URI getRequestURI() throws IOException;
+    URI getRequestURI() throws NIOException;
 
-    OutputStream getResponseBody() throws IOException;
+    OutputStream getResponseBody() throws NIOException;
 
-    void sendError(int code, String msg) throws IOException;
+    void sendError(int code, String msg) throws NIOException;
 
-    void sendResponseHeaders(int code, long length) throws IOException;
+    void sendResponseHeaders(int code, long length) throws NIOException;
 
-    void sendResponseText(int code, String text) throws IOException;
+    void sendResponseText(int code, String text) throws NIOException;
 
-    void sendResponseFile(int code, File file) throws IOException;
+    void sendResponseFile(int code, File file) throws NIOException;
 
-    void sendResponseBytes(int code, byte[] bytes) throws IOException;
+    void sendResponseBytes(int code, byte[] bytes) throws NIOException;
 
-    void sendResponseFile(int code, NPath file) throws IOException;
-    void sendResponseFile(int code, Path file) throws IOException;
+    void sendResponseFile(int code, NPath file) throws NIOException;
 
-    Set<String> getRequestHeaderKeys(String header) throws IOException;
+    void sendResponseFile(int code, Path file) throws NIOException;
 
-    String getRequestHeaderFirstValue(String header) throws IOException;
+    Set<String> getRequestHeaderKeys(String header) throws NIOException;
 
-    List<String> getRequestHeaderAllValues(String header) throws IOException;
+    String getRequestHeaderFirstValue(String header) throws NIOException;
 
-    InputStream getRequestBody() throws IOException;
+    List<String> getRequestHeaderAllValues(String header) throws NIOException;
 
-    Map<String, List<String>> getParameters() throws IOException;
+    InputStream getRequestBody() throws NIOException;
 
-    void addResponseHeader(String name, String value) throws IOException;
+    Map<String, List<String>> getParameters() throws NIOException;
+
+    void addResponseHeader(String name, String value) throws NIOException;
 
 }
