@@ -239,3 +239,4 @@ core/nuts-app-full/target
 /core/nlib-common-utils/target
 /core/nlib-common-collections/target
 /core/nlib-common-collections/target
+/core/nuts-app-full/dependency-reduced-pom.xml
