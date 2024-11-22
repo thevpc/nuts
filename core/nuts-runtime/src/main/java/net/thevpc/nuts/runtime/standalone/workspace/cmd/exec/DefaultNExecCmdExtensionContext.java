@@ -27,7 +27,7 @@ public class DefaultNExecCmdExtensionContext implements NExecCmdExtensionContext
         this.execCommand = execCommand;
         switch (in.getType()) {
             case NULL: {
-                hin = new MyInHolder(session, NIO.of().ofNullRawInputStream(), false, null);
+                hin = new MyInHolder(session, NIO.ofNullRawInputStream(), false, null);
                 break;
             }
             case PATH: {
@@ -46,7 +46,7 @@ public class DefaultNExecCmdExtensionContext implements NExecCmdExtensionContext
         }
         switch (out.getType()) {
             case NULL: {
-                hout = new MyOutHolder(session, NIO.of().ofNullRawOutputStream(), false, null);
+                hout = new MyOutHolder(session, NIO.ofNullRawOutputStream(), false, null);
                 break;
             }
             case PATH: {
@@ -81,7 +81,7 @@ public class DefaultNExecCmdExtensionContext implements NExecCmdExtensionContext
         }
         switch (err.getType()) {
             case NULL: {
-                herr = new MyOutHolder(session, NIO.of().ofNullRawOutputStream(), false, null);
+                herr = new MyOutHolder(session, NIO.ofNullRawOutputStream(), false, null);
                 break;
             }
             case PATH: {

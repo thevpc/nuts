@@ -33,7 +33,7 @@ import net.thevpc.nuts.io.NSystemTerminal;
 import net.thevpc.nuts.runtime.optional.jansi.OptionalJansi;
 import net.thevpc.nuts.io.NullNPrintStream;
 import net.thevpc.nuts.runtime.standalone.io.terminal.*;
-import net.thevpc.nuts.runtime.standalone.io.util.NullOutputStream;
+import net.thevpc.nuts.io.NullOutputStream;
 import net.thevpc.nuts.runtime.standalone.session.DefaultNSession;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NativeImageHelper;

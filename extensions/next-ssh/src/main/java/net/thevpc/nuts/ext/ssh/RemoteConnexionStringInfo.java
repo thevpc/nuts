@@ -346,7 +346,7 @@ public class RemoteConnexionStringInfo {
             this.cmd = cmd;
             this.out = out;
             this.err = err;
-            nullInput = NIO.of().ofNullRawInputStream();
+            nullInput = NIO.ofNullRawInputStream();
         }
 
         @Override

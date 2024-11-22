@@ -141,11 +141,11 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                     return NOptional.of((T) p);
                 }
                 case "net.thevpc.nuts.io.NIO": {
-                    DefaultNIO p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNIO(session));
+                    DefaultNIO p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.WORKSPACE, () -> new DefaultNIO(workspace));
                     return NOptional.of((T) p);
                 }
                 case "net.thevpc.nuts.NConfigs": {
-                    DefaultNConfigs p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNConfigs(workspace));
+                    DefaultNConfigs p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.WORKSPACE, () -> new DefaultNConfigs(workspace));
                     return NOptional.of((T) p);
                 }
                 case "net.thevpc.nuts.NBootManager": {

@@ -157,7 +157,7 @@ public class NSessionUtils {
                         copied = true;
                         session = session.copy();
                     }
-                    session.getTerminal().setIn(NIO.of().ofNullRawInputStream());
+                    session.getTerminal().setIn(NIO.ofNullRawInputStream());
                     break;
                 }
                 case PATH: {

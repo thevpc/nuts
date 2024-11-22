@@ -4,7 +4,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
 import net.thevpc.nuts.runtime.standalone.io.printstream.*;
-import net.thevpc.nuts.runtime.standalone.io.util.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
@@ -14,19 +13,14 @@ import net.thevpc.nuts.spi.NSystemTerminalBase;
 import java.io.*;
 
 public class DefaultNIO implements NIO {
-    private final NSession session;
     public DefaultNWorkspaceConfigModel cmodel;
     public DefaultNBootModel bootModel;
+    public NWorkspace workspace;
 
-    public DefaultNIO(NSession session) {
-        this.session = session;
+    public DefaultNIO(NWorkspace workspace) {
+        this.workspace=workspace;
         this.cmodel = ((DefaultNConfigs) NConfigs.of()).getModel();
         bootModel = NWorkspaceExt.of().getModel().bootModel;
-    }
-
-    @Override
-    public InputStream ofNullRawInputStream() {
-        return NullInputStream.INSTANCE;
     }
 
     @Override
@@ -46,13 +40,6 @@ public class DefaultNIO implements NIO {
 
     private DefaultNBootModel getBootModel() {
         return NWorkspaceExt.of().getModel().bootModel;
-    }
-
-
-    @Override
-    public OutputStream ofNullRawOutputStream() {
-        checkSession();
-        return getBootModel().nullOutputStream();
     }
 
 
@@ -94,14 +81,6 @@ public class DefaultNIO implements NIO {
     @Override
     public NPrintStream stderr() {
         return getBootModel().getSystemTerminal().err();
-    }
-
-    public NSession getSession() {
-        return session;
-    }
-
-    private void checkSession() {
-        //NutsWorkspaceUtils.checkSession(model.getWorkspace(), getSession());
     }
 
     private DefaultNWorkspaceConfigModel getConfigModel() {

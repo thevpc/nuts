@@ -24,7 +24,7 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts.runtime.standalone.io.util;
+package net.thevpc.nuts.io;
 
 import java.io.OutputStream;
 
