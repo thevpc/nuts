@@ -5,8 +5,8 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.lib.common.collections.CharQueue;
-import net.thevpc.nuts.lib.common.collections.NMatchType;
+import net.thevpc.nuts.util.NCharQueue;
+import net.thevpc.nuts.util.NMatchType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +17,7 @@ public class Test34_CharQueue {
 
     @Test
     public void test01() {
-        CharQueue q = new CharQueue(4);
+        NCharQueue q = new NCharQueue(4);
         Assertions.assertEquals(0, q.length());
         Assertions.assertEquals("", q.toString());
 
@@ -51,7 +51,7 @@ public class Test34_CharQueue {
 
     @Test
     public void test02() {
-        CharQueue q = new CharQueue();
+        NCharQueue q = new NCharQueue();
         q.write("###");
 
         Assertions.assertEquals(NMatchType.FULL_MATCH, q.peekPattern("#").mode());
@@ -62,21 +62,21 @@ public class Test34_CharQueue {
 
     @Test
     public void test03() {
-        CharQueue q = new CharQueue();
+        NCharQueue q = new NCharQueue();
         q.write("###");
         Assertions.assertEquals(NMatchType.MATCH, q.peekPattern("#*").mode());
     }
 
     @Test
     public void test04() {
-        CharQueue q = new CharQueue();
+        NCharQueue q = new NCharQueue();
         q.write("a");
         Assertions.assertEquals('a', q.read());
     }
 
     @Test
     public void test05() {
-        CharQueue q = new CharQueue(2,2);
+        NCharQueue q = new NCharQueue(2,2);
         q.write("a");
         Assertions.assertEquals(0, q.getFrom());
         Assertions.assertEquals(1, q.getTo());

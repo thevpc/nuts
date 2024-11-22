@@ -6,7 +6,7 @@ import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.format.NTreeVisitResult;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.lib.common.str.NConnexionString;
+import net.thevpc.nuts.util.NConnexionString;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.text.NTextBuilder;

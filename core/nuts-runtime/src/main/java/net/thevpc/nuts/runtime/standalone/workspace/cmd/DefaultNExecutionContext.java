@@ -28,7 +28,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.lib.common.collections.CoreCollectionUtils;
+import net.thevpc.nuts.util.NCoreCollectionUtils;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -76,10 +76,10 @@ public class DefaultNExecutionContext implements NExecutionContext {
     ) {
         this.commandName = commandName;
         this.definition = definition;
-        this.arguments = CoreCollectionUtils.unmodifiableList(arguments);
+        this.arguments = NCoreCollectionUtils.unmodifiableList(arguments);
         this.workspace = workspace;
-        this.executorOptions = CoreCollectionUtils.unmodifiableList(executorArgs);
-        this.workspaceOptions = CoreCollectionUtils.unmodifiableList(workspaceOptions);
+        this.executorOptions = NCoreCollectionUtils.unmodifiableList(executorArgs);
+        this.workspaceOptions = NCoreCollectionUtils.unmodifiableList(workspaceOptions);
         this.sleepMillis = sleepMillis;
         this.cwd = cwd;
         if (env == null) {
@@ -240,12 +240,12 @@ public class DefaultNExecutionContext implements NExecutionContext {
     }
 
     public DefaultNExecutionContext setExecutorOptions(String[] executorOptions) {
-        this.executorOptions = CoreCollectionUtils.unmodifiableList(Arrays.asList(executorOptions));
+        this.executorOptions = NCoreCollectionUtils.unmodifiableList(Arrays.asList(executorOptions));
         return this;
     }
 
     public DefaultNExecutionContext setArguments(String[] arguments) {
-        this.arguments = CoreCollectionUtils.unmodifiableList(Arrays.asList(arguments));
+        this.arguments = NCoreCollectionUtils.unmodifiableList(Arrays.asList(arguments));
         return this;
     }
 

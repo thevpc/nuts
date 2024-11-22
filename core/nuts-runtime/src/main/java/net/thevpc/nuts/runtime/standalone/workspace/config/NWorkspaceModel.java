@@ -6,8 +6,8 @@ import net.thevpc.nuts.runtime.standalone.NWsConfDB;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEventModel;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions;
 import net.thevpc.nuts.runtime.standalone.io.cache.CachedSupplier;
-import net.thevpc.nuts.lib.common.collections.LRUMap;
-import net.thevpc.nuts.lib.common.collections.NPropertiesHolder;
+import net.thevpc.nuts.util.NLRUMap;
+import net.thevpc.nuts.util.NPropertiesHolder;
 import net.thevpc.nuts.runtime.standalone.util.filters.DefaultNFilterModel;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTextManagerModel;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNLogModel;
@@ -58,7 +58,7 @@ public class NWorkspaceModel {
     public NId askedRuntimeId;
     public NBootOptions bOption0;
     public NWsConfDB confDB;
-    public LRUMap<NId, CachedSupplier<NDefinition>> cachedDefs=new LRUMap<>(100);
+    public NLRUMap<NId, CachedSupplier<NDefinition>> cachedDefs=new NLRUMap<>(100);
     public DefaultNExtensions extensions;
 
     public NWorkspaceModel(NWorkspace workspace, NBootOptions bOption0) {

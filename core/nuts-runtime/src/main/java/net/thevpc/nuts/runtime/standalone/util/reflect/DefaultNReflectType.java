@@ -26,7 +26,7 @@ package net.thevpc.nuts.runtime.standalone.util.reflect;
 
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.NWorkspace;
-import net.thevpc.nuts.lib.common.collections.NArrays;
+import net.thevpc.nuts.util.NArrays;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.NSession;

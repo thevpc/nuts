@@ -30,8 +30,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.lib.common.iter.IteratorBuilder;
-import net.thevpc.nuts.lib.common.iter.IteratorUtils;
+import net.thevpc.nuts.util.NIteratorBuilder;
+import net.thevpc.nuts.util.NIteratorUtils;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
@@ -139,7 +139,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
             @Override
             public NIterator<R> iterator() {
                 NIterator<T> it = NStreamBase.this.iterator();
-                return (NIterator) IteratorBuilder.of(it).map(NFunction.of(mapper)).build();
+                return (NIterator) NIteratorBuilder.of(it).map(NFunction.of(mapper)).build();
             }
         };
     }
@@ -160,7 +160,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
             @Override
             public NIterator<T> iterator() {
                 NIterator<T> it = NStreamBase.this.iterator();
-                return IteratorUtils.sort(it, null, false)
+                return NIteratorUtils.sort(it, null, false)
                         ;
             }
         };
@@ -172,7 +172,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
             @Override
             public NIterator<T> iterator() {
                 NIterator<T> it = NStreamBase.this.iterator();
-                return IteratorUtils.sort(it, comp, false)
+                return NIteratorUtils.sort(it, comp, false)
                         ;
             }
         };
@@ -184,7 +184,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
             @Override
             public NIterator<T> iterator() {
                 NIterator<T> it = NStreamBase.this.iterator();
-                return IteratorUtils.distinct(it)
+                return NIteratorUtils.distinct(it)
                         ;
             }
         };
@@ -196,7 +196,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
             @Override
             public NIterator<T> iterator() {
                 NIterator<T> it = NStreamBase.this.iterator();
-                return IteratorUtils.distinct(it, condition)
+                return NIteratorUtils.distinct(it, condition)
                         ;
             }
         };
@@ -233,7 +233,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
             @Override
             public NIterator<T> iterator() {
                 NIterator<T> it = NStreamBase.this.iterator();
-                return IteratorBuilder.of(it).filter(NPredicate.of(predicate)).build()
+                return NIteratorBuilder.of(it).filter(NPredicate.of(predicate)).build()
                         ;//,"mapped("+it+")"
             }
         };
@@ -256,7 +256,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
             public NIterator<T> iterator() {
                 NIterator<T> it = NStreamBase.this.iterator();
                 List<NIterator<? extends T>> iterators = Arrays.asList(it, other);
-                return IteratorUtils.coalesce(iterators)
+                return NIteratorUtils.coalesce(iterators)
                         ;//,"mapped("+it+")"
             }
         };
@@ -290,7 +290,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
         return new NStreamBase<R>(nutsBase) {
             @Override
             public NIterator<R> iterator() {
-                return IteratorBuilder.of(NStreamBase.this.iterator()).flatMap(mapper).build();
+                return NIteratorBuilder.of(NStreamBase.this.iterator()).flatMap(mapper).build();
             }
         };
     }
@@ -300,7 +300,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
         return new NStreamBase<R>(nutsBase) {
             @Override
             public NIterator<R> iterator() {
-                IteratorBuilder<T> r = IteratorBuilder.of(NStreamBase.this.iterator());
+                NIteratorBuilder<T> r = NIteratorBuilder.of(NStreamBase.this.iterator());
                 return (NIterator<R>) r.flatMap(
                         NFunction.of(tt -> mapper.apply((T) tt).iterator()).withDesc(()->NFunction.of(mapper).describe())
                 ).build()
@@ -314,7 +314,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
         return new NStreamBase<R>(nutsBase) {
             @Override
             public NIterator<R> iterator() {
-                return IteratorBuilder.of(NStreamBase.this.iterator())
+                return NIteratorBuilder.of(NStreamBase.this.iterator())
                         .flatMap(
                                 NFunction.of(t -> Arrays.asList(mapper.apply((T) t)).iterator())
                                         .withDesc(()->NFunction.of(mapper).describe())
@@ -329,7 +329,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
         return new NStreamBase<R>(nutsBase) {
             @Override
             public NIterator<R> iterator() {
-                return (NIterator<R>) IteratorBuilder.of(NStreamBase.this.iterator()).flatMap(
+                return (NIterator<R>) NIteratorBuilder.of(NStreamBase.this.iterator()).flatMap(
                         NFunction.of(t -> mapper.apply(t).iterator())
                 ).build().withDesc(()->NFunction.of(mapper).describe());
             }
@@ -341,7 +341,7 @@ public abstract class NStreamBase<T> implements NStream<T> {
         return new NStreamBase<R>(nutsBase) {
             @Override
             public NIterator<R> iterator() {
-                return (NIterator<R>) IteratorBuilder.of(NStreamBase.this.iterator())
+                return (NIterator<R>) NIteratorBuilder.of(NStreamBase.this.iterator())
                         .flatMap(
                                 NFunction.of(t -> mapper.apply(t).iterator())
                         ).build().withDesc(()->NFunction.of(mapper).describe())

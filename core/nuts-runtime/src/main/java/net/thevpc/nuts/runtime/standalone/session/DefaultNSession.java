@@ -42,7 +42,7 @@ import net.thevpc.nuts.runtime.standalone.elem.DefaultNArrayElementBuilder;
 import net.thevpc.nuts.runtime.standalone.io.progress.ProgressOptions;
 import net.thevpc.nuts.runtime.standalone.io.terminal.AbstractNTerminal;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.lib.common.collections.NPropertiesHolder;
+import net.thevpc.nuts.util.NPropertiesHolder;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;

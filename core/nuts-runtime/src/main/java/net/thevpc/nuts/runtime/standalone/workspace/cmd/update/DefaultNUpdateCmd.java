@@ -18,7 +18,7 @@ import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
-import net.thevpc.nuts.lib.common.iter.IteratorUtils;
+import net.thevpc.nuts.util.NIteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNUpdateResult;
@@ -263,7 +263,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
             // This bloc is to handle packages that were installed by their jar/content but was removed for any reason!
             NWorkspaceExt dws = NWorkspaceExt.of();
             NInstalledRepository ir = dws.getInstalledRepository();
-            for (NInstallInformation y : IteratorUtils.toList(ir.searchInstallInformation())) {
+            for (NInstallInformation y : NIteratorUtils.toList(ir.searchInstallInformation())) {
                 if (y != null && y.getInstallStatus().isInstalled() && y.getId() != null) {
                     baseRegulars.add(y.getId().builder().setVersion("").build());
                 }
@@ -291,7 +291,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         NWorkspace ws = session.getWorkspace();
         NWorkspaceExt dws = NWorkspaceExt.of();
         NInstalledRepository ir = dws.getInstalledRepository();
-        resultFixes = IteratorUtils.toList(IteratorUtils.convertNonNull(ir.searchInstallInformation(), new Function<NInstallInformation, FixAction>() {
+        resultFixes = NIteratorUtils.toList(NIteratorUtils.convertNonNull(ir.searchInstallInformation(), new Function<NInstallInformation, FixAction>() {
             @Override
             public FixAction apply(NInstallInformation nInstallInformation) {
                 NId id = NSearchCmd.of().setInstallStatus(

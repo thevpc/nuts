@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.standalone.security;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.lib.common.collections.CoreCollectionUtils;
+import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.ConfigEventType;
@@ -244,7 +244,7 @@ public class DefaultNWorkspaceSecurityModel {
         NUserConfig s = NConfigsExt.of(NConfigs.of()).getModel().getUser(n);
         if (s != null) {
             List<String> rr = s.getPermissions();
-            aa = new NAuthorizations(CoreCollectionUtils.nonNullList(rr));
+            aa = new NAuthorizations(NCoreCollectionUtils.nonNullList(rr));
             authorizations.put(n, aa);
         } else {
             aa = new NAuthorizations(Collections.emptyList());

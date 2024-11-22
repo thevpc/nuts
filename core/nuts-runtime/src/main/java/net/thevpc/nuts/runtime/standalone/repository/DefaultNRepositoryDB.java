@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.repository;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.lib.common.collections.NMaps;
+import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.runtime.standalone.util.NMapWithAlias;
 import net.thevpc.nuts.spi.NRepositoryDB;
 import net.thevpc.nuts.spi.NRepositoryLocation;

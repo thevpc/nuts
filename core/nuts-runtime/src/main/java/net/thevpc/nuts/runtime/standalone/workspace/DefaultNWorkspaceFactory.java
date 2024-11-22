@@ -41,9 +41,9 @@ import net.thevpc.nuts.runtime.standalone.io.path.DefaultNPaths;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNLogs;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
-import net.thevpc.nuts.lib.common.collections.ClassClassMap;
-import net.thevpc.nuts.lib.common.collections.ListMap;
-import net.thevpc.nuts.lib.common.collections.NPropertiesHolder;
+import net.thevpc.nuts.util.NClassClassMap;
+import net.thevpc.nuts.util.NListMap;
+import net.thevpc.nuts.util.NPropertiesHolder;
 import net.thevpc.nuts.runtime.standalone.util.stream.DefaultNCollectionsRPI;
 import net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionFormat;
 import net.thevpc.nuts.runtime.standalone.web.DefaultNWebCli;
@@ -77,7 +77,7 @@ import java.util.stream.Collectors;
 public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
 
     private final NLog LOG;
-    private final ListMap<Class<?>, Object> instances = new ListMap<>();
+    private final NListMap<Class<?>, Object> instances = new NListMap<>();
     private final Map<NId, IdCache> discoveredCacheById = new HashMap<>();
     private final HashMap<String, String> _alreadyLogger = new HashMap<>();
     private final NWorkspace workspace;
@@ -100,7 +100,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             IdCache value = new IdCache(id, url, bootClassLoader, LOG, extensionPoints, workspace);
             discoveredCacheById.put(id, value);
             Set<Class<? extends NComponent>> all = new HashSet<>();
-            for (ClassClassMap m : value.classes.values()) {
+            for (NClassClassMap m : value.classes.values()) {
                 Collection<Class<? extends NComponent>> values = (Collection) m.values();
                 all.addAll(values);
             }
@@ -606,8 +606,8 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         for (Map.Entry<NId, IdCache> e : discoveredCacheById.entrySet()) {
             IdCache idCache = e.getValue();
             System.err.println("\t" + e.getKey() + " :: " + idCache.url);
-            for (Map.Entry<Class<?>, ClassClassMap> v : idCache.classes.entrySet()) {
-                ClassClassMap vv = v.getValue();
+            for (Map.Entry<Class<?>, NClassClassMap> v : idCache.classes.entrySet()) {
+                NClassClassMap vv = v.getValue();
                 Set<Class> classes = vv.allKeySet();
                 for (Class k : classes) {
                     if (k.isInterface()) {

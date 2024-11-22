@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.standalone.security;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepoConfigManager;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
-import net.thevpc.nuts.lib.common.collections.CoreCollectionUtils;
+import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
 import net.thevpc.nuts.security.NAuthenticationAgent;
@@ -78,7 +78,7 @@ public class DefaultNRepositorySecurityModel {
         if (s != null) {
             List<String> rr = s.getPermissions();
             aa = new NAuthorizations(
-                    CoreCollectionUtils.nonNullList(rr)
+                    NCoreCollectionUtils.nonNullList(rr)
             );
             authorizations.put(n, aa);
         } else {

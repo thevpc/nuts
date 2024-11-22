@@ -37,7 +37,7 @@ import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
-import net.thevpc.nuts.lib.common.collections.NCollections;
+import net.thevpc.nuts.util.NCollections;
 
 import java.io.IOException;
 import java.nio.file.FileStore;

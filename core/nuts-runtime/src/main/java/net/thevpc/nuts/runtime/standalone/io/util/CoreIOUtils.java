@@ -37,7 +37,7 @@ import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.DoWhenExist;
 import net.thevpc.nuts.runtime.standalone.util.DoWhenNotExists;
-import net.thevpc.nuts.lib.common.collections.CoreCollectionUtils;
+import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDB;
@@ -108,7 +108,7 @@ public class CoreIOUtils {
     }
 
     public static Stream<String> lines(Reader reader) {
-        return CoreCollectionUtils.finiteStream(new Supplier<String>() {
+        return NCoreCollectionUtils.finiteStream(new Supplier<String>() {
             private BufferedReader r = new BufferedReader(reader);
 
             public String get() {

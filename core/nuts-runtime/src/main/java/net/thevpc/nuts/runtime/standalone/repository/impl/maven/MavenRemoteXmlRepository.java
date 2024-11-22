@@ -31,7 +31,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenMetadata;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
-import net.thevpc.nuts.lib.common.iter.IteratorBuilder;
+import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.util.NIterator;
 import net.thevpc.nuts.util.NMsg;
 
@@ -53,14 +53,14 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
     @Override
     public NIterator<NId> findNonSingleVersionImpl(NId id, NIdFilter idFilter, NFetchMode fetchMode) {
         if (!acceptedFetchNoCache(fetchMode)) {
-            return IteratorBuilder.emptyIterator();
+            return NIteratorBuilder.emptyIterator();
         }
         NSession session = getWorkspace().currentSession();
         String groupId = id.getGroupId();
         String artifactId = id.getArtifactId();
         NPath metadataURL = config().getLocationPath().resolve(groupId.replace('.', '/') + "/" + artifactId + "/maven-metadata.xml");
 
-        return IteratorBuilder.ofSupplier(
+        return NIteratorBuilder.ofSupplier(
                 () -> {
                     List<NId> ret = new ArrayList<>();
                     InputStream metadataStream = null;
@@ -69,7 +69,7 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
                         try {
                             metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNConstants.QueryFaces.CATALOG).build(), "artifact catalog", "retrieve");
                         } catch (UncheckedIOException | NIOException ex) {
-                            return IteratorBuilder.emptyIterator();
+                            return NIteratorBuilder.emptyIterator();
                         }
                         MavenMetadata info = MavenUtils.of().parseMavenMetaData(metadataStream, session);
                         if (info != null) {
@@ -86,14 +86,14 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
                         }
                     } catch (UncheckedIOException | NIOException ex) {
                         //unable to access
-                        return IteratorBuilder.emptyIterator();
+                        return NIteratorBuilder.emptyIterator();
                     } finally {
                         if (metadataStream != null) {
                             try {
                                 metadataStream.close();
                             } catch (IOException e) {
 //                    throw new NutsIOException(getWorkspace(),e);
-                                return IteratorBuilder.emptyIterator();
+                                return NIteratorBuilder.emptyIterator();
                             }
                         }
                     }

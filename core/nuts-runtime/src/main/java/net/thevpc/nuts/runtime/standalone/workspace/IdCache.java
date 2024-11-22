@@ -7,8 +7,7 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.runtime.standalone.extension.CoreServiceUtils;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
-import net.thevpc.nuts.lib.common.collections.ClassClassMap;
+import net.thevpc.nuts.util.NClassClassMap;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NMsg;
@@ -22,7 +21,7 @@ import java.util.stream.Collectors;
 class IdCache {
 
     private final NId id;
-    final Map<Class<?>, ClassClassMap> classes = new HashMap<>();
+    final Map<Class<?>, NClassClassMap> classes = new HashMap<>();
     private final Map<Class<?>, Set<Class<?>>> cacheExtensionTypes = new HashMap<>();
     private final NWorkspace workspace;
     URL url;
@@ -90,7 +89,7 @@ class IdCache {
                     lop.verb(NLogVerb.WARNING).level(Level.FINE)
                             .log(NMsg.ofC("not a valid type %s <> %s, ignore...", c, serviceClass));
                 } else {
-                    ClassClassMap cc = classes.computeIfAbsent(extensionPoint, r -> new ClassClassMap());
+                    NClassClassMap cc = classes.computeIfAbsent(extensionPoint, r -> new NClassClassMap());
                     cc.add(c);
                     lop.verb(NLogVerb.INFO).level(Level.FINE)
                             .log(NMsg.ofC("discovered %s as %s in %s", c, extensionPoint, url==null?"default classloader":url));
@@ -115,7 +114,7 @@ class IdCache {
 
 
     void add(Class<?> extensionPoint, Class<?> implementation) {
-        ClassClassMap y = getClassClassMap(extensionPoint, true);
+        NClassClassMap y = getClassClassMap(extensionPoint, true);
         if (!y.containsExactKey(implementation)) {
             y.add(implementation);
             invalidateCache();
@@ -126,10 +125,10 @@ class IdCache {
         cacheExtensionTypes.clear();
     }
 
-    private ClassClassMap getClassClassMap(Class extensionPoint, boolean create) {
-        ClassClassMap r = classes.get(extensionPoint);
+    private NClassClassMap getClassClassMap(Class extensionPoint, boolean create) {
+        NClassClassMap r = classes.get(extensionPoint);
         if (r == null && create) {
-            r = new ClassClassMap();
+            r = new NClassClassMap();
             classes.put(extensionPoint, r);
         }
         return r;
@@ -149,7 +148,7 @@ class IdCache {
 
     public <T> Set<Class<? extends T>> getExtensionTypesNoCache(Class<T> extensionPoint) {
         Set<Class<? extends T>> all = new LinkedHashSet<>();
-        for (Map.Entry<Class<?>, ClassClassMap> rr : this.classes.entrySet()) {
+        for (Map.Entry<Class<?>, NClassClassMap> rr : this.classes.entrySet()) {
             if (rr.getKey().isAssignableFrom(extensionPoint)) {
                 all.addAll((Collection) Arrays.asList(rr.getValue().getAll(extensionPoint)));
             }
@@ -159,7 +158,7 @@ class IdCache {
 
     public <T> Set<Class<? extends T>> getExtensionTypesNoCache2(Class<T> extensionPoint) {
         Set<Class<? extends T>> all = new LinkedHashSet<>();
-        for (Map.Entry<Class<?>, ClassClassMap> rr : this.classes.entrySet()) {
+        for (Map.Entry<Class<?>, NClassClassMap> rr : this.classes.entrySet()) {
             all.addAll((Collection) Arrays.asList(rr.getValue().getAll(extensionPoint)));
         }
         return all;

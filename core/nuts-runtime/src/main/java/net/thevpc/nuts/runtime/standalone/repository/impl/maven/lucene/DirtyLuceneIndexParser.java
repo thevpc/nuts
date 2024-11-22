@@ -3,15 +3,15 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.maven.lucene;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.lib.common.collections.EvictingIntQueue;
-import net.thevpc.nuts.lib.common.iter.NIteratorBase;
+import net.thevpc.nuts.util.NEvictingIntQueue;
+import net.thevpc.nuts.util.NIteratorBase;
 
 import java.io.*;
 
 public class DirtyLuceneIndexParser extends NIteratorBase<String> implements Closeable {
     private PushbackReader reader;
     private String last;
-    private EvictingIntQueue whites = new EvictingIntQueue(10);
+    private NEvictingIntQueue whites = new NEvictingIntQueue(10);
     private long count = 0;
     private boolean closed=false;
     private InputStream source0;

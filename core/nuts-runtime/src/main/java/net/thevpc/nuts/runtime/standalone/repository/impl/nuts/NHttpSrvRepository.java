@@ -30,7 +30,7 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.repository.util.NIdLocationUtils;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
-import net.thevpc.nuts.lib.common.iter.NIteratorBase;
+import net.thevpc.nuts.util.NIteratorBase;
 import net.thevpc.nuts.runtime.standalone.id.filter.NExprIdFilter;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NCachedRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
@@ -44,7 +44,7 @@ import java.util.Arrays;
 import java.util.logging.Level;
 
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
-import net.thevpc.nuts.lib.common.iter.IteratorBuilder;
+import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.spi.*;
@@ -143,14 +143,14 @@ public class NHttpSrvRepository extends NCachedRepository {
             session.getTerminal().printProgress(NMsg.ofC("search version for %s", id.getLongId()));
             ret = NPath.of(getUrl("/find-versions?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session))).getInputStream();
         } catch (UncheckedIOException | NIOException e) {
-            return IteratorBuilder.emptyIterator();
+            return NIteratorBuilder.emptyIterator();
         }
         NIterator<NId> it = new NamedNIdFromStreamIterator(ret, session);
         NIdFilter filter2 = NIdFilters.of().nonnull(idFilter).and(
                 NIdFilters.of().byName(id.getShortName())
         );
         if (filter2 != null) {
-            it = IteratorBuilder.of(it).filter(CoreFilterUtils.createFilter(filter2)).iterator();
+            it = NIteratorBuilder.of(it).filter(CoreFilterUtils.createFilter(filter2)).iterator();
         }
         return it;
     }
@@ -179,7 +179,7 @@ public class NHttpSrvRepository extends NCachedRepository {
                                 NInputSource.of(js.getBytes())).end()
                         .run()
                         .getContent().getInputStream();
-                return IteratorBuilder.of(new NamedNIdFromStreamIterator(ret, session)).filter(CoreFilterUtils.createFilter(filter)).iterator();
+                return NIteratorBuilder.of(new NamedNIdFromStreamIterator(ret, session)).filter(CoreFilterUtils.createFilter(filter)).iterator();
             }
         } else {
             NWebCli nWebCli = NWebCli.of();
@@ -196,7 +196,7 @@ public class NHttpSrvRepository extends NCachedRepository {
         if (filter == null) {
             return new NamedNIdFromStreamIterator(ret, session);
         }
-        return IteratorBuilder.of(new NamedNIdFromStreamIterator(ret, session)).filter(CoreFilterUtils.createFilter(filter)).iterator();
+        return NIteratorBuilder.of(new NamedNIdFromStreamIterator(ret, session)).filter(CoreFilterUtils.createFilter(filter)).iterator();
 
     }
 

@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextPlain;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NDebugString;
-import net.thevpc.nuts.lib.common.collections.EvictingCharQueue;
+import net.thevpc.nuts.util.NEvictingCharQueue;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringBuilder;
@@ -29,7 +29,7 @@ public class StyledParserStep extends ParserStep {
 //    List<ParserStep> children = new ArrayList<>();
     int maxSize = 10;
     private NWorkspace workspace;
-    private EvictingCharQueue charQueue = new EvictingCharQueue(5);
+    private NEvictingCharQueue charQueue = new NEvictingCharQueue(5);
     private DefaultNTextNodeParser.State state;
     private StyledParserStepCmdParser parseHelper = new StyledParserStepCmdParser();
     private boolean wasEscape;

@@ -9,7 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecHelper;
-import net.thevpc.nuts.lib.common.collections.CoreCollectionUtils;
+import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
@@ -36,7 +36,7 @@ public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt 
                 NCmdLine.of(cmd).toString(),
                 NExecutableType.SYSTEM, execCommand);
         this.cmd = cmd;
-        this.executorOptions = CoreCollectionUtils.nonNullList(executorOptions);
+        this.executorOptions = NCoreCollectionUtils.nonNullList(executorOptions);
         NCmdLine cmdLine = NCmdLine.of(this.executorOptions);
         while (cmdLine.hasNext()) {
             NArg aa = cmdLine.peek().get();

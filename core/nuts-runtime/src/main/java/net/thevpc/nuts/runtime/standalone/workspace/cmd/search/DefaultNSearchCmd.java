@@ -36,8 +36,8 @@ import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.id.filter.NPatternIdFilter;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.NInstallStatusIdFilter;
-import net.thevpc.nuts.lib.common.iter.IteratorBuilder;
-import net.thevpc.nuts.lib.common.iter.IteratorUtils;
+import net.thevpc.nuts.util.NIteratorBuilder;
+import net.thevpc.nuts.util.NIteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.fetch.DefaultNFetchCmd;
@@ -556,7 +556,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                                 NIterator<NId> it = repoSPI.search().setFetchMode(NFetchMode.LOCAL).setFilter(NIdFilters.of().byName(
                                         nutsId.builder().setGroupId("*").build().toString()
                                 )).getResult();
-                                installedIds = IteratorUtils.toList(it);
+                                installedIds = NIteratorUtils.toList(it);
                             }
                             if (!installedIds.isEmpty()) {
                                 nutsId2.addAll(installedIds);
@@ -602,7 +602,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                                     consideredRepos.add(repoAndMode.getRepository());
                                     NRepositorySPI repoSPI = wu.repoSPI(repoAndMode.getRepository());
 
-                                    NIterator<NId> z = IteratorBuilder.of(repoSPI.searchVersions().setId(nutsIdNonLatest).setFilter(filter)
+                                    NIterator<NId> z = NIteratorBuilder.of(repoSPI.searchVersions().setId(nutsIdNonLatest).setFilter(filter)
                                                     .setFetchMode(repoAndMode.getFetchMode())
                                                     .getResult())
                                             .named(
@@ -618,8 +618,8 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                             }
                         }
                         toConcat.add(fetchMode.isStopFast()
-                                ? IteratorUtils.coalesce(IteratorUtils.concat(idLocal), IteratorUtils.concat(idRemote))
-                                : IteratorUtils.concatLists(idLocal, idRemote)
+                                ? NIteratorUtils.coalesce(NIteratorUtils.concat(idLocal), NIteratorUtils.concat(idRemote))
+                                : NIteratorUtils.concatLists(idLocal, idRemote)
                         );
                     }
                     if (nutsId.getGroupId() == null) {
@@ -632,12 +632,12 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                                         .and(search.getIdFilter())
                         );
                         NIterator<NId> extraResult = search2.getResultIds().iterator();
-                        allResults.add(IteratorUtils.coalesce(
-                                IteratorUtils.concat(toConcat),
+                        allResults.add(NIteratorUtils.coalesce(
+                                NIteratorUtils.concat(toConcat),
                                 extraResult
                         ));
                     } else {
-                        allResults.add(IteratorUtils.concat(toConcat));
+                        allResults.add(NIteratorUtils.concat(toConcat));
                     }
                 }
             }
@@ -652,7 +652,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                 consideredRepos.add(repoAndMode.getRepository());
                 NSession finalSession1 = session;
                 all.add(
-                        IteratorBuilder.of(wu.repoSPI(repoAndMode.getRepository()).search()
+                        NIteratorBuilder.of(wu.repoSPI(repoAndMode.getRepository()).search()
                                         .setFilter(filter)
                                         .setFetchMode(repoAndMode.getFetchMode())
                                         .getResult()).safeIgnore()
@@ -668,21 +668,21 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
             }
             allResults.add(
                     fetchMode.isStopFast()
-                            ? IteratorUtils.coalesce(all)
-                            : IteratorUtils.concat(all)
+                            ? NIteratorUtils.coalesce(all)
+                            : NIteratorUtils.concat(all)
             );
         }
-        NIterator<NId> baseIterator = IteratorUtils.concat(allResults);
+        NIterator<NId> baseIterator = NIteratorUtils.concat(allResults);
 
         if (inlineDependencies) {
             //optimize by applying latest and distinct when asking for dependencies
             baseIterator = filterLatestAndDuplicatesThenSort(baseIterator, isLatest(), isDistinct(), false);
             //now include dependencies
             NIterator<NId> curr = baseIterator;
-            baseIterator = IteratorBuilder.of(curr)
+            baseIterator = NIteratorBuilder.of(curr)
                     .flatMap(
                             NFunction.of(
-                                            (NId x) -> IteratorBuilder.of(
+                                            (NId x) -> NIteratorBuilder.of(
                                                     toFetch().setId(x).setContent(false)
                                                             .setDependencies(true).getResultDefinition().getDependencies().get().transitiveWithSource().iterator()
                                             ).build())
@@ -828,14 +828,14 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
         if (!latest && !distinct) {
             r = baseIterator;
         } else if (!latest && distinct) {
-            r = IteratorBuilder.of(baseIterator).distinct(
+            r = NIteratorBuilder.of(baseIterator).distinct(
                     NFunction.of(
                             (NId nutsId) -> nutsId.getLongId()
                                     .toString())
                             .withDesc(NEDesc.of("getLongId"))
             ).iterator();
         } else if (latest && distinct) {
-            r = IteratorBuilder.ofSupplier(() -> {
+            r = NIteratorBuilder.ofSupplier(() -> {
                         Map<String, NId> visited = new LinkedHashMap<>();
                         while (baseIterator.hasNext()) {
                             NId nutsId = baseIterator.next();
@@ -853,7 +853,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                             .build()
             ).build();
         } else /*if (latest && !distinct)*/ {
-            r = IteratorBuilder.ofSupplier(() -> {
+            r = NIteratorBuilder.ofSupplier(() -> {
                                 Map<String, List<NId>> visited = new LinkedHashMap<>();
                                 while (baseIterator.hasNext()) {
                                     NId nutsId = baseIterator.next();
@@ -866,7 +866,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                                         oldList.add(nutsId);
                                     }
                                 }
-                                return IteratorBuilder.ofFlatMap(NIterator.of(visited.values().iterator()).withDesc(NEDesc.of("visited"))).build();
+                                return NIteratorBuilder.ofFlatMap(NIterator.of(visited.values().iterator()).withDesc(NEDesc.of("visited"))).build();
                             }, () -> NEDesc.describeResolveOrDestructAsObject(baseIterator)
                                     .builder()
                                     .set("latest", true)
@@ -876,7 +876,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                     .build();
         }
         if (sort) {
-            r = IteratorUtils.sort(r, comparator, false);
+            r = NIteratorUtils.sort(r, comparator, false);
         }
         return r;
     }

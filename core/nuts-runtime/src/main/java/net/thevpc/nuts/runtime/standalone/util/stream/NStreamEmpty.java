@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.util.stream;
 
 import net.thevpc.nuts.util.NIterator;
-import net.thevpc.nuts.lib.common.iter.IteratorBuilder;
+import net.thevpc.nuts.util.NIteratorBuilder;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -33,7 +33,7 @@ public class NStreamEmpty<T> extends NStreamBase<T> {
 
     @Override
     public NIterator<T> iterator() {
-        return IteratorBuilder.emptyIterator();
+        return NIteratorBuilder.emptyIterator();
     }
 
     @Override

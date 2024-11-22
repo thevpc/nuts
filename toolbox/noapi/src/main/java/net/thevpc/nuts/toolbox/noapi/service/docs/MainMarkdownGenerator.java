@@ -3,7 +3,7 @@ package net.thevpc.nuts.toolbox.noapi.service.docs;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.lib.common.collections.NMaps;
+import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.lib.md.*;
 import net.thevpc.nuts.toolbox.noapi.util.AppMessages;
 import net.thevpc.nuts.toolbox.noapi.util.NoApiUtils;

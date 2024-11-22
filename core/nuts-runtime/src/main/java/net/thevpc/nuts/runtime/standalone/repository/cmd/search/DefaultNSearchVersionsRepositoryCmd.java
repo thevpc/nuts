@@ -19,8 +19,8 @@ import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
-import net.thevpc.nuts.lib.common.iter.IteratorBuilder;
-import net.thevpc.nuts.lib.common.iter.IteratorUtils;
+import net.thevpc.nuts.util.NIteratorBuilder;
+import net.thevpc.nuts.util.NIteratorUtils;
 import net.thevpc.nuts.spi.NSearchVersionsRepositoryCmd;
 
 /**
@@ -62,7 +62,7 @@ public class DefaultNSearchVersionsRepositoryCmd extends AbstractNSearchVersions
                     }
                     if (d != null && filter != null) {
                         resultList.add(
-                                IteratorBuilder.of(d).filter(
+                                NIteratorBuilder.of(d).filter(
                                         x -> filter.acceptId(x),
                                         () -> NEDesc.describeResolveOrToString(filter)
                                 ).safeIgnore().iterator()
@@ -74,7 +74,7 @@ public class DefaultNSearchVersionsRepositoryCmd extends AbstractNSearchVersions
             if (rr != null) {
                 resultList.add(rr);
             }
-            result = IteratorUtils.coalesce(resultList);
+            result = NIteratorUtils.coalesce(resultList);
             return this;
         } catch (RuntimeException ex) {
             _LOGOP().level(Level.FINEST).verb(NLogVerb.FAIL)

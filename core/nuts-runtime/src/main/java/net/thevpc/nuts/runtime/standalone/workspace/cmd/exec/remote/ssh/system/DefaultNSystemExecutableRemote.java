@@ -11,7 +11,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
-import net.thevpc.nuts.lib.common.collections.CoreCollectionUtils;
+import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmdExtensionContext;
 import net.thevpc.nuts.text.NText;
@@ -49,7 +49,7 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableInformati
         this.out = out;
         this.err = err;
         this.cmd = cmd;
-        this.executorOptions = CoreCollectionUtils.nonNullList(executorOptions);
+        this.executorOptions = NCoreCollectionUtils.nonNullList(executorOptions);
         this.commExec = commExec;
         NCmdLine cmdLine = NCmdLine.of(this.executorOptions);
         NSession session = workspace.currentSession();

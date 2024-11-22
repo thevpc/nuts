@@ -9,7 +9,7 @@ import net.thevpc.nuts.NId;
 import net.thevpc.nuts.NRepository;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositoryCmdBase;
-import net.thevpc.nuts.lib.common.collections.CoreCollectionUtils;
+import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.spi.NPushRepositoryCmd;
 
 import java.util.Arrays;
@@ -78,7 +78,7 @@ public abstract class AbstractNPushRepositoryCmd extends NRepositoryCmdBase<NPus
 
     @Override
     public List<String> getArgs() {
-        return CoreCollectionUtils.unmodifiableList(args);
+        return NCoreCollectionUtils.unmodifiableList(args);
     }
 
 //    @Override
@@ -91,7 +91,7 @@ public abstract class AbstractNPushRepositoryCmd extends NRepositoryCmdBase<NPus
     @Override
     public NPushRepositoryCmd setArgs(List<String> args) {
         this.args.clear();
-        this.args.addAll(CoreCollectionUtils.nonNullList(args));
+        this.args.addAll(NCoreCollectionUtils.nonNullList(args));
         return this;
     }
 

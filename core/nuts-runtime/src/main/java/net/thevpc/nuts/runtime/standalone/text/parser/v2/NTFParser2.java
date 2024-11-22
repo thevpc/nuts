@@ -3,9 +3,9 @@ package net.thevpc.nuts.runtime.standalone.text.parser.v2;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.text.AbstractNTextNodeParser;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
-import net.thevpc.nuts.lib.common.collections.CharQueue;
-import net.thevpc.nuts.lib.common.collections.NMatchType;
-import net.thevpc.nuts.lib.common.collections.NStringMatchResult;
+import net.thevpc.nuts.util.NCharQueue;
+import net.thevpc.nuts.util.NMatchType;
+import net.thevpc.nuts.util.NStringMatchResult;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.text.NTextVisitor;
@@ -40,7 +40,7 @@ public class NTFParser2 extends AbstractNTextNodeParser {
         COMPOSITE_STYLE,
     }
 
-    private final CharQueue q = new CharQueue();
+    private final NCharQueue q = new NCharQueue();
     private NTexts txt;
     private boolean wasNewLine = true;
     private Stack<Embedded> stackedStyles = new Stack<>();
@@ -141,7 +141,7 @@ public class NTFParser2 extends AbstractNTextNodeParser {
                             int simpleLvl = (embedded == null ? 0 : embedded.level) + 1;
                             NRef<NText> ret = NRef.ofNull();
                             q.doWithPattern(
-                                    new CharQueue.MultiPattern()
+                                    new NCharQueue.MultiPattern()
                                             .setFully(fully)
                                             .onFullMatch("##:(?<n>[!a-zA-Z0-9_,(')/%+-]+)[: ]", m -> {
                                                 String a = m.get();

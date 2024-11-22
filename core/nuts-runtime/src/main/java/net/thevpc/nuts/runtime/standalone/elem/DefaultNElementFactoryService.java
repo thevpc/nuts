@@ -49,7 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import net.thevpc.nuts.lib.common.collections.ClassMap;
+import net.thevpc.nuts.util.NClassMap;
 import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.reflect.NReflectRepository;
@@ -103,9 +103,9 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
 
 //    public static final NutsElementFactory F_JSONELEMENT = new NutsElementFactoryJsonElement();
 
-    private final ClassMap<NElementMapper> defaultMappers = new ClassMap<>(null, NElementMapper.class);
+    private final NClassMap<NElementMapper> defaultMappers = new NClassMap<>(null, NElementMapper.class);
     private final Map<Class, NElementMapper> coreMappers = new HashMap<>();
-    private final ClassMap<NElementMapper> customMappers = new ClassMap<>(null, NElementMapper.class);
+    private final NClassMap<NElementMapper> customMappers = new NClassMap<>(null, NElementMapper.class);
     private NReflectRepository typesRepository;
     private final NWorkspace workspace;
     private final NElementMapper F_OBJ = new NElementMapperObjReflect(this);

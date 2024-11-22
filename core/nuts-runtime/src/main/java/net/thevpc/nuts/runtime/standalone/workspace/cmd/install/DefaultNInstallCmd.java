@@ -34,7 +34,7 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.util.stream.NStreamFromList;
-import net.thevpc.nuts.lib.common.iter.IteratorUtils;
+import net.thevpc.nuts.util.NIteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
@@ -226,7 +226,7 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
             }
             // This bloc is to handle packages that were installed but their jar/content was removed for any reason!
             NInstalledRepository ir = dws.getInstalledRepository();
-            for (NInstallInformation y : IteratorUtils.toList(ir.searchInstallInformation())) {
+            for (NInstallInformation y : NIteratorUtils.toList(ir.searchInstallInformation())) {
                 if (y != null && y.getInstallStatus().isInstalled() && y.getId() != null) {
                     list.addForInstall(y.getId(), getInstalled(), true);
                 }

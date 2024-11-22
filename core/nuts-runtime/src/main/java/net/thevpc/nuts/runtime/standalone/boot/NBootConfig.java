@@ -26,7 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.lib.common.collections.CoreCollectionUtils;
+import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceCurrentConfig;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.env.NOsFamily;
@@ -130,8 +130,8 @@ public final class NBootConfig implements Cloneable, Serializable {
             this.setStoreStrategy(options.getStoreStrategy().orNull());
             this.setRepositoryStoreStrategy(options.getRepositoryStoreStrategy().orNull());
             this.setStoreLayout(options.getStoreLayout().orNull());
-            this.storeLocations = CoreCollectionUtils.nonNullMap(options.getStoreLocations().orNull());
-            this.homeLocations = CoreCollectionUtils.nonNullMap(options.getHomeLocations().orNull());
+            this.storeLocations = NCoreCollectionUtils.nonNullMap(options.getStoreLocations().orNull());
+            this.homeLocations = NCoreCollectionUtils.nonNullMap(options.getHomeLocations().orNull());
             this.setRuntimeId(options.getRuntimeId().orNull());
 //            this.setRuntimeDependencies(options.getBootRuntimeDependencies());
 //            this.setRepositories(options.getBootRepositories());

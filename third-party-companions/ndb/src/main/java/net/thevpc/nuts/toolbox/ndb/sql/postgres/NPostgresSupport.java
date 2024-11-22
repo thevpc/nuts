@@ -9,7 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
-import net.thevpc.nuts.lib.common.collections.NMaps;
+import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.toolbox.ndb.base.CmdRedirect;
 import net.thevpc.nuts.toolbox.ndb.sql.postgres.cmd.*;
 import net.thevpc.nuts.toolbox.ndb.sql.sqlbase.SqlSupport;

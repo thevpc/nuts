@@ -8,8 +8,8 @@ package net.thevpc.nuts.runtime.standalone.repository.cmd.search;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.format.NPositionType;
-import net.thevpc.nuts.lib.common.iter.IndexFirstIterator;
-import net.thevpc.nuts.lib.common.iter.IteratorBuilder;
+import net.thevpc.nuts.util.NIndexFirstIterator;
+import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
@@ -72,13 +72,13 @@ public class DefaultNSearchRepositoryCmd extends AbstractNSearchRepositoryCmd {
                             .log(NMsg.ofJ("error search operation using Indexer for {0} : {1}", getRepo().getName(), ex));
                 }
                 if (o != null) {
-                    result = IteratorBuilder.of(new IndexFirstIterator<>(o,
+                    result = NIteratorBuilder.of(new NIndexFirstIterator<>(o,
                             xrepo.searchImpl(filter, getFetchMode()),session
                     )).onStart(startRunnable).onFinish(endRunnable).build();
                     return this;
                 }
             }
-            result = IteratorBuilder.of(xrepo.searchImpl(filter, getFetchMode()))
+            result = NIteratorBuilder.of(xrepo.searchImpl(filter, getFetchMode()))
                     .onStart(startRunnable)
                     .onFinish(endRunnable)
                     .build();

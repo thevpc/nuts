@@ -70,7 +70,7 @@ import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreTimeUtils;
 import net.thevpc.nuts.runtime.standalone.util.MapToFunction;
-import net.thevpc.nuts.lib.common.collections.CoreCollectionUtils;
+import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.DefaultNFilterModel;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNExecutionContextBuilder;
@@ -429,7 +429,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             data.justInstalledArchetype = initializeWorkspace(effectiveBootOptions.getArchetype().orNull());
         }
         List<String> transientRepositoriesSet =
-                CoreCollectionUtils.nonNullList(effectiveBootOptions.getRepositories().orElseGet(Collections::emptyList));
+                NCoreCollectionUtils.nonNullList(effectiveBootOptions.getRepositories().orElseGet(Collections::emptyList));
         NRepositoryDB repoDB = NRepositoryDB.of();
         NRepositorySelectorList expected = NRepositorySelectorList.of(transientRepositoriesSet, repoDB).get();
         for (NRepositoryLocation loc : expected.resolve(null, repoDB)) {

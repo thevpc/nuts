@@ -3,13 +3,11 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.format.NFormat;
 import net.thevpc.nuts.format.NFormattable;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessBuilder2;
-import net.thevpc.nuts.lib.common.collections.CoreCollectionUtils;
+import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
-import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.time.NDuration;
@@ -95,7 +93,7 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
 
     @Override
     public List<String> getCommand() {
-        return CoreCollectionUtils.unmodifiableList(command);
+        return NCoreCollectionUtils.unmodifiableList(command);
     }
 
     @Override
@@ -223,7 +221,7 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
 
     @Override
     public List<String> getWorkspaceOptions() {
-        return CoreCollectionUtils.unmodifiableList(workspaceOptions);
+        return NCoreCollectionUtils.unmodifiableList(workspaceOptions);
     }
 
     @Override
@@ -545,7 +543,7 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
 
     @Override
     public List<String> getExecutorOptions() {
-        return CoreCollectionUtils.unmodifiableList(executorOptions);
+        return NCoreCollectionUtils.unmodifiableList(executorOptions);
     }
 
     @Override

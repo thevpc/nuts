@@ -10,8 +10,8 @@ import net.thevpc.nuts.runtime.standalone.repository.NIdPathIterator;
 import net.thevpc.nuts.runtime.standalone.repository.NIdPathIteratorBase;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NCachedRepository;
 import net.thevpc.nuts.runtime.standalone.repository.util.NIdLocationUtils;
-import net.thevpc.nuts.lib.common.iter.IteratorBuilder;
-import net.thevpc.nuts.lib.common.iter.IteratorUtils;
+import net.thevpc.nuts.util.NIteratorBuilder;
+import net.thevpc.nuts.util.NIteratorUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.util.NIterator;
 import net.thevpc.nuts.log.NLogVerb;
@@ -111,7 +111,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
             //,"https://search.maven.org/solrsearch",
             //                                                "maven.solrsearch.enable","true"
             list.add(
-                    (NIterator) IteratorBuilder.ofRunnable(
+                    (NIterator) NIteratorBuilder.ofRunnable(
                             () -> session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s", getName(), "browse",
                                     (basePath == null ? repoRoot : repoRoot.resolve(basePath)).toCompressedForm()
                             )),
@@ -124,7 +124,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                 list.add(new NIdPathIterator(this, repoRoot, basePath, filter, repoIter, 2, "core", null, true));
             }
         }
-        return IteratorUtils.concat(list);
+        return NIteratorUtils.concat(list);
     }
 
     @Override
@@ -193,7 +193,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
         NPath foldersFileUrl = config().getLocationPath().resolve(groupId.replace('.', '/') + "/" + artifactId + "/");
         NSession session = getWorkspace().currentSession();
 
-        return IteratorBuilder.ofSupplier(
+        return NIteratorBuilder.ofSupplier(
                 () -> {
                     List<NId> ret = new ArrayList<>();
                     session.getTerminal().printProgress(NMsg.ofC("looking for versions of %s at %s", id, foldersFileUrl.toCompressedForm()));
@@ -235,7 +235,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                     .resolve(groupId.replace('.', '/') + "/" + artifactId + "/" + singleVersion + "/"
                             + getIdFilename(id.builder().setFaceDescriptor().build())
                     );
-            return IteratorBuilder.ofSupplier(
+            return NIteratorBuilder.ofSupplier(
                     () -> {
                         List<NId> ret = new ArrayList<>();
                         session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s", getName(), "search", metadataURL.toCompressedForm()));

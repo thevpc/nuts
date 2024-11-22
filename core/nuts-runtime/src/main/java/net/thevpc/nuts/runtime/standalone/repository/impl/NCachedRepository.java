@@ -35,7 +35,7 @@ import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.runtime.standalone.repository.impl.util.CommonRootsByPathHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.util.CommonRootsByIdHelper;
-import net.thevpc.nuts.lib.common.iter.IteratorBuilder;
+import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.updatestats.AbstractNUpdateRepositoryStatsCmd;
@@ -190,7 +190,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
 //        NSession session = getWorkspace().currentSession();
         if (fetchMode != NFetchMode.REMOTE) {
             if (lib.isReadEnabled()) {
-                all.add(IteratorBuilder.of(
+                all.add(NIteratorBuilder.of(
                                 lib.searchVersions(id, idFilter, true)
                                 ).named("searchVersionInLib(" + getName() + ")")
                         .build()
@@ -202,7 +202,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
             try {
                 if (cache.isReadEnabled()) {
                     all.add(
-                            IteratorBuilder.of(
+                            NIteratorBuilder.of(
                                     cache.searchVersions(id, idFilter, true)
                             ).named("searchVersionInCache(" + getName() + ")").build());
                 }
@@ -225,7 +225,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
             p = searchVersionsCore(id, idFilter, fetchMode);
             if (p != null) {
                 all.add(
-                        IteratorBuilder.of(p).named("searchVersionInCore(" + getName() + ")").build());
+                        NIteratorBuilder.of(p).named("searchVersionInCore(" + getName() + ")").build());
             }
         } catch (NNotFoundException ex) {
             //ignore error
@@ -234,13 +234,13 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                     .log(NMsg.ofJ("search versions error : {0}", ex));
             //ignore....
         }
-        NIterator<NId> namedNutIdIterator = IteratorBuilder.ofConcat(all).distinct(
+        NIterator<NId> namedNutIdIterator = NIteratorBuilder.ofConcat(all).distinct(
                 NFunction.of(NId::getLongName).withDesc(NEDesc.of("getLongName"))).build();
 
         if (namedNutIdIterator == null) {
-            namedNutIdIterator = IteratorBuilder.emptyIterator();
+            namedNutIdIterator = NIteratorBuilder.emptyIterator();
         }
-        return IteratorBuilder.of(
+        return NIteratorBuilder.of(
                 mirroring.searchVersionsImpl_appendMirrors(namedNutIdIterator, id, idFilter, fetchMode)
         ).named("searchVersion(" + getName() + ")").build();
 
@@ -364,7 +364,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         if (p != null) {
             li.add(p);
         }
-        return mirroring.search(IteratorBuilder.ofConcat(li).distinct(
+        return mirroring.search(NIteratorBuilder.ofConcat(li).distinct(
                 NFunction.of(NId::getLongName).withDesc(NEDesc.of("getLongName"))
         ).build(), filter, fetchMode);
     }

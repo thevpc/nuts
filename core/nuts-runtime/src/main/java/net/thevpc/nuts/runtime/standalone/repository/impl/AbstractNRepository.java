@@ -29,7 +29,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepoConfigManager;
 import net.thevpc.nuts.runtime.standalone.repository.config.NRepositoryConfigModel;
 import net.thevpc.nuts.runtime.standalone.util.NCachedValue;
-import net.thevpc.nuts.lib.common.collections.DefaultObservableMap;
+import net.thevpc.nuts.util.NDefaultObservableMap;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.spi.NRepositorySPI;
@@ -60,7 +60,7 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
 
     public AbstractNRepository(NWorkspace workspace) {
         this.workspace=workspace;
-        this.userProperties = new DefaultObservableMap<>();
+        this.userProperties = new NDefaultObservableMap<>();
         this.securityModel = new DefaultNRepositorySecurityModel(this);
         this.available = new NCachedValue<>(workspace, () -> isAvailableImpl(), 0);;
     }

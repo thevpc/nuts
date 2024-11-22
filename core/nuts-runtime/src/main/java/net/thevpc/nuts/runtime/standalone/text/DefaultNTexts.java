@@ -21,7 +21,7 @@ import net.thevpc.nuts.runtime.standalone.text.util.DefaultNDurationFormat2;
 import net.thevpc.nuts.runtime.standalone.text.util.DefaultUnitFormat;
 import net.thevpc.nuts.runtime.standalone.util.BytesSizeFormat;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.lib.common.collections.ClassMap;
+import net.thevpc.nuts.util.NClassMap;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NFormatSPI;
@@ -48,7 +48,7 @@ public class DefaultNTexts implements NTexts {
 
     private final NWorkspace workspace;
     private final DefaultNTextManagerModel shared;
-    private ClassMap<NTextMapper> textMapper = new ClassMap<>(NTextMapper.class);
+    private NClassMap<NTextMapper> textMapper = new NClassMap<>(NTextMapper.class);
 
     public DefaultNTexts(NWorkspace workspace) {
         this.workspace = workspace;

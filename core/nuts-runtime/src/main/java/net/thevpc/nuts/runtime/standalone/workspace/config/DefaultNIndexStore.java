@@ -31,7 +31,7 @@ import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.lib.common.iter.IteratorBuilder;
+import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 
@@ -52,10 +52,10 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
     @Override
     public NIterator<NId> searchVersions(NId id) {
         NSession session=getRepository().getWorkspace().currentSession();
-        return IteratorBuilder.ofSupplier(
+        return NIteratorBuilder.ofSupplier(
                 () -> {
                     if (isInaccessible()) {
-                        return IteratorBuilder.emptyIterator();
+                        return NIteratorBuilder.emptyIterator();
                     }
                     String uu = getIndexURL().resolve( NConstants.Folders.ID).resolve( "allVersions")
                             + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s"
@@ -74,7 +74,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
                                 .collect(Collectors.toList()).iterator();
                     } catch (UncheckedIOException | NIOException e) {
                         setInaccessible();
-                        return IteratorBuilder.emptyIterator();
+                        return NIteratorBuilder.emptyIterator();
                     }
                 },
                 ()-> NElements.of()
@@ -89,7 +89,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
     public NIterator<NId> search(NIdFilter filter) {
         NSession session=getWorkspace().currentSession();
         NElements elems = NElements.of();
-        return IteratorBuilder.ofSupplier(
+        return NIteratorBuilder.ofSupplier(
                 () -> {
                     if (isInaccessible()) {
                         throw new NIndexerNotAccessibleException(NMsg.ofC("index search failed for %s",getRepository().getName()));

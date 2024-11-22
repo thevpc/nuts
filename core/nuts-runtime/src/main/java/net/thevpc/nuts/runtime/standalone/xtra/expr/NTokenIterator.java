@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.expr.NToken;
-import net.thevpc.nuts.lib.common.str.NStreamTokenizer;
+import net.thevpc.nuts.util.NStreamTokenizer;
 
 import java.io.Reader;
 import java.io.StreamTokenizer;

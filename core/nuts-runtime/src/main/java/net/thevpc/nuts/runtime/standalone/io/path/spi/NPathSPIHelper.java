@@ -7,7 +7,7 @@ import net.thevpc.nuts.format.NTreeVisitResult;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
-import net.thevpc.nuts.lib.common.iter.NIteratorBase;
+import net.thevpc.nuts.util.NIteratorBase;
 import net.thevpc.nuts.util.NStream;
 
 import java.util.Iterator;

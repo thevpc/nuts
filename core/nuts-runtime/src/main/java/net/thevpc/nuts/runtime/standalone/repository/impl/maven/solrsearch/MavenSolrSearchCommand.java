@@ -7,8 +7,8 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.MavenFolderRepository;
-import net.thevpc.nuts.lib.common.iter.IteratorBuilder;
-import net.thevpc.nuts.lib.common.iter.IteratorUtils;
+import net.thevpc.nuts.util.NIteratorBuilder;
+import net.thevpc.nuts.util.NIteratorUtils;
 import net.thevpc.nuts.util.NIterator;
 import net.thevpc.nuts.util.NLiteral;
 
@@ -61,7 +61,7 @@ public class MavenSolrSearchCommand {
                     }
                 }
                 if(someCorrect && !someIncorrect){
-                    return IteratorUtils.concat(list2);
+                    return NIteratorUtils.concat(list2);
                 }
             }
         }
@@ -100,7 +100,7 @@ public class MavenSolrSearchCommand {
                 }
                 NSession session = repo.getWorkspace().currentSession();
                 NPath query = NPath.of(q2.toString());
-                IteratorBuilder<NId> it = IteratorBuilder.<NId>ofSupplier(new Supplier<Iterator<NId>>() {
+                NIteratorBuilder<NId> it = NIteratorBuilder.<NId>ofSupplier(new Supplier<Iterator<NId>>() {
                     @Override
                     public Iterator<NId> get() {
                         return new Iterator<NId>() {

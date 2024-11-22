@@ -8,7 +8,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.build.util.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.lib.common.collections.NMaps;
+import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.NMsg;
 

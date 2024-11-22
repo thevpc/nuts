@@ -2,8 +2,8 @@ package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.lib.common.iter.IteratorBuilder;
-import net.thevpc.nuts.lib.common.iter.IteratorUtils;
+import net.thevpc.nuts.util.NIteratorBuilder;
+import net.thevpc.nuts.util.NIteratorUtils;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.util.NIterator;
 
@@ -62,7 +62,7 @@ public class NRepositoryList extends NCachedRepository {
             );
         }
         NSession session = workspace.currentSession();
-        return IteratorBuilder.ofCoalesce(all).build();
+        return NIteratorBuilder.ofCoalesce(all).build();
     }
 
 
@@ -96,7 +96,7 @@ public class NRepositoryList extends NCachedRepository {
                             .getResult()
             );
         }
-        return IteratorUtils.concat(list);
+        return NIteratorUtils.concat(list);
     }
 
     @Override

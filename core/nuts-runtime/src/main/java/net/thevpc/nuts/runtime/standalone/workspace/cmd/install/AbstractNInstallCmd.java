@@ -29,7 +29,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
-import net.thevpc.nuts.lib.common.collections.CoreCollectionUtils;
+import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NLiteral;
@@ -166,7 +166,7 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
 
     @Override
     public List<String> getArgs() {
-        return CoreCollectionUtils.unmodifiableList(args);
+        return NCoreCollectionUtils.unmodifiableList(args);
     }
 
     @Override
@@ -210,7 +210,7 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
 
     @Override
     public List<NId> getIds() {
-        return CoreCollectionUtils.unmodifiableList(ids == null ? null : ids.keySet());
+        return NCoreCollectionUtils.unmodifiableList(ids == null ? null : ids.keySet());
     }
 
     @Override

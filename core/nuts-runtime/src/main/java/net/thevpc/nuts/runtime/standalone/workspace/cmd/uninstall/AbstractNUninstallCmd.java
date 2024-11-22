@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.uninstall;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.lib.common.collections.CoreCollectionUtils;
+import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
@@ -98,7 +98,7 @@ public abstract class AbstractNUninstallCmd extends NWorkspaceCmdBase<NUninstall
 
     @Override
     public List<String> getArgs() {
-        return CoreCollectionUtils.unmodifiableList(args);
+        return NCoreCollectionUtils.unmodifiableList(args);
     }
 
     @Override
@@ -134,7 +134,7 @@ public abstract class AbstractNUninstallCmd extends NWorkspaceCmdBase<NUninstall
 
     @Override
     public List<NId> getIds() {
-        return CoreCollectionUtils.unmodifiableList(ids);
+        return NCoreCollectionUtils.unmodifiableList(ids);
     }
 
     @Override

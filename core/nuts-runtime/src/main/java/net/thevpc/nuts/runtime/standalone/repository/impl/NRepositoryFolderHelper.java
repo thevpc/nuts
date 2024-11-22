@@ -23,7 +23,7 @@ import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.DefaultNFetchCont
 import net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy.DefaultNRepositoryUndeployCmd;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
-import net.thevpc.nuts.lib.common.iter.IteratorBuilder;
+import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.CharacterizedExecFile;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmd;
@@ -256,7 +256,7 @@ public class NRepositoryFolderHelper {
                         id.getVersion().isReleaseVersion() ? null :
                                 id.getVersion().asSingleValue().orNull();
         if (singleVersion != null) {
-            return IteratorBuilder.ofSupplier(
+            return NIteratorBuilder.ofSupplier(
                     () -> {
                         if (NConstants.Versions.LATEST.equals(singleVersion) || NConstants.Versions.RELEASE.equals(singleVersion)) {
                             NId found = searchLatestVersion(id, filter);
@@ -267,7 +267,7 @@ public class NRepositoryFolderHelper {
                         if (localFile != null && localFile.isRegularFile()) {
                             return Collections.singletonList(id.builder().setRepository(repo == null ? null : repo.getName()).build()).iterator();
                         }
-                        return IteratorBuilder.emptyIterator();
+                        return NIteratorBuilder.emptyIterator();
                     },
                     () -> NElements.of()
                             .ofObject()

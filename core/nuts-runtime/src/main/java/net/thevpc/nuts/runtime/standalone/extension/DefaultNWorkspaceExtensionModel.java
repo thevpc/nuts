@@ -23,7 +23,7 @@ import net.thevpc.nuts.runtime.standalone.io.printstream.NFormattedPrintStream;
 import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNTerminalFromSystem;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
-import net.thevpc.nuts.lib.common.collections.ListMap;
+import net.thevpc.nuts.util.NListMap;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspaceFactory;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -77,7 +77,7 @@ public class DefaultNWorkspaceExtensionModel {
                     NWorkspaceArchetypeComponent.class
             )
     );
-    private final ListMap<String, String> defaultWiredComponents = new ListMap<>();
+    private final NListMap<String, String> defaultWiredComponents = new NListMap<>();
     private final Set<String> exclusions = new HashSet<String>();
     private final NWorkspace workspace;
     private final NBootWorkspaceFactory bootFactory;

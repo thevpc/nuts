@@ -12,8 +12,8 @@ import net.thevpc.nuts.runtime.standalone.id.filter.NSearchIdByDescriptor;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositoryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
-import net.thevpc.nuts.lib.common.iter.IteratorBuilder;
-import net.thevpc.nuts.lib.common.iter.IteratorUtils;
+import net.thevpc.nuts.util.NIteratorBuilder;
+import net.thevpc.nuts.util.NIteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NDeployRepositoryCmd;
@@ -58,7 +58,7 @@ public class NRepositoryMirroringHelper {
                 if (sup != NSpeedQualifier.UNAVAILABLE) {
                     NRepositorySPI repoSPI = NWorkspaceUtils.of(getWorkspace()).repoSPI(repo);
                     list.add(
-                            IteratorBuilder.of(repoSPI.searchVersions().setId(id).setFilter(idFilter)
+                            NIteratorBuilder.of(repoSPI.searchVersions().setId(id).setFilter(idFilter)
                                             .setFetchMode(fetchMode)
                                             .getResult())
                                     .named("searchInMirror(" + repo.getName() + ")")
@@ -68,7 +68,7 @@ public class NRepositoryMirroringHelper {
                 }
             }
         }
-        return IteratorUtils.concat(list);
+        return NIteratorUtils.concat(list);
     }
 
     protected NPath fetchContent(NId id, NDescriptor descriptor, NFetchMode fetchMode) {
@@ -144,11 +144,11 @@ public class NRepositoryMirroringHelper {
         all.add(li);
         for (NRepository remote : rconfig.getMirrors()) {
             NRepositorySPI repoSPI = NWorkspaceUtils.of(getWorkspace()).repoSPI(remote);
-            all.add(IteratorUtils.safeIgnore(
+            all.add(NIteratorUtils.safeIgnore(
                     repoSPI.search().setFilter(filter).setFetchMode(fetchMode).getResult()
             ));
         }
-        return IteratorUtils.concat(all);
+        return NIteratorUtils.concat(all);
 
     }
 

@@ -7,7 +7,7 @@ import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.env.NPlatformFamily;
 import net.thevpc.nuts.io.NPsInfo;
 import net.thevpc.nuts.io.NPs;
-import net.thevpc.nuts.lib.common.iter.IteratorBuilder;
+import net.thevpc.nuts.util.NIteratorBuilder;
 
 import java.io.File;
 import java.util.*;
@@ -141,7 +141,7 @@ public class DefaultNPs implements NPs {
 
     private NStream<NPsInfo> getResultListJava(String version) {
         NEnvs envs = NEnvs.of();
-        NIterator<NPsInfo> it = IteratorBuilder.ofSupplier(() -> {
+        NIterator<NPsInfo> it = NIteratorBuilder.ofSupplier(() -> {
             String cmd = "jps";
             NExecCmd b = null;
             boolean mainArgs = true;
@@ -162,7 +162,7 @@ public class DefaultNPs implements NPs {
                 String[] split = out.split("\n");
                 return Arrays.asList(split).iterator();
             }
-            return IteratorBuilder.emptyIterator();
+            return NIteratorBuilder.emptyIterator();
         }, () -> NElements.of().ofString("jps")).map(
                 NFunction.of(
                         (String line) -> {

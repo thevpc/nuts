@@ -31,7 +31,7 @@ import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.lib.common.collections.NCollections;
+import net.thevpc.nuts.util.NCollections;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNInstallInfo;
@@ -50,9 +50,9 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.AbstractNRepository;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt0;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryFolderHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
-import net.thevpc.nuts.lib.common.collections.LRUMap;
+import net.thevpc.nuts.util.NLRUMap;
 import net.thevpc.nuts.runtime.standalone.util.filters.NIdFilterToPredicate;
-import net.thevpc.nuts.lib.common.iter.IteratorBuilder;
+import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
@@ -75,7 +75,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     public static final String INSTALLED_REPO_UUID = "<main>";
     private static final String NUTS_INSTALL_FILE = "nuts-install.json";
     private final NRepositoryFolderHelper deployments;
-    private final Map<NId, String> cachedDefaultVersions = new LRUMap<>(200);
+    private final Map<NId, String> cachedDefaultVersions = new NLRUMap<>(200);
 
     public DefaultNInstalledRepository(NWorkspace ws, NBootOptions bOptions) {
         super(ws);
@@ -776,16 +776,16 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
             public NSearchRepositoryCmd run() {
                 NIterator<InstallInfoConfig> installIter = searchInstallConfig();
                 NSession session = workspace.currentSession();
-                NIterator<NId> idIter = IteratorBuilder.of(installIter)
+                NIterator<NId> idIter = NIteratorBuilder.of(installIter)
                         .map(NFunction.of(InstallInfoConfig::getId).withDesc(NEDesc.of("NutsInstallInformation->Id")))
                         .build();
                 NIdFilter ff = getFilter();
                 if (ff != null) {
-                    idIter = IteratorBuilder.of(idIter).filter(new NIdFilterToPredicate(ff)).build();
+                    idIter = NIteratorBuilder.of(idIter).filter(new NIdFilterToPredicate(ff)).build();
                 }
                 result = idIter; //deployments.searchImpl(getFilter(), session)
                 if (result == null) {
-                    result = IteratorBuilder.emptyIterator();
+                    result = NIteratorBuilder.emptyIterator();
                 }
                 return this;
             }
@@ -804,7 +804,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                             .builder().setVersion("ANY").build(), NStoreType.CONF).getParent();
                     if (installFolder.isDirectory()) {
                         final NVersionFilter filter0 = getId().getVersion().filter();
-                        result = IteratorBuilder.of(installFolder.stream().iterator())
+                        result = NIteratorBuilder.of(installFolder.stream().iterator())
                                 .map(NFunction.of(
                                         new Function<NPath, NId>() {
                                             @Override
@@ -825,10 +825,10 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                                 .notNull().iterator();
                     } else {
                         //ok.sort((a, b) -> CoreVersionUtils.compareVersions(a, b));
-                        result = IteratorBuilder.emptyIterator();
+                        result = NIteratorBuilder.emptyIterator();
                     }
                 } else {
-                    this.result = IteratorBuilder.of(deployments.searchVersions(getId(), getFilter(), true))
+                    this.result = NIteratorBuilder.of(deployments.searchVersions(getId(), getFilter(), true))
                             .named("searchVersionsInMain()")
                             .build()
                     ;

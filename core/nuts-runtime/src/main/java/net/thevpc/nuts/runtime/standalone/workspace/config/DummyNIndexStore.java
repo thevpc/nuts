@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.lib.common.iter.IteratorBuilder;
+import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.util.NIterator;
 
 public class DummyNIndexStore extends AbstractNIndexStore {
@@ -13,12 +13,12 @@ public class DummyNIndexStore extends AbstractNIndexStore {
 
     @Override
     public NIterator<NId> searchVersions(NId id) {
-        return IteratorBuilder.emptyIterator();
+        return NIteratorBuilder.emptyIterator();
     }
 
     @Override
     public NIterator<NId> search(NIdFilter filter) {
-        return IteratorBuilder.emptyIterator();
+        return NIteratorBuilder.emptyIterator();
     }
 
     @Override

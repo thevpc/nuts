@@ -26,7 +26,7 @@ package net.thevpc.nuts.runtime.standalone.dependency.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NEDesc;
-import net.thevpc.nuts.lib.common.iter.IteratorBuilder;
+import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.util.NFunction;
 import net.thevpc.nuts.util.NIterator;
 import net.thevpc.nuts.util.NStringUtils;
@@ -67,13 +67,13 @@ public class NDependencyUtils {
     }
 
     public static Iterator<NDependency> itIdToDep(NIterator<NId> id) {
-        return IteratorBuilder.of(id).map(NFunction.of(NId::toDependency).withDesc(NEDesc.of("IdToDependency"))).build();
+        return NIteratorBuilder.of(id).map(NFunction.of(NId::toDependency).withDesc(NEDesc.of("IdToDependency"))).build();
     }
 
     public static Iterator<NDependency> itIdToDep(NIterator<NId> id, NDependency copyFrom) {
         String _optional = copyFrom.getOptional();
         String _scope = copyFrom.getScope();
-        return IteratorBuilder.of(id).map(NFunction.of(
+        return NIteratorBuilder.of(id).map(NFunction.of(
                         (NId x) -> x.toDependency().builder()
                                 .setOptional(_optional).setScope(_scope).build())
                 .withDesc(NEDesc.of("IdToDependency"))

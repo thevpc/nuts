@@ -3,7 +3,7 @@ package net.thevpc.nuts.ext.ssh;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.lib.common.str.NConnexionString;
+import net.thevpc.nuts.util.NConnexionString;
 
 import java.io.IOException;
 import java.io.OutputStream;

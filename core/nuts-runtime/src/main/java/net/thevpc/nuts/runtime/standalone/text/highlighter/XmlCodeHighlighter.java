@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.lib.common.collections.EvictingQueue;
-import net.thevpc.nuts.lib.common.str.NStreamTokenizer;
+import net.thevpc.nuts.util.NEvictingQueue;
+import net.thevpc.nuts.util.NStreamTokenizer;
 import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
@@ -59,7 +59,7 @@ public class XmlCodeHighlighter implements NCodeHighlighter {
 
         List<NText> nodes = new ArrayList<>();
         int s;
-        EvictingQueue<String> last = new EvictingQueue<>(3);
+        NEvictingQueue<String> last = new NEvictingQueue<>(3);
         while ((s = st.nextToken()) != NStreamTokenizer.TT_EOF) {
             switch (s) {
                 case NStreamTokenizer.TT_SPACES: {
