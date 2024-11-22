@@ -31,6 +31,7 @@ import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author thevpc
@@ -57,6 +58,8 @@ public interface NRepositoryConfigManager{
     boolean isTemporary();
 
     boolean isPreview();
+
+    Set<String> getTags();
 
     NRepositoryConfigManager setTemporary(boolean enabled);
 

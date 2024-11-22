@@ -55,7 +55,7 @@ public class DefaultNLogModel {
 
     public DefaultNLogModel(NWorkspace ws, NWorkspaceOptions bOptions) {
         this.workspace = ws;
-        NWorkspaceOptions bootOptions = NWorkspaceExt.of(this.workspace).getModel().bootModel.getBootUserOptions();
+        NWorkspaceOptions bootOptions = NWorkspaceExt.of().getModel().bootModel.getBootUserOptions();
         logFolder = Paths.get(bOptions.getStoreType(NStoreType.LOG).orNull());
         NLogConfig lc = bootOptions.getLogConfig().orNull();
         if (lc != null) {
@@ -208,7 +208,7 @@ public class DefaultNLogModel {
                 }
             } else {
                 consoleHandler = new NLogConsoleHandler(out, false,
-                        NWorkspaceExt.of(workspace).defaultSession()
+                        NWorkspaceExt.of().defaultSession()
                 );
                 consoleHandler.setLevel(logConfig.getLogTermLevel());
             }

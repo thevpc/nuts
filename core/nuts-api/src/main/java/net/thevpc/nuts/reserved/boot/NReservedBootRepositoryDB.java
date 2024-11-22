@@ -1,47 +1,51 @@
 package net.thevpc.nuts.reserved.boot;
 
+import net.thevpc.nuts.NAddRepositoryOptions;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.NRepositoryConfig;
 import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.reserved.io.NReservedIOUtils;
 import net.thevpc.nuts.spi.NRepositoryDB;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NPlatformHome;
 
 import java.util.*;
 
 public class NReservedBootRepositoryDB implements NRepositoryDB {
-    private final Map<String, String> defaultRepositoriesByName = new LinkedHashMap<>();
+    private final Map<String, NAddRepositoryOptions> defaultRepositoriesByName = new LinkedHashMap<>();
+    private final Map<String, NAddRepositoryOptions> defaultRepositoriesByLocation = new LinkedHashMap<>();
     private final Map<String, String> aliasToBase = new LinkedHashMap<>();
     private final Map<String, Set<String>> baseToAliases = new LinkedHashMap<>();
-    private final Map<String, Boolean> previewByName = new LinkedHashMap<>();
 
     public NReservedBootRepositoryDB() {
-        reg(false, "system", "nuts@" + NReservedIOUtils.getNativePath(
+        reg(false, "system", NAddRepositoryOptions.ORDER_SYSTEM_LOCAL, "nuts@" + NReservedIOUtils.getNativePath(
                         NPlatformHome.SYSTEM.getWorkspaceStore(
                                 NStoreType.LIB,
                                 NConstants.Names.DEFAULT_WORKSPACE_NAME) + "/" + NConstants.Folders.ID
                 )
         );
-        reg(false, "maven", "maven");
-        reg(false, "maven-central", "maven@https://repo.maven.apache.org/maven2");
-        reg(false, "jcenter", "maven@https://jcenter.bintray.com");
-        reg(false, "jboss", "maven@https://repository.jboss.org/nexus/content/repositories/releases");
-        reg(false, "clojars", "maven@https://repo.clojars.org");
-        reg(false, "atlassian", "maven@https://packages.atlassian.com/maven/public");
-        reg(false, "atlassian-snapshot", "maven@https://packages.atlassian.com/maven/public-snapshot");
-        reg(false, "oracle", "maven@https://maven.oracle.com");
-        reg(false, "google", "maven@https://maven.google.com");
-        reg(false, "spring", "maven@https://repo.spring.io/release", "spring-framework");
-        reg(false, "maven-thevpc-git", "maven@https://raw.githubusercontent.com/thevpc/vpc-public-maven/master", "vpc-public-maven");
-        reg(false, "nuts-public", "maven@dotfilefs:https://raw.githubusercontent.com/thevpc/nuts-public/master", "vpc-public-nuts", "nuts-thevpc-git");
-        reg(true, "nuts-preview", "maven@dotfilefs:https://raw.githubusercontent.com/thevpc/nuts-preview/master", "preview");
-        reg(true, "thevpc-goodies", "nuts@htmlfs:https://thevpc.net/maven-goodies", "goodies");
-        reg(true, "thevpc", "maven@htmlfs:https://thevpc.net/maven", "dev");
+        reg(false, "maven", NAddRepositoryOptions.ORDER_USER_LOCAL, "maven");
+        reg(false, "maven-central", NAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://repo.maven.apache.org/maven2");
+        reg(false, "jcenter", NAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://jcenter.bintray.com");
+        reg(false, "jboss", NAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://repository.jboss.org/nexus/content/repositories/releases");
+        reg(false, "clojars", NAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://repo.clojars.org");
+        reg(false, "atlassian", NAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://packages.atlassian.com/maven/public");
+        reg(false, "atlassian-snapshot", NAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://packages.atlassian.com/maven/public-snapshot");
+        reg(false, "oracle", NAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://maven.oracle.com");
+        reg(false, "google", NAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://maven.google.com");
+        reg(false, "spring", NAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://repo.spring.io/release", "spring-framework");
+        reg(false, "maven-thevpc-git", NAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://raw.githubusercontent.com/thevpc/vpc-public-maven/master", "vpc-public-maven");
+        reg(false, "nuts-public", NAddRepositoryOptions.ORDER_USER_REMOTE, "maven@dotfilefs:https://raw.githubusercontent.com/thevpc/nuts-public/master", "vpc-public-nuts", "nuts-thevpc-git");
+        reg(true, "nuts-preview", NAddRepositoryOptions.ORDER_USER_REMOTE, "maven@dotfilefs:https://raw.githubusercontent.com/thevpc/nuts-preview/master", "preview");
+        reg(true, "thevpc-goodies", NAddRepositoryOptions.ORDER_USER_REMOTE, "nuts@htmlfs:https://thevpc.net/maven-goodies", "goodies");
+        reg(true, "thevpc", NAddRepositoryOptions.ORDER_USER_REMOTE, "maven@htmlfs:https://thevpc.net/maven", "dev");
     }
 
     @Override
-    public Set<String> getAllNames(String name) {
+    public Set<String> findAllNamesByName(String name) {
         Set<String> a = baseToAliases.get(name);
         if (a != null) {
             return Collections.unmodifiableSet(a);
@@ -57,66 +61,43 @@ public class NReservedBootRepositoryDB implements NRepositoryDB {
     }
 
     @Override
-    public boolean isPreviewRepository(String nameOrUrl) {
-        for (String n : getAllNames(nameOrUrl)) {
-            Boolean u = previewByName.get(n);
-            if (u != null) {
-                return u;
-            }
+    public NOptional<NAddRepositoryOptions> getRepositoryOptionsByName(String name) {
+        NAddRepositoryOptions o = defaultRepositoriesByName.get(name);
+        if (o == null) {
+            String base = aliasToBase.get(name);
+            o = defaultRepositoriesByName.get(base);
         }
-        String i = getRepositoryNameByLocation(nameOrUrl);
-        if (i != null) {
-            for (String n : getAllNames(i)) {
-                Boolean u = previewByName.get(n);
-                if (u != null) {
-                    return u;
-                }
-            }
+        if (o != null) {
+            return NOptional.of(o.copy());
         }
-        return false;
+        return NOptional.ofEmpty(NMsg.ofC("repository %s", name));
     }
 
     @Override
-    public String getRepositoryNameByLocation(String location) {
-        NRepositoryLocation v0 = NRepositoryLocation.of(location).setName(null);
-        for (Map.Entry<String, String> entry : defaultRepositoriesByName.entrySet()) {
-            NRepositoryLocation v = NRepositoryLocation.of(entry.getValue()).setName(null);
-            if (v.equals(v0)) {
-                return entry.getKey();
-            }
+    public NOptional<NAddRepositoryOptions> getRepositoryOptionsByLocation(String name) {
+        NAddRepositoryOptions o = defaultRepositoriesByLocation.get(name);
+        if (o != null) {
+            return NOptional.of(o.copy());
         }
-        v0 = NRepositoryLocation.of(location).setName(null).setLocationType(null);
-        for (Map.Entry<String, String> entry : defaultRepositoriesByName.entrySet()) {
-            NRepositoryLocation v = NRepositoryLocation.of(entry.getValue()).setName(null).setLocationType(null);
-            if (v.equals(v0)) {
-                return entry.getKey();
-            }
-        }
-        return null;
+        return NOptional.ofEmpty(NMsg.ofC("repository %s", name));
     }
 
-    @Override
-    public boolean isDefaultRepositoryName(String name) {
-        return defaultRepositoriesByName.containsKey(name)
-                || aliasToBase.containsKey(name);
-    }
-
-    @Override
-    public String getRepositoryLocationByName(String name) {
-        String a = defaultRepositoriesByName.get(name);
-        if (a != null) {
-            return a;
-        }
-        String base = aliasToBase.get(name);
-        if (base != null) {
-            return defaultRepositoriesByName.get(base);
-        }
-        return null;
-    }
-
-    private void reg(boolean preview, String name, String url, String... names) {
-        defaultRepositoriesByName.put(name, url);
-        previewByName.put(name, preview);
+    private void reg(boolean preview, String name, int order, String url, String... names) {
+        NAddRepositoryOptions options = new NAddRepositoryOptions()
+                .setName(name)
+                .setEnabled(true)
+                .setCreate(true)
+                .setFailSafe(false)
+                .setOrder(order)
+                .setConfig(
+                        new NRepositoryConfig()
+                                .setLocation(
+                                        NRepositoryLocation.of(url)
+                                )
+                                .setTags(preview ? new String[]{NConstants.RepoTags.PREVIEW} : new String[0])
+                );
+        defaultRepositoriesByName.put(name, options);
+        defaultRepositoriesByLocation.put(url, options);
         Set<String> all = new LinkedHashSet<>();
         all.add(name);
         for (String other : names) {
@@ -125,6 +106,7 @@ public class NReservedBootRepositoryDB implements NRepositoryDB {
         }
         baseToAliases.put(name, all);
     }
+
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {

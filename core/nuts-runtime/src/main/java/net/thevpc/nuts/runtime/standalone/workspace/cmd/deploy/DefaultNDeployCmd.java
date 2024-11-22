@@ -146,7 +146,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
 
     private NDeployCmd runDeployFile(NInputSource content, Object descriptor0, String descSHA1) {
         NSession session=workspace.currentSession();
-        NWorkspaceExt dws = NWorkspaceExt.of(session.getWorkspace());
+        NWorkspaceExt dws = NWorkspaceExt.of();
         NWorkspaceUtils wu = NWorkspaceUtils.of(workspace);
         wu.checkReadOnly();
 

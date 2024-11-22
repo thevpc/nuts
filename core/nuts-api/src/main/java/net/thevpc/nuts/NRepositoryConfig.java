@@ -27,17 +27,16 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.spi.NRepositoryLocation;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.io.Serializable;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author thevpc
  * @app.category Config
  * @since 0.5.4
  */
-public class NRepositoryConfig extends NConfigItem {
+public class NRepositoryConfig extends NConfigItem implements Serializable,Cloneable {
 
     private static final long serialVersionUID = 1;
     private String uuid;
@@ -54,6 +53,38 @@ public class NRepositoryConfig extends NConfigItem {
     private String[] tags;
 
     public NRepositoryConfig() {
+    }
+
+    public NRepositoryConfig copy(){
+        return clone();
+    }
+
+    @Override
+    protected NRepositoryConfig clone(){
+        try {
+            NRepositoryConfig o = (NRepositoryConfig) super.clone();
+            if(o.location!=null){
+                o.location=o.location.copy();
+            }
+            if(o.storeLocations!=null) {
+                o.storeLocations = new LinkedHashMap<>(storeLocations);
+            }
+            if(o.env!=null) {
+                o.env=new LinkedHashMap<>(o.env);
+            }
+            if(o.mirrors!=null) {
+                o.mirrors=o.mirrors.stream().map(NRepositoryRef::copy).collect(Collectors.toList());
+            }
+            if(o.users!=null) {
+                o.users=o.users.stream().map(NUserConfig::copy).collect(Collectors.toList());
+            }
+            if(o.tags!=null) {
+                o.tags=Arrays.copyOf(tags,tags.length);
+            }
+            return o;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String[] getTags() {

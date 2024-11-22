@@ -139,7 +139,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                 NDescriptor success = fetchDescriptorCore(id, fetchMode);
                 if (success != null) {
                     if (cache.isWriteEnabled()) {
-                        NId id0 = NWorkspaceExt.of(getWorkspace()).resolveEffectiveId(success);
+                        NId id0 = NWorkspaceExt.of().resolveEffectiveId(success);
                         if (!id0.getLongName().equals(success.getId().getLongName())) {
                             success = success.builder().setId(id0).build();
                         }

@@ -66,8 +66,8 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
             }
             defaults.add(NRepositoryLocation.of(d.getName(), (String)null));
         }
-        NWorkspaceExt.of(session).getModel().configModel.getStoredConfigMain().setEnablePreviewRepositories(session.isPreviewRepo());
-        NWorkspaceExt.of(session).getModel().configModel.invalidateStoreModelMain();
+        NWorkspaceExt.of().getModel().configModel.getStoredConfigMain().setEnablePreviewRepositories(session.isPreviewRepo());
+        NWorkspaceExt.of().getModel().configModel.invalidateStoreModelMain();
         defaults.add(NRepositoryLocation.ofName(NConstants.Names.DEFAULT_REPOSITORY_NAME));
         NRepositoryLocation[] br = rm.getModel().resolveBootRepositoriesList().resolve(defaults.toArray(new NRepositoryLocation[0]), NRepositoryDB.of());
         for (NRepositoryLocation s : br) {

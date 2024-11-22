@@ -60,9 +60,9 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
 
     public AbstractNRepository(NWorkspace workspace) {
         this.workspace=workspace;
-        userProperties = new DefaultObservableMap<>();
-        securityModel = new DefaultNRepositorySecurityModel(this);
-        available = new NCachedValue<>(workspace, () -> isAvailableImpl(), 0);;
+        this.userProperties = new DefaultObservableMap<>();
+        this.securityModel = new DefaultNRepositorySecurityModel(this);
+        this.available = new NCachedValue<>(workspace, () -> isAvailableImpl(), 0);;
     }
 
     public boolean isPreview() {

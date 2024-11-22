@@ -144,6 +144,7 @@
 /documentation/media/Thumbs.db:encryptable
 /core/nuts/target-8+/
 /core/nuts/target-11/
+/core/nuts-lib/target/
 /companions/nstore/target/
 /libraries/nlib-spring-boot/target/
 /libraries/nlib-spring-boot/.pom.xml.kate-swp

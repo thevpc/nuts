@@ -38,7 +38,7 @@ public class DefaultNUninstallCmd extends AbstractNUninstallCmd {
     public NUninstallCmd run() {
         NSession session=workspace.currentSession();
         NWorkspaceUtils.of(workspace).checkReadOnly();
-        NWorkspaceExt dws = NWorkspaceExt.of(session.getWorkspace());
+        NWorkspaceExt dws = NWorkspaceExt.of();
         NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.UNINSTALL, "uninstall");
         List<NDefinition> defs = new ArrayList<>();
         List<NId> nutsIds = this.getIds();
@@ -77,7 +77,7 @@ public class DefaultNUninstallCmd extends AbstractNUninstallCmd {
         }
 
         for (NDefinition def : defs) {
-            NWorkspaceExt.of(workspace).uninstallImpl(def, getArgs().toArray(new String[0]), true, true, isErase(),true);
+            NWorkspaceExt.of().uninstallImpl(def, getArgs().toArray(new String[0]), true, true, isErase(),true);
         }
         return this;
     }

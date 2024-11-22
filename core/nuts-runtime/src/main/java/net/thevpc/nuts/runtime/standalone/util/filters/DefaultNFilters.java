@@ -10,7 +10,7 @@ public class DefaultNFilters implements NFilters {
     public DefaultNFilterModel model;
     public NSession session;
     public DefaultNFilters(NSession session) {
-        this.model = NWorkspaceExt.of(session.getWorkspace()).getModel().filtersModel;
+        this.model = NWorkspaceExt.of().getModel().filtersModel;
         this.session=session;
     }
 

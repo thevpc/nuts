@@ -113,6 +113,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
         NSession session = executionContext.getSession();
         NWorkspaceOptionsBuilder options = NBootManager.of().getBootOptions().builder();
         options.setDry(executionContext.isDry());
+        options.setBot(executionContext.isBot());
 
         //copy session parameters to the newly created workspace
         options.setShowStacktrace(session.getShowStacktrace().orDefault());
@@ -121,7 +122,6 @@ public class JavaExecutorComponent implements NExecutorComponent {
         options.setErrLinePrefix(session.getErrLinePrefix());
         options.setDebug(session.getDebug().orDefault());
         options.setTrace(session.isTrace());
-        options.setBot(session.isBot());
         options.setPreviewRepo(session.isPreviewRepo());
         options.setCached(session.isCached());
         options.setIndexed(session.isIndexed());
@@ -473,7 +473,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
             }
             if (th != null) {
                 if (!(th instanceof NExecutionException)) {
-                    NWorkspaceExt.of(workspace).getModel().recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(), th), NRecommendationPhase.EXEC, false);
+                    NWorkspaceExt.of().getModel().recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(), th), NRecommendationPhase.EXEC, false);
                     throw new NExecutionException(
                             NMsg.ofC("error executing %s : %s", def.getId(), th)
                             , th);
@@ -481,7 +481,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 NExecutionException nex = (NExecutionException) th;
                 if (nex.getExitCode() != NExecutionException.SUCCESS) {
                     if (def != null) {
-                        NWorkspaceExt.of(workspace).getModel().recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(), nex), NRecommendationPhase.EXEC, false);
+                        NWorkspaceExt.of().getModel().recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(), nex), NRecommendationPhase.EXEC, false);
                     }
                     throw new NExecutionException(NMsg.ofC("error executing %s : %s", def == null ? null : def.getId(), th), th);
                 }

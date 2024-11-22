@@ -78,8 +78,7 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
             }
         }
         String directory = NBlankable.isBlank(joptions.getDir()) ? null : joptions.getDir().toAbsolute().toString();
-        NSession session = workspace.currentSession();
-        NWorkspaceExt.of(session).getModel().recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(), ""), NRecommendationPhase.EXEC, false);
+        NWorkspaceExt.of().getModel().recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(), ""), NRecommendationPhase.EXEC, false);
         return ProcessExecHelper.ofDefinition(def,
                 args.toArray(new String[0]), osEnv, directory,
                 joptions.isShowCommand(),

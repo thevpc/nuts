@@ -72,7 +72,7 @@
             <version>5.8.2</version>
             <scope>test</scope>
         </dependency>
-        <dependency><groupId>net.thevpc.nuts.lib</groupId><artifactId>nlib-common-utils</artifactId><version>0.8.5.0</version></dependency>
+        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts-lib</artifactId><version>0.8.5.0</version></dependency>
     </dependencies>
     <distributionManagement>
         <snapshotRepository>

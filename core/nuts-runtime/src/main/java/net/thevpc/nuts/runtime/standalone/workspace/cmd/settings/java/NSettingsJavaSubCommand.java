@@ -37,7 +37,7 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
         NPrintStream out = session.out();
         NConfigs conf = NConfigs.of();
         NPlatforms platforms = NPlatforms.of();
-        if (cmdLine.next("add java").isPresent()) {
+        if (cmdLine.next("add java","java add").isPresent()) {
             if (cmdLine.next("--search").isPresent()) {
                 List<String> extraLocations = new ArrayList<>();
                 while (cmdLine.hasNext()) {
@@ -71,7 +71,7 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
                 }
             }
             return true;
-        } else if (cmdLine.next("remove java").isPresent()) {
+        } else if (cmdLine.next("remove java","java remove").isPresent()) {
             while (cmdLine.hasNext()) {
                 String name = cmdLine.next()
                         .flatMap(NLiteral::asString).get();
@@ -90,7 +90,7 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
                 conf.save(false);
             }
             return true;
-        } else if (cmdLine.next("list java").isPresent()) {
+        } else if (cmdLine.next("list java","java list").isPresent()) {
             NTableFormat t = NTableFormat.of()
                     //                    .setBorder(TableFormatter.SPACE_BORDER)
                     .setVisibleHeader(true);

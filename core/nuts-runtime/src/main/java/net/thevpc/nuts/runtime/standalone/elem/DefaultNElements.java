@@ -96,7 +96,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
     public DefaultNElements(NWorkspace workspace) {
         super(workspace, "element-format");
-        this.model = NWorkspaceExt.of(workspace).getModel().textModel;
+        this.model = NWorkspaceExt.of().getModel().textModel;
     }
 
 

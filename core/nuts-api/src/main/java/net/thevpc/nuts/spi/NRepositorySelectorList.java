@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts.spi;
 
+import net.thevpc.nuts.NAddRepositoryOptions;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -113,16 +114,18 @@ public class NRepositorySelectorList {
                     String k = entry.getName();
                     String v = entry.getFullLocation();
                     if (NBlankable.isBlank(v) && !NBlankable.isBlank(k)) {
-                        String u2 = db.getRepositoryLocationByName(k);
-                        if (u2 != null) {
-                            v = u2;
+                        NAddRepositoryOptions ro = db.getRepositoryOptionsByName(k).orNull();
+                        String u = ro==null?null:ro.getConfig().getLocation().getFullLocation();
+                        if (u != null) {
+                            v = u;
                         } else {
                             v = k;
                         }
                     } else if (!NBlankable.isBlank(v) && NBlankable.isBlank(k)) {
-                        String u2 = db.getRepositoryNameByLocation(k);
-                        if (u2 != null) {
-                            k = u2;
+                        NAddRepositoryOptions ro = db.getRepositoryOptionsByLocation(k).orNull();
+                        String n = ro==null?null:ro.getName();
+                        if (n != null) {
+                            k = n;
                         }
                     }
                     current.add(NRepositoryLocation.of(k, v));
@@ -176,7 +179,7 @@ public class NRepositorySelectorList {
         }
         for (NRepositoryLocation e : current.toArray()) {
             if (acceptExisting(e)) {
-                Set<String> allNames = db.getAllNames(e.getName());
+                Set<String> allNames = db.findAllNamesByName(e.getName());
                 if (!isVisitedFlag(allNames, visited)) {
                     visited.addAll(allNames);
                     result.add(e);
@@ -187,10 +190,10 @@ public class NRepositorySelectorList {
     }
     private Set<String> getAllNames(NRepositorySelector r,NRepositoryDB db){
         if (!NBlankable.isBlank(r.getName())) {
-            return db.getAllNames(r.getName());
+            return db.findAllNamesByName(r.getName());
         }else{
-            String name = db.getRepositoryNameByLocation(r.getUrl());
-            return db.getAllNames(name);
+            String name = db.getRepositoryOptionsByLocation(r.getUrl()).map(x->x.getName()).orNull();
+            return db.findAllNamesByName(name);
         }
     }
     private boolean isVisitedFlag(Set<String> allNames, Set<String> visited) {

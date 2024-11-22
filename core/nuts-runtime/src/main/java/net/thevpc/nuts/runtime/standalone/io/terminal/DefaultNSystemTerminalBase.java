@@ -39,10 +39,9 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     @Override
     public int getSupportLevel(NSupportLevelContext criteria) {
         NWorkspace workspace = getWorkspace();
-        NSession session = workspace.currentSession();
         NWorkspaceOptions options = NBootManager.of().getBootOptions();
         NTerminalMode terminalMode = options.getTerminalMode().orElse(NTerminalMode.DEFAULT);
-        NWorkspaceTerminalOptions bootStdFd = NWorkspaceExt.of(session).getModel().bootModel.getBootTerminal();
+        NWorkspaceTerminalOptions bootStdFd = NWorkspaceExt.of().getModel().bootModel.getBootTerminal();
         if (terminalMode == NTerminalMode.DEFAULT) {
             if (options.getBot().orElse(false) || !bootStdFd.getFlags().contains("ansi")) {
                 terminalMode = NTerminalMode.FILTERED;

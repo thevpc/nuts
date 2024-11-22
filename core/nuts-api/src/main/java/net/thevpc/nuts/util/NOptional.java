@@ -64,7 +64,7 @@ public interface NOptional<T> extends NBlankable {
     }
 
     static <T> NOptional<T> of(T value) {
-        return of(value, null);
+        return of(value, (Supplier<NMsg>) null);
     }
 
     static <T> NOptional<T> ofNullable(T value) {
@@ -86,6 +86,13 @@ public interface NOptional<T> extends NBlankable {
     }
 
     static <T> NOptional<T> of(T value, Supplier<NMsg> emptyMessage) {
+        if (value == null) {
+            return ofEmpty(emptyMessage);
+        }
+        return ofNullable(value);
+    }
+
+    static <T> NOptional<T> of(T value, NMsg emptyMessage) {
         if (value == null) {
             return ofEmpty(emptyMessage);
         }

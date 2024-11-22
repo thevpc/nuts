@@ -253,7 +253,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         } finally {
             if (err != null) {
                 if (definition != null) {
-                    NWorkspaceExt.of(workspace).getModel().recomm.getRecommendations(new RequestQueryInfo(definition.getId().toString(), err), NRecommendationPhase.EXEC, false);
+                    NWorkspaceExt.of().getModel().recomm.getRecommendations(new RequestQueryInfo(definition.getId().toString(), err), NRecommendationPhase.EXEC, false);
                 }
             }
         }

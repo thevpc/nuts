@@ -69,7 +69,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
         } else {
             NSession session = workspace.currentSession();
             NPrintStream out = session.out();
-            if (cmdLine.next("list users", "lu").isPresent()) {
+            if (cmdLine.next("list users","list user","user list", "lu").isPresent()) {
                 NRepository repository = null;
                 if (editedRepo != null) {
                     repository = editedRepo;

@@ -55,6 +55,7 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
     private NExecOutput out;
     private NExecOutput err;
     private boolean dry;
+    private boolean bot;
 
     public DefaultNExecutionContextBuilder() {
     }
@@ -69,7 +70,8 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
                                            NExecInput in,
                                            NExecOutput out,
                                            NExecOutput err,
-                                           boolean dry
+                                           boolean dry,
+                                           boolean bot
     ) {
         this.commandName = commandName;
         this.definition = definition;
@@ -90,6 +92,7 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
         this.out = out;
         this.err = err;
         this.dry = dry;
+        this.bot = bot;
     }
 
     public DefaultNExecutionContextBuilder(NExecutionContext other) {
@@ -109,6 +112,7 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
         this.out = other.getOut();
         this.err = other.getErr();
         this.dry = other.isDry();
+        this.bot = other.isBot();
     }
 
     public boolean isDry() {
@@ -117,6 +121,15 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
 
     public NExecutionContextBuilder setDry(boolean dry) {
         this.dry = dry;
+        return this;
+    }
+
+    public boolean isBot() {
+        return bot;
+    }
+
+    public NExecutionContextBuilder setBot(boolean bot) {
+        this.bot = bot;
         return this;
     }
 
@@ -312,7 +325,7 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
         return new DefaultNExecutionContext(
                 definition, arguments, executorOptions, workspaceOptions, env, cwd,
                 workspace, failFast, temporary, executionType,
-                commandName, sleepMillis, in, out, err,dry
+                commandName, sleepMillis, in, out, err,dry,bot
         ).setSession(NSession.get());
     }
 

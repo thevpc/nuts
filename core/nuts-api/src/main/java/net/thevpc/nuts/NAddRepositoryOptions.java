@@ -36,7 +36,7 @@ import java.util.Objects;
  * @app.category Config
  * @since 0.5.4
  */
-public class NAddRepositoryOptions implements Serializable {
+public class NAddRepositoryOptions implements Serializable, Cloneable {
 
     /**
      * Repository Order for local repositories, used for prioritising local access
@@ -121,11 +121,27 @@ public class NAddRepositoryOptions implements Serializable {
         this.enabled = other.enabled;
         this.failSafe = other.failSafe;
         this.create = other.create;
-        this.config = other.config;
         this.temporary = other.temporary;
         this.deployWeight = other.deployWeight;
         this.order = other.order;
-        this.repositoryModel = other.repositoryModel;
+        this.config = other.config == null ? null : other.config.copy();
+        this.repositoryModel = other.repositoryModel == null ? null : other.repositoryModel/*.copy()*/;
+    }
+
+    public NAddRepositoryOptions copy() {
+        return clone();
+    }
+
+    @Override
+    protected NAddRepositoryOptions clone() {
+        try {
+            NAddRepositoryOptions o = (NAddRepositoryOptions) super.clone();
+            o.config = o.config == null ? null : o.config.copy();
+            o.repositoryModel = o.repositoryModel == null ? null : o.repositoryModel/*.copy()*/;
+            return o;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -329,15 +345,6 @@ public class NAddRepositoryOptions implements Serializable {
     public NAddRepositoryOptions setDeployWeight(int value) {
         this.deployWeight = value;
         return this;
-    }
-
-    /**
-     * create a copy of this instance
-     *
-     * @return a copy of this instance
-     */
-    public NAddRepositoryOptions copy() {
-        return new NAddRepositoryOptions(this);
     }
 
     @Override

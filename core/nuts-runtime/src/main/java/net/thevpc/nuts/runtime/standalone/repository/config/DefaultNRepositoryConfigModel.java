@@ -9,6 +9,7 @@ import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositoryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositoryRegistryHelper;
+import net.thevpc.nuts.runtime.standalone.repository.NRepositoryTagsListHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.util.NSpeedQualifiers;
@@ -47,7 +48,6 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
                                          NSpeedQualifier speed,
                                          boolean supportedMirroring, String repositoryType) {
         this.workspace = workspace;
-        NSession session = workspace.currentSession();
         NAssert.requireNonNull(options, "repository options");
         NAssert.requireNonNull(options.getConfig(), "repository options config");
         this.repositoryRef = NRepositoryUtils.optionsToRef(options);
@@ -75,6 +75,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         this.speed = speed;
         this.deployWeight = options.getDeployWeight();
         this.temporary = options.isTemporary();
+        this.tags.addAll(new NRepositoryTagsListHelper().add(options.getConfig().getTags()).toSet());
         this.supportedMirroring = supportedMirroring;
         this.repositoryType = repositoryType;
         setConfig(config, false);
@@ -266,7 +267,6 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
     }
 
     public void setConfig(NRepositoryConfig newConfig, boolean fireChange) {
-        NSession session = workspace.currentSession();
         NAssert.requireNonBlank(newConfig, "repository config");
         this.config = newConfig;
         if (this.config.getUuid() == null) {
@@ -390,7 +390,6 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
 //    }
     @Override
     public boolean save(boolean force) {
-        NSession session = repository.getWorkspace().currentSession();
         boolean ok = false;
         if (force || (!NConfigs.of().isReadOnly() && isConfigurationChanged())) {
             NWorkspaceUtils.of(getWorkspace()).checkReadOnly();
@@ -405,6 +404,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
             if (config.getEnv() != null && config.getEnv().isEmpty()) {
                 config.setEnv(null);
             }
+            config.setTags(tags.toArray(new String[0]));
             config.setMirrors(Arrays.asList(repositoryRegistryHelper.getRepositoryRefs()));
             config.setUsers(configUsers.isEmpty() ? null : new ArrayList<>(configUsers.values()));
 //            if (NutsBlankable.isBlank(config.getConfigVersion())) {

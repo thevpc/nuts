@@ -72,6 +72,7 @@ public class NWorkspaceModel {
         this.eventsModel = new DefaultNWorkspaceEventModel(workspace);
         this.repositoryModel = new DefaultNRepositoryModel(workspace);
         this.extensions= new DefaultNExtensions(this);
+        this.bootModel = new DefaultNBootModel(workspace,this,bOption0);
     }
 
     public void init(){
@@ -88,7 +89,6 @@ public class NWorkspaceModel {
                 askedRuntimeId.getGroupId(),
                 askedRuntimeId.getArtifactId(),
                 NVersion.of(askedRuntimeId.getVersion().toString()).get()).get();
-        this.bootModel = new DefaultNBootModel(workspace,this);
-        this.bootModel.init(bOption0);
+        this.bootModel.init();
     }
 }

@@ -33,7 +33,7 @@ import java.util.Objects;
  * @app.category Base
  * @since 0.5.4
  */
-public class NRepositoryRef extends NConfigItem {
+public class NRepositoryRef extends NConfigItem implements Cloneable {
 
     private static final long serialVersionUID = 2;
 
@@ -98,7 +98,16 @@ public class NRepositoryRef extends NConfigItem {
     }
 
     public NRepositoryRef copy() {
-        return new NRepositoryRef(this);
+        return clone();
+    }
+
+    @Override
+    protected NRepositoryRef clone() {
+        try {
+            return (NRepositoryRef) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public int getDeployWeight() {

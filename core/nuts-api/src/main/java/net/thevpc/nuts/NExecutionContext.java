@@ -132,19 +132,22 @@ public interface NExecutionContext extends NSessionProvider {
     NExecutionType getExecutionType();
 
     NRunAs getRunAs();
-    boolean isDry() ;
 
-    public NExecutionContext setDry(boolean dry);
+    boolean isDry();
 
-    NExecInput getIn() ;
+    boolean isBot();
 
-    NExecutionContext setIn(NExecInput in) ;
+    NExecutionContext setDry(boolean dry);
 
-    NExecOutput getOut() ;
+    NExecInput getIn();
 
-    NExecutionContext setOut(NExecOutput out) ;
+    NExecutionContext setIn(NExecInput in);
+
+    NExecOutput getOut();
+
+    NExecutionContext setOut(NExecOutput out);
 
     NExecOutput getErr();
 
-    NExecutionContext setErr(NExecOutput err) ;
+    NExecutionContext setErr(NExecOutput err);
 }

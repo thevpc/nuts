@@ -101,11 +101,11 @@ public interface NRepositoryModel {
 
     }
 
-    default boolean acceptFetch(NId id, NFetchMode mode, NRepository repository) {
+    default boolean isAcceptFetch(NId id, NFetchMode mode, NRepository repository) {
         return true;
     }
 
-    default boolean acceptDeploy(NId id, NFetchMode mode, NRepository repository) {
+    default boolean isAcceptDeploy(NId id, NFetchMode mode, NRepository repository) {
         return true;
     }
 

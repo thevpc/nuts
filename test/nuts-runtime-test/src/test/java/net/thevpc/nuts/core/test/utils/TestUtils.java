@@ -233,7 +233,7 @@ public class TestUtils {
             //disable installing nsh
             argsList.add("--install-companions=true");
             argsList.add("--skip-welcome");
-            argsList.add("--main-instance");
+            argsList.add("--shared-instance");
 //        argsList.add("--embedded");
             argsList.addAll(Arrays.asList(args));
             if (run) {

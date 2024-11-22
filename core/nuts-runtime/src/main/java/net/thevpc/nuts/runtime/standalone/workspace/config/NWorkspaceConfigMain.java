@@ -29,6 +29,7 @@ import net.thevpc.nuts.NCommandFactoryConfig;
 import net.thevpc.nuts.NConfigItem;
 import net.thevpc.nuts.NPlatformLocation;
 import net.thevpc.nuts.NRepositoryRef;
+import net.thevpc.nuts.runtime.NutsRuntimeConfigConstants;
 
 import java.util.*;
 
@@ -45,7 +46,7 @@ public final class NWorkspaceConfigMain extends NConfigItem {
     /**
      * @since 0.8.5
      */
-    private boolean enablePreviewRepositories;
+    private boolean enablePreviewRepositories= NutsRuntimeConfigConstants.ENABLE_PREVIEW_REPOSITORIES;
     private List<NCommandFactoryConfig> commandFactories;
     private Map<String,String> env = new LinkedHashMap<>();
     private List<NPlatformLocation> platforms = new ArrayList<>();

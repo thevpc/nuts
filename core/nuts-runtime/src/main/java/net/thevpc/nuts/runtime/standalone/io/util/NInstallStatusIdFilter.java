@@ -15,7 +15,7 @@ public class NInstallStatusIdFilter extends AbstractIdFilter {
 
     @Override
     public boolean acceptId(NId id) {
-        NInstallStatus is = NWorkspaceExt.of(workspace).getInstalledRepository().getInstallStatus(id);
+        NInstallStatus is = NWorkspaceExt.of().getInstalledRepository().getInstallStatus(id);
         if (installStatus == null) {
             return true;
         }
@@ -24,7 +24,7 @@ public class NInstallStatusIdFilter extends AbstractIdFilter {
 
     @Override
     public boolean acceptSearchId(NSearchId sid) {
-        NInstallStatus is = NWorkspaceExt.of(workspace).getInstalledRepository().getInstallStatus(sid.getId());
+        NInstallStatus is = NWorkspaceExt.of().getInstalledRepository().getInstallStatus(sid.getId());
         if (installStatus == null) {
             return true;
         }

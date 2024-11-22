@@ -62,7 +62,6 @@ public class ZipInstallerComponent implements NInstallerComponent {
     @Override
     public void install(NExecutionContext executionContext) {
         DefaultNDefinition nutsDefinition = (DefaultNDefinition) executionContext.getDefinition();
-        NSession session = executionContext.getSession();
         NPath installFolder = NLocations.of().getStoreLocation(nutsDefinition.getId(), NStoreType.BIN);
         NCmdLine cmd = NCmdLine.of(executionContext.getArguments());
         UnzipOptions unzipOptions = new UnzipOptions();
@@ -82,7 +81,7 @@ public class ZipInstallerComponent implements NInstallerComponent {
         } catch (IOException ex) {
             throw new NIOException(ex);
         }
-        nutsDefinition.setInstallInformation(NWorkspaceExt.of(session).getInstalledRepository().getInstallInformation(nutsDefinition.getId()
+        nutsDefinition.setInstallInformation(NWorkspaceExt.of().getInstalledRepository().getInstallInformation(nutsDefinition.getId()
         ));
         if (executionContext.getExecutorOptions().size() > 0) {
             NExecCmd.of()

@@ -40,7 +40,6 @@ public class NSettingsIndexSubCommand extends AbstractNSettingsSubCommand {
     }
 
     private void updateStatistics(String[] repos) {
-        NConfigs cfg = NConfigs.of();
         NUpdateStatsCmd cmd = NUpdateStatsCmd.of();
         for (String repo : repos) {
             cmd.add(repo);

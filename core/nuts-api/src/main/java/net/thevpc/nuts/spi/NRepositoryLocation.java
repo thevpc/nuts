@@ -11,19 +11,20 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
 package net.thevpc.nuts.spi;
 
+import net.thevpc.nuts.NAddRepositoryOptions;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -38,7 +39,7 @@ import java.util.regex.Pattern;
  *
  * @author thevpc
  */
-public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBlankable {
+public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBlankable, Cloneable {
 
     protected static final Pattern FULL_PATTERN = Pattern.compile("((?<n>[a-zA-Z][a-zA-Z0-9_-]*)?=)?((?<t>[a-zA-Z][a-zA-Z0-9_-]*)?@)?(?<r>.*)");
 
@@ -92,8 +93,9 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
     public static NRepositoryLocation of(String locationString) {
         return new NRepositoryLocation(locationString);
     }
+
     public static NRepositoryLocation ofName(String name) {
-        return of(name,(String)null);
+        return of(name, (String) null);
     }
 
     /**
@@ -146,7 +148,8 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
         } else {
             if (locationString.matches("[a-zA-Z][a-zA-Z0-9-_]+")) {
                 name = locationString;
-                String u = db.getRepositoryLocationByName(name);
+                NAddRepositoryOptions ro = db.getRepositoryOptionsByName(name).orNull();
+                String u = ro==null?null:ro.getConfig().getLocation().getFullLocation();
                 if (u == null) {
                     url = name;
                 } else {
@@ -154,7 +157,8 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
                 }
             } else {
                 url = locationString;
-                String n = db.getRepositoryNameByLocation(url);
+                NAddRepositoryOptions ro = db.getRepositoryOptionsByLocation(name).orNull();
+                String n = ro==null?null:ro.getName();
                 if (n == null) {
                     name = null;
                 } else {
@@ -336,4 +340,16 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
         return toString().compareTo(o.toString());
     }
 
+    public NRepositoryLocation copy() {
+        return clone();
+    }
+
+    @Override
+    protected NRepositoryLocation clone() {
+        try {
+            return (NRepositoryLocation) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

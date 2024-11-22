@@ -6,8 +6,7 @@ import net.thevpc.nuts.NWorkspace;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
+
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 
 public abstract class InternalNTypedFilters<T extends NFilter> implements NTypedFilters<T> {
@@ -19,7 +18,7 @@ public abstract class InternalNTypedFilters<T extends NFilter> implements NTyped
 
     public InternalNTypedFilters(NWorkspace workspace, Class<T> type) {
         this.workspace = workspace;
-        this.model = NWorkspaceExt.of(workspace).getModel().filtersModel;
+        this.model = NWorkspaceExt.of().getModel().filtersModel;
         this.ws = model.getWorkspace();
         this.type = type;
     }

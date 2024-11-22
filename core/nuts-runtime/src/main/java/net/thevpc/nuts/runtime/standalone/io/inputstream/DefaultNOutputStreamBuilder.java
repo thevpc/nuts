@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.io.inputstream;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.io.NContentMetadata;
 import net.thevpc.nuts.io.NOutputStreamBuilder;
@@ -67,7 +66,7 @@ public class DefaultNOutputStreamBuilder implements NOutputStreamBuilder {
     @Override
     public OutputStream createOutputStream() {
         if(base==null){
-            return NWorkspaceExt.of(workspace).getModel().bootModel.nullOutputStream();
+            return NWorkspaceExt.of().getModel().bootModel.nullOutputStream();
         }
         OutputStreamExt o = new OutputStreamExt(
                 base, metadata, closeBase, closeAction, workspace

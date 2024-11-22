@@ -14,7 +14,7 @@ public class DefaultCommands implements NCommands {
 
     public DefaultCommands(NWorkspace ws) {
         this.ws = ws;
-        this.model = NWorkspaceExt.of(ws).getModel().aliasesModel;
+        this.model = NWorkspaceExt.of().getModel().aliasesModel;
     }
 
     @Override

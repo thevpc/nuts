@@ -8,28 +8,28 @@ import net.thevpc.nuts.util.NRunnable;
 
 import java.util.Stack;
 
-public class NWorkspaceScopes {
+public class NScopedWorkspace {
     public static InheritableThreadLocal<Stack<NWorkspace>> workspaceScopes = new InheritableThreadLocal<>();
-    public static NWorkspace mainWorkspace;
-    public static InheritableThreadLocal<NWorkspace> threadMainWorkspaceScopes=new InheritableThreadLocal<>();
+    public static NWorkspace defaultSharedWorkspaceInstance;
+    public static InheritableThreadLocal<NWorkspace> threadSharedWorkspaceInstanceScopes =new InheritableThreadLocal<>();
 
-    public static NWorkspace getMainWorkspace() {
-        NWorkspace workspace = threadMainWorkspaceScopes.get();
+    public static NWorkspace getSharedWorkspaceInstance() {
+        NWorkspace workspace = threadSharedWorkspaceInstanceScopes.get();
         if(workspace!=null){
             return workspace;
         }
-        return mainWorkspace;
+        return defaultSharedWorkspaceInstance;
     }
 
-    public static NWorkspace setMainWorkspace(NWorkspace mainWorkspace) {
-        NWorkspace wold = threadMainWorkspaceScopes.get();
-        NWorkspace old = NWorkspaceScopes.mainWorkspace;
-        NWorkspaceScopes.mainWorkspace = mainWorkspace;
-        threadMainWorkspaceScopes.set(mainWorkspace);
-        if(old==mainWorkspace && wold==mainWorkspace){
+    public static NWorkspace setSharedWorkspaceInstance(NWorkspace sharedWorkspace) {
+        NWorkspace wold = threadSharedWorkspaceInstanceScopes.get();
+        NWorkspace old = NScopedWorkspace.defaultSharedWorkspaceInstance;
+        NScopedWorkspace.defaultSharedWorkspaceInstance = sharedWorkspace;
+        threadSharedWorkspaceInstanceScopes.set(sharedWorkspace);
+        if(old==sharedWorkspace && wold==sharedWorkspace){
             return null;
         }
-        if(old!=mainWorkspace) {
+        if(old!=sharedWorkspace) {
             return old;
         }
         return wold;
@@ -39,9 +39,9 @@ public class NWorkspaceScopes {
         Stack<NWorkspace> workspaces = workspaceScopes();
         NMsg emptyMessage = NMsg.ofPlain("missing current context workspace");
         if (workspaces.isEmpty()) {
-            NWorkspace mainWorkspace0 = mainWorkspace;
-            if(mainWorkspace0 !=null){
-                return NOptional.of(mainWorkspace0);
+            NWorkspace shw = defaultSharedWorkspaceInstance;
+            if(shw !=null){
+                return NOptional.of(shw);
             }
             return NOptional.ofEmpty(emptyMessage);
         }

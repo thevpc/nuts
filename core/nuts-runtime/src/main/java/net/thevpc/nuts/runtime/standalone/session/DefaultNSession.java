@@ -36,7 +36,7 @@ import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.log.NLogUtils;
-import net.thevpc.nuts.reserved.NWorkspaceScopes;
+import net.thevpc.nuts.reserved.NScopedWorkspace;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineUtils;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNArrayElementBuilder;
 import net.thevpc.nuts.runtime.standalone.io.progress.ProgressOptions;
@@ -132,8 +132,8 @@ public class DefaultNSession implements Cloneable, NSession {
     @Override
     public void runWith(NRunnable runnable) {
         if (runnable != null) {
-            NWorkspaceScopes.runWith0(workspace, () -> {
-                Stack<NSession> nSessions = NWorkspaceExt.of(workspace).sessionScopes();
+            NScopedWorkspace.runWith0(workspace, () -> {
+                Stack<NSession> nSessions = NWorkspaceExt.of().sessionScopes();
                 if (!nSessions.isEmpty()) {
                     NSession l = nSessions.peek();
                     if (l == this) {
@@ -154,8 +154,8 @@ public class DefaultNSession implements Cloneable, NSession {
     @Override
     public <T> T callWith(NCallable<T> callable) {
         if (callable != null) {
-            return NWorkspaceScopes.callWith0(workspace,()->{
-                Stack<NSession> nSessions = NWorkspaceExt.of(workspace).sessionScopes();
+            return NScopedWorkspace.callWith0(workspace,()->{
+                Stack<NSession> nSessions = NWorkspaceExt.of().sessionScopes();
                 if (!nSessions.isEmpty()) {
                     NSession l = nSessions.peek();
                     if (l == this) {
@@ -738,7 +738,7 @@ public class DefaultNSession implements Cloneable, NSession {
     public NOptional<Boolean> getPreviewRepo() {
         return NOptional.ofNamed(previewRepo, "previewRepo").withDefault(
                 () -> NBootManager.of().getBootOptions().getPreviewRepo()
-                        .orElse(NWorkspaceExt.of(workspace).getModel().configModel.getStoredConfigMain().isEnablePreviewRepositories())
+                        .orElse(NWorkspaceExt.of().getModel().configModel.getStoredConfigMain().isEnablePreviewRepositories())
         );
     }
 
@@ -1962,7 +1962,7 @@ public class DefaultNSession implements Cloneable, NSession {
     public NOptional<NText> getAppHelp() {
         NText h = null;
         try {
-            h = NWorkspaceExt.of(getWorkspace()).resolveDefaultHelp(getAppClass());
+            h = NWorkspaceExt.of().resolveDefaultHelp(getAppClass());
         } catch (Exception ex) {
             //
         }
@@ -1983,7 +1983,7 @@ public class DefaultNSession implements Cloneable, NSession {
 
     @Override
     public void printAppHelp() {
-        NText h = NWorkspaceExt.of(getWorkspace()).resolveDefaultHelp(getAppClass());
+        NText h = NWorkspaceExt.of().resolveDefaultHelp(getAppClass());
         h = NTexts.of().transform(h, new NTextTransformConfig()
                 .setProcessTitleNumbers(true)
                 .setNormalize(true)

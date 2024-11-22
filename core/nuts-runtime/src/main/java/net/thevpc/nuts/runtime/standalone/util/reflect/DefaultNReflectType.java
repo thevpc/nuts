@@ -24,6 +24,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.reflect;
 
+import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.lib.common.collections.NArrays;
 import net.thevpc.nuts.util.NMsg;
@@ -134,7 +135,7 @@ public class DefaultNReflectType implements NReflectType {
         if (noArgConstr == null) {
             if (javaType instanceof Class<?>) {
                 try {
-                    noArgConstr = ((Class) javaType).getConstructor();
+                    noArgConstr = ((Class) javaType).getDeclaredConstructor();
                     noArgConstr.setAccessible(true);
                 } catch (Exception ex) {
                     return false;
@@ -143,7 +144,7 @@ public class DefaultNReflectType implements NReflectType {
                 Class c2 = ReflectUtils.getRawClass(javaType);
                 if (c2 != null) {
                     try {
-                        noArgConstr = ((Class) c2).getConstructor();
+                        noArgConstr = c2.getDeclaredConstructor();
                         noArgConstr.setAccessible(true);
                     } catch (Exception ex) {
                         return false;
@@ -159,7 +160,7 @@ public class DefaultNReflectType implements NReflectType {
         if (sessionConstr == null) {
             if (javaType instanceof Class<?>) {
                 try {
-                    sessionConstr = ((Class) javaType).getConstructor(NSession.class);
+                    sessionConstr = ((Class) javaType).getDeclaredConstructor(NSession.class);
                     sessionConstr.setAccessible(true);
                 } catch (Exception ex) {
                     return false;
@@ -168,7 +169,7 @@ public class DefaultNReflectType implements NReflectType {
                 Class c2 = ReflectUtils.getRawClass(javaType);
                 if (c2 != null) {
                     try {
-                        sessionConstr = ((Class) c2).getConstructor(NSession.class);
+                        sessionConstr = c2.getDeclaredConstructor(NSession.class);
                         sessionConstr.setAccessible(true);
                     } catch (Exception ex) {
                         return false;
@@ -184,7 +185,7 @@ public class DefaultNReflectType implements NReflectType {
         if (workspaceConstr == null) {
             if (javaType instanceof Class<?>) {
                 try {
-                    workspaceConstr = ((Class) javaType).getConstructor(NWorkspace.class);
+                    workspaceConstr = ((Class) javaType).getDeclaredConstructor(NWorkspace.class);
                     workspaceConstr.setAccessible(true);
                 } catch (Exception ex) {
                     return false;
@@ -193,7 +194,7 @@ public class DefaultNReflectType implements NReflectType {
                 Class c2 = ReflectUtils.getRawClass(javaType);
                 if (c2 != null) {
                     try {
-                        workspaceConstr = ((Class) c2).getConstructor(NWorkspace.class);
+                        workspaceConstr = c2.getDeclaredConstructor(NWorkspace.class);
                         workspaceConstr.setAccessible(true);
                     } catch (Exception ex) {
                         return false;
@@ -220,13 +221,13 @@ public class DefaultNReflectType implements NReflectType {
                     case ERROR:{
                         //resolveSessionConstr(true);
                         resolveNoArgsConstr(true);
-                        throw new IllegalArgumentException("not instantiable");
+                        throw new NIllegalArgumentException(NMsg.ofC("missing constructor for %s",javaType));
                     }
                     case WORKSPACE:{
                         return workspaceConstr.newInstance(workspace);
                     }
                     case SESSION:{
-                        return sessionConstr.newInstance(workspace.createSession());
+                        return sessionConstr.newInstance(workspace.currentSession());
                     }
                     case DEFAULT:{
                         return noArgConstr.newInstance();

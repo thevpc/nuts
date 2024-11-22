@@ -27,9 +27,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.dependency.solver.NDependencySolverUtils;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NOptional;
@@ -46,7 +44,7 @@ public class DefaultNConfigs implements NConfigs, NConfigsExt {
     private final DefaultNWorkspaceConfigModel cmodel;
 
     public DefaultNConfigs(NWorkspace ws) {
-        NWorkspaceExt e = NWorkspaceExt.of(ws);
+        NWorkspaceExt e = NWorkspaceExt.of();
         this.cmodel = e.getModel().configModel;
     }
 

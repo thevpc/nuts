@@ -217,7 +217,7 @@ public class TestUtils {
         argsList.add("--yes");
         //disable companions
         argsList.add("--install-companions=false");
-        argsList.add("--main-instance=true");
+        argsList.add("--shared-instance=true");
 //        argsList.add("--embedded");
         argsList.addAll(Arrays.asList(args));
         if(run){

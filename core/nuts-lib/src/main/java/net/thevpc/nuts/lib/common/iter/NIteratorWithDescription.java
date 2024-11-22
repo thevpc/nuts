@@ -1,11 +1,9 @@
 package net.thevpc.nuts.lib.common.iter;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.util.NIterator;
 
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class NIteratorWithDescription<T> extends NIteratorDelegate<T> {

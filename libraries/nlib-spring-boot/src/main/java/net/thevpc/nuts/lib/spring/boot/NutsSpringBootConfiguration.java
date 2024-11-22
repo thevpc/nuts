@@ -76,7 +76,7 @@ public class NutsSpringBootConfiguration {
     private String[] resolveNutsArgs(){
         List<String> args = NCmdLine.parseDefault(env.getProperty("nuts.args")).get().toStringList();
         //always enable main instance in spring apps
-        args.add("--main-instance=true");
+        args.add("--shared-instance=true");
         return args.toArray(new String[0]);
     }
 

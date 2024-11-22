@@ -140,7 +140,7 @@ public class DefaultNRepositoryModel {
 
     public NRepository getRepository(String repositoryIdOrName) throws NRepositoryNotFoundException {
         if (DefaultNInstalledRepository.INSTALLED_REPO_UUID.equals(repositoryIdOrName)) {
-            return NWorkspaceExt.of(getWorkspace()).getInstalledRepository();
+            return NWorkspaceExt.of().getInstalledRepository();
         }
         return findRepository(repositoryIdOrName).get();
     }
@@ -322,7 +322,6 @@ public class DefaultNRepositoryModel {
     }
 
     public NRepository addRepository(String repositoryNamedUrl) {
-        NSession session = workspace.currentSession();
         NRepositoryLocation r = NRepositoryLocation.of(repositoryNamedUrl, NRepositoryDB.of()).get();
         NAddRepositoryOptions options = NRepositorySelectorHelper.createRepositoryOptions(r, true);
         return addRepository(options);

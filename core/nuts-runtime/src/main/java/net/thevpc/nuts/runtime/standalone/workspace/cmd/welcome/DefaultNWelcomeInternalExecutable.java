@@ -56,7 +56,7 @@ public class DefaultNWelcomeInternalExecutable extends DefaultInternalNExecutabl
         }
 
         if (session.isPlainOut()) {
-            session.out().resetLine().println(NWorkspaceExt.of(session.getWorkspace()).getWelcomeText());
+            session.out().resetLine().println(NWorkspaceExt.of().getWelcomeText());
         } else {
             Map<String, Object> welcome = new LinkedHashMap<>();
             welcome.put("message", "Welcome to nuts. Yeah, it is working...");

@@ -61,22 +61,22 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
         return null;
     };
     private Map<String, Supplier<Object>> mapSupplier;
-    private Function<StringAndSession, Object> fct = new Function<StringAndSession, Object>() {
+    private Function<String, Object> fct = new Function<String, Object>() {
         @Override
-        public Object apply(StringAndSession s) {
-            Supplier<Object> r = mapSupplier.get(s.string);
+        public Object apply(String s) {
+            Supplier<Object> r = mapSupplier.get(s);
             if(r!=null){
                 return r.get();
             }
-            String v = extraProperties.get(s.string);
+            String v = extraProperties.get(s);
             if(v!=null){
                 return v;
             }
-            v = System.getProperty(s.string);
+            v = System.getProperty(s);
             if(v!=null){
                 return v;
             }
-            NRepository repo = NRepositories.of().findRepository(s.string).orNull();
+            NRepository repo = NRepositories.of().findRepository(s).orNull();
             if (repo != null) {
                 return buildRepoRepoMap(repo, true, null);
             }
@@ -306,8 +306,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
     }
 
     public NOptional<Object> getPropertyValue(String propertyName) {
-        NSession session = workspace.currentSession();
-        return NOptional.ofNamed(fct.apply(new StringAndSession(propertyName,session)), "property " + propertyName);
+        return NOptional.ofNamed(fct.apply(propertyName), "property " + propertyName);
     }
 
     private Map<String, Supplier<Object>> buildMapSupplier() {
@@ -481,16 +480,6 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
             }
         }
         return change;
-    }
-
-    static class StringAndSession {
-        String string;
-        NSession session;
-
-        public StringAndSession(String string, NSession session) {
-            this.string = string;
-            this.session = session;
-        }
     }
 
     static class MapAndSession {

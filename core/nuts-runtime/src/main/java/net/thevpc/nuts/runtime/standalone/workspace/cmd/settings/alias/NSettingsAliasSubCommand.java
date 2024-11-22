@@ -29,7 +29,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
 
     @Override
     public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
-        if (cmdLine.next("list aliases").isPresent()) {
+        if (cmdLine.next("list aliases","list alias","aliases list").isPresent()) {
             cmdLine.setCommandName("settings list aliases");
             List<String> toList = new ArrayList<>();
             NSession session = workspace.currentSession();
@@ -86,7 +86,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                 }
             }
             return true;
-        } else if (cmdLine.next("remove alias").isPresent()) {
+        } else if (cmdLine.next("remove alias","alias remove").isPresent()) {
             if (cmdLine.isExecMode()) {
                 while (cmdLine.hasNext()) {
                     NCommands.of().removeCommand(cmdLine.next().get().toString());
@@ -94,7 +94,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                 NConfigs.of().save();
             }
             return true;
-        } else if (cmdLine.next("add alias").isPresent()) {
+        } else if (cmdLine.next("add alias","alias add").isPresent()) {
             if (cmdLine.isExecMode()) {
                 String n = null;
                 LinkedHashMap<String, AliasInfo> toAdd = new LinkedHashMap<>();

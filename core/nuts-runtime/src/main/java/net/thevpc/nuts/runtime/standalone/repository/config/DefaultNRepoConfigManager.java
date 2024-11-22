@@ -9,8 +9,10 @@ import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NOptional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class DefaultNRepoConfigManager implements NRepositoryConfigManager, NRepositoryConfigManagerExt {
 
@@ -89,6 +91,11 @@ public class DefaultNRepoConfigManager implements NRepositoryConfigManager, NRep
     @Override
     public boolean isPreview() {
         return getModel().isPreview();
+    }
+
+    @Override
+    public Set<String> getTags() {
+        return getModel().getTags();
     }
 
     @Override

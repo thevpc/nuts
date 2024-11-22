@@ -1,0 +1,179 @@
+configure ```sh nuts```
+
+##) SYNOPSIS:
+
+    ```sh settings <command> [<args>]...```
+
+###) alias:
+    ```sh settings list aliases [<name-or-expr>]```
+        ...
+
+    ```sh settings add alias <name>=<cmd>...```
+        ...
+
+    ```sh settings remove alias <name>...```
+        ...
+
+###) alias:
+    ```sh settings list imports [<name-or-expr>]```
+        ...
+
+    ```sh settings (import|ia) <name>...```
+        ...
+
+    ```sh settings (unimport|ir) <name>...```
+        ...
+
+###) archetype:
+    ```sh settings (list archetypes|la)```
+        ...
+
+###) backup/restore:
+    ```sh settings backup (--file|-f)=<file>```
+    ```sh settings backup <file>```
+        ...
+
+    ```sh settings restore (--file|-f)=<file>```
+    ```sh settings restore <file>```
+        ...
+
+###) cli-id:
+    ```sh settings cli-id```
+    ```sh settings get cli-id```
+
+    ```sh settings cli-id=<value>```
+    ```sh settings set cli-id <value>```
+        ...
+
+    ```sh settings restore (--file|-f)=<file>```
+    ```sh settings restore <file>```
+        ...
+
+###) connect:
+    ```sh settings connect --password=<password> <user>@<host>:port```
+        telnet a remote tcp server
+        ...
+
+###) delete:
+    ```sh settings delete bin|conf|var|log|temp|cache|run ...```
+        delete workspace folder
+
+###) update stats:
+    ```sh settings update stats ...```
+        update repository stats
+
+###) java:
+    ```sh settings add java --search```
+        deploys an id from registered repository to another
+
+    ```sh settings add java <folder>...```
+        deploys an id from registered repository to another
+
+    ```sh settings remove java <name>...```
+        deploys an id from registered repository to another
+
+###) repository:
+    ```sh settings list repos...```
+        ...
+    ```sh settings add repo <repo>...```
+        ...
+
+    ```sh settings remove repo <name>...```
+        ...
+    ```sh settings enable repo <name>...```
+        ...
+    ```sh settings disable repo <name>...```
+        ...
+    ```sh settings edit repo <name> <repo-command>...```
+        ...
+
+###) user:
+    ```sh settings list users...```
+        ...
+    ```sh settings add user <user>...```
+        ...
+
+    ```sh settings remove user <name>...```
+        ...
+    ```sh settings enable user <name>...```
+        ...
+    ```sh settings disable user <name>...```
+        ...
+    ```sh settings edit user <name> <user-command>...```
+        ...
+    ```sh settings password...```
+        ...
+
+###) log:
+    ```sh settings (set log level|sll) verbose|finest|fine|finer|info|warning|severe|error|config|off|all```
+        ...
+
+    ```sh settings (log level|get log level)```
+        ...
+
+    ```sh settings install log```
+        ...
+
+###) ndi (nuts desktop integration):
+    ```sh settings ndi [<option>...] <package>...```
+        ...
+    OPTIONS:
+    ```sh --fetch|-t...```
+        ...
+    ```sh (--workdir|-d)=<path>...```
+        ...
+    ```sh --icon=<path>...```
+        ...
+    ```sh --menu=(supported|never|always|preferred)...```
+        ...
+    ```sh --menu-category=<path>...```
+        ...
+    ```sh --menu-name=<name>...```
+        ...
+    ```sh --shortcut-name=<name>...```
+        ...
+    ```sh --shortcut-path=<path>...```
+        ...
+    ```sh --desktop=(supported|never|always|preferred)...```
+        ...
+    ```sh --desktop-name=<name>...```
+        ...
+    ```sh --spawn|--external|-x...```
+        ...
+    ```sh --embedded|-b...```
+        ...
+    ```sh --terminal...```
+        ...
+    ```sh --env|e...```
+        ...
+    ```sh --system...```
+        ...
+    ```sh --current-user...```
+        ...
+    ```sh --as-root...```
+        ...
+    ```sh --run-as=<user>...```
+        ...
+    ```sh (--exec-options|-X)=<options>...```
+        ...
+    ```sh (--installed|-i)...```
+        ...
+    ```sh (--companions|-c)...```
+        ...
+    ```sh (--switch)...```
+        ...
+    ```sh (--ignore-unsupported-os)...```
+        ...
+    ```sh (--workspace|-w)=<ws>...```
+        ...
+    ```sh (--name|-n)=<name>...```
+        ...
+
+
+##) EXAMPLES:
+
+    ```sh settings --file myjar.jar```
+        settings the myjar.jar file to default local repository
+
+    ```sh deploy --id example:some-thing --to system```
+        settings the latest version of example:some-thing to system repository

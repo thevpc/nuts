@@ -19,16 +19,9 @@ import java.util.Stack;
  */
 public interface NWorkspaceExt {
 
-    static NWorkspaceExt of(NSession session) {
-        return of(session.getWorkspace());
-    }
 
     static NWorkspaceExt of() {
-        return of(NWorkspace.get());
-    }
-
-    static NWorkspaceExt of(NWorkspace ws) {
-        return (NWorkspaceExt) ws;
+        return ((NWorkspaceExt)NWorkspace.get());
     }
 
     NText getWelcomeText();

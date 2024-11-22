@@ -27,14 +27,13 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.reserved.NWorkspaceScopes;
+import net.thevpc.nuts.reserved.NScopedWorkspace;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NCallable;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NRunnable;
 
 import java.io.Closeable;
-import java.io.IOException;
 
 /**
  * Created by vpc on 1/5/17.
@@ -49,16 +48,20 @@ public interface NWorkspace extends NComponent, Closeable {
     }
 
     static NOptional<NWorkspace> of() {
-        return NWorkspaceScopes.currentWorkspace();
+        return NScopedWorkspace.currentWorkspace();
     }
 
     static void run(NRunnable runnable) {
-        NWorkspaceScopes.runWith(runnable);
+        NScopedWorkspace.runWith(runnable);
     }
 
     static <T> T call(NCallable<T> callable) {
-        return NWorkspaceScopes.callWith(callable);
+        return NScopedWorkspace.callWith(callable);
     }
+
+    void setSharedInstance();
+
+    boolean isSharedInstance();
 
     void runWith(NRunnable runnable);
 

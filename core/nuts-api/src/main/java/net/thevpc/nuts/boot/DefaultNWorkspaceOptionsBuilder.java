@@ -155,7 +155,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     /**
      * option-type : runtime
      */
-    private Boolean mainInstance;
+    private Boolean sharedInstance;
 
     /**
      * option-type : exported (inherited in child workspaces)
@@ -1502,7 +1502,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         this.setDesktopLauncher(other.getDesktopLauncher().orNull());
         this.setMenuLauncher(other.getMenuLauncher().orNull());
         this.setUserLauncher(other.getUserLauncher().orNull());
-        this.setMainInstance(other.getMainInstance().orNull());
+        this.setSharedInstance(other.getSharedInstance().orNull());
         this.setPreviewRepo(other.getPreviewRepo().orNull());
         return this;
     }
@@ -1727,8 +1727,8 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
             if (other.getPreviewRepo().isPresent()) {
                 this.setPreviewRepo(other.getPreviewRepo().orNull());
             }
-            if (other.getMainInstance().isPresent()) {
-                this.setMainInstance(other.getMainInstance().orNull());
+            if (other.getSharedInstance().isPresent()) {
+                this.setSharedInstance(other.getSharedInstance().orNull());
             }
         }
         return this;
@@ -1745,13 +1745,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         NWorkspaceCmdLineParser.parseNutsArguments(args, this);
         return this;
     }
-    public NOptional<Boolean> getMainInstance() {
-        return NOptional.ofNamed(mainInstance, "mainInstance");
+    public NOptional<Boolean> getSharedInstance() {
+        return NOptional.ofNamed(sharedInstance, "sharedInstance");
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setMainInstance(Boolean mainInstance) {
-        this.mainInstance = mainInstance;
+    public NWorkspaceOptionsBuilder setSharedInstance(Boolean sharedInstance) {
+        this.sharedInstance = sharedInstance;
         return this;
     }
 
@@ -1876,7 +1876,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
                 getExecutorOptions().orNull(), getErrors().orNull(), getStoreLocations().orNull(), getHomeLocations().orNull(),
                 getDesktopLauncher().orNull(), getMenuLauncher().orNull(), getUserLauncher().orNull()
                 , getPreviewRepo().orNull()
-                , getMainInstance().orNull()
+                , getSharedInstance().orNull()
         );
     }
 

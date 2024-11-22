@@ -581,7 +581,7 @@ public class NIdFormatHelper {
         if (!built) {
             built = true;
             NWorkspace ws = workspace;
-            NInstalledRepository rr = NWorkspaceExt.of(ws).getInstalledRepository();
+            NInstalledRepository rr = NWorkspaceExt.of().getInstalledRepository();
             this.installStatus = rr.getInstallStatus(id);
             NInstallInformation iif = rr.getInstallInformation(id);
             this.dte = iif == null ? null : iif.getCreatedInstant();

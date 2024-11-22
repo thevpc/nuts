@@ -9,16 +9,14 @@ import net.thevpc.nuts.spi.NSupportLevelContext;
 import java.util.concurrent.ExecutorService;
 
 public class DefaultNScheduler implements NScheduler {
-    private NSession session;
 
-    public DefaultNScheduler(NSession session) {
-        this.session = session;
+    public DefaultNScheduler() {
     }
 
 
     @Override
     public ExecutorService executorService() {
-        return NWorkspaceExt.of(session).getModel().configModel.executorService();
+        return NWorkspaceExt.of().getModel().configModel.executorService();
     }
 
     @Override

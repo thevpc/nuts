@@ -6,7 +6,6 @@ import net.thevpc.nuts.env.NDesktopEnvironmentFamily;
 import net.thevpc.nuts.env.NDesktopIntegrationItem;
 import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NdiScriptOptions;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NSettingsNdiSubCommand;
@@ -39,7 +38,7 @@ public class DefaultNEnvs implements NEnvs {
     protected DefaultNPlatformModel sdkModel;
 
     public DefaultNEnvs(NWorkspace ws) {
-        NWorkspaceExt e = NWorkspaceExt.of(ws);
+        NWorkspaceExt e = NWorkspaceExt.of();
         this.model = e.getModel().envModel;
         this.sdkModel = e.getModel().sdkModel;
     }

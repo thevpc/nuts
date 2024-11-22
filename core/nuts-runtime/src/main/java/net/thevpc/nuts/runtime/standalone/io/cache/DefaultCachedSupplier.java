@@ -239,7 +239,7 @@ public class DefaultCachedSupplier<T> implements CachedSupplier<T> {
 
         @Override
         public String getCacheId() {
-            return NWorkspaceExt.of(session).getModel().installationDigest;
+            return NWorkspaceExt.of().getModel().installationDigest;
         }
 
         @Override

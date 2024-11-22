@@ -52,7 +52,7 @@ public class DefaultNTexts implements NTexts {
 
     public DefaultNTexts(NWorkspace workspace) {
         this.workspace = workspace;
-        this.shared = NWorkspaceExt.of(workspace).getModel().textModel;
+        this.shared = NWorkspaceExt.of().getModel().textModel;
         registerDefaults();
     }
 

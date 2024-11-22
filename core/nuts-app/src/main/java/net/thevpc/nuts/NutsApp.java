@@ -52,8 +52,10 @@ public final class NutsApp {
         } catch (Exception ex) {
             NSession session = NSessionAwareExceptionBase.resolveSession(ex).orNull();
             if (session != null) {
-                System.exit(NApplicationExceptionHandler.of()
-                        .processThrowable(args, ex));
+                session.runWith(()->{
+                    System.exit(NApplicationExceptionHandler.of()
+                            .processThrowable(args, ex));
+                });
             } else {
                 System.exit(NApiUtilsRPI.processThrowable(ex, args));
             }

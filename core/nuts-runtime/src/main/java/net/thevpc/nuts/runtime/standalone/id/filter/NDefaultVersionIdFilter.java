@@ -31,7 +31,7 @@ public class NDefaultVersionIdFilter extends AbstractIdFilter implements NIdFilt
         if (defaultVersion == null) {
             return true;
         }
-        return NWorkspaceExt.of(workspace).getInstalledRepository().isDefaultVersion(other) == defaultVersion;
+        return NWorkspaceExt.of().getInstalledRepository().isDefaultVersion(other) == defaultVersion;
     }
 
     @Override

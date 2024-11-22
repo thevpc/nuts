@@ -405,7 +405,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
     private final Boolean initScripts;
     private final Boolean initPlatforms;
     private final Boolean initJava;
-    private final Boolean mainInstance;
+    private final Boolean sharedInstance;
     private final NIsolationLevel isolationLevel;
     private final NSupportMode desktopLauncher;
     private final NSupportMode menuLauncher;
@@ -432,7 +432,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
                                     Map<NHomeLocation, String> homeLocations, NSupportMode desktopLauncher, NSupportMode menuLauncher,
                                     NSupportMode userLauncher,
                                     Boolean previewRepo,
-                                    Boolean mainInstance
+                                    Boolean sharedInstance
     ) {
         this.outputFormatOptions = NReservedLangUtils.unmodifiableOrNullList(outputFormatOptions);
         this.customOptions = NReservedLangUtils.unmodifiableOrNullList(customOptions);
@@ -508,7 +508,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
         this.menuLauncher = menuLauncher;
         this.userLauncher = userLauncher;
         this.previewRepo = previewRepo;
-        this.mainInstance = mainInstance;
+        this.sharedInstance = sharedInstance;
     }
 
     @Override
@@ -516,8 +516,8 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
         return NOptional.ofNamed(previewRepo, "previewRepo");
     }
 
-    public NOptional<Boolean> getMainInstance() {
-        return NOptional.ofNamed(mainInstance, "mainInstance");
+    public NOptional<Boolean> getSharedInstance() {
+        return NOptional.ofNamed(sharedInstance, "sharedInstance");
     }
 
     @Override

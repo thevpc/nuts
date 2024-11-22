@@ -31,7 +31,7 @@ public class NSettingsLogSubCommand extends AbstractNSettingsSubCommand {
     @Override
     public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
         NSession session = workspace.currentSession();
-        if (cmdLine.next("set loglevel", "sll").isPresent()) {
+        if (cmdLine.next("set log level", "sll").isPresent()) {
 //            NutsWorkspaceConfigManager configManager = context.getWorkspace().config();
             if (cmdLine.next("verbose", "finest").isPresent()) {
                 if (cmdLine.isExecMode()) {
@@ -76,15 +76,15 @@ public class NSettingsLogSubCommand extends AbstractNSettingsSubCommand {
             }
             cmdLine.setCommandName("config log").throwUnexpectedArgument();
             return true;
-        } else if (cmdLine.next("get loglevel").isPresent()) {
+        } else if (cmdLine.next("get log level","log level").isPresent()) {
             if (cmdLine.isExecMode()) {
                 Logger rootLogger = Logger.getLogger("");
                 session.out().println(rootLogger.getLevel());
             }
-        } else if (cmdLine.next("install-log").isPresent()) {
+        } else if (cmdLine.next("install log").isPresent()) {
             if (cmdLine.isExecMode()) {
                 if(session.isPlainOut()) {
-                    for (NInstallLogRecord r : NWorkspaceExt.of(session).getInstalledRepository().findLog()) {
+                    for (NInstallLogRecord r : NWorkspaceExt.of().getInstalledRepository().findLog()) {
                         NTexts txt = NTexts.of();
                         session.out().print(
                                 NMsg.ofC("%s %s %s %s %s %s %s%n",
@@ -102,7 +102,7 @@ public class NSettingsLogSubCommand extends AbstractNSettingsSubCommand {
                     }
                 }else{
                     session.out().println(
-                            NWorkspaceExt.of(session).getInstalledRepository().findLog().toList()
+                            NWorkspaceExt.of().getInstalledRepository().findLog().toList()
                     );
                 }
             }

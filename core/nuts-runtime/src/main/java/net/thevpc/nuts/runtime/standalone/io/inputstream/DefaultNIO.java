@@ -21,7 +21,7 @@ public class DefaultNIO implements NIO {
     public DefaultNIO(NSession session) {
         this.session = session;
         this.cmodel = ((DefaultNConfigs) NConfigs.of()).getModel();
-        bootModel = NWorkspaceExt.of(session.getWorkspace()).getModel().bootModel;
+        bootModel = NWorkspaceExt.of().getModel().bootModel;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class DefaultNIO implements NIO {
     }
 
     private DefaultNBootModel getBootModel() {
-        return NWorkspaceExt.of(session).getModel().bootModel;
+        return NWorkspaceExt.of().getModel().bootModel;
     }
 
 
@@ -150,12 +150,12 @@ public class DefaultNIO implements NIO {
 
     @Override
     public NSystemTerminal getSystemTerminal() {
-        return NWorkspaceExt.of(session).getModel().bootModel.getSystemTerminal();
+        return NWorkspaceExt.of().getModel().bootModel.getSystemTerminal();
     }
 
     @Override
     public NIO setSystemTerminal(NSystemTerminalBase terminal) {
-        NWorkspaceExt.of(session).getModel().bootModel.setSystemTerminal(terminal);
+        NWorkspaceExt.of().getModel().bootModel.setSystemTerminal(terminal);
         return this;
     }
 

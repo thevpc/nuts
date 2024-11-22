@@ -25,6 +25,7 @@
                 <!--groupId>org.dstovall</groupId--> <!-- not available on the central -->
                 <groupId>com.jolira</groupId>
                 <artifactId>onejar-maven-plugin</artifactId>
+                <version>1.4.4</version>
                 <executions>
                     <execution>
                         <configuration>

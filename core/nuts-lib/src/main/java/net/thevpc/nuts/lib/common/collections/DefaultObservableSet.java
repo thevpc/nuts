@@ -26,8 +26,6 @@
  */
 package net.thevpc.nuts.lib.common.collections;
 
-import net.thevpc.nuts.util.NObservableMap;
-import net.thevpc.nuts.util.NObservableMapListener;
 import net.thevpc.nuts.util.NObservableSet;
 import net.thevpc.nuts.util.NObservableSetListener;
 

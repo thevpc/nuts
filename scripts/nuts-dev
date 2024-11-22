@@ -66,5 +66,6 @@ case "$1" in
     ;;
 esac
 _NUTS_JAVA_OPTIONS=`echo "$NUTS_JAVA_OPTIONS -jar" | xargs`
-$_java $NUTS_DEBUG_ARG $_NUTS_JAVA_OPTIONS "//home/vpc/.m2/repository/net/thevpc/nuts/nuts/0.8.4/nuts-0.8.4.jar" -w "$NUTS_WORKSPACE" "$@"
+%echo $_java $NUTS_DEBUG_ARG $_NUTS_JAVA_OPTIONS "/home/vpc/.m2/repository/net/thevpc/nuts/nuts/0.8.5/nuts-0.8.5.jar" -w "$NUTS_WORKSPACE" "$@"
+$_java $NUTS_DEBUG_ARG $_NUTS_JAVA_OPTIONS "/home/vpc/.m2/repository/net/thevpc/nuts/nuts/0.8.5/nuts-0.8.5.jar" -w "$NUTS_WORKSPACE" "$@"
 # END-COMMAND

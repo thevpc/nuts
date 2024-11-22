@@ -74,16 +74,16 @@ public class DefaultNBootModel implements NBootModel {
     private NSystemTerminalRef systemTerminal;
     private NWorkspaceModel workspaceModel;
 
-    public DefaultNBootModel(NWorkspace workspace, NWorkspaceModel workspaceModel) {
+    public DefaultNBootModel(NWorkspace workspace, NWorkspaceModel workspaceModel,NBootOptions bOption0) {
         this.workspace = workspace;
         this.workspaceModel = workspaceModel;
+        this.bootSession = new DefaultNSession(workspace, bOption0);
+        this.bOptions = bOption0.readOnly();
     }
 
-    public void init(NBootOptions bOption0) {
+    public void init() {
         this.initializing = true;
-        this.bootSession = new DefaultNSession(workspace, bOption0);
         NativeImageHelper.prepare(this.workspace);
-        this.bOptions = bOption0.readOnly();
         this.bootTerminal = detectAnsiTerminalSupport(NOsFamily.getCurrent(), bOptions, true);
         workspaceModel.uuid = bOptions.getUuid().orNull();
         workspaceModel.name = Paths.get(bOptions.getWorkspace().get()).getFileName().toString();

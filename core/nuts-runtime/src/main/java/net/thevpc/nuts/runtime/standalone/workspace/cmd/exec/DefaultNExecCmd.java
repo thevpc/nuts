@@ -967,7 +967,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
             executorArgs.addAll(executorOptions);
             executorArgs.addAll(Arrays.asList(optionsAndArgs.getArgs()));
 
-            NExecutionContextBuilder ecb = NWorkspaceExt.of(getWorkspace()).createExecutionContext();
+            NExecutionContextBuilder ecb = NWorkspaceExt.of().createExecutionContext();
             NExecutionContext executionContext = ecb
                     .setDefinition(def)
                     .setArguments(appArgs)

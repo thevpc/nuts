@@ -10,9 +10,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>nuts-api</module>
-        <module>nlib-common-collections</module>
-        <module>nlib-common-strings</module>
-        <module>nlib-common-utils</module>
+        <module>nuts-lib</module>
         <module>nuts-app</module>
         <module>nuts-app-full</module>
         <module>nuts-runtime</module>

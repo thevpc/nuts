@@ -32,7 +32,7 @@ import java.io.Serializable;
  * @author thevpc
  * @app.category Config
  */
-public class NConfigItem implements Serializable {
+public class NConfigItem implements Serializable,Cloneable{
     private static final long serialVersionUID = 1;
     /**
      * Api version having created the config

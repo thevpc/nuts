@@ -87,7 +87,7 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
                     new File(fileName.substring(fileName.length() - ".java".length())).getName(),
                     "--class-path",
                     folder.toString()));
-            NExecutionContext executionContext2 = NWorkspaceExt.of(executionContext.getSession())
+            NExecutionContext executionContext2 = NWorkspaceExt.of()
                     .createExecutionContext()
                     .setAll(executionContext)
                     .setDefinition(d)
@@ -117,7 +117,7 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
                     new File(fileName.substring(fileName.length() - ".java".length())).getName(),
                     "--class-path",
                     folder.toString()));
-            NExecutionContext executionContext2 = NWorkspaceExt.of(executionContext.getSession())
+            NExecutionContext executionContext2 = NWorkspaceExt.of()
                     .createExecutionContext()
                     .setAll(executionContext)
                     .setDefinition(d)

@@ -99,6 +99,16 @@ public interface NExecCmd extends NWorkspaceCmd {
     NExecCmd failFast();
 
     /**
+     * runin bot mode
+     *
+     * @param bot bot
+     * @return {@code this} instance
+     */
+    NExecCmd setBot(Boolean bot);
+
+    Boolean getBot();
+
+    /**
      * return command to execute
      *
      * @return command to execute

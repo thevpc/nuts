@@ -1,5 +1,5 @@
 [Unit]
-Description=PRobot System Server
+Description=$$SERVICE_DESCRIPTION$$
 
 [Service]
 User=$$USER$$

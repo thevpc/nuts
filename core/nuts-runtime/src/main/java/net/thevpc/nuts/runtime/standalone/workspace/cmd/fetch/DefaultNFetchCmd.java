@@ -57,7 +57,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
             NSession session=getWorkspace().currentSession();
             NDefinition def = fetchDefinition(getId(), this, false, false);
             if (isEffective()) {
-                return NWorkspaceExt.of(getWorkspace()).resolveEffectiveId(def.getEffectiveDescriptor().get());
+                return NWorkspaceExt.of().resolveEffectiveId(def.getEffectiveDescriptor().get());
             }
             return def.getId();
         } catch (NNotFoundException ex) {
@@ -127,7 +127,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
     @Override
     public NInstallInformation getResultInstallInformation() {
         NSession session=getWorkspace().currentSession();
-        NWorkspaceExt dws = NWorkspaceExt.of(getWorkspace());
+        NWorkspaceExt dws = NWorkspaceExt.of();
         NInstallInformation ii = dws.getInstalledRepository().getInstallInformation(getId());
         if (ii != null) {
             return ii;
@@ -173,7 +173,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
         NWorkspaceUtils wu = NWorkspaceUtils.of(workspace);
         CoreNIdUtils.checkLongId(id);
 //        checkSession();
-        NWorkspaceExt dws = NWorkspaceExt.of(session);
+        NWorkspaceExt dws = NWorkspaceExt.of();
         NFetchStrategy nutsFetchModes = NWorkspaceHelper.validate(session.getFetchStrategy().orDefault());
         NRepositoryFilter repositoryFilter = this.getRepositoryFilter();
         if (!NBlankable.isBlank(id.getRepository())) {
@@ -452,7 +452,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
 
     protected DefaultNDefinition fetchDescriptorAsDefinition(NId id, NFetchStrategy nutsFetchModes, NFetchMode mode, NRepository repo) {
         NSession session=getWorkspace().currentSession();
-        NWorkspaceExt dws = NWorkspaceExt.of(session);
+        NWorkspaceExt dws = NWorkspaceExt.of();
         boolean withCache = !(repo instanceof DefaultNInstalledRepository) && session.isCached();
         NPath cachePath = null;
         NWorkspaceUtils wu = NWorkspaceUtils.of(getWorkspace());

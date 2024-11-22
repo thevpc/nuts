@@ -26,7 +26,7 @@ public class NSettingsImportSubCommand extends AbstractNSettingsSubCommand {
     @Override
     public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
         NSession session = workspace.currentSession();
-        if (cmdLine.next("list imports", "li").isPresent()) {
+        if (cmdLine.next("list imports","list import","import list", "li").isPresent()) {
             cmdLine.setCommandName("config list imports").throwUnexpectedArgument();
             if (cmdLine.isExecMode()) {
                 for (String imp : (NImports.of().getAllImports())) {

@@ -552,7 +552,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                             List<NId> installedIds = Collections.emptyList();
                             if (!nutsId.getArtifactId().contains("*")) {
                                 NRepositorySPI repoSPI = wu
-                                        .repoSPI(NWorkspaceExt.of(getWorkspace()).getInstalledRepository());
+                                        .repoSPI(NWorkspaceExt.of().getInstalledRepository());
                                 NIterator<NId> it = repoSPI.search().setFetchMode(NFetchMode.LOCAL).setFilter(NIdFilters.of().byName(
                                         nutsId.builder().setGroupId("*").build().toString()
                                 )).getResult();

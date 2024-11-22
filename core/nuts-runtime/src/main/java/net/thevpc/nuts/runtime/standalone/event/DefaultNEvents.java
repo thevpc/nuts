@@ -17,7 +17,7 @@ public class DefaultNEvents implements NEvents {
 
     public DefaultNEvents(NWorkspace workspace) {
         this.workspace = workspace;
-        NWorkspaceExt e = NWorkspaceExt.of(workspace);
+        NWorkspaceExt e = NWorkspaceExt.of();
         this.model = e.getModel().eventsModel;
     }
 

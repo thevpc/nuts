@@ -70,32 +70,10 @@
     </licenses>
 
     <dependencies>
-        <dependency>
-            <groupId>net.thevpc.nuts</groupId>
-            <artifactId>nuts-api</artifactId>
-            <version>0.8.5</version>
-        </dependency>
-        <dependency><groupId>net.thevpc.nuts.lib</groupId><artifactId>nlib-common-collections</artifactId><version>0.8.5.0</version></dependency>
-        <dependency><groupId>net.thevpc.nuts.lib</groupId><artifactId>nlib-common-strings</artifactId><version>0.8.5.0</version></dependency>
-        <dependency><groupId>net.thevpc.nuts.lib</groupId><artifactId>nlib-common-utils</artifactId><version>0.8.5.0</version></dependency>
-        <dependency>
-            <groupId>org.fusesource.jansi</groupId>
-            <artifactId>jansi</artifactId>
-            <!--            <optional>true</optional>-->
-            <!--!
-             <os>windows</os>
-            -->
-            <version>2.3.4</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.vatbub</groupId>
-            <artifactId>mslinks</artifactId>
-            <version>1.0.5</version>
-            <!--            <version>1.0.6.2</version> requires JDK10-->
-            <!--!
-             <os>windows</os>
-            -->
-        </dependency>
+        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts-api</artifactId><version>0.8.5</version></dependency>
+        <dependency><groupId>net.thevpc.nuts</groupId><artifactId>nuts-lib</artifactId><version>0.8.5.0</version></dependency>
+        <dependency><groupId>org.fusesource.jansi</groupId><artifactId>jansi</artifactId><version>2.3.4</version><!--<optional>true</optional>--><!--!<os>windows</os>--></dependency>
+        <dependency><groupId>com.github.vatbub</groupId><artifactId>mslinks</artifactId><version>1.0.5</version><!--<version>1.0.6.2</version> requires JDK10--><!--!<os>windows</os>--></dependency>
     </dependencies>
     <distributionManagement>
         <snapshotRepository>

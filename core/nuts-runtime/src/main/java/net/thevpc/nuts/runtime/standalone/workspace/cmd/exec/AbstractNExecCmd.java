@@ -48,6 +48,7 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
     protected NRunAs runAs = NRunAs.CURRENT_USER;
     protected Boolean dry = null;
     protected boolean failFast;
+    protected Boolean bot;
     private long sleepMillis = 1000;
     private String target;
 
@@ -68,6 +69,17 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
     @Override
     public boolean isFailFast() {
         return failFast;
+    }
+
+    @Override
+    public NExecCmd setBot(Boolean bot) {
+        this.bot = bot;
+        return this;
+    }
+
+    @Override
+    public Boolean getBot() {
+        return bot;
     }
 
     @Override
@@ -506,6 +518,7 @@ public abstract class AbstractNExecCmd extends NWorkspaceCmdBase<NExecCmd> imple
         setRunAs(other.getRunAs());
         setTarget(other.getTarget());
         setDry(other.getDry());
+        setBot(other.getBot());
         return this;
     }
 

@@ -224,7 +224,7 @@ public class NRepositoryMirroringHelper {
                 if (nutsDescriptor != null) {
                     if (filter == null || filter.acceptSearchId(new NSearchIdByDescriptor(nutsDescriptor))) {
 //                        NutsId id2 = C                                oreNutsUtils.createComponentFaceId(getWorkspace().resolveEffectiveId(nutsDescriptor,session),nutsDescriptor,null);
-                        NWorkspaceExt dws = NWorkspaceExt.of(getWorkspace());
+                        NWorkspaceExt dws = NWorkspaceExt.of();
                         NId id2 = dws.resolveEffectiveId(nutsDescriptor).builder().setFaceDescriptor().build();
                         NPath localNutFile = cache.getLongIdLocalFile(id2);
                         nutsDescriptor.formatter().print(localNutFile);

@@ -41,7 +41,7 @@ public class DefaultNLicenseInternalExecutable extends DefaultInternalNExecutabl
             session.configureLast(cmdLine);
         }
 
-        NText licenseString = NWorkspaceExt.of(session.getWorkspace()).getLicenseText();
+        NText licenseString = NWorkspaceExt.of().getLicenseText();
         session.out().println(licenseString);
         return NExecutionException.SUCCESS;
     }

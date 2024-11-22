@@ -25,12 +25,10 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.reserved.NWorkspaceScopes;
+import net.thevpc.nuts.reserved.NScopedWorkspace;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NCallable;
 import net.thevpc.nuts.util.NRunnable;
-
-import java.util.Stack;
 
 /**
  * Created by vpc on 1/6/17.
@@ -41,12 +39,12 @@ public abstract class AbstractNWorkspace implements NWorkspace {
 
     @Override
     public void runWith(NRunnable runnable) {
-        NWorkspaceScopes.runWith(this,runnable);
+        NScopedWorkspace.runWith(this,runnable);
     }
 
     @Override
     public <T> T callWith(NCallable<T> callable) {
-        return NWorkspaceScopes.callWith(this,callable);
+        return NScopedWorkspace.callWith(this,callable);
     }
 
     @Override
@@ -64,5 +62,15 @@ public abstract class AbstractNWorkspace implements NWorkspace {
     @Override
     public void close() {
 
+    }
+
+    @Override
+    public void setSharedInstance() {
+        NScopedWorkspace.setSharedWorkspaceInstance(this);
+    }
+
+    @Override
+    public boolean isSharedInstance() {
+        return NScopedWorkspace.getSharedWorkspaceInstance()==this;
     }
 }

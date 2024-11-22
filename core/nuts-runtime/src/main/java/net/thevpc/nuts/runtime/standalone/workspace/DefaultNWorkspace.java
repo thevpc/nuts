@@ -42,7 +42,7 @@ import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
-import net.thevpc.nuts.reserved.NWorkspaceScopes;
+import net.thevpc.nuts.reserved.NScopedWorkspace;
 import net.thevpc.nuts.runtime.standalone.NLocationKey;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNLog;
 import net.thevpc.nuts.text.*;
@@ -201,8 +201,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         data.initialBootOptions = initialBootOptions0.readOnly();
         try {
             this.wsModel = new NWorkspaceModel(this, data.initialBootOptions);
-            this.wsModel.init();
             this.runWith(()->{
+                this.wsModel.init();
                 _preloadWorkspace(data);
                 if (!loadWorkspace(data.effectiveBootOptions.getExcludedExtensions().orElseGet(Collections::emptyList), null)) {
                     _createWorkspaceFirstBoot(data);
@@ -357,9 +357,9 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                                 NDuration.ofDuration(data._boot.getCreationDuration())
                         )
                 );
-        if(data.effectiveBootOptions.getMainInstance().orElse(false)){
+        if(data.effectiveBootOptions.getSharedInstance().orElse(false)){
 
-            NWorkspace o = NWorkspaceScopes.setMainWorkspace(this);
+            NWorkspace o = NScopedWorkspace.setSharedWorkspaceInstance(this);
             if(o!=null){
                 LOG.with().level(Level.WARNING).verb(NLogVerb.SUCCESS)
                         .log(
@@ -1128,7 +1128,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 //should change def to reflect install location!
                 NExecutionContextBuilder cc = createExecutionContext()
                         .setDefinition(def).setArguments(args).failFast().setTemporary(false)
-                        .setExecutionType(NBootManager.of().getBootOptions().getExecutionType().orNull())
                         .setRunAs(NRunAs.currentUser())// install or update always uses current user
                         ;
                 NArtifactCall installer = def.getDescriptor().getInstaller();
@@ -1672,10 +1671,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 NExecutionContext executionContext = createExecutionContext()
                         .setDefinition(def)
                         .setArguments(args)
-                        .setWorkspace(this)
                         .failFast()
                         .setTemporary(false)
-                        .setExecutionType(NBootManager.of().getBootOptions().getExecutionType().orNull())
                         .setRunAs(NRunAs.currentUser())//uninstall always uses current user
                         .build();
                 installerComponent.uninstall(executionContext, eraseFiles);
@@ -1822,6 +1819,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         return new DefaultNExecutionContextBuilder()
                 .setWorkspace(this)
                 .setDry(session.isDry())
+                .setBot(session.isBot())
+                .setExecutionType(NBootManager.of().getBootOptions().getExecutionType().orNull())
                 ;
     }
 
@@ -1829,7 +1828,6 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     public void deployBoot(NId id, boolean withDependencies) {
         runWith(()-> {
         Map<NId, NDefinition> defs = new HashMap<>();
-        NSession session = wsModel.workspace.currentSession();
         NDefinition m = NFetchCmd.of(id).setContent(true).setDependencies(true).setFailFast(false).getResultDefinition();
         Map<String, String> a = new LinkedHashMap<>();
         a.put("configVersion", Nuts.getVersion().toString());

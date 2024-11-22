@@ -56,7 +56,7 @@ public class DefaultNWorkspaceLocationModel {
         try {
             return cfg().current().getStoreLocation(folderType);
         } catch (IllegalStateException stillInitializing) {
-            NWorkspaceOptions info = NWorkspaceExt.of(workspace).getModel().bootModel.getBootUserOptions();
+            NWorkspaceOptions info = NWorkspaceExt.of().getModel().bootModel.getBootUserOptions();
             String h = info.getStoreType(folderType).orNull();
             NSession session = getWorkspace().currentSession();
             return h==null?null: NPath.of(h);

@@ -19,7 +19,7 @@ public class DefaultNRepositories implements NRepositories {
 
     public DefaultNRepositories(NWorkspace workspace) {
         this.workspace = workspace;
-        NWorkspaceExt e = NWorkspaceExt.of(workspace);
+        NWorkspaceExt e = NWorkspaceExt.of();
         this.model = e.getModel().repositoryModel;
     }
 

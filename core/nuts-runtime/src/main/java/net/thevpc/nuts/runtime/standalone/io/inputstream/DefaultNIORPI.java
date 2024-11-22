@@ -37,7 +37,7 @@ public class DefaultNIORPI implements NIORPI {
         this.workspace = workspace;
         NSession session = workspace.currentSession();
         this.cmodel = ((DefaultNConfigs) NConfigs.of()).getModel();
-        bootModel = NWorkspaceExt.of(session.getWorkspace()).getModel().bootModel;
+        bootModel = NWorkspaceExt.of().getModel().bootModel;
     }
 
 

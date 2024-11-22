@@ -84,7 +84,7 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
         //NPrintStream fout = NPrintStream.ofInMemory(session).setTerminalMode(NTerminalMode.FORMATTED);
         NPrintStream out = session.out();
         if (!helpColors && helpFor.isEmpty()) {
-            out.println(NWorkspaceExt.of(session.getWorkspace()).getHelpText());
+            out.println(NWorkspaceExt.of().getHelpText());
             out.flush();
         }
         for (String arg : helpFor) {

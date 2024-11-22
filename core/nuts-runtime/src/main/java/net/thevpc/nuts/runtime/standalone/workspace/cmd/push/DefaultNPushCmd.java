@@ -65,7 +65,7 @@ public class DefaultNPushCmd extends AbstractDefaultNPushCmd {
             NAssert.requireNonNull(file, "content to push");
             toProcess.put(id, file);
         }
-        NWorkspaceExt dws = NWorkspaceExt.of(getWorkspace());
+        NWorkspaceExt dws = NWorkspaceExt.of();
         NAssert.requireNonBlank(toProcess, "package tp push");
         for (Map.Entry<NId, NDefinition> entry : toProcess.entrySet()) {
             NId id = entry.getKey();

@@ -11,7 +11,7 @@ public class DefaultNImports implements NImports {
     private DefaultImportModel model;
 
     public DefaultNImports(NWorkspace workspace) {
-        NWorkspaceExt e = NWorkspaceExt.of(workspace);
+        NWorkspaceExt e = NWorkspaceExt.of();
         this.model = e.getModel().importModel;
     }
 

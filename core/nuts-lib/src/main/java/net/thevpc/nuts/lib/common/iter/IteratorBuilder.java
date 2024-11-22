@@ -5,7 +5,6 @@
  */
 package net.thevpc.nuts.lib.common.iter;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;

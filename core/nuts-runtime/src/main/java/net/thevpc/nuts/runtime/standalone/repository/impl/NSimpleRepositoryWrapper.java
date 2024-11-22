@@ -57,8 +57,8 @@ public class NSimpleRepositoryWrapper extends NCachedRepository {
             return false;
         }
         switch (supportedAction){
-            case DEPLOY: return base.acceptDeploy(id, mode, this);
-            case SEARCH: return base.acceptFetch(id, mode, this);
+            case DEPLOY: return base.isAcceptDeploy(id, mode, this);
+            case SEARCH: return base.isAcceptFetch(id, mode, this);
         }
         return false;
     }

@@ -8,6 +8,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.clinfo;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
+import net.thevpc.nuts.util.NBlankable;
 
 /**
  * @author thevpc
@@ -19,14 +20,16 @@ public class NCliInfoSubCommand extends AbstractNSettingsSubCommand {
 
     @Override
     public boolean exec(NCmdLine cmdLine, Boolean autoSave) {
-        if (cmdLine.next("cli-id").isPresent()) {
-            if(cmdLine.isEmpty()){
+        if(cmdLine.withNextEntry((v,a)->{
+            if(NBlankable.isBlank(v)){
                 doLoadCliId();
             }else{
-                String value = cmdLine.nextNonOption().get().toString();
-                doSaveCliId(value);
+                doSaveCliId(v);
             }
-        }else if (cmdLine.next("get cli-id").isPresent()) {
+        },"cli-id")){
+            return true;
+        }
+        if (cmdLine.next("get cli-id").isPresent()) {
             doLoadCliId();
             return true;
         }else if (cmdLine.next("set cli-id").isPresent()) {

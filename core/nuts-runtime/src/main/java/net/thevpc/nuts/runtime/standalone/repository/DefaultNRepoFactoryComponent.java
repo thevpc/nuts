@@ -97,7 +97,7 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
     @Override
     public NRepository create(NAddRepositoryOptions options, NRepository parentRepository) {
         NRepositoryConfig config = options.getConfig();
-        NSession session=workspace.currentSession();
+//        NSession session=workspace.currentSession();
         String type = NRepositoryUtils.getRepoType(config);
         if (NBlankable.isBlank(type)) {
             return null;

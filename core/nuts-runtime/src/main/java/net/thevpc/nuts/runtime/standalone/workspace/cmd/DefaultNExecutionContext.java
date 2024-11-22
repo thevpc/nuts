@@ -59,6 +59,7 @@ public class DefaultNExecutionContext implements NExecutionContext {
     private NExecOutput out;
     private NExecOutput err;
     private boolean dry;
+    private boolean bot;
 
     public DefaultNExecutionContext(NDefinition definition,
                                     List<String> arguments, List<String> executorArgs, List<String> workspaceOptions, Map<String, String> env,
@@ -70,7 +71,8 @@ public class DefaultNExecutionContext implements NExecutionContext {
                                     NExecInput in,
                                     NExecOutput out,
                                     NExecOutput err,
-                                    boolean dry
+                                    boolean dry,
+                                    boolean bot
     ) {
         this.commandName = commandName;
         this.definition = definition;
@@ -92,6 +94,7 @@ public class DefaultNExecutionContext implements NExecutionContext {
         this.out = out;
         this.err = err;
         this.dry = dry;
+        this.bot = bot;
     }
 
     public DefaultNExecutionContext(NExecutionContext other) {
@@ -113,6 +116,7 @@ public class DefaultNExecutionContext implements NExecutionContext {
         this.out = other.getOut();
         this.err = other.getErr();
         this.dry = other.isDry();
+        this.bot = other.isBot();
     }
 
     public boolean isDry() {
@@ -122,6 +126,11 @@ public class DefaultNExecutionContext implements NExecutionContext {
     public NExecutionContext setDry(boolean dry) {
         this.dry = dry;
         return this;
+    }
+
+    @Override
+    public boolean isBot() {
+        return bot;
     }
 
     public NExecInput getIn() {

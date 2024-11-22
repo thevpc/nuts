@@ -201,7 +201,7 @@ public class NLogUtils {
             session=((NLogRecord) record).getSession();
         }
         if(session==null){
-            session= NWorkspaceExt.of(ws).defaultSession();
+            session= NWorkspaceExt.of().defaultSession();
         }
         return session;
     }

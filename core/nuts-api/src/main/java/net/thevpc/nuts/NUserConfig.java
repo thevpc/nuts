@@ -27,6 +27,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.reserved.NReservedLangUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,7 +36,7 @@ import java.util.Objects;
  * @app.category Config
  * @since 0.5.4
  */
-public final class NUserConfig extends NConfigItem {
+public final class NUserConfig extends NConfigItem implements Cloneable{
 
     private static final long serialVersionUID = 2;
     private String user;
@@ -62,6 +63,26 @@ public final class NUserConfig extends NConfigItem {
         this.credentials = (credentials);
         setGroups(groups);
         setPermissions(permissions);
+    }
+
+    public NUserConfig copy() {
+        return clone();
+    }
+
+    @Override
+    protected NUserConfig clone() {
+        try {
+            NUserConfig o =(NUserConfig) super.clone();
+            if(o.groups!=null) {
+                o.groups=new ArrayList<>(o.groups);
+            }
+            if (o.permissions != null) {
+                o.permissions = new ArrayList<>(o.permissions);
+            }
+            return o;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String getRemoteIdentity() {

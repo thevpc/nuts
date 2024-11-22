@@ -196,7 +196,7 @@ public class NWorkspaceUtils {
         }
 
         List<NRepository> ret = new ArrayList<>();
-        NInstalledRepository installedRepository = NWorkspaceExt.of(workspace).getInstalledRepository();
+        NInstalledRepository installedRepository = NWorkspaceExt.of().getInstalledRepository();
         if (mode == NFetchMode.LOCAL && fmode == NRepositorySupportedAction.SEARCH
                 &&
                 (repositoryFilter == null || repositoryFilter.acceptRepository(installedRepository))) {

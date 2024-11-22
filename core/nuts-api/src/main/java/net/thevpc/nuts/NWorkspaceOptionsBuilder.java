@@ -104,7 +104,7 @@ public interface NWorkspaceOptionsBuilder extends NWorkspaceOptions {
 
     NWorkspaceOptionsBuilder setExecutionType(NExecutionType executionType);
 
-    NWorkspaceOptionsBuilder setMainInstance(Boolean mainInstance);
+    NWorkspaceOptionsBuilder setSharedInstance(Boolean sharedInstance);
 
     /**
      * set runAs mode

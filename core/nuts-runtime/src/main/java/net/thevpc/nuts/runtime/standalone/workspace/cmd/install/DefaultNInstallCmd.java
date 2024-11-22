@@ -135,7 +135,7 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
 //        }
 
         NSession session=getWorkspace().currentSession();
-        NWorkspaceExt dws = NWorkspaceExt.of(getWorkspace());
+        NWorkspaceExt dws = NWorkspaceExt.of();
         InstallIdInfo info = list.get(id);
         if (info.doInstall) {
             _loadIdContent(info.id, null, session, true, list, info.strategy);
@@ -178,7 +178,7 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
     public NInstallCmd run() {
         NSession session=getWorkspace().currentSession();
         NWorkspace ws = getWorkspace();
-        NWorkspaceExt dws = NWorkspaceExt.of(ws);
+        NWorkspaceExt dws = NWorkspaceExt.of();
         NPrintStream out = session.out();
         NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.INSTALL, "install");
 //        LinkedHashMap<NutsId, Boolean> allToInstall = new LinkedHashMap<>();

@@ -599,9 +599,9 @@ public interface NWorkspaceOptions extends Serializable {
 
     /**
      * @since 0.8.5
-     * @return workspace is running as main Workspace (Singleton)
+     * @return workspace is running as shared Workspace instance (Singleton)
      */
-    NOptional<Boolean> getMainInstance();
+    NOptional<Boolean> getSharedInstance();
 
     /**
      * default fetch strategy

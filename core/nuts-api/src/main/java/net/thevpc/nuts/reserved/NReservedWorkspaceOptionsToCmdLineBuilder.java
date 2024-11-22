@@ -431,6 +431,7 @@ public class NReservedWorkspaceOptionsToCmdLineBuilder {
         }
         if (isApiVersionOrAfter(V085)) {
             fillOption("--preview-repo", "-U", options.getPreviewRepo().orNull(), false, arguments, false);
+            fillOption("--shared-instance", null, options.getSharedInstance().orNull(), false, arguments, false);
         }
         if (options.getFetchStrategy().isPresent() && options.getFetchStrategy().orNull() != NFetchStrategy.ONLINE) {
             fillOption("--fetch", "-f", options.getFetchStrategy().orNull(), NFetchStrategy.class, arguments, false);

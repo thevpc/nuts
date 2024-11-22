@@ -133,7 +133,7 @@ public class DefaultNTextManagerModel {
     public NTextFormatTheme getTheme() {
         if (styleTheme == null) {
             if (styleThemeName == null) {
-                NWorkspaceOptions bootOptions = NWorkspaceExt.of(this.workspace).getModel().bootModel.getBootUserOptions();
+                NWorkspaceOptions bootOptions = NWorkspaceExt.of().getModel().bootModel.getBootUserOptions();
                 styleThemeName = bootOptions.getTheme().orNull();
             }
             styleTheme = createTheme(styleThemeName);

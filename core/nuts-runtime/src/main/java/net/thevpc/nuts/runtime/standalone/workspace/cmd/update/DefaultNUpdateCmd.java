@@ -58,7 +58,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
     private final NComparator<NId> DEFAULT_THEN_LATEST_VERSION_FIRST = new NComparator<NId>() {
         @Override
         public int compare(NId x, NId y) {
-            NInstalledRepository rr = NWorkspaceExt.of(workspace).getInstalledRepository();
+            NInstalledRepository rr = NWorkspaceExt.of().getInstalledRepository();
             int xi = rr.isDefaultVersion(x) ? 0 : 1;
             int yi = rr.isDefaultVersion(y) ? 0 : 1;
             int v = Integer.compare(xi, yi);
@@ -131,7 +131,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         }
         NSession session = getWorkspace().currentSession();
         Instant now = expireTime == null ? Instant.now() : expireTime;
-        NWorkspaceExt dws = NWorkspaceExt.of(session);
+        NWorkspaceExt dws = NWorkspaceExt.of();
 //        NutsWorkspaceCurrentConfig actualBootConfig = ws.config().current();
 //        NutsWorkspaceCurrentConfig jsonBootConfig = getConfigManager().getBootContext();
         Map<String, NUpdateResult> allUpdates = new LinkedHashMap<>();
@@ -261,7 +261,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
                     .setInstallStatus(NInstallStatusFilters.of().byInstalled(true))
                     .getResultIds().stream().map(NId::getShortId).collect(Collectors.toList()));
             // This bloc is to handle packages that were installed by their jar/content but was removed for any reason!
-            NWorkspaceExt dws = NWorkspaceExt.of(ws);
+            NWorkspaceExt dws = NWorkspaceExt.of();
             NInstalledRepository ir = dws.getInstalledRepository();
             for (NInstallInformation y : IteratorUtils.toList(ir.searchInstallInformation())) {
                 if (y != null && y.getInstallStatus().isInstalled() && y.getId() != null) {
@@ -289,7 +289,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         resultFixes = null;
         NSession session = getWorkspace().currentSession();
         NWorkspace ws = session.getWorkspace();
-        NWorkspaceExt dws = NWorkspaceExt.of(ws);
+        NWorkspaceExt dws = NWorkspaceExt.of();
         NInstalledRepository ir = dws.getInstalledRepository();
         resultFixes = IteratorUtils.toList(IteratorUtils.convertNonNull(ir.searchInstallInformation(), new Function<NInstallInformation, FixAction>() {
             @Override
@@ -610,7 +610,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
             applyRegularUpdate(((DefaultNUpdateResult) runtimeUpdate));
             ((DefaultNUpdateResult) runtimeUpdate).setUpdateApplied(true);
             List<NId> baseApiIds = CoreNUtils.resolveNutsApiIdsFromIdList(runtimeUpdate.getDependencies(), session);
-            DefaultNWorkspaceConfigModel configModel = NWorkspaceExt.of(session).getModel().configModel;
+            DefaultNWorkspaceConfigModel configModel = NWorkspaceExt.of().getModel().configModel;
             for (NId newApi : baseApiIds) {
                 configModel.setExtraBootRuntimeId(
                         newApi,
@@ -625,7 +625,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
                 if (extension.getAvailable() != null) {
                     applyRegularUpdate(((DefaultNUpdateResult) extension));
                     List<NId> baseApiIds = CoreNUtils.resolveNutsApiIdsFromIdList(extension.getDependencies(), session);
-                    DefaultNWorkspaceConfigModel configModel = NWorkspaceExt.of(session).getModel().configModel;
+                    DefaultNWorkspaceConfigModel configModel = NWorkspaceExt.of().getModel().configModel;
                     for (NId newApi : baseApiIds) {
                         configModel.setExtraBootExtensionId(
                                 newApi,
@@ -859,7 +859,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         if (r.isUpdateApplied()) {
             return;
         }
-        NWorkspaceExt dws = NWorkspaceExt.of(ws);
+        NWorkspaceExt dws = NWorkspaceExt.of();
         final NPrintStream out = session.out();
 //        NutsId id = r.getId();
         NDefinition d0 = r.getInstalled();

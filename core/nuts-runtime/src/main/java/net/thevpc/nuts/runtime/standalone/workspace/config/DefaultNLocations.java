@@ -4,9 +4,7 @@ import java.util.Map;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.env.NOsFamily;
 
@@ -15,7 +13,7 @@ public class DefaultNLocations implements NLocations {
     private DefaultNWorkspaceLocationModel model;
 
     public DefaultNLocations(NWorkspace workspace) {
-        this.model = NWorkspaceExt.of(workspace).getModel().locationsModel;
+        this.model = NWorkspaceExt.of().getModel().locationsModel;
     }
 
     @Override

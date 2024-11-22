@@ -94,7 +94,6 @@ public class DefaultNUpdateStatsCmd extends AbstractNUpdateStatsCmd {
 
     @Override
     public void add(String repo) {
-        NSession session=getWorkspace().currentSession();
         NAssert.requireNonBlank(repo, "repository or path");
         if (repo.equals(".") || repo.equals("..") || repo.contains("/") || repo.contains("\\")) {
             addPath(Paths.get(repo));
