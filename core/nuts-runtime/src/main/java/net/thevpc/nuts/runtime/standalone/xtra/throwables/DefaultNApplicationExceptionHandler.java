@@ -17,6 +17,7 @@ import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.PrintStream;
 import java.util.logging.Level;
@@ -79,7 +80,7 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
             } else {
                 if (fm != null) {
                     session.eout().add(NElements.of().ofObject()
-                            .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
+                            .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().getId().orNull()))
                             .set("error", NTexts.of().ofText(fm).filteredText())
                             .build()
                     );
@@ -96,7 +97,7 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
                     fout.flush();
                 } else {
                     session.eout().add(NElements.of().ofObject()
-                            .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
+                            .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().getId().orNull()))
                             .set("error", m)
                             .build());
                     if (showTrace) {

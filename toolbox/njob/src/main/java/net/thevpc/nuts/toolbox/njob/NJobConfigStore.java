@@ -25,7 +25,7 @@ public class NJobConfigStore {
         json = NElements.of().json().setNtf(false);
         json.setCompact(false);
         //ensure we always consider the latest config version
-        dbPath = session.getAppVersionFolder(NStoreType.CONF, NJobConfigVersions.CURRENT)
+        dbPath = NApp.of().getVersionFolder(NStoreType.CONF, NJobConfigVersions.CURRENT)
                 .resolve("db");
     }
 

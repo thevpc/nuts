@@ -24,13 +24,13 @@ public class ProjectService {
     public ProjectService(RepositoryAddress defaultRepositoryAddress, NPath file) throws IOException {
         this.defaultRepositoryAddress = defaultRepositoryAddress == null ? new RepositoryAddress() : defaultRepositoryAddress;
         config = NElements.of().json().parse(file, ProjectConfig.class);
-        sharedConfigFolder = NSession.get().getAppVersionFolder(NStoreType.CONF, NWorkConfigVersions.CURRENT);
+        sharedConfigFolder = NApp.of().getVersionFolder(NStoreType.CONF, NWorkConfigVersions.CURRENT);
     }
 
     public ProjectService(RepositoryAddress defaultRepositoryAddress, ProjectConfig config) {
         this.config = config;
         this.defaultRepositoryAddress = defaultRepositoryAddress;
-        sharedConfigFolder = NSession.get().getAppVersionFolder(NStoreType.CONF, NWorkConfigVersions.CURRENT);
+        sharedConfigFolder = NApp.of().getVersionFolder(NStoreType.CONF, NWorkConfigVersions.CURRENT);
     }
 
     public ProjectConfig getConfig() {

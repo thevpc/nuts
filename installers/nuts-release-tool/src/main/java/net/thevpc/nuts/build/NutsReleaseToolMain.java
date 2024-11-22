@@ -1,5 +1,6 @@
 package net.thevpc.nuts.build;
 
+import net.thevpc.nuts.NApp;
 import net.thevpc.nuts.NApplication;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.build.builders.*;
@@ -21,7 +22,7 @@ public class NutsReleaseToolMain implements NApplication {
                 new InstallerRunner(session)
         );
         nutsBuildRunner.run(
-                session.getAppCmdLine()
+                NApp.of().getCmdLine()
         );
     }
 

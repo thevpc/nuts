@@ -20,7 +20,7 @@ public class NTemplateMain implements NApplication {
 
     @Override
     public void run() {
-        NSession.get().runAppCmdLine(new NCmdLineRunner() {
+        NApp.of().processCmdLine(new NCmdLineRunner() {
 
             @Override
             public boolean nextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {

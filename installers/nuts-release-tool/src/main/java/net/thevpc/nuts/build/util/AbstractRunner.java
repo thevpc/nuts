@@ -262,20 +262,17 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
     }
 
     public void echo(String message, Map<String, ?> vars) {
-        NSession session = NSession.get();
-        NPrintStream out = session.out();
+        NPrintStream out = NSession.get().out();
         out.println(NMsg.ofV(message, vars));
     }
 
     public void echo(String message) {
-        NSession session = NSession.get();
-        NPrintStream out = session.out();
+        NPrintStream out = NSession.get().out();
         out.println(NMsg.ofV(message, new HashMap<>()));
     }
 
     public void sleep(int seconds) {
         NSession session = NSession.get();
-        NPrintStream out = session.out();
         if (session.isDry() || session.isTrace()) {
             traceCmd("sleep", String.valueOf(seconds));
         }

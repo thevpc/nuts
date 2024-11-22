@@ -15,7 +15,7 @@ public class NJobMain implements NApplication {
     public void run() {
         NSession session = NSession.of().get();
         JobServiceCmd ts = new JobServiceCmd(session);
-        NCmdLine cmdLine = session.getAppCmdLine();
+        NCmdLine cmdLine = NApp.of().getCmdLine();
         NArg a;
         while(!cmdLine.isEmpty()) {
             if (session.configureFirst(cmdLine)) {

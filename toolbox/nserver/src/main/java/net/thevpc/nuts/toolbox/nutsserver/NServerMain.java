@@ -38,7 +38,7 @@ public class NServerMain implements NApplication {
     @Override
     public void run() {
         NSession session = NSession.of().get();
-        NCmdLine cmdLine = session.getAppCmdLine().setCommandName("nuts-server");
+        NCmdLine cmdLine = NApp.of().getCmdLine().setCommandName("nuts-server");
         cmdLine.setCommandName("nuts-server");
         while (cmdLine.hasNext()) {
             if (cmdLine.next("start").isPresent()) {

@@ -1,5 +1,6 @@
 package net.thevpc.nuts.toolbox.ndb;
 
+import net.thevpc.nuts.NApp;
 import net.thevpc.nuts.NApplication;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -16,8 +17,7 @@ public class NdbMain implements NApplication {
 
     @Override
     public void run() {
-        NSession session = NSession.of().get();
-        run(session.getAppCmdLine());
+        run(NApp.of().getCmdLine());
     }
 
     public void run(NCmdLine cmdLine) {
@@ -39,6 +39,6 @@ public class NdbMain implements NApplication {
                 session.configureLast(cmdLine);
             }
         }
-        session.printAppHelp();
+        NApp.of().printHelp();
     }
 }

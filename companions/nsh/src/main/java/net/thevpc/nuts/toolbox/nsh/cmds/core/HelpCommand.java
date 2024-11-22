@@ -109,7 +109,7 @@ public class HelpCommand extends NShellBuiltinCore {
                 NText n=null;
                 try {
                     if (context.getSession() != null) {
-                        n = context.getSession().getAppHelp().orNull();
+                        n = NApp.of().getHelpText().orNull();
                     }
                 } catch (Exception ex) {
                     //

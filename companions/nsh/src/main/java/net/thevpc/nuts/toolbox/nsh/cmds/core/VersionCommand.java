@@ -25,10 +25,10 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.core;
 
+import net.thevpc.nuts.NApp;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NVersionFormat;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinCore;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
@@ -62,16 +62,15 @@ public class VersionCommand extends NShellBuiltinCore {
 
     @Override
     protected void main(NCmdLine cmdLine, NShellExecutionContext context) {
-        NSession session = context.getSession();
         Options options = context.getOptions();
         if (options.version == null) {
             options.version = NVersionFormat.of();
         }
         if(context.getSession().isPlainOut()){
-            context.out().println( context.getSession().getAppId().getVersion().getValue());
+            context.out().println( NApp.of().getId().get().getVersion().getValue());
         }else {
             options.version
-                    .addProperty("app-version", context.getSession().getAppId().getVersion().getValue())
+                    .addProperty("app-version", NApp.of().getId().get().getVersion().getValue())
                     .println(context.out());
         }
     }

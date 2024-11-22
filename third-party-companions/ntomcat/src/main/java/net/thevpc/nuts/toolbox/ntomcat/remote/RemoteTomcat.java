@@ -24,7 +24,7 @@ public class RemoteTomcat {
     public RemoteTomcat(NSession session, NCmdLine cmdLine) {
         this.setSession(session);
         this.cmdLine = cmdLine;
-        sharedConfigFolder = session.getAppVersionFolder(NStoreType.CONF, NTomcatConfigVersions.CURRENT);
+        sharedConfigFolder = NApp.of().getVersionFolder(NStoreType.CONF, NTomcatConfigVersions.CURRENT);
     }
 
     public void runArgs() {

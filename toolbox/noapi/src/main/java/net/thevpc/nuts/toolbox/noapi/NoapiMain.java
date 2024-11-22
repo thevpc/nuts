@@ -31,7 +31,7 @@ public class NoapiMain implements NApplication {
         NSession session = NSession.of().get();
         this.service = new NOpenAPIService(session);
         ref.setCommand("pdf");
-        session.runAppCmdLine(new NCmdLineRunner() {
+        NApp.of().processCmdLine(new NCmdLineRunner() {
             @Override
             public boolean nextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
                 switch (option.asString().get()) {

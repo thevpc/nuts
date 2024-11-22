@@ -2,6 +2,8 @@ package net.thevpc.nuts.tutorial.cli;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import net.thevpc.nuts.NApp;
 import net.thevpc.nuts.NApplication;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.NMsg;
@@ -21,7 +23,7 @@ public class CustomCliB implements NApplication {
     @Override
     public void run() {
         NSession session = NSession.get();
-        NCmdLine cmdLine = session.getAppCmdLine();
+        NCmdLine cmdLine = NApp.of().getCmdLine();
         boolean boolOption = false;
         String stringOption = null;
         List<String> others = new ArrayList<>();

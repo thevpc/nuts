@@ -172,8 +172,8 @@ public abstract class AbstractNShellContext implements NShellContext {
                         for (String s : rr.split("\n")) {
                             s = s.trim();
                             if (s.length() > 0) {
-                                if (s.startsWith(NSession.AUTO_COMPLETE_CANDIDATE_PREFIX)) {
-                                    s = s.substring(NSession.AUTO_COMPLETE_CANDIDATE_PREFIX.length()).trim();
+                                if (s.startsWith(NConstants.Apps.AUTO_COMPLETE_CANDIDATE_PREFIX)) {
+                                    s = s.substring(NConstants.Apps.AUTO_COMPLETE_CANDIDATE_PREFIX.length()).trim();
                                     NCmdLine args = NCmdLine.of(s, NShellFamily.BASH).setExpandSimpleOptions(false);
                                     String value = null;
                                     String display = null;

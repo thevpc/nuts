@@ -1263,7 +1263,7 @@ public final class NBootWorkspace {
                 fallbackInstallActionUnavailable(message);
                 throw new NBootException(NMsg.ofC("workspace not available to run : %s", NCmdLine.of(o.getApplicationArguments().get())));
             }
-            workspace.currentSession().setAppId(workspace.getApiId());
+            NApp.of().setId(workspace.getApiId());
             NLogOp logOp = NLog.of(NBootWorkspace.class).with().level(Level.CONFIG);
             logOp.verb(NLogVerb.SUCCESS).log(NMsg.ofC("running workspace in %s mode", getRunModeString()));
             if (workspace == null && o.getApplicationArguments().get().size() > 0) {

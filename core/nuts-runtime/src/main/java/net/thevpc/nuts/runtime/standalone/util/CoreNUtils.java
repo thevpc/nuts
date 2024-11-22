@@ -608,6 +608,13 @@ public class CoreNUtils {
                 .orElse(false);
     }
 
+    public static RuntimeException toUncheckedException(Throwable e) {
+        if(e instanceof RuntimeException){
+            return (RuntimeException) e;
+        }
+        return new RuntimeException(e);
+    }
+
     public static boolean isShowCommand() {
         return NBootManager.of().getCustomBootOption("---show-command")
                 .flatMap(NLiteral::asBoolean)

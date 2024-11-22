@@ -21,8 +21,8 @@ public class CachedMapFile {
     public CachedMapFile(NSession session, String name, boolean enabled) {
         this.session = session;
         this.enabled = enabled;
-        NId appId = session.getAppId();
-        path = session.getAppTempFolder()
+        NId appId = NApp.of().getId().get();
+        path = NApp.of().getTempFolder()
                 .resolve(appId.getGroupId() + "-" + appId.getArtifactId() + "-" + appId.getVersion())
                 .resolve(name + ".json");
         if (enabled) {

@@ -41,7 +41,7 @@ public class WorkspaceService {
 
     public WorkspaceService(NSession session) {
         this.session = session;
-        sharedConfigFolder = session.getAppVersionFolder(NStoreType.CONF, NWorkConfigVersions.CURRENT);
+        sharedConfigFolder = NApp.of().getVersionFolder(NStoreType.CONF, NWorkConfigVersions.CURRENT);
         NPath c = getConfigFile();
         if (c.isRegularFile()) {
             try {

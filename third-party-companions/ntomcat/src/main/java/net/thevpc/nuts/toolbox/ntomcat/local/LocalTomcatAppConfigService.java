@@ -36,7 +36,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
         this.config = config;
         this.tomcat = tomcat;
         this.session = tomcat.getTomcatServer().getSession();
-        sharedConfigFolder = tomcat.getSession().getAppVersionFolder(NStoreType.CONF, NTomcatConfigVersions.CURRENT);
+        sharedConfigFolder = NApp.of().getVersionFolder(NStoreType.CONF, NTomcatConfigVersions.CURRENT);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     public Path getArchiveFile(String version) {
         String runningFolder = tomcat.getConfig().getArchiveFolder();
         if (runningFolder == null || runningFolder.trim().isEmpty()) {
-            runningFolder = session.getAppSharedConfFolder().resolve("archive").toString();
+            runningFolder = NApp.of().getSharedConfFolder().resolve("archive").toString();
         }
         String packaging = "war";
         return Paths.get(runningFolder).resolve(name + "-" + version + "." + packaging);
@@ -65,7 +65,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
         String _runningFolder = tomcat.getConfig().getRunningFolder();
         NPath runningFolder = (_runningFolder == null || _runningFolder.trim().isEmpty()) ? null : NPath.of(_runningFolder);
         if (runningFolder == null) {
-            runningFolder = session.getAppSharedConfFolder().resolve("running");
+            runningFolder = NApp.of().getSharedConfFolder().resolve("running");
         }
         String packaging = "war";
         return runningFolder.resolve(name + "." + packaging);

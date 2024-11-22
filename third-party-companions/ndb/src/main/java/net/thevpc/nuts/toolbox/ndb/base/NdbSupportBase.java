@@ -30,7 +30,7 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
         this.dbType = dbType;
         this.configClass = configClass;
         this.session = session;
-        this.sharedConfigFolder = session.getAppVersionFolder(NStoreType.CONF, NMySqlConfigVersions.CURRENT)
+        this.sharedConfigFolder = NApp.of().getVersionFolder(NStoreType.CONF, NMySqlConfigVersions.CURRENT)
                 .resolve(dbType);
         declareNdbCmd(new AddConfigCmd<>(this));
         declareNdbCmd(new CountCmd<>(this));

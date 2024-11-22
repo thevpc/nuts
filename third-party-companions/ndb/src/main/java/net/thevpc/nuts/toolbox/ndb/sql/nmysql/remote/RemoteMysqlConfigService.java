@@ -25,7 +25,7 @@ public class RemoteMysqlConfigService {
     public RemoteMysqlConfigService(String name, NSession session) {
         setName(name);
         this.session = session;
-        sharedConfigFolder = session.getAppVersionFolder(NStoreType.CONF, NMySqlConfigVersions.CURRENT);
+        sharedConfigFolder = NApp.of().getVersionFolder(NStoreType.CONF, NMySqlConfigVersions.CURRENT);
     }
 
     public String getName() {

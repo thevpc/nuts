@@ -41,7 +41,7 @@ public class RemoteSelfCallApp implements NApplication {
     @Override
     public void run() {
         NSession session = NSession.get();
-        NCmdLine cmdLine = session.getAppCmdLine();
+        NCmdLine cmdLine = NApp.of().getCmdLine();
         log(NMsg.ofC("%s", cmdLine));
         Options options = new Options();
         while (cmdLine.hasNext()) {
@@ -93,7 +93,7 @@ public class RemoteSelfCallApp implements NApplication {
                                     // ssh://user@machine
                                     .setTarget(options.host)
                                     .setCommand(
-                                            session.getAppId().toString(),
+                                            NStringUtils.toStringOrEmpty(NApp.of().getId().orNull()),
                                             "--on-call-self"
                                     )
                                     .addCommand("from=" + NEnvs.of().getHostName())

@@ -28,7 +28,7 @@ public class NBackup implements NApplication {
     public void run() {
         NSession session = NSession.of().get();
         session.out().println(NMsg.ofC("%s Backup Tool.", NMsg.ofStyled("Nuts", NTextStyle.keyword())));
-        session.runAppCmdLine(new NCmdLineRunner() {
+        NApp.of().processCmdLine(new NCmdLineRunner() {
 
             @Override
             public boolean nextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
@@ -73,8 +73,7 @@ public class NBackup implements NApplication {
             }
 
             private NPath getConfigFile() {
-                NSession session = NSession.of().get();
-                return session.getAppConfFolder().resolve("backup.json");
+                return NApp.of().getConfFolder().resolve("backup.json");
             }
 
             @Override

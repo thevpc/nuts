@@ -68,6 +68,9 @@ public final class NConstants {
         public static final int NO_SUPPORT = -1;
     }
 
+    public static final class Apps {
+        public static final String AUTO_COMPLETE_CANDIDATE_PREFIX = "```error Candidate```: ";
+    }
     /**
      * name constants
      *

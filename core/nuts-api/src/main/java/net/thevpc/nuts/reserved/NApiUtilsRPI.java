@@ -262,7 +262,7 @@ public class NApiUtilsRPI {
                 } else {
                     if (fm != null) {
                         session.eout().add(NElements.of().ofObject()
-                                .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
+                                .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().getId().get()))
                                 .set("error", NTexts.of().ofText(fm).filteredText())
                                 .build()
                         );
@@ -279,7 +279,7 @@ public class NApiUtilsRPI {
                         sout.flush();
                     } else {
                         session.eout().add(NElements.of().ofObject()
-                                .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
+                                .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().getId().get()))
                                 .set("error", m)
                                 .build());
                         if (showStackTrace) {

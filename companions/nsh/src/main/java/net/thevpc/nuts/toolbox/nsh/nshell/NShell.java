@@ -109,11 +109,11 @@ public class NShell {
 
         args = resolveArgs(session, args);
         this.appId = appId;
-        this.bootStartMillis = session == null ? null : session.getAppStartTime();
+        this.bootStartMillis = session == null ? null : NApp.of().getStartTime();
         this.session = session;
         //super.setCwd(workspace.getConfigManager().getCwd());
-        if (this.appId == null && session != null) {
-            this.appId = session.getAppId();
+        if (this.appId == null) {
+            this.appId = NApp.of().getId().orNull();
             if (this.appId == null) {
                 this.appId = NId.ofClass(NShell.class).orNull();
             }
@@ -222,7 +222,7 @@ public class NShell {
         if (args != null) {
             return args;
         }
-        return session.getAppArguments().toArray(new String[0]);
+        return NApp.of().getArguments().toArray(new String[0]);
     }
 
     private static String resolveServiceName(NSession session, String serviceName, NId appId) {
@@ -541,7 +541,7 @@ public class NShell {
 
     public void run() {
         try {
-            if (session.getAppAutoComplete() != null) {
+            if (NApp.of().getAutoComplete() != null) {
                 return;
             }
             NShellContext rootContext = getRootContext();
@@ -663,12 +663,12 @@ public class NShell {
     }
 
     protected void executeVersion(NShellContext context) {
-        context.out().println(NMsg.ofC("v%s", context.getSession().getAppId().getVersion()));
+        context.out().println(NMsg.ofC("v%s", NApp.of().getId().get().getVersion()));
     }
 
     protected void executeInteractive(NShellContext context) {
         NSystemTerminal.enableRichTerm();
-        NPath appVarFolder = session.getAppVarFolder();
+        NPath appVarFolder = NApp.of().getVarFolder();
         if (appVarFolder == null) {
             appVarFolder = NLocations.of().getStoreLocation(
                     NId.of("net.thevpc.app.nuts.toolbox:nsh").get()

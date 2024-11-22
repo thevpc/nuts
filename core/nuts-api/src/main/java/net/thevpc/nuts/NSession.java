@@ -59,8 +59,6 @@ import java.util.logging.Level;
  * @since 0.5.4
  */
 public interface NSession extends NCmdLineConfigurable, Closeable {
-    String AUTO_COMPLETE_CANDIDATE_PREFIX = "```error Candidate```: ";
-
     static NSession get() {
         return of().get();
     }
@@ -291,86 +289,6 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      * @return return {@code this} instance
      */
     NSession setAll(NWorkspaceOptions options);
-
-    NId getAppId();
-
-    NSession prepareApplication(String[] args, Class<?> appClass, String storeId, NClock startTime);
-
-    NApplicationMode getAppMode();
-
-    List<String> getAppModeArguments();
-
-    NCmdLineAutoComplete getAppAutoComplete();
-
-    NOptional<NText> getAppHelp();
-
-    void printAppHelp();
-
-    Class<?> getAppClass();
-
-    NPath getAppBinFolder();
-
-    NPath getAppConfFolder();
-
-    NPath getAppLogFolder();
-
-    NPath getAppTempFolder();
-
-    NPath getAppVarFolder();
-
-    NPath getAppLibFolder();
-
-    NPath getAppRunFolder();
-
-    NPath getAppCacheFolder();
-
-    NPath getAppVersionFolder(NStoreType location, String version);
-
-    NPath getAppSharedAppsFolder();
-
-    NPath getAppSharedConfFolder();
-
-    NPath getAppSharedLogFolder();
-
-    NPath getAppSharedTempFolder();
-
-    NPath getAppSharedVarFolder();
-
-    NPath getAppSharedLibFolder();
-
-    NPath getAppSharedRunFolder();
-
-    NPath getAppSharedFolder(NStoreType location);
-
-    NVersion getAppVersion();
-
-    List<String> getAppArguments();
-
-    NClock getAppStartTime();
-
-    NVersion getAppPreviousVersion();
-
-    NCmdLine getAppCmdLine();
-
-    void runAppCmdLine(NCmdLineRunner commandLineProcessor);
-
-    NPath getAppFolder(NStoreType location);
-
-    boolean isAppExecMode();
-
-    NAppStoreLocationResolver getAppStoreLocationResolver();
-
-    NSession setAppVersionStoreLocationSupplier(NAppStoreLocationResolver appVersionStoreLocationSupplier);
-
-    NSession setAppMode(NApplicationMode mode);
-
-    NSession setAppModeArgs(List<String> modeArgs);
-
-    NSession setAppFolder(NStoreType location, NPath folder);
-
-    NSession setAppSharedFolder(NStoreType location, NPath folder);
-
-    NSession setAppId(NId appId);
 
     /**
      * return current fetch strategy. When no strategy (or null strategy) was
@@ -759,14 +677,6 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
     <T> T setProperty(String name, NScopeType scope, T value);
 
     <T> NOptional<T> getProperty(String name, NScopeType scope);
-
-    NSession setAppArguments(List<String> args);
-
-    NSession setAppArguments(String[] args);
-
-    NSession setAppStartTime(NClock startTime);
-
-    NSession setAppPreviousVersion(NVersion previousVersion);
 
     void close();
 }

@@ -315,7 +315,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
         props.put("nuts-api-version", () ->  NWorkspace.of().get().getApiVersion());
         props.put("nuts-api-id", () ->  NWorkspace.of().get().getApiId());
         props.put("nuts-runtime-id", () ->  NWorkspace.of().get().getRuntimeId());
-        props.put("nuts-app-id", () ->  NSession.of().get().getAppId());
+        props.put("nuts-app-id", () ->  NApp.of().getId().orNull());
 
         props.put("nuts-runtime-classpath",
                 () ->  {
@@ -512,7 +512,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
 //        NutsIdFormat idFormat = ws.id().formatter();
         props.put("nuts-api-id", session.getWorkspace().getApiId());
         props.put("nuts-runtime-id", session.getWorkspace().getRuntimeId());
-        props.put("nuts-app-id", session.getAppId());
+        props.put("nuts-app-id", NApp.of().getId().orNull());
         List<URL> cl = NBootManager.of().getBootClassWorldURLs();
         List<NPath> runtimeClassPath = new ArrayList<>();
         if (cl != null) {

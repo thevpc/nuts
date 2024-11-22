@@ -271,10 +271,7 @@ public class RemoteConnexionStringInfo {
             storeLocationCacheRepo = NPath.of(targetConnexion.copy()
                     .setPath(storeLocationCache)
                     .toString()).resolve(NConstants.Folders.ID);
-            NId appId = session.getAppId();
-            if (appId == null) {
-                appId = session.getWorkspace().getApiId();
-            }
+            NId appId = NApp.of().getId().orElseGet(()->NWorkspace.get().getApiId());
             storeLocationCacheRepoSSH = storeLocationCacheRepo.resolve(NIdUtils.resolveIdPath(appId)).resolve("repo");
             NPath e = storeLocationCacheRepoSSH.resolve(".nuts-repository");
             if (!e.isRegularFile()) {

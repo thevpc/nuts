@@ -148,10 +148,7 @@ public class DefaultNPaths implements NPaths {
             repositoryById = repositoryId;
             rootFolder = repositoryById.config().getStoreLocation(NStoreType.TEMP);
         }
-        NId appId = session.getAppId();
-        if (appId == null) {
-            appId = session.getWorkspace().getRuntimeId();
-        }
+        NId appId = NApp.of().getId().orElseGet(()->session.getWorkspace().getRuntimeId());
         if (appId != null) {
             rootFolder = rootFolder.resolve(NConstants.Folders.ID).resolve(NLocations.of().getDefaultIdBasedir(appId));
         }

@@ -16,7 +16,7 @@ public class NWorkMain implements NApplication {
     public void run() {
         NSession session = NSession.of().get();
         this.service = new WorkspaceService(session);
-        NCmdLine cmdLine = session.getAppCmdLine().setCommandName("nwork");
+        NCmdLine cmdLine = NApp.of().getCmdLine().setCommandName("nwork");
         NArg a;
         do {
             if (session.configureFirst(cmdLine)) {

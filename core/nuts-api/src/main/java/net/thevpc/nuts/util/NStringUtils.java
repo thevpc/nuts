@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.NId;
 import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
@@ -885,4 +886,10 @@ public class NStringUtils {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, 0), false);
     }
 
+    public static String toStringOrEmpty(Object any) {
+        if(any==null) {
+            return "";
+        }
+        return any.toString();
+    }
 }

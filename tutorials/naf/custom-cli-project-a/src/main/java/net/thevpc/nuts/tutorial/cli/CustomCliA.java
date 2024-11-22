@@ -2,6 +2,8 @@ package net.thevpc.nuts.tutorial.cli;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import net.thevpc.nuts.NApp;
 import net.thevpc.nuts.NApplication;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NArg;
@@ -21,8 +23,7 @@ public class CustomCliA implements NApplication {
 
     @Override
     public void run() {
-        NSession session = NSession.get();
-        session.runAppCmdLine(new NCmdLineRunner() {
+        NApp.of().processCmdLine(new NCmdLineRunner() {
             boolean noMoreOptions = false;
             boolean clean = false;
             List<String> params = new ArrayList<>();

@@ -262,9 +262,9 @@ public class DefaultNAsk<T> implements NAsk<T> {
         NSession session= workspace.currentSession();
         String ft = NTexts.of().parse(str).filteredText();
         NMsg title = NMsg.ofC("Nuts Package Manager - %s", session.getWorkspace().getApiId().getVersion());
-        if (session.getAppId() != null) {
+        if (NApp.of().getId().orNull() != null) {
             try {
-                NDefinition def = NSearchCmd.of().setId(session.getAppId())
+                NDefinition def = NSearchCmd.of().setId(NApp.of().getId().get())
                         .setEffective(true).setLatest(true).getResultDefinitions()
                         .findFirst().orNull();
                 if (def != null) {

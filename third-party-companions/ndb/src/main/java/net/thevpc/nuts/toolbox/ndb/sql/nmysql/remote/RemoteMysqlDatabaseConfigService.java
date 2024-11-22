@@ -110,7 +110,7 @@ public class RemoteMysqlDatabaseConfigService {
         String ppath = (String) resMap.get("path");
 
         if (NBlankable.isBlank(localPath)) {
-            localPath = session.getAppVarFolder()
+            localPath = NApp.of().getVarFolder()
                     .resolve("pull-backups")
                     .resolve(client.getName() + "-" + getName())
                     .resolve(/*MysqlUtils.newDateString()+"-"+*/Paths.get(ppath).getFileName().toString())

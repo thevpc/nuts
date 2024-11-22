@@ -213,80 +213,82 @@ public abstract class NShellBuiltinBase implements NShellBuiltin {
     }
 
     public final void exec(String[] args, NShellExecutionContext context) {
-        try {
-            boolean conf = false;
-            int maxLoops = 1000;
-            boolean robustMode = false;
-            NSession session = context.getSession();
-            NCmdLine cmdLine = NCmdLine.of(args).setCommandName(getName())
-                    .setAutoComplete(context.getShellContext().getAutoComplete());
-            context.setOptions(optionsSupplier==null?null:optionsSupplier.get());
-            init(cmdLine, context);
-            while (cmdLine.hasNext()) {
-                NArg arg = cmdLine.peek().get();
-                if (robustMode) {
-                    String[] before = cmdLine.toStringArray();
-                    if(arg.isOption()){
-                        if (!this.nextOption(arg, cmdLine, context)) {
-                            context.configureLast(cmdLine);
-                        } else {
-                            conf = true;
+        context.getSession().runWith(()->{
+            try {
+                boolean conf = false;
+                int maxLoops = 1000;
+                boolean robustMode = false;
+                NSession session = context.getSession();
+                NCmdLine cmdLine = NCmdLine.of(args).setCommandName(getName())
+                        .setAutoComplete(context.getShellContext().getAutoComplete());
+                context.setOptions(optionsSupplier==null?null:optionsSupplier.get());
+                init(cmdLine, context);
+                while (cmdLine.hasNext()) {
+                    NArg arg = cmdLine.peek().get();
+                    if (robustMode) {
+                        String[] before = cmdLine.toStringArray();
+                        if(arg.isOption()){
+                            if (!this.nextOption(arg, cmdLine, context)) {
+                                context.configureLast(cmdLine);
+                            } else {
+                                conf = true;
+                            }
+                        }else{
+                            if (!this.nextNonOption(arg, cmdLine, context)) {
+                                context.configureLast(cmdLine);
+                            } else {
+                                conf = true;
+                            }
                         }
-                    }else{
-                        if (!this.nextNonOption(arg, cmdLine, context)) {
-                            context.configureLast(cmdLine);
-                        } else {
-                            conf = true;
+                        String[] after = cmdLine.toStringArray();
+                        if (Arrays.equals(before, after)) {
+                            throw new IllegalStateException("bad implementation of configureFirst in class " + getClass().getName() + "."
+                                    + " Commandline is not consumed; perhaps missing skip() class."
+                                    + " args = " + Arrays.toString(after));
+                        }
+                    } else {
+                        if(arg.isOption()){
+                            if (!this.nextOption(arg, cmdLine, context)) {
+                                context.configureLast(cmdLine);
+                            } else {
+                                conf = true;
+                            }
+                        }else{
+                            if (!this.nextNonOption(arg, cmdLine, context)) {
+                                context.configureLast(cmdLine);
+                            } else {
+                                conf = true;
+                            }
                         }
                     }
-                    String[] after = cmdLine.toStringArray();
-                    if (Arrays.equals(before, after)) {
-                        throw new IllegalStateException("bad implementation of configureFirst in class " + getClass().getName() + "."
-                                + " Commandline is not consumed; perhaps missing skip() class."
-                                + " args = " + Arrays.toString(after));
-                    }
-                } else {
-                    if(arg.isOption()){
-                        if (!this.nextOption(arg, cmdLine, context)) {
-                            context.configureLast(cmdLine);
-                        } else {
-                            conf = true;
-                        }
-                    }else{
-                        if (!this.nextNonOption(arg, cmdLine, context)) {
-                            context.configureLast(cmdLine);
-                        } else {
-                            conf = true;
-                        }
+                    maxLoops--;
+                    if (maxLoops < 0) {
+                        robustMode = true;
                     }
                 }
-                maxLoops--;
-                if (maxLoops < 0) {
-                    robustMode = true;
+                this.validate(cmdLine, context);
+                if (cmdLine.isAutoCompleteMode()) {
+                    return;
                 }
+                if (context.isAskHelp()) {
+                    session.out().println(NString.of(getHelp()));
+                    return;
+                }
+                if (context.isAskVersion()) {
+                    session.out().println(NId.ofClass(getClass()).get().getVersion());
+                    return;
+                }
+                main(cmdLine, context);
+            } catch (NExecutionException ex) {
+                throw ex;
+            } catch (NException ex) {
+                throw new NExecutionException(ex.getFormattedMessage(), ex, NExecutionException.ERROR_255);
+            } catch (Exception ex) {
+                throw new NExecutionException(
+                        NMsg.ofNtf(NTexts.of().ofText(ex).toString())
+                        , ex, NExecutionException.ERROR_255);
             }
-            this.validate(cmdLine, context);
-            if (cmdLine.isAutoCompleteMode()) {
-                return;
-            }
-            if (context.isAskHelp()) {
-                session.out().println(NString.of(getHelp()));
-                return;
-            }
-            if (context.isAskVersion()) {
-                session.out().println(NId.ofClass(getClass()).get().getVersion());
-                return;
-            }
-            main(cmdLine, context);
-        } catch (NExecutionException ex) {
-            throw ex;
-        } catch (NException ex) {
-            throw new NExecutionException(ex.getFormattedMessage(), ex, NExecutionException.ERROR_255);
-        } catch (Exception ex) {
-            throw new NExecutionException(
-                    NMsg.ofNtf(NTexts.of().ofText(ex).toString())
-                    , ex, NExecutionException.ERROR_255);
-        }
+        });
     }
 
     protected NCmdLine cmdLine(String[] args, NShellExecutionContext context) {

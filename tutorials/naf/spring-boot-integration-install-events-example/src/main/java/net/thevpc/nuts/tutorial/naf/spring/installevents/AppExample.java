@@ -42,7 +42,7 @@ public class AppExample implements NApplication {
     @Override
     public void run() {
         NSession session = NSession.get();
-        NCmdLine cmd = session.getAppCmdLine();
+        NCmdLine cmd = NApp.of().getCmdLine();
         NArg a;
         String someStringOption = null;
         Boolean someBooleanOption = null;
@@ -86,7 +86,7 @@ public class AppExample implements NApplication {
             //cmd.next("--some-string-option").get(session);
         }
         //the application can be run in one of 'execMode' and 'autoCompleteMode' modes
-        if (session.isAppExecMode()) {
+        if (NApp.of().isExecMode()) {
             //only run if in execMode
             //just display the options as an example of execution
             Map<String, Object> result = new LinkedHashMap<>();

@@ -173,12 +173,12 @@ public final class NApplications {
             ws = Nuts.openInheritedWorkspace(nutsArgs, args);
             NWorkspace finalWs = ws;
             ws.runWith(() -> {
-                finalWs.currentSession().prepareApplication(args, applicationInstance.getClass(), null, now);
+                NApp.of().prepare(new NAppInitInfo(args, applicationInstance.getClass(), null, now));
                 runApplication(applicationInstance);
             });
         } else {
             ws.runWith(() -> {
-                NSession.get().prepareApplication(args, applicationInstance.getClass(), null, now);
+                NApp.of().prepare(new NAppInitInfo(args, applicationInstance.getClass(), null, now));
                 runApplication(applicationInstance);
             });
         }
@@ -202,11 +202,11 @@ public final class NApplications {
                                     "running application %s: %s %s",
                                     inherited ? "(inherited)" : "",
                                     applicationInstance.getClass().getName(),
-                                    session.getAppCmdLine()
+                                    NApp.of().getCmdLine()
                             )
                     );
             try {
-                switch (session.getAppMode()) {
+                switch (NApp.of().getMode()) {
                     //both RUN and AUTO_COMPLETE execute the run branch. Later
                     //session.isExecMode()
                     case RUN:
@@ -233,7 +233,7 @@ public final class NApplications {
                 }
                 throw e;
             }
-            throw new NExecutionException(NMsg.ofC("unsupported execution mode %s", session.getAppMode()), NExecutionException.ERROR_255);
+            throw new NExecutionException(NMsg.ofC("unsupported execution mode %s", NApp.of().getMode()), NExecutionException.ERROR_255);
         });
     }
 

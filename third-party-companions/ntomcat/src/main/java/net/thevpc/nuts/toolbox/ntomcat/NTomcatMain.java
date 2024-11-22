@@ -25,7 +25,7 @@ public class NTomcatMain implements NApplication {
                             
             );
         }
-        NCmdLine cmdLine = session.getAppCmdLine();
+        NCmdLine cmdLine = NApp.of().getCmdLine();
         Boolean local = null;
         boolean skipFirst = false;
         if (cmdLine.hasNext()) {

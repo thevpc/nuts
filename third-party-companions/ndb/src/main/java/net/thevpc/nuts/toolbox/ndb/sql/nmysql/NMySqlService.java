@@ -20,7 +20,7 @@ public class NMySqlService {
 
     public NMySqlService(NSession session) {
         this.session = session;
-        sharedConfigFolder = session.getAppVersionFolder(NStoreType.CONF, NMySqlConfigVersions.CURRENT);
+        sharedConfigFolder = NApp.of().getVersionFolder(NStoreType.CONF, NMySqlConfigVersions.CURRENT);
     }
 
     public LocalMysqlConfigService[] listLocalConfig() {

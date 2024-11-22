@@ -35,7 +35,7 @@ public class LocalMysqlConfigService {
     public LocalMysqlConfigService(String name, NSession session) {
         setName(name);
         this.session = session;
-        sharedConfigFolder = getSession().getAppVersionFolder(NStoreType.CONF, NMySqlConfigVersions.CURRENT);
+        sharedConfigFolder = NApp.of().getVersionFolder(NStoreType.CONF, NMySqlConfigVersions.CURRENT);
     }
 
     public LocalMysqlConfigService setName(String name) {

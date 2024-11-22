@@ -23,7 +23,7 @@ public class NDocusaurusMain implements NApplication {
     @Override
     public void run() {
         NSession session = NSession.of().get();
-        session.runAppCmdLine(new NCmdLineRunner() {
+        NApp.of().processCmdLine(new NCmdLineRunner() {
             @Override
             public boolean nextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
                 switch (option.key()) {

@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.executor.embedded;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorComponent;
 import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorOptions;
+import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.time.NClock;
 
 import java.lang.reflect.Method;
@@ -25,7 +26,7 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
     }
 
     @Override
-    public Object runWithContext() throws Throwable {
+    public Object runWithContext() {
         NClock now = NClock.now();
         if (cls.getName().equals("net.thevpc.nuts.Nuts")) {
             NWorkspaceOptionsBuilder o = NWorkspaceOptionsBuilder.of().setCmdLine(
@@ -55,39 +56,47 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
             }
             return null;
         }
-        Method mainMethod = null;
+        final Method[] mainMethod = {null};
         String nutsAppVersion = null;
         Object nutsApp = null;
         NSession sessionCopy = getSession().copy();
         try {
             nutsAppVersion = CoreNApplications.getNutsAppVersion(cls);
             if (nutsAppVersion != null) {
-                mainMethod = cls.getMethod("run", NSession.class, String[].class);
-                mainMethod.setAccessible(true);
-                nutsApp= CoreNApplications.createApplicationInstance(cls,session,joptions.getAppArgs().toArray(new String[0]));
+                mainMethod[0] = cls.getMethod("run", NSession.class, String[].class);
+                mainMethod[0].setAccessible(true);
+                nutsApp = CoreNApplications.createApplicationInstance(cls, session, joptions.getAppArgs().toArray(new String[0]));
             }
         } catch (Exception rr) {
             //ignore
         }
-        sessionCopy.prepareApplication(joptions.getAppArgs().toArray(new String[0]),cls,null, now);
-        if (nutsAppVersion != null && nutsApp!=null) {
-            //NutsWorkspace
-            NApplications.getSharedMap().put("nuts.embedded.application.id", id);
-            mainMethod.invoke(nutsApp, sessionCopy, joptions.getAppArgs().toArray(new String[0]));
-        } else {
-            //NutsWorkspace
+        String finalNutsAppVersion = nutsAppVersion;
+        Object finalNutsApp = nutsApp;
+        return sessionCopy.callWith(() -> {
+            NApp.of().prepare(new NAppInitInfo(joptions.getAppArgs().toArray(new String[0]), cls, null, now));
+            try {
+                if (finalNutsAppVersion != null && finalNutsApp != null) {
+                    //NutsWorkspace
+                    NApplications.getSharedMap().put("nuts.embedded.application.id", id);
+                    mainMethod[0].invoke(finalNutsApp, sessionCopy, joptions.getAppArgs().toArray(new String[0]));
+                } else {
+                    //NutsWorkspace
 
-            NWorkspaceOptionsBuilder bootOptions = JavaExecutorComponent.createChildOptions(executionContext);
-            System.setProperty("nuts.boot.args",
-                    bootOptions
-                            .toCmdLine(new NWorkspaceOptionsConfig().setCompact(true))
-                            .add(id.getLongName())
-                            .formatter().setShellFamily(NShellFamily.SH).toString()
-            );
-            mainMethod = cls.getMethod("main", String[].class);
-            mainMethod.invoke(null, new Object[]{joptions.getAppArgs().toArray(new String[0])});
-        }
-        return null;
+                    NWorkspaceOptionsBuilder bootOptions = JavaExecutorComponent.createChildOptions(executionContext);
+                    System.setProperty("nuts.boot.args",
+                            bootOptions
+                                    .toCmdLine(new NWorkspaceOptionsConfig().setCompact(true))
+                                    .add(id.getLongName())
+                                    .formatter().setShellFamily(NShellFamily.SH).toString()
+                    );
+                    mainMethod[0] = cls.getMethod("main", String[].class);
+                    mainMethod[0].invoke(null, new Object[]{joptions.getAppArgs().toArray(new String[0])});
+                }
+            } catch (Exception e) {
+                throw CoreNUtils.toUncheckedException(e);
+            }
+            return null;
+        });
     }
 
 }

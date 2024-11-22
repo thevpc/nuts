@@ -55,7 +55,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         this.app = app;
         setName(name);
         this.session = app.getSession();
-        sharedConfigFolder = app.getSession().getAppVersionFolder(NStoreType.CONF, NTomcatConfigVersions.CURRENT);
+        sharedConfigFolder = NApp.of().getVersionFolder(NStoreType.CONF, NTomcatConfigVersions.CURRENT);
     }
 
     public void open(NOpenMode autoCreate) {
@@ -192,7 +192,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             if (x2 > 0) {
                 v = v.substring(0, x2);
             }
-            catalinaBase = session.getAppSharedConfFolder().resolve("catalina-base-" + v).resolve("default");
+            catalinaBase = NApp.of().getSharedConfFolder().resolve("catalina-base-" + v).resolve("default");
         } else {
             if (!catalinaBase.isAbsolute()) {
                 String v = getValidCatalinaVersion();
@@ -201,7 +201,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 if (x2 > 0) {
                     v = v.substring(0, x2);
                 }
-                catalinaBase = session.getAppSharedConfFolder().resolve("catalina-base-" + v).resolve(catalinaBase);
+                catalinaBase = NApp.of().getSharedConfFolder().resolve("catalina-base-" + v).resolve(catalinaBase);
             }
         }
         return catalinaBase;

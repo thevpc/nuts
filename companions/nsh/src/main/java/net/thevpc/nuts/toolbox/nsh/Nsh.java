@@ -40,7 +40,7 @@ public class Nsh implements NApplication {
         NLogOp log = NLogOp.of(Nsh.class);
         log.level(Level.CONFIG).verb(NLogVerb.START).log(NMsg.ofPlain("[nsh] Installation..."));
         NSession session = NSession.of().get();
-        session.runAppCmdLine(new NCmdLineRunner() {
+        NApp.of().processCmdLine(new NCmdLineRunner() {
             @Override
             public void init(NCmdLine cmdLine, NCmdLineContext context) {
                 cmdLine.setCommandName("nsh --nuts-exec-mode=install");
@@ -52,7 +52,7 @@ public class Nsh implements NApplication {
                     log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofC("[nsh] activating options trace=%s yes=%s", session.isTrace(), session.isYes()));
                 }
                 //id will not include version or
-                String nshIdStr = session.getAppId().getShortName();
+                String nshIdStr = NApp.of().getId().get().getShortName();
                 NConfigs cfg = NConfigs.of();
 //        HashMap<String, String> parameters = new HashMap<>();
 //        parameters.put("forList", nshIdStr + " --!color -c find-forCommand");
@@ -84,7 +84,7 @@ public class Nsh implements NApplication {
                                         .setFactoryId("nsh")
                                         .setName(command.getName())
                                         .setCommand(nshIdStr, "-c", command.getName())
-                                        .setOwner(session.getAppId())
+                                        .setOwner(NApp.of().getId().orNull())
                                         .setHelpCommand(nshIdStr, "-c", "help", "--ntf", command.getName())
                                 )) {
                             reinstalled.add(command.getName());
@@ -126,7 +126,7 @@ public class Nsh implements NApplication {
                             .orElse(false);
                     NEnvs.of().addLauncher(
                             new NLauncherOptions()
-                                    .setId(session.getAppId())
+                                    .setId(NApp.of().getId().orNull())
                                     .setCreateScript(true)
                                     .setCreateDesktopLauncher(initLaunchers ? NSupportMode.PREFERRED : NSupportMode.NEVER)
                                     .setCreateMenuLauncher(initLaunchers ? NSupportMode.SUPPORTED : NSupportMode.NEVER)
@@ -142,8 +142,8 @@ public class Nsh implements NApplication {
         NLogOp log = NLogOp.of(Nsh.class);
         log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofPlain("[nsh] update..."));
         NSession session = NSession.of().get();
-        NVersion currentVersion = session.getAppVersion();
-        NVersion previousVersion = session.getAppPreviousVersion();
+        NVersion currentVersion = NApp.of().getVersion();
+        NVersion previousVersion = NApp.of().getPreviousVersion();
         onInstallApplication();
     }
 
@@ -159,7 +159,7 @@ public class Nsh implements NApplication {
                 //ignore!
             }
             Set<String> uninstalled = new TreeSet<>();
-            for (NCustomCmd command : NCommands.of().findCommandsByOwner(session.getAppId())) {
+            for (NCustomCmd command : NCommands.of().findCommandsByOwner(NApp.of().getId().orNull())) {
                 try {
                     NCommands.of(
                     ).removeCommand(command.getName());
@@ -188,7 +188,7 @@ public class Nsh implements NApplication {
         //before loading NShell check if we need to activate rich term
         NSession session = NSession.of().get();
         DefaultNShellOptionsParser options = new DefaultNShellOptionsParser(session);
-        NShellOptions o = options.parse(session.getAppCmdLine().toStringArray());
+        NShellOptions o = options.parse(NApp.of().getCmdLine().toStringArray());
 
 //        if (o.isEffectiveInteractive()) {
 //            session.getWorkspace().io().term().enableRichTerm(session);
