@@ -27,22 +27,22 @@ import java.util.Objects;
 @NComponentScope(NScopeType.SESSION)
 public class NAppImpl implements NApp, Cloneable {
     private Class appClass;
-    private final NPath[] appFolders = new NPath[NStoreType.values().length];
-    private final NPath[] appSharedFolders = new NPath[NStoreType.values().length];
+    private final NPath[] folders = new NPath[NStoreType.values().length];
+    private final NPath[] sharedFolders = new NPath[NStoreType.values().length];
     /**
      * auto complete info for "auto-complete" mode
      */
-    private NCmdLineAutoComplete appAutoComplete;
-    private NId appId;
-    private NClock appStartTime;
-    private List<String> appArgs;
-    private NApplicationMode appMode = NApplicationMode.RUN;
-    private NAppStoreLocationResolver appStoreLocationResolver;
+    private NCmdLineAutoComplete autoComplete;
+    private NId id;
+    private NClock startTime;
+    private List<String> args;
+    private NApplicationMode mode = NApplicationMode.RUN;
+    private NAppStoreLocationResolver storeLocationResolver;
     /**
      * previous parse for "update" mode
      */
-    private NVersion appPreviousVersion;
-    private List<String> appModeArgs = new ArrayList<>();
+    private NVersion previousVersion;
+    private List<String> modeArgs = new ArrayList<>();
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
@@ -61,49 +61,49 @@ public class NAppImpl implements NApp, Cloneable {
         NStoreType[] values = NStoreType.values();
         for (int i = 0; i < values.length; i++) {
             NStoreType value = values[i];
-            cloned.appFolders[i] = this.getFolder(value);
+            cloned.folders[i] = this.getFolder(value);
         }
         for (int i = 0; i < values.length; i++) {
             NStoreType value = values[i];
-            cloned.appSharedFolders[i] = this.getSharedFolder(value);
+            cloned.sharedFolders[i] = this.getSharedFolder(value);
         }
-        cloned.appAutoComplete = this.getAutoComplete();
-        cloned.appStartTime = this.getStartTime();
-        cloned.appArgs = this.getArguments() == null ? null : new ArrayList<>(this.getArguments());
-        cloned.appMode = this.getMode();
-        cloned.appStoreLocationResolver = this.getStoreLocationResolver();
-        cloned.appPreviousVersion = this.getPreviousVersion();
-        cloned.appModeArgs = this.getModeArguments() == null ? null : new ArrayList<>(this.getModeArguments());
+        cloned.autoComplete = this.getAutoComplete();
+        cloned.startTime = this.getStartTime();
+        cloned.args = this.getArguments() == null ? null : new ArrayList<>(this.getArguments());
+        cloned.mode = this.getMode();
+        cloned.storeLocationResolver = this.getStoreLocationResolver();
+        cloned.previousVersion = this.previousVersion;
+        cloned.modeArgs = this.getModeArguments() == null ? null : new ArrayList<>(this.getModeArguments());
         return cloned;
     }
 
     @Override
     public NApp copyFrom(NApp other) {
         //boolean withDefaults = false;
-        this.appId = other.getId().orNull();
+        this.id = other.getId().orNull();
         this.appClass = other.getAppClass();
         NStoreType[] values = NStoreType.values();
         for (int i = 0; i < values.length; i++) {
             NStoreType value = values[i];
-            this.appFolders[i] = other.getFolder(value);
+            this.folders[i] = other.getFolder(value);
         }
         for (int i = 0; i < values.length; i++) {
             NStoreType value = values[i];
-            this.appSharedFolders[i] = other.getSharedFolder(value);
+            this.sharedFolders[i] = other.getSharedFolder(value);
         }
-        this.appAutoComplete = other.getAutoComplete();
-        this.appStartTime = other.getStartTime();
-        this.appArgs = other.getArguments() == null ? null : new ArrayList<>(other.getArguments());
-        this.appMode = other.getMode();
-        this.appStoreLocationResolver = other.getStoreLocationResolver();
-        this.appPreviousVersion = other.getPreviousVersion();
-        this.appModeArgs = other.getModeArguments() == null ? null : new ArrayList<>(other.getModeArguments());
+        this.autoComplete = other.getAutoComplete();
+        this.startTime = other.getStartTime();
+        this.args = other.getArguments() == null ? null : new ArrayList<>(other.getArguments());
+        this.mode = other.getMode();
+        this.storeLocationResolver = other.getStoreLocationResolver();
+        this.previousVersion = other.getPreviousVersion().orNull();
+        this.modeArgs = other.getModeArguments() == null ? null : new ArrayList<>(other.getModeArguments());
         return this;
     }
 
     @Override
     public NOptional<NId> getId() {
-        return NOptional.ofNamed(this.appId,"app-id");
+        return NOptional.ofNamed(this.id,"app-id");
     }
 
 
@@ -112,7 +112,7 @@ public class NAppImpl implements NApp, Cloneable {
         Class<?> appClass=appInitInfo.getAppClass();
         String storeId=appInitInfo.getStoreId();
         NClock startTime=appInitInfo.getStartTime();
-        this.appStoreLocationResolver=appInitInfo.getStoreLocationSupplier();
+        this.storeLocationResolver =appInitInfo.getStoreLocationSupplier();
         List<String> args = new ArrayList<>();
         if (args0 != null) {
             for (String s : args0) {
@@ -122,7 +122,7 @@ public class NAppImpl implements NApp, Cloneable {
                 args.add(s);
             }
         }
-        this.appStartTime = startTime == null ? NClock.now() : startTime;
+        this.startTime = startTime == null ? NClock.now() : startTime;
         int wordIndex = -1;
         if (args.size() > 0 && args.get(0).startsWith("--nuts-exec-mode=")) {
             NCmdLine execModeCommand = NCmdLine.parseDefault(
@@ -131,32 +131,32 @@ public class NAppImpl implements NApp, Cloneable {
                 NArg a = execModeCommand.next().get();
                 switch (a.key()) {
                     case "auto-complete": {
-                        this.appMode = NApplicationMode.AUTO_COMPLETE;
+                        this.mode = NApplicationMode.AUTO_COMPLETE;
                         if (execModeCommand.hasNext()) {
                             wordIndex = execModeCommand.next().get().asInt().get();
                         }
-                        this.appModeArgs = execModeCommand.toStringList();
+                        this.modeArgs = execModeCommand.toStringList();
                         execModeCommand.skipAll();
                         break;
                     }
                     case "install": {
-                        this.appMode = NApplicationMode.INSTALL;
-                        this.appModeArgs = execModeCommand.toStringList();
+                        this.mode = NApplicationMode.INSTALL;
+                        this.modeArgs = execModeCommand.toStringList();
                         execModeCommand.skipAll();
                         break;
                     }
                     case "uninstall": {
-                        this.appMode = NApplicationMode.UNINSTALL;
-                        this.appModeArgs = execModeCommand.toStringList();
+                        this.mode = NApplicationMode.UNINSTALL;
+                        this.modeArgs = execModeCommand.toStringList();
                         execModeCommand.skipAll();
                         break;
                     }
                     case "update": {
-                        this.appMode = NApplicationMode.UPDATE;
+                        this.mode = NApplicationMode.UPDATE;
                         if (execModeCommand.hasNext()) {
-                            this.appPreviousVersion = NVersion.of(execModeCommand.next().flatMap(NLiteral::asString).get()).get();
+                            this.previousVersion = NVersion.of(execModeCommand.next().flatMap(NLiteral::asString).get()).get();
                         }
-                        this.appModeArgs = execModeCommand.toStringList();
+                        this.modeArgs = execModeCommand.toStringList();
                         execModeCommand.skipAll();
                         break;
                     }
@@ -176,41 +176,41 @@ public class NAppImpl implements NApp, Cloneable {
         if (_appId == null) {
             throw new NExecutionException(NMsg.ofC("invalid Nuts Application (%s). Id cannot be resolved", appClass.getName()), NExecutionException.ERROR_255);
         }
-        this.appArgs = (args);
-        this.appId = (_appId);
+        this.args = (args);
+        this.id = (_appId);
         this.appClass = appClass == null ? null : JavaClassUtils.unwrapCGLib(appClass);
         NLocations locations = NLocations.of();
         for (NStoreType folder : NStoreType.values()) {
-            this.setFolder(folder, locations.getStoreLocation(this.appId, folder));
-            this.setSharedFolder(folder, locations.getStoreLocation(this.appId.builder().setVersion("SHARED").build(), folder));
+            this.setFolder(folder, locations.getStoreLocation(this.id, folder));
+            this.setSharedFolder(folder, locations.getStoreLocation(this.id.builder().setVersion("SHARED").build(), folder));
         }
-        if (this.appMode == NApplicationMode.AUTO_COMPLETE) {
+        if (this.mode == NApplicationMode.AUTO_COMPLETE) {
             //TODO fix me
 //            this.workspace.term().setSession(session).getSystemTerminal()
 //                    .setMode(NutsTerminalMode.FILTERED);
             if (wordIndex < 0) {
                 wordIndex = args.size();
             }
-            this.appAutoComplete = new AppCmdLineAutoComplete(args, wordIndex);
+            this.autoComplete = new AppCmdLineAutoComplete(args, wordIndex);
         } else {
-            this.appAutoComplete = null;
+            this.autoComplete = null;
         }
 
     }
 
     @Override
     public NApplicationMode getMode() {
-        return this.appMode;
+        return this.mode;
     }
 
     @Override
     public List<String> getModeArguments() {
-        return this.appModeArgs;
+        return this.modeArgs;
     }
 
     @Override
     public NCmdLineAutoComplete getAutoComplete() {
-        return this.appAutoComplete;
+        return this.autoComplete;
     }
 
     @Override
@@ -308,8 +308,8 @@ public class NAppImpl implements NApp, Cloneable {
             return getFolder(location);
         }
         NId newId = getId().get().builder().setVersion(version).build();
-        if (this.appStoreLocationResolver != null) {
-            NPath r = this.appStoreLocationResolver.getStoreLocation(newId, location);
+        if (this.storeLocationResolver != null) {
+            NPath r = this.storeLocationResolver.getStoreLocation(newId, location);
             if (r != null) {
                 return r;
             }
@@ -354,27 +354,27 @@ public class NAppImpl implements NApp, Cloneable {
 
     @Override
     public NPath getSharedFolder(NStoreType location) {
-        return this.appSharedFolders[location.ordinal()];
+        return this.sharedFolders[location.ordinal()];
     }
 
     @Override
-    public NVersion getVersion() {
-        return this.appId == null ? null : this.appId.getVersion();
+    public NOptional<NVersion> getVersion() {
+        return this.getId().map(NId::getVersion);
     }
 
     @Override
     public List<String> getArguments() {
-        return this.appArgs;
+        return this.args;
     }
 
     @Override
     public NClock getStartTime() {
-        return this.appStartTime;
+        return this.startTime;
     }
 
     @Override
-    public NVersion getPreviousVersion() {
-        return this.appPreviousVersion;
+    public NOptional<NVersion> getPreviousVersion() {
+        return NOptional.ofNamed(previousVersion,"previousVersion");
     }
 
     @Override
@@ -400,7 +400,7 @@ public class NAppImpl implements NApp, Cloneable {
 
     @Override
     public NPath getFolder(NStoreType location) {
-        return this.appFolders[location.ordinal()];
+        return this.folders[location.ordinal()];
     }
 
     @Override
@@ -410,58 +410,58 @@ public class NAppImpl implements NApp, Cloneable {
 
     @Override
     public NAppStoreLocationResolver getStoreLocationResolver() {
-        return this.appStoreLocationResolver;
+        return this.storeLocationResolver;
     }
 
     public NApp setVersionStoreLocationSupplier(NAppStoreLocationResolver appVersionStoreLocationSupplier) {
-        this.appStoreLocationResolver = appVersionStoreLocationSupplier;
+        this.storeLocationResolver = appVersionStoreLocationSupplier;
         return this;
     }
 
     public NApp setMode(NApplicationMode mode) {
-        this.appMode = mode;
+        this.mode = mode;
         return this;
     }
 
     public NApp setModeArgs(List<String> modeArgs) {
-        this.appModeArgs = modeArgs;
+        this.modeArgs = modeArgs;
         return this;
     }
 
     public NApp setFolder(NStoreType location, NPath folder) {
-        this.appFolders[location.ordinal()] = folder;
+        this.folders[location.ordinal()] = folder;
         return this;
     }
 
     public NApp setSharedFolder(NStoreType location, NPath folder) {
-        this.appSharedFolders[location.ordinal()] = folder;
+        this.sharedFolders[location.ordinal()] = folder;
         return this;
     }
 
     //    @Override
     public NApp setId(NId appId) {
-        this.appId = appId;
+        this.id = appId;
         return this;
     }
 
     //    @Override
     public NApp setArguments(List<String> args) {
-        this.appArgs = args;
+        this.args = args;
         return this;
     }
 
     public NApp setArguments(String[] args) {
-        this.appArgs = new ArrayList<>(Arrays.asList(args));
+        this.args = new ArrayList<>(Arrays.asList(args));
         return this;
     }
 
     public NApp setStartTime(NClock startTime) {
-        this.appStartTime = startTime;
+        this.startTime = startTime;
         return this;
     }
 
     public NApp setPreviousVersion(NVersion previousVersion) {
-        this.appPreviousVersion = previousVersion;
+        this.previousVersion = previousVersion;
         return this;
     }
 

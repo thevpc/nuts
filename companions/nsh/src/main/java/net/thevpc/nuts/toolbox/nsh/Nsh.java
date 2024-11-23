@@ -142,8 +142,8 @@ public class Nsh implements NApplication {
         NLogOp log = NLogOp.of(Nsh.class);
         log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofPlain("[nsh] update..."));
         NSession session = NSession.of().get();
-        NVersion currentVersion = NApp.of().getVersion();
-        NVersion previousVersion = NApp.of().getPreviousVersion();
+        NVersion currentVersion = NApp.of().getVersion().orNull();
+        NVersion previousVersion = NApp.of().getPreviousVersion().orNull();
         onInstallApplication();
     }
 

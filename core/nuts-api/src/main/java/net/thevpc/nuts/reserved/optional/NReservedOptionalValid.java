@@ -112,4 +112,8 @@ public abstract class NReservedOptionalValid<T> extends NReservedOptionalImpl<T>
         return NOptionalType.PRESENT;
     }
 
+    @Override
+    public NOptional<T> withExceptionFactory(ExceptionFactory exceptionFactory) {
+        return this;
+    }
 }

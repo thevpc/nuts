@@ -31,9 +31,7 @@ import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
-import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogConfig;
-import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.reserved.*;
 import net.thevpc.nuts.reserved.boot.NReservedBootClassLoader;
@@ -167,22 +165,6 @@ public final class NBootWorkspace {
     private void postInit() {
         this.computedOptions.setAll(userOptions);
         this.computedOptions.setUserOptions(this.userOptions);
-//        this.computedOptions.setBot(this.computedOptions.getBot().orElse(false));
-//        this.computedOptions.setDry(this.computedOptions.getDry().orElse(false));
-//        this.computedOptions.setShowStacktrace(this.computedOptions.getShowStacktrace().orElse(false));
-//        this.computedOptions.setSystem(this.computedOptions.getSystem().orElse(false));
-//        this.computedOptions.setGui(this.computedOptions.getGui().orElse(false));
-//        this.computedOptions.setInherited(this.computedOptions.getInherited().orElse(false));
-//        this.computedOptions.setReadOnly(this.computedOptions.getReadOnly().orElse(false));
-//        this.computedOptions.setRecover(this.computedOptions.getRecover().orElse(false));
-//        this.computedOptions.setReset(this.computedOptions.getReset().orElse(false));
-//        this.computedOptions.setSkipErrors(this.computedOptions.getSkipErrors().orElse(false));
-//        this.computedOptions.setSkipWelcome(this.computedOptions.getSkipWelcome().orElse(false));
-//        this.computedOptions.setInstallCompanions(this.computedOptions.getInstallCompanions().orElse(false));
-//        this.computedOptions.setTransitive(this.computedOptions.getTransitive().orElse(true));
-//        this.computedOptions.setTrace(this.computedOptions.getTrace().orElse(true));
-//        this.computedOptions.setCached(this.computedOptions.getCached().orElse(true));
-//        this.computedOptions.setIndexed(this.computedOptions.getIndexed().orElse(true));
         this.computedOptions.setIsolationLevel(this.computedOptions.getIsolationLevel().orElse(NIsolationLevel.SYSTEM));
         this.computedOptions.setExecutionType(this.computedOptions.getExecutionType().orElse(NExecutionType.SPAWN));
         this.computedOptions.setConfirm(this.computedOptions.getConfirm().orElse(NConfirmationMode.ASK));
@@ -927,7 +909,21 @@ public final class NBootWorkspace {
         return !computedOptions.getRecover().orElse(false) && !computedOptions.getReset().orElse(false);
     }
 
-    public NWorkspace openWorkspace() {
+    /**
+     * return type is Object to remove static dependency on NWorkspace class
+     * so than versions of API can evolve independently of Boot
+     * @return NWorkspace instance as object
+     */
+    public Object openWorkspace() {
+        return openOrRunWorkspace(false);
+    }
+
+    /**
+     * return type is Object to remove static dependency on NWorkspace class
+     * so than versions of API can evolve independently of Boot
+     * @return NWorkspace instance as object
+     */
+    private Object openOrRunWorkspace(boolean run) {
         prepareWorkspace();
         if (hasUnsatisfiedRequirements()) {
             throw new NUnsatisfiedRequirementsException(NMsg.ofC("unable to open a distinct version : %s from nuts#%s", getRequirementsHelpString(true), Nuts.getVersion()));
@@ -942,7 +938,7 @@ public final class NBootWorkspace {
         }
         URL[] bootClassWorldURLs = null;
         ClassLoader workspaceClassLoader;
-        NWorkspace nWorkspace = null;
+        Object wsInstance = null;
         NReservedErrorInfoList errorList = new NReservedErrorInfoList();
         try {
             Path configFile = Paths.get(computedOptions.getWorkspace().get()).resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
@@ -1034,7 +1030,11 @@ public final class NBootWorkspace {
                         bLog.log(Level.CONFIG, NLogVerb.INFO, NMsg.ofC("create workspace using %s", factoryInstance.getClass().getName()));
                     }
                     computedOptions.setBootWorkspaceFactory(factoryInstance);
-                    nWorkspace = a.createWorkspace(computedOptions);
+                    if(run){
+                        wsInstance = a.runWorkspace(computedOptions);
+                    }else {
+                        wsInstance = a.createWorkspace(computedOptions);
+                    }
                 } catch (UnsatisfiedLinkError | Exception ex) {
                     exceptions.add(ex);
                     bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("unable to create workspace using factory %s", a), ex);
@@ -1042,11 +1042,11 @@ public final class NBootWorkspace {
                     // just stop
                     break;
                 }
-                if (nWorkspace != null) {
+                if (wsInstance != null) {
                     break;
                 }
             }
-            if (nWorkspace == null) {
+            if (wsInstance == null) {
                 //should never happen
                 bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("unable to load Workspace \"%s\" from ClassPath :", computedOptions.getName().orNull()));
                 for (URL url : bootClassWorldURLs) {
@@ -1058,7 +1058,7 @@ public final class NBootWorkspace {
                 bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofC("unable to load Workspace Component from ClassPath : %s", Arrays.asList(bootClassWorldURLs)));
                 throw new NInvalidWorkspaceException(this.computedOptions.getWorkspace().orNull(), NMsg.ofC("unable to load Workspace Component from ClassPath : %s%n  caused by:%n\t%s", Arrays.asList(bootClassWorldURLs), exceptions.stream().map(Throwable::toString).collect(Collectors.joining("\n\t"))));
             }
-            return nWorkspace;
+            return wsInstance;
         } catch (NReadOnlyException | NCancelException | NNoSessionCancelException ex) {
             throw ex;
         } catch (UnsatisfiedLinkError | AbstractMethodError ex) {
@@ -1085,16 +1085,6 @@ public final class NBootWorkspace {
 
     private ClassLoader getContextClassLoader() {
         return computedOptions.getClassLoaderSupplier().orElse(() -> Thread.currentThread().getContextClassLoader()).get();
-    }
-
-    private String getRunModeString() {
-        if (this.getOptions().getReset().orElse(false)) {
-            return "reset";
-        } else if (this.getOptions().getRecover().orElse(false)) {
-            return "recover";
-        } else {
-            return "exec";
-        }
     }
 
     private void runCommandHelp() {
@@ -1243,7 +1233,12 @@ public final class NBootWorkspace {
         bLog.outln("%s", Nuts.getVersion());
     }
 
-    public NWorkspace runWorkspace() {
+    /**
+     * return type is Object to remove static dependency on NWorkspace class
+     * so than versions of API can evolve independently of Boot
+     * @return NWorkspace instance as object
+     */
+    public Object runWorkspace() {
         if (computedOptions.getCommandHelp().orElse(false)) {
             runCommandHelp();
             return null;
@@ -1255,52 +1250,7 @@ public final class NBootWorkspace {
             runNewProcess();
             return null;
         }
-        NWorkspace workspace = this.openWorkspace();
-        workspace.runWith(() -> {
-            String message = "workspace started successfully";
-            NBootOptions o = this.getOptions();
-            if (workspace == null) {
-                fallbackInstallActionUnavailable(message);
-                throw new NBootException(NMsg.ofC("workspace not available to run : %s", NCmdLine.of(o.getApplicationArguments().get())));
-            }
-            NApp.of().setId(workspace.getApiId());
-            NLogOp logOp = NLog.of(NBootWorkspace.class).with().level(Level.CONFIG);
-            logOp.verb(NLogVerb.SUCCESS).log(NMsg.ofC("running workspace in %s mode", getRunModeString()));
-            if (workspace == null && o.getApplicationArguments().get().size() > 0) {
-                switch (o.getApplicationArguments().get().get(0)) {
-                    case "version": {
-                        runCommandVersion();
-                        return;
-                    }
-                    case "help": {
-                        runCommandHelp();
-                        return;
-                    }
-                }
-            }
-            NExecCmd execCmd = NExecCmd.of()
-                    .setExecutionType(o.getExecutionType().orNull())
-                    .setRunAs(o.getRunAs().orNull())
-                    .failFast();
-            List<String> executorOptions = o.getExecutorOptions().orNull();
-            if (executorOptions != null) {
-                execCmd.configure(true, executorOptions.toArray(new String[0]));
-            }
-            NCmdLine executorOptionsCmdLine = NCmdLine.of(executorOptions).setExpandSimpleOptions(false);
-            while (executorOptionsCmdLine.hasNext()) {
-                execCmd.configureLast(executorOptionsCmdLine);
-            }
-            if (o.getApplicationArguments().get().size() == 0) {
-                if (o.getSkipWelcome().orElse(false)) {
-                    return;
-                }
-                execCmd.addCommand("welcome");
-            } else {
-                execCmd.addCommand(o.getApplicationArguments().get());
-            }
-            execCmd.run();
-        });
-        return workspace;
+        return this.openOrRunWorkspace(true);
     }
 
     private void fallbackInstallActionUnavailable(String message) {

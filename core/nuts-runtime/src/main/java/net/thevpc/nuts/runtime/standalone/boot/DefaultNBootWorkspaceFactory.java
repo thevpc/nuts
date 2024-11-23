@@ -25,11 +25,19 @@
 */
 package net.thevpc.nuts.runtime.standalone.boot;
 
-import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NBootOptions;
+import net.thevpc.nuts.boot.NBootWorkspace;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.log.NLog;
+import net.thevpc.nuts.log.NLogOp;
+import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.spi.NBootWorkspaceFactory;
+import net.thevpc.nuts.util.NMsg;
+
+import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Created by vpc on 1/5/17.
@@ -57,6 +65,51 @@ public class DefaultNBootWorkspaceFactory implements NBootWorkspaceFactory {
             return null;
         }
         return new DefaultNWorkspace(bOptions);
+    }
+
+    @Override
+    public NWorkspace runWorkspace(NBootOptions options) {
+        NWorkspace workspace = createWorkspace(options);
+        if(workspace==null){
+            return null;
+        }
+        workspace.runWith(() -> {
+            NApp.of().setId(workspace.getApiId());
+            NLogOp logOp = NLog.of(NBootWorkspace.class).with().level(Level.CONFIG);
+            logOp.verb(NLogVerb.SUCCESS).log(NMsg.ofC("running workspace in %s mode", getRunModeString(options)));
+            NExecCmd execCmd = NExecCmd.of()
+                    .setExecutionType(options.getExecutionType().orNull())
+                    .setRunAs(options.getRunAs().orNull())
+                    .failFast();
+            List<String> executorOptions = options.getExecutorOptions().orNull();
+            if (executorOptions != null) {
+                execCmd.configure(true, executorOptions.toArray(new String[0]));
+            }
+            NCmdLine executorOptionsCmdLine = NCmdLine.of(executorOptions).setExpandSimpleOptions(false);
+            while (executorOptionsCmdLine.hasNext()) {
+                execCmd.configureLast(executorOptionsCmdLine);
+            }
+            if (options.getApplicationArguments().get().isEmpty()) {
+                if (options.getSkipWelcome().orElse(false)) {
+                    return;
+                }
+                execCmd.addCommand("welcome");
+            } else {
+                execCmd.addCommand(options.getApplicationArguments().get());
+            }
+            execCmd.run();
+        });
+        return workspace;
+    }
+
+    private String getRunModeString(NBootOptions options) {
+        if (options.getReset().orElse(false)) {
+            return "reset";
+        } else if (options.getRecover().orElse(false)) {
+            return "recover";
+        } else {
+            return "exec";
+        }
     }
 
     @Override

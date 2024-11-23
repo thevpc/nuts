@@ -260,6 +260,8 @@ public interface NOptional<T> extends NBlankable {
 
     Throwable getError();
 
+    ExceptionFactory getExceptionFactory();
+
     T orNull();
 
     T orDefault();
@@ -328,4 +330,9 @@ public interface NOptional<T> extends NBlankable {
 
     Supplier<NMsg> getMessage();
 
+    NOptional<T> withExceptionFactory(ExceptionFactory exceptionFactory);
+
+    interface ExceptionFactory{
+        RuntimeException createException(NMsg message, Throwable e);
+    }
 }

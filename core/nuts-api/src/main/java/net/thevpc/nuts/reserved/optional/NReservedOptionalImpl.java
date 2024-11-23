@@ -15,6 +15,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneable {
+    private ExceptionFactory exceptionFactory;
 
 
     public NReservedOptionalImpl() {
@@ -388,5 +389,13 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T>, Cloneabl
         return !isPresent();
     }
 
+    @Override
+    public NOptional<T> withExceptionFactory(ExceptionFactory exceptionFactory) {
+        this.exceptionFactory = exceptionFactory;
+        return this;
+    }
 
+    public ExceptionFactory getExceptionFactory() {
+        return exceptionFactory;
+    }
 }

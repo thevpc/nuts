@@ -240,3 +240,5 @@ core/nuts-app-full/target
 /core/nlib-common-collections/target
 /core/nlib-common-collections/target
 /core/nuts-app-full/dependency-reduced-pom.xml
+/core/nuts-boot/target
+/core/nuts-boot/assembly.xml

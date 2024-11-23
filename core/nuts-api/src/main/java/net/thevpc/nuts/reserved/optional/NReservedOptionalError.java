@@ -9,6 +9,7 @@ import net.thevpc.nuts.util.NOptionalErrorException;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
+
 import net.thevpc.nuts.util.NOptionalType;
 
 public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> implements Cloneable {
@@ -27,7 +28,7 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
     @Override
     public <V> NOptional<V> then(Function<T, V> mapper) {
         Objects.requireNonNull(mapper);
-        return NOptional.ofError(getMessage(), getError());
+        return (NOptional<V>)this;
     }
 
     @Override
@@ -107,6 +108,17 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
         Supplier<NMsg> finalMessage = message;
         NMsg eMsg = NApiUtilsRPI.resolveValidErrorMessage(() -> finalMessage == null ? null : finalMessage.get());
         NMsg m = prepareMessage(eMsg);
-        throw new NOptionalErrorException(m);
+
+        ExceptionFactory exceptionFactory = getExceptionFactory();
+        RuntimeException exception = null;
+        if (exceptionFactory != null) {
+            exception = exceptionFactory.createException(m, null);
+        }
+        if (exception == null) {
+            exception = new NOptionalErrorException(m, error);
+        }
+        throw exception;
     }
+
+
 }

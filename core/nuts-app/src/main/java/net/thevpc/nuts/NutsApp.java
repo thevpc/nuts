@@ -24,6 +24,7 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NBootWorkspace;
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
 
 /**
@@ -45,9 +46,9 @@ public final class NutsApp {
      * @param args main arguments
      */
     @SuppressWarnings("UseSpecificCatch")
-    public static void main(String[] args) throws Throwable {
+    public static void main(String[] args) {
         try {
-            Nuts.runWorkspace(args);
+            new NBootWorkspace(null, args).runWorkspace();
             System.exit(0);
         } catch (Exception ex) {
             NSession session = NSessionAwareExceptionBase.resolveSession(ex).orNull();

@@ -9,6 +9,7 @@
     <version>0.8.5.0</version>
     <packaging>pom</packaging>
     <modules>
+        <module>nuts-boot</module>
         <module>nuts-api</module>
         <module>nuts-lib</module>
         <module>nuts-app</module>

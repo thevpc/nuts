@@ -115,7 +115,7 @@ public final class Nuts {
             options.setStdout(term.getOut());
             options.setStderr(term.getErr());
         }
-        return new NBootWorkspace(options).openWorkspace();
+        return (NWorkspace) new NBootWorkspace(options).openWorkspace();
     }
 
     /**
@@ -125,7 +125,7 @@ public final class Nuts {
      * @return new NutsSession instance
      */
     public static NWorkspace openWorkspace(String... args) throws NUnsatisfiedRequirementsException {
-        return new NBootWorkspace(null, args).openWorkspace();
+        return (NWorkspace) new NBootWorkspace(null, args).openWorkspace();
     }
 
     /**
@@ -136,7 +136,7 @@ public final class Nuts {
      * @return new NutsSession instance
      */
     public static NWorkspace openWorkspace(NWorkspaceTerminalOptions term, String... args) throws NUnsatisfiedRequirementsException {
-        return new NBootWorkspace(term, args).openWorkspace();
+        return (NWorkspace) new NBootWorkspace(term, args).openWorkspace();
     }
 
     /**
@@ -155,7 +155,7 @@ public final class Nuts {
      * @return new NutsSession instance
      */
     public static NWorkspace openWorkspace(NWorkspaceOptions options) {
-        return new NBootWorkspace(options).openWorkspace();
+        return (NWorkspace) new NBootWorkspace(options).openWorkspace();
     }
 
     /**
@@ -171,7 +171,7 @@ public final class Nuts {
      * @return workspace
      */
     public static NWorkspace runWorkspace(NWorkspaceTerminalOptions term, String... args) throws NExecutionException {
-        return new NBootWorkspace(term, args).runWorkspace();
+        return (NWorkspace) new NBootWorkspace(term, args).runWorkspace();
     }
 
     /**

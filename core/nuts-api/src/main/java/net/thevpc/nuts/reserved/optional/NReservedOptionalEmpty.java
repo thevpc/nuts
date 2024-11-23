@@ -9,6 +9,7 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
 import net.thevpc.nuts.util.NOptionalType;
 
 public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> implements Cloneable {
@@ -26,7 +27,8 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
     public T get() {
         throwError(message, this.message);
         //never reached!
-        return null;    }
+        return null;
+    }
 
     @Override
     public T get(Supplier<NMsg> message) {
@@ -110,6 +112,16 @@ public class NReservedOptionalEmpty<T> extends NReservedOptionalThrowable<T> imp
         Supplier<NMsg> finalMessage = message;
         NMsg eMsg = NApiUtilsRPI.resolveValidErrorMessage(() -> finalMessage == null ? null : finalMessage.get());
         NMsg m = prepareMessage(eMsg);
-        throw new NNoSuchElementException(m);
+        RuntimeException exception = null;
+        ExceptionFactory exceptionFactory = getExceptionFactory();
+        if (exceptionFactory != null) {
+            exception = exceptionFactory.createException(m, null);
+        }
+        if (exception == null) {
+            exception = new NNoSuchElementException(m);
+        }
+        throw exception;
     }
+
+
 }
