@@ -25,6 +25,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;

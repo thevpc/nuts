@@ -1,13 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NFormat;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.io.util.AbstractMultiReadNInputSource;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NLiteral;
@@ -341,14 +342,10 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
         return delete(false);
     }
 
-    public NString toNutsString() {
-        return NTexts.of().ofPlain(toString());
+    public NText toNutsString() {
+        return NText.ofPlain(toString());
     }
 
-    @Override
-    public NFormat formatter() {
-        return new PathFormat(this);
-    }
 
     @Override
     public int hashCode() {
@@ -367,7 +364,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
         return Objects.equals(toString(), that.toString());
     }
 
-    private static class PathFormat extends DefaultFormatBase<NFormat> {
+    public static class PathFormat extends DefaultFormatBase<NFormat> {
 
         private final NPathBase p;
 
@@ -378,7 +375,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
         @Override
         public void print(NPrintStream out) {
-            out.print(NTexts.of().ofStyled(p.toNutsString(), NTextStyle.path()));
+            out.print(NText.ofStyled(p.toNutsString(), NTextStyle.path()));
         }
 
         @Override

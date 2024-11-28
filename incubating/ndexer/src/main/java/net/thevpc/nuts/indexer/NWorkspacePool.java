@@ -2,9 +2,8 @@ package net.thevpc.nuts.indexer;
 
 import net.thevpc.nuts.NLocations;
 import net.thevpc.nuts.NWorkspace;
-import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
+import net.thevpc.nuts.NWorkspaceOptionsBuilder;
 import net.thevpc.nuts.Nuts;
-import net.thevpc.nuts.NSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +23,7 @@ public class NWorkspacePool {
             if (NLocations.of().getWorkspaceLocation().toString().equals(ws)) {
                 o = workspace;
             } else {
-                o = Nuts.openWorkspace(new DefaultNWorkspaceOptionsBuilder()
+                o = Nuts.openWorkspace(NWorkspaceOptionsBuilder.of()
                         .setInstallCompanions(false)
                         .setWorkspace(ws)
                 );

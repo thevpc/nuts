@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
@@ -71,7 +72,7 @@ public class DefaultSourceControlHelper {
                 d = d.builder().setId(d.getId().builder().setVersion(oldVersion + ".1").build()).build();
             }
             NId newId = NDeployCmd.of().setContent(folder).setDescriptor(d).getResult().get(0);
-            d.formatter().print(file);
+            NDescriptorFormat.of(d).print(file);
             CoreIOUtils.delete(folder);
             return newId;
         } else {
@@ -104,7 +105,7 @@ public class DefaultSourceControlHelper {
             NId newId = d.getId().builder().setVersion(oldVersion + CoreNConstants.Versions.CHECKED_OUT_EXTENSION).build();
             d = d.builder().setId(newId).build();
 
-            d.formatter().print(file);
+            NDescriptorFormat.of(d).print(file);
 
             return new DefaultNDefinition(
                     nutToInstall.getRepositoryUuid(),

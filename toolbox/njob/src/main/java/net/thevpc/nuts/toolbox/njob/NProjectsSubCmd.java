@@ -6,6 +6,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NMutableTableModel;
 import net.thevpc.nuts.format.NTableFormat;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.njob.model.NProject;
@@ -104,7 +105,7 @@ public class NProjectsSubCmd {
             service.projects().addProject(t);
             if (session.isPlainTrace()) {
                 session.out().println(NMsg.ofC("project %s (%s) added.",
-                        NTexts.of().ofStyled(t.getId(), NTextStyle.primary5()),
+                        NText.ofStyledPrimary5(t.getId()),
                         t.getName()
                 ));
             }

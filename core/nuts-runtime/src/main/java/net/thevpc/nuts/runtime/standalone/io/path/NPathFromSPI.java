@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.format.NFormat;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.NPathSPIHelper;
@@ -9,7 +8,6 @@ import net.thevpc.nuts.runtime.standalone.io.path.spi.URLPath;
 import net.thevpc.nuts.runtime.standalone.util.reflect.NUseDefaultUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceVarExpansionFunction;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
-import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
@@ -30,6 +28,10 @@ public class NPathFromSPI extends NPathBase {
     public NPathFromSPI(NWorkspace workspace,NPathSPI base) {
         super(workspace);
         this.base = base;
+    }
+
+    public NPathSPI getBase() {
+        return base;
     }
 
     @Override
@@ -490,20 +492,6 @@ public class NPathFromSPI extends NPathBase {
     public NStream<NPath> walkGlob(NPathOption... options) {
         NSession session = workspace.currentSession();
         return new DirectoryScanner(this, session).stream();
-    }
-
-    @Override
-    public NFormat formatter() {
-        NFormatSPI fspi = null;
-        if (NUseDefaultUtils.isUseDefault(base.getClass(), "formatter",
-                NPath.class)) {
-        } else {
-            fspi = base.formatter(this);
-        }
-        if (fspi != null) {
-            return new NFormatFromSPI(fspi, workspace);
-        }
-        return super.formatter();
     }
 
     @Override

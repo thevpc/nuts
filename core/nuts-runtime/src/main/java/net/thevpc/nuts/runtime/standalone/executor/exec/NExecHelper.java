@@ -9,6 +9,7 @@ import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelpe
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.text.NTerminalCmd;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.log.NLog;
@@ -67,8 +68,8 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
                 .orElse(false)) {
 
             if (session.out().getTerminalMode() == NTerminalMode.FORMATTED) {
-                session.out().print(NMsg.ofC("%s ", NTexts.of().ofStyled("[exec]", NTextStyle.primary4())));
-                session.out().println(NTexts.of().ofText(commandOut));
+                session.out().print(NMsg.ofC("%s ", NText.ofStyled("[exec]", NTextStyle.primary4())));
+                session.out().println(NText.of(commandOut));
             } else {
                 session.out().print("exec ");
                 session.out().println(commandOut);
@@ -102,10 +103,10 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
         if (session.isDry()) {
             if (out.getTerminalMode() == NTerminalMode.FORMATTED) {
                 out.print("[dry] ==[exec]== ");
-                out.println(pb.format());
+                out.println(NExecCmdFormat.of(pb).format());
             } else {
                 out.print("[dry] exec ");
-                out.println(pb.format());
+                out.println(NExecCmdFormat.of(pb).format());
             }
             return NExecutionException.SUCCESS;
         }

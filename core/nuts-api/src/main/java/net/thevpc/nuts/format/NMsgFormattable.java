@@ -26,8 +26,6 @@
  */
 package net.thevpc.nuts.format;
 
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.util.NMsg;
 
 /**

@@ -44,7 +44,7 @@ import java.util.List;
  */
 public interface NContentTypes extends NComponent {
     static NContentTypes of() {
-       return NExtensions.of().createComponent(NContentTypes.class).get();
+       return NExtensions.of(NContentTypes.class);
     }
 
     String probeContentType(URL path);

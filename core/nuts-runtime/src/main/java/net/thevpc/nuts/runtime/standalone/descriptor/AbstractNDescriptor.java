@@ -26,6 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.descriptor;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 
 /**
  * Created by vpc on 2/19/17.
@@ -42,8 +43,4 @@ public abstract class AbstractNDescriptor implements NDescriptor {
         return new DefaultNDescriptorBuilder(this);
     }
 
-    @Override
-    public NDescriptorFormat formatter() {
-        return NDescriptorFormat.of().setValue(this);
-    }
 }

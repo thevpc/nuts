@@ -29,8 +29,8 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
+import net.thevpc.nuts.util.NHex;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;
 
@@ -114,10 +114,10 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                             default: {
                                 sb.append('\\');
                                 sb.append('u');
-                                sb.append(NStringUtils.toHexChar((c >> 12) & 0xF));
-                                sb.append(NStringUtils.toHexChar((c >> 8) & 0xF));
-                                sb.append(NStringUtils.toHexChar((c >> 4) & 0xF));
-                                sb.append(NStringUtils.toHexChar(c & 0xF));
+                                sb.append(NHex.toHexChar((c >> 12) & 0xF));
+                                sb.append(NHex.toHexChar((c >> 8) & 0xF));
+                                sb.append(NHex.toHexChar((c >> 4) & 0xF));
+                                sb.append(NHex.toHexChar(c & 0xF));
                             }
                         }
                     } else {
@@ -134,10 +134,10 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
                                 if (c > 0x007e) {
                                     sb.append('\\');
                                     sb.append('u');
-                                    sb.append(NStringUtils.toHexChar((c >> 12) & 0xF));
-                                    sb.append(NStringUtils.toHexChar((c >> 8) & 0xF));
-                                    sb.append(NStringUtils.toHexChar((c >> 4) & 0xF));
-                                    sb.append(NStringUtils.toHexChar(c & 0xF));
+                                    sb.append(NHex.toHexChar((c >> 12) & 0xF));
+                                    sb.append(NHex.toHexChar((c >> 8) & 0xF));
+                                    sb.append(NHex.toHexChar((c >> 4) & 0xF));
+                                    sb.append(NHex.toHexChar(c & 0xF));
                                 } else {
                                     sb.append(c);
                                 }

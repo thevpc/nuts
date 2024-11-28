@@ -1,11 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.format;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextCode;
 import net.thevpc.nuts.text.NTexts;
 
@@ -66,14 +68,13 @@ public class DefaultNDescriptorFormat extends DefaultFormatBase<NDescriptorForma
 
     @Override
     public void print(NPrintStream out) {
-        NSession session=workspace.currentSession();
         if (isNtf()) {
             ByteArrayOutputStream os=new ByteArrayOutputStream();
             NElements.of()
                     .setNtf(true).json()
                     .setValue(desc).setCompact(isCompact())
                     .print(os);
-            NTextCode r = NTexts.of().ofCode("json", os.toString());
+            NTextCode r = NText.ofCode("json", os.toString());
             out.print(r);
         } else {
             NElements.of().setNtf(false).json()

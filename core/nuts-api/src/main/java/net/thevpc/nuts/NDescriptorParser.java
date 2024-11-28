@@ -45,7 +45,7 @@ import java.nio.file.Path;
 public interface NDescriptorParser extends NComponent {
 
     static NDescriptorParser of() {
-        return NExtensions.of().createComponent(NDescriptorParser.class).get();
+        return NExtensions.of(NDescriptorParser.class);
     }
 
     /**

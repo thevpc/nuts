@@ -1,30 +1,11 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.NIllegalArgumentException;
 
 import java.util.function.Supplier;
 
 public class NAssert {
     private NAssert() {
-    }
-
-    public static NSession requireSession(NSession session) {
-        if (session == null) {
-            throw new NMissingSessionException();
-        }
-        return session;
-    }
-
-    public static NSession requireSession(NSession session, NSession defaultSession) {
-        if (session == null) {
-            if (defaultSession == null) {
-                throw new NMissingSessionException();
-            } else {
-                throw new NMissingSessionException();
-                //new NIllegalArgumentException(defaultSession, NMsg.ofPlain("missing session"));
-            }
-        }
-        return session;
     }
 
     private static NMsg createMessage(Supplier<NMsg> msg) {

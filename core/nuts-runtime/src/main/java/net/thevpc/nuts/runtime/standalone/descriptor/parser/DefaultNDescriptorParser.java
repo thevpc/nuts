@@ -1,12 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.parser;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
+import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
+import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorPropertyBuilder;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
-import net.thevpc.nuts.DefaultNArtifactCall;
+import net.thevpc.nuts.runtime.standalone.DefaultNArtifactCall;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;

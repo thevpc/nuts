@@ -6,7 +6,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NMutableTableModel;
 import net.thevpc.nuts.format.NTableFormat;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.njob.model.*;
@@ -95,7 +95,7 @@ public class NJobsSubCmd {
             service.jobs().addJob(t);
             if (session.isPlainTrace()) {
                 session.out().println(NMsg.ofC("job %s (%s) added.",
-                        NTexts.of().ofStyled(t.getId(), NTextStyle.primary5()),
+                        NText.ofStyled(t.getId(), NTextStyle.primary5()),
                         t.getName()
                 ));
             }
@@ -472,7 +472,7 @@ public class NJobsSubCmd {
                 List<NJob> lastResults = new ArrayList<>();
                 int[] index = new int[1];
                 r.forEach(x -> {
-                    NString durationString = NTexts.of().ofStyled(String.valueOf(timeUnit0 == null ? x.getDuration() : x.getDuration().toUnit(timeUnit0, d.hoursPerDay)), NTextStyle.keyword());
+                    NText durationString = NText.ofStyled(String.valueOf(timeUnit0 == null ? x.getDuration() : x.getDuration().toUnit(timeUnit0, d.hoursPerDay)), NTextStyle.keyword());
                     index[0]++;
                     lastResults.add(x);
                     m.newRow().addCells(
@@ -486,7 +486,7 @@ public class NJobsSubCmd {
 
                             } : new Object[]{
                                     parent.createHashId(index[0], -1),
-                                    NTexts.of().ofStyled(x.getId(), NTextStyle.pale()),
+                                    NText.ofStyled(x.getId(), NTextStyle.pale()),
                                     parent.getFormattedDate(x.getStartTime()),
                                     durationString,
                                     parent.getFormattedProject(x.getProject() == null ? "*" : x.getProject()),

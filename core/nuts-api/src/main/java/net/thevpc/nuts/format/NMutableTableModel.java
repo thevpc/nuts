@@ -37,7 +37,7 @@ import net.thevpc.nuts.spi.NComponent;
 public interface NMutableTableModel extends NTableModel, NComponent {
 
     static NMutableTableModel of() {
-        return NExtensions.of().createComponent(NMutableTableModel.class).get();
+        return NExtensions.of(NMutableTableModel.class);
     }
 
     /**

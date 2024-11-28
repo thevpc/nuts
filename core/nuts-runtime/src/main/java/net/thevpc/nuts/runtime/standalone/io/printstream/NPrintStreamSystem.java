@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.spi.NSystemTerminalBase;

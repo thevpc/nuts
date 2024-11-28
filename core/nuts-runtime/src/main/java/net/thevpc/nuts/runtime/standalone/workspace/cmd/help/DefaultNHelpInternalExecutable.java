@@ -78,7 +78,7 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
                     this.getClass().getClassLoader()
             ));
             session.getTerminal().out().print(
-                    n == null ? NTexts.of().ofStyled(("no help found for " + name), NTextStyle.error()) : n
+                    n == null ? NText.ofStyled(("no help found for " + name), NTextStyle.error()) : n
             );
         }
         //NPrintStream fout = NPrintStream.ofInMemory(session).setTerminalMode(NTerminalMode.FORMATTED);

@@ -32,7 +32,7 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NFormatSPI;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextFormat;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NAssert;
@@ -73,7 +73,7 @@ public interface NFormat extends NCmdLineConfigurable, NComponent {
      *
      * @return formatted current value
      */
-    NString format();
+    NText format();
 
     default String formatPlain() {
         boolean ntf = isNtf();

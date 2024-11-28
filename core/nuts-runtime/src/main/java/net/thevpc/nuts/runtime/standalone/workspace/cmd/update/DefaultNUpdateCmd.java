@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.update;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
@@ -18,6 +19,7 @@ import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NIteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
@@ -351,21 +353,21 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         if (session.isPlainTrace()) {
             if (notInstalled.size() == 0 && updates.size() == 0) {
                 out.resetLine().println(NMsg.ofC("all packages are %s. You are running latest version%s.",
-                        NTexts.of().ofStyled("up-to-date", NTextStyle.success()),
+                        NText.ofStyledSuccess("up-to-date"),
                         result.getAllResults().size() > 1 ? "s" : ""));
             } else {
                 if (updates.size() > 0 && notInstalled.size() > 0) {
                     out.resetLine().println(NMsg.ofC("workspace has %s package%s not installed and %s package%s to update.",
-                            NTexts.of().ofStyled("" + notInstalled.size(), NTextStyle.primary1()),
+                            NText.ofStyledPrimary1("" + notInstalled.size()),
                             (notInstalled.size() > 1 ? "s" : ""),
-                            NTexts.of().ofStyled("" + updates.size(), NTextStyle.primary1()),
+                            NText.ofStyledPrimary1("" + updates.size()),
                             (updates.size() > 1 ? "s" : "")
                     ));
                 } else if (updates.size() > 0) {
-                    out.resetLine().println(NMsg.ofC("workspace has %s package%s to update.", NTexts.of().ofStyled("" + updates.size(), NTextStyle.primary1()),
+                    out.resetLine().println(NMsg.ofC("workspace has %s package%s to update.", NText.ofStyledPrimary1("" + updates.size()),
                             (updates.size() > 1 ? "s" : "")));
                 } else if (notInstalled.size() > 0) {
-                    out.resetLine().println(NMsg.ofC("workspace has %s package%s not installed.", NTexts.of().ofStyled("" + notInstalled.size(), NTextStyle.primary1()),
+                    out.resetLine().println(NMsg.ofC("workspace has %s package%s not installed.", NText.ofStyledPrimary1("" + notInstalled.size()),
                             (notInstalled.size() > 1 ? "s" : "")));
                 }
                 int widthCol1 = 2;

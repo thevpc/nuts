@@ -324,7 +324,7 @@ public class DefaultUnitFormat {
                     }
                 }
             }
-            return sb.toText();
+            return sb.build();
         } else {
             throw new NIllegalArgumentException(NMsg.ofPlain("Not supported yet"));
         }

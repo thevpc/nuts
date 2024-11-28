@@ -39,7 +39,7 @@ import java.util.List;
  */
 public interface NUpdateUserCmd extends NWorkspaceCmd {
     static NUpdateUserCmd of() {
-        return NExtensions.of().createComponent(NUpdateUserCmd.class).get();
+        return NExtensions.of(NUpdateUserCmd.class);
     }
 
     NUpdateUserCmd removeGroup(String group);

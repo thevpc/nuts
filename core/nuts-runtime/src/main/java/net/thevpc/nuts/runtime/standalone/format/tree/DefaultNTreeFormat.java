@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.util.*;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElements;
@@ -15,7 +16,8 @@ import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.props.DefaultNPropertiesFormat;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -24,13 +26,13 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
     public static final NTreeLinkFormat LINK_ASCII_FORMATTER = new AsciiTreeLinkFormat();
     public static final NTreeLinkFormat LINK_SPACE_FORMATTER = new SpaceTreeLinkFormat();
     public static final NTreeLinkFormat LINK_UNICODE_FORMATTER = new UnicodeTreeLinkFormat();
-    private NString rootName;
+    private NText rootName;
     private Map<String, String> multilineProperties = new HashMap<>();
 
     public final NTreeNodeFormat TO_STRING_FORMATTER = new NTreeNodeFormat() {
         @Override
-        public NString format(Object o, int depth) {
-            return NTexts.of().ofBuilder().append(o).immutable();
+        public NText format(Object o, int depth) {
+            return NTextBuilder.of().append(o).immutable();
         }
     };
     private NTreeNodeFormat formatter;
@@ -41,12 +43,12 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
     private boolean omitEmptyRoot = true;
     private XNodeFormatter xNodeFormatter = new XNodeFormatter() {
         @Override
-        public NString[] getMultilineArray(NString key, Object value, NSession session) {
+        public NText[] getMultilineArray(NText key, Object value, NSession session) {
             return DefaultNTreeFormat.this.getMultilineArray(key, value);
         }
 
         @Override
-        public NString stringValue(Object o, NSession session) {
+        public NText stringValue(Object o, NSession session) {
             return getNodeFormat().format(o, -1);
         }
 
@@ -290,7 +292,7 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
         return this;
     }
 
-    private NString[] getMultilineArray(NString key, Object value) {
+    private NText[] getMultilineArray(NText key, Object value) {
         String sep = getMultilineSeparator(key);
         if (sep == null) {
             return null;
@@ -300,10 +302,10 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
             return null;
         }
         NSession session = workspace.currentSession();
-        return Arrays.stream(vv).map(x -> NTexts.of().ofText(x)).toArray(NString[]::new);
+        return Arrays.stream(vv).map(x -> NText.of(x)).toArray(NText[]::new);
     }
 
-    private String getMultilineSeparator(NString key) {
+    private String getMultilineSeparator(NText key) {
         String sep = multilineProperties.get(key.toString());
         if (sep != null && sep.length() == 0) {
             sep = ":|;";

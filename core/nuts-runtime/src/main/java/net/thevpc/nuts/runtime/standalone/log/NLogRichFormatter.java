@@ -4,10 +4,7 @@ package net.thevpc.nuts.runtime.standalone.log;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreTimeUtils;
-import net.thevpc.nuts.text.NString;
-import net.thevpc.nuts.text.NTextBuilder;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NLogRecord;
 import net.thevpc.nuts.util.NMsg;
 
@@ -145,9 +142,9 @@ public class NLogRichFormatter extends Formatter {
                 + ": ");
 
         NMsg message = wRecord.getFormattedMessage();
-        NString msgStr =
+        NText msgStr =
                 NTexts.of()
-                        .ofText(message);
+                        .of(message);
         sb.append(msgStr);
         if (wRecord.getTime() > 0) {
             sb.append(" (");
@@ -158,7 +155,7 @@ public class NLogRichFormatter extends Formatter {
         lastMillis = wRecord.getMillis();
         if (wRecord.getThrown() != null) {
             sb.append(
-                    NTexts.of().ofPlain(
+                    NText.ofPlain(
                             NLogUtils.stacktrace(wRecord.getThrown())
                     ).toString()
             );

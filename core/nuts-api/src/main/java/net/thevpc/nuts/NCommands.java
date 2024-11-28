@@ -39,7 +39,7 @@ import java.util.List;
  */
 public interface NCommands extends NComponent {
     static NCommands of() {
-        return NExtensions.of().createComponent(NCommands.class).get();
+        return NExtensions.of(NCommands.class);
     }
 
     /**

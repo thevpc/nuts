@@ -105,13 +105,12 @@ public class DefaultNCustomCommand implements NCustomCmd {
 
     @Override
     public NText getHelpText() throws NExecutionException {
-        NSession session=workspace.currentSession();
         if (!NBlankable.isBlank(helpText)) {
-            return NTexts.of().ofPlain(helpText);
+            return NText.ofPlain(helpText);
         }
         if (helpCommand != null && helpCommand.size() > 0) {
             try {
-                return NTexts.of().ofPlain(
+                return NText.ofPlain(
                         NExecCmd.of()
                                 .addCommand(helpCommand)
                                 .setFailFast(false)
@@ -120,7 +119,7 @@ public class DefaultNCustomCommand implements NCustomCmd {
                 );
             } catch (Exception ex) {
                 _LOGOP().level(Level.FINE).error(ex).log(NMsg.ofC("failed to retrieve help for %s", getName()));
-                return NTexts.of().ofStyled("failed to retrieve help for " + getName(), NTextStyle.error());
+                return NText.ofStyled("failed to retrieve help for " + getName(), NTextStyle.error());
             }
         }
         return null;

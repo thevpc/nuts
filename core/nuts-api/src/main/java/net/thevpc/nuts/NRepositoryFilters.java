@@ -33,7 +33,7 @@ import net.thevpc.nuts.ext.NExtensions;
  */
 public interface NRepositoryFilters extends NTypedFilters<NRepositoryFilter> {
     static NRepositoryFilters of() {
-       return NExtensions.of().createComponent(NRepositoryFilters.class).get();
+       return NExtensions.of(NRepositoryFilters.class);
     }
 
     NRepositoryFilter bySelector(String... names);

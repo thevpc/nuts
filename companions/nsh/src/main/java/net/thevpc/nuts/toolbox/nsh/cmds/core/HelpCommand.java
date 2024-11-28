@@ -127,7 +127,7 @@ public class HelpCommand extends NShellBuiltinCore {
 //                );
                 String helpText = (n == null ? "no help found" : n.toString());
                 context.out().println(ss.apply(helpText));
-                context.out().println(NTexts.of().ofStyled("AVAILABLE COMMANDS ARE:", NTextStyle.primary1()));
+                context.out().println(NText.ofStyled("AVAILABLE COMMANDS ARE:", NTextStyle.primary1()));
                 NShellBuiltin[] commands = context.builtins().getAll();
                 Arrays.sort(commands, new Comparator<NShellBuiltin>() {
                     @Override

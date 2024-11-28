@@ -89,11 +89,6 @@ public class DefaultNTextStyled extends AbstractNText implements NTextStyled {
     }
 
     @Override
-    public String toString() {
-        return super.toString();
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -114,5 +109,10 @@ public class DefaultNTextStyled extends AbstractNText implements NTextStyled {
     @Override
     public int textLength() {
         return child.textLength();
+    }
+
+    @Override
+    public NText immutable() {
+        return this;
     }
 }

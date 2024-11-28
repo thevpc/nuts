@@ -97,6 +97,13 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
                 }
                 break;
             }
+            case BUILDER: {
+                NTextBuilder s = (NTextBuilder) node;
+                for (NText n : s.getChildren()) {
+                    writeNode(formats, n, ctx);
+                }
+                break;
+            }
             case STYLED: {
                 DefaultNTextStyled s = (DefaultNTextStyled) node;
                 NTextStyles styles = s.getStyles();

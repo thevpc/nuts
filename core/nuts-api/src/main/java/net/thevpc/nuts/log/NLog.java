@@ -40,7 +40,32 @@ import java.util.logging.LogRecord;
  * @app.category Logging
  */
 public interface NLog {
+    static NLog NULL =new NLog() {
+        @Override
+        public boolean isLoggable(Level level) {
+            return false;
+        }
 
+        @Override
+        public void log(Level level, NLogVerb verb, NMsg msg, Throwable thrown) {
+
+        }
+
+        @Override
+        public void log(Level level, NLogVerb verb, Supplier<NMsg> msgSupplier, Supplier<Throwable> errorSupplier) {
+
+        }
+
+        @Override
+        public NLogOp with() {
+            return null;
+        }
+
+        @Override
+        public void log(LogRecord record) {
+
+        }
+    };
     /**
      * create an instance of {@link NLog}
      *

@@ -25,6 +25,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.install;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.ext.NExtensions;
@@ -510,14 +511,14 @@ public class DefaultNInstallCmd extends AbstractNInstallCmd {
                                         saction.equals("ignored") ? NTextStyle.pale() :
                                                 NTextStyle.primary1()
                         );
-                NTextBuilder msg = NTexts.of().ofBuilder();
+                NTextBuilder msg = NTextBuilder.of();
                 msg.append("the following ")
                         .append(kind).append(" ").append((all.size() > 1 ? "artifacts are" : "artifact is"))
                         .append(" going to be ").append(action).append(" : ")
                         .appendJoined(
-                                NTexts.of().ofPlain(", "),
+                                NText.ofPlain(", "),
                                 all.stream().map(x
-                                                -> NTexts.of().ofText(
+                                                -> NText.of(
                                                 x.builder().build()
                                         )
                                 ).collect(Collectors.toList())

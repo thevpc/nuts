@@ -1,6 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
+import net.thevpc.nuts.runtime.standalone.DefaultNEnvConditionBuilder;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.*;
@@ -160,7 +163,7 @@ public class NDescriptorUtils {
         c.setOsDist(NCoreArrayUtils.toDistinctTrimmedNonEmptyList(c.getOsDist()));
         c.setPlatform(NCoreArrayUtils.toDistinctTrimmedNonEmptyList(c.getPlatform()));
         c.setDesktopEnvironment(NCoreArrayUtils.toDistinctTrimmedNonEmptyList(c.getDesktopEnvironment()));
-        c.setProfile(NCoreArrayUtils.toDistinctTrimmedNonEmptyList(c.getProfile()));
+        c.setProfile(NCoreArrayUtils.toDistinctTrimmedNonEmptyList(c.getProfiles()));
         return c;
     }
 
@@ -171,7 +174,7 @@ public class NDescriptorUtils {
         c.setOsDist(CoreNUtils.applyStringPropertiesList(c.getOsDist(), map));
         c.setPlatform(CoreNUtils.applyStringPropertiesList(c.getPlatform(), map));
         c.setDesktopEnvironment(CoreNUtils.applyStringPropertiesList(c.getDesktopEnvironment(), map));
-        c.setProfile(CoreNUtils.applyStringPropertiesList(c.getProfile(), map));
+        c.setProfile(CoreNUtils.applyStringPropertiesList(c.getProfiles(), map));
         return c;
     }
 
@@ -181,7 +184,7 @@ public class NDescriptorUtils {
                 .setOs(CoreNUtils.applyStringProperties(child.getOs(), properties))
                 .setOsDist(CoreNUtils.applyStringProperties(child.getOsDist(), properties))
                 .setPlatform(CoreNUtils.applyStringProperties(child.getPlatform(), properties))
-                .setProfile(CoreNUtils.applyStringProperties(child.getProfile(), properties))
+                .setProfile(CoreNUtils.applyStringProperties(child.getProfiles(), properties))
                 .setDesktopEnvironment(CoreNUtils.applyStringProperties(child.getDesktopEnvironment(), properties))
                 .setArch(CoreNUtils.applyStringProperties(child.getArch(), properties))
                 .readOnly();

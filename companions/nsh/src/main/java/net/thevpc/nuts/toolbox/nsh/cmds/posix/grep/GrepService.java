@@ -159,7 +159,7 @@ public class GrepService {
             }
             r.add(t);
         }
-        return NTexts.of().ofBuilder().appendAll(r);
+        return NTextBuilder.of().appendAll(r);
     }
 
     private boolean processByLine(GrepOptions options, GrepFilter p, FileInfo f, GrepResultCollector results, NSession session) throws IOException {
@@ -176,7 +176,7 @@ public class GrepService {
             //long nn, String line
             NTextBuilder coloredLine0 = coloredLine;
             if (coloredLine0 == null) {
-                coloredLine0 = NTexts.of().ofCode(f.getHighlighter(), line.getObject()).highlight().builder();
+                coloredLine0 = NText.ofCode(f.getHighlighter(), line.getObject()).highlight().builder();
             }
             results.acceptLine(line);
             if (i == wline.getPivotIndex()) {
@@ -195,7 +195,7 @@ public class GrepService {
         if (NBlankable.isBlank(f.getHighlighter())) {
             f.setHighlighter(f.getPath().getContentType());
         }
-        NTextBuilder flattened = NTexts.of().ofCode(f.getHighlighter(), text).highlight()
+        NTextBuilder flattened = NText.ofCode(f.getHighlighter(), text).highlight()
                 .builder()
                 .flatten();
         try (Reader in = f.getPath().getReader()) {

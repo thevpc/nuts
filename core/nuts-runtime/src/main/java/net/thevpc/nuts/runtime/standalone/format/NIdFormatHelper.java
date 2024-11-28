@@ -37,10 +37,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
-import net.thevpc.nuts.text.NString;
-import net.thevpc.nuts.text.NTextBuilder;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
@@ -304,12 +301,12 @@ public class NIdFormatHelper {
         }
     }
 
-    public NString getSingleColumnRow(NFetchDisplayOptions oo) {
+    public NText getSingleColumnRow(NFetchDisplayOptions oo) {
         NDisplayProperty[] a = oo.getDisplayProperties();
         NTexts txt = NTexts.of();
         NTextBuilder sb = txt.ofBuilder();
         for (int j = 0; j < a.length; j++) {
-            NString s = buildMain(oo, a[j]);
+            NText s = buildMain(oo, a[j]);
             int z = 0;
             switch (a[j]) {
                 case INSTALL_DATE: {
@@ -344,7 +341,7 @@ public class NIdFormatHelper {
         return sb.immutable();
     }
 
-    public NString buildMain(NFetchDisplayOptions oo, NDisplayProperty dp) {
+    public NText buildMain(NFetchDisplayOptions oo, NDisplayProperty dp) {
         NTexts text = NTexts.of();
         if (oo.isRequireDefinition()) {
             buildLong();
@@ -361,7 +358,7 @@ public class NIdFormatHelper {
             }
             case FILE: {
                 if (def != null && def.getContent().isPresent()) {
-                    return text.ofText(def.getContent().orNull());
+                    return text.of(def.getContent().orNull());
                 }
                 return text.ofStyled("missing-path", NTextStyle.error());
             }
@@ -408,8 +405,8 @@ public class NIdFormatHelper {
                 return text.ofStyled("missing-platform", NTextStyle.error());
             }
             case PROFILE: {
-                if (desc != null && desc.getCondition().getProfile().size()>0) {
-                    return keywordArr1(desc.getCondition().getProfile());
+                if (desc != null && desc.getCondition().getProfiles().size()>0) {
+                    return keywordArr1(desc.getCondition().getProfiles());
                 }
                 return text.ofStyled("no-profile", NTextStyle.error());
             }
@@ -511,7 +508,7 @@ public class NIdFormatHelper {
             }
             case EXEC_ENTRY: {
                 if (def != null && def.getContent().isPresent()) {
-                    List<NString> results = new ArrayList<>();
+                    List<NText> results = new ArrayList<>();
                     for (NExecutionEntry entry : NExecutionEntry.parse(def.getContent().get())) {
                         if (entry.isDefaultEntry()) {
                             //should all mark?
@@ -537,7 +534,7 @@ public class NIdFormatHelper {
                 return text.ofStyled("<null>", NTextStyle.pale());
             }
             case LONG_STATUS: {
-                List<NString> all = new ArrayList<>();
+                List<NText> all = new ArrayList<>();
                 if (def != null && def.getDescriptor().getIdType() != null) {
                     switch (def.getDescriptor().getIdType()) {
                         case REGULAR: {
@@ -729,7 +726,7 @@ public class NIdFormatHelper {
         return this.executableApp != null ? (this.executableApp ? 'X' : this.executable ? 'x' : '-') : '.';
     }
 
-    public NString getFormattedStatusString() {
+    public NText getFormattedStatusString() {
         NTexts text = NTexts.of();
         if (dep != null) {
             return text.ofStyled("" + status_f
@@ -752,15 +749,15 @@ public class NIdFormatHelper {
                 + status_e + status_i;
     }
 
-    private NString keywordArr1(List<String> any) {
+    private NText keywordArr1(List<String> any) {
         return keywordArr0(any, NTextStyle.primary1());
     }
 
-    private NString keywordArr2(List<String> any) {
+    private NText keywordArr2(List<String> any) {
         return keywordArr0(any, NTextStyle.primary3());
     }
 
-    private NString keywordArr0(List<String> any, NTextStyle style) {
+    private NText keywordArr0(List<String> any, NTextStyle style) {
         NTexts txt = NTexts.of();
         if (any == null || any.size() == 0) {
             return txt.ofBlank();
@@ -778,7 +775,7 @@ public class NIdFormatHelper {
                 .append("]").immutable();
     }
 
-    private NString stringValue(Object any) {
+    private NText stringValue(Object any) {
         return NTextUtils.stringValueFormatted(any, false);
     }
 }

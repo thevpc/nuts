@@ -39,7 +39,7 @@ import java.util.Map;
  */
 public interface NPropertiesFormat extends NContentTypeFormat {
     static NPropertiesFormat of() {
-       return NExtensions.of().createComponent(NPropertiesFormat.class).get();
+       return NExtensions.of(NPropertiesFormat.class);
     }
 
     /**

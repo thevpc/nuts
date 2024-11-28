@@ -25,10 +25,11 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.log.NLogConfig;
+import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.util.NSupportMode;
@@ -47,7 +48,7 @@ import java.util.function.Supplier;
  * @author thevpc
  * @app.category Config
  */
-public interface NWorkspaceOptionsBuilder extends NWorkspaceOptions {
+public interface NWorkspaceOptionsBuilder extends NWorkspaceOptions, NComponent {
 
     /**
      * create NutsWorkspaceOptionsBuilder instance for the given session (shall not be null).
@@ -55,7 +56,11 @@ public interface NWorkspaceOptionsBuilder extends NWorkspaceOptions {
      * @return new NutsWorkspaceOptionsBuilder instance
      */
     static NWorkspaceOptionsBuilder of() {
-        return new DefaultNWorkspaceOptionsBuilder();
+        return NExtensions.of(NWorkspaceOptionsBuilder.class);
+    }
+
+    static NWorkspaceOptionsBuilder of(NWorkspaceOptions options) {
+        return of().setAll(options);
     }
 
     NWorkspaceOptionsBuilder setInitLaunchers(Boolean initLaunchers);

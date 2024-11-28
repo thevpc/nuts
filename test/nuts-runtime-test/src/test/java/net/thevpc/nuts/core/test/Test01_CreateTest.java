@@ -82,7 +82,7 @@ public class Test01_CreateTest {
                 "a\n\nb";
         TestUtils.println("-----------------------");
         TestUtils.println(str);
-        NText txt = NTexts.of().parse(str);
+        NText txt = NText.of(str);
         TestUtils.println("-----------------------");
         TestUtils.println(txt);
         long b=System.currentTimeMillis();

@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.text.NTerminalCmd;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
@@ -30,7 +31,7 @@ public class NPrintStreamFormatted extends NPrintStreamRendered {
     @Override
     public NPrintStream run(NTerminalCmd command) {
         flush();
-        print(NTexts.of().ofCommand(command));
+        print(NText.ofCommand(command));
         flush();
         return this;
     }

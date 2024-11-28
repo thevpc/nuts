@@ -1,12 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.DefaultNDependencyBuilder;
+import net.thevpc.nuts.runtime.standalone.DefaultNDependencyBuilder;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
 import net.thevpc.nuts.elem.NElementType;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.format.NFormats;
+import net.thevpc.nuts.text.NText;
 
 import java.lang.reflect.Type;
 
@@ -14,14 +15,13 @@ public class NElementMapperNDependency implements NElementMapper<NDependency> {
 
     @Override
     public Object destruct(NDependency o, Type typeOfSrc, NElementFactoryContext context) {
-        NSession session = context.getSession();
         if (o.getExclusions().isEmpty()) {
             //use compact form
             if (context.isNtf()) {
                 return NDependencyFormat.of().setNtf(true).setValue(o).format();
             } else {
 
-                return context.defaultDestruct(o.formatter()
+                return context.defaultDestruct(NFormats.of().ofFormat(o).get()
                         .setNtf(context.isNtf())
                         .format(), null);
             }
@@ -42,7 +42,7 @@ public class NElementMapperNDependency implements NElementMapper<NDependency> {
 //                    return ws.elem().forString(ws.dependency().formatter().setNtf(true).setValue(o).format());
 //                } else {
 
-        NString format = o.formatter()
+        NText format = NFormats.of().ofFormat(o).get()
                 .setNtf(context.isNtf())
                 .format();
         return context.defaultObjectToElement(

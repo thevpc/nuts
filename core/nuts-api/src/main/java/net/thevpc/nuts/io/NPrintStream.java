@@ -27,10 +27,7 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.spi.NSystemTerminalBase;
-import net.thevpc.nuts.text.NString;
-import net.thevpc.nuts.text.NTerminalCmd;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTextStyles;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.reserved.rpi.NIORPI;
 import net.thevpc.nuts.util.NMsg;
 
@@ -107,7 +104,7 @@ public interface NPrintStream extends NOutputTarget {
 
     NPrintStream print(NMsg b);
 
-    NPrintStream print(NString b);
+    NPrintStream print(NText b);
 
     NPrintStream print(Boolean b);
 
@@ -149,7 +146,7 @@ public interface NPrintStream extends NOutputTarget {
 
     NPrintStream println(NMsg b);
 
-    NPrintStream println(NString b);
+    NPrintStream println(NText b);
 
     NPrintStream println(int x);
 

@@ -25,7 +25,6 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.format.NFormat;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -434,11 +433,6 @@ public class DefaultNVersion implements NVersion {
                     () -> NMsg.ofC("missing number at %s", level)
             );
         }
-    }
-
-    @Override
-    public NFormat formatter() {
-        return NVersionFormat.of().setVersion(this);
     }
 
     private String toExplicitSingleValueOrNullString() {

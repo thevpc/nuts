@@ -18,7 +18,8 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.NIdFormatHelper;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTexts;
 
 /**
@@ -29,7 +30,7 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
     private Object lastObject;
     NTreeNodeFormat nTreeNodeFormat = new NTreeNodeFormat() {
         @Override
-        public NString format(Object o, int depth) {
+        public NText format(Object o, int depth) {
             NIdFormatHelper fid = NIdFormatHelper.of(o);
             if (fid != null) {
                 return fid.getSingleColumnRow(getDisplayOptions());
@@ -37,7 +38,7 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
                 if (o instanceof XNode) {
                     return ((XNode) o).toNutsString();
                 }
-                return NTexts.of().ofBuilder().append(o).immutable();
+                return NTextBuilder.of().append(o).immutable();
             }
         }
     };

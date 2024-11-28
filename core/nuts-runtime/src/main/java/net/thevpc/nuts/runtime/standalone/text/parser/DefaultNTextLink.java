@@ -27,8 +27,8 @@
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.text.NTextLink;
 import net.thevpc.nuts.text.NTextType;
 
@@ -69,7 +69,10 @@ public class DefaultNTextLink extends NTextSpecialBase implements NTextLink {
         DefaultNTextLink that = (DefaultNTextLink) o;
         return Objects.equals(value, that.value);
     }
-
+    @Override
+    public NText immutable() {
+        return this;
+    }
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), value);

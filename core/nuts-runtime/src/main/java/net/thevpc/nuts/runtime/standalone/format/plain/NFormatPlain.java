@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.format.plain;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NArrayElement;
@@ -18,6 +19,7 @@ import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.props.DefaultNPropertiesFormat;
 import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
 import org.w3c.dom.Document;
@@ -54,7 +56,6 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NSession session=workspace.currentSession();
         NArg n = cmdLine.peek().orNull();
         if (n != null) {
             NArg a;
@@ -84,7 +85,6 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
     private String getFormattedPrimitiveValue(NElement value) {
         switch (value.type()) {
             default: {
-                NSession session=workspace.currentSession();
                 throw new NUnsupportedArgumentException(NMsg.ofC("invalid element type: %s", value.type()));
             }
         }
@@ -92,7 +92,6 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
 
     @Override
     public void print(NPrintStream w) {
-        NSession session=workspace.currentSession();
         Object value = getValue();
         if (value instanceof NTableModel) {
             NTableFormat.of().setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
@@ -137,7 +136,7 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
                 }
             }else{
                 NPrintStream out = getValidPrintStream(w);
-                out.print(NTexts.of().ofText(value));
+                out.print(NText.of(value));
                 out.flush();
             }
         }

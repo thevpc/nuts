@@ -6,6 +6,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NMutableTableModel;
 import net.thevpc.nuts.format.NTableFormat;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -167,7 +168,7 @@ public class NTasksSubCmd {
             service.tasks().addTask(t);
             if (session.isPlainTrace()) {
                 session.out().println(NMsg.ofC("task %s (%s) added.",
-                        NTexts.of().ofStyled(t.getId(), NTextStyle.primary5()),
+                        NText.ofStyledPrimary5(t.getId()),
                         t.getName()
                 ));
             }
@@ -622,7 +623,7 @@ public class NTasksSubCmd {
         NProject p = project == null ? null : service.projects().getProject(project);
         NTaskStatus s = x.getStatus();
         String dte0 = parent.getFormattedDate(x.getDueTime());
-        NTextBuilder dte = NTexts.of().ofBuilder();
+        NTextBuilder dte = NTextBuilder.of();
         if (s == NTaskStatus.CANCELLED || s == NTaskStatus.DONE) {
             dte.append(dte0, NTextStyle.pale());
         } else if (x.getDueTime() != null && x.getDueTime().compareTo(Instant.now()) < 0) {
@@ -633,7 +634,7 @@ public class NTasksSubCmd {
         String projectName = p != null ? p.getName() : project != null ? project : "*";
         return new Object[]{
             index,
-            NTexts.of().ofBuilder().append(x.getId(), NTextStyle.pale()),
+            NTextBuilder.of().append(x.getId(), NTextStyle.pale()),
             parent.getFlagString(x.getFlag()),
             parent.getStatusString(x.getStatus()),
             parent.getPriorityString(x.getPriority()),

@@ -1,18 +1,12 @@
 package net.thevpc.nuts.time;
 
-import net.thevpc.nuts.format.NFormat;
-import net.thevpc.nuts.format.NFormattable;
-import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NMapBy;
-import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.spi.NFormatSPI;
 
 import java.io.Serializable;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
-public class NDuration implements Serializable, NFormattable {
+public class NDuration implements Serializable {
     private long nanos;
     private long micros;
 
@@ -1056,35 +1050,4 @@ public class NDuration implements Serializable, NFormattable {
         return DefaultNDurationFormat.DEFAULT.format(this);
     }
 
-    @Override
-    public NFormat formatter() {
-        return NFormat.of(new NFormatSPI() {
-            private NDurationFormatMode formatMode;
-
-            @Override
-            public String getName() {
-                return "duration";
-            }
-
-            @Override
-            public void print(NPrintStream out) {
-                DefaultNDurationFormat.of(formatMode).print(NDuration.this, out);
-            }
-
-            @Override
-            public boolean configureFirst(NCmdLine cmdLine) {
-                NArg a = cmdLine.peek().get();
-                switch (a.key()) {
-                    case "--mode": {
-                        a = cmdLine.nextEntry().get();
-                        if (a.isActive()) {
-                            formatMode = NDurationFormatMode.parse(a.getStringValue().get()).get();
-                        }
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
-    }
 }

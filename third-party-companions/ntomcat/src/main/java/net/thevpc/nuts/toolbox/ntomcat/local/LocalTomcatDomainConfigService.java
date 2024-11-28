@@ -4,7 +4,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.ntomcat.local.config.LocalTomcatDomainConfig;
@@ -62,8 +63,8 @@ public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase {
         getSession().out().println(NMsg.ofC("%s domain removed.", getBracketsPrefix(name)));
         return this;
     }
-    public NString getBracketsPrefix(String str) {
-        return NTexts.of().ofBuilder()
+    public NText getBracketsPrefix(String str) {
+        return NTextBuilder.of()
                 .append("[")
                 .append(str, NTextStyle.primary5())
                 .append("]");

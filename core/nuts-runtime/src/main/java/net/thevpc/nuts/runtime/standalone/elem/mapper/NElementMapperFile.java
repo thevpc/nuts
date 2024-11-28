@@ -24,7 +24,7 @@ public class NElementMapperFile implements NElementMapper<File> {
             NSession session = context.getSession();
 //                NutsText n = ws.text().forStyled(o.toString(), NutsTextStyle.path());
 //                return ws.elem().forPrimitive().buildNutsString(n);
-            NText n = NTexts.of().ofStyled(o.toString(), NTextStyle.path());
+            NText n = NText.ofStyled(o.toString(), NTextStyle.path());
             return context.elem().ofString(n.toString());
         } else {
             return context.defaultObjectToElement(o.toString(), null);

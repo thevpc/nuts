@@ -35,7 +35,7 @@ import java.lang.reflect.Type;
  */
 public interface NReflectRepository extends NComponent {
     static NReflectRepository of() {
-        return NExtensions.of().createComponent(NReflectRepository.class).get();
+        return NExtensions.of(NReflectRepository.class);
     }
 
     NReflectType getParametrizedType(Type clazz,Type owner,Type[] params);

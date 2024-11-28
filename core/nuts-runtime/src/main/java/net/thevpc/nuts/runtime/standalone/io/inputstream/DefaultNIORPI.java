@@ -16,7 +16,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.reserved.rpi.NIORPI;
@@ -66,7 +66,7 @@ public class DefaultNIORPI implements NIORPI {
         if (out == null) {
             return null;
         }
-        NWorkspaceOptions woptions = NBootManager.of().getBootOptions();
+        NBootOptions woptions = NBootManager.of().getBootOptions();
         NTerminalMode expectedMode0 = woptions.getTerminalMode().orElse(NTerminalMode.DEFAULT);
         if (expectedMode0 == NTerminalMode.DEFAULT) {
             if (woptions.getBot().orElse(false)) {
@@ -171,7 +171,7 @@ public class DefaultNIORPI implements NIORPI {
             return (NInputSource) inputStream;
         }
         if (metadata == null) {
-            NString str = null;
+            NText str = null;
             Long contentLength = null;
             try {
                 contentLength = (long) inputStream.available();
@@ -181,9 +181,9 @@ public class DefaultNIORPI implements NIORPI {
             }
             NSession session = workspace.currentSession();
             if (inputStream instanceof ByteArrayInputStream) {
-                str = NTexts.of().ofStyled("<memory-buffer>", NTextStyle.path());
+                str = NText.ofStyled("<memory-buffer>", NTextStyle.path());
             } else {
-                str = NTexts.of().ofStyled(inputStream.toString(), NTextStyle.path());
+                str = NText.ofStyled(inputStream.toString(), NTextStyle.path());
             }
             metadata = new DefaultNContentMetadata(NMsg.ofNtf(str), contentLength, null, null, null);
         }

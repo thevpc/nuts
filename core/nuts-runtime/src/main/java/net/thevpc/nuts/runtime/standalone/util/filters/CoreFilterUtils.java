@@ -26,6 +26,8 @@
 package net.thevpc.nuts.runtime.standalone.util.filters;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.env.NArchFamily;
 import net.thevpc.nuts.env.NDesktopEnvironmentFamily;
 import net.thevpc.nuts.env.NOsFamily;
@@ -565,7 +567,7 @@ public class CoreFilterUtils {
         if (!NBlankable.isBlank(s)) {
             m.put(NConstants.IdProperties.DESKTOP, s);
         }
-        s = condition.getProfile().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        s = condition.getProfiles().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
         if (!NBlankable.isBlank(s)) {
             m.put(NConstants.IdProperties.PROFILE, s);
         }

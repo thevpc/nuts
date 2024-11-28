@@ -69,7 +69,7 @@ public class RootParserStep extends ParserStep {
                 all.add(n);
             }
         }
-        return NTexts.of().ofList(all).simplify();
+        return NText.ofList(all).simplify();
     }
 
     @Override

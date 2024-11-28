@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.dependency.format;
 import java.util.*;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPrintStream;
@@ -10,7 +11,7 @@ import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
 
 @NComponentScope(NScopeType.PROTOTYPE)
 public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyFormat> implements NDependencyFormat {
@@ -100,7 +101,7 @@ public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyForma
     }
 
     @Override
-    public NString format() {
+    public NText format() {
         NIdBuilder id = value.toId().builder();
         Map<String, String> q = id.getProperties();
         for (Map.Entry<String, String> e : q.entrySet()) {

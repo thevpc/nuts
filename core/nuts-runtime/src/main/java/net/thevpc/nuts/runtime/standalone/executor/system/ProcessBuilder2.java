@@ -32,6 +32,7 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineShellOptions;
 import net.thevpc.nuts.runtime.standalone.shell.NShellHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -262,7 +263,7 @@ public class ProcessBuilder2 {
             throw new NIllegalStateException(NMsg.ofPlain("already started"));
         }
         NLog.of(ProcessBuilder2.class).with().verb(NLogVerb.START).level(Level.FINEST).log(
-                NMsg.ofNtf(NTexts.of().ofCode("system", getCommandString()))
+                NMsg.ofNtf(NText.ofCode("system", getCommandString()))
         );
         switch (in.base.getType()) {
             case PIPE:
@@ -776,7 +777,7 @@ public class ProcessBuilder2 {
     }
 
     private String escape(String f) {
-        return NTexts.of().ofPlain(f).toString();
+        return NText.ofPlain(f).toString();
     }
 
     public String getFormattedCommandString(CommandStringFormat f) {

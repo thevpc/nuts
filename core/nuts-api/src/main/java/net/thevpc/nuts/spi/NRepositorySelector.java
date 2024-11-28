@@ -24,9 +24,9 @@
  */
 package net.thevpc.nuts.spi;
 
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NStringUtils;
 
 /**

@@ -5,7 +5,7 @@ import net.thevpc.nuts.spi.NComponent;
 
 public interface NHashName extends NComponent {
     static NHashName of() {
-        return NExtensions.of().createComponent(NHashName.class).get();
+        return NExtensions.of(NHashName.class);
     }
 
 

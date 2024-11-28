@@ -37,7 +37,7 @@ import java.io.OutputStream;
  * @app.category Input Output
  * @since 0.5.5
  */
-public interface NOutputTarget extends NFormattable, NContentMetadataProvider {
+public interface NOutputTarget extends NContentMetadataProvider {
     static NOutputTarget of(OutputStream outputStream) {
         return NIORPI.of().ofOutputTarget(outputStream);
     }

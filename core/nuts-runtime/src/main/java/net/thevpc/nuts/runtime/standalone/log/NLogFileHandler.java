@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.log.NLogRecord;
 import net.thevpc.nuts.util.NBlankable;

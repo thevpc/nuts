@@ -26,7 +26,6 @@
 package net.thevpc.nuts.lib.servlet;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.toolbox.nutsserver.AdminServerConfig;
 import net.thevpc.nuts.toolbox.nutsserver.DefaultNWorkspaceServerManager;
@@ -140,7 +139,7 @@ public class NutsHttpServlet extends HttpServlet {
         Map<String, NWorkspace> workspacesByLocation = new HashMap<>();
         Map<String, NWorkspace> workspacesByWebContextPath = new HashMap<>();
         NWorkspace ws = Nuts.openWorkspace(
-                new DefaultNWorkspaceOptionsBuilder()
+                NWorkspaceOptionsBuilder.of()
                         .setRuntimeId(runtimeId)
                         .setWorkspace(workspaceLocation)
                         .setOpenMode(NOpenMode.OPEN_OR_CREATE)
@@ -161,7 +160,7 @@ public class NutsHttpServlet extends HttpServlet {
             NWorkspace ws2 = workspacesByLocation.get(location);
             if (ws2 == null) {
                 ws2 = Nuts.openWorkspace(
-                        new DefaultNWorkspaceOptionsBuilder()
+                        NWorkspaceOptionsBuilder.of()
                                 .setRuntimeId(runtimeId)
                                 .setWorkspace(location)
                                 .setOpenMode(NOpenMode.OPEN_OR_CREATE)

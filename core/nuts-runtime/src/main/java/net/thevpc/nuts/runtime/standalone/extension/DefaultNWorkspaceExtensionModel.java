@@ -6,8 +6,12 @@
 package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.NBootWorkspaceFactory;
 import net.thevpc.nuts.boot.NClassLoaderNode;
-import net.thevpc.nuts.boot.NBootOptions;
+import net.thevpc.nuts.NBootOptions;
+import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.ext.NExtensionAlreadyRegisteredException;
 import net.thevpc.nuts.ext.NExtensionInformation;
@@ -150,7 +154,7 @@ public class DefaultNWorkspaceExtensionModel {
         List<NExtensionInformation> ret = new ArrayList<>();
         List<String> allUrls = new ArrayList<>();
         for (String r : getExtensionRepositoryLocations(id)) {
-            String url = r + "/" + NIdUtils.resolveFilePath(id, extensionType);
+            String url = r + "/" + ExtraApiUtils.resolveFilePath(id, extensionType);
             allUrls.add(url);
             URL u = expandURL(url);
             if (u != null) {
@@ -526,7 +530,6 @@ public class DefaultNWorkspaceExtensionModel {
 
     public NWorkspaceExtension wireExtension(NId id, NFetchCmd options) {
         NSession session=workspace.currentSession();
-        NSessionUtils.checkSession(workspace, session);
         NAssert.requireNonNull(id, "extension id");
         NId wired = CoreNUtils.findNutsIdBySimpleName(id, extensions.keySet());
         if (wired != null) {
@@ -675,7 +678,7 @@ public class DefaultNWorkspaceExtensionModel {
     public URL[] getExtensionURLLocations(NId nutsId, String appId, String extensionType, NSession session) {
         List<URL> bootUrls = new ArrayList<>();
         for (String r : getExtensionRepositoryLocations(nutsId)) {
-            String url = r + "/" + NIdUtils.resolveFilePath(nutsId, extensionType);
+            String url = r + "/" + ExtraApiUtils.resolveFilePath(nutsId, extensionType);
             URL u = expandURL(url);
             bootUrls.add(u);
         }

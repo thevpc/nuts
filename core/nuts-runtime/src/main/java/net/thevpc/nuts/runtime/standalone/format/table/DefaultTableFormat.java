@@ -25,6 +25,7 @@
 package net.thevpc.nuts.runtime.standalone.format.table;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElement;
@@ -38,7 +39,7 @@ import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringBuilder;
@@ -155,7 +156,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
     }
 
     public static void formatAndHorizontalAlign(StringBuilder sb, NPositionType a, int columns, NTexts tf, NSession session) {
-        int length = tf.parse(sb.toString()).textLength();
+        int length = tf.of(sb.toString()).textLength();
         switch (a) {
             case FIRST: {
 //                if (sb.length() > length) {
@@ -239,7 +240,6 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
     @Override
     public NTableFormat setBorder(String borderName) {
         NTableBordersFormat n = parseTableBorders(borderName);
-        NSession session=workspace.currentSession();
         if (n == null) {
             throw new NIllegalArgumentException(NMsg.ofC("unsupported border. use one of : %s", getAvailableTableBorders()));
         }
@@ -314,7 +314,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                     DefaultCell cell = cells.get(i);
                     String B = getSeparator(NTableSeparator.FIRST_ROW_LINE);
                     String s = cell.rendered.toString();
-                    line.append(CoreStringUtils.fillString(B, NTexts.of().parse(s).textLength()));
+                    line.append(CoreStringUtils.fillString(B, NText.of(s).textLength()));
                 }
                 line.append(getSeparator(NTableSeparator.FIRST_ROW_END));
 
@@ -336,7 +336,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                             DefaultCell cell = cells.get(i);
                             String B = getSeparator(NTableSeparator.MIDDLE_ROW_LINE);
                             String s = cell.rendered.toString();
-                            line.append(CoreStringUtils.fillString(B, NTexts.of().parse(s).textLength()));
+                            line.append(CoreStringUtils.fillString(B, NText.of(s).textLength()));
                         }
                         line.append(getSeparator(NTableSeparator.MIDDLE_ROW_END));
 
@@ -378,7 +378,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                     DefaultCell cell = cells.get(i);
                     String B = getSeparator(NTableSeparator.LAST_ROW_LINE);
                     String s = cell.rendered.toString();
-                    line.append(CoreStringUtils.fillString(B, NTexts.of().parse(s).textLength()));
+                    line.append(CoreStringUtils.fillString(B, NText.of(s).textLength()));
                 }
                 line.append(getSeparator(NTableSeparator.LAST_ROW_END));
             }
@@ -396,7 +396,6 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
         try {
             w.flush();
         } catch (IOException ex) {
-            NSession session=workspace.currentSession();
             throw new NIOException(ex);
         }
         return out.toString();
@@ -575,9 +574,9 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
 
     private static class SimpleCell {
         private String title;
-        private NString value;
+        private NText value;
 
-        public SimpleCell(String title, NString value) {
+        public SimpleCell(String title, NText value) {
             this.title = title;
             this.value = value;
         }
@@ -618,7 +617,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
         }
         if (
                 (o instanceof NMsg)
-                        || (o instanceof NString)
+                        || (o instanceof NText)
                         || (o instanceof NFormattable)
         ) {
             NMutableTableModel model = NMutableTableModel.of();
@@ -700,7 +699,6 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
     }
     public List<SimpleRow> resolveColumnsFromRows(Object obj) {
         List<SimpleRow> rows = new ArrayList<>();
-        NSession session=workspace.currentSession();
         if (obj instanceof NElement) {
             NElement value = (NElement) obj;
             switch (value.type()) {
@@ -726,7 +724,6 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
     }
 
     public SimpleRow resolveColumnsFromRow(Object obj) {
-        NSession session=workspace.currentSession();
         if (obj instanceof NElement) {
             NElement value = (NElement) obj;
             switch (value.type()) {
@@ -788,7 +785,6 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
     }
 
     private NElements _elems() {
-        NSession session=workspace.currentSession();
         return NElements.of();
     }
 
@@ -799,7 +795,6 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NSession session=workspace.currentSession();
         NArg a;
         if ((a = cmdLine.nextFlag("--no-header").orNull()) != null) {
             boolean val = a.getBooleanValue().get();
@@ -846,8 +841,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
         return false;
     }
 
-    private NString formatObject(Object any) {
-        NSession session=workspace.currentSession();
+    private NText formatObject(Object any) {
         return NTextUtils.stringValueFormatted(any, false);
     }
 
@@ -920,7 +914,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
         }
 
         public int len(String other) {
-            return metrics.parse(other).textLength();
+            return metrics.of(other).textLength();
         }
 
         public RenderedCell appendHorizontally(RenderedCell other) {

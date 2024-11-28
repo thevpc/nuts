@@ -10,8 +10,8 @@ import net.thevpc.nuts.NExecutionException;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
+import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
-import net.thevpc.nuts.util.NUtils;
 
 /**
  *
@@ -26,7 +26,7 @@ public class DefaultNExecInternalExecutable extends DefaultInternalNExecutableCo
     @Override
     public int execute() {
         NSession session = workspace.currentSession();
-        if (NUtils.asBoolean(getExecCommand().getDry())) {
+        if (ExtraApiUtils.asBoolean(getExecCommand().getDry())) {
             dryExecute();
             return NExecutionException.SUCCESS;
         }

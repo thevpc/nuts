@@ -20,6 +20,8 @@ import java.util.Set;
 import java.util.function.Function;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
@@ -64,7 +66,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
                 return NAsk.of()
                         .forString(
                                 NMsg.ofNtf(
-                                        NTexts.of().ofBuilder()
+                                        NTextBuilder.of()
                                                 .append(propertyTitle, NTextStyle.primary4())
                                                 .append(" (")
                                                 .append(propName, NTextStyle.pale())
@@ -427,7 +429,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
             if (p != null) {
                 if (!NAsk.of()
                         .forBoolean(NMsg.ofC("accept project location %s?",
-                                NTexts.of().ofStyled(p.getPath(), NTextStyle.path())))
+                                NText.ofStyledPath(p.getPath())))
                         .setDefaultValue(false)
                         .getBooleanValue()) {
                     throw new NCancelException();

@@ -38,7 +38,7 @@ import java.util.List;
  */
 public interface NUpdateCmd extends NWorkspaceCmd {
     static NUpdateCmd of() {
-        return NExtensions.of().createComponent(NUpdateCmd.class).get();
+        return NExtensions.of(NUpdateCmd.class);
     }
 
     NUpdateCmd removeId(NId id);

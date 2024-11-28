@@ -1,13 +1,11 @@
 package net.thevpc.nuts.toolbox.nwork;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.DefaultNBootOptionsBuilder;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.nwork.config.ProjectConfig;
 import net.thevpc.nuts.toolbox.nwork.config.RepositoryAddress;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NIdUtils;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.File;
@@ -149,7 +147,7 @@ public class ProjectService {
     public File detectLocalVersionFile(String sid) {
         NId id = NId.of(sid).get();
         if (config.getTechnologies().contains("maven")) {
-            File f = new File(System.getProperty("user.home"), ".m2/repository/" + NIdUtils.resolveJarPath(id));
+            File f = new File(System.getProperty("user.home"), ".m2/repository/" + id.getMavenPath("jar"));
             if (f.exists()) {
                 return f;
             }
@@ -193,7 +191,7 @@ public class ProjectService {
                 NSession s = null;
                 if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(NLocations.of().getWorkspaceLocation().toString())) {
                     s = Nuts.openWorkspace(
-                            new DefaultNBootOptionsBuilder()
+                            NWorkspaceOptionsBuilder.of()
                                     .setOpenMode(NOpenMode.OPEN_OR_ERROR)
                                     .setReadOnly(true)
                                     .setWorkspace(a.getNutsWorkspace())
@@ -245,7 +243,7 @@ public class ProjectService {
                         NSession s = null;
                         if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(NLocations.of().getWorkspaceLocation().toString())) {
                             s = Nuts.openWorkspace(
-                                    new DefaultNBootOptionsBuilder()
+                                    NWorkspaceOptionsBuilder.of()
                                             .setOpenMode(NOpenMode.OPEN_OR_ERROR)
                                             .setReadOnly(true)
                                             .setWorkspace(a.getNutsWorkspace())

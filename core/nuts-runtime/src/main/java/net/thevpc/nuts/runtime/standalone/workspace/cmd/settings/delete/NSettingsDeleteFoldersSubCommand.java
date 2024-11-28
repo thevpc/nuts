@@ -10,6 +10,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NAsk;
@@ -32,7 +33,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
             NSession session = repository.getWorkspace().currentSession();
             if (s.exists()) {
                 session.out().println(NMsg.ofC("```error deleting``` %s folder %s ...",
-                        NTexts.of().ofStyled("cache", NTextStyle.primary1())
+                        NText.ofStyledPrimary1("cache")
                         , s));
                 if (force
                         || NAsk.of()

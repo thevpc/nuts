@@ -11,12 +11,12 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
+import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +34,7 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
     @Override
     public int execute() {
         NSession session = workspace.currentSession();
-        boolean dry = NUtils.asBoolean(getExecCommand().getDry());
+        boolean dry = ExtraApiUtils.asBoolean(getExecCommand().getDry());
         if(dry){
             dryExecute();
             return NExecutionException.SUCCESS;

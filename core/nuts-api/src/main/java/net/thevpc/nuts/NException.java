@@ -25,7 +25,9 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
 
 /**
@@ -99,8 +101,11 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
         return message;
     }
 
-    static NString messageToFormattedString(NMsg message) {
-        return NString.of(validateFormattedMessage(message));
+    static NText messageToFormattedString(NMsg message) {
+        if(NWorkspace.of().isNotPresent()){
+            throw new IllegalArgumentException("missing workspace");
+        }
+        return NText.of(validateFormattedMessage(message));
     }
 
     static String messageToString(NMsg message) {

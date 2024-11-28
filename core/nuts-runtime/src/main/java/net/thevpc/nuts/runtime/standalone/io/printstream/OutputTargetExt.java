@@ -34,9 +34,8 @@ public class OutputTargetExt implements NOutputTarget {
         return md;
     }
 
-    @Override
-    public NFormat formatter() {
-        return NFormat.of(new NContentMetadataProviderFormatSPI(this, null, "output-stream"));
+    public NMsg getSourceName() {
+        return sourceName;
     }
 
     @Override

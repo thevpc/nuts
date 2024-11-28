@@ -24,7 +24,6 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NMissingSessionException;
 import net.thevpc.nuts.NUnsupportedEnumException;
 
 public enum NSupportMode implements NEnum {

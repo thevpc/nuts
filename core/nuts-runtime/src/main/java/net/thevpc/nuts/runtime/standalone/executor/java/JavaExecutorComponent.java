@@ -26,9 +26,11 @@ package net.thevpc.nuts.runtime.standalone.executor.java;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NClassLoaderNode;
-import net.thevpc.nuts.boot.NWorkspaceCmdLineParser;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.cmdline.NCmdLineFormat;
+import net.thevpc.nuts.cmdline.NWorkspaceCmdLineParser;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
@@ -48,7 +50,7 @@ import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NExecutorComponent;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.log.NLogConfig;
@@ -111,7 +113,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
 
     public static NWorkspaceOptionsBuilder createChildOptions(NExecutionContext executionContext) {
         NSession session = executionContext.getSession();
-        NWorkspaceOptionsBuilder options = NBootManager.of().getBootOptions().builder();
+        NWorkspaceOptionsBuilder options = NBootManager.of().getBootOptions().toWorkspaceOptions().builder();
         options.setDry(executionContext.isDry());
         options.setBot(executionContext.isBot());
 
@@ -263,9 +265,9 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 if (def.getId().equalsShortId(session.getWorkspace().getApiId())) {
                     extraStartWithAppArgs.addAll(ncmdLine.toStringList());
                 }
-                String bootArgumentsString = ncmdLine
+                String bootArgumentsString = NCmdLineFormat.of(ncmdLine
                         .add(executionContext.getDefinition().getId().getLongName())
-                        .formatter().setShellFamily(NShellFamily.SH).setNtf(false).toString();
+                        ).setShellFamily(NShellFamily.SH).setNtf(false).toString();
                 if (!NBlankable.isBlank(bootArgumentsString)) {
                     osEnv.put("NUTS_BOOT_ARGS", bootArgumentsString);
                     joptions.getJvmArgs().add("-Dnuts.boot.args=" + bootArgumentsString);
@@ -294,7 +296,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                     System.exit(233);
                 }
 
-                List<NString> xargs = new ArrayList<>();
+                List<NText> xargs = new ArrayList<>();
                 List<String> args = new ArrayList<>();
 
                 NTexts txt = NTexts.of();
@@ -334,8 +336,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
 
                 if (joptions.isJar()) {
                     xargs.add(txt.ofPlain("-jar"));
-                    xargs.add(def.getId().formatter().format());
-
+                    xargs.add(NIdFormat.of(def.getId()).format());
                     args.add("-jar");
                     args.add(contentFile.toString());
                 } else {

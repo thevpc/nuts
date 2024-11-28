@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.format;
 
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
 
 /**
  * @app.category Format
@@ -34,7 +34,7 @@ import net.thevpc.nuts.text.NString;
 public interface NFormattable extends NStringFormattable {
     NFormat formatter();
 
-    default NString format() {
+    default NText format() {
         return formatter().format();
     }
 }

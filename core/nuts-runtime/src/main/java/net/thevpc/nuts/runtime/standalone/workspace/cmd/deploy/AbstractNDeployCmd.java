@@ -1,13 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCmdBase;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 
 import java.io.File;
@@ -32,11 +33,11 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
     protected final List<NId> ids = new ArrayList<>();
 
     protected static class Result {
-        NString source;
+        NText source;
         String repository;
         NId id;
 
-        public Result(NId nid, String repository, NString source) {
+        public Result(NId nid, String repository, NText source) {
             this.id = nid.getLongId();
             this.source = source;
             this.repository = repository;
@@ -66,7 +67,6 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
 
     @Override
     public NDeployCmd setContent(InputStream stream) {
-        NSession session=workspace.currentSession();
         content = stream == null ? null : NInputSource.of(stream);
         return this;
     }
@@ -79,14 +79,12 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
 
     @Override
     public NDeployCmd setContent(byte[] content) {
-        NSession session=workspace.currentSession();
         this.content = content == null ? null : NInputSource.of(content);
         return this;
     }
 
     @Override
     public NDeployCmd setContent(File file) {
-        NSession session=workspace.currentSession();
         content = file == null ? null : NPath.of(file);
         invalidateResult();
         return this;
@@ -94,7 +92,6 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
 
     @Override
     public NDeployCmd setContent(Path file) {
-        NSession session=workspace.currentSession();
         content = file == null ? null : NPath.of(file);
         invalidateResult();
         return this;
@@ -163,7 +160,6 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
 
     @Override
     public NDeployCmd setContent(URL url) {
-        NSession session=workspace.currentSession();
         content = url == null ? null : NPath.of(url);
         invalidateResult();
         return this;
@@ -234,8 +230,7 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
         result = null;
     }
 
-    protected void addResult(NId nid, String repository, NString source) {
-        NSession session=workspace.currentSession();
+    protected void addResult(NId nid, String repository, NText source) {
         if (result == null) {
             result = new ArrayList<>();
         }
@@ -250,7 +245,6 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
 
     @Override
     public NDeployCmd addIds(String... values) {
-        NSession session=workspace.currentSession();
         if (values != null) {
             for (String s : values) {
                 if (!NBlankable.isBlank(s)) {
@@ -297,14 +291,12 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
 
     @Override
     public NDeployCmd removeId(String id) {
-        NSession session=workspace.currentSession();
         ids.remove(NId.of(id).get());
         return this;
     }
 
     @Override
     public NDeployCmd addId(String id) {
-        NSession session=workspace.currentSession();
         if (!NBlankable.isBlank(id)) {
             ids.add(NId.of(id).get());
         }
@@ -318,7 +310,6 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NSession session=workspace.currentSession();
         NArg a = cmdLine.peek().get();
         if (a == null) {
             return false;

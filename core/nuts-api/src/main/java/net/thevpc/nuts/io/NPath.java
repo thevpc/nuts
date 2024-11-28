@@ -50,7 +50,7 @@ import java.util.function.Function;
  *
  * @app.category Input Output
  */
-public interface NPath extends NFormattable, NInputSource, NOutputTarget, NWorkspaceProvider {
+public interface NPath extends NInputSource, NOutputTarget, NWorkspaceProvider {
 
     static NPath of(URL path) {
         return NPaths.of().createPath(path);

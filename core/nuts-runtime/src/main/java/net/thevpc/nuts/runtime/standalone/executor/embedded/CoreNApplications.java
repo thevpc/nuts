@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.executor.embedded;
 
-import net.thevpc.nuts.NBootException;
+import net.thevpc.nuts.NWorkspaceException;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 
@@ -38,7 +38,7 @@ public class CoreNApplications {
                                 return appType.cast(o);
                             }
                         } else {
-                            throw new NBootException(NMsg.ofC("createApplicationInstance must return %s", appType.getName()));
+                            throw new NWorkspaceException(NMsg.ofC("createApplicationInstance must return %s", appType.getName()));
                         }
                         break;
                     }
@@ -65,13 +65,13 @@ public class CoreNApplications {
             if (c instanceof Error) {
                 throw (Error) c;
             }
-            throw new NBootException(NMsg.ofC("unable to instantiate application %s", appType.getName()), ex);
+            throw new NWorkspaceException(NMsg.ofC("unable to instantiate application %s", appType.getName()), ex);
         } catch (IllegalAccessException ex) {
-            throw new NBootException(NMsg.ofC("illegal access to default constructor for %s", appType.getName()), ex);
+            throw new NWorkspaceException(NMsg.ofC("illegal access to default constructor for %s", appType.getName()), ex);
         } catch (InvocationTargetException ex) {
-            throw new NBootException(NMsg.ofC("invocation exception for %s", appType.getName()), ex);
+            throw new NWorkspaceException(NMsg.ofC("invocation exception for %s", appType.getName()), ex);
         }
-        throw new NBootException(NMsg.ofC("missing application constructor one of : \n\t static createApplicationInstance(NutsSession,String[])\n\t Constructor(NutsSession,String[])\n\t Constructor()", appType.getName()));
+        throw new NWorkspaceException(NMsg.ofC("missing application constructor one of : \n\t static createApplicationInstance(NutsSession,String[])\n\t Constructor(NutsSession,String[])\n\t Constructor()", appType.getName()));
     }
 
     public static String getNutsAppVersion(Class cls) {

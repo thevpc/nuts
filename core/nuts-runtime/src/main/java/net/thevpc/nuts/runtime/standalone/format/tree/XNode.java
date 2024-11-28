@@ -35,7 +35,8 @@ import net.thevpc.nuts.elem.NArrayElement;
 import net.thevpc.nuts.elem.NElementEntry;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTexts;
 
 /**
@@ -44,14 +45,14 @@ import net.thevpc.nuts.text.NTexts;
  */
 public class XNode {
 
-    NString key;
+    NText key;
     Object value;
-    NString title;
+    NText title;
     NSession session;
     NWorkspace ws;
     XNodeFormatter format;
 
-    public static XNode root(Object destructedObject, NString title, NSession session, XNodeFormatter format) {
+    public static XNode root(Object destructedObject, NText title, NSession session, XNodeFormatter format) {
         return new XNode(null,
                 destructedObject, ((destructedObject instanceof List)
                 || (destructedObject instanceof Map)
@@ -63,11 +64,11 @@ public class XNode {
         return new XNode(null, destructedObject, null, session, format);
     }
 
-    public static XNode entryNode(NString key, Object destructedObject, NSession session, XNodeFormatter format) {
+    public static XNode entryNode(NText key, Object destructedObject, NSession session, XNodeFormatter format) {
         return new XNode(key, destructedObject, null, session, format);
     }
 
-    public XNode(NString key, Object destructedObject, NString title, NSession session, XNodeFormatter format) {
+    public XNode(NText key, Object destructedObject, NText title, NSession session, XNodeFormatter format) {
         if (destructedObject instanceof Map && ((Map) destructedObject).size() == 1) {
             value = ((Map) destructedObject).entrySet().toArray()[0];
         }else if (destructedObject instanceof NObjectElement && ((NObjectElement) destructedObject).size() == 1) {
@@ -86,14 +87,14 @@ public class XNode {
         return toNutsString().toString();
     }
 
-    public NString toNutsString() {
-        NString keyAsElement = format.stringValue(key, session);
-        NString[] p = format.getMultilineArray(keyAsElement, value, session);
+    public NText toNutsString() {
+        NText keyAsElement = format.stringValue(key, session);
+        NText[] p = format.getMultilineArray(keyAsElement, value, session);
         if (p != null) {
             return keyAsElement;
         }
-        NString _title = resolveTitle();
-        NString titleOrValueAsElement = null;
+        NText _title = resolveTitle();
+        NText titleOrValueAsElement = null;
         if(getChildren()==null || getChildren().isEmpty()){
             titleOrValueAsElement = format.stringValue(_title != null ? _title : value, session);
         }else{
@@ -103,14 +104,14 @@ public class XNode {
             return titleOrValueAsElement;
         } else {
             if (isList(value) || isMap(value)) {
-                return NTexts.of().ofBuilder().append(keyAsElement);
+                return NTextBuilder.of().append(keyAsElement);
             } else {
-                return NTexts.of().ofBuilder().append(keyAsElement).append("=").append(titleOrValueAsElement);
+                return NTextBuilder.of().append(keyAsElement).append("=").append(titleOrValueAsElement);
             }
         }
     }
 
-    private NString resolveTitle() {
+    private NText resolveTitle() {
         if (title != null) {
             return title;
         }
@@ -216,8 +217,8 @@ public class XNode {
             Map<Object, Object> m = (Map<Object, Object>) value;
             List<XNode> all = new ArrayList<>();
             for (Map.Entry<Object, Object> me : m.entrySet()) {
-                NString keyStr = format.stringValue(me.getKey(), session);
-                NString[] map = format.getMultilineArray(keyStr, me.getValue(), session);
+                NText keyStr = format.stringValue(me.getKey(), session);
+                NText[] map = format.getMultilineArray(keyStr, me.getValue(), session);
                 if (map == null) {
                     all.add(entryNode(keyStr, me.getValue(), session, format));
                 } else {
@@ -231,8 +232,8 @@ public class XNode {
             NObjectElement m = (NObjectElement) value;
             List<XNode> all = new ArrayList<>();
             for (NElementEntry me : m) {
-                NString keyStr = format.stringValue(me.getKey(), session);
-                NString[] map = format.getMultilineArray(keyStr, me.getValue(), session);
+                NText keyStr = format.stringValue(me.getKey(), session);
+                NText[] map = format.getMultilineArray(keyStr, me.getValue(), session);
                 if (map == null) {
                     all.add(entryNode(keyStr, me.getValue(), session, format));
                 } else {

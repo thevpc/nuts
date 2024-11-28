@@ -35,7 +35,7 @@ import java.util.Set;
  */
 public interface NImports extends NComponent {
     static NImports of() {
-        return NExtensions.of().createComponent(NImports.class).get();
+        return NExtensions.of(NImports.class);
     }
 
     NImports addImports(String... importExpression);

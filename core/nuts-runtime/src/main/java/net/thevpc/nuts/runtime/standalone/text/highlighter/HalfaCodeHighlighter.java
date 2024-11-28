@@ -1,10 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
-import net.thevpc.nuts.NCodeHighlighter;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
-import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.*;
 

@@ -25,9 +25,8 @@
  */
 package net.thevpc.nuts.cmdline;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.format.NFormattable;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.NShellFamily;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
@@ -100,7 +99,7 @@ import java.util.function.Consumer;
  * @app.category Command Line
  * @since 0.5.5
  */
-public interface NCmdLine extends Iterable<NArg>, NFormattable, NBlankable {
+public interface NCmdLine extends Iterable<NArg>, NBlankable {
 
     static NCmdLine of(String[] args) {
         return new DefaultNCmdLine(args);
@@ -252,7 +251,7 @@ public interface NCmdLine extends Iterable<NArg>, NFormattable, NBlankable {
      * @param errorMessage message to throw
      * @return {@code this} instance
      */
-    NCmdLine throwUnexpectedArgument(NString errorMessage);
+    NCmdLine throwUnexpectedArgument(NText errorMessage);
 
     /**
      * throw exception if command line is not empty
@@ -626,9 +625,7 @@ public interface NCmdLine extends Iterable<NArg>, NFormattable, NBlankable {
      *
      * @param message message
      */
-    void throwError(NString message);
-
-    NCmdLineFormat formatter();
+    void throwError(NText message);
 
     /**
      * add new argument (ignoring null values)

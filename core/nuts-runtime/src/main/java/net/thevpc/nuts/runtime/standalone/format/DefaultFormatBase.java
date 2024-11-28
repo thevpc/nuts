@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.standalone.format;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NFormat;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
 
 import java.io.File;
@@ -58,15 +58,15 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
     }
 
     @Override
-    public NString format() {
+    public NText format() {
         if (isNtf()) {
             NPrintStream out = NMemoryPrintStream.of(NTerminalMode.FORMATTED);
             print(out);
-            return NTexts.of().parse(out.toString());
+            return NText.of(out.toString());
         } else {
             NPrintStream out = NMemoryPrintStream.of(NTerminalMode.INHERITED);
             print(out);
-            return NTexts.of().ofPlain(out.toString());
+            return NText.ofPlain(out.toString());
         }
     }
 

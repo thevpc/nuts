@@ -21,7 +21,7 @@ import java.io.InputStream;
 /**
  * @author thevpc
  */
-public class InputStreamExt extends InputStream implements NInterruptible<InputStream>, NFormattable, NContentMetadataProvider {
+public class InputStreamExt extends InputStream implements NInterruptible<InputStream>, NContentMetadataProvider {
 
     private InputStream base;
     private NContentMetadata md;
@@ -283,9 +283,8 @@ public class InputStreamExt extends InputStream implements NInterruptible<InputS
     }
 
 
-    @Override
-    public NFormat formatter() {
-        return NFormat.of(new NContentMetadataProviderFormatSPI(this, sourceName,"input-stream"));
+    public NMsg getSourceName() {
+        return sourceName;
     }
 
     @Override

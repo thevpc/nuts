@@ -1,7 +1,6 @@
 package net.thevpc.nuts.toolbox.nutsserver;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -177,7 +176,7 @@ public class NServerMain implements NApplication {
                         nSession = server.workspaces.get(wsContext);
                         if (nSession == null) {
                             nSession = Nuts.openWorkspace(
-                                    new DefaultNWorkspaceOptionsBuilder()
+                                    NWorkspaceOptionsBuilder.of()
                                             .setWorkspace(wsLocation)
                                             .setOpenMode(NOpenMode.OPEN_OR_ERROR)
                                             .setReadOnly(server.readOnly)

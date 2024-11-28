@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.uninstall;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.util.NCoreCollectionUtils;
@@ -39,14 +40,12 @@ public abstract class AbstractNUninstallCmd extends NWorkspaceCmdBase<NUninstall
 
     @Override
     public NUninstallCmd addId(String id) {
-        NSession session=workspace.currentSession();
         return addId(id == null ? null : NId.of(id).get());
     }
 
     @Override
     public NUninstallCmd addId(NId id) {
         if (id == null) {
-            NSession session=workspace.currentSession();
             throw new NNotFoundException(id);
         } else {
             ids.add(id);
@@ -80,7 +79,6 @@ public abstract class AbstractNUninstallCmd extends NWorkspaceCmdBase<NUninstall
 
     @Override
     public NUninstallCmd removeId(String id) {
-        NSession session=workspace.currentSession();
         return removeId(NId.of(id).get());
     }
 
@@ -150,7 +148,6 @@ public abstract class AbstractNUninstallCmd extends NWorkspaceCmdBase<NUninstall
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NSession session=workspace.currentSession();
         NArg aa = cmdLine.peek().get();
         if (aa == null) {
             return false;

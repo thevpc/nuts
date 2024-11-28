@@ -39,7 +39,7 @@ import java.util.Collection;
  */
 public interface NUpdateStatsCmd extends NWorkspaceCmd {
     static NUpdateStatsCmd of() {
-        return NExtensions.of().createComponent(NUpdateStatsCmd.class).get();
+        return NExtensions.of(NUpdateStatsCmd.class);
     }
 
     NUpdateStatsCmd clearRepos();

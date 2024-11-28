@@ -67,7 +67,7 @@ public abstract class AbstractNExecutableInformationExt implements NExecutableIn
 
     @Override
     public NText getHelpText() {
-        return NTexts.of().ofStyled(
+        return NText.ofStyled(
                 "No help available. Try '" + getName() + " --help'",
                 NTextStyle.error()
         );

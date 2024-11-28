@@ -32,7 +32,7 @@ import net.thevpc.nuts.ext.NExtensions;
  */
 public interface NInstallStatusFilters extends NTypedFilters<NInstallStatusFilter> {
     static NInstallStatusFilters of() {
-       return NExtensions.of().createComponent(NInstallStatusFilters.class).get();
+       return NExtensions.of(NInstallStatusFilters.class);
     }
 
     NInstallStatusFilter byInstalled(boolean value);

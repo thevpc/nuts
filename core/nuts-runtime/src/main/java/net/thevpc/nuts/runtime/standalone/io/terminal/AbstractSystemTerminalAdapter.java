@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.io.NPrintStream;
@@ -10,6 +11,7 @@ import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.spi.NSystemTerminalBaseImpl;
 import net.thevpc.nuts.text.NTerminalCmd;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
@@ -147,7 +149,7 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
                 getProgressBar(session).printProgress(
                         Float.isNaN(progress) ? -1
                                 : (int) (progress * 100),
-                        NTexts.of().ofText(message),
+                        NText.of(message),
                         err()
                 );
             }

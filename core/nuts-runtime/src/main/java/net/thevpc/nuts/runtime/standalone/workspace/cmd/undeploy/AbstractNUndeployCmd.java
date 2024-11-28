@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.undeploy;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NContentType;
@@ -44,13 +45,11 @@ public abstract class AbstractNUndeployCmd extends NWorkspaceCmdBase<NUndeployCm
 
     @Override
     public NUndeployCmd addId(String id) {
-        NSession session=workspace.currentSession();
         return addId(NBlankable.isBlank(id) ? null : NId.of(id).get());
     }
 
     @Override
     public NUndeployCmd addIds(String... values) {
-        NSession session=workspace.currentSession();
         if (values != null) {
             for (String s : values) {
                 if (!NBlankable.isBlank(s)) {
@@ -150,7 +149,6 @@ public abstract class AbstractNUndeployCmd extends NWorkspaceCmdBase<NUndeployCm
                     return false;
                 } else {
                     cmdLine.skip();
-                    NSession session=workspace.currentSession();
                     addId(aa.asString().get());
                     return true;
                 }

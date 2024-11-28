@@ -6,7 +6,7 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.DefaultNBootOptionsBuilder;
+import net.thevpc.nuts.runtime.standalone.DefaultNBootOptionsBuilder;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;

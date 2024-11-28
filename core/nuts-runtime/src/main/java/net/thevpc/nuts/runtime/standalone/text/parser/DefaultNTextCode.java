@@ -65,7 +65,10 @@ public class DefaultNTextCode extends NTextSpecialBase implements NTextCode {
                 .resolveCodeHighlighter(getKind());
         return t.stringToText(text, txt);
     }
-
+    @Override
+    public NText immutable() {
+        return this;
+    }
     @Override
     public NTextType getType() {
         return NTextType.CODE;

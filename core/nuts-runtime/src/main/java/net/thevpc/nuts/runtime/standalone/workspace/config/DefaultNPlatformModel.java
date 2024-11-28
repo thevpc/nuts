@@ -5,6 +5,7 @@ import net.thevpc.nuts.env.NPlatformFamily;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.text.NTexts;
@@ -64,7 +65,7 @@ public class DefaultNPlatformModel {
             if (notify) {
                 if (session.isPlainTrace()) {
                     session.out().resetLine().println(NMsg.ofC("%s %s %s (%s) %s at %s",
-                            NTexts.of().ofStyled("install", NTextStyles.of(NTextStyle.success())),
+                            NText.ofStyledSuccess("install"),
                             location.getId().getShortName(),
                             location.getPackaging(),
                             location.getProduct(),

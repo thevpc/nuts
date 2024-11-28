@@ -42,7 +42,7 @@ import java.util.List;
  */
 public interface NWorkspaceSecurityManager extends NComponent {
     static NWorkspaceSecurityManager of() {
-        return NExtensions.of().createComponent(NWorkspaceSecurityManager.class).get();
+        return NExtensions.of(NWorkspaceSecurityManager.class);
     }
 
     /**

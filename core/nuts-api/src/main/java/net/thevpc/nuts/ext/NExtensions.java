@@ -40,6 +40,10 @@ import java.util.Set;
  * @since 0.5.4
  */
 public interface NExtensions extends NComponent  {
+    static <T extends NComponent> T of(Class<T> type) {
+        return of().createComponent(type).get();
+    }
+
     static NExtensions of() {
         return NWorkspace.of().get().extensions();
     }

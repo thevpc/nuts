@@ -26,6 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.security;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import com.sun.security.auth.UserPrincipal;

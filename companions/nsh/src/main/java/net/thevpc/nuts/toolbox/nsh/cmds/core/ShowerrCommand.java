@@ -32,6 +32,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinCore;
@@ -88,29 +89,23 @@ public class ShowerrCommand extends NShellBuiltinCore {
     @Override
     protected void main(NCmdLine cmdLine, NShellExecutionContext context) {
         NShellResult r = context.getShellContext().getLastResult();
-        NPrintStream out = context.getSession().out();
+        NPrintStream out = context.out();
         switch (context.getSession().getOutputFormat().orDefault()) {
             case PLAIN: {
                 if (r.getCode() == 0) {
                     out.println(
-                            NTexts.of().ofStyled(
-                                    "last command ended successfully with no errors.", NTextStyle.success()
+                            NText.ofStyledSuccess(
+                                    "last command ended successfully with no errors."
                             ));
                 } else {
                     out.println(
-                            NTexts.of()
-                                    .ofStyled("last command ended abnormally with the following error :", NTextStyle.error())
+                            NText.ofStyledError("last command ended abnormally with the following error :")
                     );
                     if (r.getMessage() != null) {
-                        out.println(NTexts.of()
-                                .ofStyled(r.getMessage(), NTextStyle.error()
-                                ));
+                        out.println(NText.ofStyledError(r.getMessage()));
                     }
                     if (r.getStackTrace() != null) {
-                        context.err().println(
-                                NTexts.of()
-                                        .ofStyled(r.getStackTrace(), NTextStyle.error())
-                        );
+                        context.err().println(NText.ofStyledError(r.getStackTrace()));
                     }
                 }
                 break;

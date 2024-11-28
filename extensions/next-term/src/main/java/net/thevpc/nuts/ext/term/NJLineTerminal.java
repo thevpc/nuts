@@ -145,16 +145,16 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
             case LINK: {
                 NTextLink p = (NTextLink) n;
                 return toAttributedString(
-                        NTexts.of().ofPlain(p.getText()),
+                        NText.ofPlain(p.getText()),
                         styles.append(NTextStyle.underlined())
                 );
             }
             case INCLUDE: {
                 NTextLink p = (NTextLink) n;
                 return toAttributedString(
-                        NTexts.of().ofList(
-                                NTexts.of().ofPlain("include"),
-                                NTexts.of().ofPlain(p.getText())
+                        NText.ofList(
+                                NText.ofPlain("include"),
+                                NText.ofPlain(p.getText())
                         ),
                         styles.append(NTextStyle.danger())
                 );
@@ -209,7 +209,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
                         if (NBlankable.isBlank(ct)) {
                             ct = "system";
                         }
-                        NText n = NTexts.of().ofCode(ct, buffer).highlight();
+                        NText n = NText.ofCode(ct, buffer).highlight();
                         return toAttributedString(n, NTextStyles.PLAIN);
                     }
 
@@ -282,7 +282,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
 //        }
         String readLine = null;
         try {
-            readLine = reader.readLine(NTexts.of().ofText(message).toString());
+            readLine = reader.readLine(NText.of(message).toString());
         } catch (UserInterruptException e) {
             throw new NJLineInterruptException();
         }
@@ -298,11 +298,11 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     public char[] readPassword(NPrintStream out, NMsg message) {
         prepare();
         if (out == null) {
-            return reader.readLine(NTexts.of().ofText(message).toString(), '*').toCharArray();
+            return reader.readLine(NText.of(message).toString(), '*').toCharArray();
         } else {
             //should I use some out??
         }
-        return reader.readLine(NTexts.of().ofText(message).toString(), '*').toCharArray();
+        return reader.readLine(NText.of(message).toString(), '*').toCharArray();
     }
 
     @Override

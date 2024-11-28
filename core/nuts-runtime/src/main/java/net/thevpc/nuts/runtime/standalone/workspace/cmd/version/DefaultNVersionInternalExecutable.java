@@ -8,9 +8,9 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.version;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
+import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmd;
-import net.thevpc.nuts.util.NUtils;
 
 /**
  *
@@ -25,7 +25,7 @@ public class DefaultNVersionInternalExecutable extends DefaultInternalNExecutabl
     @Override
     public int execute() {
         NSession session = workspace.currentSession();
-        boolean dry = NUtils.asBoolean(getExecCommand().getDry());
+        boolean dry = ExtraApiUtils.asBoolean(getExecCommand().getDry());
         if(dry){
             dryExecute();
             return NExecutionException.SUCCESS;

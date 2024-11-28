@@ -28,6 +28,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
 import org.junit.jupiter.api.*;
 
@@ -56,8 +57,8 @@ public class Test17_JsonTest {
 //        TestUtils.println(NutsTexts.of(session).forPlain("a@@@"));
 //        TestUtils.println(NutsTexts.of(session).forPlain("a@@@").filteredText());
 
-        TestUtils.println(NTexts.of().ofPlain("a##@"));
-        TestUtils.println(NTexts.of().ofPlain("a##@").filteredText());
+        TestUtils.println(NText.ofPlain("a##@"));
+        TestUtils.println(NText.ofPlain("a##@").filteredText());
 
     }
 
@@ -217,8 +218,8 @@ public class Test17_JsonTest {
 //        TestUtils.println(NutsTexts.of(session).forPlain("a@@@"));
 //        TestUtils.println(NutsTexts.of(session).forPlain("a@@@").filteredText());
 
-        TestUtils.println(NTexts.of().ofPlain("a##@"));
-        TestUtils.println(NTexts.of().ofPlain("a##@").filteredText());
+        TestUtils.println(NText.ofPlain("a##@"));
+        TestUtils.println(NText.ofPlain("a##@").filteredText());
 
     }
 

@@ -9,8 +9,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
+import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
-import net.thevpc.nuts.util.NUtils;
 
 /**
  *
@@ -28,7 +28,7 @@ public class DefaultNInfoInternalExecutable extends DefaultInternalNExecutableCo
         session = NSessionUtils.configureCopyOfSession(session, getExecCommand().getIn(), getExecCommand().getOut(),getExecCommand().getErr());
         NSession finalSession = session;
         return session.callWith(()->{
-            boolean dry = NUtils.asBoolean(getExecCommand().getDry());
+            boolean dry = ExtraApiUtils.asBoolean(getExecCommand().getDry());
             if(dry){
                 dryExecute();
                 return NExecutionException.SUCCESS;

@@ -26,9 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NOptional;
 
 /**
  * Base Nuts Exception Interface. Parent of all Nuts defined Exceptions.
@@ -38,9 +36,6 @@ import net.thevpc.nuts.util.NOptional;
  * @since 0.5.4
  */
 public interface NExceptionBase {
-    static NOptional<NExceptionBase> resolveExceptionBase(Throwable th) {
-        return NReservedLangUtils.findThrowable(th, NExceptionBase.class, null);
-    }
 
 
     NMsg getFormattedMessage();

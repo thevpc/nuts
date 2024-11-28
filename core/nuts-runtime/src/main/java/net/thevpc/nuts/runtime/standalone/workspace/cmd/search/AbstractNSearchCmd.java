@@ -25,6 +25,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.search;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NEDesc;
@@ -822,7 +824,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     @Override
     public NStream<String> getResultProfile() {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
-                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getCondition().getProfile()))
+                .mapMulti(NFunction.of((NDefinition x) -> Arrays.asList(x.getDescriptor().getCondition().getProfiles()))
                         .withDesc(NEDesc.of("getProfile"))
                 )
                 .notBlank()

@@ -29,10 +29,7 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.format.NFormattable;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.text.NString;
-import net.thevpc.nuts.text.NTextBuilder;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NQuoteType;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -50,13 +47,13 @@ import java.util.stream.Collectors;
 
 public class NTextUtils {
 
-    public static NString stringValueFormatted(Object o, boolean escapeString) {
+    public static NText stringValueFormatted(Object o, boolean escapeString) {
         NTexts txt = NTexts.of();
         if (o == null) {
             return txt.ofBlank();
         }
         if (o instanceof NFormattable) {
-            return txt.ofText(o);
+            return txt.of(o);
         }
         if (o instanceof NPrimitiveElement) {
             o = ((NPrimitiveElement) o).getRaw();
@@ -81,12 +78,12 @@ public class NTextUtils {
 
         } else if (o instanceof NElementEntry) {
             NElementEntry ne = (NElementEntry) o;
-            NTextBuilder sb = NTexts.of().ofBuilder();
+            NTextBuilder sb = NTextBuilder.of();
             sb.append(stringValueFormatted(ne.getKey(), escapeString));
             sb.append("=");
             if (ne.getValue().type() == NElementType.STRING) {
                 sb.append(
-                        txt.ofText(
+                        txt.of(
                                 NStringUtils.formatStringLiteral(stringValueFormatted(ne.getValue(), escapeString).toString(), NQuoteType.DOUBLE)
                         ));
 //            } else if (ne.getValue().type() == NutsElementType.NUTS_STRING) {
@@ -97,13 +94,13 @@ public class NTextUtils {
             o = sb.toString();
         } else if (o instanceof Map.Entry) {
             Map.Entry ne = (Map.Entry) o;
-            NTextBuilder sb = NTexts.of().ofBuilder();
+            NTextBuilder sb = NTextBuilder.of();
             sb.append(stringValueFormatted(ne.getKey(), escapeString));
             sb.append("=");
             if (ne.getValue() instanceof String
                     || (ne.getValue() instanceof NElement && ((NElement) ne.getValue()).isString())) {
                 sb.append(
-                        txt.ofText(
+                        txt.of(
                                 NStringUtils.formatStringLiteral(stringValueFormatted(ne.getValue(), escapeString).toString(), NQuoteType.DOUBLE)
                         )
                 );
@@ -143,7 +140,7 @@ public class NTextUtils {
             if (a.length == 1) {
                 return txt.ofPlain(CoreStringUtils.stringValue(a[0]));
             }
-            List<NString> ll = ((Collection<Object>) c).stream().map(x -> stringValueFormatted(x, escapeString)).collect(Collectors.toList());
+            List<NText> ll = ((Collection<Object>) c).stream().map(x -> stringValueFormatted(x, escapeString)).collect(Collectors.toList());
             return txt.ofBuilder()
                     .append("[")
                     .appendJoined(
@@ -161,7 +158,7 @@ public class NTextUtils {
             if (a.length == 1) {
                 return txt.ofPlain(CoreStringUtils.stringValue(a[0]));
             }
-            List<NString> ll = Arrays.stream(a).map(x -> stringValueFormatted(x, escapeString)).collect(Collectors.toList());
+            List<NText> ll = Arrays.stream(a).map(x -> stringValueFormatted(x, escapeString)).collect(Collectors.toList());
             return txt.ofBuilder()
                     .append("{")
                     .appendJoined(
@@ -178,7 +175,7 @@ public class NTextUtils {
             if (len == 1) {
                 return stringValueFormatted(Array.get(o, 0), escapeString);
             }
-            List<NString> all = new ArrayList<>(len);
+            List<NText> all = new ArrayList<>(len);
             for (int i = 0; i < len; i++) {
                 all.add(stringValueFormatted(Array.get(o, i), escapeString));
             }
@@ -203,12 +200,12 @@ public class NTextUtils {
             }
             return stringValueFormatted(all, escapeString);
         }
-        return txt.ofText(o);
+        return txt.of(o);
     }
 
-    public static NString formatLogValue(NTexts text, Object unresolved, Object resolved) {
-        NString a = desc(unresolved, text);
-        NString b = desc(resolved, text);
+    public static NText formatLogValue(NTexts text, Object unresolved, Object resolved) {
+        NText a = desc(unresolved, text);
+        NText b = desc(resolved, text);
         if (a.equals(b)) {
             return a;
         } else {
@@ -221,10 +218,10 @@ public class NTextUtils {
         }
     }
 
-    public static NString desc(Object s, NTexts text) {
+    public static NText desc(Object s, NTexts text) {
         if (s == null || (s instanceof String && ((String) s).isEmpty())) {
             return text.ofStyled("<EMPTY>", NTextStyle.option());
         }
-        return text.ofText(s);
+        return text.of(s);
     }
 }

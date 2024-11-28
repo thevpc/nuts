@@ -32,7 +32,7 @@ import java.util.List;
 
 public interface NDependencySolvers extends NComponent {
     static NDependencySolvers of() {
-       return NExtensions.of().createComponent(NDependencySolvers.class).get();
+       return NExtensions.of(NDependencySolvers.class);
     }
 
     NDependencySolver createSolver();

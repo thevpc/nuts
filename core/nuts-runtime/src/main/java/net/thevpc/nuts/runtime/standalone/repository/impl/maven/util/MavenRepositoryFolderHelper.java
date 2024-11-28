@@ -50,6 +50,7 @@ import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.DefaultNVersion;
 import net.thevpc.nuts.runtime.standalone.repository.NIdPathIterator;
 import net.thevpc.nuts.runtime.standalone.repository.NIdPathIteratorBase;
+import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLog;
@@ -105,7 +106,7 @@ public class MavenRepositoryFolderHelper {
 
     public NPath getLocalGroupAndArtifactFile(NId id, NSession session) {
         CoreNIdUtils.checkShortId(id);
-        return getStoreLocation().resolve(net.thevpc.nuts.util.NIdUtils.resolveIdPath(id.getShortId()));
+        return getStoreLocation().resolve(ExtraApiUtils.resolveIdPath(id.getShortId()));
     }
 
     public Iterator<NId> searchVersions(NId id, final NIdFilter filter, boolean deep, NSession session) {

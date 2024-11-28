@@ -108,7 +108,6 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
 
     @Override
     public NElement defaultObjectToElement(Object o, Type expectedType) {
-        NSession session=workspace.currentSession();
         if (o != null) {
             RefItem ro = new RefItem(o, "defaultObjectToElement");
             if (visited.contains(ro)) {
@@ -126,7 +125,6 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
 
     @Override
     public Object defaultDestruct(Object o, Type expectedType) {
-        NSession session=workspace.currentSession();
         if (o != null) {
             RefItem ro = new RefItem(o, "defaultDestruct");
             if (visited.contains(ro)) {
@@ -144,7 +142,6 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
 
     @Override
     public NElement objectToElement(Object o, Type expectedType) {
-        NSession session=workspace.currentSession();
         if (o != null) {
             RefItem ro = new RefItem(o, "objectToElement");
             if (visited.contains(ro)) {
@@ -163,7 +160,6 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
 
     @Override
     public Object destruct(Object o, Type expectedType) {
-        NSession session=workspace.currentSession();
         if (o != null) {
             RefItem ro = new RefItem(o, "destruct");
             if (visited.contains(ro)) {

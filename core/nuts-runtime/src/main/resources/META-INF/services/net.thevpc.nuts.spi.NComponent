@@ -60,6 +60,12 @@ net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs
 net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions
 net.thevpc.nuts.runtime.standalone.web.DefaultNWebCli
 
+net.thevpc.nuts.runtime.standalone.DefaultNBootOptionsBuilder
+net.thevpc.nuts.runtime.standalone.DefaultNDependencyBuilder
+net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder
+net.thevpc.nuts.runtime.standalone.DefaultNEnvConditionBuilder
+net.thevpc.nuts.runtime.standalone.DefaultNIdBuilder
+net.thevpc.nuts.runtime.standalone.DefaultNWorkspaceOptionsBuilder
 
 ##################### Utilities
 net.thevpc.nuts.runtime.standalone.app.NAppImpl
@@ -77,10 +83,12 @@ net.thevpc.nuts.runtime.standalone.format.props.DefaultNPropertiesFormat
 net.thevpc.nuts.runtime.standalone.format.table.DefaultTableFormat
 net.thevpc.nuts.runtime.standalone.format.table.DefaultNMutableTableModel
 net.thevpc.nuts.runtime.standalone.format.tree.DefaultNTreeFormat
+net.thevpc.nuts.runtime.standalone.format.NFormatsImpl
 net.thevpc.nuts.runtime.standalone.id.format.DefaultNIdFormat
 net.thevpc.nuts.runtime.standalone.descriptor.format.DefaultNDescriptorFormat
 net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionFormat
 net.thevpc.nuts.runtime.standalone.dependency.format.DefaultNDependencyFormat
+
 net.thevpc.nuts.runtime.standalone.elem.DefaultNElements
 net.thevpc.nuts.runtime.standalone.text.DefaultNTexts
 net.thevpc.nuts.runtime.standalone.text.highlighter.JavaCodeHighlighter
@@ -114,7 +122,7 @@ net.thevpc.nuts.runtime.standalone.xtra.compress.DefaultNCompress
 net.thevpc.nuts.runtime.standalone.xtra.compress.DefaultNUncompress
 net.thevpc.nuts.runtime.standalone.xtra.scheduler.DefaultNScheduler
 net.thevpc.nuts.runtime.standalone.descriptor.parser.DefaultNDescriptorParser
-net.thevpc.nuts.DefaultNArtifactCallBuilder
+net.thevpc.nuts.runtime.standalone.DefaultNArtifactCallBuilder
 
 net.thevpc.nuts.runtime.standalone.id.filter.InternalNIdFilters
 net.thevpc.nuts.runtime.standalone.version.filter.InternalNVersionFilters

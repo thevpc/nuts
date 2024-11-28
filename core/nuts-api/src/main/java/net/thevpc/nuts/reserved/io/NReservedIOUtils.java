@@ -27,8 +27,8 @@
 package net.thevpc.nuts.reserved.io;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NBootOptions;
-import net.thevpc.nuts.boot.NBootOptionsBuilder;
+import net.thevpc.nuts.NBootOptions;
+import net.thevpc.nuts.NBootOptionsBuilder;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.NNoSessionCancelException;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
@@ -412,7 +412,7 @@ public class NReservedIOUtils {
                 }
             });
             byte[] digest = md.digest();
-            return NStringUtils.toHexString(digest);
+            return NHex.toHexString(digest);
         } catch (Exception e) {
             return null;
         }
@@ -436,7 +436,7 @@ public class NReservedIOUtils {
                 md.update(bytes, 0, numBytes);
             }
             byte[] digest = md.digest();
-            return NStringUtils.toHexString(digest);
+            return NHex.toHexString(digest);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
@@ -541,7 +541,7 @@ public class NReservedIOUtils {
                         if (bOptions.getConfirm().orElse(NConfirmationMode.ASK) == NConfirmationMode.YES) {
                             line = "y";
                         } else {
-                            throw new NBootException(NMsg.ofPlain("failed to delete files in --bot mode without auto confirmation"));
+                            throw new NIllegalArgumentException(NMsg.ofPlain("failed to delete files in --bot mode without auto confirmation"));
                         }
                     } else {
                         if (bOptions.getGui().orElse(false)) {
@@ -561,7 +561,7 @@ public class NReservedIOUtils {
                                     break;
                                 }
                                 case ERROR: {
-                                    throw new NBootException(NMsg.ofPlain("error response"));
+                                    throw new NIllegalArgumentException(NMsg.ofPlain("error response"));
                                 }
                                 case ASK: {
                                     // Level.OFF is to force logging in all cases
@@ -661,7 +661,7 @@ public class NReservedIOUtils {
         NConfirmationMode confirm = o.getConfirm().orElse(NConfirmationMode.ASK);
         if (confirm == NConfirmationMode.ASK
                 && o.getOutputFormat().orElse(NContentType.PLAIN) != NContentType.PLAIN) {
-            throw new NBootException(
+            throw new NExecutionException(
                     NMsg.ofPlain("unable to switch to interactive mode for non plain text output format. "
                             + "You need to provide default response (-y|-n) for resetting/recovering workspace. "
                             + "You was asked to confirm deleting folders as part as recover/reset option."), NExecutionException.ERROR_255);
@@ -702,7 +702,7 @@ public class NReservedIOUtils {
                 } else if (ovalue instanceof File) {
                     folders.add(((File) ovalue).toPath());
                 } else {
-                    throw new NBootException(NMsg.ofC("unsupported path type : %s", ovalue));
+                    throw new NIllegalArgumentException(NMsg.ofC("unsupported path type : %s", ovalue));
                 }
             }
         }

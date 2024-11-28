@@ -1,6 +1,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.posix.grep;
 
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.text.NTexts;
@@ -36,7 +37,7 @@ public class PatternGrepFilter implements GrepFilter {
             int pos = matcher.start();
             int end = matcher.end();
             coloredLine.replace(pos, end,
-                    NTexts.of().ofStyled(
+                    NText.ofStyled(
                             coloredLine.substring(pos, end)
                             , selectionStyle
                     )

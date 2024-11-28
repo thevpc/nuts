@@ -17,7 +17,7 @@ import java.util.List;
  */
 public interface NIORPI extends NComponent {
     static NIORPI of() {
-        return NExtensions.of().createComponent(NIORPI.class).get();
+        return NExtensions.of(NIORPI.class);
     }
 
     <T> NAsk<T> createQuestion();

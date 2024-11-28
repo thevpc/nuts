@@ -9,12 +9,12 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecHelper;
+import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -74,7 +74,7 @@ public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt 
                 execCommand.getErr(),
                 execCommand.getRunAs(),
                 executorOptions.toArray(new String[0]),
-                NUtils.asBooleanOr(execCommand.getDry(),NSession.get().isDry()), workspace
+                ExtraApiUtils.asBooleanOr(execCommand.getDry(),NSession.get().isDry()), workspace
         );
     }
 
@@ -89,14 +89,14 @@ public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt 
     public NText getHelpText() {
         switch (NEnvs.of().getOsFamily()) {
             case WINDOWS: {
-                return NTexts.of().ofStyled(
+                return NText.ofStyled(
                         "No help available. Try " + getName() + " /help",
                         NTextStyle.error()
                 );
             }
             default: {
                 return
-                        NTexts.of().ofStyled(
+                        NText.ofStyled(
                                 "No help available. Try 'man " + getName() + "' or '" + getName() + " --help'",
                                 NTextStyle.error()
                         );

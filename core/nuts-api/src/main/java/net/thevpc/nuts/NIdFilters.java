@@ -33,7 +33,7 @@ import net.thevpc.nuts.ext.NExtensions;
  */
 public interface NIdFilters extends NTypedFilters<NIdFilter> {
     static NIdFilters of() {
-       return NExtensions.of().createComponent(NIdFilters.class).get();
+       return NExtensions.of(NIdFilters.class);
     }
 
     NIdFilter byValue(NId id);

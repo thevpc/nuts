@@ -38,8 +38,12 @@ import net.thevpc.nuts.spi.NComponent;
  * @since 0.5.4
  */
 public interface NDescriptorFormat extends NFormat, NComponent {
+    static NDescriptorFormat of(NDescriptor value) {
+        return of().setValue(value);
+    }
+
     static NDescriptorFormat of() {
-       return NExtensions.of().createComponent(NDescriptorFormat.class).get();
+        return NExtensions.of(NDescriptorFormat.class);
     }
 
     /**

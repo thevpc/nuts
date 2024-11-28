@@ -28,6 +28,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NIteratorBase;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -108,11 +109,11 @@ public class NIdPathIterator extends NIteratorBase<NId> {
                     children = file.path.stream().toArray(NPath[]::new);
                 } catch (NIOException ex) {
                     //just log without stack trace!
-                    session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s %s", repository.getName(), kind, "search folder", file.path.toCompressedForm(), NTexts.of().ofStyled("failed!", NTextStyle.error())));
+                    session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s %s", repository.getName(), kind, "search folder", file.path.toCompressedForm(), NText.ofStyledError("failed!")));
                     NLogOp.of(NIdPathIterator.class).level(Level.FINE)//.error(ex)
                             .log(NMsg.ofJ("error listing : {0} : {1} : {2}", file.path, toString(), ex.toString()));
                 } catch (Exception ex) {
-                    session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s %s", repository.getName(), kind, "search folder", file.path.toCompressedForm(), NTexts.of().ofStyled("failed!", NTextStyle.error())));
+                    session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s %s", repository.getName(), kind, "search folder", file.path.toCompressedForm(), NText.ofStyledError("failed!")));
                     NLogOp.of(NIdPathIterator.class).level(Level.FINE).error(ex)
                             .log(NMsg.ofJ("error listing : {0} : {1}", file.path, toString()));
                 }

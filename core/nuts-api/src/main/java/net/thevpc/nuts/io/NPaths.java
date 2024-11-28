@@ -12,7 +12,7 @@ import java.nio.file.Path;
 
 public interface NPaths extends NComponent {
     static NPaths of() {
-        return NExtensions.of().createComponent(NPaths.class).get();
+        return NExtensions.of(NPaths.class);
     }
 
     /**

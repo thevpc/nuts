@@ -37,7 +37,7 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class NNonBlockingInputStreamAdapter extends FilterInputStream implements NNonBlockingInputStream, NInterruptible<InputStream>, NFormattable, NContentMetadataProvider {
+public class NNonBlockingInputStreamAdapter extends FilterInputStream implements NNonBlockingInputStream, NInterruptible<InputStream>, NContentMetadataProvider {
 
     private boolean hasMoreBytes = true;
     private boolean closed = false;
@@ -252,10 +252,8 @@ public class NNonBlockingInputStreamAdapter extends FilterInputStream implements
         return md;
     }
 
-
-    @Override
-    public NFormat formatter() {
-        return NFormat.of(new NContentMetadataProviderFormatSPI(this, sourceName, "input-stream"));
+    public NMsg getSourceName() {
+        return sourceName;
     }
 
     @Override

@@ -49,7 +49,7 @@ import java.util.Set;
 public interface NSearchCmd extends NWorkspaceCmd {
 
     static NSearchCmd of() {
-        return NExtensions.of().createComponent(NSearchCmd.class).get();
+        return NExtensions.of(NSearchCmd.class);
     }
 
     NOptional<NFetchStrategy> getFetchStrategy();

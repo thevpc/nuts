@@ -1,7 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.xtra.throwables;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NBootOptionsBuilder;
+import net.thevpc.nuts.NBootOptionsBuilder;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NContentType;
@@ -11,13 +12,14 @@ import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
-import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.NUtils;
 
 import java.io.PrintStream;
 import java.util.logging.Level;
@@ -25,26 +27,24 @@ import java.util.logging.Level;
 @NComponentScope(NScopeType.SESSION)
 public class DefaultNApplicationExceptionHandler implements NApplicationExceptionHandler {
 
-    private NSession session;
+    public DefaultNApplicationExceptionHandler() {
 
-    public DefaultNApplicationExceptionHandler(NSession session) {
-        this.session = session;
     }
 
 
 
     @Override
     public int processThrowable(String[] args, Throwable throwable) {
-        NAssert.requireSession(session);
-        NBootOptionsBuilder bo = null;
-        bo = NBootManager.of().getBootOptions().builder();
+        NSession session = NSession.get();
+        NWorkspaceOptionsBuilder bo = null;
+        bo = NBootManager.of().getBootOptions().toWorkspaceOptions().builder();
         if (!NEnvs.of().isGraphicalDesktopEnvironment()) {
             bo.setGui(false);
         }
 
         boolean showGui = NApiUtilsRPI.resolveGui(bo);
         boolean showTrace = NApiUtilsRPI.resolveShowStackTrace(bo);
-        int errorCode = NExceptionWithExitCodeBase.resolveExitCode(throwable).orElse(204);
+        int errorCode = NUtils.resolveExitCode(throwable).orElse(204);
         NMsg fm = NSessionAwareExceptionBase.resolveSessionAwareExceptionBase(throwable)
                 .map(NSessionAwareExceptionBase::getFormattedMessage).orNull();
         String m = throwable.getMessage();
@@ -81,7 +81,7 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
                 if (fm != null) {
                     session.eout().add(NElements.of().ofObject()
                             .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().getId().orNull()))
-                            .set("error", NTexts.of().ofText(fm).filteredText())
+                            .set("error", NText.of(fm).filteredText())
                             .build()
                     );
                     if (showTrace) {
@@ -129,7 +129,7 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
         if (showGui) {
             StringBuilder sb = new StringBuilder();
             if (fm != null) {
-                sb.append(NTexts.of().ofText(fm).filteredText());
+                sb.append(NText.of(fm).filteredText());
             } else {
                 sb.append(m);
             }

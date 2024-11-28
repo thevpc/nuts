@@ -38,7 +38,7 @@ public class DefaultNEnvCondition implements NEnvCondition {
 
     private static final long serialVersionUID = 1L;
     private List<String> arch;
-    private List<String> profile;
+    private List<String> profiles;
     private List<String> os;
     private List<String> osDist;
     private List<String> platform;
@@ -52,7 +52,7 @@ public class DefaultNEnvCondition implements NEnvCondition {
                 d.getOsDist(),
                 d.getPlatform(),
                 d.getDesktopEnvironment(),
-                d.getProfile(),
+                d.getProfiles(),
                 d.getProperties()
         );
     }
@@ -64,14 +64,14 @@ public class DefaultNEnvCondition implements NEnvCondition {
     public DefaultNEnvCondition(List<String> arch, List<String> os, List<String> osDist,
                                 List<String> platform,
                                 List<String> desktopEnvironment,
-                                List<String> profile,
+                                List<String> profiles,
                                 Map<String, String> properties) {
         this.arch = arch == null ? Collections.emptyList() : Collections.unmodifiableList(arch);
         this.os = os == null ? Collections.emptyList() : Collections.unmodifiableList(os);
         this.osDist = osDist == null ? Collections.emptyList() : Collections.unmodifiableList(osDist);
         this.platform = platform == null ? Collections.emptyList() : Collections.unmodifiableList(platform);
         this.desktopEnvironment = desktopEnvironment == null ? Collections.emptyList() : Collections.unmodifiableList(desktopEnvironment);
-        this.profile = profile == null ? Collections.emptyList() : Collections.unmodifiableList(profile);
+        this.profiles = profiles == null ? Collections.emptyList() : Collections.unmodifiableList(profiles);
         this.properties = properties == null ? new HashMap<>() : new HashMap<>(properties);
     }
 
@@ -106,7 +106,7 @@ public class DefaultNEnvCondition implements NEnvCondition {
                 return false;
             }
         }
-        for (String s : profile) {
+        for (String s : profiles) {
             if (!NBlankable.isBlank(s)) {
                 return false;
             }
@@ -118,8 +118,8 @@ public class DefaultNEnvCondition implements NEnvCondition {
     }
 
     @Override
-    public List<String> getProfile() {
-        return profile;
+    public List<String> getProfiles() {
+        return profiles;
     }
 
     @Override
@@ -157,7 +157,7 @@ public class DefaultNEnvCondition implements NEnvCondition {
                 && Objects.equals(os, that.os)
                 && Objects.equals(osDist, that.osDist)
                 && Objects.equals(platform, that.platform)
-                && Objects.equals(profile, that.profile)
+                && Objects.equals(profiles, that.profiles)
                 && Objects.equals(desktopEnvironment, that.desktopEnvironment);
     }
 
@@ -169,7 +169,7 @@ public class DefaultNEnvCondition implements NEnvCondition {
         result = 31 * result + Objects.hashCode(os);
         result = 31 * result + Objects.hashCode(osDist);
         result = 31 * result + Objects.hashCode(platform);
-        result = 31 * result + Objects.hashCode(profile);
+        result = 31 * result + Objects.hashCode(profiles);
         result = 31 * result + Objects.hashCode(desktopEnvironment);
         return result;
     }
@@ -178,7 +178,7 @@ public class DefaultNEnvCondition implements NEnvCondition {
     public String toString() {
         String s = String.join(" & ",
                 Arrays.stream(new String[]{
-                                ts("profile", profile),
+                                ts("profile", profiles),
                                 ts("arch", arch),
                                 ts("os", os),
                                 ts("osDist", osDist),
@@ -218,7 +218,7 @@ public class DefaultNEnvCondition implements NEnvCondition {
 
     @Override
     public NEnvConditionBuilder builder() {
-        return new DefaultNEnvConditionBuilder(this);
+        return NEnvConditionBuilder.of();
     }
 
     @Override

@@ -25,6 +25,7 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NBootOptionsBoot;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NTerminalMode;
@@ -45,6 +46,8 @@ import java.util.function.Supplier;
 
 /**
  * Workspace options class that holds command argument information.
+ * NWorkspaceOptions are used to create new workspaces,
+ * whereas NBootOptions holds effective bootstrap Workspace Options
  *
  * @author thevpc
  * @app.category Config
@@ -59,6 +62,8 @@ public interface NWorkspaceOptions extends Serializable {
     NOptional<NSupportMode> getUserLauncher();
 
     NOptional<NIsolationLevel> getIsolationLevel();
+
+    NBootOptionsBoot toBootOptions();
 
     /**
      * init launcher

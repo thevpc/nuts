@@ -38,7 +38,7 @@ import java.util.Map;
  */
 public interface NLocations extends NComponent {
     static NLocations of() {
-        return NExtensions.of().createComponent(NLocations.class).get();
+        return NExtensions.of(NLocations.class);
     }
 
     NPath getHomeLocation(NStoreType folderType);

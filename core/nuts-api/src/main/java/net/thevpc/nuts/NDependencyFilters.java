@@ -47,7 +47,7 @@ public interface NDependencyFilters extends NTypedFilters<NDependencyFilter> {
      * @return a new session bound instance of NutsDependencyFilters
      */
     static NDependencyFilters of() {
-       return NExtensions.of().createComponent(NDependencyFilters.class).get();
+       return NExtensions.of(NDependencyFilters.class);
     }
 
     /**

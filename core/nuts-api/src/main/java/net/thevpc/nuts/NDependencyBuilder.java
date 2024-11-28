@@ -25,6 +25,9 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.spi.NComponent;
+
 import java.util.List;
 import java.util.Map;
 
@@ -37,14 +40,14 @@ import java.util.Map;
  * @app.category Descriptor
  * @since 0.5.4
  */
-public interface NDependencyBuilder extends NDependency {
+public interface NDependencyBuilder extends NDependency, NComponent {
 
     static NDependencyBuilder of(String groupId, String artifactId) {
-        return new DefaultNDependencyBuilder(groupId, artifactId);
+        return of().setGroupId(groupId).setArtifactId(artifactId);
     }
 
     static NDependencyBuilder of() {
-        return new DefaultNDependencyBuilder();
+        return NExtensions.of(NDependencyBuilder.class);
     }
 
     /**

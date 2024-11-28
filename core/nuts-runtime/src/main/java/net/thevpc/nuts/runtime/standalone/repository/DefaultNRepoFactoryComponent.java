@@ -25,6 +25,7 @@
 package net.thevpc.nuts.runtime.standalone.repository;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.repository.impl.nuts.NFolderRepository;
 import net.thevpc.nuts.runtime.standalone.repository.impl.nuts.NHttpSrvRepository;
@@ -97,7 +98,6 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
     @Override
     public NRepository create(NAddRepositoryOptions options, NRepository parentRepository) {
         NRepositoryConfig config = options.getConfig();
-//        NSession session=workspace.currentSession();
         String type = NRepositoryUtils.getRepoType(config);
         if (NBlankable.isBlank(type)) {
             return null;

@@ -1,8 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NScopeType;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
 
 import java.util.function.Function;
@@ -100,7 +102,7 @@ public class NWorkspaceVarExpansionFunction implements Function<String, String> 
             default: {
                 Object v = NInfoCmd.of().getPropertyValue(from).orNull();
                 if (v != null) {
-                    return NTexts.of().ofText(v).filteredText();
+                    return NText.of(v).filteredText();
                 }
             }
         }

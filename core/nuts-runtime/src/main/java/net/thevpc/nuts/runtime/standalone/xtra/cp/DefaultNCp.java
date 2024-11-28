@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.cp;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.log.NLog;
@@ -495,7 +496,7 @@ public class DefaultNCp implements NCp {
                 options.contains(NPathOption.LOG),
                 options.contains(NPathOption.TRACE),
                 getProgressFactory());
-        NText srcBaseMessage = NTexts.of().ofText(srcBase);
+        NText srcBaseMessage = NText.of(srcBase);
         m.onProgress(NProgressEvent.ofStart(srcBase,
                 NMsg.ofNtf(srcBaseMessage)
                 , f.files + f.folders));

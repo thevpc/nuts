@@ -38,7 +38,7 @@ import java.util.List;
  */
 public interface NDescriptorFilters extends NTypedFilters<NDescriptorFilter> {
     static NDescriptorFilters of() {
-       return NExtensions.of().createComponent(NDescriptorFilters.class).get();
+       return NExtensions.of(NDescriptorFilters.class);
     }
 
     NDescriptorFilter byPackaging(String... values);

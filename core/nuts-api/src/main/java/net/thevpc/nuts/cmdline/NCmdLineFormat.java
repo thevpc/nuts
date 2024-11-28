@@ -38,8 +38,12 @@ import net.thevpc.nuts.NShellFamily;
  */
 public interface NCmdLineFormat extends NFormat {
 
+    static NCmdLineFormat of(NCmdLine value) {
+        return of().setValue(value);
+    }
+
     static NCmdLineFormat of() {
-       return NExtensions.of().createComponent(NCmdLineFormat.class).get();
+       return NExtensions.of(NCmdLineFormat.class);
     }
 
     /**

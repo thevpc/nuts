@@ -41,7 +41,9 @@ public enum NTextType implements NEnum {
     INCLUDE,
     STYLED,
     ANCHOR,
-    CODE;
+    CODE,
+    BUILDER,
+    ;
     private final String id;
 
     NTextType() {

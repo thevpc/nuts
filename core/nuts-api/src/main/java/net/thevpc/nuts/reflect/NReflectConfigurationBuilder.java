@@ -37,7 +37,7 @@ import java.util.function.Function;
 public interface NReflectConfigurationBuilder extends NComponent {
 
     static NReflectConfigurationBuilder of() {
-        return NExtensions.of().createComponent(NReflectConfigurationBuilder.class).get();
+        return NExtensions.of(NReflectConfigurationBuilder.class);
     }
 
     NReflectConfiguration build();

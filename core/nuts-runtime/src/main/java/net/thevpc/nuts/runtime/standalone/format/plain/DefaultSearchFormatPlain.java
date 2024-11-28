@@ -12,7 +12,7 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.format.NIdFormatHelper;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
 
 /**
  * @author thevpc
@@ -54,7 +54,7 @@ public class DefaultSearchFormatPlain extends DefaultSearchFormatBase {
     }
 
     private void formatElement(NIdFormatHelper id, long index) {
-        NString s = id.getSingleColumnRow(getDisplayOptions());
+        NText s = id.getSingleColumnRow(getDisplayOptions());
         getWriter()
                 .resetLine()
                 .println(s)

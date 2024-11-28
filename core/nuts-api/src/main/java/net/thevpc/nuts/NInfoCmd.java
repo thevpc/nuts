@@ -43,7 +43,7 @@ import java.util.*;
 public interface NInfoCmd extends NFormat, NWorkspaceCmd {
 
     static NInfoCmd of() {
-       return NExtensions.of().createComponent(NInfoCmd.class).get();
+       return NExtensions.of(NInfoCmd.class);
     }
 
     /**

@@ -111,7 +111,6 @@ public class NHttpServerComponent implements NServerComponent {
         NSession invokerSession = ws.currentSession();
         NHttpServerConfig httpConfig = (NHttpServerConfig) config;
         Map<String, NWorkspace> workspaces = httpConfig.getWorkspaces();
-        NAssert.requireSession(invokerSession);
         if (workspaces.isEmpty()) {
             workspaces.put("", invokerSession.getWorkspace());
         }

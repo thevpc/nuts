@@ -1,15 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -461,8 +461,8 @@ public class GenericFilePath implements NPathSPI {
             this.p = p;
         }
 
-        public NString asFormattedString() {
-            return NTexts.of().ofText(p.value);
+        public NText asFormattedString() {
+            return NText.of(p.value);
         }
 
         @Override

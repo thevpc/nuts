@@ -25,7 +25,9 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.DefaultNArtifactCall;
+import net.thevpc.nuts.runtime.standalone.*;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.env.NArchFamily;
@@ -265,7 +267,7 @@ public class MavenUtils {
             LOG().with().level(Level.FINEST).verb(NLogVerb.SUCCESS).time(time)
                     .log(NMsg.ofJ("{0}{1} parse pom    {2}", fetchString,
                             NStringUtils.formatAlign(repository == null ? "<no-repo>" : repository.getName(), 20, NPositionType.FIRST),
-                            NTexts.of().ofStyled(urlDesc, NTextStyle.path())
+                            NText.ofStyledPath(urlDesc)
                     ));
 
             String icons = pom.getProperties().get("nuts.icons");

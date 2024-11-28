@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.id.format;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPrintStream;
@@ -145,12 +146,12 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
     }
 
     @Override
-    public NString format() {
+    public NText format() {
         NSession session=getWorkspace().currentSession();
         if (id == null) {
             return isNtf() ?
-                    NTexts.of().ofStyled("<null>", NTextStyle.of(NTextStyleType.BOOLEAN))
-                    : NTexts.of().ofPlain("<null>")
+                    NText.ofStyled("<null>", NTextStyle.of(NTextStyleType.BOOLEAN))
+                    : NText.ofPlain("<null>")
                     ;
         }
         Map<String, String> queryMap = id.getProperties();
@@ -167,7 +168,7 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
             idBuilder.setProperty(NConstants.IdProperties.FACE, null);
         }
         id = idBuilder.build();
-        NTextBuilder sb = NTexts.of().ofBuilder();
+        NTextBuilder sb = NTextBuilder.of();
         if (!isOmitGroupId()) {
             if (!NBlankable.isBlank(id.getGroupId())) {
                 boolean importedGroup2 = NConstants.Ids.NUTS_GROUP_ID.equals(id.getGroupId());
@@ -278,7 +279,7 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
         if (isNtf()) {
             return sb.immutable();
         } else {
-            return NTexts.of().ofPlain(sb.filteredText());
+            return NText.ofPlain(sb.filteredText());
         }
     }
 

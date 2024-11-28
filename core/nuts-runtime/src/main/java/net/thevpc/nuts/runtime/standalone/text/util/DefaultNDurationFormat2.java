@@ -209,13 +209,13 @@ public class DefaultNDurationFormat2 {
     public NText format(NDuration duration) {
         NTextBuilder sb = NTextBuilder.of();
         print(duration, sb);
-        return sb.toText();
+        return sb.build();
     }
 
     public NText format(NDuration duration, NTexts texts) {
         NTextBuilder sb = texts.ofBuilder();
         print(duration, sb);
-        return sb.toText();
+        return sb.build();
     }
 
     public void print(NDuration duration, NTextBuilder out) {

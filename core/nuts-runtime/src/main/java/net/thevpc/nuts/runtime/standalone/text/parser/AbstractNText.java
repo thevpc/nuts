@@ -1,9 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.text.NImmutableString;
 import net.thevpc.nuts.runtime.standalone.text.NTextNodeWriterStringer;
-import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTexts;
@@ -20,15 +18,10 @@ public abstract class AbstractNText implements NText {
 
     @Override
     public String toString() {
-        return immutable().toString();
-    }
-
-    @Override
-    public NString immutable() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         NTextNodeWriterStringer ss = new NTextNodeWriterStringer(out);
         ss.writeNode(this);
-        return new NImmutableString(out.toString());
+        return out.toString();
     }
 
     @Override
@@ -39,11 +32,6 @@ public abstract class AbstractNText implements NText {
     @Override
     public int textLength() {
         return immutable().textLength();
-    }
-
-    @Override
-    public NText toText() {
-        return this;
     }
 
     @Override
@@ -58,7 +46,7 @@ public abstract class AbstractNText implements NText {
 
     @Override
     public NTextBuilder builder() {
-        return NTexts.of().ofBuilder().append(this);
+        return NTextBuilder.of().append(this);
     }
 
 }

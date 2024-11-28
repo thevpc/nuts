@@ -37,7 +37,7 @@ import net.thevpc.nuts.util.NFilter;
  */
 public interface NFilters extends NComponent {
     static NFilters of() {
-       return NExtensions.of().createComponent(NFilters.class).get();
+       return NExtensions.of(NFilters.class);
     }
 
 

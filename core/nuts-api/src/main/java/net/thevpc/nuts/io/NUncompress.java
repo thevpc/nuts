@@ -46,7 +46,7 @@ import java.util.Set;
  */
 public interface NUncompress extends NComponent {
     static NUncompress of() {
-        return NExtensions.of().createComponent(NUncompress.class).get();
+        return NExtensions.of(NUncompress.class);
     }
 
     /**

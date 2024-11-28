@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.dependency.solver;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.spi.NDependencySolvers;
 import net.thevpc.nuts.spi.NDependencySolver;

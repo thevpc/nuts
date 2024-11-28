@@ -25,7 +25,6 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.format.NFormattable;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NOptional;
 
@@ -40,7 +39,7 @@ import java.util.Map;
  * @app.category Descriptor
  * @since 0.5.3
  */
-public interface NDependency extends Serializable, NFormattable, NBlankable {
+public interface NDependency extends Serializable, NBlankable {
 
     static NOptional<NDependency> of(String value) {
         return NId.of(value).map(NId::toDependency);
@@ -169,6 +168,4 @@ public interface NDependency extends Serializable, NFormattable, NBlankable {
      */
     Map<String, String> getProperties();
 
-    @Override
-    NDependencyFormat formatter();
 }

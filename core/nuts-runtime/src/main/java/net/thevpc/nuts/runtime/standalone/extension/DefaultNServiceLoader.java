@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
 import net.thevpc.nuts.spi.NDefaultSupportLevelContext;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
 public class DefaultNServiceLoader<T extends NComponent, B> implements NServiceLoader<T> {

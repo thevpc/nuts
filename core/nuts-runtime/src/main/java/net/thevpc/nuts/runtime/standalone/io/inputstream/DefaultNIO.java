@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.inputstream;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
 import net.thevpc.nuts.runtime.standalone.io.printstream.*;

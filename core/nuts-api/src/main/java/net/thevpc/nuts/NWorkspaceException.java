@@ -35,7 +35,7 @@ import net.thevpc.nuts.util.NMsg;
  * @app.category Exceptions
  * @since 0.5.4
  */
-public abstract class NWorkspaceException extends NException {
+public class NWorkspaceException extends NException {
 
     /**
      * Constructs a new NutsWorkspaceException exception
@@ -47,6 +47,11 @@ public abstract class NWorkspaceException extends NException {
         super(
                 message == null
                         ? NMsg.ofC("workspace %s has encountered problem", NWorkspace.of().map(x->x.getName()).orNull()) : message, ex);
+    }
+    public NWorkspaceException(NMsg message) {
+        super(
+                message == null
+                        ? NMsg.ofC("workspace %s has encountered problem", NWorkspace.of().map(x->x.getName()).orNull()) : message);
     }
 
 }

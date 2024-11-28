@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.util.jclass;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.format.NVisitResult;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;

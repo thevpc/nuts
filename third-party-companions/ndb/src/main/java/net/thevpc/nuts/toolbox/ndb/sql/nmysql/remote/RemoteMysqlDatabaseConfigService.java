@@ -7,7 +7,8 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.NMySqlService;
@@ -267,7 +268,7 @@ public class RemoteMysqlDatabaseConfigService {
             b.addCommand(cmd);
         }
         if (session.isPlainTrace()) {
-            NString ff = b.formatter()
+            NText ff = NExecCmdFormat.of(b)
                     .setEnvReplacer(envEntry -> {
                         if (envEntry.getName().toLowerCase().contains("password")
                                 || envEntry.getName().toLowerCase().contains("pwd")) {
@@ -292,8 +293,8 @@ public class RemoteMysqlDatabaseConfigService {
         return server;
     }
 
-    public NString getBracketsPrefix(String str) {
-        return NTexts.of().ofBuilder()
+    public NText getBracketsPrefix(String str) {
+        return NTextBuilder.of()
                 .append("[")
                 .append(str, NTextStyle.primary5())
                 .append("]");

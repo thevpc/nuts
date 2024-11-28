@@ -29,6 +29,7 @@ package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextAnchor;
 import net.thevpc.nuts.text.NTextType;
 
@@ -67,7 +68,10 @@ public class DefaultNTextAnchor extends NTextSpecialBase implements NTextAnchor 
         DefaultNTextAnchor that = (DefaultNTextAnchor) o;
         return Objects.equals(value, that.value);
     }
-
+    @Override
+    public NText immutable() {
+        return this;
+    }
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), value);

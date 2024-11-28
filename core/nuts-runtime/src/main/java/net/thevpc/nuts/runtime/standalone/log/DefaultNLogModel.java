@@ -53,11 +53,10 @@ public class DefaultNLogModel {
     private Path logFolder;
     private NSession defaultSession;
 
-    public DefaultNLogModel(NWorkspace ws, NWorkspaceOptions bOptions) {
+    public DefaultNLogModel(NWorkspace ws, NBootOptions effOptions, NBootOptions userOptions) {
         this.workspace = ws;
-        NWorkspaceOptions bootOptions = NWorkspaceExt.of().getModel().bootModel.getBootUserOptions();
-        logFolder = Paths.get(bOptions.getStoreType(NStoreType.LOG).orNull());
-        NLogConfig lc = bootOptions.getLogConfig().orNull();
+        this.logFolder = Paths.get(effOptions.getStoreType(NStoreType.LOG).get());
+        NLogConfig lc = userOptions.getLogConfig().orNull();
         if (lc != null) {
             if (lc.getLogFileLevel() != null) {
                 logConfig.setLogFileLevel(lc.getLogFileLevel());

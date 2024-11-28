@@ -101,4 +101,9 @@ public class DefaultNTextTitle extends AbstractNText implements NTextTitle {
         // 1 is the length of '\n'
         return child.textLength()+1;
     }
+
+    @Override
+    public NText immutable() {
+        return this;
+    }
 }

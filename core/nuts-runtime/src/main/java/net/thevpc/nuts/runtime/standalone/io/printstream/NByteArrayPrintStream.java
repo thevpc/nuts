@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NFormat;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.util.AbstractMultiReadNInputSource;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
@@ -17,14 +18,14 @@ public class NByteArrayPrintStream extends NPrintStreamRaw implements NMemoryPri
     public NByteArrayPrintStream(NTerminalMode mode, NWorkspace workspace) {
         super(new ByteArrayOutputStream2(), mode, null, null, workspace, new Bindings(), null);
         getMetaData().setMessage(
-                NMsg.ofNtf(NTexts.of().ofStyled("<memory-buffer>", NTextStyle.path()))
+                NMsg.ofNtf(NText.ofStyledPath("<memory-buffer>"))
         );
     }
 
     protected NByteArrayPrintStream(NTerminalMode mode, ByteArrayOutputStream2 bos, NWorkspace workspace) {
         super(bos, mode, null, null, workspace, new Bindings(), null);
         getMetaData().setMessage(
-                NMsg.ofNtf(NTexts.of().ofStyled("<memory-buffer>", NTextStyle.path()))
+                NMsg.ofNtf(NText.ofStyledPath("<memory-buffer>"))
         );
     }
 
@@ -52,32 +53,7 @@ public class NByteArrayPrintStream extends NPrintStreamRaw implements NMemoryPri
 
     @Override
     public NInputSource asInputSource() {
-        return new AbstractMultiReadNInputSource(workspace) {
-            @Override
-            public InputStream getInputStream() {
-                return out2().asInputStream();
-            }
-
-            @Override
-            public NFormat formatter() {
-                return NByteArrayPrintStream.this.formatter();
-            }
-
-            @Override
-            public NContentMetadata getMetaData() {
-                return NByteArrayPrintStream.this.getMetaData();
-            }
-
-            @Override
-            public boolean isKnownContentLength() {
-                return true;
-            }
-
-            @Override
-            public long getContentLength() {
-                return out2().size();
-            }
-        };
+        return new MyAbstractMultiReadNInputSource(this);
     }
 
     public static class InputStreamFromByteArrayOutputStream2 extends InputStream {
@@ -265,5 +241,38 @@ public class NByteArrayPrintStream extends NPrintStreamRaw implements NMemoryPri
         return (minCapacity > MAX_ARRAY_SIZE) ?
                 Integer.MAX_VALUE :
                 MAX_ARRAY_SIZE;
+    }
+
+    public static class MyAbstractMultiReadNInputSource extends AbstractMultiReadNInputSource {
+        private NByteArrayPrintStream value;
+
+        public MyAbstractMultiReadNInputSource(NByteArrayPrintStream value) {
+            super(value.workspace);
+            this.value = value;
+        }
+
+        public NByteArrayPrintStream getValue() {
+            return value;
+        }
+
+        @Override
+        public InputStream getInputStream() {
+            return value.out2().asInputStream();
+        }
+
+        @Override
+        public NContentMetadata getMetaData() {
+            return value.getMetaData();
+        }
+
+        @Override
+        public boolean isKnownContentLength() {
+            return true;
+        }
+
+        @Override
+        public long getContentLength() {
+            return value.out2().size();
+        }
     }
 }

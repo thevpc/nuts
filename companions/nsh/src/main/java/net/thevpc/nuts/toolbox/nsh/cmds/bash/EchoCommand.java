@@ -30,6 +30,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextCode;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
@@ -195,7 +196,7 @@ public class EchoCommand extends NShellBuiltinDefault {
         if (options.highlighter == null) {
             ns = options.message.toString();
         } else {
-            NTextCode c = NTexts.of().ofCode(
+            NTextCode c = NText.ofCode(
                     options.highlighter.isEmpty() ? "ntf" : options.highlighter
                     , options.message.toString());
             ns = c.highlight();

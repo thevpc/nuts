@@ -25,11 +25,14 @@
 package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.env.NOsFamily;
+import net.thevpc.nuts.env.NPlatformHome;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
-import net.thevpc.nuts.boot.NBootOptions;
+import net.thevpc.nuts.NBootOptions;
 import net.thevpc.nuts.util.*;
 
 import java.io.*;
@@ -47,39 +50,6 @@ import java.util.stream.Collectors;
  */
 public final class NReservedUtils {
 
-    public static boolean isValidWorkspaceName(String workspace) {
-        if (NBlankable.isBlank(workspace)) {
-            return true;
-        }
-        String workspaceName = workspace.trim();
-        return workspaceName.matches("[^/\\\\]+")
-                && !workspaceName.equals(".")
-                && !workspaceName.equals("..");
-    }
-
-    public static String resolveValidWorkspaceName(String workspace) {
-        if (NBlankable.isBlank(workspace)) {
-            return NConstants.Names.DEFAULT_WORKSPACE_NAME;
-        }
-        String workspaceName = workspace.trim();
-        if (workspaceName.matches("[^/\\\\]+")
-                && !workspaceName.equals(".")
-                && !workspaceName.equals("..")) {
-            return workspaceName;
-        } else {
-            String p = null;
-            try {
-                p = Paths.get(workspaceName).toRealPath().getFileName().toString();
-            } catch (IOException ex) {
-                p = new File(workspaceName).getAbsoluteFile().getName();
-            }
-            if (p.isEmpty() || p.equals(".") || p.equals("..")) {
-                return "unknown";
-            }
-            return p;
-        }
-    }
-
     public static String resolveJavaCommand(String javaHome) {
         String exe = NOsFamily.getCurrent().equals(NOsFamily.WINDOWS) ? "java.exe" : "java";
         if (javaHome == null || javaHome.isEmpty()) {
@@ -92,38 +62,6 @@ public final class NReservedUtils {
         return javaHome + File.separator + "bin" + File.separator + exe;
     }
 
-    public static boolean isActualJavaOptions(String options) {
-        //FIX ME
-        return true;
-    }
-
-    public static boolean isActualJavaCommand(String cmd) {
-        if (cmd == null || cmd.trim().isEmpty()) {
-            return true;
-        }
-        String javaHome = System.getProperty("java.home");
-        if (NBlankable.isBlank(javaHome) || "null".equals(javaHome)) {
-            return cmd.equals("java") || cmd.equals("java.exe") || cmd.equals("javaw.exe") || cmd.equals("javaw");
-        }
-        String jh = javaHome.replace("\\", "/");
-        cmd = cmd.replace("\\", "/");
-        if (cmd.equals(jh + "/bin/java")) {
-            return true;
-        }
-        if (cmd.equals(jh + "/bin/java.exe")) {
-            return true;
-        }
-        if (cmd.equals(jh + "/bin/javaw")) {
-            return true;
-        }
-        if (cmd.equals(jh + "/bin/javaw.exe")) {
-            return true;
-        }
-        if (cmd.equals(jh + "/jre/bin/java")) {
-            return true;
-        }
-        return cmd.equals(jh + "/jre/bin/java.exe");
-    }
 
     public static String desc(Object s) {
         if (s == null) {
@@ -145,15 +83,6 @@ public final class NReservedUtils {
         return desc(null);
     }
 
-    public static String formatLogValue(Object unresolved, Object resolved) {
-        String a = NReservedUtils.desc(unresolved);
-        String b = NReservedUtils.desc(resolved);
-        if (a.equals(b)) {
-            return a;
-        } else {
-            return a + " => " + b;
-        }
-    }
 
     public static boolean getSysBoolNutsProperty(String property, boolean defaultValue) {
         return
@@ -255,17 +184,6 @@ public final class NReservedUtils {
         return true;
     }
 
-    public static boolean isAcceptDependency(NDependency s, NBootOptions bOptions) {
-        boolean bootOptionals = isBootOptional(bOptions);
-        //by default ignore optionals
-        String o = s.getOptional();
-        if (NBlankable.isBlank(o) || Boolean.parseBoolean(o)) {
-            if (!bootOptionals && !isBootOptional(s.getArtifactId(), bOptions)) {
-                return false;
-            }
-        }
-        return isAcceptCondition(s.getCondition());
-    }
 
     public static String toDependencyExclusionListString(List<NId> exclusions) {
         TreeSet<String> ex = new TreeSet<>();
@@ -311,7 +229,7 @@ public final class NReservedUtils {
 
     public static boolean acceptVersion(NVersion one, NVersion other) {
         if (!other.isSingleValue()) {
-            throw new NBootException(NMsg.ofC("expected single value version: %s", other));
+            throw new NIllegalArgumentException(NMsg.ofC("expected single value version: %s", other));
         }
         List<NVersionInterval> ii = one.intervals().get();
         if (ii.isEmpty()) {
@@ -339,77 +257,75 @@ public final class NReservedUtils {
         }
         Matcher m = NId.PATTERN.matcher(nutsId);
         if (m.find()) {
-            NIdBuilder idBuilder = NIdBuilder.of();
             String group = m.group("group");
             String artifact = m.group("artifact");
-            idBuilder.setArtifactId(artifact);
-            idBuilder.setVersion(m.group("version"));
+            String version = m.group("version");
             if (artifact == null) {
                 artifact = group;
                 group = null;
             }
-            idBuilder.setArtifactId(artifact);
-            idBuilder.setGroupId(group);
-
+            String classifier = null;
+            LinkedHashSet<String> condArch = new LinkedHashSet<>();
+            LinkedHashSet<String> condOs = new LinkedHashSet<>();
+            LinkedHashSet<String> condDist = new LinkedHashSet<>();
+            LinkedHashSet<String> condPlatform = new LinkedHashSet<>();
+            LinkedHashSet<String> condDE = new LinkedHashSet<>();
+            List<String> condProfiles = new ArrayList<>();
             Map<String, String> queryMap = NStringMapFormat.DEFAULT.parse(m.group("query")).get();
-            NEnvConditionBuilder conditionBuilder = new DefaultNEnvConditionBuilder();
 
             Map<String, String> idProperties = new LinkedHashMap<>();
+            Map<String, String> condProperties = new LinkedHashMap<>();
             for (Iterator<Map.Entry<String, String>> iterator = queryMap.entrySet().iterator(); iterator.hasNext(); ) {
                 Map.Entry<String, String> e = iterator.next();
                 String key = e.getKey();
                 String value = e.getValue();
-                setIdProperty(key, value, idBuilder, conditionBuilder, idProperties);
+                switch (key) {
+                    case NConstants.IdProperties.CLASSIFIER: {
+                        classifier = value;
+                        break;
+                    }
+                    case NConstants.IdProperties.PROFILE: {
+                        condProfiles.addAll(NReservedLangUtils.splitDefault(value));
+                        break;
+                    }
+                    case NConstants.IdProperties.PLATFORM: {
+                        condPlatform.addAll(NStringUtils.parsePropertyIdList(value).get());
+                        break;
+                    }
+                    case NConstants.IdProperties.OS_DIST: {
+                        condDist.addAll(NStringUtils.parsePropertyIdList(value).get());
+                        break;
+                    }
+                    case NConstants.IdProperties.ARCH: {
+                        condArch.addAll(NStringUtils.parsePropertyIdList(value).get());
+                        break;
+                    }
+                    case NConstants.IdProperties.OS: {
+                        condOs.addAll(NStringUtils.parsePropertyIdList(value).get());
+                        break;
+                    }
+                    case NConstants.IdProperties.DESKTOP: {
+                        condDE.addAll(NStringUtils.parsePropertyIdList(value).get());
+                        break;
+                    }
+                    case NConstants.IdProperties.CONDITIONAL_PROPERTIES: {
+                        condProperties.putAll(NStringMapFormat.COMMA_FORMAT.parse(value).get());
+                        break;
+                    }
+                    default: {
+                        idProperties.put(key, value);
+                    }
+                }
             }
-
-            return NOptional.of(idBuilder.setCondition(conditionBuilder)
-                    .setProperties(idProperties).build());
+            return NOptional.of(new DefaultNId(
+                    group, artifact, NVersion.of(version).get(),
+                    classifier, idProperties, new DefaultNEnvCondition(
+                    new ArrayList<>(condArch), new ArrayList<>(condOs), new ArrayList<>(condDist), new ArrayList<>(condPlatform), new ArrayList<>(condDE),
+                    new ArrayList<>(condProfiles), condProperties
+            )
+            ));
         }
         return NOptional.ofError(() -> NMsg.ofC("invalid id format : %s", nutsId));
-    }
-
-    private static void setIdProperty(String key, String value, NIdBuilder builder, NEnvConditionBuilder sb, Map<String, String> props) {
-        if (key == null) {
-            return;
-        }
-        switch (key) {
-            case NConstants.IdProperties.CLASSIFIER: {
-                builder.setClassifier(value);
-                break;
-            }
-            case NConstants.IdProperties.PROFILE: {
-                sb.setProfile(NReservedLangUtils.splitDefault(value));
-                break;
-            }
-            case NConstants.IdProperties.PLATFORM: {
-                sb.setPlatform(NStringUtils.parsePropertyIdList(value).get());
-                break;
-            }
-            case NConstants.IdProperties.OS_DIST: {
-                sb.setOsDist(NStringUtils.parsePropertyIdList(value).get());
-                break;
-            }
-            case NConstants.IdProperties.ARCH: {
-                sb.setArch(NStringUtils.parsePropertyIdList(value).get());
-                break;
-            }
-            case NConstants.IdProperties.OS: {
-                sb.setOs(NStringUtils.parsePropertyIdList(value).get());
-                break;
-            }
-            case NConstants.IdProperties.DESKTOP: {
-                sb.setDesktopEnvironment(NStringUtils.parsePropertyIdList(value).get());
-                break;
-            }
-            case NConstants.IdProperties.CONDITIONAL_PROPERTIES: {
-                Map<String, String> mm = NStringMapFormat.COMMA_FORMAT.parse(value).get();
-                sb.setProperties(mm);
-                break;
-            }
-            default: {
-                props.put(key, value);
-            }
-        }
     }
 
     private static boolean ndiAddFileLine(Path filePath, String commentLine, String goodLine, boolean force,
@@ -508,56 +424,6 @@ public final class NReservedUtils {
         }
     }
 
-    public static void ndiUndo(NLog bLog) {
-        //need to unset settings configuration.
-        //what is the safest way to do so?
-        NOsFamily os = NOsFamily.getCurrent();
-        //windows is ignored because it does not define a global nuts environment
-        if (os == NOsFamily.LINUX || os == NOsFamily.MACOS) {
-            String bashrc = os == NOsFamily.LINUX ? ".bashrc" : ".bash_profile";
-            Path sysrcFile = Paths.get(System.getProperty("user.home")).resolve(bashrc);
-            if (Files.exists(sysrcFile)) {
-
-                //these two lines will remove older versions of nuts ( before 0.8.0)
-                ndiRemoveFileCommented2Lines(sysrcFile, "net.thevpc.app.nuts.toolbox.ndi configuration", true, bLog);
-                ndiRemoveFileCommented2Lines(sysrcFile, "net.thevpc.app.nuts configuration", true, bLog);
-
-                //this line will remove 0.8.0+ versions of nuts
-                ndiRemoveFileCommented2Lines(sysrcFile, "net.thevpc.nuts configuration", true, bLog);
-            }
-
-            // if we have deleted a non default workspace, we will fall back to the default one
-            // and will consider the latest version of it.
-            // this is helpful if we are playing with multiple workspaces. The default workspace will always be
-            // accessible when deleting others
-            String latestDefaultVersion = null;
-            try {
-                Path nbase = Paths.get(System.getProperty("user.home")).resolve(".local/share/nuts/apps/" + NConstants.Names.DEFAULT_WORKSPACE_NAME + "/id/net/thevpc/nuts/nuts");
-                if (Files.isDirectory(nbase)) {
-                    latestDefaultVersion = Files.list(nbase).filter(f -> Files.exists(f.resolve(".nuts-bashrc")))
-                            .map(x -> sysrcFile.getFileName().toString()).min((o1, o2) -> NVersion.of(o2).get().compareTo(NVersion.of(o1).get()))
-                            .orElse(null);
-                }
-                if (latestDefaultVersion != null) {
-                    ndiAddFileLine(sysrcFile, "net.thevpc.nuts configuration",
-                            "source " + nbase.resolve(latestDefaultVersion).resolve(".nuts-bashrc"),
-                            true, "#!.*", "#!/bin/sh", bLog);
-                }
-            } catch (Exception e) {
-                //ignore
-                bLog.with().level(Level.FINEST).verb(NLogVerb.FAIL).log(NMsg.ofC("unable to undo NDI : %s", e.toString()));
-            }
-        }
-    }
-
-    public static String formatIdList(List<NId> s) {
-        return s.stream().map(Object::toString).collect(Collectors.joining(","));
-    }
-
-    public static String formatIdArray(NId[] s) {
-        return Arrays.stream(s).map(Object::toString).collect(Collectors.joining(","));
-    }
-
     public static String formatStringIdList(List<String> s) {
         LinkedHashSet<String> allIds = new LinkedHashSet<>();
         if (s != null) {
@@ -571,18 +437,6 @@ public final class NReservedUtils {
         return String.join(",", allIds);
     }
 
-    public static String formatStringIdArray(String[] s) {
-        LinkedHashSet<String> allIds = new LinkedHashSet<>();
-        if (s != null) {
-            for (String s1 : s) {
-                s1 = NStringUtils.trim(s1);
-                if (s1.length() > 0) {
-                    allIds.add(s1);
-                }
-            }
-        }
-        return String.join(",", allIds);
-    }
 
     public static NOptional<List<String>> parseStringIdList(String s) {
         if (s == null) {
@@ -688,8 +542,8 @@ public final class NReservedUtils {
                 m.put(NConstants.IdProperties.DESKTOP, s);
             }
         }
-        if (condition.getProfile() != null) {
-            s = condition.getProfile().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        if (condition.getProfiles() != null) {
+            s = condition.getProfiles().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
             if (!NBlankable.isBlank(s)) {
                 m.put(NConstants.IdProperties.PROFILE, s);
             }
@@ -703,23 +557,4 @@ public final class NReservedUtils {
         return m;
     }
 
-    static boolean isBootOptional(String name, NBootOptions bOptions) {
-        for (String property : bOptions.getCustomOptions().orElseGet(Collections::emptyList)) {
-            NArg a = NArg.of(property);
-            if (a.getKey().asString().orElse("").equals("boot-" + name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    static boolean isBootOptional(NBootOptions bOptions) {
-        for (String property : bOptions.getCustomOptions().orElseGet(Collections::emptyList)) {
-            NArg a = NArg.of(property);
-            if (a.getKey().asString().orElse("").equals("boot-optional")) {
-                return a.getValue().asBoolean().orElse(true);
-            }
-        }
-        return true;
-    }
 }

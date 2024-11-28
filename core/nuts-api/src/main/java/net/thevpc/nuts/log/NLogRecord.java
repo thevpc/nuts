@@ -1,6 +1,7 @@
 package net.thevpc.nuts.log;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
 
@@ -17,7 +18,7 @@ public class NLogRecord extends LogRecord implements NSessionProvider{
     private long time;
 
     public NLogRecord(NSession session, Level level, NLogVerb verb, NMsg msg, long time, Throwable thrown) {
-        super(level, NTexts.of().ofText(msg).filteredText());
+        super(level, NText.of(msg).filteredText());
         this.nmsg = msg;
         this.verb = verb;
         this.session = session;

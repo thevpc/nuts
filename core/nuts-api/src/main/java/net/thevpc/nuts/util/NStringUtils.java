@@ -26,7 +26,6 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NId;
 import net.thevpc.nuts.expr.NToken;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
@@ -49,7 +48,6 @@ import java.util.stream.StreamSupport;
 public class NStringUtils {
 
     public static final String DEFAULT_VAR_NAME = "var";
-    private static final char[] BASE16_CHARS = new char[]{'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 
     private NStringUtils() {
     }
@@ -308,20 +306,6 @@ public class NStringUtils {
             }
         }
         return null;
-    }
-
-    public static String toHexString(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        for (int j = 0; j < bytes.length; j++) {
-            int v = bytes[j] & 255;
-            hexChars[j * 2] = BASE16_CHARS[v >>> 4];
-            hexChars[j * 2 + 1] = BASE16_CHARS[v & 15];
-        }
-        return new String(hexChars);
-    }
-
-    public static char toHexChar(int nibble) {
-        return BASE16_CHARS[nibble & 15];
     }
 
     public static String formatAlign(String text, int size, NPositionType position) {
@@ -591,25 +575,6 @@ public class NStringUtils {
             }
         }
         return all;
-    }
-
-    public static byte[] fromHexString(String s) {
-        int len = s.length();
-        if (len == 0) {
-            return new byte[0];
-        }
-        if (s.length() % 2 == 1) {
-            s = s + "0";
-            len++;
-        }
-        byte[] data = new byte[len / 2];
-        for (int i = 0; i < len; i += 2) {
-            char c1 = s.charAt(i);
-            char c2 = s.charAt(i + 1);
-            data[i / 2] = (byte) ((Character.digit(c1, 16) << 4)
-                    + Character.digit(c2, 16));
-        }
-        return data;
     }
 
     /**

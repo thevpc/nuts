@@ -44,7 +44,7 @@ import java.util.List;
 public interface NAddUserCmd extends NWorkspaceCmd {
 
     static NAddUserCmd of() {
-        return NExtensions.of().createComponent(NAddUserCmd.class).get();
+        return NExtensions.of(NAddUserCmd.class);
     }
 
     /**

@@ -658,7 +658,7 @@ public class BytesSizeFormat {
         }
         if (sb.filteredText().length() == 0) {
             if (neg) {
-                sb.insert(0, NTexts.of().ofText("-"));
+                sb.insert(0, NText.of("-"));
             }
             if (low >= T) {
                 sb.append(formatLeft(0, 3),NTextStyle.number()).append(binaryPrefix ? "Ti" : "T");
@@ -672,10 +672,10 @@ public class BytesSizeFormat {
             }
         } else {
             if (neg) {
-                sb.insert(0, NTexts.of().ofText("-"));
+                sb.insert(0, NText.of("-"));
             }
         }
-        return sb.toText();
+        return sb.build();
     }
 
 }

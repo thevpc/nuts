@@ -27,7 +27,9 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.parser;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.DefaultNArtifactCall;
+import net.thevpc.nuts.runtime.standalone.DefaultNArtifactCall;
+import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.format.json.JsonStringBuffer;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.NStringUtils;

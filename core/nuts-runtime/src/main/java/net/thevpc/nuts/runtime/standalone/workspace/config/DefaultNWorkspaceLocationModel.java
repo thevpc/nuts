@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
@@ -56,9 +58,8 @@ public class DefaultNWorkspaceLocationModel {
         try {
             return cfg().current().getStoreLocation(folderType);
         } catch (IllegalStateException stillInitializing) {
-            NWorkspaceOptions info = NWorkspaceExt.of().getModel().bootModel.getBootUserOptions();
+            NBootOptions info = NWorkspaceExt.of().getModel().bootModel.getBootUserOptions();
             String h = info.getStoreType(folderType).orNull();
-            NSession session = getWorkspace().currentSession();
             return h==null?null: NPath.of(h);
         }
     }

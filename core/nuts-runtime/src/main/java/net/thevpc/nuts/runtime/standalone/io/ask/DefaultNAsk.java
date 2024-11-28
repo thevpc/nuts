@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.ask;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
@@ -118,7 +120,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
                 } else {
                     out.print(", ");
                 }
-                out.print(NMsg.ofC("default is %s", NTexts.of().ofStyled(ff.format(this.getDefaultValue(), this), NTextStyle.primary1())));
+                out.print(NMsg.ofC("default is %s", NText.ofStyled(ff.format(this.getDefaultValue(), this), NTextStyle.primary1())));
             }
             if (getHintMessage() != null) {
                 out.print(" (");
@@ -140,7 +142,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
                         }
                         sb.append(ff.format(acceptedValue, this));
                     }
-                    out.print(NMsg.ofC("accepts %s", NTexts.of().ofStyled(sb.toString(), NTextStyle.primary4())));
+                    out.print(NMsg.ofC("accepts %s", NText.ofStyled(sb.toString(), NTextStyle.primary4())));
                 }
                 if (!first) {
                     out.print(")");
@@ -260,7 +262,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
 
     private String showGuiInput(String str, boolean pwd) {
         NSession session= workspace.currentSession();
-        String ft = NTexts.of().parse(str).filteredText();
+        String ft = NText.of(str).filteredText();
         NMsg title = NMsg.ofC("Nuts Package Manager - %s", session.getWorkspace().getApiId().getVersion());
         if (NApp.of().getId().orNull() != null) {
             try {

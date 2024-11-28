@@ -1,12 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.boot.NBootConfig;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.env.NOsFamily;
-import net.thevpc.nuts.util.NPlatformHome;
+import net.thevpc.nuts.env.NPlatformHome;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -152,7 +154,6 @@ public final class DefaultNWorkspaceCurrentConfig {
             this.bootRuntime = c.getId();
         }
         if (c.getDependencies() != null) {
-            NSession session=workspace.currentSession();
             this.runtimeBootDescriptor = new DefaultNDescriptorBuilder()
                     .setId(NId.of(this.bootRuntime.toString()).get())
                     .setDependencies(
@@ -199,7 +200,6 @@ public final class DefaultNWorkspaceCurrentConfig {
     public DefaultNWorkspaceCurrentConfig merge(NBootConfig c) {
         this.name = c.getName();
         if (c.getApiVersion() != null) {
-            NSession session=workspace.currentSession();
             this.apiId = NId.of(NConstants.Ids.NUTS_API + "#" + c.getApiVersion()).get();
         }
         if (c.getRuntimeId() != null) {
@@ -362,19 +362,16 @@ public final class DefaultNWorkspaceCurrentConfig {
     }
 
     public NPath getStoreLocation(NStoreType storeType) {
-        NSession session=workspace.currentSession();
         Path p = effStoreLocationPath[storeType.ordinal()];
         return p == null ? null : NPath.of(p);
     }
 
     public NPath getHomeLocation(NHomeLocation location) {
-        NSession session=workspace.currentSession();
         String s = new NHomeLocationsMap(homeLocations).get(location);
         return s == null ? null : NPath.of(s);
     }
 
     public NPath getHomeLocation(NStoreType storeType) {
-        NSession session=workspace.currentSession();
         return NPath.of(Paths.get(NPlatformHome.of(getStoreLayout(), isSystem()).getWorkspaceLocation(
                 storeType, getHomeLocations(),
                 getName()
@@ -410,12 +407,10 @@ public final class DefaultNWorkspaceCurrentConfig {
 
 
     public NPath getStoreLocation(String id, NStoreType storeType) {
-        NSession session=workspace.currentSession();
         return getStoreLocation(NId.of(id).get(), storeType);
     }
 
     public NPath getStoreLocation(NId id, NStoreType storeType) {
-        NSession session=workspace.currentSession();
         NPath storeLocation = getStoreLocation(storeType);
         if (storeLocation == null) {
             return null;

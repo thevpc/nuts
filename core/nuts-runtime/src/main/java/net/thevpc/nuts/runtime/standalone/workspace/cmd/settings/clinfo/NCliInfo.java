@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.clinfo;
 
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.util.NPlatformHome;
+import net.thevpc.nuts.env.NPlatformHome;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.nio.file.Files;

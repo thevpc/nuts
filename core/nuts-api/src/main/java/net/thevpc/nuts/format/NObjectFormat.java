@@ -42,7 +42,7 @@ import java.util.Map;
 public interface NObjectFormat extends NContentTypeFormat {
 
     static NObjectFormat of() {
-       return NExtensions.of().createComponent(NObjectFormat.class).get();
+       return NExtensions.of(NObjectFormat.class);
     }
 
     String getFormatMode();

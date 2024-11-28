@@ -39,7 +39,7 @@ import java.util.List;
  */
 public interface NLibPaths extends NComponent {
     static NLibPaths of() {
-        return NExtensions.of().createComponent(NLibPaths.class).get();
+        return NExtensions.of(NLibPaths.class);
     }
 
 

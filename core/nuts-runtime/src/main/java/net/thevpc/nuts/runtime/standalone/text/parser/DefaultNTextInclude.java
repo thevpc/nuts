@@ -27,8 +27,8 @@
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.text.NTextInclude;
 import net.thevpc.nuts.text.NTextType;
 
@@ -69,7 +69,10 @@ public class DefaultNTextInclude extends NTextSpecialBase implements NTextInclud
         DefaultNTextInclude that = (DefaultNTextInclude) o;
         return Objects.equals(value, that.value);
     }
-
+    @Override
+    public NText immutable() {
+        return this;
+    }
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), value);

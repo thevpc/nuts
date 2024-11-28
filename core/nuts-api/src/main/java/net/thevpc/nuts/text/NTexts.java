@@ -43,14 +43,16 @@ import java.util.List;
  */
 public interface NTexts extends NComponent {
     static NTexts of() {
-        return NExtensions.of().createComponent(NTexts.class).get();
+        return NExtensions.of(NTexts.class);
     }
 
     NTextBuilder ofBuilder();
 
     NText ofBlank();
 
-    NText ofText(Object t);
+    NText of(Object t);
+
+    NText of(NMsg t);
 
     NTextPlain ofPlain(String t);
 
@@ -62,8 +64,6 @@ public interface NTexts extends NComponent {
 
     NText ofStyled(NMsg other, NTextStyles styles);
 
-    NText ofStyled(NString other, NTextStyles styles);
-
     NText ofStyled(NText other, NTextStyles styles);
 
 
@@ -71,13 +71,9 @@ public interface NTexts extends NComponent {
 
     NText ofStyled(NMsg other, NTextStyle style);
 
-    NText ofStyled(NString other, NTextStyle style);
-
     NText ofStyled(NText other, NTextStyle style);
 
     NTextTitle ofTitle(String other, int level);
-
-    NTextTitle ofTitle(NString other, int level);
 
     NTextTitle ofTitle(NText other, int level);
 
@@ -105,6 +101,10 @@ public interface NTexts extends NComponent {
 
     NTextLink ofLink(String value);
 
+    NTextInclude ofInclude(String value);
+
+    NTextInclude ofInclude(String value, char sep);
+
     NTextFormatTheme getTheme();
 
     NTexts setTheme(NTextFormatTheme theme);
@@ -119,7 +119,9 @@ public interface NTexts extends NComponent {
 
     List<NCodeHighlighter> getCodeHighlighters();
 
-    NText parse(String t);
+    NText of(NText t);
+
+    NText of(String t);
 
     NTextParser parser();
 
@@ -141,10 +143,6 @@ public interface NTexts extends NComponent {
 
     String filterText(String text);
 
-
-    NTextInclude ofInclude(String value);
-
-    NTextInclude ofInclude(String value, char sep);
 
     NFormat createFormat(NFormatSPI format);
 

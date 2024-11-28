@@ -50,7 +50,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.util.NClassMap;
-import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.reflect.NReflectRepository;
 import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
@@ -163,7 +162,7 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
         addDefaultMapper(NElement.class, new NElementMapperNElement());
         addDefaultMapper(NElementEntry.class, F_NAMED_ELEM);
         addDefaultMapper(NCmdLine.class, new NElementMapperCmdLine());
-        addDefaultMapper(NString.class, new NElementMapperNString());
+//        addDefaultMapper(NText.class, new NElementMapperNString());
         addDefaultMapper(NText.class, new NElementMapperNText());
         addDefaultMapper(NPath.class, new NElementMapperNPath());
         addDefaultMapper(NFilter.class, new NElementMapperNFilter());

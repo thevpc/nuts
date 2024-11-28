@@ -6,7 +6,8 @@ import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.ntomcat.NTomcatConfigVersions;
@@ -86,14 +87,14 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
         }
         return null;
     }
-    public NString getFormattedPath(String str) {
-        return NTexts.of().ofStyled(str, NTextStyle.path());
+    public NText getFormattedPath(String str) {
+        return NText.ofStyled(str, NTextStyle.path());
     }
-    public NString getFormattedVersion(String str) {
-        return NTexts.of().ofStyled(str, NTextStyle.version());
+    public NText getFormattedVersion(String str) {
+        return NText.ofStyled(str, NTextStyle.version());
     }
-    public NString getFormattedPrefix(String str) {
-        return NTexts.of().ofBuilder()
+    public NText getFormattedPrefix(String str) {
+        return NTextBuilder.of()
                 .append("[")
                 .append(str, NTextStyle.primary5())
                 .append("]");

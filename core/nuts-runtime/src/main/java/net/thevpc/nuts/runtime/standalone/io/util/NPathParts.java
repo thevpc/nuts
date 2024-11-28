@@ -2,10 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
-import net.thevpc.nuts.text.NString;
-import net.thevpc.nuts.text.NTextBuilder;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 
@@ -310,7 +307,7 @@ public class NPathParts {
         return result.toString();
     }
 
-    public static NString toNutsString(NString protocol, NString authority, NString path, NString query, NString ref, NSession session) {
+    public static NText toNutsString(NText protocol, NText authority, NText path, NText query, NText ref, NSession session) {
         NTexts txt = NTexts.of();
         NTextBuilder result = txt.ofBuilder();
         result.append(protocol);
@@ -360,11 +357,11 @@ public class NPathParts {
         return "";
     }
 
-    public static NString compressPath(String path, NSession session) {
+    public static NText compressPath(String path, NSession session) {
         return compressPath(path, 2, 2, session);
     }
 
-    public static NString compressPath(String path, int left, int right, NSession session) {
+    public static NText compressPath(String path, int left, int right, NSession session) {
         NTexts txt = NTexts.of();
         NPathParts p = new NPathParts(path);
         switch (p.getType()) {

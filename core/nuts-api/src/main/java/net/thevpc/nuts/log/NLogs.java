@@ -40,7 +40,7 @@ import java.util.logging.Level;
  */
 public interface NLogs extends NComponent {
     static NLogs of() {
-       return NExtensions.of().createComponent(NLogs.class).get();
+       return NExtensions.of(NLogs.class);
     }
 
     /**

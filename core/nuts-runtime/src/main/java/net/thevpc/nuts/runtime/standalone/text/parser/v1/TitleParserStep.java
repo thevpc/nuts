@@ -50,7 +50,7 @@ public class TitleParserStep extends ParserStep {
             for (ParserStep a : children) {
                 all.add(a.toText());
             }
-            child= NTexts.of().ofList(all).simplify();
+            child= NText.ofList(all).simplify();
         }
         return factory0.createTitle(s,s0.length()-1 ,child,isComplete());
     }

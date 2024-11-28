@@ -41,7 +41,7 @@ import java.util.List;
  */
 public interface NArtifactCallBuilder extends Serializable, NComponent {
     static NArtifactCallBuilder of() {
-       return NExtensions.of().createComponent(NArtifactCallBuilder.class).get();
+       return NExtensions.of(NArtifactCallBuilder.class);
     }
 
     /**

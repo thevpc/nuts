@@ -42,7 +42,7 @@ import java.io.Closeable;
  * @app.category Base
  * @since 0.5.4
  */
-public interface NWorkspace extends NComponent, Closeable {
+public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
     static NWorkspace get() {
         return of().get();
     }
@@ -87,11 +87,13 @@ public interface NWorkspace extends NComponent, Closeable {
 
     NId getApiId();
 
+    NId getAppId();
+
     NId getRuntimeId();
 
     NPath getLocation();
 
-    ///////////////////// create new session
+    /// ////////////////// create new session
     NSession createSession();
 
     NSession currentSession();

@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NAsk;
@@ -103,7 +104,7 @@ public class UnmodifiableTerminal extends AbstractNTerminal {
                 getProgressBar().printProgress(
                         Float.isNaN(progress) ? -1
                                 : (int) (progress * 100),
-                        NTexts.of().ofText(message),
+                        NText.of(message),
                         err()
                 );
             }

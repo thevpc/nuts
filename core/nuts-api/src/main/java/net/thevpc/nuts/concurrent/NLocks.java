@@ -43,7 +43,7 @@ import java.util.concurrent.locks.Lock;
  */
 public interface NLocks extends NComponent {
     static NLocks of() {
-        return NExtensions.of().createComponent(NLocks.class).get();
+        return NExtensions.of(NLocks.class);
     }
 
     /**

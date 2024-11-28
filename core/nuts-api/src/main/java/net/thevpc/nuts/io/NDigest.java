@@ -47,7 +47,7 @@ import java.util.List;
  */
 public interface NDigest extends NComponent {
     static NDigest of() {
-        return NExtensions.of().createComponent(NDigest.class).get();
+        return NExtensions.of(NDigest.class);
     }
 
     NDigest addSource(NInputSource source);

@@ -25,7 +25,6 @@
 package net.thevpc.nuts.runtime.standalone.util.reflect;
 
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.reflect.NReflectConfiguration;
 import net.thevpc.nuts.reflect.NReflectConfigurationBuilder;

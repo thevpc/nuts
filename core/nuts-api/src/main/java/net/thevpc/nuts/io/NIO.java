@@ -26,19 +26,16 @@
  */
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
-import net.thevpc.nuts.text.NString;
-import net.thevpc.nuts.util.NMsg;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 
 public interface NIO extends NComponent {
     static NIO of() {
-        return NExtensions.of().createComponent(NIO.class).get();
+        return NExtensions.of(NIO.class);
     }
 //    static NPrintStream out(){return NSession.get().out();}
 //
@@ -55,7 +52,7 @@ public interface NIO extends NComponent {
 //        return out().println(b);
 //    }
 //
-//    static NPrintStream println(NString b){
+//    static NPrintStream println(NText b){
 //        return out().println(b);
 //    }
 //

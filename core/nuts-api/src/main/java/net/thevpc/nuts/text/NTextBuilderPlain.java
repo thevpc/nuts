@@ -3,8 +3,10 @@ package net.thevpc.nuts.text;
 import net.thevpc.nuts.util.NStream;
 import net.thevpc.nuts.util.NStringBuilder;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public class NTextBuilderPlain implements NTextBuilder {
@@ -17,7 +19,25 @@ public class NTextBuilderPlain implements NTextBuilder {
             sb.append(data);
         }
     }
+    @Override
+    public Iterator<NText> iterator() {
+        return Collections.unmodifiableList(getChildren()).iterator();
+    }
 
+    @Override
+    public String toString() {
+        return sb.toString();
+    }
+
+    @Override
+    public NTextType getType() {
+        return NTextType.BUILDER;
+    }
+
+    @Override
+    public NTextBuilder builder() {
+        return new NTextBuilderPlain(sb.toString());
+    }
 
     @Override
     public NTextStyleGenerator getStyleGenerator() {
@@ -178,19 +198,19 @@ public class NTextBuilderPlain implements NTextBuilder {
     }
 
     @Override
-    public NTextBuilder appendHash(Object text) {
+    public NTextBuilder appendHashStyle(Object text) {
         sb.append(text==null?"":text);
         return this;
     }
 
     @Override
-    public NTextBuilder appendRandom(Object text) {
+    public NTextBuilder appendRandomStyle(Object text) {
         sb.append(text==null?"":text);
         return this;
     }
 
     @Override
-    public NTextBuilder appendHash(Object text, Object hash) {
+    public NTextBuilder appendHashStyle(Object text, Object hash) {
         sb.append(text==null?"":text);
         return this;
     }
@@ -247,8 +267,7 @@ public class NTextBuilderPlain implements NTextBuilder {
 
     @Override
     public NText build() {
-        NString nString = NString.ofPlain(sb.toString());
-        return new ImmutableNTextPlain(nString);
+        return new ImmutableNTextPlain(sb.toString());
     }
 
     @Override
@@ -259,14 +278,14 @@ public class NTextBuilderPlain implements NTextBuilder {
     @Override
     public NText subChildren(int from, int to) {
         if(from==0 && to==1){
-            return new ImmutableNTextPlain(immutable());
+            return new ImmutableNTextPlain(sb.toString());
         }
-        return new ImmutableNTextPlain(NString.ofPlain(""));
+        return new ImmutableNTextPlain("");
     }
 
     @Override
     public NText substring(int from, int to) {
-        return new ImmutableNTextPlain(NString.ofPlain(sb.substring(from,to)));
+        return new ImmutableNTextPlain(sb.substring(from,to));
     }
 
     @Override
@@ -336,8 +355,8 @@ public class NTextBuilderPlain implements NTextBuilder {
     }
 
     @Override
-    public NString immutable() {
-        return NString.ofPlain(sb.toString());
+    public NText immutable() {
+        return new ImmutableNTextPlain(sb.toString());
     }
 
     @Override
@@ -351,18 +370,8 @@ public class NTextBuilderPlain implements NTextBuilder {
     }
 
     @Override
-    public NText toText() {
-        return new ImmutableNTextPlain(immutable());
-    }
-
-    @Override
     public boolean isEmpty() {
         return sb.isEmpty();
-    }
-
-    @Override
-    public NTextBuilder builder() {
-        return new NTextBuilderPlain(sb.toString());
     }
 
     @Override
@@ -371,9 +380,9 @@ public class NTextBuilderPlain implements NTextBuilder {
     }
 
     private static class ImmutableNTextPlain implements NTextPlain {
-        private final NString nString;
+        private final String nString;
 
-        public ImmutableNTextPlain(NString nString) {
+        public ImmutableNTextPlain(String nString) {
             this.nString = nString;
         }
 
@@ -388,23 +397,18 @@ public class NTextBuilderPlain implements NTextBuilder {
         }
 
         @Override
-        public NString immutable() {
-            return nString;
+        public NText immutable() {
+            return this;
         }
 
         @Override
         public String filteredText() {
-            return nString.filteredText();
+            return nString;
         }
 
         @Override
         public int textLength() {
-            return nString.textLength();
-        }
-
-        @Override
-        public NText toText() {
-            return this;
+            return nString.length();
         }
 
         @Override
@@ -421,7 +425,7 @@ public class NTextBuilderPlain implements NTextBuilder {
 
         @Override
         public boolean isBlank() {
-            return nString.isBlank();
+            return nString.trim().isEmpty();
         }
     }
 }

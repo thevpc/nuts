@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.descriptor.parser.NDescriptorContentResolver;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
@@ -13,6 +14,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.spi.NRepositorySPI;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NAssert;
@@ -127,7 +129,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
                                 "%s deployed successfully as %s to %s",
                                 nid.source,
                                 nid.id,
-                                NTexts.of().ofStyled(nid.repository, NTextStyle.primary3())
+                                NText.ofStyled(nid.repository, NTextStyle.primary3())
                         ));
                     }
                     break;
@@ -189,7 +191,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
                         descriptor = descriptor2;
                     } else {
                         if (descriptor2 != null && !descriptor2.equals(descriptor)) {
-                            descriptor.formatter().print(descFile);
+                            NDescriptorFormat.of(descriptor).print(descFile);
                         }
                     }
                     if (descriptor != null) {
@@ -237,7 +239,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
                                 //.setFetchMode(NutsFetchMode.LOCAL)
                                 .setId(effId).setContent(contentFile).setDescriptor(descriptor)
                                 .run();
-                        addResult(effId, repo.getName(), NTexts.of().ofText(content));
+                        addResult(effId, repo.getName(), NText.of(content));
                         return this;
                     }
                 } else {
@@ -252,7 +254,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
                             .setContent(contentFile)
                             .setDescriptor(descriptor)
                             .run();
-                    addResult(effId, repo.getName(), NTexts.of().ofText(content));
+                    addResult(effId, repo.getName(), NText.of(content));
                     return this;
                 }
                 throw new NRepositoryNotFoundException(repository);
@@ -280,7 +282,6 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
         if (descriptor == null) {
             return null;
         }
-        NSession session=workspace.currentSession();
         NDescriptor mdescriptor = null;
         if (descriptor instanceof NDescriptor) {
             mdescriptor = (NDescriptor) descriptor;
@@ -319,7 +320,6 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
 
     @Override
     public NDeployCmd addIds(String... values) {
-        NSession session=workspace.currentSession();
         if (values != null) {
             for (String s : values) {
                 if (!NBlankable.isBlank(s)) {

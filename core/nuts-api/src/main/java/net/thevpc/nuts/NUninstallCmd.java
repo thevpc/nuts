@@ -39,7 +39,7 @@ import java.util.List;
  */
 public interface NUninstallCmd extends NWorkspaceCmd {
     static NUninstallCmd of() {
-        return NExtensions.of().createComponent(NUninstallCmd.class).get();
+        return NExtensions.of(NUninstallCmd.class);
     }
 
     NUninstallCmd addId(NId id);

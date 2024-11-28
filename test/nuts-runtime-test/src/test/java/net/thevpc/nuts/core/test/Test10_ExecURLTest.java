@@ -6,9 +6,7 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.util.NAssert;
 import org.junit.jupiter.api.*;
 
@@ -56,7 +54,7 @@ public class Test10_ExecURLTest {
             }
         }
         String result = NExecCmd.of()
-                .addWorkspaceOptions(new DefaultNWorkspaceOptionsBuilder()
+                .addWorkspaceOptions(NWorkspaceOptionsBuilder.of()
                         .setBot(true)
                         .setWorkspace(NLocations.of().getWorkspaceLocation().resolve("temp-ws").toString())
                 )

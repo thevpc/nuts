@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.security.util;
 
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.NHex;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -142,7 +142,7 @@ public class CoreDigestHelper {
         if (!collected) {
             collected = true;
             byte[] digest = md.digest();
-            collectedString = NStringUtils.toHexString(digest);
+            collectedString = NHex.toHexString(digest);
         }
         return collectedString;
     }

@@ -123,12 +123,12 @@ public class JobServiceCmd {
         );
     }
 
-    protected NString getFormattedProject(String projectName) {
-        NTextBuilder builder = NTexts.of().ofBuilder();
+    protected NText getFormattedProject(String projectName) {
+        NTextBuilder builder = NTextBuilder.of();
         builder.getStyleGenerator()
                 .setIncludeForeground(true)
                 .setUsePaletteColors();
-        return builder.appendHash(projectName).immutable();
+        return builder.appendHashStyle(projectName).immutable();
     }
 
     protected String getFormattedDate(Instant x) {
@@ -141,41 +141,41 @@ public class JobServiceCmd {
 //        return s;
     }
 
-    protected NString getCheckedString(Boolean x) {
+    protected NText getCheckedString(Boolean x) {
         if (x == null) {
-            return NTexts.of().ofPlain("");
+            return NText.ofPlain("");
         }
         if (x) {
-            return NTexts.of().ofPlain("\u2611");
+            return NText.ofPlain("\u2611");
         } else {
-            return NTexts.of().ofPlain("\u25A1");
+            return NText.ofPlain("\u25A1");
         }
     }
 
-    protected NString getPriorityString(NPriority x) {
+    protected NText getPriorityString(NPriority x) {
         if (x == null) {
-            return NTexts.of().ofPlain("N");
+            return NText.ofPlain("N");
         }
         switch (x) {
             case NONE:
-                return NTexts.of().ofStyled("0", NTextStyle.pale());
+                return NText.ofStyled("0", NTextStyle.pale());
             case LOW:
-                return NTexts.of().ofStyled("L", NTextStyle.pale());
+                return NText.ofStyled("L", NTextStyle.pale());
             case NORMAL:
-                return NTexts.of().ofPlain("N");
+                return NText.ofPlain("N");
             case MEDIUM:
-                return NTexts.of().ofStyled("M", NTextStyle.primary1());
+                return NText.ofStyled("M", NTextStyle.primary1());
             case URGENT:
-                return NTexts.of().ofStyled("U", NTextStyle.primary2());
+                return NText.ofStyled("U", NTextStyle.primary2());
             case HIGH:
-                return NTexts.of().ofStyled("H", NTextStyle.primary3());
+                return NText.ofStyled("H", NTextStyle.primary3());
             case CRITICAL:
-                return NTexts.of().ofStyled("C", NTextStyle.fail());
+                return NText.ofStyled("C", NTextStyle.fail());
         }
-        return NTexts.of().ofPlain("?");
+        return NText.ofPlain("?");
     }
 
-    protected NString getStatusString(NTaskStatus x) {
+    protected NText getStatusString(NTaskStatus x) {
         NTexts text = NTexts.of();
         if (x == null) {
             return text.ofPlain("*");
@@ -193,29 +193,29 @@ public class JobServiceCmd {
         return text.ofPlain("?");
     }
 
-    private NString getFlagString(String x, int index) {
+    private NText getFlagString(String x, int index) {
         switch (index) {
             case 1:
-                return NTexts.of().ofStyled(x, NTextStyle.primary1());
+                return NText.ofStyled(x, NTextStyle.primary1());
             case 2:
-                return NTexts.of().ofStyled(x, NTextStyle.primary2());
+                return NText.ofStyled(x, NTextStyle.primary2());
             case 3:
-                return NTexts.of().ofStyled(x, NTextStyle.primary3());
+                return NText.ofStyled(x, NTextStyle.primary3());
             case 4:
-                return NTexts.of().ofStyled(x, NTextStyle.primary4());
+                return NText.ofStyled(x, NTextStyle.primary4());
             case 5:
-                return NTexts.of().ofStyled(x, NTextStyle.primary5());
+                return NText.ofStyled(x, NTextStyle.primary5());
         }
         throw new NIllegalArgumentException(NMsg.ofC("invalid index %s", index));
     }
 
-    protected NString getFlagString(NFlag x) {
+    protected NText getFlagString(NFlag x) {
         if (x == null) {
             x = NFlag.NONE;
         }
         switch (x) {
             case NONE:
-                return NTexts.of().ofPlain("\u2690");
+                return NText.ofPlain("\u2690");
 
             case STAR1:
                 return getFlagString("\u2605", 1);
@@ -272,7 +272,7 @@ public class JobServiceCmd {
             case PHONE5:
                 return getFlagString("\u260E", 5);
         }
-        return NTexts.of().ofPlain("[" + x.toString().toLowerCase() + "]");
+        return NText.ofPlain("[" + x.toString().toLowerCase() + "]");
     }
 
     protected <T> void appendPredicateRef(NRef<Predicate<T>> whereFilter, Predicate<T> t) {

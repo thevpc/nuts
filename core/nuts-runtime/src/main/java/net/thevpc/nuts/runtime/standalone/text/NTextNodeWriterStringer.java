@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.DefaultNCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NIOException;
@@ -63,6 +64,13 @@ public class NTextNodeWriterStringer extends AbstractNTextNodeWriter {
                 break;
             case LIST: {
                 NTextList s = (NTextList) node;
+                for (NText n : s) {
+                    writeNode(n);
+                }
+                break;
+            }
+            case BUILDER: {
+                NTextBuilder s = (NTextBuilder) node;
                 for (NText n : s) {
                     writeNode(n);
                 }

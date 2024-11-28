@@ -1,13 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.AbstractPathSPIAdapter;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.log.NLogOp;
@@ -301,7 +301,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
             return "path";
         }
 
-        public NString asFormattedString() {
+        public NText asFormattedString() {
             NTextBuilder sb = NTextBuilder.of();
             sb.append(PROTOCOL, NTextStyle.primary1());
             sb.append(":", NTextStyle.separator());

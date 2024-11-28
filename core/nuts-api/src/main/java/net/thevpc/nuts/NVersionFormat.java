@@ -39,7 +39,11 @@ import java.util.Map;
 public interface NVersionFormat extends NFormat, NComponent {
 
     static NVersionFormat of() {
-       return NExtensions.of().createComponent(NVersionFormat.class).get();
+        return NExtensions.of(NVersionFormat.class);
+    }
+
+    static NVersionFormat of(NVersion version) {
+        return of().setVersion(version);
     }
 
     @Override

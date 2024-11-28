@@ -45,7 +45,7 @@ import java.util.Set;
 public interface NFetchCmd extends NWorkspaceCmd {
 
     static NFetchCmd of() {
-        return NExtensions.of().createComponent(NFetchCmd.class).get();
+        return NExtensions.of(NFetchCmd.class);
     }
 
     static NFetchCmd of(NId id) {
@@ -60,13 +60,18 @@ public interface NFetchCmd extends NWorkspaceCmd {
         return of().setId(NWorkspace.of().get().getApiId());
     }
 
+    static NFetchCmd ofNutsApp() {
+        return of().setId(NWorkspace.of().get().getAppId());
+    }
+
     static NFetchCmd ofNutsRuntime() {
         return of().setId(NWorkspace.of().get().getRuntimeId());
     }
 
     ////////////////////////////////////////////////////////
     // Setters
-    ////////////////////////////////////////////////////////
+
+    /// /////////////////////////////////////////////////////
 
     NOptional<NFetchStrategy> getFetchStrategy();
 

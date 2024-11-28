@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.security;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.security.NAuthenticationAgent;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.NBlankable;

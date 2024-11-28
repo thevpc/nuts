@@ -16,7 +16,7 @@ import java.util.List;
 
 public interface NApp extends NComponent {
     static NApp of() {
-        return NExtensions.of().createComponent(NApp.class).get();
+        return NExtensions.of(NApp.class);
     }
 
     void prepare(NAppInitInfo appInitInfo);

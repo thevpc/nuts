@@ -25,6 +25,7 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
@@ -43,7 +44,7 @@ public class NReadOnlyException extends NException {
      * @param location location
      */
     public NReadOnlyException(String location) {
-        super(NMsg.ofC("cannot update readonly workspace %s", NTexts.of().ofStyled(location, NTextStyle.path())));
+        super(NMsg.ofC("cannot update readonly workspace %s", NText.ofStyled(location, NTextStyle.path())));
     }
 
     /**

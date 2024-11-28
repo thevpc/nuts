@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.format.table;
 
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.format.NTableCellFormat;
+import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 
@@ -19,7 +20,7 @@ public class DefaultTableHeaderFormat implements NTableCellFormat {
 
     @Override
     public String format(int row, int col, Object value) {
-        return NTexts.of().ofBuilder().append(String.valueOf(value),
+        return NTextBuilder.of().append(String.valueOf(value),
                 NTextStyle.primary1()
                 ).toString();
     }

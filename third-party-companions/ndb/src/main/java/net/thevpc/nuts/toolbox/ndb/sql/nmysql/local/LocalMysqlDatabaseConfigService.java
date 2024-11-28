@@ -2,7 +2,8 @@ package net.thevpc.nuts.toolbox.ndb.sql.nmysql.local;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.local.config.LocalMysqlDatabaseConfig;
@@ -42,8 +43,8 @@ public class LocalMysqlDatabaseConfigService {
         return this;
     }
 
-    public NString getBracketsPrefix(String str) {
-        return NTexts.of().ofBuilder()
+    public NText getBracketsPrefix(String str) {
+        return NTextBuilder.of()
                 .append("[")
                 .append(str, NTextStyle.primary5())
                 .append("]");
@@ -121,7 +122,7 @@ public class LocalMysqlDatabaseConfigService {
                     .grabAll();
             if (session.isPlainTrace()) {
                 session.out().println(NMsg.ofC("%s    [exec] %s", getBracketsPrefix(getDatabaseName()),
-                        cmd.formatter().setEnvReplacer(envEntry -> {
+                        NExecCmdFormat.of(cmd).setEnvReplacer(envEntry -> {
                             if ("CMD_PWD".equals(envEntry.getName())) {
                                 return "****";
                             }

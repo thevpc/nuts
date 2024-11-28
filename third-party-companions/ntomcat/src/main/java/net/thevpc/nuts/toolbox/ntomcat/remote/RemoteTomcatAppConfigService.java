@@ -5,7 +5,8 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NObjectFormat;
 import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.ntomcat.remote.config.RemoteTomcatAppConfig;
@@ -142,8 +143,8 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
 
     }
 
-    public NString getBracketsPrefix(String str) {
-        return NTexts.of().ofBuilder()
+    public NText getBracketsPrefix(String str) {
+        return NTextBuilder.of()
                 .append("[")
                 .append(str, NTextStyle.primary5())
                 .append("]");

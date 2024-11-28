@@ -45,7 +45,7 @@ import java.util.function.Predicate;
  */
 public interface NInstallCmd extends NWorkspaceCmd {
     static NInstallCmd of() {
-        return NExtensions.of().createComponent(NInstallCmd.class).get();
+        return NExtensions.of(NInstallCmd.class);
     }
 
     /**

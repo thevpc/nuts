@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.executor.embedded;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NCmdLineFormat;
+import net.thevpc.nuts.format.NFormats;
 import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorComponent;
 import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorOptions;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
@@ -84,10 +86,11 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
 
                     NWorkspaceOptionsBuilder bootOptions = JavaExecutorComponent.createChildOptions(executionContext);
                     System.setProperty("nuts.boot.args",
-                            bootOptions
-                                    .toCmdLine(new NWorkspaceOptionsConfig().setCompact(true))
-                                    .add(id.getLongName())
-                                    .formatter().setShellFamily(NShellFamily.SH).toString()
+                            NCmdLineFormat.of(
+                                    bootOptions
+                                            .toCmdLine(new NWorkspaceOptionsConfig().setCompact(true))
+                                            .add(id.getLongName())
+                            ).setShellFamily(NShellFamily.SH).toString()
                     );
                     mainMethod[0] = cls.getMethod("main", String[].class);
                     mainMethod[0].invoke(null, new Object[]{joptions.getAppArgs().toArray(new String[0])});

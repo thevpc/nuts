@@ -35,7 +35,7 @@ import java.util.List;
 /**
  * @app.category Format
  */
-public interface NTextBuilder extends NString {
+public interface NTextBuilder extends NText, Iterable<NText> {
     static NTextBuilder of() {
         NSession s = NSession.of().orNull();
         if(s==null){
@@ -52,11 +52,11 @@ public interface NTextBuilder extends NString {
 
     NTextBuilder appendCode(String lang, String text);
 
-    NTextBuilder appendHash(Object text);
+    NTextBuilder appendHashStyle(Object text);
 
-    NTextBuilder appendRandom(Object text);
+    NTextBuilder appendRandomStyle(Object text);
 
-    NTextBuilder appendHash(Object text, Object hash);
+    NTextBuilder appendHashStyle(Object text, Object hash);
 
     NTextBuilder append(Object text, NTextStyle style);
 

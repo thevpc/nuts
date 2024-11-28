@@ -92,7 +92,7 @@ public class NullNPrintStream implements NPrintStream {
     }
 
     @Override
-    public NPrintStream print(NString b) {
+    public NPrintStream print(NText b) {
         return this;
     }
 
@@ -163,7 +163,7 @@ public class NullNPrintStream implements NPrintStream {
     }
 
     @Override
-    public NPrintStream println(NString b) {
+    public NPrintStream println(NText b) {
         return this;
     }
 
@@ -329,10 +329,5 @@ public class NullNPrintStream implements NPrintStream {
     @Override
     public NPrintStream writeRaw(byte[] buf, int off, int len) {
         return this;
-    }
-
-    @Override
-    public NFormat formatter() {
-        return NFormat.of(new NContentMetadataProviderFormatSPI(this, null, "print-stream"));
     }
 }

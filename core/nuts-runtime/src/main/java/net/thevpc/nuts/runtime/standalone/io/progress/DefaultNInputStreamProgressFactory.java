@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.time.NProgressFactory;
 import net.thevpc.nuts.time.NProgressListener;

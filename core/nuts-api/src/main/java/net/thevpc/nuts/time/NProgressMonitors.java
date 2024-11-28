@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 public interface NProgressMonitors extends NComponent {
     static NProgressMonitors of() {
-        return NExtensions.of().createComponent(NProgressMonitors.class).get();
+        return NExtensions.of(NProgressMonitors.class);
     }
 
 

@@ -26,6 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
@@ -49,7 +50,6 @@ public class DefaultNUpdateUserCmd extends AbstractNUpdateUserCmd {
 
     @Override
     public NUpdateUserCmd run() {
-        NSession session=workspace.currentSession();
         NWorkspaceSecurityManager sec = NWorkspaceSecurityManager.of();
         if (!(getCredentials()==null || NBlankable.isBlank(new String(getCredentials())))) {
             sec.checkAllowed(NConstants.Permissions.SET_PASSWORD, "set-user-credentials");
@@ -83,7 +83,6 @@ public class DefaultNUpdateUserCmd extends AbstractNUpdateUserCmd {
     }
 
     protected void fillNutsUserConfig(NUserConfig u) {
-        NSession session=workspace.currentSession();
         NWorkspaceSecurityManager wsec = NWorkspaceSecurityManager.of();
         String currentLogin = wsec.getCurrentUsername();
         if (!currentLogin.equals(login)) {

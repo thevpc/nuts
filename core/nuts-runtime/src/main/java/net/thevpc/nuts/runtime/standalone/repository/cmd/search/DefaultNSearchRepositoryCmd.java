@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.cmd.search;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.util.NIndexFirstIterator;

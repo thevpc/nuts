@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.format.NFormat;
 import net.thevpc.nuts.format.NObjectFormat;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
@@ -70,6 +69,12 @@ public abstract class NPrintStreamBase implements NPrintStream {
                     }
                     break;
                 }
+                case BUILDER: {
+                    for (NText child : ((NTextBuilder) b).getChildren()) {
+                        printNormalized(child);
+                    }
+                    break;
+                }
                 case PLAIN: {
                     printParsed(b);
                     break;
@@ -106,11 +111,11 @@ public abstract class NPrintStreamBase implements NPrintStream {
     }
 
     @Override
-    public NPrintStream print(NString b) {
+    public NPrintStream print(NText b) {
         if (b == null) {
             return printNull();
         }
-        NText t = b.toText();
+        NText t = txt().of(b);
         NText transformed = txt().transform(t,
                 new NTextTransformConfig()
                         .setNormalize(true)
@@ -125,13 +130,13 @@ public abstract class NPrintStreamBase implements NPrintStream {
         if (b == null) {
             return printNull();
         }
-        this.print(txt().ofText(b));
+        this.print(txt().of(b));
         return this;
     }
 
     @Override
     public NPrintStream print(boolean b) {
-        this.print(txt().ofText(b));
+        this.print(txt().of(b));
         return this;
     }
 
@@ -140,7 +145,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
         if (b == null) {
             return printNull();
         } else if (isNtf()) {
-            this.print(txt().ofText(b));
+            this.print(txt().of(b));
         } else {
             this.print(String.valueOf(b));
         }
@@ -162,26 +167,26 @@ public abstract class NPrintStreamBase implements NPrintStream {
         if (isNtf()) {
             this.print(String.valueOf(i));
         } else {
-            this.print(txt().ofText(i));
+            this.print(txt().of(i));
         }
         return this;
     }
 
     @Override
     public NPrintStream print(long l) {
-        this.print(txt().ofText(l));
+        this.print(txt().of(l));
         return this;
     }
 
     @Override
     public NPrintStream print(float f) {
-        this.print(txt().ofText(f));
+        this.print(txt().of(f));
         return this;
     }
 
     @Override
     public NPrintStream print(double d) {
-        this.print(txt().ofText(d));
+        this.print(txt().of(d));
         return this;
     }
 
@@ -190,7 +195,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
         if (d == null) {
             return printNull();
         }
-        this.print(txt().ofText(d));
+        this.print(txt().of(d));
         return this;
     }
 
@@ -199,7 +204,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
         if (d == null) {
             return printNull();
         }
-        this.print(txt().ofText(d));
+        this.print(txt().of(d));
         return this;
     }
 
@@ -208,7 +213,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
         if (d == null) {
             return printNull();
         }
-        this.print(txt().ofText(d));
+        this.print(txt().of(d));
         return this;
     }
 
@@ -256,8 +261,8 @@ public abstract class NPrintStreamBase implements NPrintStream {
             this.print((Temporal) obj);
         } else if (obj instanceof NMsg) {
             this.print((NMsg) obj);
-        } else if (obj instanceof NString) {
-            this.print((NString) obj);
+        } else if (obj instanceof NText) {
+            this.print((NText) obj);
         } else if (obj instanceof char[]) {
             this.print((char[]) obj);
         } else if (obj instanceof byte[]) {
@@ -296,7 +301,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
     }
 
     @Override
-    public NPrintStream println(NString b) {
+    public NPrintStream println(NText b) {
         this.print(b);
         this.println();
         return this;
@@ -304,7 +309,7 @@ public abstract class NPrintStreamBase implements NPrintStream {
 
     @Override
     public NPrintStream println(NMsg b) {
-        this.println(txt().ofText(b));
+        this.println(txt().of(b));
         return this;
     }
 
@@ -582,9 +587,9 @@ public abstract class NPrintStreamBase implements NPrintStream {
         if (text != null) {
             NTexts txt = txt();
             if (styles == null || styles.size() == 0) {
-                print(txt.ofText(text));
+                print(txt.of(text));
             } else {
-                print(txt.ofStyled(txt.ofText(text), styles));
+                print(txt.ofStyled(txt.of(text), styles));
             }
         }
         return this;
@@ -611,8 +616,4 @@ public abstract class NPrintStreamBase implements NPrintStream {
         return write(buf, off, len);
     }
 
-    @Override
-    public NFormat formatter() {
-        return NFormat.of(new NContentMetadataProviderFormatSPI(this, null, "print-stream"));
-    }
 }

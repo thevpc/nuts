@@ -5,7 +5,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
 import net.thevpc.nuts.elem.NObjectElement;
-import net.thevpc.nuts.DefaultNArtifactCall;
+import net.thevpc.nuts.runtime.standalone.DefaultNArtifactCall;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;

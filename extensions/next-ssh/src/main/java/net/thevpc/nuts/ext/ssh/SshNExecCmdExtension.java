@@ -1,10 +1,9 @@
 package net.thevpc.nuts.ext.ssh;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
-import net.thevpc.nuts.boot.NWorkspaceCmdLineParser;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.cmdline.NWorkspaceCmdLineParser;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NConnexionString;
@@ -35,7 +34,7 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
             }
             case EMBEDDED:
             case SPAWN: {
-                NWorkspaceOptionsBuilder wOptions = new DefaultNWorkspaceOptionsBuilder();
+                NWorkspaceOptionsBuilder wOptions = NWorkspaceOptionsBuilder.of();
                 wOptions.setBot(session.isBot());
                 wOptions.setConfirm(session.getConfirm().orDefault());
                 wOptions.setDry(session.isDry());

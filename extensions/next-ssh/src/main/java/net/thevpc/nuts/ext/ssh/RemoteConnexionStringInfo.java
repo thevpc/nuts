@@ -5,6 +5,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.env.NDesktopEnvironmentFamily;
 import net.thevpc.nuts.env.NOsFamily;
+import net.thevpc.nuts.env.NPlatformHome;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NConnexionString;
@@ -69,13 +70,13 @@ public class RemoteConnexionStringInfo {
                 .setContent(true)
                 .getResultDefinition();
         NPath apiLocalPath = def.getContent().get();
-        NPath remoteJarPath = remoteRepo.resolve(NIdUtils.resolveJarPath(id));
+        NPath remoteJarPath = remoteRepo.resolve(id.getMavenPath("jar"));
         if (remoteJar != null) {
             remoteJar.set(remoteJarPath);
         }
         if (copy(apiLocalPath, remoteJarPath, session)) {
-            def.getDescriptor().formatter().setNtf(false).print(
-                    remoteRepo.resolve(NIdUtils.resolveDescPath(id)).mkParentDirs()
+            NDescriptorFormat.of(def.getDescriptor()).setNtf(false).print(
+                    remoteRepo.resolve(id.getMavenPath("nuts")).mkParentDirs()
             );
             return true;
         }
@@ -272,7 +273,7 @@ public class RemoteConnexionStringInfo {
                     .setPath(storeLocationCache)
                     .toString()).resolve(NConstants.Folders.ID);
             NId appId = NApp.of().getId().orElseGet(()->NWorkspace.get().getApiId());
-            storeLocationCacheRepoSSH = storeLocationCacheRepo.resolve(NIdUtils.resolveIdPath(appId)).resolve("repo");
+            storeLocationCacheRepoSSH = storeLocationCacheRepo.resolve(appId.getMavenFolder()).resolve("repo");
             NPath e = storeLocationCacheRepoSSH.resolve(".nuts-repository");
             if (!e.isRegularFile()) {
                 e.mkParentDirs().writeString("{}");

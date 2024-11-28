@@ -13,6 +13,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.NRecommendationPha
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.RequestQueryInfo;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 import net.thevpc.nuts.text.NTerminalCmd;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.log.NLog;
@@ -70,15 +71,15 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         if (_LL.isLoggable(Level.FINEST)) {
             _LL.with().level(Level.FINE).verb(NLogVerb.START).log(
                     NMsg.ofC("[exec] %s",
-                            NTexts.of().ofCode("system",
+                            NText.ofCode("system",
                                     pb.getCommandString()
                             )));
         }
         NSession session = workspace.currentSession();
         if (showCommand || CoreNUtils.isShowCommand()) {
             if (session.out().getTerminalMode() == NTerminalMode.FORMATTED) {
-                session.out().print(NMsg.ofC("%s ", NTexts.of().ofStyled("[exec]", NTextStyle.primary4())));
-                session.out().println(NTexts.of().ofCode("system", pb.getCommandString()));
+                session.out().print(NMsg.ofC("%s ", NText.ofStyled("[exec]", NTextStyle.primary4())));
+                session.out().println(NText.ofCode("system", pb.getCommandString()));
             } else {
                 session.out().print("exec ");
                 session.out().println(NMsg.ofPlain(pb.getCommandString()));

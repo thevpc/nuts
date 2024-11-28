@@ -122,7 +122,7 @@ public class Test13_TerminalModeTest {
 
     @Test
     public void testBuilder(){
-        NText c = NTexts.of().ofCode("java", "public static void main(String[] args){}")
+        NText c = NText.ofCode("java", "public static void main(String[] args){}")
                 .highlight();
         NSession session = NSession.get();
         session.out().println(c);
@@ -134,7 +134,7 @@ public class Test13_TerminalModeTest {
         NText portion_npar = c.builder().substring(22, 24);
         session.out().println(portion_npar);
         Assertions.assertEquals("n##{separator:(}##\u001E",portion_npar.toString());
-        NText rep=c.builder().replace(23,24, NTexts.of().ofStyled("()(", NTextStyle.danger())).build();
+        NText rep=c.builder().replace(23,24, NText.ofStyled("()(", NTextStyle.danger())).build();
         session.out().println(rep);
         Assertions.assertEquals("##{keyword:public}##\u001E ##{keyword:static}##\u001E ##{keyword:void}##\u001E main##{danger:()(}##\u001EString##{separator:[}##\u001E##{separator:]}##\u001E args##{separator:)}##\u001E##{separator:{}##\u001E##{separator:}}##\u001E",
                 rep.toString());

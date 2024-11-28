@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
-import net.thevpc.nuts.DefaultNDescriptorLicenseBuilder;
+import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorLicenseBuilder;
 import net.thevpc.nuts.NDescriptorLicense;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;

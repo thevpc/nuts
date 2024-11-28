@@ -40,7 +40,7 @@ import java.util.stream.Stream;
  */
 public interface NCollectionsRPI extends NComponent {
     static NCollectionsRPI of() {
-        return NExtensions.of().createComponent(NCollectionsRPI.class).get();
+        return NExtensions.of(NCollectionsRPI.class);
     }
 
     <T> NStream<T> arrayToStream(T[] str);

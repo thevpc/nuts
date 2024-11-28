@@ -84,7 +84,6 @@ public abstract class DefaultFormatBase0<T> implements NCmdLineConfigurable {
      */
     @Override
     public T configure(boolean skipUnsupported, String... args) {
-        NSession session=workspace.currentSession();
         return NCmdLineConfigurable.configure(this, skipUnsupported, args,getName());
     }
 

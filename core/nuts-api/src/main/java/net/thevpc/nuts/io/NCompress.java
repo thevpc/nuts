@@ -50,7 +50,7 @@ import java.util.Set;
  */
 public interface NCompress extends NComponent {
     static NCompress of() {
-        return NExtensions.of().createComponent(NCompress.class).get();
+        return NExtensions.of(NCompress.class);
     }
 
     /**

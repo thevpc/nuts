@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.update;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.util.NCoreCollectionUtils;
@@ -59,14 +60,12 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
 
     @Override
     public NUpdateCmd addId(String id) {
-        NSession session=workspace.currentSession();
         return addId(id == null ? null : NId.of(id).get());
     }
 
     @Override
     public NUpdateCmd addId(NId id) {
         if (id == null) {
-            NSession session=workspace.currentSession();
             throw new NNotFoundException(id);
         } else {
             ids.add(id);
@@ -100,7 +99,6 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
 
     @Override
     public NUpdateCmd removeId(String id) {
-        NSession session=workspace.currentSession();
         return removeId(NId.of(id).get());
     }
 
@@ -296,7 +294,6 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
 
     @Override
     public NWorkspaceUpdateResult getResult() {
-        NSession session=workspace.currentSession();
         if (result == null) {
             checkUpdates();
         }
@@ -377,7 +374,6 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
 
     @Override
     public NUpdateCmd addLockedId(String id) {
-        NSession session=workspace.currentSession();
         if (!NBlankable.isBlank(id)) {
             lockedIds.add(NId.of(id).get());
         }
@@ -418,7 +414,6 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NSession session=workspace.currentSession();
         NArg a = cmdLine.peek().get();
         if (a == null) {
             return false;

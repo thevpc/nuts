@@ -13,7 +13,7 @@ import net.thevpc.nuts.util.NOptional;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class OutputStreamExt extends OutputStream implements NFormattable, NContentMetadataProvider {
+public class OutputStreamExt extends OutputStream implements NContentMetadataProvider {
 
     private OutputStream base;
     private NMsg sourceName;
@@ -66,11 +66,6 @@ public class OutputStreamExt extends OutputStream implements NFormattable, NCont
         if (onClose != null) {
             onClose.run();
         }
-    }
-
-    @Override
-    public NFormat formatter() {
-        return NFormat.of(new NContentMetadataProviderFormatSPI(this, null, "output-stream"));
     }
 
     @Override

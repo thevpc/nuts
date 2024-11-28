@@ -36,12 +36,15 @@ import java.util.function.Predicate;
  *
  * @author thevpc
  * @app.category Format
- * @see NExecCmd#formatter()
  * @since 0.5.4
  */
 public interface NExecCmdFormat extends NFormat {
+    static NExecCmdFormat of(NExecCmd execCmd) {
+        return of().setValue(execCmd);
+    }
+
     static NExecCmdFormat of() {
-       return NExtensions.of().createComponent(NExecCmdFormat.class).get();
+       return NExtensions.of(NExecCmdFormat.class);
     }
 
     /**

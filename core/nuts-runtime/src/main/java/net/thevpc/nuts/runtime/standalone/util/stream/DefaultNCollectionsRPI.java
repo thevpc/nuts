@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.util.stream;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.reserved.rpi.NCollectionsRPI;
 import net.thevpc.nuts.util.NIteratorEmpty;

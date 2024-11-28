@@ -6,7 +6,7 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.runtime.standalone.workspace.AbstractNWorkspace;
 import net.thevpc.nuts.runtime.standalone.xtra.ntalk.NTalkClient;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
@@ -23,7 +23,7 @@ public abstract class RemoteNWorkspace extends AbstractNWorkspace {
             NObjectElement q = e.ofObject()
                     .set("cmd", commandName)
                     .set("body", body).build();
-            NString json = e.setValue(q).format();
+            NText json = e.setValue(q).format();
             String wsURL = NBootManager.of().getBootOptions().getWorkspace().orNull();
             byte[] result = cli.request("nuts/ws:"+wsURL, json.toString().getBytes());
             NObjectElement resultObject = e.parse(result, NObjectElement.class);
@@ -34,7 +34,7 @@ public abstract class RemoteNWorkspace extends AbstractNWorkspace {
             } else {
                 //TODO mush deserialize exception
                 throw new NException(NMsg.ofC("unable to call %s",
-                        NTexts.of().ofStyled(commandName, NTextStyle.primary1())));
+                        NText.ofStyled(commandName, NTextStyle.primary1())));
             }
         }
     }

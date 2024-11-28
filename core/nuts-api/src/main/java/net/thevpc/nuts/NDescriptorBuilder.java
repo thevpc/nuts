@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NOptional;
 
@@ -42,8 +44,11 @@ import java.util.function.UnaryOperator;
  * @app.category Descriptor
  * @since 0.5.4
  */
-public interface NDescriptorBuilder extends NDescriptor {
+public interface NDescriptorBuilder extends NDescriptor, NComponent {
 
+    static NDescriptorBuilder of(){
+        return NExtensions.of(NDescriptorBuilder.class);
+    }
 
     /**
      * set id

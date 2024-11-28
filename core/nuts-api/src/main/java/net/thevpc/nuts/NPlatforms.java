@@ -40,7 +40,7 @@ import java.util.function.Predicate;
  */
 public interface NPlatforms extends NComponent {
     static NPlatforms of() {
-        return NExtensions.of().createComponent(NPlatforms.class).get();
+        return NExtensions.of(NPlatforms.class);
     }
 
     boolean addPlatform(NPlatformLocation location);

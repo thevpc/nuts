@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
@@ -8,7 +9,7 @@ import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.log.NLogOp;
@@ -308,7 +309,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
             this.p = p;
         }
 
-        public NString asFormattedString() {
+        public NText asFormattedString() {
             NTextBuilder sb = NTextBuilder.of();
             sb.append("html", NTextStyle.primary1());
             sb.append(":", NTextStyle.separator());

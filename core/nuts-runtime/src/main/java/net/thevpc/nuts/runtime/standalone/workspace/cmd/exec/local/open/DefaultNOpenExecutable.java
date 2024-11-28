@@ -113,10 +113,10 @@ public class DefaultNOpenExecutable extends AbstractNExecutableInformationExt {
         NSession session = workspace.currentSession();
         switch (NEnvs.of().getOsFamily()) {
             case WINDOWS: {
-                return NTexts.of().ofStyled("No help available. Try " + getName() + " /help", NTextStyle.error());
+                return NText.ofStyled("No help available. Try " + getName() + " /help", NTextStyle.error());
             }
             default: {
-                return NTexts.of().ofStyled("No help available. Try 'man " + getName() + "' or '" + getName() + " --help'", NTextStyle.error());
+                return NText.ofStyled("No help available. Try 'man " + getName() + "' or '" + getName() + " --help'", NTextStyle.error());
             }
         }
     }

@@ -1,7 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NBootOptions;
+import net.thevpc.nuts.NBootOptions;
+import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.io.*;
@@ -28,18 +30,17 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
 
     public DefaultNSystemTerminalBaseBoot(DefaultNBootModel bootModel) {
         super(bootModel.getWorkspace());
-        NWorkspaceOptions bo = bootModel.getBootUserOptions();
+        NBootOptions bo = bootModel.getBootUserOptions();
         NWorkspaceTerminalOptions bootStdFd = new NWorkspaceTerminalOptions(
                 bo.getStdin().orElse(System.in),
                 bo.getStdout().orElse(System.out),
                 bo.getStderr().orElse(System.err),
                 bootModel.getBootTerminal().getFlags().toArray(new String[0])
         );
-        NBootOptions bOptions = bootModel.getBootEffectiveOptions();
-        NTerminalMode terminalMode = bOptions.getUserOptions().get().getTerminalMode().orElse(NTerminalMode.DEFAULT);
+        NTerminalMode terminalMode = bootModel.getBootUserOptions().getTerminalMode().orElse(NTerminalMode.DEFAULT);
         boolean bootStdFdAnsi = bootStdFd.getFlags().contains("ansi");
         if (terminalMode == NTerminalMode.DEFAULT) {
-            if (bOptions.getUserOptions().get().getBot().orElse(false)) {
+            if (bootModel.getBootUserOptions().getBot().orElse(false)) {
                 terminalMode = NTerminalMode.FILTERED;
             } else {
                 if (bootStdFdAnsi) {

@@ -25,6 +25,9 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.spi.NComponent;
+
 import java.io.Serializable;
 import java.util.Map;
 
@@ -35,14 +38,17 @@ import java.util.Map;
  * @app.category Descriptor
  * @since 0.5.4
  */
-public interface NIdBuilder extends NId, Serializable {
+public interface NIdBuilder extends NId, NComponent, Serializable {
 
+    static NIdBuilder of(NId id) {
+        return of().setAll(id);
+    }
     static NIdBuilder of(String groupId, String artifactId) {
-        return new DefaultNIdBuilder(groupId, artifactId);
+        return of().setGroupId(groupId).setArtifactId(artifactId);
     }
 
     static NIdBuilder of() {
-        return new DefaultNIdBuilder();
+        return NExtensions.of(NIdBuilder.class);
     }
 
     /**

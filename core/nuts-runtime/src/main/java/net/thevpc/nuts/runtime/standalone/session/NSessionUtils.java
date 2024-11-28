@@ -11,7 +11,9 @@ import java.util.Objects;
 
 public class NSessionUtils {
     public static void checkSession(NWorkspace ws, NSession session) {
-        NAssert.requireSession(session);
+        if (session == null) {
+            throw new NMissingSessionException();
+        }
         if (!Objects.equals(session.getWorkspace().getUuid(), ws.getUuid())) {
             throw new NIllegalArgumentException(NMsg.ofC("invalid session %s != %s ; %s != %s ; %s != %s ; ",
                     session.getWorkspace().getName(), ws.getName(),

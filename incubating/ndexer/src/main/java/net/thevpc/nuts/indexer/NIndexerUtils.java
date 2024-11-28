@@ -75,7 +75,7 @@ public class NIndexerUtils {
         _condPut(entity, NConstants.IdProperties.OS_DIST, String.join(",",id.getCondition().getOsDist()));
         _condPut(entity, NConstants.IdProperties.ARCH, String.join(",",id.getCondition().getArch()));
         _condPut(entity, NConstants.IdProperties.PLATFORM, String.join(",",id.getCondition().getPlatform()));
-        _condPut(entity, NConstants.IdProperties.PROFILE, String.join(",",id.getCondition().getProfile()));
+        _condPut(entity, NConstants.IdProperties.PROFILE, String.join(",",id.getCondition().getProfiles()));
         _condPut(entity, NConstants.IdProperties.DESKTOP, String.join(",",id.getCondition().getDesktopEnvironment()));
         _condPut(entity, NConstants.IdProperties.CLASSIFIER, id.getClassifier());
 //        _condPut(entity, NutsConstants.IdProperties.ALTERNATIVE, id.getAlternative());
@@ -98,7 +98,7 @@ public class NIndexerUtils {
         _condPut(entity, NConstants.IdProperties.OS_DIST, String.join(",",id2.getCondition().getOsDist()));
         _condPut(entity, NConstants.IdProperties.ARCH, String.join(",",id2.getCondition().getArch()));
         _condPut(entity, NConstants.IdProperties.PLATFORM, String.join(",",id2.getCondition().getPlatform()));
-        _condPut(entity, NConstants.IdProperties.PROFILE, String.join(",",id2.getCondition().getProfile()));
+        _condPut(entity, NConstants.IdProperties.PROFILE, String.join(",",id2.getCondition().getProfiles()));
         _condPut(entity, NConstants.IdProperties.DESKTOP, String.join(",",id2.getCondition().getDesktopEnvironment()));
         _condPut(entity, NConstants.IdProperties.CLASSIFIER, id2.getClassifier());
 
@@ -149,7 +149,7 @@ public class NIndexerUtils {
                 .setGroupId(NStringUtils.trim(map.get("group")))
                 .setVersion(NStringUtils.trim(map.get("version")))
                 .setCondition(
-                        new DefaultNEnvConditionBuilder()
+                        NEnvConditionBuilder.of()
                                 //TODO what if the result is ',' separated array?
                                 .setArch(Arrays.asList(NStringUtils.trim(map.get(NConstants.IdProperties.ARCH))))
                                 .setOs(Arrays.asList(NStringUtils.trim(map.get(NConstants.IdProperties.OS))))

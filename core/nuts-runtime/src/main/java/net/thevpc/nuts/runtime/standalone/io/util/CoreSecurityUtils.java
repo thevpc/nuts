@@ -26,8 +26,8 @@ package net.thevpc.nuts.runtime.standalone.io.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
+import net.thevpc.nuts.util.NHex;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NStringUtils;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -44,7 +44,7 @@ import java.util.Base64;
 public class CoreSecurityUtils {
 
     public static final String ENV_KEY_PASSPHRASE = "passphrase";
-    public static final String DEFAULT_PASSPHRASE = NStringUtils.toHexString("It's completely nuts!!".getBytes());
+    public static final String DEFAULT_PASSPHRASE = NHex.toHexString("It's completely nuts!!".getBytes());
 
     public static char[] defaultDecryptChars(char[] data, String passphrase) {
         return decryptString(new String(data), passphrase).toCharArray();

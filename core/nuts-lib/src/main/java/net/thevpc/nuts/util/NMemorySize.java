@@ -1,12 +1,6 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NMapBy;
-import net.thevpc.nuts.format.NFormat;
-import net.thevpc.nuts.format.NFormattable;
-import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.spi.NFormatSPI;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -14,7 +8,7 @@ import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.util.Arrays;
 
-public class NMemorySize implements Serializable, NFormattable {
+public class NMemorySize implements Serializable {
     private final long[] values = new long[NMemoryUnit.values().length];
     private final NMemoryUnit smallestUnit;
     private final NMemoryUnit largestUnit;
@@ -837,46 +831,6 @@ public class NMemorySize implements Serializable, NFormattable {
 
     public String toString(boolean fixed) {
         return NMemorySizeFormat.of(fixed, null).format(this);
-    }
-
-    @Override
-    public NFormat formatter() {
-        return NFormat.of(new NFormatSPI() {
-            private Boolean iec;
-            private boolean fixed;
-
-            @Override
-            public String getName() {
-                return "memory-size";
-            }
-
-            @Override
-            public void print(NPrintStream out) {
-                NMemorySizeFormat.of(fixed, iec).print(NMemorySize.this, out);
-            }
-
-            @Override
-            public boolean configureFirst(NCmdLine cmdLine) {
-                NArg a = cmdLine.peek().get();
-                switch (a.key()) {
-                    case "--iec": {
-                        a = cmdLine.nextFlag().get();
-                        if (a.isActive()) {
-                            iec = a.getBooleanValue().get();
-                        }
-                        return true;
-                    }
-                    case "--fixed": {
-                        a = cmdLine.nextFlag().get();
-                        if (a.isActive()) {
-                            fixed = a.getBooleanValue().get();
-                        }
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
     }
 
     public static NOptional<NMemorySize> parse(String value, NMemoryUnit defaultUnit) {

@@ -26,10 +26,12 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.parser;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.DefaultNArtifactCall;
+import net.thevpc.nuts.runtime.standalone.DefaultNArtifactCall;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NVisitResult;
+import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NRef;

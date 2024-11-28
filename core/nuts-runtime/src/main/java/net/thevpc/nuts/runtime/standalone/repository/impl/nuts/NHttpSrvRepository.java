@@ -25,6 +25,8 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.nuts;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.*;
@@ -97,7 +99,7 @@ public class NHttpSrvRepository extends NCachedRepository {
         }
         NSessionUtils.checkSession(getWorkspace(), session);
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
-        desc.formatter().print(new OutputStreamWriter(descStream));
+        NDescriptorFormat.of(desc).print(new OutputStreamWriter(descStream));
         NWebCli nWebCli = NWebCli.of();
         nWebCli.req().post()
                 .setUrl(CoreIOUtils.buildUrl(config().getLocationPath().toString(), "/deploy?" + resolveAuthURLPart(session)))

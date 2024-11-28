@@ -25,7 +25,6 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NClassLoaderNode;
-import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NLiteral;
@@ -42,7 +41,7 @@ import java.util.List;
 public interface NBootManager extends NComponent {
 
     static NBootManager of() {
-        return NExtensions.of().createComponent(NBootManager.class).get();
+        return NExtensions.of(NBootManager.class);
     }
 
     /**

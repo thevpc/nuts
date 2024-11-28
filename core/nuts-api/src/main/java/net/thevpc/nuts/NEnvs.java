@@ -45,7 +45,7 @@ import java.util.function.Function;
  */
 public interface NEnvs extends NComponent {
     static NEnvs of() {
-        return NExtensions.of().createComponent(NEnvs.class).get();
+        return NExtensions.of(NEnvs.class);
     }
 
     /**

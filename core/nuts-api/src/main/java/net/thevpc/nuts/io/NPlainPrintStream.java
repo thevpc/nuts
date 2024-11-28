@@ -1,12 +1,9 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.format.NFormat;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
-import net.thevpc.nuts.text.NTerminalCmd;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTextStyles;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -80,7 +77,7 @@ public class NPlainPrintStream implements NPrintStream {
     }
 
     @Override
-    public NPrintStream print(NString b) {
+    public NPrintStream print(NText b) {
         if (b != null) {
             sb.append(b);
         }
@@ -170,7 +167,7 @@ public class NPlainPrintStream implements NPrintStream {
     }
 
     @Override
-    public NPrintStream println(NString b) {
+    public NPrintStream println(NText b) {
         sb.append(b);
         println();
         return this;
@@ -403,8 +400,4 @@ public class NPlainPrintStream implements NPrintStream {
         return this;
     }
 
-    @Override
-    public NFormat formatter() {
-        return NFormat.of(new NContentMetadataProviderFormatSPI(this, null, "print-stream"));
-    }
 }

@@ -37,7 +37,7 @@ import net.thevpc.nuts.ext.NExtensions;
  */
 public interface NRemoveUserCmd extends NWorkspaceCmd {
     static NRemoveUserCmd of() {
-        return NExtensions.of().createComponent(NRemoveUserCmd.class).get();
+        return NExtensions.of(NRemoveUserCmd.class);
     }
 
     /**

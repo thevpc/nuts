@@ -25,6 +25,7 @@
 package net.thevpc.nuts.runtime.standalone.session;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.*;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElements;
@@ -100,7 +101,13 @@ public class DefaultNSession implements Cloneable, NSession {
 
     public DefaultNSession(NWorkspace workspace) {
         this.workspace = workspace;
-        setAll(NBootManager.of().getBootOptions());
+        setAll(NBootManager.of().getBootOptions().toWorkspaceOptions());
+    }
+    public DefaultNSession(NWorkspace workspace, NWorkspaceOptions options) {
+        this.workspace = workspace;
+        if(options!=null) {
+            setAll(options);
+        }
     }
 
 
@@ -153,10 +160,6 @@ public class DefaultNSession implements Cloneable, NSession {
 
     }
 
-    public DefaultNSession(NWorkspace workspace, NWorkspaceOptions options) {
-        this.workspace = workspace;
-        setAll(options);
-    }
 
     /**
      * configure the current command with the given arguments. This is an
@@ -881,6 +884,34 @@ public class DefaultNSession implements Cloneable, NSession {
 
     @Override
     public NSession setAll(NWorkspaceOptions options) {
+        if (options != null) {
+            this.trace = options.getTrace().orElse(true);
+            this.debug = options.getDebug().orNull();
+            this.progressOptions = options.getProgressOptions().orNull();
+            this.dry = options.getDry().orNull();
+            this.cached = options.getCached().orNull();
+            this.indexed = options.getIndexed().orNull();
+            this.gui = options.getGui().orNull();
+            this.confirm = options.getConfirm().orNull();
+            this.errLinePrefix = options.getErrLinePrefix().orNull();
+            this.outLinePrefix = options.getOutLinePrefix().orNull();
+            this.fetchStrategy = options.getFetchStrategy().orNull();
+            this.outputFormat = options.getOutputFormat().orNull();
+            this.outputFormatOptions.clear();
+            this.outputFormatOptions.addAll(options.getOutputFormatOptions().orElseGet(Collections::emptyList));
+            NLogConfig logConfig = options.getLogConfig().orNull();
+            if (logConfig != null) {
+                this.logTermLevel = logConfig.getLogTermLevel();
+                this.logTermFilter = logConfig.getLogTermFilter();
+                this.logFileLevel = logConfig.getLogFileLevel();
+                this.logFileFilter = logConfig.getLogFileFilter();
+            }
+            this.dependencySolver = options.getDependencySolver().orNull();
+        }
+        return this;
+    }
+
+    public NSession setAll(NBootOptions options) {
         if (options != null) {
             this.trace = options.getTrace().orElse(true);
             this.debug = options.getDebug().orNull();

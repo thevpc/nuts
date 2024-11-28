@@ -77,9 +77,9 @@ public class NMsg {
             return NMsg.ofC("invalid %s", valueName);
         }
         if (NBlankable.isBlank(valueName)) {
-            return NMsg.ofC("invalid value : %s", NReservedLangUtils.getErrorMessage(throwable));
+            return ofC("invalid value : %s", NReservedLangUtils.getErrorMessage(throwable));
         }
-        return NMsg.ofC("invalid %s : %s", valueName, NReservedLangUtils.getErrorMessage(throwable));
+        return ofC("invalid %s : %s", valueName, NReservedLangUtils.getErrorMessage(throwable));
     }
 
     private static NMsg of(NTextFormatType format, Object message, Object[] params, NTextStyles styles, String codeLang, Level level) {
@@ -147,15 +147,15 @@ public class NMsg {
         return of(NTextFormatType.STYLED, message, NO_PARAMS, styles, null, null);
     }
 
-    public static NMsg ofStyled(NString message, NTextStyle style) {
+    public static NMsg ofStyled(NText message, NTextStyle style) {
         return of(NTextFormatType.STYLED, message, NO_PARAMS, style == null ? null : NTextStyles.of(style), null, null);
     }
 
-    public static NMsg ofStyled(NString message, NTextStyles styles) {
+    public static NMsg ofStyled(NText message, NTextStyles styles) {
         return of(NTextFormatType.STYLED, message, NO_PARAMS, styles, null, null);
     }
 
-    public static NMsg ofNtf(NString message) {
+    public static NMsg ofNtf(NText message) {
         return of(NTextFormatType.NTF, message, NO_PARAMS, null, null, null);
     }
 

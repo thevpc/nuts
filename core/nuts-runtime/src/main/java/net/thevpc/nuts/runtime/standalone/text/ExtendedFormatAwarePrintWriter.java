@@ -2,9 +2,8 @@ package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOp;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.spi.NSessionAware;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
 
@@ -97,14 +96,14 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
     @Override
     public ExtendedFormatAwarePrintWriter format(Locale l, String format, Object... args) {
         if (l == null) {
-            print(NTexts.of().ofText(
+            print(NText.of(
                     NMsg.ofC(
                             format, args
                     )
             ));
         } else {
             print(
-                    NTexts.of().ofText(
+                    NText.of(
                             NMsg.ofC(
                                     format, args
                             )

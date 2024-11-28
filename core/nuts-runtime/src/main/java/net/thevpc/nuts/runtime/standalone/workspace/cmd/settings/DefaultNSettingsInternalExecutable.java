@@ -11,9 +11,9 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
+import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutab
 
     @Override
     public int execute() {
-        boolean dry = NUtils.asBoolean(getExecCommand().getDry());
+        boolean dry = ExtraApiUtils.asBoolean(getExecCommand().getDry());
         if (dry) {
             dryExecute();
             return NExecutionException.SUCCESS;

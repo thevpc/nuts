@@ -37,7 +37,7 @@ import java.util.List;
  */
 public interface NEvents extends NComponent {
     static NEvents of() {
-        return NExtensions.of().createComponent(NEvents.class).get();
+        return NExtensions.of(NEvents.class);
     }
 
     NEvents removeRepositoryListener(NRepositoryListener listener);

@@ -29,7 +29,7 @@ import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.Collection;
@@ -47,7 +47,7 @@ import java.util.Map;
 public interface NExecCmd extends NWorkspaceCmd {
 
     static NExecCmd of() {
-        return NExtensions.of().createComponent(NExecCmd.class).get();
+        return NExtensions.of(NExecCmd.class);
     }
 
     static NExecCmd of(String ...cmd) {
@@ -57,20 +57,6 @@ public interface NExecCmd extends NWorkspaceCmd {
     static NExecCmd ofSystem(String ...cmd) {
         return of().addCommand(cmd).system();
     }
-
-    /**
-     * create a prefilled command format
-     *
-     * @return a prefilled command format
-     */
-    NExecCmdFormat formatter();
-
-    /**
-     * shorthand for {@code formatter().format()}
-     *
-     * @return formatted string of the command
-     */
-    NString format();
 
     /**
      * if true, an exception is thrown whenever the command returns non zero

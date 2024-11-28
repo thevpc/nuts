@@ -41,7 +41,7 @@ import java.util.List;
 public interface NPushCmd extends NWorkspaceCmd {
 
     static NPushCmd of() {
-        return NExtensions.of().createComponent(NPushCmd.class).get();
+        return NExtensions.of(NPushCmd.class);
     }
     /**
      * remove id to push.

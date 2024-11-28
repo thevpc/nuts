@@ -5,14 +5,7 @@
  */
 package net.thevpc.nuts.time;
 
-import net.thevpc.nuts.format.NFormat;
-import net.thevpc.nuts.format.NFormattable;
-import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NMapBy;
-import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.spi.NFormatSPI;
-import net.thevpc.nuts.text.NTextStyle;
 
 import java.io.Serializable;
 import java.time.Duration;
@@ -21,7 +14,7 @@ import java.time.temporal.ChronoUnit;
 /**
  * @author taha.bensalah@gmail.com
  */
-public class NChronometer implements Serializable, NFormattable {
+public class NChronometer implements Serializable {
 
     private final static long serialVersionUID = 1L;
     private long accumulatedNanos;
@@ -260,43 +253,4 @@ public class NChronometer implements Serializable, NFormattable {
         return this;
     }
 
-    @Override
-    public NFormat formatter() {
-        return NFormat.of(new NFormatSPI() {
-            private NDurationFormatMode formatMode;
-
-            @Override
-            public String getName() {
-                return "chronometer";
-            }
-
-            @Override
-            public void print(NPrintStream out) {
-                if (name != null) {
-                    out.print(name);
-                    out.print("=", NTextStyle.separator());
-                }
-                out.print(getDuration().formatter()
-                        .configure(true,
-                                "--mode",
-                                (formatMode == null ? NDurationFormatMode.DEFAULT : formatMode).id())
-                        .format());
-            }
-
-            @Override
-            public boolean configureFirst(NCmdLine cmdLine) {
-                NArg a = cmdLine.peek().get();
-                switch (a.key()) {
-                    case "--mode": {
-                        a = cmdLine.nextEntry().get();
-                        if (a.isActive()) {
-                            formatMode = NDurationFormatMode.parse(a.getStringValue().get()).get();
-                        }
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
-    }
 }

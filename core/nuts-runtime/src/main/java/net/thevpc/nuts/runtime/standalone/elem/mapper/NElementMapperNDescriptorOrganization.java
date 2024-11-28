@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
-import net.thevpc.nuts.DefaultNDescriptorOrganizationBuilder;
+import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorOrganizationBuilder;
 import net.thevpc.nuts.NDescriptorOrganization;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;

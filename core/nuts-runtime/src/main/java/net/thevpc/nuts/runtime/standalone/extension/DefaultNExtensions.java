@@ -6,12 +6,13 @@
 package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NServiceLoader;
+import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.NIdUtils;
 import net.thevpc.nuts.util.NOptional;
 
 import java.net.URL;
@@ -171,7 +172,7 @@ public class DefaultNExtensions implements NExtensions {
         }
 
         URL nuts = classLoader.getResource("META-INF/nuts/"
-                + NIdUtils.resolveIdPath(id.getShortId()) + "/nuts.json");
+                + ExtraApiUtils.resolveIdPath(id.getShortId()) + "/nuts.json");
         if (nuts != null) {
             NDescriptor e = NDescriptorParser.of()
                     .setDescriptorStyle(NDescriptorStyle.NUTS)

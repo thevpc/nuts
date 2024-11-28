@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NClassLoaderNode;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.runtime.standalone.descriptor.util.NDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 import net.thevpc.nuts.util.NBlankable;
@@ -319,9 +320,8 @@ public class CoreNUtils {
             x.put("repository-uuid", def.getRepositoryUuid());
         }
         if (def.getDescriptor() != null) {
-            x.put("descriptor", def.getDescriptor().formatter().format());
-            x.put("effective-descriptor", NDescriptorUtils.getEffectiveDescriptor(def)
-                    .formatter().format());
+            x.put("descriptor", NDescriptorFormat.of(def.getDescriptor()).format());
+            x.put("effective-descriptor", NDescriptorFormat.of(NDescriptorUtils.getEffectiveDescriptor(def)).format());
         }
         return x;
     }

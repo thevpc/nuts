@@ -38,7 +38,7 @@ import net.thevpc.nuts.spi.NComponent;
  */
 public interface NCmdLines extends NComponent {
     static NCmdLines of() {
-        return NExtensions.of().createComponent(NCmdLines.class).get();
+        return NExtensions.of(NCmdLines.class);
     }
 
     /**

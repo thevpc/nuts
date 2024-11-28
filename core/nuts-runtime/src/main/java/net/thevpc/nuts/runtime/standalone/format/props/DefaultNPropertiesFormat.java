@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.format.props;
 import java.util.*;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NArrayElement;
@@ -17,7 +18,7 @@ import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NStringUtils;
@@ -41,7 +42,6 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NSession session=workspace.currentSession();
         NArg a;
         if ((a = cmdLine.nextEntry(OPTION_MULTILINE_PROPERTY).orNull()) != null) {
             NArg i = NArg.of(a.getStringValue().get());
@@ -74,38 +74,37 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
     }
 
     public Map buildModel() {
-        NSession session=workspace.currentSession();
         Object value = NElements.of().setIndestructibleFormat().destruct(getValue());
-        LinkedHashMap<NString, NString> map = new LinkedHashMap<>();
-        fillMap(NString.of((rootName==null?"":rootName)), value, map);
+        LinkedHashMap<NText, NText> map = new LinkedHashMap<>();
+        fillMap(NText.of((rootName==null?"":rootName)), value, map);
         return map;
     }
 
-    private void fillMap(NString entryKey, Object entryValue, Map<NString, NString> map) {
+    private void fillMap(NText entryKey, Object entryValue, Map<NText, NText> map) {
         if(entryValue instanceof Map) {
             for (Map.Entry<Object, Object> entry : ((Map<Object, Object>) entryValue).entrySet()) {
                 Object k = entry.getKey();
-                NString ns = entryKey.isEmpty() ? stringValue(k) : entryKey.builder().append(".").append(stringValue(k));
+                NText ns = entryKey.isEmpty() ? stringValue(k) : entryKey.builder().append(".").append(stringValue(k));
                 Object v = entry.getValue();
                 fillMap(ns, v, map);
             }
         }else if(entryValue instanceof NObjectElement){
             for (NElementEntry entry : ((NObjectElement) entryValue)) {
                 Object k = entry.getKey();
-                NString ns= entryKey.isEmpty()?stringValue(k): entryKey.builder().append(".").append(stringValue(k));
+                NText ns= entryKey.isEmpty()?stringValue(k): entryKey.builder().append(".").append(stringValue(k));
                 Object v = entry.getValue();
                 fillMap(ns, v,map);
             }
         }else if(entryValue instanceof List){
             List<Object> objects = (List<Object>) entryValue;
             for (int i = 0; i < objects.size(); i++) {
-                NString ns = entryKey.builder().append("[").append(stringValue(i+1)).append("]");
+                NText ns = entryKey.builder().append("[").append(stringValue(i+1)).append("]");
                 fillMap(ns, objects.get(i), map);
             }
         }else if(entryValue instanceof NArrayElement){
             NArrayElement objects = (NArrayElement) entryValue;
             for (int i = 0; i < objects.size(); i++) {
-                NString ns = entryKey.builder().append("[").append(stringValue(i+1)).append("]");
+                NText ns = entryKey.builder().append("[").append(stringValue(i+1)).append("]");
                 fillMap(ns, objects.get(i), map);
             }
         }else {
@@ -115,8 +114,7 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
                 if(!entryKey.isEmpty()) {
                     map.put(entryKey, stringValue(entryValue));
                 }else{
-                    NSession session=workspace.currentSession();
-                    map.put(NString.of("value"), stringValue(entryValue));
+                    map.put(NText.ofPlain("value"), stringValue(entryValue));
                 }
             }
         }
@@ -147,7 +145,6 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
 
     @Override
     public void print(NPrintStream w) {
-        NSession session=workspace.currentSession();
         NPrintStream out = getValidPrintStream(w);
         Map<Object, Object> mm;
         Map model = buildModel();
@@ -167,7 +164,7 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
         if (javaProps) {
             CoreIOUtils.storeProperties(ObjectOutputFormatWriterHelper.explodeMap(mm), w.asPrintStream(), sorted);
         } else {
-            printMap(out, NTexts.of().ofBlank(), mm);
+            printMap(out, NText.ofBlank(), mm);
         }
     }
 
@@ -191,7 +188,7 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
 //        }
 //        return sb.toString();
 //    }
-    private void printMap(NPrintStream out, NString prefix, Map<Object, Object> props) {
+    private void printMap(NPrintStream out, NText prefix, Map<Object, Object> props) {
         int len = 1;
         for (Object extraKey : props.keySet()) {
             int x = stringValue(extraKey).textLength();
@@ -211,7 +208,7 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
         out.flush();
     }
 
-    private String getMultilineSeparator(NString key) {
+    private String getMultilineSeparator(NText key) {
         String sep = multilineProperties.get(key.filteredText());
         if (sep != null && sep.length() == 0) {
             sep = ":|;";
@@ -219,20 +216,19 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
         return sep;
     }
 
-    private void printKeyValue(NPrintStream out, NString prefix, int len, NString key, NString value) {
+    private void printKeyValue(NPrintStream out, NText prefix, int len, NText key, NText value) {
         printKeyValue(out, prefix, len, getMultilineSeparator(key), key, value);
     }
 
-    private void printKeyValue(NPrintStream out, NString prefix, int len, String fancySep, NString key, NString value) {
-        NSession session=workspace.currentSession();
+    private void printKeyValue(NPrintStream out, NText prefix, int len, String fancySep, NText key, NText value) {
         NTexts txt = NTexts.of();
         if (prefix == null) {
             prefix = txt.ofBlank();
         }
-        NString formattedKey = compact ? key
+        NText formattedKey = compact ? key
                 : txt.ofBuilder().append(key).append(CoreStringUtils.fillString(' ', len - key.textLength()));
         if (fancySep != null) {
-            NString cc = compact ? key : txt.ofPlain(NStringUtils.formatAlign("", len + 3, NPositionType.FIRST));
+            NText cc = compact ? key : txt.ofPlain(NStringUtils.formatAlign("", len + 3, NPositionType.FIRST));
             String[] split = value.toString().split(fancySep);
             if (split.length == 0) {
                 out.print(prefix);
@@ -282,12 +278,11 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
         }
     }
 
-    private NString stringValue(Object o) {
-        NSession session=workspace.currentSession();
+    private NText stringValue(Object o) {
         if (escapeText) {
             return NTextUtils.stringValueFormatted(o, escapeText);
         } else {
-            return NTexts.of().ofText(o);
+            return NText.of(o);
         }
     }
 

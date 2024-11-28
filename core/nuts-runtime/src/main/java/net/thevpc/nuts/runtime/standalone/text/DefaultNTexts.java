@@ -1,12 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NEDesc;
-import net.thevpc.nuts.format.NFormat;
-import net.thevpc.nuts.format.NFormattable;
-import net.thevpc.nuts.format.NMsgFormattable;
-import net.thevpc.nuts.format.NStringFormattable;
+import net.thevpc.nuts.format.*;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.util.NRef;
@@ -48,7 +47,7 @@ public class DefaultNTexts implements NTexts {
 
     private final NWorkspace workspace;
     private final DefaultNTextManagerModel shared;
-    private NClassMap<NTextMapper> textMapper = new NClassMap<>(NTextMapper.class);
+    private NClassMap<NTextMapper> mapper = new NClassMap<>(NTextMapper.class);
 
     public DefaultNTexts(NWorkspace workspace) {
         this.workspace = workspace;
@@ -57,11 +56,11 @@ public class DefaultNTexts implements NTexts {
     }
 
     private void registerDefaults() {
-        register(NFormattable.class, (o, t, s) -> (((NFormattable) o).formatter().setNtf(true).format()).toText());
-        register(NStringFormattable.class, (o, t, s) -> (((NStringFormattable) o).format()).toText());
+        register(NFormattable.class, (o, t, s) -> (((NFormattable) o).formatter().setNtf(true).format()));
+        register(NStringFormattable.class, (o, t, s) -> of(((NStringFormattable) o).format()));
         register(NMsgFormattable.class, (o, t, s) -> _NMsg_toString((((NMsgFormattable) o).toMsg())));
         register(NMsg.class, (o, t, s) -> _NMsg_toString((NMsg) o));
-        register(NString.class, (o, t, s) -> ((NString) o).toText());
+        register(NText.class, (o, t, s) -> (NText) o);
         register(InputStream.class, (o, t, s) -> t.ofStyled(NInputSource.of((InputStream) o).getMetaData().getName().orElse(o.toString()), NTextStyle.path()));
         register(OutputStream.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
         register(NPrintStream.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
@@ -99,7 +98,7 @@ public class DefaultNTexts implements NTexts {
             }
         });
         register(Throwable.class, (o, t, s) -> t.ofStyled(
-                ofText(CoreStringUtils.exceptionToMessage((Throwable) o)),
+                of(CoreStringUtils.exceptionToMessage((Throwable) o)),
                 NTextStyle.error()
         ));
         register(Collection.class, (o, t, s) -> {
@@ -113,19 +112,19 @@ public class DefaultNTexts implements NTexts {
                 } else {
                     first = false;
                 }
-                b.append(t.ofText(v));
+                b.append(t.of(v));
             }
             b.append("]", NTextStyle.separator());
-            return b.toText();
+            return b.build();
         });
         register(Map.Entry.class, (o, t, s) -> {
             NTextBuilder b = ofBuilder();
             Map.Entry e = (Map.Entry) o;
-            b.append(t.ofText(e.getKey()));
+            b.append(t.of(e.getKey()));
             b.append(":", NTextStyle.separator());
             b.append(" ");
-            b.append(t.ofText(e.getValue()));
-            return b.toText();
+            b.append(t.of(e.getValue()));
+            return b.build();
         });
         register(Map.class, (o, t, s) -> {
             NTextBuilder b = ofBuilder();
@@ -138,18 +137,18 @@ public class DefaultNTexts implements NTexts {
                 } else {
                     first = false;
                 }
-                b.append(t.ofText(v));
+                b.append(t.of(v));
             }
             b.append("}", NTextStyle.separator());
-            return b.toText();
+            return b.build();
         });
     }
 
     private void register(Class clz, NTextMapper mapper) {
         if (mapper == null) {
-            textMapper.remove(clz);
+            this.mapper.remove(clz);
         } else {
-            textMapper.put(clz, mapper);
+            this.mapper.put(clz, mapper);
         }
     }
 
@@ -242,7 +241,7 @@ public class DefaultNTexts implements NTexts {
         if (m instanceof Boolean) {
             return txt.ofStyled(String.valueOf(m), NTextStyle.keyword());
         }
-        return txt.ofText(m);
+        return txt.of(m);
     }
 
 
@@ -256,7 +255,7 @@ public class DefaultNTexts implements NTexts {
             params = new Object[0];
         }
         Object msg = m.getMessage();
-        NSession session=workspace.currentSession();
+        NSession session = workspace.currentSession();
         String sLocale = session.getLocale().orDefault();
         Locale locale = NBlankable.isBlank(sLocale) ? null : new Locale(sLocale);
         NTexts txt = NTexts.of();
@@ -287,7 +286,7 @@ public class DefaultNTexts implements NTexts {
 //                                StringBuilder sb2 = new StringBuilder();
 //                                new Formatter(sb2, locale).format(part.getValue(), txt.ofText(a));
 //                                sb.append(sb2);
-                                sb.append(txt.ofText(a));
+                                sb.append(txt.of(a));
                             }
                             paramIndex++;
                         }
@@ -331,14 +330,14 @@ public class DefaultNTexts implements NTexts {
                             String sb2 = MessageFormat.format("{0" + formatExt + "}", a);
                             sb.append(txt.ofStyled(sb2, getSpecialLiteralType(a)));
                         } else {
-                            sb.append(MessageFormat.format("{0" + formatExt + "}", txt.ofText(a)));
+                            sb.append(MessageFormat.format("{0" + formatExt + "}", txt.of(a)));
                         }
                         gParamIndex++;
                     } else {
                         sb.append(part.getValue());
                     }
                 }
-                return txt.parse(sb.toString());
+                return txt.of(sb.toString());
             }
             case VFORMAT: {
                 Object[] finalParams = params;
@@ -354,19 +353,19 @@ public class DefaultNTexts implements NTexts {
                             return "${" + s + "}";
                         }
                 ).toString();
-                return txt.parse(a);
+                return txt.of(a);
             }
             case PLAIN: {
                 return txt.ofPlain((String) msg);
             }
             case NTF: {
                 if (msg instanceof String) {
-                    return txt.parse((String) msg);
+                    return txt.of((String) msg);
                 }
-                return txt.ofText(msg);
+                return txt.of(msg);
             }
             case STYLED: {
-                return txt.ofStyled(txt.ofText(msg), m.getStyles());
+                return txt.ofStyled(txt.of(msg), m.getStyles());
             }
             case CODE: {
                 return txt.ofCodeOrCommand(m.getCodeLang(), (String) msg);
@@ -396,7 +395,12 @@ public class DefaultNTexts implements NTexts {
     }
 
     @Override
-    public NText ofText(Object t) {
+    public NText of(NMsg t) {
+        return _NMsg_toString(t);
+    }
+
+    @Override
+    public NText of(Object t) {
         if (t == null) {
             return ofBlank();
         }
@@ -409,22 +413,23 @@ public class DefaultNTexts implements NTexts {
             b.append("[", NTextStyle.separator());
             int max = Array.getLength(t);
             if (max > 0) {
-                b.append(ofText(Array.get(t, 0)));
+                b.append(of(Array.get(t, 0)));
                 for (int i = 1; i < max; i++) {
                     b.append(",", NTextStyle.separator());
                     b.append(" ");
-                    b.append(ofText(Array.get(t, i)));
+                    b.append(of(Array.get(t, i)));
                 }
             }
             b.append("]", NTextStyle.separator());
-            return b.toText();
+            return b.build();
         }
-        NTextMapper e = textMapper.get(c);
+        NTextMapper e = mapper.get(c);
         if (e != null) {
             return e.ofText(t, this, workspace);
         }
-        if (c.isArray()) {
-
+        NFormat nFormat = NFormats.of().ofFormat(c).orNull();
+        if (nFormat != null) {
+            return of(nFormat.setNtf(true).format());
         }
         return ofPlain(t.toString());
     }
@@ -452,10 +457,6 @@ public class DefaultNTexts implements NTexts {
         return ofStyled(other == null ? null : ofPlain(other), styles);
     }
 
-    @Override
-    public NText ofStyled(NString other, NTextStyles styles) {
-        return ofStyled(other == null ? null : other.toText(), styles);
-    }
 
     @Override
     public NText ofStyled(NText other, NTextStyles styles) {
@@ -477,18 +478,13 @@ public class DefaultNTexts implements NTexts {
     }
 
     @Override
-    public NText ofStyled(NString other, NTextStyle style) {
-        return ofStyled(other.toText(), style);
-    }
-
-    @Override
     public NText ofStyled(NMsg other, NTextStyles styles) {
-        return ofStyled(ofText(other), styles);
+        return ofStyled(of(other), styles);
     }
 
     @Override
     public NText ofStyled(NMsg other, NTextStyle style) {
-        return ofStyled(ofText(other), style);
+        return ofStyled(of(other), style);
     }
 
     /**
@@ -710,8 +706,13 @@ public class DefaultNTexts implements NTexts {
     }
 
     @Override
-    public NText parse(String t) {
+    public NText of(String t) {
         return t == null ? ofBlank() : parser().parse(new StringReader(t));
+    }
+
+    @Override
+    public NText of(NText t) {
+        return t == null ? ofBlank() : parser().parse(new StringReader(t.toString()));
     }
 
     @Override
@@ -835,10 +836,6 @@ public class DefaultNTexts implements NTexts {
         return ofTitle(ofPlain(other), level);
     }
 
-    @Override
-    public NTextTitle ofTitle(NString other, int level) {
-        return ofTitle(other.toText(), level);
-    }
 
     public NTextCode createCode(String start, String kind, String separator, String end, String text) {
         return new DefaultNTextCode(workspace, start, kind, separator, end, text);
@@ -904,6 +901,17 @@ public class DefaultNTexts implements NTexts {
                         }
                         case LIST: {
                             NTextList t = (NTextList) z;
+                            queue.removeFirst();
+                            List<NText> children = t.getChildren();
+                            if (children.size() > 0) {
+                                for (int i = children.size() - 1; i >= 0; i--) {
+                                    queue.addFirst(children.get(i));
+                                }
+                            }
+                            break;
+                        }
+                        case BUILDER: {
+                            NTextBuilder t = (NTextBuilder) z;
                             queue.removeFirst();
                             List<NText> children = t.getChildren();
                             if (children.size() > 0) {
@@ -1079,6 +1087,22 @@ public class DefaultNTexts implements NTexts {
                     }
                 }
                 visitor.visit(t);
+                break;
+            }
+            case BUILDER: {
+                NTextBuilder t = (NTextBuilder) text;
+                for (NText child : t.getChildren()) {
+                    if (child != null) {
+                        visitor.visit(child);
+                    }
+                }
+                visitor.visit(t);
+                break;
+            }
+            case INCLUDE:{
+                NTextInclude t = (NTextInclude) text;
+                visitor.visit(t);
+                break;
             }
         }
     }
@@ -1123,6 +1147,21 @@ public class DefaultNTexts implements NTexts {
                             q.add(child);
                         }
                     }
+                    visitor.visit(t);
+                    break;
+                }
+                case BUILDER: {
+                    NTextBuilder t = (NTextBuilder) text;
+                    for (NText child : t.getChildren()) {
+                        if (child != null) {
+                            q.add(child);
+                        }
+                    }
+                    visitor.visit(t);
+                    break;
+                }
+                case INCLUDE: {
+                    NTextInclude t = (NTextInclude) text;
                     visitor.visit(t);
                     break;
                 }
@@ -1181,6 +1220,28 @@ public class DefaultNTexts implements NTexts {
                     }
                     return transformer.postTransform(ofList(li), c);
                 }
+                return null;
+            }
+            case BUILDER: {
+                NTextBuilder t = (NTextBuilder) text;
+                List<NText> li = new ArrayList<>();
+                for (NText child : t.getChildren()) {
+                    if (child != null) {
+                        child = transform(child, transformer, c);
+                        if (child != null) {
+                            li.add(child);
+                        }
+                    }
+                }
+                if (li.size() > 0) {
+                    if (li.size() == 1) {
+                        return transformer.postTransform(li.get(0), c);
+                    }
+                    return transformer.postTransform(ofList(li), c);
+                }
+                return null;
+            }
+            case INCLUDE:{
                 return null;
             }
         }
@@ -1312,12 +1373,12 @@ public class DefaultNTexts implements NTexts {
                                     @Override
                                     public NText toText(Number object) {
                                         if (object == null) {
-                                            return NTextBuilder.of().toText();
+                                            return NTextBuilder.of().build();
                                         }
                                         return NTextBuilder.of()
                                                 .append(d.format(object.doubleValue() * 100.0), NTextStyle.number())
                                                 .append("%", NTextStyle.separator())
-                                                .toText()
+                                                .build()
                                                 ;
                                     }
                                 }
@@ -1332,12 +1393,12 @@ public class DefaultNTexts implements NTexts {
                                     @Override
                                     public NText toText(Number object) {
                                         if (object == null) {
-                                            return NTextBuilder.of().toText();
+                                            return NTextBuilder.of().build();
                                         }
                                         return NTextBuilder.of()
                                                 .append(d.format(object), NTextStyle.number())
                                                 .append("°", NTextStyle.separator())
-                                                .toText()
+                                                .build()
                                                 ;
                                     }
                                 }
@@ -1352,11 +1413,11 @@ public class DefaultNTexts implements NTexts {
                                     @Override
                                     public NText toText(Number object) {
                                         if (object == null) {
-                                            return NTextBuilder.of().toText();
+                                            return NTextBuilder.of().build();
                                         }
                                         return NTextBuilder.of()
                                                 .append(d.format(object), NTextStyle.number())
-                                                .toText()
+                                                .build()
                                                 ;
                                     }
                                 }

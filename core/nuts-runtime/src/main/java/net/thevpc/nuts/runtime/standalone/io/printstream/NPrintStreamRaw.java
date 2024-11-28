@@ -5,6 +5,7 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NTerminalCmd;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
@@ -22,7 +23,7 @@ public class NPrintStreamRaw extends NPrintStreamBase {
 
     protected NPrintStreamRaw(OutputStream out, PrintStream base, Boolean autoFlush, NTerminalMode mode, NWorkspace workspace, Bindings bindings, NSystemTerminalBase term) {
         super(autoFlush == null || autoFlush, mode, workspace, bindings, term);
-        getMetaData().setMessage(NMsg.ofNtf(NTexts.of().ofStyled("<raw-stream>", NTextStyle.path())));
+        getMetaData().setMessage(NMsg.ofNtf(NText.ofStyledPath("<raw-stream>")));
         this.out = out;
         this.base = base;
     }
@@ -36,7 +37,7 @@ public class NPrintStreamRaw extends NPrintStreamBase {
                            Bindings bindings,
                            NSystemTerminalBase term) {
         super(true, mode == null ? NTerminalMode.INHERITED : mode, workspace, bindings, term);
-        getMetaData().setMessage(NMsg.ofNtf(NTexts.of().ofStyled("<raw-stream>", NTextStyle.path())));
+        getMetaData().setMessage(NMsg.ofNtf(NText.ofStyledPath("<raw-stream>")));
         this.out = out;
         if (out instanceof PrintStream) {
             PrintStream ps = (PrintStream) out;

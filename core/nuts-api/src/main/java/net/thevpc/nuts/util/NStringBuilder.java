@@ -1,7 +1,5 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.text.NTextBuilder;
-
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.security.SecureRandom;

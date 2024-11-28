@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.id.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.io.NPath;

@@ -1,13 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NFormat;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStream;
 
@@ -24,7 +24,7 @@ import java.util.function.Function;
 public class NCompressedPath extends NPathBase {
 
     private final String compressedForm;
-    private final NString formattedCompressedForm;
+    private final NText formattedCompressedForm;
     private final NPath base;
     private final NCompressedPathHelper compressedPathHelper;
 
@@ -372,12 +372,8 @@ public class NCompressedPath extends NPathBase {
         return String.valueOf(compressedForm);
     }
 
-    @Override
-    public NFormat formatter() {
-        return new MyPathFormat(this);
-    }
 
-    private static class MyPathFormat extends DefaultFormatBase<NFormat> {
+    public static class MyPathFormat extends DefaultFormatBase<NFormat> {
 
         private final NCompressedPath p;
 
@@ -386,7 +382,7 @@ public class NCompressedPath extends NPathBase {
             this.p = p;
         }
 
-        public NString asFormattedString() {
+        public NText asFormattedString() {
             return p.formattedCompressedForm;
         }
 

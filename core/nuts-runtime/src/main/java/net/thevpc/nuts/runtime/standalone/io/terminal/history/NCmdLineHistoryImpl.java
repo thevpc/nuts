@@ -25,6 +25,7 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal.history;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.cmdline.NCmdLineHistoryEntry;
 import net.thevpc.nuts.io.NIOException;

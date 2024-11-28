@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.toolbox.ncode.processors;
 
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.text.NTextStyle;
@@ -35,16 +36,16 @@ public class JavaSourceFormatter implements SourceProcessor {
             }
             return NMsg.ofC(
                     "%s %s %s %s",
-                    NTexts.of().ofStyled(leftAlign(v1, 4), NTextStyle.config()),
-                    NTexts.of().ofStyled(leftAlign(v2, 4), NTextStyle.info()),
-                    NTexts.of().ofStyled(leftAlign(n, clsNameSize), NTextStyle.primary1()),
-                    NTexts.of().ofStyled(source.getExternalPath(), NTextStyle.path()),
+                    NText.ofStyled(leftAlign(v1, 4), NTextStyle.config()),
+                    NText.ofStyled(leftAlign(v2, 4), NTextStyle.info()),
+                    NText.ofStyled(leftAlign(n, clsNameSize), NTextStyle.primary1()),
+                    NText.ofStyled(source.getExternalPath(), NTextStyle.path()),
                     source.toString()
             );
         } else {
             return NMsg.ofC(
                     "%s : %s",
-                    NTexts.of().ofStyled("invalid source", NTextStyle.error()),
+                    NText.ofStyled("invalid source", NTextStyle.error()),
                     source.toString()
             );
         }

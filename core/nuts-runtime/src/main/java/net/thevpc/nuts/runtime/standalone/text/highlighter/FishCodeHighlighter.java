@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextPlain;

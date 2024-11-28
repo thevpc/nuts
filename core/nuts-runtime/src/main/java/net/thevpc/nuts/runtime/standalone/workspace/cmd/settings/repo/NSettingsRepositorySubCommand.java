@@ -18,6 +18,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettin
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.NSettingsUserSubCommand;
 import net.thevpc.nuts.spi.NRepositoryDB;
 import net.thevpc.nuts.spi.NRepositoryLocation;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NLiteral;
@@ -143,7 +144,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                     }
                 }
                 for (NRepository repository : linkRepositories) {
-                    m.addRow(NTexts.of().ofStyled(repository.getName(), NTextStyle.primary4()), repository.config().isEnabled() ? repository.isEnabled() ? NTexts.of().ofStyled("ENABLED", NTextStyle.success()) : NTexts.of().ofStyled("<RT-DISABLED>", NTextStyle.error()) : NTexts.of().ofStyled("<DISABLED>", NTextStyle.error()), repository.getRepositoryType(), repository.config().getLocation().toString());
+                    m.addRow(NText.ofStyledPrimary4(repository.getName()), repository.config().isEnabled() ? repository.isEnabled() ? NText.ofStyled("ENABLED", NTextStyle.success()) : NText.ofStyled("<RT-DISABLED>", NTextStyle.error()) : NText.ofStyled("<DISABLED>", NTextStyle.error()), repository.getRepositoryType(), repository.config().getLocation().toString());
                 }
                 out.print(t);
             } else if (cmdLine.next("-h", "-?", "--help").isPresent()) {

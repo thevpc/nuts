@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NFormat;
 import net.thevpc.nuts.format.NTreeVisitor;
@@ -8,7 +9,7 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.io.util.NPathParts;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NOptional;
@@ -27,17 +28,17 @@ import java.util.function.Function;
 public class NCompressedPathBase extends NPathBase {
 
     private final String compressedForm;
-    private final NString formattedCompressedForm;
+    private final NText formattedCompressedForm;
     private final NPath base;
 
     public NCompressedPathBase(NPath base) {
         super(base.getWorkspace());
         this.base = base;
         this.compressedForm = compressUrl(base.toString(), base.getWorkspace().currentSession());
-        this.formattedCompressedForm = NTexts.of().ofStyled(compressedForm, NTextStyle.path());
+        this.formattedCompressedForm = NText.ofStyled(compressedForm, NTextStyle.path());
     }
 
-    public NCompressedPathBase(NPath base, String compressedForm, NString formattedCompressedForm) {
+    public NCompressedPathBase(NPath base, String compressedForm, NText formattedCompressedForm) {
         super(base.getWorkspace());
         this.compressedForm = compressedForm;
         this.formattedCompressedForm = formattedCompressedForm;
@@ -401,12 +402,7 @@ public class NCompressedPathBase extends NPathBase {
         return String.valueOf(compressedForm);
     }
 
-    @Override
-    public NFormat formatter() {
-        return new MyPathFormat(this);
-    }
-
-    private static class MyPathFormat extends DefaultFormatBase<NFormat> {
+    public static class MyPathFormat extends DefaultFormatBase<NFormat> {
 
         private final NCompressedPathBase p;
 
@@ -415,8 +411,8 @@ public class NCompressedPathBase extends NPathBase {
             this.p = p;
         }
 
-        public NString asFormattedString() {
-            return NTexts.of().ofStyled(p.compressedForm, NTextStyle.path());
+        public NText asFormattedString() {
+            return NText.ofStyled(p.compressedForm, NTextStyle.path());
         }
 
         @Override

@@ -97,11 +97,11 @@ public class ApacheTomcatRepositoryModel implements NRepositoryModel {
                     }
                 }
 
-                return new DefaultNDescriptorBuilder()
+                return NDescriptorBuilder.of()
                         .setId(id.getLongId())
                         .setPackaging("zip")
                         .setCondition(
-                                new DefaultNEnvConditionBuilder()
+                                NEnvConditionBuilder.of()
                                         .setPlatform(Arrays.asList("java" + javaVersion))
                         )
                         .setDescription("Apache Tomcat Official Zip Bundle")
@@ -114,7 +114,6 @@ public class ApacheTomcatRepositoryModel implements NRepositoryModel {
 
     @Override
     public NPath fetchContent(NId id, NDescriptor descriptor, NFetchMode fetchMode, NRepository repository) {
-        NSession session = workspace.currentSession();
         if (fetchMode != NFetchMode.REMOTE) {
             return null;
         }
@@ -130,7 +129,6 @@ public class ApacheTomcatRepositoryModel implements NRepositoryModel {
 
     @Override
     public NIterator<NId> search(NIdFilter filter, NPath[] basePaths, NFetchMode fetchMode, NRepository repository) {
-        NSession session = workspace.currentSession();
         if (fetchMode != NFetchMode.REMOTE) {
             return NIterator.ofEmpty();
         }

@@ -210,15 +210,15 @@ public class Test08_ElementTest {
             TestUtils.println("CHECKING : '" + tt.path + "'");
             List<NElement> filtered1 = e.compilePath(tt.path).filter(p);
             ss.setValue(filtered1).println();
-            NString sexpected = NString.ofPlain(tt.expected.get(0));
-            NString sresult = ss.format().immutable();
+            NText sexpected = NText.ofPlain(tt.expected.get(0));
+            NText sresult = ss.format().immutable();
             Assertions.assertEquals(sexpected.immutable(), sresult.immutable());
         }
     }
 
     @Test
     public void testIndestructibleObjects() {
-        NText styledText = NTexts.of().ofStyled("Hello", NTextStyle.success());
+        NText styledText = NText.ofStyled("Hello", NTextStyle.success());
         NElements e = NElements.of();
 
         //create a composite object with a styled element
@@ -240,7 +240,7 @@ public class Test08_ElementTest {
         expected=e.ofObject()
                 .set("a","13")
                 .set("b",
-                        e.ofCustom(NTexts.of().ofStyled("Hello", NTextStyle.success()))
+                        e.ofCustom(NText.ofStyled("Hello", NTextStyle.success()))
                         ).build();
         Assertions.assertEquals(expected,q);
 
@@ -249,7 +249,7 @@ public class Test08_ElementTest {
         NObjectElement b = e.ofObject()
                 .set("a", "13")
                 .set("b",
-                        e.ofCustom(NTexts.of().ofStyled("Hello", NTextStyle.success()))
+                        e.ofCustom(NText.ofStyled("Hello", NTextStyle.success()))
                 ).build();
 
         q = e.toElement(b);

@@ -25,7 +25,8 @@
 package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NBootOptions;
+import net.thevpc.nuts.NBootOptions;
+import net.thevpc.nuts.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.cmdline.DefaultNArg;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPrintStream;
@@ -67,6 +68,7 @@ public class DefaultNBootModel implements NBootModel {
     protected boolean firstBoot;
     protected boolean initializing;
     protected NBootOptions bOptions;
+    protected NBootOptions effOptions;
     protected NSession bootSession;
     private Map<String, NLiteral> customBootOptions;
     private NWorkspaceTerminalOptions bootTerminal;
@@ -77,16 +79,18 @@ public class DefaultNBootModel implements NBootModel {
     public DefaultNBootModel(NWorkspace workspace, NWorkspaceModel workspaceModel,NBootOptions bOption0) {
         this.workspace = workspace;
         this.workspaceModel = workspaceModel;
-        this.bootSession = new DefaultNSession(workspace, bOption0);
         this.bOptions = bOption0.readOnly();
+        this.effOptions = bOption0.readOnly();
+        this.bootSession = new DefaultNSession(workspace,null)
+                .setAll(effOptions);
     }
 
     public void init() {
         this.initializing = true;
         NativeImageHelper.prepare(this.workspace);
-        this.bootTerminal = detectAnsiTerminalSupport(NOsFamily.getCurrent(), bOptions, true);
-        workspaceModel.uuid = bOptions.getUuid().orNull();
-        workspaceModel.name = Paths.get(bOptions.getWorkspace().get()).getFileName().toString();
+        this.bootTerminal = detectAnsiTerminalSupport(NOsFamily.getCurrent(), effOptions, true);
+        workspaceModel.uuid = effOptions.getUuid().orNull();
+        workspaceModel.name = Paths.get(effOptions.getWorkspace().get()).getFileName().toString();
         DefaultSystemTerminal sys = new DefaultSystemTerminal(workspace, new DefaultNSystemTerminalBaseBoot(this));
         this.systemTerminal = new NSystemTerminalRef(getWorkspace(), NutsSystemTerminal_of_NutsSystemTerminalBase(sys));
         this.bootSession.setTerminal(new DefaultNTerminalFromSystem(workspace, this.systemTerminal));
@@ -94,7 +98,7 @@ public class DefaultNBootModel implements NBootModel {
         this.nullOutputStream = NullOutputStream.INSTANCE;
     }
 
-    public static NWorkspaceTerminalOptions detectAnsiTerminalSupport(NOsFamily os, NWorkspaceOptions bOption, boolean boot) {
+    public static NWorkspaceTerminalOptions detectAnsiTerminalSupport(NOsFamily os, NBootOptions bOption, boolean boot) {
         List<String> flags = new ArrayList<>();
         boolean tty = false;
         boolean customOut = false;
@@ -214,7 +218,7 @@ public class DefaultNBootModel implements NBootModel {
 //    }
 
     public void onInitializeWorkspace() {
-        this.bootTerminal = detectAnsiTerminalSupport(NOsFamily.getCurrent(), bOptions.getUserOptions().get(), false);
+        this.bootTerminal = detectAnsiTerminalSupport(NOsFamily.getCurrent(), effOptions, false);
     }
 
     public void setSystemTerminal(NSystemTerminalBase terminal) {
@@ -242,7 +246,7 @@ public class DefaultNBootModel implements NBootModel {
         } else {
             NSession session=getWorkspace().currentSession();
             NId extId = NId.of("net.thevpc.nuts.ext:next-term#" + workspace.getApiVersion()).get();
-            if (!NExtensions.of().isExcludedExtension(extId.toString(), NBootManager.of().getBootOptions())) {
+            if (!NExtensions.of().isExcludedExtension(extId.toString(), NBootManager.of().getBootOptions().toWorkspaceOptions())) {
                 NExtensions extensions = NExtensions.of();
                 extensions.loadExtension(extId);
                 NSystemTerminal systemTerminal = createSystemTerminal(
@@ -266,7 +270,6 @@ public class DefaultNBootModel implements NBootModel {
 
     private NSystemTerminal NutsSystemTerminal_of_NutsSystemTerminalBase(NSystemTerminalBase terminal) {
         if (terminal == null) {
-            NSession session=workspace.currentSession();
             throw new NIllegalArgumentException(NMsg.ofPlain("missing terminal"));
         }
         NSystemTerminal syst;
@@ -288,11 +291,11 @@ public class DefaultNBootModel implements NBootModel {
     }
 
     public NBootOptions getBootEffectiveOptions() {
-        return bOptions;
+        return effOptions;
     }
 
-    public NWorkspaceOptions getBootUserOptions() {
-        return bOptions.getUserOptions().get();
+    public NBootOptions getBootUserOptions() {
+        return bOptions;
     }
 
     public NWorkspaceTerminalOptions getBootTerminal() {
@@ -362,7 +365,7 @@ public class DefaultNBootModel implements NBootModel {
     public Map<String, NLiteral> getCustomBootOptions() {
         if (customBootOptions == null) {
             customBootOptions = new LinkedHashMap<>();
-            List<String> properties = bOptions.getUserOptions().get().getCustomOptions().orNull();
+            List<String> properties = bOptions.getCustomOptions().orNull();
             if (properties != null) {
                 for (String property : properties) {
                     if (property != null) {

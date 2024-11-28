@@ -33,7 +33,7 @@ import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
 import net.thevpc.nuts.io.NMemoryPrintStream;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nsh.autocomplete.NCommandAutoCompleteComponent;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
@@ -271,7 +271,7 @@ public abstract class NShellBuiltinBase implements NShellBuiltin {
                     return;
                 }
                 if (context.isAskHelp()) {
-                    session.out().println(NString.of(getHelp()));
+                    session.out().println(NText.of(getHelp()));
                     return;
                 }
                 if (context.isAskVersion()) {
@@ -285,7 +285,7 @@ public abstract class NShellBuiltinBase implements NShellBuiltin {
                 throw new NExecutionException(ex.getFormattedMessage(), ex, NExecutionException.ERROR_255);
             } catch (Exception ex) {
                 throw new NExecutionException(
-                        NMsg.ofNtf(NTexts.of().ofText(ex).toString())
+                        NMsg.ofNtf(NText.of(ex).toString())
                         , ex, NExecutionException.ERROR_255);
             }
         });

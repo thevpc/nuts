@@ -26,6 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.format;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
@@ -33,12 +34,12 @@ import net.thevpc.nuts.format.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminal;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NMemorySize;
 import net.thevpc.nuts.runtime.standalone.format.obj.RollingFileService;
 import net.thevpc.nuts.runtime.standalone.format.plain.NFormatPlain;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.util.*;
 
@@ -202,8 +203,8 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
                 NElements ee = NElements.of().setNtf(isNtf())
                         .setCompact(isCompact())
                         .setContentType(session.getOutputFormat().orDefault());
-                if (value instanceof NString) {
-                    NTextBuilder builder = ((NString) value).builder();
+                if (value instanceof NText) {
+                    NTextBuilder builder = ((NText) value).builder();
                     Object[] r = builder.lines().map(
                             NFunction.of(
                                     (NTextBuilder x) -> {
@@ -223,8 +224,8 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
             }
             case PROPS: {
                 NPropertiesFormat ee = NPropertiesFormat.of().setNtf(isNtf());
-                if (value instanceof NString) {
-                    NTextBuilder builder = ((NString) value).builder();
+                if (value instanceof NText) {
+                    NTextBuilder builder = ((NText) value).builder();
                     Object[] r = builder.lines().toArray(Object[]::new);
                     ee.setValue(r);
                 } else {
@@ -234,8 +235,8 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
             }
             case TREE: {
                 NTreeFormat ee = NTreeFormat.of().setNtf(isNtf());
-                if (value instanceof NString) {
-                    NTextBuilder builder = ((NString) value).builder();
+                if (value instanceof NText) {
+                    NTextBuilder builder = ((NText) value).builder();
                     Object[] r = builder.lines().toArray(Object[]::new);
                     ee.setValue(r);
                 } else {
@@ -245,8 +246,8 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
             }
             case TABLE: {
                 NTableFormat ee = NTableFormat.of().setNtf(isNtf());
-                if (value instanceof NString) {
-                    NTextBuilder builder = ((NString) value).builder();
+                if (value instanceof NText) {
+                    NTextBuilder builder = ((NText) value).builder();
                     Object[] r = builder.lines().toArray(Object[]::new);
                     ee.setValue(r);
                 } else {
@@ -269,7 +270,7 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
 //    }
 
     @Override
-    public NString format() {
+    public NText format() {
         return getBase().format();
     }
 

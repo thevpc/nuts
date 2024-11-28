@@ -43,7 +43,7 @@ public interface NEnvCondition extends NBlankable {
      *
      * @return supported supported profiles
      */
-    List<String> getProfile();
+    List<String> getProfiles();
 
     /**
      * supported arch list. if empty, all arch are supported (for example for java, all arch are supported).

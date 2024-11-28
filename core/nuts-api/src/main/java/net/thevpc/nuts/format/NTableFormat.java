@@ -35,7 +35,7 @@ import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
  */
 public interface NTableFormat extends NContentTypeFormat {
     static NTableFormat of() {
-       return NExtensions.of().createComponent(NTableFormat.class).get();
+       return NExtensions.of(NTableFormat.class);
     }
 
     boolean isVisibleHeader();

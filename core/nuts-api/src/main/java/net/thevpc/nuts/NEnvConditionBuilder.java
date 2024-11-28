@@ -1,9 +1,16 @@
 package net.thevpc.nuts;
 
+
+import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.spi.NComponent;
+
 import java.util.List;
 import java.util.Map;
 
-public interface NEnvConditionBuilder extends NEnvCondition {
+public interface NEnvConditionBuilder extends NEnvCondition, NComponent {
+    static NEnvConditionBuilder of(){
+        return NExtensions.of(NEnvConditionBuilder.class);
+    }
     NEnvConditionBuilder setArch(List<String> arch);
 
     NEnvConditionBuilder setOs(List<String> os);

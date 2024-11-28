@@ -112,7 +112,7 @@ public class TraceNProgressListener implements NProgressListener/*, NutsOutputSt
             } else {
                 minLength = length;
             }
-            bar.printProgress2(formattedLine.toText(),out);
+            bar.printProgress2(formattedLine.build(),out);
             return true;
         }
         return false;

@@ -28,6 +28,7 @@ package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextPlain;
 import net.thevpc.nuts.text.NTextType;
 
@@ -67,7 +68,10 @@ public class DefaultNTextPlain extends AbstractNText implements NTextPlain {
         DefaultNTextPlain that = (DefaultNTextPlain) o;
         return Objects.equals(text, that.text);
     }
-
+    @Override
+    public NText immutable() {
+        return this;
+    }
     @Override
     public int hashCode() {
         return Objects.hash(text);

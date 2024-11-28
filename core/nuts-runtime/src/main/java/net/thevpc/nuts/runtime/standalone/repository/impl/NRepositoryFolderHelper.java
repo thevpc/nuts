@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.concurrent.NLocks;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
@@ -22,6 +23,7 @@ import net.thevpc.nuts.runtime.standalone.repository.NRepositoryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.DefaultNFetchContentRepositoryCmd;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy.DefaultNRepositoryUndeployCmd;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
+import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
@@ -238,13 +240,13 @@ public class NRepositoryFolderHelper {
     public NPath getRelativeLocalGroupAndArtifactFile(NId id) {
         CoreNIdUtils.checkShortId(id);
         return NPath.of(
-                net.thevpc.nuts.util.NIdUtils.resolveIdPath(id.getShortId())
+                ExtraApiUtils.resolveIdPath(id.getShortId())
         );
     }
 
     public NPath getLocalGroupAndArtifactFile(NId id) {
         CoreNIdUtils.checkShortId(id);
-        return getStoreLocation().resolve(net.thevpc.nuts.util.NIdUtils.resolveIdPath(id.getShortId()));
+        return getStoreLocation().resolve(ExtraApiUtils.resolveIdPath(id.getShortId()));
     }
 
     public NIterator<NId> searchVersions(NId id, final NIdFilter filter, boolean deep) {
@@ -449,7 +451,7 @@ public class NRepositoryFolderHelper {
         }
         return NLocks.of().setSource(descFile).call(() -> {
 
-            desc.formatter().setNtf(false).print(descFile);
+            NDescriptorFormat.of(desc).setNtf(false).print(descFile);
             byte[] bytes = NDigest.of().sha1().setSource(desc).computeString().getBytes();
             NCp.of()
                     .from(NInputSource.of(

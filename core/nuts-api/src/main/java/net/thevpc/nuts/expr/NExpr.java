@@ -34,7 +34,7 @@ import net.thevpc.nuts.spi.NComponent;
  */
 public interface NExpr extends NComponent {
     static NExpr of() {
-        return NExtensions.of().createComponent(NExpr.class).get();
+        return NExtensions.of(NExpr.class);
     }
 
     NExprDeclarations newDeclarations(boolean includeDefaults);

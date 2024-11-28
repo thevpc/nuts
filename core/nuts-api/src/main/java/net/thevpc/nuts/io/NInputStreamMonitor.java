@@ -43,7 +43,7 @@ import java.nio.file.Path;
  */
 public interface NInputStreamMonitor extends NComponent {
     static NInputStreamMonitor of() {
-        return NExtensions.of().createComponent(NInputStreamMonitor.class).get();
+        return NExtensions.of(NInputStreamMonitor.class);
     }
 
 

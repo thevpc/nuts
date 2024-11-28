@@ -43,7 +43,7 @@ import java.util.List;
 public interface NDependencyFormat extends NFormat, NComponent {
 
     static NDependencyFormat of() {
-       return NExtensions.of().createComponent(NDependencyFormat.class).get();
+       return NExtensions.of(NDependencyFormat.class);
     }
 
     /**

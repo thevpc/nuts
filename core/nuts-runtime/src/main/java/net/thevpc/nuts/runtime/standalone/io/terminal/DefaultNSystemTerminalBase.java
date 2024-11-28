@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.io.*;
@@ -39,7 +41,7 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     @Override
     public int getSupportLevel(NSupportLevelContext criteria) {
         NWorkspace workspace = getWorkspace();
-        NWorkspaceOptions options = NBootManager.of().getBootOptions();
+        NBootOptions options = NBootManager.of().getBootOptions();
         NTerminalMode terminalMode = options.getTerminalMode().orElse(NTerminalMode.DEFAULT);
         NWorkspaceTerminalOptions bootStdFd = NWorkspaceExt.of().getModel().bootModel.getBootTerminal();
         if (terminalMode == NTerminalMode.DEFAULT) {

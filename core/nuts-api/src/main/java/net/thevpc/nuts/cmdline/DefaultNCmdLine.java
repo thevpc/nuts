@@ -24,9 +24,10 @@
  */
 package net.thevpc.nuts.cmdline;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.reserved.util.NReservedSimpleCharQueue;
-import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.*;
@@ -183,7 +184,7 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public NCmdLine throwUnexpectedArgument(NString errorMessage) {
+    public NCmdLine throwUnexpectedArgument(NText errorMessage) {
         return throwUnexpectedArgument(NMsg.ofC("%s", errorMessage));
     }
 
@@ -826,7 +827,7 @@ public class DefaultNCmdLine implements NCmdLine {
     }
 
     @Override
-    public void throwError(NString message) {
+    public void throwError(NText message) {
         NTextBuilder m = NTextBuilder.of();
         if (!NBlankable.isBlank(commandName)) {
             m.append(commandName).append(" : ");
@@ -834,12 +835,6 @@ public class DefaultNCmdLine implements NCmdLine {
         m.append(message);
         throw new NIllegalArgumentException(NMsg.ofNtf(m.build().toString()));
     }
-
-    @Override
-    public NCmdLineFormat formatter() {
-        return NCmdLineFormat.of().setValue(this);
-    }
-
 
     private NArgCandidate[] resolveRecommendations(NArgType expectValue, String[] names, int autoCompleteCurrentWordIndex) {
         //nameSeqArray

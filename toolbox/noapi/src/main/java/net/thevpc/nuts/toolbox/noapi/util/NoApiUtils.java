@@ -1,5 +1,6 @@
 package net.thevpc.nuts.toolbox.noapi.util;
 
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.NSession;
@@ -265,7 +266,7 @@ public class NoApiUtils {
         if (trace) {
             if (pdf) {
                 session.out().println(NMsg.ofC("generated src %s",
-                        NTexts.of().ofStyled(
+                        NText.ofStyled(
                                 adocFile, NTextStyle.primary4()
                         )
                 ));

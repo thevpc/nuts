@@ -7,7 +7,7 @@ import java.util.concurrent.ExecutorService;
 
 public interface NScheduler extends NComponent {
     static NScheduler of(){
-       return NExtensions.of().createComponent(NScheduler.class).get();
+       return NExtensions.of(NScheduler.class);
     }
     ExecutorService executorService();
 }

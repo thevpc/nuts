@@ -1,7 +1,6 @@
 package net.thevpc.nuts.lib.tomcatclassloader;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
 import org.apache.catalina.WebResource;
 import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.loader.WebappClassLoader;
@@ -127,7 +126,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
         if (workspace == null) {
             workspace
                     = Nuts.openWorkspace(
-                        new DefaultNWorkspaceOptionsBuilder()
+                        NWorkspaceOptionsBuilder.of()
                                     .setRuntimeId(getWorkspaceBootRuntime())
                                     .setClassLoaderSupplier(this::getParent)
                                     .setOpenMode(NOpenMode.OPEN_OR_CREATE)

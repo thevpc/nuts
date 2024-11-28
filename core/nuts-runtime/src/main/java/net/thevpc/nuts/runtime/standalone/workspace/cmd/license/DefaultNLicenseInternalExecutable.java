@@ -9,10 +9,10 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
+import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.util.NUtils;
 
 /**
  * @author thevpc
@@ -25,7 +25,7 @@ public class DefaultNLicenseInternalExecutable extends DefaultInternalNExecutabl
 
     @Override
     public int execute() {
-        boolean dry = NUtils.asBoolean(getExecCommand().getDry());
+        boolean dry = ExtraApiUtils.asBoolean(getExecCommand().getDry());
         NSession session = workspace.currentSession();
         if (dry) {
             dryExecute();

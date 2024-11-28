@@ -35,11 +35,6 @@ public class NInputStreamSource extends AbstractSingleReadNInputSource {
     }
 
     @Override
-    public NFormat formatter() {
-        return NFormat.of(new NContentMetadataProviderFormatSPI(this, null, "input-stream"));
-    }
-
-    @Override
     public String getName() {
         return getMetaData().getName().orNull();
     }

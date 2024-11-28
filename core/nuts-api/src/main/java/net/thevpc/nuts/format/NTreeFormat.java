@@ -42,7 +42,7 @@ import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
  */
 public interface NTreeFormat extends NContentTypeFormat {
     static NTreeFormat of() {
-       return NExtensions.of().createComponent(NTreeFormat.class).get();
+       return NExtensions.of(NTreeFormat.class);
     }
 
     /**

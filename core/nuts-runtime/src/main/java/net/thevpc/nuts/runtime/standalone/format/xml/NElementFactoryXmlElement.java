@@ -42,7 +42,7 @@ import java.util.function.Supplier;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringUtils;
 import org.w3c.dom.Attr;
@@ -321,7 +321,7 @@ public class NElementFactoryXmlElement implements NElementMapper<Node> {
                 return context.objectToElement(value, String.class);
             }
             case "nuts-string": {
-                return context.objectToElement(value, NString.class);
+                return context.objectToElement(value, NText.class);
             }
             case "instant": {
                 return context.objectToElement(value, Instant.class);

@@ -9,7 +9,7 @@ import net.thevpc.nuts.io.NPathPermission;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathSPI;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStream;
@@ -321,7 +321,7 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
             this.p = p;
         }
 
-        public NString asFormattedString() {
+        public NText asFormattedString() {
             NTextBuilder sb = NTextBuilder.of();
             sb.append(p.ref);
             return sb.build();

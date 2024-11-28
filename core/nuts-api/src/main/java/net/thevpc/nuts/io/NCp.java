@@ -63,7 +63,7 @@ import java.util.Set;
  */
 public interface NCp extends NComponent {
     static NCp of() {
-       return NExtensions.of().createComponent(NCp.class).get();
+       return NExtensions.of(NCp.class);
     }
 
     /**

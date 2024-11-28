@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
+import net.thevpc.nuts.format.NFormats;
 import net.thevpc.nuts.util.NLiteral;
 
 import java.lang.reflect.Type;
@@ -13,7 +14,7 @@ public class NElementMapperNId implements NElementMapper<NId> {
     @Override
     public Object destruct(NId o, Type typeOfSrc, NElementFactoryContext context) {
         if (context.isNtf()) {
-            return o.formatter().setNtf(true).format();
+            return NFormats.of().ofFormat(o).get().setNtf(true).format();
         } else {
             return o.toString();
         }
@@ -26,7 +27,7 @@ public class NElementMapperNId implements NElementMapper<NId> {
 //                NutsText n = ws.text().toText(ws.id().formatter(o).setNtf(true).format());
 //                return ws.elem().forPrimitive().buildNutsString(n);
             NSession session = context.getSession();
-            return context.elem().ofString(o.formatter().setNtf(true).format().toString());
+            return context.elem().ofString(NFormats.of().ofFormat(o).get().setNtf(true).format().toString());
         } else {
             return context.defaultObjectToElement(o.toString(), null);
         }

@@ -24,8 +24,12 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NBootArguments;
+import net.thevpc.nuts.boot.NBootException;
 import net.thevpc.nuts.boot.NBootWorkspace;
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
+
+import java.time.Instant;
 
 /**
  * Nuts App. Nuts is a Package manager for Java Applications and this
@@ -48,8 +52,14 @@ public final class NutsApp {
     @SuppressWarnings("UseSpecificCatch")
     public static void main(String[] args) {
         try {
-            new NBootWorkspace(null, args).runWorkspace();
+            Instant startTime = Instant.now();
+            NBootArguments options = new NBootArguments();
+            options.setArgs(args);
+            options.setStartTime(startTime);
+            new NBootWorkspace(options).runWorkspace();
             System.exit(0);
+        } catch (NBootException ex) {
+            throw ex;
         } catch (Exception ex) {
             NSession session = NSessionAwareExceptionBase.resolveSession(ex).orNull();
             if (session != null) {

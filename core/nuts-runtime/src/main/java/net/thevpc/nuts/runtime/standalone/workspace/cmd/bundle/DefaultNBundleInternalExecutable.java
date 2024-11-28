@@ -6,6 +6,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.bundle;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NCompress;
@@ -285,7 +287,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         for (Map.Entry<NId, NDefinition> entry : allIds.entrySet()) {
             NId id = entry.getKey();
             NDefinition resultDefinition = entry.getValue();
-            String fullPath = NIdUtils.resolveJarPath(id);
+            String fullPath = ExtraApiUtils.resolveJarPath(id);
             if (resultDefinition.getContent().isPresent()) {
                 cp.from(resultDefinition.getContent().get())
                         .to(bundleFolder.resolve(fullPath))
@@ -298,7 +300,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                 }
             }
 
-            fullPath = NIdUtils.resolveNutsDescriptorPath(id);
+            fullPath = ExtraApiUtils.resolveNutsDescriptorPath(id);
             cp.from(NDescriptorFormat.of().setValue(resultDefinition.getDescriptor()).setNtf(false).toString().getBytes())
                     .to(bundleFolder.resolve(fullPath))
                     .run();
@@ -314,7 +316,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         if (includeConfigFiles) {
             nuts_bundle_files_config.println("copy /.nuts-repository $target/.nuts-repository");
             for (NId id : toBaseDir) {
-                String fullPath = NIdUtils.resolveJarPath(id);
+                String fullPath = ExtraApiUtils.resolveJarPath(id);
 
                 nuts_bundle_files_config.println("copy /" + fullPath
                         + " $target/"

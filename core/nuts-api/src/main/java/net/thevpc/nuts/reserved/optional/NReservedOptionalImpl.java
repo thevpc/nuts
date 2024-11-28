@@ -1,12 +1,9 @@
 package net.thevpc.nuts.reserved.optional;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.reserved.NApiUtilsRPI;
-import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.util.NOptionalErrorException;
 
 import java.util.Objects;
 import java.util.function.Consumer;

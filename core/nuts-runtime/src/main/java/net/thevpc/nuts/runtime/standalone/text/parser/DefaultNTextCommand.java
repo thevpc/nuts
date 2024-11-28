@@ -29,6 +29,7 @@ package net.thevpc.nuts.runtime.standalone.text.parser;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.text.NTerminalCmd;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextCmd;
 import net.thevpc.nuts.text.NTextType;
 
@@ -70,7 +71,10 @@ public class DefaultNTextCommand extends NTextSpecialBase implements NTextCmd {
         DefaultNTextCommand that = (DefaultNTextCommand) o;
         return Objects.equals(command, that.command);
     }
-
+    @Override
+    public NText immutable() {
+        return this;
+    }
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), command);

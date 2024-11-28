@@ -24,8 +24,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
-import net.thevpc.nuts.boot.NBootWorkspace;
+import net.thevpc.nuts.boot.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -81,7 +80,7 @@ public final class Nuts {
      * @param appArgs application arguments
      * @return NutsSession instance
      */
-    public static NWorkspace openInheritedWorkspace(String[] overriddenNutsArgs, String... appArgs) throws NUnsatisfiedRequirementsException {
+    public static NWorkspace openInheritedWorkspace(String[] overriddenNutsArgs, String... appArgs) throws NUnsatisfiedWorkspaceRequirementsException {
         return openInheritedWorkspace(null, overriddenNutsArgs, appArgs);
     }
 
@@ -97,7 +96,7 @@ public final class Nuts {
      * @param appArgs arguments
      * @return NutsSession instance
      */
-    public static NWorkspace openInheritedWorkspace(NWorkspaceTerminalOptions term, String[] overriddenNutsArgs, String... appArgs) throws NUnsatisfiedRequirementsException {
+    public static NWorkspace openInheritedWorkspace(NWorkspaceTerminalOptions term, String[] overriddenNutsArgs, String... appArgs) throws NUnsatisfiedWorkspaceRequirementsException {
         Instant startTime = Instant.now();
         List<String> nutsArgs = new ArrayList<>();
         nutsArgs.addAll(NCmdLine.parseDefault(NStringUtils.trim(System.getProperty("nuts.boot.args"))).get().toStringList());
@@ -105,15 +104,17 @@ public final class Nuts {
         if (overriddenNutsArgs != null) {
             nutsArgs.addAll(Arrays.asList(overriddenNutsArgs));
         }
-        NWorkspaceOptionsBuilder options = new DefaultNWorkspaceOptionsBuilder();
-        options.setCmdLine(nutsArgs.toArray(new String[0]));
-        options.setApplicationArguments(Arrays.asList(appArgs));
+        if (appArgs != null) {
+            nutsArgs.addAll(Arrays.asList(appArgs));
+        }
+        NBootArguments options = new NBootArguments();
+        options.setArgs(nutsArgs.toArray(new String[0]));
         options.setInherited(true);
-        options.setCreationTime(startTime);
+        options.setStartTime(startTime);
         if (term != null) {
-            options.setStdin(term.getIn());
-            options.setStdout(term.getOut());
-            options.setStderr(term.getErr());
+            options.setIn(term.getIn());
+            options.setOut(term.getOut());
+            options.setErr(term.getErr());
         }
         return (NWorkspace) new NBootWorkspace(options).openWorkspace();
     }
@@ -124,8 +125,12 @@ public final class Nuts {
      * @param args nuts boot arguments
      * @return new NutsSession instance
      */
-    public static NWorkspace openWorkspace(String... args) throws NUnsatisfiedRequirementsException {
-        return (NWorkspace) new NBootWorkspace(null, args).openWorkspace();
+    public static NWorkspace openWorkspace(String... args) throws NUnsatisfiedWorkspaceRequirementsException {
+        Instant startTime = Instant.now();
+        NBootArguments options = new NBootArguments();
+        options.setArgs(args);
+        options.setStartTime(startTime);
+        return (NWorkspace) new NBootWorkspace(options).openWorkspace();
     }
 
     /**
@@ -135,8 +140,17 @@ public final class Nuts {
      * @param args nuts boot arguments
      * @return new NutsSession instance
      */
-    public static NWorkspace openWorkspace(NWorkspaceTerminalOptions term, String... args) throws NUnsatisfiedRequirementsException {
-        return (NWorkspace) new NBootWorkspace(term, args).openWorkspace();
+    public static NWorkspace openWorkspace(NWorkspaceTerminalOptions term, String... args) throws NUnsatisfiedWorkspaceRequirementsException {
+        Instant startTime = Instant.now();
+        NBootArguments options = new NBootArguments();
+        options.setArgs(args);
+        options.setStartTime(startTime);
+        if (term != null) {
+            options.setIn(term.getIn());
+            options.setOut(term.getOut());
+            options.setErr(term.getErr());
+        }
+        return (NWorkspace) new NBootWorkspace(options).openWorkspace();
     }
 
     /**
@@ -155,7 +169,7 @@ public final class Nuts {
      * @return new NutsSession instance
      */
     public static NWorkspace openWorkspace(NWorkspaceOptions options) {
-        return (NWorkspace) new NBootWorkspace(options).openWorkspace();
+        return (NWorkspace) new NBootWorkspace(options==null?null:options.toBootOptions()).openWorkspace();
     }
 
     /**
@@ -171,7 +185,16 @@ public final class Nuts {
      * @return workspace
      */
     public static NWorkspace runWorkspace(NWorkspaceTerminalOptions term, String... args) throws NExecutionException {
-        return (NWorkspace) new NBootWorkspace(term, args).runWorkspace();
+        Instant startTime = Instant.now();
+        NBootArguments options = new NBootArguments();
+        options.setArgs(args);
+        options.setStartTime(startTime);
+        if (term != null) {
+            options.setIn(term.getIn());
+            options.setOut(term.getOut());
+            options.setErr(term.getErr());
+        }
+        return (NWorkspace) new NBootWorkspace(options).runWorkspace();
     }
 
     /**
@@ -186,6 +209,10 @@ public final class Nuts {
      * @return session
      */
     public static NWorkspace runWorkspace(String... args) throws NExecutionException {
-        return runWorkspace(null, args);
+        Instant startTime = Instant.now();
+        NBootArguments options = new NBootArguments();
+        options.setArgs(args);
+        options.setStartTime(startTime);
+        return (NWorkspace) new NBootWorkspace(options).runWorkspace();
     }
 }

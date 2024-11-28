@@ -26,14 +26,14 @@
 package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NBootOptions;
-import net.thevpc.nuts.boot.NBootWorkspace;
+import net.thevpc.nuts.boot.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.runtime.standalone.DefaultNBootOptionsBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
-import net.thevpc.nuts.spi.NBootWorkspaceFactory;
+import net.thevpc.nuts.boot.NBootWorkspaceFactory;
 import net.thevpc.nuts.util.NMsg;
 
 import java.util.List;
@@ -48,13 +48,14 @@ public class DefaultNBootWorkspaceFactory implements NBootWorkspaceFactory {
     }
 
     @Override
-    public int getBootSupportLevel(NBootOptions options) {
+    public int getBootSupportLevel(NBootOptionsBoot options) {
         return NConstants.Support.DEFAULT_SUPPORT;
     }
 
     @Override
-    public NWorkspace createWorkspace(NBootOptions bOptions) {
-        String workspaceLocation = bOptions.getWorkspace().orNull();
+    public NWorkspace createWorkspace(NBootOptionsBoot bOptions) {
+        NBootOptions info2=new DefaultNBootOptionsBuilder(bOptions).build();
+        String workspaceLocation = info2.getWorkspace().orNull();
         if(workspaceLocation!=null && workspaceLocation.matches("[a-z-]+://.*")){
             String protocol=workspaceLocation.substring(0,workspaceLocation.indexOf("://"));
             switch (protocol){
@@ -64,24 +65,25 @@ public class DefaultNBootWorkspaceFactory implements NBootWorkspaceFactory {
             }
             return null;
         }
-        return new DefaultNWorkspace(bOptions);
+        return new DefaultNWorkspace(info2);
     }
 
     @Override
-    public NWorkspace runWorkspace(NBootOptions options) {
+    public NWorkspace runWorkspace(NBootOptionsBoot options) {
         NWorkspace workspace = createWorkspace(options);
         if(workspace==null){
             return null;
         }
         workspace.runWith(() -> {
+            NBootOptions info2=new DefaultNBootOptionsBuilder(options).build();
             NApp.of().setId(workspace.getApiId());
             NLogOp logOp = NLog.of(NBootWorkspace.class).with().level(Level.CONFIG);
-            logOp.verb(NLogVerb.SUCCESS).log(NMsg.ofC("running workspace in %s mode", getRunModeString(options)));
+            logOp.verb(NLogVerb.SUCCESS).log(NMsg.ofC("running workspace in %s mode", getRunModeString(info2)));
             NExecCmd execCmd = NExecCmd.of()
-                    .setExecutionType(options.getExecutionType().orNull())
-                    .setRunAs(options.getRunAs().orNull())
+                    .setExecutionType(info2.getExecutionType().orNull())
+                    .setRunAs(info2.getRunAs().orNull())
                     .failFast();
-            List<String> executorOptions = options.getExecutorOptions().orNull();
+            List<String> executorOptions = info2.getExecutorOptions().orNull();
             if (executorOptions != null) {
                 execCmd.configure(true, executorOptions.toArray(new String[0]));
             }
@@ -89,13 +91,13 @@ public class DefaultNBootWorkspaceFactory implements NBootWorkspaceFactory {
             while (executorOptionsCmdLine.hasNext()) {
                 execCmd.configureLast(executorOptionsCmdLine);
             }
-            if (options.getApplicationArguments().get().isEmpty()) {
-                if (options.getSkipWelcome().orElse(false)) {
+            if (info2.getApplicationArguments().get().isEmpty()) {
+                if (info2.getSkipWelcome().orElse(false)) {
                     return;
                 }
                 execCmd.addCommand("welcome");
             } else {
-                execCmd.addCommand(options.getApplicationArguments().get());
+                execCmd.addCommand(info2.getApplicationArguments().get());
             }
             execCmd.run();
         });

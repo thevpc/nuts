@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.uninstall;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NMemoryPrintStream;
 import net.thevpc.nuts.io.NPrintStream;
@@ -36,9 +37,7 @@ public class DefaultNUninstallCmd extends AbstractNUninstallCmd {
 
     @Override
     public NUninstallCmd run() {
-        NSession session=workspace.currentSession();
         NWorkspaceUtils.of(workspace).checkReadOnly();
-        NWorkspaceExt dws = NWorkspaceExt.of();
         NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.UNINSTALL, "uninstall");
         List<NDefinition> defs = new ArrayList<>();
         List<NId> nutsIds = this.getIds();
@@ -94,14 +93,14 @@ public class DefaultNUninstallCmd extends AbstractNUninstallCmd {
                                         saction.equals("ignored") ? NTextStyle.pale() :
                                                 NTextStyle.primary1()
                         );
-                NTextBuilder msg = NTexts.of().ofBuilder();
+                NTextBuilder msg = NTextBuilder.of();
                 msg.append("the following ")
                         .append(kind).append(" ").append((all.size() > 1 ? "artifacts are" : "artifact is"))
                         .append(" going to be ").append(action).append(" : ")
                         .appendJoined(
-                                NTexts.of().ofPlain(", "),
+                                NText.ofPlain(", "),
                                 all.stream().map(x
-                                                -> NTexts.of().ofText(
+                                                -> NText.of(
                                                 x.builder().build()
                                         )
                                 ).collect(Collectors.toList())

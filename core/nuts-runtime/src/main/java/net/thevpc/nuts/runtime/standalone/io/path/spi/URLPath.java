@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.format.NTreeVisitResult;
@@ -13,7 +14,7 @@ import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
@@ -143,7 +144,6 @@ public class URLPath implements NPathSPI {
             return f.stream();
         }
         //should we implement other protocols ?
-        NSession session=workspace.currentSession();
         return NStream.ofEmpty();
     }
 
@@ -393,7 +393,6 @@ public class URLPath implements NPathSPI {
         } catch (Exception e) {
             //
         }
-        NSession session=workspace.currentSession();
         return NContentTypes.of().probeContentType(basePath);
     }
 
@@ -414,7 +413,6 @@ public class URLPath implements NPathSPI {
         } catch (Exception e) {
             //
         }
-        NSession session=workspace.currentSession();
         return NContentTypes.of().probeCharset(basePath);
     }
 
@@ -424,7 +422,6 @@ public class URLPath implements NPathSPI {
     }
 
     public InputStream getInputStream(NPath basePath, NPathOption... options) {
-        NSession session=workspace.currentSession();
         if (url == null) {
             throw new NIOException(NMsg.ofC("unable to resolve input stream %s", toString()));
         }
@@ -448,13 +445,11 @@ public class URLPath implements NPathSPI {
 
     public OutputStream getOutputStream(NPath basePath, NPathOption... options) {
         try {
-            NSession session=workspace.currentSession();
             if (url == null) {
                 throw new NIOException(NMsg.ofC("unable to resolve output stream %s", toString()));
             }
             return url.openConnection().getOutputStream();
         } catch (IOException e) {
-            NSession session=workspace.currentSession();
             throw new NIOException(e);
         }
     }
@@ -468,7 +463,6 @@ public class URLPath implements NPathSPI {
                 return;
             }
         }
-        NSession session=workspace.currentSession();
         throw new NIOException(NMsg.ofC("unable to delete %s", toString()));
     }
 
@@ -481,7 +475,6 @@ public class URLPath implements NPathSPI {
                 return;
             }
         }
-        NSession session=workspace.currentSession();
         throw new NIOException(NMsg.ofC("unable to mkdir %s", toString()));
     }
 
@@ -620,7 +613,6 @@ public class URLPath implements NPathSPI {
         if (NBlankable.isBlank(location)) {
             return 0;
         }
-        NSession session=workspace.currentSession();
         return NPath.of(location).getLocationItemsCount();
     }
 
@@ -635,7 +627,6 @@ public class URLPath implements NPathSPI {
             case "\\\\":
                 return true;
         }
-        NSession session=workspace.currentSession();
         return NPath.of(loc).isRoot();
     }
 
@@ -654,13 +645,11 @@ public class URLPath implements NPathSPI {
             return f.walk(maxDepth, options);
         }
         //should we implement other protocols ?
-        NSession session=workspace.currentSession();
         return NStream.ofEmpty();
     }
 
     @Override
     public NPath subpath(NPath basePath, int beginIndex, int endIndex) {
-        NSession session=workspace.currentSession();
         return rebuildURLPath(
                 NPath.of(getLocation(basePath)).subpath(beginIndex, endIndex).toString()
         );
@@ -668,25 +657,21 @@ public class URLPath implements NPathSPI {
 
     @Override
     public List<String> getLocationItems(NPath basePath) {
-        NSession session=workspace.currentSession();
         return NPath.of(getLocation(basePath)).getLocationItems();
     }
 
     @Override
     public void moveTo(NPath basePath, NPath other, NPathOption... options) {
-        NSession session=workspace.currentSession();
         throw new NIOException(NMsg.ofC("unable to move %s", this));
     }
 
     @Override
     public void copyTo(NPath basePath, NPath other, NPathOption... options) {
-        NSession session=workspace.currentSession();
         NCp.of().from(basePath).to(other).addOptions(options).run();
     }
 
     @Override
     public void walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {
-        NSession session=workspace.currentSession();
         for (NPath x : walk(basePath, maxDepth, options)) {
             if (x.isDirectory()) {
                 NTreeVisitResult r = visitor.preVisitDirectory(x);
@@ -729,7 +714,6 @@ public class URLPath implements NPathSPI {
             if (child.startsWith("/") || child.startsWith("\\")) {
                 child = child.substring(1);
             }
-            NSession session=workspace.currentSession();
             return NPath.of(child);
         }
         return null;
@@ -785,7 +769,6 @@ public class URLPath implements NPathSPI {
     }
 
     protected NPath rebuildURLPath(String other) {
-        NSession session=workspace.currentSession();
         return NPath.of(other);
     }
 
@@ -821,7 +804,6 @@ public class URLPath implements NPathSPI {
         return toURL(basePath).flatMap(x -> {
             File f = _toFile(x);
             if (f != null) {
-                NSession session=workspace.currentSession();
                 return NOptional.of(NPath.of(f));
             }
             return NOptional.ofEmpty(() -> NMsg.ofC("not a local file %s", toString()));
@@ -849,12 +831,12 @@ public class URLPath implements NPathSPI {
             return "path";
         }
 
-        public NString asFormattedString() {
+        public NText asFormattedString() {
             NSession session=p.workspace.currentSession();
             if (p.url == null) {
-                return NTexts.of().ofPlain("");
+                return NText.ofPlain("");
             }
-            return NTexts.of().ofText(p.url);
+            return NText.of(p.url);
         }
 
         @Override

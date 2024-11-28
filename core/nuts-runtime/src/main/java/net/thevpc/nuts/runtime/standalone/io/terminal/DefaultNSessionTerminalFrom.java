@@ -6,6 +6,7 @@ import net.thevpc.nuts.runtime.standalone.io.ask.DefaultNAsk;
 import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NAsk;
@@ -52,7 +53,6 @@ public class DefaultNSessionTerminalFrom extends AbstractNTerminal {
 
     @Override
     public String readLine(NPrintStream out, NMsg message) {
-        NSession session=workspace.currentSession();
         if (out == null) {
             out = out();
         }
@@ -77,7 +77,6 @@ public class DefaultNSessionTerminalFrom extends AbstractNTerminal {
 
     @Override
     public char[] readPassword(NPrintStream out, NMsg prompt) {
-        NSession session=workspace.currentSession();
         if (out == null) {
             out = out();
         }
@@ -102,7 +101,7 @@ public class DefaultNSessionTerminalFrom extends AbstractNTerminal {
         if ((
                 in == NIO.of().stdin()
         ) && ((cons = System.console()) != null)) {
-            String txt = NTexts.of().ofText(prompt).toString();
+            String txt = NText.of(prompt).toString();
             if ((passwd = cons.readPassword("%s", txt)) != null) {
                 return passwd;
             } else {
@@ -209,7 +208,7 @@ public class DefaultNSessionTerminalFrom extends AbstractNTerminal {
                 getProgressBar().printProgress(
                         Float.isNaN(progress) ? -1 :
                                 (int) (progress * 100),
-                        NTexts.of().ofText(message),
+                        NText.of(message),
                         err()
                 );
             }
@@ -235,7 +234,6 @@ public class DefaultNSessionTerminalFrom extends AbstractNTerminal {
 
     private CProgressBar getProgressBar() {
         if (progressBar == null) {
-            NSession session=workspace.currentSession();
             progressBar = CProgressBar.of();
         }
         return progressBar;

@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 
 public interface NGlob extends NComponent {
     static NGlob of() {
-        return NExtensions.of().createComponent(NGlob.class).get();
+        return NExtensions.of(NGlob.class);
     }
 
     String getSeparator();

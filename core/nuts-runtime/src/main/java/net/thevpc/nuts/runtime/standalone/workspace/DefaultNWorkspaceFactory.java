@@ -27,13 +27,16 @@ package net.thevpc.nuts.runtime.standalone.workspace;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElementNotFoundException;
 import net.thevpc.nuts.ext.NFactoryException;
+import net.thevpc.nuts.format.NFormats;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.io.NContentTypes;
 import net.thevpc.nuts.reserved.rpi.NCollectionsRPI;
 import net.thevpc.nuts.reserved.rpi.NIORPI;
+import net.thevpc.nuts.runtime.standalone.*;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootManager;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElements;
 import net.thevpc.nuts.runtime.standalone.format.DefaultNObjectFormat;
+import net.thevpc.nuts.runtime.standalone.format.NFormatsImpl;
 import net.thevpc.nuts.runtime.standalone.id.format.DefaultNIdFormat;
 import net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIO;
 import net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIORPI;
@@ -196,6 +199,28 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                     NWebCli p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNWebCli(session));
                     return NOptional.of((T) p);
                 }
+                case "net.thevpc.nuts.NIdBuilder": {
+                    return NOptional.of((T) new DefaultNIdBuilder());
+                }
+                case "net.thevpc.nuts.NDependencyBuilder": {
+                    return NOptional.of((T) new DefaultNDependencyBuilder());
+                }
+                case "net.thevpc.nuts.NEnvConditionBuilder": {
+                    return NOptional.of((T) new DefaultNEnvConditionBuilder());
+                }
+                case "net.thevpc.nuts.NDescriptorBuilder": {
+                    return NOptional.of((T) new DefaultNDescriptorBuilder());
+                }
+                case "net.thevpc.nuts.NBootOptionsBuilder": {
+                    return NOptional.of((T) new DefaultNBootOptionsBuilder());
+                }
+                case "net.thevpc.nuts.NWorkspaceOptionsBuilder": {
+                    return NOptional.of((T) new DefaultNWorkspaceOptionsBuilder());
+                }
+                case "net.thevpc.nuts.format.NFormats": {
+                    NFormats p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.WORKSPACE, () -> new NFormatsImpl(workspace));
+                    return NOptional.of((T) p);
+                }
                 default: {
                     //wont use NLog because not yet initialized!
                     //System.err.println("[Nuts] createComponent failed for :" + type.getName());
@@ -322,7 +347,6 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
 
     @Override
     public <T extends NComponent> void registerInstance(Class<T> extensionPoint, T implementation) {
-        NSession session=workspace.currentSession();
         if (isRegisteredInstance(extensionPoint, implementation)) {
             throw new NIllegalArgumentException(NMsg.ofC("already registered Extension %s for %s", implementation, extensionPoint.getName()));
         }
@@ -336,7 +360,6 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
 
     @Override
     public <T extends NComponent> void registerType(Class<T> extensionPoint, Class<? extends T> implementationType, NId source) {
-        NSession session=workspace.currentSession();
         if (isRegisteredType(extensionPoint, implementationType.getName())) {
             throw new NIllegalArgumentException(NMsg.ofC("already registered Extension %s for %s", implementationType.getName(), extensionPoint.getName()));
         }

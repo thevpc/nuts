@@ -26,20 +26,18 @@
 package net.thevpc.nuts.runtime.standalone.xtra.digest;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.format.NFormat;
+import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.format.NFormats;
 import net.thevpc.nuts.format.NTreeVisitResult;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.util.AbstractMultiReadNInputSource;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.text.NString;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.*;
@@ -140,7 +138,7 @@ public class DefaultNDigest implements NDigest {
 
     @Override
     public String computeString() {
-        return NStringUtils.toHexString(computeBytes());
+        return NHex.toHexString(computeBytes());
     }
 
     @Override
@@ -280,7 +278,7 @@ public class DefaultNDigest implements NDigest {
         return NConstants.Support.DEFAULT_SUPPORT;
     }
 
-    private class NDescriptorInputSource extends AbstractMultiReadNInputSource {
+    public class NDescriptorInputSource extends AbstractMultiReadNInputSource {
         private final NDescriptor source;
 
         public NDescriptorInputSource(NDescriptor source, NWorkspace workspace) {
@@ -289,7 +287,7 @@ public class DefaultNDigest implements NDigest {
         }
 
         private byte[] getBytes() {
-            return source.formatter()
+            return NDescriptorFormat.of(source)
                     .setNtf(false)
                     .format().filteredText().getBytes();
         }
@@ -306,7 +304,7 @@ public class DefaultNDigest implements NDigest {
 
         @Override
         public long getContentLength() {
-            return source.formatter()
+            return NDescriptorFormat.of(source)
                     .setNtf(false)
                     .format().filteredText().getBytes().length;
         }
@@ -314,11 +312,11 @@ public class DefaultNDigest implements NDigest {
         @Override
         public NContentMetadata getMetaData() {
             NId id = source.getId();
-            NString str;
+            NText str;
             if (id != null) {
-                str = id.format();
+                str = NFormats.of(id).get().format();
             } else {
-                str = NTexts.of().ofStyled("<empty-descriptor>", NTextStyle.path());
+                str = NText.ofStyled("<empty-descriptor>", NTextStyle.path());
             }
             return new DefaultNContentMetadata(NMsg.ofNtf(str), null, null, null, null);
         }
@@ -326,31 +324,6 @@ public class DefaultNDigest implements NDigest {
         @Override
         public boolean isMultiRead() {
             return true;
-        }
-
-        @Override
-        public NFormat formatter() {
-            return NFormat.of(new NFormatSPI() {
-                @Override
-                public String getName() {
-                    return "input-stream";
-                }
-
-                @Override
-                public void print(NPrintStream out) {
-                    NOptional<NMsg> m = getMetaData().getMessage();
-                    if (m.isPresent()) {
-                        out.print(m.get());
-                    } else {
-                        out.print(getClass().getSimpleName(), NTextStyle.path());
-                    }
-                }
-
-                @Override
-                public boolean configureFirst(NCmdLine cmdLine) {
-                    return false;
-                }
-            });
         }
 
         @Override

@@ -47,7 +47,7 @@ import java.util.List;
 public interface NDeployCmd extends NWorkspaceCmd {
 
     static NDeployCmd of() {
-        return NExtensions.of().createComponent(NDeployCmd.class).get();
+        return NExtensions.of(NDeployCmd.class);
     }
     /**
      * set content

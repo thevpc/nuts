@@ -11,11 +11,12 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
+import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NUtils;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -32,7 +33,7 @@ public class DefaultNWelcomeInternalExecutable extends DefaultInternalNExecutabl
     @Override
     public int execute() {
         NSession session = workspace.currentSession();
-        boolean dry = NUtils.asBoolean(getExecCommand().getDry());
+        boolean dry = ExtraApiUtils.asBoolean(getExecCommand().getDry());
         if(dry){
             dryExecute();
             return NExecutionException.SUCCESS;
@@ -60,7 +61,7 @@ public class DefaultNWelcomeInternalExecutable extends DefaultInternalNExecutabl
         } else {
             Map<String, Object> welcome = new LinkedHashMap<>();
             welcome.put("message", "Welcome to nuts. Yeah, it is working...");
-            welcome.put("name", NTexts.of().ofStyled("nuts", NTextStyle.primary(1)));
+            welcome.put("name", NText.ofStyledPrimary1("nuts"));
             welcome.put("long-name", "Network Updatable Things Services");
             welcome.put("description", "The Free and Open Source Package Manager for Java (TM) and other Things ...");
             welcome.put("url", NPath.of("https://github.com/thevpc/nuts"));

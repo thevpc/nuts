@@ -1,19 +1,22 @@
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.NExceptionBase;
+import net.thevpc.nuts.NExceptionWithExitCodeBase;
+import net.thevpc.nuts.reserved.NReservedLangUtils;
+
 import java.util.Arrays;
 import java.util.List;
 
 public class NUtils {
-
-    public static boolean asBoolean(Boolean value) {
-        return asBooleanOr(value, false);
+    static NOptional<NExceptionBase> resolveExceptionBase(Throwable th) {
+        return NReservedLangUtils.findThrowable(th, NExceptionBase.class, null);
+    }
+    static NOptional<NExceptionWithExitCodeBase> resolveWithExitCodeExceptionBase(Throwable th) {
+        return NReservedLangUtils.findThrowable(th, NExceptionWithExitCodeBase.class, null);
     }
 
-    public static boolean asBooleanOr(Boolean value, boolean defaultValue) {
-        if (value == null) {
-            return defaultValue;
-        }
-        return value.booleanValue();
+    public static NOptional<Integer> resolveExitCode(Throwable th) {
+        return resolveWithExitCodeExceptionBase(th).map(NExceptionWithExitCodeBase::getExitCode);
     }
 
     public static <T> T firstNonNull(T a, T b) {

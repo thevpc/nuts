@@ -26,8 +26,9 @@ package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NClassLoaderNode;
-import net.thevpc.nuts.boot.NBootOptions;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
+import net.thevpc.nuts.NBootOptions;
+import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;

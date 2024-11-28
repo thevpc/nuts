@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.format.NFormat;
+import net.thevpc.nuts.boot.reserved.util.NStringUtilsBoot;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.reserved.NReservedUtils;
 import net.thevpc.nuts.util.NBlankable;
@@ -89,11 +89,6 @@ public class DefaultNId implements NId {
     }
 
     @Override
-    public NFormat formatter() {
-        return NIdFormat.of().setValue(this);
-    }
-
-    @Override
     public boolean isNull() {
         return false;
     }
@@ -102,6 +97,51 @@ public class DefaultNId implements NId {
     public boolean isBlank() {
         return toString().isEmpty();
     }
+
+    public String getMavenFolder() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.join("/", NStringUtils.split(groupId, "./\\", true, true)));
+        if (!NStringUtilsBoot.isBlank(artifactId)) {
+            if (sb.length() > 0) {
+                sb.append("/");
+            }
+            sb.append(artifactId);
+            if (!NBlankable.isBlank(version)) {
+                sb.append("/");
+                sb.append(version);
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public String getMavenFileName(String extension) {
+        StringBuilder sb = new StringBuilder();
+        if (!NBlankable.isBlank(artifactId)) {
+            sb.append(artifactId);
+        }
+        if (!NBlankable.isBlank(version)) {
+            sb.append("-").append(version);
+        }
+        if (!NBlankable.isBlank(extension)) {
+            sb.append(".").append(extension);
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public String getMavenPath(String extension) {
+        String p = getMavenFolder();
+        String n = getMavenFileName(extension);
+        if (p.isEmpty()) {
+            return n;
+        }
+        if (n.isEmpty()) {
+            return p + "/";
+        }
+        return p + "/" + n;
+    }
+
 
     @Override
     public boolean equalsShortId(NId other) {
@@ -320,7 +360,7 @@ public class DefaultNId implements NId {
                 a.add(n);
             }
         }
-        return new DefaultNDependencyBuilder()
+        return NDependencyBuilder.of()
                 .setRepository(getRepository())
                 .setArtifactId(getArtifactId())
                 .setGroupId(getGroupId())
@@ -337,7 +377,7 @@ public class DefaultNId implements NId {
 
     @Override
     public NIdBuilder builder() {
-        return new DefaultNIdBuilder(this);
+        return NIdBuilder.of(this);
     }
 
     @Override

@@ -25,6 +25,8 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
@@ -777,7 +779,7 @@ public class CoreIOUtils {
         return NInputSourceBuilder.of(ist)
                 .setMetadata(new DefaultNContentMetadata(
                         path,
-                        NMsg.ofNtf(NTexts.of().ofStyled(path, NTextStyle.path())),
+                        NMsg.ofNtf(NText.ofStyledPath(path)),
                         size, header.getContentType(), header.getCharset(), sourceTypeName
                 )).createInputStream()
                 ;
@@ -865,10 +867,10 @@ public class CoreIOUtils {
                     } else if (((c < 0x0020) || (c > 0x007e))) {
                         buffer.append('\\');
                         buffer.append('u');
-                        buffer.append(NStringUtils.toHexChar((c >> 12) & 0xF));
-                        buffer.append(NStringUtils.toHexChar((c >> 8) & 0xF));
-                        buffer.append(NStringUtils.toHexChar((c >> 4) & 0xF));
-                        buffer.append(NStringUtils.toHexChar(c & 0xF));
+                        buffer.append(NHex.toHexChar((c >> 12) & 0xF));
+                        buffer.append(NHex.toHexChar((c >> 8) & 0xF));
+                        buffer.append(NHex.toHexChar((c >> 4) & 0xF));
+                        buffer.append(NHex.toHexChar(c & 0xF));
                     } else {
                         buffer.append(c);
                     }
@@ -1192,7 +1194,7 @@ public class CoreIOUtils {
                     if (NAsk.of()
                             .setDefaultValue(true)
                             .forBoolean(NMsg.ofC("create %s ?",
-                                    NTexts.of().ofStyled(
+                                    NText.ofStyled(
                                             betterPath(out.toString()), NTextStyle.path()
                                     ))
                             ).getBooleanValue()) {
@@ -1229,7 +1231,7 @@ public class CoreIOUtils {
                     if (NAsk.of()
                             .setDefaultValue(true)
                             .forBoolean(NMsg.ofC("override %s ?",
-                                    NTexts.of().ofStyled(
+                                    NText.ofStyled(
                                             betterPath(out.toString()), NTextStyle.path()
                                     ))
                             ).getBooleanValue()) {

@@ -38,7 +38,7 @@ import java.util.List;
  */
 public interface NPrepareCmd extends NWorkspaceCmd {
     static NPrepareCmd of() {
-        return NExtensions.of().createComponent(NPrepareCmd.class).get();
+        return NExtensions.of(NPrepareCmd.class);
     }
 
     NPrepareCmd setTargetServer(String remoteServer);

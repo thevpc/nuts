@@ -5,6 +5,7 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.ask.DefaultNAsk;
 import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NAsk;
@@ -101,7 +102,7 @@ public class DefaultNTerminalFromSystem extends AbstractNTerminal {
         if ((
                 in == NIO.of().stdin()
         ) && ((cons = System.console()) != null)) {
-            String txt = NTexts.of().ofText(prompt).toString();
+            String txt = NText.of(prompt).toString();
             if ((passwd = cons.readPassword("%s", txt)) != null) {
                 return passwd;
             } else {
@@ -207,7 +208,7 @@ public class DefaultNTerminalFromSystem extends AbstractNTerminal {
                 getProgressBar().printProgress(
                         Float.isNaN(progress) ? -1 :
                                 (int) (progress * 100),
-                        NTexts.of().ofText(message),
+                        NText.of(message),
                         err()
                 );
             }

@@ -127,14 +127,14 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
         NSession session = workspace.currentSession();
         switch (NEnvs.of().getOsFamily()) {
             case WINDOWS: {
-                return NTexts.of().ofStyled(
+                return NText.ofStyled(
                         "No help available. Try " + getName() + " /help",
                         NTextStyle.error()
                 );
             }
             default: {
                 return
-                        NTexts.of().ofStyled(
+                        NText.ofStyled(
                                 "No help available. Try 'man " + getName() + "' or '" + getName() + " --help'",
                                 NTextStyle.error()
                         );

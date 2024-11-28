@@ -39,7 +39,7 @@ import net.thevpc.nuts.spi.NComponent;
  */
 public interface NPs extends NComponent {
     static NPs of() {
-        return NExtensions.of().createComponent(NPs.class).get();
+        return NExtensions.of(NPs.class);
     }
 
     /**

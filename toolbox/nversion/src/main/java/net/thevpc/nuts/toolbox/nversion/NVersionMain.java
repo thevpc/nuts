@@ -177,14 +177,14 @@ public class NVersionMain implements NApplication {
                         if (nameFormat) {
                             out.println(NMsg.ofC("%s", text.ofStyled(descriptor.getId().getShortName(), NTextStyle.primary4())));
                         } else if (idFormat) {
-                            out.println(NMsg.ofC("%s", text.ofText(descriptor.getId())));
+                            out.println(NMsg.ofC("%s", text.of(descriptor.getId())));
                         } else if (longFormat) {
-                            out.println(NMsg.ofC("%s", text.ofText(descriptor.getId())));
+                            out.println(NMsg.ofC("%s", text.of(descriptor.getId())));
                             NPropertiesFormat f = NPropertiesFormat.of()
                                     .setSorted(true);
                             f.setValue(descriptor.getProperties()).print(out);
                         } else {
-                            out.println(NMsg.ofC("%s", text.ofText(descriptor.getId().getVersion())));
+                            out.println(NMsg.ofC("%s", text.of(descriptor.getId().getVersion())));
                         }
                         if (!all) {
                             break;

@@ -6,7 +6,7 @@ import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathSPI;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -33,7 +33,6 @@ public class InvalidFilePath implements NPathSPI {
 
     @Override
     public NStream<NPath> list(NPath basePath) {
-        NSession session=workspace.currentSession();
         return NStream.ofEmpty();
     }
 
@@ -63,7 +62,6 @@ public class InvalidFilePath implements NPathSPI {
     @Override
     public NPath resolve(NPath basePath, String path) {
         String b = value;
-        NSession session=workspace.currentSession();
         if (b.endsWith("/") || b.endsWith("\\")) {
             return NPath.of(b + path);
         }
@@ -81,7 +79,6 @@ public class InvalidFilePath implements NPathSPI {
             return getParent(basePath);
         }
         if (isRoot(basePath)) {
-            NSession session=workspace.currentSession();
             return NPath.of("/" + path);
         }
         return getParent(basePath).resolve(path);
@@ -167,24 +164,20 @@ public class InvalidFilePath implements NPathSPI {
     }
 
     public InputStream getInputStream(NPath basePath, NPathOption... options) {
-        NSession session=workspace.currentSession();
         throw new NIOException(NMsg.ofC("path not found %s", this));
     }
 
     public OutputStream getOutputStream(NPath basePath, NPathOption... options) {
-        NSession session=workspace.currentSession();
         throw new NIOException(NMsg.ofC("path not found %s", this));
     }
 
     @Override
     public void delete(NPath basePath, boolean recurse) {
-        NSession session=workspace.currentSession();
         throw new NIOException(NMsg.ofC("unable to delete path %s", this));
     }
 
     @Override
     public void mkdir(boolean parents, NPath basePath) {
-        NSession session=workspace.currentSession();
         throw new NIOException(NMsg.ofC("unable to create folder out of regular file %s", this));
     }
 
@@ -218,7 +211,6 @@ public class InvalidFilePath implements NPathSPI {
             x = y;
         }
         if (x >= 0) {
-            NSession session=workspace.currentSession();
             return NPath.of(sb.substring(0, x));
         }
         return null;
@@ -312,14 +304,12 @@ public class InvalidFilePath implements NPathSPI {
 
     @Override
     public NStream<NPath> walk(NPath basePath, int maxDepth, NPathOption[] options) {
-        NSession session=workspace.currentSession();
         return NStream.ofEmpty();
     }
 
     @Override
     public NPath subpath(NPath basePath, int beginIndex, int endIndex) {
         List<String> a = asPathArray();
-        NSession session=workspace.currentSession();
         return NPath.of(String.join("/", a.subList(beginIndex, endIndex)));
     }
 
@@ -399,9 +389,9 @@ public class InvalidFilePath implements NPathSPI {
             this.p = p;
         }
 
-        public NString asFormattedString() {
+        public NText asFormattedString() {
             NSession session=p.workspace.currentSession();
-            return NTexts.of().ofText(p.value);
+            return NText.of(p.value);
         }
 
         @Override
@@ -417,13 +407,11 @@ public class InvalidFilePath implements NPathSPI {
 
     @Override
     public void moveTo(NPath basePath, NPath other, NPathOption... options) {
-        NSession session=workspace.currentSession();
         throw new NIOException(NMsg.ofC("unable to move %s",this));
     }
 
     @Override
     public void copyTo(NPath basePath, NPath other, NPathOption... options) {
-        NSession session=workspace.currentSession();
         throw new NIOException(NMsg.ofC("unable to copy %s",this));
     }
     @Override
@@ -457,7 +445,6 @@ public class InvalidFilePath implements NPathSPI {
             if (child.startsWith("/") || child.startsWith("\\")) {
                 child = child.substring(1);
             }
-            NSession session=workspace.currentSession();
             return NPath.of(child);
         }
         return null;

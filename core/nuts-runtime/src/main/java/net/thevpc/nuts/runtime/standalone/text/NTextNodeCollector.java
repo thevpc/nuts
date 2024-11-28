@@ -24,10 +24,10 @@ public class NTextNodeCollector implements NTextVisitor {
         if (all.isEmpty()) {
             return null;
         }
-        return NTexts.of().ofList(all).simplify();
+        return NText.ofList(all).simplify();
     }
 
     public NText getRootOrEmpty() {
-        return NTexts.of().ofList(all).simplify();
+        return NText.ofList(all).simplify();
     }
 }

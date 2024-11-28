@@ -10,7 +10,7 @@ import java.util.Map;
 
 public interface NInstallSvcCmd extends NCmdLineConfigurable, NComponent{
     static NInstallSvcCmd of() {
-        return NExtensions.of().createComponent(NInstallSvcCmd.class).get();
+        return NExtensions.of(NInstallSvcCmd.class);
     }
 
     String[] getStartCommand();

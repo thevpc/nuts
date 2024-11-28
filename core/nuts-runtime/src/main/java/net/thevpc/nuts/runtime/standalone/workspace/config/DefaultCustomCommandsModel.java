@@ -6,6 +6,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.CommandNWorkspaceCommandFactory;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ConfigNWorkspaceCommandFactory;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.alias.DefaultNCustomCommand;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.text.NTexts;
@@ -180,7 +181,7 @@ public class DefaultCustomCommandsModel {
             if (!NAsk.of()
                     .setDefaultValue(false)
                     .forBoolean(NMsg.ofC("override existing command %s ?",
-                            NTexts.of().ofStyled(
+                            NText.ofStyled(
                                     command.getName(), NTextStyle.primary1()
                             ))
                     ).getBooleanValue()) {
@@ -254,7 +255,7 @@ public class DefaultCustomCommandsModel {
         NSession session = workspace.currentSession();
         if (session.isPlainTrace()) {
             NPrintStream out = session.getTerminal().out();
-            out.println(NMsg.ofC("%s command %s", "uninstall", NTexts.of().ofStyled(name, NTextStyle.primary3())));
+            out.println(NMsg.ofC("%s command %s", "uninstall", NText.ofStyled(name, NTextStyle.primary3())));
         }
     }
 

@@ -42,7 +42,7 @@ import java.util.stream.Stream;
  * @app.category Input Output
  * @since 0.5.5
  */
-public interface NInputSource extends NFormattable, NContentMetadataProvider, NInputContentProvider {
+public interface NInputSource extends NContentMetadataProvider, NInputContentProvider {
 
     static NInputSource of(File file) {
         return file == null ? null : NPath.of(file);

@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.*;
 
 import java.util.Objects;
@@ -59,6 +60,32 @@ public class NRunAs {
             throw new IllegalArgumentException("invalid user name");
         }
         return new NRunAs(Mode.SUDO, name);
+    }
+
+    public static NOptional<NRunAs> parse(String runAs) {
+        if(NBlankable.isBlank(runAs)){
+            return NOptional.ofNamedEmpty("NRunAs "+runAs);
+        }
+        runAs=runAs.trim();
+        String urunAs=runAs.toUpperCase();
+        switch (urunAs){
+            case "ROOT":
+            case "RUN-AS:ROOT":
+            case "RUN_AS:ROOT":
+                return NOptional.of(ROOT);
+            case "CURRENT_USER":
+            case "RUN-AS:CURRENT_USER":
+            case "RUN_AS:CURRENT_USER":
+                return NOptional.of(CURRENT_USER);
+            case "SUDO":
+            case "RUN-AS:SUDO":
+            case "RUN_AS:SUDO":
+                return NOptional.of(SUDO);
+        }
+        if(urunAs.startsWith("RUN-AS:")){
+            return NOptional.of(user(runAs.substring("RUN-AS:".length())));
+        }
+        return NOptional.ofNamedEmpty("NRunAs "+runAs);
     }
 
     public Mode getMode() {

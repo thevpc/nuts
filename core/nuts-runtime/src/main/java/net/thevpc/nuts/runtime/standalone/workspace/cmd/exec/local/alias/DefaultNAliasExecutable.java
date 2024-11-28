@@ -49,7 +49,7 @@ public class DefaultNAliasExecutable extends AbstractNExecutableInformationExt {
         if (t != null) {
             return t;
         }
-        return NTexts.of().ofStyled("No help available. Try '" + getName() + " --help'", NTextStyle.error());
+        return NText.ofStyled("No help available. Try '" + getName() + " --help'", NTextStyle.error());
     }
 
     @Override

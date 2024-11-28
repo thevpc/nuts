@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.format.NFormattable;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.*;
 
 import java.io.Serializable;
@@ -47,7 +47,7 @@ import java.util.regex.Pattern;
  * @app.category Descriptor
  * @since 0.5.4
  */
-public interface NVersion extends Serializable, /*NTokenFilter, */NFormattable, Comparable<NVersion>, NBlankable {
+public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable {
     Pattern PATTERN = Pattern.compile("[A-Za-z0-9._*,()\\[\\] ${}+-]+");
     NVersion BLANK = new DefaultNVersion("");
 

@@ -44,8 +44,12 @@ import java.util.List;
  * @since 0.5.4
  */
 public interface NIdFormat extends NFormat, NComponent {
+    static NIdFormat of(NId id) {
+        return of().setValue(id);
+    }
+
     static NIdFormat of() {
-       return NExtensions.of().createComponent(NIdFormat.class).get();
+       return NExtensions.of(NIdFormat.class);
     }
 
     /**

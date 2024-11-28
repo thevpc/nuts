@@ -23,7 +23,6 @@ public class RemoteNSearchCmd extends AbstractNSearchCmd {
 
     @Override
     public NSearchCmd copy() {
-        NSession session=workspace.currentSession();
         RemoteNSearchCmd b = new RemoteNSearchCmd(getWorkspace());
         b.setAll(this);
         return b;
@@ -36,7 +35,6 @@ public class RemoteNSearchCmd extends AbstractNSearchCmd {
 
     @Override
     protected NIterator<NId> getResultIdIteratorBase(Boolean forceInlineDependencies) {
-        NSession session=workspace.currentSession();
         NElements e = NElements.of();
         NObjectElementBuilder eb = e.ofObject()
                 .set("execType", getExecType())

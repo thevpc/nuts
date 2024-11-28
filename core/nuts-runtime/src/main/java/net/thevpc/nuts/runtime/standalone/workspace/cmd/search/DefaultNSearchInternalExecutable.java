@@ -7,8 +7,8 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.search;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
+import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.internal.DefaultInternalNExecutableCommand;
-import net.thevpc.nuts.util.NUtils;
 
 /**
  *
@@ -22,7 +22,7 @@ public class DefaultNSearchInternalExecutable extends DefaultInternalNExecutable
 
     @Override
     public int execute() {
-        boolean dry = NUtils.asBoolean(getExecCommand().getDry());
+        boolean dry = ExtraApiUtils.asBoolean(getExecCommand().getDry());
         if(dry){
             dryExecute();
             return NExecutionException.SUCCESS;

@@ -1,6 +1,6 @@
 package net.thevpc.nuts.reserved.io;
 
-import net.thevpc.nuts.NBootException;
+import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
@@ -106,7 +106,7 @@ public class NReservedMonitoredURLInputStream extends FilterInputStream {
             if (contentLength >= 0) {
                 if (readCount != contentLength) {
                     log.with().level(Level.FINE).verb(NLogVerb.FAIL).log(NMsg.ofC("failed to downloaded %s. stream closed unexpectedly", url));
-                    throw new NBootException(NMsg.ofC("failed to downloaded %s. stream closed unexpectedly", url));
+                    throw new NIllegalArgumentException(NMsg.ofC("failed to downloaded %s. stream closed unexpectedly", url));
                 }
             }
             if (log != null) {

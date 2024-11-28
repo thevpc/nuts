@@ -23,7 +23,7 @@ public class NElementMapperPath implements NElementMapper<Path> {
     public NElement createElement(Path o, Type typeOfSrc, NElementFactoryContext context) {
         if (context.isNtf()) {
             NSession session = context.getSession();
-            NText n = NTexts.of().ofStyled(o.toString(), NTextStyle.path());
+            NText n = NText.ofStyled(o.toString(), NTextStyle.path());
             return context.elem().ofString(n.toString());
         } else {
             return context.defaultObjectToElement(o.toString(), null);

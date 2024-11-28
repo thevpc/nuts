@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
@@ -13,10 +14,7 @@ import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.text.NString;
-import net.thevpc.nuts.text.NTextBuilder;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -94,7 +92,7 @@ public class NResourcePath implements NPathSPI {
         sb.append(location);
         return sb.toString();
     }
-    protected static NString rebuildURL2(NString location, NId[] ids, NSession session) {
+    protected static NText rebuildURL2(NText location, NId[] ids, NSession session) {
         NTexts txt = NTexts.of();
         NTextBuilder sb = txt.ofBuilder();
         sb.append(nResourceProtocol, NTextStyle.path());
@@ -529,7 +527,7 @@ public class NResourcePath implements NPathSPI {
             return "path";
         }
 
-        public NString asFormattedString() {
+        public NText asFormattedString() {
             String path = p.path;
             NTexts text = NTexts.of();
             NTextBuilder tb = text.ofBuilder();
@@ -540,7 +538,7 @@ public class NResourcePath implements NPathSPI {
                 if (x > 0) {
                     String idsStr = path.substring("resource://(".length(), x);
                     tb.appendJoined(
-                            NTexts.of().ofStyled(";", NTextStyle.separator()),
+                            NText.ofStyled(";", NTextStyle.separator()),
                             StringTokenizerUtils.splitSemiColon(idsStr).stream().map(xi -> {
                                 xi = xi.trim();
                                 if (!xi.isEmpty()) {
@@ -555,7 +553,7 @@ public class NResourcePath implements NPathSPI {
                     tb.append(")", NTextStyle.separator());
                     tb.append(path.substring(x + 1), NTextStyle.path());
                 } else {
-                    return text.ofText(path);
+                    return text.of(path);
                 }
             } else if (path.startsWith("resource://")) {
                 int x = path.indexOf('/', "resource://".length());
@@ -569,12 +567,12 @@ public class NResourcePath implements NPathSPI {
                     }
                     tb.append(path.substring(x), NTextStyle.path());
                 } else {
-                    return text.ofText(path);
+                    return text.of(path);
                 }
             } else {
-                return text.ofText(path);
+                return text.of(path);
             }
-            return tb.toText();
+            return tb.build();
         }
 
         @Override
@@ -619,7 +617,7 @@ public class NResourcePath implements NPathSPI {
 
     private class NResourceCompressedPath implements NCompressedPathHelper {
         @Override
-        public NString toCompressedString(NPath base, NSession session) {
+        public NText toCompressedString(NPath base, NSession session) {
             return rebuildURL2(NPathParts.compressPath(location, session),
                     ids.stream().map(x -> NId.of(x.getArtifactId()).get()).toArray(NId[]::new)
                     ,session

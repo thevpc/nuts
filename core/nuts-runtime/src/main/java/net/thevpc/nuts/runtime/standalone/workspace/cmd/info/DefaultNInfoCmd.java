@@ -12,8 +12,11 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.cmdline.NCmdLineFormat;
 import net.thevpc.nuts.env.NDesktopIntegrationItem;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.format.NObjectFormat;
@@ -26,6 +29,8 @@ import net.thevpc.nuts.runtime.standalone.dependency.solver.NDependencySolverUti
 import net.thevpc.nuts.runtime.standalone.util.jclass.NJavaSdkUtils;
 import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NBlankable;
@@ -338,7 +343,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
                     return txt.ofBuilder().appendJoined(";", runtimeClassPath);
                 }
         );
-        props.put("nuts-workspace-id", () ->  NTexts.of().ofStyled(stringValue(NWorkspace.of().get().getUuid()), NTextStyle.path()));
+        props.put("nuts-workspace-id", () ->  NText.ofStyledPath(stringValue(NWorkspace.of().get().getUuid())));
         props.put("nuts-store-layout", () ->  NLocations.of().getStoreLayout());
         props.put("nuts-store-strategy", () ->  NLocations.of().getStoreStrategy());
         props.put("nuts-repo-store-strategy", () ->  NLocations.of().getRepositoryStoreStrategy());
@@ -387,7 +392,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
                 () ->  {
                     String ds = NDependencySolverUtils.resolveSolverName(NBootManager.of().getBootOptions().getDependencySolver().orNull());
                     List<String> allDs = NDependencySolver.getSolverNames();
-                    return NTexts.of().ofStyled(
+                    return NText.ofStyled(
                             ds,
                             allDs.stream().map(NDependencySolverUtils::resolveSolverName)
                                     .anyMatch(x -> x.equals(ds))
@@ -413,14 +418,14 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
         props.put("java-home", () ->  NPath.of(System.getProperty("java.home")));
         props.put("java-executable", () ->  NPath.of(NJavaSdkUtils.of(NWorkspace.of().get()).resolveJavaCommandByHome(null)));
         props.put("java-classpath",
-                () ->  NTexts.of().ofBuilder().appendJoined(";",
+                () ->  NTextBuilder.of().appendJoined(";",
                         Arrays.stream(System.getProperty("java.class.path").split(File.pathSeparator))
                                 .map(x -> NPath.of(x))
                                 .collect(Collectors.toList())
                 )
         );
         props.put("java-library-path",
-                () ->  NTexts.of().ofBuilder().appendJoined(";",
+                () ->  NTextBuilder.of().appendJoined(";",
                         Arrays.stream(System.getProperty("java.library.path").split(File.pathSeparator))
                                 .map(x -> NPath.of(x))
                                 .collect(Collectors.toList())
@@ -450,9 +455,8 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
         props.put("command-line-short", () ->  NBootManager.of().getBootOptions().toCmdLine(new NWorkspaceOptionsConfig().setCompact(true)));
         props.put("inherited", () ->  NBootManager.of().getBootOptions().getInherited().orElse(false));
         // nuts-boot-args must always be parsed in bash format
-        props.put("inherited-nuts-boot-args", () ->  NCmdLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH).format());
-        props.put("inherited-nuts-args", () ->  NCmdLine.of(System.getProperty("nuts.args"), NShellFamily.SH)
-                .format()
+        props.put("inherited-nuts-boot-args", () -> NCmdLineFormat.of(NCmdLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH)));
+        props.put("inherited-nuts-args", () ->  NCmdLineFormat.of(NCmdLine.of(System.getProperty("nuts.args"), NShellFamily.SH))
         );
         props.put("creation-started", () ->  NBootManager.of().getCreationStartTime());
         props.put("creation-finished", () ->  NBootManager.of().getCreationFinishTime());
@@ -503,8 +507,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
         String prefix = null;
         FilteredMap props = new FilteredMap(filter);
         NSession session = workspace.currentSession();
-        NConfigs rt = NConfigs.of();
-        NWorkspaceOptions options = NBootManager.of().getBootOptions();
+        NBootOptions options = NBootManager.of().getBootOptions();
         Set<String> extraKeys = new TreeSet<>(extraProperties.keySet());
 
         props.put("name", stringValue(session.getWorkspace().getName()));
@@ -644,9 +647,8 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
         props.put("command-line-short", NBootManager.of().getBootOptions().toCmdLine(new NWorkspaceOptionsConfig().setCompact(true)));
         props.put("inherited", NBootManager.of().getBootOptions().getInherited().orElse(false));
         // nuts-boot-args must always be parsed in bash format
-        props.put("inherited-nuts-boot-args", NCmdLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH).format());
-        props.put("inherited-nuts-args", NCmdLine.of(System.getProperty("nuts.args"), NShellFamily.SH)
-                .format()
+        props.put("inherited-nuts-boot-args", NCmdLineFormat.of(NCmdLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH)));
+        props.put("inherited-nuts-args", NCmdLineFormat.of(NCmdLine.of(System.getProperty("nuts.args"), NShellFamily.SH))
         );
         props.put("creation-started", NBootManager.of().getCreationStartTime());
         props.put("creation-finished", NBootManager.of().getCreationFinishTime());
@@ -674,7 +676,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
         props.put(key(prefix, "uuid"), stringValue(repo.getUuid()));
         props.put(key(prefix, "type"),
                 //display as enum
-                NTexts.of().ofStyled(repo.config().getType(), NTextStyle.option())
+                NText.ofStyled(repo.config().getType(), NTextStyle.option())
         );
         props.put(key(prefix, "speed"), (repo.config().getSpeed()));
         props.put(key(prefix, "enabled"), (repo.config().isEnabled()));
@@ -708,8 +710,7 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
     }
 
     private String stringValue(Object s) {
-        NSession session = workspace.currentSession();
-        return NTexts.of().ofBuilder().append(CoreStringUtils.stringValue(s)).toString();
+        return NTextBuilder.of().append(CoreStringUtils.stringValue(s)).toString();
     }
 
     public boolean isLenient() {

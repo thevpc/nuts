@@ -1,18 +1,16 @@
 package net.thevpc.nuts.runtime.standalone.repository.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.reserved.parser.NReservedJsonParser;
-import net.thevpc.nuts.reserved.io.NReservedPath;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
-import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 
@@ -36,40 +34,40 @@ public class NRepositoryUtils {
                 .setTemporary(false);
     }
 
-    public static class RepoExtraInfos {
-
-    }
-
     public static NRepositoryLocation validateLocation(NRepositoryLocation r, NLog nLog) {
         if (NBlankable.isBlank(r.getLocationType()) || NBlankable.isBlank(r.getName())) {
             if (r.getFullLocation() != null) {
-                NReservedPath r1 = new NReservedPath(r.getPath()).toAbsolute();
-                if (!Objects.equals(r.getPath(),r1.getPath())) {
-                    r = r.setPath(r1.getPath());
+                NPath r1 = NPath.of(r.getPath()).toAbsolute();
+                if (!Objects.equals(r.getPath(),r1.toString())) {
+                    r = r.setPath(r1.toString());
                 }
-                NReservedPath r2 = r1.resolve(".nuts-repository");
-                NReservedJsonParser parser = null;
+                NPath r2 = r1.resolve(".nuts-repository");
                 boolean fileExists = false;
                 try {
-                    byte[] bytes = r2.readAllBytes(nLog);
-                    if (bytes != null) {
-                        fileExists = true;
-                        parser = new NReservedJsonParser(new InputStreamReader(new ByteArrayInputStream(bytes)));
-                        Map<String, Object> jsonObject = parser.parseObject();
-                        if (NBlankable.isBlank(r.getLocationType())) {
-                            Object o = jsonObject.get("repositoryType");
-                            if (o instanceof String && !NBlankable.isBlank(o)) {
-                                r = r.setLocationType(String.valueOf(o));
-                            }
+                    if(!r2.exists()){
+                        if (nLog != null) {
+                            nLog.with().level(Level.CONFIG).verb(NLogVerb.WARNING).log(NMsg.ofC("unable to load %s", r2));
                         }
-                        if (NBlankable.isBlank(r.getName())) {
-                            Object o = jsonObject.get("repositoryName");
-                            if (o instanceof String && !NBlankable.isBlank(o)) {
-                                r = r.setName(String.valueOf(o));
+                    }else {
+                        byte[] bytes = r2.readBytes();
+                        if (bytes != null) {
+                            fileExists = true;
+                            NObjectElement jsonObject = NElements.of().json().parse(bytes).asObject().get();
+                            if (NBlankable.isBlank(r.getLocationType())) {
+                                String o = jsonObject.getString("repositoryType").orNull();
+                                if (!NBlankable.isBlank(o)) {
+                                    r = r.setLocationType(String.valueOf(o));
+                                }
                             }
-                        }
-                        if (NBlankable.isBlank(r.getName())) {
-                            r = r.setName(r.getName());
+                            if (NBlankable.isBlank(r.getName())) {
+                                String o = jsonObject.getString("repositoryName").orNull();
+                                if (!NBlankable.isBlank(o)) {
+                                    r = r.setName(String.valueOf(o));
+                                }
+                            }
+                            if (NBlankable.isBlank(r.getName())) {
+                                r = r.setName(r.getName());
+                            }
                         }
                     }
                 } catch (Exception e) {

@@ -1,12 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.version.format;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
@@ -109,7 +111,7 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
             if (isWorkspaceVersion()) {
                 out.print((NMsg.ofC("%s/%s", session.getWorkspace().getApiVersion(), session.getWorkspace().getRuntimeId().getVersion())));
             } else {
-                out.print(NTexts.of().ofStyled(
+                out.print(NText.ofStyled(
                         getVersion().toString(), NTextStyle.version()
                 ));
             }
@@ -118,7 +120,7 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
                 out.print(buildProps());
             } else {
                 out.print(
-                        NTexts.of().ofStyled(
+                        NText.ofStyled(
                                 getVersion().toString(), NTextStyle.version()
                         )
                 );

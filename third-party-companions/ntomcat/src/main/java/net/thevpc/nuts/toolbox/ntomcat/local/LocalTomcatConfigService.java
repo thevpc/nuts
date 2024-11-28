@@ -5,7 +5,8 @@ import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NObjectFormat;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.ntomcat.NTomcatConfigVersions;
@@ -233,16 +234,16 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         return NPath.of(h);
     }
 
-    public NString getFormattedError(String str) {
-        return NTexts.of().ofStyled(str, NTextStyle.error());
+    public NText getFormattedError(String str) {
+        return NText.ofStyled(str, NTextStyle.error());
     }
 
-    public NString getFormattedSuccess(String str) {
-        return NTexts.of().ofStyled(str, NTextStyle.success());
+    public NText getFormattedSuccess(String str) {
+        return NText.ofStyled(str, NTextStyle.success());
     }
 
-    public NString getFormattedPrefix(String str) {
-        return NTexts.of().ofBuilder()
+    public NText getFormattedPrefix(String str) {
+        return NTextBuilder.of()
                 .append("[")
                 .append(str, NTextStyle.primary5())
                 .append("]");
@@ -520,7 +521,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             }
             String cid="org.apache.catalina:apache-tomcat";//+"#"+cv;
             cid= NIdBuilder.of().setAll(NId.of(cid).get()).setCondition(
-                    new DefaultNEnvConditionBuilder()
+                    NEnvConditionBuilder.of()
                             .addPlatform(NEnvs.of().getPlatform().toString())
             ).toString();
 

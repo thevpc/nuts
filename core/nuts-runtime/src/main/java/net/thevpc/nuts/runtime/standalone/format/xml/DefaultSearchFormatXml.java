@@ -44,7 +44,7 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
 
     @Override
     public void start() {
-        NTextBuilder builder = NTexts.of().ofBuilder();
+        NTextBuilder builder = NTextBuilder.of();
 
         builder.append(codeFormat.tokenToText("<?", "separator", txt));
         builder.append(codeFormat.tokenToText("xml", "name", txt));
@@ -84,7 +84,7 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
 
     @Override
     public void complete(long count) {
-        NTextBuilder builder = NTexts.of().ofBuilder();
+        NTextBuilder builder = NTextBuilder.of();
 
         builder.append(codeFormat.tokenToText("</", "separator", txt));
         builder.append(codeFormat.tokenToText(rootName, "name", txt));

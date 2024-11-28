@@ -13,6 +13,7 @@ import java.time.temporal.Temporal;
 import java.util.Date;
 import java.util.function.Predicate;
 
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.format.NContentType;
@@ -31,14 +32,11 @@ import net.thevpc.nuts.runtime.standalone.format.tree.DefaultSearchFormatTree;
 import net.thevpc.nuts.runtime.standalone.format.xml.DefaultSearchFormatXml;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.time.NProgressFactory;
 import net.thevpc.nuts.reflect.NReflectRepository;
-import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NOptional;
 
 public class DefaultNElements extends DefaultFormatBase<NElements> implements NElements {
 
@@ -78,7 +76,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
                 return true;
             }
             return (
-                    NString.class.isAssignableFrom(x)
+                    NText.class.isAssignableFrom(x)
                             || NElement.class.isAssignableFrom(x)
                             || NFormattable.class.isAssignableFrom(x)
                             || NMsg.class.isAssignableFrom(x)
@@ -631,7 +629,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
         if (out.isNtf()) {
             NPrintStream bos = NMemoryPrintStream.of();
             format.printElement(elem, bos, compact, createFactoryContext());
-            out.print(NTexts.of().ofCode(getContentType().id(), bos.toString()));
+            out.print(NText.ofCode(getContentType().id(), bos.toString()));
         } else {
             format.printElement(elem, out, compact, createFactoryContext());
         }

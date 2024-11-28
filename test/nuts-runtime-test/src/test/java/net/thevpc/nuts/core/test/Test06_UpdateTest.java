@@ -11,7 +11,6 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.util.NIdUtils;
 import org.junit.jupiter.api.*;
 
 import java.io.ByteArrayInputStream;
@@ -79,10 +78,11 @@ public class Test06_UpdateTest {
         if (!data.apiFromTo.isIdentity()) {
             Path path = replaceAPIJar(data.apiDef1.getContent().flatMap(NPath::toPath).get(), data.apiFromTo);
             NPath.of(path)
-                    .copyTo(NPath.of(data.updateRepoPath).resolve(NIdUtils.resolveJarPath(data.apiId2)));
+                    .copyTo(NPath.of(data.updateRepoPath).resolve(data.apiId2.getMavenPath("jar")));
+            NDescriptorFormat.of(
             data.apiDef1.getDescriptor().builder().setId(data.apiId2).build()
-                    .formatter()
-                    .print(NPath.of(data.updateRepoPath).resolve(NIdUtils.resolveNutsDescriptorPath(data.apiId2)));
+                    )
+                    .print(NPath.of(data.updateRepoPath).resolve(data.apiId2.getMavenPath("nuts")));
         }
 
 
@@ -95,8 +95,9 @@ public class Test06_UpdateTest {
 
         if (!data.rtFromTo.isIdentity()) {
             replaceRuntimeJar(data.rtDef1.getContent().flatMap(NPath::toPath).get(), data.apiFromTo, data.rtFromTo,
-                    NPath.of(data.updateRepoPath).resolve(NIdUtils.resolveJarPath(data.rtId2)).toPath().get()
+                    NPath.of(data.updateRepoPath).resolve(data.rtId2.getMavenPath("jar")).toPath().get()
             );
+            NDescriptorFormat.of(
             data.rtDef1.getDescriptor()
                     .builder()
                     .setId(data.rtId2)
@@ -105,8 +106,8 @@ public class Test06_UpdateTest {
                             x -> x.builder().setVersion(data.apiId2.getVersion()).build()
                     )
                     .build()
-                    .formatter()
-                    .print(NPath.of(data.updateRepoPath).resolve(NIdUtils.resolveNutsDescriptorPath(data.rtId2)));
+                    )
+                    .print(NPath.of(data.updateRepoPath).resolve(data.rtId2.getMavenPath("nuts")));
 
         }
     }
@@ -205,7 +206,7 @@ public class Test06_UpdateTest {
                 .setFailFast(false)
                 .grabAll()
                 .setSleepMillis(5000);
-        TestUtils.println(ee.formatter().format().filteredText());
+        TestUtils.println(NExecCmdFormat.of(ee).format().filteredText());
         ee.run();
 
         String ss = ee.getGrabbedOutString();

@@ -5,8 +5,8 @@ import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NInputSource;
+import net.thevpc.nuts.util.NHex;
 import net.thevpc.nuts.util.NIOUtils;
-import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -162,12 +162,12 @@ public abstract class AbstractNInputSource implements NInputSource {
 
     @Override
     public String getDigestString() {
-        return NStringUtils.toHexString(getDigest());
+        return NHex.toHexString(getDigest());
     }
 
     @Override
     public String getDigestString(String algo) {
-        return NStringUtils.toHexString(getDigest(algo));
+        return NHex.toHexString(getDigest(algo));
     }
 
     @Override

@@ -161,7 +161,7 @@ class SshNPath implements NPathSPI {
                                 .append(keyFile);
                     }
                 }
-                out.print(sb.toText());
+                out.print(sb.build());
             }
 
             @Override
@@ -752,7 +752,7 @@ class SshNPath implements NPathSPI {
                 int i = z.indexOf(' ');
                 if (i > 0) {
                     z = z.substring(0, i);
-                    return NStringUtils.fromHexString(z);
+                    return NHex.toBytes(z);
                 }
             }
         }

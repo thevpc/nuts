@@ -55,7 +55,7 @@ public interface NElements extends NContentTypeFormat {
 
 
     static NElements of() {
-       return NExtensions.of().createComponent(NElements.class).get();
+       return NExtensions.of(NElements.class);
     }
 
     /**

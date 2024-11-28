@@ -26,23 +26,22 @@
 package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.DefaultNBootOptionsBuilder;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextBuilder;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogConfig;
-import net.thevpc.nuts.reserved.io.NReservedIOUtils;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.*;
 
 import java.lang.reflect.Array;
-import java.net.URL;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.thevpc.nuts.boot.NBootOptionsBuilder;
+
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElements;
@@ -51,9 +50,7 @@ import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
-import net.thevpc.nuts.reserved.boot.NReservedBootLog;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 
 /**
  * this class implements several utility methods to be used by Nuts API
@@ -149,7 +146,7 @@ public class NApiUtilsRPI {
     }
 
     public static int processThrowable(Throwable ex, String[] args) {
-        DefaultNBootOptionsBuilder bo = new DefaultNBootOptionsBuilder();
+        NWorkspaceOptionsBuilder bo = NWorkspaceOptionsBuilder.of();
         bo.setCmdLine(args);
         return processThrowable(ex, null, true, resolveShowStackTrace(bo), resolveGui(bo));
     }
@@ -167,11 +164,11 @@ public class NApiUtilsRPI {
         }
 
         NSession session = NSessionAwareExceptionBase.resolveSession(ex).orNull();
-        NBootOptionsBuilder bo = null;
+        NWorkspaceOptionsBuilder bo = null;
         if (session != null) {
-            bo = NBootManager.of().getBootOptions().builder();
+            bo = NBootManager.of().getBootOptions().builder().toWorkspaceOptions().builder();
         } else {
-            NBootOptionsBuilder options = new DefaultNBootOptionsBuilder();
+            NWorkspaceOptionsBuilder options = NWorkspaceOptionsBuilder.of();
             //load inherited
             String nutsArgs = NStringUtils.trim(
                     NStringUtils.trim(System.getProperty("nuts.boot.args"))
@@ -205,7 +202,7 @@ public class NApiUtilsRPI {
         if (ex == null) {
             return 0;
         }
-        int errorCode = NExceptionWithExitCodeBase.resolveExitCode(ex).orElse(204);
+        int errorCode = NUtils.resolveExitCode(ex).orElse(204);
         if (errorCode == 0) {
             return 0;
         }
@@ -219,7 +216,7 @@ public class NApiUtilsRPI {
                 try {
                     sout = NIO.of().getSystemTerminal().getErr();
                     if (fm != null) {
-                        fm = NMsg.ofNtf(NTexts.of().ofBuilder().append(fm, NTextStyle.error()).build());
+                        fm = NMsg.ofNtf(NTextBuilder.of().append(fm, NTextStyle.error()).build());
                     } else {
                         fm = NMsg.ofStyled(m, NTextStyle.error());
                     }
@@ -235,7 +232,7 @@ public class NApiUtilsRPI {
                     // This is kind of odd, so will ignore message fm
                     fm = null;
                 } else {
-                    out = new NReservedBootLog();
+                    out = NLog.NULL;
                 }
             }
         } else {
@@ -263,7 +260,7 @@ public class NApiUtilsRPI {
                     if (fm != null) {
                         session.eout().add(NElements.of().ofObject()
                                 .set("app-id", NStringUtils.toStringOrEmpty(NApp.of().getId().get()))
-                                .set("error", NTexts.of().ofText(fm).filteredText())
+                                .set("error", NText.of(fm).filteredText())
                                 .build()
                         );
                         if (showStackTrace) {
@@ -298,7 +295,7 @@ public class NApiUtilsRPI {
                 }
             } else {
                 if (out == null) {
-                    out = new NReservedBootLog();
+                    out = NLog.NULL;
                 }
                 if (fm != null) {
                     out.with().level(Level.OFF).verb(NLogVerb.FAIL).log(fm);
@@ -319,7 +316,7 @@ public class NApiUtilsRPI {
             StringBuilder sb = new StringBuilder();
             if (fm != null) {
                 if (session != null) {
-                    sb.append(NTexts.of().ofText(fm).filteredText());
+                    sb.append(NText.of(fm).filteredText());
                 } else {
                     sb.append(fm);
                 }
@@ -348,34 +345,6 @@ public class NApiUtilsRPI {
 
     public static boolean getSysBoolNutsProperty(String property, boolean defaultValue) {
         return NReservedUtils.getSysBoolNutsProperty(property, defaultValue);
-    }
-
-    public static String resolveNutsVersionFromClassPath(NLog bLog) {
-        return NReservedMavenUtils.resolveNutsApiVersionFromClassPath(bLog);
-    }
-
-    public static String resolveNutsIdDigestOrError() {
-        String d = resolveNutsIdDigest();
-        if (d == null) {
-            ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            URL[] urls = NReservedLangUtils.resolveClasspathURLs(cl, true);
-            throw new NBootException(NMsg.ofPlain("unable to detect nuts digest. Most likely you are missing valid compilation of nuts." + "\n\t 'pom.properties' could not be resolved and hence, we are unable to resolve nuts version." + "\n\t java=" + System.getProperty("java.home") + " as " + System.getProperty("java.version") + "\n\t class-path=" + System.getProperty("java.class.path") + "\n\t urls=" + Arrays.toString(urls) + "\n\t class-loader=" + cl.getClass().getName() + " as " + cl));
-        }
-        return d;
-
-    }
-
-    public static String resolveNutsIdDigest() {
-        //TODO COMMIT TO 0.8.4
-        return resolveNutsIdDigest(NId.ofApi(Nuts.getVersion()).get(), NReservedLangUtils.resolveClasspathURLs(Nuts.class.getClassLoader(), true));
-    }
-
-    public static String resolveNutsIdDigest(NId id, URL[] urls) {
-        return NReservedIOUtils.getURLDigest(NReservedLangUtils.findClassLoaderJar(id, urls), null);
-    }
-
-    public static URL findClassLoaderJar(NId id, URL[] urls) {
-        return NReservedLangUtils.findClassLoaderJar(id, urls);
     }
 
     public static NOptional<Integer> parseFileSizeInBytes(String value, Integer defaultMultiplier) {

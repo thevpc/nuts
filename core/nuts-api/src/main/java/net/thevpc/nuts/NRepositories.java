@@ -36,7 +36,7 @@ import java.util.List;
  */
 public interface NRepositories extends NComponent {
     static NRepositories of() {
-        return NExtensions.of().createComponent(NRepositories.class).get();
+        return NExtensions.of(NRepositories.class);
     }
 
     NRepositoryFilters filter();

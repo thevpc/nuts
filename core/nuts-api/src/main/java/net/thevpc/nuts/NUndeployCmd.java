@@ -37,7 +37,7 @@ import java.util.List;
  */
 public interface NUndeployCmd extends NWorkspaceCmd {
     static NUndeployCmd of() {
-        return NExtensions.of().createComponent(NUndeployCmd.class).get();
+        return NExtensions.of(NUndeployCmd.class);
     }
 
     String getRepository();

@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.lib.template;
 
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 
@@ -63,7 +64,7 @@ public class IOUtils {
             }
             if (!project.isNewlyCreated(file.getPath())) {
                 if (!console.ask("override://" + file.getPath(), "override file " + file.getName(), new ValidatorFactory(project.getSession()).BOOLEAN, null).equals("true")) {
-                    console.println("```error [WONT OVERRIDE]``` " + file.getPath());
+                    console.println("%s %s",NText.ofStyledError("[WONT OVERRIDE]"),file);
                     return;
                 }
             }
@@ -78,10 +79,10 @@ public class IOUtils {
         fileWriter.flush();
         fileWriter.close();
         if (isOverride) {
-            console.println("[OVERRIDE] %s%n", NTexts.of().ofStyled(file.getPath(), NTextStyle.path()));
+            console.println("[OVERRIDE] %s%n", file);
         } else {
             project.setNewlyCreated(file.getPath());
-            console.println("[GENERATE] %s%n" + NTexts.of().ofStyled(file.getPath(), NTextStyle.path()));
+            console.println("[GENERATE] %s%n",file);
         }
     }
 

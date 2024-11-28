@@ -60,7 +60,6 @@ public class DefaultNLog implements NLog {
     }
 
     public boolean isLoggable(Level level) {
-        NSession session=workspace.currentSession();
         if (isLoggable(level, NLog.getTermLevel())) {
             return true;
         }
@@ -147,7 +146,6 @@ public class DefaultNLog implements NLog {
      * @param record the LogRecord to be published
      */
     private void log0(LogRecord record) {
-        NSession session=workspace.currentSession();
         DefaultNLogs logManager = (DefaultNLogs) NLogs.of();
         logManager.getModel().updateHandlers(record);
         Handler ch = logManager.getModel().getTermHandler();

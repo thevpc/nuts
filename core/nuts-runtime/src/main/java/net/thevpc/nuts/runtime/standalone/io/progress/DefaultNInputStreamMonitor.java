@@ -6,9 +6,11 @@
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.time.NProgressEvent;
 import net.thevpc.nuts.time.NProgressFactory;
@@ -112,10 +114,10 @@ public class DefaultNInputStreamMonitor implements NInputStreamMonitor {
         NAssert.requireNonNull(source, "source");
         NMsg sourceName = this.sourceName;
         if (sourceName == null && source != null) {
-            sourceName = NMsg.ofNtf(NTexts.of().ofText(source));
+            sourceName = NMsg.ofNtf(NText.of(source));
         }
         if (sourceName == null) {
-            sourceName = NMsg.ofNtf(NTexts.of().ofText(source.getMetaData().getName()));
+            sourceName = NMsg.ofNtf(NText.of(source.getMetaData().getName()));
         }
         NProgressListener monitor = NProgressUtils.createProgressMonitor(NProgressUtils.MonitorType.STREAM, source, sourceOrigin, workspace
                 , isLogProgress()

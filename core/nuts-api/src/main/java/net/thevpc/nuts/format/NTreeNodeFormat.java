@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.format;
 
-import net.thevpc.nuts.text.NString;
+import net.thevpc.nuts.text.NText;
 
 /**
  * classes implementing this interface handle formatting of the tree node.
@@ -44,5 +44,5 @@ public interface NTreeNodeFormat {
      * @param depth  tree node depth
      * @return string representation
      */
-    NString format(Object object, int depth);
+    NText format(Object object, int depth);
 }

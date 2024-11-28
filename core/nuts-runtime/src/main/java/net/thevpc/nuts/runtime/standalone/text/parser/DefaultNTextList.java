@@ -30,10 +30,7 @@ import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextList;
 import net.thevpc.nuts.text.NTextType;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Created by vpc on 5/23/17.
@@ -96,7 +93,7 @@ public class DefaultNTextList extends AbstractNText implements NTextList {
 
     @Override
     public Iterator<NText> iterator() {
-        return children.iterator();
+        return Collections.unmodifiableList(children).iterator();
     }
 
     @Override
@@ -129,5 +126,10 @@ public class DefaultNTextList extends AbstractNText implements NTextList {
         }
         return count;
 //        return immutable().textLength();
+    }
+
+    @Override
+    public NText immutable() {
+        return this;
     }
 }

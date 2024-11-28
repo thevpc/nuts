@@ -16,7 +16,7 @@ import net.thevpc.nuts.io.NUncompress;
 import net.thevpc.nuts.io.NUncompressVisitor;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NPlatformHome;
+import net.thevpc.nuts.env.NPlatformHome;
 
 import java.io.File;
 import java.io.InputStream;

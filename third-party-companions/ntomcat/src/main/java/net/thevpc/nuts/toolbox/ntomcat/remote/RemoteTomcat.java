@@ -5,6 +5,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.ntomcat.NTomcatConfigVersions;
@@ -370,14 +371,14 @@ public class RemoteTomcat {
             public void show(RemoteTomcatServiceBase aa) {
                 NSession session = getSession();
                 if (json) {
-                    session.out().println(NMsg.ofC("%s :", NTexts.of().ofStyled(aa.getName(), NTextStyle.primary4())));
+                    session.out().println(NMsg.ofC("%s :", NText.ofStyledPrimary4(aa.getName())));
                     aa.println(session.out());
                 } else if (yaml) {
                     //TODO FIX ME, what to do in Yaml?
-                    session.out().println(NMsg.ofC("%s :", NTexts.of().ofStyled(aa.getName(), NTextStyle.primary4())));
+                    session.out().println(NMsg.ofC("%s :", NText.ofStyledPrimary4(aa.getName())));
                     aa.println(session.out());
                 } else {
-                    session.out().println(NMsg.ofC("%s :", NTexts.of().ofStyled(aa.getName(), NTextStyle.primary4())));
+                    session.out().println(NMsg.ofC("%s :", NText.ofStyledPrimary4(aa.getName())));
                     aa.println(session.out());
                 }
             }

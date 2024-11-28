@@ -3,7 +3,7 @@
 //import net.thevpc.nuts.format.NFormat;
 //import net.thevpc.nuts.util.NMsg;
 //import net.thevpc.nuts.NSession;
-//import net.thevpc.nuts.text.NString;
+//import net.thevpc.nuts.text.NText;
 //import net.thevpc.nuts.spi.NSystemTerminalBase;
 //import net.thevpc.nuts.text.NTerminalCommand;
 //import net.thevpc.nuts.text.NTextStyle;

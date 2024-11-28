@@ -18,7 +18,7 @@ import java.io.OutputStream;
 /**
  * @author thevpc
  */
-public class InputStreamTee extends InputStream implements NInterruptible<InputStream>, NFormattable, NContentMetadataProvider {
+public class InputStreamTee extends InputStream implements NInterruptible<InputStream>, NContentMetadataProvider {
 
     private final InputStream in;
     private final OutputStream out;
@@ -43,11 +43,6 @@ public class InputStreamTee extends InputStream implements NInterruptible<InputS
     @Override
     public NContentMetadata getMetaData() {
         return metadata;
-    }
-
-    @Override
-    public NFormat formatter() {
-        return NFormat.of(new NContentMetadataProviderFormatSPI(this, null, "input-stream-tee"));
     }
 
     @Override

@@ -7,7 +7,7 @@ import java.util.function.Function;
 
 public interface NWebCli extends NComponent {
     static NWebCli of() {
-        return NExtensions.of().createComponent(NWebCli.class).get();
+        return NExtensions.of(NWebCli.class);
     }
 
     Function<NWebResponse, NWebResponse> getResponsePostProcessor();

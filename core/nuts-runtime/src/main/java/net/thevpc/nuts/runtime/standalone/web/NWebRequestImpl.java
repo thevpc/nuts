@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.web;
 
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NInputSource;

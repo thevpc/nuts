@@ -65,6 +65,30 @@ public class DefaultNTextTransformer implements NTextTransformer {
                     for (NText a : all) {
                         if (a instanceof NTextList) {
                             all2.addAll(((NTextList) a).getChildren());
+                        }else if (a instanceof NTextBuilder) {
+                            all2.addAll(((NTextBuilder) a).getChildren());
+                        } else {
+                            all2.add(a);
+                        }
+                    }
+                    if (all.size() == all2.size()) {
+                        return text;
+                    }
+                    return txt.ofList(all2);
+                } else {
+                    return text;
+                }
+            }
+            case BUILDER: {
+                if (config.isFlatten()) {
+                    NTextBuilder t = (NTextBuilder) text;
+                    List<NText> all = t.getChildren();
+                    List<NText> all2 = new ArrayList<>();
+                    for (NText a : all) {
+                        if (a instanceof NTextList) {
+                            all2.addAll(((NTextList) a).getChildren());
+                        }else if (a instanceof NTextBuilder) {
+                            all2.addAll(((NTextBuilder) a).getChildren());
                         } else {
                             all2.add(a);
                         }
@@ -167,7 +191,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
                         if (n == null) {
                             n = config.getTitleNumberSequence();
                             if (n == null) {
-                                n = NTexts.of().ofNumbering();
+                                n = NText.ofNumbering();
                             }
                             context.setTitleSequence(n);
                         }

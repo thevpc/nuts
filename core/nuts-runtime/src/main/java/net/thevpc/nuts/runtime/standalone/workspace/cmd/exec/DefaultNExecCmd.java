@@ -1,6 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.ext.NExtensions;
@@ -338,7 +342,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                 }
             } catch (Exception ex) {
                 String p = getExtraErrorMessage();
-                int exceptionExitCode = NExceptionWithExitCodeBase.resolveExitCode(ex).orElse(NExecutionException.ERROR_255);
+                int exceptionExitCode = NUtils.resolveExitCode(ex).orElse(NExecutionException.ERROR_255);
                 if (exceptionExitCode != NExecutionException.SUCCESS) {
                     if (!NBlankable.isBlank(p)) {
                         resultException = new NExecutionException(
@@ -766,8 +770,8 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                 if (traceSession.isPlainTrace()) {
                     traceSession.out().resetLine().println(NMsg.ofC("%s is %s, will search for it online. Type %s to stop...",
                             nid,
-                            NTexts.of().ofStyled("not installed", NTextStyle.error()),
-                            NTexts.of().ofStyled("CTRL^C", NTextStyle.error())
+                            NText.ofStyledError("not installed"),
+                            NText.ofStyledError("CTRL^C")
                     ));
                     traceSession.out().flush();
                 }
@@ -789,7 +793,6 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
 
     public boolean isUserCommand(String s) {
         String p = System.getenv().get("PATH");
-        NSession session=getWorkspace().currentSession();
         if (p != null) {
             char r = File.pathSeparatorChar;
             for (String z : p.split("" + r)) {

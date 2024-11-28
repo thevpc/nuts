@@ -36,6 +36,7 @@ import net.thevpc.nuts.io.NMemoryPrintStream;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
 import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -71,7 +72,7 @@ public class DefaultXmlNElementStreamFormat implements NElementStreamFormat {
         if (out.isNtf()) {
             NPrintStream bos = NMemoryPrintStream.of();
             XmlUtils.writeDocument(doc, new StreamResult(bos.asPrintStream()), compact, true);
-            out.print(NTexts.of().ofCode("xml", bos.toString()));
+            out.print(NText.ofCode("xml", bos.toString()));
         } else {
             XmlUtils.writeDocument(doc, new StreamResult(out.asPrintStream()), compact, true);
         }

@@ -41,7 +41,7 @@ import net.thevpc.nuts.ext.NExtensions;
 public interface NContentTypeFormat extends NFormat {
 
     static NContentTypeFormat of() {
-       return NExtensions.of().createComponent(NContentTypeFormat.class).get();
+       return NExtensions.of(NContentTypeFormat.class);
     }
 
     /**
