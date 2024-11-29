@@ -49,11 +49,11 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
     }
 
     static NInputSource of(Path file) {
-        return file == null ? null :NPath.of(file);
+        return file == null ? null : NPath.of(file);
     }
 
     static NInputSource of(URL file) {
-        return file == null ? null :NPath.of(file);
+        return file == null ? null : NPath.of(file);
     }
 
     static NInputSource of(byte[] bytes) {
@@ -65,16 +65,16 @@ public interface NInputSource extends NContentMetadataProvider, NInputContentPro
     }
 
     static NInputSource ofMultiRead(NInputSource source) {
-        return source==null?null: NIORPI.of().ofMultiRead(source);
+        return source == null ? null : NIORPI.of().ofMultiRead(source);
     }
 
-    static NInputSource of(InputStream inputStream, NContentMetadata metadata){
-        return inputStream==null?null: NIORPI.of().ofInputSource(inputStream,metadata);
+    static NInputSource of(InputStream inputStream, NContentMetadata metadata) {
+        return inputStream == null ? null : NIORPI.of().ofInputSource(inputStream, metadata);
     }
 
 
-    static NInputSource of(byte[] bytes, NContentMetadata metadata){
-        return bytes==null?null: NIORPI.of().ofInputSource(bytes,metadata);
+    static NInputSource of(byte[] bytes, NContentMetadata metadata) {
+        return bytes == null ? null : NIORPI.of().ofInputSource(bytes, metadata);
     }
 
     byte[] readBytes();

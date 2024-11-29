@@ -12,6 +12,8 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.runtime.standalone.io.NCoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.printstream.OutputTargetExt;
 import net.thevpc.nuts.runtime.standalone.io.progress.NProgressUtils;
 import net.thevpc.nuts.runtime.standalone.io.progress.SingletonNInputStreamProgressFactory;
 import net.thevpc.nuts.runtime.standalone.io.util.*;
@@ -29,6 +31,7 @@ import java.io.*;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
@@ -144,6 +147,12 @@ public class DefaultNCp implements NCp {
     @Override
     public NCp from(NPath source) {
         this.source = source;
+        return this;
+    }
+
+    @Override
+    public NCp from(Reader source) {
+        this.source = source == null ? null : new ReaderInputSource(source);
         return this;
     }
 
@@ -921,5 +930,76 @@ public class DefaultNCp implements NCp {
         long folders;
         long doneFiles;
         long doneFolders;
+    }
+
+    private static class ReaderInputStream extends InputStream {
+        private final Reader reader;
+        private final String charsetName;
+        private byte[] buffer;
+        private int index;
+        private int end;
+
+        public ReaderInputStream(Reader reader, String charsetName) {
+            this.reader = reader;
+            this.charsetName = charsetName == null ? "UTF-8" : charsetName;
+            this.buffer = null;
+            this.index = 0;
+            this.end = 0;
+        }
+
+        @Override
+        public int read() throws IOException {
+            if (index >= end) {
+                char[] charBuffer = new char[1024];
+                int numChars = reader.read(charBuffer);
+                if (numChars == -1) {
+                    return -1;
+                }
+                buffer = new String(charBuffer, 0, numChars).getBytes(charsetName);
+                index = 0;
+                end = buffer.length;
+            }
+            return buffer[index++] & 0xFF;
+        }
+
+        @Override
+        public void close() throws IOException {
+            reader.close();
+        }
+    }
+
+    private static class WriterOutputTarget extends OutputTargetExt {
+        Writer writer;
+        OuSt writer;
+    }
+    private static class ReaderInputSource extends AbstractSingleReadNInputSource {
+        private Reader reader;
+        private ReaderInputStream in;
+        private NContentMetadata md;
+
+        public ReaderInputSource(NWorkspace workspace, Reader reader) {
+            super(workspace);
+            this.reader = reader;
+            this.in = new ReaderInputStream(reader, null);
+        }
+
+        @Override
+        public InputStream getInputStream() {
+            return in;
+        }
+
+        @Override
+        public NContentMetadata getMetaData() {
+            return md;
+        }
+
+        @Override
+        public String readString(Charset cs) {
+            try (Reader in = reader) {
+                return new String(NCoreIOUtils.readChars(in));
+            } catch (IOException e) {
+                throw new NIOException(e);
+            }
+        }
     }
 }

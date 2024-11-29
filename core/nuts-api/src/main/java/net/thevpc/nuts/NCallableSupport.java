@@ -109,6 +109,11 @@ public interface NCallableSupport<T> {
         return new DefaultNCallableSupport<>(null, NConstants.Support.NO_SUPPORT, emptyMessage);
     }
 
+    @SuppressWarnings("unchecked")
+    static <T> NCallableSupport<T> invalid(NMsg emptyMessage) {
+        return new DefaultNCallableSupport<>(null, NConstants.Support.NO_SUPPORT, emptyMessage==null?null:()->emptyMessage);
+    }
+
     static <T> boolean isValid(NCallableSupport<T> s) {
         return s != null && s.isValid();
     }

@@ -32,9 +32,7 @@ import net.thevpc.nuts.time.NProgressFactory;
 import net.thevpc.nuts.time.NProgressListener;
 import net.thevpc.nuts.util.NMsg;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Set;
@@ -147,6 +145,14 @@ public interface NCp extends NComponent {
      * @param source source to copy from
      * @return {@code this} instance
      */
+    NCp from(Reader source);
+
+    /**
+     * update source to copy from
+     *
+     * @param source source to copy from
+     * @return {@code this} instance
+     */
     NCp from(InputStream source);
 
     /**
@@ -241,6 +247,7 @@ public interface NCp extends NComponent {
     NCp setTarget(NOutputTarget target);
 
     NCp setSource(NInputSource source);
+
     /**
      * update target
      *
@@ -248,6 +255,14 @@ public interface NCp extends NComponent {
      * @return {@code this} instance
      */
     NCp to(OutputStream target);
+
+    /**
+     * update target
+     *
+     * @param target target
+     * @return {@code this} instance
+     */
+    NCp to(Writer target);
 
 
     /**

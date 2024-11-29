@@ -155,6 +155,16 @@ public class NCoreIOUtils {
         return out.toByteArray();
     }
 
+    public static char[] readChars(Reader from) {
+        return readChars(from,-1);
+    }
+
+    public static char[] readChars(Reader from, int bufferSize) {
+        CharArrayWriter out = new CharArrayWriter();
+        copy(from, out, bufferSize);
+        return out.toCharArray();
+    }
+
     public static String readStringFromFile(File file) throws IOException {
         return new String(Files.readAllBytes(file.toPath()));
     }
@@ -516,24 +526,32 @@ public class NCoreIOUtils {
         }
     }
 
-    public static void copy(Reader in, Writer out) {
-        char[] buffer = new char[4096 * 2];
-        int c = 0;
-        try {
-            while ((c = in.read(buffer)) > 0) {
-                out.write(buffer, 0, c);
-            }
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-    }
 
     public static long copy(InputStream from, OutputStream to) {
         return copy(from, to, -1);
     }
 
     public static long copy(InputStream from, OutputStream to, int bufferSize) {
-        byte[] bytes = new byte[bufferSize < 0 ? 10240 : bufferSize];
+        byte[] bytes = new byte[bufferSize <= 0 ? 10240 : bufferSize];
+        int count;
+        long all = 0;
+        try {
+            while ((count = from.read(bytes)) > 0) {
+                to.write(bytes, 0, count);
+                all += count;
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+        return all;
+    }
+
+    public static long copy(Reader from, Writer to) {
+        return copy(from,to,-1);
+    }
+
+    public static long copy(Reader from, Writer to, int bufferSize) {
+        char[] bytes = new char[bufferSize <= 0 ? 10240 : bufferSize];
         int count;
         long all = 0;
         try {

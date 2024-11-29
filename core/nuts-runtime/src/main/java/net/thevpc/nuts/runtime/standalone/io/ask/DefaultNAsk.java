@@ -343,7 +343,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
         K[] values = enumType.getEnumConstants();
         return ((NAsk<K>) this).setValueType(enumType)
                 .setMessage(msg)
-                .setAcceptedValues(Arrays.asList(values));
+                .setAcceptedValues(Arrays.asList((Object[])values));
     }
 
     @Override

@@ -234,11 +234,8 @@ core/nuts-api/target
 core/nuts-app/target
 core/nuts-app-full/target
 /installers/nuts-portable/target
-/core/nlib-common-collections/target
-/core/nlib-common-strings/target
-/core/nlib-common-utils/target
-/core/nlib-common-collections/target
-/core/nlib-common-collections/target
 /core/nuts-app-full/dependency-reduced-pom.xml
 /core/nuts-boot/target
 /core/nuts-boot/assembly.xml
+/core/nuts-lib/target
+
