@@ -2,6 +2,8 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.env.NLocations;
+import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.descriptor.parser.NDescriptorContentResolver;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
@@ -16,7 +18,6 @@ import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;

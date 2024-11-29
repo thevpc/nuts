@@ -2,7 +2,7 @@ package net.thevpc.nuts.env;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.reserved.io.NReservedIOUtils;
+import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
@@ -563,13 +563,13 @@ public class NPlatformHome {
                     case STANDALONE: {
                         String c = getCustomPlatformHomeFolder(location, homeLocations);
                         storeLocations.put(location, c == null ?
-                                (workspaceLocation + File.separator + location.id() + NReservedIOUtils.getNativePath("/" + _storeLocation))
+                                (workspaceLocation + File.separator + location.id() + NApiUtilsRPI.getNativePath("/" + _storeLocation))
                                 :
-                                (c + NReservedIOUtils.getNativePath("/" + _storeLocation)));
+                                (c + NApiUtilsRPI.getNativePath("/" + _storeLocation)));
                         break;
                     }
                     case EXPLODED: {
-                        storeLocations.put(location, homes[location.ordinal()] + NReservedIOUtils.getNativePath("/" + _storeLocation));
+                        storeLocations.put(location, homes[location.ordinal()] + NApiUtilsRPI.getNativePath("/" + _storeLocation));
                         break;
                     }
                 }

@@ -3,13 +3,13 @@ package net.thevpc.nuts.runtime.standalone.util;
 import net.thevpc.nuts.NId;
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.Nuts;
-import net.thevpc.nuts.boot.NClassLoaderNode;
+import net.thevpc.nuts.boot.NBootClassLoaderNode;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
+import net.thevpc.nuts.runtime.standalone.io.NCoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.NReservedMavenUtils;
 import net.thevpc.nuts.reserved.NReservedUtils;
-import net.thevpc.nuts.reserved.io.NReservedIOUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 
@@ -48,7 +48,7 @@ public class ExtraApiUtils {
     }
 
     public static String resolveNutsIdDigest(NId id, URL[] urls) {
-        return NReservedIOUtils.getURLDigest(findClassLoaderJar(id, urls), null);
+        return NCoreIOUtils.getURLDigest(findClassLoaderJar(id, urls), null);
     }
 
     public static boolean asBoolean(Boolean value) {
@@ -139,7 +139,7 @@ public class ExtraApiUtils {
                 if (contextClassLoader == null) {
                     return false;
                 }
-                File file = NReservedIOUtils.toFile(url);
+                File file = NCoreIOUtils.toFile(url);
                 if (file == null) {
                     throw new NIllegalArgumentException(NMsg.ofC("unsupported classpath item; expected a file path: %s", url));
                 }
@@ -186,7 +186,7 @@ public class ExtraApiUtils {
         return false;
     }
 
-    private static void fillBootDependencyNodes(NClassLoaderNode node, Set<URL> urls, Set<String> visitedIds,
+    private static void fillBootDependencyNodes(NBootClassLoaderNode node, Set<URL> urls, Set<String> visitedIds,
                                                 NLog bLog) {
         String shortName = NId.of(node.getId()).get().getShortName();
         if (!visitedIds.contains(shortName)) {
@@ -196,17 +196,17 @@ public class ExtraApiUtils {
             } else {
                 bLog.with().level(Level.WARNING).verb(NLogVerb.CACHE).log( NMsg.ofC("url will not be loaded (already in classloader) : %s", node.getURL()));
             }
-            for (NClassLoaderNode dependency : node.getDependencies()) {
+            for (NBootClassLoaderNode dependency : node.getDependencies()) {
                 fillBootDependencyNodes(dependency, urls, visitedIds, bLog);
             }
         }
     }
 
-    public static URL[] resolveClassWorldURLs(NClassLoaderNode[] nodes, ClassLoader contextClassLoader,
+    public static URL[] resolveClassWorldURLs(NBootClassLoaderNode[] nodes, ClassLoader contextClassLoader,
                                               NLog bLog) {
         LinkedHashSet<URL> urls = new LinkedHashSet<>();
         Set<String> visitedIds = new HashSet<>();
-        for (NClassLoaderNode info : nodes) {
+        for (NBootClassLoaderNode info : nodes) {
             if(info!=null) {
                 fillBootDependencyNodes(info, urls, visitedIds, bLog);
             }

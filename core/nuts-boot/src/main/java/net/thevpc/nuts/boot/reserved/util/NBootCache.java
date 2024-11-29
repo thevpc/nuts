@@ -1,7 +1,6 @@
 package net.thevpc.nuts.boot.reserved.util;
 
-import net.thevpc.nuts.boot.NIdBoot;
-import net.thevpc.nuts.boot.reserved.NIdCache;
+import net.thevpc.nuts.boot.NBootId;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -9,5 +8,5 @@ import java.util.Map;
 
 public class NBootCache {
     public Map<String, Object> cache = new LinkedHashMap<>();
-    public Map<NIdBoot, NIdCache> fallbackIdMap = new HashMap<>();
+    public Map<NBootId, NBootIdCache> fallbackIdMap = new HashMap<>();
 }

@@ -1,6 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.repository.index;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.env.NEnvs;
+import net.thevpc.nuts.env.NLocations;
+import net.thevpc.nuts.env.NStoreType;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDB;
 
 public class CacheDB {

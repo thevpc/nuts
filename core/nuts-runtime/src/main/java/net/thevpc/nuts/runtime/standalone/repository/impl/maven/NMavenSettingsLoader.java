@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
-import net.thevpc.nuts.reserved.io.NReservedIOUtils;
+import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
@@ -101,7 +101,7 @@ public class NMavenSettingsLoader {
         ArrayList<NRepositoryLocation> list = new ArrayList<>();
         NMavenSettings settings = new NMavenSettings();
         if (NBlankable.isBlank(settingsFilePath)) {
-            settingsFilePath = System.getProperty("user.home") + NReservedIOUtils.getNativePath("/.m2/settings.xml");
+            settingsFilePath = System.getProperty("user.home") + NApiUtilsRPI.getNativePath("/.m2/settings.xml");
         }
         Path path = Paths.get(settingsFilePath);
         if (Files.isRegularFile(path) && Files.isReadable(path)) {
@@ -164,7 +164,7 @@ public class NMavenSettingsLoader {
             }
         }
         if (NBlankable.isBlank(settings.getLocalRepository())) {
-            settings.setLocalRepository(System.getProperty("user.home") + NReservedIOUtils.getNativePath("/.m2/repository"));
+            settings.setLocalRepository(System.getProperty("user.home") + NApiUtilsRPI.getNativePath("/.m2/repository"));
         }
         if (NBlankable.isBlank(settings.getRemoteRepository())) {
             //always!

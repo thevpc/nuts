@@ -2,13 +2,12 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.env.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.boot.NBootConfig;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.env.NOsFamily;
-import net.thevpc.nuts.env.NPlatformHome;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

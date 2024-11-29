@@ -7,6 +7,8 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
+import net.thevpc.nuts.env.NLocations;
+import net.thevpc.nuts.env.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NMsg;
 import org.junit.jupiter.api.*;

@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.imports;
 
 import net.thevpc.nuts.NConfigs;
-import net.thevpc.nuts.NImports;
+import net.thevpc.nuts.env.NImports;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NMsg;

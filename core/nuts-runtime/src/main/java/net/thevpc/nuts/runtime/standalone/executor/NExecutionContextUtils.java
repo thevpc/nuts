@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.executor;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.env.NLocations;
+import net.thevpc.nuts.env.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 

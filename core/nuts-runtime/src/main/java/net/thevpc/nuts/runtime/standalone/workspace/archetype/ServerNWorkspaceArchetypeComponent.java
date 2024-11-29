@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.archetype;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.env.NBootManager;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;

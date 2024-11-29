@@ -27,13 +27,13 @@ package net.thevpc.nuts.runtime.standalone;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.env.*;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.util.NSupportMode;
 
 import java.io.InputStream;
@@ -63,15 +63,15 @@ public class DefaultNBootOptions implements NBootOptions {
     /**
      * special
      */
-    private final NClassLoaderNode runtimeBootDependencyNode;
+    private final NBootClassLoaderNode runtimeBootDependencyNode;
     /**
      * special
      */
-    private final List<NDescriptorBoot> extensionBootDescriptors;
+    private final List<NBootDescriptor> extensionBootDescriptors;
     /**
      * special
      */
-    private final List<NClassLoaderNode> extensionBootDependencyNodes;
+    private final List<NBootClassLoaderNode> extensionBootDependencyNodes;
 
     /**
      * special
@@ -101,7 +101,7 @@ public class DefaultNBootOptions implements NBootOptions {
     /**
      * special
      */
-    private final NDescriptorBoot runtimeBootDescriptor;
+    private final NBootDescriptor runtimeBootDescriptor;
 
     /**
      * option-type : exported (inherited in child workspaces)
@@ -471,9 +471,9 @@ public class DefaultNBootOptions implements NBootOptions {
                                InputStream stdin,
                                PrintStream stdout, PrintStream stderr, ExecutorService executorService,
                                Instant expireTime, List<NMsg> errors, Boolean skipErrors, String locale,
-                               String theme, String uuid, String bootRepositories, NClassLoaderNode runtimeBootDependencyNode,
-                               List<NDescriptorBoot> extensionBootDescriptors, List<NClassLoaderNode> extensionBootDependencyNodes,
-                               List<URL> classWorldURLs, Set<String> extensionsSet, NBootWorkspaceFactory bootWorkspaceFactory, NDescriptorBoot runtimeBootDescriptor, ClassLoader classWorldLoader,
+                               String theme, String uuid, String bootRepositories, NBootClassLoaderNode runtimeBootDependencyNode,
+                               List<NBootDescriptor> extensionBootDescriptors, List<NBootClassLoaderNode> extensionBootDependencyNodes,
+                               List<URL> classWorldURLs, Set<String> extensionsSet, NBootWorkspaceFactory bootWorkspaceFactory, NBootDescriptor runtimeBootDescriptor, ClassLoader classWorldLoader,
                                NSupportMode desktopLauncher, NSupportMode menuLauncher, NSupportMode userLauncher, Boolean previewRepo, Boolean sharedInstance) {
         ;
         this.outputFormatOptions = NReservedLangUtils.unmodifiableOrNullList(outputFormatOptions);
@@ -968,17 +968,17 @@ public class DefaultNBootOptions implements NBootOptions {
     }
 
     @Override
-    public NOptional<NClassLoaderNode> getRuntimeBootDependencyNode() {
+    public NOptional<NBootClassLoaderNode> getRuntimeBootDependencyNode() {
         return NOptional.ofNamed(runtimeBootDependencyNode, "runtimeBootDependencyNode");
     }
 
     @Override
-    public NOptional<List<NDescriptorBoot>> getExtensionBootDescriptors() {
+    public NOptional<List<NBootDescriptor>> getExtensionBootDescriptors() {
         return NOptional.ofNamed(extensionBootDescriptors, "extensionBootDescriptors");
     }
 
     @Override
-    public NOptional<List<NClassLoaderNode>> getExtensionBootDependencyNodes() {
+    public NOptional<List<NBootClassLoaderNode>> getExtensionBootDependencyNodes() {
         return NOptional.ofNamed(extensionBootDependencyNodes, "extensionBootDependencyNodes");
     }
 
@@ -1008,7 +1008,7 @@ public class DefaultNBootOptions implements NBootOptions {
     }
 
     @Override
-    public NOptional<NDescriptorBoot> getRuntimeBootDescriptor() {
+    public NOptional<NBootDescriptor> getRuntimeBootDescriptor() {
         return NOptional.ofNamed(runtimeBootDescriptor, "runtimeBootDescriptor");
     }
 
@@ -1035,9 +1035,9 @@ public class DefaultNBootOptions implements NBootOptions {
         r.setProgressOptions(this.getProgressOptions().orNull());
         {
             NLogConfig c = this.getLogConfig().orNull();
-            NLogConfigBoot v = null;
+            NBootLogConfig v = null;
             if(c!=null){
-                v=new NLogConfigBoot();
+                v=new NBootLogConfig();
                 v.setLogFileBase(c.getLogFileBase());
                 v.setLogFileLevel(c.getLogFileLevel());
                 v.setLogFileFilter(c.getLogFileFilter());
@@ -1072,11 +1072,11 @@ public class DefaultNBootOptions implements NBootOptions {
         r.setStoreStrategy(this.getStoreStrategy().map(x->x.id()).orNull());
         {
             Map<NHomeLocation, String> c = this.getHomeLocations().orNull();
-            Map<NHomeLocationBoot, String> v =null;
+            Map<NBootHomeLocation, String> v =null;
             if(c!=null){
                 v=new HashMap<>();
                 for (Map.Entry<NHomeLocation, String> e : c.entrySet()) {
-                    v.put(NHomeLocationBoot.of(
+                    v.put(NBootHomeLocation.of(
                             e.getKey().getOsFamily().id(),
                             e.getKey().getStoreLocation().id()
                     ), e.getValue());

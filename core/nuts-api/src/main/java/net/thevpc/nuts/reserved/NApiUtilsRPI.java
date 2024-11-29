@@ -26,6 +26,7 @@
 package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.env.NBootManager;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.util.NBlankable;
@@ -34,9 +35,9 @@ import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.*;
 
+import java.io.File;
 import java.lang.reflect.Array;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.logging.Level;
@@ -67,24 +68,6 @@ public class NApiUtilsRPI {
 
     public static boolean isBlank(CharSequence s) {
         return s == null || isBlank(s.toString().toCharArray());
-    }
-
-    public static <T> T firstNonBlank(List<T> any) {
-        for (T t : any) {
-            if (!isBlank(t)) {
-                return t;
-            }
-        }
-        return null;
-    }
-
-    public static <T> T firstNonBlank(T... any) {
-        for (T t : any) {
-            if (!isBlank(t)) {
-                return t;
-            }
-        }
-        return null;
     }
 
     public static boolean isBlank(Object any) {
@@ -387,5 +370,9 @@ public class NApiUtilsRPI {
             return m;
         }
         return t;
+    }
+
+    public static String getNativePath(String s) {
+        return s.replace('/', File.separatorChar);
     }
 }

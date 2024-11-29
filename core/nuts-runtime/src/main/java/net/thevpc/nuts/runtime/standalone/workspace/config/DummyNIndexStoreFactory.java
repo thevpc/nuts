@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.NIndexStore;
+import net.thevpc.nuts.env.NIndexStore;
 import net.thevpc.nuts.spi.NIndexStoreFactory;
 import net.thevpc.nuts.NRepository;
 import net.thevpc.nuts.spi.NSupportLevelContext;

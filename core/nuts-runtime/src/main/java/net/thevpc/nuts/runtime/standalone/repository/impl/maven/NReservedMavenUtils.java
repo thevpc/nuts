@@ -27,12 +27,13 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.reserved.util.NReservedJsonParser;
+import net.thevpc.nuts.boot.reserved.util.NBootJsonParser;
+import net.thevpc.nuts.env.NBootOptionsBuilder;
+import net.thevpc.nuts.runtime.standalone.io.NCoreIOUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
-import net.thevpc.nuts.reserved.io.NReservedIOUtils;
-import net.thevpc.nuts.boot.reserved.NReservedPath;
+import net.thevpc.nuts.boot.reserved.util.NBootPath;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.util.*;
 import org.w3c.dom.Document;
@@ -74,7 +75,7 @@ public final class NReservedMavenUtils {
      * @return list of detected urls
      */
     public static NId[] resolveJarIds(URL url) {
-        File file = NReservedIOUtils.toFile(url);
+        File file = NCoreIOUtils.toFile(url);
         if (file != null) {
             if (file.isDirectory()) {
                 Matcher m = PATTERN_TARGET_CLASSES
@@ -128,7 +129,7 @@ public final class NReservedMavenUtils {
                                 //now detect version from pom
                                 try (InputStream is = zf.getInputStream(entry)) {
                                     try (Reader r = new InputStreamReader(is)) {
-                                        Object p = new NReservedJsonParser(r).parse();
+                                        Object p = new NBootJsonParser(r).parse();
                                         if (p instanceof Map) {
                                             Map<?, ?> map = ((Map<?, ?>) p);
                                             Object v = map.get("version");
@@ -246,12 +247,12 @@ public final class NReservedMavenUtils {
 
 
     public static Set<NId> loadDependenciesFromNutsUrl(String url, NLog bLog) {
-        InputStream inputStream = NReservedIOUtils.resolveInputStream(url, bLog);
+        InputStream inputStream = NCoreIOUtils.resolveInputStream(url, bLog);
         Map<String, Object> descNuts = null;
         if (inputStream != null) {
             try {
-                NReservedJsonParser parser = null;
-                parser = new NReservedJsonParser(new InputStreamReader(inputStream));
+                NBootJsonParser parser = null;
+                parser = new NBootJsonParser(new InputStreamReader(inputStream));
                 descNuts = parser.parseObject();
                 List<String> dependencies = (List<String>) descNuts.get("dependencies");
                 if (dependencies == null) {
@@ -449,7 +450,7 @@ public final class NReservedMavenUtils {
             DocumentBuilder builder = factory.newDocumentBuilder();
             InputStream is = null;
             try {
-                is = NReservedIOUtils.preloadStream(NReservedIOUtils.openStream(runtimeMetadata, bLog), bLog);
+                is = NCoreIOUtils.preloadStream(NCoreIOUtils.openStream(runtimeMetadata, bLog), bLog);
             } catch (Exception ex) {
                 //do not need to log error
                 //ignore
@@ -552,7 +553,7 @@ public final class NReservedMavenUtils {
             if (!basePath.endsWith("/")) {
                 basePath = basePath + "/";
             }
-            boolean remoteURL = new NReservedPath(basePath).isRemote();
+            boolean remoteURL = new NBootPath(basePath).isRemote();
             if ((remoteURL && online) || (!remoteURL && offline)) {
                 //do nothing
                 if (htmlfs) {
@@ -647,7 +648,7 @@ public final class NReservedMavenUtils {
 
     private static List<NVersion> detectVersionsFromHtmlfsTomcatDirectoryListing(String basePath, NLog bLog) {
         List<NVersion> all = new ArrayList<>();
-        try (InputStream in = NReservedIOUtils.openStream(new URL(basePath), bLog)) {
+        try (InputStream in = NCoreIOUtils.openStream(new URL(basePath), bLog)) {
             List<String> p = new HtmlfsTomcatDirectoryListParser().parse(in);
             if (p != null) {
                 for (String s : p) {
@@ -849,7 +850,7 @@ public final class NReservedMavenUtils {
                     case "groupId":
                     case "artifactId":
                     case "version": {
-                        propValue = NReservedIOUtils.loadURLProperties(
+                        propValue = NCoreIOUtils.loadURLProperties(
                                 resource,
                                 null, false, bLog).getProperty(propName);
                         break;
@@ -864,7 +865,7 @@ public final class NReservedMavenUtils {
         }
         URL pomXml = Nuts.class.getResource("/META-INF/maven/net.thevpc.nuts/nuts/pom.xml");
         if (pomXml != null) {
-            try (InputStream is = NReservedIOUtils.openStream(pomXml, bLog)) {
+            try (InputStream is = NCoreIOUtils.openStream(pomXml, bLog)) {
                 propValue = resolvePomTagValues(new String[]{propName}, is).get(propName);
             } catch (Exception ex) {
                 //
@@ -900,7 +901,7 @@ public final class NReservedMavenUtils {
                     case "groupId":
                     case "artifactId":
                     case "version": {
-                        String id = NReservedIOUtils.loadURLProperties(
+                        String id = NCoreIOUtils.loadURLProperties(
                                 resource,
                                 null, false, bLog).getProperty("id");
                         if(!NBlankable.isBlank(id)){
@@ -964,7 +965,7 @@ public final class NReservedMavenUtils {
         Pattern pattern = Pattern.compile(sb.toString());
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try {
-            NReservedIOUtils.copy(is, bos, false, false);
+            NCoreIOUtils.copy(is, bos, false, false);
         } catch (Exception ex) {
             //
         }

@@ -10,6 +10,8 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
+import net.thevpc.nuts.env.NLocations;
+import net.thevpc.nuts.env.NStoreType;
 import net.thevpc.nuts.io.NCompress;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NUncompress;

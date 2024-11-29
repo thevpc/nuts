@@ -26,13 +26,10 @@ package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.env.*;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.env.NOsFamily;
-import net.thevpc.nuts.env.NPlatformHome;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
-import net.thevpc.nuts.NBootOptions;
 import net.thevpc.nuts.util.*;
 
 import java.io.*;

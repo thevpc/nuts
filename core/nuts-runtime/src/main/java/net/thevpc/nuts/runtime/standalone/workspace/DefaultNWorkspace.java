@@ -25,12 +25,15 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.NBootOptions;
+import net.thevpc.nuts.env.NBootOptions;
 import net.thevpc.nuts.boot.NBootWorkspaceFactory;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.boot.NWorkspaceAlreadyExistsException;
-import net.thevpc.nuts.boot.NWorkspaceNotFoundException;
+import net.thevpc.nuts.boot.NBootWorkspaceAlreadyExistsException;
+import net.thevpc.nuts.boot.NBootWorkspaceNotFoundException;
 import net.thevpc.nuts.NWorkspaceTerminalOptions;
+import net.thevpc.nuts.env.*;
+import net.thevpc.nuts.format.NDescriptorFormat;
+import net.thevpc.nuts.format.NVersionFormat;
 import net.thevpc.nuts.runtime.standalone.util.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
@@ -39,7 +42,6 @@ import net.thevpc.nuts.cmdline.NCmdLines;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElementNotFoundException;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.env.NDesktopIntegrationItem;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.format.NTableFormat;
 import net.thevpc.nuts.format.NTableModel;
@@ -305,13 +307,13 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             switch (openMode) {
                 case OPEN_OR_ERROR: {
                     if (!exists) {
-                        throw new NWorkspaceNotFoundException(workspaceLocation);
+                        throw new NBootWorkspaceNotFoundException(workspaceLocation);
                     }
                     break;
                 }
                 case CREATE_OR_ERROR: {
                     if (exists) {
-                        throw new NWorkspaceAlreadyExistsException(workspaceLocation);
+                        throw new NBootWorkspaceAlreadyExistsException(workspaceLocation);
                     }
                     break;
                 }

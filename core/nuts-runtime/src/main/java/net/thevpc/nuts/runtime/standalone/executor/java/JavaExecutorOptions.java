@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.executor.java;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NClassLoaderNode;
+import net.thevpc.nuts.boot.NBootClassLoaderNode;
 import net.thevpc.nuts.cmdline.NWorkspaceCmdLineParser;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
@@ -39,7 +39,7 @@ public final class JavaExecutorOptions {
     private final List<String> appendArgs = new ArrayList<>();
     //    private NutsDefinition nutsMainDef;
     private final NWorkspace workspace;
-    private final List<NClassLoaderNode> classPathNodes = new ArrayList<>();
+    private final List<NBootClassLoaderNode> classPathNodes = new ArrayList<>();
     private final List<String> classPath = new ArrayList<>();
     private String javaVersion = null;//runnerProps.getProperty("java.parseVersion");
     private String javaEffVersion = null;
@@ -80,7 +80,7 @@ public final class JavaExecutorOptions {
         //will accept all -- and - based options!
         NCmdLine cmdLine = NCmdLine.of(getExecArgs()).setExpandSimpleOptions(false);
         NArg a;
-        List<NClassLoaderNode> currentCP = new ArrayList<>();
+        List<NBootClassLoaderNode> currentCP = new ArrayList<>();
         List<NArg> extraMayBeJvmOptions = new ArrayList<>();
 
         while (cmdLine.hasNext()) {
@@ -326,7 +326,7 @@ public final class JavaExecutorOptions {
             boolean baseDetected = false;
             NRepositoryFilters nRepositoryFilters = NRepositoryFilters.of();
             for (NDefinition nDefinition : nDefinitions) {
-                NClassLoaderNode nn = null;
+                NBootClassLoaderNode nn = null;
                 if (nDefinition.getContent().isPresent()) {
                     if (id.getLongName().equals(nDefinition.getId().getLongName())) {
                         baseDetected = true;
@@ -356,7 +356,7 @@ public final class JavaExecutorOptions {
             classPathNodes.addAll(currentCP);
             List<NClassLoaderNodeExt> ln =
                     NJavaSdkUtils.loadNutsClassLoaderNodeExts(
-                            currentCP.toArray(new NClassLoaderNode[0]),
+                            currentCP.toArray(new NBootClassLoaderNode[0]),
                             java9, workspace
                     );
             if (java9) {
@@ -587,7 +587,7 @@ public final class JavaExecutorOptions {
         return null;
     }
 
-    private void addCp(List<NClassLoaderNode> classPath, String value) {
+    private void addCp(List<NBootClassLoaderNode> classPath, String value) {
         if (value == null) {
             value = "";
         }
@@ -599,14 +599,14 @@ public final class JavaExecutorOptions {
             for (String n : StringTokenizerUtils.splitColon(value)) {
                 if (!NBlankable.isBlank(n)) {
                     URL url = NPath.of(n).toURL().get();
-                    classPath.add(new NClassLoaderNode("", url, true, true));
+                    classPath.add(new NBootClassLoaderNode("", url, true, true));
                 }
             }
         }
 
     }
 
-    private void addNp(List<NClassLoaderNode> classPath, String value) {
+    private void addNp(List<NBootClassLoaderNode> classPath, String value) {
         NSearchCmd ns = NSearchCmd.of().setLatest(true);
         NRepositoryFilters nRepositoryFilters = NRepositoryFilters.of();
         for (String n : StringTokenizerUtils.splitDefault(value)) {
@@ -677,36 +677,36 @@ public final class JavaExecutorOptions {
         return workspace;
     }
 
-    public void fillStrings(NClassLoaderNode n, List<String> list) {
+    public void fillStrings(NBootClassLoaderNode n, List<String> list) {
         URL f = n.getURL();
         list.add(NPath.of(f).toPath().get().toString());
-        for (NClassLoaderNode d : n.getDependencies()) {
+        for (NBootClassLoaderNode d : n.getDependencies()) {
             fillStrings(d, list);
         }
     }
 
 
-    public void fillNidStrings(NClassLoaderNode n, List<String> list) {
+    public void fillNidStrings(NBootClassLoaderNode n, List<String> list) {
         if (n.getId() == null || n.getId().isEmpty()) {
             URL f = n.getURL();
             list.add(NPath.of(f).toPath().get().toString());
         } else {
             list.add(n.getId());
         }
-        for (NClassLoaderNode d : n.getDependencies()) {
+        for (NBootClassLoaderNode d : n.getDependencies()) {
             fillStrings(d, list);
         }
     }
 
     public List<String> getClassPathNidStrings() {
         List<String> li = new ArrayList<>();
-        for (NClassLoaderNode n : getClassPathNodes()) {
+        for (NBootClassLoaderNode n : getClassPathNodes()) {
             fillNidStrings(n, li);
         }
         return li;
     }
 
-    public List<NClassLoaderNode> getClassPathNodes() {
+    public List<NBootClassLoaderNode> getClassPathNodes() {
         return classPathNodes;
     }
 

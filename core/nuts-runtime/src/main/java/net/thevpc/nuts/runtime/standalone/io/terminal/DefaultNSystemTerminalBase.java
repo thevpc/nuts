@@ -5,6 +5,8 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
+import net.thevpc.nuts.env.NBootManager;
+import net.thevpc.nuts.env.NBootOptions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamSystem;
 import net.thevpc.nuts.runtime.standalone.util.NCachedValue;

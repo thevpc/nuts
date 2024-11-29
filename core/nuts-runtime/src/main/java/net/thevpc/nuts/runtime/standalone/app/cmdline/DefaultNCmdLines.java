@@ -7,6 +7,8 @@ import net.thevpc.nuts.cmdline.DefaultNCmdLine;
 import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLines;
+import net.thevpc.nuts.env.NEnvs;
+import net.thevpc.nuts.env.NShellFamily;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.option.*;
 import net.thevpc.nuts.runtime.standalone.shell.NShellHelper;
 import net.thevpc.nuts.spi.NSupportLevelContext;

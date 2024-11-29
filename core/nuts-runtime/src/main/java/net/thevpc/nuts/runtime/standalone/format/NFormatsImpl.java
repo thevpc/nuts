@@ -2,15 +2,12 @@ package net.thevpc.nuts.runtime.standalone.format;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.cmdline.NCmdLineFormat;
-import net.thevpc.nuts.format.NFormat;
-import net.thevpc.nuts.format.NFormats;
+import net.thevpc.nuts.format.*;
 import net.thevpc.nuts.io.NContentMetadataProviderFormatSPI;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.io.path.*;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NByteArrayPrintStream;
-import net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamBase;
 import net.thevpc.nuts.runtime.standalone.io.printstream.OutputStreamExt;
 import net.thevpc.nuts.runtime.standalone.io.printstream.OutputTargetExt;
 import net.thevpc.nuts.runtime.standalone.io.util.InputStreamExt;

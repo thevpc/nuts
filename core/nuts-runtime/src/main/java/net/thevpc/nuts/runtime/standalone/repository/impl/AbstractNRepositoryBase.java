@@ -25,6 +25,9 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.env.NIndexStore;
+import net.thevpc.nuts.env.NLocations;
+import net.thevpc.nuts.env.NSpeedQualifier;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.log.NLogUtils;

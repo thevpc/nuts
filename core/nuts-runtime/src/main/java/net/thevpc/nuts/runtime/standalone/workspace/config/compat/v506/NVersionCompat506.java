@@ -3,6 +3,8 @@ package net.thevpc.nuts.runtime.standalone.workspace.config.compat.v506;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.env.NLocations;
+import net.thevpc.nuts.env.NUserConfig;
 import net.thevpc.nuts.runtime.standalone.workspace.config.*;
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.AbstractNVersionCompat;
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.CompatUtils;

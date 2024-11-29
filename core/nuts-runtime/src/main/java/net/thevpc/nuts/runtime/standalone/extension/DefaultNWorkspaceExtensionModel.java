@@ -7,9 +7,10 @@ package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NBootWorkspaceFactory;
-import net.thevpc.nuts.boot.NClassLoaderNode;
-import net.thevpc.nuts.NBootOptions;
+import net.thevpc.nuts.boot.NBootClassLoaderNode;
+import net.thevpc.nuts.env.NBootOptions;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.env.NLocations;
 import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NElements;
@@ -25,7 +26,6 @@ import net.thevpc.nuts.runtime.standalone.dependency.util.NClassLoaderUtils;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NFormattedPrintStream;
 import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNTerminalFromSystem;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.util.NListMap;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
@@ -266,7 +266,7 @@ public class DefaultNWorkspaceExtensionModel {
         }
 
         // discover extensions path
-        for (NClassLoaderNode idurl : bOptions.getExtensionBootDependencyNodes().orElseGet(Collections::emptyList)) {
+        for (NBootClassLoaderNode idurl : bOptions.getExtensionBootDependencyNodes().orElseGet(Collections::emptyList)) {
             objectFactory.discoverTypes(
                     NId.of(idurl.getId()).get(),
                     idurl.getURL(),

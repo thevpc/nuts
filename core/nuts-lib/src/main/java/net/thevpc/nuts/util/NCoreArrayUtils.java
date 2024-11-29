@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import net.thevpc.nuts.NIdLocation;
+import net.thevpc.nuts.env.NIdLocation;
 
 /**
  *

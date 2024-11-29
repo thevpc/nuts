@@ -30,6 +30,10 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.env.NEnvs;
+import net.thevpc.nuts.env.NLocations;
+import net.thevpc.nuts.env.NStoreType;
+import net.thevpc.nuts.env.NUserConfig;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;

@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.cache;
 
-import net.thevpc.nuts.NLocations;
+import net.thevpc.nuts.env.NLocations;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.env.NStoreType;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.NLocationKey;

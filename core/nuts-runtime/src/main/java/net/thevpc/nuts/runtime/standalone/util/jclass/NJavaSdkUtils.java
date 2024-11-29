@@ -1,12 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.util.jclass;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NClassLoaderNode;
+import net.thevpc.nuts.boot.NBootClassLoaderNode;
+import net.thevpc.nuts.env.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.concurrent.NScheduler;
-import net.thevpc.nuts.env.NOsFamily;
-import net.thevpc.nuts.env.NPlatformFamily;
-import net.thevpc.nuts.env.NPlatformHome;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
@@ -45,15 +43,15 @@ public class NJavaSdkUtils {
 //        return wp;
     }
 
-    public static List<NClassLoaderNodeExt> loadNutsClassLoaderNodeExts(NClassLoaderNode[] n, boolean java9, NWorkspace workspace) {
+    public static List<NClassLoaderNodeExt> loadNutsClassLoaderNodeExts(NBootClassLoaderNode[] n, boolean java9, NWorkspace workspace) {
         List<NClassLoaderNodeExt> list = new ArrayList<>();
-        for (NClassLoaderNode nn : n) {
+        for (NBootClassLoaderNode nn : n) {
             fillNodes(nn, list, java9, workspace);
         }
         return list;
     }
 
-    private static void fillNodes(NClassLoaderNode n, List<NClassLoaderNodeExt> list, boolean java9, NWorkspace workspace) {
+    private static void fillNodes(NBootClassLoaderNode n, List<NClassLoaderNodeExt> list, boolean java9, NWorkspace workspace) {
         NClassLoaderNodeExt k = new NClassLoaderNodeExt();
         k.node = n;
         k.id = NId.of(n.getId()).get();
@@ -77,7 +75,7 @@ public class NJavaSdkUtils {
                     k.id.getGroupId().startsWith("org.openjfx");
         }
         list.add(k);
-        for (NClassLoaderNode d : n.getDependencies()) {
+        for (NBootClassLoaderNode d : n.getDependencies()) {
             fillNodes(d, list, java9, workspace);
         }
     }

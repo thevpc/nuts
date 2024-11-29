@@ -8,16 +8,17 @@ package net.thevpc.nuts.core.test;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.cmdline.NCmdLineFormat;
+import net.thevpc.nuts.format.NCmdLineFormat;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.concurrent.NLocks;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.env.NHomeLocation;
+import net.thevpc.nuts.env.NLocations;
 import net.thevpc.nuts.env.NOsFamily;
-import net.thevpc.nuts.expr.NExpr;
-import net.thevpc.nuts.format.NObjectFormat;
-import net.thevpc.nuts.format.NTableFormat;
-import net.thevpc.nuts.format.NTreeFormat;
+import net.thevpc.nuts.env.NStoreType;
+import net.thevpc.nuts.expr.NExprs;
+import net.thevpc.nuts.format.*;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
@@ -192,7 +193,7 @@ public class Test01_CreateTest {
         }
 
         {
-            NExpr expr = NExpr.of();
+            NExprs expr = NExprs.of();
             Assertions.assertNotNull(expr);
         }
 

@@ -2,6 +2,7 @@ package net.thevpc.nuts.toolbox.ndb.sql.nmysql.local;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.format.NExecCmdFormat;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;

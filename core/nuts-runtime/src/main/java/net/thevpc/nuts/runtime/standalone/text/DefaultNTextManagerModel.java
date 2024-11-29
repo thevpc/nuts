@@ -25,6 +25,9 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.env.NBootOptions;
+import net.thevpc.nuts.env.NEnvs;
+import net.thevpc.nuts.env.NShellFamily;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactoryService;
@@ -39,6 +42,7 @@ import net.thevpc.nuts.runtime.standalone.format.xml.DefaultXmlNElementStreamFor
 import net.thevpc.nuts.runtime.standalone.format.yaml.SimpleYaml;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
+import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.spi.NDefaultSupportLevelContext;
 import net.thevpc.nuts.text.NTextFormatTheme;
 import net.thevpc.nuts.text.NTextStyle;

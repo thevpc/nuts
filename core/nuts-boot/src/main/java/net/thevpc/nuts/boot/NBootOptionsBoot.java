@@ -24,9 +24,8 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.boot.reserved.NMsgBoot;
-import net.thevpc.nuts.boot.reserved.util.NReservedLangUtilsBoot;
-import net.thevpc.nuts.boot.reserved.util.NStringUtilsBoot;
+import net.thevpc.nuts.boot.reserved.util.NBootUtils;
+import net.thevpc.nuts.boot.reserved.util.NBootStringUtils;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -54,15 +53,15 @@ public final class NBootOptionsBoot {
     /**
      * special
      */
-    private NClassLoaderNode runtimeBootDependencyNode;
+    private NBootClassLoaderNode runtimeBootDependencyNode;
     /**
      * special
      */
-    private List<NDescriptorBoot> extensionBootDescriptors;
+    private List<NBootDescriptor> extensionBootDescriptors;
     /**
      * special
      */
-    private List<NClassLoaderNode> extensionBootDependencyNodes;
+    private List<NBootClassLoaderNode> extensionBootDependencyNodes;
 
     /**
      * special
@@ -92,7 +91,7 @@ public final class NBootOptionsBoot {
     /**
      * special
      */
-    private NDescriptorBoot runtimeBootDescriptor;
+    private NBootDescriptor runtimeBootDescriptor;
     /**
      * user options
      */
@@ -243,7 +242,7 @@ public final class NBootOptionsBoot {
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private NLogConfigBoot logConfig;
+    private NBootLogConfig logConfig;
 
     /**
      * option-type : exported (inherited in child workspaces)
@@ -357,7 +356,7 @@ public final class NBootOptionsBoot {
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
-    private Map<NHomeLocationBoot, String> homeLocations;
+    private Map<NBootHomeLocation, String> homeLocations;
 
     /**
      * option-type : create (used when creating new workspace. will not be
@@ -734,17 +733,17 @@ public final class NBootOptionsBoot {
     }
 
     
-    public String getHomeLocation(NHomeLocationBoot location) {
+    public String getHomeLocation(NBootHomeLocation location) {
         return homeLocations==null?null:homeLocations.get(location);
     }
 
     
-    public Map<NHomeLocationBoot, String> getHomeLocations() {
+    public Map<NBootHomeLocation, String> getHomeLocations() {
         return homeLocations;
     }
 
     
-    public NBootOptionsBoot setHomeLocations(Map<NHomeLocationBoot, String> homeLocations) {
+    public NBootOptionsBoot setHomeLocations(Map<NBootHomeLocation, String> homeLocations) {
         if (homeLocations != null) {
             if (this.homeLocations == null) {
                 this.homeLocations = new HashMap<>();
@@ -785,7 +784,7 @@ public final class NBootOptionsBoot {
     }
 
     
-    public NLogConfigBoot getLogConfig() {
+    public NBootLogConfig getLogConfig() {
         return logConfig;
     }
 
@@ -796,7 +795,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
     
-    public NBootOptionsBoot setLogConfig(NLogConfigBoot logConfig) {
+    public NBootOptionsBoot setLogConfig(NBootLogConfig logConfig) {
         this.logConfig = logConfig == null ? null : logConfig.copy();
         return this;
     }
@@ -870,7 +869,7 @@ public final class NBootOptionsBoot {
                 outputFormatOptions = new ArrayList<>();
             }
             this.outputFormatOptions.clear();
-            return addOutputFormatOptions(NReservedLangUtilsBoot.nonNullList(options).toArray(new String[0]));
+            return addOutputFormatOptions(NBootUtils.nonNullList(options).toArray(new String[0]));
         } else {
             this.outputFormatOptions = null;
         }
@@ -987,7 +986,7 @@ public final class NBootOptionsBoot {
                 this.storeLocations = new HashMap<>();
             }
             this.storeLocations.clear();
-            this.storeLocations.putAll(NReservedLangUtilsBoot.nonNullMap(storeLocations));
+            this.storeLocations.putAll(NBootUtils.nonNullMap(storeLocations));
         } else {
             this.storeLocations = null;
         }
@@ -1867,7 +1866,7 @@ public final class NBootOptionsBoot {
      */
     
     public NBootOptionsBoot setStoreLocation(String location, String value) {
-        if (NStringUtilsBoot.isBlank(value)) {
+        if (NBootStringUtils.isBlank(value)) {
             if (storeLocations != null) {
                 storeLocations.remove(location);
             }
@@ -1888,8 +1887,8 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
     
-    public NBootOptionsBoot setHomeLocation(NHomeLocationBoot location, String value) {
-        if (NStringUtilsBoot.isBlank(value)) {
+    public NBootOptionsBoot setHomeLocation(NBootHomeLocation location, String value) {
+        if (NBootStringUtils.isBlank(value)) {
             if (homeLocations != null) {
                 homeLocations.remove(location);
             }
@@ -1913,7 +1912,7 @@ public final class NBootOptionsBoot {
         if (options != null) {
             for (String option : options) {
                 if (option != null) {
-                    option = NStringUtilsBoot.trim(option);
+                    option = NBootStringUtils.trim(option);
                     if (!option.isEmpty()) {
                         if (outputFormatOptions == null) {
                             outputFormatOptions = new ArrayList<>();
@@ -2067,37 +2066,37 @@ public final class NBootOptionsBoot {
 
     
     public NBootOptionsBoot setBootRepositories(String bootRepositories) {
-        this.bootRepositories = NStringUtilsBoot.trimToNull(bootRepositories);
+        this.bootRepositories = NBootStringUtils.trimToNull(bootRepositories);
         return this;
     }
 
-    public NClassLoaderNode getRuntimeBootDependencyNode() {
+    public NBootClassLoaderNode getRuntimeBootDependencyNode() {
         return runtimeBootDependencyNode;
     }
 
     
-    public NBootOptionsBoot setRuntimeBootDependencyNode(NClassLoaderNode runtimeBootDependencyNode) {
+    public NBootOptionsBoot setRuntimeBootDependencyNode(NBootClassLoaderNode runtimeBootDependencyNode) {
         this.runtimeBootDependencyNode = runtimeBootDependencyNode;
         return this;
     }
 
-    public List<NDescriptorBoot> getExtensionBootDescriptors() {
+    public List<NBootDescriptor> getExtensionBootDescriptors() {
         return extensionBootDescriptors;
     }
 
     
-    public NBootOptionsBoot setExtensionBootDescriptors(List<NDescriptorBoot> extensionBootDescriptors) {
-        this.extensionBootDescriptors = NReservedLangUtilsBoot.nonNullList(extensionBootDescriptors);
+    public NBootOptionsBoot setExtensionBootDescriptors(List<NBootDescriptor> extensionBootDescriptors) {
+        this.extensionBootDescriptors = NBootUtils.nonNullList(extensionBootDescriptors);
         return this;
     }
 
-    public List<NClassLoaderNode> getExtensionBootDependencyNodes() {
+    public List<NBootClassLoaderNode> getExtensionBootDependencyNodes() {
         return extensionBootDependencyNodes;
     }
 
     
-    public NBootOptionsBoot setExtensionBootDependencyNodes(List<NClassLoaderNode> extensionBootDependencyNodes) {
-        this.extensionBootDependencyNodes = NReservedLangUtilsBoot.nonNullList(extensionBootDependencyNodes);
+    public NBootOptionsBoot setExtensionBootDependencyNodes(List<NBootClassLoaderNode> extensionBootDependencyNodes) {
+        this.extensionBootDependencyNodes = NBootUtils.nonNullList(extensionBootDependencyNodes);
         return this;
     }
 
@@ -2117,7 +2116,7 @@ public final class NBootOptionsBoot {
 
     
     public NBootOptionsBoot setClassWorldURLs(List<URL> classWorldURLs) {
-        this.classWorldURLs = NReservedLangUtilsBoot.nonNullList(classWorldURLs);
+        this.classWorldURLs = NBootUtils.nonNullList(classWorldURLs);
         return this;
     }
 
@@ -2137,7 +2136,7 @@ public final class NBootOptionsBoot {
 
     
     public NBootOptionsBoot setUuid(String uuid) {
-        this.uuid = NStringUtilsBoot.trimToNull(uuid);
+        this.uuid = NBootStringUtils.trimToNull(uuid);
         return this;
     }
 
@@ -2147,16 +2146,16 @@ public final class NBootOptionsBoot {
 
     
     public NBootOptionsBoot setExtensionsSet(Set<String> extensionsSet) {
-        this.extensionsSet = NReservedLangUtilsBoot.nonNullSet(extensionsSet);
+        this.extensionsSet = NBootUtils.nonNullSet(extensionsSet);
         return this;
     }
 
-    public NDescriptorBoot getRuntimeBootDescriptor() {
+    public NBootDescriptor getRuntimeBootDescriptor() {
         return runtimeBootDescriptor;
     }
 
     
-    public NBootOptionsBoot setRuntimeBootDescriptor(NDescriptorBoot runtimeBootDescriptor) {
+    public NBootOptionsBoot setRuntimeBootDescriptor(NBootDescriptor runtimeBootDescriptor) {
         this.runtimeBootDescriptor = runtimeBootDescriptor;
         return this;
     }

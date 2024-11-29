@@ -2,6 +2,8 @@ package net.thevpc.nuts.toolbox.ntomcat.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.env.NEnvConditionBuilder;
+import net.thevpc.nuts.env.NLocations;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;

@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.repository;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.env.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.runtime.standalone.util.NMapWithAlias;

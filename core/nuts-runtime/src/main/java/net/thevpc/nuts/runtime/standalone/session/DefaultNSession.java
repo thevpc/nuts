@@ -25,6 +25,8 @@
 package net.thevpc.nuts.runtime.standalone.session;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.env.NBootManager;
+import net.thevpc.nuts.env.NBootOptions;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.*;
 import net.thevpc.nuts.elem.NArrayElementBuilder;

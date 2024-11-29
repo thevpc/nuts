@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.repository.index;
 
-import net.thevpc.nuts.NEnvs;
+import net.thevpc.nuts.env.NEnvs;
 import net.thevpc.nuts.NId;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NStream;

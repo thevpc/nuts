@@ -25,7 +25,8 @@
 package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.NBootOptions;
+import net.thevpc.nuts.env.NBootManager;
+import net.thevpc.nuts.env.NBootOptions;
 import net.thevpc.nuts.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.cmdline.DefaultNArg;
 import net.thevpc.nuts.ext.NExtensions;

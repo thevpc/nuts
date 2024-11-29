@@ -28,9 +28,9 @@ package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.NDescriptorProperty;
 import net.thevpc.nuts.NDescriptorPropertyBuilder;
-import net.thevpc.nuts.NEnvCondition;
-import net.thevpc.nuts.NEnvConditionBuilder;
-import net.thevpc.nuts.boot.NDescriptorPropertyBoot;
+import net.thevpc.nuts.env.NEnvCondition;
+import net.thevpc.nuts.env.NEnvConditionBuilder;
+import net.thevpc.nuts.boot.NBootDescriptorProperty;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
 
@@ -102,7 +102,7 @@ public class DefaultNDescriptorPropertyBuilder implements NDescriptorPropertyBui
         return this;
     }
 
-    public NDescriptorPropertyBuilder setAll(NDescriptorPropertyBoot value) {
+    public NDescriptorPropertyBuilder setAll(NBootDescriptorProperty value) {
         if (value == null) {
             this.setName(null);
             this.setValue(null);

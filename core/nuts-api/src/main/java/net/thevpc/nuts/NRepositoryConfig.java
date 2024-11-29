@@ -25,6 +25,9 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.env.NStoreStrategy;
+import net.thevpc.nuts.env.NStoreType;
+import net.thevpc.nuts.env.NUserConfig;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 
 import java.io.Serializable;

@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
-import net.thevpc.nuts.NIndexStore;
+import net.thevpc.nuts.env.NIndexStore;
 import net.thevpc.nuts.NRepository;
 import net.thevpc.nuts.NWorkspace;
 

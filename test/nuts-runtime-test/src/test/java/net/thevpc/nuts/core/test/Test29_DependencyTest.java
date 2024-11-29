@@ -6,6 +6,7 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.env.NBootOptionsBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNBootOptionsBuilder;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import org.junit.jupiter.api.Assertions;
@@ -21,8 +22,8 @@ public class Test29_DependencyTest {
 
     @BeforeAll
     public static void init() {
-        System.out.println(new DefaultNBootOptionsBuilder().toString());
         TestUtils.openNewMinTestWorkspace();
+        System.out.println(NBootOptionsBuilder.of().toString());
     }
 
     @Test

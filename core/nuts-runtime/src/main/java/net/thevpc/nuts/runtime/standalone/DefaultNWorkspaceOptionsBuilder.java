@@ -26,14 +26,14 @@ package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NBootOptionsBoot;
-import net.thevpc.nuts.boot.NHomeLocationBoot;
-import net.thevpc.nuts.boot.NLogConfigBoot;
+import net.thevpc.nuts.boot.NBootHomeLocation;
+import net.thevpc.nuts.boot.NBootLogConfig;
 import net.thevpc.nuts.cmdline.NWorkspaceCmdLineParser;
+import net.thevpc.nuts.env.*;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.log.NLogConfig;
@@ -1541,7 +1541,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         this.setTrace(other.getTrace());
         this.setProgressOptions(other.getProgressOptions());
         {
-            NLogConfigBoot c = other.getLogConfig();
+            NBootLogConfig c = other.getLogConfig();
             NLogConfig v = null;
             if(c!=null){
                 v=new NLogConfig();
@@ -1578,11 +1578,11 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         this.setArchetype(other.getArchetype());
         this.setStoreStrategy(NStoreStrategy.parse(other.getStoreStrategy()).orNull());
         {
-            Map<NHomeLocationBoot, String> c = other.getHomeLocations();
+            Map<NBootHomeLocation, String> c = other.getHomeLocations();
             Map<NHomeLocation, String> v =null;
             if(c!=null){
                 v=new HashMap<>();
-                for (Map.Entry<NHomeLocationBoot, String> e : c.entrySet()) {
+                for (Map.Entry<NBootHomeLocation, String> e : c.entrySet()) {
                     v.put(NHomeLocation.of(
                             NOsFamily.parse(e.getKey().getOsFamily()).get(),
                             NStoreType.parse(e.getKey().getStoreLocation()).get()

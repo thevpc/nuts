@@ -25,8 +25,11 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NClassLoaderNode;
+import net.thevpc.nuts.boot.NBootClassLoaderNode;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.env.NBootManager;
+import net.thevpc.nuts.env.NStoreType;
+import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.runtime.standalone.descriptor.util.NDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 import net.thevpc.nuts.util.NBlankable;
@@ -526,7 +529,7 @@ public class CoreNUtils {
                 if (rt.equals(depId.getShortName())) {
                     return NIdType.RUNTIME;
                 } else {
-                    for (NClassLoaderNode n : NBootManager.of().getBootExtensionClassLoaderNode()) {
+                    for (NBootClassLoaderNode n : NBootManager.of().getBootExtensionClassLoaderNode()) {
                         if (NId.of(n.getId()).orElse(NId.BLANK).equalsShortId(depId)) {
                             return NIdType.EXTENSION;
                         }

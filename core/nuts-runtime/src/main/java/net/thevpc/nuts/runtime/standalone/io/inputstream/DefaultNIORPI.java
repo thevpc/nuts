@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.inputstream;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.env.NBootManager;
+import net.thevpc.nuts.env.NBootOptions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
 import net.thevpc.nuts.runtime.standalone.io.ask.DefaultNAsk;
@@ -18,7 +20,6 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConf
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.reserved.rpi.NIORPI;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NAsk;

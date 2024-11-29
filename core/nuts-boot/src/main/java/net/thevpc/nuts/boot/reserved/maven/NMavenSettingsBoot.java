@@ -1,6 +1,6 @@
 package net.thevpc.nuts.boot.reserved.maven;
 
-import net.thevpc.nuts.boot.NRepositoryLocationBoot;
+import net.thevpc.nuts.boot.NBootRepositoryLocation;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ public class NMavenSettingsBoot {
     private String settingsFile;
     private String localRepository;
     private String remoteRepository;
-    private List<NRepositoryLocationBoot> activeRepositories;
+    private List<NBootRepositoryLocation> activeRepositories;
 
     public String getSettingsFile() {
         return settingsFile;
@@ -37,11 +37,11 @@ public class NMavenSettingsBoot {
         return this;
     }
 
-    public List<NRepositoryLocationBoot> getActiveRepositories() {
+    public List<NBootRepositoryLocation> getActiveRepositories() {
         return activeRepositories;
     }
 
-    public NMavenSettingsBoot setActiveRepositories(List<NRepositoryLocationBoot> activeRepositories) {
+    public NMavenSettingsBoot setActiveRepositories(List<NBootRepositoryLocation> activeRepositories) {
         this.activeRepositories = activeRepositories;
         return this;
     }

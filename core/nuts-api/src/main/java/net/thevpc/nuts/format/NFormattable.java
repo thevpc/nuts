@@ -31,7 +31,7 @@ import net.thevpc.nuts.text.NText;
 /**
  * @app.category Format
  */
-public interface NFormattable extends NStringFormattable {
+public interface NFormattable extends NFormatted {
     NFormat formatter();
 
     default NText format() {

@@ -2,6 +2,9 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.env.NEnvs;
+import net.thevpc.nuts.env.NIdLocation;
+import net.thevpc.nuts.env.NLocations;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
@@ -56,8 +59,6 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.which.DefaultNWhichInter
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.spi.NExecutorComponent;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.util.*;
 

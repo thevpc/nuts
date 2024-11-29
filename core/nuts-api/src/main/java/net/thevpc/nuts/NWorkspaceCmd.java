@@ -39,13 +39,6 @@ import net.thevpc.nuts.spi.NComponent;
  */
 public interface NWorkspaceCmd extends NCmdLineConfigurable, NComponent {
 
-//    /**
-//     * copy session
-//     *
-//     * @return {@code this} instance
-//     */
-//    NWorkspaceCmd copySession();
-
     /**
      * configure the current command with the given arguments. This is an
      * override of the {@link NCmdLineConfigurable#configure(boolean, java.lang.String...) }

@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.installer;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.env.NBootManager;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNInstallInfo;
 import net.thevpc.nuts.runtime.standalone.executor.NExecutionContextUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;

@@ -8,6 +8,8 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.alias;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.env.NShellFamily;
+import net.thevpc.nuts.format.NPropertiesFormat;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;

@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.env.NStoreType;
 
 /**
  *

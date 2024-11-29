@@ -82,7 +82,7 @@ public class Test19_ExprTest {
 
     @Test
     public void test1() throws Exception {
-        NExprDeclarations expr = NExpr.of().newDeclarations(true);
+        NExprDeclarations expr = NExprs.of().newDeclarations(true);
         _retain(expr, "infix:+");
         NExprNode n = expr.parse("1+2+3").get();
         TestUtils.println(n);
@@ -91,7 +91,7 @@ public class Test19_ExprTest {
 
     @Test
     public void test2() throws Exception {
-        NExprDeclarations expr = NExpr.of().newDeclarations(true);
+        NExprDeclarations expr = NExprs.of().newDeclarations(true);
 //        _retain(expr,"infix:+");
         NExprNode n = expr.parse("1+2*3").get();
         TestUtils.println(n);
@@ -100,7 +100,7 @@ public class Test19_ExprTest {
 
     @Test
     public void test3() throws Exception {
-        NExprDeclarations expr = NExpr.of().newDeclarations(true);
+        NExprDeclarations expr = NExprs.of().newDeclarations(true);
 //        _retain(expr,"infix:+");
         NExprNode n = expr.parse("a").get();
         Assertions.assertEquals(NExprNodeType.WORD, n.getType());
@@ -109,7 +109,7 @@ public class Test19_ExprTest {
 
     @Test
     public void test4() throws Exception {
-        NExprDeclarations expr = NExpr.of().newDeclarations(true);
+        NExprDeclarations expr = NExprs.of().newDeclarations(true);
 //        _retain(expr,"infix:+");
         NExprNode n = expr.parse("(a&b)").get();
         n.toString();
@@ -123,7 +123,7 @@ public class Test19_ExprTest {
 
     @Test
     public void test5() throws Exception {
-        NExprDeclarations expr = NExpr.of().newDeclarations(true);
+        NExprDeclarations expr = NExprs.of().newDeclarations(true);
 //        _retain(expr,"infix:+");
         NExprNode n = expr.parse("(a&&b)").get();
         Assertions.assertEquals(NExprNodeType.OPERATOR, n.getType());
@@ -160,7 +160,7 @@ public class Test19_ExprTest {
 
     @Test
     public void test6() throws Exception {
-        NExprDeclarations expr = NExpr.of().newDeclarations(true);
+        NExprDeclarations expr = NExprs.of().newDeclarations(true);
 //        _retain(expr,"infix:+");
         NExprNode n = expr.parse("if (a) 'hello' else 'hella'").get();
         Assertions.assertEquals(NExprNodeType.IF, n.getType());
@@ -169,7 +169,7 @@ public class Test19_ExprTest {
 
     @Test
     public void test7() throws Exception {
-        NExprDeclarations expr = NExpr.of().newDeclarations(true);
+        NExprDeclarations expr = NExprs.of().newDeclarations(true);
 //        _retain(expr,"infix:+");
         NExprNode n = expr.parse("if (a) 'hello' else {'hella'};x=3").get();
 //        Assertions.assertEquals(NExprNodeType.IF, n.getType());
@@ -177,7 +177,7 @@ public class Test19_ExprTest {
     }
     @Test
     public void test8() throws Exception {
-        NExprDeclarations expr = NExpr.of().newDeclarations(true);
+        NExprDeclarations expr = NExprs.of().newDeclarations(true);
 //        _retain(expr,"infix:+");
         NExprNode n = expr.parse("printChunk(0);;;;\n").get();
 //        Assertions.assertEquals(NExprNodeType.IF, n.getType());
@@ -186,7 +186,7 @@ public class Test19_ExprTest {
 
     @Test
     public void test9() throws Exception {
-        NExprDeclarations expr = NExpr.of().newDeclarations(true);
+        NExprDeclarations expr = NExprs.of().newDeclarations(true);
 //        _retain(expr,"infix:+");
         NExprNode n = expr.parse("printChunk(0);;printChunk(0);;printChunk(0)\n").get();
 //        Assertions.assertEquals(NExprNodeType.IF, n.getType());

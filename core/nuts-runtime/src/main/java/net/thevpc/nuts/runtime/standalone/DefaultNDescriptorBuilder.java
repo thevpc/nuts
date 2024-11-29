@@ -27,7 +27,10 @@
 package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NDescriptorBoot;
+import net.thevpc.nuts.boot.NBootDescriptor;
+import net.thevpc.nuts.env.NEnvCondition;
+import net.thevpc.nuts.env.NEnvConditionBuilder;
+import net.thevpc.nuts.env.NIdLocation;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
@@ -326,7 +329,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
     }
 
 //    @Override
-    public NDescriptorBuilder setAll(NDescriptorBoot other) {
+    public NDescriptorBuilder setAll(NBootDescriptor other) {
         if (other != null) {
             setId(other.getId()==null?null:NId.of(other.getId().toString()).get());
             setPackaging(other.getPackaging());

@@ -3,6 +3,7 @@ package net.thevpc.nuts.toolbox.njob;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.env.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.njob.model.Id;
 import net.thevpc.nuts.toolbox.njob.model.NJob;

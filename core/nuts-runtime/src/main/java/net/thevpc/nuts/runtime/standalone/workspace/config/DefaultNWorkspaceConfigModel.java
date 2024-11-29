@@ -25,19 +25,17 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NClassLoaderNode;
-import net.thevpc.nuts.NBootOptions;
+import net.thevpc.nuts.boot.NBootClassLoaderNode;
+import net.thevpc.nuts.env.NBootOptions;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.boot.NDescriptorBoot;
-import net.thevpc.nuts.runtime.standalone.DefaultNDescriptor;
+import net.thevpc.nuts.boot.NBootDescriptor;
+import net.thevpc.nuts.env.*;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.util.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.env.NOsFamily;
-import net.thevpc.nuts.env.NPlatformHome;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.util.NCoreCollectionUtils;
@@ -536,7 +534,7 @@ public class DefaultNWorkspaceConfigModel {
         NId iruntimeId = wsModel.bootModel.getBootEffectiveOptions().getRuntimeId().orNull();
         if (wsModel.bootModel.getBootEffectiveOptions().getRuntimeBootDescriptor().isPresent()) {
             //not present in shaded jar mode
-            NDescriptorBoot d = wsModel.bootModel.getBootEffectiveOptions().getRuntimeBootDescriptor().get();
+            NBootDescriptor d = wsModel.bootModel.getBootEffectiveOptions().getRuntimeBootDescriptor().get();
             iruntimeId = NId.of(d.getId().toString()).get();
         }
         wsModel.configModel.prepareBootClassPathConf(NIdType.API, workspace.getApiId(), null, iruntimeId, false, false);
@@ -1152,10 +1150,10 @@ public class DefaultNWorkspaceConfigModel {
                 + '}';
     }
 
-    public void collect(NClassLoaderNode n, LinkedHashMap<String, NClassLoaderNode> deps) {
+    public void collect(NBootClassLoaderNode n, LinkedHashMap<String, NBootClassLoaderNode> deps) {
         if (!deps.containsKey(n.getId())) {
             deps.put(n.getId(), n);
-            for (NClassLoaderNode d : n.getDependencies()) {
+            for (NBootClassLoaderNode d : n.getDependencies()) {
                 collect(d, deps);
             }
         }
@@ -1176,10 +1174,10 @@ public class DefaultNWorkspaceConfigModel {
                     (content && nd.getContent().isPresent()) ? nd.getContent().get() : null);
         }
         if (isFirstBoot()) {
-            NClassLoaderNode n = searchBootNode(id);
+            NBootClassLoaderNode n = searchBootNode(id);
             if (n != null) {
-                LinkedHashMap<String, NClassLoaderNode> dm = new LinkedHashMap<>();
-                for (NClassLoaderNode d : n.getDependencies()) {
+                LinkedHashMap<String, NBootClassLoaderNode> dm = new LinkedHashMap<>();
+                for (NBootClassLoaderNode d : n.getDependencies()) {
                     collect(d, dm);
                 }
                 return new NBootDef(
@@ -1284,23 +1282,23 @@ public class DefaultNWorkspaceConfigModel {
         return false;
     }
 
-    private NClassLoaderNode searchBootNode(NId id) {
+    private NBootClassLoaderNode searchBootNode(NId id) {
         NSession session = getWorkspace().currentSession();
         NBootManager boot = NBootManager.of();
-        List<NClassLoaderNode> all = new ArrayList<>();
+        List<NBootClassLoaderNode> all = new ArrayList<>();
         all.add(boot.getBootRuntimeClassLoaderNode());
         all.addAll(boot.getBootExtensionClassLoaderNode());
         return searchBootNode(id, all);
     }
 
-    private NClassLoaderNode searchBootNode(NId id, List<NClassLoaderNode> into) {
-        for (NClassLoaderNode n : into) {
+    private NBootClassLoaderNode searchBootNode(NId id, List<NBootClassLoaderNode> into) {
+        for (NBootClassLoaderNode n : into) {
             if (n != null) {
                 if (id.getLongName().equals(n.getId())) {
                     return n;
                 }
             }
-            NClassLoaderNode a = searchBootNode(id, n.getDependencies());
+            NBootClassLoaderNode a = searchBootNode(id, n.getDependencies());
             if (a != null) {
                 return a;
             }

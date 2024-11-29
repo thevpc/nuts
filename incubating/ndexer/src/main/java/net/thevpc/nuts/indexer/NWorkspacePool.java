@@ -1,6 +1,6 @@
 package net.thevpc.nuts.indexer;
 
-import net.thevpc.nuts.NLocations;
+import net.thevpc.nuts.env.NLocations;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.NWorkspaceOptionsBuilder;
 import net.thevpc.nuts.Nuts;

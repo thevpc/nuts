@@ -7,6 +7,7 @@ package net.thevpc.nuts.core.test.special;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
+import net.thevpc.nuts.format.NVersionFormat;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 

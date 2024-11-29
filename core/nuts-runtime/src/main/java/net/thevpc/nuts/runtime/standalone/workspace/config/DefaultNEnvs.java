@@ -2,10 +2,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.NArchFamily;
-import net.thevpc.nuts.env.NDesktopEnvironmentFamily;
-import net.thevpc.nuts.env.NDesktopIntegrationItem;
-import net.thevpc.nuts.env.NOsFamily;
+import net.thevpc.nuts.env.*;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NdiScriptOptions;

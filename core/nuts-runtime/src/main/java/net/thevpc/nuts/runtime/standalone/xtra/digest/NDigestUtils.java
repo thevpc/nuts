@@ -20,7 +20,7 @@ public class NDigestUtils {
     }
 
     public static String evalMD5Hex(Path path) {
-        return NHex.toHexString(evalMD5(path));
+        return NHex.fromBytes(evalMD5(path));
     }
 
     public static byte[] evalMD5(Path path) {
@@ -32,7 +32,7 @@ public class NDigestUtils {
     }
 
     public static String evalMD5Hex(InputStream input) {
-        return NHex.toHexString(evalMD5(input));
+        return NHex.fromBytes(evalMD5(input));
     }
 
     public static byte[] evalHash(InputStream input, String algo) {
@@ -119,11 +119,11 @@ public class NDigestUtils {
     }
 
     public static String evalSHA1Hex(InputStream input, boolean closeStream) {
-        return NHex.toHexString(evalSHA1(input, closeStream));
+        return NHex.fromBytes(evalSHA1(input, closeStream));
     }
 
     public static char[] evalSHA1HexChars(InputStream input, boolean closeStream) {
-        return NHex.toHexString(evalSHA1(input, closeStream)).toCharArray();
+        return NHex.fromBytes(evalSHA1(input, closeStream)).toCharArray();
     }
 
     public static byte[] evalSHA1(InputStream input, boolean closeStream) {

@@ -1,10 +1,10 @@
 package net.thevpc.nuts.boot.reserved.maven;
 
-import net.thevpc.nuts.boot.NRepositoryLocationBoot;
-import net.thevpc.nuts.boot.reserved.NLogBoot;
-import net.thevpc.nuts.boot.reserved.NMsgBoot;
-import net.thevpc.nuts.boot.reserved.util.NReservedIOUtilsBoot;
-import net.thevpc.nuts.boot.reserved.util.NStringUtilsBoot;
+import net.thevpc.nuts.boot.NBootRepositoryLocation;
+import net.thevpc.nuts.boot.reserved.util.NBootLog;
+import net.thevpc.nuts.boot.reserved.util.NBootMsg;
+import net.thevpc.nuts.boot.reserved.util.NBootIOUtilsBoot;
+import net.thevpc.nuts.boot.reserved.util.NBootStringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -23,18 +23,18 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 
 public class NMavenSettingsLoaderBoot {
-    private NLogBoot log;
+    private NBootLog log;
     private String settingsFilePath;
 
-    public NMavenSettingsLoaderBoot(NLogBoot log) {
+    public NMavenSettingsLoaderBoot(NBootLog log) {
         this.log = log;
     }
 
-    public NLogBoot getLog() {
+    public NBootLog getLog() {
         return log;
     }
 
-    public NMavenSettingsLoaderBoot setLog(NLogBoot log) {
+    public NMavenSettingsLoaderBoot setLog(NBootLog log) {
         this.log = log;
         return this;
     }
@@ -104,10 +104,10 @@ public class NMavenSettingsLoaderBoot {
 
     public NMavenSettingsBoot loadSettingsRepos() {
         String settingsFilePath = this.settingsFilePath;
-        ArrayList<NRepositoryLocationBoot> list = new ArrayList<>();
+        ArrayList<NBootRepositoryLocation> list = new ArrayList<>();
         NMavenSettingsBoot settings = new NMavenSettingsBoot();
-        if (NStringUtilsBoot.isBlank(settingsFilePath)) {
-            settingsFilePath = System.getProperty("user.home") + NReservedIOUtilsBoot.getNativePath("/.m2/settings.xml");
+        if (NBootStringUtils.isBlank(settingsFilePath)) {
+            settingsFilePath = System.getProperty("user.home") + NBootIOUtilsBoot.getNativePath("/.m2/settings.xml");
         }
         Path path = Paths.get(settingsFilePath);
         if (Files.isRegularFile(path) && Files.isReadable(path)) {
@@ -121,7 +121,7 @@ public class NMavenSettingsLoaderBoot {
                     switch (e.getNodeName()) {
                         case "localRepository": {
                             String url0 = elementText(e);
-                            if (!NStringUtilsBoot.isBlank(url0)) {
+                            if (!NBootStringUtils.isBlank(url0)) {
                                 settings.setLocalRepository(url0.trim());
                             }
                         }
@@ -129,8 +129,8 @@ public class NMavenSettingsLoaderBoot {
                             for (Element mirror : elements(e, x -> x.getNodeName().equals("mirror"))) {
                                 String id = elementText((element(mirror, x -> x.getNodeName().equals("id"))));
                                 String url0 = elementText((element(mirror, x -> x.getNodeName().equals("url"))));
-                                if (!NStringUtilsBoot.isBlank(id) && !NStringUtilsBoot.isBlank(url0)) {
-                                    list.add(new NRepositoryLocationBoot(id.trim(), "maven", url0.trim()));
+                                if (!NBootStringUtils.isBlank(id) && !NBootStringUtils.isBlank(url0)) {
+                                    list.add(new NBootRepositoryLocation(id.trim(), "maven", url0.trim()));
                                 }
                             }
                             break;
@@ -154,8 +154,8 @@ public class NMavenSettingsLoaderBoot {
                                                     enabled0 = elementBoolean(enabled, enabled0);
                                                 }
                                             }
-                                            if (enabled0 && !NStringUtilsBoot.isBlank(id) && !NStringUtilsBoot.isBlank(url0)) {
-                                                list.add(new NRepositoryLocationBoot(id.trim(), "maven", url0.trim()));
+                                            if (enabled0 && !NBootStringUtils.isBlank(id) && !NBootStringUtils.isBlank(url0)) {
+                                                list.add(new NBootRepositoryLocation(id.trim(), "maven", url0.trim()));
                                             }
                                         }
                                     }
@@ -166,13 +166,13 @@ public class NMavenSettingsLoaderBoot {
                     }
                 }
             } catch (Exception ex) {
-                log.with().level(Level.FINE).verbFail().error(ex).log(NMsgBoot.ofC("unable to load maven settings.xml %s", settingsFilePath));
+                log.with().level(Level.FINE).verbFail().error(ex).log(NBootMsg.ofC("unable to load maven settings.xml %s", settingsFilePath));
             }
         }
-        if (NStringUtilsBoot.isBlank(settings.getLocalRepository())) {
-            settings.setLocalRepository(System.getProperty("user.home") + NReservedIOUtilsBoot.getNativePath("/.m2/repository"));
+        if (NBootStringUtils.isBlank(settings.getLocalRepository())) {
+            settings.setLocalRepository(System.getProperty("user.home") + NBootIOUtilsBoot.getNativePath("/.m2/repository"));
         }
-        if (NStringUtilsBoot.isBlank(settings.getRemoteRepository())) {
+        if (NBootStringUtils.isBlank(settings.getRemoteRepository())) {
             //always!
             settings.setRemoteRepository("https://repo.maven.apache.org/maven2");
         }

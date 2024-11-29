@@ -3,6 +3,7 @@ package net.thevpc.nuts.toolbox.nsh.eval;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.*;
 import net.thevpc.nuts.elem.NEDesc;
+import net.thevpc.nuts.env.NShellFamily;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.toolbox.nsh.autocomplete.NShellAutoCompleteCandidate;

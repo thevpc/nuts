@@ -25,7 +25,9 @@
 package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NDependencyBoot;
+import net.thevpc.nuts.boot.NBootDependency;
+import net.thevpc.nuts.env.NEnvCondition;
+import net.thevpc.nuts.env.NEnvConditionBuilder;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.reserved.NReservedUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -110,7 +112,7 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
     }
 
 
-    public NDependencyBuilder setAll(NDependencyBoot value) {
+    public NDependencyBuilder setAll(NBootDependency value) {
         if (value != null) {
             setRepository(value.getRepository());
             setGroupId(value.getGroupId());

@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NIndexStore;
+import net.thevpc.nuts.env.NIndexStore;
 import net.thevpc.nuts.NRepository;
 
 /**

@@ -2,8 +2,8 @@ package net.thevpc.nuts.runtime.standalone.io.urlpart;
 
 import net.thevpc.nuts.format.NVisitResult;
 import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.runtime.standalone.io.NCoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
-import net.thevpc.nuts.util.NIOUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -29,7 +29,7 @@ class URLPartJar extends URLPart {
         URLPart pp = (URLPart) obj;
         ZipUtils.visitZipStream(pp.getInputStream(), (path, inputStream) -> {
             if (path.equals(URLPartJar.this.path)) {
-                found.add(new ByteArrayInputStream(NIOUtils.readBytes(inputStream)));
+                found.add(new ByteArrayInputStream(NCoreIOUtils.readBytes(inputStream)));
                 return NVisitResult.TERMINATE;
             }
             return NVisitResult.CONTINUE;

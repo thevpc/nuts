@@ -26,7 +26,10 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.env.NHomeLocation;
 import net.thevpc.nuts.env.NOsFamily;
+import net.thevpc.nuts.env.NStoreStrategy;
+import net.thevpc.nuts.env.NStoreType;
 
 import java.util.List;
 import java.util.Map;

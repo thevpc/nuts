@@ -30,7 +30,7 @@ import java.net.URLClassLoader;
 import java.util.LinkedHashMap;
 
 import net.thevpc.nuts.NWorkspace;
-import net.thevpc.nuts.boot.NClassLoaderNode;
+import net.thevpc.nuts.boot.NBootClassLoaderNode;
 
 import net.thevpc.nuts.NSession;
 
@@ -38,8 +38,8 @@ public class DefaultNClassLoader extends URLClassLoader {
 
     private String name;
     private NWorkspace workspace;
-    private LinkedHashMap<String, NClassLoaderNode> nodes = new LinkedHashMap<>();
-    private LinkedHashMap<String, NClassLoaderNode> effective = new LinkedHashMap<>();
+    private LinkedHashMap<String, NBootClassLoaderNode> nodes = new LinkedHashMap<>();
+    private LinkedHashMap<String, NBootClassLoaderNode> effective = new LinkedHashMap<>();
     public DefaultNClassLoader(String name, NWorkspace workspace, ClassLoader parent) {
         super(new URL[0], parent);
         this.name = name;
@@ -50,15 +50,15 @@ public class DefaultNClassLoader extends URLClassLoader {
         return name;
     }
 
-    public boolean contains(NClassLoaderNode node, boolean deep) {
+    public boolean contains(NBootClassLoaderNode node, boolean deep) {
         return search(node, deep) != null;
     }
 
-    public NClassLoaderNode search(NClassLoaderNode node, boolean deep) {
+    public NBootClassLoaderNode search(NBootClassLoaderNode node, boolean deep) {
         NSession session = workspace.currentSession();
         NId ii = NId.of(node.getId()).get();
         String sn = ii.getShortName();
-        NClassLoaderNode o = nodes.get(sn);
+        NBootClassLoaderNode o = nodes.get(sn);
         if (o != null) {
             return o;
         }
@@ -75,7 +75,7 @@ public class DefaultNClassLoader extends URLClassLoader {
         return null;
     }
 
-    public boolean add(NClassLoaderNode node) {
+    public boolean add(NBootClassLoaderNode node) {
         NSession session = workspace.currentSession();
         NId ii = NId.of(node.getId()).get();
         String sn = ii.getShortName();
@@ -86,7 +86,7 @@ public class DefaultNClassLoader extends URLClassLoader {
         return false;
     }
 
-    protected boolean add(NClassLoaderNode node, boolean deep) {
+    protected boolean add(NBootClassLoaderNode node, boolean deep) {
         NSession session = workspace.currentSession();
         String s = node.getId();
         NId ii = NId.of(s).get();
@@ -95,14 +95,14 @@ public class DefaultNClassLoader extends URLClassLoader {
             effective.put(sn, node);
             super.addURL(node.getURL());
             if (deep) {
-                for (NClassLoaderNode dependency : node.getDependencies()) {
+                for (NBootClassLoaderNode dependency : node.getDependencies()) {
                     add(dependency, true);
                 }
             }
             return true;
         } else {
             if (deep) {
-                for (NClassLoaderNode dependency : node.getDependencies()) {
+                for (NBootClassLoaderNode dependency : node.getDependencies()) {
                     add(dependency, true);
                 }
             }

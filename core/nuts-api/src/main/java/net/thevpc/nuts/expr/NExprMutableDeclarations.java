@@ -12,7 +12,9 @@ public interface NExprMutableDeclarations extends NExprDeclarations {
     NExprVarDeclaration declareVar(String name, NExprVar varImpl);
 
     NExprOpDeclaration declareOperator(String name, NExprOpType type, int precedence, NExprOpAssociativity associativity, NExprConstruct impl);
+
     NExprOpDeclaration declareOperator(String name, NExprConstruct impl);
+
     NExprOpDeclaration declareOperator(String name, NExprOpType type, NExprConstruct impl);
 
     void resetDeclaration(NExprVarDeclaration member);

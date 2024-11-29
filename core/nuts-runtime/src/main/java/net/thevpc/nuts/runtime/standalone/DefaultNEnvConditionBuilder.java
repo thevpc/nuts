@@ -25,11 +25,11 @@
  */
 package net.thevpc.nuts.runtime.standalone;
 
-import net.thevpc.nuts.DefaultNEnvCondition;
+import net.thevpc.nuts.env.DefaultNEnvCondition;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.NEnvCondition;
-import net.thevpc.nuts.NEnvConditionBuilder;
-import net.thevpc.nuts.boot.NEnvConditionBoot;
+import net.thevpc.nuts.env.NEnvCondition;
+import net.thevpc.nuts.env.NEnvConditionBuilder;
+import net.thevpc.nuts.boot.NBootEnvCondition;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.reserved.NReservedUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -130,7 +130,7 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
         return this;
     }
 
-    public NEnvConditionBuilder setAll(NEnvConditionBoot other) {
+    public NEnvConditionBuilder setAll(NBootEnvCondition other) {
         clear();
         addAll(other);
         return this;
@@ -150,7 +150,7 @@ public class DefaultNEnvConditionBuilder implements Serializable, NEnvConditionB
         return this;
     }
 
-    public NEnvConditionBuilder addAll(NEnvConditionBoot other) {
+    public NEnvConditionBuilder addAll(NBootEnvCondition other) {
         if (other != null) {
             setArch(mergeLists(getArch(), other.getArch()));
             setOs(mergeLists(getOs(), other.getOs()));

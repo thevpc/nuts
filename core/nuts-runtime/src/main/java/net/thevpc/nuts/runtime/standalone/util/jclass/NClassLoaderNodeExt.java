@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util.jclass;
 
-import net.thevpc.nuts.boot.NClassLoaderNode;
+import net.thevpc.nuts.boot.NBootClassLoaderNode;
 import net.thevpc.nuts.NId;
 import net.thevpc.nuts.io.NPath;
 
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NClassLoaderNodeExt {
-    public NClassLoaderNode node;
+    public NBootClassLoaderNode node;
     public NId id;
     public NPath path;
     public boolean jfx;

@@ -3,6 +3,7 @@ package net.thevpc.nuts.toolbox.njob;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
+import net.thevpc.nuts.env.NEnvs;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NSystemTerminal;

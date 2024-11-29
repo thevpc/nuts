@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.digest;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.format.NFormats;
@@ -39,7 +40,6 @@ import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.*;
 
 import java.io.*;
@@ -138,7 +138,7 @@ public class DefaultNDigest implements NDigest {
 
     @Override
     public String computeString() {
-        return NHex.toHexString(computeBytes());
+        return NHex.fromBytes(computeBytes());
     }
 
     @Override

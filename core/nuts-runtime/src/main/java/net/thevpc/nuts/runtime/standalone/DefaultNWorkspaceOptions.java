@@ -26,9 +26,10 @@ package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NBootOptionsBoot;
-import net.thevpc.nuts.boot.NHomeLocationBoot;
-import net.thevpc.nuts.boot.NLogConfigBoot;
+import net.thevpc.nuts.boot.NBootHomeLocation;
+import net.thevpc.nuts.boot.NBootLogConfig;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.env.*;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.reserved.NReservedWorkspaceOptionsToCmdLineBuilder;
@@ -36,7 +37,6 @@ import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.env.NOsFamily;
 import net.thevpc.nuts.util.NSupportMode;
 
 import java.io.InputStream;
@@ -536,9 +536,9 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
         r.setProgressOptions(this.getProgressOptions().orNull());
         {
             NLogConfig c = this.getLogConfig().orNull();
-            NLogConfigBoot v = null;
+            NBootLogConfig v = null;
             if(c!=null){
-                v=new NLogConfigBoot();
+                v=new NBootLogConfig();
                 v.setLogFileBase(c.getLogFileBase());
                 v.setLogFileLevel(c.getLogFileLevel());
                 v.setLogFileFilter(c.getLogFileFilter());
@@ -573,11 +573,11 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
         r.setStoreStrategy(this.getStoreStrategy().map(x->x.id()).orNull());
         {
             Map<NHomeLocation, String> c = this.getHomeLocations().orNull();
-            Map<NHomeLocationBoot, String> v =null;
+            Map<NBootHomeLocation, String> v =null;
             if(c!=null){
                 v=new HashMap<>();
                 for (Map.Entry<NHomeLocation, String> e : c.entrySet()) {
-                    v.put(NHomeLocationBoot.of(
+                    v.put(NBootHomeLocation.of(
                             e.getKey().getOsFamily().id(),
                             e.getKey().getStoreLocation().id()
                     ), e.getValue());

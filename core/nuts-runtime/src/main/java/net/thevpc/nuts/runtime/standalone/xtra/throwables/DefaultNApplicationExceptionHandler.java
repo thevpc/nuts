@@ -1,10 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.xtra.throwables;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.NBootOptionsBuilder;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.env.NBootManager;
+import net.thevpc.nuts.env.NEnvs;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
@@ -14,7 +15,6 @@ import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.util.NMsg;

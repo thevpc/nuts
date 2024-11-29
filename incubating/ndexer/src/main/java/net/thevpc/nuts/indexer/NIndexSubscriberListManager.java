@@ -2,6 +2,8 @@ package net.thevpc.nuts.indexer;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.env.NLocations;
+import net.thevpc.nuts.env.NStoreType;
 import net.thevpc.nuts.io.NPath;
 
 import java.util.*;

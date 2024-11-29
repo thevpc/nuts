@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import java.util.Set;
 
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.env.NImports;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 

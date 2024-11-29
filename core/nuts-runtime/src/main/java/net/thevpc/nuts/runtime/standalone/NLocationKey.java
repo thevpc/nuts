@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.env.NStoreType;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NStringUtils;

@@ -1,6 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.unix;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.env.NEnvs;
+import net.thevpc.nuts.env.NLocations;
+import net.thevpc.nuts.env.NShellFamily;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.shell.NShellHelper;

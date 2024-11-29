@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.util.NEvictingQueue;
 import net.thevpc.nuts.util.NStreamTokenizer;
 import net.thevpc.nuts.expr.NToken;

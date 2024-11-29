@@ -5,7 +5,7 @@ import java.nio.charset.StandardCharsets;
 public class NHex {
 
     private static final byte[] HEX_ARRAY = "0123456789ABCDEF".getBytes(StandardCharsets.US_ASCII);
-    private static final char[] BASE16_CHARS = new char[]{'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+    private static final char[] BASE16_CHARS = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
     public static byte toByte(String v) {
         return toBytes(v, 1)[0];
@@ -45,30 +45,30 @@ public class NHex {
 
     public static String fromInt(int v) {
         return fromBytes(new byte[]{
-            (byte) (v >>> 24 & 255),
-            (byte) (v >>> 16 & 255),
-            (byte) (v >>> 8 & 255),
-            (byte) (v >>> 0 & 255)
+                (byte) (v >>> 24 & 255),
+                (byte) (v >>> 16 & 255),
+                (byte) (v >>> 8 & 255),
+                (byte) (v >>> 0 & 255)
         });
     }
 
     public static String fromLong(long v) {
         return fromBytes(new byte[]{
-            (byte) ((int) (v >>> 56)),
-            (byte) ((int) (v >>> 48)),
-            (byte) ((int) (v >>> 40)),
-            (byte) ((int) (v >>> 32)),
-            (byte) ((int) (v >>> 24)),
-            (byte) ((int) (v >>> 16)),
-            (byte) ((int) (v >>> 8)),
-            (byte) ((int) (v >>> 0))
+                (byte) ((int) (v >>> 56)),
+                (byte) ((int) (v >>> 48)),
+                (byte) ((int) (v >>> 40)),
+                (byte) ((int) (v >>> 32)),
+                (byte) ((int) (v >>> 24)),
+                (byte) ((int) (v >>> 16)),
+                (byte) ((int) (v >>> 8)),
+                (byte) ((int) (v >>> 0))
         });
     }
 
     public static String fromShort(short v) {
         return fromBytes(new byte[]{
-            (byte) (v >>> 8 & 255),
-            (byte) (v >>> 0 & 255)
+                (byte) (v >>> 8 & 255),
+                (byte) (v >>> 0 & 255)
         });
     }
 
@@ -82,15 +82,15 @@ public class NHex {
         return new String(hexChars, StandardCharsets.UTF_8);
     }
 
-     public static String fromBytes(byte[] bytes, int offset, int length) {
-         byte[] hexChars = new byte[length * 2];
-         for (int j = offset; j < offset + length; j++) {
-             int v = bytes[j] & 0xFF;
-             hexChars[j * 2] = HEX_ARRAY[v >>> 4];
-             hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
-         }
-         return new String(hexChars, StandardCharsets.UTF_8);
-     }
+    public static String fromBytes(byte[] bytes, int offset, int length) {
+        byte[] hexChars = new byte[length * 2];
+        for (int j = offset; j < offset + length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
+            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
+        }
+        return new String(hexChars, StandardCharsets.UTF_8);
+    }
 
     public static byte[] toBytes(String s, int size) {
         byte[] a = toBytes(s);
@@ -102,8 +102,14 @@ public class NHex {
 
     public static byte[] toBytes(String s) {
         int len = s.length();
+        if (len == 0) {
+            return new byte[0];
+        }
+        if (len % 2 == 1) {
+            s = s + "0";
+            len++;
+        }
         byte[] result = new byte[len / 2];
-
         for (int i = 0; i < len; i += 2) {
             char a = s.charAt(i);
             if (Character.isUpperCase(a)) {
@@ -120,36 +126,9 @@ public class NHex {
         return result;
     }
 
-    public static String toHexString(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        for (int j = 0; j < bytes.length; j++) {
-            int v = bytes[j] & 255;
-            hexChars[j * 2] = BASE16_CHARS[v >>> 4];
-            hexChars[j * 2 + 1] = BASE16_CHARS[v & 15];
-        }
-        return new String(hexChars);
-    }
 
     public static char toHexChar(int nibble) {
         return BASE16_CHARS[nibble & 15];
     }
 
-    public static byte[] fromHexString(String s) {
-        int len = s.length();
-        if (len == 0) {
-            return new byte[0];
-        }
-        if (s.length() % 2 == 1) {
-            s = s + "0";
-            len++;
-        }
-        byte[] data = new byte[len / 2];
-        for (int i = 0; i < len; i += 2) {
-            char c1 = s.charAt(i);
-            char c2 = s.charAt(i + 1);
-            data[i / 2] = (byte) ((Character.digit(c1, 16) << 4)
-                    + Character.digit(c2, 16));
-        }
-        return data;
-    }
 }

@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone;
 
-import net.thevpc.nuts.NLocations;
+import net.thevpc.nuts.env.NLocations;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.io.NPath;

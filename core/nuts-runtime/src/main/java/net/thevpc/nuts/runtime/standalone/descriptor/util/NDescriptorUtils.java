@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.env.NEnvCondition;
+import net.thevpc.nuts.env.NEnvConditionBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNEnvConditionBuilder;
 import net.thevpc.nuts.util.NBlankable;

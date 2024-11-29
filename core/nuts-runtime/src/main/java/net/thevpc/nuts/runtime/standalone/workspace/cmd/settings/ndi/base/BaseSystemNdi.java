@@ -2,11 +2,9 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.env.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.env.NDesktopIntegrationItem;
-import net.thevpc.nuts.env.NOsFamily;
-import net.thevpc.nuts.env.NPlatformHome;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.shell.NShellHelper;

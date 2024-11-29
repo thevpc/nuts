@@ -32,6 +32,7 @@ import net.thevpc.nuts.cmdline.DefaultNCmdLineAutoComplete;
 import net.thevpc.nuts.cmdline.NArgCandidate;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
+import net.thevpc.nuts.env.NEnvs;
 
 /**
  *

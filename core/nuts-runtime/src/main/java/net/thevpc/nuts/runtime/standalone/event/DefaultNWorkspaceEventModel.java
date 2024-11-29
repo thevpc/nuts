@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.event;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.env.NEnvs;
 import net.thevpc.nuts.util.NObservableMap;
 import net.thevpc.nuts.util.NObservableMapListener;
 

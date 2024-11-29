@@ -29,7 +29,7 @@ import net.thevpc.nuts.NApp;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.NVersionFormat;
+import net.thevpc.nuts.format.NVersionFormat;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinCore;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 

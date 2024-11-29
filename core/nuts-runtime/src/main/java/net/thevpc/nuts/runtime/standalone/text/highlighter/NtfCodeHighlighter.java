@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
-import net.thevpc.nuts.NCodeHighlighter;
+import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.text.NText;

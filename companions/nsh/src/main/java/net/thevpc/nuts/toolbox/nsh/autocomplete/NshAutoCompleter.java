@@ -5,6 +5,7 @@ import net.thevpc.nuts.cmdline.DefaultNArgCandidate;
 import net.thevpc.nuts.cmdline.NArgCandidate;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
+import net.thevpc.nuts.env.NEnvs;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellContext;
 import net.thevpc.nuts.util.NBlankable;

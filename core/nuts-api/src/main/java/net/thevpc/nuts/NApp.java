@@ -3,15 +3,14 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
 import net.thevpc.nuts.cmdline.NCmdLineRunner;
+import net.thevpc.nuts.env.NStoreType;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.time.NClock;
 import net.thevpc.nuts.util.NOptional;
 
-import java.io.InputStream;
 import java.util.List;
 
 public interface NApp extends NComponent {

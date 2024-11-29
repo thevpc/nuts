@@ -28,6 +28,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.DefaultNArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineFormatStrategy;
+import net.thevpc.nuts.env.NShellFamily;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineShellOptions;
 import net.thevpc.nuts.runtime.standalone.shell.NShellHelper;

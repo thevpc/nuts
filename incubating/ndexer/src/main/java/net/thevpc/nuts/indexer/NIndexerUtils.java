@@ -2,6 +2,10 @@ package net.thevpc.nuts.indexer;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.env.NEnvConditionBuilder;
+import net.thevpc.nuts.env.NEnvs;
+import net.thevpc.nuts.env.NLocations;
+import net.thevpc.nuts.env.NStoreType;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NStringUtils;
 import org.apache.lucene.index.Term;

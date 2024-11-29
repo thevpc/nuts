@@ -2,9 +2,9 @@ package net.thevpc.nuts.runtime.standalone.io.urlpart;
 
 import net.thevpc.nuts.format.NVisitResult;
 import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.runtime.standalone.io.NCoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
-import net.thevpc.nuts.util.NIOUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -49,7 +49,7 @@ class URLPartSpringJarNested extends URLPart {
         String path1 = CoreIOUtils.concatPath(base1 , path);
         ZipUtils.visitZipStream(pp.getInputStream(), (path, inputStream) -> {
             if (path.equals(path1)) {
-                found.add(new ByteArrayInputStream(NIOUtils.readBytes(inputStream)));
+                found.add(new ByteArrayInputStream(NCoreIOUtils.readBytes(inputStream)));
                 return NVisitResult.TERMINATE;
             }
             return NVisitResult.CONTINUE;

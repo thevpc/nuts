@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.repository;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.env.NSpeedQualifier;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;

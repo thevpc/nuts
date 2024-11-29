@@ -80,7 +80,7 @@ public final class Nuts {
      * @param appArgs application arguments
      * @return NutsSession instance
      */
-    public static NWorkspace openInheritedWorkspace(String[] overriddenNutsArgs, String... appArgs) throws NUnsatisfiedWorkspaceRequirementsException {
+    public static NWorkspace openInheritedWorkspace(String[] overriddenNutsArgs, String... appArgs) throws NBootUnsatisfiedRequirementsException {
         return openInheritedWorkspace(null, overriddenNutsArgs, appArgs);
     }
 
@@ -96,7 +96,7 @@ public final class Nuts {
      * @param appArgs arguments
      * @return NutsSession instance
      */
-    public static NWorkspace openInheritedWorkspace(NWorkspaceTerminalOptions term, String[] overriddenNutsArgs, String... appArgs) throws NUnsatisfiedWorkspaceRequirementsException {
+    public static NWorkspace openInheritedWorkspace(NWorkspaceTerminalOptions term, String[] overriddenNutsArgs, String... appArgs) throws NBootUnsatisfiedRequirementsException {
         Instant startTime = Instant.now();
         List<String> nutsArgs = new ArrayList<>();
         nutsArgs.addAll(NCmdLine.parseDefault(NStringUtils.trim(System.getProperty("nuts.boot.args"))).get().toStringList());
@@ -125,7 +125,7 @@ public final class Nuts {
      * @param args nuts boot arguments
      * @return new NutsSession instance
      */
-    public static NWorkspace openWorkspace(String... args) throws NUnsatisfiedWorkspaceRequirementsException {
+    public static NWorkspace openWorkspace(String... args) throws NBootUnsatisfiedRequirementsException {
         Instant startTime = Instant.now();
         NBootArguments options = new NBootArguments();
         options.setArgs(args);
@@ -140,7 +140,7 @@ public final class Nuts {
      * @param args nuts boot arguments
      * @return new NutsSession instance
      */
-    public static NWorkspace openWorkspace(NWorkspaceTerminalOptions term, String... args) throws NUnsatisfiedWorkspaceRequirementsException {
+    public static NWorkspace openWorkspace(NWorkspaceTerminalOptions term, String... args) throws NBootUnsatisfiedRequirementsException {
         Instant startTime = Instant.now();
         NBootArguments options = new NBootArguments();
         options.setArgs(args);

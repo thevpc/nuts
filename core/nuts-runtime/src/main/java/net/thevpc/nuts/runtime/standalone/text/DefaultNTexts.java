@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NEDesc;
@@ -22,10 +23,6 @@ import net.thevpc.nuts.runtime.standalone.util.BytesSizeFormat;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.util.NClassMap;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.spi.NComponentScope;
-import net.thevpc.nuts.spi.NFormatSPI;
-import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.*;
@@ -57,7 +54,7 @@ public class DefaultNTexts implements NTexts {
 
     private void registerDefaults() {
         register(NFormattable.class, (o, t, s) -> (((NFormattable) o).formatter().setNtf(true).format()));
-        register(NStringFormattable.class, (o, t, s) -> of(((NStringFormattable) o).format()));
+        register(NFormatted.class, (o, t, s) -> of(((NFormatted) o).format()));
         register(NMsgFormattable.class, (o, t, s) -> _NMsg_toString((((NMsgFormattable) o).toMsg())));
         register(NMsg.class, (o, t, s) -> _NMsg_toString((NMsg) o));
         register(NText.class, (o, t, s) -> (NText) o);

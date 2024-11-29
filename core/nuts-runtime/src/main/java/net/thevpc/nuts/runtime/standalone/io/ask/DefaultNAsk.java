@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.ask;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.env.NEnvs;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
@@ -11,7 +12,6 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.runtime.standalone.app.gui.CoreNUtilGui;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.*;
 
 import java.io.ByteArrayOutputStream;

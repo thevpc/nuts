@@ -1,12 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
 import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.runtime.standalone.io.NCoreIOUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.util.NHex;
-import net.thevpc.nuts.util.NIOUtils;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -60,7 +60,7 @@ public abstract class AbstractNInputSource implements NInputSource {
     @Override
     public byte[] readBytes() {
         try (InputStream in = getInputStream()) {
-            return NIOUtils.readBytes(in);
+            return NCoreIOUtils.readBytes(in);
         } catch (IOException e) {
             throw new NIOException(e);
         }
@@ -162,12 +162,12 @@ public abstract class AbstractNInputSource implements NInputSource {
 
     @Override
     public String getDigestString() {
-        return NHex.toHexString(getDigest());
+        return NHex.fromBytes(getDigest());
     }
 
     @Override
     public String getDigestString(String algo) {
-        return NHex.toHexString(getDigest(algo));
+        return NHex.fromBytes(getDigest(algo));
     }
 
     @Override

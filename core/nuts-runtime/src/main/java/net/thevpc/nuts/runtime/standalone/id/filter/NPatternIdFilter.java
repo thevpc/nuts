@@ -13,6 +13,7 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.env.NEnvCondition;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.spi.base.AbstractIdFilter;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;

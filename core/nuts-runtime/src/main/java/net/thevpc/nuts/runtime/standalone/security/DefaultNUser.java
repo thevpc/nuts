@@ -6,8 +6,8 @@
 package net.thevpc.nuts.runtime.standalone.security;
 
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.NUser;
-import net.thevpc.nuts.NUserConfig;
+import net.thevpc.nuts.env.NUser;
+import net.thevpc.nuts.env.NUserConfig;
 
 import java.util.ArrayList;
 import java.util.List;

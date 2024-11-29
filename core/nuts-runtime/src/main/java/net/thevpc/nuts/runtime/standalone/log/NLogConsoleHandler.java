@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
-import net.thevpc.nuts.NBootManager;
+import net.thevpc.nuts.env.NBootManager;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.NSession;

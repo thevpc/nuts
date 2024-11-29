@@ -25,8 +25,9 @@
 package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NClassLoaderNode;
-import net.thevpc.nuts.NBootOptions;
+import net.thevpc.nuts.boot.NBootClassLoaderNode;
+import net.thevpc.nuts.env.NBootManager;
+import net.thevpc.nuts.env.NBootOptions;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -109,11 +110,11 @@ public class DefaultNBootManager implements NBootManager {
         return _configModel().getCreateDuration();
     }
 
-    public NClassLoaderNode getBootRuntimeClassLoaderNode() {
+    public NBootClassLoaderNode getBootRuntimeClassLoaderNode() {
         return model.bOptions.getRuntimeBootDependencyNode().get();
     }
 
-    public List<NClassLoaderNode> getBootExtensionClassLoaderNode() {
+    public List<NBootClassLoaderNode> getBootExtensionClassLoaderNode() {
         return model.bOptions.getExtensionBootDependencyNodes().orElseGet(Collections::emptyList);
     }
 

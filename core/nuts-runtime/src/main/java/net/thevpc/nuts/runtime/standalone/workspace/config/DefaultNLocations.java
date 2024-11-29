@@ -4,10 +4,10 @@ import java.util.Map;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.env.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.env.NOsFamily;
 
 public class DefaultNLocations implements NLocations {
 

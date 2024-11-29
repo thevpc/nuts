@@ -27,7 +27,7 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.NExceptionWithExitCodeBase;
-import net.thevpc.nuts.boot.reserved.NMsgBoot;
+import net.thevpc.nuts.boot.reserved.util.NBootMsg;
 
 /**
  * Base Boot Nuts Exception. Thrown when the Workspace could is booting
@@ -49,7 +49,7 @@ public class NBootException extends RuntimeException implements NExceptionWithEx
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public NBootException(NMsgBoot message) {
+    public NBootException(NBootMsg message) {
         super(message.toString());
         this.exitCode = 1;
     }
@@ -69,7 +69,7 @@ public class NBootException extends RuntimeException implements NExceptionWithEx
      *                permitted, and indicates that the cause is nonexistent or
      *                unknown.)
      */
-    public NBootException(NMsgBoot message, Throwable cause) {
+    public NBootException(NBootMsg message, Throwable cause) {
         super(message.toString(), cause);
         this.exitCode = 1;
     }
@@ -83,7 +83,7 @@ public class NBootException extends RuntimeException implements NExceptionWithEx
      * @param message  the detail message. The detail message is saved for
      *                 later retrieval by the {@link #getMessage()} method.
      */
-    public NBootException(NMsgBoot message, int exitCode) {
+    public NBootException(NBootMsg message, int exitCode) {
         super(message.toString());
         this.exitCode = exitCode;
     }
@@ -104,7 +104,7 @@ public class NBootException extends RuntimeException implements NExceptionWithEx
      *                 permitted, and indicates that the cause is nonexistent or
      *                 unknown.)
      */
-    public NBootException(NMsgBoot message, Throwable cause, int exitCode) {
+    public NBootException(NBootMsg message, Throwable cause, int exitCode) {
         super(message.toString(), cause);
         this.exitCode = exitCode;
     }

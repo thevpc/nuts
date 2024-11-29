@@ -16,8 +16,8 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.cmdline.NCmdLineFormat;
-import net.thevpc.nuts.env.NDesktopIntegrationItem;
+import net.thevpc.nuts.format.NCmdLineFormat;
+import net.thevpc.nuts.env.*;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.format.NObjectFormat;
 import net.thevpc.nuts.io.NPath;
@@ -455,9 +455,8 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
         props.put("command-line-short", () ->  NBootManager.of().getBootOptions().toCmdLine(new NWorkspaceOptionsConfig().setCompact(true)));
         props.put("inherited", () ->  NBootManager.of().getBootOptions().getInherited().orElse(false));
         // nuts-boot-args must always be parsed in bash format
-        props.put("inherited-nuts-boot-args", () -> NCmdLineFormat.of(NCmdLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH)));
-        props.put("inherited-nuts-args", () ->  NCmdLineFormat.of(NCmdLine.of(System.getProperty("nuts.args"), NShellFamily.SH))
-        );
+        props.put("inherited-nuts-boot-args", () -> NCmdLineFormat.of(NCmdLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH)).format());
+        props.put("inherited-nuts-args", () ->  NCmdLineFormat.of(NCmdLine.of(System.getProperty("nuts.args"), NShellFamily.SH)).format());
         props.put("creation-started", () ->  NBootManager.of().getCreationStartTime());
         props.put("creation-finished", () ->  NBootManager.of().getCreationFinishTime());
         props.put("creation-within", () ->  CoreTimeUtils.formatPeriodMilli(NBootManager.of().getCreationDuration()).trim());
@@ -647,9 +646,8 @@ public class DefaultNInfoCmd extends DefaultFormatBase<NInfoCmd> implements NInf
         props.put("command-line-short", NBootManager.of().getBootOptions().toCmdLine(new NWorkspaceOptionsConfig().setCompact(true)));
         props.put("inherited", NBootManager.of().getBootOptions().getInherited().orElse(false));
         // nuts-boot-args must always be parsed in bash format
-        props.put("inherited-nuts-boot-args", NCmdLineFormat.of(NCmdLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH)));
-        props.put("inherited-nuts-args", NCmdLineFormat.of(NCmdLine.of(System.getProperty("nuts.args"), NShellFamily.SH))
-        );
+        props.put("inherited-nuts-boot-args", NCmdLineFormat.of(NCmdLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH)).format());
+        props.put("inherited-nuts-args", NCmdLineFormat.of(NCmdLine.of(System.getProperty("nuts.args"), NShellFamily.SH)).format());
         props.put("creation-started", NBootManager.of().getCreationStartTime());
         props.put("creation-finished", NBootManager.of().getCreationFinishTime());
         props.put("creation-within", CoreTimeUtils.formatPeriodMilli(NBootManager.of().getCreationDuration()).trim());

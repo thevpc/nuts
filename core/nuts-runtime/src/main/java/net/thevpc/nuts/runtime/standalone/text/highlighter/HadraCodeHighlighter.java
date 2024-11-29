@@ -6,7 +6,7 @@ import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 
 import java.util.*;
 
-import net.thevpc.nuts.NCodeHighlighter;
+import net.thevpc.nuts.spi.NCodeHighlighter;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.*;
 

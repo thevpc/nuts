@@ -29,6 +29,7 @@ import java.awt.Color;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
+import net.thevpc.nuts.env.NLocations;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.*;

@@ -28,7 +28,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NWorkspaceCmdLineParser;
-import net.thevpc.nuts.env.NOsFamily;
+import net.thevpc.nuts.env.*;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.log.NLogConfig;
@@ -422,15 +422,15 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     /**
      * special
      */
-    private NClassLoaderNode runtimeBootDependencyNode;
+    private NBootClassLoaderNode runtimeBootDependencyNode;
     /**
      * special
      */
-    private List<NDescriptorBoot> extensionBootDescriptors;
+    private List<NBootDescriptor> extensionBootDescriptors;
     /**
      * special
      */
-    private List<NClassLoaderNode> extensionBootDependencyNodes;
+    private List<NBootClassLoaderNode> extensionBootDependencyNodes;
 
     /**
      * special
@@ -460,7 +460,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     /**
      * special
      */
-    private NDescriptorBoot runtimeBootDescriptor;
+    private NBootDescriptor runtimeBootDescriptor;
 
     public DefaultNBootOptionsBuilder() {
     }
@@ -691,32 +691,32 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         return this;
     }
 
-    public NOptional<NClassLoaderNode> getRuntimeBootDependencyNode() {
+    public NOptional<NBootClassLoaderNode> getRuntimeBootDependencyNode() {
         return NOptional.of(runtimeBootDependencyNode);
     }
 
     @Override
-    public DefaultNBootOptionsBuilder setRuntimeBootDependencyNode(NClassLoaderNode runtimeBootDependencyNode) {
+    public DefaultNBootOptionsBuilder setRuntimeBootDependencyNode(NBootClassLoaderNode runtimeBootDependencyNode) {
         this.runtimeBootDependencyNode = runtimeBootDependencyNode;
         return this;
     }
 
-    public NOptional<List<NDescriptorBoot>> getExtensionBootDescriptors() {
+    public NOptional<List<NBootDescriptor>> getExtensionBootDescriptors() {
         return NOptional.of(extensionBootDescriptors);
     }
 
     @Override
-    public DefaultNBootOptionsBuilder setExtensionBootDescriptors(List<NDescriptorBoot> extensionBootDescriptors) {
+    public DefaultNBootOptionsBuilder setExtensionBootDescriptors(List<NBootDescriptor> extensionBootDescriptors) {
         this.extensionBootDescriptors = NReservedLangUtils.nonNullList(extensionBootDescriptors);
         return this;
     }
 
-    public NOptional<List<NClassLoaderNode>> getExtensionBootDependencyNodes() {
+    public NOptional<List<NBootClassLoaderNode>> getExtensionBootDependencyNodes() {
         return NOptional.of(extensionBootDependencyNodes);
     }
 
     @Override
-    public DefaultNBootOptionsBuilder setExtensionBootDependencyNodes(List<NClassLoaderNode> extensionBootDependencyNodes) {
+    public DefaultNBootOptionsBuilder setExtensionBootDependencyNodes(List<NBootClassLoaderNode> extensionBootDependencyNodes) {
         this.extensionBootDependencyNodes = NReservedLangUtils.nonNullList(extensionBootDependencyNodes);
         return this;
     }
@@ -771,12 +771,12 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         return this;
     }
 
-    public NOptional<NDescriptorBoot> getRuntimeBootDescriptor() {
+    public NOptional<NBootDescriptor> getRuntimeBootDescriptor() {
         return NOptional.of(runtimeBootDescriptor);
     }
 
     @Override
-    public DefaultNBootOptionsBuilder setRuntimeBootDescriptor(NDescriptorBoot runtimeBootDescriptor) {
+    public DefaultNBootOptionsBuilder setRuntimeBootDescriptor(NBootDescriptor runtimeBootDescriptor) {
         this.runtimeBootDescriptor = runtimeBootDescriptor;
         return this;
     }
@@ -1283,9 +1283,9 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         r.setProgressOptions(this.getProgressOptions().orNull());
         {
             NLogConfig c = this.getLogConfig().orNull();
-            NLogConfigBoot v = null;
+            NBootLogConfig v = null;
             if (c != null) {
-                v = new NLogConfigBoot();
+                v = new NBootLogConfig();
                 v.setLogFileBase(c.getLogFileBase());
                 v.setLogFileLevel(c.getLogFileLevel());
                 v.setLogFileFilter(c.getLogFileFilter());
@@ -1320,11 +1320,11 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         r.setStoreStrategy(this.getStoreStrategy().map(x -> x.id()).orNull());
         {
             Map<NHomeLocation, String> c = this.getHomeLocations().orNull();
-            Map<NHomeLocationBoot, String> v = null;
+            Map<NBootHomeLocation, String> v = null;
             if (c != null) {
                 v = new HashMap<>();
                 for (Map.Entry<NHomeLocation, String> e : c.entrySet()) {
-                    v.put(NHomeLocationBoot.of(
+                    v.put(NBootHomeLocation.of(
                             e.getKey().getOsFamily().id(),
                             e.getKey().getStoreLocation().id()
                     ), e.getValue());
@@ -2419,7 +2419,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         this.setTrace(other.getTrace());
         this.setProgressOptions(other.getProgressOptions());
         {
-            NLogConfigBoot c = other.getLogConfig();
+            NBootLogConfig c = other.getLogConfig();
             NLogConfig v = null;
             if (c != null) {
                 v = new NLogConfig();
@@ -2456,13 +2456,13 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         this.setArchetype(other.getArchetype());
         this.setStoreStrategy(NStoreStrategy.parse(other.getStoreStrategy()).orNull());
         {
-            Map<NHomeLocationBoot, String> c = other.getHomeLocations();
+            Map<NBootHomeLocation, String> c = other.getHomeLocations();
             Map<NHomeLocation, String> v = null;
             if (c != null) {
                 v = new HashMap<>();
-                for (Map.Entry<NHomeLocationBoot, String> e : c.entrySet()) {
+                for (Map.Entry<NBootHomeLocation, String> e : c.entrySet()) {
                     v.put(NHomeLocation.of(
-                            NOsFamily.parse(e.getKey().getOsFamily()).get(),
+                            NOsFamily.parse(e.getKey().getOsFamily()).orNull(),
                             NStoreType.parse(e.getKey().getStoreLocation()).get()
                     ), e.getValue());
                 }

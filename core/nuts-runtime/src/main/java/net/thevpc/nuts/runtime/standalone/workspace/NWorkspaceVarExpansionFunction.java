@@ -2,10 +2,12 @@ package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.env.NBootManager;
+import net.thevpc.nuts.env.NLocations;
+import net.thevpc.nuts.env.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTexts;
 
 import java.util.function.Function;
 

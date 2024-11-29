@@ -24,6 +24,7 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.env.NBootManager;
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.time.NClock;
 import net.thevpc.nuts.log.NLog;

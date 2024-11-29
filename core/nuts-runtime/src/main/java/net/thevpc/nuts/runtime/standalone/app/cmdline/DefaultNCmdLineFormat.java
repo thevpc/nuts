@@ -3,15 +3,15 @@ package net.thevpc.nuts.runtime.standalone.app.cmdline;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.cmdline.NCmdLineFormat;
+import net.thevpc.nuts.format.NCmdLineFormat;
 import net.thevpc.nuts.cmdline.NCmdLineFormatStrategy;
 import net.thevpc.nuts.cmdline.NCmdLines;
+import net.thevpc.nuts.env.NShellFamily;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.shell.NShellHelper;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTexts;
 
 public class DefaultNCmdLineFormat extends DefaultFormatBase<NCmdLineFormat> implements NCmdLineFormat {
 

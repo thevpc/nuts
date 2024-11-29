@@ -142,7 +142,7 @@ public class CoreDigestHelper {
         if (!collected) {
             collected = true;
             byte[] digest = md.digest();
-            collectedString = NHex.toHexString(digest);
+            collectedString = NHex.fromBytes(digest);
         }
         return collectedString;
     }

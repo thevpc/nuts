@@ -25,6 +25,8 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.env.NBootOptions;
+import net.thevpc.nuts.env.NStoreType;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.log.NLog;

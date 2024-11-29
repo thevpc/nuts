@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.shell;
 
 import net.thevpc.nuts.env.NOsFamily;
-import net.thevpc.nuts.NShellFamily;
+import net.thevpc.nuts.env.NShellFamily;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineShellOptions;
 
 public interface NShellHelper {
