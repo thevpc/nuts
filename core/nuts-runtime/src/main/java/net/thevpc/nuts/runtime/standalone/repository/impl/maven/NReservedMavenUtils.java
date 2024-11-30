@@ -965,7 +965,7 @@ public final class NReservedMavenUtils {
         Pattern pattern = Pattern.compile(sb.toString());
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try {
-            NCoreIOUtils.copy(is, bos, false, false);
+            NIOUtils.copy(is, bos, false, false);
         } catch (Exception ex) {
             //
         }

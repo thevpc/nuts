@@ -12,8 +12,6 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
-import net.thevpc.nuts.runtime.standalone.io.NCoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.io.printstream.OutputTargetExt;
 import net.thevpc.nuts.runtime.standalone.io.progress.NProgressUtils;
 import net.thevpc.nuts.runtime.standalone.io.progress.SingletonNInputStreamProgressFactory;
 import net.thevpc.nuts.runtime.standalone.io.util.*;
@@ -21,7 +19,6 @@ import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.time.NProgressEvent;
 import net.thevpc.nuts.time.NProgressFactory;
 import net.thevpc.nuts.time.NProgressListener;
@@ -31,7 +28,6 @@ import java.io.*;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
@@ -152,13 +148,19 @@ public class DefaultNCp implements NCp {
 
     @Override
     public NCp from(Reader source) {
-        this.source = source == null ? null : new ReaderInputSource(source);
+        this.source = source == null ? null : new ReaderInputSource(workspace, source);
         return this;
     }
 
     @Override
     public NCp to(NOutputTarget target) {
         this.target = target;
+        return this;
+    }
+
+    @Override
+    public NCp to(Writer target) {
+        this.target = target == null ? null : new WriterOutputTarget(workspace, target);
         return this;
     }
 
@@ -587,13 +589,21 @@ public class DefaultNCp implements NCp {
 
     public long copy(InputStream in, OutputStream out, Set<NPathOption> options)
             throws IOException {
-        NSession session = workspace.currentSession();
         if (options.contains(NPathOption.INTERRUPTIBLE)) {
             in = NInputSourceBuilder.of(in).setInterruptible(true).createInputStream();
             interruptibleInstance = (NInterruptible) in;
             return transferTo(in, out);
         }
-        return CoreIOUtils.copy(in, out);
+        return NIOUtils.copy(in, out);
+    }
+    public long copy(Reader in, Writer out, Set<NPathOption> options)
+            throws IOException {
+//        if (options.contains(NPathOption.INTERRUPTIBLE)) {
+//            in = NInputSourceBuilder.of(in).setInterruptible(true).createInputStream();
+//            interruptibleInstance = (NInterruptible) in;
+//            return transferTo(in, out);
+//        }
+        return NIOUtils.copy(in, out);
     }
 
     public long copy(Path source, OutputStream out) throws IOException {
@@ -804,7 +814,7 @@ public class DefaultNCp implements NCp {
                             // happens when the file is used by another process
                             // in that case try to check if the file needs to be copied
                             //if not, return safely!
-                            if (CoreIOUtils.compareContent(temp, _target2.jpath)) {
+                            if (NIOUtils.compareContent(temp, _target2.jpath)) {
                                 //cannot write the file (used by another process), but no pbm because does not need to
                                 return;
                             }
@@ -932,74 +942,4 @@ public class DefaultNCp implements NCp {
         long doneFolders;
     }
 
-    private static class ReaderInputStream extends InputStream {
-        private final Reader reader;
-        private final String charsetName;
-        private byte[] buffer;
-        private int index;
-        private int end;
-
-        public ReaderInputStream(Reader reader, String charsetName) {
-            this.reader = reader;
-            this.charsetName = charsetName == null ? "UTF-8" : charsetName;
-            this.buffer = null;
-            this.index = 0;
-            this.end = 0;
-        }
-
-        @Override
-        public int read() throws IOException {
-            if (index >= end) {
-                char[] charBuffer = new char[1024];
-                int numChars = reader.read(charBuffer);
-                if (numChars == -1) {
-                    return -1;
-                }
-                buffer = new String(charBuffer, 0, numChars).getBytes(charsetName);
-                index = 0;
-                end = buffer.length;
-            }
-            return buffer[index++] & 0xFF;
-        }
-
-        @Override
-        public void close() throws IOException {
-            reader.close();
-        }
-    }
-
-    private static class WriterOutputTarget extends OutputTargetExt {
-        Writer writer;
-        OuSt writer;
-    }
-    private static class ReaderInputSource extends AbstractSingleReadNInputSource {
-        private Reader reader;
-        private ReaderInputStream in;
-        private NContentMetadata md;
-
-        public ReaderInputSource(NWorkspace workspace, Reader reader) {
-            super(workspace);
-            this.reader = reader;
-            this.in = new ReaderInputStream(reader, null);
-        }
-
-        @Override
-        public InputStream getInputStream() {
-            return in;
-        }
-
-        @Override
-        public NContentMetadata getMetaData() {
-            return md;
-        }
-
-        @Override
-        public String readString(Charset cs) {
-            try (Reader in = reader) {
-                return new String(NCoreIOUtils.readChars(in));
-            } catch (IOException e) {
-                throw new NIOException(e);
-            }
-        }
-    }
 }

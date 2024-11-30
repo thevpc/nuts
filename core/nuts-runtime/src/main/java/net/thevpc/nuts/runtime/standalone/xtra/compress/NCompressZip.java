@@ -3,12 +3,12 @@ package net.thevpc.nuts.runtime.standalone.xtra.compress;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NCompressPackaging;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.util.NIOUtils;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -88,11 +88,11 @@ public class NCompressZip implements NCompressPackaging {
                     } else if (target instanceof NPath) {
                         try (InputStream ii = Files.newInputStream(tempPath)) {
                             try (OutputStream jj = target.getOutputStream()) {
-                                CoreIOUtils.copy(ii, jj);
+                                NIOUtils.copy(ii, jj);
                             }
                         }
                     } else {
-                        CoreIOUtils.copy(
+                        NIOUtils.copy(
                                 Files.newInputStream(tempPath),
                                 target.getOutputStream()
                         );

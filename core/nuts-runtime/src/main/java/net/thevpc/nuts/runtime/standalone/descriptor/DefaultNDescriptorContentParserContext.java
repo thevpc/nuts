@@ -34,6 +34,7 @@ import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NDescriptorContentParserContext;
+import net.thevpc.nuts.util.NIOUtils;
 import net.thevpc.nuts.util.NMsg;
 
 /**
@@ -64,7 +65,7 @@ public class DefaultNDescriptorContentParserContext implements NDescriptorConten
         if (bytes == null) {
             try {
                 try (InputStream is = file.getInputStream()) {
-                    bytes = CoreIOUtils.loadByteArray(is, 1024 * 1024 * 10, true);
+                    bytes = NIOUtils.loadByteArray(is, 1024 * 1024 * 10, true);
                 }
             } catch (IOException e) {
                 throw new NIOException(e);

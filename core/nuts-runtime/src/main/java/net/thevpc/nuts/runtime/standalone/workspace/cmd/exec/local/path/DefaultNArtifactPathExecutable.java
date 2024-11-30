@@ -9,11 +9,11 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinition;
-import net.thevpc.nuts.runtime.standalone.io.util.*;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.CharacterizedExecFile;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCmd;
 import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.util.NIOUtils;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.Closeable;
@@ -89,7 +89,7 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableInformati
         NSession session = workspace.currentSession();
         if (tempFolder != null) {
             try {
-                CoreIOUtils.delete(Paths.get(tempFolder));
+                NIOUtils.delete(Paths.get(tempFolder));
             } catch (UncheckedIOException | NIOException e) {
                 LOG().with().level(Level.FINEST).verb(NLogVerb.FAIL)
                         .log(NMsg.ofC("unable to delete temp folder created for execution : %s", tempFolder));

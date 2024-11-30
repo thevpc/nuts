@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NVersion;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.util.NIOUtils;
 
 /**
  * @author thevpc
@@ -157,7 +157,7 @@ public class TestUtils {
         File path;
         try {
             path = new File("./runtime/test/" + test_id+"/"+a).getCanonicalFile();
-            CoreIOUtils.delete(path);
+            NIOUtils.delete(path);
             return path.toPath();
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
@@ -201,7 +201,7 @@ public class TestUtils {
             try {
                 path = new File("./runtime/test/" + test_id).getCanonicalFile();
                 if (deleteFolder) {
-                    CoreIOUtils.delete(path);
+                    NIOUtils.delete(path);
                 }
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
@@ -251,7 +251,7 @@ public class TestUtils {
         String test_id = TestUtils.getCallerMethodId(2);
         try {
             File path = new File("./runtime/test/" + test_id).getCanonicalFile();
-            CoreIOUtils.delete(path);
+            NIOUtils.delete(path);
             return path;
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
@@ -325,7 +325,7 @@ public class TestUtils {
             File[] c = new File(string).listFiles();
             if (c != null) {
                 for (File file : c) {
-                    CoreIOUtils.delete(file);
+                    NIOUtils.delete(file);
                 }
             }
         }

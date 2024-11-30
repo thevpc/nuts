@@ -214,7 +214,7 @@ public class MavenUtils {
             if (stream == null) {
                 return null;
             }
-            byte[] bytes = CoreIOUtils.loadByteArray(stream);
+            byte[] bytes = NIOUtils.loadByteArray(stream);
             InputStream bytesStream = CoreIOUtils.createBytesStream(bytes,
                     urlDesc == null ? NMsg.ofNtf("pom.xml") : NMsg.ofNtf(urlDesc), "text/xml",
                     StandardCharsets.UTF_8.name(), urlDesc == null ? "pom.xml" : urlDesc);

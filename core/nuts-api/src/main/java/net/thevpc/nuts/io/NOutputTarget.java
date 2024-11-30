@@ -29,6 +29,7 @@ import net.thevpc.nuts.format.NFormattable;
 import net.thevpc.nuts.reserved.rpi.NIORPI;
 
 import java.io.OutputStream;
+import java.io.Writer;
 
 /**
  * I/O output stream base
@@ -44,6 +45,13 @@ public interface NOutputTarget extends NContentMetadataProvider {
 
     static NOutputTarget of(OutputStream outputStream, NContentMetadata metadata) {
         return NIORPI.of().ofOutputTarget(outputStream, metadata);
+    }
+    static NOutputTarget of(Writer writer) {
+        return NIORPI.of().ofOutputTarget(writer);
+    }
+
+    static NOutputTarget of(Writer writer, NContentMetadata metadata) {
+        return NIORPI.of().ofOutputTarget(writer, metadata);
     }
 
     OutputStream getOutputStream();

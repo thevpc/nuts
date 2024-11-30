@@ -239,7 +239,7 @@ public class NHttpSrvRepository extends NCachedRepository {
     private String httpGetString(String url, NSession session) {
         LOG().with().level(Level.FINEST).verb(NLogVerb.START)
                 .log(NMsg.ofJ("get URL{0}", url));
-        return CoreIOUtils.loadString(NPath.of(url).getInputStream(), true);
+        return NIOUtils.loadString(NPath.of(url).getInputStream(), true);
     }
 
     @Override

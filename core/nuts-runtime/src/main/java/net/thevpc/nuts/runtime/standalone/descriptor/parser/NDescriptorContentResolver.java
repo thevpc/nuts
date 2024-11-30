@@ -9,6 +9,7 @@ import net.thevpc.nuts.spi.NDescriptorContentParserComponent;
 import net.thevpc.nuts.spi.NDescriptorContentParserContext;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.util.NIOUtils;
 import net.thevpc.nuts.util.NMsg;
 
 import java.nio.file.Path;
@@ -28,7 +29,7 @@ public class NDescriptorContentResolver {
             parseOptions = new ArrayList<>();
         }
         if (localPath != null) {
-            String fileExtension = CoreIOUtils.getFileExtension(localPath.getFileName().toString());
+            String fileExtension = NIOUtils.getFileExtension(localPath.getFileName().toString());
             NDescriptorContentParserContext ctx = new DefaultNDescriptorContentParserContext(
                     localPath, fileExtension, null, parseOptions);
             List<NDescriptorContentParserComponent> allParsers = NExtensions.of()

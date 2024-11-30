@@ -592,7 +592,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             NIdFormat.of();
 
             LOGCSF.log(NMsg.ofPlain(" ==============================================================================="));
-            String s = CoreIOUtils.loadString(getClass().getResourceAsStream("/net/thevpc/nuts/runtime/includes/standard-header.ntf"), true);
+            String s = NIOUtils.loadString(getClass().getResourceAsStream("/net/thevpc/nuts/runtime/includes/standard-header.ntf"), true);
             s = s.replace("${nuts.workspace-runtime.version}", Nuts.getVersion().toString());
             for (String s1 : s.split("\n")) {
                 LOGCSF.log(NMsg.ofNtf(s1));

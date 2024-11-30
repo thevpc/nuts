@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.digest;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NHex;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.util.NIOUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -108,7 +108,7 @@ public class NDigestUtils {
     }
 
     public static char[] evalSHA1(char[] input) {
-        byte[] bytes = CoreIOUtils.charsToBytes(input);
+        byte[] bytes = NIOUtils.charsToBytes(input);
         char[] r = evalSHA1HexChars(new ByteArrayInputStream(bytes), true);
         Arrays.fill(bytes, (byte) 0);
         return r;

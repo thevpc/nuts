@@ -7,7 +7,6 @@ import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
@@ -15,6 +14,7 @@ import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NIOUtils;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStream;
 
@@ -223,7 +223,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         try {
             session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "browse", NPath.of(baseUrl).toCompressedForm()));
             foldersFileStream = NInputStreamMonitor.of().setSource(NPath.of(dotFilesUrl)).create();
-            List<String> splitted = StringTokenizerUtils.splitNewLine(CoreIOUtils.loadString(foldersFileStream, true));
+            List<String> splitted = StringTokenizerUtils.splitNewLine(NIOUtils.loadString(foldersFileStream, true));
             for (String s : splitted) {
                 s = s.trim();
                 if (s.length() > 0) {
@@ -281,7 +281,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
                 String dotFolderUrl = baseUrl + "/" + CoreNConstants.Files.DOT_FOLDERS;
                 try (InputStream stream = NInputStreamMonitor.of().setSource(NPath.of(dotFolderUrl))
                         .create()) {
-                    foldersFileContent = StringTokenizerUtils.splitNewLine(CoreIOUtils.loadString(stream, true))
+                    foldersFileContent = StringTokenizerUtils.splitNewLine(NIOUtils.loadString(stream, true))
                             .stream().map(x -> x.trim()).filter(x -> x.length() > 0).toArray(String[]::new);
                 } catch (IOException | UncheckedIOException | NIOException ex) {
                     NLogOp.of(DotfilefsPath.class).level(Level.FINE).verb(NLogVerb.FAIL)

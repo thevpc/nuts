@@ -1088,7 +1088,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                         String artifactId = d.getDigest();
                         c.setDescriptor(new DefaultNDescriptorBuilder()
                                 .setId("temp:" + artifactId + "#1.0")
-                                .setPackaging(CoreIOUtils.getFileExtension(contentFile.getMetaData().getName().orElse("")))
+                                .setPackaging(NIOUtils.getFileExtension(contentFile.getMetaData().getName().orElse("")))
                                 .build());
                     }
                 }

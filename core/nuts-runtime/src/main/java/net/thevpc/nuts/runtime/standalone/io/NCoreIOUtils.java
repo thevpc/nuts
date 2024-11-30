@@ -8,6 +8,7 @@ import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NHex;
+import net.thevpc.nuts.util.NIOUtils;
 import net.thevpc.nuts.util.NMsg;
 
 import java.io.*;
@@ -137,38 +138,6 @@ public class NCoreIOUtils {
         }
     }
 
-    public static byte[] readBytes(URL url) {
-        try (InputStream in = url.openStream()) {
-            return readBytes(in);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-    }
-
-    public static byte[] readBytes(InputStream from) {
-        return readBytes(from, -1);
-    }
-
-    public static byte[] readBytes(InputStream from, int bufferSize) {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        copy(from, out, bufferSize);
-        return out.toByteArray();
-    }
-
-    public static char[] readChars(Reader from) {
-        return readChars(from,-1);
-    }
-
-    public static char[] readChars(Reader from, int bufferSize) {
-        CharArrayWriter out = new CharArrayWriter();
-        copy(from, out, bufferSize);
-        return out.toCharArray();
-    }
-
-    public static String readStringFromFile(File file) throws IOException {
-        return new String(Files.readAllBytes(file.toPath()));
-    }
-
     public static String formatURL(URL url) {
         if (url == null) {
             return "<EMPTY>";
@@ -291,7 +260,7 @@ public class NCoreIOUtils {
 
     public static byte[] loadStream(InputStream stream, NLog bLog) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        copy(stream, bos, true, true);
+        NIOUtils.copy(stream, bos, true, true);
         return bos.toByteArray();
     }
 
@@ -437,29 +406,6 @@ public class NCoreIOUtils {
         return null;
     }
 
-    public static long copy(InputStream from, OutputStream to, boolean closeInput, boolean closeOutput) throws IOException {
-        byte[] bytes = new byte[10240];
-        int count;
-        long all = 0;
-        try {
-            try {
-                while ((count = from.read(bytes)) > 0) {
-                    to.write(bytes, 0, count);
-                    all += count;
-                }
-                return all;
-            } finally {
-                if (closeInput) {
-                    from.close();
-                }
-            }
-        } finally {
-            if (closeOutput) {
-                to.close();
-            }
-        }
-    }
-
     public static void copy(File ff, File to, NLog bLog) throws IOException {
         if (to.getParentFile() != null) {
             to.getParentFile().mkdirs();
@@ -502,66 +448,5 @@ public class NCoreIOUtils {
         }
     }
 
-    public static void copy(InputStream in, Path file) {
-        Path p = file.getParent();
-        if (p != null) {
-            p.toFile().mkdirs();
-        }
-        try (OutputStream out = Files.newOutputStream(file)) {
-            copy(in, out);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-    }
 
-    public static void copy(Reader in, Path file) {
-        Path p = file.getParent();
-        if (p != null) {
-            p.toFile().mkdirs();
-        }
-        try (Writer out = Files.newBufferedWriter(file)) {
-            copy(in, out);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-    }
-
-
-    public static long copy(InputStream from, OutputStream to) {
-        return copy(from, to, -1);
-    }
-
-    public static long copy(InputStream from, OutputStream to, int bufferSize) {
-        byte[] bytes = new byte[bufferSize <= 0 ? 10240 : bufferSize];
-        int count;
-        long all = 0;
-        try {
-            while ((count = from.read(bytes)) > 0) {
-                to.write(bytes, 0, count);
-                all += count;
-            }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-        return all;
-    }
-
-    public static long copy(Reader from, Writer to) {
-        return copy(from,to,-1);
-    }
-
-    public static long copy(Reader from, Writer to, int bufferSize) {
-        char[] bytes = new char[bufferSize <= 0 ? 10240 : bufferSize];
-        int count;
-        long all = 0;
-        try {
-            while ((count = from.read(bytes)) > 0) {
-                to.write(bytes, 0, count);
-                all += count;
-            }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-        return all;
-    }
 }

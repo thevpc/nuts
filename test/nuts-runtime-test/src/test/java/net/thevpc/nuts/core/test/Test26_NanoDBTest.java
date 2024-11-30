@@ -1,10 +1,9 @@
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDB;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBTableFile;
+import net.thevpc.nuts.util.NIOUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -42,7 +41,7 @@ public class Test26_NanoDBTest {
     public void testPerf() {
         File dir = TestUtils.initFolder(".test-db-perf").toFile();
         long from = System.currentTimeMillis();
-        CoreIOUtils.delete(dir);
+        NIOUtils.delete(dir);
         try (NanoDB db = new NanoDB(dir)) {
             NanoDBTableFile<Person> test = db.tableBuilder(Person.class).setNullable(false).addIndices("id").create();
             int c = 1000;

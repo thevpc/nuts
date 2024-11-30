@@ -18,10 +18,7 @@ import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -273,7 +270,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
                 characterizedFile.close();
             }
             if (tempFile != null) {
-                CoreIOUtils.delete(tempFile);
+                NIOUtils.delete(tempFile);
             }
         }
 

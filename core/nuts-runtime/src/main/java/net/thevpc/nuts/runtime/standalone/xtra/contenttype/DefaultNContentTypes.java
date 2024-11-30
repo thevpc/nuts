@@ -5,11 +5,11 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NContentTypes;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NCharsetResolver;
 import net.thevpc.nuts.spi.NContentTypeResolver;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NIOUtils;
 
 import java.io.File;
 import java.io.InputStream;
@@ -93,7 +93,7 @@ public class DefaultNContentTypes implements NContentTypes {
 
     @Override
     public String probeContentType(InputStream stream) {
-        byte[] buffer = CoreIOUtils.readBestEffort(4096, stream);
+        byte[] buffer = NIOUtils.readBestEffort(4096, stream);
         return probeContentType(buffer);
     }
 
@@ -152,7 +152,7 @@ public class DefaultNContentTypes implements NContentTypes {
 
     @Override
     public String probeCharset(InputStream stream) {
-        byte[] buffer = CoreIOUtils.readBestEffort(4096*10, stream);
+        byte[] buffer = NIOUtils.readBestEffort(4096*10, stream);
         return probeCharset(buffer);
     }
 

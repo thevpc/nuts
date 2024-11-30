@@ -9,6 +9,7 @@ import net.thevpc.nuts.util.NAsk;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.io.Writer;
 import java.util.List;
 
@@ -60,6 +61,10 @@ public interface NIORPI extends NComponent {
 
     NInputSource ofInputSource(InputStream inputStream, NContentMetadata metadata);
 
+    NInputSource ofInputSource(Reader inputStream);
+
+    NInputSource ofInputSource(Reader inputStream, NContentMetadata metadata);
+
     NInputSource ofInputSource(byte[] inputStream);
 
     NInputSource ofInputSource(byte[] inputStream, NContentMetadata metadata);
@@ -67,6 +72,10 @@ public interface NIORPI extends NComponent {
     NOutputTarget ofOutputTarget(OutputStream outputStream);
 
     NOutputTarget ofOutputTarget(OutputStream outputStream, NContentMetadata metadata);
+
+    NOutputTarget ofOutputTarget(Writer writer, NContentMetadata metadata);
+
+    NOutputTarget ofOutputTarget(Writer writer);
 
     NOutputStreamBuilder ofOutputStreamBuilder(OutputStream base);
 
@@ -126,7 +135,6 @@ public interface NIORPI extends NComponent {
      * terminal and may even load a nuts extension to enable such features.
      */
     void enableRichTerm();
-
 
 
     List<NExecutionEntry> parseExecutionEntries(NPath file);

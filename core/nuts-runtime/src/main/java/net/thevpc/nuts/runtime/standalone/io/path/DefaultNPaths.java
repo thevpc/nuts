@@ -8,13 +8,13 @@ import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.FilePath;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.URLPath;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.io.NPaths;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.util.NIOUtils;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringBuilder;
 
@@ -159,7 +159,7 @@ public class DefaultNPaths implements NPaths {
             name = "";
         }
         rootFolder.mkdirs();
-        NStringBuilder ext = new NStringBuilder(CoreIOUtils.getFileExtension(name, false, true));
+        NStringBuilder ext = new NStringBuilder(NIOUtils.getFileExtension(name, false, true));
         NStringBuilder prefix = new NStringBuilder((ext.length() > 0) ? name.substring(0, name.length() - ext.length()) : name);
         if (ext.isEmpty() && prefix.isEmpty()) {
             prefix.append("nuts-");

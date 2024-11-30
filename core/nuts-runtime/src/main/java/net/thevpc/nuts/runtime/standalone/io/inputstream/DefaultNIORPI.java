@@ -9,7 +9,6 @@ import net.thevpc.nuts.runtime.standalone.io.ask.DefaultNAsk;
 import net.thevpc.nuts.runtime.standalone.io.printstream.*;
 import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNSessionTerminalFrom;
 import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNTerminalFromSystem;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.NInputStreamSource;
 import net.thevpc.nuts.runtime.standalone.text.SimpleWriterOutputStream;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
@@ -21,8 +20,7 @@ import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.reserved.rpi.NIORPI;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NAsk;
+import net.thevpc.nuts.util.*;
 
 import java.io.*;
 import java.util.Arrays;
@@ -164,6 +162,22 @@ public class DefaultNIORPI implements NIORPI {
     }
 
     @Override
+    public NInputSource ofInputSource(Reader inputStream, NContentMetadata metadata) {
+        if (inputStream == null) {
+            return null;
+        }
+        if (inputStream instanceof NInputSource) {
+            return (NInputSource) inputStream;
+        }
+        return ofInputSource(new ReaderInputStream(inputStream,null), metadata);
+    }
+
+    @Override
+    public NInputSource ofInputSource(Reader inputStream) {
+        return ofInputSource(inputStream, null);
+    }
+
+    @Override
     public NInputSource ofInputSource(InputStream inputStream, NContentMetadata metadata) {
         if (inputStream == null) {
             return null;
@@ -180,7 +194,6 @@ public class DefaultNIORPI implements NIORPI {
                 //just ignore error
                 //throw new UncheckedIOException(e);
             }
-            NSession session = workspace.currentSession();
             if (inputStream instanceof ByteArrayInputStream) {
                 str = NText.ofStyled("<memory-buffer>", NTextStyle.path());
             } else {
@@ -203,7 +216,7 @@ public class DefaultNIORPI implements NIORPI {
         NPath tf = NPath.ofTempFile();
         try (InputStream in = source.getInputStream()) {
             try (OutputStream out = tf.getOutputStream()) {
-                CoreIOUtils.copy(in, out, 4096);
+                NIOUtils.copy(in, out, 4096);
             }
         } catch (IOException ex) {
             throw new NIOException(ex);
@@ -231,6 +244,22 @@ public class DefaultNIORPI implements NIORPI {
     public NOutputTarget ofOutputTarget(OutputStream outputStream, NContentMetadata metadata) {
         return new OutputTargetExt(NOutputStreamBuilder.of(outputStream)
                 .setMetadata(metadata).createOutputStream(), null, workspace);
+    }
+
+    @Override
+    public NOutputTarget ofOutputTarget(Writer writer, NContentMetadata metadata) {
+        if(writer==null){
+            return null;
+        }
+        if(writer instanceof NOutputTarget){
+            return (NOutputTarget) writer;
+        }
+        return ofOutputTarget(new WriterOutputStream(writer), metadata);
+    }
+
+    @Override
+    public NOutputTarget ofOutputTarget(Writer writer) {
+        return ofOutputTarget(writer, null);
     }
 
     @Override

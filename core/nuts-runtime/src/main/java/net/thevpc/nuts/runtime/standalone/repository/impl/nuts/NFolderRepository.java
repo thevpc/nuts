@@ -33,6 +33,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.folder.NFolderRepositoryBase;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
+import net.thevpc.nuts.util.NIOUtils;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -103,7 +104,7 @@ public class NFolderRepository extends NFolderRepositoryBase {
                 String name = null;
                 try {
                     stream = getStream(idDesc, "artifact descriptor", "retrieve");
-                    bytes = CoreIOUtils.loadByteArray(stream, true);
+                    bytes = NIOUtils.loadByteArray(stream, true);
                     name = NInputSource.of(stream).getMetaData().getName().orElse("no-name");
                     nutsDescriptor = NDescriptorParser.of()
                             .setDescriptorStyle(NDescriptorStyle.NUTS)
@@ -147,7 +148,7 @@ public class NFolderRepository extends NFolderRepositoryBase {
             String name = null;
             try {
                 stream = openStream(id, pomURL, id, "artifact descriptor", "retrieve");
-                bytes = CoreIOUtils.loadByteArray(stream, true);
+                bytes = NIOUtils.loadByteArray(stream, true);
                 name = NInputSource.of(stream).getMetaData().getName().orElse("no-name");
                 nutsDescriptor = NDescriptorParser.of()
                         .setDescriptorStyle(NDescriptorStyle.NUTS)

@@ -10,13 +10,13 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.UnzipOptions;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinition;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
+import net.thevpc.nuts.util.NIOUtils;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -74,7 +74,7 @@ public class DefaultSourceControlHelper {
             }
             NId newId = NDeployCmd.of().setContent(folder).setDescriptor(d).getResult().get(0);
             NDescriptorFormat.of(d).print(file);
-            CoreIOUtils.delete(folder);
+            NIOUtils.delete(folder);
             return newId;
         } else {
             throw new NUnsupportedOperationException(NMsg.ofPlain("commit not supported"));

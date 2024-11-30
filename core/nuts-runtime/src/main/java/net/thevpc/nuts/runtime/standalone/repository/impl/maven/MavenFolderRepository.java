@@ -36,6 +36,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MvnClient;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NRepositorySPI;
+import net.thevpc.nuts.util.NIOUtils;
 import net.thevpc.nuts.util.NIterator;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.util.NMsg;
@@ -191,7 +192,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
             try {
                 stream = getStream(idDesc, "artifact descriptor", "retrieve");
                 name = NInputSource.of(stream).getMetaData().getName().orElse("no-name");
-                bytes = CoreIOUtils.loadByteArray(stream, true);
+                bytes = NIOUtils.loadByteArray(stream, true);
                 nutsDescriptor = MavenUtils.of().parsePomXmlAndResolveParents(
                         CoreIOUtils.createBytesStream(bytes, name == null ? null : NMsg.ofNtf(name), "text/xml", StandardCharsets.UTF_8.name(), "pom.xml")
                         , fetchMode, getIdRemotePath(id).toString(), this);

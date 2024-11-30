@@ -15,7 +15,7 @@ import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.format.NExecCmdFormat;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.util.NIOUtils;
 import org.junit.jupiter.api.*;
 
 import java.io.ByteArrayInputStream;
@@ -36,7 +36,7 @@ public class Test06_UpdateTest {
     @BeforeAll
     public static void setUpClass() throws IOException {
         baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getPath();
-        CoreIOUtils.delete(new File(baseFolder));
+        NIOUtils.delete(new File(baseFolder));
         TestUtils.println("####### RUNNING TEST @ " + TestUtils.getCallerClassSimpleName());
     }
 

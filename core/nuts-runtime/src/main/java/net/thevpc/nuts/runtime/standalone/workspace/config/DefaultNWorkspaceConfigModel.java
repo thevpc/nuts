@@ -56,7 +56,6 @@ import net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs.HtmlfsPath;
 import net.thevpc.nuts.runtime.standalone.io.terminal.AbstractSystemTerminalAdapter;
 import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNTerminalFromSystem;
 import net.thevpc.nuts.runtime.standalone.io.terminal.UnmodifiableTerminal;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
@@ -346,7 +345,7 @@ public class DefaultNWorkspaceConfigModel {
                 lastConfigPath
                         = CoreNUtils.isValidWorkspaceName(_ws)
                         ? plocs.getWorkspaceLocation(CoreNUtils.resolveValidWorkspaceName(_ws)
-                ) : CoreIOUtils.getAbsolutePath(_ws);
+                ) : NIOUtils.getAbsolutePath(_ws);
 
                 NWorkspaceConfigBoot configLoaded = parseBootConfig(NPath.of(lastConfigPath));
                 if (configLoaded == null) {
@@ -372,7 +371,7 @@ public class DefaultNWorkspaceConfigModel {
             lastConfigPath
                     = CoreNUtils.isValidWorkspaceName(_ws)
                     ? plocs.getWorkspaceLocation(CoreNUtils.resolveValidWorkspaceName(_ws)
-            ) : CoreIOUtils.getAbsolutePath(_ws);
+            ) : NIOUtils.getAbsolutePath(_ws);
 
             lastConfigLoaded = parseBootConfig(NPath.of(lastConfigPath));
             if (lastConfigLoaded == null) {
@@ -1325,7 +1324,7 @@ public class DefaultNWorkspaceConfigModel {
             if (!oldPath.equals(newPath)) {
                 Path oldPathObj = Paths.get(oldPath);
                 if (Files.exists(oldPathObj)) {
-                    CoreIOUtils.copyFolder(oldPathObj, Paths.get(newPath));
+                    NIOUtils.copyFolder(oldPathObj, Paths.get(newPath));
                 }
             }
         }
