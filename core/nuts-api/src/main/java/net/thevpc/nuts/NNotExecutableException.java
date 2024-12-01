@@ -29,7 +29,7 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.util.NMsg;
 
 /**
- * Exception thrown when a non executable nuts id is requested to run.
+ * Exception thrown when a non-executable nuts id is requested to run.
  *
  * @app.category Exceptions
  * @since 0.5.4
@@ -42,7 +42,7 @@ public class NNotExecutableException extends NExecutionException {
     private final NId id;
 
     /**
-     * Constructs a new NutsNotExecutableException exception
+     * Constructs a new NNotExecutableException exception
      *
      * @param id artifact id
      */

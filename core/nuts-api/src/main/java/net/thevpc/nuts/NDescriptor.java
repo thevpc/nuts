@@ -105,6 +105,13 @@ public interface NDescriptor extends Serializable, NBlankable {
     String getPackaging();
 
     /**
+     *
+     * This is typically the case for pom projects
+     * @return true when the descriptor does not define a content.
+     */
+    boolean isNoContent();
+
+    /**
      * dependency resolution solver. defaults to 'maven'
      *
      * @return dependency resolution solver

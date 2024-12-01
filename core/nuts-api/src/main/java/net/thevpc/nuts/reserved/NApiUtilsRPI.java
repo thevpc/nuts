@@ -27,6 +27,9 @@ package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.*;
 
+import net.thevpc.nuts.boot.NBootLogConfig;
+import net.thevpc.nuts.boot.NBootOptionsInfo;
+import net.thevpc.nuts.boot.reserved.cmdline.NBootWorkspaceCmdLineParser;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.util.NBlankable;
@@ -128,10 +131,39 @@ public class NApiUtilsRPI {
         }
     }
 
+    public static boolean resolveShowStackTrace(NBootOptionsInfo bo) {
+        if (bo.getShowStacktrace()!=null) {
+            return bo.getShowStacktrace();
+        } else if (bo.getBot()!=null && bo.getBot()) {
+            return false;
+        } else {
+            if (NApiUtilsRPI.getSysBoolNutsProperty("stacktrace", false)) {
+                return true;
+            }
+            if (bo.getDebug()!=null && !NBlankable.isBlank(bo.getDebug())) {
+                return true;
+            }
+            NBootLogConfig nLogConfig = bo.getLogConfig();
+            if (nLogConfig!=null && nLogConfig.getLogTermLevel() != null
+                    && nLogConfig.getLogTermLevel().intValue() < Level.INFO.intValue()) {
+                return true;
+            }
+            return false;
+        }
+    }
+
     public static int processThrowable(Throwable ex, String[] args) {
-        NWorkspaceOptionsBuilder bo = NWorkspaceOptionsBuilder.of();
-        bo.setCmdLine(args);
-        return processThrowable(ex, null, true, resolveShowStackTrace(bo), resolveGui(bo));
+        if (ex == null) {
+            return 0;
+        }
+        NSession session = NSessionAwareExceptionBase.resolveSession(ex).orNull();
+        if (session != null) {
+            return (NApplicationExceptionHandler.of()
+                    .processThrowable(args, ex));
+        }
+        NBootOptionsInfo options = new NBootOptionsInfo();
+        NBootWorkspaceCmdLineParser.parseNutsArguments(args, options);
+        return processThrowable(ex, null, true, resolveShowStackTrace(options), resolveGui(options));
     }
 
     /**
@@ -145,26 +177,26 @@ public class NApiUtilsRPI {
         if (ex == null) {
             return 0;
         }
-
         NSession session = NSessionAwareExceptionBase.resolveSession(ex).orNull();
         NWorkspaceOptionsBuilder bo = null;
         if (session != null) {
             bo = NWorkspace.get().getBootOptions().builder().toWorkspaceOptions().builder();
+            return processThrowable(ex, out, true, resolveShowStackTrace(bo), resolveGui(bo));
         } else {
-            NWorkspaceOptionsBuilder options = NWorkspaceOptionsBuilder.of();
             //load inherited
             String nutsArgs = NStringUtils.trim(
                     NStringUtils.trim(System.getProperty("nuts.boot.args"))
                     + " " + NStringUtils.trim(System.getProperty("nuts.args"))
             );
             try {
-                options.setCmdLine(NCmdLine.parseDefault(nutsArgs).get().toStringArray());
+                NBootOptionsInfo options = new NBootOptionsInfo();
+                NBootWorkspaceCmdLineParser.parseNutsArguments(NCmdLine.parseDefault(nutsArgs).get().toStringArray(), options);
+                return processThrowable(ex, null, true, resolveShowStackTrace(options), resolveGui(options));
             } catch (Exception e) {
                 //any, ignore...
             }
-            bo = options;
+            return 254;
         }
-        return processThrowable(ex, out, true, resolveShowStackTrace(bo), resolveGui(bo));
     }
 
     public static boolean resolveGui(NWorkspaceOptions bo) {
@@ -172,6 +204,19 @@ public class NApiUtilsRPI {
             return false;
         }
         if (bo.getGui().orElse(false)) {
+            if (!NApiUtilsRPI.isGraphicalDesktopEnvironment()) {
+                return false;
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public static boolean resolveGui(NBootOptionsInfo bo) {
+        if (bo.getBot()!=null && bo.getBot()) {
+            return false;
+        }
+        if (bo.getGui()!=null && bo.getGui()) {
             if (!NApiUtilsRPI.isGraphicalDesktopEnvironment()) {
                 return false;
             }

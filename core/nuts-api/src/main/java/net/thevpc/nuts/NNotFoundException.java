@@ -47,7 +47,7 @@ public class NNotFoundException extends NException {
     private Set<NIdInvalidDependency> missingDependencies = Collections.emptySet();
 
     /**
-     * Constructs a new NutsNotFoundException exception
+     * Constructs a new NNotFoundException exception
      *
      * @param id artifact id
      */
@@ -56,7 +56,7 @@ public class NNotFoundException extends NException {
     }
 
     /**
-     * Constructs a new NutsNotFoundException exception
+     * Constructs a new NNotFoundException exception
      *
      * @param id    artifact id
      * @param cause cause
@@ -67,7 +67,7 @@ public class NNotFoundException extends NException {
 
 
     /**
-     * Constructs a new NutsNotFoundException exception
+     * Constructs a new NNotFoundException exception
      *
      * @param id           artifact id
      * @param dependencies dependencies
@@ -88,7 +88,7 @@ public class NNotFoundException extends NException {
     }
 
     /**
-     * Constructs a new NutsNotFoundException exception
+     * Constructs a new NNotFoundException exception
      *
      * @param id      artifact id
      * @param message message
@@ -102,7 +102,7 @@ public class NNotFoundException extends NException {
     }
 
     /**
-     * Constructs a new NutsNotFoundException exception
+     * Constructs a new NNotFoundException exception
      *
      * @param id      artifact id
      * @param message message

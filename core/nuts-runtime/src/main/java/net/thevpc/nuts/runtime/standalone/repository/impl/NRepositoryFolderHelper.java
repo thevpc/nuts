@@ -381,7 +381,7 @@ public class NRepositoryFolderHelper {
         CoreNIdUtils.checkLongId(id);
         NInputSource inputSource = null;
         if (deployment.getContent() == null) {
-            if (!NDescriptorUtils.isNoContent(descriptor)) {
+            if (!descriptor.isNoContent()) {
                 NAssert.requireNonNull(deployment.getContent(), () -> NMsg.ofC("invalid deployment; missing content for %s", deployment.getId()));
             }
         } else {

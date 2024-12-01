@@ -22,9 +22,6 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class NDescriptorUtils {
-    public static boolean isNoContent(NDescriptor desc) {
-        return desc != null && "pom".equals(desc.getPackaging());
-    }
 
     public static NDescriptor getEffectiveDescriptor(NDefinition def) {
         final NDescriptor d = def.getEffectiveDescriptor().orNull();

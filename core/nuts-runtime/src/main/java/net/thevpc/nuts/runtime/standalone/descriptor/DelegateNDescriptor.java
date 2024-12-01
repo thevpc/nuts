@@ -198,4 +198,9 @@ public abstract class DelegateNDescriptor extends AbstractNDescriptor {
     public NDescriptorOrganization getOrganization() {
         return getBase().getOrganization();
     }
+
+    @Override
+    public boolean isNoContent() {
+        return getBase().isNoContent();
+    }
 }

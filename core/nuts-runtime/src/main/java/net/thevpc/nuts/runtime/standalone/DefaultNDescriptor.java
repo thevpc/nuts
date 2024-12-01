@@ -305,6 +305,10 @@ public class DefaultNDescriptor implements NDescriptor {
         return packaging;
     }
 
+    public boolean isNoContent() {
+        return "pom".equals(getPackaging());
+    }
+
     @Override
     public String getSolver() {
         return solver;

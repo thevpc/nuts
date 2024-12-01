@@ -197,6 +197,14 @@ public interface NLog {
         log(Level.WARNING, NLogVerb.WARNING, msg, thrown);
     }
 
+    default void info(NMsg msg){
+        log(Level.INFO, NLogVerb.INFO, msg);
+    }
+
+    default void debug(NMsg msg){
+        log(Level.FINEST, NLogVerb.DEBUG, msg);
+    }
+
     default void warn(NMsg msg){
         log(Level.WARNING, NLogVerb.WARNING, msg,null);
     }

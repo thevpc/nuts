@@ -52,6 +52,10 @@ public class NDependencyUtils {
         return String.join(",", ex);
     }
 
+    public static boolean isOptionalDependency(NDependency d) {
+        return !isRequiredDependency(d);
+    }
+
     public static boolean isRequiredDependency(NDependency d) {
         if (d.isOptional()) {
             return false;

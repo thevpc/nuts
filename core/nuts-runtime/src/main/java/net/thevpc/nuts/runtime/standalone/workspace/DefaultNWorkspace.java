@@ -968,7 +968,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         try {
             NDependencyFilter ndf = NDependencyFilters.of().byRunnable();
             if (def.getEffectiveDescriptor().isNotPresent()
-                    || (!NDescriptorUtils.isNoContent(def.getDescriptor()) && def.getContent().isNotPresent())) {
+                    || (!def.getDescriptor().isNoContent() && def.getContent().isNotPresent())) {
                 // reload def
                 NFetchCmd fetch2 = NFetchCmd.of(def.getId())
                         .content()
@@ -1074,7 +1074,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             }
             out.flush();
             NWorkspace envs = this;
-            if (def.getContent().isPresent() || NDescriptorUtils.isNoContent(def.getDescriptor())) {
+            if (def.getContent().isPresent() || def.getDescriptor().isNoContent()) {
                 if (requireParents) {
                     List<NDefinition> requiredDefinitions = new ArrayList<>();
                     for (NId parent : def.getDescriptor().getParents()) {

@@ -65,11 +65,11 @@ public final class NClassLoaderUtils {
         return toClassLoaderNodeWithOptional(d, false, withChildren, repositoryFilter);
     }
 
-    private static NClassLoaderNode toClassLoaderNodeWithOptional(NDependency d, boolean isOptional, NRepositoryFilter repositoryFilter) {
+    private static NClassLoaderNode toClassLoaderNodeWithOptional(NDependency d, boolean optional, NRepositoryFilter repositoryFilter) {
         NPath cc = null;
-        if (!isOptional) {
-            if (!NDependencyUtils.isRequiredDependency(d)) {
-                isOptional = true;
+        if (!optional) {
+            if (NDependencyUtils.isOptionalDependency(d)) {
+                optional = true;
             }
         }
         NId id = d.toId();
@@ -94,7 +94,7 @@ public final class NClassLoaderUtils {
                 );
             }
         }
-        if (isOptional) {
+        if (optional) {
             return null;
         }
         throw new NNotFoundException(id);

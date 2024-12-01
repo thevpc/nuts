@@ -45,8 +45,14 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
     public NPath getResultContent() {
         try {
             NDefinition def = fetchDefinition(getId(), copy().setContent(true).setEffective(false), true, false);
-            if(NDescriptorUtils.isNoContent(def.getDescriptor())){
+            if(def.getDescriptor().isNoContent()){
                 return null;
+            }
+            if(!def.getContent().isPresent()){
+                if (!isFailFast()) {
+                    return null;
+                }
+                throw new NNotFoundException(getId(),NMsg.ofC("missing content for %s",getId()));
             }
             return def.getContent().get();
         } catch (NNotFoundException ex) {
@@ -239,7 +245,7 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
                     // always ok for content, if 'content' flag is not armed, try find 'local' path
                     NInstalledRepository installedRepository = dws.getInstalledRepository();
                     if (includeContent) {
-                        if (!NDescriptorUtils.isNoContent(foundDefinition.getDescriptor())) {
+                        if (!foundDefinition.getDescriptor().isNoContent()) {
                             boolean loadedFromInstallRepo = DefaultNInstalledRepository.INSTALLED_REPO_UUID.equals(successfulDescriptorLocation
                                     .getRepository().getUuid());
                             NId id1 = CoreNIdUtils.createContentFaceId(foundDefinition.getId(), foundDefinition.getDescriptor());

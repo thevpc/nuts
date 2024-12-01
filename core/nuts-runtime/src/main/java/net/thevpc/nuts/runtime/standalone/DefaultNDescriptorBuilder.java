@@ -843,4 +843,8 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
     public int getSupportLevel(NSupportLevelContext context) {
         return NConstants.Support.DEFAULT_SUPPORT;
     }
+
+    public boolean isNoContent() {
+        return "pom".equals(getPackaging());
+    }
 }

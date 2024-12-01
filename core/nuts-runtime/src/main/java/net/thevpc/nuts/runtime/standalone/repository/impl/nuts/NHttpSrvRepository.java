@@ -295,7 +295,7 @@ public class NHttpSrvRepository extends NCachedRepository {
 //    public void checkAllowedFetch(NutsId parse, NutsSession session) {
 //        super.checkAllowedFetch(parse, session);
 //        if (session.getFetchMode() != NutsFetchMode.REMOTE) {
-//            throw new NutsNotFoundException(session(), parse);
+//            throw new NNotFoundException(session(), parse);
 //        }
 //    }
     private class NamedNIdFromStreamIterator extends NIteratorBase<NId> {

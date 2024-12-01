@@ -38,7 +38,7 @@ import net.thevpc.nuts.util.NMsg;
 public class NNoSuchElementException extends NException {
 
     /**
-     * Constructs a new NutsIllegalArgumentException exception
+     * Constructs a new NNoSuchElementException exception
      *
      * @param message message
      */
@@ -47,7 +47,7 @@ public class NNoSuchElementException extends NException {
     }
 
     /**
-     * Constructs a new NutsIllegalArgumentException exception
+     * Constructs a new NNoSuchElementException exception
      *
      * @param message message
      * @param cause   cause
@@ -57,13 +57,13 @@ public class NNoSuchElementException extends NException {
     }
 
     /**
-     * Constructs a new NutsIllegalArgumentException exception
+     * Constructs a new NNoSuchElementException exception
      *
      * @param message            message
      * @param cause              cause
-     * @param enableSuppression  whether or not suppression is enabled or
+     * @param enableSuppression  whether suppression is enabled or
      *                           disabled
-     * @param writableStackTrace whether or not the stack trace should be
+     * @param writableStackTrace whether the stack trace should be
      *                           writable
      */
     public NNoSuchElementException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
