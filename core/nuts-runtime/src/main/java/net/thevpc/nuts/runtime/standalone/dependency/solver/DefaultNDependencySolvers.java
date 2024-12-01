@@ -2,7 +2,8 @@ package net.thevpc.nuts.runtime.standalone.dependency.solver;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
+
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NDependencySolvers;
 import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -23,14 +24,12 @@ public class DefaultNDependencySolvers implements NDependencySolvers {
 
     @Override
     public NDependencySolver createSolver(String solverName) {
-        DefaultNConfigs config = (DefaultNConfigs) NConfigs.of();
-        return config.createDependencySolver(solverName);
+        return NWorkspaceExt.of().createDependencySolver(solverName);
     }
 
     @Override
     public List<String> getSolverNames() {
-        DefaultNConfigs config = (DefaultNConfigs)NConfigs.of();
-        return config.getDependencySolverNames();
+        return NWorkspaceExt.of().getDependencySolverNames();
     }
 
     @Override

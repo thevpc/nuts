@@ -13,6 +13,7 @@ import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
+
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.io.NIO;
@@ -89,7 +90,6 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
 
     @Override
     public NWorkspaceUpdateResult getResult() {
-        NSession session = getWorkspace().currentSession();
         if (result == null) {
             checkUpdates();
         }
@@ -101,7 +101,6 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NSession session = getWorkspace().currentSession();
         NArg a = cmdLine.peek().get();
         if (a == null) {
             return false;
@@ -131,7 +130,6 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
             checkFixes();
             traceFixes();
         }
-        NSession session = getWorkspace().currentSession();
         Instant now = expireTime == null ? Instant.now() : expireTime;
         NWorkspaceExt dws = NWorkspaceExt.of();
 //        NutsWorkspaceCurrentConfig actualBootConfig = ws.config().current();
@@ -140,7 +138,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         Map<String, NUpdateResult> extUpdates = new LinkedHashMap<>();
         Map<String, NUpdateResult> regularUpdates = new HashMap<>();
         NUpdateResult apiUpdate = null;
-        NVersion bootVersion0 = session.getWorkspace().getApiVersion();
+        NVersion bootVersion0 = workspace.getApiVersion();
         NVersion bootVersion = bootVersion0;
         if (!(this.getApiVersion() == null || this.getApiVersion().isBlank())) {
             bootVersion = this.getApiVersion();
@@ -158,7 +156,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         NUpdateResult runtimeUpdate = null;
         if (this.isRuntime()) {
             if (dws.requiresRuntimeExtension()) {
-                runtimeUpdate = checkCoreUpdate(NId.of(session.getWorkspace().getRuntimeId().getShortName()).get(),
+                runtimeUpdate = checkCoreUpdate(NId.of(workspace.getRuntimeId().getShortName()).get(),
                         apiUpdate != null && apiUpdate.getAvailable() != null && apiUpdate.getAvailable().getId() != null ? apiUpdate.getAvailable().getId().getVersion()
                                 : bootVersion, Type.RUNTIME, now);
                 if (runtimeUpdate.isUpdatable()) {
@@ -217,7 +215,6 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
 
     private Set<NId> getExtensionsToUpdate() {
         Set<NId> ext = new HashSet<>();
-        NSession session = getWorkspace().currentSession();
         for (NId extension : NExtensions.of().getConfigExtensions()) {
             ext.add(extension.getShortId());
         }
@@ -250,8 +247,6 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
     }
 
     private Set<NId> getRegularIds() {
-        NSession session = getWorkspace().currentSession();
-        NWorkspace ws = session.getWorkspace();
         HashSet<String> extensions = new HashSet<>();
         for (NId object : NExtensions.of().getConfigExtensions()) {
             extensions.add(object.getShortName());
@@ -276,7 +271,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
             if (id.getShortName().equals(NConstants.Ids.NUTS_API)) {
                 continue;
             }
-            if (id.getShortName().equals(session.getWorkspace().getRuntimeId().getShortName())) {
+            if (id.getShortName().equals(workspace.getRuntimeId().getShortName())) {
                 continue;
             }
             if (extensions.contains(id.getShortName())) {
@@ -289,8 +284,6 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
 
     public NUpdateCmd checkFixes() {
         resultFixes = null;
-        NSession session = getWorkspace().currentSession();
-        NWorkspace ws = session.getWorkspace();
         NWorkspaceExt dws = NWorkspaceExt.of();
         NInstalledRepository ir = dws.getInstalledRepository();
         resultFixes = NIteratorUtils.toList(NIteratorUtils.convertNonNull(ir.searchInstallInformation(), new Function<NInstallInformation, FixAction>() {
@@ -458,7 +451,6 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         } else {
             se.addScopes(scopes.toArray(new NDependencyScope[0]));
         }
-        NSession session = getWorkspace().currentSession();
         se.setOptional(isOptional() ? null : false)
         //TODO
         //.setSession(se.session.copy().setFetchStrategy(NFetchStrategy.ONLINE))
@@ -467,7 +459,6 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
     }
 
     protected NUpdateResult checkRegularUpdate(NId id, Type type, NVersion targetApiVersion, Instant now, boolean updateEvenIfExisting) {
-        NSession session = getWorkspace().currentSession();
         NVersion version = id.getVersion();
         if (!updateEvenIfExisting && version.isSingleValue()) {
             updateEvenIfExisting = NAsk.of()
@@ -547,7 +538,6 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
     }
 
     private NFetchCmd fetch0() {
-        NSession session = getWorkspace().currentSession();
         return NFetchCmd.of().setContent(true).setEffective(true);
     }
 
@@ -644,7 +634,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
             applyRegularUpdate((DefaultNUpdateResult) component);
         }
 
-        if (NConfigs.of().save(requireSave)) {
+        if (NWorkspace.get().saveConfig(requireSave)) {
             if (_LOG().isLoggable(Level.INFO)) {
                 _LOGOP().level(Level.INFO).verb(NLogVerb.WARNING)
                         .log(NMsg.ofPlain("workspace is updated. Nuts should be restarted for changes to take effect."));
@@ -714,8 +704,8 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
 //        NutsSession sessionOffline = session.copy().setFetchMode(NutsFetchMode.OFFLINE);
         switch (type) {
             case API: {
-                oldId = NConfigs.of().stored().getApiId();
-                NId confId = NConfigs.of().stored().getApiId();
+                oldId = NWorkspace.get().getStoredConfig().getApiId();
+                NId confId = NWorkspace.get().getStoredConfig().getApiId();
                 if (confId != null) {
                     oldId = confId;
                 }
@@ -751,7 +741,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
             }
             case RUNTIME: {
                 oldId = ws.getRuntimeId();
-                NId confId = NConfigs.of().stored().getRuntimeId();
+                NId confId = NWorkspace.get().getStoredConfig().getRuntimeId();
                 if (confId != null) {
                     oldId = confId;
                 }

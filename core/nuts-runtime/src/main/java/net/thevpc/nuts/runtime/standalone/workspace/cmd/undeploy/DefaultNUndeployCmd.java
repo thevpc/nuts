@@ -26,12 +26,12 @@ public class DefaultNUndeployCmd extends AbstractNUndeployCmd {
                     .addRepositoryFilter(NRepositoryFilters.of().byName(getRepository()))
                     //skip 'installed' repository
                     .setRepositoryFilter(
-                            NRepositories.of().filter().installedRepo().neg()
+                            NRepositoryFilters.of().installedRepo().neg()
                     )
                     .setDistinct(true)
                     .failFast()
                     .getResultDefinitions().findFirst().get();
-            NRepository repository1 = NRepositories.of()
+            NRepository repository1 = workspace
                     .findRepository(p.getRepositoryUuid()).get();
             NRepositorySPI repoSPI = NWorkspaceUtils.of(workspace).repoSPI(repository1);
             repoSPI.undeploy()

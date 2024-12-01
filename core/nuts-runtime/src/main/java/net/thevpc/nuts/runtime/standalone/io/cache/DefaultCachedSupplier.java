@@ -1,8 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.io.cache;
 
-import net.thevpc.nuts.env.NLocations;
+
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.env.NStoreType;
+import net.thevpc.nuts.NWorkspace;
+
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.NLocationKey;
@@ -75,7 +77,7 @@ public class DefaultCachedSupplier<T> implements CachedSupplier<T> {
             if (key.getStoreType() != NStoreType.CACHE) {
                 throw new IllegalArgumentException("expected cache store");
             }
-            NLocations nLocations = NLocations.of();
+            NWorkspace nLocations = session.getWorkspace();
             this.elems = NElements.of();
             this.cachePath = nLocations.getStoreLocation(key.getId(), key.getStoreType(), key.getRepoUuid())
                     .resolve(nLocations.getDefaultIdFilename(key.getId().builder().setFace(key.getName() + ".value.cache").build()));

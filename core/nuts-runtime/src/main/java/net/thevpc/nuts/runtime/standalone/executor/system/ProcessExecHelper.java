@@ -2,8 +2,9 @@ package net.thevpc.nuts.runtime.standalone.executor.system;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.env.NLocations;
-import net.thevpc.nuts.env.NShellFamily;
+
+
+import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
@@ -116,7 +117,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         if (map.containsKey("nuts.jar")) {
             map.put("nuts.cmd", map.get("nuts.java") + " -jar " + map.get("nuts.jar"));
         }
-        map.put("nuts.workspace", NLocations.of().getWorkspaceLocation().toString());
+        map.put("nuts.workspace", NWorkspace.get().getWorkspaceLocation().toString());
         if (installerFile != null) {
             map.put("nuts.installer", installerFile.toString());
         }
@@ -183,7 +184,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         }
         args = args2.toArray(new String[0]);
 
-        Path wsLocation = NLocations.of().getWorkspaceLocation().toPath().get();
+        Path wsLocation = NWorkspace.get().getWorkspaceLocation().toPath().get();
         Path path = wsLocation.resolve(args[0]).normalize();
         if (Files.exists(path)) {
             NPath.of(path).addPermissions(NPathPermission.CAN_EXECUTE);

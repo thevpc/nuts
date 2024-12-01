@@ -27,7 +27,7 @@
 package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.env.NShellFamily;
+import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.spi.NComponent;
 
 /**

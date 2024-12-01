@@ -26,9 +26,9 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NUserConfig;
+import net.thevpc.nuts.NUserConfig;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
@@ -46,7 +46,6 @@ public class DefaultNAddUserCmd extends AbstractNAddUserCmd {
 
     @Override
     public NAddUserCmd run() {
-        NSession session=getWorkspace().currentSession();
         if (NBlankable.isBlank(getUsername())) {
             throw new NIllegalArgumentException(NMsg.ofPlain("invalid user"));
         }
@@ -68,7 +67,7 @@ public class DefaultNAddUserCmd extends AbstractNAddUserCmd {
                     getGroups(), getPermissions());
             security.setRemoteIdentity(getRemoteIdentity());
             security.setRemoteCredentials(CoreStringUtils.chrToStr(sec.createCredentials(getRemoteCredentials(), true, null)));
-            NConfigsExt.of(NConfigs.of()).getModel()
+            NWorkspaceExt.of(workspace).getConfigModel()
                     .setUser(security);
         }
         return this;

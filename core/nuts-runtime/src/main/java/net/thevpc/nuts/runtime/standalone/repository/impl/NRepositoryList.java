@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NSpeedQualifier;
+import net.thevpc.nuts.NSpeedQualifier;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.util.NIteratorUtils;
@@ -62,7 +62,6 @@ public class NRepositoryList extends NCachedRepository {
                             .getResult()
             );
         }
-        NSession session = workspace.currentSession();
         return NIteratorBuilder.ofCoalesce(all).build();
     }
 

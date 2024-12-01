@@ -16,15 +16,13 @@ public class DefaultWriteTypeProcessor {
     private Supplier<RuntimeException> error;
     private NLog log;
     private NConfirmationMode writeType;
-    private NSession session;
 
-    public DefaultWriteTypeProcessor(NConfirmationMode writeType, NSession session) {
+    public DefaultWriteTypeProcessor(NConfirmationMode writeType) {
         this.writeType = writeType;
-        this.session = session;
     }
 
-    public static DefaultWriteTypeProcessor of(NConfirmationMode writeType, NSession session) {
-        return new DefaultWriteTypeProcessor(writeType, session);
+    public static DefaultWriteTypeProcessor of(NConfirmationMode writeType) {
+        return new DefaultWriteTypeProcessor(writeType);
     }
 
     public DefaultWriteTypeProcessor ask(NMsg m) {

@@ -196,12 +196,12 @@ public class FilePath implements NPathSPI {
 
     @Override
     public String getContentType(NPath basePath) {
-        return NContentTypes.of().probeContentType(value);
+        return NIO.of().probeContentType(value);
     }
 
     @Override
     public String getCharset(NPath basePath) {
-        return NContentTypes.of().probeCharset(value);
+        return NIO.of().probeCharset(value);
     }
 
     @Override

@@ -9,7 +9,6 @@ import java.util.*;
 
 import net.thevpc.nuts.NIdFilter;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.id.filter.NIdFilterAnd;
 import net.thevpc.nuts.runtime.standalone.id.filter.NIdFilterOr;
 import net.thevpc.nuts.runtime.standalone.id.filter.NPatternIdFilter;
@@ -19,7 +18,7 @@ import net.thevpc.nuts.runtime.standalone.id.filter.NPatternIdFilter;
  */
 public class CommonRootsByPathHelper {
 
-    private static Set<NPath> resolveRootIdAnd(Set<NPath> a, Set<NPath> b, NSession session) {
+    private static Set<NPath> resolveRootIdAnd(Set<NPath> a, Set<NPath> b) {
         if (a == null) {
             return b;
         }
@@ -37,7 +36,7 @@ public class CommonRootsByPathHelper {
         HashSet<NPath> h = new HashSet<>();
         for (NPath path : aa) {
             for (NPath nutsPath : bb) {
-                h.add(commonRoot(path, nutsPath, session));
+                h.add(commonRoot(path, nutsPath));
             }
         }
         //TODO
@@ -94,7 +93,7 @@ public class CommonRootsByPathHelper {
         return new HashSet<>(x.values());
     }
 
-    private static NPath commonRoot(NPath a, NPath b, NSession session) {
+    private static NPath commonRoot(NPath a, NPath b) {
         boolean a_deep;
         String a_path;
         boolean b_deep;
@@ -130,7 +129,7 @@ public class CommonRootsByPathHelper {
         return NPath.of(sb.toString());
     }
 
-    private static Set<NPath> resolveRootId(String groupId, String artifactId, String version, NSession session) {
+    private static Set<NPath> resolveRootId(String groupId, String artifactId, String version) {
         String g = groupId;
         if (g == null) {
             g = "";
@@ -169,12 +168,12 @@ public class CommonRootsByPathHelper {
         return new HashSet<>(Collections.singletonList(NPath.of(g.replace('.', '/'))));
     }
 
-    public static List<NPath> resolveRootPaths(NIdFilter filter, NSession session) {
-        return new ArrayList<>(CommonRootsByPathHelper.resolveRootIds(filter, session));
+    public static List<NPath> resolveRootPaths(NIdFilter filter) {
+        return new ArrayList<>(CommonRootsByPathHelper.resolveRootIds(filter));
     }
 
-    public static Set<NPath> resolveRootIds(NIdFilter filter, NSession session) {
-        Set<NPath> v = resolveRootId0(filter, session);
+    public static Set<NPath> resolveRootIds(NIdFilter filter) {
+        Set<NPath> v = resolveRootId0(filter);
         if (v == null) {
             HashSet<NPath> s = new HashSet<>();
             s.add(NPath.of("*"));
@@ -183,7 +182,7 @@ public class CommonRootsByPathHelper {
         return v;
     }
 
-    public static Set<NPath> resolveRootId0(NIdFilter filter, NSession session) {
+    public static Set<NPath> resolveRootId0(NIdFilter filter) {
         if (filter == null) {
             return null;
         }
@@ -191,7 +190,7 @@ public class CommonRootsByPathHelper {
             NIdFilterAnd f = ((NIdFilterAnd) filter);
             Set<NPath> xx = null;
             for (NIdFilter g : f.getChildren()) {
-                xx = resolveRootIdAnd(xx, resolveRootId0(g, session), session);
+                xx = resolveRootIdAnd(xx, resolveRootId0(g));
             }
             return xx;
         }
@@ -202,15 +201,15 @@ public class CommonRootsByPathHelper {
             if (y.length == 0) {
                 return null;
             }
-            Set<NPath> xx = resolveRootId0(y[0], session);
+            Set<NPath> xx = resolveRootId0(y[0]);
             for (int i = 1; i < y.length; i++) {
-                xx = resolveRootIdOr(xx, resolveRootId0(y[i], session));
+                xx = resolveRootIdOr(xx, resolveRootId0(y[i]));
             }
             return xx;
         }
         if (filter instanceof NPatternIdFilter) {
             NPatternIdFilter f = ((NPatternIdFilter) filter);
-            return resolveRootId(f.getId().getGroupId(), f.getId().getArtifactId(), f.getId().getVersion().toString(),session);
+            return resolveRootId(f.getId().getGroupId(), f.getId().getArtifactId(), f.getId().getVersion().toString());
         }
         return null;
     }

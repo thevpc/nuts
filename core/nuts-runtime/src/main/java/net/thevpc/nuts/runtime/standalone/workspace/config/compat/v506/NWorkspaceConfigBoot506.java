@@ -26,7 +26,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config.compat.v506;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.*;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigBoot;
 
 import java.util.*;

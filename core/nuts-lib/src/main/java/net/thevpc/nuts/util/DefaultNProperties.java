@@ -1,7 +1,7 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.NDescriptorProperty;
-import net.thevpc.nuts.env.NEnvCondition;
+import net.thevpc.nuts.NEnvCondition;
 
 import java.util.*;
 

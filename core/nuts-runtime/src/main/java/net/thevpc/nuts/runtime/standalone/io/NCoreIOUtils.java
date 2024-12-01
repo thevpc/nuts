@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
-import net.thevpc.nuts.env.NBootOptions;
-import net.thevpc.nuts.env.NStoreType;
+import net.thevpc.nuts.NBootOptions;
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.time.NChronometer;

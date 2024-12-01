@@ -13,10 +13,6 @@ import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.concurrent.NLocks;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.env.NHomeLocation;
-import net.thevpc.nuts.env.NLocations;
-import net.thevpc.nuts.env.NOsFamily;
-import net.thevpc.nuts.env.NStoreType;
 import net.thevpc.nuts.expr.NExprs;
 import net.thevpc.nuts.format.*;
 import net.thevpc.nuts.io.*;
@@ -24,7 +20,6 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.spi.NDependencySolver;
-import net.thevpc.nuts.io.NPaths;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.*;
@@ -55,8 +50,8 @@ public class Test01_CreateTest {
         );
         Assertions.assertEquals(
                 NPath.of(new File(wsPath, "cache")),
-                NLocations.of().getStoreLocation(NStoreType.CACHE));
-        Assertions.assertEquals(0, NRepositories.of().getRepositories().size());
+                NWorkspace.get().getStoreLocation(NStoreType.CACHE));
+        Assertions.assertEquals(0, NWorkspace.get().getRepositories().size());
 //        Assertions.assertEquals(new File(wsPath,  "cache/" + NutsConstants.Folders.REPOSITORIES + "/" +
 //                        NRepositories.of(session).getRepositories()[0].getName() +
 //                        "/" + NRepositories.of(session).getRepositories()[0].getUuid()).getPath(),
@@ -135,14 +130,14 @@ public class Test01_CreateTest {
         }
         Assertions.assertEquals(
                 NPath.of(new File(base, new File(wsPath).getName())),
-                NLocations.of().getStoreLocation(NStoreType.CACHE));
+                NWorkspace.get().getStoreLocation(NStoreType.CACHE));
         Assertions.assertEquals(
                 NPath.of(new File(base, new File(wsPath).getName() + "/"
                         + NConstants.Folders.REPOSITORIES + "/"
-                        + NRepositories.of().getRepositories().get(0).getName()
-                        + "/" + NRepositories.of().getRepositories().get(0).getUuid()
+                        + NWorkspace.get().getRepositories().get(0).getName()
+                        + "/" + NWorkspace.get().getRepositories().get(0).getUuid()
                 )),
-                NRepositories.of().getRepositories().get(0).config().getStoreLocation(NStoreType.CACHE));
+                NWorkspace.get().getRepositories().get(0).config().getStoreLocation(NStoreType.CACHE));
     }
 
     @Test
@@ -239,10 +234,6 @@ public class Test01_CreateTest {
         }
         {
             NLocks c = NLocks.of();
-            Assertions.assertNotNull(c);
-        }
-        {
-            NPaths c = NPaths.of();
             Assertions.assertNotNull(c);
         }
         {

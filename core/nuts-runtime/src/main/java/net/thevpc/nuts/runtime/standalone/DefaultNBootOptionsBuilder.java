@@ -28,11 +28,11 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NWorkspaceCmdLineParser;
-import net.thevpc.nuts.env.*;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
+import net.thevpc.nuts.runtime.standalone.util.NDefaultClassLoaderNode;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.*;
 
@@ -422,7 +422,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     /**
      * special
      */
-    private NBootClassLoaderNode runtimeBootDependencyNode;
+    private NClassLoaderNode runtimeBootDependencyNode;
     /**
      * special
      */
@@ -430,7 +430,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     /**
      * special
      */
-    private List<NBootClassLoaderNode> extensionBootDependencyNodes;
+    private List<NClassLoaderNode> extensionBootDependencyNodes;
 
     /**
      * special
@@ -691,12 +691,12 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         return this;
     }
 
-    public NOptional<NBootClassLoaderNode> getRuntimeBootDependencyNode() {
+    public NOptional<NClassLoaderNode> getRuntimeBootDependencyNode() {
         return NOptional.of(runtimeBootDependencyNode);
     }
 
     @Override
-    public DefaultNBootOptionsBuilder setRuntimeBootDependencyNode(NBootClassLoaderNode runtimeBootDependencyNode) {
+    public DefaultNBootOptionsBuilder setRuntimeBootDependencyNode(NClassLoaderNode runtimeBootDependencyNode) {
         this.runtimeBootDependencyNode = runtimeBootDependencyNode;
         return this;
     }
@@ -711,12 +711,12 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         return this;
     }
 
-    public NOptional<List<NBootClassLoaderNode>> getExtensionBootDependencyNodes() {
+    public NOptional<List<NClassLoaderNode>> getExtensionBootDependencyNodes() {
         return NOptional.of(extensionBootDependencyNodes);
     }
 
     @Override
-    public DefaultNBootOptionsBuilder setExtensionBootDependencyNodes(List<NBootClassLoaderNode> extensionBootDependencyNodes) {
+    public DefaultNBootOptionsBuilder setExtensionBootDependencyNodes(List<NClassLoaderNode> extensionBootDependencyNodes) {
         this.extensionBootDependencyNodes = NReservedLangUtils.nonNullList(extensionBootDependencyNodes);
         return this;
     }
@@ -2520,9 +2520,9 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         this.setClassWorldLoader(other.getClassWorldLoader());
 
         this.setBootRepositories(other.getBootRepositories());
-        this.setRuntimeBootDependencyNode(other.getRuntimeBootDependencyNode());
+        this.setRuntimeBootDependencyNode(convertNode(other.getRuntimeBootDependencyNode()));
         this.setExtensionBootDescriptors(other.getExtensionBootDescriptors());
-        this.setExtensionBootDependencyNodes(other.getExtensionBootDependencyNodes());
+        this.setExtensionBootDependencyNodes(convertNodes(other.getExtensionBootDependencyNodes()));
         this.setBootWorkspaceFactory(other.getBootWorkspaceFactory());
         this.setClassWorldURLs(other.getClassWorldURLs());
         this.setClassWorldLoader(other.getClassWorldLoader());
@@ -2532,7 +2532,24 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
 
         return this;
     }
+    private List<NClassLoaderNode> convertNodes(List<NBootClassLoaderNode> dependencies) {
+        return dependencies == null ? null : dependencies.stream().map(this::convertNode).collect(Collectors.toList());
+    }
 
+    private NClassLoaderNode convertNode(NBootClassLoaderNode n) {
+        if (n == null) {
+            return null;
+        }
+        List<NBootClassLoaderNode> dependencies = n.getDependencies();
+        List<NClassLoaderNode> children = convertNodes(dependencies);
+        return new NDefaultClassLoaderNode(
+                NBlankable.isBlank(n.getId()) ? null : NId.of(n.getId()).get(),
+                n.getURL(),
+                n.isEnabled(),
+                n.isIncludedInClasspath(),
+                children == null ? null : children.toArray(new NClassLoaderNode[0])
+        );
+    }
     @Override
     public NBootOptionsBuilder setCmdLine(String cmdLine) {
         setCmdLine(NCmdLine.parseDefault(cmdLine).get().toStringArray());

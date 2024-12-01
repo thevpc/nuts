@@ -346,7 +346,6 @@ public class DefaultNCp implements NCp {
 
     @Override
     public NCp run() {
-        NSession session = workspace.currentSession();
         NAssert.requireNonBlank(source, "source");
         NAssert.requireNonBlank(target, "target");
 
@@ -499,7 +498,6 @@ public class DefaultNCp implements NCp {
     }
 
     private void copyFolderWithMonitor(Path srcBase, Path targetBase, CopyData f) {
-        NSession session = workspace.currentSession();
         long start = System.nanoTime();
         Object origin = getSourceOrigin();
         NProgressListener m = NProgressUtils.createProgressMonitor(
@@ -512,7 +510,6 @@ public class DefaultNCp implements NCp {
                 NMsg.ofNtf(srcBaseMessage)
                 , f.files + f.folders));
         try {
-            NSession finalSession = session;
             Files.walkFileTree(srcBase, new FileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
@@ -636,7 +633,6 @@ public class DefaultNCp implements NCp {
     }
 
     private void copyFolderNoMonitor(Path srcBase, Path targetBase, CopyData f) {
-        NSession session = workspace.currentSession();
         try {
             Files.walkFileTree(srcBase, new FileVisitor<Path>() {
                 @Override
@@ -673,7 +669,6 @@ public class DefaultNCp implements NCp {
     }
 
     private void copyStream() {
-        NSession session = workspace.currentSession();
         NAssert.requireNonBlank(source, "source");
         NAssert.requireNonBlank(target, "target");
         boolean safe = options.contains(NPathOption.SAFE);
@@ -887,7 +882,6 @@ public class DefaultNCp implements NCp {
             } catch (NCpValidatorException ex) {
                 throw ex;
             } catch (Exception ex) {
-                NSession session = workspace.currentSession();
                 throw new NCpValidatorException(NMsg.ofC("validate file %s failed", temp), ex);
             }
         }
@@ -900,7 +894,6 @@ public class DefaultNCp implements NCp {
             } catch (NCpValidatorException ex) {
                 throw ex;
             } catch (Exception ex) {
-                NSession session = workspace.currentSession();
                 throw new NCpValidatorException(NMsg.ofPlain("validate file failed"), ex);
             }
         }

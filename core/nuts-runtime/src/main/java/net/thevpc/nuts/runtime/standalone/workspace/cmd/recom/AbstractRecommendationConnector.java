@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.recom;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NEnvs;
+
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.clinfo.NCliInfo;
@@ -26,7 +26,6 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
         if (localUserUUID != null) {
             return localUserUUID;
         }
-        NSession session= workspace.currentSession();
         localUserUUID = NCliInfo.loadCliId(true);
         return localUserUUID;
     }
@@ -38,7 +37,6 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
     @Override
     public Map getRecommendations(RequestQueryInfo ri, NRecommendationPhase phase, boolean failure) {
         validateRequest(ri);
-        NSession session= workspace.currentSession();
         NId id = NId.of(ri.q.getId()).ifBlankEmpty().get();
         String name = phase.name().toLowerCase() + (failure ? "-failure" : "") + "-recommendations.json";
         String url = "/repo/" + ExtraApiUtils.resolveIdPath(id) + '/' + name;
@@ -50,19 +48,17 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
 
     public void validateRequest(RequestQueryInfo ri) {
         NSession session= workspace.currentSession();
-        NEnvs envs = NEnvs.of();
-        NLiteral endPointURL = envs.getProperty("nuts-endpoint-url").orNull();
+        NLiteral endPointURL = workspace.getProperty("nuts-endpoint-url").orNull();
         if (NBlankable.isBlank(ri.server)) {
             if (endPointURL == null || endPointURL.isBlank()) {
                 String defaultURL = resolveDefaultEndpointURL();
-                envs.setProperty("nuts-endpoint-url", defaultURL);
+                workspace.setProperty("nuts-endpoint-url", defaultURL);
             } else {
                 ri.server = endPointURL.asString().get();
             }
         }
-        NEnvs env = envs;
         RequestAgent agent = ri.q.getAgent();
-        NWorkspace ws = session.getWorkspace();
+        NWorkspace ws = workspace;
         if (agent.getApiVersion() == null) {
             agent.setApiVersion(ws.getApiVersion().toString());
         }
@@ -70,22 +66,22 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
             agent.setRuntimeId(ws.getRuntimeId().toString());
         }
         if (agent.getArch() == null) {
-            agent.setArch(env.getArch().toString());
+            agent.setArch(workspace.getArch().toString());
         }
         if (agent.getOs() == null) {
-            agent.setOs(env.getOs().toString());
+            agent.setOs(workspace.getOs().toString());
         }
         if (agent.getOsDist() == null) {
-            agent.setOsDist(env.getOsDist().toString());
+            agent.setOsDist(workspace.getOsDist().toString());
         }
         if (agent.getDesktop() == null) {
-            agent.setDesktop(env.getDesktopEnvironment().toString());
+            agent.setDesktop(workspace.getDesktopEnvironment().toString());
         }
         if (agent.getPlatform() == null) {
-            agent.setPlatform(env.getPlatform().toString());
+            agent.setPlatform(workspace.getPlatform().toString());
         }
         if (agent.getShell() == null) {
-            agent.setShell(env.getShellFamily().toString());
+            agent.setShell(workspace.getShellFamily().toString());
         }
         if (agent.getUserDigest() == null) {
             agent.setUserDigest(getLocalUserUUID());
@@ -118,7 +114,6 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
             }
         } else {
             try {
-                NSession session= workspace.currentSession();
                 String s = NStringUtils.trimToNull(NPath.of("https://raw.githubusercontent.com/thevpc/nuts/master/.endpoint").readString());
                 if (s != null && s.startsWith("https://")) {
                     return s;

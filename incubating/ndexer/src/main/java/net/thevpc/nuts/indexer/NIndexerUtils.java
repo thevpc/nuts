@@ -2,10 +2,8 @@ package net.thevpc.nuts.indexer;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.env.NEnvConditionBuilder;
-import net.thevpc.nuts.env.NEnvs;
-import net.thevpc.nuts.env.NLocations;
-import net.thevpc.nuts.env.NStoreType;
+import net.thevpc.nuts.NEnvConditionBuilder;
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NStringUtils;
 import org.apache.lucene.index.Term;
@@ -25,12 +23,12 @@ public class NIndexerUtils {
 
     public static Path getCacheDir(String entity) {
         String k = "NutsIndexerUtils.CACHE." + entity;
-        String m = NEnvs.of().getProperty(k).flatMap(NLiteral::asString).orNull();
+        String m = NWorkspace.get().getProperty(k).flatMap(NLiteral::asString).orNull();
         if (m == null) {
-            m = NLocations.of()
+            m = NWorkspace.get()
                     .getStoreLocation(NId.ofClass(NIndexerUtils.class).get(),
                             NStoreType.CACHE) + File.separator + entity;
-            NEnvs.of().setProperty(k, m);
+            NWorkspace.get().setProperty(k, m);
         }
         return new File(m).toPath();
     }

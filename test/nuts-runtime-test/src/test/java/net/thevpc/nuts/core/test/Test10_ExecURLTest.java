@@ -7,7 +7,8 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.env.NLocations;
+
+
 import net.thevpc.nuts.format.NVersionFormat;
 import net.thevpc.nuts.util.NAssert;
 import org.junit.jupiter.api.*;
@@ -58,7 +59,7 @@ public class Test10_ExecURLTest {
         String result = NExecCmd.of()
                 .addWorkspaceOptions(NWorkspaceOptionsBuilder.of()
                         .setBot(true)
-                        .setWorkspace(NLocations.of().getWorkspaceLocation().resolve("temp-ws").toString())
+                        .setWorkspace(NWorkspace.get().getWorkspaceLocation().resolve("temp-ws").toString())
                 )
                 //.addExecutorOption("--main-class=Version")
                 .addCommand(

@@ -25,8 +25,8 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NBootOptions;
-import net.thevpc.nuts.env.NStoreType;
+import net.thevpc.nuts.NBootOptions;
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.log.NLog;
@@ -181,10 +181,9 @@ public class DefaultNLogModel {
         if (fileHandler == null) {
             if (logConfig.getLogFileLevel() != Level.OFF) {
                 if (fileHandler == null) {
-                    NSession session = NLogUtils.resolveSession(record, workspace);
                     try {
                         fileHandler = NLogFileHandler.create(
-                                session, logConfig, true, logFolder);
+                                workspace, logConfig, true, logFolder);
                         fileHandler.setLevel(logConfig.getLogFileLevel());
                     } catch (Exception ex) {
                         Logger.getLogger(DefaultNLogs.class.getName()).log(Level.FINE, "unable to create file handler", ex);
@@ -208,9 +207,7 @@ public class DefaultNLogModel {
                     consoleHandler.setLevel(logConfig.getLogTermLevel());
                 }
             } else {
-                consoleHandler = new NLogConsoleHandler(out, false,
-                        NWorkspaceExt.of().defaultSession()
-                );
+                consoleHandler = new NLogConsoleHandler(out, false,workspace);
                 consoleHandler.setLevel(logConfig.getLogTermLevel());
             }
         }

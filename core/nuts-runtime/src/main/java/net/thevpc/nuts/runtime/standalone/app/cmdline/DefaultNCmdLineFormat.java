@@ -6,7 +6,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NCmdLineFormat;
 import net.thevpc.nuts.cmdline.NCmdLineFormatStrategy;
 import net.thevpc.nuts.cmdline.NCmdLines;
-import net.thevpc.nuts.env.NShellFamily;
+import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.shell.NShellHelper;
@@ -41,7 +41,6 @@ public class DefaultNCmdLineFormat extends DefaultFormatBase<NCmdLineFormat> imp
 
     @Override
     public NCmdLineFormat setValue(String args) {
-        NSession session=getWorkspace().currentSession();
         return setValue(args == null ? null : NCmdLines.of().parseCmdLine(args));
     }
 

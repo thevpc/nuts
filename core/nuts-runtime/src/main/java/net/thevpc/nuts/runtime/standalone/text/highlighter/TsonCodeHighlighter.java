@@ -46,7 +46,6 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
 
     @Override
     public NText stringToText(String text, NTexts txt) {
-        NSession session=workspace.currentSession();
         List<NText> all = new ArrayList<>();
         StringReaderExt ar = new StringReaderExt(text);
         while (ar.hasNext()) {
@@ -66,7 +65,7 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
                 case '\'':
                 case '"':
                 case '`': {
-                    all.addAll(Arrays.asList(parseRawString(session, txt, ar)));
+                    all.addAll(Arrays.asList(parseRawString(txt, ar)));
                     break;
                 }
                 case '0':
@@ -79,13 +78,13 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
                 case '7':
                 case '8':
                 case '9': {
-                    all.addAll(Arrays.asList(readNumber(session, txt, ar)));
+                    all.addAll(Arrays.asList(readNumber(txt, ar)));
                     break;
                 }
                 case '.':
                 case '-':
                 case '+': {
-                    NText[] d = readNumber(session, txt, ar);
+                    NText[] d = readNumber(txt, ar);
                     if (d != null) {
                         all.addAll(Arrays.asList(d));
                     } else {
@@ -95,9 +94,9 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
                 }
                 case '/': {
                     if (ar.peekChars("//")) {
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashSlashComments(session, ar)));
+                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashSlashComments(ar)));
                     } else if (ar.peekChars("/*")) {
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashStarComments(session, ar)));
+                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashStarComments(ar)));
                     } else {
                         all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                     }
@@ -105,9 +104,9 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
                 }
                 default: {
                     if (Character.isWhitespace(ar.peekChar())) {
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(session, ar)));
+                        all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(ar)));
                     } else {
-                        NText[] d = readIdentifier(session, txt, ar);
+                        NText[] d = readIdentifier(txt, ar);
                         if (d != null) {
                             if (d.length == 1 && d[0].getType() == NTextType.PLAIN) {
                                 String txt2 = ((NTextPlain) d[0]).getText();
@@ -129,7 +128,7 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
     }
 
 
-    public static String readNumberStr(NSession session, StringReaderExt ar) {
+    public static String readNumberStr(StringReaderExt ar) {
         ar.mark();
         StringBuilder sb = new StringBuilder();
         if (ar.readString("0u")) {
@@ -230,8 +229,8 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
         return sb.toString();
     }
 
-    public static NText[] readNumber(NSession session, NTexts txt, StringReaderExt ar) {
-        String s = readNumberStr(session, ar);
+    public static NText[] readNumber(NTexts txt, StringReaderExt ar) {
+        String s = readNumberStr(ar);
         if (s.length() > 0) {
             return new NText[]{
                     txt.ofStyled(s, NTextStyle.number())
@@ -269,7 +268,7 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
         return Character.isJavaIdentifierStart(c);
     }
 
-    private NText[] readIdentifier(NSession session, NTexts txt, StringReaderExt ar) {
+    private NText[] readIdentifier(NTexts txt, StringReaderExt ar) {
         List<NText> all = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
         if (!ar.hasNext() || !isIdentifierStart(ar.peekChar())) {
@@ -296,7 +295,7 @@ public class TsonCodeHighlighter implements NCodeHighlighter {
         return all.toArray(new NText[0]);
     }
 
-    public NText[] parseRawString(NSession session, NTexts txt, StringReaderExt chars) {
+    public NText[] parseRawString(NTexts txt, StringReaderExt chars) {
         List<NText> all = new ArrayList<>();
         for (String border : new String[]{
                 "\"\"\"",

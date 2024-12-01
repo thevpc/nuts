@@ -25,10 +25,10 @@
  */
 package net.thevpc.nuts.runtime.standalone;
 
-import net.thevpc.nuts.env.DefaultNEnvCondition;
+import net.thevpc.nuts.DefaultNEnvCondition;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.NEnvCondition;
-import net.thevpc.nuts.env.NEnvConditionBuilder;
+import net.thevpc.nuts.NEnvCondition;
+import net.thevpc.nuts.NEnvConditionBuilder;
 import net.thevpc.nuts.boot.NBootEnvCondition;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.reserved.NReservedUtils;

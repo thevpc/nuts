@@ -3,7 +3,6 @@ package net.thevpc.nuts.ext.ssh;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.env.*;
 import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPath;
@@ -303,7 +302,7 @@ public class RemoteConnexionStringInfo {
     }
 
     public String[] buildEffectiveCommand(String[] cmd, NRunAs runAs, String[] executionOptions, NExecCmdExtension commExec, NSession session) {
-        return NEnvs.of().buildEffectiveCommand(cmd, runAs,
+        return NWorkspace.get().buildEffectiveCommand(cmd, runAs,
                 new HashSet<NDesktopEnvironmentFamily>(),
                 s -> {
                     if (s == null) {

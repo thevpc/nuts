@@ -41,7 +41,6 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableInformationEx
         super(workspace,commandName, def.getId().getLongName(), NExecutableType.ARTIFACT, execCommand);
         this.def = def;
         this.runAs = runAs;
-        NSession session = workspace.currentSession();
         //all these information are available, an exception would be thrown if not!
         def.getContent().get();
         def.getDependencies().get();

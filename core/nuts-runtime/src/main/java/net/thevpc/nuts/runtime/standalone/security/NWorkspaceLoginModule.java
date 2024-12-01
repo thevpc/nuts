@@ -27,10 +27,10 @@ package net.thevpc.nuts.runtime.standalone.security;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.NUserConfig;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
+import net.thevpc.nuts.NUserConfig;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import com.sun.security.auth.UserPrincipal;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.*;
@@ -97,8 +97,8 @@ public class NWorkspaceLoginModule implements LoginModule {
                 this.login = name;
                 return true;
             }
-            NUserConfig registeredUser = NConfigsExt.of(NConfigs.of())
-                    .getModel()
+            NUserConfig registeredUser = NWorkspaceExt.of()
+                    .getConfigModel()
                     .getUser(name);
             if (registeredUser != null) {
                 try {

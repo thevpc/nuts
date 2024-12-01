@@ -2,10 +2,6 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.env.NOsFamily;
-import net.thevpc.nuts.env.NPlatformFamily;
-import net.thevpc.nuts.env.NPlatformHome;
-import net.thevpc.nuts.env.NStoreType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +21,7 @@ public class Test41_NPlatformHome {
 
     @Test
     public void test02() {
-        NPlatformLocation z = NPlatforms.of().findPlatformByVersion(NPlatformFamily.JAVA, "[1.8,6]").orNull();
+        NPlatformLocation z = NWorkspace.get().findPlatformByVersion(NPlatformFamily.JAVA, "[1.8,6]").orNull();
         System.out.println(z);
     }
 

@@ -45,7 +45,6 @@ public class DefaultNRepositoryUndeployCmd extends AbstractNRepositoryUndeployCm
     @Override
     public NRepositoryUndeployCmd run() {
         NSession session = getRepo().getWorkspace().currentSession();
-        NSessionUtils.checkSession(getRepo().getWorkspace(), session);
         getRepo().security().checkAllowed(NConstants.Permissions.UNDEPLOY, "undeploy");
         try {
             NRepositoryExt xrepo = NRepositoryExt.of(getRepo());

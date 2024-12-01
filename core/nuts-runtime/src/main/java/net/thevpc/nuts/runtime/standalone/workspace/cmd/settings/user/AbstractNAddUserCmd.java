@@ -214,7 +214,6 @@ public abstract class AbstractNAddUserCmd extends NWorkspaceCmdBaseRepo<NAddUser
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NSession session=getWorkspace().currentSession();
         NArg a = cmdLine.peek().get();
         if (a == null) {
             return false;

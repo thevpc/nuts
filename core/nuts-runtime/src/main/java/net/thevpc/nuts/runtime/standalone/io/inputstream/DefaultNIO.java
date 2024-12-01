@@ -2,16 +2,29 @@ package net.thevpc.nuts.runtime.standalone.io.inputstream;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
+import net.thevpc.nuts.runtime.standalone.io.path.NPathFromSPI;
+import net.thevpc.nuts.runtime.standalone.io.path.spi.FilePath;
+import net.thevpc.nuts.runtime.standalone.io.path.spi.URLPath;
 import net.thevpc.nuts.runtime.standalone.io.printstream.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
-import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.util.NBlankable;
+import net.thevpc.nuts.util.NIOUtils;
+import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NStringBuilder;
 
 import java.io.*;
+import java.net.URL;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class DefaultNIO implements NIO {
     public DefaultNWorkspaceConfigModel cmodel;
@@ -20,7 +33,7 @@ public class DefaultNIO implements NIO {
 
     public DefaultNIO(NWorkspace workspace) {
         this.workspace=workspace;
-        this.cmodel = ((DefaultNConfigs) NConfigs.of()).getModel();
+        this.cmodel = NWorkspaceExt.of().getConfigModel();
         bootModel = NWorkspaceExt.of().getModel().bootModel;
     }
 
@@ -85,7 +98,7 @@ public class DefaultNIO implements NIO {
     }
 
     private DefaultNWorkspaceConfigModel getConfigModel() {
-        return ((DefaultNConfigs) NConfigs.of()).getModel();
+        return NWorkspaceExt.of(workspace).getConfigModel();
     }
 
 
@@ -148,5 +161,322 @@ public class DefaultNIO implements NIO {
     public NIO setDefaultTerminal(NTerminal terminal) {
         cmodel.setTerminal(terminal);
         return this;
+    }
+
+    @Override
+    public NPath createPath(String path) {
+        return createPath(path, null);
+    }
+
+    @Override
+    public NPath createPath(File path) {
+        if (path == null) {
+            return null;
+        }
+        return createPath(new FilePath(path.toPath(), workspace));
+    }
+
+    @Override
+    public NPath createPath(Path path) {
+        if (path == null) {
+            return null;
+        }
+        return createPath(new FilePath(path, workspace));
+    }
+
+    @Override
+    public NPath createPath(URL path) {
+        if (path == null) {
+            return null;
+        }
+        return createPath(new URLPath(path, workspace));
+    }
+
+    @Override
+    public NPath createPath(String path, ClassLoader classLoader) {
+        if (path == null || path.trim().isEmpty()) {
+            return null;
+        }
+        NPath p = getConfigModel().resolve(path, classLoader);
+        if (p == null) {
+            throw new NIllegalArgumentException(NMsg.ofC("unable to resolve path from %s", path));
+        }
+        return p;
+    }
+
+    @Override
+    public NPath createPath(NPathSPI path) {
+        if (path == null) {
+            return null;
+        }
+        return new NPathFromSPI(workspace, path);
+    }
+
+    @Override
+    public NIO addPathFactory(NPathFactorySPI pathFactory) {
+        getConfigModel().addPathFactory(pathFactory);
+        return this;
+    }
+
+    @Override
+    public NIO removePathFactory(NPathFactorySPI pathFactory) {
+        getConfigModel().removePathFactory(pathFactory);
+        return this;
+    }
+
+    public NPath ofTempFile(String name) {
+        return createAnyTempFile(name, false, null);
+    }
+
+    @Override
+    public NPath ofTempFolder(String name) {
+        return createAnyTempFile(name, true, null);
+    }
+
+    @Override
+    public NPath ofTempFile() {
+        return createAnyTempFile(null, false, null);
+    }
+
+    @Override
+    public NPath ofTempFolder() {
+        return createAnyTempFile(null, true, null);
+    }
+
+
+    public NPath ofTempRepositoryFile(String name, NRepository repository) {
+        return createAnyTempFile(name, false, repository);
+    }
+
+    @Override
+    public NPath ofTempRepositoryFolder(String name, NRepository repository) {
+        return createAnyTempFile(name, true, repository);
+    }
+
+    @Override
+    public NPath ofTempRepositoryFile(NRepository repository) {
+        return createAnyTempFile(null, false, repository);
+    }
+
+    @Override
+    public NPath ofTempRepositoryFolder(NRepository repository) {
+        return createAnyTempFile(null, true, repository);
+    }
+
+
+    public NPath createAnyTempFile(String name, boolean folder, NRepository repositoryId) {
+        NPath rootFolder = null;
+        NRepository repositoryById = null;
+        NSession session = workspace.currentSession();
+        if (repositoryId == null) {
+            rootFolder = NWorkspace.get().getStoreLocation(NStoreType.TEMP);
+        } else {
+            repositoryById = repositoryId;
+            rootFolder = repositoryById.config().getStoreLocation(NStoreType.TEMP);
+        }
+        NId appId = NApp.of().getId().orElseGet(()->session.getWorkspace().getRuntimeId());
+        if (appId != null) {
+            rootFolder = rootFolder.resolve(NConstants.Folders.ID).resolve(NWorkspace.get().getDefaultIdBasedir(appId));
+        }
+        if (name == null) {
+            name = "";
+        }
+        rootFolder.mkdirs();
+        NStringBuilder ext = new NStringBuilder(NIOUtils.getFileExtension(name, false, true));
+        NStringBuilder prefix = new NStringBuilder((ext.length() > 0) ? name.substring(0, name.length() - ext.length()) : name);
+        if (ext.isEmpty() && prefix.isEmpty()) {
+            prefix.append("nuts-");
+            if (!folder) {
+                ext.append(".tmp");
+            }
+        } else if (ext.isEmpty()) {
+            if (!folder) {
+                ext.append("-tmp");
+            }
+        } else if (prefix.isEmpty()) {
+            prefix.append(ext);
+            ext.clear();
+            ext.append("-tmp");
+        }
+        if (!prefix.endsWith("-")) {
+            prefix.append('-');
+        }
+        if (prefix.length() < 3) {
+            if (prefix.length() < 3) {
+                prefix.append('A');
+                if (prefix.length() < 3) {
+                    prefix.append('B');
+                }
+            }
+        }
+
+        if (folder) {
+            for (int i = 0; i < 15; i++) {
+                File temp = null;
+                try {
+                    temp = File.createTempFile(prefix.toString(), ext.toString(), rootFolder.toFile().get());
+                    if (temp.delete() && temp.mkdir()) {
+                        return NPath.of(temp.toPath())
+                                .setUserTemporary(true);
+                    }
+                } catch (IOException ex) {
+                    //
+                }
+            }
+            throw new NIOException(NMsg.ofC("could not create temp directory: %s*%s", rootFolder + File.separator + prefix, ext));
+        } else {
+            try {
+                return NPath.of(File.createTempFile(prefix.toString(), ext.toString(), rootFolder.toFile().get()).toPath())
+                        .setUserTemporary(true);
+            } catch (IOException e) {
+                throw new NIOException(e);
+            }
+        }
+    }
+
+    @Override
+    public String probeContentType(Path path) {
+        return probeContentType(path == null ? null : NPath.of(path));
+    }
+
+    @Override
+    public String probeContentType(File path) {
+        return probeContentType(path == null ? null : NPath.of(path));
+    }
+
+    @Override
+    public String probeContentType(URL path) {
+        return probeContentType(path == null ? null : NPath.of(path));
+    }
+
+    @Override
+    public String probeContentType(NPath path) {
+        List<NContentTypeResolver> allSupported = NExtensions.of()
+                .createComponents(NContentTypeResolver.class, path);
+        NCallableSupport<String> best = null;
+        for (NContentTypeResolver r : allSupported) {
+            NCallableSupport<String> s = r.probeContentType(path);
+            if (s != null && s.isValid()) {
+                if (best == null || s.getSupportLevel() > best.getSupportLevel()) {
+                    best = s;
+                }
+            }
+        }
+        if (best == null) {
+            return null;
+        }
+        return best.call();
+    }
+
+    @Override
+    public List<String> findExtensionsByContentType(String contentType) {
+        List<NContentTypeResolver> allSupported = NExtensions.of()
+                .createComponents(NContentTypeResolver.class, null);
+        LinkedHashSet<String> all = new LinkedHashSet<>();
+        for (NContentTypeResolver r : allSupported) {
+            List<String> s = r.findExtensionsByContentType(contentType);
+            if (s != null) {
+                all.addAll(s.stream().filter(x->!NBlankable.isBlank(x)).collect(Collectors.toList()));
+            }
+        }
+        return new ArrayList<>(all);
+    }
+
+    @Override
+    public List<String> findContentTypesByExtension(String extension) {
+        List<NContentTypeResolver> allSupported = NExtensions.of()
+                .createComponents(NContentTypeResolver.class, null);
+        LinkedHashSet<String> all = new LinkedHashSet<>();
+        for (NContentTypeResolver r : allSupported) {
+            List<String> s = r.findContentTypesByExtension(extension);
+            if (s != null) {
+                all.addAll(s.stream().filter(NBlankable::isBlank).collect(Collectors.toList()));
+            }
+        }
+        return new ArrayList<>(all);
+    }
+
+    @Override
+    public String probeContentType(InputStream stream) {
+        byte[] buffer = NIOUtils.readBestEffort(4096, stream);
+        return probeContentType(buffer);
+    }
+
+    @Override
+    public String probeContentType(byte[] bytes) {
+        List<NContentTypeResolver> allSupported = NExtensions.of()
+                .createComponents(NContentTypeResolver.class, bytes);
+        NCallableSupport<String> best = null;
+        for (NContentTypeResolver r : allSupported) {
+            NCallableSupport<String> s = r.probeContentType(bytes);
+            if (s != null && s.isValid()) {
+                if (best == null || s.getSupportLevel() > best.getSupportLevel()) {
+                    best = s;
+                }
+            }
+        }
+        if (best == null) {
+            return null;
+        }
+        return best.call();
+    }
+
+    @Override
+    public String probeCharset(URL path) {
+        return probeCharset(path == null ? null : NPath.of(path));
+    }
+
+    @Override
+    public String probeCharset(File path) {
+        return probeCharset(path == null ? null : NPath.of(path));
+    }
+
+    @Override
+    public String probeCharset(Path path) {
+        return probeCharset(path == null ? null : NPath.of(path));
+    }
+
+    @Override
+    public String probeCharset(NPath path) {
+        List<NCharsetResolver> allSupported = NExtensions.of()
+                .createComponents(NCharsetResolver.class, path);
+        NCallableSupport<String> best = null;
+        for (NCharsetResolver r : allSupported) {
+            NCallableSupport<String> s = r.probeCharset(path);
+            if (s != null && s.isValid()) {
+                if (best == null || s.getSupportLevel() > best.getSupportLevel()) {
+                    best = s;
+                }
+            }
+        }
+        if (best == null) {
+            return null;
+        }
+        return best.call();
+    }
+
+    @Override
+    public String probeCharset(InputStream stream) {
+        byte[] buffer = NIOUtils.readBestEffort(4096*10, stream);
+        return probeCharset(buffer);
+    }
+
+    @Override
+    public String probeCharset(byte[] bytes) {
+        List<NCharsetResolver> allSupported = NExtensions.of()
+                .createComponents(NCharsetResolver.class, bytes);
+        NCallableSupport<String> best = null;
+        for (NCharsetResolver r : allSupported) {
+            NCallableSupport<String> s = r.probeCharset(bytes);
+            if (s != null && s.isValid()) {
+                if (best == null || s.getSupportLevel() > best.getSupportLevel()) {
+                    best = s;
+                }
+            }
+        }
+        if (best == null) {
+            return null;
+        }
+        return best.call();
     }
 }

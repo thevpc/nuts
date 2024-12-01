@@ -28,8 +28,9 @@ package net.thevpc.nuts.runtime.standalone.installer;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.env.NLocations;
-import net.thevpc.nuts.env.NStoreType;
+
+
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.util.UnzipOptions;
@@ -65,7 +66,7 @@ public class ZipInstallerComponent implements NInstallerComponent {
     @Override
     public void install(NExecutionContext executionContext) {
         DefaultNDefinition nutsDefinition = (DefaultNDefinition) executionContext.getDefinition();
-        NPath installFolder = NLocations.of().getStoreLocation(nutsDefinition.getId(), NStoreType.BIN);
+        NPath installFolder = NWorkspace.get().getStoreLocation(nutsDefinition.getId(), NStoreType.BIN);
         NCmdLine cmd = NCmdLine.of(executionContext.getArguments());
         UnzipOptions unzipOptions = new UnzipOptions();
         while (cmd.hasNext()) {

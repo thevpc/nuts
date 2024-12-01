@@ -27,12 +27,12 @@ package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.env.NEnvs;
+
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
-import net.thevpc.nuts.env.NArchFamily;
+import net.thevpc.nuts.NArchFamily;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,9 +81,9 @@ public class UnameCommand extends NShellBuiltinDefault {
         NSession session = context.getSession();
 
         Result rr = new Result();
-        rr.osDist = NEnvs.of().getOsDist();
-        rr.os = NEnvs.of().getOs();
-        rr.arch = NEnvs.of().getArchFamily();
+        rr.osDist = NWorkspace.get().getOsDist();
+        rr.os = NWorkspace.get().getOs();
+        rr.arch = NWorkspace.get().getArchFamily();
         if (!config.farch && !config.fos && !config.fdist) {
             config.farch = true;
             config.fos = true;

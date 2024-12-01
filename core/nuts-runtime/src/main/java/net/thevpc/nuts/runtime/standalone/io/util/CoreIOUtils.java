@@ -25,8 +25,9 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NLocations;
-import net.thevpc.nuts.env.NStoreType;
+
+
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.io.*;
@@ -335,7 +336,7 @@ public class CoreIOUtils {
 
     public static InputStream getCachedUrlWithSHA1(String path, String sourceTypeName, boolean ignoreSha1NotFound) {
         NWorkspace workspace=NWorkspace.of().get();
-        final NPath cacheBasePath = NLocations.of().getStoreLocation(workspace.getRuntimeId(), NStoreType.CACHE);
+        final NPath cacheBasePath = NWorkspace.get().getStoreLocation(workspace.getRuntimeId(), NStoreType.CACHE);
         final NPath urlContent = cacheBasePath.resolve("urls-content");
         String sha1 = null;
         try {
@@ -546,10 +547,9 @@ public class CoreIOUtils {
             NPath pp = NPath.of(temp);
             String ext = pp.getLastExtension();
             if (ext.isEmpty()) {
-                NContentTypes ctt = NContentTypes.of();
-                String ct = ctt.probeContentType(temp);
+                String ct = NIO.of().probeContentType(temp);
                 if (ct != null) {
-                    List<String> e = ctt.findExtensionsByContentType(ct);
+                    List<String> e = NIO.of().findExtensionsByContentType(ct);
                     if (!e.isEmpty()) {
                         NPath newFile = NPath.ofTempFile(name + "." + e.get(0));
                         Path newFilePath = newFile.toPath().get();

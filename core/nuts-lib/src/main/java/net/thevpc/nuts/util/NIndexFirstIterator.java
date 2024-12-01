@@ -25,12 +25,10 @@ public class NIndexFirstIterator<T> extends NIteratorBase<T> {
     private long readFromIndex;
     private T nextItem;
     private boolean hasNextItem;
-    private NSession session;
 
-    public NIndexFirstIterator(Iterator<T> index, Iterator<T> other, NSession session) {
+    public NIndexFirstIterator(Iterator<T> index, Iterator<T> other) {
         this.index = index;
         this.other = other;
-        this.session = session;
     }
 
     @Override

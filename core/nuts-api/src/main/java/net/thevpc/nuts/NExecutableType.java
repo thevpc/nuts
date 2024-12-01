@@ -25,6 +25,7 @@
  */
 package net.thevpc.nuts;
 
+
 import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
@@ -45,7 +46,7 @@ public enum NExecutableType implements NEnum {
 
     /**
      * workspace configured command using
-     * {@link NCommands#addCommand(NCommandConfig)}
+     * {@link NEnvs#addCommand(NCommandConfig)}
      */
     ALIAS,
 

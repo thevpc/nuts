@@ -63,8 +63,6 @@ public class DefaultNFetchContentRepositoryCmd extends AbstractNFetchContentRepo
     @Override
     public NFetchContentRepositoryCmd run() {
         NRepository repo = getRepo();
-        NSession session = repo.getWorkspace().currentSession();
-        NSessionUtils.checkSession(repo.getWorkspace(), session);
         NDescriptor descriptor0 = descriptor;
         if (descriptor0 == null) {
             NRepositorySPI repoSPI = NWorkspaceUtils.of(getRepo().getWorkspace()).repoSPI(repo);

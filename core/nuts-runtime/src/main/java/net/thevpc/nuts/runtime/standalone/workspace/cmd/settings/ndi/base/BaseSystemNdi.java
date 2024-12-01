@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.*;
@@ -37,7 +36,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public NdiScriptInfo[] getSysRC(NdiScriptOptions options) {
         List<NdiScriptInfo> scriptInfos = new ArrayList<>();
         Set<String> visited = new LinkedHashSet<>();
-        for (NShellFamily sf : NEnvs.of().getShellFamilies()) {
+        for (NShellFamily sf : NWorkspace.get().getShellFamilies()) {
             String z = NShellHelper.of(sf).getSysRcName();
             if (!visited.contains(z)) {
                 visited.add(z);
@@ -276,7 +275,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public PathInfo[] addScript(NdiScriptOptions options, String[] all) {
         List<String> idsToInstall = Arrays.asList(all);
         NSession session = workspace.currentSession();
-        Path workspaceLocation = NLocations.of().getWorkspaceLocation().toPath().get();
+        Path workspaceLocation = NWorkspace.get().getWorkspaceLocation().toPath().get();
         List<PathInfo> result = new ArrayList<>();
         Boolean systemWideConfig = options.getLauncher().getSwitchWorkspace();
         if (!idsToInstall.isEmpty()) {
@@ -422,7 +421,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     public NSupportMode getDesktopIntegrationSupport(NDesktopIntegrationItem target) {
-        return NEnvs.of().getDesktopIntegrationSupport(target);
+        return NWorkspace.get().getDesktopIntegrationSupport(target);
     }
 
     protected boolean matchCondition(NSupportMode createDesktop, NSupportMode desktopIntegrationSupport) {
@@ -437,7 +436,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     public NWorkspaceBootConfig loadSwitchWorkspaceLocationConfig(String switchWorkspaceLocation) {
-        NWorkspaceBootConfig bootConfig = NConfigs.of().loadBootConfig(switchWorkspaceLocation, false, true);
+        NWorkspaceBootConfig bootConfig = NWorkspace.get().loadBootConfig(switchWorkspaceLocation, false, true);
         if (bootConfig == null) {
             throw new NIllegalArgumentException(NMsg.ofC("invalid workspace: %s", switchWorkspaceLocation));
         }
@@ -760,7 +759,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             NPath p0 = NPath.of(descAppIcon);
             descAppIcon=toAbsoluteIconPath(appId, descAppIcon);
             String bestName = descAppIconDigest + "." + p0.getLastExtension();
-            NPath localIconPath = NLocations.of().getStoreLocation(appDef.getId(), NStoreType.CACHE)
+            NPath localIconPath = NWorkspace.get().getStoreLocation(appDef.getId(), NStoreType.CACHE)
                     .resolve("icons")
                     .resolve(bestName);
             if (localIconPath.isRegularFile()) {

@@ -18,11 +18,9 @@ public class DirectoryScanner {
 //    private Pattern pattern;
     private PathPart[] parts;
 //    private DirectoryScannerFS fs;
-    private NSession session;
 
-    public DirectoryScanner(NPath pattern, NSession session) {
+    public DirectoryScanner(NPath pattern) {
         this.initialPattern = pattern.toAbsolute().normalize();
-        this.session = session;
         parts = buildParts(initialPattern);
     }
 

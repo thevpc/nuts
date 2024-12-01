@@ -40,7 +40,6 @@ public abstract class NWorkspaceCmdBase<T extends NWorkspaceCmd> implements NWor
     }
 
     protected NLog _LOG() {
-        NSession session = workspace.currentSession();
         return NLog.of(getClass());
     }
 

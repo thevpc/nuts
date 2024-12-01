@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.shell;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NShellFamily;
+import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathPermission;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;

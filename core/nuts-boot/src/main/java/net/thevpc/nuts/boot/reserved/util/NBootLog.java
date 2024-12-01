@@ -75,6 +75,16 @@ public class NBootLog {
         cachedFileLogLevel = Level.OFF.intValue();
     }
 
+    public void error(NBootMsg message, Throwable e) {
+        log(Level.SEVERE, "FAIL",message,e);
+    }
+    public void warn(NBootMsg message) {
+        log(Level.WARNING, "WARNING",message);
+    }
+
+    public void error(NBootMsg message) {
+        log(Level.SEVERE, "FAIL",message);
+    }
     public void log(Level lvl, String logVerb, NBootMsg message) {
         if (isLoggableTerm(lvl)) {
             doLogTerm(lvl, logVerb, message == null ? "" : message.toString());

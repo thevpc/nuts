@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.repository.index;
 
-import net.thevpc.nuts.env.NEnvs;
+
 import net.thevpc.nuts.NId;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.util.NStream;
@@ -26,10 +26,10 @@ public class ArtifactsIndexDB {
 
     public static ArtifactsIndexDB of() {
         synchronized (NWorkspace.get()) {
-            ArtifactsIndexDB o = (ArtifactsIndexDB) NEnvs.of().getProperties().get(ArtifactsIndexDB.class.getName());
+            ArtifactsIndexDB o = (ArtifactsIndexDB) NWorkspace.get().getProperties().get(ArtifactsIndexDB.class.getName());
             if (o == null) {
                 o = new ArtifactsIndexDB(DEFAULT_ARTIFACT_TABLE_NAME, CacheDB.of());
-                NEnvs.of().getProperties().put(ArtifactsIndexDB.class.getName(), o);
+                NWorkspace.get().getProperties().put(ArtifactsIndexDB.class.getName(), o);
             }
             return o;
         }

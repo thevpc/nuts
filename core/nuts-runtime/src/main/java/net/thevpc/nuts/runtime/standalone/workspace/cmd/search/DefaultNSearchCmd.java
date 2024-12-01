@@ -26,7 +26,8 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.search;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.NImports;
+
+
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
@@ -71,7 +72,6 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
 
     @Override
     public NFetchCmd toFetch() {
-        NSession session=getWorkspace().currentSession();
         NFetchCmd t = new DefaultNFetchCmd(getWorkspace()).copyFromDefaultNQueryBaseOptions(this)
                 ;
         if (getDisplayOptions().isRequireDefinition()) {
@@ -203,7 +203,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
         NDescriptorFilter _descriptorFilter = dfilter.always();
         NIdFilter _idFilter = NIdFilters.of().always();
         NDependencyFilter depFilter = NDependencyFilters.of().always();
-        NRepositoryFilter rfilter = NRepositories.of().filter().always();
+        NRepositoryFilter rfilter = NRepositoryFilters.of().always();
         for (String j : this.getScripts()) {
             if (!NBlankable.isBlank(j)) {
                 if (CoreStringUtils.containsTopWord(j, "descriptor")) {
@@ -564,7 +564,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                             if (!installedIds.isEmpty()) {
                                 nutsId2.addAll(installedIds);
                             } else {
-                                for (String aImport : NImports.of().getAllImports()) {
+                                for (String aImport : NWorkspace.get().getAllImports()) {
                                     //example import(net.thevpc),search(pnote) ==>net.thevpc:pnote
                                     nutsId2.add(nutsId.builder().setGroupId(aImport).build());
                                     //example import(net.thevpc),search(pnote) ==>net.thevpc.pnote:pnote
@@ -827,7 +827,6 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
     private NIterator<NId> filterLatestAndDuplicatesThenSort(NIterator<NId> baseIterator, boolean latest, boolean distinct, boolean sort) {
         //ff ft tt tf
         NIterator<NId> r;
-        NSession session=getWorkspace().currentSession();
         if (!latest && !distinct) {
             r = baseIterator;
         } else if (!latest && distinct) {

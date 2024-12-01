@@ -28,9 +28,9 @@ package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NBootDescriptor;
-import net.thevpc.nuts.env.NEnvCondition;
-import net.thevpc.nuts.env.NEnvConditionBuilder;
-import net.thevpc.nuts.env.NIdLocation;
+import net.thevpc.nuts.NEnvCondition;
+import net.thevpc.nuts.NEnvConditionBuilder;
+import net.thevpc.nuts.NIdLocation;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.reserved.NReservedLangUtils;

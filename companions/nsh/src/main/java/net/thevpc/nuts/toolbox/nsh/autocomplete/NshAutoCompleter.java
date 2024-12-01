@@ -5,7 +5,7 @@ import net.thevpc.nuts.cmdline.DefaultNArgCandidate;
 import net.thevpc.nuts.cmdline.NArgCandidate;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
-import net.thevpc.nuts.env.NEnvs;
+
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellContext;
 import net.thevpc.nuts.util.NBlankable;
@@ -25,7 +25,7 @@ public class NshAutoCompleter implements NCmdLineAutoCompleteResolver {
     public List<NArgCandidate> resolveCandidates(NCmdLine cmdLine, int wordIndex) {
         List<NArgCandidate> candidates = new ArrayList<>();
         NSession session=workspace.currentSession();
-        NShellContext fileContext = (NShellContext) NEnvs.of().getProperties().get(NShellContext.class.getName());
+        NShellContext fileContext = (NShellContext) NWorkspace.get().getProperties().get(NShellContext.class.getName());
 
         if (wordIndex == 0) {
             for (NShellBuiltin command : fileContext.builtins().getAll()) {

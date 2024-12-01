@@ -200,8 +200,11 @@ public class NLogUtils {
         if (record instanceof NLogRecord){
             session=((NLogRecord) record).getSession();
         }
+        if(session==null && ws!=null){
+            session= ws.currentSession();
+        }
         if(session==null){
-            session= NWorkspaceExt.of().defaultSession();
+            session= NWorkspace.get().currentSession();
         }
         return session;
     }

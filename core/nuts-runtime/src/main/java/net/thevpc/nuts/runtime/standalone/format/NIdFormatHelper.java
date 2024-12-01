@@ -30,12 +30,11 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NEnvs;
-import net.thevpc.nuts.env.NLocations;
-import net.thevpc.nuts.env.NStoreType;
-import net.thevpc.nuts.env.NUserConfig;
+
+
+import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.NUserConfig;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
@@ -158,47 +157,47 @@ public class NIdFormatHelper {
     }
 
     private static FormatHelper getFormatHelper(NWorkspace workspace) {
-        FormatHelper h = (FormatHelper) NEnvs.of().getProperties().get(FormatHelper.class.getName());
+        FormatHelper h = (FormatHelper) NWorkspace.get().getProperties().get(FormatHelper.class.getName());
         if (h != null) {
             return h;
         }
-        FormatHelperResetListener h2 = (FormatHelperResetListener) NEnvs.of()
+        FormatHelperResetListener h2 = (FormatHelperResetListener) workspace
                 .getProperty(FormatHelperResetListener.class.getName())
                 .map(NLiteral::getRaw).orNull()
                 ;
         if (h2 == null) {
             h2 = new FormatHelperResetListener();
-            NEvents.of().addWorkspaceListener(h2);
+            workspace.addWorkspaceListener(h2);
         }
         h = new FormatHelper(workspace);
-        NEnvs.of().setProperty(FormatHelper.class.getName(), h);
+        NWorkspace.get().setProperty(FormatHelper.class.getName(), h);
         return h;
     }
 
     public static class FormatHelperResetListener implements NWorkspaceListener, NRepositoryListener {
 
-        private void _onReset(NSession session) {
-            NEnvs.of().setProperty(FormatHelper.class.getName(), null);
+        private void _onReset() {
+            NWorkspace.get().setProperty(FormatHelper.class.getName(), null);
         }
 
         @Override
         public void onAddRepository(NWorkspaceEvent event) {
-            _onReset(event.getSession());
+            _onReset();
         }
 
         @Override
         public void onRemoveRepository(NWorkspaceEvent event) {
-            _onReset(event.getSession());
+            _onReset();
         }
 
         @Override
         public void onReloadWorkspace(NWorkspaceEvent event) {
-            _onReset(event.getSession());
+            _onReset();
         }
 
         @Override
         public void onCreateWorkspace(NWorkspaceEvent event) {
-            _onReset(event.getSession());
+            _onReset();
         }
 
         @Override
@@ -208,22 +207,22 @@ public class NIdFormatHelper {
 
         @Override
         public void onAddRepository(NRepositoryEvent event) {
-            _onReset(event.getSession());
+            _onReset();
         }
 
         @Override
         public void onRemoveRepository(NRepositoryEvent event) {
-            _onReset(event.getSession());
+            _onReset();
         }
 
         @Override
         public void onConfigurationChanged(NRepositoryEvent event) {
-            _onReset(event.getSession());
+            _onReset();
         }
 
         @Override
         public void onConfigurationChanged(NWorkspaceEvent event) {
-            _onReset(event.getSession());
+            _onReset();
         }
     }
 
@@ -244,7 +243,7 @@ public class NIdFormatHelper {
             }
             int z = 0;
             Stack<NRepository> stack = new Stack<>();
-            for (NRepository repository : NRepositories.of()
+            for (NRepository repository : workspace
                     .getRepositories()) {
                 stack.push(repository);
             }
@@ -269,8 +268,7 @@ public class NIdFormatHelper {
                 return maxUserNameSize;
             }
             int z = "anonymous".length();
-            NConfigsExt wc = NConfigsExt.of(NConfigs.of());
-            NUserConfig[] users = wc.getModel().getStoredConfigSecurity().getUsers();
+            NUserConfig[] users = NWorkspaceExt.of(workspace).getConfigModel().getStoredConfigSecurity().getUsers();
             if (users != null) {
                 for (NUserConfig user : users) {
                     String s = user.getUser();
@@ -280,7 +278,7 @@ public class NIdFormatHelper {
                 }
             }
             Stack<NRepository> stack = new Stack<>();
-            for (NRepository repository : NRepositories.of().getRepositories()) {
+            for (NRepository repository : workspace.getRepositories()) {
                 stack.push(repository);
             }
             while (!stack.isEmpty()) {
@@ -433,7 +431,7 @@ public class NIdFormatHelper {
                         rname = def.getRepositoryName();
                     }
                     if (def.getRepositoryUuid() != null) {
-                        NRepository r = NRepositories.of()
+                        NRepository r = workspace
                                 .findRepositoryById(def.getRepositoryUuid()).orNull();
                         if (r != null) {
                             rname = r.getName();
@@ -454,7 +452,7 @@ public class NIdFormatHelper {
                 }
                 if (ruuid == null && id != null) {
                     String p = id.getRepository();
-                    NRepository r = NRepositories.of()
+                    NRepository r = workspace
                             .findRepositoryByName(p).orNull();
                     if (r != null) {
                         ruuid = r.getUuid();
@@ -470,43 +468,43 @@ public class NIdFormatHelper {
             }
             case CACHE_FOLDER: {
                 if (def != null) {
-                    return stringValue(NLocations.of().getStoreLocation(def.getId(), NStoreType.CACHE));
+                    return stringValue(NWorkspace.get().getStoreLocation(def.getId(), NStoreType.CACHE));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case CONF_FOLDER: {
                 if (def != null) {
-                    return stringValue(NLocations.of().getStoreLocation(def.getId(), NStoreType.CONF));
+                    return stringValue(NWorkspace.get().getStoreLocation(def.getId(), NStoreType.CONF));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case LIB_FOLDER: {
                 if (def != null) {
-                    return stringValue(NLocations.of().getStoreLocation(def.getId(), NStoreType.LIB));
+                    return stringValue(NWorkspace.get().getStoreLocation(def.getId(), NStoreType.LIB));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case LOG_FOLDER: {
                 if (def != null) {
-                    return stringValue(NLocations.of().getStoreLocation(def.getId(), NStoreType.LOG));
+                    return stringValue(NWorkspace.get().getStoreLocation(def.getId(), NStoreType.LOG));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case TEMP_FOLDER: {
                 if (def != null) {
-                    return stringValue(NLocations.of().getStoreLocation(def.getId(), NStoreType.TEMP));
+                    return stringValue(NWorkspace.get().getStoreLocation(def.getId(), NStoreType.TEMP));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case VAR_LOCATION: {
                 if (def != null) {
-                    return stringValue(NLocations.of().getStoreLocation(def.getId(), NStoreType.VAR));
+                    return stringValue(NWorkspace.get().getStoreLocation(def.getId(), NStoreType.VAR));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case BIN_FOLDER: {
                 if (def != null) {
-                    return stringValue(NLocations.of().getStoreLocation(def.getId(), NStoreType.BIN));
+                    return stringValue(NWorkspace.get().getStoreLocation(def.getId(), NStoreType.BIN));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }

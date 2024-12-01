@@ -78,7 +78,6 @@ public abstract class NRepositoryCmdBase<T extends NRepositoryCmd> implements NR
         }
 //        switch(a.key()) {
 //        }
-        NSession session = repo.getWorkspace().currentSession();
         if (configureFirst(cmdLine)) {
             return true;
         }

@@ -10,7 +10,7 @@ import net.thevpc.nuts.build.util.Mvn;
 import net.thevpc.nuts.build.util.MvnArtifactType;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.env.NBootManager;
+
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.text.NTextStyle;
@@ -124,7 +124,7 @@ public class SiteRunner extends AbstractRunner {
                 .setBuildWebSite(true)
                 .setStartWebSite(false)
                 .setBuildPdf(true)
-                .setAutoInstallNutsPackages(NBootManager.of()
+                .setAutoInstallNutsPackages(NWorkspace.get()
                         .getBootOptions().getConfirm().orElse(NConfirmationMode.ASK) == NConfirmationMode.YES)
                 .setVars(prepareVars());
 

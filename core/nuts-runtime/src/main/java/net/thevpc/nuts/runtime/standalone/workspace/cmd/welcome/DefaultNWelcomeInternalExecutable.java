@@ -8,7 +8,8 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.welcome;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.env.NLocations;
+
+
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
@@ -69,7 +70,7 @@ public class DefaultNWelcomeInternalExecutable extends DefaultInternalNExecutabl
             welcome.put("api-version", session.getWorkspace().getApiVersion());
             welcome.put("runtime-id", session.getWorkspace().getRuntimeId().builder().setVersion("").build());
             welcome.put("runtime-version", session.getWorkspace().getRuntimeId().getVersion());
-            welcome.put("workspace", NLocations.of().getWorkspaceLocation());
+            welcome.put("workspace", NWorkspace.get().getWorkspaceLocation());
             welcome.put("hash-name", NPath.of(session.getWorkspace().getHashName()));
             if (session.isPlainOut()) {
                 session = session.copy().setOutputFormat(NContentType.PROPS);

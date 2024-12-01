@@ -26,8 +26,9 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.search;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.NLocations;
-import net.thevpc.nuts.env.NStoreType;
+
+
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -95,7 +96,6 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NSearchCmd addId(String id) {
-        NSession session=getWorkspace().currentSession();
         if (!NBlankable.isBlank(id)) {
             ids.add(NId.of(id).get());
         }
@@ -741,7 +741,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     @Override
     public NStream<NPath> getResultStoreLocations(NStoreType location) {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
-                .map(NFunction.of((NDefinition x) -> NLocations.of().getStoreLocation(x.getId(), location))
+                .map(NFunction.of((NDefinition x) -> NWorkspace.get().getStoreLocation(x.getId(), location))
                         .withDesc(NEDesc.of("getStoreLocation(" + location.id() + ")"))
                 )
                 .notNull());
@@ -1299,7 +1299,14 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
                 .map(NFunction.of((NId next) -> {
 //                    NutsDefinition d = null;
 //                    if (isContent()) {
-                    NDefinition d = fetch.setId(next).getResultDefinition();
+                    NDefinition d=null;
+                    try {
+                        d = fetch.setId(next).getResultDefinition();
+                    }catch (NNotFoundException e){
+                        if(next.toDependency().isOptional()){
+                            return null;
+                        }
+                    }
                     if (d == null) {
                         if (isFailFast()) {
                             throw new NNotFoundException(next);

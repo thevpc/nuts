@@ -1,8 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NLocations;
-import net.thevpc.nuts.env.NStoreType;
+
+
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.NPathSPIHelper;
@@ -144,7 +145,6 @@ public class NPathFromSPI extends NPathBase {
         try (OutputStream os = getOutputStream()) {
             os.write(bytes);
         } catch (IOException ex) {
-            NSession session = workspace.currentSession();
             throw new NIOException(NMsg.ofC("unable to write to %s", this));
         }
         return this;
@@ -194,13 +194,11 @@ public class NPathFromSPI extends NPathBase {
         if (p != null) {
             return p;
         }
-        NSession session = workspace.currentSession();
         return NStream.ofEmpty();
     }
 
     @Override
     public InputStream getInputStream(NPathOption... options) {
-        NSession session = workspace.currentSession();
         return NInputSourceBuilder.of(base.getInputStream(this, options))
                 .setMetadata(getMetaData())
                 .createInputStream();
@@ -208,7 +206,6 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public OutputStream getOutputStream(NPathOption... options) {
-        NSession session = workspace.currentSession();
         return NOutputStreamBuilder.of(base.getOutputStream(this, options))
                 .setMetadata(this.getMetaData())
                 .createOutputStream()
@@ -250,12 +247,11 @@ public class NPathFromSPI extends NPathBase {
         String s = StringPlaceHolderParser.replaceDollarPlaceHolders(toString(), resolver);
         if (s.length() > 0) {
             if (s.startsWith("~")) {
-                NLocations locations = NLocations.of();
                 if (s.equals("~~")) {
-                    NPath nutsHome = locations.getHomeLocation(NStoreType.CONF);
+                    NPath nutsHome = workspace.getHomeLocation(NStoreType.CONF);
                     return nutsHome.normalize();
                 } else if (s.startsWith("~~") && s.length() > 2 && (s.charAt(2) == '/' || s.charAt(2) == '\\')) {
-                    NPath nutsHome = locations.getHomeLocation(NStoreType.CONF);
+                    NPath nutsHome = workspace.getHomeLocation(NStoreType.CONF);
                     return nutsHome.resolve(s.substring(3)).normalize();
                 } else if (s.equals("~")) {
                     return NPath.ofUserHome();
@@ -430,8 +426,7 @@ public class NPathFromSPI extends NPathBase {
         }
         if (NUseDefaultUtils.isUseDefault(base.getClass(), "walk",
                 NPath.class, int.class, NPathOption[].class)) {
-            NSession session = workspace.currentSession();
-            return NPathSPIHelper.walk(session, this, maxDepth, options1);
+            return NPathSPIHelper.walk(this, maxDepth, options1);
         } else {
             return base.walk(this, maxDepth, options);
         }
@@ -482,8 +477,7 @@ public class NPathFromSPI extends NPathBase {
         }
         if (NUseDefaultUtils.isUseDefault(base.getClass(), "walkDfs",
                 NPath.class, NTreeVisitor.class, int.class, NPathOption[].class)) {
-            NSession session = workspace.currentSession();
-            NPathSPIHelper.walkDfs(session, this, visitor, maxDepth, options);
+            NPathSPIHelper.walkDfs( this, visitor, maxDepth, options);
         } else {
             base.walkDfs(this, visitor, maxDepth, options);
         }
@@ -492,8 +486,7 @@ public class NPathFromSPI extends NPathBase {
 
     @Override
     public NStream<NPath> walkGlob(NPathOption... options) {
-        NSession session = workspace.currentSession();
-        return new DirectoryScanner(this, session).stream();
+        return new DirectoryScanner(this).stream();
     }
 
     @Override

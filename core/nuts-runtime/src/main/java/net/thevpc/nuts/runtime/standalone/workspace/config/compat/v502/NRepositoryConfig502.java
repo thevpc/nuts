@@ -29,9 +29,9 @@ import java.io.Serializable;
 import java.util.*;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NStoreStrategy;
-import net.thevpc.nuts.env.NStoreType;
-import net.thevpc.nuts.env.NUserConfig;
+import net.thevpc.nuts.NStoreStrategy;
+import net.thevpc.nuts.NStoreType;
+import net.thevpc.nuts.NUserConfig;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NStoreLocationsMap;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.util.NBlankable;

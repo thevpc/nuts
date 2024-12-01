@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.repository.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NSpeedQualifier;
-import net.thevpc.nuts.env.NStoreStrategy;
-import net.thevpc.nuts.env.NStoreType;
+import net.thevpc.nuts.NSpeedQualifier;
+import net.thevpc.nuts.NStoreStrategy;
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
 import net.thevpc.nuts.spi.NRepositoryLocation;

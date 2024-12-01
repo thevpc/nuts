@@ -31,7 +31,6 @@ public abstract class NExprDeclarationsBase implements NExprDeclarations {
     }
 
     public NOptional<Object> evalSetVar(String varName, Object value) {
-        NSession session = workspace.currentSession();
         return NOptional.of(getVar(varName).get().set(value, this));
     }
 
@@ -40,7 +39,6 @@ public abstract class NExprDeclarationsBase implements NExprDeclarations {
         if(!var.isPresent()){
             return var.map(x->null);
         }
-        NSession session = workspace.currentSession();
         return NOptional.ofNullable(var.get().get(this));
     }
 

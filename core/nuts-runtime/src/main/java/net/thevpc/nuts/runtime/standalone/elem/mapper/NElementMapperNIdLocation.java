@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElementMapper;
-import net.thevpc.nuts.env.NIdLocation;
+import net.thevpc.nuts.NIdLocation;
 
 import java.lang.reflect.Type;
 import java.util.Map;

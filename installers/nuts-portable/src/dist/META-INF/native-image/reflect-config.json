@@ -333,10 +333,6 @@
   "methods":[{"name":"<init>","parameterTypes":["net.thevpc.nuts.NSession"] }]
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.io.path.DefaultNPaths",
-  "methods":[{"name":"<init>","parameterTypes":["net.thevpc.nuts.NSession"] }]
-},
-{
   "name":"net.thevpc.nuts.runtime.standalone.io.path.spi.ClassLoaderPath"
 },
 {
@@ -599,21 +595,6 @@
   "name":"net.thevpc.nuts.runtime.standalone.workspace.cmd.update.DefaultNUpdateCmd"
 },
 {
-  "name":"net.thevpc.nuts.runtime.standalone.workspace.config.DefaultCommands"
-},
-{
-  "name":"net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs",
-  "methods":[{"name":"<init>","parameterTypes":["net.thevpc.nuts.NSession"] }]
-},
-{
-  "name":"net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNEnvs",
-  "methods":[{"name":"<init>","parameterTypes":["net.thevpc.nuts.NSession"] }]
-},
-{
-  "name":"net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNImports",
-  "methods":[{"name":"<init>","parameterTypes":["net.thevpc.nuts.NSession"] }]
-},
-{
   "name":"net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNIndexStoreFactory",
   "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.NSession"] }, {"name":"<init>","parameterTypes":["net.thevpc.nuts.NWorkspace"] }]
 },
@@ -670,10 +651,6 @@
 },
 {
   "name":"net.thevpc.nuts.runtime.standalone.xtra.contenttype.DefaultNContentTypeResolver",
-  "methods":[{"name":"<init>","parameterTypes":["net.thevpc.nuts.NSession"] }]
-},
-{
-  "name":"net.thevpc.nuts.runtime.standalone.xtra.contenttype.DefaultNContentTypes",
   "methods":[{"name":"<init>","parameterTypes":["net.thevpc.nuts.NSession"] }]
 },
 {

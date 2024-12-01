@@ -4,8 +4,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.env.NBootManager;
-import net.thevpc.nuts.env.NEnvs;
+
+
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
@@ -37,8 +37,8 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
     public int processThrowable(String[] args, Throwable throwable) {
         NSession session = NSession.get();
         NWorkspaceOptionsBuilder bo = null;
-        bo = NBootManager.of().getBootOptions().toWorkspaceOptions().builder();
-        if (!NEnvs.of().isGraphicalDesktopEnvironment()) {
+        bo = NWorkspace.get().getBootOptions().toWorkspaceOptions().builder();
+        if (!NWorkspace.get().isGraphicalDesktopEnvironment()) {
             bo.setGui(false);
         }
 

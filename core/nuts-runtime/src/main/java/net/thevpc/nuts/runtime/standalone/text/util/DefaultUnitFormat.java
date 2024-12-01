@@ -219,7 +219,7 @@ public class DefaultUnitFormat {
     }
 
     public NText formatDouble(double value, NSession session) {
-        return format(value, session);
+        return format(value);
     }
 
 
@@ -290,7 +290,7 @@ public class DefaultUnitFormat {
         throw new IllegalArgumentException("Unsupported");
     }
 
-    public NText format(double value, NSession session) {
+    public NText format(double value) {
         NTextBuilder sb = NTextBuilder.of();
         boolean neg = value < 0;
         int sign = neg ? -1 : 1;

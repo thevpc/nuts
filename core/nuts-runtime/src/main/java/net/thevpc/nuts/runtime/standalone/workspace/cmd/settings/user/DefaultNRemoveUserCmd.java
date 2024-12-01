@@ -5,12 +5,10 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user;
 
-import net.thevpc.nuts.NConfigs;
 import net.thevpc.nuts.NRemoveUserCmd;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
 
 /**
  *
@@ -27,7 +25,7 @@ public class DefaultNRemoveUserCmd extends AbstractNRemoveUserCmd {
         if (repository != null) {
             NRepositoryConfigManagerExt.of(repository.config()).getModel().removeUser(login);
         } else {
-            NConfigsExt.of(NConfigs.of()).getModel().removeUser(login);
+            NWorkspaceExt.of(workspace).getConfigModel().removeUser(login);
         }
         return this;
     }

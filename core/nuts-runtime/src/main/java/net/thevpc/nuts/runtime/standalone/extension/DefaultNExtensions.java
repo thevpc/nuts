@@ -48,13 +48,11 @@ public class DefaultNExtensions implements NExtensions {
 
     @Override
     public <T extends NComponent> boolean installWorkspaceExtensionComponent(Class<T> extensionPointType, T extensionImpl) {
-        NSession session = workspace.currentSession();
         return wsModel.extensionModel.installWorkspaceExtensionComponent(extensionPointType, extensionImpl);
     }
 
     @Override
     public Set<Class<? extends NComponent>> discoverTypes(NId id, ClassLoader classLoader) {
-        NSession session = workspace.currentSession();
         return wsModel.extensionModel.discoverTypes(id, classLoader);
     }
 
@@ -148,7 +146,6 @@ public class DefaultNExtensions implements NExtensions {
         if (id == null) {
             return false;
         }
-        NSession session= wsModel.extensionModel.getWorkspace().currentSession();
         if (classLoader == null) {
             classLoader = Thread.currentThread().getContextClassLoader();
         }

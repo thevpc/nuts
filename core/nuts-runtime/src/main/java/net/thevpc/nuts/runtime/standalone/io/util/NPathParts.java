@@ -18,7 +18,7 @@ public class NPathParts {
     private final String ref;
     private final String query;
 
-    public NPathParts(Type type, String protocol, String authority, String location, String query, String ref, NSession session) {
+    public NPathParts(Type type, String protocol, String authority, String location, String query, String ref) {
         switch (type) {
             case REF: {
                 this.type = type;
@@ -307,7 +307,7 @@ public class NPathParts {
         return result.toString();
     }
 
-    public static NText toNutsString(NText protocol, NText authority, NText path, NText query, NText ref, NSession session) {
+    public static NText toNutsString(NText protocol, NText authority, NText path, NText query, NText ref) {
         NTexts txt = NTexts.of();
         NTextBuilder result = txt.ofBuilder();
         result.append(protocol);
@@ -357,11 +357,11 @@ public class NPathParts {
         return "";
     }
 
-    public static NText compressPath(String path, NSession session) {
-        return compressPath(path, 2, 2, session);
+    public static NText compressPath(String path) {
+        return compressPath(path, 2, 2);
     }
 
-    public static NText compressPath(String path, int left, int right, NSession session) {
+    public static NText compressPath(String path, int left, int right) {
         NTexts txt = NTexts.of();
         NPathParts p = new NPathParts(path);
         switch (p.getType()) {
@@ -372,8 +372,7 @@ public class NPathParts {
                         NBlankable.isBlank(p.getAuthority()) ? null : txt.ofStyled(p.getAuthority(), NTextStyle.path()),
                         NBlankable.isBlank(p.getFile()) ? null : txt.ofStyled(NPathParts.compressLocalPath(p.getFile(), 0, 2), NTextStyle.path()),
                         NBlankable.isBlank(p.getQuery()) ? null : txt.ofStyled("...", NTextStyle.path()),
-                        NBlankable.isBlank(p.getRef()) ? null : txt.ofStyled("...", NTextStyle.path()),
-                        session
+                        NBlankable.isBlank(p.getRef()) ? null : txt.ofStyled("...", NTextStyle.path())
                 );
             }
             case REF: {

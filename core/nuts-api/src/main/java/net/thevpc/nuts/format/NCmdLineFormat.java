@@ -29,7 +29,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.cmdline.NCmdLineFormatStrategy;
 import net.thevpc.nuts.ext.NExtensions;
-import net.thevpc.nuts.env.NShellFamily;
+import net.thevpc.nuts.NShellFamily;
 
 /**
  * Simple Command line Format

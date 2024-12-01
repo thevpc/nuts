@@ -27,7 +27,6 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NBootOptionsBoot;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.env.*;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.log.NLogConfig;

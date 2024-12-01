@@ -32,7 +32,7 @@ import net.thevpc.nuts.cmdline.DefaultNCmdLineAutoComplete;
 import net.thevpc.nuts.cmdline.NArgCandidate;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
-import net.thevpc.nuts.env.NEnvs;
+
 
 /**
  *
@@ -47,7 +47,7 @@ public class JobAutoCompleter implements NCmdLineAutoCompleteResolver {
     @Override
     public List<NArgCandidate> resolveCandidates(NCmdLine cmdLine, int wordIndex) {
         NSession session=workspace.currentSession();
-        JobServiceCmd fileContext = (JobServiceCmd) NEnvs.of().getProperties().get(JobServiceCmd.class.getName());
+        JobServiceCmd fileContext = (JobServiceCmd) NWorkspace.get().getProperties().get(JobServiceCmd.class.getName());
         DefaultNCmdLineAutoComplete autoComplete = new DefaultNCmdLineAutoComplete()
                 .setCurrentWordIndex(wordIndex)
                 .setLine(cmdLine.toString()).setWords(

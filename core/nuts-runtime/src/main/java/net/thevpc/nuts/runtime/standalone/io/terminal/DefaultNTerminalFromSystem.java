@@ -52,7 +52,6 @@ public class DefaultNTerminalFromSystem extends AbstractNTerminal {
 
     @Override
     public String readLine(NPrintStream out, NMsg message) {
-        NSession session = workspace.currentSession();
         if (out == null) {
             out = out();
         }
@@ -77,7 +76,6 @@ public class DefaultNTerminalFromSystem extends AbstractNTerminal {
 
     @Override
     public char[] readPassword(NPrintStream out, NMsg prompt) {
-        NSession session = workspace.currentSession();
         if (out == null) {
             out = out();
         }
@@ -234,7 +232,6 @@ public class DefaultNTerminalFromSystem extends AbstractNTerminal {
 
     private CProgressBar getProgressBar() {
         if (progressBar == null) {
-            NSession session = workspace.currentSession();
             progressBar = CProgressBar.of();
         }
         return progressBar;

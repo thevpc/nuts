@@ -57,7 +57,6 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
     }
 
     private void pushId(NId pid, NVersion apiIdVersion) {
-        NSession session=getWorkspace().currentSession();
         NDefinition def = NSearchCmd.of().addId(pid).setOptional(false).setLatest(true).setContent(true).setTargetApiVersion(apiIdVersion).getResultDefinitions().findFirst().get();
         NPath apiJar = def.getContent().get();
         if (!runRemoteAsStringNoFail("ls " + remoteIdMavenJar(def.getApiId()))) {
@@ -80,7 +79,6 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
 
     private NPath remoteJavaCommand(NVersion apiVersion) {
         //check JDK8 ?
-        NSession session=getWorkspace().currentSession();
         return NPath.of("java");
     }
 
@@ -100,7 +98,6 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
     }
 
     private NPath remoteHomeFile(String path) {
-        NSession session=getWorkspace().currentSession();
         if (NBlankable.isBlank(targetHome)) {
             String user = getValidUser();
             return NPath.of("/home/" + user + "/" + path);
@@ -139,7 +136,6 @@ public class DefaultNPrepareCmd extends AbstractNPrepareCmd {
     }
 
     private String runRemoteAsString(String... cmd) {
-        NSession session=getWorkspace().currentSession();
         String remoteUser = getValidUser();
         NExecCmd e = NExecCmd.of();
 

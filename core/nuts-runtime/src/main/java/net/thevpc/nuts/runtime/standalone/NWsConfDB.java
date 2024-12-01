@@ -1,8 +1,7 @@
 package net.thevpc.nuts.runtime.standalone;
 
-import net.thevpc.nuts.env.NLocations;
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
+
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NBlankable;
 
@@ -18,8 +17,7 @@ public class NWsConfDB {
     }
 
     public void storeString(NLocationKey k, String value, boolean deleteIfBlank) {
-        NSession session = ws.currentSession();
-        NPath path = NLocations.of().getStoreLocation(k.getId(), k.getStoreType(), k.getRepoUuid())
+        NPath path = NWorkspace.get().getStoreLocation(k.getId(), k.getStoreType(), k.getRepoUuid())
                 .resolve(k.getName());
         if (NBlankable.isBlank(value) && deleteIfBlank) {
             if (path.isRegularFile()) {

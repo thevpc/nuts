@@ -3,11 +3,12 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.env.NLocations;
-import net.thevpc.nuts.env.NStoreType;
+
+
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.ConfigEventType;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
@@ -68,7 +69,7 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
     }
 
     public NPath getStoreLocation() {
-        return NLocations.of().getStoreLocation(workspace.getApiId(), NStoreType.BIN);
+        return NWorkspace.get().getStoreLocation(workspace.getApiId(), NStoreType.BIN);
     }
 
     private NPath getCommandsFolder() {
@@ -81,7 +82,7 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
         NPath file = getCommandsFolder().resolve(name + NConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         if (file.exists()) {
             file.delete();
-            NConfigsExt.of(NConfigs.of()).getModel().fireConfigurationChanged("command", ConfigEventType.MAIN);
+            NWorkspaceExt.of(workspace).getConfigModel().fireConfigurationChanged("command", ConfigEventType.MAIN);
         }
     }
 
@@ -89,7 +90,7 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
         NPath path = getCommandsFolder().resolve(command.getName() + NConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         NElements.of().json().setValue(command)
                 .setNtf(false).print(path);
-        NConfigsExt.of(NConfigs.of()).getModel().fireConfigurationChanged("command", ConfigEventType.MAIN);
+        NWorkspaceExt.of(workspace).getConfigModel().fireConfigurationChanged("command", ConfigEventType.MAIN);
     }
 
     public List<NCommandConfig> findCommands(NId id) {

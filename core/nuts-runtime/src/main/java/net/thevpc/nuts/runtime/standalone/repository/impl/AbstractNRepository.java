@@ -26,7 +26,8 @@ package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.NLocations;
+
+
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepoConfigManager;
@@ -235,11 +236,11 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     }
 
     protected String getIdExtension(NId id) {
-        return NLocations.of().getDefaultIdExtension(id);
+        return NWorkspace.get().getDefaultIdExtension(id);
     }
 
     public NPath getIdBasedir(NId id) {
-        return NLocations.of().getDefaultIdBasedir(id);
+        return NWorkspace.get().getDefaultIdBasedir(id);
     }
 
     public String getIdFilename(NId id) {

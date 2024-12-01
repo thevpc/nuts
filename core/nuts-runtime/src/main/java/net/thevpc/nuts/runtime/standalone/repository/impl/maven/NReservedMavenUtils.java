@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.reserved.util.NBootJsonParser;
-import net.thevpc.nuts.env.NBootOptionsBuilder;
+import net.thevpc.nuts.NBootOptionsBuilder;
 import net.thevpc.nuts.runtime.standalone.io.NCoreIOUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.log.NLog;

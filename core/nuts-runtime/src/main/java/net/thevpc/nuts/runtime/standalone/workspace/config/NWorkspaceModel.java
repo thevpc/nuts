@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NBootOptions;
+import net.thevpc.nuts.NBootOptions;
 import net.thevpc.nuts.runtime.standalone.NWsConfDB;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEventModel;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions;
@@ -47,7 +47,7 @@ public class NWorkspaceModel {
     public DefaultNWorkspaceEnvManagerModel envModel;
     public DefaultNPlatformModel sdkModel;
     public DefaultNWorkspaceExtensionModel extensionModel;
-    public DefaultCustomCommandsModel aliasesModel;
+    public DefaultCustomCommandsModel commandModel;
     public DefaultImportModel importModel;
     public String apiDigest;
     public String installationDigest;
@@ -67,7 +67,7 @@ public class NWorkspaceModel {
         this.confDB=new NWsConfDB(workspace);
         this.bOption0 = bOption0;
         // initialized here because they just do nothing...
-        this.aliasesModel = new DefaultCustomCommandsModel(workspace);
+        this.commandModel = new DefaultCustomCommandsModel(workspace);
         this.importModel = new DefaultImportModel(workspace);
         this.eventsModel = new DefaultNWorkspaceEventModel(workspace);
         this.repositoryModel = new DefaultNRepositoryModel(workspace);

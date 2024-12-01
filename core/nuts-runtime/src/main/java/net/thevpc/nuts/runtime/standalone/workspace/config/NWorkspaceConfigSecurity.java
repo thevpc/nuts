@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.NConfigItem;
-import net.thevpc.nuts.env.NUserConfig;
+import net.thevpc.nuts.NUserConfig;
 
 public class NWorkspaceConfigSecurity extends NConfigItem {
     private static final long serialVersionUID = 2;

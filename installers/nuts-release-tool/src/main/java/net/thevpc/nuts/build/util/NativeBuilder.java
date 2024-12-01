@@ -1,7 +1,7 @@
 package net.thevpc.nuts.build.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NEnvs;
+
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.text.NTextStyle;
@@ -211,7 +211,7 @@ public class NativeBuilder {
     }
 
     private BinPlatform currentPlatform() {
-        NEnvs e = NEnvs.of();
+        NWorkspace e = NWorkspace.get();
         switch (e.getOsFamily()) {
             case UNIX:
             case LINUX: {
@@ -244,7 +244,7 @@ public class NativeBuilder {
     }
 
     private BinPlatform evalCurrentBinPlatform() {
-        NEnvs z = NEnvs.of();
+        NWorkspace z = NWorkspace.get();
         switch (z.getOsFamily()) {
             case LINUX: {
                 switch (z.getArchFamily()) {

@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
@@ -66,7 +65,6 @@ public class DefaultNWorkspaceLocationModel {
 
 
     public void setStoreLocation(NStoreType folderType, String location) {
-        NSession session = getWorkspace().currentSession();
         NAssert.requireNonNull(folderType, "store root folder");
         cfg().onPreUpdateConfig("store-location");
         cfg().getStoreModelBoot().setStoreLocations(new NStoreLocationsMap(cfg().getStoreModelBoot().getStoreLocations()).set(folderType, location).toMapOrNull());
@@ -94,18 +92,16 @@ public class DefaultNWorkspaceLocationModel {
 
 
     public NPath getStoreLocation(NStoreType folderType, String repositoryIdOrName) {
-        NSession session = getWorkspace().currentSession();
         if (repositoryIdOrName == null) {
             return getStoreLocation(folderType);
         }
-        NRepository repositoryById = NRepositories.of().findRepository(repositoryIdOrName).get();
+        NRepository repositoryById = workspace.findRepository(repositoryIdOrName).get();
         NRepositorySPI nRepositorySPI = NWorkspaceUtils.of(getWorkspace()).repoSPI(repositoryById);
         return nRepositorySPI.config().getStoreLocation(folderType);
     }
 
 
     public NPath getStoreLocation(NId id, NStoreType folderType, String repositoryIdOrName) {
-        NSession session = getWorkspace().currentSession();
         if (repositoryIdOrName == null) {
             return getStoreLocation(id, folderType);
         }
@@ -119,7 +115,6 @@ public class DefaultNWorkspaceLocationModel {
         if (storeLocation == null) {
             return null;
         }
-        NSession session = getWorkspace().currentSession();
         return storeLocation.resolve(NConstants.Folders.ID).resolve(getDefaultIdBasedir(id));
 //        switch (folderType) {
 //            case CACHE:
@@ -180,7 +175,6 @@ public class DefaultNWorkspaceLocationModel {
 
     public String getDefaultIdFilename(NId id) {
         String classifier = "";
-        NSession session = getWorkspace().currentSession();
         String ext = getDefaultIdExtension(id);
         if (!ext.equals(NConstants.Files.DESCRIPTOR_FILE_EXTENSION) && !ext.equals(".pom")) {
             String c = id.getClassifier();
@@ -193,7 +187,6 @@ public class DefaultNWorkspaceLocationModel {
 
 
     public String getDefaultIdContentExtension(String packaging) {
-        NSession session = getWorkspace().currentSession();
         NAssert.requireNonBlank(packaging, "packaging");
         switch (packaging) {
             case "jar":
@@ -236,7 +229,6 @@ public class DefaultNWorkspaceLocationModel {
 
 
     public String getDefaultIdExtension(NId id) {
-        NSession session = getWorkspace().currentSession();
         Map<String, String> q = id.getProperties();
         String f = NStringUtils.trim(q.get(NConstants.IdProperties.FACE));
         switch (f) {

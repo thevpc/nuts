@@ -86,7 +86,6 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableInformati
     }
 
     private void dispose() {
-        NSession session = workspace.currentSession();
         if (tempFolder != null) {
             try {
                 NIOUtils.delete(Paths.get(tempFolder));

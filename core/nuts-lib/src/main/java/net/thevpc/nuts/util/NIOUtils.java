@@ -128,6 +128,9 @@ public class NIOUtils {
      * @return size copied
      */
     public static long copy(InputStream in, OutputStream out, int bufferSize) {
+        if(bufferSize<=0){
+            bufferSize=DEFAULT_BUFFER_SIZE;
+        }
         byte[] buffer = new byte[bufferSize];
         int len;
         long count = 0;
@@ -150,6 +153,9 @@ public class NIOUtils {
      * @param bufferSize bufferSize
      */
     public static long copy(Reader in, Writer out, int bufferSize) {
+        if(bufferSize<=0){
+            bufferSize=DEFAULT_BUFFER_SIZE;
+        }
         char[] buffer = new char[bufferSize];
         int len;
         long count = 0;

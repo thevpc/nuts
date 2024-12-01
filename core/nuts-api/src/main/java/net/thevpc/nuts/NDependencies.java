@@ -54,22 +54,22 @@ public interface NDependencies extends NIterable<NDependency> {
     NDependencyFilter filter();
 
     /**
-     * return immediate dependencies (not including sources)
+     * return immediate dependencies (not including source ids)
      * @return immediate dependencies
      */
     NStream<NDependency> immediate();
 
     /**
-     * return transitive (all but sources) dependencies
-     * @return transitive (all but sources) dependencies
+     * return transitive (all but source ids) dependencies
+     * @return transitive (all but source ids) dependencies
      */
 
     NStream<NDependency> transitive();
 
     /**
-     * transitive dependencies merged with ids, which may constitute a full classpath
+     * transitive dependencies merged with source ids, which may constitute a full classpath
      *
-     * @return transitive dependencies merged with ids, which may constitute a full classpath
+     * @return transitive dependencies merged with source ids, which may constitute a full classpath
      */
     NStream<NDependency> transitiveWithSource();
 

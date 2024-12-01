@@ -24,7 +24,6 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.env.NStoreType;
 import net.thevpc.nuts.io.NPath;
 
 /**

@@ -7,8 +7,8 @@ import net.thevpc.nuts.cmdline.DefaultNCmdLine;
 import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLines;
-import net.thevpc.nuts.env.NEnvs;
-import net.thevpc.nuts.env.NShellFamily;
+
+import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.option.*;
 import net.thevpc.nuts.runtime.standalone.shell.NShellHelper;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -43,7 +43,7 @@ public class DefaultNCmdLines implements NCmdLines {
     private String[] parseCmdLineArr(String line) {
         NShellFamily f = getShellFamily();
         if (f == null) {
-            f = NEnvs.of().getShellFamily();
+            f = NWorkspace.get().getShellFamily();
         }
         if (f == null) {
             f = NShellFamily.getCurrent();

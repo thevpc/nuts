@@ -28,7 +28,7 @@ public class DefaultNRepositoryUuidFilter extends AbstractRepositoryFilter{
     @Override
     public NRepositoryFilter simplify() {
         if(exactRepos.isEmpty()){
-            return NRepositories.of().filter().always();
+            return NRepositoryFilters.of().always();
         }
         return this;
     }

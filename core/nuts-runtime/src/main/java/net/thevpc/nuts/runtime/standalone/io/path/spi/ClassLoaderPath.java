@@ -16,7 +16,7 @@ public class ClassLoaderPath extends URLPath {
     private final String effectivePath;
     private final ClassLoader loader;
     private final NWorkspace workspace;
-    private static String fileOf(String path,boolean check, NSession session){
+    private static String fileOf(String path,boolean check){
         if(path!=null){
             if(path.startsWith("classpath:")){
                 String p=path;
@@ -34,9 +34,9 @@ public class ClassLoaderPath extends URLPath {
     }
 
     public ClassLoaderPath(String path, ClassLoader loader, NWorkspace workspace) {
-        super(loader.getResource(fileOf(path,true,workspace.currentSession())), workspace, true);
+        super(loader.getResource(fileOf(path,true)), workspace, true);
         this.path = path;
-        this.effectivePath = fileOf(path,false,workspace.currentSession());
+        this.effectivePath = fileOf(path,false);
         this.loader = loader;
         this.workspace = workspace;
     }

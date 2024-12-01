@@ -1,8 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.executor;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NLocations;
-import net.thevpc.nuts.env.NStoreType;
+
+
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 
@@ -15,35 +16,35 @@ public class NExecutionContextUtils {
                     return (definition.getId().toString());
                 }
                 case "NUTS_ID_BIN": {
-                    NPath v = NLocations.of().getStoreLocation(definition.getId(), NStoreType.BIN);
+                    NPath v = NWorkspace.get().getStoreLocation(definition.getId(), NStoreType.BIN);
                     return (v.toString());
                 }
                 case "NUTS_ID_CONF": {
-                    NPath v = NLocations.of().getStoreLocation(definition.getId(), NStoreType.CONF);
+                    NPath v = NWorkspace.get().getStoreLocation(definition.getId(), NStoreType.CONF);
                     return (v.toString());
                 }
                 case "NUTS_ID_LOG": {
-                    NPath v = NLocations.of().getStoreLocation(definition.getId(), NStoreType.LOG);
+                    NPath v = NWorkspace.get().getStoreLocation(definition.getId(), NStoreType.LOG);
                     return (v.toString());
                 }
                 case "NUTS_ID_CACHE": {
-                    NPath v = NLocations.of().getStoreLocation(definition.getId(), NStoreType.CACHE);
+                    NPath v = NWorkspace.get().getStoreLocation(definition.getId(), NStoreType.CACHE);
                     return (v.toString());
                 }
                 case "NUTS_ID_LIB": {
-                    NPath v = NLocations.of().getStoreLocation(definition.getId(), NStoreType.LIB);
+                    NPath v = NWorkspace.get().getStoreLocation(definition.getId(), NStoreType.LIB);
                     return (v.toString());
                 }
                 case "NUTS_ID_RUN": {
-                    NPath v = NLocations.of().getStoreLocation(definition.getId(), NStoreType.RUN);
+                    NPath v = NWorkspace.get().getStoreLocation(definition.getId(), NStoreType.RUN);
                     return (v.toString());
                 }
                 case "NUTS_ID_TEMP": {
-                    NPath v = NLocations.of().getStoreLocation(definition.getId(), NStoreType.TEMP);
+                    NPath v = NWorkspace.get().getStoreLocation(definition.getId(), NStoreType.TEMP);
                     return (v.toString());
                 }
                 case "NUTS_ID_VAR": {
-                    NPath v = NLocations.of().getStoreLocation(definition.getId(), NStoreType.VAR);
+                    NPath v = NWorkspace.get().getStoreLocation(definition.getId(), NStoreType.VAR);
                     return (v.toString());
                 }
             }

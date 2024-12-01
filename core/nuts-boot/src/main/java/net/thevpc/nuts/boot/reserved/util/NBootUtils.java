@@ -1438,4 +1438,15 @@ public final class NBootUtils {
         String fileName = resolveFileName(id, extension);
         return resolveIdPath(id) + '/' + fileName;
     }
+
+    public static List<String> nonNullStrList(List<String> list) {
+        if (list == null) {
+            return new ArrayList<>();
+        }
+        return list;
+    }
+
+    public static <T> boolean isEmptyList(List<T> any) {
+        return any==null || any.isEmpty();
+    }
 }

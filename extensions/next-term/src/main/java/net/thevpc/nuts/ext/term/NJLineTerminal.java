@@ -29,7 +29,7 @@ import java.awt.Color;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
-import net.thevpc.nuts.env.NLocations;
+
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.*;
@@ -230,7 +230,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
                 //                .parse(parse)
                 .build();
         reader.unsetOpt(LineReader.Option.INSERT_TAB);
-        reader.setVariable(LineReader.HISTORY_FILE, NLocations.of().getWorkspaceLocation().resolve("history").normalize().toPath().get());
+        reader.setVariable(LineReader.HISTORY_FILE, NWorkspace.get().getWorkspaceLocation().resolve("history").normalize().toPath().get());
         if (reader instanceof LineReaderImpl) {
             ((LineReaderImpl) reader).setHistory(new NJLineHistory(reader, session, this));
         }

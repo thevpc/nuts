@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.installer.svc;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.env.NOsServiceType;
+import net.thevpc.nuts.NOsServiceType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathPermission;
 import net.thevpc.nuts.spi.NSupportLevelContext;

@@ -30,10 +30,10 @@ import java.util.*;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NPlatformLocation;
-import net.thevpc.nuts.env.NStoreStrategy;
-import net.thevpc.nuts.env.NUserConfig;
+import net.thevpc.nuts.NStoreStrategy;
+import net.thevpc.nuts.NUserConfig;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigBoot;
-import net.thevpc.nuts.env.NOsFamily;
+import net.thevpc.nuts.NOsFamily;
 
 /**
  *

@@ -28,7 +28,6 @@ net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecutorComponent
 
 net.thevpc.nuts.runtime.standalone.repository.impl.maven.MavenRepositoryFactoryComponent
 net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNIndexStoreFactory
-net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNPlatforms
 net.thevpc.nuts.runtime.standalone.security.DefaultNAuthenticationAgent
 net.thevpc.nuts.runtime.standalone.log.DefaultNLogs
 net.thevpc.nuts.runtime.standalone.workspace.list.DefaultNWorkspaceList
@@ -48,15 +47,7 @@ net.thevpc.nuts.runtime.standalone.installer.svc.DefaultInstallSvcCommand
 net.thevpc.nuts.runtime.standalone.workspace.cmd.uninstall.DefaultNUninstallCmd
 net.thevpc.nuts.runtime.standalone.workspace.cmd.update.DefaultNUpdateCmd
 net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.updatestats.DefaultNUpdateStatsCmd
-net.thevpc.nuts.runtime.standalone.boot.DefaultNBootManager
-net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNEnvs
-net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNLocations
-net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNImports
-net.thevpc.nuts.runtime.standalone.workspace.config.DefaultCommands
-net.thevpc.nuts.runtime.standalone.event.DefaultNEvents
 net.thevpc.nuts.runtime.standalone.security.DefaultNWorkspaceSecurityManager
-net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepositories
-net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs
 net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions
 net.thevpc.nuts.runtime.standalone.web.DefaultNWebCli
 
@@ -108,8 +99,6 @@ net.thevpc.nuts.runtime.standalone.text.highlighter.PlainCodeHighlighter
 
 
 net.thevpc.nuts.runtime.standalone.xtra.contenttype.DefaultNContentTypeResolver
-net.thevpc.nuts.runtime.standalone.xtra.contenttype.DefaultNContentTypes
-net.thevpc.nuts.runtime.standalone.io.path.DefaultNPaths
 net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIO
 net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIORPI
 net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNLibPaths

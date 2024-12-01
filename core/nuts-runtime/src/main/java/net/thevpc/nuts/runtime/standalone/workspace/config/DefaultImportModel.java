@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 
 public class DefaultImportModel {
@@ -74,8 +76,8 @@ public class DefaultImportModel {
             }
         }
         getStoreModelMain().setImports(new ArrayList<>(simports));
-        NConfigsExt.of(NConfigs.of())
-                .getModel()
+        NWorkspaceExt.of(workspace)
+                .getConfigModel()
                 .fireConfigurationChanged("import", ConfigEventType.MAIN);
     }
 

@@ -65,7 +65,6 @@ public class NIdPathIterator extends NIteratorBase<NId> {
         this.filter = filter;
         this.model = model;
         this.maxDepth = maxDepth;
-        NSession session = repository.getWorkspace().currentSession();
         if (rootFolder == null) {
             throw new NIllegalArgumentException(NMsg.ofPlain("could not iterate over null rootFolder"));
         }
@@ -161,7 +160,6 @@ public class NIdPathIterator extends NIteratorBase<NId> {
         if (last != null) {
             model.undeploy(last);
         }
-        NSession session=repository.getWorkspace().currentSession();
         throw new NUnsupportedOperationException(NMsg.ofPlain("unsupported Remove"));
     }
 

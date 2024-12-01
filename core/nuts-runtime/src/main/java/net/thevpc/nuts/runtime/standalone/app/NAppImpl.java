@@ -3,8 +3,8 @@ package net.thevpc.nuts.runtime.standalone.app;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.*;
-import net.thevpc.nuts.env.NLocations;
-import net.thevpc.nuts.env.NStoreType;
+
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineUtils;
@@ -182,10 +182,10 @@ public class NAppImpl implements NApp, Cloneable {
         this.args = (args);
         this.id = (_appId);
         this.appClass = appClass == null ? null : JavaClassUtils.unwrapCGLib(appClass);
-        NLocations locations = NLocations.of();
+        NWorkspace workspace = NWorkspace.get();
         for (NStoreType folder : NStoreType.values()) {
-            this.setFolder(folder, locations.getStoreLocation(this.id, folder));
-            this.setSharedFolder(folder, locations.getStoreLocation(this.id.builder().setVersion("SHARED").build(), folder));
+            this.setFolder(folder, workspace.getStoreLocation(this.id, folder));
+            this.setSharedFolder(folder, workspace.getStoreLocation(this.id.builder().setVersion("SHARED").build(), folder));
         }
         if (this.mode == NApplicationMode.AUTO_COMPLETE) {
             //TODO fix me
@@ -317,7 +317,7 @@ public class NAppImpl implements NApp, Cloneable {
                 return r;
             }
         }
-        return NLocations.of().getStoreLocation(newId, location);
+        return NWorkspace.get().getStoreLocation(newId, location);
     }
 
     @Override

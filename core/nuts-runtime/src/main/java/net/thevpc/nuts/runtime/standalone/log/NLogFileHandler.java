@@ -2,7 +2,8 @@ package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.NBootManager;
+
+
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.log.NLogRecord;
 import net.thevpc.nuts.util.NBlankable;
@@ -18,12 +19,12 @@ import java.util.logging.LogRecord;
 
 public class NLogFileHandler extends FileHandler {
 
-    private NSession session;
+    private NWorkspace workspace;
     private String pattern;
     private int limit;
     private int count;
 
-    public static NLogFileHandler create(NSession session, NLogConfig config, boolean append, Path logFolder) throws IOException, SecurityException {
+    public static NLogFileHandler create(NWorkspace workspace, NLogConfig config, boolean append, Path logFolder) throws IOException, SecurityException {
         Level level = config.getLogFileLevel();
         String folder = config.getLogFileBase();
         String name = config.getLogFileName();
@@ -38,7 +39,7 @@ public class NLogFileHandler extends FileHandler {
             name = Instant.now().toString().replace(":", "") + "-nuts-%g.log";
         }
         if (folder == null || NBlankable.isBlank(folder)) {
-            folder = logFolder + "/" + NConstants.Folders.ID + "/net/thevpc/nuts/nuts/" + session.getWorkspace().getApiVersion();
+            folder = logFolder + "/" + NConstants.Folders.ID + "/net/thevpc/nuts/nuts/" + workspace.getApiVersion();
         }
         String pattern = (folder + "/" + name).replace('/', File.separatorChar);
         if (maxSize <= 0) {
@@ -51,18 +52,18 @@ public class NLogFileHandler extends FileHandler {
         if (parentFile != null) {
             parentFile.mkdirs();
         }
-        NLogFileHandler handler = new NLogFileHandler(pattern, maxSize * MEGA, count, append,session);
+        NLogFileHandler handler = new NLogFileHandler(pattern, maxSize * MEGA, count, append,workspace);
         handler.setLevel(level);
         return handler;
     }
 
-    private NLogFileHandler(String pattern, int limit, int count, boolean append, NSession session) throws IOException, SecurityException {
+    private NLogFileHandler(String pattern, int limit, int count, boolean append, NWorkspace workspace) throws IOException, SecurityException {
         super(prepare(pattern), limit, count, append);
-        this.session = session;
+        this.workspace = workspace;
         this.pattern = pattern;
         this.limit = limit;
         this.count = count;
-        setFormatter(new NLogRichFormatter(session,true));
+        setFormatter(new NLogRichFormatter(workspace,true));
     }
 
     private static String prepare(String pattern) {
@@ -82,9 +83,9 @@ public class NLogFileHandler extends FileHandler {
             session=((NLogRecord) record).getSession();
         }
         if(session==null){
-            session=this.session;
+            session=this.workspace.currentSession();
         }
-        NLogConfig logConfig = NBootManager.of().getBootOptions().getLogConfig().orElseGet(NLogConfig::new);
+        NLogConfig logConfig = workspace.getBootOptions().getLogConfig().orElseGet(NLogConfig::new);
         Level sessionLogLevel = session.getLogFileLevel();
         if (sessionLogLevel == null) {
             if (logConfig != null) {

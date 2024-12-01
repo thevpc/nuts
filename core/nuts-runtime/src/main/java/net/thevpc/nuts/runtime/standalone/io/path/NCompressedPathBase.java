@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NFormat;
@@ -11,7 +10,6 @@ import net.thevpc.nuts.runtime.standalone.io.util.NPathParts;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NStream;
 
@@ -34,7 +32,7 @@ public class NCompressedPathBase extends NPathBase {
     public NCompressedPathBase(NPath base) {
         super(base.getWorkspace());
         this.base = base;
-        this.compressedForm = compressUrl(base.toString(), base.getWorkspace().currentSession());
+        this.compressedForm = compressUrl(base.toString());
         this.formattedCompressedForm = NText.ofStyled(compressedForm, NTextStyle.path());
     }
 
@@ -50,12 +48,12 @@ public class NCompressedPathBase extends NPathBase {
         return new NCompressedPathBase(base, compressedForm, formattedCompressedForm).copyExtraFrom(this);
     }
 
-    public static String compressUrl(String path, NSession session) {
+    public static String compressUrl(String path) {
         NPathParts p = new NPathParts(path);
         switch (p.getType()) {
             case FILE_URL:
             case URL: {
-                return new NPathParts(p.getType(), p.getProtocol(), p.getAuthority(), NPathParts.compressLocalPath(p.getFile(), 0, 2), p.getQuery().length() > 0 ? "..." : "", p.getRef().length() > 0 ? "..." : "", session
+                return new NPathParts(p.getType(), p.getProtocol(), p.getAuthority(), NPathParts.compressLocalPath(p.getFile(), 0, 2), p.getQuery().length() > 0 ? "..." : "", p.getRef().length() > 0 ? "..." : ""
 
                 ).toString();
             }

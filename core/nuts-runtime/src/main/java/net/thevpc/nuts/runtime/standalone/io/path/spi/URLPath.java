@@ -15,7 +15,6 @@ import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -393,7 +392,7 @@ public class URLPath implements NPathSPI {
         } catch (Exception e) {
             //
         }
-        return NContentTypes.of().probeContentType(basePath);
+        return NIO.of().probeContentType(basePath);
     }
 
     @Override
@@ -413,7 +412,7 @@ public class URLPath implements NPathSPI {
         } catch (Exception e) {
             //
         }
-        return NContentTypes.of().probeCharset(basePath);
+        return NIO.of().probeCharset(basePath);
     }
 
     @Override
@@ -524,15 +523,13 @@ public class URLPath implements NPathSPI {
             if (ppath == null) {
                 return null;
             }
-            NSession session=workspace.currentSession();
             URL url = new URL(
                     new NPathParts(NPathParts.Type.URL,
                             this.url.getProtocol(),
                             this.url.getAuthority(),
                             ppath,
                             this.url.getQuery(),
-                            this.url.getRef(),
-                            session
+                            this.url.getRef()
                     ).toString()
             );
             return NPath.of(url);
@@ -832,7 +829,6 @@ public class URLPath implements NPathSPI {
         }
 
         public NText asFormattedString() {
-            NSession session=p.workspace.currentSession();
             if (p.url == null) {
                 return NText.ofPlain("");
             }

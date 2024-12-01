@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.boot.NBootConfig;
@@ -110,7 +109,6 @@ public final class DefaultNWorkspaceCurrentConfig {
         if (repositoryStoreStrategy == null) {
             repositoryStoreStrategy = NStoreStrategy.EXPLODED;
         }
-        NSession session= workspace.currentSession();
         Map<NStoreType, String> storeLocations =
         NPlatformHome.of(getStoreLayout(),getSystem()).buildLocations(storeStrategy,
                 getStoreLocations(), homeLocations, workspaceLocation.toString()
@@ -124,7 +122,7 @@ public final class DefaultNWorkspaceCurrentConfig {
             apiId = NId.ofApi(Nuts.getVersion()).get();
         }
         if (storeLayout == null) {
-            storeLayout = NEnvs.of().getOsFamily();
+            storeLayout = NWorkspace.get().getOsFamily();
         }
         return this;
     }
@@ -416,11 +414,11 @@ public final class DefaultNWorkspaceCurrentConfig {
         }
         switch (storeType) {
             case CACHE:
-                return storeLocation.resolve(NConstants.Folders.ID).resolve(NLocations.of().getDefaultIdBasedir(id));
+                return storeLocation.resolve(NConstants.Folders.ID).resolve(NWorkspace.get().getDefaultIdBasedir(id));
             case CONF:
-                return storeLocation.resolve(NConstants.Folders.ID).resolve(NLocations.of().getDefaultIdBasedir(id));
+                return storeLocation.resolve(NConstants.Folders.ID).resolve(NWorkspace.get().getDefaultIdBasedir(id));
         }
-        return storeLocation.resolve(NLocations.of().getDefaultIdBasedir(id));
+        return storeLocation.resolve(NWorkspace.get().getDefaultIdBasedir(id));
     }
 
 }

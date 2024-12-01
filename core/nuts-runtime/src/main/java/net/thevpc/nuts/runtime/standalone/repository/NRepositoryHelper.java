@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.repository;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NSpeedQualifier;
+import net.thevpc.nuts.NSpeedQualifier;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
@@ -38,7 +38,7 @@ public class NRepositoryHelper {
         return wp;
     }
 
-    public static NSpeedQualifier getSupportSpeedLevel(NRepository repository, NRepositorySupportedAction supportedAction, NId id, NFetchMode mode, boolean transitive, NSession session) {
+    public static NSpeedQualifier getSupportSpeedLevel(NRepository repository, NRepositorySupportedAction supportedAction, NId id, NFetchMode mode, boolean transitive) {
         if (repository instanceof NInstalledRepository) {
             return NSpeedQualifier.UNAVAILABLE;
         }
@@ -53,7 +53,7 @@ public class NRepositoryHelper {
         if (transitive) {
             for (NRepository remote : repository.config()
                     .getMirrors()) {
-                NSpeedQualifier r = getSupportSpeedLevel(remote, supportedAction, id, mode, transitive, session);
+                NSpeedQualifier r = getSupportSpeedLevel(remote, supportedAction, id, mode, transitive);
                 if (r != NSpeedQualifier.UNAVAILABLE) {
                     speeds.add(r);
                 }
@@ -113,7 +113,7 @@ public class NRepositoryHelper {
             for (NRepositoryListener listener : u.repo.getRepositoryListeners()) {
                 listener.onUndeploy(evt);
             }
-            for (NRepositoryListener listener : NEvents.of().getRepositoryListeners()) {
+            for (NRepositoryListener listener : u.repo.getWorkspace().getRepositoryListeners()) {
                 listener.onUndeploy(evt);
             }
         }
@@ -122,7 +122,7 @@ public class NRepositoryHelper {
             for (NRepositoryListener listener : u.repo.getRepositoryListeners()) {
                 listener.onDeploy(event);
             }
-            for (NRepositoryListener listener : NEvents.of().getRepositoryListeners()) {
+            for (NRepositoryListener listener : u.repo.getWorkspace().getRepositoryListeners()) {
                 listener.onDeploy(event);
             }
         }
@@ -131,7 +131,7 @@ public class NRepositoryHelper {
             for (NRepositoryListener listener : u.repo.getRepositoryListeners()) {
                 listener.onPush(event);
             }
-            for (NRepositoryListener listener : NEvents.of().getRepositoryListeners()) {
+            for (NRepositoryListener listener : u.repo.getWorkspace().getRepositoryListeners()) {
                 listener.onPush(event);
             }
             for (NRepositoryListener listener : event.getSession().getListeners(NRepositoryListener.class)) {
@@ -149,7 +149,7 @@ public class NRepositoryHelper {
             for (NRepositoryListener listener : u.repo.getRepositoryListeners()) {
                 listener.onAddRepository(event);
             }
-            for (NRepositoryListener listener : NEvents.of().getRepositoryListeners()) {
+            for (NRepositoryListener listener : u.repo.getWorkspace().getRepositoryListeners()) {
                 listener.onAddRepository(event);
             }
             for (NRepositoryListener listener : event.getSession().getListeners(NRepositoryListener.class)) {
@@ -169,7 +169,7 @@ public class NRepositoryHelper {
 //            }
                 listener.onRemoveRepository(event);
             }
-            for (NRepositoryListener listener : NEvents.of().getRepositoryListeners()) {
+            for (NRepositoryListener listener : u.repo.getWorkspace().getRepositoryListeners()) {
 //            if (event == null) {
 //                event = new DefaultNRepositoryEvent(getWorkspace(), this, event, "mirror", event, null);
 //            }

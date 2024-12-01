@@ -25,16 +25,16 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NBootClassLoaderNode;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.NBootManager;
-import net.thevpc.nuts.env.NStoreType;
+
+
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.runtime.standalone.descriptor.util.NDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.env.NOsFamily;
+import net.thevpc.nuts.NOsFamily;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.File;
@@ -529,9 +529,11 @@ public class CoreNUtils {
                 if (rt.equals(depId.getShortName())) {
                     return NIdType.RUNTIME;
                 } else {
-                    for (NBootClassLoaderNode n : NBootManager.of().getBootExtensionClassLoaderNode()) {
-                        if (NId.of(n.getId()).orElse(NId.BLANK).equalsShortId(depId)) {
-                            return NIdType.EXTENSION;
+                    for (NClassLoaderNode n : NWorkspace.get().getBootExtensionClassLoaderNode()) {
+                        if(n.getId()!=null) {
+                            if (n.getId().equalsShortId(depId)) {
+                                return NIdType.EXTENSION;
+                            }
                         }
                     }
                     return NIdType.REGULAR;
@@ -599,14 +601,14 @@ public class CoreNUtils {
     }
 
     public static boolean isCustomTrue(String name) {
-        return NBootManager.of().getCustomBootOption(name)
+        return NWorkspace.get().getCustomBootOption(name)
                 .ifEmpty(NLiteral.of("true"))
                 .flatMap(NLiteral::asBoolean)
                 .orElse(false);
     }
 
     public static boolean isCustomFalse(String name) {
-        return NBootManager.of().getCustomBootOption(name)
+        return NWorkspace.get().getCustomBootOption(name)
                 .flatMap(NLiteral::asBoolean)
                 .orElse(false);
     }
@@ -619,7 +621,7 @@ public class CoreNUtils {
     }
 
     public static boolean isShowCommand() {
-        return NBootManager.of().getCustomBootOption("---show-command")
+        return NWorkspace.get().getCustomBootOption("---show-command")
                 .flatMap(NLiteral::asBoolean)
                 .orElse(false);
     }

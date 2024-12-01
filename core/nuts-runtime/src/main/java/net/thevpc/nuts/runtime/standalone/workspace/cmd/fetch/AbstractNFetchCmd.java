@@ -26,22 +26,20 @@ public abstract class AbstractNFetchCmd extends DefaultNQueryBaseOptions<NFetchC
 
     @Override
     public NFetchCmd setId(String id) {
-        NSession session=getWorkspace().currentSession();
         NId nid = NId.of(id).get();
         return setId(nid);
     }
 
     @Override
     public NFetchCmd setId(NId id) {
-        NSession session=getWorkspace().currentSession();
         if (id == null) {
-            throw new NParseException(NMsg.ofNtf("invalid Id format : null"));
+            throw new NParseException(NMsg.ofNtf("invalid Id format to fetch : null"));
         }
         if (
                 id.getVersion().isBlank()
                         || !id.getVersion().isSingleValue()
         ) {
-            throw new NParseException(NMsg.ofC("invalid Id format : %s", id));
+            throw new NParseException(NMsg.ofC("invalid Id format to fetch : %s", id));
         }
         this.id = id;
         return this;
@@ -70,7 +68,6 @@ public abstract class AbstractNFetchCmd extends DefaultNQueryBaseOptions<NFetchC
             return false;
         }
         boolean enabled = a.isActive();
-        NSession session=getWorkspace().currentSession();
         switch (a.key()) {
             case "--not-installed": {
                 cmdLine.skip();

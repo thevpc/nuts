@@ -180,7 +180,6 @@ public abstract class AbstractNInputSource implements NInputSource {
         if (NBlankable.isBlank(algo)) {
             algo = "SHA-1";
         }
-        NSession session = workspace.currentSession();
         try (InputStream input = getInputStream()) {
             MessageDigest sha1 = null;
             try {

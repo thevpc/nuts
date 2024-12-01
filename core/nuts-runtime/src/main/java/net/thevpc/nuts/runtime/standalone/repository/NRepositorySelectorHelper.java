@@ -126,7 +126,7 @@ public class NRepositorySelectorHelper {
 //                                        .setLocation(NRepositoryLocation.of("nuts@"
 //                                                + NPath.of(
 //                                                        NPlatformHome.SYSTEM.getWorkspaceLocation(
-//                                                                NStoreType.LIB, NConfigs.of().stored().getHomeLocations(),
+//                                                                NStoreType.LIB, NWorkspace.get().stored().getHomeLocations(),
 //                                                                NConstants.Names.DEFAULT_WORKSPACE_NAME))
 //                                                .resolve(NConstants.Folders.ID)
 //                                                .toString())

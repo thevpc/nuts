@@ -92,7 +92,7 @@ public class NResourcePath implements NPathSPI {
         sb.append(location);
         return sb.toString();
     }
-    protected static NText rebuildURL2(NText location, NId[] ids, NSession session) {
+    protected static NText rebuildURL2(NText location, NId[] ids) {
         NTexts txt = NTexts.of();
         NTextBuilder sb = txt.ofBuilder();
         sb.append(nResourceProtocol, NTextStyle.path());
@@ -617,10 +617,9 @@ public class NResourcePath implements NPathSPI {
 
     private class NResourceCompressedPath implements NCompressedPathHelper {
         @Override
-        public NText toCompressedString(NPath base, NSession session) {
-            return rebuildURL2(NPathParts.compressPath(location, session),
+        public NText toCompressedString(NPath base) {
+            return rebuildURL2(NPathParts.compressPath(location),
                     ids.stream().map(x -> NId.of(x.getArtifactId()).get()).toArray(NId[]::new)
-                    ,session
             );
         }
     }

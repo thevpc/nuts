@@ -3,8 +3,9 @@ package net.thevpc.nuts.runtime.standalone.workspace.list;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.env.NLocations;
-import net.thevpc.nuts.env.NStoreType;
+
+
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NBlankable;
@@ -40,7 +41,7 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
                     new NWorkspaceLocation()
                             .setUuid(ws.getUuid())
                             .setName(NConstants.Names.DEFAULT_WORKSPACE_NAME)
-                            .setLocation(NLocations.of().getWorkspaceLocation().toString())
+                            .setLocation(NWorkspace.get().getWorkspaceLocation().toString())
             );
             this.save();
         }
@@ -59,7 +60,7 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
     }
 
     private NPath getConfigFile() {
-        return NLocations.of()
+        return NWorkspace.get()
                 .getStoreLocation(NId.ofClass(DefaultNWorkspaceList.class).get(),
                         NStoreType.CONF)
                 .resolve(name + "-nuts-workspace-list.json");
@@ -89,11 +90,11 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
     @Override
     public NWorkspace addWorkspace(String path) {
         NWorkspace ss = this.createWorkspace(path);
-        NLocations locations = NLocations.of();
+        NWorkspace workspace = NWorkspace.get();
         NWorkspaceLocation workspaceLocation = new NWorkspaceLocation()
                 .setUuid(ss.getUuid())
-                .setName(locations.getWorkspaceLocation().getName())
-                .setLocation(locations.getWorkspaceLocation().toString());
+                .setName(workspace.getWorkspaceLocation().getName())
+                .setLocation(workspace.getWorkspaceLocation().toString());
         workspaces.put(ss.getUuid(), workspaceLocation);
         this.save();
         return ss;

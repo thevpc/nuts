@@ -26,7 +26,6 @@ package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
@@ -276,7 +275,7 @@ public final class NReservedUtils {
                 Map.Entry<String, String> e = iterator.next();
                 String key = e.getKey();
                 String value = e.getValue();
-                switch (key) {
+                switch (NStringUtils.trim(key)) {
                     case NConstants.IdProperties.CLASSIFIER: {
                         classifier = value;
                         break;

@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.*;
 import net.thevpc.nuts.runtime.standalone.util.filters.InternalNTypedFilters;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NAssert;
@@ -185,16 +184,16 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
 
     @Override
     public NDependencyFilter byCurrentDesktop() {
-        return byDesktop(NEnvs.of().getDesktopEnvironmentFamilies());
+        return byDesktop(NWorkspace.get().getDesktopEnvironmentFamilies());
     }
 
     public NDependencyFilter byCurrentArch() {
-        return byArch(NEnvs.of().getArchFamily());
+        return byArch(NWorkspace.get().getArchFamily());
     }
 
     @Override
     public NDependencyFilter byCurrentOs() {
-        return byOs(NEnvs.of().getOsFamily());
+        return byOs(NWorkspace.get().getOsFamily());
     }
 
     @Override

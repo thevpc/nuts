@@ -26,7 +26,7 @@
 package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NBootManager;
+
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.util.NBlankable;
@@ -149,7 +149,7 @@ public class NApiUtilsRPI {
         NSession session = NSessionAwareExceptionBase.resolveSession(ex).orNull();
         NWorkspaceOptionsBuilder bo = null;
         if (session != null) {
-            bo = NBootManager.of().getBootOptions().builder().toWorkspaceOptions().builder();
+            bo = NWorkspace.get().getBootOptions().builder().toWorkspaceOptions().builder();
         } else {
             NWorkspaceOptionsBuilder options = NWorkspaceOptionsBuilder.of();
             //load inherited

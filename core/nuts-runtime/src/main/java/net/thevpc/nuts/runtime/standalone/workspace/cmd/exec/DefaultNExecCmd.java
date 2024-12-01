@@ -2,9 +2,10 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.NEnvs;
-import net.thevpc.nuts.env.NIdLocation;
-import net.thevpc.nuts.env.NLocations;
+
+import net.thevpc.nuts.NIdLocation;
+
+import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
@@ -70,6 +71,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.logging.Level;
 
 /**
  * type: Command Class
@@ -460,15 +462,24 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                         //
                     }
                     if (c != null) {
-                        if (c.getDescriptor() != null) {
-                            NId _id = c.getDescriptor().getId();
+                        NDescriptor descriptor = c.getDescriptor();
+                        if (descriptor != null) {
+                            try {
+                                descriptor=NWorkspaceExt.of(workspace).resolveEffectiveDescriptor(descriptor);
+                            } catch (NNotFoundException ex) {
+                                //ignore
+                                _LOGOP().level(Level.WARNING).verb(NLogVerb.WARNING)
+                                        .log(NMsg.ofC("artifact descriptor found, but one of its parents or dependencies is not: %s : missing %s", descriptor.getId(),
+                                                ex.getId()));
+                                throw ex;
+                            }
+                            NId _id = descriptor.getId();
                             DefaultNDefinition nutToRun = new DefaultNDefinition(
                                     null,
                                     null,
                                     _id.getLongId(),
-                                    c.getDescriptor(),
-                                    NPath.of(c.getContentFile()).setUserCache(false).setUserTemporary(c.getTemps().size() > 0)
-                                    ,
+                                    descriptor,
+                                    NPath.of(c.getContentFile()).setUserCache(false).setUserTemporary(!c.getTemps().isEmpty()),
                                     DefaultNInstallInfo.notInstalled(_id),
                                     null, getWorkspace()
                             );
@@ -481,7 +492,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
 //                            .and(ff.byOptional(getOptional())
 //                            ).and(getDependencyFilter())
                                     );
-                            for (NDependency dependency : c.getDescriptor().getDependencies()) {
+                            for (NDependency dependency : descriptor.getDependencies()) {
                                 resolver.add(dependency);
                             }
                             nutToRun.setDependencies(resolver.solve());
@@ -522,7 +533,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                 if (remoteInfo0 != null) {
                     NAssert.requireNonBlank(command, "command");
                     List<String> ts = new ArrayList<>(command);
-                    if (ts.size() == 0) {
+                    if (ts.isEmpty()) {
                         throw new NUnsupportedArgumentException(NMsg.ofPlain("missing command"));
                     }
                     String id = ts.get(0);
@@ -707,7 +718,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                     );
                 }
                 NCustomCmd command = null;
-                command = NCommands.of().findCommand(goodKw);
+                command = NWorkspace.get().findCommand(goodKw);
                 if (command != null) {
                     NCmdExecOptions o = new NCmdExecOptions().setExecutorOptions(executorOptions).setDirectory(directory).setFailFast(failFast)
                             .setExecutionType(executionType).setEnv(env);
@@ -798,7 +809,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
             char r = File.pathSeparatorChar;
             for (String z : p.split("" + r)) {
                 Path t = Paths.get(z);
-                switch (NEnvs.of().getOsFamily()) {
+                switch (NWorkspace.get().getOsFamily()) {
                     case WINDOWS: {
                         if (Files.isRegularFile(t.resolve(s))) {
                             return true;
@@ -827,7 +838,6 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
 
     protected NExecutableInformationExt ws_execId(NId goodId, String commandName, String[] appArgs, List<String> executorOptions,
                                                   List<String> workspaceOptions, NExecutionType executionType, NRunAs runAs) {
-        NSession session=getWorkspace().currentSession();
         NDefinition def = null;
         try {
             def = NFetchCmd.of(goodId)
@@ -1040,7 +1050,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                         URLBuilder ub = new URLBuilder(((NPath) c.getStreamOrPath()).toURL().toString());
                         try {
                             c.setContentFile(CoreIOUtils.toPathInputSource(
-                                    NPath.of(ub.resolveSibling(NLocations.of().getDefaultIdFilename(c.getDescriptor().getId())).toURL()),
+                                    NPath.of(ub.resolveSibling(NWorkspace.get().getDefaultIdFilename(c.getDescriptor().getId())).toURL()),
                                     c.getTemps(), true));
                         } catch (Exception ex) {
                             //TODO FIX ME
@@ -1063,8 +1073,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                                     URLBuilder ub = new URLBuilder(((NPath) c.getStreamOrPath()).toURL().toString());
                                     try {
                                         c.setContentFile(CoreIOUtils.toPathInputSource(
-                                                NPath.of(ub.resolveSibling(NLocations.of()
-                                                        .getDefaultIdFilename(c.getDescriptor().getId())).toURL()),
+                                                NPath.of(ub.resolveSibling(NWorkspace.get().getDefaultIdFilename(c.getDescriptor().getId())).toURL()),
                                                 c.getTemps(), true));
                                     } catch (Exception ex) {
                                         //TODO add log here

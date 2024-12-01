@@ -410,7 +410,6 @@ public abstract class AbstractNUpdateUserCmd extends NWorkspaceCmdBaseRepo<NUpda
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NSession session=getWorkspace().currentSession();
         NArg a = cmdLine.peek().get();
         if (a == null) {
             return false;

@@ -5,8 +5,9 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.concurrent.NLock;
 import net.thevpc.nuts.concurrent.NLockAcquireException;
 import net.thevpc.nuts.concurrent.NLockException;
-import net.thevpc.nuts.env.NLocations;
-import net.thevpc.nuts.env.NStoreType;
+
+
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NBlankable;
@@ -25,7 +26,6 @@ public class DefaultNLocks extends AbstractNLocks {
 
     @Override
     public NLock create() {
-        NSession session=getWorkspace().currentSession();
         Object s = getSource();
         Object lr = getResource();
         Path lrPath = null;
@@ -44,12 +44,11 @@ public class DefaultNLocks extends AbstractNLocks {
                 throw new NLockException(NMsg.ofC("unsupported lock %s", lr.getClass().getName()), lr, s);
             }
         }
-        return new DefaultFileNLock(lrPath, s, session);
+        return new DefaultFileNLock(lrPath, s, getWorkspace());
     }
 
     @Override
     public <T> T call(Callable<T> runnable) {
-        NSession session=getWorkspace().currentSession();
         NLock lock = create();
         if (!lock.tryLock()) {
             throw new NLockAcquireException(null, getResource(), lock);
@@ -70,7 +69,6 @@ public class DefaultNLocks extends AbstractNLocks {
 
     @Override
     public <T> T call(Callable<T> runnable, long time, TimeUnit unit) {
-        NSession session=getWorkspace().currentSession();
         NLock lock = create();
         boolean b = false;
         try {
@@ -97,7 +95,6 @@ public class DefaultNLocks extends AbstractNLocks {
 
     @Override
     public void run(Runnable runnable) {
-        NSession session=getWorkspace().currentSession();
         NLock lock = create();
         if (!lock.tryLock()) {
             throw new NLockAcquireException(null, getResource(), lock);
@@ -116,7 +113,6 @@ public class DefaultNLocks extends AbstractNLocks {
 
     @Override
     public void run(Runnable runnable, long time, TimeUnit unit) {
-        NSession session=getWorkspace().currentSession();
         NLock lock = create();
         boolean b = false;
         try {
@@ -146,8 +142,7 @@ public class DefaultNLocks extends AbstractNLocks {
             if (NBlankable.isBlank(face)) {
                 face = "content";
             }
-            NSession session=getWorkspace().currentSession();
-            return NLocations.of().getStoreLocation((NId) lockedObject, NStoreType.RUN)
+            return NWorkspace.get().getStoreLocation((NId) lockedObject, NStoreType.RUN)
                     .resolve("nuts-" + face)
                     .toPath().get()
                     ;

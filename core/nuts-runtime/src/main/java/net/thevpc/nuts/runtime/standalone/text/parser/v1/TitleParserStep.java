@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NQuoteType;
 import net.thevpc.nuts.util.NStringUtils;
@@ -14,10 +13,8 @@ public class TitleParserStep extends ParserStep {
 
     StringBuilder start = new StringBuilder();
     List<ParserStep> children = new ArrayList<>();
-    private NSession session;
-    public TitleParserStep(String c, NSession session) {
+    public TitleParserStep(String c) {
         start.append(c);
-        this.session = session;
     }
 
     @Override

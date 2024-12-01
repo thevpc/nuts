@@ -1,8 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util.jclass;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NBootClassLoaderNode;
-import net.thevpc.nuts.env.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.concurrent.NScheduler;
 import net.thevpc.nuts.io.NPath;
@@ -23,6 +21,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 
 public class NJavaSdkUtils {
@@ -43,18 +42,18 @@ public class NJavaSdkUtils {
 //        return wp;
     }
 
-    public static List<NClassLoaderNodeExt> loadNutsClassLoaderNodeExts(NBootClassLoaderNode[] n, boolean java9, NWorkspace workspace) {
+    public static List<NClassLoaderNodeExt> loadNutsClassLoaderNodeExts(NClassLoaderNode[] n, boolean java9, NWorkspace workspace) {
         List<NClassLoaderNodeExt> list = new ArrayList<>();
-        for (NBootClassLoaderNode nn : n) {
+        for (NClassLoaderNode nn : n) {
             fillNodes(nn, list, java9, workspace);
         }
         return list;
     }
 
-    private static void fillNodes(NBootClassLoaderNode n, List<NClassLoaderNodeExt> list, boolean java9, NWorkspace workspace) {
+    private static void fillNodes(NClassLoaderNode n, List<NClassLoaderNodeExt> list, boolean java9, NWorkspace workspace) {
         NClassLoaderNodeExt k = new NClassLoaderNodeExt();
         k.node = n;
-        k.id = NId.of(n.getId()).get();
+        k.id = n.getId();
         k.path = NPath.of(n.getURL());
         if (java9) {
             k.moduleInfo = JavaJarUtils.parseModuleInfo(k.path, workspace);
@@ -75,7 +74,7 @@ public class NJavaSdkUtils {
                     k.id.getGroupId().startsWith("org.openjfx");
         }
         list.add(k);
-        for (NBootClassLoaderNode d : n.getDependencies()) {
+        for (NClassLoaderNode d : n.getDependencies()) {
             fillNodes(d, list, java9, workspace);
         }
     }
@@ -88,27 +87,58 @@ public class NJavaSdkUtils {
         return NLog.of(NJavaSdkUtils.class);
     }
 
-    public NPlatformLocation resolveJdkLocation(String requestedJavaVersion) {
-        String _requestedJavaVersion = requestedJavaVersion;
+    public Predicate<String> createVersionFilterPredicate(String requestedJavaVersion){
+        NVersionFilter versionFilter = createVersionFilter(requestedJavaVersion);
+        return createVersionFilterPredicate(versionFilter);
+    }
+
+    public Predicate<String> createVersionFilterPredicate(NVersionFilter versionFilter){
+        return new Predicate<String>() {
+            @Override
+            public boolean test(String sVersion) {
+                NVersion version = NVersion.of(sVersion).get();
+                if (versionFilter.acceptVersion(version)) {
+                    return true;
+                }
+                // replace 1.6 by 6, and 1.8 by 8
+                int a = sVersion.indexOf('.');
+                if (a > 0) {
+                    NLiteral p = NLiteral.of(sVersion.substring(0, a));
+                    if (p.isInt() && p.asInt().get() == 1) {
+                        String sVersion2 = sVersion.substring(a + 1);
+                        NVersion version2 = NVersion.of(sVersion2).get();
+                        if (versionFilter.acceptVersion(version2)) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+        };
+    }
+
+    public NVersionFilter createVersionFilter(String requestedJavaVersion){
         requestedJavaVersion = NStringUtils.trim(requestedJavaVersion);
         NVersion vv = NVersion.of(requestedJavaVersion).get();
         String singleVersion = vv.asSingleValue().orNull();
         if (singleVersion != null) {
             requestedJavaVersion = "[" + singleVersion + ",[";
         }
-        NVersionFilter requestedVersionFilter = NVersionFilters.of().byValue(requestedJavaVersion).get();
-        NPlatforms platforms = NPlatforms.of();
-        NPlatformLocation bestJava = platforms
+        return NVersionFilters.of().byValue(requestedJavaVersion).get();
+    }
+    public NPlatformLocation resolveJdkLocation(String requestedJavaVersion) {
+        NVersionFilter requestedVersionFilter = createVersionFilter(requestedJavaVersion);
+        NPlatformLocation bestJava = workspace
                 .findPlatformByVersion(NPlatformFamily.JAVA, requestedVersionFilter).orNull();
         if (bestJava == null) {
-            String appSuffix = NEnvs.of().getOsFamily() == NOsFamily.WINDOWS ? ".exe" : "";
+            String appSuffix = NWorkspace.get().getOsFamily() == NOsFamily.WINDOWS ? ".exe" : "";
             String packaging = "jre";
             if (new File(System.getProperty("java.home"), "bin" + File.separator + "javac" + (appSuffix)).isFile()) {
                 packaging = "jdk";
             }
             String product = "JDK";
             NPlatformLocation current = new NPlatformLocation(
-                    NEnvs.of().getPlatform(),
+                    NWorkspace.get().getPlatform(),
                     product,
                     product + "-" + System.getProperty("java.version"),
                     System.getProperty("java.home"),
@@ -117,7 +147,7 @@ public class NJavaSdkUtils {
                     0
             );
             current.setConfigVersion(DefaultNWorkspace.VERSION_SDK_LOCATION);
-            NVersionFilter requestedJavaVersionFilter = vv.filter();
+            NVersionFilter requestedJavaVersionFilter = NVersion.of(NStringUtils.trim(requestedJavaVersion)).get().filter();
             if (requestedJavaVersionFilter == null || requestedJavaVersionFilter.acceptVersion(NVersion.of(current.getVersion()).get())) {
                 bestJava = current;
             }
@@ -133,29 +163,17 @@ public class NJavaSdkUtils {
             }
         }
         String sVersion = bestJava.getVersion();
-        if (requestedVersionFilter.acceptVersion(NVersion.of(sVersion).get())) {
+        if(createVersionFilterPredicate(requestedVersionFilter).test(sVersion)){
             return bestJava;
         }
-        // replace 1.6 by 6, and 1.8 by 8
-        int a = sVersion.indexOf('.');
-        if (a > 0) {
-            NLiteral p = NLiteral.of(sVersion.substring(0, a));
-            if (p.isInt() && p.asInt().get() == 1) {
-                String sVersion2 = sVersion.substring(a + 1);
-                NVersion version2 = NVersion.of(sVersion2).get();
-                if (requestedVersionFilter.acceptVersion(version2)) {
-                    return bestJava;
-                }
-            }
-        }
         _LOGOP().level(Level.FINE).verb(NLogVerb.WARNING)
-                .log(NMsg.ofJ("no valid JRE found for version {0}", _requestedJavaVersion));
+                .log(NMsg.ofJ("no valid JRE found for version {0}", requestedJavaVersion));
         return null;
     }
 
-    public NPlatformLocation[] searchJdkLocations(NSession session) {
+    public NPlatformLocation[] searchJdkLocations() {
         String[] conf = {};
-        switch (NEnvs.of().getOsFamily()) {
+        switch (NWorkspace.get().getOsFamily()) {
             case LINUX:
             case UNIX:
             case UNKNOWN: {
@@ -176,7 +194,7 @@ public class NJavaSdkUtils {
         }
         List<NPlatformLocation> all = new ArrayList<>();
         for (String s : conf) {
-            all.addAll(Arrays.asList(searchJdkLocations(NPath.of(s), session)));
+            all.addAll(Arrays.asList(searchJdkLocations(NPath.of(s))));
         }
         return all.toArray(new NPlatformLocation[0]);
     }
@@ -189,7 +207,7 @@ public class NJavaSdkUtils {
         if (base != null) {
             all.add(CompletableFuture.completedFuture(new NPlatformLocation[]{base}));
         }
-        switch (NEnvs.of().getOsFamily()) {
+        switch (NWorkspace.get().getOsFamily()) {
             case LINUX:
             case UNIX:
             case UNKNOWN: {
@@ -224,20 +242,20 @@ public class NJavaSdkUtils {
         });
     }
 
-    public NPlatformLocation[] searchJdkLocations(NPath loc, NSession session) {
+    public NPlatformLocation[] searchJdkLocations(NPath loc) {
         List<NPlatformLocation> all = new ArrayList<>();
         if (loc.isDirectory()) {
             for (NPath d : loc.list()) {
                 NPlatformLocation r = resolveJdkLocation(d, null);
                 if (r != null) {
                     all.add(r);
-                    if (session != null && session.isPlainTrace()) {
+//                    if (session != null && session.isPlainTrace()) {
 //                            NTexts factory = NTexts.of(session);
 //                            session.out().println(NMsg.ofC("detected java %s %s at %s", r.getPackaging(),
 //                                    factory.ofStyled(r.getVersion(), NutsTextStyle.version()),
 //                                    factory.ofStyled(r.getPath(), NutsTextStyle.path())
 //                            );
-                    }
+//                    }
                 }
             }
         }
@@ -316,7 +334,7 @@ public class NJavaSdkUtils {
 
     public NPlatformLocation resolveJdkLocation(NPath path, String preferredName) {
         NAssert.requireNonBlank(path, "path");
-        String appSuffix = NEnvs.of().getOsFamily() == NOsFamily.WINDOWS ? ".exe" : "";
+        String appSuffix = NWorkspace.get().getOsFamily() == NOsFamily.WINDOWS ? ".exe" : "";
         NPath bin = path.resolve("bin");
         NPath javaExePath = bin.resolve("java" + appSuffix);
         if (!javaExePath.isRegularFile()) {
@@ -437,9 +455,9 @@ public class NJavaSdkUtils {
         }
         String bestJavaPath = nutsPlatformLocation.getPath();
         //if (bestJavaPath.contains("/") || bestJavaPath.contains("\\") || bestJavaPath.equals(".") || bestJavaPath.equals("..")) {
-        NPath file = NPath.of(bestJavaPath).toAbsolute(NLocations.of().getWorkspaceLocation());
+        NPath file = NPath.of(bestJavaPath).toAbsolute(NWorkspace.get().getWorkspaceLocation());
         //if (file.isDirectory() && file.resolve("bin").isDirectory()) {
-        boolean winOs = NEnvs.of().getOsFamily() == NOsFamily.WINDOWS;
+        boolean winOs = NWorkspace.get().getOsFamily() == NOsFamily.WINDOWS;
         if (winOs) {
             if (javaw) {
                 bestJavaPath = file.resolve("bin").resolve("javaw.exe").toString();
@@ -455,7 +473,7 @@ public class NJavaSdkUtils {
     }
 
     public String resolveJavaCommandByHome(String javaHome) {
-        String appSuffix = NEnvs.of().getOsFamily() == NOsFamily.WINDOWS ? ".exe" : "";
+        String appSuffix = NWorkspace.get().getOsFamily() == NOsFamily.WINDOWS ? ".exe" : "";
         String exe = "java" + appSuffix;
         if (javaHome == null || javaHome.isEmpty()) {
             javaHome = System.getProperty("java.home");

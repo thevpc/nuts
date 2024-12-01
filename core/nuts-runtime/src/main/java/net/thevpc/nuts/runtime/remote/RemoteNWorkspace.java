@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
-import net.thevpc.nuts.env.NBootManager;
+
 import net.thevpc.nuts.runtime.standalone.workspace.AbstractNWorkspace;
 import net.thevpc.nuts.runtime.standalone.xtra.ntalk.NTalkClient;
 import net.thevpc.nuts.text.NText;
@@ -24,7 +24,7 @@ public abstract class RemoteNWorkspace extends AbstractNWorkspace {
                     .set("cmd", commandName)
                     .set("body", body).build();
             NText json = e.setValue(q).format();
-            String wsURL = NBootManager.of().getBootOptions().getWorkspace().orNull();
+            String wsURL = NWorkspace.get().getBootOptions().getWorkspace().orNull();
             byte[] result = cli.request("nuts/ws:"+wsURL, json.toString().getBytes());
             NObjectElement resultObject = e.parse(result, NObjectElement.class);
             NElements prv = NElements.of();

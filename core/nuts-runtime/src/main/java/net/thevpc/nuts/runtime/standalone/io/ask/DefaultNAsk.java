@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.ask;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NEnvs;
+
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
@@ -79,7 +79,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
                             + "You need to provide default response (-y|-n) for question : %s", os
             ), NExecutionException.ERROR_255);
         }
-        boolean gui = session.isGui() && NEnvs.of().isGraphicalDesktopEnvironment();
+        boolean gui = session.isGui() && NWorkspace.get().isGraphicalDesktopEnvironment();
 
         NMsg message = this.getMessage();
 //        if (message.endsWith("\n")) {
@@ -470,7 +470,6 @@ public class DefaultNAsk<T> implements NAsk<T> {
      */
     @Override
     public final NAsk<T> configure(boolean skipUnsupported, String... args) {
-        NSession session= workspace.currentSession();
         return NCmdLineConfigurable.configure(this, skipUnsupported, args,"question");
     }
 
@@ -482,7 +481,6 @@ public class DefaultNAsk<T> implements NAsk<T> {
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NSession session= workspace.currentSession();
         NArg aa = cmdLine.peek().get();
         if (aa == null) {
             return false;

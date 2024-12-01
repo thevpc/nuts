@@ -14,18 +14,18 @@ import java.util.logging.LogRecord;
 
 public class NLogRichFormatter extends Formatter {
     private long lastMillis = -1;
-    private NSession session;
+    private NWorkspace workspace;
     private boolean filtered;
 //    public static final NutsLogRichFormatter RICH = new NutsLogRichFormatter();
 
-    public NLogRichFormatter(NSession session, boolean filtered) {
-        this.session = session;
+    public NLogRichFormatter(NWorkspace workspace, boolean filtered) {
+        this.workspace = workspace;
         this.filtered = filtered;
     }
 
     @Override
     public String format(LogRecord record) {
-        NLogRecord wRecord = NLogUtils.toNutsLogRecord(record, session);
+        NLogRecord wRecord = NLogUtils.toNutsLogRecord(record, workspace.currentSession());
         NTexts tf = NTexts.of();
 
         NTextBuilder sb = tf.ofBuilder();

@@ -56,7 +56,6 @@ public class NCachedValue<T> {
     }
 
     public void updateAsync() {
-        NSession session = workspace.currentSession();
         if (!updating) {
             new Thread() {
                 @Override

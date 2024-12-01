@@ -26,10 +26,10 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NHomeLocation;
-import net.thevpc.nuts.env.NOsFamily;
-import net.thevpc.nuts.env.NStoreStrategy;
-import net.thevpc.nuts.env.NStoreType;
+import net.thevpc.nuts.NHomeLocation;
+import net.thevpc.nuts.NOsFamily;
+import net.thevpc.nuts.NStoreStrategy;
+import net.thevpc.nuts.NStoreType;
 
 import java.util.*;
 

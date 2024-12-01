@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NBootOptions;
+import net.thevpc.nuts.NBootOptions;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
@@ -72,7 +71,6 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
             out = getOut();
         }
         if (out == null) {
-            NSession session = getWorkspace().currentSession();
             out = NIO.of().stdout();
         }
         if (message != null) {
@@ -88,7 +86,6 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
             out = getOut();
         }
         if (out == null) {
-            NSession session = getWorkspace().currentSession();
             out = NIO.of().stdout();
         }
         if (message != null) {
@@ -174,7 +171,7 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
             //try {
                 byte[] bytes = s.getBytes();
                 printStream.writeRaw(bytes,0,bytes.length);
-//                NWorkspaceTerminalOptions bootStdFd = NBootManager.of(session).getBootTerminal();
+//                NWorkspaceTerminalOptions bootStdFd = NEnvs.of(session).getBootTerminal();
 //                bootStdFd.getOut().write(bytes);
             //} catch (IOException e) {
             //    throw new NIOException(session, e);

@@ -1,8 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.io.inputstream;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NBootManager;
-import net.thevpc.nuts.env.NBootOptions;
+
+import net.thevpc.nuts.NBootOptions;
+
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
 import net.thevpc.nuts.runtime.standalone.io.ask.DefaultNAsk;
@@ -14,7 +15,6 @@ import net.thevpc.nuts.runtime.standalone.text.SimpleWriterOutputStream;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaJarUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NText;
@@ -34,8 +34,7 @@ public class DefaultNIORPI implements NIORPI {
 
     public DefaultNIORPI(NWorkspace workspace) {
         this.workspace = workspace;
-        NSession session = workspace.currentSession();
-        this.cmodel = ((DefaultNConfigs) NConfigs.of()).getModel();
+        this.cmodel = NWorkspaceExt.of().getConfigModel();
         bootModel = NWorkspaceExt.of().getModel().bootModel;
     }
 
@@ -65,7 +64,7 @@ public class DefaultNIORPI implements NIORPI {
         if (out == null) {
             return null;
         }
-        NBootOptions woptions = NBootManager.of().getBootOptions();
+        NBootOptions woptions = NWorkspace.get().getBootOptions();
         NTerminalMode expectedMode0 = woptions.getTerminalMode().orElse(NTerminalMode.DEFAULT);
         if (expectedMode0 == NTerminalMode.DEFAULT) {
             if (woptions.getBot().orElse(false)) {
@@ -212,7 +211,6 @@ public class DefaultNIORPI implements NIORPI {
         if (source.isMultiRead()) {
             return source;
         }
-        NSession session = workspace.currentSession();
         NPath tf = NPath.ofTempFile();
         try (InputStream in = source.getInputStream()) {
             try (OutputStream out = tf.getOutputStream()) {
@@ -313,7 +311,6 @@ public class DefaultNIORPI implements NIORPI {
     @Override
     public NTerminal createInMemoryTerminal(boolean mergeErr) {
         ByteArrayInputStream in = new ByteArrayInputStream(new byte[0]);
-        NSession session = workspace.currentSession();
         NMemoryPrintStream out = NMemoryPrintStream.of();
         NMemoryPrintStream err = mergeErr ? out : NMemoryPrintStream.of();
         return createTerminal(in, out, err);
@@ -333,7 +330,6 @@ public class DefaultNIORPI implements NIORPI {
                     return parseExecutionEntries(in, "jar", file.toAbsolute().normalize().toString());
                 }
             } catch (IOException ex) {
-                NSession session = workspace.currentSession();
                 throw new NIOException(ex);
             }
         } else if (file.getName().toLowerCase().endsWith(".class")) {
@@ -342,7 +338,6 @@ public class DefaultNIORPI implements NIORPI {
                     return parseExecutionEntries(in, "class", file.toAbsolute().normalize().toString());
                 }
             } catch (IOException ex) {
-                NSession session = workspace.currentSession();
                 throw new NIOException(ex);
             }
         } else {
@@ -352,7 +347,6 @@ public class DefaultNIORPI implements NIORPI {
 
     @Override
     public List<NExecutionEntry> parseExecutionEntries(InputStream inputStream, String type, String sourceName) {
-        NSession session = workspace.currentSession();
         if ("jar".equals(type)) {
             return JavaJarUtils.parseJarExecutionEntries(inputStream);
         } else if ("class".equals(type)) {

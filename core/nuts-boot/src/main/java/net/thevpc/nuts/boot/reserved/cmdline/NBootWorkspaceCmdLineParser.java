@@ -1087,11 +1087,7 @@ public final class NBootWorkspaceCmdLineParser {
                                     showError.add(NBootMsg.ofC("invalid argument for workspace: %s", a.getImage()).toString());
                                     options.setErrors(showError);
                                 }
-                                List<String> applicationArguments = options.getApplicationArguments();
-                                if (applicationArguments == null) {
-                                    applicationArguments = new ArrayList<>();
-                                }
-
+                                List<String> applicationArguments = NBootUtils.nonNullStrList(options.getApplicationArguments());
                                 applicationArguments.addAll(newArgs);
                                 options.setApplicationArguments(applicationArguments);
                             }
@@ -1218,10 +1214,7 @@ public final class NBootWorkspaceCmdLineParser {
                                         }
                                     } else {
                                         if (options != null) {
-                                            List<String> applicationArguments = options.getApplicationArguments();
-                                            if (applicationArguments == null) {
-                                                applicationArguments = new ArrayList<>();
-                                            }
+                                            List<String> applicationArguments = NBootUtils.nonNullStrList(options.getApplicationArguments());
                                             applicationArguments.add(NBootUtils.firstNonNull(a.toString(), ""));
                                             List<String> list = Arrays.asList(cmdLine.toStringArray());
                                             applicationArguments.addAll(list);
@@ -1445,10 +1438,7 @@ public final class NBootWorkspaceCmdLineParser {
                 newArgs.addAll(Arrays.asList(cmdLine.toStringArray()));
                 cmdLine.skipAll();
                 if (options != null) {
-                    List<String> applicationArguments = options.getApplicationArguments();
-                    if (applicationArguments == null) {
-                        applicationArguments = new ArrayList<>();
-                    }
+                    List<String> applicationArguments = NBootUtils.nonNullStrList(options.getApplicationArguments());
                     applicationArguments.addAll(newArgs);
                     options.setApplicationArguments(applicationArguments);
                 }

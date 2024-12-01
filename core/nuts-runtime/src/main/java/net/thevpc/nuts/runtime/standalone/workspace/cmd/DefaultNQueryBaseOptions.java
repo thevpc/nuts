@@ -297,7 +297,6 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
         if (getDisplayOptions().configureFirst(cmdLine)) {
             return true;
         }
-        NSession session = workspace.currentSession();
         NArg a = cmdLine.peek().get();
         if (a == null) {
             return false;
@@ -353,11 +352,10 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
 
     //    @Override
     public T setRepositoryFilter(String filter) {
-        NSession session = workspace.currentSession();
         if (NBlankable.isBlank(filter)) {
             this.repositoryFilter = null;
         } else {
-            this.repositoryFilter = NRepositories.of().filter().bySelector(filter);
+            this.repositoryFilter = NRepositoryFilters.of().bySelector(filter);
         }
         return (T) this;
     }
@@ -409,7 +407,6 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCmd> extends 
 
     //    @Override
     public T setDependencyFilter(String filter) {
-        NSession session = workspace.currentSession();
         this.dependencyFilter = NDependencyFilters.of().parse(filter);
         return (T) this;
     }

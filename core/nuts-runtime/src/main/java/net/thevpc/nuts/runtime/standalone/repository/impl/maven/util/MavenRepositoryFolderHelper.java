@@ -42,7 +42,8 @@ import java.util.logging.Level;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NEDesc;
-import net.thevpc.nuts.env.NLocations;
+
+
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
@@ -64,12 +65,12 @@ import net.thevpc.nuts.util.NMsg;
 public class MavenRepositoryFolderHelper {
 
     private NRepository repo;
-    private NWorkspace ws;
+    private NWorkspace workspace;
     private NPath rootPath;
 
     public MavenRepositoryFolderHelper(NRepository repo, NPath rootPath) {
         this.repo = repo;
-        this.ws = NWorkspace.get();
+        this.workspace = NWorkspace.get();
         this.rootPath = rootPath;
     }
 
@@ -81,13 +82,13 @@ public class MavenRepositoryFolderHelper {
         return NLog.of(MavenRepositoryFolderHelper.class);
     }
 
-    public NPath getIdLocalFile(NId id, NSession session) {
+    public NPath getIdLocalFile(NId id) {
         return getStoreLocation().resolve(NRepositoryExt.of(repo).getIdBasedir(id))
-                .resolve(NLocations.of().getDefaultIdFilename(id));
+                .resolve(NWorkspace.get().getDefaultIdFilename(id));
     }
 
-    public NPath fetchContentImpl(NId id, Path localPath, NSession session) {
-        NPath cacheContent = getIdLocalFile(id, session);
+    public NPath fetchContentImpl(NId id, Path localPath) {
+        NPath cacheContent = getIdLocalFile(id);
         if (cacheContent != null && cacheContent.exists()) {
             return cacheContent.setUserCache(true).setUserTemporary(false);
         }
@@ -95,37 +96,37 @@ public class MavenRepositoryFolderHelper {
     }
 
     public NWorkspace getWorkspace() {
-        return ws;
+        return workspace;
     }
 
-    protected String getIdFilename(NId id, NSession session) {
+    protected String getIdFilename(NId id) {
         if (repo == null) {
-            return NLocations.of().getDefaultIdFilename(id);
+            return NWorkspace.get().getDefaultIdFilename(id);
         }
         return NRepositoryExt.of(repo).getIdFilename(id);
     }
 
-    public NPath getLocalGroupAndArtifactFile(NId id, NSession session) {
+    public NPath getLocalGroupAndArtifactFile(NId id) {
         CoreNIdUtils.checkShortId(id);
         return getStoreLocation().resolve(ExtraApiUtils.resolveIdPath(id.getShortId()));
     }
 
-    public Iterator<NId> searchVersions(NId id, final NIdFilter filter, boolean deep, NSession session) {
+    public Iterator<NId> searchVersions(NId id, final NIdFilter filter, boolean deep) {
         String singleVersion = id.getVersion().asSingleValue().orNull();
         if (singleVersion != null) {
             NId id1 = id.builder().setVersion(singleVersion).setFaceDescriptor().build();
-            NPath localFile = getIdLocalFile(id1, session);
+            NPath localFile = getIdLocalFile(id1);
             if (localFile != null && localFile.isRegularFile()) {
                 return Collections.singletonList(id.builder().setRepository(repo == null ? null : repo.getName()).build()).iterator();
             }
             return null;
         }
-        return searchInFolder(getLocalGroupAndArtifactFile(id, session), filter,
-                deep ? Integer.MAX_VALUE : 1,
-                session);
+        return searchInFolder(getLocalGroupAndArtifactFile(id), filter,
+                deep ? Integer.MAX_VALUE : 1
+        );
     }
 
-    public Iterator<NId> searchInFolder(NPath folder, final NIdFilter filter, int maxDepth, NSession session) {
+    public Iterator<NId> searchInFolder(NPath folder, final NIdFilter filter, int maxDepth) {
         return new NIdPathIterator(repo, rootPath.normalize(), folder, filter, new NIdPathIteratorBase() {
             @Override
             public NWorkspace getWorkspace() {
@@ -153,9 +154,9 @@ public class MavenRepositoryFolderHelper {
         return rootPath;
     }
 
-    public NId searchLatestVersion(NId id, NIdFilter filter, NSession session) {
+    public NId searchLatestVersion(NId id, NIdFilter filter) {
         NId bestId = null;
-        NPath file = getLocalGroupAndArtifactFile(id, session);
+        NPath file = getLocalGroupAndArtifactFile(id);
         if (file.exists()) {
             NPath[] versionFolders = file.stream().filter(NPath::isDirectory).withDesc(NEDesc.of("isDirectory"))
                     .toArray(NPath[]::new);
@@ -169,11 +170,11 @@ public class MavenRepositoryFolderHelper {
         return bestId;
     }
 
-    public void reindexFolder(NSession session) {
-        reindexFolder(getStoreLocation(), true, session);
+    public void reindexFolder() {
+        reindexFolder(getStoreLocation(), true);
     }
 
-    private void reindexFolder(NPath path, boolean applyRawNavigation, NSession session) {
+    private void reindexFolder(NPath path, boolean applyRawNavigation) {
         try {
             Files.walkFileTree(path.toPath().get(), new FileVisitor<Path>() {
                 @Override
@@ -223,7 +224,7 @@ public class MavenRepositoryFolderHelper {
                             MavenMetadata old = null;
                             try {
                                 if (Files.exists(metadataxml)) {
-                                    old = new MavenMetadataParser(session).parseMavenMetaData(metadataxml);
+                                    old = new MavenMetadataParser().parseMavenMetaData(metadataxml);
                                 }
                             } catch (Exception ex) {
                                 _LOGOP().level(Level.SEVERE).error(ex)
@@ -257,7 +258,7 @@ public class MavenRepositoryFolderHelper {
                                 m.setLastUpdated(new Date());
                             }
 //                            println(MavenMetadataParser.toXmlString(m));
-                            new MavenMetadataParser(session).writeMavenMetaData(m, metadataxml);
+                            new MavenMetadataParser().writeMavenMetaData(m, metadataxml);
                             String md5 = NDigestUtils.evalMD5Hex(metadataxml).toLowerCase();
                             Files.write(metadataxml.resolveSibling("maven-metadata.xml.md5"), md5.getBytes());
                             String sha1 = NDigestUtils.evalSHA1Hex(NPath.of(metadataxml)).toLowerCase();
@@ -285,7 +286,7 @@ public class MavenRepositoryFolderHelper {
 //                            throw new NutsIOException(getWorkspace(),e);
 //                        }
                         try (PrintStream p = new PrintStream(new File(folder, CoreNConstants.Files.DOT_FILES))) {
-                            p.println("#version=" + ws.getApiVersion());
+                            p.println("#version=" + workspace.getApiVersion());
                             for (String file : folders) {
                                 p.println(file + "/");
                             }

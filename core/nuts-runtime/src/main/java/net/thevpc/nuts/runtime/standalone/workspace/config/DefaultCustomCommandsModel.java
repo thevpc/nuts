@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.CommandNWorkspaceCommandFactory;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ConfigNWorkspaceCommandFactory;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.alias.DefaultNCustomCommand;
@@ -82,8 +83,8 @@ public class DefaultCustomCommandsModel {
             oldCommandFactory.setParameters(commandFactoryConfig.getParameters() == null ? null : new LinkedHashMap<>(commandFactoryConfig.getParameters()));
             oldCommandFactory.setPriority(commandFactoryConfig.getPriority());
         }
-        NConfigsExt.of(NConfigs.of())
-                .getModel().fireConfigurationChanged("command", ConfigEventType.MAIN);
+        NWorkspaceExt.of(workspace)
+                .getConfigModel().fireConfigurationChanged("command", ConfigEventType.MAIN);
     }
 
     public boolean removeFactoryIfExists(String factoryId) {
@@ -133,8 +134,8 @@ public class DefaultCustomCommandsModel {
             if (factoryId.equals(factory.getFactoryId())) {
                 removeMe = factory;
                 iterator.remove();
-                NConfigsExt.of(NConfigs.of())
-                        .getModel()
+                NWorkspaceExt.of(workspace)
+                        .getConfigModel()
                         .fireConfigurationChanged("command", ConfigEventType.MAIN);
                 break;
             }
@@ -146,7 +147,7 @@ public class DefaultCustomCommandsModel {
                 if (factoryId.equals(commandFactory.getFactoryId())) {
                     removeMeConfig = commandFactory;
                     iterator.remove();
-                    NConfigsExt.of(NConfigs.of()).getModel()
+                    NWorkspaceExt.of(workspace).getConfigModel()
                             .fireConfigurationChanged("command", ConfigEventType.MAIN);
                     break;
                 }

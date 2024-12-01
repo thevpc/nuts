@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
-import net.thevpc.nuts.env.NBootManager;
+
+
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.NSession;
@@ -14,11 +16,11 @@ import java.util.logging.StreamHandler;
 public class NLogConsoleHandler extends StreamHandler {
 
     private NPrintStream out;
-    private NSession session;
+    private NWorkspace workspace;
 
-    public NLogConsoleHandler(NPrintStream out, boolean closeable, NSession session) {
-        this.session = session;
-        setFormatter(new NLogRichFormatter(session, false));
+    public NLogConsoleHandler(NPrintStream out, boolean closeable, NWorkspace workspace) {
+        this.workspace = workspace;
+        setFormatter(new NLogRichFormatter(workspace, false));
         setOutputStream(out, closeable);
     }
 
@@ -42,11 +44,11 @@ public class NLogConsoleHandler extends StreamHandler {
         if (!super.isLoggable(record)) {
             return false;
         }
-        NSession session = NLogUtils.resolveSession(record,this.session);
+        NSession session = NLogUtils.resolveSession(record,this.workspace);
         if (session.isBot()) {
             return false;
         }
-        NLogConfig logConfig = NBootManager.of().getBootOptions().getLogConfig().orElseGet(NLogConfig::new);
+        NLogConfig logConfig = NWorkspace.get().getBootOptions().getLogConfig().orElseGet(NLogConfig::new);
         Level sessionLogLevel = session.getLogTermLevel();
         if (sessionLogLevel == null) {
             if (logConfig != null) {

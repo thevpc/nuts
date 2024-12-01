@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.executor.embedded;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NCmdLineFormat;
-import net.thevpc.nuts.env.NShellFamily;
+import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorComponent;
 import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorOptions;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;

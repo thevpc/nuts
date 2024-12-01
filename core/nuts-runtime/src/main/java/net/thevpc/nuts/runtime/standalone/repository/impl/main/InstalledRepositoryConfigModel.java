@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.main;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.repository.config.AbstractNRepositoryConfigModel;
 import net.thevpc.nuts.spi.NRepositoryLocation;
@@ -121,7 +120,7 @@ class InstalledRepositoryConfigModel extends AbstractNRepositoryConfigModel {
 
     @Override
     public NStoreStrategy getStoreStrategy() {
-        return NLocations.of().getRepositoryStoreStrategy();
+        return NWorkspace.get().getRepositoryStoreStrategy();
     }
 
     @Override
@@ -251,7 +250,7 @@ class InstalledRepositoryConfigModel extends AbstractNRepositoryConfigModel {
     @Override
     public Map<String, String> toMap(boolean inherit) {
         if (inherit) {
-            return NConfigs.of().getConfigMap();
+            return NWorkspace.get().getConfigMap();
         }
         return new HashMap<>();
     }
@@ -265,7 +264,7 @@ class InstalledRepositoryConfigModel extends AbstractNRepositoryConfigModel {
     public NOptional<NLiteral> get(String key, boolean inherit) {
         NOptional<NLiteral> o = NOptional.ofEmpty(() -> NMsg.ofC("repo config property not found : %s", key));
         if (inherit) {
-            return o.orElseUse(()->NConfigs.of().getConfigProperty(key));
+            return o.orElseUse(()->NWorkspace.get().getConfigProperty(key));
         }
         return o;
     }

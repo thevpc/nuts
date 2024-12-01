@@ -529,16 +529,17 @@ public class NBootWorkspaceCmdLineFormatter {
         }
         if (isApiVersionOrAfter(V081)) {
             if (options.getCustomOptions() != null) {
-                arguments.addAll(nonNullStrList(options.getCustomOptions()));
+                arguments.addAll(NBootUtils.nonNullStrList(options.getCustomOptions()));
             }
         }
         //final options for execution
-        if ((!config.isOmitDefaults() && options.getApplicationArguments() != null && !options.getApplicationArguments().isEmpty())
-                || !nonNullStrList(options.getExecutorOptions()).isEmpty()) {
+        if ((!config.isOmitDefaults() &&
+                !NBootUtils.isEmptyList(options.getApplicationArguments())
+                || !NBootUtils.nonNullStrList(options.getExecutorOptions()).isEmpty())) {
             arguments.add(selectOptionName("--exec", "-e"));
         }
-        arguments.addAll(nonNullStrList(options.getExecutorOptions()));
-        arguments.addAll(nonNullStrList(options.getApplicationArguments()));
+        arguments.addAll(NBootUtils.nonNullStrList(options.getExecutorOptions()));
+        arguments.addAll(NBootUtils.nonNullStrList(options.getApplicationArguments()));
         return new NBootCmdLine(arguments);
     }
 
@@ -549,13 +550,6 @@ public class NBootWorkspaceCmdLineFormatter {
         }
         NBootVersion apiVersionObj = NBootVersion.of(apiVersionStr);
         return apiVersionObj.compareTo(version) >= 0;
-    }
-
-    private List<String> nonNullStrList(List<String> list) {
-        if (list == null) {
-            return new ArrayList<>();
-        }
-        return list;
     }
 
 }

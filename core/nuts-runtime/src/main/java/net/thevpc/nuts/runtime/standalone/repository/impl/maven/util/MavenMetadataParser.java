@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
 import net.thevpc.nuts.log.NLog;
@@ -30,10 +29,7 @@ import java.util.logging.Level;
 public class MavenMetadataParser {
     private final NLog LOG;
 
-    private NSession session;
-
-    public MavenMetadataParser(NSession session) {
-        this.session = session;
+    public MavenMetadataParser() {
         LOG= NLog.of(MavenMetadataParser.class);
     }
 

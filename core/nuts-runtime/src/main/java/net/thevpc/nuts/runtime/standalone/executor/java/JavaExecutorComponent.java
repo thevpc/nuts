@@ -25,15 +25,15 @@
 package net.thevpc.nuts.runtime.standalone.executor.java;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NBootClassLoaderNode;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+
 import net.thevpc.nuts.format.NCmdLineFormat;
 import net.thevpc.nuts.cmdline.NWorkspaceCmdLineParser;
-import net.thevpc.nuts.env.NBootManager;
-import net.thevpc.nuts.env.NIsolationLevel;
-import net.thevpc.nuts.env.NShellFamily;
+
+import net.thevpc.nuts.NIsolationLevel;
+import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
@@ -116,7 +116,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
 
     public static NWorkspaceOptionsBuilder createChildOptions(NExecutionContext executionContext) {
         NSession session = executionContext.getSession();
-        NWorkspaceOptionsBuilder options = NBootManager.of().getBootOptions().toWorkspaceOptions().builder();
+        NWorkspaceOptionsBuilder options = NWorkspace.get().getBootOptions().toWorkspaceOptions().builder();
         options.setDry(executionContext.isDry());
         options.setBot(executionContext.isBot());
 
@@ -422,7 +422,9 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 List<String> cmdLine = new ArrayList<>();
                 cmdLine.add("embedded-java");
                 cmdLine.add("-cp");
-                cmdLine.add(joptions.getClassPathNodes().stream().map(NBootClassLoaderNode::getId).collect(Collectors.joining(":")));
+                cmdLine.add(joptions.getClassPathNodes().stream().map(NClassLoaderNode::getId).filter(NBlankable::isNonBlank)
+                                .map(Object::toString)
+                        .collect(Collectors.joining(":")));
                 cmdLine.add(joptions.getMainClass());
                 cmdLine.addAll(joptions.getAppArgs());
 
@@ -446,7 +448,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                         def.getId().toString(),
                         null//getSession().getWorkspace().config().getBootClassLoader()
                 );
-                for (NBootClassLoaderNode n : joptions.getClassPathNodes()) {
+                for (NClassLoaderNode n : joptions.getClassPathNodes()) {
                     classLoader.add(n);
                 }
                 if (joptions.getMainClass() == null) {

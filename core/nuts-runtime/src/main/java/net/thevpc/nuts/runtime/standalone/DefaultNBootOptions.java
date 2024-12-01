@@ -11,14 +11,14 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
@@ -27,7 +27,6 @@ package net.thevpc.nuts.runtime.standalone;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.env.*;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
@@ -63,7 +62,7 @@ public class DefaultNBootOptions implements NBootOptions {
     /**
      * special
      */
-    private final NBootClassLoaderNode runtimeBootDependencyNode;
+    private final NClassLoaderNode runtimeBootDependencyNode;
     /**
      * special
      */
@@ -71,7 +70,7 @@ public class DefaultNBootOptions implements NBootOptions {
     /**
      * special
      */
-    private final List<NBootClassLoaderNode> extensionBootDependencyNodes;
+    private final List<NClassLoaderNode> extensionBootDependencyNodes;
 
     /**
      * special
@@ -471,8 +470,8 @@ public class DefaultNBootOptions implements NBootOptions {
                                InputStream stdin,
                                PrintStream stdout, PrintStream stderr, ExecutorService executorService,
                                Instant expireTime, List<NMsg> errors, Boolean skipErrors, String locale,
-                               String theme, String uuid, String bootRepositories, NBootClassLoaderNode runtimeBootDependencyNode,
-                               List<NBootDescriptor> extensionBootDescriptors, List<NBootClassLoaderNode> extensionBootDependencyNodes,
+                               String theme, String uuid, String bootRepositories, NClassLoaderNode runtimeBootDependencyNode,
+                               List<NBootDescriptor> extensionBootDescriptors, List<NClassLoaderNode> extensionBootDependencyNodes,
                                List<URL> classWorldURLs, Set<String> extensionsSet, NBootWorkspaceFactory bootWorkspaceFactory, NBootDescriptor runtimeBootDescriptor, ClassLoader classWorldLoader,
                                NSupportMode desktopLauncher, NSupportMode menuLauncher, NSupportMode userLauncher, Boolean previewRepo, Boolean sharedInstance) {
         ;
@@ -968,7 +967,7 @@ public class DefaultNBootOptions implements NBootOptions {
     }
 
     @Override
-    public NOptional<NBootClassLoaderNode> getRuntimeBootDependencyNode() {
+    public NOptional<NClassLoaderNode> getRuntimeBootDependencyNode() {
         return NOptional.ofNamed(runtimeBootDependencyNode, "runtimeBootDependencyNode");
     }
 
@@ -978,7 +977,7 @@ public class DefaultNBootOptions implements NBootOptions {
     }
 
     @Override
-    public NOptional<List<NBootClassLoaderNode>> getExtensionBootDependencyNodes() {
+    public NOptional<List<NClassLoaderNode>> getExtensionBootDependencyNodes() {
         return NOptional.ofNamed(extensionBootDependencyNodes, "extensionBootDependencyNodes");
     }
 
@@ -1015,9 +1014,9 @@ public class DefaultNBootOptions implements NBootOptions {
     /// ///////////
 
     public NBootOptionsBoot toBootOptions() {
-        NBootOptionsBoot r=new NBootOptionsBoot();
-        r.setApiVersion(this.getApiVersion().map(x->x.toString()).orNull());
-        r.setRuntimeId(this.getRuntimeId().map(x->x.toString()).orNull());
+        NBootOptionsBoot r = new NBootOptionsBoot();
+        r.setApiVersion(this.getApiVersion().map(Object::toString).orNull());
+        r.setRuntimeId(this.getRuntimeId().map(Object::toString).orNull());
         r.setJavaCommand(this.getJavaCommand().orNull());
         r.setJavaOptions(this.getJavaOptions().orNull());
         r.setWorkspace(this.getWorkspace().orNull());
@@ -1029,15 +1028,15 @@ public class DefaultNBootOptions implements NBootOptions {
         r.setGui(this.getGui().orNull());
         r.setUserName(this.getUserName().orNull());
         r.setCredentials(this.getCredentials().orNull());
-        r.setTerminalMode(this.getTerminalMode().map(x->x.id()).orNull());
+        r.setTerminalMode(this.getTerminalMode().map(NTerminalMode::id).orNull());
         r.setReadOnly(this.getReadOnly().orNull());
         r.setTrace(this.getTrace().orNull());
         r.setProgressOptions(this.getProgressOptions().orNull());
         {
             NLogConfig c = this.getLogConfig().orNull();
             NBootLogConfig v = null;
-            if(c!=null){
-                v=new NBootLogConfig();
+            if (c != null) {
+                v = new NBootLogConfig();
                 v.setLogFileBase(c.getLogFileBase());
                 v.setLogFileLevel(c.getLogFileLevel());
                 v.setLogFileFilter(c.getLogFileFilter());
@@ -1050,11 +1049,11 @@ public class DefaultNBootOptions implements NBootOptions {
             }
             r.setLogConfig(v);
         }
-        r.setConfirm(this.getConfirm().map(x->x.id()).orNull());
-        r.setConfirm(this.getConfirm().map(x->x.id()).orNull());
-        r.setOutputFormat(this.getOutputFormat().map(x->x.id()).orNull());
+        r.setConfirm(this.getConfirm().map(NConfirmationMode::id).orNull());
+        r.setConfirm(this.getConfirm().map(NConfirmationMode::id).orNull());
+        r.setOutputFormat(this.getOutputFormat().map(NContentType::id).orNull());
         r.setOutputFormatOptions(this.getOutputFormatOptions().orNull());
-        r.setOpenMode(this.getOpenMode().map(x->x.id()).orNull());
+        r.setOpenMode(this.getOpenMode().map(NOpenMode::id).orNull());
         r.setCreationTime(this.getCreationTime().orNull());
         r.setDry(this.getDry().orNull());
         r.setShowStacktrace(this.getShowStacktrace().orNull());
@@ -1066,15 +1065,15 @@ public class DefaultNBootOptions implements NBootOptions {
         r.setCommandHelp(this.getCommandHelp().orNull());
         r.setDebug(this.getDebug().orNull());
         r.setInherited(this.getInherited().orNull());
-        r.setExecutionType(this.getExecutionType().map(x->x.id()).orNull());
-        r.setRunAs(this.getRunAs().map(x->x.toString()).orNull());
+        r.setExecutionType(this.getExecutionType().map(NExecutionType::id).orNull());
+        r.setRunAs(this.getRunAs().map(NRunAs::toString).orNull());
         r.setArchetype(this.getArchetype().orNull());
-        r.setStoreStrategy(this.getStoreStrategy().map(x->x.id()).orNull());
+        r.setStoreStrategy(this.getStoreStrategy().map(NStoreStrategy::id).orNull());
         {
             Map<NHomeLocation, String> c = this.getHomeLocations().orNull();
-            Map<NBootHomeLocation, String> v =null;
-            if(c!=null){
-                v=new HashMap<>();
+            Map<NBootHomeLocation, String> v = null;
+            if (c != null) {
+                v = new HashMap<>();
                 for (Map.Entry<NHomeLocation, String> e : c.entrySet()) {
                     v.put(NBootHomeLocation.of(
                             e.getKey().getOsFamily().id(),
@@ -1086,19 +1085,19 @@ public class DefaultNBootOptions implements NBootOptions {
         }
         {
             Map<NStoreType, String> c = this.getStoreLocations().orNull();
-            Map<String, String> v =null;
-            if(c!=null){
-                v=new HashMap<>();
+            Map<String, String> v = null;
+            if (c != null) {
+                v = new HashMap<>();
                 for (Map.Entry<NStoreType, String> e : c.entrySet()) {
                     v.put(e.getKey().id(), e.getValue());
                 }
             }
             r.setStoreLocations(v);
         }
-        r.setStoreLayout(this.getStoreLayout().map(x->x.toString()).orNull());
-        r.setStoreStrategy(this.getStoreStrategy().map(x->x.toString()).orNull());
-        r.setRepositoryStoreStrategy(this.getRepositoryStoreStrategy().map(x->x.toString()).orNull());
-        r.setFetchStrategy(this.getFetchStrategy().map(x->x.toString()).orNull());
+        r.setStoreLayout(this.getStoreLayout().map(Enum::toString).orNull());
+        r.setStoreStrategy(this.getStoreStrategy().map(Enum::toString).orNull());
+        r.setRepositoryStoreStrategy(this.getRepositoryStoreStrategy().map(Enum::toString).orNull());
+        r.setFetchStrategy(this.getFetchStrategy().map(Enum::toString).orNull());
         r.setCached(this.getCached().orNull());
         r.setIndexed(this.getIndexed().orNull());
         r.setTransitive(this.getTransitive().orNull());
@@ -1115,23 +1114,54 @@ public class DefaultNBootOptions implements NBootOptions {
         r.setApplicationArguments(this.getApplicationArguments().orNull());
         r.setCustomOptions(this.getCustomOptions().orNull());
         r.setExpireTime(this.getExpireTime().orNull());
-        r.setErrors(this.getErrors().isNotPresent()?new ArrayList<>():this.getErrors().get().stream().map(x->x.toString()).collect(Collectors.toList()));
+        r.setErrors(this.getErrors().isNotPresent() ? new ArrayList<>() : this.getErrors().get().stream().map(NMsg::toString).collect(Collectors.toList()));
         r.setSkipErrors(this.getSkipErrors().orNull());
         r.setSwitchWorkspace(this.getSwitchWorkspace().orNull());
         r.setLocale(this.getLocale().orNull());
         r.setTheme(this.getTheme().orNull());
         r.setDependencySolver(this.getDependencySolver().orNull());
-        r.setIsolationLevel(this.getIsolationLevel().map(x->x.id()).orNull());
+        r.setIsolationLevel(this.getIsolationLevel().map(NIsolationLevel::id).orNull());
         r.setInitLaunchers(this.getInitLaunchers().orNull());
         r.setInitJava(this.getInitJava().orNull());
         r.setInitScripts(this.getInitScripts().orNull());
         r.setInitPlatforms(this.getInitPlatforms().orNull());
-        r.setDesktopLauncher(this.getDesktopLauncher().map(x->x.id()).orNull());
-        r.setMenuLauncher(this.getMenuLauncher().map(x->x.id()).orNull());
-        r.setUserLauncher(this.getUserLauncher().map(x->x.id()).orNull());
+        r.setDesktopLauncher(this.getDesktopLauncher().map(NSupportMode::id).orNull());
+        r.setMenuLauncher(this.getMenuLauncher().map(NSupportMode::id).orNull());
+        r.setUserLauncher(this.getUserLauncher().map(NSupportMode::id).orNull());
         r.setSharedInstance(this.getSharedInstance().orNull());
         r.setPreviewRepo(this.getPreviewRepo().orNull());
+
+        r.setBootRepositories(this.getBootRepositories().orNull());
+        r.setRuntimeBootDependencyNode(convertNode(this.getRuntimeBootDependencyNode().orNull()));
+        r.setExtensionBootDescriptors(this.getExtensionBootDescriptors().orNull());
+        r.setExtensionBootDependencyNodes(convertNodes(this.getExtensionBootDependencyNodes().orNull()));
+        r.setBootWorkspaceFactory(this.getBootWorkspaceFactory().orNull());
+        r.setClassWorldURLs(this.getClassWorldURLs().orNull());
+        r.setClassWorldLoader(this.getClassWorldLoader().orNull());
+        r.setUuid(this.getUuid().orNull());
+        r.setExtensionsSet(this.getExtensionsSet().orNull());
+        r.setRuntimeBootDescriptor(this.getRuntimeBootDescriptor().orNull());
+
         return r;
+    }
+
+    private List<NBootClassLoaderNode> convertNodes(List<NClassLoaderNode> dependencies) {
+        return dependencies == null ? null : dependencies.stream().map(this::convertNode).collect(Collectors.toList());
+    }
+
+    private NBootClassLoaderNode convertNode(NClassLoaderNode n) {
+        if (n == null) {
+            return null;
+        }
+        List<NClassLoaderNode> dependencies = n.getDependencies();
+        List<NBootClassLoaderNode> children = convertNodes(dependencies);
+        return new NBootClassLoaderNode(
+                n.getId() == null ? null : n.getId().toString(),
+                n.getURL(),
+                n.isEnabled(),
+                n.isIncludedInClasspath(),
+                children == null ? null : children.toArray(new NBootClassLoaderNode[0])
+        );
     }
 
     @Override

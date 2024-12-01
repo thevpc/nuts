@@ -2,8 +2,18 @@ package net.thevpc.nuts.lib.spring.boot;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.cmdline.NCmdLines;
+import net.thevpc.nuts.concurrent.NLocks;
+import net.thevpc.nuts.concurrent.NScheduler;
+
+import net.thevpc.nuts.expr.NExprs;
+import net.thevpc.nuts.ext.NExtensions;
+import net.thevpc.nuts.format.NFormats;
+import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminal;
+import net.thevpc.nuts.time.NProgressMonitors;
+import net.thevpc.nuts.util.NGlob;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.CommandLineRunner;
@@ -43,6 +53,87 @@ public class NutsSpringBootConfiguration {
     public NSession nutsSession(ApplicationArguments applicationArguments) {
         return nutsWorkspace(applicationArguments).currentSession();
     }
+
+
+    @Bean
+    public NTerminal nutsTerminal(ApplicationArguments applicationArguments) {
+        return nutsSession(applicationArguments).getTerminal();
+    }
+
+    @Bean
+    public NExprs nutsNExprs(ApplicationArguments applicationArguments) {
+        return nutsSession(applicationArguments).callWith(()->{
+            return NExprs.of();
+        });
+    }
+    @Bean
+    public NIdFilters nutsIdFilters(ApplicationArguments applicationArguments) {
+        return nutsSession(applicationArguments).callWith(()->{
+            return NIdFilters.of();
+        });
+    }
+
+    @Bean
+    public NDependencyFilters nutsDependencyFilters(ApplicationArguments applicationArguments) {
+        return nutsSession(applicationArguments).callWith(()->{
+            return NDependencyFilters.of();
+        });
+    }
+
+    @Bean
+    public NDescriptorFilters nutsDescriptorFilters(ApplicationArguments applicationArguments) {
+        return nutsSession(applicationArguments).callWith(()->{
+            return NDescriptorFilters.of();
+        });
+    }
+    @Bean
+    public NLibPaths nutsLibPaths(ApplicationArguments applicationArguments) {
+        return nutsSession(applicationArguments).callWith(()->{
+            return NLibPaths.of();
+        });
+    }
+
+
+    @Bean
+    public NProgressMonitors nutsProgressMonitors(ApplicationArguments applicationArguments) {
+        return nutsSession(applicationArguments).callWith(()->{
+            return NProgressMonitors.of();
+        });
+    }
+    @Bean
+    public NIO nutsIO(ApplicationArguments applicationArguments) {
+        return nutsSession(applicationArguments).callWith(()->{
+            return NIO.of();
+        });
+    }
+    @Bean
+    public NFormats nutsFormats(ApplicationArguments applicationArguments) {
+        return nutsSession(applicationArguments).callWith(()->{
+            return NFormats.of();
+        });
+    }
+
+    @Bean
+    public NExtensions nutsExtensions(ApplicationArguments applicationArguments) {
+        return nutsSession(applicationArguments).callWith(()->{
+            return NExtensions.of();
+        });
+    }
+
+    @Bean
+    public NScheduler nutsScheduler(ApplicationArguments applicationArguments) {
+        return nutsSession(applicationArguments).callWith(()->{
+            return NScheduler.of();
+        });
+    }
+
+    @Bean
+    public NCmdLines nutsCmdLines(ApplicationArguments applicationArguments) {
+        return nutsSession(applicationArguments).callWith(()->{
+            return NCmdLines.of();
+        });
+    }
+
 
     @Bean
     public NApplication nutsApplication() {

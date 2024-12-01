@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.NShellFamily;
+import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextPlain;
@@ -68,7 +68,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
         return txt.ofPlain(text);
     }
 
-    private NText[] parseCmdLine_readSimpleQuotes(StringReaderExt ar, NTexts txt, NSession session) {
+    private NText[] parseCmdLine_readSimpleQuotes(StringReaderExt ar, NTexts txt) {
         StringBuilder sb = new StringBuilder();
         sb.append(ar.readChar()); //quote!
         List<NText> ret = new ArrayList<>();
@@ -100,7 +100,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
         return ret.toArray(new NText[0]);
     }
 
-    private NText[] parseCmdLine_readWord(StringReaderExt ar, NTexts txt, NSession session) {
+    private NText[] parseCmdLine_readWord(StringReaderExt ar, NTexts txt) {
         StringBuilder sb = new StringBuilder();
         List<NText> ret = new ArrayList<>();
         boolean inLoop = true;
@@ -113,7 +113,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
                         ret.add(txt.ofPlain(sb.toString()));
                         sb.setLength(0);
                     }
-                    ret.addAll(Arrays.asList(parseCmdLine_readAntiSlash(ar, session)));
+                    ret.addAll(Arrays.asList(parseCmdLine_readAntiSlash(ar)));
                     break;
                 }
                 case ';': {
@@ -172,7 +172,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
         return ret.toArray(new NText[0]);
     }
 
-    private static NText[] parseCmdLine_readAntiSlash(StringReaderExt ar, NSession session) {
+    private static NText[] parseCmdLine_readAntiSlash(StringReaderExt ar) {
         StringBuilder sb2 = new StringBuilder();
         sb2.append(ar.readChar());
         if (ar.hasNext()) {
@@ -182,18 +182,18 @@ public class BashCodeHighlighter implements NCodeHighlighter {
         return new NText[]{factory.ofStyled(sb2.toString(), NTextStyle.separator())};
     }
 
-    private NText[] parseCmdLine_readDollar(StringReaderExt ar, NTexts txt, NSession session) {
+    private NText[] parseCmdLine_readDollar(StringReaderExt ar, NTexts txt) {
         if (ar.peekChars("$((")) {
-            return parseCmdLine_readDollarPar2(ar, session, txt);
+            return parseCmdLine_readDollarPar2(ar, txt);
         }
         StringBuilder sb2 = new StringBuilder();
         if (ar.hasNext(1)) {
             switch (ar.peekChar(1)) {
                 case '(': {
-                    return parseCmdLine_readDollarPar2(ar, session, txt);
+                    return parseCmdLine_readDollarPar2(ar, txt);
                 }
                 case '{': {
-                    return parseCmdLine_readDollarCurlyBrackets(ar, txt, session);
+                    return parseCmdLine_readDollarCurlyBrackets(ar, txt);
                 }
                 case '*':
                 case '?':
@@ -232,7 +232,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
                 txt.ofStyled("$", NTextStyle.separator()),};
     }
 
-    private NText[] parseCmdLine_readDoubleQuotes(StringReaderExt ar, NTexts txt, NSession session) {
+    private NText[] parseCmdLine_readDoubleQuotes(StringReaderExt ar, NTexts txt) {
         List<NText> ret = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
 
@@ -244,13 +244,13 @@ public class BashCodeHighlighter implements NCodeHighlighter {
                     ret.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
                     sb.setLength(0);
                 }
-                ret.addAll(Arrays.asList(parseCmdLine_readAntiSlash(ar, session)));
+                ret.addAll(Arrays.asList(parseCmdLine_readAntiSlash(ar)));
             } else if (c == '$') {
                 if (sb.length() > 0) {
                     ret.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
                     sb.setLength(0);
                 }
-                ret.addAll(Arrays.asList(parseCmdLine_readDollar(ar, txt, session)));
+                ret.addAll(Arrays.asList(parseCmdLine_readDollar(ar, txt)));
             } else if (c == '\"') {
                 if (sb.length() > 0) {
                     ret.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
@@ -345,7 +345,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
         return -1;
     }
 
-    private NText[] parseCmdLine_readAntiQuotes(StringReaderExt ar, NTexts txt, NSession session) {
+    private NText[] parseCmdLine_readAntiQuotes(StringReaderExt ar, NTexts txt) {
         List<NText> all = new ArrayList<>();
         all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
         boolean inLoop = true;
@@ -360,14 +360,14 @@ public class BashCodeHighlighter implements NCodeHighlighter {
                     break;
                 }
                 default: {
-                    wasSpace = parseCmdLineStep(ar, all, 1, wasSpace, txt, session);
+                    wasSpace = parseCmdLineStep(ar, all, 1, wasSpace, txt);
                 }
             }
         }
         return all.toArray(new NText[0]);
     }
 
-    private NText[] parseCmdLine_readDollarPar(NWorkspace ws, StringReaderExt ar, NTexts txt, NSession session) {
+    private NText[] parseCmdLine_readDollarPar(NWorkspace ws, StringReaderExt ar, NTexts txt) {
         List<NText> all = new ArrayList<>();
         all.add(txt.ofStyled(String.valueOf(ar.readChar()) + ar.readChar(), NTextStyle.separator()));
         boolean inLoop = true;
@@ -381,14 +381,14 @@ public class BashCodeHighlighter implements NCodeHighlighter {
                     break;
                 }
                 default: {
-                    wasSpace = parseCmdLineStep(ar, all, 2, wasSpace, txt, session);
+                    wasSpace = parseCmdLineStep(ar, all, 2, wasSpace, txt);
                 }
             }
         }
         return all.toArray(new NText[0]);
     }
 
-    private NText[] parseCmdLine_readDollarPar2(StringReaderExt ar, NSession session, NTexts txt) {
+    private NText[] parseCmdLine_readDollarPar2(StringReaderExt ar, NTexts txt) {
         List<NText> all = new ArrayList<>();
         all.add(txt.ofStyled(String.valueOf(ar.readChar()) + ar.readChar() + ar.readChar(), NTextStyle.separator()));
         boolean inLoop = true;
@@ -411,19 +411,19 @@ public class BashCodeHighlighter implements NCodeHighlighter {
                         all.add(txt.ofStyled(String.valueOf(ar.nextChars(2)), NTextStyle.separator()));
                         inLoop = false;
                     } else {
-                        wasSpace = parseCmdLineStep(ar, all, 2, wasSpace, txt, session);
+                        wasSpace = parseCmdLineStep(ar, all, 2, wasSpace, txt);
                     }
                     break;
                 }
                 default: {
-                    wasSpace = parseCmdLineStep(ar, all, 2, wasSpace, txt, session);
+                    wasSpace = parseCmdLineStep(ar, all, 2, wasSpace, txt);
                 }
             }
         }
         return all.toArray(new NText[0]);
     }
 
-    private NText[] parseCmdLine_readDollarCurlyBrackets(StringReaderExt ar, NTexts txt, NSession session) {
+    private NText[] parseCmdLine_readDollarCurlyBrackets(StringReaderExt ar, NTexts txt) {
         List<NText> all = new ArrayList<>();
         all.add(txt.ofStyled(String.valueOf(ar.readChar()) + ar.readChar(), NTextStyle.separator()));
         boolean inLoop = true;
@@ -440,7 +440,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
                 }
                 default: {
                     startIndex = all.size();
-                    wasSpace = parseCmdLineStep(ar, all, -1, wasSpace, txt, session);
+                    wasSpace = parseCmdLineStep(ar, all, -1, wasSpace, txt);
                     if (expectedName) {
                         expectedName = false;
                         if (all.size() > startIndex) {
@@ -457,7 +457,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
         return all.toArray(new NText[0]);
     }
 
-    private NText[] parseCmdLine_readPar2(StringReaderExt ar, NTexts txt, NSession session) {
+    private NText[] parseCmdLine_readPar2(StringReaderExt ar, NTexts txt) {
         List<NText> all = new ArrayList<>();
         all.add(txt.ofStyled(String.valueOf(ar.readChar()) + ar.readChar(), NTextStyle.separator()));
         boolean inLoop = true;
@@ -470,12 +470,12 @@ public class BashCodeHighlighter implements NCodeHighlighter {
                         all.add(txt.ofStyled(String.valueOf(ar.nextChars(2)), NTextStyle.separator()));
                         inLoop = false;
                     } else {
-                        wasSpace = parseCmdLineStep(ar, all, 2, wasSpace, txt, session);
+                        wasSpace = parseCmdLineStep(ar, all, 2, wasSpace, txt);
                     }
                     break;
                 }
                 default: {
-                    wasSpace = parseCmdLineStep(ar, all, 2, wasSpace, txt, session);
+                    wasSpace = parseCmdLineStep(ar, all, 2, wasSpace, txt);
                 }
             }
         }
@@ -489,30 +489,30 @@ public class BashCodeHighlighter implements NCodeHighlighter {
      * @param all        all
      * @param startIndex startIndex
      * @param wasSpace   wasSpace
-     * @param txt txt
+     * @param txt        txt
      * @return is space
      */
-    private boolean parseCmdLineStep(StringReaderExt ar, List<NText> all, int startIndex, boolean wasSpace, NTexts txt, NSession session) {
+    private boolean parseCmdLineStep(StringReaderExt ar, List<NText> all, int startIndex, boolean wasSpace, NTexts txt) {
         char c = ar.peekChar();
         if (c <= 32) {
-            all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(session, ar)));
+            all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(ar)));
             return true;
         }
         switch (c) {
             case '\'': {
-                all.addAll(Arrays.asList(parseCmdLine_readSimpleQuotes(ar, txt, session)));
+                all.addAll(Arrays.asList(parseCmdLine_readSimpleQuotes(ar, txt)));
                 break;
             }
             case '`': {
-                all.addAll(Arrays.asList(parseCmdLine_readAntiQuotes(ar, txt, session)));
+                all.addAll(Arrays.asList(parseCmdLine_readAntiQuotes(ar, txt)));
                 break;
             }
             case '"': {
-                all.addAll(Arrays.asList(parseCmdLine_readDoubleQuotes(ar, txt, session)));
+                all.addAll(Arrays.asList(parseCmdLine_readDoubleQuotes(ar, txt)));
                 break;
             }
             case '$': {
-                all.addAll(Arrays.asList(parseCmdLine_readDollar(ar, txt, session)));
+                all.addAll(Arrays.asList(parseCmdLine_readDollar(ar, txt)));
                 break;
             }
             case ';': {
@@ -598,7 +598,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
             }
             case '(': {
                 if (ar.peekChars("((")) {
-                    all.addAll(Arrays.asList(parseCmdLine_readPar2(ar, txt, session)));
+                    all.addAll(Arrays.asList(parseCmdLine_readPar2(ar, txt)));
                 } else {
                     all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                 }
@@ -641,7 +641,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
             default: {
                 if (startIndex >= 0) {
                     boolean first = all.size() == startIndex;
-                    all.addAll(Arrays.asList(parseCmdLine_readWord(ar, txt, session)));
+                    all.addAll(Arrays.asList(parseCmdLine_readWord(ar, txt)));
                     if (first) {
                         int i = indexOfFirstWord(all, startIndex);
                         if (i >= 0) {
@@ -649,19 +649,19 @@ public class BashCodeHighlighter implements NCodeHighlighter {
                         }
                     }
                 } else {
-                    all.addAll(Arrays.asList(parseCmdLine_readWord(ar, txt, session)));
+                    all.addAll(Arrays.asList(parseCmdLine_readWord(ar, txt)));
                 }
             }
         }
         return false;
     }
 
-    private NText[] parseCmdLine(String commandLineString, NTexts txt, NSession session) {
+    private NText[] parseCmdLine(String commandLineString, NTexts txt) {
         StringReaderExt ar = new StringReaderExt(commandLineString);
         List<NText> all = new ArrayList<>();
         boolean wasSpace = true;
         while (ar.hasNext()) {
-            wasSpace = parseCmdLineStep(ar, all, 0, wasSpace, txt, session);
+            wasSpace = parseCmdLineStep(ar, all, 0, wasSpace, txt);
         }
         return all.toArray(new NText[0]);
     }
@@ -712,7 +712,6 @@ public class BashCodeHighlighter implements NCodeHighlighter {
 
     @Override
     public NText stringToText(String text, NTexts txt) {
-        NSession session=workspace.currentSession();
         List<NText> all = new ArrayList<>();
         BufferedReader reader = new BufferedReader(new StringReader(text));
         String line = null;
@@ -730,12 +729,12 @@ public class BashCodeHighlighter implements NCodeHighlighter {
             } else {
                 all.add(txt.ofPlain("\n"));
             }
-            all.add(commandToNode(line, txt, session));
+            all.add(commandToNode(line, txt));
         }
         return txt.ofList(all).simplify();
     }
 
-    public NText next(StringReaderExt reader, boolean exitOnClosedCurlBrace, boolean exitOnClosedPar, boolean exitOnDblQuote, boolean exitOnAntiQuote, NTexts txt, NSession session) {
+    public NText next(StringReaderExt reader, boolean exitOnClosedCurlBrace, boolean exitOnClosedPar, boolean exitOnDblQuote, boolean exitOnAntiQuote, NTexts txt) {
         boolean lineStart = true;
         List<NText> all = new ArrayList<>();
         NTexts factory = NTexts.of();
@@ -883,7 +882,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
                 }
                 case '\"': {
                     lineStart = false;
-                    all.add(nextDoubleQuotes(reader, session, txt));
+                    all.add(nextDoubleQuotes(reader, txt));
                     break;
                 }
                 case '`': {
@@ -893,7 +892,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
                     } else {
                         List<NText> a = new ArrayList<>();
                         a.add(factory.ofStyled(reader.nextChars(1), NTextStyle.string()));
-                        a.add(next(reader, false, false, false, true, txt, session));
+                        a.add(next(reader, false, false, false, true, txt));
                         if (reader.hasNext() && reader.peekChar() == '`') {
                             a.add(factory.ofStyled(reader.nextChars(1), NTextStyle.string()));
                         } else {
@@ -1087,7 +1086,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
         return factory.ofList(all).simplify();
     }
 
-    private NText nextDollar(StringReaderExt reader, NTexts txt, NSession session) {
+    private NText nextDollar(StringReaderExt reader, NTexts txt) {
         NTexts factory = NTexts.of();
         if (reader.isAvailable(2)) {
             char c = reader.peekChar(1);
@@ -1095,7 +1094,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
                 case '(': {
                     List<NText> a = new ArrayList<>();
                     a.add(factory.ofStyled(reader.nextChars(1), NTextStyle.separator()));
-                    a.add(next(reader, false, true, false, false, txt, session));
+                    a.add(next(reader, false, true, false, false, txt));
                     if (reader.hasNext() && reader.peekChar() == ')') {
                         a.add(factory.ofStyled(reader.nextChars(1), NTextStyle.separator()));
                     }
@@ -1104,7 +1103,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
                 case '{': {
                     List<NText> a = new ArrayList<>();
                     a.add(factory.ofStyled(reader.nextChars(1), NTextStyle.separator()));
-                    a.add(next(reader, true, false, false, false, txt, session));
+                    a.add(next(reader, true, false, false, false, txt));
                     if (reader.hasNext() && reader.peekChar() == ')') {
                         a.add(factory.ofStyled(reader.nextChars(1), NTextStyle.separator()));
                     }
@@ -1145,7 +1144,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
         }
     }
 
-    public NText nextDoubleQuotes(StringReaderExt reader, NSession session, NTexts txt) {
+    public NText nextDoubleQuotes(StringReaderExt reader, NTexts txt) {
         List<NText> all = new ArrayList<>();
         boolean exit = false;
         StringBuilder sb = new StringBuilder();
@@ -1166,7 +1165,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
                         all.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
                         sb.setLength(0);
                     }
-                    all.add(nextDollar(reader, txt, session));
+                    all.add(nextDollar(reader, txt));
                 }
                 case '`': {
                     if (sb.length() > 0) {
@@ -1175,7 +1174,7 @@ public class BashCodeHighlighter implements NCodeHighlighter {
                     }
                     List<NText> a = new ArrayList<>();
                     a.add(txt.ofStyled(reader.nextChars(1), NTextStyle.string()));
-                    a.add(next(reader, false, false, false, true, txt, session));
+                    a.add(next(reader, false, false, false, true, txt));
                     if (reader.hasNext() && reader.peekChar() == '`') {
                         a.add(txt.ofStyled(reader.nextChars(1), NTextStyle.string()));
                     } else {
@@ -1196,8 +1195,8 @@ public class BashCodeHighlighter implements NCodeHighlighter {
         return txt.ofList(all).simplify();
     }
 
-    public NText commandToNode(String text, NTexts txt, NSession session) {
-        return txt.ofList(parseCmdLine(text, txt, session));
+    public NText commandToNode(String text, NTexts txt) {
+        return txt.ofList(parseCmdLine(text, txt));
     }
 
 }

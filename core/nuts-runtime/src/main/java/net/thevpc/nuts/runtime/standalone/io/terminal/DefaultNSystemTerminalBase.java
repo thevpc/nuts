@@ -5,8 +5,9 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
-import net.thevpc.nuts.env.NBootManager;
-import net.thevpc.nuts.env.NBootOptions;
+
+import net.thevpc.nuts.NBootOptions;
+
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamSystem;
 import net.thevpc.nuts.runtime.standalone.util.NCachedValue;
@@ -43,7 +44,7 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     @Override
     public int getSupportLevel(NSupportLevelContext criteria) {
         NWorkspace workspace = getWorkspace();
-        NBootOptions options = NBootManager.of().getBootOptions();
+        NBootOptions options = NWorkspace.get().getBootOptions();
         NTerminalMode terminalMode = options.getTerminalMode().orElse(NTerminalMode.DEFAULT);
         NWorkspaceTerminalOptions bootStdFd = NWorkspaceExt.of().getModel().bootModel.getBootTerminal();
         if (terminalMode == NTerminalMode.DEFAULT) {
@@ -71,7 +72,6 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
 
     @Override
     public String readLine(NPrintStream out, NMsg message) {
-        NSession session = getWorkspace().currentSession();
         if (out == null) {
             out = getOut();
         }
@@ -87,7 +87,6 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
 
     @Override
     public char[] readPassword(NPrintStream out, NMsg message) {
-        NSession session = getWorkspace().currentSession();
         if (out == null) {
             out = getOut();
         }
@@ -198,8 +197,8 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
 
     //    @Override
 //    public int getColumns() {
-//        int tputCallTimeout = NBootManager.of(session).getBootCustomArgument("---nuts.term.tput.call.timeout").getValue().getInt(60);
-//        Integer w = NBootManager.of(session).getBootCustomArgument("---nuts.term.width").getValue().getInt(null);
+//        int tputCallTimeout = NEnvs.of(session).getBootCustomArgument("---nuts.term.tput.call.timeout").getValue().getInt(60);
+//        Integer w = NEnvs.of(session).getBootCustomArgument("---nuts.term.width").getValue().getInt(null);
 //        if (w == null) {
 //            if (tput_cols == null) {
 //                tput_cols = new NutsCachedValue<>(new DefaultAnsiEscapeCommand.TputEvaluator(session), tputCallTimeout);

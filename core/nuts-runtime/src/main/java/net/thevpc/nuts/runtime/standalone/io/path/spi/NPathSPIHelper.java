@@ -1,6 +1,5 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NTreeVisitResult;
@@ -26,13 +25,13 @@ public class NPathSPIHelper {
             this.folder = folder;
         }
     }
-    public static NStream<NPath> walk(NSession session, NPath basePath, int maxDepth, NPathOption[] options) {
+    public static NStream<NPath> walk(NPath basePath, int maxDepth, NPathOption[] options) {
         boolean noMax=maxDepth<=0 || maxDepth==Integer.MAX_VALUE;
         Iterator<NPath> it = new NPathIterator(basePath, noMax, maxDepth);
         return NStream.of(it);
     }
 
-    public static void walkDfs(NSession session, NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {
+    public static void walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {
         boolean noMax=maxDepth<=0 || maxDepth==Integer.MAX_VALUE;
 
         Stack<Data> stack=new Stack<>();

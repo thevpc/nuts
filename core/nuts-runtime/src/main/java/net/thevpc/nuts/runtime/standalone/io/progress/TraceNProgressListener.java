@@ -84,7 +84,7 @@ public class TraceNProgressListener implements NProgressListener/*, NutsOutputSt
                 return false;
             }
             formattedLine.append(p);
-            BytesSizeFormat mf = new BytesSizeFormat("BTD1F", event.getSession());
+            BytesSizeFormat mf = new BytesSizeFormat("BTD1F");
 
             if(Double.isNaN(percent)){
                 formattedLine.append(" ").append(text.ofStyled(String.format("%6s", ""), NTextStyle.config())).append("  ");

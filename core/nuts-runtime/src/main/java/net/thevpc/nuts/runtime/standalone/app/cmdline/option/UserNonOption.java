@@ -28,7 +28,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.DefaultNArgCandidate;
 import net.thevpc.nuts.cmdline.NArgCandidate;
 import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
-import net.thevpc.nuts.env.NUser;
+import net.thevpc.nuts.NUser;
 
 import java.util.ArrayList;
 import java.util.List;

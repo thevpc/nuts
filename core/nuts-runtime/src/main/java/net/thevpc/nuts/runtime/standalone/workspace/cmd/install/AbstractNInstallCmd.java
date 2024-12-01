@@ -85,7 +85,6 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
 
     @Override
     public NInstallCmd addId(String id) {
-        NSession session=getWorkspace().currentSession();
         return addId(id == null ? null : NId.of(id).get());
     }
 
@@ -112,7 +111,6 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
     @Override
     public NInstallCmd addId(NId id) {
         if (id == null) {
-            NSession session=getWorkspace().currentSession();
             throw new NNotFoundException(id);
         } else {
             ids.put(id, getStrategy());
@@ -146,7 +144,6 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
 
     @Override
     public NInstallCmd removeId(String id) {
-        NSession session=getWorkspace().currentSession();
         if (id != null) {
             this.ids.remove(NId.of(id).get());
         }
@@ -298,7 +295,6 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NSession session=getWorkspace().currentSession();
         NArg aa = cmdLine.peek().get();
         if (aa == null) {
             return false;

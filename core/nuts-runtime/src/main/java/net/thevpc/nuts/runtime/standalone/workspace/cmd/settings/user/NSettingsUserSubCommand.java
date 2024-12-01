@@ -10,7 +10,8 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElementNotFoundException;
-import net.thevpc.nuts.env.NUser;
+
+import net.thevpc.nuts.NUser;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.util.NBlankable;
@@ -40,7 +41,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 repository = editedRepo;
             } else {
                 if (cmdLine.next("--repo", "-r").isPresent()) {
-                    repository = NRepositories.of().findRepository(cmdLine.nextNonOption(NArgName.of("RepositoryId"))
+                    repository = workspace.findRepository(cmdLine.nextNonOption(NArgName.of("RepositoryId"))
                             .flatMap(NLiteral::asString).get())
                             .get();
                 }
@@ -65,7 +66,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 }
             }
             if (cmdLine.isExecMode()) {
-                NConfigs.of().save();
+                NWorkspace.get().saveConfig();
             }
             return true;
         } else {
@@ -77,7 +78,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r").isPresent()) {
-                        repository = NRepositories.of()
+                        repository = workspace
                                 .findRepository(
                                         cmdLine.nextNonOption(NArgName.of("repository"))
                                                 .flatMap(NLiteral::asString).get()
@@ -109,7 +110,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r").isPresent()) {
-                        repository = NRepositories.of()
+                        repository = workspace
                                 .findRepository(cmdLine.nextNonOption(NArgName.of("RepositoryId")).flatMap(NLiteral::asString).get()
                                 ).get();
                     }
@@ -149,7 +150,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                     } else {
                         repository.security().updateUser(user).setCredentials(password).setOldCredentials(oldPassword).run();
                     }
-                    NConfigs.of().save();
+                    NWorkspace.get().saveConfig();
                 }
                 return true;
 
@@ -159,7 +160,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r").isPresent()) {
-                        repository = NRepositories.of().findRepository(
+                        repository = workspace.findRepository(
                                 cmdLine.nextNonOption(NArgName.of("RepositoryId")).flatMap(NLiteral::asString).get()
                         ).get();
                     }
@@ -279,7 +280,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                     }
                 }
                 if (cmdLine.isExecMode()) {
-                    NConfigs.of().save();
+                    NWorkspace.get().saveConfig();
                 }
                 return true;
 
@@ -289,7 +290,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r").isPresent()) {
-                        repository = NRepositories.of().findRepository(
+                        repository = workspace.findRepository(
                                 cmdLine.nextNonOption(NArgName.of("RepositoryId")).flatMap(NLiteral::asString).get()
                         ).get();
                     }
@@ -309,7 +310,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                         Arrays.fill(credentials, '\0');
                     }
                 }
-                NConfigs.of().save();
+                NWorkspace.get().saveConfig();
                 return true;
             } else if (cmdLine.next("secure").isPresent()) {
                 char[] credentials = null;
@@ -321,7 +322,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r").isPresent()) {
-                        repository = NRepositories.of().findRepository(
+                        repository = workspace.findRepository(
                                 cmdLine.nextNonOption(NArgName.of("RepositoryId")).flatMap(NLiteral::asString).get()
                         ).get();
                     }
@@ -337,7 +338,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 if (credentials != null) {
                     Arrays.fill(credentials, '\0');
                 }
-                NConfigs.of().save();
+                NWorkspace.get().saveConfig();
                 return true;
             }
         }

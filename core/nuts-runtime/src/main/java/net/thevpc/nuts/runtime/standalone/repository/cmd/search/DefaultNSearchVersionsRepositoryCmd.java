@@ -44,7 +44,6 @@ public class DefaultNSearchVersionsRepositoryCmd extends AbstractNSearchVersions
     @Override
     public NSearchVersionsRepositoryCmd run() {
         NSession session = getRepo().getWorkspace().currentSession();
-        NSessionUtils.checkSession(getRepo().getWorkspace(), session);
         //id = id.builder().setFaceContent().build();
         getRepo().security().checkAllowed(NConstants.Permissions.FETCH_DESC, "find-versions");
         NRepositoryExt xrepo = NRepositoryExt.of(getRepo());

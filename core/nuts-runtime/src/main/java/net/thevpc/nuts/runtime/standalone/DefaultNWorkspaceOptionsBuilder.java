@@ -29,7 +29,6 @@ import net.thevpc.nuts.boot.NBootOptionsBoot;
 import net.thevpc.nuts.boot.NBootHomeLocation;
 import net.thevpc.nuts.boot.NBootLogConfig;
 import net.thevpc.nuts.cmdline.NWorkspaceCmdLineParser;
-import net.thevpc.nuts.env.*;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NBlankable;

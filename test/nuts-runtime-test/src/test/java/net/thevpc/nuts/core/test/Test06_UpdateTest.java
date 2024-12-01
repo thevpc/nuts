@@ -8,9 +8,10 @@ package net.thevpc.nuts.core.test;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.env.NLocations;
-import net.thevpc.nuts.env.NStoreStrategy;
-import net.thevpc.nuts.env.NStoreType;
+
+
+import net.thevpc.nuts.NStoreStrategy;
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.format.NExecCmdFormat;
 import net.thevpc.nuts.io.NIOException;
@@ -119,13 +120,12 @@ public class Test06_UpdateTest {
 
     private void prepareWorkspaceToUpdate(boolean implOnly, Data data) {
         TestUtils.println("\n------------------------------------------");
-        TestUtils.openNewTestWorkspace(
+        NWorkspace workspace=TestUtils.openNewTestWorkspace(
                 "--standalone",
                 "--standalone-repositories",
                 "--yes",
                 "--install-companions=false"
         );
-        NRepositories repos = NRepositories.of();
         NPath tempRepo = NPath.ofTempFolder();
         data.updateRepoPath = tempRepo.toString();
         data.apiDef1 = NFetchCmd.ofNutsApi().setContent(true).getResultDefinition();
@@ -133,16 +133,16 @@ public class Test06_UpdateTest {
         data.rtDef1 = NFetchCmd.ofNutsRuntime().setContent(true).getResultDefinition();
         data.rtId1 = data.rtDef1.getId().builder().setVersion(data.rtDef1.getId().getVersion()).build();
 
-        repos.addRepository(new NAddRepositoryOptions().setTemporary(true).setName("temp").setLocation(data.updateRepoPath)
+        workspace.addRepository(new NAddRepositoryOptions().setTemporary(true).setName("temp").setLocation(data.updateRepoPath)
                 .setConfig(new NRepositoryConfig().setStoreStrategy(NStoreStrategy.STANDALONE))
         );
-        TestUtils.println(repos.findRepository("temp").get().config().getStoreStrategy());
-        TestUtils.println(repos.findRepository("temp").get().config().getStoreLocation());
-        TestUtils.println(repos.findRepository("temp").get().config().getStoreLocation(NStoreType.LIB));
+        TestUtils.println(workspace.findRepository("temp").get().config().getStoreStrategy());
+        TestUtils.println(workspace.findRepository("temp").get().config().getStoreLocation());
+        TestUtils.println(workspace.findRepository("temp").get().config().getStoreLocation(NStoreType.LIB));
         NInfoCmd.of().configure(false, "--repos").setShowRepositories(true).println();
 
         Assertions.assertEquals(data.updateRepoPath,
-                repos.findRepository("temp").get().config().getLocationPath().toString()
+                workspace.findRepository("temp").get().config().getLocationPath().toString()
         );
         TestUtils.println(NSearchCmd.of().addId(data.api).getResultIds().toList());
         TestUtils.println(NSearchCmd.of().addId(data.rt).getResultIds().toList());
@@ -189,10 +189,10 @@ public class Test06_UpdateTest {
         final String newRuntimeVersion = foundUpdates.getResult().getRuntime().getAvailable().getId().getVersion().toString();
 //        Path bootFolder=Paths.get(workspacePath).resolve(NutsConstants.Folders.BOOT);
 //        Path bootCompFolder=Paths.get(workspacePath).resolve(NutsConstants.Folders.BOOT);
-        NLocations nwsLocations = NLocations.of();
-        Path bootCacheFolder = (nwsLocations.getStoreLocation(NStoreType.CACHE)).resolve(NConstants.Folders.ID).toPath().get();
-        Path libFolder = (nwsLocations.getStoreLocation(NStoreType.LIB)).resolve(NConstants.Folders.ID).toPath().get();
-        Path configFolder = (nwsLocations.getStoreLocation(NStoreType.CONF)).resolve(NConstants.Folders.ID).toPath().get();
+        NWorkspace newWorkspace = NWorkspace.get();
+        Path bootCacheFolder = (newWorkspace.getStoreLocation(NStoreType.CACHE)).resolve(NConstants.Folders.ID).toPath().get();
+        Path libFolder = (newWorkspace.getStoreLocation(NStoreType.LIB)).resolve(NConstants.Folders.ID).toPath().get();
+        Path configFolder = (newWorkspace.getStoreLocation(NStoreType.CONF)).resolve(NConstants.Folders.ID).toPath().get();
         Assertions.assertTrue(Files.exists(libFolder.resolve("net/thevpc/nuts/nuts/").resolve(newApiVersion)
                 .resolve("nuts-" + newApiVersion + ".jar")
         ));

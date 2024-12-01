@@ -18,7 +18,7 @@ import java.util.*;
  */
 public class CommonRootsByIdHelper {
 
-    private static Set<NId> resolveRootIdAnd(Set<NId> a, Set<NId> b, NSession session) {
+    private static Set<NId> resolveRootIdAnd(Set<NId> a, Set<NId> b) {
         if (a == null) {
             return b;
         }
@@ -36,7 +36,7 @@ public class CommonRootsByIdHelper {
         HashSet<NId> h = new HashSet<>();
         for (NId path : aa) {
             for (NId nutsPath : bb) {
-                h.add(commonRoot(path, nutsPath, session));
+                h.add(commonRoot(path, nutsPath));
             }
         }
         //TODO
@@ -108,7 +108,7 @@ public class CommonRootsByIdHelper {
         return new HashSet<>(x.values());
     }
 
-    private static NId commonRoot(NId a, NId b, NSession session) {
+    private static NId commonRoot(NId a, NId b) {
         if (a.getShortName().equals(b.getShortName())) {
             return a;
         }
@@ -126,19 +126,19 @@ public class CommonRootsByIdHelper {
         return NId.of(sb.toString() + ":*").get();
     }
 
-    private static Set<NId> resolveRootId(String groupId, String artifactId, String version, NSession session) {
+    private static Set<NId> resolveRootId(String groupId, String artifactId, String version) {
         return new HashSet<>(Collections.singletonList(NIdBuilder.of()
                 .setGroupId(NBlankable.isBlank(groupId) ? "*" : groupId)
                 .setArtifactId(NBlankable.isBlank(artifactId) ? "*" : artifactId)
                 .build()));
     }
 
-    public static List<NId> resolveRootPaths(NIdFilter filter, NSession session) {
-        return new ArrayList<>(CommonRootsByIdHelper.resolveRootIds(filter, session));
+    public static List<NId> resolveRootPaths(NIdFilter filter) {
+        return new ArrayList<>(CommonRootsByIdHelper.resolveRootIds(filter));
     }
 
-    public static Set<NId> resolveRootIds(NIdFilter filter, NSession session) {
-        Set<NId> v = resolveRootId0(filter, session);
+    public static Set<NId> resolveRootIds(NIdFilter filter) {
+        Set<NId> v = resolveRootId0(filter);
         if (v == null) {
             HashSet<NId> s = new HashSet<>();
             s.add(NId.of("*:*").get());
@@ -147,7 +147,7 @@ public class CommonRootsByIdHelper {
         return v;
     }
 
-    public static Set<NId> resolveRootId0(NIdFilter filter, NSession session) {
+    public static Set<NId> resolveRootId0(NIdFilter filter) {
         if (filter == null) {
             return null;
         }
@@ -155,7 +155,7 @@ public class CommonRootsByIdHelper {
             NIdFilterAnd f = ((NIdFilterAnd) filter);
             Set<NId> xx = null;
             for (NIdFilter g : f.getChildren()) {
-                xx = resolveRootIdAnd(xx, resolveRootId0(g, session), session);
+                xx = resolveRootIdAnd(xx, resolveRootId0(g));
             }
             return xx;
         }
@@ -166,15 +166,15 @@ public class CommonRootsByIdHelper {
             if (y.length == 0) {
                 return null;
             }
-            Set<NId> xx = resolveRootId0(y[0], session);
+            Set<NId> xx = resolveRootId0(y[0]);
             for (int i = 1; i < y.length; i++) {
-                xx = resolveRootIdOr(xx, resolveRootId0(y[i], session));
+                xx = resolveRootIdOr(xx, resolveRootId0(y[i]));
             }
             return xx;
         }
         if (filter instanceof NPatternIdFilter) {
             NPatternIdFilter f = ((NPatternIdFilter) filter);
-            return resolveRootId(f.getId().getGroupId(), f.getId().getArtifactId(), f.getId().getVersion().toString(), session);
+            return resolveRootId(f.getId().getGroupId(), f.getId().getArtifactId(), f.getId().getVersion().toString());
         }
         return null;
     }

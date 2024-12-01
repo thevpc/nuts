@@ -26,7 +26,8 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.NLocations;
+
+
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.folder.NFolderRepositoryBase;
@@ -97,13 +98,12 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
     }
 
     private NRepository getLocalMavenRepo() {
-        NSession session = getWorkspace().currentSession();
-        for (NRepository nRepository : NRepositories.of().getRepositories()) {
+        for (NRepository nRepository : workspace.getRepositories()) {
             if (nRepository.getRepositoryType().equals(NConstants.RepoTypes.MAVEN)
                     && nRepository.config().getLocationPath() != null
                     && nRepository.config().getLocationPath().toString()
                     .equals(
-                            Paths.get(NPath.of("~/.m2").toAbsolute(NLocations.of().getWorkspaceLocation()).toString()).toString()
+                            Paths.get(NPath.of("~/.m2").toAbsolute(NWorkspace.get().getWorkspaceLocation()).toString()).toString()
                     )) {
                 return nRepository;
             }
@@ -111,7 +111,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
         return null;
     }
 
-    protected NPath getMavenLocalFolderContent(NId id, NSession session) {
+    protected NPath getMavenLocalFolderContent(NId id) {
         NPath p = getIdRelativePath(id);
         if (p != null) {
             return NPath.ofUserHome().resolve(".m2").resolve(p);
@@ -129,7 +129,6 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
         if (wrapper == null) {
             wrapper = getWrapper();
         }
-        NSession session = getWorkspace().currentSession();
         if (wrapper != null && wrapper.get(id, config().getLocationPath().toString())) {
             NRepository repo = getLocalMavenRepo();
             if (repo != null) {
@@ -142,7 +141,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
                         .getResult();
             }
             //should be already downloaded to m2 folder
-            NPath content = getMavenLocalFolderContent(id, session);
+            NPath content = getMavenLocalFolderContent(id);
             if (content != null && content.exists()) {
                 return content.setUserCache(true).setUserTemporary(false);
             }
@@ -154,7 +153,6 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
     public String getIdExtension(NId id) {
         Map<String, String> q = id.getProperties();
         String f = NStringUtils.trim(q.get(NConstants.IdProperties.FACE));
-        NSession session = getWorkspace().currentSession();
         switch (f) {
             case NConstants.QueryFaces.DESCRIPTOR: {
                 return ".pom";
@@ -170,7 +168,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
             }
             case NConstants.QueryFaces.CONTENT: {
                 String packaging = q.get(NConstants.IdProperties.PACKAGING);
-                return NLocations.of().getDefaultIdContentExtension(packaging);
+                return NWorkspace.get().getDefaultIdContentExtension(packaging);
             }
             default: {
                 throw new NUnsupportedArgumentException(NMsg.ofC("unsupported fact %s", f));
@@ -179,7 +177,6 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
     }
 
     public NDescriptor fetchDescriptorCore(NId id, NFetchMode fetchMode) {
-        NSession session = getWorkspace().currentSession();
         if (!acceptedFetchNoCache(fetchMode)) {
             throw new NNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
         }

@@ -84,7 +84,6 @@ public class AnsiNPrintStreamTerminalBase extends NSystemTerminalBaseImpl {
 
     @Override
     public Object run(NTerminalCmd command, NPrintStream printStream) {
-        NSession session=getWorkspace().currentSession();
         String s = NAnsiTermHelper.of(getWorkspace()).command(command);
         if (s != null) {
             byte[] bytes = s.getBytes();

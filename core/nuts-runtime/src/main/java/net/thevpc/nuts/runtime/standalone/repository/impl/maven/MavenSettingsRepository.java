@@ -65,7 +65,6 @@ public class MavenSettingsRepository extends NRepositoryList {
     }
 
     private MavenFolderRepository createChild(NAddRepositoryOptions options0, String type, String id, String url) {
-        NSession session = getWorkspace().currentSession();
         NPath p = NPath.of(url);
         String pr = NStringUtils.trim(p.getProtocol());
         MavenFolderRepository mavenChild = null;

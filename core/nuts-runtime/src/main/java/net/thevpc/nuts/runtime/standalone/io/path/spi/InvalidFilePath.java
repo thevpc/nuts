@@ -390,7 +390,6 @@ public class InvalidFilePath implements NPathSPI {
         }
 
         public NText asFormattedString() {
-            NSession session=p.workspace.currentSession();
             return NText.of(p.value);
         }
 

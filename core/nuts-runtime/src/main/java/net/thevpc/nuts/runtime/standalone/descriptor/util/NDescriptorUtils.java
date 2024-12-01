@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NEnvCondition;
-import net.thevpc.nuts.env.NEnvConditionBuilder;
+import net.thevpc.nuts.NEnvCondition;
+import net.thevpc.nuts.NEnvConditionBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNDescriptorBuilder;
 import net.thevpc.nuts.runtime.standalone.DefaultNEnvConditionBuilder;
 import net.thevpc.nuts.util.NBlankable;
@@ -107,16 +107,15 @@ public class NDescriptorUtils {
             CoreNIdUtils.checkValidEffectiveId(effectiveDescriptor.getId());
             for (NDependency dependency : effectiveDescriptor.getDependencies()) {
                 if (!CoreNIdUtils.isValidEffectiveId(dependency.toId())) {
-                    if (dependency.isOptional()) {
-                        NLogOp.of(NDescriptorUtils.class)
-                                .verb(NLogVerb.WARNING).level(Level.FINE)
-                                .log(NMsg.ofJ("{0} is using dependency {1} which defines an unresolved variable. This is a potential bug.",
-                                        effectiveDescriptor.getId(),
-                                        dependency
-                                ));
-                    } else {
+                    NLogOp.of(NDescriptorUtils.class)
+                            .verb(NLogVerb.WARNING).level(Level.FINE)
+                            .log(NMsg.ofJ("{0} is using dependency {1} which defines an unresolved variable. This is a potential bug.",
+                                    effectiveDescriptor.getId(),
+                                    dependency
+                            ));
+                    if (!dependency.isOptional()) {
                         topException = true;
-                        throw new NIllegalArgumentException(NMsg.ofJ("{0} is using dependency {1} which defines an unresolved variable. This is a potential bug.",
+                        throw new NNotFoundException(effectiveDescriptor.getId(), NMsg.ofJ("{0} is using dependency {1} which defines an unresolved variable. This is a potential bug.",
                                 effectiveDescriptor.getId(),
                                 dependency
                         ));
@@ -124,7 +123,6 @@ public class NDescriptorUtils {
                 }
             }
             for (NDependency dependency : effectiveDescriptor.getStandardDependencies()) {
-                //NutsIdUtils.checkValidEffectiveId(dependency.toId(),session);
                 // replace direct call to checkValidEffectiveId with the following...
                 if (!CoreNIdUtils.isValidEffectiveId(dependency.toId())) {
                     // sometimes the variable is defined later in the pom that uses this POM standard Dependencies
@@ -142,6 +140,8 @@ public class NDescriptorUtils {
                 throw ex;
             }
             throw new NIllegalArgumentException(NMsg.ofC("unable to evaluate effective descriptor for %s", effectiveDescriptor.getId()), ex);
+        } catch (NNotFoundException ex) {
+            throw new NNotFoundException(effectiveDescriptor.getId(), NMsg.ofC("unable to evaluate effective descriptor for %s", effectiveDescriptor.getId()), ex);
         } catch (Exception ex) {
             throw new NIllegalArgumentException(NMsg.ofC("unable to evaluate effective descriptor for %s", effectiveDescriptor.getId()), ex);
         }

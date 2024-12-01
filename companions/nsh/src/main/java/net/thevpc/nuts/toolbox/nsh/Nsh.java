@@ -4,9 +4,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineRunner;
 import net.thevpc.nuts.cmdline.NCmdLineContext;
-import net.thevpc.nuts.env.NBootManager;
-import net.thevpc.nuts.env.NEnvs;
-import net.thevpc.nuts.env.NLauncherOptions;
+
+import net.thevpc.nuts.NLauncherOptions;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nsh.nshell.NShell;
@@ -56,7 +55,6 @@ public class Nsh implements NApplication {
                 }
                 //id will not include version or
                 String nshIdStr = NApp.of().getId().get().getShortName();
-                NConfigs cfg = NConfigs.of();
 //        HashMap<String, String> parameters = new HashMap<>();
 //        parameters.put("forList", nshIdStr + " --!color -c find-forCommand");
 //        parameters.put("find", nshIdStr + " --!color -c find-forCommand %n");
@@ -81,8 +79,7 @@ public class Nsh implements NApplication {
                     if (!CONTEXTUAL_BUILTINS.contains(command.getName())) {
                         // avoid recursive definition!
                         // disable trace, summary will be traced later!
-                        if (NCommands.of(
-                                )
+                        if (session.getWorkspace()
                                 .addCommand(new NCommandConfig()
                                         .setFactoryId("nsh")
                                         .setName(command.getName())
@@ -120,14 +117,14 @@ public class Nsh implements NApplication {
                         ));
                     }
                 }
-                cfg.save(false);
-                if (NBootManager.of().getBootOptions().getInitScripts()
+                session.getWorkspace().saveConfig(false);
+                if (NWorkspace.get().getBootOptions().getInitScripts()
                         .ifEmpty(true)
                         .orElse(false)) {
-                    boolean initLaunchers = NBootManager.of().getBootOptions().getInitLaunchers()
+                    boolean initLaunchers = NWorkspace.get().getBootOptions().getInitLaunchers()
                             .ifEmpty(true)
                             .orElse(false);
-                    NEnvs.of().addLauncher(
+                    NWorkspace.get().addLauncher(
                             new NLauncherOptions()
                                     .setId(NApp.of().getId().orNull())
                                     .setCreateScript(true)
@@ -157,15 +154,14 @@ public class Nsh implements NApplication {
         NSession session = NSession.of().get();
         try {
             try {
-                NCommands.of().removeCommandFactory("nsh");
+                NWorkspace.get().removeCommandFactory("nsh");
             } catch (Exception notFound) {
                 //ignore!
             }
             Set<String> uninstalled = new TreeSet<>();
-            for (NCustomCmd command : NCommands.of().findCommandsByOwner(NApp.of().getId().orNull())) {
+            for (NCustomCmd command : NWorkspace.get().findCommandsByOwner(NApp.of().getId().orNull())) {
                 try {
-                    NCommands.of(
-                    ).removeCommand(command.getName());
+                    NWorkspace.get().removeCommand(command.getName());
                     uninstalled.add(command.getName());
                 } catch (Exception ex) {
                     if (session.isPlainTrace()) {

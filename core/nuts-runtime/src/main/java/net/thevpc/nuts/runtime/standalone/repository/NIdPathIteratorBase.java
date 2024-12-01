@@ -16,7 +16,6 @@ import java.util.logging.Level;
 public abstract class NIdPathIteratorBase implements NIdPathIteratorModel {
     public abstract NWorkspace getWorkspace();
     public NId validate(NId id, NDescriptor t, NPath pathname, NPath rootPath, NIdFilter filter, NRepository repository) throws IOException {
-        NSession session = getWorkspace().currentSession();
         if (t != null) {
             if (!CoreNUtils.isEffectiveId(t.getId())) {
                 NDescriptor nutsDescriptor = null;
@@ -47,7 +46,6 @@ public abstract class NIdPathIteratorBase implements NIdPathIteratorModel {
     @Override
     public NId parseId(NPath pathname, NPath rootPath, NIdFilter filter, NRepository repository) throws IOException {
         NDescriptor t = null;
-        NSession session = getWorkspace().currentSession();
         try {
             t = parseDescriptor(pathname, NInputStreamMonitor.of().setSource(pathname).create(),
                     NFetchMode.LOCAL, repository, rootPath);

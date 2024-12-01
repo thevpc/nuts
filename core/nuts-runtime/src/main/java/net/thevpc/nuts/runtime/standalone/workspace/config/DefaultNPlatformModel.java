@@ -1,14 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NPlatformFamily;
+import net.thevpc.nuts.NPlatformFamily;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTextStyles;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
@@ -73,8 +71,8 @@ public class DefaultNPlatformModel {
                             NPath.of(location.getPath())
                     ));
                 }
-                NConfigsExt.of(NConfigs.of())
-                        .getModel()
+                NWorkspaceExt.of(workspace)
+                        .getConfigModel()
                         .fireConfigurationChanged("platform", ConfigEventType.MAIN);
             }
             return true;
@@ -95,9 +93,8 @@ public class DefaultNPlatformModel {
             List<NPlatformLocation> list = getPlatforms().get(location.getPlatformType());
             if (list != null) {
                 if (list.remove(location)) {
-                    NSession session=getWorkspace().currentSession();
-                    NConfigsExt.of(NConfigs.of())
-                            .getModel()
+                    NWorkspaceExt.of(workspace)
+                            .getConfigModel()
                             .fireConfigurationChanged("platform", ConfigEventType.MAIN);
                     return true;
                 }
@@ -144,7 +141,6 @@ public class DefaultNPlatformModel {
     }
 
     public NOptional<NPlatformLocation> findPlatformByVersion(NPlatformFamily type, NVersionFilter versionFilter) {
-        NSession session=getWorkspace().currentSession();
         return findOnePlatform(type,
                 location -> {
 
@@ -187,15 +183,13 @@ public class DefaultNPlatformModel {
     }
 
     public NStream<NPlatformLocation> searchSystemPlatforms(NPlatformFamily platformType, NPath path) {
-        NSession session=getWorkspace().currentSession();
         if (platformType == NPlatformFamily.JAVA) {
-            return NStream.of(NJavaSdkUtils.of(workspace).searchJdkLocations(path, session));
+            return NStream.of(NJavaSdkUtils.of(workspace).searchJdkLocations(path));
         }
         return NStream.ofEmpty();
     }
 
     public NOptional<NPlatformLocation> resolvePlatform(NPlatformFamily platformType, NPath path, String preferredName) {
-        NSession session=getWorkspace().currentSession();
         if (platformType == NPlatformFamily.JAVA) {
             NPlatformLocation z = NJavaSdkUtils.of(workspace).resolveJdkLocation(path, preferredName);
             if (z == null) {
@@ -227,7 +221,6 @@ public class DefaultNPlatformModel {
             return NOptional.of(r);
         }
         //find the best minimum version that is applicable!
-        NSession session=getWorkspace().currentSession();
         NPlatformLocation best = a[0];
         for (int i = 1; i < a.length; i++) {
             NVersion v1 = NVersion.of(best.getVersion()).get();

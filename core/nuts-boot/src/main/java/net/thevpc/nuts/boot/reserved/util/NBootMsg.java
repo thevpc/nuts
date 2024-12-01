@@ -109,29 +109,12 @@ public class NBootMsg {
         return of("VFORMAT", message, new Object[]{vars}, null, null);
     }
 
-    public static NBootMsg ofJ(String message, NBootMsgParam... params) {
-        if (params == null) {
-            return ofJ(message, new Object[]{null});
-        }
-        Object[] paramsAsObjects = Arrays.stream(params).map(NBootMsgParam::getValue).toArray();
-        return ofJ(message, paramsAsObjects);
-    }
-
     public static NBootMsg ofC(String message, NBootMsgParam... params) {
         if (params == null) {
             return ofC(message, new Object[]{null});
         }
         Object[] paramsAsObjects = Arrays.stream(params).map(NBootMsgParam::getValue).toArray();
         return ofC(message, paramsAsObjects);
-    }
-
-    @Deprecated
-    public static NBootMsg ofJ(String message) {
-        return of("JFORMAT", message, NO_PARAMS, null, null);
-    }
-
-    public static NBootMsg ofJ(String message, Object... params) {
-        return of("JFORMAT", message, params, null, null);
     }
 
     public String getFormat() {
@@ -180,55 +163,6 @@ public class NBootMsg {
                     StringBuilder sb = new StringBuilder();
                     new Formatter(sb).format((String) message, _preFormatArr(params));
                     return sb.toString();
-                }
-                case "JFORMAT": {
-                    //must process special case of {}
-                    String sMsg = (String) message;
-                    if (sMsg.contains("{}")) {
-                        StringBuilder sb = new StringBuilder();
-                        char[] chars = sMsg.toCharArray();
-                        int currentIndex = 0;
-                        for (int i = 0; i < chars.length; i++) {
-                            char c = chars[i];
-                            if (c == '{') {
-                                StringBuilder sb2 = new StringBuilder();
-                                i++;
-                                while (i < chars.length) {
-                                    char c2 = chars[i];
-                                    if (c2 == '}') {
-                                        break;
-                                    } else if (c2 == '\\') {
-                                        sb2.append(c2);
-                                        i++;
-                                        if (i < chars.length) {
-                                            c2 = chars[i];
-                                            sb2.append(c2);
-                                        }
-                                    } else {
-                                        sb2.append(c2);
-                                    }
-                                }
-                                String s2 = sb2.toString();
-                                if (s2.isEmpty()) {
-                                    s2 = String.valueOf(currentIndex);
-                                } else if (s2.trim().startsWith(":")) {
-                                    s2 = String.valueOf(currentIndex) + s2;
-                                }
-                                sb.append("{").append(s2).append("}");
-                                currentIndex++;
-                            } else if (c == '\\') {
-                                sb.append(c);
-                                i++;
-                                if (i < chars.length) {
-                                    sb.append(c);
-                                }
-                            } else {
-                                sb.append(c);
-                            }
-                        }
-                        sMsg = sb.toString();
-                    }
-                    return MessageFormat.format(sMsg, _preFormatArr(params));
                 }
                 case "VFORMAT": {
                     return formatAsV();

@@ -99,7 +99,6 @@ public class DefaultNTextNodeBuilder extends AbstractNText implements NTextBuild
     @Override
     public NTextBuilder append(Object text, NTextStyles styles) {
         if (text != null) {
-            NSession session = workspace.currentSession();
             if (styles.size() == 0) {
                 append(NText.of(text));
             } else {
@@ -207,7 +206,6 @@ public class DefaultNTextNodeBuilder extends AbstractNText implements NTextBuild
     }
 
     public NText substring(int from, int to) {
-        NSession session = workspace.currentSession();
         if (to <= from) {
             return NText.ofPlain("");
         }

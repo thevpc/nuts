@@ -5,7 +5,7 @@ import net.thevpc.nuts.cmdline.NCmdLineContext;
 import net.thevpc.nuts.cmdline.NCmdLineRunner;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.env.NBootManager;
+
 import net.thevpc.nuts.util.NMsg;
 
 import java.nio.file.Paths;
@@ -79,7 +79,7 @@ public class NDocusaurusMain implements NApplication {
                         .setBuildWebSite(build)
                         .setStartWebSite(start)
                         .setBuildPdf(buildPdf)
-                        .setAutoInstallNutsPackages(NBootManager.of().getBootOptions().getConfirm().orElse(NConfirmationMode.ASK) == NConfirmationMode.YES)
+                        .setAutoInstallNutsPackages(NWorkspace.get().getBootOptions().getConfirm().orElse(NConfirmationMode.ASK) == NConfirmationMode.YES)
                         .run();
             }
         });

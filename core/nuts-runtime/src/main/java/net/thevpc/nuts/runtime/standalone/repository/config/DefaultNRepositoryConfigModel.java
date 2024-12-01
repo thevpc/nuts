@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.repository.config;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.*;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NPositionType;
@@ -209,9 +209,8 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
     @Override
     public NPath getLocationPath() {
         String s = NStringUtils.trimToNull(config.getLocation().getPath());
-        NSession session = repository.getWorkspace().currentSession();
         if (s != null) {
-            return NPath.of(s).toAbsolute(NLocations.of().getWorkspaceLocation());
+            return NPath.of(s).toAbsolute(NWorkspace.get().getWorkspaceLocation());
         }
         return null;
     }
@@ -233,9 +232,6 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
     @Override
     public NPath getStoreLocation(NStoreType folderType) {
         NStoreLocationsMap hlm = new NStoreLocationsMap(config.getStoreLocations());
-        NSession session = repository.getWorkspace().currentSession();
-
-//        String n = CoreNutsUtils.getArrItem(config.getStoreLocations(), folderType.ordinal());
         String n = hlm.get(folderType);
         if (temporary) {
             if (NBlankable.isBlank(n)) {
@@ -253,7 +249,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
                     return getStoreLocation().resolve(n);
                 }
                 case EXPLODED: {
-                    NPath storeLocation = NLocations.of().getStoreLocation(folderType);
+                    NPath storeLocation = NWorkspace.get().getStoreLocation(folderType);
                     //uuid is added as
                     return storeLocation.resolve(NConstants.Folders.REPOSITORIES).resolve(getName()).resolve(getUuid());
 
@@ -278,7 +274,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         }
         if (this.config.getStoreStrategy() == null) {
             fireChange = true;
-            this.config.setStoreStrategy(NLocations.of().getRepositoryStoreStrategy());
+            this.config.setStoreStrategy(NWorkspace.get().getRepositoryStoreStrategy());
         }
         if (!Objects.equals(NRepositoryUtils.getRepoType(config), repositoryType)) {
             throw new NIllegalArgumentException(
@@ -304,8 +300,8 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         removeAllMirrors();
         if (config.getMirrors() != null) {
             for (NRepositoryRef ref : config.getMirrors()) {
-                NRepository r = ((DefaultNRepositories) NRepositories.of())
-                        .getModel()
+                NRepository r = NWorkspaceExt.of()
+                        .getRepositoryModel()
                         .createRepository(
                                 NRepositoryUtils.refToOptions(ref),
                                 repository
@@ -394,7 +390,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
     @Override
     public boolean save(boolean force) {
         boolean ok = false;
-        if (force || (!NConfigs.of().isReadOnly() && isConfigurationChanged())) {
+        if (force || (!NWorkspace.get().isReadOnly() && isConfigurationChanged())) {
             NWorkspaceUtils.of(getWorkspace()).checkReadOnly();
             repository.security().checkAllowed(NConstants.Permissions.SAVE, "save");
             NPath file = getStoreLocation().resolve(NConstants.Files.REPOSITORY_CONFIG_FILE_NAME);
@@ -551,7 +547,6 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
 //        return getMirror(repositoryIdOrName, false);
 //    }
     public NRepository getMirror(String repositoryIdPath) {
-        NSession session = repository.getWorkspace().currentSession();
         NRepository r = findMirror(repositoryIdPath);
         if (r != null) {
             return r;
@@ -645,15 +640,14 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
     }
 
     public NRepository addMirror(NAddRepositoryOptions options) {
-        NSession session = repository.getWorkspace().currentSession();
         if (!isSupportedMirroring()) {
             throw new NUnsupportedOperationException(NMsg.ofC("unsupported operation '%s'", "addMirror"));
         }
         if (options.isTemporary()) {
             return null;
         }
-        NRepository repo = ((DefaultNRepositories) NRepositories.of())
-                .getModel()
+        NRepository repo = NWorkspaceExt.of()
+                .getRepositoryModel()
                 .createRepository(
                         options,
                         repository
@@ -701,8 +695,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
     public NOptional<NLiteral> get(String key, boolean inherit) {
         NOptional<NLiteral> o = config_getEnv(key, inherit);
         if (o.isBlank() && inherit) {
-            NSession session = repository.getWorkspace().currentSession();
-            return o.orElseUse(() -> NConfigs.of().getConfigProperty(key));
+            return o.orElseUse(() -> NWorkspace.get().getConfigProperty(key));
         }
         return o;
     }
@@ -731,19 +724,17 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
             return NOptional.of(NLiteral.of(t));
         }
         if (inherit) {
-            NSession session = repository.getWorkspace().currentSession();
-            return NConfigs.of().getConfigProperty(key);
+            return NWorkspace.get().getConfigProperty(key);
         }
         return NOptional.ofEmpty(() -> NMsg.ofC("repository property not found : %s", key));
     }
 
     private Map<String, String> config_getEnv(boolean inherit) {
-        NSession session = repository.getWorkspace().currentSession();
         NRepositoryConfigModel model = ((DefaultNRepoConfigManager) repository.config()).getModel();
         NRepositoryConfig config = model.getConfig();
         Map<String, String> p = new LinkedHashMap<>();
         if (inherit) {
-            p.putAll(NConfigs.of().getConfigMap());
+            p.putAll(NWorkspace.get().getConfigMap());
         }
         if (config.getEnv() != null) {
             p.putAll(config.getEnv());

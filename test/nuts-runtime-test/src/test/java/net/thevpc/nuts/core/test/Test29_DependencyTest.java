@@ -6,12 +6,17 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NBootOptionsBuilder;
-import net.thevpc.nuts.runtime.standalone.DefaultNBootOptionsBuilder;
+import net.thevpc.nuts.NBootOptionsBuilder;
 import net.thevpc.nuts.core.test.utils.TestUtils;
+import net.thevpc.nuts.runtime.standalone.DefaultNDependencyBuilder;
+import net.thevpc.nuts.runtime.standalone.DefaultNEnvConditionBuilder;
+import net.thevpc.nuts.util.NMaps;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 
 /**
@@ -47,6 +52,19 @@ public class Test29_DependencyTest {
                         || t2.equals(s2.toString())
         );
         System.out.println("Okkay");
+    }
+
+    @Test
+    public void test2() {
+        DefaultNDependencyBuilder b=new DefaultNDependencyBuilder();
+        b.setId(NId.of("a:b").get());
+        DefaultNEnvConditionBuilder cond = new DefaultNEnvConditionBuilder();
+        cond.setProfile(new ArrayList<>(Arrays.asList("felix")));
+        cond.setProperties(NMaps.of("a","b"));
+        b.setCondition(cond);
+        System.out.println(b);
+
+
     }
 
 }

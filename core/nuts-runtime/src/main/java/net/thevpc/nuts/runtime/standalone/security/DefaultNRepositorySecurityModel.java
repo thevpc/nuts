@@ -7,13 +7,12 @@ package net.thevpc.nuts.runtime.standalone.security;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.NUser;
-import net.thevpc.nuts.env.NUserConfig;
+import net.thevpc.nuts.NUser;
+import net.thevpc.nuts.NUserConfig;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepoConfigManager;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
 import net.thevpc.nuts.security.NAuthenticationAgent;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
@@ -46,8 +45,6 @@ public class DefaultNRepositorySecurityModel {
     }
 
     public void checkAllowed(String right, String operationName) {
-        NSession session=repository.getWorkspace().currentSession();
-        NSessionUtils.checkSession(repository.getWorkspace(), session);
         if (!isAllowed(right)) {
             if (NBlankable.isBlank(operationName)) {
                 throw new NSecurityException(NMsg.ofC("%s not allowed!",right));
@@ -91,7 +88,6 @@ public class DefaultNRepositorySecurityModel {
     }
 
     public boolean isAllowed(String right) {
-        NSession session=repository.getWorkspace().currentSession();
         NWorkspaceSecurityManager sec = NWorkspaceSecurityManager.of();
         if (!sec.isSecure()) {
             return true;
@@ -173,9 +169,8 @@ public class DefaultNRepositorySecurityModel {
                     .getModel()
                     .getStoredConfig().getAuthenticationAgent();
         }
-        NSession session = getWorkspace().currentSession();
-        NAuthenticationAgent a = NConfigsExt.of(NConfigs.of())
-                .getModel()
+        NAuthenticationAgent a = NWorkspaceExt.of(getWorkspace())
+                .getConfigModel()
                 .createAuthenticationAgent(id);
         return a;
     }
@@ -183,10 +178,9 @@ public class DefaultNRepositorySecurityModel {
     public void setAuthenticationAgent(String authenticationAgent) {
 //        options = CoreNutsUtils.validate(options, repository.getWorkspace());
         DefaultNRepoConfigManager cc = (DefaultNRepoConfigManager) repository.config();
-        NSession session=repository.getWorkspace().currentSession();
 
-        if (NConfigsExt.of(NConfigs.of())
-                .getModel().createAuthenticationAgent(authenticationAgent) == null) {
+        if (NWorkspaceExt.of(getWorkspace())
+                .getConfigModel().createAuthenticationAgent(authenticationAgent) == null) {
             throw new NIllegalArgumentException(
                     NMsg.ofC("unsupported Authentication Agent %s", authenticationAgent)
             );

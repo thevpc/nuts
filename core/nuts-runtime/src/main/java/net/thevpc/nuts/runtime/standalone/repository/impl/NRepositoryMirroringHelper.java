@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NSpeedQualifier;
+import net.thevpc.nuts.NSpeedQualifier;
 import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNContentEvent;
@@ -53,7 +53,7 @@ public class NRepositoryMirroringHelper {
             for (NRepository repo : repo.config().getMirrors()) {
                 NSpeedQualifier sup = NSpeedQualifier.UNAVAILABLE;
                 try {
-                    sup = NRepositoryHelper.getSupportSpeedLevel(repo, NRepositorySupportedAction.SEARCH, id, fetchMode, session.isTransitive(), session);
+                    sup = NRepositoryHelper.getSupportSpeedLevel(repo, NRepositorySupportedAction.SEARCH, id, fetchMode, session.isTransitive());
                 } catch (Exception ex) {
                     //                errors.append(CoreStringUtils.exceptionToString(ex)).append("\n");
                 }
@@ -108,7 +108,7 @@ public class NRepositoryMirroringHelper {
         String idFilename = getIdFilename(id);
         NWorkspace workspace = repo.getWorkspace();
         NSession session = workspace.currentSession();
-        NPath versionFolder = cache.getLongIdLocalFolder(id, session);
+        NPath versionFolder = cache.getLongIdLocalFolder(id);
         NRepositoryConfigManager rconf = repo.config();
         if (session.isTransitive() && rconf.isSupportedMirroring()) {
             for (NRepository remote : rconf.getMirrors()) {
@@ -172,7 +172,7 @@ public class NRepositoryMirroringHelper {
         if (NBlankable.isBlank(repository)) {
             List<NRepository> all = new ArrayList<>();
             for (NRepository remote : repo.config().getMirrors()) {
-                NSpeedQualifier lvl = NRepositoryHelper.getSupportSpeedLevel(remote, NRepositorySupportedAction.DEPLOY, id, NFetchMode.LOCAL, false, session);
+                NSpeedQualifier lvl = NRepositoryHelper.getSupportSpeedLevel(remote, NRepositorySupportedAction.DEPLOY, id, NFetchMode.LOCAL, false);
                 if (lvl != NSpeedQualifier.UNAVAILABLE) {
                     all.add(remote);
                 }

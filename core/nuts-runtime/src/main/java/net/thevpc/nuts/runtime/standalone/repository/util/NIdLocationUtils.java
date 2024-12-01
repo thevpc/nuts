@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NIdLocation;
+import net.thevpc.nuts.NIdLocation;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 public class NIdLocationUtils {
-    public static NPath fetch(NId id, List<NIdLocation> locations, AbstractNRepository repository, NSession session) {
+    public static NPath fetch(NId id, List<NIdLocation> locations, AbstractNRepository repository) {
         for (NIdLocation location : locations) {
             if (CoreFilterUtils.acceptClassifier(location, id.getClassifier())) {
                 try {

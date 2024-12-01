@@ -25,7 +25,6 @@ public class DefaultNExecInternalExecutable extends DefaultInternalNExecutableCo
 
     @Override
     public int execute() {
-        NSession session = workspace.currentSession();
         if (ExtraApiUtils.asBoolean(getExecCommand().getDry())) {
             dryExecute();
             return NExecutionException.SUCCESS;

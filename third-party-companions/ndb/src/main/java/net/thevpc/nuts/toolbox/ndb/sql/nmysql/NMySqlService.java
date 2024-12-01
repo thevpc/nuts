@@ -2,7 +2,7 @@ package net.thevpc.nuts.toolbox.ndb.sql.nmysql;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NEDesc;
-import net.thevpc.nuts.env.NStoreType;
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.local.LocalMysqlConfigService;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.local.config.LocalMysqlConfig;

@@ -9,6 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElements;
+
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
@@ -89,7 +90,7 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                                         factory.ofStyled(arg, NTextStyle.primary4()),
                                         factory.ofStyled("nuts alias", NTextStyle.primary6()),
                                         p.getId(),
-                                        NCmdLine.of(NCommands.of().findCommand(p.getName()).getCommand())
+                                        NCmdLine.of(NWorkspace.get().findCommand(p.getName()).getCommand())
                                 ));
                             } else {
                                 session.out().println(

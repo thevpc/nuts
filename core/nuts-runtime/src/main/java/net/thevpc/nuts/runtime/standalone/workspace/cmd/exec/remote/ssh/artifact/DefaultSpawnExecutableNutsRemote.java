@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.remote.ssh.artifac
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.env.NEnvs;
+
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
@@ -68,7 +68,6 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
         this.executorOptions = NCoreCollectionUtils.nonNullList(executorOptions);
         this.commExec = commExec;
         NCmdLine cmdLine = NCmdLine.of(this.executorOptions);
-        NSession session = workspace.currentSession();
         while (cmdLine.hasNext()) {
             NArg aa = cmdLine.peek().get();
             switch (aa.key()) {
@@ -89,21 +88,20 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
     }
 
     private AbstractSyncIProcessExecHelper resolveExecHelper() {
-        NSession session = workspace.currentSession();
         return new AbstractSyncIProcessExecHelper(workspace) {
             @Override
             public int exec() {
-                return runOnce(ecmd, session);
+                return runOnce(ecmd);
             }
         };
     }
 
 
-    private int runOnce(String[] cmd, NSession session) {
+    private int runOnce(String[] cmd) {
         int e;
         try (DefaultNExecCmdExtensionContext d = new DefaultNExecCmdExtensionContext(
                 getExecCommand().getTarget(),
-                cmd, session,
+                cmd, workspace.currentSession(),
                 in,
                 out,
                 err,
@@ -124,8 +122,7 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
 
     @Override
     public NText getHelpText() {
-        NSession session = workspace.currentSession();
-        switch (NEnvs.of().getOsFamily()) {
+        switch (NWorkspace.get().getOsFamily()) {
             case WINDOWS: {
                 return NText.ofStyled(
                         "No help available. Try " + getName() + " /help",

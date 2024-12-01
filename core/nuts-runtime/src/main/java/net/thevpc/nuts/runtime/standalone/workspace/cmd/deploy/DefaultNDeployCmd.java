@@ -2,7 +2,8 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.NLocations;
+
+
 import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.descriptor.parser.NDescriptorContentResolver;
@@ -163,7 +164,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
                 NAssert.requireNonBlank(characterizedFile.getDescriptor(), "descriptor");
                 descriptor = characterizedFile.getDescriptor();
             }
-            String name = NLocations.of().getDefaultIdFilename(descriptor.getId().builder().setFaceDescriptor().build());
+            String name = NWorkspace.get().getDefaultIdFilename(descriptor.getId().builder().setFaceDescriptor().build());
             tempFile = NPath.ofTempFile(name).toPath().get();
             NCp.of().from(contentSource.getInputStream()).to(tempFile).addOptions(NPathOption.SAFE).run();
             contentFile2 = tempFile;
@@ -241,7 +242,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
                         return this;
                     }
                 } else {
-                    NRepository repo = NRepositories.of().findRepository(repository).get();
+                    NRepository repo = workspace.findRepository(repository).get();
                     if (!repo.isEnabled()) {
                         throw new NRepositoryDisabledException(repository);
                     }

@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.env.NLocations;
+
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.NMsg;
@@ -51,6 +51,6 @@ public class NReadOnlyException extends NException {
      * Constructs a new NutsReadOnlyException exception
      */
     public NReadOnlyException() {
-        this(NSession.of().isNotPresent()? null : String.valueOf(NLocations.of().getWorkspaceLocation()));
+        this(NSession.of().isNotPresent()? null : String.valueOf(NWorkspace.get().getWorkspaceLocation()));
     }
 }

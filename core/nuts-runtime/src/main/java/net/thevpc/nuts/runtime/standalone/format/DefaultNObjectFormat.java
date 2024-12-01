@@ -30,7 +30,8 @@ import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.env.NBootManager;
+
+
 import net.thevpc.nuts.format.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
@@ -154,7 +155,7 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
     public NContentTypeFormat getBase() {
         NSession session=workspace.currentSession();
         NContentTypeFormat base = createObjectFormat();
-        base.configure(true, NBootManager.of().getBootOptions().getOutputFormatOptions().orElseGet(Collections::emptyList).toArray(new String[0]));
+        base.configure(true, NWorkspace.get().getBootOptions().getOutputFormatOptions().orElseGet(Collections::emptyList).toArray(new String[0]));
         base.configure(true, session.getOutputFormatOptions().toArray(new String[0]));
         return base;
     }

@@ -77,28 +77,24 @@ public abstract class AbstractNDeployRepositoryCmd extends NRepositoryCmdBase<ND
 
     @Override
     public NDeployRepositoryCmd setContent(Path content) {
-        NSession session = getRepo().getWorkspace().currentSession();
         this.content = content == null ? null : NPath.of(content);
         return this;
     }
 
     @Override
     public NDeployRepositoryCmd setContent(URL content) {
-        NSession session = getRepo().getWorkspace().currentSession();
         this.content = content == null ? null : NPath.of(content);
         return this;
     }
 
     @Override
     public NDeployRepositoryCmd setContent(File content) {
-        NSession session = getRepo().getWorkspace().currentSession();
         this.content = content == null ? null : NPath.of(content);
         return this;
     }
 
     @Override
     public NDeployRepositoryCmd setContent(InputStream content) {
-        NSession session = getRepo().getWorkspace().currentSession();
         this.content = content == null ? null : NInputSource.of(content);
         return this;
     }
@@ -126,7 +122,6 @@ public abstract class AbstractNDeployRepositoryCmd extends NRepositoryCmdBase<ND
     }
 
     protected void checkParameters() {
-        NSession session = getRepo().getWorkspace().currentSession();
         getRepo().security().checkAllowed(NConstants.Permissions.DEPLOY, "deploy");
         CoreNIdUtils.checkLongId(getId());
         NAssert.requireNonNull(this.getContent(), "content");

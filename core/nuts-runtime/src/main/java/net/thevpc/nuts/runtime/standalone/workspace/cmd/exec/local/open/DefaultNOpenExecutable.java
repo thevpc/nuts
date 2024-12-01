@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.open;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.env.NEnvs;
+
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableInformationExt;
 import net.thevpc.nuts.text.NText;
@@ -39,7 +39,6 @@ public class DefaultNOpenExecutable extends AbstractNExecutableInformationExt {
         this.cmd = cmd;
         this.executorOptions = executorOptions == null ? new String[0] : executorOptions;
         NCmdLine cmdLine = NCmdLine.of(this.executorOptions);
-        NSession session = workspace.currentSession();
         while (cmdLine.hasNext()) {
             NArg aa = cmdLine.peek().get();
             switch (aa.key()) {
@@ -52,7 +51,7 @@ public class DefaultNOpenExecutable extends AbstractNExecutableInformationExt {
                 }
             }
         }
-        switch (NEnvs.of().getOsFamily()) {
+        switch (NWorkspace.get().getOsFamily()) {
             case LINUX: {
                 Path execPath = NSysExecUtils.sysWhich("xdg-open");
                 if (execPath != null) {
@@ -92,7 +91,6 @@ public class DefaultNOpenExecutable extends AbstractNExecutableInformationExt {
 
     private NExecCmd resolveExecHelper() {
         if (effectiveOpenExecutable == null) {
-            NSession session = workspace.currentSession();
             throw new NIllegalArgumentException(NMsg.ofC("unable to resolve viewer for %s", cmd[0]));
         }
         NExecCmd cc = getExecCommand().copy();
@@ -110,8 +108,7 @@ public class DefaultNOpenExecutable extends AbstractNExecutableInformationExt {
 
     @Override
     public NText getHelpText() {
-        NSession session = workspace.currentSession();
-        switch (NEnvs.of().getOsFamily()) {
+        switch (NWorkspace.get().getOsFamily()) {
             case WINDOWS: {
                 return NText.ofStyled("No help available. Try " + getName() + " /help", NTextStyle.error());
             }

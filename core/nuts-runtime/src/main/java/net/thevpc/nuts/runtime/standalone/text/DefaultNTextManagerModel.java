@@ -25,9 +25,9 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NBootOptions;
-import net.thevpc.nuts.env.NEnvs;
-import net.thevpc.nuts.env.NShellFamily;
+import net.thevpc.nuts.NBootOptions;
+
+import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElementFactoryService;
@@ -48,7 +48,7 @@ import net.thevpc.nuts.text.NTextFormatTheme;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.env.NOsFamily;
+import net.thevpc.nuts.NOsFamily;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.BufferedReader;
@@ -121,7 +121,7 @@ public class DefaultNTextManagerModel {
         if ("default".equals(y)) {
             //default always refers to this implementation
             if (defaultTheme == null) {
-                if (NEnvs.of().getOsFamily() == NOsFamily.WINDOWS) {
+                if (NWorkspace.get().getOsFamily() == NOsFamily.WINDOWS) {
                     //dark blue and red are very ugly under windows, replace them with green tones !
                     defaultTheme = new NTextFormatThemeWrapper(new NTextFormatPropertiesTheme("grass", null, workspace));
                 } else {
@@ -192,7 +192,7 @@ public class DefaultNTextManagerModel {
             }
         }
         if ("system".equals(lc)) {
-            NShellFamily shellFamily = NEnvs.of().getShellFamily();
+            NShellFamily shellFamily = NWorkspace.get().getShellFamily();
             h = getCodeHighlighter(shellFamily.id());
             _cachedHighlighters.put(lc, h);
             return h;

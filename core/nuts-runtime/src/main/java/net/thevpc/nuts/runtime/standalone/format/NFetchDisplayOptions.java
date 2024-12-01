@@ -145,7 +145,6 @@ public class NFetchDisplayOptions {
         if (idFormat.configureFirst(cmdLine)) {
             return true;
         }
-        NSession session = workspace.currentSession();
         NArg a = cmdLine.peek().get();
         if (a == null) {
             return false;

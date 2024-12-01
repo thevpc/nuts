@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.local.system;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.env.NEnvs;
+
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.util.NCoreCollectionUtils;
@@ -87,7 +87,7 @@ public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt 
 
     @Override
     public NText getHelpText() {
-        switch (NEnvs.of().getOsFamily()) {
+        switch (NWorkspace.get().getOsFamily()) {
             case WINDOWS: {
                 return NText.ofStyled(
                         "No help available. Try " + getName() + " /help",

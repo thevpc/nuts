@@ -2,7 +2,8 @@ package net.thevpc.nuts.runtime.standalone.repository;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.NStoreType;
+
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.runtime.standalone.util.NMapWithAlias;
@@ -11,7 +12,7 @@ import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.env.NPlatformHome;
+import net.thevpc.nuts.NPlatformHome;
 
 import java.util.*;
 
@@ -30,7 +31,7 @@ public class DefaultNRepositoryDB implements NRepositoryDB {
                                 .setLocation(NRepositoryLocation.of("nuts@"
                                         + NPath.of(
                                                 NPlatformHome.SYSTEM.getWorkspaceLocation(
-                                                        NStoreType.LIB, NConfigs.of().stored().getHomeLocations(),
+                                                        NStoreType.LIB, NWorkspace.get().getStoredConfig().getHomeLocations(),
                                                         NConstants.Names.DEFAULT_WORKSPACE_NAME))
                                         .resolve(NConstants.Folders.ID)
                                         .toString())

@@ -28,12 +28,12 @@ package net.thevpc.nuts.toolbox.nsh.cmds.posix;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.env.NEnvs;
+
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
-import net.thevpc.nuts.env.NOsFamily;
+import net.thevpc.nuts.NOsFamily;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -56,7 +56,7 @@ public class JpsCommand extends NShellBuiltinDefault {
     }
 
     public static String resolveJavaToolCommand(NSession session, String javaHome, String javaCommand) {
-        String exe = NEnvs.of().getOsFamily().equals(NOsFamily.WINDOWS) ? (javaCommand + ".exe") : javaCommand;
+        String exe = NWorkspace.get().getOsFamily().equals(NOsFamily.WINDOWS) ? (javaCommand + ".exe") : javaCommand;
         if (javaHome == null) {
             javaHome = System.getProperty("java.home");
         }

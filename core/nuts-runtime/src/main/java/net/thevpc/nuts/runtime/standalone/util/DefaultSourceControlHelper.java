@@ -41,7 +41,6 @@ public class DefaultSourceControlHelper {
     }
 
     protected NLog _LOG() {
-        NSession session = workspace.currentSession();
         return NLog.of(DefaultSourceControlHelper.class);
     }
 

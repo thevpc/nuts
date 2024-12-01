@@ -2,8 +2,8 @@ package net.thevpc.nuts.toolbox.nwork;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.env.NLocations;
-import net.thevpc.nuts.env.NStoreType;
+
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.nwork.config.ProjectConfig;
 import net.thevpc.nuts.toolbox.nwork.config.RepositoryAddress;
@@ -191,7 +191,7 @@ public class ProjectService {
             }
             try {
                 NSession s = null;
-                if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(NLocations.of().getWorkspaceLocation().toString())) {
+                if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(NWorkspace.get().getWorkspaceLocation().toString())) {
                     s = Nuts.openWorkspace(
                             NWorkspaceOptionsBuilder.of()
                                     .setOpenMode(NOpenMode.OPEN_OR_ERROR)
@@ -243,7 +243,7 @@ public class ProjectService {
                                 .setDescriptorStyle(NDescriptorStyle.MAVEN)
                                 .parse(new File(f, "pom.xml")).get();
                         NSession s = null;
-                        if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(NLocations.of().getWorkspaceLocation().toString())) {
+                        if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(NWorkspace.get().getWorkspaceLocation().toString())) {
                             s = Nuts.openWorkspace(
                                     NWorkspaceOptionsBuilder.of()
                                             .setOpenMode(NOpenMode.OPEN_OR_ERROR)

@@ -2,12 +2,12 @@ package net.thevpc.nuts.runtime.standalone.xtra.ps;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.NEnvs;
+
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.env.NOsFamily;
-import net.thevpc.nuts.env.NPlatformFamily;
+import net.thevpc.nuts.NOsFamily;
+import net.thevpc.nuts.NPlatformFamily;
 import net.thevpc.nuts.io.NPsInfo;
 import net.thevpc.nuts.io.NPs;
 import net.thevpc.nuts.util.NIteratorBuilder;
@@ -25,11 +25,11 @@ import net.thevpc.nuts.util.*;
 public class DefaultNPs implements NPs {
 
     private String processType;
-    private NWorkspace ws;
+    private NWorkspace workspace;
     private boolean failFast;
 
-    public DefaultNPs(NWorkspace ws) {
-        this.ws = ws;
+    public DefaultNPs(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
     @Override
@@ -50,7 +50,7 @@ public class DefaultNPs implements NPs {
 
     @Override
     public boolean isSupportedKillProcess() {
-        NOsFamily f = NEnvs.of().getOsFamily();
+        NOsFamily f = NWorkspace.get().getOsFamily();
         return f == NOsFamily.LINUX || f == NOsFamily.MACOS || f == NOsFamily.UNIX;
     }
 
@@ -95,9 +95,9 @@ public class DefaultNPs implements NPs {
         if (v != null) {
             return v;
         }
-        NPlatforms platforms = NPlatforms.of();
+        NWorkspace workspace = NWorkspace.get();
         NVersionFilter nvf = NBlankable.isBlank(version) ? null : NVersion.of(version).get().filter();
-        NPlatformLocation[] availableJava = platforms.findPlatforms(NPlatformFamily.JAVA,
+        NPlatformLocation[] availableJava = workspace.findPlatforms(NPlatformFamily.JAVA,
                 java -> "jdk".equals(java.getPackaging()) && (nvf == null || nvf.acceptVersion(NVersion.of(java.getVersion()).get()))
         ).toArray(NPlatformLocation[]::new);
         for (NPlatformLocation java : availableJava) {
@@ -143,7 +143,7 @@ public class DefaultNPs implements NPs {
     }
 
     private NStream<NPsInfo> getResultListJava(String version) {
-        NEnvs envs = NEnvs.of();
+        NWorkspace workspace = NWorkspace.get();
         NIterator<NPsInfo> it = NIteratorBuilder.ofSupplier(() -> {
             String cmd = "jps";
             NExecCmd b = null;
@@ -174,7 +174,7 @@ public class DefaultNPs implements NPs {
                             String pid = line.substring(0, s1).trim();
                             String cls = line.substring(s1 + 1, s2 < 0 ? line.length() : s2).trim();
                             String cmdLineString = s2 >= 0 ? line.substring(s2 + 1).trim() : "";
-                            String[] parsedCmdLine = betterArgs(envs, pid);
+                            String[] parsedCmdLine = betterArgs(pid);
                             if (parsedCmdLine == null) {
                                 parsedCmdLine= NCmdLine.of(cmdLineString,null).toStringArray();
                             }
@@ -185,8 +185,8 @@ public class DefaultNPs implements NPs {
         return new NStreamFromNIterator<>("process-" + getType(), it);
     }
 
-    private String[] betterArgs(NEnvs envs, String pid) {
-        switch (envs.getOsFamily()) {
+    private String[] betterArgs(String pid) {
+        switch (workspace.getOsFamily()) {
             case LINUX:
             case UNIX:
             case MACOS: {

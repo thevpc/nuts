@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.*;
+
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NOptional;
@@ -38,7 +39,7 @@ public class ProgressOptions {
                     o.put(k, NLiteral.of(v));
                 }
             }
-            for (Map.Entry<String, String> e : NConfigs.of().getConfigMap().entrySet()) {
+            for (Map.Entry<String, String> e : NWorkspace.get().getConfigMap().entrySet()) {
                 if (e.getKey().startsWith("progress.")) {
                     String k = e.getKey().substring("progress.".length());
                     if (o.get(k).isNotPresent()) {

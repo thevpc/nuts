@@ -189,6 +189,26 @@ public interface NLog {
      */
     void log(Level level, NLogVerb verb, NMsg msg, Throwable thrown);
 
+    default void log(Level level, NLogVerb verb, NMsg msg){
+        log(level,verb,msg,null);
+    }
+
+    default void warn(NMsg msg, Throwable thrown){
+        log(Level.WARNING, NLogVerb.WARNING, msg, thrown);
+    }
+
+    default void warn(NMsg msg){
+        log(Level.WARNING, NLogVerb.WARNING, msg,null);
+    }
+
+    default void error(NMsg msg, Throwable thrown){
+        log(Level.SEVERE, NLogVerb.FAIL, msg, thrown);
+    }
+
+    default void error(NMsg msg){
+        log(Level.SEVERE, NLogVerb.FAIL, msg,null);
+    }
+
     /**
      * log message using the given verb and level
      *

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NDesktopEnvironmentFamily;
+import net.thevpc.nuts.NDesktopEnvironmentFamily;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.util.NFilterOp;

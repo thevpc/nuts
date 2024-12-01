@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
+import net.thevpc.nuts.NClassLoaderNode;
 import net.thevpc.nuts.NId;
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.Nuts;
-import net.thevpc.nuts.boot.NBootClassLoaderNode;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
@@ -186,27 +186,39 @@ public class ExtraApiUtils {
         return false;
     }
 
-    private static void fillBootDependencyNodes(NBootClassLoaderNode node, Set<URL> urls, Set<String> visitedIds,
+    private static void fillBootDependencyNodes(NClassLoaderNode node, Set<URL> urls, Set<String> visitedIds,
                                                 NLog bLog) {
-        String shortName = NId.of(node.getId()).get().getShortName();
-        if (!visitedIds.contains(shortName)) {
-            visitedIds.add(shortName);
+        if(node.getId()==null){
             if (!node.isIncludedInClasspath()) {
                 urls.add(node.getURL());
             } else {
                 bLog.with().level(Level.WARNING).verb(NLogVerb.CACHE).log( NMsg.ofC("url will not be loaded (already in classloader) : %s", node.getURL()));
             }
-            for (NBootClassLoaderNode dependency : node.getDependencies()) {
+            for (NClassLoaderNode dependency : node.getDependencies()) {
                 fillBootDependencyNodes(dependency, urls, visitedIds, bLog);
+            }
+            return;
+        }else {
+            String shortName = node.getId().getShortName();
+            if (!visitedIds.contains(shortName)) {
+                visitedIds.add(shortName);
+                if (!node.isIncludedInClasspath()) {
+                    urls.add(node.getURL());
+                } else {
+                    bLog.with().level(Level.WARNING).verb(NLogVerb.CACHE).log(NMsg.ofC("url will not be loaded (already in classloader) : %s", node.getURL()));
+                }
+                for (NClassLoaderNode dependency : node.getDependencies()) {
+                    fillBootDependencyNodes(dependency, urls, visitedIds, bLog);
+                }
             }
         }
     }
 
-    public static URL[] resolveClassWorldURLs(NBootClassLoaderNode[] nodes, ClassLoader contextClassLoader,
+    public static URL[] resolveClassWorldURLs(NClassLoaderNode[] nodes, ClassLoader contextClassLoader,
                                               NLog bLog) {
         LinkedHashSet<URL> urls = new LinkedHashSet<>();
         Set<String> visitedIds = new HashSet<>();
-        for (NBootClassLoaderNode info : nodes) {
+        for (NClassLoaderNode info : nodes) {
             if(info!=null) {
                 fillBootDependencyNodes(info, urls, visitedIds, bLog);
             }

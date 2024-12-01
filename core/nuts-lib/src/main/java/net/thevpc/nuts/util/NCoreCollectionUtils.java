@@ -24,7 +24,7 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.env.NIdLocation;
+import net.thevpc.nuts.NIdLocation;
 
 import java.util.*;
 import java.util.function.Predicate;

@@ -6,12 +6,15 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepositoryModel;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NExecutionContextBuilder;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
+import net.thevpc.nuts.runtime.standalone.workspace.config.*;
+import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.spi.NInstallerComponent;
 import net.thevpc.nuts.text.NText;
 
+import java.util.List;
 import java.util.Stack;
 
 /**
@@ -22,6 +25,9 @@ public interface NWorkspaceExt {
 
     static NWorkspaceExt of() {
         return ((NWorkspaceExt)NWorkspace.get());
+    }
+    static NWorkspaceExt of(NWorkspace ws) {
+        return ((NWorkspaceExt)ws);
     }
 
     NText getWelcomeText();
@@ -79,5 +85,19 @@ public interface NWorkspaceExt {
     void setInstallationDigest(String value);
 
     Stack<NSession> sessionScopes();
+    DefaultNRepositoryModel getRepositoryModel();
 
+    public DefaultNWorkspaceEnvManagerModel getEnvModel();
+
+    public DefaultCustomCommandsModel getCommandModel() ;
+
+    public DefaultNWorkspaceConfigModel getConfigModel();
+
+    public DefaultImportModel getImportModel();
+
+    NDependencySolver createDependencySolver(String solverName);
+
+    List<String> getDependencySolverNames();
+
+    DefaultNWorkspaceLocationModel getLocationModel();
 }

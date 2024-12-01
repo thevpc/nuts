@@ -71,7 +71,7 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
                         } catch (UncheckedIOException | NIOException ex) {
                             return NIteratorBuilder.emptyIterator();
                         }
-                        MavenMetadata info = MavenUtils.of().parseMavenMetaData(metadataStream, session);
+                        MavenMetadata info = MavenUtils.of().parseMavenMetaData(metadataStream);
                         if (info != null) {
                             for (String version : info.getVersions()) {
                                 final NId nutsId = id.builder().setVersion(version).build();

@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.env.NEnvs;
+
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
@@ -32,8 +32,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
 
     public static SystemNdi createNdi(NWorkspace workspace) {
         SystemNdi ndi = null;
-        NEnvs workspaceEnvManager = NEnvs.of();
-        switch (workspaceEnvManager.getOsFamily()) {
+        switch (workspace.getOsFamily()) {
             case LINUX:
             case UNIX: {
 
@@ -249,7 +248,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 if (d.ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NExecutionException(NMsg.ofC("platform not supported : %s", NEnvs.of().getOs()), NExecutionException.ERROR_2);
+                throw new NExecutionException(NMsg.ofC("platform not supported : %s", NWorkspace.get().getOs()), NExecutionException.ERROR_2);
             }
             if (!d.idsToInstall.isEmpty()) {
                 printResults(ndi.addScript(d.options, d.idsToInstall.toArray(new String[0])));
@@ -314,7 +313,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 if (ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NExecutionException(NMsg.ofC("platform not supported : %s", NEnvs.of().getOs()), NExecutionException.ERROR_2);
+                throw new NExecutionException(NMsg.ofC("platform not supported : %s", NWorkspace.get().getOs()), NExecutionException.ERROR_2);
             }
             boolean subTrace = session.isTrace();
             if (!session.isPlainTrace()) {
@@ -427,7 +426,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 if (d.ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NExecutionException(NMsg.ofC("platform not supported : %s ", NEnvs.of().getOs()), NExecutionException.ERROR_2);
+                throw new NExecutionException(NMsg.ofC("platform not supported : %s ", NWorkspace.get().getOs()), NExecutionException.ERROR_2);
             }
             if (d.switchWorkspaceLocation != null || d.switchWorkspaceApi != null) {
                 NdiScriptOptions oo = new NdiScriptOptions();

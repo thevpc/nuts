@@ -2,8 +2,8 @@ package net.thevpc.nuts.indexer;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.env.NLocations;
-import net.thevpc.nuts.env.NStoreType;
+
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.NPath;
 
 import java.util.*;
@@ -36,7 +36,7 @@ public class NIndexSubscriberListManager {
     }
 
     private NPath getConfigFile() {
-        return NLocations.of()
+        return NWorkspace.get()
                 .getStoreLocation(NId.ofClass(NIndexSubscriberListManager.class).get(),
                         NStoreType.CONF).resolve(
                         name + "-nuts-subscriber-list.json");
@@ -83,7 +83,7 @@ public class NIndexSubscriberListManager {
     }
 
     private String getRepositoryNameFromUuid(String repositoryUuid) {
-        List<NRepository> repositories = NRepositories.of().getRepositories();
+        List<NRepository> repositories = NWorkspace.get().getRepositories();
         for (NRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 return repository.getName();

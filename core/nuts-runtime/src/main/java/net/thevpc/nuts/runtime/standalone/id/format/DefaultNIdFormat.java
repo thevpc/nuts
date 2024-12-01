@@ -4,7 +4,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.env.NImports;
+
+
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.dependency.NDependencyScopes;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
@@ -148,7 +149,6 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
 
     @Override
     public NText format() {
-        NSession session=getWorkspace().currentSession();
         if (id == null) {
             return isNtf() ?
                     NText.ofStyled("<null>", NTextStyle.of(NTextStyleType.BOOLEAN))
@@ -173,7 +173,7 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
         if (!isOmitGroupId()) {
             if (!NBlankable.isBlank(id.getGroupId())) {
                 boolean importedGroup2 = NConstants.Ids.NUTS_GROUP_ID.equals(id.getGroupId());
-                boolean importedGroup = NImports.of().getAllImports().contains(id.getGroupId());
+                boolean importedGroup = NWorkspace.get().getAllImports().contains(id.getGroupId());
                 if (!(importedGroup && isOmitImportedGroupId())) {
                     if (importedGroup || importedGroup2) {
                         sb.append(id.getGroupId(), NTextStyle.pale());
@@ -285,11 +285,11 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
     }
 
     private String _encodeValue(String s) {
-        return NStringUtils.formatStringLiteral(s, NQuoteType.SIMPLE, NSupportMode.PREFERRED);
+        return NStringUtils.formatStringLiteral(s, NQuoteType.SIMPLE, NSupportMode.PREFERRED,"=&");
     }
 
     private String _encodeKey(String s) {
-        return NStringUtils.formatStringLiteral(s, NQuoteType.SIMPLE, NSupportMode.PREFERRED);
+        return NStringUtils.formatStringLiteral(s, NQuoteType.SIMPLE, NSupportMode.PREFERRED,"=&");
     }
 
     @Override
@@ -312,7 +312,6 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NSession session=getWorkspace().currentSession();
         NArg aa = cmdLine.peek().get();
         if (aa == null) {
             return false;

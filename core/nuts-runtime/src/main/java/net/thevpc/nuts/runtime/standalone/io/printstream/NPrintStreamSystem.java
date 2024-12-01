@@ -2,7 +2,8 @@ package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NWorkspaceTerminalOptions;
-import net.thevpc.nuts.env.NBootManager;
+
+
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
@@ -80,7 +81,7 @@ public class NPrintStreamSystem extends NPrintStreamBase {
         if (ansi != null) {
             return ansi ? NTerminalMode.ANSI : NTerminalMode.INHERITED;
         }
-        NWorkspaceTerminalOptions b = NBootManager.of().getBootTerminal();
+        NWorkspaceTerminalOptions b = NWorkspace.get().getBootTerminal();
         if (b.getFlags().contains("ansi")) {
             return NTerminalMode.ANSI;
         } else {

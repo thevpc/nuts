@@ -56,7 +56,7 @@ public class RefreshDataService {
                     .stream()
                     .collect(Collectors.toMap(map -> map.get("stringId"), map -> NIndexerUtils.mapToNutsId(map), (v1, v2) -> v1));
             Iterator<NDefinition> definitions = NSearchCmd.of()
-                    .setRepositoryFilter(NRepositories.of().filter().byUuid(subscriber.getUuid()))
+                    .setRepositoryFilter(NRepositoryFilters.of().byUuid(subscriber.getUuid()))
                     .setFailFast(false)
                     .setContent(false)
                     .setEffective(true)

@@ -71,7 +71,6 @@ public class MavenSolrSearchCommand {
     public NPath getSolrSearchUrl() {
         String a = repo.config().getConfigProperty("maven.solrsearch.url").flatMap(NLiteral::asString).orNull();
         if (a != null) {
-            NSession session = repo.getWorkspace().currentSession();
             return NPath.of(a);
         }
         return null;
@@ -98,7 +97,6 @@ public class MavenSolrSearchCommand {
                     }
                     index++;
                 }
-                NSession session = repo.getWorkspace().currentSession();
                 NPath query = NPath.of(q2.toString());
                 NIteratorBuilder<NId> it = NIteratorBuilder.<NId>ofSupplier(new Supplier<Iterator<NId>>() {
                     @Override

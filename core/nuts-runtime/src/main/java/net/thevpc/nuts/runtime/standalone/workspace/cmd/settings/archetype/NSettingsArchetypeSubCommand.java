@@ -5,10 +5,10 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.archetype;
 
-import net.thevpc.nuts.NConfigs;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.cmdline.NCmdLine;
+
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 
 /**
@@ -25,7 +25,7 @@ public class NSettingsArchetypeSubCommand extends AbstractNSettingsSubCommand {
         if (cmdLine.next("list archetypes","list archetype","archetype list", "la").isPresent()) {
             if (cmdLine.isExecMode()) {
                 NSession session=workspace.currentSession();
-                session.out().println(NConfigs.of().getAvailableArchetypes());
+                session.out().println(NWorkspace.get().getAvailableArchetypes());
             }
             return true;
         }

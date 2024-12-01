@@ -28,7 +28,8 @@ package net.thevpc.nuts.toolbox.nsh.cmds.posix;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.env.NLocations;
+
+
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponentScope;
@@ -83,7 +84,7 @@ public class CpCommand extends NShellBuiltinDefault {
         for (String value : options.files) {
             NAssert.requireNonBlank(value, "file path");
             options.xfiles.add(NPath.of((value.contains("://") ? value :
-                    NPath.of(value).toAbsolute(NLocations.of().getWorkspaceLocation()).toString()
+                    NPath.of(value).toAbsolute(NWorkspace.get().getWorkspaceLocation()).toString()
             )));
         }
         if (options.xfiles.size() < 2) {

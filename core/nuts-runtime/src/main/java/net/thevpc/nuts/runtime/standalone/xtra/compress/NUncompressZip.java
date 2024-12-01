@@ -28,7 +28,6 @@ public class NUncompressZip implements NUncompressPackaging {
     }
 
     public void uncompressPackage(NUncompress uncompress, NInputSource source) {
-        NSession session = workspace.currentSession();
         NOutputTarget target = uncompress.getTarget();
         try {
             NPath _target = asValidTargetPath(target);
@@ -98,7 +97,6 @@ public class NUncompressZip implements NUncompressPackaging {
     }
 
     public void visitPackage(NUncompress uncompress, NInputSource source, NUncompressVisitor visitor) {
-        NSession session = workspace.currentSession();
         try {
             //get the zip file content
             InputStream _in = source.getInputStream();

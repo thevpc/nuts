@@ -27,7 +27,7 @@ public class MavenNDependencySolver implements NDependencySolver {
         this.workspace = workspace;
     }
 
-    ;
+
 
     public NDependencySolver addRootId(NId id) {
         pending.add(new RootInfo(id.toDependency(), null));

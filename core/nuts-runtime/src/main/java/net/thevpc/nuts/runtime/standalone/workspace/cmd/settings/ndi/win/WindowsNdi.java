@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.win;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NEnvs;
-import net.thevpc.nuts.env.NShellFamily;
+
+import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.FreeDesktopEntryWriter;
@@ -23,7 +23,7 @@ public class WindowsNdi extends BaseSystemNdi {
     }
 
     protected NShellFamily[] getShellGroups() {
-        Set<NShellFamily> all=new LinkedHashSet<>(NEnvs.of().getShellFamilies());
+        Set<NShellFamily> all=new LinkedHashSet<>(NWorkspace.get().getShellFamilies());
         all.retainAll(Arrays.asList(NShellFamily.WIN_CMD, NShellFamily.WIN_POWER_SHELL));
         return all.toArray(new NShellFamily[0]);
     }
@@ -79,7 +79,7 @@ public class WindowsNdi extends BaseSystemNdi {
     @Override
     protected FreeDesktopEntryWriter createFreeDesktopEntryWriter() {
         return new WindowFreeDesktopEntryWriter(
-                NEnvs.of().getDesktopPath()==null?null: NPath.of(NEnvs.of().getDesktopPath())
+                NWorkspace.get().getDesktopPath()==null?null: NPath.of(NWorkspace.get().getDesktopPath())
                 , workspace);
     }
 

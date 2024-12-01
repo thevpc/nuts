@@ -5,7 +5,6 @@ import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -90,9 +89,8 @@ public class BytesSizeFormat {
     private long high = TERA;
     private long low = BYTE;
     private int depth = Integer.MAX_VALUE;
-    private NSession session;
 
-    public BytesSizeFormat(boolean leadingZeros, boolean intermediateZeros, boolean fixedLength, boolean binaryPrefix, long high, long low, int depth, NSession session) {
+    public BytesSizeFormat(boolean leadingZeros, boolean intermediateZeros, boolean fixedLength, boolean binaryPrefix, long high, long low, int depth) {
         this.leadingZeros = leadingZeros;
         this.intermediateZeros = intermediateZeros;
         this.fixedLength = fixedLength;
@@ -100,7 +98,6 @@ public class BytesSizeFormat {
         this.high = high;
         this.low = low;
         this.depth = depth <= 0 ? Integer.MAX_VALUE : depth;
-        this.session = session;
     }
 
 //    public BytesSizeFormat() {
@@ -162,12 +159,9 @@ public class BytesSizeFormat {
      *
      *
      * </pre>
-     *
-     * @param format  size format
-     * @param session session
+     *  @param format  size format
      */
-    public BytesSizeFormat(String format, NSession session) {
-        this.session = session;
+    public BytesSizeFormat(String format) {
         leadingZeros = false;
         intermediateZeros = false;
         trailingZeros = false;
@@ -293,10 +287,6 @@ public class BytesSizeFormat {
     }
 
     public String formatString(long bytes) {
-        return formatString(bytes,session);
-    }
-
-    public String formatString(long bytes, NSession session) {
         StringBuilder sb = new StringBuilder();
         boolean neg = bytes < 0;
         long v = bytes < 0 ? -bytes : bytes;
@@ -487,7 +477,7 @@ public class BytesSizeFormat {
         return sb.toString();
     }
 
-    public NText formatText(long bytes, NSession session) {
+    public NText formatText(long bytes) {
         NTextBuilder sb = NTextBuilder.of();
         boolean neg = bytes < 0;
         long v = bytes < 0 ? -bytes : bytes;

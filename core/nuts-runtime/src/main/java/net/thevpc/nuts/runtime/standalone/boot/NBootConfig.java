@@ -27,13 +27,13 @@ package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.NHomeLocation;
-import net.thevpc.nuts.env.NStoreStrategy;
-import net.thevpc.nuts.env.NStoreType;
+import net.thevpc.nuts.NHomeLocation;
+import net.thevpc.nuts.NStoreStrategy;
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.util.NCoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceCurrentConfig;
 import net.thevpc.nuts.util.NBlankable;
-import net.thevpc.nuts.env.NOsFamily;
+import net.thevpc.nuts.NOsFamily;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;

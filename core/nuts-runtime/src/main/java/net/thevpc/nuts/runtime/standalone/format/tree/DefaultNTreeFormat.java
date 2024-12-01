@@ -148,7 +148,6 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
     @Override
     public String toString() {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
-        NSession session = workspace.currentSession();
         NPrintStream out = NPrintStream.of(b);
         NTreeModel tree = getModel();
         print(tree, "", NPositionType.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0, false);
@@ -164,7 +163,6 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
     }
 
     private boolean print(NTreeModel tree, String prefix, NPositionType type, Object o, NPrintStream out, boolean hideRoot, int depth, boolean prefixNewLine) {
-        NSession session = workspace.currentSession();
         Object oValue = o;
         if (oValue instanceof XNode) {
             oValue = ((XNode) oValue).toNutsString();
@@ -200,7 +198,6 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
     }
 
     private void print(NTreeModel tree, String prefix, NPositionType type, Object o, PrintWriter out, boolean hideRoot, int depth) {
-        NSession session = workspace.currentSession();
         boolean skipNewLine = true;
         if (!hideRoot) {
             out.print(prefix);
@@ -241,7 +238,6 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NSession session = workspace.currentSession();
         NArg aa = cmdLine.peek().orNull();
         if (aa == null) {
             return false;
@@ -301,7 +297,6 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
         if (vv.length == 0 || vv.length == 1) {
             return null;
         }
-        NSession session = workspace.currentSession();
         return Arrays.stream(vv).map(x -> NText.of(x)).toArray(NText[]::new);
     }
 

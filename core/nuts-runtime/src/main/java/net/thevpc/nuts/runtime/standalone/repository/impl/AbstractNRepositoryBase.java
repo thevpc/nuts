@@ -25,9 +25,10 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NIndexStore;
-import net.thevpc.nuts.env.NLocations;
-import net.thevpc.nuts.env.NSpeedQualifier;
+
+import net.thevpc.nuts.NIndexStore;
+
+import net.thevpc.nuts.NSpeedQualifier;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
@@ -74,7 +75,7 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
     protected void init(NAddRepositoryOptions options, NRepository parent, NSpeedQualifier speed, boolean supportedMirroring, String repositoryType) {
         this.parentRepository = parent;
         this.configModel = new DefaultNRepositoryConfigModel(this, options, workspace,speed, supportedMirroring, repositoryType);
-        this.nIndexStore = NConfigs.of().getIndexStoreClientFactory().createIndexStore(this);
+        this.nIndexStore = NWorkspace.get().getIndexStoreClientFactory().createIndexStore(this);
 //        setEnabled(options.isEnabled(), initSession);
     }
 
@@ -136,7 +137,6 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
     }
 
     protected void traceMessage(NFetchMode fetchMode, Level lvl, NId id, NLogVerb tracePhase, String title, long startTime, NMsg extraMessage) {
-        NSession session = workspace.currentSession();
         NLogUtils.traceMessage(NLog.of(AbstractNRepositoryBase.class), lvl, getName(), fetchMode, id, tracePhase, title, startTime, extraMessage);
     }
 
@@ -171,16 +171,16 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
     }
 
     protected String getIdComponentExtension(String packaging) {
-        return NLocations.of().getDefaultIdContentExtension(packaging);
+        return NWorkspace.get().getDefaultIdContentExtension(packaging);
     }
 
     protected String getIdExtension(NId id) {
-        return NLocations.of().getDefaultIdExtension(id);
+        return NWorkspace.get().getDefaultIdExtension(id);
     }
 
     @Override
     public NPath getIdBasedir(NId id) {
-        return NLocations.of().getDefaultIdBasedir(id);
+        return NWorkspace.get().getDefaultIdBasedir(id);
     }
 
     public NPath getIdRemotePath(NId id) {

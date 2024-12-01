@@ -7,10 +7,10 @@ package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NBootWorkspaceFactory;
-import net.thevpc.nuts.boot.NBootClassLoaderNode;
-import net.thevpc.nuts.env.NBootOptions;
+import net.thevpc.nuts.NBootOptions;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.NLocations;
+
+
 import net.thevpc.nuts.runtime.standalone.util.ExtraApiUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NElements;
@@ -33,7 +33,6 @@ import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspaceFactory;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceFactory;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigBoot;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.*;
@@ -143,13 +142,11 @@ public class DefaultNWorkspaceExtensionModel {
 
     //@Override
     public List<NExtensionInformation> findExtensions(String id, String extensionType) {
-        NSession session=getWorkspace().currentSession();
         return findExtensions(NId.of(id).get(), extensionType);
     }
 
     // @Override
     public List<NExtensionInformation> findExtensions(NId id, String extensionType) {
-        NSession session=getWorkspace().currentSession();
         NAssert.requireNonBlank(id.getVersion(), "version");
         List<NExtensionInformation> ret = new ArrayList<>();
         List<String> allUrls = new ArrayList<>();
@@ -214,7 +211,6 @@ public class DefaultNWorkspaceExtensionModel {
     }
 
     public void onInitializeWorkspace(NBootOptions bOptions, ClassLoader bootClassLoader) {
-        NSession session = workspace.currentSession();
         // add discover classpath
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         boolean resolveClassPathUrls=false;
@@ -244,7 +240,7 @@ public class DefaultNWorkspaceExtensionModel {
                     .log(NMsg.ofC("initialize workspace extensions from %s/%s urls : %s", valid.length, urls.length, Arrays.asList(urls)));
             for (PathAndUrl v : valid) {
                 objectFactory.discoverTypes(
-                        CoreNIdUtils.resolveOrGenerateIdFromFileName(v.path, session),
+                        CoreNIdUtils.resolveOrGenerateIdFromFileName(v.path),
                         v.url,
                         bootClassLoader
                 );
@@ -257,21 +253,23 @@ public class DefaultNWorkspaceExtensionModel {
         );
 
         // discover runtime path
-        if (!bOptions.getRuntimeBootDependencyNode().isEmpty()) {
+        if (!bOptions.getRuntimeBootDependencyNode().isBlank()) {
             objectFactory.discoverTypes(
-                    NId.of(bOptions.getRuntimeBootDependencyNode().get().getId()).get(),
+                    bOptions.getRuntimeBootDependencyNode().get().getId(),
                     bOptions.getRuntimeBootDependencyNode().get().getURL(),
                     bootClassLoader
             );
         }
 
         // discover extensions path
-        for (NBootClassLoaderNode idurl : bOptions.getExtensionBootDependencyNodes().orElseGet(Collections::emptyList)) {
-            objectFactory.discoverTypes(
-                    NId.of(idurl.getId()).get(),
-                    idurl.getURL(),
-                    bootClassLoader
-            );
+        for (NClassLoaderNode idurl : bOptions.getExtensionBootDependencyNodes().orElseGet(Collections::emptyList)) {
+            if(idurl.getId()!=null) {
+                objectFactory.discoverTypes(
+                        idurl.getId(),
+                        idurl.getURL(),
+                        bootClassLoader
+                );
+            }
         }
         this.workspaceExtensionsClassLoader = new DefaultNClassLoader("workspaceExtensionsClassLoader", workspace, bootClassLoader);
     }
@@ -287,7 +285,6 @@ public class DefaultNWorkspaceExtensionModel {
 //        }
 //    }
     public <T extends NComponent> boolean installWorkspaceExtensionComponent(Class<T> extensionPointType, T extensionImpl) {
-        NSession session = workspace.currentSession();
         if (NComponent.class.isAssignableFrom(extensionPointType)) {
             if (extensionPointType.isInstance(extensionImpl)) {
                 return registerInstance(extensionPointType, extensionImpl);
@@ -324,7 +321,6 @@ public class DefaultNWorkspaceExtensionModel {
 //        }
 //    }
     public Set<Class<? extends NComponent>> discoverTypes(NId id, ClassLoader classLoader) {
-        NSession session = workspace.currentSession();
         URL url = NFetchCmd.of(id).setContent(true).getResultContent().toURL().get();
         return objectFactory.discoverTypes(id, url, classLoader);
     }
@@ -453,7 +449,6 @@ public class DefaultNWorkspaceExtensionModel {
                     someUpdates = true;
                 } else {
                     //load extension
-                    NSession session=getWorkspace().currentSession();
                     NDefinition def = NSearchCmd.of()
                             .addId(extension).setTargetApiVersion(workspace.getApiVersion())
                             .setContent(true)
@@ -490,7 +485,6 @@ public class DefaultNWorkspaceExtensionModel {
 
     private void updateLoadedExtensionURLs() {
         loadedExtensionURLs.clear();
-        NSession session=getWorkspace().currentSession();
         for (NDefinition def : NSearchCmd.of().addIds(loadedExtensionIds.toArray(new NId[0]))
                 .setTargetApiVersion(workspace.getApiVersion())
                 .setContent(true)
@@ -588,7 +582,6 @@ public class DefaultNWorkspaceExtensionModel {
 
     private boolean isLoadedClassPath(NDefinition file) {
         //session = CoreNutsUtils.validateSession(session,ws);
-        NSession session=getWorkspace().currentSession();
         if (file.getId().equalsShortId(NId.of(NConstants.Ids.NUTS_API).get())) {
             return true;
         }
@@ -689,7 +682,7 @@ public class DefaultNWorkspaceExtensionModel {
     public String[] getExtensionRepositoryLocations(NId appId) {
         //should parse this form config?
         //or should be parse from and extension component?
-        String repos = NConfigs.of()
+        String repos = workspace
                 .getConfigProperty("nuts.bootstrap-repository-locations").flatMap(NLiteral::asString).orElse("") + ";" //                + NutsConstants.BootstrapURLs.LOCAL_NUTS_FOLDER
                 //                + ";" + NutsConstants.BootstrapURLs.REMOTE_NUTS_GIT
                 ;
@@ -703,15 +696,11 @@ public class DefaultNWorkspaceExtensionModel {
     }
 
     protected URL expandURL(String url) {
-        NSession session=getWorkspace().currentSession();
         return NPath.of(url)
-                .toAbsolute(NLocations.of().getWorkspaceLocation())
+                .toAbsolute(NWorkspace.get().getWorkspaceLocation())
                 .toURL().get();
     }
 
-    private NConfigsExt configExt() {
-        return NConfigsExt.of(NConfigs.of());
-    }
     //    @Override
 //    public boolean addExtension(NutsId extensionId) {
 //        if (extensionId == null) {
@@ -778,15 +767,14 @@ public class DefaultNWorkspaceExtensionModel {
 //        configExt().fireConfigurationChanged();
 //    }
     private NWorkspaceConfigBoot getStoredConfig() {
-        return configExt().getModel().getStoredConfigBoot();
+        return NWorkspaceExt.of(workspace).getConfigModel().getStoredConfigBoot();
     }
 
     public synchronized DefaultNClassLoader getNutsURLClassLoader(String name, ClassLoader parent) {
         if (parent == null) {
             parent = workspaceExtensionsClassLoader;
         }
-        NSession session=getWorkspace().currentSession();
-        return new DefaultNClassLoader(name, session.getWorkspace(), parent);
+        return new DefaultNClassLoader(name, workspace, parent);
     }
 
     public static class RegInfo {

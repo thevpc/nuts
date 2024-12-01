@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.env.NEnvs;
+
 import net.thevpc.nuts.format.NVersionFormat;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
@@ -135,12 +135,11 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
         if (extraProperties != null) {
             extraKeys = new TreeSet(extraProperties.keySet());
         }
-        NSession session=workspace.currentSession();
-        props.put("nuts-api-version", session.getWorkspace().getApiVersion().toString());
-        props.put("nuts-runtime-version", session.getWorkspace().getRuntimeId().getVersion().toString());
+        props.put("nuts-api-version", workspace.getApiVersion().toString());
+        props.put("nuts-runtime-version", workspace.getRuntimeId().getVersion().toString());
         if (all) {
             props.put("java-version", System.getProperty("java.version"));
-            props.put("os-version", NEnvs.of().getOs().getVersion().toString());
+            props.put("os-version", workspace.getOs().getVersion().toString());
         }
         for (String extraKey : extraKeys) {
             props.put(extraKey, extraProperties.get(extraKey));

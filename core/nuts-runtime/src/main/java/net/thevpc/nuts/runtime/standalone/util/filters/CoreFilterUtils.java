@@ -27,7 +27,6 @@ package net.thevpc.nuts.runtime.standalone.util.filters;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.ext.NExtensionInformation;
 import net.thevpc.nuts.spi.base.AbstractNPredicate;
@@ -179,14 +178,14 @@ public class CoreFilterUtils {
                     if (a.length > 0) {
                         NOsFamily o = NOsFamily.parse(a[0]).orNull();
                         if (o != null) {
-                            if (o != NEnvs.of().getOsFamily()) {
+                            if (o != NWorkspace.get().getOsFamily()) {
                                 return false;
                             }
                         }
                         if (a.length > 1) {
                             NArchFamily af = NArchFamily.parse(a[1]).orNull();
                             if (af != null) {
-                                if (af != NEnvs.of().getArchFamily()) {
+                                if (af != NWorkspace.get().getArchFamily()) {
                                     return false;
                                 }
                             }
@@ -249,36 +248,35 @@ public class CoreFilterUtils {
         if (envCond == null || envCond.isBlank()) {
             return true;
         }
-        NEnvs env = NEnvs.of();
-        NPlatforms platforms = NPlatforms.of();
+        NWorkspace workspace = NWorkspace.get();
         if (!matchesArch(
-                env.getArchFamily().id(),
+                workspace.getArchFamily().id(),
                 envCond.getArch()
         )) {
             return false;
         }
         if (!matchesOs(
-                env.getOsFamily().id(),
+                workspace.getOsFamily().id(),
                 envCond.getOs()
         )) {
             return false;
         }
         if (!matchesOsDist(
-                env.getOsDist().toString(),
+                workspace.getOsDist().toString(),
                 envCond.getOsDist()
         )) {
             return false;
         }
         if (currentVMOnLy) {
             if (!matchesPlatform(
-                    env.getPlatform().toString(),
+                    workspace.getPlatform().toString(),
                     envCond.getPlatform()
             )) {
                 return false;
             }
         } else {
             if (!matchesPlatform(
-                    platforms.findPlatforms().toList(),
+                    workspace.findPlatforms().toList(),
                     envCond.getPlatform()
             )) {
                 return false;
@@ -286,7 +284,7 @@ public class CoreFilterUtils {
         }
 
         if (!matchesDesktopEnvironment(
-                env.getDesktopEnvironments(),
+                workspace.getDesktopEnvironments(),
                 envCond.getDesktopEnvironment()
         )) {
             return false;

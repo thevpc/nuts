@@ -27,9 +27,9 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.NUserConfig;
+import net.thevpc.nuts.NUserConfig;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
 import java.util.*;
@@ -70,7 +70,7 @@ public class DefaultNUpdateUserCmd extends AbstractNUpdateUserCmd {
                 rconf.setUser(u);
 
             } else {
-                DefaultNWorkspaceConfigModel wconf = NConfigsExt.of(NConfigs.of()).getModel();
+                DefaultNWorkspaceConfigModel wconf = NWorkspaceExt.of(workspace).getConfigModel();
                 NUserConfig u = wconf.getUser(login);
                 if (u == null) {
                     throw new NIllegalArgumentException(NMsg.ofC("no such user %s", login));

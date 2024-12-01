@@ -28,7 +28,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds.posix;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.env.NUser;
+import net.thevpc.nuts.NUser;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
@@ -114,7 +114,7 @@ public class WhoamiCommand extends NShellBuiltinDefault {
                     result.remoteId = user.getRemoteIdentity();
                 }
                 List<RepoResult> rr = new ArrayList<>();
-                for (NRepository repository : NRepositories.of().getRepositories()) {
+                for (NRepository repository : NWorkspace.get().getRepositories()) {
                     NUser ruser = repository.security().getEffectiveUser(login);
                     if (ruser != null && (ruser.getGroups().size() > 0
                             || ruser.getPermissions().size() > 0

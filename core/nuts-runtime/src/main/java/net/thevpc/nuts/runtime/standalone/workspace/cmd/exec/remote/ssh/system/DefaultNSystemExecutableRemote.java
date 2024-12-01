@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.remote.ssh.system;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.env.NEnvs;
+
 import net.thevpc.nuts.io.NExecInput;
 import net.thevpc.nuts.io.NExecOutput;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
@@ -52,7 +52,6 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableInformati
         this.executorOptions = NCoreCollectionUtils.nonNullList(executorOptions);
         this.commExec = commExec;
         NCmdLine cmdLine = NCmdLine.of(this.executorOptions);
-        NSession session = workspace.currentSession();
         while (cmdLine.hasNext()) {
             NArg aa = cmdLine.peek().get();
             switch (aa.key()) {
@@ -121,8 +120,7 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableInformati
 
     @Override
     public NText getHelpText() {
-        NSession session = workspace.currentSession();
-        switch (NEnvs.of().getOsFamily()) {
+        switch (NWorkspace.get().getOsFamily()) {
             case WINDOWS: {
                 return NText.ofStyled(
                         "No help available. Try " + getName() + " /help",

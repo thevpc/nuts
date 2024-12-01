@@ -5,7 +5,8 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NBootManager;
+
+
 import net.thevpc.nuts.security.NAuthenticationAgent;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
@@ -48,7 +49,7 @@ class WrapperNAuthenticationAgent {
         String b = new String(a);
         int x = b.indexOf(':');
         if (x <= 0) {
-            if (NBootManager.of().getBootOptions().getRecover().orElse(false)) {
+            if (NWorkspace.get().getBootOptions().getRecover().orElse(false)) {
                 //All stored passwords will be reset to 'secret'
                 NSession.get().err().println("```error RECOVER MODE : Password could no be parsed due a change in encryption spec. WIll use new default agent```");
                 return null;

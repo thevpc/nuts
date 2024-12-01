@@ -28,7 +28,7 @@ package net.thevpc.nuts.toolbox.nutsserver.http;
 
 import com.sun.net.httpserver.*;
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NLocations;
+
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -250,9 +250,9 @@ public class NHttpServerComponent implements NServerComponent {
                 NWorkspace ws2 = entry.getValue();
                 ws2.runWith(() -> {
                     if ("".equals(k)) {
-                        out.println(NLocations.of().getWorkspaceLocation());
+                        out.println(NWorkspace.get().getWorkspaceLocation());
                     } else {
-                        out.println((NMsg.ofC("%s : %s", k, NLocations.of().getWorkspaceLocation())));
+                        out.println((NMsg.ofC("%s : %s", k, NWorkspace.get().getWorkspaceLocation())));
                     }
                 });
             }
@@ -262,7 +262,7 @@ public class NHttpServerComponent implements NServerComponent {
                 String k = NStringUtils.firstNonBlank(entry.getKey(), "<default>");
                 NWorkspace ws2 = entry.getValue();
                 ws2.runWith(() -> {
-                    out.println(NMsg.ofC("\t%s : %s", k, NLocations.of().getWorkspaceLocation()));
+                    out.println(NMsg.ofC("\t%s : %s", k, NWorkspace.get().getWorkspaceLocation()));
                 });
             }
         }

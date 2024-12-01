@@ -28,13 +28,13 @@ import java.util.*;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.NBootManager;
-import net.thevpc.nuts.env.NImports;
+
+
+
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositorySelectorHelper;
-import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.util.NBlankable;
 
@@ -56,12 +56,9 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 
     @Override
     public void initializeWorkspace() {
-        NSession session=workspace.currentSession();
-        NConfigs nConfigs = NConfigs.of();
-        DefaultNConfigs rm = (DefaultNConfigs) nConfigs;
         LinkedHashMap<String, NAddRepositoryOptions> def = new LinkedHashMap<>();
         List<NRepositoryLocation> defaults = new ArrayList<>();
-        for (NAddRepositoryOptions d : rm.getDefaultRepositories()) {
+        for (NAddRepositoryOptions d : workspace.getDefaultRepositories()) {
             if (d.getConfig() != null) {
                 def.put(NPath.of(d.getConfig().getLocation().getPath()).toAbsolute().toString(), d);
             } else {
@@ -69,10 +66,10 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
             }
             defaults.add(NRepositoryLocation.of(d.getName(), (String)null));
         }
-        NWorkspaceExt.of().getModel().configModel.getStoredConfigMain().setEnablePreviewRepositories(session.isPreviewRepo());
+        NWorkspaceExt.of().getModel().configModel.getStoredConfigMain().setEnablePreviewRepositories(NSession.get().isPreviewRepo());
         NWorkspaceExt.of().getModel().configModel.invalidateStoreModelMain();
         defaults.add(NRepositoryLocation.ofName(NConstants.Names.DEFAULT_REPOSITORY_NAME));
-        NRepositoryLocation[] br = rm.getModel().resolveBootRepositoriesList().resolve(defaults.toArray(new NRepositoryLocation[0]), NRepositoryDB.of());
+        NRepositoryLocation[] br = NWorkspaceExt.of(workspace).getConfigModel().resolveBootRepositoriesList().resolve(defaults.toArray(new NRepositoryLocation[0]), NRepositoryDB.of());
         for (NRepositoryLocation s : br) {
             NAddRepositoryOptions oo = NRepositorySelectorHelper.createRepositoryOptions(s, false);
             String sloc = NPath.of(oo.getConfig().getLocation().getPath()).toAbsolute().toString();
@@ -81,7 +78,7 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
                 if (!NBlankable.isBlank(s.getName())) {
                     r.setName(oo.getName());
                 }
-                NRepository nr = NRepositories.of().addRepository(r);
+                NRepository nr = workspace.addRepository(r);
                 if (
                         "system".equals(nr.getName())
                                 && "system".equals(nr.config().getGlobalName())
@@ -95,7 +92,7 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
                 }
                 def.remove(sloc);
             } else {
-                NRepositories.of().addRepository(oo
+                workspace.addRepository(oo
                         //.setTemporary(!defaults.containsKey(oo.getName()))
                 );
             }
@@ -103,10 +100,10 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 //        for (NutsAddRepositoryOptions d : def.values()) {
 //            ws.repos().addRepository(d);
 //        }
-        NImports.of().addImports(new String[]{
+        NWorkspace.get().addImports(
                 "net.thevpc.nuts.toolbox",
                 "net.thevpc"
-        });
+        );
 
         NWorkspaceSecurityManager.of().updateUser(NConstants.Users.ANONYMOUS)
                 .resetPermissions()
@@ -128,12 +125,11 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 
     @Override
     public void startWorkspace() {
-        NBootManager boot = NBootManager.of();
 //        boolean initializePlatforms = boot.getBootOptions().getInitPlatforms().ifEmpty(false).get(session);
 //        boolean initializeJava = boot.getBootOptions().getInitJava().ifEmpty(initializePlatforms).get(session);
-        boolean initializeScripts = boot.getBootOptions().getInitScripts().orElse(true);
-        boolean initializeLaunchers = boot.getBootOptions().getInitLaunchers().orElse(true);
-        boolean installCompanions = boot.getBootOptions().getInstallCompanions().orElse(false);
+        boolean initializeScripts = workspace.getBootOptions().getInitScripts().orElse(true);
+        boolean initializeLaunchers = workspace.getBootOptions().getInitLaunchers().orElse(true);
+        boolean installCompanions = workspace.getBootOptions().getInstallCompanions().orElse(false);
 
 //        if (initializeJava) {
 //            NWorkspaceUtils.of(session).installAllJVM();

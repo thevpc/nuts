@@ -1,8 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.text.theme;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NLocations;
-import net.thevpc.nuts.env.NStoreType;
+
+
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
@@ -26,7 +27,6 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
 
     public NTextFormatPropertiesTheme(String name, ClassLoader cls, NWorkspace workspace) {
         this.workspace = workspace;
-        NSession session = workspace.currentSession();
         if (name.indexOf('/') >= 0 || name.indexOf('\\') >= 0) {
             try (InputStream is = NPath.of(name).getInputStream()) {
                 props.load(is);
@@ -54,7 +54,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
                     throw new NIOException(e);
                 }
             } else {
-                NPath themeFile = NLocations.of().getStoreLocation(
+                NPath themeFile = NWorkspace.get().getStoreLocation(
                         NId.ofRuntime("SHARED").get(),
                         NStoreType.CONF
                 ).resolve("themes").resolve(name);
@@ -143,7 +143,6 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
 
     public NTextStyles toBasicStyles(NTextStyle style, int maxLoop) {
         if (maxLoop <= 0) {
-            NSession session = workspace.currentSession();
             throw new NIllegalArgumentException(
                     NMsg.ofC("invalid ntf theme for %s(%s). infinite loop", style.getType(), style.getVariant()));
         }

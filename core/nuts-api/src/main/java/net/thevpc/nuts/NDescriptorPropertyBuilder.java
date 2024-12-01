@@ -1,7 +1,5 @@
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.env.NEnvCondition;
-
 public interface NDescriptorPropertyBuilder extends NDescriptorProperty {
     NDescriptorPropertyBuilder setCondition(NEnvCondition condition);
 

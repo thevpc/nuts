@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.NShellFamily;
+import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextPlain;
@@ -165,7 +165,6 @@ public class FishCodeHighlighter implements NCodeHighlighter {
         if (ar.hasNext()) {
             sb2.append(ar.readChar());
         }
-        NSession session = workspace.currentSession();
         NTexts txt = NTexts.of();
         return new NText[]{txt.ofStyled(sb2.toString(), NTextStyle.separator())};
     }
@@ -480,10 +479,9 @@ public class FishCodeHighlighter implements NCodeHighlighter {
      * @return is space
      */
     private boolean parseCmdLineStep(StringReaderExt ar, List<NText> all, int startIndex, boolean wasSpace, NTexts txt) {
-        NSession session = workspace.currentSession();
         char c = ar.peekChar();
         if (c <= 32) {
-            all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(session, ar)));
+            all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(ar)));
             return true;
         }
         switch (c) {
@@ -704,7 +702,6 @@ public class FishCodeHighlighter implements NCodeHighlighter {
         BufferedReader reader = new BufferedReader(new StringReader(text));
         String line = null;
         boolean first = true;
-        NSession session = workspace.currentSession();
         while (true) {
             try {
                 if ((line = reader.readLine()) == null) {
@@ -726,7 +723,6 @@ public class FishCodeHighlighter implements NCodeHighlighter {
     public NText next(StringReaderExt reader, boolean exitOnClosedCurlBrace, boolean exitOnClosedPar, boolean exitOnDblQuote, boolean exitOnAntiQuote) {
         boolean lineStart = true;
         List<NText> all = new ArrayList<>();
-        NSession session = workspace.currentSession();
         NTexts txt = NTexts.of();
         boolean exit = false;
         while (!exit && reader.hasNext()) {
@@ -1077,7 +1073,6 @@ public class FishCodeHighlighter implements NCodeHighlighter {
     }
 
     private NText nextDollar(StringReaderExt reader) {
-        NSession session = workspace.currentSession();
         NTexts txt = NTexts.of();
         if (reader.isAvailable(2)) {
             char c = reader.peekChar(1);
@@ -1137,7 +1132,6 @@ public class FishCodeHighlighter implements NCodeHighlighter {
 
     public NText nextDoubleQuotes(StringReaderExt reader) {
         List<NText> all = new ArrayList<>();
-        NSession session = workspace.currentSession();
         NTexts txt = NTexts.of();
         boolean exit = false;
         StringBuilder sb = new StringBuilder();

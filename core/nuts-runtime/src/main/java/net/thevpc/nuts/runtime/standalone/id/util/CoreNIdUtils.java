@@ -3,8 +3,9 @@ package net.thevpc.nuts.runtime.standalone.id.util;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.env.NLocations;
-import net.thevpc.nuts.env.NStoreType;
+
+
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigApi;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CoreNIdUtils {
-    public static NId resolveOrGenerateIdFromFileName(NPath path, NSession session) {
+    public static NId resolveOrGenerateIdFromFileName(NPath path) {
         List<NId> nIds = NId.findByPath(path);
         if (nIds.size() == 1) {
             return nIds.get(0);
@@ -136,7 +137,7 @@ public class CoreNIdUtils {
         if (apiVersion.equals(workspace.getApiVersion().toString())) {
             return workspace.getRuntimeId();
         }
-        NPath apiBoot = NLocations.of().getStoreLocation(apiId(apiVersion), NStoreType.CONF).resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
+        NPath apiBoot = NWorkspace.get().getStoreLocation(apiId(apiVersion), NStoreType.CONF).resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
         if (apiBoot.isRegularFile()) {
             NWorkspaceConfigApi c = NElements.of()
                     .json().parse(apiBoot, NWorkspaceConfigApi.class);

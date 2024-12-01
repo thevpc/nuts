@@ -92,7 +92,6 @@ public abstract class AbstractNPrepareCmd extends NWorkspaceCmdBase<NPrepareCmd>
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NSession session=getWorkspace().currentSession();
         NArg a = cmdLine.peek().get();
         if (a == null) {
             return false;

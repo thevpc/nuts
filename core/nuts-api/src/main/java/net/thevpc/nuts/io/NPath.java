@@ -53,27 +53,27 @@ import java.util.function.Function;
 public interface NPath extends NInputSource, NOutputTarget, NWorkspaceProvider {
 
     static NPath of(URL path) {
-        return NPaths.of().createPath(path);
+        return NIO.of().createPath(path);
     }
 
     static NPath of(String path, ClassLoader classLoader) {
-        return NPaths.of().createPath(path, classLoader);
+        return NIO.of().createPath(path, classLoader);
     }
 
     static NPath of(File path) {
-        return NPaths.of().createPath(path);
+        return NIO.of().createPath(path);
     }
 
     static NPath of(Path path) {
-        return NPaths.of().createPath(path);
+        return NIO.of().createPath(path);
     }
 
     static NPath of(String path) {
-        return NPaths.of().createPath(path);
+        return NIO.of().createPath(path);
     }
 
     static NPath of(NPathSPI path) {
-        return NPaths.of().createPath(path);
+        return NIO.of().createPath(path);
     }
 
     /**
@@ -101,7 +101,7 @@ public interface NPath extends NInputSource, NOutputTarget, NWorkspaceProvider {
      * @return newly created file path
      */
     static NPath ofTempFile(String name) {
-        return NPaths.of().ofTempFile(name);
+        return NIO.of().ofTempFile(name);
     }
 
     /**
@@ -110,7 +110,7 @@ public interface NPath extends NInputSource, NOutputTarget, NWorkspaceProvider {
      * @return newly created file path
      */
     static NPath ofTempFile() {
-        return NPaths.of().ofTempFile();
+        return NIO.of().ofTempFile();
     }
 
     /**
@@ -120,7 +120,7 @@ public interface NPath extends NInputSource, NOutputTarget, NWorkspaceProvider {
      * @return newly created temp folder
      */
     static NPath ofTempFolder(String name) {
-        return NPaths.of().ofTempFolder(name);
+        return NIO.of().ofTempFolder(name);
     }
 
     /**
@@ -129,7 +129,7 @@ public interface NPath extends NInputSource, NOutputTarget, NWorkspaceProvider {
      * @return newly created temp folder
      */
     static NPath ofTempFolder() {
-        return NPaths.of().ofTempFolder();
+        return NIO.of().ofTempFolder();
     }
 
     /**
@@ -139,7 +139,7 @@ public interface NPath extends NInputSource, NOutputTarget, NWorkspaceProvider {
      * @return newly created file path
      */
     static NPath ofTempRepositoryFile(String name, NRepository repository) {
-        return NPaths.of().ofTempRepositoryFile(name, repository);
+        return NIO.of().ofTempRepositoryFile(name, repository);
     }
 
     /**
@@ -148,7 +148,7 @@ public interface NPath extends NInputSource, NOutputTarget, NWorkspaceProvider {
      * @return newly created file path
      */
     static NPath ofTempRepositoryFile(NRepository repository) {
-        return NPaths.of().ofTempRepositoryFile(repository);
+        return NIO.of().ofTempRepositoryFile(repository);
     }
 
     /**
@@ -158,7 +158,7 @@ public interface NPath extends NInputSource, NOutputTarget, NWorkspaceProvider {
      * @return newly created temp folder
      */
     static NPath ofTempRepositoryFolder(String name, NRepository repository) {
-        return NPaths.of().ofTempRepositoryFolder(name, repository);
+        return NIO.of().ofTempRepositoryFolder(name, repository);
     }
 
     /**
@@ -167,7 +167,7 @@ public interface NPath extends NInputSource, NOutputTarget, NWorkspaceProvider {
      * @return newly created temp folder
      */
     static NPath ofTempRepositoryFolder(NRepository repository) {
-        return NPaths.of().ofTempRepositoryFolder(repository);
+        return NIO.of().ofTempRepositoryFolder(repository);
     }
 
     /**

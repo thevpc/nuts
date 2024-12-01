@@ -27,8 +27,8 @@ package net.thevpc.nuts.runtime.standalone.workspace.config.compat.v506;
 
 import net.thevpc.nuts.NConfigItem;
 import net.thevpc.nuts.NRepositoryRef;
-import net.thevpc.nuts.env.NStoreStrategy;
-import net.thevpc.nuts.env.NUserConfig;
+import net.thevpc.nuts.NStoreStrategy;
+import net.thevpc.nuts.NUserConfig;
 
 import java.util.Arrays;
 import java.util.List;

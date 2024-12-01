@@ -3,9 +3,9 @@ package net.thevpc.nuts.toolbox.ntomcat.local;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.env.NEnvConditionBuilder;
-import net.thevpc.nuts.env.NEnvs;
-import net.thevpc.nuts.env.NStoreType;
+import net.thevpc.nuts.NEnvConditionBuilder;
+
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.format.NObjectFormat;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.text.NText;
@@ -18,7 +18,7 @@ import net.thevpc.nuts.toolbox.ntomcat.local.config.LocalTomcatDomainConfig;
 import net.thevpc.nuts.toolbox.ntomcat.util.*;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.env.NOsFamily;
+import net.thevpc.nuts.NOsFamily;
 import net.thevpc.nuts.util.NPredicate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -317,7 +317,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         NPath catalinaBase = getCatalinaBase();
         boolean catalinaBaseUpdated = false;
         catalinaBaseUpdated |= mkdirs(catalinaBase);
-        String ext = NEnvs.of().getOsFamily() == NOsFamily.WINDOWS ? "bat" : "sh";
+        String ext = NWorkspace.get().getOsFamily() == NOsFamily.WINDOWS ? "bat" : "sh";
         catalinaBaseUpdated |= checkExec(catalinaHome.resolve("bin").resolve("catalina." + ext));
         LocalTomcatConfig c = getConfig();
         catalinaBaseUpdated |= mkdirs(catalinaBase.resolve("logs"));
@@ -374,7 +374,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         NPath catalinaHome = getCatalinaHome();
         NPath catalinaBase = getCatalinaBase();
         NSession session = getSession();
-        String ext = NEnvs.of().getOsFamily() == NOsFamily.WINDOWS ? "bat" : "sh";
+        String ext = NWorkspace.get().getOsFamily() == NOsFamily.WINDOWS ? "bat" : "sh";
 
         //b.
 //        b.setOutput(context.getSession().out());
@@ -496,7 +496,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         catalinaVersion = catalinaVersion.trim();
         NSession session = getSession();
         if (catalinaVersion.isEmpty()) {
-            NVersion javaVersion = NEnvs.of().getPlatform().getVersion();
+            NVersion javaVersion = NWorkspace.get().getPlatform().getVersion();
             //  http://tomcat.apache.org/whichversion.html
             if (javaVersion.compareTo("1.8") >= 0) {
                 catalinaVersion = "[9,10.1[";
@@ -524,7 +524,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             String cid="org.apache.catalina:apache-tomcat";//+"#"+cv;
             cid= NIdBuilder.of().setAll(NId.of(cid).get()).setCondition(
                     NEnvConditionBuilder.of()
-                            .addPlatform(NEnvs.of().getPlatform().toString())
+                            .addPlatform(NWorkspace.get().getPlatform().toString())
             ).toString();
 
             NSearchCmd searchLatestCommand = NSearchCmd.of().addId(cid)

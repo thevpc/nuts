@@ -5,10 +5,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.imports;
 
-import net.thevpc.nuts.NConfigs;
-import net.thevpc.nuts.env.NImports;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
+
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -29,7 +28,7 @@ public class NSettingsImportSubCommand extends AbstractNSettingsSubCommand {
         if (cmdLine.next("list imports","list import","import list", "li").isPresent()) {
             cmdLine.setCommandName("config list imports").throwUnexpectedArgument();
             if (cmdLine.isExecMode()) {
-                for (String imp : (NImports.of().getAllImports())) {
+                for (String imp : (NWorkspace.get().getAllImports())) {
                     session.out().println(NMsg.ofPlain(imp));
                 }
             }
@@ -37,8 +36,8 @@ public class NSettingsImportSubCommand extends AbstractNSettingsSubCommand {
         } else if (cmdLine.next("clear imports", "ci").isPresent()) {
             cmdLine.setCommandName("config clear imports").throwUnexpectedArgument();
             if (cmdLine.isExecMode()) {
-                NImports.of().clearImports();
-                NConfigs.of().save();
+                NWorkspace.get().clearImports();
+                NWorkspace.get().saveConfig();
             }
             return true;
         } else if (cmdLine.next("import", "ia").isPresent()) {
@@ -46,11 +45,11 @@ public class NSettingsImportSubCommand extends AbstractNSettingsSubCommand {
                 String a = cmdLine.nextNonOption(NArgName.of("import")).get()
                         .asString().get();
                 if (cmdLine.isExecMode()) {
-                    NImports.of().addImports(new String[]{a});
+                    NWorkspace.get().addImports(new String[]{a});
                 }
             } while (cmdLine.hasNext());
             if (cmdLine.isExecMode()) {
-                NConfigs.of().save();
+                NWorkspace.get().saveConfig();
             }
             return true;
         } else if (cmdLine.next("unimport", "ir").isPresent()) {
@@ -58,11 +57,11 @@ public class NSettingsImportSubCommand extends AbstractNSettingsSubCommand {
                 String ii = cmdLine.nextNonOption(NArgName.of("import")).get()
                         .asString().get();
                 if (cmdLine.isExecMode()) {
-                    NImports.of().removeImports(new String[]{ii});
+                    NWorkspace.get().removeImports(new String[]{ii});
                 }
             }
             if (cmdLine.isExecMode()) {
-                NConfigs.of().save();
+                NWorkspace.get().saveConfig();
             }
             return true;
         }

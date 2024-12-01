@@ -4,8 +4,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.env.NSpeedQualifier;
-import net.thevpc.nuts.env.NStoreStrategy;
+import net.thevpc.nuts.NSpeedQualifier;
+import net.thevpc.nuts.NStoreStrategy;
 import net.thevpc.nuts.format.NTreeVisitResult;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
@@ -13,13 +13,9 @@ import net.thevpc.nuts.runtime.standalone.repository.NIdPathIterator;
 import net.thevpc.nuts.runtime.standalone.repository.NIdPathIteratorBase;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NCachedRepository;
 import net.thevpc.nuts.runtime.standalone.repository.util.NIdLocationUtils;
-import net.thevpc.nuts.util.NIteratorBuilder;
-import net.thevpc.nuts.util.NIteratorUtils;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
-import net.thevpc.nuts.util.NIterator;
 import net.thevpc.nuts.log.NLogVerb;
-import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -71,7 +67,6 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
         if (!acceptedFetchNoCache(fetchMode)) {
             return null;
         }
-        NSession session = getWorkspace().currentSession();
         NIdFilter filter2 = NIdFilters.of().nonnull(idFilter).and(
                 NIdFilters.of().byName(id.getShortName())
         );
@@ -84,11 +79,10 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
 
     @Override
     public NPath fetchContentCore(NId id, NDescriptor descriptor, NFetchMode fetchMode) {
-        NSession session = getWorkspace().currentSession();
         if (!acceptedFetchNoCache(fetchMode)) {
             throw new NNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
         }
-        NPath fetch = NIdLocationUtils.fetch(id, descriptor.getLocations(), this, session);
+        NPath fetch = NIdLocationUtils.fetch(id, descriptor.getLocations(), this);
         if (fetch != null) {
             return fetch;
         }
@@ -165,7 +159,6 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
 
     public NPath fetchContentCoreUsingRepoHelper(NId id, NDescriptor descriptor, NFetchMode fetchMode) {
         NPath p = getIdRemotePath(id);
-        NSession session = getWorkspace().currentSession();
         if (p.isLocal()) {
             if (p.exists()) {
                 return p.copy();
@@ -241,10 +234,12 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
             return NIteratorBuilder.ofSupplier(
                     () -> {
                         List<NId> ret = new ArrayList<>();
-                        session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s", getName(), "search", metadataURL.toCompressedForm()));
                         if (metadataURL.isRegularFile()) {
+                            session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s", getName(), "found", metadataURL.toCompressedForm()));
                             // ok found!!
                             ret.add(id);
+                        }else{
+                            session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s", getName(), "missing", metadataURL.toCompressedForm()));
                         }
                         return ret.iterator();
                     }
@@ -268,7 +263,6 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
     }
 
     public String getStreamAsString(NId id, String typeName, String action) {
-        NSession session = getWorkspace().currentSession();
         byte[] barr = NCp.of()
                 .addOptions(NPathOption.LOG, NPathOption.TRACE, NPathOption.SAFE)
                 .from(getIdRemotePath(id))
@@ -286,7 +280,6 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
             stream.close();
             return;
         }
-        NSession session = getWorkspace().currentSession();
         switch (NStringUtils.trim(id.getFace())) {
             case NConstants.QueryFaces.CONTENT_HASH:
             case NConstants.QueryFaces.DESCRIPTOR_HASH: {
@@ -301,7 +294,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
         try {
             String rhash = null;
             try {
-                rhash = getStreamSHA1(id, session, typeName);
+                rhash = getStreamSHA1(id, typeName);
             } catch (UncheckedIOException | NIOException ex) {
                 //sha is not provided... so do not check anything!
                 return;
@@ -315,13 +308,13 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
         }
     }
 
-    protected String getStreamSHA1(NId id, NSession session, String typeName) {
+    protected String getStreamSHA1(NId id, String typeName) {
 //        if (!isRemoteRepository()) {
 //            return CoreIOUtils.evalSHA1Hex(getStream(id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(), typeName, "verify", session), true, session);
 //        }
         String hash = getStreamAsString(id, typeName + " SHA1", "verify").toUpperCase();
         for (String s : hash.split("[ \n\r]")) {
-            if (s.length() > 0) {
+            if (!s.isEmpty()) {
                 return s;
             }
         }
@@ -330,7 +323,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
 
     public InputStream openStream(NId id, NPath path, Object source, String typeName, String action) {
         NSession session = getWorkspace().currentSession();
-        session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s", getName(), action, path.toCompressedForm()));
+        session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s %s", getName(), action, NNameFormat.LOWER_KEBAB_CASE.format(typeName), path.toCompressedForm()));
         return NInputStreamMonitor.of().setSource(path).setOrigin(source).setSourceTypeName(typeName).create();
     }
 

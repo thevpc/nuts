@@ -2,7 +2,8 @@ package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.NBootManager;
+
+
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextPlain;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NDebugString;
@@ -99,7 +100,7 @@ public class StyledParserStep extends ParserStep {
                     case ')': {
                         beforeChangingStep();
                         state.applyDropReplace(this, new TitleParserStep(
-                                CoreStringUtils.fillString("#", sharpsStartCount) + ")", workspace.currentSession()));
+                                CoreStringUtils.fillString("#", sharpsStartCount) + ")"));
                         break;
                     }
                     case NConstants.Ntf.SILENT: {
@@ -654,7 +655,7 @@ public class StyledParserStep extends ParserStep {
     }
 
     private void logErr(String s) {
-        if(NDebugString.of(NBootManager.of().getBootOptions().getDebug().orNull()).isEnabled()) {
+        if(NDebugString.of(NWorkspace.get().getBootOptions().getDebug().orNull()).isEnabled()) {
             workspace.currentSession().err().println(s);
         }
     }

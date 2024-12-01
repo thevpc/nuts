@@ -1,9 +1,10 @@
 package net.thevpc.nuts.runtime.deprecated;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NBootOptions;
-import net.thevpc.nuts.env.NBootOptionsBuilder;
-import net.thevpc.nuts.env.NStoreType;
+import net.thevpc.nuts.NBootOptions;
+import net.thevpc.nuts.NBootOptionsBuilder;
+
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
@@ -62,7 +63,6 @@ public class NDeleteFileHelper {
                 throw new NNoSessionCancelException(NMsg.ofPlain("cancel delete folder"));
             }
         }
-        NConfigs conf = null;
         List<Path> folders = new ArrayList<>();
         if (includeRoot) {
             folders.add(Paths.get(lastBootOptions.getWorkspace().get()));

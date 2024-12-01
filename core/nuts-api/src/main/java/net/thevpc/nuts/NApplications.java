@@ -24,7 +24,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.env.NBootManager;
+
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
 import net.thevpc.nuts.time.NClock;
 import net.thevpc.nuts.log.NLog;
@@ -195,8 +195,7 @@ public final class NApplications {
             return;
         }
         ws.runWith(() -> {
-            NSession session = NSession.of().get();
-            boolean inherited = NBootManager.of().getBootOptions().getInherited().orElse(false);
+            boolean inherited = NWorkspace.get().getBootOptions().getInherited().orElse(false);
             NLog.of(NApplications.class).with().level(Level.FINE).verb(NLogVerb.START)
                     .log(
                             NMsg.ofC(

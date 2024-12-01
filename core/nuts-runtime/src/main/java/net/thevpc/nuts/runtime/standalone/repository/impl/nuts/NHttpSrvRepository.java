@@ -26,16 +26,15 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.nuts;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.NSpeedQualifier;
-import net.thevpc.nuts.env.NUser;
-import net.thevpc.nuts.env.NUserConfig;
+import net.thevpc.nuts.NSpeedQualifier;
+import net.thevpc.nuts.NUser;
+import net.thevpc.nuts.NUserConfig;
 import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.repository.util.NIdLocationUtils;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.util.NIteratorBase;
 import net.thevpc.nuts.runtime.standalone.id.filter.NExprIdFilter;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NCachedRepository;
@@ -83,8 +82,7 @@ public class NHttpSrvRepository extends NCachedRepository {
     public NId getRemoteId() {
         if (remoteId == null) {
             try {
-                NSession session = getWorkspace().currentSession();
-                remoteId = NId.of(httpGetString(getUrl("/version"), session)).get();
+                remoteId = NId.of(httpGetString(getUrl("/version"))).get();
             } catch (Exception ex) {
                 LOG().with().level(Level.WARNING).verb(NLogVerb.FAIL)
                         .log(NMsg.ofJ("unable to resolve Repository NutsId for remote repository {0}", config().getLocation()));
@@ -95,18 +93,16 @@ public class NHttpSrvRepository extends NCachedRepository {
 
     @Override
     public void pushImpl(NPushRepositoryCmd command) {
-        NSession session=getWorkspace().currentSession();
         NPath content = lib.fetchContentImpl(command.getId());
         NDescriptor desc = lib.fetchDescriptorImpl(command.getId());
         if (content == null || desc == null) {
             throw new NNotFoundException(command.getId());
         }
-        NSessionUtils.checkSession(getWorkspace(), session);
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
         NDescriptorFormat.of(desc).print(new OutputStreamWriter(descStream));
         NWebCli nWebCli = NWebCli.of();
         nWebCli.req().post()
-                .setUrl(CoreIOUtils.buildUrl(config().getLocationPath().toString(), "/deploy?" + resolveAuthURLPart(session)))
+                .setUrl(CoreIOUtils.buildUrl(config().getLocationPath().toString(), "/deploy?" + resolveAuthURLPart()))
                 .addPart("descriptor-hash", NDigest.of().sha1().setSource(desc).computeString())
                 .addPart("content-hash", NDigestUtils.evalSHA1Hex(content))
                 .addPart("force", NDigestUtils.evalSHA1Hex(content))
@@ -123,10 +119,10 @@ public class NHttpSrvRepository extends NCachedRepository {
         }
         boolean transitive = session.isTransitive();
         session.getTerminal().printProgress(NMsg.ofC("loading descriptor for %s", id.getLongId()));
-        try (InputStream stream = NPath.of(getUrl("/fetch-descriptor?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session))).getInputStream()) {
+        try (InputStream stream = NPath.of(getUrl("/fetch-descriptor?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).getInputStream()) {
             NDescriptor descriptor = NDescriptorParser.of().parse(stream).get();
             if (descriptor != null) {
-                String hash = httpGetString(getUrl("/fetch-descriptor-hash?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session)), session);
+                String hash = httpGetString(getUrl("/fetch-descriptor-hash?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
                 if (hash.equals(descriptor.toString())) {
                     return descriptor;
                 }
@@ -147,11 +143,11 @@ public class NHttpSrvRepository extends NCachedRepository {
         InputStream ret = null;
         try {
             session.getTerminal().printProgress(NMsg.ofC("search version for %s", id.getLongId()));
-            ret = NPath.of(getUrl("/find-versions?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session))).getInputStream();
+            ret = NPath.of(getUrl("/find-versions?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart())).getInputStream();
         } catch (UncheckedIOException | NIOException e) {
             return NIteratorBuilder.emptyIterator();
         }
-        NIterator<NId> it = new NamedNIdFromStreamIterator(ret, session);
+        NIterator<NId> it = new NamedNIdFromStreamIterator(ret);
         NIdFilter filter2 = NIdFilters.of().nonnull(idFilter).and(
                 NIdFilters.of().byName(id.getShortName())
         );
@@ -171,13 +167,13 @@ public class NHttpSrvRepository extends NCachedRepository {
         session.getTerminal().printProgress(NMsg.ofC("search into %s ", Arrays.toString(basePaths)));
         boolean transitive = session.isTransitive();
         InputStream ret = null;
-        String[] ulp = resolveEncryptedAuth(session);
+        String[] ulp = resolveEncryptedAuth();
         if (filter instanceof NExprIdFilter) {
             String js = ((NExprIdFilter) filter).toExpr();
             if (js != null) {
                 NWebCli nWebCli = NWebCli.of();
                 ret = nWebCli.req().post()
-                        .setUrl(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart(session)))
+                        .setUrl(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()))
                         .addPart("root", "/")
                         .addPart("ul", ulp[0])
                         .addPart("up", ulp[1])
@@ -185,12 +181,12 @@ public class NHttpSrvRepository extends NCachedRepository {
                                 NInputSource.of(js.getBytes())).end()
                         .run()
                         .getContent().getInputStream();
-                return NIteratorBuilder.of(new NamedNIdFromStreamIterator(ret, session)).filter(CoreFilterUtils.createFilter(filter)).iterator();
+                return NIteratorBuilder.of(new NamedNIdFromStreamIterator(ret)).filter(CoreFilterUtils.createFilter(filter)).iterator();
             }
         } else {
             NWebCli nWebCli = NWebCli.of();
             ret = nWebCli.req().post()
-                    .setUrl(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart(session)))
+                    .setUrl(getUrl("/find?" + (transitive ? ("transitive") : "") + "&" + resolveAuthURLPart()))
                     .addPart("root", "/")
                     .addPart("ul", ulp[0])
                     .addPart("up", ulp[1])
@@ -200,9 +196,9 @@ public class NHttpSrvRepository extends NCachedRepository {
                     .getContent().getInputStream();
         }
         if (filter == null) {
-            return new NamedNIdFromStreamIterator(ret, session);
+            return new NamedNIdFromStreamIterator(ret);
         }
-        return NIteratorBuilder.of(new NamedNIdFromStreamIterator(ret, session)).filter(CoreFilterUtils.createFilter(filter)).iterator();
+        return NIteratorBuilder.of(new NamedNIdFromStreamIterator(ret)).filter(CoreFilterUtils.createFilter(filter)).iterator();
 
     }
 
@@ -212,7 +208,7 @@ public class NHttpSrvRepository extends NCachedRepository {
         if (fetchMode != NFetchMode.REMOTE) {
             throw new NNotFoundException(id, new NFetchModeNotSupportedException(this, fetchMode, id.toString(), null));
         }
-        NPath localPath=NIdLocationUtils.fetch(id, descriptor.getLocations(), this, session);
+        NPath localPath=NIdLocationUtils.fetch(id, descriptor.getLocations(), this);
         if (localPath!=null) {
             return localPath;
         }
@@ -220,11 +216,11 @@ public class NHttpSrvRepository extends NCachedRepository {
 
         try {
             localPath = NPath.ofTempRepositoryFile(new File(this.getIdFilename(id)).getName(), this);
-            String location = getUrl("/fetch?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session));
+            String location = getUrl("/fetch?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart());
             NCp.of().from(
                     NPath.of(location)
             ).to(localPath).addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE).run();
-            String rhash = httpGetString(getUrl("/fetch-hash?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session)), session);
+            String rhash = httpGetString(getUrl("/fetch-hash?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart()));
             String lhash = NDigestUtils.evalSHA1Hex(localPath);
             if (rhash.equalsIgnoreCase(lhash)) {
                 return localPath.setUserCache(false);
@@ -236,7 +232,7 @@ public class NHttpSrvRepository extends NCachedRepository {
         return null;
     }
 
-    private String httpGetString(String url, NSession session) {
+    private String httpGetString(String url) {
         LOG().with().level(Level.FINEST).verb(NLogVerb.START)
                 .log(NMsg.ofJ("get URL{0}", url));
         return NIOUtils.loadString(NPath.of(url).getInputStream(), true);
@@ -247,7 +243,7 @@ public class NHttpSrvRepository extends NCachedRepository {
         return super.toString() + ((this.remoteId == null ? "" : " ; desc=" + this.remoteId));
     }
 
-    private String[] resolveEncryptedAuth(NSession session) {
+    private String[] resolveEncryptedAuth() {
         String login = NWorkspaceSecurityManager.of().getCurrentUsername();
         NUserConfig security = NRepositoryConfigManagerExt.of(config()).getModel().findUser(login).orNull();
         String newLogin = "";
@@ -286,8 +282,8 @@ public class NHttpSrvRepository extends NCachedRepository {
         return new String[]{newLogin, new String(credentials)};
     }
 
-    private String resolveAuthURLPart(NSession session) {
-        String[] auth = resolveEncryptedAuth(session);
+    private String resolveAuthURLPart() {
+        String[] auth = resolveEncryptedAuth();
         return "ul=" + CoreIOUtils.urlEncodeString(auth[0]) + "&up=" + CoreIOUtils.urlEncodeString(auth[0]);
     }
 
@@ -306,13 +302,11 @@ public class NHttpSrvRepository extends NCachedRepository {
 
         private final BufferedReader br;
         private String line;
-        private NSession session;
         private InputStream source0;
 
-        public NamedNIdFromStreamIterator(InputStream ret, NSession session) {
+        public NamedNIdFromStreamIterator(InputStream ret) {
             br = new BufferedReader(new InputStreamReader(ret));
             line = null;
-            this.session = session;
         }
 
         @Override

@@ -5,7 +5,7 @@ import net.thevpc.nuts.concurrent.NLock;
 import net.thevpc.nuts.concurrent.NLockAcquireException;
 import net.thevpc.nuts.concurrent.NLockBarrierException;
 import net.thevpc.nuts.concurrent.NLockReleaseException;
-import net.thevpc.nuts.env.NEnvs;
+
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.util.TimePeriod;
 import net.thevpc.nuts.util.NAssert;
@@ -24,17 +24,17 @@ public class DefaultFileNLock implements NLock {
     private static TimePeriod FIVE_MINUTES = new TimePeriod(5, TimeUnit.MINUTES);
     private Path path;
     private Object lockedObject;
-    private NSession session;
+    private NWorkspace workspace;
 
-    public DefaultFileNLock(Path path, Object lockedObject, NSession session) {
+    public DefaultFileNLock(Path path, Object lockedObject, NWorkspace workspace) {
         this.path = path;
         this.lockedObject = lockedObject;
-        this.session = session;
+        this.workspace = workspace;
     }
 
     public TimePeriod getDefaultTimePeriod() {
         return TimePeriod.parse(
-                NConfigs.of().getConfigProperty("nuts.file-lock.timeout").flatMap(NLiteral::asString).get(),
+                NWorkspace.get().getConfigProperty("nuts.file-lock.timeout").flatMap(NLiteral::asString).get(),
                 TimeUnit.SECONDS
         ).orElse(FIVE_MINUTES);
     }
@@ -197,12 +197,11 @@ public class DefaultFileNLock implements NLock {
                 NPath p = NPath.of(path);
                 p.mkParentDirs();
                 Files.createFile(path);
-                NEnvs e = NEnvs.of();
                 Date now = new Date();
                 Files.write(path,
                         (
-                                "hostname=" + e.getHostName() + "\n"
-                                        + "pid=" + e.getPid() + "\n"
+                                "hostname=" + workspace.getHostName() + "\n"
+                                        + "pid=" + workspace.getPid() + "\n"
                                         + "time=" + now.getTime() + "\n"
                                         + "date=" + now + "\n"
                         ).getBytes());

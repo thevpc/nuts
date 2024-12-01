@@ -26,9 +26,7 @@
 package net.thevpc.nuts.toolbox.ndb.sql.derby;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NEnvs;
-import net.thevpc.nuts.env.NLocations;
-import net.thevpc.nuts.env.NStoreType;
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
@@ -154,7 +152,7 @@ public class DerbyService {
     }
 
     public Set<String> findVersions() {
-        NId java = NEnvs.of().getPlatform();
+        NId java = NWorkspace.get().getPlatform();
         List<String> all = NSearchCmd.of().addId("org.apache.derby:derbynet").setDistinct(true)
                 .setIdFilter(
                         (java.getVersion().compareTo("1.9") < 0) ? NVersionFilters.of().byValue("[,10.15.1.3[").get().to(NIdFilter.class) :
@@ -175,7 +173,7 @@ public class DerbyService {
         List<String> executorOptions = new ArrayList<>();
         String currentDerbyVersion = options.getDerbyVersion();
         if (currentDerbyVersion == null) {
-            NId java = NEnvs.of().getPlatform();
+            NId java = NWorkspace.get().getPlatform();
             NId best = NSearchCmd.of().addId("org.apache.derby:derbynet").setDistinct(true).setLatest(true)
                     .setIdFilter(
                             (java.getVersion().compareTo("1.9") < 0) ? NVersionFilters.of().byValue("[,10.15.1.3[").get().to(NIdFilter.class) :
@@ -196,7 +194,7 @@ public class DerbyService {
         }
         NPath derbyDataHomeRoot = derbyDataHome.getParent();
         derbyDataHome.mkdirs();
-        Path derbyBinHome = NLocations.of().getStoreLocation(NApp.of().getId().get(), NStoreType.BIN).resolve(currentDerbyVersion).toPath().get();
+        Path derbyBinHome = NWorkspace.get().getStoreLocation(NApp.of().getId().get(), NStoreType.BIN).resolve(currentDerbyVersion).toPath().get();
         Path derbyLibHome = derbyBinHome.resolve("lib");
         Path derby = download("org.apache.derby:derby#" + currentDerbyVersion, derbyLibHome, false);
         Path derbynet = download("org.apache.derby:derbynet#" + currentDerbyVersion, derbyLibHome, false);

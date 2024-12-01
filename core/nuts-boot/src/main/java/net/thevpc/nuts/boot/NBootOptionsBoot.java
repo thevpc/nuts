@@ -11,14 +11,14 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
@@ -92,12 +92,6 @@ public final class NBootOptionsBoot {
      * special
      */
     private NBootDescriptor runtimeBootDescriptor;
-    /**
-     * user options
-     */
-    private NBootOptionsBoot userOptions;
-
-
 
     /// /////////////////////////////////
     ///
@@ -458,77 +452,74 @@ public final class NBootOptionsBoot {
     private String userLauncher;
 
 
-
-    
     public String getDesktopLauncher() {
         return desktopLauncher;
     }
 
-    
+
     public String getMenuLauncher() {
         return menuLauncher;
     }
 
-    
+
     public String getUserLauncher() {
         return userLauncher;
     }
 
-    
+
     public NBootOptionsBoot setInitLaunchers(Boolean initLaunchers) {
         this.initLaunchers = initLaunchers;
         return this;
     }
 
-    
+
     public NBootOptionsBoot setInitScripts(Boolean initScripts) {
         this.initScripts = initScripts;
         return this;
     }
 
-    
+
     public NBootOptionsBoot setInitPlatforms(Boolean initPlatforms) {
         this.initPlatforms = initPlatforms;
         return this;
     }
 
-    
+
     public NBootOptionsBoot setInitJava(Boolean initJava) {
         this.initJava = initJava;
         return this;
     }
 
-    
+
     public NBootOptionsBoot setIsolationLevel(String isolationLevel) {
         this.isolationLevel = isolationLevel;
         return this;
     }
 
-    
+
     public NBootOptionsBoot setDesktopLauncher(String desktopLauncher) {
         this.desktopLauncher = desktopLauncher;
         return this;
     }
 
-    
+
     public NBootOptionsBoot setMenuLauncher(String menuLauncher) {
         this.menuLauncher = menuLauncher;
         return this;
     }
 
-    
+
     public NBootOptionsBoot setUserLauncher(String userLauncher) {
         this.userLauncher = userLauncher;
         return this;
     }
 
-    
+
     public NBootOptionsBoot copy() {
         return new NBootOptionsBoot().setAll(this);
     }
 
 
-    
     public String getApiVersion() {
         return apiVersion;
     }
@@ -539,13 +530,13 @@ public final class NBootOptionsBoot {
      * @param apiVersion new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setApiVersion(String apiVersion) {
         this.apiVersion = apiVersion;
         return this;
     }
 
-    
+
     public List<String> getApplicationArguments() {
         return applicationArguments;
     }
@@ -556,13 +547,13 @@ public final class NBootOptionsBoot {
      * @param applicationArguments new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setApplicationArguments(List<String> applicationArguments) {
         this.applicationArguments = applicationArguments;
         return this;
     }
 
-    
+
     public String getArchetype() {
         return archetype;
     }
@@ -573,13 +564,13 @@ public final class NBootOptionsBoot {
      * @param archetype new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setArchetype(String archetype) {
         this.archetype = archetype;
         return this;
     }
 
-    
+
     public Supplier<ClassLoader> getClassLoaderSupplier() {
         return classLoaderSupplier;
     }
@@ -590,13 +581,13 @@ public final class NBootOptionsBoot {
      * @param provider new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setClassLoaderSupplier(Supplier<ClassLoader> provider) {
         this.classLoaderSupplier = provider;
         return this;
     }
 
-    
+
     public String getConfirm() {
         return confirm;
     }
@@ -607,18 +598,18 @@ public final class NBootOptionsBoot {
      * @param confirm new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setConfirm(String confirm) {
         this.confirm = confirm;
         return this;
     }
 
-    
+
     public Boolean getDry() {
         return dry;
     }
 
-    
+
     public Boolean getShowStacktrace() {
         return showStacktrace;
     }
@@ -629,7 +620,7 @@ public final class NBootOptionsBoot {
      * @param dry new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setDry(Boolean dry) {
         this.dry = dry;
         return this;
@@ -642,13 +633,13 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      * @since 0.8.4
      */
-    
+
     public NBootOptionsBoot setShowStacktrace(Boolean showStacktrace) {
         this.showStacktrace = showStacktrace;
         return this;
     }
 
-    
+
     public Instant getCreationTime() {
         return creationTime;
     }
@@ -659,13 +650,13 @@ public final class NBootOptionsBoot {
      * @param creationTime new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setCreationTime(Instant creationTime) {
         this.creationTime = creationTime;
         return this;
     }
 
-    
+
     public List<String> getExcludedExtensions() {
         return excludedExtensions;
     }
@@ -676,13 +667,13 @@ public final class NBootOptionsBoot {
      * @param excludedExtensions new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setExcludedExtensions(List<String> excludedExtensions) {
         this.excludedExtensions = excludedExtensions;
         return this;
     }
 
-    
+
     public String getExecutionType() {
         return executionType;
     }
@@ -693,13 +684,13 @@ public final class NBootOptionsBoot {
      * @param executionType new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setExecutionType(String executionType) {
         this.executionType = executionType;
         return this;
     }
 
-    
+
     public String getRunAs() {
         return runAs;
     }
@@ -715,7 +706,7 @@ public final class NBootOptionsBoot {
         return this;
     }
 
-    
+
     public List<String> getExecutorOptions() {
         return executorOptions;
     }
@@ -726,23 +717,23 @@ public final class NBootOptionsBoot {
      * @param executorOptions new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setExecutorOptions(List<String> executorOptions) {
         this.executorOptions = executorOptions;
         return this;
     }
 
-    
+
     public String getHomeLocation(NBootHomeLocation location) {
-        return homeLocations==null?null:homeLocations.get(location);
+        return homeLocations == null ? null : homeLocations.get(location);
     }
 
-    
+
     public Map<NBootHomeLocation, String> getHomeLocations() {
         return homeLocations;
     }
 
-    
+
     public NBootOptionsBoot setHomeLocations(Map<NBootHomeLocation, String> homeLocations) {
         if (homeLocations != null) {
             if (this.homeLocations == null) {
@@ -755,18 +746,18 @@ public final class NBootOptionsBoot {
         return this;
     }
 
-    
+
     public String getJavaCommand() {
         return javaCommand;
     }
 
-    
+
     public NBootOptionsBoot setJavaCommand(String javaCommand) {
         this.javaCommand = javaCommand;
         return this;
     }
 
-    
+
     public String getJavaOptions() {
         return javaOptions;
     }
@@ -777,13 +768,13 @@ public final class NBootOptionsBoot {
      * @param javaOptions new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setJavaOptions(String javaOptions) {
         this.javaOptions = javaOptions;
         return this;
     }
 
-    
+
     public NBootLogConfig getLogConfig() {
         return logConfig;
     }
@@ -794,13 +785,13 @@ public final class NBootOptionsBoot {
      * @param logConfig new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setLogConfig(NBootLogConfig logConfig) {
         this.logConfig = logConfig == null ? null : logConfig.copy();
         return this;
     }
 
-    
+
     public String getName() {
         return name;
     }
@@ -811,13 +802,13 @@ public final class NBootOptionsBoot {
      * @param workspaceName new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setName(String workspaceName) {
         this.name = workspaceName;
         return this;
     }
 
-    
+
     public String getOpenMode() {
         return openMode;
     }
@@ -828,13 +819,13 @@ public final class NBootOptionsBoot {
      * @param openMode new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setOpenMode(String openMode) {
         this.openMode = openMode;
         return this;
     }
 
-    
+
     public String getOutputFormat() {
         return outputFormat;
     }
@@ -845,13 +836,13 @@ public final class NBootOptionsBoot {
      * @param outputFormat new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setOutputFormat(String outputFormat) {
         this.outputFormat = outputFormat;
         return this;
     }
 
-    
+
     public List<String> getOutputFormatOptions() {
         return outputFormatOptions;
     }
@@ -862,7 +853,7 @@ public final class NBootOptionsBoot {
      * @param options new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setOutputFormatOptions(List<String> options) {
         if (options != null) {
             if (outputFormatOptions == null) {
@@ -884,7 +875,7 @@ public final class NBootOptionsBoot {
         return addOutputFormatOptions(options);
     }
 
-    
+
     public char[] getCredentials() {
         return credentials;
     }
@@ -895,13 +886,13 @@ public final class NBootOptionsBoot {
      * @param credentials new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setCredentials(char[] credentials) {
         this.credentials = credentials;
         return this;
     }
 
-    
+
     public String getRepositoryStoreStrategy() {
         return repositoryStoreStrategy;
     }
@@ -912,13 +903,13 @@ public final class NBootOptionsBoot {
      * @param repositoryStoreStrategy new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setRepositoryStoreStrategy(String repositoryStoreStrategy) {
         this.repositoryStoreStrategy = repositoryStoreStrategy;
         return this;
     }
 
-    
+
     public String getRuntimeId() {
         return runtimeId;
     }
@@ -929,18 +920,18 @@ public final class NBootOptionsBoot {
      * @param runtimeId new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setRuntimeId(String runtimeId) {
         this.runtimeId = runtimeId;
         return this;
     }
 
-    
+
     public String getStoreType(String folder) {
-        return storeLocations==null?null:storeLocations.get(folder);
+        return storeLocations == null ? null : storeLocations.get(folder);
     }
 
-    
+
     public String getStoreLayout() {
         return storeLayout;
     }
@@ -951,13 +942,13 @@ public final class NBootOptionsBoot {
      * @param storeLayout new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setStoreLayout(String storeLayout) {
         this.storeLayout = storeLayout;
         return this;
     }
 
-    
+
     public String getStoreStrategy() {
         return storeStrategy;
     }
@@ -968,18 +959,18 @@ public final class NBootOptionsBoot {
      * @param storeStrategy new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setStoreStrategy(String storeStrategy) {
         this.storeStrategy = storeStrategy;
         return this;
     }
 
-    
+
     public Map<String, String> getStoreLocations() {
         return storeLocations;
     }
 
-    
+
     public NBootOptionsBoot setStoreLocations(Map<String, String> storeLocations) {
         if (storeLocations != null) {
             if (this.storeLocations == null) {
@@ -993,7 +984,7 @@ public final class NBootOptionsBoot {
         return this;
     }
 
-    
+
     public String getTerminalMode() {
         return terminalMode;
     }
@@ -1004,13 +995,13 @@ public final class NBootOptionsBoot {
      * @param terminalMode new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setTerminalMode(String terminalMode) {
         this.terminalMode = terminalMode;
         return this;
     }
 
-    
+
     public List<String> getRepositories() {
         return repositories;
     }
@@ -1021,18 +1012,18 @@ public final class NBootOptionsBoot {
      * @param repositories new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setRepositories(List<String> repositories) {
         this.repositories = repositories;
         return this;
     }
 
-    
+
     public String getUserName() {
         return userName;
     }
 
-    
+
     public String getWorkspace() {
         return workspace;
     }
@@ -1043,13 +1034,13 @@ public final class NBootOptionsBoot {
      * @param workspace workspace
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setWorkspace(String workspace) {
         this.workspace = workspace;
         return this;
     }
 
-    
+
     public String getDebug() {
         return debug;
     }
@@ -1060,13 +1051,13 @@ public final class NBootOptionsBoot {
      * @param debug new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setDebug(String debug) {
         this.debug = debug;
         return this;
     }
 
-    
+
     public Boolean getSystem() {
         return system;
     }
@@ -1077,13 +1068,13 @@ public final class NBootOptionsBoot {
      * @param system new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setSystem(Boolean system) {
         this.system = system;
         return this;
     }
 
-    
+
     public Boolean getGui() {
         return gui;
     }
@@ -1094,13 +1085,13 @@ public final class NBootOptionsBoot {
      * @param gui new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setGui(Boolean gui) {
         this.gui = gui;
         return this;
     }
 
-    
+
     public Boolean getInherited() {
         return inherited;
     }
@@ -1111,13 +1102,13 @@ public final class NBootOptionsBoot {
      * @param inherited new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setInherited(Boolean inherited) {
         this.inherited = inherited;
         return this;
     }
 
-    
+
     public Boolean getReadOnly() {
         return readOnly;
     }
@@ -1128,13 +1119,13 @@ public final class NBootOptionsBoot {
      * @param readOnly new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setReadOnly(Boolean readOnly) {
         this.readOnly = readOnly;
         return this;
     }
 
-    
+
     public Boolean getRecover() {
         return recover;
     }
@@ -1145,13 +1136,13 @@ public final class NBootOptionsBoot {
      * @param recover new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setRecover(Boolean recover) {
         this.recover = recover;
         return this;
     }
 
-    
+
     public Boolean getReset() {
         return reset;
     }
@@ -1162,35 +1153,35 @@ public final class NBootOptionsBoot {
      * @param reset new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setReset(Boolean reset) {
         this.reset = reset;
         return this;
     }
 
-    
+
     public Boolean getCommandVersion() {
         return commandVersion;
     }
 
-    
+
     public NBootOptionsBoot setCommandVersion(Boolean version) {
         this.commandVersion = version;
         return this;
     }
 
-    
+
     public Boolean getCommandHelp() {
         return commandHelp;
     }
 
-    
+
     public NBootOptionsBoot setCommandHelp(Boolean help) {
         this.commandHelp = help;
         return this;
     }
 
-    
+
     public Boolean getInstallCompanions() {
         return installCompanions;
     }
@@ -1201,13 +1192,13 @@ public final class NBootOptionsBoot {
      * @param skipInstallCompanions new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setInstallCompanions(Boolean skipInstallCompanions) {
         this.installCompanions = skipInstallCompanions;
         return this;
     }
 
-    
+
     public Boolean getSkipWelcome() {
         return skipWelcome;
     }
@@ -1218,35 +1209,35 @@ public final class NBootOptionsBoot {
      * @param skipWelcome new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setSkipWelcome(Boolean skipWelcome) {
         this.skipWelcome = skipWelcome;
         return this;
     }
 
-    
+
     public String getOutLinePrefix() {
         return outLinePrefix;
     }
 
-    
+
     public NBootOptionsBoot setOutLinePrefix(String outLinePrefix) {
         this.outLinePrefix = outLinePrefix;
         return this;
     }
 
-    
+
     public String getErrLinePrefix() {
         return errLinePrefix;
     }
 
-    
+
     public NBootOptionsBoot setErrLinePrefix(String errLinePrefix) {
         this.errLinePrefix = errLinePrefix;
         return this;
     }
 
-    
+
     public Boolean getSkipBoot() {
         return skipBoot;
     }
@@ -1257,13 +1248,13 @@ public final class NBootOptionsBoot {
      * @param skipBoot new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setSkipBoot(Boolean skipBoot) {
         this.skipBoot = skipBoot;
         return this;
     }
 
-    
+
     public Boolean getTrace() {
         return trace;
     }
@@ -1274,7 +1265,7 @@ public final class NBootOptionsBoot {
      * @param trace new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setTrace(Boolean trace) {
         this.trace = trace;
         return this;
@@ -1284,145 +1275,145 @@ public final class NBootOptionsBoot {
         return progressOptions;
     }
 
-    
+
     public NBootOptionsBoot setProgressOptions(String progressOptions) {
         this.progressOptions = progressOptions;
         return this;
     }
 
-    
+
     public Boolean getCached() {
         return cached;
     }
 
-    
+
     public NBootOptionsBoot setCached(Boolean cached) {
         this.cached = cached;
         return this;
     }
 
-    
+
     public Boolean getIndexed() {
         return indexed;
     }
 
-    
+
     public NBootOptionsBoot setIndexed(Boolean indexed) {
         this.indexed = indexed;
         return this;
     }
 
-    
+
     public Boolean getTransitive() {
         return transitive;
     }
 
-    
+
     public NBootOptionsBoot setTransitive(Boolean transitive) {
         this.transitive = transitive;
         return this;
     }
 
-    
+
     public Boolean getBot() {
         return bot;
     }
 
-    
+
     public NBootOptionsBoot setBot(Boolean bot) {
         this.bot = bot;
         return this;
     }
 
-    
+
     public Boolean getPreviewRepo() {
         return previewRepo;
     }
 
-    
+
     public NBootOptionsBoot setPreviewRepo(Boolean bot) {
         this.previewRepo = bot;
         return this;
     }
 
-    
+
     public String getFetchStrategy() {
         return fetchStrategy;
     }
 
-    
+
     public NBootOptionsBoot setFetchStrategy(String fetchStrategy) {
         this.fetchStrategy = fetchStrategy;
         return this;
     }
 
-    
+
     public InputStream getStdin() {
         return stdin;
     }
 
-    
+
     public NBootOptionsBoot setStdin(InputStream stdin) {
         this.stdin = stdin;
         return this;
     }
 
-    
+
     public PrintStream getStdout() {
         return stdout;
     }
 
-    
+
     public NBootOptionsBoot setStdout(PrintStream stdout) {
         this.stdout = stdout;
         return this;
     }
 
-    
+
     public PrintStream getStderr() {
         return stderr;
     }
 
-    
+
     public NBootOptionsBoot setStderr(PrintStream stderr) {
         this.stderr = stderr;
         return this;
     }
 
-    
+
     public ExecutorService getExecutorService() {
         return executorService;
     }
 
-    
+
     public NBootOptionsBoot setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
         return this;
     }
 
-    
+
     public Instant getExpireTime() {
         return expireTime;
     }
 
-    
+
     public NBootOptionsBoot setExpireTime(Instant expireTime) {
         this.expireTime = expireTime;
         return this;
     }
 
-    
+
     public Boolean getSkipErrors() {
         return skipErrors;
     }
 
-    
+
     public NBootOptionsBoot setSkipErrors(Boolean value) {
         this.skipErrors = value;
         return this;
     }
 
-    
+
     public Boolean getSwitchWorkspace() {
         return switchWorkspace;
     }
@@ -1432,51 +1423,51 @@ public final class NBootOptionsBoot {
         return this;
     }
 
-    
+
     public List<String> getErrors() {
         return errors;
     }
 
-    
+
     public NBootOptionsBoot setErrors(List<String> errors) {
         this.errors = errors;
         return this;
     }
 
-    
+
     public List<String> getCustomOptions() {
         return customOptions;
     }
 
-    
+
     public NBootOptionsBoot setCustomOptions(List<String> properties) {
         this.customOptions = properties;
         return this;
     }
 
-    
+
     public String getLocale() {
         return locale;
     }
 
-    
+
     public NBootOptionsBoot setLocale(String locale) {
         this.locale = locale;
         return this;
     }
 
-    
+
     public String getTheme() {
         return theme;
     }
 
-    
+
     public NBootOptionsBoot setTheme(String theme) {
         this.theme = theme;
         return this;
     }
 
-    
+
     public NBootOptionsBoot setAll(NBootOptionsBoot other) {
         this.setApiVersion(other.getApiVersion());
         this.setRuntimeId(other.getRuntimeId());
@@ -1564,264 +1555,263 @@ public final class NBootOptionsBoot {
         this.setUuid(other.getUuid());
         this.setExtensionsSet(other.getExtensionsSet());
         this.setRuntimeBootDescriptor(other.getRuntimeBootDescriptor());
-        this.setUserOptions(other.getUserOptions());
         return this;
     }
 
-    
+
     public NBootOptionsBoot setAllPresent(NBootOptionsBoot o) {
         if (o != null) {
-            if (o.getApiVersion()!=null) {
+            if (o.getApiVersion() != null) {
                 this.setApiVersion(o.getApiVersion());
             }
-            if (o.getRuntimeId()!=null) {
+            if (o.getRuntimeId() != null) {
                 this.setRuntimeId(o.getRuntimeId());
             }
-            if (o.getJavaCommand()!=null) {
+            if (o.getJavaCommand() != null) {
                 this.setJavaCommand(o.getJavaCommand());
             }
-            if (o.getJavaOptions()!=null) {
+            if (o.getJavaOptions() != null) {
                 this.setJavaOptions(o.getJavaOptions());
             }
-            if (o.getWorkspace()!=null) {
+            if (o.getWorkspace() != null) {
                 this.setWorkspace(o.getWorkspace());
             }
-            if (o.getName()!=null) {
+            if (o.getName() != null) {
                 this.setName(o.getName());
             }
-            if (o.getInstallCompanions()!=null) {
+            if (o.getInstallCompanions() != null) {
                 this.setInstallCompanions(o.getInstallCompanions());
             }
-            if (o.getSkipWelcome()!=null) {
+            if (o.getSkipWelcome() != null) {
                 this.setSkipWelcome(o.getSkipWelcome());
             }
-            if (o.getSkipBoot()!=null) {
+            if (o.getSkipBoot() != null) {
                 this.setSkipBoot(o.getSkipBoot());
             }
-            if (o.getSystem()!=null) {
+            if (o.getSystem() != null) {
                 this.setSystem(o.getSystem());
             }
-            if (o.getGui()!=null) {
+            if (o.getGui() != null) {
                 this.setGui(o.getGui());
             }
-            if (o.getUserName()!=null) {
+            if (o.getUserName() != null) {
                 this.setUserName(o.getUserName());
             }
-            if (o.getCredentials()!=null) {
+            if (o.getCredentials() != null) {
                 this.setCredentials(o.getCredentials());
             }
-            if (o.getTerminalMode()!=null) {
+            if (o.getTerminalMode() != null) {
                 this.setTerminalMode(o.getTerminalMode());
             }
-            if (o.getReadOnly()!=null) {
+            if (o.getReadOnly() != null) {
                 this.setReadOnly(o.getReadOnly());
             }
-            if (o.getTrace()!=null) {
+            if (o.getTrace() != null) {
                 this.setTrace(o.getTrace());
             }
-            if (o.getProgressOptions()!=null) {
+            if (o.getProgressOptions() != null) {
                 this.setProgressOptions(o.getProgressOptions());
             }
-            if (o.getLogConfig()!=null) {
+            if (o.getLogConfig() != null) {
                 this.setLogConfig(o.getLogConfig());
             }
-            if (o.getConfirm()!=null) {
+            if (o.getConfirm() != null) {
                 this.setConfirm(o.getConfirm());
             }
-            if (o.getConfirm()!=null) {
+            if (o.getConfirm() != null) {
                 this.setConfirm(o.getConfirm());
             }
-            if (o.getOutputFormat()!=null) {
+            if (o.getOutputFormat() != null) {
                 this.setOutputFormat(o.getOutputFormat());
             }
-            if (o.getOutputFormatOptions()!=null) {
+            if (o.getOutputFormatOptions() != null) {
                 this.setOutputFormatOptions(o.getOutputFormatOptions());
             }
-            if (o.getOpenMode()!=null) {
+            if (o.getOpenMode() != null) {
                 this.setOpenMode(o.getOpenMode());
             }
-            if (o.getCreationTime()!=null) {
+            if (o.getCreationTime() != null) {
                 this.setCreationTime(o.getCreationTime());
             }
-            if (o.getDry()!=null) {
+            if (o.getDry() != null) {
                 this.setDry(o.getDry());
             }
-            if (o.getShowStacktrace()!=null) {
+            if (o.getShowStacktrace() != null) {
                 this.setShowStacktrace(o.getShowStacktrace());
             }
-            if (o.getClassLoaderSupplier()!=null) {
+            if (o.getClassLoaderSupplier() != null) {
                 this.setClassLoaderSupplier(o.getClassLoaderSupplier());
             }
-            if (o.getExecutorOptions()!=null) {
+            if (o.getExecutorOptions() != null) {
                 this.setExecutorOptions(o.getExecutorOptions());
             }
-            if (o.getRecover()!=null) {
+            if (o.getRecover() != null) {
                 this.setRecover(o.getRecover());
             }
-            if (o.getReset()!=null) {
+            if (o.getReset() != null) {
                 this.setReset(o.getReset());
             }
-            if (o.getCommandVersion()!=null) {
+            if (o.getCommandVersion() != null) {
                 this.setCommandVersion(o.getCommandVersion());
             }
-            if (o.getCommandHelp()!=null) {
+            if (o.getCommandHelp() != null) {
                 this.setCommandHelp(o.getCommandHelp());
             }
-            if (o.getDebug()!=null) {
+            if (o.getDebug() != null) {
                 this.setDebug(o.getDebug());
             }
-            if (o.getInherited()!=null) {
+            if (o.getInherited() != null) {
                 this.setInherited(o.getInherited());
             }
-            if (o.getExecutionType()!=null) {
+            if (o.getExecutionType() != null) {
                 this.setExecutionType(o.getExecutionType());
             }
-            if (o.getRunAs()!=null) {
+            if (o.getRunAs() != null) {
                 this.setRunAs(o.getRunAs());
             }
-            if (o.getArchetype()!=null) {
+            if (o.getArchetype() != null) {
                 this.setArchetype(o.getArchetype());
             }
-            if (o.getStoreStrategy()!=null) {
+            if (o.getStoreStrategy() != null) {
                 this.setStoreStrategy(o.getStoreStrategy());
             }
-            if (o.getHomeLocations()!=null) {
+            if (o.getHomeLocations() != null) {
                 this.setHomeLocations(o.getHomeLocations());
             }
 
-            if (o.getStoreLocations()!=null) {
+            if (o.getStoreLocations() != null) {
                 this.setStoreLocations(o.getStoreLocations());
             }
-            if (o.getStoreLayout()!=null) {
+            if (o.getStoreLayout() != null) {
                 this.setStoreLayout(o.getStoreLayout());
             }
-            if (o.getStoreStrategy()!=null) {
+            if (o.getStoreStrategy() != null) {
                 this.setStoreStrategy(o.getStoreStrategy());
             }
-            if (o.getRepositoryStoreStrategy()!=null) {
+            if (o.getRepositoryStoreStrategy() != null) {
                 this.setRepositoryStoreStrategy(o.getRepositoryStoreStrategy());
             }
-            if (o.getFetchStrategy()!=null) {
+            if (o.getFetchStrategy() != null) {
                 this.setFetchStrategy(o.getFetchStrategy());
             }
-            if (o.getCached()!=null) {
+            if (o.getCached() != null) {
                 this.setCached(o.getCached());
             }
-            if (o.getIndexed()!=null) {
+            if (o.getIndexed() != null) {
                 this.setIndexed(o.getIndexed());
             }
-            if (o.getTransitive()!=null) {
+            if (o.getTransitive() != null) {
                 this.setTransitive(o.getTransitive());
             }
-            if (o.getBot()!=null) {
+            if (o.getBot() != null) {
                 this.setBot(o.getBot());
             }
-            if (o.getStdin()!=null) {
+            if (o.getStdin() != null) {
                 this.setStdin(o.getStdin());
             }
-            if (o.getStdout()!=null) {
+            if (o.getStdout() != null) {
                 this.setStdout(o.getStdout());
             }
-            if (o.getStderr()!=null) {
+            if (o.getStderr() != null) {
                 this.setStderr(o.getStderr());
             }
-            if (o.getExecutorService()!=null) {
+            if (o.getExecutorService() != null) {
                 this.setExecutorService(o.getExecutorService());
             }
-            if (o.getExcludedExtensions()!=null) {
+            if (o.getExcludedExtensions() != null) {
                 this.setExcludedExtensions(o.getExcludedExtensions());
             }
-            if (o.getRepositories()!=null) {
+            if (o.getRepositories() != null) {
                 this.setRepositories(o.getRepositories());
             }
-            if (o.getApplicationArguments()!=null) {
+            if (o.getApplicationArguments() != null) {
                 this.setApplicationArguments(o.getApplicationArguments());
             }
-            if (o.getCustomOptions()!=null) {
+            if (o.getCustomOptions() != null) {
                 this.setCustomOptions(o.getCustomOptions());
             }
-            if (o.getExpireTime()!=null) {
+            if (o.getExpireTime() != null) {
                 this.setExpireTime(o.getExpireTime());
             }
-            if (o.getErrors()!=null) {
+            if (o.getErrors() != null) {
                 this.setErrors(o.getErrors());
             }
-            if (o.getSkipErrors()!=null) {
+            if (o.getSkipErrors() != null) {
                 this.setSkipErrors(o.getSkipErrors());
             }
-            if (o.getSwitchWorkspace()!=null) {
+            if (o.getSwitchWorkspace() != null) {
                 this.setSwitchWorkspace(o.getSwitchWorkspace());
             }
-            if (o.getLocale()!=null) {
+            if (o.getLocale() != null) {
                 this.setLocale(o.getLocale());
             }
-            if (o.getTheme()!=null) {
+            if (o.getTheme() != null) {
                 this.setTheme(o.getTheme());
             }
-            if (o.getDependencySolver()!=null) {
+            if (o.getDependencySolver() != null) {
                 this.setDependencySolver(o.getDependencySolver());
             }
-            if (o.getIsolationLevel()!=null) {
+            if (o.getIsolationLevel() != null) {
                 this.setIsolationLevel(o.getIsolationLevel());
             }
-            if (o.getInitLaunchers()!=null) {
+            if (o.getInitLaunchers() != null) {
                 this.setInitLaunchers(o.getInitLaunchers());
             }
-            if (o.getInitJava()!=null) {
+            if (o.getInitJava() != null) {
                 this.setInitJava(o.getInitJava());
             }
-            if (o.getInitScripts()!=null) {
+            if (o.getInitScripts() != null) {
                 this.setInitScripts(o.getInitScripts());
             }
-            if (o.getInitLaunchers()!=null) {
+            if (o.getInitLaunchers() != null) {
                 this.setInitLaunchers(o.getInitLaunchers());
             }
-            if (o.getDesktopLauncher()!=null) {
+            if (o.getDesktopLauncher() != null) {
                 this.setDesktopLauncher(o.getDesktopLauncher());
             }
-            if (o.getMenuLauncher()!=null) {
+            if (o.getMenuLauncher() != null) {
                 this.setMenuLauncher(o.getMenuLauncher());
             }
-            if (o.getUserLauncher()!=null) {
+            if (o.getUserLauncher() != null) {
                 this.setUserLauncher(o.getUserLauncher());
             }
-            if (o.getPreviewRepo()!=null) {
+            if (o.getPreviewRepo() != null) {
                 this.setPreviewRepo(o.getPreviewRepo());
             }
-            if (o.getSharedInstance()!=null) {
+            if (o.getSharedInstance() != null) {
                 this.setSharedInstance(o.getSharedInstance());
             }
-            if (o.getUserOptions()!=null) {
-                setUserOptions(o.getUserOptions());
+            if(o.getBootRepositories()!=null) {
+                setBootRepositories(o.getBootRepositories());
             }
-            setBootRepositories(o.getBootRepositories());
-            if (o.getUserOptions()!=null) {
+            if (o.getRuntimeBootDependencyNode() != null) {
                 setRuntimeBootDependencyNode(o.getRuntimeBootDependencyNode());
             }
-            if (o.getUserOptions()!=null) {
+            if (o.getExtensionBootDescriptors() != null) {
                 setExtensionBootDescriptors(o.getExtensionBootDescriptors());
             }
-            if (o.getUserOptions()!=null) {
+            if (o.getExtensionBootDependencyNodes() != null) {
                 setExtensionBootDependencyNodes(o.getExtensionBootDependencyNodes());
             }
-            if (o.getUserOptions()!=null) {
+            if (o.getBootWorkspaceFactory() != null) {
                 setBootWorkspaceFactory(o.getBootWorkspaceFactory());
             }
-            if (o.getUserOptions()!=null) {
+            if (o.getClassWorldURLs() != null) {
                 setClassWorldURLs(o.getClassWorldURLs());
             }
-            if (o.getUserOptions()!=null) {
+            if (o.getClassWorldLoader() != null) {
                 setClassWorldLoader(o.getClassWorldLoader());
             }
-            if (o.getUserOptions()!=null) {
+            if (o.getUuid() != null) {
                 setUuid(o.getUuid());
             }
-            if (o.getUserOptions()!=null) {
+            if (o.getExtensionsSet() != null) {
                 setExtensionsSet(o.getExtensionsSet());
             }
-            if (o.getUserOptions()!=null) {
+            if (o.getRuntimeBootDescriptor() != null) {
                 setRuntimeBootDescriptor(o.getRuntimeBootDescriptor());
-            }        }
+            }
+        }
         return this;
     }
 
@@ -1831,7 +1821,7 @@ public final class NBootOptionsBoot {
 //        return this;
 //    }
 
-//    public NBootOptionsBuilderBoot setCmdLine(String[] args) {
+    //    public NBootOptionsBuilderBoot setCmdLine(String[] args) {
 //        NWorkspaceCmdLineParser.parseNutsArguments(args, this);
 //        return this;
 //    }
@@ -1839,7 +1829,7 @@ public final class NBootOptionsBoot {
         return sharedInstance;
     }
 
-    
+
     public NBootOptionsBoot setSharedInstance(Boolean sharedInstance) {
         this.sharedInstance = sharedInstance;
         return this;
@@ -1851,7 +1841,7 @@ public final class NBootOptionsBoot {
      * @param username new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setUserName(String username) {
         this.userName = username;
         return this;
@@ -1864,7 +1854,7 @@ public final class NBootOptionsBoot {
      * @param value    new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setStoreLocation(String location, String value) {
         if (NBootStringUtils.isBlank(value)) {
             if (storeLocations != null) {
@@ -1886,7 +1876,7 @@ public final class NBootOptionsBoot {
      * @param value    new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot setHomeLocation(NBootHomeLocation location, String value) {
         if (NBootStringUtils.isBlank(value)) {
             if (homeLocations != null) {
@@ -1907,7 +1897,7 @@ public final class NBootOptionsBoot {
      * @param options new value
      * @return {@code this} instance
      */
-    
+
     public NBootOptionsBoot addOutputFormatOptions(String... options) {
         if (options != null) {
             for (String option : options) {
@@ -1926,50 +1916,47 @@ public final class NBootOptionsBoot {
     }
 
 
-    
     public String getDependencySolver() {
         return dependencySolver;
     }
 
-    
+
     public NBootOptionsBoot setDependencySolver(String dependencySolver) {
         this.dependencySolver = dependencySolver;
         return this;
     }
 
-    
+
 //    public String toString() {
 //        return toCmdLine().toString();
 //    }
 
 
-
-    
     public String getIsolationLevel() {
         return isolationLevel;
     }
 
-    
+
     public Boolean getInitLaunchers() {
         return initLaunchers;
     }
 
-    
+
     public Boolean getInitScripts() {
         return initScripts;
     }
 
-    
+
     public Boolean getInitPlatforms() {
         return initPlatforms;
     }
 
-    
+
     public Boolean getInitJava() {
         return initJava;
     }
 
-    
+
     public NBootOptionsBoot unsetRuntimeOptions() {
         setCommandHelp(null);
         setCommandVersion(null);
@@ -1985,7 +1972,7 @@ public final class NBootOptionsBoot {
         return this;
     }
 
-    
+
     public NBootOptionsBoot unsetCreationOptions() {
         setName(null);
         setArchetype(null);
@@ -1998,7 +1985,7 @@ public final class NBootOptionsBoot {
         return this;
     }
 
-    
+
     public NBootOptionsBoot unsetExportedOptions() {
         setJavaCommand(null);
         setJavaOptions(null);
@@ -2047,24 +2034,11 @@ public final class NBootOptionsBoot {
     ///
     /// /////////////////////////////////
 
-
-    public NBootOptionsBoot getUserOptions() {
-        return userOptions;
-    }
-
-    
-    public NBootOptionsBoot setUserOptions(NBootOptionsBoot userOptions) {
-        this.userOptions = userOptions;
-        return this;
-    }
-
-    
-
     public String getBootRepositories() {
         return bootRepositories;
     }
 
-    
+
     public NBootOptionsBoot setBootRepositories(String bootRepositories) {
         this.bootRepositories = NBootStringUtils.trimToNull(bootRepositories);
         return this;
@@ -2074,7 +2048,7 @@ public final class NBootOptionsBoot {
         return runtimeBootDependencyNode;
     }
 
-    
+
     public NBootOptionsBoot setRuntimeBootDependencyNode(NBootClassLoaderNode runtimeBootDependencyNode) {
         this.runtimeBootDependencyNode = runtimeBootDependencyNode;
         return this;
@@ -2084,7 +2058,7 @@ public final class NBootOptionsBoot {
         return extensionBootDescriptors;
     }
 
-    
+
     public NBootOptionsBoot setExtensionBootDescriptors(List<NBootDescriptor> extensionBootDescriptors) {
         this.extensionBootDescriptors = NBootUtils.nonNullList(extensionBootDescriptors);
         return this;
@@ -2094,7 +2068,7 @@ public final class NBootOptionsBoot {
         return extensionBootDependencyNodes;
     }
 
-    
+
     public NBootOptionsBoot setExtensionBootDependencyNodes(List<NBootClassLoaderNode> extensionBootDependencyNodes) {
         this.extensionBootDependencyNodes = NBootUtils.nonNullList(extensionBootDependencyNodes);
         return this;
@@ -2104,7 +2078,7 @@ public final class NBootOptionsBoot {
         return bootWorkspaceFactory;
     }
 
-    
+
     public NBootOptionsBoot setBootWorkspaceFactory(NBootWorkspaceFactory bootWorkspaceFactory) {
         this.bootWorkspaceFactory = bootWorkspaceFactory;
         return this;
@@ -2114,7 +2088,7 @@ public final class NBootOptionsBoot {
         return classWorldURLs;
     }
 
-    
+
     public NBootOptionsBoot setClassWorldURLs(List<URL> classWorldURLs) {
         this.classWorldURLs = NBootUtils.nonNullList(classWorldURLs);
         return this;
@@ -2124,7 +2098,7 @@ public final class NBootOptionsBoot {
         return classWorldLoader;
     }
 
-    
+
     public NBootOptionsBoot setClassWorldLoader(ClassLoader classWorldLoader) {
         this.classWorldLoader = classWorldLoader;
         return this;
@@ -2134,7 +2108,7 @@ public final class NBootOptionsBoot {
         return uuid;
     }
 
-    
+
     public NBootOptionsBoot setUuid(String uuid) {
         this.uuid = NBootStringUtils.trimToNull(uuid);
         return this;
@@ -2144,7 +2118,7 @@ public final class NBootOptionsBoot {
         return extensionsSet;
     }
 
-    
+
     public NBootOptionsBoot setExtensionsSet(Set<String> extensionsSet) {
         this.extensionsSet = NBootUtils.nonNullSet(extensionsSet);
         return this;
@@ -2154,7 +2128,7 @@ public final class NBootOptionsBoot {
         return runtimeBootDescriptor;
     }
 
-    
+
     public NBootOptionsBoot setRuntimeBootDescriptor(NBootDescriptor runtimeBootDescriptor) {
         this.runtimeBootDescriptor = runtimeBootDescriptor;
         return this;

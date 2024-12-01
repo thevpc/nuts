@@ -5,13 +5,13 @@ import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.thevpc.nuts.NSession;
+
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.text.NText;
 
 public class StringReaderExtUtils {
 
-    public static NText[] readSpaces(NSession session, StringReaderExt ar) {
+    public static NText[] readSpaces(StringReaderExt ar) {
         NTexts factory = NTexts.of();
         StringBuilder sb = new StringBuilder();
         while (ar.hasNext() && ar.peekChar() <= 32) {
@@ -22,7 +22,7 @@ public class StringReaderExtUtils {
         };
     }
 
-    public static NText[] readSlashSlashComments(NSession session, StringReaderExt ar) {
+    public static NText[] readSlashSlashComments(StringReaderExt ar) {
         NTexts factory = NTexts.of();
         StringBuilder sb = new StringBuilder();
         if (!ar.peekChars("//")) {
@@ -51,7 +51,7 @@ public class StringReaderExtUtils {
         };
     }
 
-    public static NText[] readSlashStarComments(NSession session, StringReaderExt ar) {
+    public static NText[] readSlashStarComments(StringReaderExt ar) {
         NTexts factory = NTexts.of();
         StringBuilder sb = new StringBuilder();
         if (!ar.peekChars("/*")) {
@@ -80,7 +80,7 @@ public class StringReaderExtUtils {
         };
     }
 
-    public static NText[] readJSDoubleQuotesString(NSession session, StringReaderExt ar) {
+    public static NText[] readJSDoubleQuotesString(StringReaderExt ar) {
         NTexts factory = NTexts.of();
         List<NText> all = new ArrayList<>();
         boolean inLoop = true;
@@ -130,7 +130,7 @@ public class StringReaderExtUtils {
         }
     }
 
-    public static NText[] readJSSimpleQuotes(NSession session, StringReaderExt ar) {
+    public static NText[] readJSSimpleQuotes(StringReaderExt ar) {
         NTexts factory = NTexts.of();
         List<NText> all = new ArrayList<>();
         boolean inLoop = true;
@@ -180,7 +180,7 @@ public class StringReaderExtUtils {
         }
     }
 
-    public static NText[] readJSIdentifier(NSession session, StringReaderExt ar) {
+    public static NText[] readJSIdentifier(StringReaderExt ar) {
         NTexts factory = NTexts.of();
         List<NText> all = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
@@ -200,7 +200,7 @@ public class StringReaderExtUtils {
     }
 
 
-    public static NText[] readNumber(NSession session, StringReaderExt ar) {
+    public static NText[] readNumber(StringReaderExt ar) {
         NTexts factory = NTexts.of();
         boolean nbrVisited = false;
         boolean minusVisited = false;

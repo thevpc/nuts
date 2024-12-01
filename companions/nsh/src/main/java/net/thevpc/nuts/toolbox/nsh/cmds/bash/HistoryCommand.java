@@ -28,7 +28,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.env.NLocations;
+
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
@@ -133,7 +133,7 @@ public class HistoryCommand extends NShellBuiltinDefault {
 
                         shistory.save();
                     } else {
-                        shistory.save(NPath.of(options.sval).toAbsolute(NLocations.of().getWorkspaceLocation()));
+                        shistory.save(NPath.of(options.sval).toAbsolute(NWorkspace.get().getWorkspaceLocation()));
                     }
                 } catch (IOException ex) {
                     throw new NExecutionException(NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_2);
@@ -146,7 +146,7 @@ public class HistoryCommand extends NShellBuiltinDefault {
                         shistory.clear();
                         shistory.load();
                     } else {
-                        shistory.load(NPath.of(options.sval).toAbsolute(NLocations.of().getWorkspaceLocation()));
+                        shistory.load(NPath.of(options.sval).toAbsolute(NWorkspace.get().getWorkspaceLocation()));
                     }
                 } catch (IOException ex) {
                     throw new NExecutionException(NMsg.ofC("%s", ex), ex, NExecutionException.ERROR_2);

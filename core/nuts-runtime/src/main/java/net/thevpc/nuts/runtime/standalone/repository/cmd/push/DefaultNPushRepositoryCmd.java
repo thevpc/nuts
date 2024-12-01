@@ -40,8 +40,6 @@ public class DefaultNPushRepositoryCmd extends AbstractNPushRepositoryCmd {
 
     @Override
     public NPushRepositoryCmd run() {
-        NSession session = repo.getWorkspace().currentSession();
-        NSessionUtils.checkSession(getRepo().getWorkspace(), session);
         getRepo().security().checkAllowed(NConstants.Permissions.PUSH, "push");
         try {
             NRepositoryExt.of(getRepo()).pushImpl(this);

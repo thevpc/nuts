@@ -54,7 +54,6 @@ public class DefaultNPushCmd extends AbstractDefaultNPushCmd {
 
     @Override
     public NPushCmd run() {
-        NSession session=getWorkspace().currentSession();
         NRepositoryFilter repositoryFilter = null;
         Map<NId, NDefinition> toProcess = new LinkedHashMap<>();
         for (NId id : this.getIds()) {
@@ -110,7 +109,7 @@ public class DefaultNPushCmd extends AbstractDefaultNPushCmd {
                             ));
                 }
             } else {
-                NRepository repo = NRepositories.of().findRepository(this.getRepository()).get();
+                NRepository repo = workspace.findRepository(this.getRepository()).get();
                 if (!repo.config().isEnabled()) {
                     throw new NIllegalArgumentException(NMsg.ofC("repository %s is disabled", repo.getName()));
                 }

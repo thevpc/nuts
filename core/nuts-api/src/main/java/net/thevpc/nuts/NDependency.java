@@ -25,7 +25,6 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.env.NEnvCondition;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NOptional;
 
@@ -44,6 +43,12 @@ public interface NDependency extends Serializable, NBlankable {
 
     static NOptional<NDependency> of(String value) {
         return NId.of(value).map(NId::toDependency);
+    }
+    static NOptional<NDependency> of(NId value) {
+        if(value==null){
+            return NOptional.ofNamedEmpty("id");
+        }
+        return NOptional.of(value.toDependency());
     }
 
     /**

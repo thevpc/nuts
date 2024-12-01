@@ -100,19 +100,6 @@ class IdCache {
         return count;
     }
 
-    private NSession validLogSession(NSession session) {
-        if (session == null) {
-            //this is a bug
-            return workspace.currentSession();
-        }
-        if (session.getTerminal() == null) {
-            //chances are that we are creating the session or the session's Terminal
-            return workspace.currentSession();
-        }
-        return session;
-    }
-
-
     void add(Class<?> extensionPoint, Class<?> implementation) {
         NClassClassMap y = getClassClassMap(extensionPoint, true);
         if (!y.containsExactKey(implementation)) {

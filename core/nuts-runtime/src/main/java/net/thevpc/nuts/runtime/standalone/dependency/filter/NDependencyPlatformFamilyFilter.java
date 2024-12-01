@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.env.NPlatformFamily;
+import net.thevpc.nuts.NPlatformFamily;
 import net.thevpc.nuts.util.NFilterOp;
 
 import java.util.Collection;

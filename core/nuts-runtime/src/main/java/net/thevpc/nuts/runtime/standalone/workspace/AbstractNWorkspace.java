@@ -27,9 +27,13 @@ package net.thevpc.nuts.runtime.standalone.workspace;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.reserved.NScopedWorkspace;
+import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEventModel;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NCallable;
+import net.thevpc.nuts.util.NObservableMapListener;
 import net.thevpc.nuts.util.NRunnable;
+
+import java.util.List;
 
 /**
  * Created by vpc on 1/6/17.
@@ -74,4 +78,79 @@ public abstract class AbstractNWorkspace implements NWorkspace {
     public boolean isSharedInstance() {
         return NScopedWorkspace.getSharedWorkspaceInstance()==this;
     }
+
+    /// //////////////////////////////
+
+    private DefaultNWorkspaceEventModel eventsModel() {
+        return ((NWorkspaceExt)this).getModel().eventsModel;
+    }
+
+    @Override
+    public NWorkspace removeRepositoryListener(NRepositoryListener listener) {
+        eventsModel().removeRepositoryListener(listener);
+        return this;
+    }
+
+    @Override
+    public NWorkspace addRepositoryListener(NRepositoryListener listener) {
+        eventsModel().addRepositoryListener(listener);
+        return this;
+    }
+
+    @Override
+    public List<NRepositoryListener> getRepositoryListeners() {
+        return eventsModel().getRepositoryListeners();
+    }
+
+    @Override
+    public NWorkspace addUserPropertyListener(NObservableMapListener<String, Object> listener) {
+        eventsModel().addUserPropertyListener(listener);
+        return this;
+    }
+
+    @Override
+    public NWorkspace removeUserPropertyListener(NObservableMapListener<String, Object> listener) {
+        eventsModel().removeUserPropertyListener(listener);
+        return this;
+    }
+
+    @Override
+    public List<NObservableMapListener<String, Object>> getUserPropertyListeners() {
+        return eventsModel().getUserPropertyListeners();
+    }
+
+    @Override
+    public NWorkspace removeWorkspaceListener(NWorkspaceListener listener) {
+        eventsModel().removeWorkspaceListener(listener);
+        return this;
+    }
+
+    @Override
+    public NWorkspace addWorkspaceListener(NWorkspaceListener listener) {
+        eventsModel().addWorkspaceListener(listener);
+        return this;
+    }
+
+    @Override
+    public List<NWorkspaceListener> getWorkspaceListeners() {
+        return eventsModel().getWorkspaceListeners();
+    }
+
+    @Override
+    public NWorkspace removeInstallListener(NInstallListener listener) {
+        eventsModel().removeInstallListener(listener);
+        return this;
+    }
+
+    @Override
+    public NWorkspace addInstallListener(NInstallListener listener) {
+        eventsModel().addInstallListener(listener);
+        return this;
+    }
+
+    @Override
+    public List<NInstallListener> getInstallListeners() {
+        return eventsModel().getInstallListeners();
+    }
+
 }

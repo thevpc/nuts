@@ -10,15 +10,16 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
-import net.thevpc.nuts.env.NLocations;
-import net.thevpc.nuts.env.NStoreType;
+
+
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.NCompress;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NUncompress;
 import net.thevpc.nuts.io.NUncompressVisitor;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.env.NPlatformHome;
+import net.thevpc.nuts.NPlatformHome;
 
 import java.io.File;
 import java.io.InputStream;
@@ -53,11 +54,11 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
             }
             if (cmdLine.isExecMode()) {
                 List<String> all = new ArrayList<>();
-                all.add(NLocations.of().getWorkspaceLocation().toPath().get()
+                all.add(NWorkspace.get().getWorkspaceLocation().toPath().get()
                         .resolve("nuts-workspace.json").toString()
                 );
                 for (NStoreType value : NStoreType.values()) {
-                    NPath r = NLocations.of().getStoreLocation(value);
+                    NPath r = NWorkspace.get().getStoreLocation(value);
                     if (r.isDirectory()) {
                         all.add(r.toString());
                     }
@@ -139,7 +140,7 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                 if (ws == null || ws.isEmpty()) {
                     cmdLine.throwMissingArgument(NMsg.ofC("not a valid file : %s", file));
                 }
-                String platformHomeFolder = NPlatformHome.of(null, NConfigs.of().stored().isSystem()).getWorkspaceLocation(ws);
+                String platformHomeFolder = NPlatformHome.of(null, NWorkspace.get().getStoredConfig().isSystem()).getWorkspaceLocation(ws);
                 NUncompress.of()
                         .from(NPath.of(file))
                         .to(NPath.of(platformHomeFolder))

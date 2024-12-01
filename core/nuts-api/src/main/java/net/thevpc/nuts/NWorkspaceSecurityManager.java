@@ -26,7 +26,6 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.env.NUser;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.security.NAuthenticationAgent;
 import net.thevpc.nuts.spi.NComponent;

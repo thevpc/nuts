@@ -26,8 +26,8 @@ package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.NSpeedQualifier;
-import net.thevpc.nuts.env.NStoreType;
+import net.thevpc.nuts.NSpeedQualifier;
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.concurrent.NLocks;
 import net.thevpc.nuts.elem.NEDesc;
@@ -67,7 +67,6 @@ public class NCachedRepository extends AbstractNRepositoryBase {
 
     public NCachedRepository(NAddRepositoryOptions options, NWorkspace workspace, NRepository parent, NSpeedQualifier speed, boolean supportedMirroring, String repositoryType, boolean supportsDeploy) {
         super(options, workspace, parent, speed, supportedMirroring, repositoryType, supportsDeploy);
-        NSession session = this.workspace.currentSession();
         cache = new NRepositoryFolderHelper(this, this.workspace, config().getStoreLocation(NStoreType.CACHE).resolve(NConstants.Folders.ID), true,
                 "cache", NElements.of().ofObject().set("repoKind", "cache").build()
         );
@@ -336,8 +335,8 @@ public class NCachedRepository extends AbstractNRepositoryBase {
     @Override
     public final NIterator<NId> searchImpl(final NIdFilter filter, NFetchMode fetchMode) {
         NSession session = getWorkspace().currentSession();
-        List<NPath> basePaths = CommonRootsByPathHelper.resolveRootPaths(filter, session);
-        List<NId> baseIds = CommonRootsByIdHelper.resolveRootPaths(filter, session);
+        List<NPath> basePaths = CommonRootsByPathHelper.resolveRootPaths(filter);
+        List<NId> baseIds = CommonRootsByIdHelper.resolveRootPaths(filter);
         List<NIterator<? extends NId>> li = new ArrayList<>();
         for (NPath basePath : basePaths) {
             if (fetchMode != NFetchMode.REMOTE) {

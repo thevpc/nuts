@@ -1333,7 +1333,6 @@ public class DefaultNTexts implements NTexts {
         if (expectedType.isPrimitive()) {
             expectedType = (Class) NReflectUtils.toBoxedType(expectedType).get();
         }
-        NSession session = workspace.currentSession();
         switch (type.toLowerCase().trim()) {
             case "duration": {
                 DefaultNDurationFormat2 d = new DefaultNDurationFormat2(workspace, pattern);
@@ -1433,7 +1432,7 @@ public class DefaultNTexts implements NTexts {
                             (NTextFormat<T>) new NTextFormat<Number>() {
                                 @Override
                                 public NText toText(Number object) {
-                                    return d.format(object.doubleValue(), session);
+                                    return d.format(object.doubleValue());
                                 }
                             }
                     );
@@ -1444,13 +1443,13 @@ public class DefaultNTexts implements NTexts {
             case "bytes":
             case "size": {
                 String p = NStringUtils.trim(pattern);
-                BytesSizeFormat d = new BytesSizeFormat(null, session);
+                BytesSizeFormat d = new BytesSizeFormat(null);
                 if (Number.class.isAssignableFrom(expectedType)) {
                     return NOptional.of(
                             (NTextFormat<T>) new NTextFormat<Number>() {
                                 @Override
                                 public NText toText(Number object) {
-                                    return d.formatText(object.longValue(), session);
+                                    return d.formatText(object.longValue());
                                 }
                             }
                     );
@@ -1467,7 +1466,7 @@ public class DefaultNTexts implements NTexts {
                             (NTextFormat<T>) new NTextFormat<Number>() {
                                 @Override
                                 public NText toText(Number object) {
-                                    return d.format(object.longValue(), session);
+                                    return d.format(object.longValue());
                                 }
                             }
                     );
@@ -1482,7 +1481,7 @@ public class DefaultNTexts implements NTexts {
                             (NTextFormat<T>) new NTextFormat<Number>() {
                                 @Override
                                 public NText toText(Number object) {
-                                    return d.format(object.doubleValue(), session);
+                                    return d.format(object.doubleValue());
                                 }
                             }
                     );

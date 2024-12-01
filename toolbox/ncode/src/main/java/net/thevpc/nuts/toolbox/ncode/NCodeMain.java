@@ -6,6 +6,8 @@
 package net.thevpc.nuts.toolbox.ncode;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NArg;
+import net.thevpc.nuts.cmdline.NCmdLine;
 
 /**
  * @author thevpc

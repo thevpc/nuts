@@ -3,8 +3,9 @@ package net.thevpc.nuts.runtime.standalone.workspace.config.compat.v803;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.env.NLocations;
-import net.thevpc.nuts.env.NStoreType;
+
+
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.runtime.standalone.workspace.config.*;
@@ -12,8 +13,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.compat.AbstractNVersi
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.CompatUtils;
 
 public class NVersionCompat803 extends AbstractNVersionCompat {
-    public NVersionCompat803(NVersion apiVersion) {
-        super(apiVersion, 507);
+    public NVersionCompat803(NWorkspace workspace,NVersion apiVersion) {
+        super(workspace,apiVersion, 507);
     }
 
     @Override
@@ -23,7 +24,7 @@ public class NVersionCompat803 extends AbstractNVersionCompat {
 
     @Override
     public NWorkspaceConfigApi parseApiConfig(NId nutsApiId) {
-        NPath path = NLocations.of().getStoreLocation(nutsApiId, NStoreType.CONF)
+        NPath path = NWorkspace.get().getStoreLocation(nutsApiId, NStoreType.CONF)
                 .resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
         NWorkspaceConfigApi c = bytes==null?null: NElements.of()
@@ -36,7 +37,7 @@ public class NVersionCompat803 extends AbstractNVersionCompat {
 
     @Override
     public NWorkspaceConfigRuntime parseRuntimeConfig() {
-        NPath path = NLocations.of().getStoreLocation(NWorkspace.get().getRuntimeId(), NStoreType.CONF)
+        NPath path = NWorkspace.get().getStoreLocation(workspace.getRuntimeId(), NStoreType.CONF)
                 .resolve(NConstants.Files.RUNTIME_BOOT_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
         NWorkspaceConfigRuntime c = bytes==null?null: NElements.of()
@@ -46,7 +47,7 @@ public class NVersionCompat803 extends AbstractNVersionCompat {
 
     @Override
     public NWorkspaceConfigSecurity parseSecurityConfig(NId nutsApiId) {
-        NPath path = NLocations.of().getStoreLocation(nutsApiId
+        NPath path = NWorkspace.get().getStoreLocation(nutsApiId
                 , NStoreType.CONF)
                 .resolve(CoreNConstants.Files.WORKSPACE_SECURITY_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
@@ -57,7 +58,7 @@ public class NVersionCompat803 extends AbstractNVersionCompat {
 
     @Override
     public NWorkspaceConfigMain parseMainConfig(NId nutsApiId) {
-        NPath path = NLocations.of().getStoreLocation(nutsApiId
+        NPath path = NWorkspace.get().getStoreLocation(nutsApiId
                 , NStoreType.CONF)
                 .resolve(CoreNConstants.Files.WORKSPACE_MAIN_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);

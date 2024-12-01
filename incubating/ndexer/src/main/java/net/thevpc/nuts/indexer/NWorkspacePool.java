@@ -1,6 +1,6 @@
 package net.thevpc.nuts.indexer;
 
-import net.thevpc.nuts.env.NLocations;
+
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.NWorkspaceOptionsBuilder;
 import net.thevpc.nuts.Nuts;
@@ -20,7 +20,7 @@ public class NWorkspacePool {
     public NWorkspace openWorkspace(String ws) {
         NWorkspace o = pool.get(ws);
         if (o == null) {
-            if (NLocations.of().getWorkspaceLocation().toString().equals(ws)) {
+            if (NWorkspace.get().getWorkspaceLocation().toString().equals(ws)) {
                 o = workspace;
             } else {
                 o = Nuts.openWorkspace(NWorkspaceOptionsBuilder.of()

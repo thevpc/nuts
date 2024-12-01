@@ -31,7 +31,7 @@ public class NCompressedPath extends NPathBase {
     public NCompressedPath(NPath base, NCompressedPathHelper compressedPathHelper) {
         super(base.getWorkspace());
         this.base = base;
-        this.formattedCompressedForm = compressedPathHelper.toCompressedString(base, base.getWorkspace().currentSession());
+        this.formattedCompressedForm = compressedPathHelper.toCompressedString(base);
         this.compressedForm = this.formattedCompressedForm.filteredText();
         this.compressedPathHelper = compressedPathHelper;
     }

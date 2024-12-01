@@ -25,8 +25,9 @@
 package net.thevpc.nuts.runtime.standalone.session;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NBootManager;
-import net.thevpc.nuts.env.NBootOptions;
+
+import net.thevpc.nuts.NBootOptions;
+
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.*;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
@@ -103,7 +104,7 @@ public class DefaultNSession implements Cloneable, NSession {
 
     public DefaultNSession(NWorkspace workspace) {
         this.workspace = workspace;
-        setAll(NBootManager.of().getBootOptions().toWorkspaceOptions());
+        setAll(NWorkspace.get().getBootOptions().toWorkspaceOptions());
     }
     public DefaultNSession(NWorkspace workspace, NWorkspaceOptions options) {
         this.workspace = workspace;
@@ -623,7 +624,7 @@ public class DefaultNSession implements Cloneable, NSession {
 
     @Override
     public NOptional<Boolean> getTrace() {
-        return NOptional.ofNamed(trace, "trace").withDefault(() -> NBootManager.of().getBootOptions().getTrace().orElse(true));
+        return NOptional.ofNamed(trace, "trace").withDefault(() -> NWorkspace.get().getBootOptions().getTrace().orElse(true));
     }
 
     @Override
@@ -710,14 +711,14 @@ public class DefaultNSession implements Cloneable, NSession {
     @Override
     public NOptional<Boolean> getBot() {
         return NOptional.ofNamed(bot, "bot").withDefault(
-                () -> NBootManager.of().getBootOptions().getBot().orElse(false)
+                () -> NWorkspace.get().getBootOptions().getBot().orElse(false)
         );
     }
 
     @Override
     public NOptional<Boolean> getPreviewRepo() {
         return NOptional.ofNamed(previewRepo, "previewRepo").withDefault(
-                () -> NBootManager.of().getBootOptions().getPreviewRepo()
+                () -> NWorkspace.get().getBootOptions().getPreviewRepo()
                         .orElse(NWorkspaceExt.of().getModel().configModel.getStoredConfigMain().isEnablePreviewRepositories())
         );
     }
@@ -781,7 +782,7 @@ public class DefaultNSession implements Cloneable, NSession {
     public NOptional<NContentType> getOutputFormat() {
         return NOptional.ofNamed(outputFormat, "outputFormat")
                 .withDefault(() -> {
-                    NContentType o = NBootManager.of().getBootOptions().getOutputFormat().orNull();
+                    NContentType o = NWorkspace.get().getBootOptions().getOutputFormat().orNull();
                     if (o != null) {
                         return o;
                     }
@@ -946,7 +947,7 @@ public class DefaultNSession implements Cloneable, NSession {
     public NOptional<NFetchStrategy> getFetchStrategy() {
         return NOptional.ofNamed(fetchStrategy, "fetchStrategy")
                 .withDefault(() -> {
-                    NFetchStrategy wfetchStrategy = NBootManager.of().getBootOptions().getFetchStrategy().orNull();
+                    NFetchStrategy wfetchStrategy = NWorkspace.get().getBootOptions().getFetchStrategy().orNull();
                     if (wfetchStrategy != null) {
                         return wfetchStrategy;
                     }
@@ -1115,7 +1116,7 @@ public class DefaultNSession implements Cloneable, NSession {
     public NOptional<NConfirmationMode> getConfirm() {
         return NOptional.ofNamed(confirm, "confirm")
                 .withDefault(() -> {
-                    NConfirmationMode cm = NBootManager.of().getBootOptions().getConfirm().orNull();
+                    NConfirmationMode cm = NWorkspace.get().getBootOptions().getConfirm().orNull();
                     if (isBot()) {
                         if (cm == null) {
                             return NConfirmationMode.ERROR;
@@ -1225,7 +1226,7 @@ public class DefaultNSession implements Cloneable, NSession {
     @Override
     public NOptional<Boolean> getTransitive() {
         return NOptional.ofNamed(transitive, "transitive")
-                .withDefault(() -> NBootManager.of().getBootOptions().getTransitive().orElse(true));
+                .withDefault(() -> NWorkspace.get().getBootOptions().getTransitive().orElse(true));
     }
 
     @Override
@@ -1242,7 +1243,7 @@ public class DefaultNSession implements Cloneable, NSession {
     @Override
     public NOptional<Boolean> getCached() {
         return NOptional.ofNamed(cached, "cached")
-                .withDefault(() -> NBootManager.of().getBootOptions().getCached().orElse(true));
+                .withDefault(() -> NWorkspace.get().getBootOptions().getCached().orElse(true));
     }
 
     @Override
@@ -1259,7 +1260,7 @@ public class DefaultNSession implements Cloneable, NSession {
     @Override
     public NOptional<Boolean> getIndexed() {
         return NOptional.ofNamed(indexed, "indexed")
-                .withDefault(() -> NBootManager.of().getBootOptions().getIndexed().orElse(false))
+                .withDefault(() -> NWorkspace.get().getBootOptions().getIndexed().orElse(false))
                 ;
     }
 
@@ -1315,7 +1316,7 @@ public class DefaultNSession implements Cloneable, NSession {
                     if (gui != null) {
                         return gui;
                     }
-                    return NBootManager.of().getBootOptions().getGui().orElse(false);
+                    return NWorkspace.get().getBootOptions().getGui().orElse(false);
                 });
     }
 
@@ -1354,13 +1355,13 @@ public class DefaultNSession implements Cloneable, NSession {
 
     @Override
     public NOptional<Boolean> getDry() {
-        return NOptional.ofNamed(dry, "dry").withDefault(() -> NBootManager.of().getBootOptions().getDry().orElse(false));
+        return NOptional.ofNamed(dry, "dry").withDefault(() -> NWorkspace.get().getBootOptions().getDry().orElse(false));
     }
 
     @Override
     public NOptional<Boolean> getShowStacktrace() {
         return NOptional.ofNamed(showStacktrace, "showStacktrace")
-                .withDefault(() -> NBootManager.of().getBootOptions().getShowStacktrace().orElse(false));
+                .withDefault(() -> NWorkspace.get().getBootOptions().getShowStacktrace().orElse(false));
     }
 
 
@@ -1517,7 +1518,7 @@ public class DefaultNSession implements Cloneable, NSession {
     @Override
     public NOptional<NExecutionType> getExecutionType() {
         return NOptional.ofNamed(executionType, "executionType")
-                .withDefault(() -> NBootManager.of().getBootOptions().getExecutionType().orElse(NExecutionType.SPAWN))
+                .withDefault(() -> NWorkspace.get().getBootOptions().getExecutionType().orElse(NExecutionType.SPAWN))
                 ;
     }
 
@@ -1545,7 +1546,7 @@ public class DefaultNSession implements Cloneable, NSession {
     @Override
     public NOptional<String> getDebug() {
         return NOptional.ofNamed(debug, "debug")
-                .withDefault(() -> NBootManager.of().getBootOptions().getDebug().orNull()
+                .withDefault(() -> NWorkspace.get().getBootOptions().getDebug().orNull()
                 );
     }
 
@@ -1558,7 +1559,7 @@ public class DefaultNSession implements Cloneable, NSession {
     @Override
     public NOptional<String> getLocale() {
         return NOptional.ofNamed(locale, "locale")
-                .withDefault(() -> NBootManager.of().getBootOptions().getLocale().orNull());
+                .withDefault(() -> NWorkspace.get().getBootOptions().getLocale().orNull());
     }
 
     @Override
@@ -1570,7 +1571,7 @@ public class DefaultNSession implements Cloneable, NSession {
     public NOptional<NRunAs> getRunAs() {
         return NOptional.ofNamed(runAs, "runAs")
                 .withDefault(() -> {
-                    NRunAs r = NBootManager.of().getBootOptions().getRunAs().orNull();
+                    NRunAs r = NWorkspace.get().getBootOptions().getRunAs().orNull();
                     if (r != null) {
                         return r;
                     }

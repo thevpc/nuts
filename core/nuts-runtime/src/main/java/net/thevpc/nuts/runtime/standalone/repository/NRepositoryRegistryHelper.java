@@ -44,10 +44,10 @@ public class NRepositoryRegistryHelper {
 
     private Map<String, RepoAndRef> repositoriesByName = new LinkedHashMap<>();
     private Map<String, RepoAndRef> repositoriesByUuid = new LinkedHashMap<>();
-    private NWorkspace ws;
+    private NWorkspace workspace;
 
-    public NRepositoryRegistryHelper(NWorkspace ws) {
-        this.ws = ws;
+    public NRepositoryRegistryHelper(NWorkspace workspace) {
+        this.workspace = workspace;
     }
 
     public NRepository[] getRepositories() {
@@ -64,7 +64,6 @@ public class NRepositoryRegistryHelper {
         if (repository == null) {
             return;
         }
-        NSession session=ws.currentSession();
         NRepositoryRef repositoryRef = repository.config().getRepositoryRef();
         String uuid = repository.getUuid();
         String name = repository.getName();
@@ -93,7 +92,7 @@ public class NRepositoryRegistryHelper {
         if (uuid != null) {
             repositoriesByUuid.put(uuid, rr);
         }
-        NWorkspaceConfigMain m = ((NWorkspaceExt) session.getWorkspace()).getModel().configModel.getStoreModelMain();
+        NWorkspaceConfigMain m = ((NWorkspaceExt) workspace).getModel().configModel.getStoreModelMain();
         List<NRepositoryRef> repositoriesRefs = m.getRepositories();
         if (repositoriesRefs == null) {
             repositoriesRefs = new ArrayList<>();
@@ -137,12 +136,11 @@ public class NRepositoryRegistryHelper {
 //        }
 //    }
     public NRepository removeRepository(String repository) {
-        NSession session=ws.currentSession();
         final NRepository r = findRepository(repository);
         if (r != null) {
             repositoriesByName.remove(r.getName());
             repositoriesByUuid.remove(r.getUuid());
-            NWorkspaceConfigMain m = ((NWorkspaceExt) session.getWorkspace()).getModel().configModel.getStoreModelMain();
+            NWorkspaceConfigMain m = NWorkspaceExt.of(workspace).getModel().configModel.getStoreModelMain();
             List<NRepositoryRef> repositoriesRefs = m.getRepositories();
             if (repositoriesRefs != null) {
                 repositoriesRefs.removeIf(x -> x.getName().equals(r.getName()));

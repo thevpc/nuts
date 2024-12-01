@@ -2,7 +2,7 @@ package net.thevpc.nuts.tutorial.remoteselfcallexample;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.env.NEnvs;
+
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
@@ -97,7 +97,7 @@ public class RemoteSelfCallApp implements NApplication {
                                             NStringUtils.toStringOrEmpty(NApp.of().getId().orNull()),
                                             "--on-call-self"
                                     )
-                                    .addCommand("from=" + NEnvs.of().getHostName())
+                                    .addCommand("from=" + NWorkspace.get().getHostName())
                                     .addCommand(options.nonOptions)
                                     .failFast()
                                     .getGrabbedAllString()
@@ -119,7 +119,7 @@ public class RemoteSelfCallApp implements NApplication {
 
     private void log(NMsg m) {
         NSession session = NSession.get();
-        String hostName = NEnvs.of().getHostName();
+        String hostName = NWorkspace.get().getHostName();
         session.out().println(NMsg.ofC("[%s] %s", hostName, m));
     }
 

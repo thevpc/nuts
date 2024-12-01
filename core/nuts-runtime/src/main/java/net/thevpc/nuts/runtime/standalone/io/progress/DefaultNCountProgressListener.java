@@ -37,7 +37,7 @@ public class DefaultNCountProgressListener implements NProgressListener/*, NutsO
     }
 
     public BytesSizeFormat mf(NProgressEvent event) {
-        return new BytesSizeFormat("BTD1F",event.getSession());
+        return new BytesSizeFormat("BTD1F");
     }
 
     @Override

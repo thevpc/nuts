@@ -32,9 +32,8 @@ package net.thevpc.nuts.toolbox.nsh.nshell;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.elem.NEDesc;
-import net.thevpc.nuts.env.NEnvs;
-import net.thevpc.nuts.env.NLocations;
-import net.thevpc.nuts.env.NStoreType;
+
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NDefaultSupportLevelContext;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -181,7 +180,7 @@ public class NShell {
         if (session != null) {
             NShellContext _rootContext = getRootContext();
 
-            NEnvs.of().setProperty(NShellContext.class.getName(), _rootContext);
+            NWorkspace.get().setProperty(NShellContext.class.getName(), _rootContext);
             _rootContext.setSession(session);
             //add default commands
             List<NShellBuiltin> allCommand = new ArrayList<>();
@@ -205,7 +204,7 @@ public class NShell {
             try {
                 NPath histFile = this.history.getHistoryFile();
                 if (histFile == null) {
-                    histFile = NLocations.of().getStoreLocation(this.appId, NStoreType.VAR).resolve((serviceName == null ? "" : serviceName) + ".history");
+                    histFile = NWorkspace.get().getStoreLocation(this.appId, NStoreType.VAR).resolve((serviceName == null ? "" : serviceName) + ".history");
                     this.history.setHistoryFile(histFile);
                     if (histFile.exists()) {
                         this.history.load(histFile);
@@ -217,7 +216,7 @@ public class NShell {
                         .error(ex)
                         .log(NMsg.ofC("error resolving history file %s", this.history.getHistoryFile()));
             }
-            NEnvs.of().setProperty(NShellHistory.class.getName(), this.history);
+            NWorkspace.get().setProperty(NShellHistory.class.getName(), this.history);
         }
     }
 
@@ -673,7 +672,7 @@ public class NShell {
         NSystemTerminal.enableRichTerm();
         NPath appVarFolder = NApp.of().getVarFolder();
         if (appVarFolder == null) {
-            appVarFolder = NLocations.of().getStoreLocation(
+            appVarFolder = NWorkspace.get().getStoreLocation(
                     NId.of("net.thevpc.app.nuts.toolbox:nsh").get()
                     , NStoreType.VAR);
         }

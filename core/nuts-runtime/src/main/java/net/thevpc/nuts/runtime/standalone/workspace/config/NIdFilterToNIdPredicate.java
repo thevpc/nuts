@@ -6,11 +6,9 @@ import net.thevpc.nuts.runtime.standalone.id.filter.NSearchIdById;
 
 class NIdFilterToNIdPredicate extends AbstractNPredicate<NId> {
     private final NIdFilter filter;
-    private final NSession session;
 
-    public NIdFilterToNIdPredicate(NIdFilter filter, NSession session) {
+    public NIdFilterToNIdPredicate(NIdFilter filter) {
         this.filter = filter;
-        this.session = session;
     }
 
     @Override

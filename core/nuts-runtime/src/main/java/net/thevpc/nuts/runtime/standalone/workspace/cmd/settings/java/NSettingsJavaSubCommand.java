@@ -7,13 +7,14 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.java;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
+
 import net.thevpc.nuts.format.NMutableTableModel;
 import net.thevpc.nuts.format.NTableFormat;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.util.NLiteral;
-import net.thevpc.nuts.env.NPlatformFamily;
+import net.thevpc.nuts.NPlatformFamily;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,8 +36,6 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
         }
         NSession session=workspace.currentSession();
         NPrintStream out = session.out();
-        NConfigs conf = NConfigs.of();
-        NPlatforms platforms = NPlatforms.of();
         if (cmdLine.next("add java","java add").isPresent()) {
             if (cmdLine.next("--search").isPresent()) {
                 List<String> extraLocations = new ArrayList<>();
@@ -44,30 +43,30 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
                     extraLocations.add(cmdLine.next().flatMap(NLiteral::asString).get());
                 }
                 if (extraLocations.isEmpty()) {
-                    for (NPlatformLocation loc : platforms.searchSystemPlatforms(NPlatformFamily.JAVA)) {
-                        platforms.addPlatform(loc);
+                    for (NPlatformLocation loc : workspace.searchSystemPlatforms(NPlatformFamily.JAVA)) {
+                        workspace.addPlatform(loc);
                     }
                 } else {
                     for (String extraLocation : extraLocations) {
-                        for (NPlatformLocation loc : platforms.searchSystemPlatforms(NPlatformFamily.JAVA, NPath.of(extraLocation))) {
-                            platforms.addPlatform(loc);
+                        for (NPlatformLocation loc : workspace.searchSystemPlatforms(NPlatformFamily.JAVA, NPath.of(extraLocation))) {
+                            workspace.addPlatform(loc);
                         }
                     }
                 }
                 cmdLine.setCommandName("config java").throwUnexpectedArgument();
                 if (autoSave) {
-                    conf.save(false);
+                    workspace.saveConfig(false);
                 }
             } else {
                 while (cmdLine.hasNext()) {
-                    NPlatformLocation loc = platforms.resolvePlatform(NPlatformFamily.JAVA,
+                    NPlatformLocation loc = workspace.resolvePlatform(NPlatformFamily.JAVA,
                             NPath.of(cmdLine.next().flatMap(NLiteral::asString).get()), null).orNull();
                     if (loc != null) {
-                        platforms.addPlatform(loc);
+                        workspace.addPlatform(loc);
                     }
                 }
                 if (autoSave) {
-                    conf.save(false);
+                    workspace.saveConfig(false);
                 }
             }
             return true;
@@ -75,19 +74,19 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
             while (cmdLine.hasNext()) {
                 String name = cmdLine.next()
                         .flatMap(NLiteral::asString).get();
-                NPlatformLocation loc = platforms.findPlatformByName(NPlatformFamily.JAVA, name).orNull();
+                NPlatformLocation loc = workspace.findPlatformByName(NPlatformFamily.JAVA, name).orNull();
                 if (loc == null) {
-                    loc = platforms.findPlatformByName(NPlatformFamily.JAVA, name).orNull();
+                    loc = workspace.findPlatformByName(NPlatformFamily.JAVA, name).orNull();
                     if (loc == null) {
-                        loc = platforms.findPlatformByVersion(NPlatformFamily.JAVA, name).orNull();
+                        loc = workspace.findPlatformByVersion(NPlatformFamily.JAVA, name).orNull();
                     }
                 }
                 if (loc != null) {
-                    platforms.removePlatform(loc);
+                    workspace.removePlatform(loc);
                 }
             }
             if (autoSave) {
-                conf.save(false);
+                workspace.saveConfig(false);
             }
             return true;
         } else if (cmdLine.next("list java","java list").isPresent()) {
@@ -103,7 +102,7 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
                 }
             }
             if (cmdLine.isExecMode()) {
-                NPlatformLocation[] sdks = platforms.findPlatforms(NPlatformFamily.JAVA, null).toArray(NPlatformLocation[]::new);
+                NPlatformLocation[] sdks = workspace.findPlatforms(NPlatformFamily.JAVA, null).toArray(NPlatformLocation[]::new);
                 Arrays.sort(sdks, new Comparator<NPlatformLocation>() {
                     @Override
                     public int compare(NPlatformLocation o1, NPlatformLocation o2) {

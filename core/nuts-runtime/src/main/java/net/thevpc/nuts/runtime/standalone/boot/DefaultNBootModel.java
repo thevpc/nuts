@@ -25,10 +25,11 @@
 package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NBootManager;
-import net.thevpc.nuts.env.NBootOptions;
+
+import net.thevpc.nuts.NBootOptions;
 import net.thevpc.nuts.NWorkspaceTerminalOptions;
 import net.thevpc.nuts.cmdline.DefaultNArg;
+
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSystemTerminal;
@@ -49,7 +50,7 @@ import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.env.NOsFamily;
+import net.thevpc.nuts.NOsFamily;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -245,9 +246,8 @@ public class DefaultNBootModel implements NBootModel {
         if (st.isAutoCompleteSupported()) {
             //that's ok
         } else {
-            NSession session=getWorkspace().currentSession();
             NId extId = NId.of("net.thevpc.nuts.ext:next-term#" + workspace.getApiVersion()).get();
-            if (!NExtensions.of().isExcludedExtension(extId.toString(), NBootManager.of().getBootOptions().toWorkspaceOptions())) {
+            if (!NExtensions.of().isExcludedExtension(extId.toString(), NWorkspace.get().getBootOptions().toWorkspaceOptions())) {
                 NExtensions extensions = NExtensions.of();
                 extensions.loadExtension(extId);
                 NSystemTerminal systemTerminal = createSystemTerminal(

@@ -2,8 +2,8 @@ package net.thevpc.nuts.toolbox.ntomcat.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NEDesc;
-import net.thevpc.nuts.env.NEnvConditionBuilder;
-import net.thevpc.nuts.env.NLocations;
+import net.thevpc.nuts.NEnvConditionBuilder;
+
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
@@ -214,10 +214,9 @@ public class ApacheTomcatRepositoryModel implements NRepositoryModel {
     }
 
     public String getIdLocalFile(NId id, NFetchMode fetchMode, NRepository repository) {
-        NSession session = workspace.currentSession();
         return repository.config().getStoreLocation()
-                .resolve(NLocations.of().getDefaultIdBasedir(id))
-                .resolve(NLocations.of().getDefaultIdFilename(id))
+                .resolve(NWorkspace.get().getDefaultIdBasedir(id))
+                .resolve(NWorkspace.get().getDefaultIdFilename(id))
                 .toString();
     }
 

@@ -8,8 +8,9 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.delete;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.env.NLocations;
-import net.thevpc.nuts.env.NStoreType;
+
+
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.text.NText;
@@ -88,7 +89,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
     }
 
     private void deleteWorkspaceFolder(NStoreType folder, boolean force) {
-        NPath sstoreLocation = NLocations.of().getStoreLocation(folder);
+        NPath sstoreLocation = NWorkspace.get().getStoreLocation(folder);
         NSession session = workspace.currentSession();
         if (sstoreLocation != null) {
             NTexts factory = NTexts.of();
@@ -105,13 +106,13 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
                 }
             }
         }
-        for (NRepository repository : NRepositories.of().getRepositories()) {
+        for (NRepository repository : workspace.getRepositories()) {
             deleteRepoFolder(repository, folder, force);
         }
     }
 
     private void deleteRepoFolder(NRepository repository, NStoreType folder, boolean force) {
-        NPath sstoreLocation = NLocations.of().getStoreLocation(folder);
+        NPath sstoreLocation = NWorkspace.get().getStoreLocation(folder);
         if (sstoreLocation != null) {
             NTexts factory = NTexts.of();
             NSession session = workspace.currentSession();
@@ -136,13 +137,13 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
     }
 
     private void deleteCache(NSession session, boolean force) {
-        NPath sstoreLocation = NLocations.of().getStoreLocation(NStoreType.CACHE);
+        NPath sstoreLocation = NWorkspace.get().getStoreLocation(NStoreType.CACHE);
         if (sstoreLocation != null) {
             //            File cache = new File(storeLocation);
             if (sstoreLocation.exists()) {
                 sstoreLocation.delete();
             }
-            for (NRepository repository : NRepositories.of().getRepositories()) {
+            for (NRepository repository : workspace.getRepositories()) {
                 deleteRepoCache(repository, force);
             }
         }

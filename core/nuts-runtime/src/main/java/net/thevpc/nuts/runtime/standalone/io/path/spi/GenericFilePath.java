@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.env.NEnvs;
+
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NFormatSPI;
@@ -13,7 +13,7 @@ import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
-import net.thevpc.nuts.env.NOsFamily;
+import net.thevpc.nuts.NOsFamily;
 import net.thevpc.nuts.util.NStream;
 
 import java.io.*;
@@ -310,7 +310,7 @@ public class GenericFilePath implements NPathSPI {
             if (f.getSeparator().length() > 0) {
                 return true;
             }
-            if (NEnvs.of().getOsFamily() == NOsFamily.WINDOWS) {
+            if (NWorkspace.get().getOsFamily() == NOsFamily.WINDOWS) {
                 String n = f.getName();
                 //test if the name is a drive name
                 if (n.length() == 2 && n.charAt(1) == ':') {

@@ -23,7 +23,6 @@ public class MvnClient {
     }
 
     protected NLog LOG() {
-        NSession session = workspace.currentSession();
         return NLog.of(MvnClient.class);
     }
 

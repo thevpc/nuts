@@ -14,7 +14,6 @@ import net.thevpc.nuts.util.NIteratorBuilder;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogOp;
 import net.thevpc.nuts.log.NLogVerb;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.spi.NSearchRepositoryCmd;
@@ -43,7 +42,6 @@ public class DefaultNSearchRepositoryCmd extends AbstractNSearchRepositoryCmd {
     @Override
     public NSearchRepositoryCmd run() {
         NSession session = getRepo().getWorkspace().currentSession();
-        NSessionUtils.checkSession(getRepo().getWorkspace(), session);
         NRunnable startRunnable = NRunnable.of(
                 () -> {
                     getRepo().security().checkAllowed(NConstants.Permissions.FETCH_DESC, "search");
@@ -74,7 +72,7 @@ public class DefaultNSearchRepositoryCmd extends AbstractNSearchRepositoryCmd {
                 }
                 if (o != null) {
                     result = NIteratorBuilder.of(new NIndexFirstIterator<>(o,
-                            xrepo.searchImpl(filter, getFetchMode()),session
+                            xrepo.searchImpl(filter, getFetchMode())
                     )).onStart(startRunnable).onFinish(endRunnable).build();
                     return this;
                 }

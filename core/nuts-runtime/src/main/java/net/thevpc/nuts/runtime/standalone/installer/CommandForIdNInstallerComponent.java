@@ -26,7 +26,8 @@ package net.thevpc.nuts.runtime.standalone.installer;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.NBootManager;
+
+
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNInstallInfo;
 import net.thevpc.nuts.runtime.standalone.executor.NExecutionContextUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
@@ -85,7 +86,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                     cmd.addExecutorOptions("--nuts-auto-install=false");
                 }
                 cmd.addCommand(executionContext.getArguments())
-                        .setExecutionType(NBootManager.of().getBootOptions().getExecutionType().orNull())
+                        .setExecutionType(NWorkspace.get().getBootOptions().getExecutionType().orNull())
                         .failFast()
                         .run();
             }
@@ -108,7 +109,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                 NExecCmd.of()
                         .setCommandDefinition(def2)
                         .addCommand(eargs)
-                        .setExecutionType(NBootManager.of().getBootOptions().getExecutionType().orNull())
+                        .setExecutionType(NWorkspace.get().getBootOptions().getExecutionType().orNull())
                         .setExecutionType(
                                 "nsh".equals(def2.getId().getArtifactId()) ?
                                         NExecutionType.EMBEDDED : NExecutionType.SPAWN

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NLocations;
+
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.io.NPath;
@@ -57,7 +57,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
                 case "content":
                     contentFile = NPath
                             .ofTempFile(
-                                    NLocations.of().getDefaultIdFilename(
+                                    NWorkspace.get().getDefaultIdFilename(
                                             descriptor.getId().builder().setFaceDescriptor().build()
                                     )).toString();
                     NCp.of()

@@ -1,8 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.executor.java;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NBootClassLoaderNode;
 import net.thevpc.nuts.cmdline.NWorkspaceCmdLineParser;
+
+import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -22,7 +23,9 @@ import net.thevpc.nuts.util.*;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class JavaExecutorOptions {
 
@@ -39,7 +42,7 @@ public final class JavaExecutorOptions {
     private final List<String> appendArgs = new ArrayList<>();
     //    private NutsDefinition nutsMainDef;
     private final NWorkspace workspace;
-    private final List<NBootClassLoaderNode> classPathNodes = new ArrayList<>();
+    private final List<NClassLoaderNode> classPathNodes = new ArrayList<>();
     private final List<String> classPath = new ArrayList<>();
     private String javaVersion = null;//runnerProps.getProperty("java.parseVersion");
     private String javaEffVersion = null;
@@ -80,7 +83,7 @@ public final class JavaExecutorOptions {
         //will accept all -- and - based options!
         NCmdLine cmdLine = NCmdLine.of(getExecArgs()).setExpandSimpleOptions(false);
         NArg a;
-        List<NBootClassLoaderNode> currentCP = new ArrayList<>();
+        List<NClassLoaderNode> currentCP = new ArrayList<>();
         List<NArg> extraMayBeJvmOptions = new ArrayList<>();
 
         while (cmdLine.hasNext()) {
@@ -217,7 +220,7 @@ public final class JavaExecutorOptions {
                 .and(dependencyFilters.byOptional(false));
         if (tempId) {
             for (NDependency dependency : descriptor.getDependencies()) {
-                if(defFilter.acceptDependency(null,dependency)) {
+                if (defFilter.acceptDependency(null, dependency)) {
                     se.addId(dependency.toId());
                 }
             }
@@ -256,12 +259,36 @@ public final class JavaExecutorOptions {
         if (!NBlankable.isBlank(explicitJavaVersion) && (NBlankable.isBlank(javaVersion) || explicitJavaVersion.compareTo(javaVersion) > 0)) {
             javaVersion = explicitJavaVersion.toString();
         }
-        NPlatformLocation nutsPlatformLocation = NJavaSdkUtils.of(workspace).resolveJdkLocation(getJavaVersion());
+        NJavaSdkUtils nJavaSdkUtils = NJavaSdkUtils.of(workspace);
+        NPlatformLocation nutsPlatformLocation = nJavaSdkUtils.resolveJdkLocation(getJavaVersion());
         if (nutsPlatformLocation == null) {
-            throw new NExecutionException(NMsg.ofC("no java version %s was found", NStringUtils.trim(getJavaVersion())), NExecutionException.ERROR_1);
+            NLog.of(JavaExecutorOptions.class).warn(NMsg.ofC("No JRE %s is configured in nuts. search of system installations.", javaVersion));
+            Predicate<String> versionFilterPredicate = nJavaSdkUtils.createVersionFilterPredicate(getJavaVersion());
+            NPlatformLocation[] existing = Stream.of(nJavaSdkUtils.searchJdkLocations()).filter(
+                    aa -> {
+                        return versionFilterPredicate.test(aa.getVersion());
+                    }
+            ).toArray(NPlatformLocation[]::new);
+            if (existing.length > 0) {
+                if (NAsk.of().forBoolean(
+                                NMsg.ofC("No JRE %s is configured in nuts. However %s %s found. Would you like to auto-configure and use %s?", javaVersion, existing.length
+                                        , existing.length == 1 ? "is" : "are"
+                                        , existing.length == 1 ? "it" : "them"
+                                )
+                        ).setDefaultValue(true)
+                        .getBooleanValue()) {
+                    for (NPlatformLocation p : existing) {
+                        workspace.addPlatform(p);
+                    }
+                    nutsPlatformLocation = nJavaSdkUtils.resolveJdkLocation(getJavaVersion());
+                }
+            }
+            if (nutsPlatformLocation == null) {
+                throw new NExecutionException(NMsg.ofC("no java version %s was found", NStringUtils.trim(getJavaVersion())), NExecutionException.ERROR_1);
+            }
         }
         javaEffVersion = nutsPlatformLocation.getVersion();
-        javaCommand = NJavaSdkUtils.of(workspace).resolveJavaCommandByVersion(nutsPlatformLocation, javaw);
+        javaCommand = nJavaSdkUtils.resolveJavaCommandByVersion(nutsPlatformLocation, javaw);
         if (javaCommand == null) {
             throw new NExecutionException(NMsg.ofC("no java version %s was found", getJavaVersion()), NExecutionException.ERROR_1);
         }
@@ -326,19 +353,19 @@ public final class JavaExecutorOptions {
             boolean baseDetected = false;
             NRepositoryFilters nRepositoryFilters = NRepositoryFilters.of();
             for (NDefinition nDefinition : nDefinitions) {
-                NBootClassLoaderNode nn = null;
+                NClassLoaderNode nn = null;
                 if (nDefinition.getContent().isPresent()) {
                     if (id.getLongName().equals(nDefinition.getId().getLongName())) {
                         baseDetected = true;
                         if (!isExcludeBase()) {
-                            nn = (NClassLoaderUtils.definitionToClassLoaderNode(nDefinition,
+                            nn = (NClassLoaderUtils.definitionToClassLoaderNodeSafer(nDefinition,
                                     nRepositoryFilters.installedRepo()
                             ));
 //                            classPath.add(nutsDefinition.getPath().toString());
 //                            nutsPath.add(nutsIdFormat.value(nutsDefinition.getId()).format());
                         }
                     } else {
-                        nn = (NClassLoaderUtils.definitionToClassLoaderNode(nDefinition,
+                        nn = (NClassLoaderUtils.definitionToClassLoaderNodeSafer(nDefinition,
                                 nRepositoryFilters.installedRepo()
                         ));
 //                        classPath.add(nutsDefinition.getPath().toString());
@@ -351,12 +378,12 @@ public final class JavaExecutorOptions {
             }
             if (!isExcludeBase() && !baseDetected) {
                 NAssert.requireNonNull(path, () -> NMsg.ofC("missing path %s", finalId));
-                currentCP.add(0, NClassLoaderUtils.definitionToClassLoaderNode(def, nRepositoryFilters.installedRepo()));
+                currentCP.add(0, NClassLoaderUtils.definitionToClassLoaderNodeSafer(def, nRepositoryFilters.installedRepo()));
             }
             classPathNodes.addAll(currentCP);
             List<NClassLoaderNodeExt> ln =
                     NJavaSdkUtils.loadNutsClassLoaderNodeExts(
-                            currentCP.toArray(new NBootClassLoaderNode[0]),
+                            currentCP.toArray(new NClassLoaderNode[0]),
                             java9, workspace
                     );
             if (java9) {
@@ -587,7 +614,7 @@ public final class JavaExecutorOptions {
         return null;
     }
 
-    private void addCp(List<NBootClassLoaderNode> classPath, String value) {
+    private void addCp(List<NClassLoaderNode> classPath, String value) {
         if (value == null) {
             value = "";
         }
@@ -599,14 +626,14 @@ public final class JavaExecutorOptions {
             for (String n : StringTokenizerUtils.splitColon(value)) {
                 if (!NBlankable.isBlank(n)) {
                     URL url = NPath.of(n).toURL().get();
-                    classPath.add(new NBootClassLoaderNode("", url, true, true));
+                    classPath.add(new NDefaultClassLoaderNode(null, url, true, true));
                 }
             }
         }
 
     }
 
-    private void addNp(List<NBootClassLoaderNode> classPath, String value) {
+    private void addNp(List<NClassLoaderNode> classPath, String value) {
         NSearchCmd ns = NSearchCmd.of().setLatest(true);
         NRepositoryFilters nRepositoryFilters = NRepositoryFilters.of();
         for (String n : StringTokenizerUtils.splitDefault(value)) {
@@ -617,7 +644,7 @@ public final class JavaExecutorOptions {
         for (NId nutsId : ns.getResultIds()) {
             NDefinition f = NSearchCmd.of().addId(nutsId)
                     .setLatest(true).getResultDefinitions().findFirst().get();
-            classPath.add(NClassLoaderUtils.definitionToClassLoaderNode(f, nRepositoryFilters.installedRepo()));
+            classPath.add(NClassLoaderUtils.definitionToClassLoaderNodeSafer(f, nRepositoryFilters.installedRepo()));
         }
     }
 
@@ -677,36 +704,36 @@ public final class JavaExecutorOptions {
         return workspace;
     }
 
-    public void fillStrings(NBootClassLoaderNode n, List<String> list) {
+    public void fillStrings(NClassLoaderNode n, List<String> list) {
         URL f = n.getURL();
         list.add(NPath.of(f).toPath().get().toString());
-        for (NBootClassLoaderNode d : n.getDependencies()) {
+        for (NClassLoaderNode d : n.getDependencies()) {
             fillStrings(d, list);
         }
     }
 
 
-    public void fillNidStrings(NBootClassLoaderNode n, List<String> list) {
-        if (n.getId() == null || n.getId().isEmpty()) {
+    public void fillNidStrings(NClassLoaderNode n, List<String> list) {
+        if (NBlankable.isBlank(n.getId())) {
             URL f = n.getURL();
             list.add(NPath.of(f).toPath().get().toString());
         } else {
-            list.add(n.getId());
+            list.add(n.getId().toString());
         }
-        for (NBootClassLoaderNode d : n.getDependencies()) {
+        for (NClassLoaderNode d : n.getDependencies()) {
             fillStrings(d, list);
         }
     }
 
     public List<String> getClassPathNidStrings() {
         List<String> li = new ArrayList<>();
-        for (NBootClassLoaderNode n : getClassPathNodes()) {
+        for (NClassLoaderNode n : getClassPathNodes()) {
             fillNidStrings(n, li);
         }
         return li;
     }
 
-    public List<NBootClassLoaderNode> getClassPathNodes() {
+    public List<NClassLoaderNode> getClassPathNodes() {
         return classPathNodes;
     }
 

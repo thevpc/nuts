@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.event;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NEnvs;
+
 import net.thevpc.nuts.util.NObservableMap;
 import net.thevpc.nuts.util.NObservableMapListener;
 
@@ -37,17 +37,17 @@ public class DefaultNWorkspaceEventModel {
 
     
     public void addUserPropertyListener(NObservableMapListener<String, Object> listener) {
-        ((NObservableMap<String, Object>) NEnvs.of().getProperties()).addMapListener(listener);
+        ((NObservableMap<String, Object>) NWorkspace.get().getProperties()).addMapListener(listener);
     }
 
     
     public void removeUserPropertyListener(NObservableMapListener<String, Object> listener) {
-        ((NObservableMap<String, Object>) NEnvs.of().getProperties()).removeMapListener(listener);
+        ((NObservableMap<String, Object>) NWorkspace.get().getProperties()).removeMapListener(listener);
     }
 
     
     public List<NObservableMapListener<String, Object>> getUserPropertyListeners() {
-        return ((NObservableMap<String, Object>) NEnvs.of().getProperties()).getMapListeners();
+        return ((NObservableMap<String, Object>) NWorkspace.get().getProperties()).getMapListeners();
     }
 
     

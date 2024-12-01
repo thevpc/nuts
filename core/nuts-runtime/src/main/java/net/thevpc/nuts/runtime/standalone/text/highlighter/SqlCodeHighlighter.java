@@ -51,7 +51,6 @@ public class SqlCodeHighlighter implements NCodeHighlighter {
 
     @Override
     public NText stringToText(String text, NTexts txt) {
-        NSession session=workspace.currentSession();
         List<NText> all = new ArrayList<>();
         StringReaderExt ar = new StringReaderExt(text);
         while (ar.hasNext()) {
@@ -77,11 +76,11 @@ public class SqlCodeHighlighter implements NCodeHighlighter {
                     break;
                 }
                 case '\'': {
-                    all.addAll(Arrays.asList(StringReaderExtUtils.readJSSimpleQuotes(session, ar)));
+                    all.addAll(Arrays.asList(StringReaderExtUtils.readJSSimpleQuotes(ar)));
                     break;
                 }
                 case '"': {
-                    all.addAll(Arrays.asList(StringReaderExtUtils.readJSDoubleQuotesString(session, ar)));
+                    all.addAll(Arrays.asList(StringReaderExtUtils.readJSDoubleQuotesString(ar)));
                     break;
                 }
                 case '0':
@@ -94,12 +93,12 @@ public class SqlCodeHighlighter implements NCodeHighlighter {
                 case '7':
                 case '8':
                 case '9': {
-                    all.addAll(Arrays.asList(StringReaderExtUtils.readNumber(session, ar)));
+                    all.addAll(Arrays.asList(StringReaderExtUtils.readNumber(ar)));
                     break;
                 }
                 case '.':
                 case '-': {
-                    NText[] d = StringReaderExtUtils.readNumber(session, ar);
+                    NText[] d = StringReaderExtUtils.readNumber(ar);
                     if (d != null) {
                         all.addAll(Arrays.asList(d));
                     } else {
@@ -109,9 +108,9 @@ public class SqlCodeHighlighter implements NCodeHighlighter {
                 }
                 case '/': {
                     if (ar.peekChars("//")) {
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashSlashComments(session, ar)));
+                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashSlashComments(ar)));
                     } else if (ar.peekChars("/*")) {
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashStarComments(session, ar)));
+                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashStarComments(ar)));
                     } else {
                         all.add(txt.ofStyled(String.valueOf(ar.readChar()), NTextStyle.separator()));
                     }
@@ -119,9 +118,9 @@ public class SqlCodeHighlighter implements NCodeHighlighter {
                 }
                 default: {
                     if (Character.isWhitespace(ar.peekChar())) {
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(session, ar)));
+                        all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(ar)));
                     } else {
-                        NText[] d = StringReaderExtUtils.readJSIdentifier(session, ar);
+                        NText[] d = StringReaderExtUtils.readJSIdentifier(ar);
                         if (d != null) {
                             if (d.length == 1 && d[0].getType() == NTextType.PLAIN) {
                                 String txt2 = ((NTextPlain) d[0]).getText();

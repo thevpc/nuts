@@ -129,7 +129,6 @@ public abstract class AbstractNUpdateStatsCmd extends NWorkspaceCmdBase<NUpdateS
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NSession session=getWorkspace().currentSession();
         NArg a = cmdLine.peek().get();
         if (a == null) {
             return false;

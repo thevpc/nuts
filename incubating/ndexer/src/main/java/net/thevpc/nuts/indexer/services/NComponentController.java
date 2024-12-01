@@ -1,7 +1,7 @@
 package net.thevpc.nuts.indexer.services;
 
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.env.NEnvConditionBuilder;
+import net.thevpc.nuts.NEnvConditionBuilder;
 import net.thevpc.nuts.indexer.*;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.util.NRef;
@@ -240,7 +240,7 @@ public class NComponentController {
                     if (list.isEmpty()) {
                         Iterator<NDefinition> it = NSearchCmd.of()
                                 .setRepositoryFilter(
-                                        NRepositories.of().filter().byUuid(subscriber.getUuid())
+                                        NRepositoryFilters.of().byUuid(subscriber.getUuid())
                                 )
                                 .addId(id)
                                 .setFailFast(false)

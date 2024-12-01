@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.unix;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.NEnvs;
-import net.thevpc.nuts.env.NLocations;
-import net.thevpc.nuts.env.NShellFamily;
+
+
+import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.shell.NShellHelper;
@@ -31,7 +31,7 @@ public class AnyNixNdi extends BaseSystemNdi {
     }
 
     protected NShellFamily[] getShellGroups() {
-        Set<NShellFamily> all=new LinkedHashSet<>(NEnvs.of().getShellFamilies());
+        Set<NShellFamily> all=new LinkedHashSet<>(NWorkspace.get().getShellFamilies());
         all.retainAll(Arrays.asList(NShellFamily.SH, NShellFamily.FISH));
         return all.toArray(new NShellFamily[0]);
     }
@@ -68,10 +68,10 @@ public class AnyNixNdi extends BaseSystemNdi {
                         factory.ofBuilder().appendJoined(", ",
                                 Arrays.stream(updatedPaths).map(x ->
                                         factory.ofStyled(x.getPath().getName(), NTextStyle.path())).collect(Collectors.toList())),
-                        NLocations.of().getWorkspaceLocation()
+                        NWorkspace.get().getWorkspaceLocation()
                 ));
             }
-            final String sysRcName = NShellHelper.of(NEnvs.of().getShellFamily()).getSysRcName();
+            final String sysRcName = NShellHelper.of(NWorkspace.get().getShellFamily()).getSysRcName();
             NAsk.of()
                     .forBoolean(NMsg.ofC(
                             "```error ATTENTION``` You may need to re-run terminal or issue \"%s\" in your current terminal for new environment to take effect.%n"
@@ -128,7 +128,7 @@ public class AnyNixNdi extends BaseSystemNdi {
     @Override
     protected FreeDesktopEntryWriter createFreeDesktopEntryWriter() {
         return new UnixFreeDesktopEntryWriter(workspace,
-                NEnvs.of().getDesktopPath()==null?null: NPath.of(NEnvs.of().getDesktopPath())
+                NWorkspace.get().getDesktopPath()==null?null: NPath.of(NWorkspace.get().getDesktopPath())
         );
     }
 

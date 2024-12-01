@@ -59,20 +59,17 @@ public abstract class AbstractDefaultNPushCmd extends NWorkspaceCmdBase<NPushCmd
 
     @Override
     public NPushCmd addId(String id) {
-        NSession session=getWorkspace().currentSession();
         return addId(id == null ? null : NId.of(id).get());
     }
 
     @Override
     public NPushCmd addLockedId(String id) {
-        NSession session=getWorkspace().currentSession();
         return addLockedId(id == null ? null : NId.of(id).get());
     }
 
     @Override
     public NPushCmd addId(NId id) {
         if (id == null) {
-            NSession session=getWorkspace().currentSession();
             throw new NNotFoundException(id);
         } else {
             ids.add(id);
@@ -91,7 +88,6 @@ public abstract class AbstractDefaultNPushCmd extends NWorkspaceCmdBase<NPushCmd
     @Override
     public NPushCmd removeId(String id) {
         if (id != null) {
-            NSession session=getWorkspace().currentSession();
             ids.remove(NId.of(id).get());
         }
         return this;
@@ -109,7 +105,6 @@ public abstract class AbstractDefaultNPushCmd extends NWorkspaceCmdBase<NPushCmd
 
     @Override
     public NPushCmd removeLockedId(String id) {
-        NSession session=getWorkspace().currentSession();
         if (id != null) {
             if (lockedIds != null) {
                 lockedIds.remove(NId.of(id).get());
@@ -121,7 +116,6 @@ public abstract class AbstractDefaultNPushCmd extends NWorkspaceCmdBase<NPushCmd
     @Override
     public NPushCmd addLockedId(NId id) {
         if (id == null) {
-            NSession session=getWorkspace().currentSession();
             throw new NNotFoundException(id);
         } else {
             if (lockedIds == null) {
@@ -259,7 +253,6 @@ public abstract class AbstractDefaultNPushCmd extends NWorkspaceCmdBase<NPushCmd
 
     @Override
     public boolean configureFirst(NCmdLine cmdLine) {
-        NSession session=getWorkspace().currentSession();
         NArg a = cmdLine.peek().get();
         if (a == null) {
             return false;

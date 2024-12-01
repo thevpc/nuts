@@ -2,9 +2,10 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.env.NLauncherOptions;
-import net.thevpc.nuts.env.NLocations;
-import net.thevpc.nuts.env.NStoreType;
+
+import net.thevpc.nuts.NLauncherOptions;
+
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NAssert;
@@ -132,7 +133,7 @@ public class NdiScriptOptions implements Cloneable {
             } else {
                 NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
                 nutsApiJarPath = NPath.of(bootConfig.getStoreLocation(nid, NStoreType.LIB));
-                NLocations.of().getDefaultIdFilename(nid);
+                NWorkspace.get().getDefaultIdFilename(nid);
             }
         }
         return nutsApiJarPath;
@@ -147,7 +148,7 @@ public class NdiScriptOptions implements Cloneable {
             } else {
                 NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
                 nutsAppJarPath = NPath.of(bootConfig.getStoreLocation(nid, NStoreType.LIB));
-                NLocations.of().getDefaultIdFilename(nid);
+                NWorkspace.get().getDefaultIdFilename(nid);
             }
         }
         return nutsAppJarPath;
@@ -170,7 +171,7 @@ public class NdiScriptOptions implements Cloneable {
                     bootConfig.getStoreLocation(apiId, NStoreType.BIN)
             );
         } else {
-            return NLocations.of().getStoreLocation(apiId, NStoreType.BIN);
+            return NWorkspace.get().getStoreLocation(apiId, NStoreType.BIN);
         }
     }
 
@@ -185,7 +186,7 @@ public class NdiScriptOptions implements Cloneable {
             bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
             return NPath.of(bootConfig.getStoreLocation(apiId, NStoreType.BIN));
         } else {
-            return NLocations.of().getStoreLocation(apiId, NStoreType.BIN);
+            return NWorkspace.get().getStoreLocation(apiId, NStoreType.BIN);
         }
     }
 
@@ -253,13 +254,13 @@ public class NdiScriptOptions implements Cloneable {
             NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
             return Paths.get(bootConfig.getEffectiveWorkspace());
         } else {
-            return NLocations.of().getWorkspaceLocation().toPath().get();
+            return NWorkspace.get().getWorkspaceLocation().toPath().get();
         }
     }
 
     public NWorkspaceBootConfig loadSwitchWorkspaceLocationConfig(String switchWorkspaceLocation) {
         if (workspaceBootConfig == null) {
-            workspaceBootConfig = NConfigs.of().loadBootConfig(switchWorkspaceLocation, false, true);
+            workspaceBootConfig = NWorkspace.get().loadBootConfig(switchWorkspaceLocation, false, true);
             if (workspaceBootConfig == null) {
                 throw new NIllegalArgumentException(NMsg.ofC("invalid workspace: %s", switchWorkspaceLocation));
             }

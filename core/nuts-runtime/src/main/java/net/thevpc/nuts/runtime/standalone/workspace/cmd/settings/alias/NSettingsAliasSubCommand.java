@@ -8,7 +8,8 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.alias;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.env.NShellFamily;
+
+import net.thevpc.nuts.NShellFamily;
 import net.thevpc.nuts.format.NPropertiesFormat;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.util.NLiteral;
@@ -44,7 +45,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                 }
             }
             if (cmdLine.isExecMode()) {
-                List<NCustomCmd> r = NCommands.of().findAllCommands()
+                List<NCustomCmd> r = NWorkspace.get().findAllCommands()
                         .stream()
                         .filter(new Predicate<NCustomCmd>() {
                             @Override
@@ -91,9 +92,9 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
         } else if (cmdLine.next("remove alias","alias remove").isPresent()) {
             if (cmdLine.isExecMode()) {
                 while (cmdLine.hasNext()) {
-                    NCommands.of().removeCommand(cmdLine.next().get().toString());
+                    NWorkspace.get().removeCommand(cmdLine.next().get().toString());
                 }
-                NConfigs.of().save();
+                NWorkspace.get().saveConfig();
             }
             return true;
         } else if (cmdLine.next("add alias","alias add").isPresent()) {
@@ -127,7 +128,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                     cmdLine.next().get();
                 }
                 for (AliasInfo value : toAdd.values()) {
-                    NCommands.of()
+                    workspace
                             .addCommand(
                                     new NCommandConfig()
                                             .setCommand(NCmdLine.of(value.command, NShellFamily.BASH).setExpandSimpleOptions(false).toStringArray())
@@ -137,7 +138,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                                                             .setExpandSimpleOptions(false).toStringList())
                             );
                 }
-                NConfigs.of().save();
+                NWorkspace.get().saveConfig();
             }
             return true;
         }

@@ -30,8 +30,9 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.elem.NEDesc;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.env.NIndexStore;
-import net.thevpc.nuts.env.NLocations;
+
+import net.thevpc.nuts.NIndexStore;
+
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.util.NIteratorBuilder;
@@ -54,7 +55,6 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
 
     @Override
     public NIterator<NId> searchVersions(NId id) {
-        NSession session=getRepository().getWorkspace().currentSession();
         return NIteratorBuilder.ofSupplier(
                 () -> {
                     if (isInaccessible()) {
@@ -90,7 +90,6 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
 
     @Override
     public NIterator<NId> search(NIdFilter filter) {
-        NSession session=getWorkspace().currentSession();
         NElements elems = NElements.of();
         return NIteratorBuilder.ofSupplier(
                 () -> {
@@ -103,7 +102,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
                         Map[] array = elems.json().parse(new InputStreamReader(NPath.of(uu).getInputStream()), Map[].class);
                         return Arrays.stream(array)
                                 .map(s -> NId.of(s.get("stringId").toString()).get())
-                                .filter(filter != null ? new NIdFilterToNIdPredicate(filter, session) : NPredicates.always())
+                                .filter(filter != null ? new NIdFilterToNIdPredicate(filter) : NPredicates.always())
                                 .iterator();
                     } catch (UncheckedIOException | NIOException e) {
                         setInaccessible();
@@ -120,7 +119,6 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
     }
 
     private NPath getIndexURL() {
-        NSession session=getRepository().getWorkspace().currentSession();
         return NPath.of("http://localhost:7070/indexer/");
     }
 
@@ -129,7 +127,6 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
         if (isInaccessible()) {
             return this;
         }
-        NSession session=getRepository().getWorkspace().currentSession();
         String uu = getIndexURL().resolve( NConstants.Folders.ID).resolve("delete")
                 + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s&version=%s"
                         + "&os=%s&osdist=%s&arch=%s&face=%s"/*&alternative=%s*/, getRepository().getUuid(),
@@ -154,7 +151,6 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
         if (isInaccessible()) {
             return this;
         }
-        NSession session=getRepository().getWorkspace().currentSession();
         String uu = getIndexURL().resolve(NConstants.Folders.ID).resolve("addData")
                 + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s&version=%s"
                         + "&os=%s&osdist=%s&arch=%s&face=%s"/*&alternative=%s*/, getRepository().getUuid(),
@@ -176,9 +172,8 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
 
     @Override
     public NIndexStore subscribe() {
-        NSession session=getRepository().getWorkspace().currentSession();
         String uu = "http://localhost:7070/indexer/subscription/subscribe?workspaceLocation="
-                + CoreIOUtils.urlEncodeString(NLocations.of().getWorkspaceLocation().toString())
+                + CoreIOUtils.urlEncodeString(NWorkspace.get().getWorkspaceLocation().toString())
                 + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid());
         try {
             NPath.of(uu).getInputStream();
@@ -190,9 +185,8 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
 
     @Override
     public NIndexStore unsubscribe() {
-        NSession session=getRepository().getWorkspace().currentSession();
         String uu = "http://localhost:7070/indexer/subscription/unsubscribe?workspaceLocation="
-                + CoreIOUtils.urlEncodeString(NLocations.of().getWorkspaceLocation().toString())
+                + CoreIOUtils.urlEncodeString(NWorkspace.get().getWorkspaceLocation().toString())
                 + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid());
         try {
             NPath.of(uu).getInputStream();
@@ -204,9 +198,8 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
 
     @Override
     public boolean isSubscribed() {
-        NSession session = getRepository().getWorkspace().currentSession();
         String uu = "http://localhost:7070/indexer/subscription/isSubscribed?workspaceLocation="
-                + CoreIOUtils.urlEncodeString(NLocations.of().getWorkspaceLocation().toString())
+                + CoreIOUtils.urlEncodeString(NWorkspace.get().getWorkspaceLocation().toString())
                 + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid());
         try {
             return new Scanner(NPath.of(uu).getInputStream()).nextBoolean();

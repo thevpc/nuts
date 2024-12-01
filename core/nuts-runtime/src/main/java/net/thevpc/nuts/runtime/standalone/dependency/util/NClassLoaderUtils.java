@@ -30,34 +30,42 @@ import java.net.URLClassLoader;
 import java.util.*;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NBootClassLoaderNode;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.runtime.standalone.util.NDefaultClassLoaderNode;
 
 /**
  * @author thevpc
  */
 public final class NClassLoaderUtils {
 
-    public static NBootClassLoaderNode definitionToClassLoaderNode(NDefinition def, NRepositoryFilter repositoryFilter) {
+    public static NClassLoaderNode definitionToClassLoaderNodeSafer(NDefinition def, NRepositoryFilter repositoryFilter) {
+        try {
+            return definitionToClassLoaderNode(def, repositoryFilter);
+        }catch (NNotFoundException ex){
+            return definitionToClassLoaderNode(def, null);
+        }
+    }
+
+    public static NClassLoaderNode definitionToClassLoaderNode(NDefinition def, NRepositoryFilter repositoryFilter) {
         def.getDependencies().get();
         def.getContent().get();
         def.getContent().flatMap(NPath::toURL).get();
-        return new NBootClassLoaderNode(
-                def.getId().toString(),
+        return new NDefaultClassLoaderNode(
+                def.getId(),
                 def.getContent().flatMap(NPath::toURL).orNull(),
                 true,
                 true,
                 def.getDependencies().get().transitiveWithSource().stream().map(x -> toClassLoaderNodeWithOptional(x, false, repositoryFilter))
                         .filter(Objects::nonNull)
-                        .toArray(NBootClassLoaderNode[]::new)
+                        .toArray(NClassLoaderNode[]::new)
         );
     }
 
-    private static NBootClassLoaderNode toClassLoaderNode(NDependencyTreeNode d, boolean withChildren, NRepositoryFilter repositoryFilter) {
+    private static NClassLoaderNode toClassLoaderNode(NDependencyTreeNode d, boolean withChildren, NRepositoryFilter repositoryFilter) {
         return toClassLoaderNodeWithOptional(d, false, withChildren, repositoryFilter);
     }
 
-    private static NBootClassLoaderNode toClassLoaderNodeWithOptional(NDependency d, boolean isOptional, NRepositoryFilter repositoryFilter) {
+    private static NClassLoaderNode toClassLoaderNodeWithOptional(NDependency d, boolean isOptional, NRepositoryFilter repositoryFilter) {
         NPath cc = null;
         if (!isOptional) {
             if (!NDependencyUtils.isRequiredDependency(d)) {
@@ -75,10 +83,10 @@ public final class NClassLoaderUtils {
         if (cc != null) {
             URL url = cc.toURL().orNull();
             if (url != null) {
-                List<NBootClassLoaderNode> aa = new ArrayList<>();
-                return new NBootClassLoaderNode(
-                        id.toString(), url, true, true,
-                        aa.toArray(new NBootClassLoaderNode[0])
+                List<NClassLoaderNode> aa = new ArrayList<>();
+                return new NDefaultClassLoaderNode(
+                        id, url, true, true,
+                        aa.toArray(new NClassLoaderNode[0])
                 );
             }
         }
@@ -88,7 +96,7 @@ public final class NClassLoaderUtils {
         throw new NNotFoundException(id);
     }
 
-    private static NBootClassLoaderNode toClassLoaderNodeWithOptional(NDependencyTreeNode d, boolean isOptional, boolean withChildren, NRepositoryFilter repositoryFilter) {
+    private static NClassLoaderNode toClassLoaderNodeWithOptional(NDependencyTreeNode d, boolean isOptional, boolean withChildren, NRepositoryFilter repositoryFilter) {
         NPath cc = null;
         if (!isOptional) {
             if (!NDependencyUtils.isRequiredDependency(d.getDependency())) {
@@ -105,18 +113,18 @@ public final class NClassLoaderUtils {
         if (cc != null) {
             URL url = cc.toURL().orNull();
             if (url != null) {
-                List<NBootClassLoaderNode> aa = new ArrayList<>();
+                List<NClassLoaderNode> aa = new ArrayList<>();
                 if (withChildren) {
                     for (NDependencyTreeNode child : d.getChildren()) {
-                        NBootClassLoaderNode q = toClassLoaderNodeWithOptional(child, isOptional, true, repositoryFilter);
+                        NClassLoaderNode q = toClassLoaderNodeWithOptional(child, isOptional, true, repositoryFilter);
                         if (q != null) {
                             aa.add(q);
                         }
                     }
                 }
-                return new NBootClassLoaderNode(
-                        d.getDependency().toId().toString(), url, true, true,
-                        aa.toArray(new NBootClassLoaderNode[0])
+                return new NDefaultClassLoaderNode(
+                        d.getDependency().toId(), url, true, true,
+                        aa.toArray(new NClassLoaderNode[0])
                 );
             }
         }

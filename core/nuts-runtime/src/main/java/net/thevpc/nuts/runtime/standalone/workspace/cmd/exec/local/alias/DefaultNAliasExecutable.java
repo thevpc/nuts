@@ -37,14 +37,12 @@ public class DefaultNAliasExecutable extends AbstractNExecutableInformationExt {
 
     @Override
     public int execute() {
-        NSession session = workspace.currentSession();
         return command.exec(args, o);
     }
 
 
     @Override
     public NText getHelpText() {
-        NSession session = workspace.currentSession();
         NText t = command.getHelpText();
         if (t != null) {
             return t;

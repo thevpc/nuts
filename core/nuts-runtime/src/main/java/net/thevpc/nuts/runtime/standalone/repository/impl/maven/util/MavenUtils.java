@@ -25,7 +25,6 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.env.*;
 import net.thevpc.nuts.runtime.standalone.*;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
@@ -65,19 +64,19 @@ public class MavenUtils {
     }
 
     public static MavenUtils of() {
-        MavenUtils wp = (MavenUtils) NEnvs.of().getProperties().get(MavenUtils.class.getName());
+        MavenUtils wp = (MavenUtils) NWorkspace.get().getProperties().get(MavenUtils.class.getName());
         if (wp == null) {
             wp = new MavenUtils();
-            NEnvs.of().setProperty(MavenUtils.class.getName(), wp);
+            NWorkspace.get().setProperty(MavenUtils.class.getName(), wp);
         }
         return wp;
     }
 
     public static NPomIdResolver createPomIdResolver(NWorkspace workspace) {
-        NPomIdResolver wp = (NPomIdResolver) NEnvs.of().getProperties().get(NPomIdResolver.class.getName());
+        NPomIdResolver wp = (NPomIdResolver) NWorkspace.get().getProperties().get(NPomIdResolver.class.getName());
         if (wp == null) {
             wp = new NPomIdResolver(workspace);
-            NEnvs.of().setProperty(NPomIdResolver.class.getName(), wp);
+            NWorkspace.get().setProperty(NPomIdResolver.class.getName(), wp);
         }
         return wp;
     }
@@ -635,8 +634,8 @@ public class MavenUtils {
 //                session).map(NutsFunction.of(this::toNutsId, "PomId->NutsId")).build();
 //    }
 
-    public MavenMetadata parseMavenMetaData(InputStream metadataStream, NSession session) {
-        MavenMetadata s = new MavenMetadataParser(session).parseMavenMetaData(metadataStream);
+    public MavenMetadata parseMavenMetaData(InputStream metadataStream) {
+        MavenMetadata s = new MavenMetadataParser().parseMavenMetaData(metadataStream);
         if (s == null) {
             return s;
         }
