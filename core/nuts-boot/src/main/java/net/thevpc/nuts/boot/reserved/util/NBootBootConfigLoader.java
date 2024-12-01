@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.boot.reserved.util;
 
-import net.thevpc.nuts.boot.NBootOptionsBoot;
+import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.boot.NBootWorkspace;
 import net.thevpc.nuts.boot.reserved.compat.NReservedBootConfigLoaderOld;
 import net.thevpc.nuts.boot.NBootHomeLocation;
@@ -44,7 +44,7 @@ import java.util.logging.Level;
  */
 public final class NBootBootConfigLoader {
 
-    public static NBootOptionsBoot loadBootConfig(String workspaceLocation, NBootLog bLog) {
+    public static NBootOptionsInfo loadBootConfig(String workspaceLocation, NBootLog bLog) {
         File bootFile = new File(workspaceLocation, NBootConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
         try {
             if (bootFile.isFile()) {
@@ -63,10 +63,10 @@ public final class NBootBootConfigLoader {
         return null;
     }
 
-    private static NBootOptionsBoot loadBootConfigJSON(String json, NBootLog bLog) {
+    private static NBootOptionsInfo loadBootConfigJSON(String json, NBootLog bLog) {
         NBootJsonParser parser = new NBootJsonParser(new StringReader(json));
         Map<String, Object> jsonObject = parser.parseObject();
-        NBootOptionsBoot c = new NBootOptionsBoot();
+        NBootOptionsInfo c = new NBootOptionsInfo();
         String configVersion = ((String) jsonObject.get("configVersion"));
         if (NBootStringUtils.isBlank(configVersion)) {
             configVersion = ((String) jsonObject.get("createApiVersion"));

@@ -42,7 +42,7 @@ import java.util.function.Supplier;
  * @app.category Internal
  * @since 0.5.4
  */
-public final class NBootOptionsBoot {
+public final class NBootOptionsInfo {
 
     private static final long serialVersionUID = 1;
     /**
@@ -467,56 +467,56 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setInitLaunchers(Boolean initLaunchers) {
+    public NBootOptionsInfo setInitLaunchers(Boolean initLaunchers) {
         this.initLaunchers = initLaunchers;
         return this;
     }
 
 
-    public NBootOptionsBoot setInitScripts(Boolean initScripts) {
+    public NBootOptionsInfo setInitScripts(Boolean initScripts) {
         this.initScripts = initScripts;
         return this;
     }
 
 
-    public NBootOptionsBoot setInitPlatforms(Boolean initPlatforms) {
+    public NBootOptionsInfo setInitPlatforms(Boolean initPlatforms) {
         this.initPlatforms = initPlatforms;
         return this;
     }
 
 
-    public NBootOptionsBoot setInitJava(Boolean initJava) {
+    public NBootOptionsInfo setInitJava(Boolean initJava) {
         this.initJava = initJava;
         return this;
     }
 
 
-    public NBootOptionsBoot setIsolationLevel(String isolationLevel) {
+    public NBootOptionsInfo setIsolationLevel(String isolationLevel) {
         this.isolationLevel = isolationLevel;
         return this;
     }
 
 
-    public NBootOptionsBoot setDesktopLauncher(String desktopLauncher) {
+    public NBootOptionsInfo setDesktopLauncher(String desktopLauncher) {
         this.desktopLauncher = desktopLauncher;
         return this;
     }
 
 
-    public NBootOptionsBoot setMenuLauncher(String menuLauncher) {
+    public NBootOptionsInfo setMenuLauncher(String menuLauncher) {
         this.menuLauncher = menuLauncher;
         return this;
     }
 
 
-    public NBootOptionsBoot setUserLauncher(String userLauncher) {
+    public NBootOptionsInfo setUserLauncher(String userLauncher) {
         this.userLauncher = userLauncher;
         return this;
     }
 
 
-    public NBootOptionsBoot copy() {
-        return new NBootOptionsBoot().setAll(this);
+    public NBootOptionsInfo copy() {
+        return new NBootOptionsInfo().setAll(this);
     }
 
 
@@ -531,7 +531,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setApiVersion(String apiVersion) {
+    public NBootOptionsInfo setApiVersion(String apiVersion) {
         this.apiVersion = apiVersion;
         return this;
     }
@@ -548,7 +548,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setApplicationArguments(List<String> applicationArguments) {
+    public NBootOptionsInfo setApplicationArguments(List<String> applicationArguments) {
         this.applicationArguments = applicationArguments;
         return this;
     }
@@ -565,7 +565,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setArchetype(String archetype) {
+    public NBootOptionsInfo setArchetype(String archetype) {
         this.archetype = archetype;
         return this;
     }
@@ -582,7 +582,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setClassLoaderSupplier(Supplier<ClassLoader> provider) {
+    public NBootOptionsInfo setClassLoaderSupplier(Supplier<ClassLoader> provider) {
         this.classLoaderSupplier = provider;
         return this;
     }
@@ -599,7 +599,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setConfirm(String confirm) {
+    public NBootOptionsInfo setConfirm(String confirm) {
         this.confirm = confirm;
         return this;
     }
@@ -621,7 +621,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setDry(Boolean dry) {
+    public NBootOptionsInfo setDry(Boolean dry) {
         this.dry = dry;
         return this;
     }
@@ -634,7 +634,7 @@ public final class NBootOptionsBoot {
      * @since 0.8.4
      */
 
-    public NBootOptionsBoot setShowStacktrace(Boolean showStacktrace) {
+    public NBootOptionsInfo setShowStacktrace(Boolean showStacktrace) {
         this.showStacktrace = showStacktrace;
         return this;
     }
@@ -651,7 +651,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setCreationTime(Instant creationTime) {
+    public NBootOptionsInfo setCreationTime(Instant creationTime) {
         this.creationTime = creationTime;
         return this;
     }
@@ -668,7 +668,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setExcludedExtensions(List<String> excludedExtensions) {
+    public NBootOptionsInfo setExcludedExtensions(List<String> excludedExtensions) {
         this.excludedExtensions = excludedExtensions;
         return this;
     }
@@ -685,7 +685,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setExecutionType(String executionType) {
+    public NBootOptionsInfo setExecutionType(String executionType) {
         this.executionType = executionType;
         return this;
     }
@@ -701,7 +701,7 @@ public final class NBootOptionsBoot {
      * @param runAs new value
      * @return {@code this} instance
      */
-    public NBootOptionsBoot setRunAs(String runAs) {
+    public NBootOptionsInfo setRunAs(String runAs) {
         this.runAs = runAs;
         return this;
     }
@@ -718,7 +718,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setExecutorOptions(List<String> executorOptions) {
+    public NBootOptionsInfo setExecutorOptions(List<String> executorOptions) {
         this.executorOptions = executorOptions;
         return this;
     }
@@ -734,7 +734,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setHomeLocations(Map<NBootHomeLocation, String> homeLocations) {
+    public NBootOptionsInfo setHomeLocations(Map<NBootHomeLocation, String> homeLocations) {
         if (homeLocations != null) {
             if (this.homeLocations == null) {
                 this.homeLocations = new HashMap<>();
@@ -752,7 +752,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setJavaCommand(String javaCommand) {
+    public NBootOptionsInfo setJavaCommand(String javaCommand) {
         this.javaCommand = javaCommand;
         return this;
     }
@@ -769,7 +769,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setJavaOptions(String javaOptions) {
+    public NBootOptionsInfo setJavaOptions(String javaOptions) {
         this.javaOptions = javaOptions;
         return this;
     }
@@ -786,7 +786,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setLogConfig(NBootLogConfig logConfig) {
+    public NBootOptionsInfo setLogConfig(NBootLogConfig logConfig) {
         this.logConfig = logConfig == null ? null : logConfig.copy();
         return this;
     }
@@ -803,7 +803,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setName(String workspaceName) {
+    public NBootOptionsInfo setName(String workspaceName) {
         this.name = workspaceName;
         return this;
     }
@@ -820,7 +820,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setOpenMode(String openMode) {
+    public NBootOptionsInfo setOpenMode(String openMode) {
         this.openMode = openMode;
         return this;
     }
@@ -837,7 +837,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setOutputFormat(String outputFormat) {
+    public NBootOptionsInfo setOutputFormat(String outputFormat) {
         this.outputFormat = outputFormat;
         return this;
     }
@@ -854,7 +854,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setOutputFormatOptions(List<String> options) {
+    public NBootOptionsInfo setOutputFormatOptions(List<String> options) {
         if (options != null) {
             if (outputFormatOptions == null) {
                 outputFormatOptions = new ArrayList<>();
@@ -867,7 +867,7 @@ public final class NBootOptionsBoot {
         return this;
     }
 
-    public NBootOptionsBoot setOutputFormatOptions(String... options) {
+    public NBootOptionsInfo setOutputFormatOptions(String... options) {
         if (outputFormatOptions == null) {
             outputFormatOptions = new ArrayList<>();
         }
@@ -887,7 +887,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setCredentials(char[] credentials) {
+    public NBootOptionsInfo setCredentials(char[] credentials) {
         this.credentials = credentials;
         return this;
     }
@@ -904,7 +904,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setRepositoryStoreStrategy(String repositoryStoreStrategy) {
+    public NBootOptionsInfo setRepositoryStoreStrategy(String repositoryStoreStrategy) {
         this.repositoryStoreStrategy = repositoryStoreStrategy;
         return this;
     }
@@ -921,14 +921,14 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setRuntimeId(String runtimeId) {
+    public NBootOptionsInfo setRuntimeId(String runtimeId) {
         this.runtimeId = runtimeId;
         return this;
     }
 
 
     public String getStoreType(String folder) {
-        return storeLocations == null ? null : storeLocations.get(folder);
+        return storeLocations == null ? null : storeLocations.get(NBootUtils.enumId(folder));
     }
 
 
@@ -943,7 +943,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setStoreLayout(String storeLayout) {
+    public NBootOptionsInfo setStoreLayout(String storeLayout) {
         this.storeLayout = storeLayout;
         return this;
     }
@@ -960,7 +960,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setStoreStrategy(String storeStrategy) {
+    public NBootOptionsInfo setStoreStrategy(String storeStrategy) {
         this.storeStrategy = storeStrategy;
         return this;
     }
@@ -971,7 +971,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setStoreLocations(Map<String, String> storeLocations) {
+    public NBootOptionsInfo setStoreLocations(Map<String, String> storeLocations) {
         if (storeLocations != null) {
             if (this.storeLocations == null) {
                 this.storeLocations = new HashMap<>();
@@ -996,7 +996,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setTerminalMode(String terminalMode) {
+    public NBootOptionsInfo setTerminalMode(String terminalMode) {
         this.terminalMode = terminalMode;
         return this;
     }
@@ -1013,7 +1013,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setRepositories(List<String> repositories) {
+    public NBootOptionsInfo setRepositories(List<String> repositories) {
         this.repositories = repositories;
         return this;
     }
@@ -1035,7 +1035,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setWorkspace(String workspace) {
+    public NBootOptionsInfo setWorkspace(String workspace) {
         this.workspace = workspace;
         return this;
     }
@@ -1052,7 +1052,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setDebug(String debug) {
+    public NBootOptionsInfo setDebug(String debug) {
         this.debug = debug;
         return this;
     }
@@ -1069,7 +1069,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setSystem(Boolean system) {
+    public NBootOptionsInfo setSystem(Boolean system) {
         this.system = system;
         return this;
     }
@@ -1086,7 +1086,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setGui(Boolean gui) {
+    public NBootOptionsInfo setGui(Boolean gui) {
         this.gui = gui;
         return this;
     }
@@ -1103,7 +1103,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setInherited(Boolean inherited) {
+    public NBootOptionsInfo setInherited(Boolean inherited) {
         this.inherited = inherited;
         return this;
     }
@@ -1120,7 +1120,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setReadOnly(Boolean readOnly) {
+    public NBootOptionsInfo setReadOnly(Boolean readOnly) {
         this.readOnly = readOnly;
         return this;
     }
@@ -1137,7 +1137,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setRecover(Boolean recover) {
+    public NBootOptionsInfo setRecover(Boolean recover) {
         this.recover = recover;
         return this;
     }
@@ -1154,7 +1154,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setReset(Boolean reset) {
+    public NBootOptionsInfo setReset(Boolean reset) {
         this.reset = reset;
         return this;
     }
@@ -1165,7 +1165,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setCommandVersion(Boolean version) {
+    public NBootOptionsInfo setCommandVersion(Boolean version) {
         this.commandVersion = version;
         return this;
     }
@@ -1176,7 +1176,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setCommandHelp(Boolean help) {
+    public NBootOptionsInfo setCommandHelp(Boolean help) {
         this.commandHelp = help;
         return this;
     }
@@ -1193,7 +1193,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setInstallCompanions(Boolean skipInstallCompanions) {
+    public NBootOptionsInfo setInstallCompanions(Boolean skipInstallCompanions) {
         this.installCompanions = skipInstallCompanions;
         return this;
     }
@@ -1210,7 +1210,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setSkipWelcome(Boolean skipWelcome) {
+    public NBootOptionsInfo setSkipWelcome(Boolean skipWelcome) {
         this.skipWelcome = skipWelcome;
         return this;
     }
@@ -1221,7 +1221,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setOutLinePrefix(String outLinePrefix) {
+    public NBootOptionsInfo setOutLinePrefix(String outLinePrefix) {
         this.outLinePrefix = outLinePrefix;
         return this;
     }
@@ -1232,7 +1232,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setErrLinePrefix(String errLinePrefix) {
+    public NBootOptionsInfo setErrLinePrefix(String errLinePrefix) {
         this.errLinePrefix = errLinePrefix;
         return this;
     }
@@ -1249,7 +1249,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setSkipBoot(Boolean skipBoot) {
+    public NBootOptionsInfo setSkipBoot(Boolean skipBoot) {
         this.skipBoot = skipBoot;
         return this;
     }
@@ -1266,7 +1266,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setTrace(Boolean trace) {
+    public NBootOptionsInfo setTrace(Boolean trace) {
         this.trace = trace;
         return this;
     }
@@ -1276,7 +1276,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setProgressOptions(String progressOptions) {
+    public NBootOptionsInfo setProgressOptions(String progressOptions) {
         this.progressOptions = progressOptions;
         return this;
     }
@@ -1287,7 +1287,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setCached(Boolean cached) {
+    public NBootOptionsInfo setCached(Boolean cached) {
         this.cached = cached;
         return this;
     }
@@ -1298,7 +1298,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setIndexed(Boolean indexed) {
+    public NBootOptionsInfo setIndexed(Boolean indexed) {
         this.indexed = indexed;
         return this;
     }
@@ -1309,7 +1309,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setTransitive(Boolean transitive) {
+    public NBootOptionsInfo setTransitive(Boolean transitive) {
         this.transitive = transitive;
         return this;
     }
@@ -1320,7 +1320,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setBot(Boolean bot) {
+    public NBootOptionsInfo setBot(Boolean bot) {
         this.bot = bot;
         return this;
     }
@@ -1331,7 +1331,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setPreviewRepo(Boolean bot) {
+    public NBootOptionsInfo setPreviewRepo(Boolean bot) {
         this.previewRepo = bot;
         return this;
     }
@@ -1342,7 +1342,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setFetchStrategy(String fetchStrategy) {
+    public NBootOptionsInfo setFetchStrategy(String fetchStrategy) {
         this.fetchStrategy = fetchStrategy;
         return this;
     }
@@ -1353,7 +1353,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setStdin(InputStream stdin) {
+    public NBootOptionsInfo setStdin(InputStream stdin) {
         this.stdin = stdin;
         return this;
     }
@@ -1364,7 +1364,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setStdout(PrintStream stdout) {
+    public NBootOptionsInfo setStdout(PrintStream stdout) {
         this.stdout = stdout;
         return this;
     }
@@ -1375,7 +1375,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setStderr(PrintStream stderr) {
+    public NBootOptionsInfo setStderr(PrintStream stderr) {
         this.stderr = stderr;
         return this;
     }
@@ -1386,7 +1386,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setExecutorService(ExecutorService executorService) {
+    public NBootOptionsInfo setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
         return this;
     }
@@ -1397,7 +1397,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setExpireTime(Instant expireTime) {
+    public NBootOptionsInfo setExpireTime(Instant expireTime) {
         this.expireTime = expireTime;
         return this;
     }
@@ -1408,7 +1408,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setSkipErrors(Boolean value) {
+    public NBootOptionsInfo setSkipErrors(Boolean value) {
         this.skipErrors = value;
         return this;
     }
@@ -1418,7 +1418,7 @@ public final class NBootOptionsBoot {
         return switchWorkspace;
     }
 
-    public NBootOptionsBoot setSwitchWorkspace(Boolean switchWorkspace) {
+    public NBootOptionsInfo setSwitchWorkspace(Boolean switchWorkspace) {
         this.switchWorkspace = switchWorkspace;
         return this;
     }
@@ -1429,7 +1429,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setErrors(List<String> errors) {
+    public NBootOptionsInfo setErrors(List<String> errors) {
         this.errors = errors;
         return this;
     }
@@ -1440,7 +1440,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setCustomOptions(List<String> properties) {
+    public NBootOptionsInfo setCustomOptions(List<String> properties) {
         this.customOptions = properties;
         return this;
     }
@@ -1451,7 +1451,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setLocale(String locale) {
+    public NBootOptionsInfo setLocale(String locale) {
         this.locale = locale;
         return this;
     }
@@ -1462,13 +1462,13 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setTheme(String theme) {
+    public NBootOptionsInfo setTheme(String theme) {
         this.theme = theme;
         return this;
     }
 
 
-    public NBootOptionsBoot setAll(NBootOptionsBoot other) {
+    public NBootOptionsInfo setAll(NBootOptionsInfo other) {
         this.setApiVersion(other.getApiVersion());
         this.setRuntimeId(other.getRuntimeId());
         this.setJavaCommand(other.getJavaCommand());
@@ -1559,7 +1559,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setAllPresent(NBootOptionsBoot o) {
+    public NBootOptionsInfo setAllPresent(NBootOptionsInfo o) {
         if (o != null) {
             if (o.getApiVersion() != null) {
                 this.setApiVersion(o.getApiVersion());
@@ -1830,7 +1830,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setSharedInstance(Boolean sharedInstance) {
+    public NBootOptionsInfo setSharedInstance(Boolean sharedInstance) {
         this.sharedInstance = sharedInstance;
         return this;
     }
@@ -1842,7 +1842,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setUserName(String username) {
+    public NBootOptionsInfo setUserName(String username) {
         this.userName = username;
         return this;
     }
@@ -1855,7 +1855,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setStoreLocation(String location, String value) {
+    public NBootOptionsInfo setStoreLocation(String location, String value) {
         if (NBootStringUtils.isBlank(value)) {
             if (storeLocations != null) {
                 storeLocations.remove(location);
@@ -1877,7 +1877,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot setHomeLocation(NBootHomeLocation location, String value) {
+    public NBootOptionsInfo setHomeLocation(NBootHomeLocation location, String value) {
         if (NBootStringUtils.isBlank(value)) {
             if (homeLocations != null) {
                 homeLocations.remove(location);
@@ -1898,7 +1898,7 @@ public final class NBootOptionsBoot {
      * @return {@code this} instance
      */
 
-    public NBootOptionsBoot addOutputFormatOptions(String... options) {
+    public NBootOptionsInfo addOutputFormatOptions(String... options) {
         if (options != null) {
             for (String option : options) {
                 if (option != null) {
@@ -1921,7 +1921,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setDependencySolver(String dependencySolver) {
+    public NBootOptionsInfo setDependencySolver(String dependencySolver) {
         this.dependencySolver = dependencySolver;
         return this;
     }
@@ -1957,7 +1957,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot unsetRuntimeOptions() {
+    public NBootOptionsInfo unsetRuntimeOptions() {
         setCommandHelp(null);
         setCommandVersion(null);
         setOpenMode(null);
@@ -1973,7 +1973,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot unsetCreationOptions() {
+    public NBootOptionsInfo unsetCreationOptions() {
         setName(null);
         setArchetype(null);
         setStoreLayout(null);
@@ -1986,7 +1986,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot unsetExportedOptions() {
+    public NBootOptionsInfo unsetExportedOptions() {
         setJavaCommand(null);
         setJavaOptions(null);
         setWorkspace(null);
@@ -2039,7 +2039,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setBootRepositories(String bootRepositories) {
+    public NBootOptionsInfo setBootRepositories(String bootRepositories) {
         this.bootRepositories = NBootStringUtils.trimToNull(bootRepositories);
         return this;
     }
@@ -2049,7 +2049,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setRuntimeBootDependencyNode(NBootClassLoaderNode runtimeBootDependencyNode) {
+    public NBootOptionsInfo setRuntimeBootDependencyNode(NBootClassLoaderNode runtimeBootDependencyNode) {
         this.runtimeBootDependencyNode = runtimeBootDependencyNode;
         return this;
     }
@@ -2059,7 +2059,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setExtensionBootDescriptors(List<NBootDescriptor> extensionBootDescriptors) {
+    public NBootOptionsInfo setExtensionBootDescriptors(List<NBootDescriptor> extensionBootDescriptors) {
         this.extensionBootDescriptors = NBootUtils.nonNullList(extensionBootDescriptors);
         return this;
     }
@@ -2069,7 +2069,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setExtensionBootDependencyNodes(List<NBootClassLoaderNode> extensionBootDependencyNodes) {
+    public NBootOptionsInfo setExtensionBootDependencyNodes(List<NBootClassLoaderNode> extensionBootDependencyNodes) {
         this.extensionBootDependencyNodes = NBootUtils.nonNullList(extensionBootDependencyNodes);
         return this;
     }
@@ -2079,7 +2079,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setBootWorkspaceFactory(NBootWorkspaceFactory bootWorkspaceFactory) {
+    public NBootOptionsInfo setBootWorkspaceFactory(NBootWorkspaceFactory bootWorkspaceFactory) {
         this.bootWorkspaceFactory = bootWorkspaceFactory;
         return this;
     }
@@ -2089,7 +2089,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setClassWorldURLs(List<URL> classWorldURLs) {
+    public NBootOptionsInfo setClassWorldURLs(List<URL> classWorldURLs) {
         this.classWorldURLs = NBootUtils.nonNullList(classWorldURLs);
         return this;
     }
@@ -2099,7 +2099,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setClassWorldLoader(ClassLoader classWorldLoader) {
+    public NBootOptionsInfo setClassWorldLoader(ClassLoader classWorldLoader) {
         this.classWorldLoader = classWorldLoader;
         return this;
     }
@@ -2109,7 +2109,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setUuid(String uuid) {
+    public NBootOptionsInfo setUuid(String uuid) {
         this.uuid = NBootStringUtils.trimToNull(uuid);
         return this;
     }
@@ -2119,7 +2119,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setExtensionsSet(Set<String> extensionsSet) {
+    public NBootOptionsInfo setExtensionsSet(Set<String> extensionsSet) {
         this.extensionsSet = NBootUtils.nonNullSet(extensionsSet);
         return this;
     }
@@ -2129,7 +2129,7 @@ public final class NBootOptionsBoot {
     }
 
 
-    public NBootOptionsBoot setRuntimeBootDescriptor(NBootDescriptor runtimeBootDescriptor) {
+    public NBootOptionsInfo setRuntimeBootDescriptor(NBootDescriptor runtimeBootDescriptor) {
         this.runtimeBootDescriptor = runtimeBootDescriptor;
         return this;
     }

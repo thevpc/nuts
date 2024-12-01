@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.boot.reserved.util;
 
-import net.thevpc.nuts.boot.NBootOptionsBoot;
+import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.boot.NBootWorkspaceFactory;
 
 import java.util.Comparator;
@@ -37,9 +37,9 @@ import java.util.Comparator;
  */
 public final class NBootWorkspaceFactoryComparator implements Comparator<NBootWorkspaceFactory> {
 
-    private final NBootOptionsBoot options;
+    private final NBootOptionsInfo options;
 
-    public NBootWorkspaceFactoryComparator(NBootOptionsBoot options) {
+    public NBootWorkspaceFactoryComparator(NBootOptionsInfo options) {
         this.options = options;
     }
 

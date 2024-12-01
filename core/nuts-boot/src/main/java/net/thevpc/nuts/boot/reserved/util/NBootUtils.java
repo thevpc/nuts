@@ -285,7 +285,7 @@ public final class NBootUtils {
         return false;
     }
 
-    public static String getHome(String storeFolder, NBootOptionsBoot bOptions) {
+    public static String getHome(String storeFolder, NBootOptionsInfo bOptions) {
         return (firstNonNull(bOptions.getSystem(), false) ?
                 NBootPlatformHome.ofSystem(bOptions.getStoreLayout()) :
                 NBootPlatformHome.of(bOptions.getStoreLayout()))
@@ -687,7 +687,7 @@ public final class NBootUtils {
         return m;
     }
 
-    public static boolean isBootOptional(String name, NBootOptionsBoot bOptions) {
+    public static boolean isBootOptional(String name, NBootOptionsInfo bOptions) {
         if (bOptions.getCustomOptions() != null) {
             for (String property : bOptions.getCustomOptions()) {
                 NBootArg a = new NBootArg(property);
@@ -699,7 +699,7 @@ public final class NBootUtils {
         return false;
     }
 
-    public static boolean isBootOptional(NBootOptionsBoot bOptions) {
+    public static boolean isBootOptional(NBootOptionsInfo bOptions) {
         if (bOptions.getCustomOptions() != null) {
             for (String property : bOptions.getCustomOptions()) {
                 NBootArg a = new NBootArg(property);
@@ -790,7 +790,7 @@ public final class NBootUtils {
         return NBootIOUtilsBoot.getURLDigest(findClassLoaderJar(id, urls), null);
     }
 
-    public static boolean isAcceptDependency(NBootDependency s, NBootOptionsBoot bOptions) {
+    public static boolean isAcceptDependency(NBootDependency s, NBootOptionsInfo bOptions) {
         boolean bootOptionals = isBootOptional(bOptions);
         //by default ignore optionals
         String o = s.getOptional();

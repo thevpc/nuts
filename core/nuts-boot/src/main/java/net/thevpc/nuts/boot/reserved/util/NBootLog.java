@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.boot.reserved.util;
 
-import net.thevpc.nuts.boot.NBootOptionsBoot;
+import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.boot.NBootWorkspace;
 import net.thevpc.nuts.boot.NBootLogConfig;
 
@@ -53,7 +53,7 @@ public class NBootLog {
     public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER
             = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
             .withZone(ZoneId.systemDefault());
-    private NBootOptionsBoot options;
+    private NBootOptionsInfo options;
     private final InputStream in;
     private final PrintStream out;
     private final PrintStream err;
@@ -67,7 +67,7 @@ public class NBootLog {
         this(null);
     }
 
-    public NBootLog(NBootOptionsBoot bootTerminal) {
+    public NBootLog(NBootOptionsInfo bootTerminal) {
         in = (bootTerminal == null || bootTerminal.getStdin() == null) ? System.in : bootTerminal.getStdin();
         out = (bootTerminal == null || bootTerminal.getStdout() == null) ? System.out : bootTerminal.getStdout();
         err = (bootTerminal == null || bootTerminal.getStderr() == null) ? System.out : bootTerminal.getStderr();
@@ -189,7 +189,7 @@ public class NBootLog {
         return isLoggableTerm(lvl) || isLoggableFile(lvl);
     }
 
-    public void setOptions(NBootOptionsBoot options) {
+    public void setOptions(NBootOptionsInfo options) {
         this.options = options;
         NBootLogConfig nLogConfig = options.getLogConfig();
         if (nLogConfig != null) {

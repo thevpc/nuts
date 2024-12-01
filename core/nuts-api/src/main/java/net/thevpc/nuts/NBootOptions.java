@@ -1,6 +1,6 @@
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NBootOptionsBoot;
+import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.boot.NBootWorkspaceFactory;
 import net.thevpc.nuts.boot.NBootDescriptor;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -55,7 +55,7 @@ public interface NBootOptions  {
 
     NOptional<NIsolationLevel> getIsolationLevel();
 
-    NBootOptionsBoot toBootOptions();
+    NBootOptionsInfo toBootOptions();
 
     /**
      * init launcher

@@ -1013,8 +1013,8 @@ public class DefaultNBootOptions implements NBootOptions {
 
     /// ///////////
 
-    public NBootOptionsBoot toBootOptions() {
-        NBootOptionsBoot r = new NBootOptionsBoot();
+    public NBootOptionsInfo toBootOptions() {
+        NBootOptionsInfo r = new NBootOptionsInfo();
         r.setApiVersion(this.getApiVersion().map(Object::toString).orNull());
         r.setRuntimeId(this.getRuntimeId().map(Object::toString).orNull());
         r.setJavaCommand(this.getJavaCommand().orNull());

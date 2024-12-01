@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NBootOptionsBoot;
+import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.io.NTerminalMode;
@@ -62,7 +62,7 @@ public interface NWorkspaceOptions extends Serializable {
 
     NOptional<NIsolationLevel> getIsolationLevel();
 
-    NBootOptionsBoot toBootOptions();
+    NBootOptionsInfo toBootOptionsInfo();
 
     /**
      * init launcher

@@ -49,12 +49,12 @@ public class DefaultNBootWorkspaceFactory implements NBootWorkspaceFactory {
     }
 
     @Override
-    public int getBootSupportLevel(NBootOptionsBoot options) {
+    public int getBootSupportLevel(NBootOptionsInfo options) {
         return NConstants.Support.DEFAULT_SUPPORT;
     }
 
     @Override
-    public NWorkspace createWorkspace(NBootOptionsBoot bOptions) {
+    public NWorkspace createWorkspace(NBootOptionsInfo bOptions) {
         NBootOptions info2=new DefaultNBootOptionsBuilder(bOptions).build();
         String workspaceLocation = info2.getWorkspace().orNull();
         if(workspaceLocation!=null && workspaceLocation.matches("[a-z-]+://.*")){
@@ -70,7 +70,7 @@ public class DefaultNBootWorkspaceFactory implements NBootWorkspaceFactory {
     }
 
     @Override
-    public NWorkspace runWorkspace(NBootOptionsBoot options) {
+    public NWorkspace runWorkspace(NBootOptionsInfo options) {
         NWorkspace workspace = createWorkspace(options);
         if(workspace==null){
             return null;

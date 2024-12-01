@@ -465,7 +465,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     public DefaultNBootOptionsBuilder() {
     }
 
-    public DefaultNBootOptionsBuilder(NBootOptionsBoot other) {
+    public DefaultNBootOptionsBuilder(NBootOptionsInfo other) {
         setAll(other);
     }
 
@@ -1262,8 +1262,8 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     }
 
 
-    public NBootOptionsBoot toBootOptions() {
-        NBootOptionsBoot r = new NBootOptionsBoot();
+    public NBootOptionsInfo toBootOptions() {
+        NBootOptionsInfo r = new NBootOptionsInfo();
         r.setApiVersion(this.getApiVersion().map(x -> x.toString()).orNull());
         r.setRuntimeId(this.getRuntimeId().map(x -> x.toString()).orNull());
         r.setJavaCommand(this.getJavaCommand().orNull());
@@ -2397,7 +2397,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         return this;
     }
 
-    public NBootOptionsBuilder setAll(NBootOptionsBoot other) {
+    public NBootOptionsBuilder setAll(NBootOptionsInfo other) {
         this.setApiVersion(other.getApiVersion() == null ? null : NVersion.of(other.getApiVersion()).orNull());
         this.setRuntimeId(other.getRuntimeId() == null ? null :
                 other.getRuntimeId().contains("#") ? NId.of(other.getRuntimeId()).orNull() :

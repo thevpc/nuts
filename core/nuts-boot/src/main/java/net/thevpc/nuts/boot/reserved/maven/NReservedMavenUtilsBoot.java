@@ -453,7 +453,7 @@ public class NReservedMavenUtilsBoot {
     }
 
     static VersionAndPath resolveLatestMavenId(NBootId zId, String path, Predicate<NBootVersion> filter,
-                                               NBootLog bLog, NBootRepositoryLocation repoUrl2, boolean stopFirst, NBootOptionsBoot options) {
+                                               NBootLog bLog, NBootRepositoryLocation repoUrl2, boolean stopFirst, NBootOptionsInfo options) {
         String descType = "MAVEN";
         if (NBootConstants.RepoTypes.NUTS.equalsIgnoreCase(repoUrl2.getLocationType())) {
             descType = "NUTS";
@@ -567,7 +567,7 @@ public class NReservedMavenUtilsBoot {
      * @return latest runtime version
      */
     public static NBootId resolveLatestMavenId(NBootId zId, Predicate<NBootVersion> filter,
-                                               NBootLog bLog, Collection<NBootRepositoryLocation> bootRepositories, NBootOptionsBoot options) {
+                                               NBootLog bLog, Collection<NBootRepositoryLocation> bootRepositories, NBootOptionsInfo options) {
         if (bLog.isLoggable(Level.FINEST)) {
             switch (bootRepositories.size()) {
                 case 0: {
@@ -636,7 +636,7 @@ public class NReservedMavenUtilsBoot {
     }
 
     public static File getBootCacheJar(NBootId vid, NBootRepositoryLocation[] repositories, NBootRepositoryLocation cacheFolder, boolean useCache, String name,
-                                       Instant expire, NBootErrorInfoList errorList, NBootOptionsBoot bOptions,
+                                       Instant expire, NBootErrorInfoList errorList, NBootOptionsInfo bOptions,
                                        Function<String, String> pathExpansionConverter, NBootLog bLog, NBootCache cache) {
         File f = getBootCacheFile(vid, getFileName(vid, "jar"), repositories, cacheFolder, useCache, expire, errorList, bOptions, pathExpansionConverter, bLog, cache);
         if (f == null) {
@@ -648,7 +648,7 @@ public class NReservedMavenUtilsBoot {
 
     static File getBootCacheFile(NBootId vid, String fileName, NBootRepositoryLocation[] repositories, NBootRepositoryLocation cacheFolder,
                                  boolean useCache, Instant expire, NBootErrorInfoList errorList,
-                                 NBootOptionsBoot bOptions,
+                                 NBootOptionsInfo bOptions,
                                  Function<String, String> pathExpansionConverter, NBootLog bLog, NBootCache cache) {
         String path = getPathFile(vid, fileName);
         if (useCache && cacheFolder != null) {
@@ -680,7 +680,7 @@ public class NReservedMavenUtilsBoot {
 
     private static File getBootCacheFile(NBootId nutsId, String path, NBootRepositoryLocation repository0, NBootRepositoryLocation cacheFolder,
                                          boolean useCache, Instant expire, NBootErrorInfoList errorList,
-                                         NBootOptionsBoot bOptions, Function<String, String> pathExpansionConverter,
+                                         NBootOptionsInfo bOptions, Function<String, String> pathExpansionConverter,
                                          NBootLog bLog, NBootCache cache) {
         boolean cacheLocalFiles = true;//Boolean.getBoolean("nuts.cache.cache-local-files");
         Set<String> urls = new LinkedHashSet<>();

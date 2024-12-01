@@ -45,6 +45,9 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
     public NPath getResultContent() {
         try {
             NDefinition def = fetchDefinition(getId(), copy().setContent(true).setEffective(false), true, false);
+            if(NDescriptorUtils.isNoContent(def.getDescriptor())){
+                return null;
+            }
             return def.getContent().get();
         } catch (NNotFoundException ex) {
             if (!isFailFast()) {

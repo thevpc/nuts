@@ -25,7 +25,7 @@
 package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NBootOptionsBoot;
+import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.boot.NBootHomeLocation;
 import net.thevpc.nuts.boot.NBootLogConfig;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -514,8 +514,8 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
         this.sharedInstance = sharedInstance;
     }
 
-    public NBootOptionsBoot toBootOptions() {
-        NBootOptionsBoot r=new NBootOptionsBoot();
+    public NBootOptionsInfo toBootOptionsInfo() {
+        NBootOptionsInfo r=new NBootOptionsInfo();
         r.setApiVersion(this.getApiVersion().map(x->x.toString()).orNull());
         r.setRuntimeId(this.getRuntimeId().map(x->x.toString()).orNull());
         r.setJavaCommand(this.getJavaCommand().orNull());

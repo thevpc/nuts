@@ -1,6 +1,6 @@
 package net.thevpc.nuts.boot.reserved.cmdline;
 
-import net.thevpc.nuts.boot.NBootOptionsBoot;
+import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.boot.NBootHomeLocation;
 import net.thevpc.nuts.boot.NBootLogConfig;
 import net.thevpc.nuts.boot.NBootVersion;
@@ -18,9 +18,9 @@ public class NBootWorkspaceCmdLineFormatter {
     private static final String V084 = "0.8.4";
     private static final String V085 = "0.8.5";
     private NBootWorkspaceOptionsConfig config;
-    private NBootOptionsBoot options;
+    private NBootOptionsInfo options;
 
-    public NBootWorkspaceCmdLineFormatter(NBootWorkspaceOptionsConfig config, NBootOptionsBoot options) {
+    public NBootWorkspaceCmdLineFormatter(NBootWorkspaceOptionsConfig config, NBootOptionsInfo options) {
         this.config = config;
         this.options = options;
     }

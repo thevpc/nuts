@@ -169,7 +169,7 @@ public final class Nuts {
      * @return new NutsSession instance
      */
     public static NWorkspace openWorkspace(NWorkspaceOptions options) {
-        return (NWorkspace) new NBootWorkspace(options==null?null:options.toBootOptions()).openWorkspace();
+        return (NWorkspace) new NBootWorkspace(options==null?null:options.toBootOptionsInfo()).openWorkspace();
     }
 
     /**

@@ -25,7 +25,7 @@
 package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NBootOptionsBoot;
+import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.boot.NBootHomeLocation;
 import net.thevpc.nuts.boot.NBootLogConfig;
 import net.thevpc.nuts.cmdline.NWorkspaceCmdLineParser;
@@ -1514,11 +1514,11 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         return this;
     }
 
-    public NBootOptionsBoot toBootOptions() {
-        return build().toBootOptions();
+    public NBootOptionsInfo toBootOptionsInfo() {
+        return build().toBootOptionsInfo();
     }
 
-    public NWorkspaceOptionsBuilder setAll(NBootOptionsBoot other) {
+    public NWorkspaceOptionsBuilder setAll(NBootOptionsInfo other) {
         this.setApiVersion(other.getApiVersion()==null?null:NVersion.of(other.getApiVersion()).orNull());
         this.setRuntimeId(other.getRuntimeId()==null?null:
                         other.getRuntimeId().contains("#")?NId.of(other.getRuntimeId()).orNull():

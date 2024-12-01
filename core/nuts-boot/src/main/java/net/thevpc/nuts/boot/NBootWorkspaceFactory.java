@@ -46,7 +46,7 @@ public interface NBootWorkspaceFactory {
      * @param options command line options
      * @return support level
      */
-    int getBootSupportLevel(NBootOptionsBoot options);
+    int getBootSupportLevel(NBootOptionsInfo options);
 
     /**
      * create workspace with the given options
@@ -54,8 +54,8 @@ public interface NBootWorkspaceFactory {
      * @param options boot init options
      * @return initialized workspace
      */
-    NWorkspaceBase createWorkspace(NBootOptionsBoot options);
+    NWorkspaceBase createWorkspace(NBootOptionsInfo options);
 
-    NWorkspaceBase runWorkspace(NBootOptionsBoot options);
+    NWorkspaceBase runWorkspace(NBootOptionsInfo options);
 
 }

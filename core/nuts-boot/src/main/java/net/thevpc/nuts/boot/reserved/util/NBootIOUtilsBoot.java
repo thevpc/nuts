@@ -27,7 +27,7 @@
 package net.thevpc.nuts.boot.reserved.util;
 
 import net.thevpc.nuts.boot.NBootException;
-import net.thevpc.nuts.boot.NBootOptionsBoot;
+import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.boot.NBootCancelException;
 
 import java.io.*;
@@ -516,7 +516,7 @@ public class NBootIOUtilsBoot {
     }
 
     public static long deleteAndConfirmAll(Path[] folders, boolean force, NBootDeleteFilesContextBoot refForceAll,
-                                           String header, NBootLog bLog, NBootOptionsBoot bOptions, Supplier<String> readline) {
+                                           String header, NBootLog bLog, NBootOptionsInfo bOptions, Supplier<String> readline) {
         long count = 0;
         boolean headerWritten = false;
         if (folders != null) {
@@ -540,7 +540,7 @@ public class NBootIOUtilsBoot {
     }
 
     private static long deleteAndConfirm(Path directory, boolean force, NBootDeleteFilesContextBoot refForceAll,
-                                         NBootLog bLog, NBootOptionsBoot bOptions, Supplier<String> readline) {
+                                         NBootLog bLog, NBootOptionsInfo bOptions, Supplier<String> readline) {
         if (Files.exists(directory)) {
             if (!force && !refForceAll.isForce() && refForceAll.accept(directory)) {
                 String line = null;
@@ -646,7 +646,7 @@ public class NBootIOUtilsBoot {
         return url.toString();
     }
 
-    public static String getStoreLocationPath(NBootOptionsBoot bOptions, String storeType) {
+    public static String getStoreLocationPath(NBootOptionsInfo bOptions, String storeType) {
         Map<String, String> storeLocations = bOptions.getStoreLocations();
         if (storeLocations != null) {
             return storeLocations.get(NBootUtils.enumName(storeType));
@@ -659,7 +659,7 @@ public class NBootIOUtilsBoot {
      * @param locations   of type NutsStoreLocation, Path of File
      * @param readline
      */
-    public static long deleteStoreLocations(NBootOptionsBoot lastBootOptions, NBootOptionsBoot o, boolean includeRoot,
+    public static long deleteStoreLocations(NBootOptionsInfo lastBootOptions, NBootOptionsInfo o, boolean includeRoot,
                                             NBootLog bLog, Object[] locations, Supplier<String> readline) {
         if (lastBootOptions == null) {
             return 0;
@@ -710,7 +710,7 @@ public class NBootIOUtilsBoot {
                 }
             }
         }
-        NBootOptionsBoot optionsCopy = o.copy();
+        NBootOptionsInfo optionsCopy = o.copy();
         if (NBootUtils.firstNonNull(optionsCopy.getBot(), false) || !NBootUtils.isGraphicalDesktopEnvironment()) {
             optionsCopy.setGui(false);
         }
@@ -718,7 +718,7 @@ public class NBootIOUtilsBoot {
     }
 
     public static long deleteAndConfirmAll(Path[] folders, boolean force, String header,
-                                           NBootLog bLog, NBootOptionsBoot bOptions, Supplier<String> readline) {
+                                           NBootLog bLog, NBootOptionsInfo bOptions, Supplier<String> readline) {
         return deleteAndConfirmAll(folders, force, new NBootDeleteFilesContextBootImpl(), header, bLog, bOptions, readline);
     }
 }

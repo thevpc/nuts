@@ -1,7 +1,7 @@
 package net.thevpc.nuts.boot.reserved.compat;
 
 import net.thevpc.nuts.boot.NBootException;
-import net.thevpc.nuts.boot.NBootOptionsBoot;
+import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.boot.NBootHomeLocation;
 import net.thevpc.nuts.boot.reserved.util.NBootLog;
 import net.thevpc.nuts.boot.reserved.util.NBootMsg;
@@ -21,7 +21,7 @@ public class NReservedBootConfigLoaderOld {
      * @param jsonObject config JSON object
      */
     @SuppressWarnings("unchecked")
-    public static void loadConfigVersion507(NBootOptionsBoot config, Map<String, Object> jsonObject,
+    public static void loadConfigVersion507(NBootOptionsInfo config, Map<String, Object> jsonObject,
                                             NBootLog bLog) {
         bLog.with().level(Level.CONFIG).verbInfo().log(NBootMsg.ofPlain("config version compatibility : 0.5.7"));
         config.setUuid((String) jsonObject.get("uuid"));
@@ -60,7 +60,7 @@ public class NReservedBootConfigLoaderOld {
      * @param jsonObject config JSON object
      */
     @SuppressWarnings("unchecked")
-    public static void loadConfigVersion506(NBootOptionsBoot config, Map<String, Object> jsonObject,
+    public static void loadConfigVersion506(NBootOptionsInfo config, Map<String, Object> jsonObject,
                                             NBootLog bLog) {
         bLog.with().level(Level.CONFIG).verbInfo().log(NBootMsg.ofPlain("config version compatibility : 0.5.6"));
         config.setUuid((String) jsonObject.get("uuid"));
@@ -93,7 +93,7 @@ public class NReservedBootConfigLoaderOld {
      * @param config     config object to fill
      * @param jsonObject config JSON object
      */
-    public static void loadConfigVersion502(NBootOptionsBoot config, Map<String, Object> jsonObject,
+    public static void loadConfigVersion502(NBootOptionsInfo config, Map<String, Object> jsonObject,
                                             NBootLog bLog) {
         bLog.with().level(Level.CONFIG).verbInfo().log(NBootMsg.ofPlain("config version compatibility : 0.5.2"));
         config.setUuid((String) jsonObject.get("uuid"));

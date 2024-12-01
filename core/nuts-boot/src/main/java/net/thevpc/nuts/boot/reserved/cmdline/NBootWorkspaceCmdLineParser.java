@@ -25,7 +25,7 @@
 package net.thevpc.nuts.boot.reserved.cmdline;
 
 import net.thevpc.nuts.boot.NBootException;
-import net.thevpc.nuts.boot.NBootOptionsBoot;
+import net.thevpc.nuts.boot.NBootOptionsInfo;
 import net.thevpc.nuts.boot.NBootHomeLocation;
 import net.thevpc.nuts.boot.NBootId;
 import net.thevpc.nuts.boot.NBootLogConfig;
@@ -47,7 +47,7 @@ public final class NBootWorkspaceCmdLineParser {
     private NBootWorkspaceCmdLineParser() {
     }
 
-    public static List<NBootArg> nextNutsArgument(NBootCmdLine cmdLine, NBootOptionsBoot options) {
+    public static List<NBootArg> nextNutsArgument(NBootCmdLine cmdLine, NBootOptionsInfo options) {
         while (cmdLine.hasNext()) {
             NBootArg a = cmdLine.peek();
             if (a.isOption()) {
@@ -1452,7 +1452,7 @@ public final class NBootWorkspaceCmdLineParser {
     }
 
 
-    public static void parseNutsArguments(String[] bootArguments, NBootOptionsBoot options) {
+    public static void parseNutsArguments(String[] bootArguments, NBootOptionsInfo options) {
         NBootCmdLine cmdLine = new NBootCmdLine(bootArguments)
                 .setCommandName("nuts")
                 .setExpandSimpleOptions(true)

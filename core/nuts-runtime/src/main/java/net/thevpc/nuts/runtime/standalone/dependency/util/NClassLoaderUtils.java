@@ -77,6 +77,10 @@ public final class NClassLoaderUtils {
             cc = NFetchCmd.of(id)
                     .setRepositoryFilter(repositoryFilter)
                     .getResultContent();
+            if(cc==null){
+                //this would happen for pom ids (with no content)
+                return null;
+            }
         } catch (NNotFoundException ex) {
             //
         }
