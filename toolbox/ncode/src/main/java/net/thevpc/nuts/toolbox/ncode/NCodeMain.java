@@ -6,8 +6,6 @@
 package net.thevpc.nuts.toolbox.ncode;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCmdLine;
 
 /**
  * @author thevpc
@@ -19,7 +17,7 @@ public class NCodeMain implements NApplication {
 
     @Override
     public void run() {
-        NSession session = NSession.of().get();
+        NSession session = NSession.get().get();
         NApp.of().processCmdLine(new NCodeMainCmdProcessor(session));
     }
 

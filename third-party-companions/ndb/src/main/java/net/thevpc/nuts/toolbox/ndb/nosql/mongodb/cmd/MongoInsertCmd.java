@@ -27,7 +27,7 @@ public class MongoInsertCmd extends InsertCmd<NMongoConfig> {
                     d.putAll(Document.parse(s));
                 }
             }
-            NSession session = NSession.of().get();
+            NSession session = NSession.get().get();
             session.out().println(mongoCollection.insertOne(d));
         });
     }

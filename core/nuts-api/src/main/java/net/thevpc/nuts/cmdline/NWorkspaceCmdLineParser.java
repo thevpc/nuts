@@ -107,7 +107,7 @@ public final class NWorkspaceCmdLineParser {
                         a = cmdLine.nextEntry().get();
                         if (active && options != null) {
                             String v = a.getStringValue().get();
-                            options.setApiVersion(NVersion.of(v).get());
+                            options.setApiVersion(NVersion.of(v));
                         }
                         return NOptional.of(Collections.singletonList(a));
                     }
@@ -117,9 +117,9 @@ public final class NWorkspaceCmdLineParser {
                             String br = a.getStringValue().orElse("");
                             if (br.indexOf('#') >= 0) {
                                 //this is a full id
-                                options.setRuntimeId(NId.of(br).get());
+                                options.setRuntimeId(NId.get(br).get());
                             } else {
-                                options.setRuntimeId(NId.ofRuntime(br).orNull());
+                                options.setRuntimeId(NId.getRuntime(br).orNull());
                             }
                         }
                         return NOptional.of(Collections.singletonList(a));

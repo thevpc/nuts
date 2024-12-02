@@ -155,8 +155,8 @@ public class CoreFilterUtils {
         if (NBlankable.isBlank(desc.getPackaging())) {
             return true;
         }
-        NId _v = NId.of(packaging).orNull();
-        NId _v2 = NId.of(desc.getPackaging()).orNull();
+        NId _v = NId.get(packaging).orNull();
+        NId _v2 = NId.get(desc.getPackaging()).orNull();
         if (_v == null || _v2 == null) {
             return _v == _v2;
         }
@@ -178,14 +178,14 @@ public class CoreFilterUtils {
                     if (a.length > 0) {
                         NOsFamily o = NOsFamily.parse(a[0]).orNull();
                         if (o != null) {
-                            if (o != NWorkspace.get().getOsFamily()) {
+                            if (o != NWorkspace.of().getOsFamily()) {
                                 return false;
                             }
                         }
                         if (a.length > 1) {
                             NArchFamily af = NArchFamily.parse(a[1]).orNull();
                             if (af != null) {
-                                if (af != NWorkspace.get().getArchFamily()) {
+                                if (af != NWorkspace.of().getArchFamily()) {
                                     return false;
                                 }
                             }
@@ -248,7 +248,7 @@ public class CoreFilterUtils {
         if (envCond == null || envCond.isBlank()) {
             return true;
         }
-        NWorkspace workspace = NWorkspace.get();
+        NWorkspace workspace = NWorkspace.of();
         if (!matchesArch(
                 workspace.getArchFamily().id(),
                 envCond.getArch()
@@ -323,7 +323,7 @@ public class CoreFilterUtils {
 
     private static boolean matchesProperty(String k, String expected) {
         return matchesProperty(k, expected, x -> {
-            Object u = NSession.of().get().getProperty(x);
+            Object u = NSession.get().get().getProperty(x);
             if (u != null) {
                 return String.valueOf(u);
             }
@@ -351,13 +351,13 @@ public class CoreFilterUtils {
         if (NBlankable.isBlank(current)) {
             return true;
         }
-        NId currentId = NId.of(current).get();
+        NId currentId = NId.get(current).get();
         if (allConds != null && allConds.size() > 0) {
             for (String cond : allConds) {
                 if (NBlankable.isBlank(cond)) {
                     return true;
                 }
-                NId idCond = NId.of(cond).get();
+                NId idCond = NId.get(cond).get();
                 NArchFamily w = NArchFamily.parse(idCond.getArtifactId()).orNull();
                 if (w != null) {
                     idCond = idCond.builder().setArtifactId(w.id()).build();
@@ -378,13 +378,13 @@ public class CoreFilterUtils {
         if (NBlankable.isBlank(os)) {
             return true;
         }
-        NId currentId = NId.of(os).get();
+        NId currentId = NId.get(os).get();
         if (allConds != null && allConds.size() > 0) {
             for (String cond : allConds) {
                 if (NBlankable.isBlank(cond)) {
                     return true;
                 }
-                NId condId = NId.of(cond).get();
+                NId condId = NId.get(cond).get();
                 NOsFamily w = NOsFamily.parse(condId.getArtifactId()).orNull();
                 if (w != null) {
                     condId = condId.builder().setArtifactId(w.id()).build();
@@ -401,13 +401,13 @@ public class CoreFilterUtils {
         if (NBlankable.isBlank(current)) {
             return true;
         }
-        NId currentId = NId.of(current).get();
+        NId currentId = NId.get(current).get();
         if (allConditions != null && allConditions.size() > 0) {
             for (String cond : allConditions) {
                 if (NBlankable.isBlank(cond)) {
                     return true;
                 }
-                NId condId = NId.of(cond).get();
+                NId condId = NId.get(cond).get();
                 return condId.compatNewer().filter().acceptId(currentId);
             }
             return false;
@@ -433,13 +433,13 @@ public class CoreFilterUtils {
         if (NBlankable.isBlank(current)) {
             return true;
         }
-        NId currentId = NId.of(current).get();
+        NId currentId = NId.get(current).get();
         if (allConds != null && allConds.size() > 0) {
             for (String cond : allConds) {
                 if (NBlankable.isBlank(cond)) {
                     return true;
                 }
-                NId condId = NId.of(cond).get();
+                NId condId = NId.get(cond).get();
                 NPlatformFamily w = NPlatformFamily.parse(condId.getArtifactId()).orNull();
                 if (w != null) {
                     condId = condId.builder().setArtifactId(w.id()).build();
@@ -465,13 +465,13 @@ public class CoreFilterUtils {
         if (NBlankable.isBlank(current)) {
             return true;
         }
-        NId currentId = NId.of(current).get();
+        NId currentId = NId.get(current).get();
         if (allConds != null && allConds.size() > 0) {
             for (String cond : allConds) {
                 if (NBlankable.isBlank(cond)) {
                     return true;
                 }
-                NId condId = NId.of(cond).get();
+                NId condId = NId.get(cond).get();
                 NDesktopEnvironmentFamily w = NDesktopEnvironmentFamily.parse(condId.getArtifactId()).orNull();
                 if (w != null) {
                     condId = condId.builder().setArtifactId(w.id()).build();

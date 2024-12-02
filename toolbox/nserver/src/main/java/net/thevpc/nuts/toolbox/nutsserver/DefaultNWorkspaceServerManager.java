@@ -53,7 +53,7 @@ public class DefaultNWorkspaceServerManager implements NWorkspaceServerManager {
         if (serverConfig == null) {
             serverConfig = new NHttpServerConfig();
         }
-        NServerComponent server = NWorkspace.of().get().extensions().createServiceLoader(NServerComponent.class, ServerConfig.class, NServerComponent.class.getClassLoader())
+        NServerComponent server = NWorkspace.get().get().extensions().createServiceLoader(NServerComponent.class, ServerConfig.class, NServerComponent.class.getClassLoader())
                 .loadBest(serverConfig);
         NAssert.requireNonNull(server, "server");
         NServer s = server.start(/*.self()*/ serverConfig);

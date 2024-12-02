@@ -122,7 +122,7 @@ public class DefaultSpawnExecutableNutsRemote extends AbstractNExecutableInforma
 
     @Override
     public NText getHelpText() {
-        switch (NWorkspace.get().getOsFamily()) {
+        switch (NWorkspace.of().getOsFamily()) {
             case WINDOWS: {
                 return NText.ofStyled(
                         "No help available. Try " + getName() + " /help",

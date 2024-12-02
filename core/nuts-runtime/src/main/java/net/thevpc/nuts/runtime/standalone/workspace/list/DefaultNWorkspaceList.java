@@ -25,7 +25,7 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
     private NWorkspaceListConfig config;
 
     public DefaultNWorkspaceList() {
-        NWorkspace ws = NWorkspace.of().get();
+        NWorkspace ws = NWorkspace.get().get();
         setName(null);
         NPath file = getConfigFile();
         if (file.exists()) {
@@ -41,7 +41,7 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
                     new NWorkspaceLocation()
                             .setUuid(ws.getUuid())
                             .setName(NConstants.Names.DEFAULT_WORKSPACE_NAME)
-                            .setLocation(NWorkspace.get().getWorkspaceLocation().toString())
+                            .setLocation(NWorkspace.of().getWorkspaceLocation().toString())
             );
             this.save();
         }
@@ -60,8 +60,8 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
     }
 
     private NPath getConfigFile() {
-        return NWorkspace.get()
-                .getStoreLocation(NId.ofClass(DefaultNWorkspaceList.class).get(),
+        return NWorkspace.of()
+                .getStoreLocation(NId.getForClass(DefaultNWorkspaceList.class).get(),
                         NStoreType.CONF)
                 .resolve(name + "-nuts-workspace-list.json");
     }
@@ -90,7 +90,7 @@ public class DefaultNWorkspaceList implements NWorkspaceList {
     @Override
     public NWorkspace addWorkspace(String path) {
         NWorkspace ss = this.createWorkspace(path);
-        NWorkspace workspace = NWorkspace.get();
+        NWorkspace workspace = NWorkspace.of();
         NWorkspaceLocation workspaceLocation = new NWorkspaceLocation()
                 .setUuid(ss.getUuid())
                 .setName(workspace.getWorkspaceLocation().getName())

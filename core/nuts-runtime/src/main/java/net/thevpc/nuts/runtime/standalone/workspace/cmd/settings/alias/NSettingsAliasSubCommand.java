@@ -45,7 +45,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                 }
             }
             if (cmdLine.isExecMode()) {
-                List<NCustomCmd> r = NWorkspace.get().findAllCommands()
+                List<NCustomCmd> r = NWorkspace.of().findAllCommands()
                         .stream()
                         .filter(new Predicate<NCustomCmd>() {
                             @Override
@@ -92,9 +92,9 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
         } else if (cmdLine.next("remove alias","alias remove").isPresent()) {
             if (cmdLine.isExecMode()) {
                 while (cmdLine.hasNext()) {
-                    NWorkspace.get().removeCommand(cmdLine.next().get().toString());
+                    NWorkspace.of().removeCommand(cmdLine.next().get().toString());
                 }
-                NWorkspace.get().saveConfig();
+                NWorkspace.of().saveConfig();
             }
             return true;
         } else if (cmdLine.next("add alias","alias add").isPresent()) {
@@ -138,7 +138,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                                                             .setExpandSimpleOptions(false).toStringList())
                             );
                 }
-                NWorkspace.get().saveConfig();
+                NWorkspace.of().saveConfig();
             }
             return true;
         }

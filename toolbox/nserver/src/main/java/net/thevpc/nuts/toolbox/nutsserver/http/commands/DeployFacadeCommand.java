@@ -57,7 +57,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
                 case "content":
                     contentFile = NPath
                             .ofTempFile(
-                                    NWorkspace.get().getDefaultIdFilename(
+                                    NWorkspace.of().getDefaultIdFilename(
                                             descriptor.getId().builder().setFaceDescriptor().build()
                                     )).toString();
                     NCp.of()

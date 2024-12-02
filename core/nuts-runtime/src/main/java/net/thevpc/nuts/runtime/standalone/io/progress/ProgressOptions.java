@@ -39,7 +39,7 @@ public class ProgressOptions {
                     o.put(k, NLiteral.of(v));
                 }
             }
-            for (Map.Entry<String, String> e : NWorkspace.get().getConfigMap().entrySet()) {
+            for (Map.Entry<String, String> e : NWorkspace.of().getConfigMap().entrySet()) {
                 if (e.getKey().startsWith("progress.")) {
                     String k = e.getKey().substring("progress.".length());
                     if (o.get(k).isNotPresent()) {

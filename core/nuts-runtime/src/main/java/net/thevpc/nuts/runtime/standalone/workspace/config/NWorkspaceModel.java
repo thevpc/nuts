@@ -79,16 +79,16 @@ public class NWorkspaceModel {
         askedApiVersion = bOption0.getApiVersion().orNull();
         askedRuntimeId = bOption0.getRuntimeId().orNull();
         if (askedRuntimeId == null) {
-            askedRuntimeId = NId.ofRuntime("").get();
+            askedRuntimeId = NId.getRuntime("").get();
         }
 
         this.textModel = new DefaultNTextManagerModel(workspace);
         this.apiVersion = Nuts.getVersion();
-        this.apiId = NId.ofApi(this.apiVersion).get();
-        this.runtimeId = NId.of(
+        this.apiId = NId.getApi(this.apiVersion).get();
+        this.runtimeId = NId.get(
                 askedRuntimeId.getGroupId(),
                 askedRuntimeId.getArtifactId(),
-                NVersion.of(askedRuntimeId.getVersion().toString()).get()).get();
+                NVersion.get(askedRuntimeId.getVersion().toString()).get()).get();
         this.bootModel.init();
     }
 }

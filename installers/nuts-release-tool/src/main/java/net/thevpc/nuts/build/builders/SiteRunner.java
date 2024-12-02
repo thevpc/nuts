@@ -124,7 +124,7 @@ public class SiteRunner extends AbstractRunner {
                 .setBuildWebSite(true)
                 .setStartWebSite(false)
                 .setBuildPdf(true)
-                .setAutoInstallNutsPackages(NWorkspace.get()
+                .setAutoInstallNutsPackages(NWorkspace.of()
                         .getBootOptions().getConfirm().orElse(NConfirmationMode.ASK) == NConfirmationMode.YES)
                 .setVars(prepareVars());
 

@@ -28,7 +28,7 @@ public class NSettingsImportSubCommand extends AbstractNSettingsSubCommand {
         if (cmdLine.next("list imports","list import","import list", "li").isPresent()) {
             cmdLine.setCommandName("config list imports").throwUnexpectedArgument();
             if (cmdLine.isExecMode()) {
-                for (String imp : (NWorkspace.get().getAllImports())) {
+                for (String imp : (NWorkspace.of().getAllImports())) {
                     session.out().println(NMsg.ofPlain(imp));
                 }
             }
@@ -36,8 +36,8 @@ public class NSettingsImportSubCommand extends AbstractNSettingsSubCommand {
         } else if (cmdLine.next("clear imports", "ci").isPresent()) {
             cmdLine.setCommandName("config clear imports").throwUnexpectedArgument();
             if (cmdLine.isExecMode()) {
-                NWorkspace.get().clearImports();
-                NWorkspace.get().saveConfig();
+                NWorkspace.of().clearImports();
+                NWorkspace.of().saveConfig();
             }
             return true;
         } else if (cmdLine.next("import", "ia").isPresent()) {
@@ -45,11 +45,11 @@ public class NSettingsImportSubCommand extends AbstractNSettingsSubCommand {
                 String a = cmdLine.nextNonOption(NArgName.of("import")).get()
                         .asString().get();
                 if (cmdLine.isExecMode()) {
-                    NWorkspace.get().addImports(new String[]{a});
+                    NWorkspace.of().addImports(new String[]{a});
                 }
             } while (cmdLine.hasNext());
             if (cmdLine.isExecMode()) {
-                NWorkspace.get().saveConfig();
+                NWorkspace.of().saveConfig();
             }
             return true;
         } else if (cmdLine.next("unimport", "ir").isPresent()) {
@@ -57,11 +57,11 @@ public class NSettingsImportSubCommand extends AbstractNSettingsSubCommand {
                 String ii = cmdLine.nextNonOption(NArgName.of("import")).get()
                         .asString().get();
                 if (cmdLine.isExecMode()) {
-                    NWorkspace.get().removeImports(new String[]{ii});
+                    NWorkspace.of().removeImports(new String[]{ii});
                 }
             }
             if (cmdLine.isExecMode()) {
-                NWorkspace.get().saveConfig();
+                NWorkspace.of().saveConfig();
             }
             return true;
         }

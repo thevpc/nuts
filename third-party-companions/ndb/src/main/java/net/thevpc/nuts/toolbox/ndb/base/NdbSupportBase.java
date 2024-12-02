@@ -80,7 +80,7 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
                 if (runExtraCommand(session, cmdLine)) {
 
                 } else {
-                    NSession session = NSession.of().get();
+                    NSession session = NSession.get().get();
                     session.configureLast(cmdLine);
                 }
             }

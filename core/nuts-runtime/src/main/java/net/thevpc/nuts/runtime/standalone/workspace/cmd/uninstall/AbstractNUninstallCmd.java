@@ -40,7 +40,7 @@ public abstract class AbstractNUninstallCmd extends NWorkspaceCmdBase<NUninstall
 
     @Override
     public NUninstallCmd addId(String id) {
-        return addId(id == null ? null : NId.of(id).get());
+        return addId(id == null ? null : NId.get(id).get());
     }
 
     @Override
@@ -79,7 +79,7 @@ public abstract class AbstractNUninstallCmd extends NWorkspaceCmdBase<NUninstall
 
     @Override
     public NUninstallCmd removeId(String id) {
-        return removeId(NId.of(id).get());
+        return removeId(NId.get(id).get());
     }
 
     @Override

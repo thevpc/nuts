@@ -23,7 +23,7 @@ public class CustomCliC implements NApplication {
 
     @Override
     public void run() {
-        NSession session = NSession.of().get();
+        NSession session = NSession.get().get();
         NCmdLine cmdLine = NApp.of().getCmdLine();
         NRef<Boolean> boolOption = NRef.of(false);
         NRef<String> stringOption = NRef.ofNull();

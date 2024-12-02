@@ -269,14 +269,14 @@ public class DefaultNIO implements NIO {
         NRepository repositoryById = null;
         NSession session = workspace.currentSession();
         if (repositoryId == null) {
-            rootFolder = NWorkspace.get().getStoreLocation(NStoreType.TEMP);
+            rootFolder = NWorkspace.of().getStoreLocation(NStoreType.TEMP);
         } else {
             repositoryById = repositoryId;
             rootFolder = repositoryById.config().getStoreLocation(NStoreType.TEMP);
         }
         NId appId = NApp.of().getId().orElseGet(()->session.getWorkspace().getRuntimeId());
         if (appId != null) {
-            rootFolder = rootFolder.resolve(NConstants.Folders.ID).resolve(NWorkspace.get().getDefaultIdBasedir(appId));
+            rootFolder = rootFolder.resolve(NConstants.Folders.ID).resolve(NWorkspace.of().getDefaultIdBasedir(appId));
         }
         if (name == null) {
             name = "";

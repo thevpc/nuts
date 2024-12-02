@@ -21,6 +21,6 @@ public class NanoDBNIdSerializer extends NanoDBNonNullSerializer<NId>{
 
     @Override
     public NId read(NanoDBInputStream in, Class expectedType) {
-        return NId.of(in.readUTF()).get();
+        return NId.get(in.readUTF()).get();
     }
 }

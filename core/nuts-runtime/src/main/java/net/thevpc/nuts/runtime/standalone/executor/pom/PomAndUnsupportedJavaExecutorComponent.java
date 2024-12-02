@@ -53,7 +53,7 @@ public class PomAndUnsupportedJavaExecutorComponent implements NExecutorComponen
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
         if(ID==null){
-            ID = NId.of("net.thevpc.nuts.exec:java-unsupported").get();
+            ID = NId.get("net.thevpc.nuts.exec:java-unsupported").get();
         }
         if(true){
             return NConstants.Support.NO_SUPPORT;

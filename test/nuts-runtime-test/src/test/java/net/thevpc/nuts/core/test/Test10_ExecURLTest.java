@@ -36,7 +36,7 @@ public class Test10_ExecURLTest {
 //                .setRepositoryFilter(NRepositoryFilters.of().byName("maven"))
 //                .setFetchStrategy(NFetchStrategy.REMOTE)
                 .setLatest(true);
-        NSession.get().out().println(q.getResultQueryPlan());
+        NSession.of().out().println(q.getResultQueryPlan());
         List<NId> nutsIds = q
                 .getResultIds()
                 .toList();
@@ -59,7 +59,7 @@ public class Test10_ExecURLTest {
         String result = NExecCmd.of()
                 .addWorkspaceOptions(NWorkspaceOptionsBuilder.of()
                         .setBot(true)
-                        .setWorkspace(NWorkspace.get().getWorkspaceLocation().resolve("temp-ws").toString())
+                        .setWorkspace(NWorkspace.of().getWorkspaceLocation().resolve("temp-ws").toString())
                 )
                 //.addExecutorOption("--main-class=Version")
                 .addCommand(
@@ -86,7 +86,7 @@ public class Test10_ExecURLTest {
         String result = NExecCmd.of()
                 .addCommand("info")
                 .getGrabbedAllString();
-            NSession.get().out().println(result);
+            NSession.of().out().println(result);
         Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
     }
 
@@ -133,7 +133,7 @@ public class Test10_ExecURLTest {
                 .addCommand("com.cts.nuts.enterprise.postgres:pgcli")
                 .addCommand("list", "-i")
                 .getGrabbedAllString();
-        NSession.get().out().println(result);
+        NSession.of().out().println(result);
         Assertions.assertFalse(result.contains("[0m"), "Message should not contain terminal format");
     }
 

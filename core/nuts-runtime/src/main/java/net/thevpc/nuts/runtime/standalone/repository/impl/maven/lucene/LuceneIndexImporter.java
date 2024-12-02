@@ -45,7 +45,7 @@ public class LuceneIndexImporter {
         int allCount=0;
         try (DirtyLuceneIndexParser p = new DirtyLuceneIndexParser(new FileInputStream(filePath))) {
             while (p.hasNext()) {
-                NId id = NId.of(p.next()).get().builder().setRepository(repository).build();
+                NId id = NId.get(p.next()).get().builder().setRepository(repository).build();
                 if (!adb.contains(id)) {
                     addedCount++;
                     adb.add(id);

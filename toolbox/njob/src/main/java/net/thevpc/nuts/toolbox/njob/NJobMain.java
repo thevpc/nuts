@@ -13,7 +13,7 @@ public class NJobMain implements NApplication {
 
     @Override
     public void run() {
-        NSession session = NSession.of().get();
+        NSession session = NSession.get().get();
         JobServiceCmd ts = new JobServiceCmd(session);
         NCmdLine cmdLine = NApp.of().getCmdLine();
         NArg a;

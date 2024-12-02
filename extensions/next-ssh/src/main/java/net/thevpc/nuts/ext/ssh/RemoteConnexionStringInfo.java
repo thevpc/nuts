@@ -270,7 +270,7 @@ public class RemoteConnexionStringInfo {
             storeLocationCacheRepo = NPath.of(targetConnexion.copy()
                     .setPath(storeLocationCache)
                     .toString()).resolve(NConstants.Folders.ID);
-            NId appId = NApp.of().getId().orElseGet(()->NWorkspace.get().getApiId());
+            NId appId = NApp.of().getId().orElseGet(()->NWorkspace.of().getApiId());
             storeLocationCacheRepoSSH = storeLocationCacheRepo.resolve(appId.getMavenFolder()).resolve("repo");
             NPath e = storeLocationCacheRepoSSH.resolve(".nuts-repository");
             if (!e.isRegularFile()) {
@@ -302,7 +302,7 @@ public class RemoteConnexionStringInfo {
     }
 
     public String[] buildEffectiveCommand(String[] cmd, NRunAs runAs, String[] executionOptions, NExecCmdExtension commExec, NSession session) {
-        return NWorkspace.get().buildEffectiveCommand(cmd, runAs,
+        return NWorkspace.of().buildEffectiveCommand(cmd, runAs,
                 new HashSet<NDesktopEnvironmentFamily>(),
                 s -> {
                     if (s == null) {

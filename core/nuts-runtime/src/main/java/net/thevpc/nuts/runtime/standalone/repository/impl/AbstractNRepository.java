@@ -236,11 +236,11 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     }
 
     protected String getIdExtension(NId id) {
-        return NWorkspace.get().getDefaultIdExtension(id);
+        return NWorkspace.of().getDefaultIdExtension(id);
     }
 
     public NPath getIdBasedir(NId id) {
-        return NWorkspace.get().getDefaultIdBasedir(id);
+        return NWorkspace.of().getDefaultIdBasedir(id);
     }
 
     public String getIdFilename(NId id) {

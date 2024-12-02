@@ -317,7 +317,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         NPath catalinaBase = getCatalinaBase();
         boolean catalinaBaseUpdated = false;
         catalinaBaseUpdated |= mkdirs(catalinaBase);
-        String ext = NWorkspace.get().getOsFamily() == NOsFamily.WINDOWS ? "bat" : "sh";
+        String ext = NWorkspace.of().getOsFamily() == NOsFamily.WINDOWS ? "bat" : "sh";
         catalinaBaseUpdated |= checkExec(catalinaHome.resolve("bin").resolve("catalina." + ext));
         LocalTomcatConfig c = getConfig();
         catalinaBaseUpdated |= mkdirs(catalinaBase.resolve("logs"));
@@ -374,7 +374,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         NPath catalinaHome = getCatalinaHome();
         NPath catalinaBase = getCatalinaBase();
         NSession session = getSession();
-        String ext = NWorkspace.get().getOsFamily() == NOsFamily.WINDOWS ? "bat" : "sh";
+        String ext = NWorkspace.of().getOsFamily() == NOsFamily.WINDOWS ? "bat" : "sh";
 
         //b.
 //        b.setOutput(context.getSession().out());
@@ -496,7 +496,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         catalinaVersion = catalinaVersion.trim();
         NSession session = getSession();
         if (catalinaVersion.isEmpty()) {
-            NVersion javaVersion = NWorkspace.get().getPlatform().getVersion();
+            NVersion javaVersion = NWorkspace.of().getPlatform().getVersion();
             //  http://tomcat.apache.org/whichversion.html
             if (javaVersion.compareTo("1.8") >= 0) {
                 catalinaVersion = "[9,10.1[";
@@ -522,9 +522,9 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 cv = "[" + catalinaVersion + "," + catalinaVersion + ".99999]";
             }
             String cid="org.apache.catalina:apache-tomcat";//+"#"+cv;
-            cid= NIdBuilder.of().setAll(NId.of(cid).get()).setCondition(
+            cid= NIdBuilder.of().setAll(NId.get(cid).get()).setCondition(
                     NEnvConditionBuilder.of()
-                            .addPlatform(NWorkspace.get().getPlatform().toString())
+                            .addPlatform(NWorkspace.of().getPlatform().toString())
             ).toString();
 
             NSearchCmd searchLatestCommand = NSearchCmd.of().addId(cid)

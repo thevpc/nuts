@@ -214,7 +214,7 @@ public class CoreNUtils {
         }
         String s2 = applyStringProperties(s, properties);
         if (!NStringUtils.trim(s2).equals(s)) {
-            return NVersion.of(s2).orElse(NVersion.BLANK);
+            return NVersion.get(s2).orElse(NVersion.BLANK);
         }
         return child;
     }
@@ -525,11 +525,11 @@ public class CoreNUtils {
                 return NIdType.RUNTIME;
             }
             default: {
-                String rt = NWorkspace.of().get().getRuntimeId().getShortName();
+                String rt = NWorkspace.get().get().getRuntimeId().getShortName();
                 if (rt.equals(depId.getShortName())) {
                     return NIdType.RUNTIME;
                 } else {
-                    for (NClassLoaderNode n : NWorkspace.get().getBootExtensionClassLoaderNode()) {
+                    for (NClassLoaderNode n : NWorkspace.of().getBootExtensionClassLoaderNode()) {
                         if(n.getId()!=null) {
                             if (n.getId().equalsShortId(depId)) {
                                 return NIdType.EXTENSION;
@@ -559,13 +559,13 @@ public class CoreNUtils {
     public static List<NId> resolveNutsApiIdsFromDependencyList(List<NDependency> deps) {
         return deps.stream()
                 .map(NDependency::toId)
-                .filter(x -> NId.ofApi("").get().equalsShortId(x))
+                .filter(x -> NId.getApi("").get().equalsShortId(x))
                 .distinct().collect(Collectors.toList());
     }
 
     public static List<NId> resolveNutsApiIdsFromIdList(List<NId> deps, NSession session) {
         return deps.stream()
-                .filter(x -> NId.ofApi("").get().equalsShortId(x))
+                .filter(x -> NId.getApi("").get().equalsShortId(x))
                 .distinct().collect(Collectors.toList());
     }
 
@@ -601,14 +601,14 @@ public class CoreNUtils {
     }
 
     public static boolean isCustomTrue(String name) {
-        return NWorkspace.get().getCustomBootOption(name)
+        return NWorkspace.of().getCustomBootOption(name)
                 .ifEmpty(NLiteral.of("true"))
                 .flatMap(NLiteral::asBoolean)
                 .orElse(false);
     }
 
     public static boolean isCustomFalse(String name) {
-        return NWorkspace.get().getCustomBootOption(name)
+        return NWorkspace.of().getCustomBootOption(name)
                 .flatMap(NLiteral::asBoolean)
                 .orElse(false);
     }
@@ -621,7 +621,7 @@ public class CoreNUtils {
     }
 
     public static boolean isShowCommand() {
-        return NWorkspace.get().getCustomBootOption("---show-command")
+        return NWorkspace.of().getCustomBootOption("---show-command")
                 .flatMap(NLiteral::asBoolean)
                 .orElse(false);
     }

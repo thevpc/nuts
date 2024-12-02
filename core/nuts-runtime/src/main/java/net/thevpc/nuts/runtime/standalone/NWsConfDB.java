@@ -17,7 +17,7 @@ public class NWsConfDB {
     }
 
     public void storeString(NLocationKey k, String value, boolean deleteIfBlank) {
-        NPath path = NWorkspace.get().getStoreLocation(k.getId(), k.getStoreType(), k.getRepoUuid())
+        NPath path = NWorkspace.of().getStoreLocation(k.getId(), k.getStoreType(), k.getRepoUuid())
                 .resolve(k.getName());
         if (NBlankable.isBlank(value) && deleteIfBlank) {
             if (path.isRegularFile()) {

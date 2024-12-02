@@ -107,7 +107,7 @@ public class NShell {
         NShellErrorHandler errorHandler = configuration.getErrorHandler();
         NShellExternalExecutor externalExecutor = configuration.getExternalExecutor();
         NId appId = configuration.getAppId();
-        NSession session = NSession.get();
+        NSession session = NSession.of();
 
         args = resolveArgs(session, args);
         this.appId = appId;
@@ -117,7 +117,7 @@ public class NShell {
         if (this.appId == null) {
             this.appId = NApp.of().getId().orNull();
             if (this.appId == null) {
-                this.appId = NId.ofClass(NShell.class).orNull();
+                this.appId = NId.getForClass(NShell.class).orNull();
             }
         }
         if (this.appId == null && session != null) {
@@ -180,14 +180,14 @@ public class NShell {
         if (session != null) {
             NShellContext _rootContext = getRootContext();
 
-            NWorkspace.get().setProperty(NShellContext.class.getName(), _rootContext);
+            NWorkspace.of().setProperty(NShellContext.class.getName(), _rootContext);
             _rootContext.setSession(session);
             //add default commands
             List<NShellBuiltin> allCommand = new ArrayList<>();
             NSupportLevelContext constraints = new NDefaultSupportLevelContext(this);
 
             Predicate<NShellBuiltin> filter = new NShellBuiltinPredicate(configuration);
-            for (NShellBuiltin command : NWorkspace.of().get().extensions()
+            for (NShellBuiltin command : NWorkspace.get().get().extensions()
                             .createServiceLoader(NShellBuiltin.class, NShell.class, NShellBuiltin.class.getClassLoader())
                     .loadAll(this)) {
                 NShellBuiltin old = _rootContext.builtins().find(command.getName());
@@ -204,7 +204,7 @@ public class NShell {
             try {
                 NPath histFile = this.history.getHistoryFile();
                 if (histFile == null) {
-                    histFile = NWorkspace.get().getStoreLocation(this.appId, NStoreType.VAR).resolve((serviceName == null ? "" : serviceName) + ".history");
+                    histFile = NWorkspace.of().getStoreLocation(this.appId, NStoreType.VAR).resolve((serviceName == null ? "" : serviceName) + ".history");
                     this.history.setHistoryFile(histFile);
                     if (histFile.exists()) {
                         this.history.load(histFile);
@@ -216,7 +216,7 @@ public class NShell {
                         .error(ex)
                         .log(NMsg.ofC("error resolving history file %s", this.history.getHistoryFile()));
             }
-            NWorkspace.get().setProperty(NShellHistory.class.getName(), this.history);
+            NWorkspace.of().setProperty(NShellHistory.class.getName(), this.history);
         }
     }
 
@@ -230,7 +230,7 @@ public class NShell {
     private static String resolveServiceName(NSession session, String serviceName, NId appId) {
         if ((serviceName == null || serviceName.trim().isEmpty())) {
             if (appId == null) {
-                appId = NId.ofClass(NShell.class).get();
+                appId = NId.getForClass(NShell.class).get();
             }
             serviceName = appId.getArtifactId();
         }
@@ -672,8 +672,8 @@ public class NShell {
         NSystemTerminal.enableRichTerm();
         NPath appVarFolder = NApp.of().getVarFolder();
         if (appVarFolder == null) {
-            appVarFolder = NWorkspace.get().getStoreLocation(
-                    NId.of("net.thevpc.app.nuts.toolbox:nsh").get()
+            appVarFolder = NWorkspace.of().getStoreLocation(
+                    NId.get("net.thevpc.app.nuts.toolbox:nsh").get()
                     , NStoreType.VAR);
         }
         NIO.of().getSystemTerminal()
@@ -1174,7 +1174,7 @@ public class NShell {
     }
 
     public String getVersion() {
-        NId nutsId = NId.ofClass(getClass()).orNull();
+        NId nutsId = NId.getForClass(getClass()).orNull();
         if (nutsId == null) {
             return "dev";
         }

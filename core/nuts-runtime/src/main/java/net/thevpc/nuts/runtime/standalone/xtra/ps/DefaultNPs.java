@@ -50,7 +50,7 @@ public class DefaultNPs implements NPs {
 
     @Override
     public boolean isSupportedKillProcess() {
-        NOsFamily f = NWorkspace.get().getOsFamily();
+        NOsFamily f = NWorkspace.of().getOsFamily();
         return f == NOsFamily.LINUX || f == NOsFamily.MACOS || f == NOsFamily.UNIX;
     }
 
@@ -95,10 +95,10 @@ public class DefaultNPs implements NPs {
         if (v != null) {
             return v;
         }
-        NWorkspace workspace = NWorkspace.get();
-        NVersionFilter nvf = NBlankable.isBlank(version) ? null : NVersion.of(version).get().filter();
+        NWorkspace workspace = NWorkspace.of();
+        NVersionFilter nvf = NBlankable.isBlank(version) ? null : NVersion.get(version).get().filter();
         NPlatformLocation[] availableJava = workspace.findPlatforms(NPlatformFamily.JAVA,
-                java -> "jdk".equals(java.getPackaging()) && (nvf == null || nvf.acceptVersion(NVersion.of(java.getVersion()).get()))
+                java -> "jdk".equals(java.getPackaging()) && (nvf == null || nvf.acceptVersion(NVersion.get(java.getVersion()).get()))
         ).toArray(NPlatformLocation[]::new);
         for (NPlatformLocation java : availableJava) {
             detectedJavaHomes.add(java.getPath());
@@ -143,7 +143,7 @@ public class DefaultNPs implements NPs {
     }
 
     private NStream<NPsInfo> getResultListJava(String version) {
-        NWorkspace workspace = NWorkspace.get();
+        NWorkspace workspace = NWorkspace.of();
         NIterator<NPsInfo> it = NIteratorBuilder.ofSupplier(() -> {
             String cmd = "jps";
             NExecCmd b = null;

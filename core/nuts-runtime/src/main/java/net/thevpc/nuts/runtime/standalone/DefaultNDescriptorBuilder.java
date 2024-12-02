@@ -100,7 +100,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
 
     @Override
     public NDescriptorBuilder setId(String id) {
-        this.id = NId.of(id).get();
+        this.id = NId.get(id).get();
         return this;
     }
 
@@ -331,9 +331,9 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
 //    @Override
     public NDescriptorBuilder setAll(NBootDescriptor other) {
         if (other != null) {
-            setId(other.getId()==null?null:NId.of(other.getId().toString()).get());
+            setId(other.getId()==null?null:NId.get(other.getId().toString()).get());
             setPackaging(other.getPackaging());
-            setParents(other.getParents()==null?null:other.getParents().stream().map(x->NId.of(x.toString()).get()).collect(Collectors.toList()));
+            setParents(other.getParents()==null?null:other.getParents().stream().map(x->NId.get(x.toString()).get()).collect(Collectors.toList()));
             setDescription(other.getDescription());
             setName(other.getName());
             setCondition(other.getCondition()==null?null:new DefaultNEnvConditionBuilder().setAll(other.getCondition()).build());

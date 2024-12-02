@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class NBootHelper {
     public static NId toId(NBootId x) {
-        return x == null ? null : NId.of(x.toString()).get();
+        return x == null ? null : NId.get(x.toString()).get();
     }
 
     public static NDependency toDependency(NBootDependency x) {

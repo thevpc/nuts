@@ -26,7 +26,7 @@ public class NBackup implements NApplication {
 
     @Override
     public void run() {
-        NSession session = NSession.of().get();
+        NSession session = NSession.get().get();
         session.out().println(NMsg.ofC("%s Backup Tool.", NMsg.ofStyled("Nuts", NTextStyle.keyword())));
         NApp.of().processCmdLine(new NCmdLineRunner() {
 
@@ -50,7 +50,7 @@ public class NBackup implements NApplication {
     }
 
     public void runPull(NCmdLine cmdLine) {
-        NSession session = NSession.of().get();
+        NSession session = NSession.get().get();
         cmdLine.forEachPeek(new NCmdLineRunner() {
             private Options options = new Options();
 
@@ -138,7 +138,7 @@ public class NBackup implements NApplication {
                 if (config == null) {
                     config = new Config();
                 }
-                NSession session = NSession.of().get();
+                NSession session = NSession.get().get();
                 session.out().println(NMsg.ofC("Config File %s", getConfigFile()));
 
                 switch (options.cmd) {

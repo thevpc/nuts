@@ -45,7 +45,7 @@ public interface NExtensions extends NComponent  {
     }
 
     static NExtensions of() {
-        return NWorkspace.of().get().extensions();
+        return NWorkspace.get().get().extensions();
     }
 
     Set<NId> getCompanionIds();

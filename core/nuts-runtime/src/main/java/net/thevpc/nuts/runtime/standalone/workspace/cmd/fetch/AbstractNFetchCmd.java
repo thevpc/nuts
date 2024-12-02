@@ -26,7 +26,7 @@ public abstract class AbstractNFetchCmd extends DefaultNQueryBaseOptions<NFetchC
 
     @Override
     public NFetchCmd setId(String id) {
-        NId nid = NId.of(id).get();
+        NId nid = NId.get(id).get();
         return setId(nid);
     }
 

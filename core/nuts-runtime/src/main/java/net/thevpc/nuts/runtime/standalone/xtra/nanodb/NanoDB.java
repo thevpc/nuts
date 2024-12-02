@@ -17,7 +17,7 @@ public class NanoDB implements AutoCloseable {
     private NWorkspace workspace;
     public NanoDB(File dir) {
         this.dir = dir;
-        this.workspace = NWorkspace.of().get();
+        this.workspace = NWorkspace.get().get();
         dir.mkdirs();
     }
 

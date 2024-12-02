@@ -90,8 +90,8 @@ public final class NReservedMavenUtils {
                         String artifactId = map.get("artifactId");
                         String version = map.get("version");
                         if (groupId != null && artifactId != null && version != null) {
-                            return new NId[]{NId.of(
-                                    groupId, artifactId, NVersion.of(version).get()
+                            return new NId[]{NId.get(
+                                    groupId, artifactId, NVersion.get(version).get()
                             ).get()};
                         }
                     }
@@ -118,7 +118,7 @@ public final class NReservedMavenUtils {
                                     Map<String, String> map = resolvePomTagValues(new String[]{"groupId", "artifactId", "version"}, is);
                                     if (map.containsKey("version")) {
                                         String version = map.get("version");
-                                        all.add(NId.of(groupId, artifactId, NVersion.of(version).get()).get());
+                                        all.add(NId.get(groupId, artifactId, NVersion.get(version).get()).get());
                                     }
                                 }
                             }
@@ -134,7 +134,7 @@ public final class NReservedMavenUtils {
                                             Map<?, ?> map = ((Map<?, ?>) p);
                                             Object v = map.get("version");
                                             if (v instanceof String) {
-                                                all.add(NId.of(groupId, artifactId, NVersion.of((String) v).get()).get());
+                                                all.add(NId.get(groupId, artifactId, NVersion.get((String) v).get()).get());
                                             }
                                         }
                                     }
@@ -258,7 +258,7 @@ public final class NReservedMavenUtils {
                 if (dependencies == null) {
                     return new LinkedHashSet<>();
                 }
-                return dependencies.stream().map(x -> NId.of(x).get()).collect(Collectors.toSet());
+                return dependencies.stream().map(x -> NId.get(x).get()).collect(Collectors.toSet());
             } finally {
                 try {
                     inputStream.close();
@@ -468,7 +468,7 @@ public final class NReservedMavenUtils {
                                 for (int k = 0; k < c3.getChildNodes().getLength(); k++) {
                                     if (c3.getChildNodes().item(k) instanceof Element && c3.getChildNodes().item(k).getNodeName().equals("version")) {
                                         Element c4 = (Element) c3.getChildNodes().item(k);
-                                        NVersion p = NVersion.of(c4.getTextContent()).get();
+                                        NVersion p = NVersion.get(c4.getTextContent()).get();
                                         if (!p.isBlank()) {
                                             all.add(p);
                                         }
@@ -514,13 +514,13 @@ public final class NReservedMavenUtils {
                             if (file.isDirectory()) {
                                 String[] goodChildren = file.list(filenameFilter);
                                 if (goodChildren != null && goodChildren.length > 0) {
-                                    NVersion p = NVersion.of(file.getName()).get();//folder name is version name
+                                    NVersion p = NVersion.get(file.getName()).get();//folder name is version name
                                     if (filter == null || filter.test(p)) {
                                         found = true;
                                         if (bestVersion == null || bestVersion.compareTo(p) < 0) {
                                             //we will ignore artifact classifier to simplify search
                                             Path jarPath = file.toPath().resolve(
-                                                    getFileName(NId.of(zId.getGroupId(), zId.getArtifactId(), p).get(), "jar")
+                                                    getFileName(NId.get(zId.getGroupId(), zId.getArtifactId(), p).get(), "jar")
                                             );
                                             if (Files.isRegularFile(jarPath)) {
                                                 bestVersion = p;
@@ -657,7 +657,7 @@ public final class NReservedMavenUtils {
                         int a = s.lastIndexOf('/');
                         if (a >= 0) {
                             String n = s.substring(a + 1);
-                            NVersion v = NVersion.of(n).get();
+                            NVersion v = NVersion.get(n).get();
                             if (!v.isBlank()) {
                                 all.add(v);
                             }
@@ -905,7 +905,7 @@ public final class NReservedMavenUtils {
                                 resource,
                                 null, false, bLog).getProperty("id");
                         if(!NBlankable.isBlank(id)){
-                            NId nId = NId.of(id).orNull();
+                            NId nId = NId.get(id).orNull();
                             switch (propName) {
                                 case "groupId":
                                     propValue = nId.getGroupId();

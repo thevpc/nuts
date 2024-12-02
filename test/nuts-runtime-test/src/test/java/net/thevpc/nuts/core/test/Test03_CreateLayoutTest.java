@@ -39,7 +39,7 @@ public class Test03_CreateLayoutTest {
                 )
         );
         for (NStoreType value : NStoreType.values()) {
-            NSession.get().out().println(NMsg.ofC("%s %s", value, NWorkspace.get().getStoreLocation(value)));
+            NSession.of().out().println(NMsg.ofC("%s %s", value, NWorkspace.of().getStoreLocation(value)));
         }
 
         TestUtils.openExistingTestWorkspace(
@@ -53,8 +53,8 @@ public class Test03_CreateLayoutTest {
 
         for (NStoreType value : NStoreType.values()) {
             Assertions.assertEquals(
-                    NWorkspace.get().getStoreLocation(value),
-                    NWorkspace.get().getStoreLocation(value)
+                    NWorkspace.of().getStoreLocation(value),
+                    NWorkspace.of().getStoreLocation(value)
             );
         }
     }
@@ -105,20 +105,20 @@ public class Test03_CreateLayoutTest {
             }
             Assertions.assertTrue(nshId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
         }
-        NPath c = NWorkspace.get().getStoreLocation(NStoreType.CONF);
+        NPath c = NWorkspace.of().getStoreLocation(NStoreType.CONF);
         TestUtils.println(c);
-        File base = NWorkspace.get().getLocation().toFile().get();
+        File base = NWorkspace.of().getLocation().toFile().get();
         TestUtils.println(new File(base, "config").getPath());
         for (NStoreType value : NStoreType.values()) {
-            NSession.get().out().println(NMsg.ofC("%s %s", value, NWorkspace.get().getStoreLocation(value)));
+            NSession.of().out().println(NMsg.ofC("%s %s", value, NWorkspace.of().getStoreLocation(value)));
         }
         Assertions.assertEquals(
                 NPath.of(base).resolve("bin"),
-                NWorkspace.get().getStoreLocation(NStoreType.BIN)
+                NWorkspace.of().getStoreLocation(NStoreType.BIN)
         );
         Assertions.assertEquals(
                 NPath.of(base).resolve("cache"),
-                NWorkspace.get().getStoreLocation(NStoreType.CACHE)
+                NWorkspace.of().getStoreLocation(NStoreType.CACHE)
         );
     }
 
@@ -147,7 +147,7 @@ public class Test03_CreateLayoutTest {
         NInfoCmd.of().println();
         TestUtils.println("==========================");
         TestUtils.println(new File(base, "system.bin").getPath());
-        NWorkspace workspace = NWorkspace.get();
+        NWorkspace workspace = NWorkspace.of();
         TestUtils.println(workspace.getStoreLocation(NStoreType.BIN));
         Assertions.assertEquals(
                 NPath.of(new File(base, "system.bin")),

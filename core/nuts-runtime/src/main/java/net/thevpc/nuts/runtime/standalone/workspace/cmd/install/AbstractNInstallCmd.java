@@ -85,7 +85,7 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
 
     @Override
     public NInstallCmd addId(String id) {
-        return addId(id == null ? null : NId.of(id).get());
+        return addId(id == null ? null : NId.get(id).get());
     }
 
     @Override
@@ -145,7 +145,7 @@ public abstract class AbstractNInstallCmd extends NWorkspaceCmdBase<NInstallCmd>
     @Override
     public NInstallCmd removeId(String id) {
         if (id != null) {
-            this.ids.remove(NId.of(id).get());
+            this.ids.remove(NId.get(id).get());
         }
         return this;
     }

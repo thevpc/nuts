@@ -31,7 +31,7 @@ public class MongoDeleteCmd extends DeleteCmd<NMongoConfig> {
             DeleteResult r = eq.getOne() ?
                     mongoCollection.deleteOne(docWhere)
                     : mongoCollection.deleteMany(docWhere);
-            NSession session = NSession.of().get();
+            NSession session = NSession.get().get();
             session.out().println(r);
         });
     }

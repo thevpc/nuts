@@ -25,9 +25,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NMsg;
 
 /**
@@ -52,7 +50,7 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
      */
     public NException(NMsg message) {
         super(NException.messageToString(message));
-        this.session = NSession.of().orNull();
+        this.session = NSession.get().orNull();
         this.formattedMessage = NException.validateFormattedMessage(message);
     }
 
@@ -71,7 +69,7 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
      */
     public NException(NMsg message, Throwable cause) {
         super(NException.messageToString(message), cause);
-        this.session = NSession.of().orNull();
+        this.session = NSession.get().orNull();
         this.formattedMessage = NException.validateFormattedMessage(message);
     }
 
@@ -90,7 +88,7 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
     public NException(NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(NException.messageToString(message),
                 cause, enableSuppression, writableStackTrace);
-        this.session = NSession.of().orNull();
+        this.session = NSession.get().orNull();
         this.formattedMessage = NException.validateFormattedMessage(message);
     }
 
@@ -102,7 +100,7 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
     }
 
     static NText messageToFormattedString(NMsg message) {
-        if(NWorkspace.of().isNotPresent()){
+        if(NWorkspace.get().isNotPresent()){
             throw new IllegalArgumentException("missing workspace");
         }
         return NText.of(validateFormattedMessage(message));

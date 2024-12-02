@@ -53,7 +53,7 @@ public class NshDescriptorContentParserComponent implements NDescriptorContentPa
     private NWorkspace workspace;
     public NshDescriptorContentParserComponent(NWorkspace workspace) {
         if(NSH==null){
-            NSH= NId.of("nsh").get();
+            NSH= NId.get("nsh").get();
         }
         this.workspace=workspace;
     }
@@ -157,9 +157,9 @@ public class NshDescriptorContentParserComponent implements NDescriptorContentPa
             }
             if (comment.toString().trim().isEmpty()) {
                 return new DefaultNDescriptorBuilder()
-                        .setId(NId.of("temp:nsh#1.0").get())
+                        .setId(NId.get("temp:nsh#1.0").get())
                         .setPackaging("nsh")
-                        .setExecutor(new DefaultNArtifactCall(NId.of("net.thevpc.nuts.toolbox:nsh").get()))
+                        .setExecutor(new DefaultNArtifactCall(NId.get("net.thevpc.nuts.toolbox:nsh").get()))
                         .build();
             }
             return NDescriptorParser.of().parse(comment.getValidString()).get();

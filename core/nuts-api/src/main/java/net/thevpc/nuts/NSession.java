@@ -24,19 +24,13 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
-import net.thevpc.nuts.cmdline.NCmdLineRunner;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.format.NContentType;
 import net.thevpc.nuts.format.NIterableFormat;
-import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminal;
 import net.thevpc.nuts.spi.NScopeType;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.time.NClock;
 import net.thevpc.nuts.util.NCallable;
 import net.thevpc.nuts.util.NObservableMapListener;
 import net.thevpc.nuts.util.NOptional;
@@ -59,12 +53,12 @@ import java.util.logging.Level;
  * @since 0.5.4
  */
 public interface NSession extends NCmdLineConfigurable, Closeable {
-    static NSession get() {
-        return of().get();
+    static NSession of() {
+        return get().get();
     }
 
-    static NOptional<NSession> of() {
-        return NWorkspace.of().map(NWorkspace::currentSession);
+    static NOptional<NSession> get() {
+        return NWorkspace.get().map(NWorkspace::currentSession);
     }
 
     void runWith(NRunnable runnable);

@@ -147,7 +147,7 @@ public class ProjectService {
     }
 
     public File detectLocalVersionFile(String sid) {
-        NId id = NId.of(sid).get();
+        NId id = NId.get(sid).get();
         if (config.getTechnologies().contains("maven")) {
             File f = new File(System.getProperty("user.home"), ".m2/repository/" + id.getMavenPath("jar"));
             if (f.exists()) {
@@ -176,7 +176,7 @@ public class ProjectService {
     }
 
     public File detectRemoteVersionFile(String sid) {
-        NId id = NId.of(sid).get();
+        NId id = NId.get(sid).get();
         if (config.getTechnologies().contains("maven")) {
             RepositoryAddress a = config.getAddress();
             if (a == null) {
@@ -191,16 +191,16 @@ public class ProjectService {
             }
             try {
                 NSession s = null;
-                if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(NWorkspace.get().getWorkspaceLocation().toString())) {
+                if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(NWorkspace.of().getWorkspaceLocation().toString())) {
                     s = Nuts.openWorkspace(
                             NWorkspaceOptionsBuilder.of()
                                     .setOpenMode(NOpenMode.OPEN_OR_ERROR)
                                     .setReadOnly(true)
                                     .setWorkspace(a.getNutsWorkspace())
                     ).currentSession();
-                    s.setAll(NSession.get());
+                    s.setAll(NSession.of());
                 } else {
-                    s = NSession.get();
+                    s = NSession.of();
                 }
 
                 List<NDefinition> found = s.callWith(() -> NSearchCmd.of()
@@ -243,16 +243,16 @@ public class ProjectService {
                                 .setDescriptorStyle(NDescriptorStyle.MAVEN)
                                 .parse(new File(f, "pom.xml")).get();
                         NSession s = null;
-                        if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(NWorkspace.get().getWorkspaceLocation().toString())) {
+                        if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(NWorkspace.of().getWorkspaceLocation().toString())) {
                             s = Nuts.openWorkspace(
                                     NWorkspaceOptionsBuilder.of()
                                             .setOpenMode(NOpenMode.OPEN_OR_ERROR)
                                             .setReadOnly(true)
                                             .setWorkspace(a.getNutsWorkspace())
                             ).currentSession();
-                            s.setAll(NSession.get());
+                            s.setAll(NSession.of());
                         } else {
-                            s = NSession.get();
+                            s = NSession.of();
                         }
                         List<NId> found = s.callWith(()->NSearchCmd.of()
                                 .addId(g.getId().getGroupId() + ":" + g.getId().getArtifactId())

@@ -59,12 +59,12 @@ public abstract class AbstractDefaultNPushCmd extends NWorkspaceCmdBase<NPushCmd
 
     @Override
     public NPushCmd addId(String id) {
-        return addId(id == null ? null : NId.of(id).get());
+        return addId(id == null ? null : NId.get(id).get());
     }
 
     @Override
     public NPushCmd addLockedId(String id) {
-        return addLockedId(id == null ? null : NId.of(id).get());
+        return addLockedId(id == null ? null : NId.get(id).get());
     }
 
     @Override
@@ -88,7 +88,7 @@ public abstract class AbstractDefaultNPushCmd extends NWorkspaceCmdBase<NPushCmd
     @Override
     public NPushCmd removeId(String id) {
         if (id != null) {
-            ids.remove(NId.of(id).get());
+            ids.remove(NId.get(id).get());
         }
         return this;
     }
@@ -107,7 +107,7 @@ public abstract class AbstractDefaultNPushCmd extends NWorkspaceCmdBase<NPushCmd
     public NPushCmd removeLockedId(String id) {
         if (id != null) {
             if (lockedIds != null) {
-                lockedIds.remove(NId.of(id).get());
+                lockedIds.remove(NId.get(id).get());
             }
         }
         return this;

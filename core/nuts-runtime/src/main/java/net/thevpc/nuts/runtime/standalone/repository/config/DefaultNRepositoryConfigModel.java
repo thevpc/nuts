@@ -210,7 +210,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
     public NPath getLocationPath() {
         String s = NStringUtils.trimToNull(config.getLocation().getPath());
         if (s != null) {
-            return NPath.of(s).toAbsolute(NWorkspace.get().getWorkspaceLocation());
+            return NPath.of(s).toAbsolute(NWorkspace.of().getWorkspaceLocation());
         }
         return null;
     }
@@ -249,7 +249,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
                     return getStoreLocation().resolve(n);
                 }
                 case EXPLODED: {
-                    NPath storeLocation = NWorkspace.get().getStoreLocation(folderType);
+                    NPath storeLocation = NWorkspace.of().getStoreLocation(folderType);
                     //uuid is added as
                     return storeLocation.resolve(NConstants.Folders.REPOSITORIES).resolve(getName()).resolve(getUuid());
 
@@ -274,7 +274,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         }
         if (this.config.getStoreStrategy() == null) {
             fireChange = true;
-            this.config.setStoreStrategy(NWorkspace.get().getRepositoryStoreStrategy());
+            this.config.setStoreStrategy(NWorkspace.of().getRepositoryStoreStrategy());
         }
         if (!Objects.equals(NRepositoryUtils.getRepoType(config), repositoryType)) {
             throw new NIllegalArgumentException(
@@ -390,7 +390,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
     @Override
     public boolean save(boolean force) {
         boolean ok = false;
-        if (force || (!NWorkspace.get().isReadOnly() && isConfigurationChanged())) {
+        if (force || (!NWorkspace.of().isReadOnly() && isConfigurationChanged())) {
             NWorkspaceUtils.of(getWorkspace()).checkReadOnly();
             repository.security().checkAllowed(NConstants.Permissions.SAVE, "save");
             NPath file = getStoreLocation().resolve(NConstants.Files.REPOSITORY_CONFIG_FILE_NAME);
@@ -695,7 +695,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
     public NOptional<NLiteral> get(String key, boolean inherit) {
         NOptional<NLiteral> o = config_getEnv(key, inherit);
         if (o.isBlank() && inherit) {
-            return o.orElseUse(() -> NWorkspace.get().getConfigProperty(key));
+            return o.orElseUse(() -> NWorkspace.of().getConfigProperty(key));
         }
         return o;
     }
@@ -724,7 +724,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
             return NOptional.of(NLiteral.of(t));
         }
         if (inherit) {
-            return NWorkspace.get().getConfigProperty(key);
+            return NWorkspace.of().getConfigProperty(key);
         }
         return NOptional.ofEmpty(() -> NMsg.ofC("repository property not found : %s", key));
     }
@@ -734,7 +734,7 @@ public class DefaultNRepositoryConfigModel extends AbstractNRepositoryConfigMode
         NRepositoryConfig config = model.getConfig();
         Map<String, String> p = new LinkedHashMap<>();
         if (inherit) {
-            p.putAll(NWorkspace.get().getConfigMap());
+            p.putAll(NWorkspace.of().getConfigMap());
         }
         if (config.getEnv() != null) {
             p.putAll(config.getEnv());

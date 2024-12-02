@@ -33,7 +33,7 @@ public class NutsReleaseToolRunner {
     }
 
     public NutsBuildRunnerContext context() {
-        NSession session = NSession.get();
+        NSession session = NSession.of();
         NutsBuildRunnerContext s = (NutsBuildRunnerContext) session.getProperty(NutsBuildRunnerContext.class.getName(), NScopeType.SESSION).orNull();
         if (s == null) {
             s = new NutsBuildRunnerContext();
@@ -45,7 +45,7 @@ public class NutsReleaseToolRunner {
 
     public void run(NCmdLine args) {
         NChronometer chrono = NChronometer.startNow();
-        NSession session = NSession.get();
+        NSession session = NSession.of();
         session.out().println("Process started");
         configure(args);
         for (AbstractRunner runner : runners) {

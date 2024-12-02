@@ -28,7 +28,7 @@ public class NoapiMain implements NApplication {
 
     @Override
     public void run() {
-        NSession session = NSession.of().get();
+        NSession session = NSession.get().get();
         this.service = new NOpenAPIService(session);
         ref.setCommand("pdf");
         NApp.of().processCmdLine(new NCmdLineRunner() {

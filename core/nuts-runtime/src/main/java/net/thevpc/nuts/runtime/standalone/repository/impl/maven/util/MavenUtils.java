@@ -64,19 +64,19 @@ public class MavenUtils {
     }
 
     public static MavenUtils of() {
-        MavenUtils wp = (MavenUtils) NWorkspace.get().getProperties().get(MavenUtils.class.getName());
+        MavenUtils wp = (MavenUtils) NWorkspace.of().getProperties().get(MavenUtils.class.getName());
         if (wp == null) {
             wp = new MavenUtils();
-            NWorkspace.get().setProperty(MavenUtils.class.getName(), wp);
+            NWorkspace.of().setProperty(MavenUtils.class.getName(), wp);
         }
         return wp;
     }
 
     public static NPomIdResolver createPomIdResolver(NWorkspace workspace) {
-        NPomIdResolver wp = (NPomIdResolver) NWorkspace.get().getProperties().get(NPomIdResolver.class.getName());
+        NPomIdResolver wp = (NPomIdResolver) NWorkspace.of().getProperties().get(NPomIdResolver.class.getName());
         if (wp == null) {
             wp = new NPomIdResolver(workspace);
-            NWorkspace.get().setProperty(NPomIdResolver.class.getName(), wp);
+            NWorkspace.of().setProperty(NPomIdResolver.class.getName(), wp);
         }
         return wp;
     }
@@ -304,7 +304,7 @@ public class MavenUtils {
                 String vv = pom.getProperties().get(v);
                 if (!NBlankable.isBlank(vv)) {
                     if (mavenCompilerTarget == null || mavenCompilerTarget.compareTo(vv) < 0) {
-                        mavenCompilerTarget = NVersion.of(vv).get();
+                        mavenCompilerTarget = NVersion.get(vv).get();
                     }
                 }
             }
@@ -483,7 +483,7 @@ public class MavenUtils {
 
     public NDescriptor parsePomXmlAndResolveParents(NPath path, NFetchMode fetchMode, NRepository repository) throws IOException {
         try {
-            NSession session = NSession.of().get();
+            NSession session = NSession.get().get();
             session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "parse", path.toCompressedForm()));
             try (InputStream is = path.getInputStream()) {
                 NDescriptor nutsDescriptor = parsePomXmlAndResolveParents(is, fetchMode, path.toString(), repository);
@@ -507,7 +507,7 @@ public class MavenUtils {
 //        if (session == null) {
 //            session = ws.createSession();
 //        }
-        NSession session = NSession.of().get();
+        NSession session = NSession.get().get();
         try {
             try {
 //            bytes = IOUtils.loadByteArray(stream, true);
@@ -667,7 +667,7 @@ public class MavenUtils {
         }
         if (cl.hasNext()) {
             String callIdString = cl.next().get().toString();
-            callId = NId.of(callIdString).orNull();
+            callId = NId.get(callIdString).orNull();
         }
         List<String> callArgs = cl.toStringList();
         if (callId != null) {

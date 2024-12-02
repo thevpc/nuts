@@ -41,7 +41,7 @@ public class Nsh implements NApplication {
     public void onInstallApplication() {
         NLogOp log = NLogOp.of(Nsh.class);
         log.level(Level.CONFIG).verb(NLogVerb.START).log(NMsg.ofPlain("[nsh] Installation..."));
-        NSession session = NSession.of().get();
+        NSession session = NSession.get().get();
         NApp.of().processCmdLine(new NCmdLineRunner() {
             @Override
             public void init(NCmdLine cmdLine, NCmdLineContext context) {
@@ -118,13 +118,13 @@ public class Nsh implements NApplication {
                     }
                 }
                 session.getWorkspace().saveConfig(false);
-                if (NWorkspace.get().getBootOptions().getInitScripts()
+                if (NWorkspace.of().getBootOptions().getInitScripts()
                         .ifEmpty(true)
                         .orElse(false)) {
-                    boolean initLaunchers = NWorkspace.get().getBootOptions().getInitLaunchers()
+                    boolean initLaunchers = NWorkspace.of().getBootOptions().getInitLaunchers()
                             .ifEmpty(true)
                             .orElse(false);
-                    NWorkspace.get().addLauncher(
+                    NWorkspace.of().addLauncher(
                             new NLauncherOptions()
                                     .setId(NApp.of().getId().orNull())
                                     .setCreateScript(true)
@@ -141,7 +141,7 @@ public class Nsh implements NApplication {
     public void onUpdateApplication() {
         NLogOp log = NLogOp.of(Nsh.class);
         log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofPlain("[nsh] update..."));
-        NSession session = NSession.of().get();
+        NSession session = NSession.get().get();
         NVersion currentVersion = NApp.of().getVersion().orNull();
         NVersion previousVersion = NApp.of().getPreviousVersion().orNull();
         onInstallApplication();
@@ -151,17 +151,17 @@ public class Nsh implements NApplication {
     public void onUninstallApplication() {
         NLogOp log = NLogOp.of(Nsh.class);
         log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofPlain("[nsh] uninstallation..."));
-        NSession session = NSession.of().get();
+        NSession session = NSession.get().get();
         try {
             try {
-                NWorkspace.get().removeCommandFactory("nsh");
+                NWorkspace.of().removeCommandFactory("nsh");
             } catch (Exception notFound) {
                 //ignore!
             }
             Set<String> uninstalled = new TreeSet<>();
-            for (NCustomCmd command : NWorkspace.get().findCommandsByOwner(NApp.of().getId().orNull())) {
+            for (NCustomCmd command : NWorkspace.of().findCommandsByOwner(NApp.of().getId().orNull())) {
                 try {
-                    NWorkspace.get().removeCommand(command.getName());
+                    NWorkspace.of().removeCommand(command.getName());
                     uninstalled.add(command.getName());
                 } catch (Exception ex) {
                     if (session.isPlainTrace()) {
@@ -185,7 +185,7 @@ public class Nsh implements NApplication {
     public void run() {
 
         //before loading NShell check if we need to activate rich term
-        NSession session = NSession.of().get();
+        NSession session = NSession.get().get();
         DefaultNShellOptionsParser options = new DefaultNShellOptionsParser(session);
         NShellOptions o = options.parse(NApp.of().getCmdLine().toStringArray());
 

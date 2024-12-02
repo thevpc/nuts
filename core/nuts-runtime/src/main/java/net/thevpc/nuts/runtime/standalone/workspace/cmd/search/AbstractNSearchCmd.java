@@ -97,7 +97,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     @Override
     public NSearchCmd addId(String id) {
         if (!NBlankable.isBlank(id)) {
-            ids.add(NId.of(id).get());
+            ids.add(NId.get(id).get());
         }
         return this;
     }
@@ -115,7 +115,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
         if (values != null) {
             for (String s : values) {
                 if (!NBlankable.isBlank(s)) {
-                    ids.add(NId.of(s).get());
+                    ids.add(NId.get(s).get());
                 }
             }
         }
@@ -136,7 +136,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NSearchCmd removeId(String id) {
-        ids.remove(NId.of(id).get());
+        ids.remove(NId.get(id).get());
         return this;
     }
 
@@ -267,7 +267,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
         if (values != null) {
             for (String s : values) {
                 if (!NBlankable.isBlank(s)) {
-                    lockedIds.add(NId.of(s).get());
+                    lockedIds.add(NId.get(s).get());
                 }
             }
         }
@@ -381,14 +381,14 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
 
     @Override
     public NSearchCmd removeLockedId(String id) {
-        lockedIds.remove(NId.of(id).get());
+        lockedIds.remove(NId.get(id).get());
         return this;
     }
 
     @Override
     public NSearchCmd addLockedId(String id) {
         if (!NBlankable.isBlank(id)) {
-            lockedIds.add(NId.of(id).get());
+            lockedIds.add(NId.get(id).get());
         }
         return this;
     }
@@ -741,7 +741,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
     @Override
     public NStream<NPath> getResultStoreLocations(NStoreType location) {
         return postProcessResult(NIteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
-                .map(NFunction.of((NDefinition x) -> NWorkspace.get().getStoreLocation(x.getId(), location))
+                .map(NFunction.of((NDefinition x) -> NWorkspace.of().getStoreLocation(x.getId(), location))
                         .withDesc(NEDesc.of("getStoreLocation(" + location.id() + ")"))
                 )
                 .notNull());
@@ -948,7 +948,7 @@ public abstract class AbstractNSearchCmd extends DefaultNQueryBaseOptions<NSearc
                 return true;
             }
             case "--api-version": {
-                cmdLine.withNextEntry((v, r) -> this.setTargetApiVersion(NVersion.of(v).get()));
+                cmdLine.withNextEntry((v, r) -> this.setTargetApiVersion(NVersion.get(v).get()));
                 return true;
             }
             case "--nuts-app":

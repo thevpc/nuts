@@ -16,7 +16,7 @@ public class ExamplesOfZip {
     }
 
     public void executeCompress() {
-        NSession session = NSession.get();
+        NSession session = NSession.of();
         session.out().println("Example of ## Compress ##");
         NPath example = NPath.ofUserDirectory().resolve("example");
         if (example.isDirectory()) {
@@ -29,7 +29,7 @@ public class ExamplesOfZip {
     }
 
     public void executeUncompress() {
-        NSession session = NSession.get();
+        NSession session = NSession.of();
         session.out().println("Example of ## Uncompress ##");
         NPath example = NPath.ofUserDirectory().resolve("example.zip");
         if (example.isRegularFile()) {

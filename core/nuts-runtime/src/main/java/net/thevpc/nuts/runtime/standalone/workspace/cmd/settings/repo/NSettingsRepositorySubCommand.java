@@ -113,23 +113,23 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
 
                 NRepository editedRepo = workspace.findRepository(repoId).get();
                 NRepository repo = editedRepo.config().addMirror(new NAddRepositoryOptions().setName(repositoryName).setLocation(repositoryName).setConfig(new NRepositoryConfig().setName(repositoryName).setLocation(NRepositoryLocation.of(location))));
-                NWorkspace.get().saveConfig();
+                NWorkspace.of().saveConfig();
 
             } else if (cmdLine.next("remove repo", "rr").isPresent()) {
                 String location = cmdLine.nextNonOption(NArgName.of("RepositoryName")).flatMap(NLiteral::asString).get();
                 NRepository editedRepo = workspace.findRepository(repoId).get();
                 editedRepo.config().removeMirror(location);
-                NWorkspace.get().saveConfig();
+                NWorkspace.of().saveConfig();
 
             } else if (cmdLine.next("enable", "br").isPresent()) {
                 NRepository editedRepo = workspace.findRepository(repoId).get();
                 editedRepo.config().setEnabled(true);
-                NWorkspace.get().saveConfig();
+                NWorkspace.of().saveConfig();
 
             } else if (cmdLine.next("disable", "dr").isPresent()) {
                 NRepository editedRepo = workspace.findRepository(repoId).get();
                 editedRepo.config().setEnabled(true);
-                NWorkspace.get().saveConfig();
+                NWorkspace.of().saveConfig();
             } else if (cmdLine.next("list repos","repo list", "list repo", "lr").isPresent()) {
                 NRepository editedRepo = workspace.findRepository(repoId).get();
                 List<NRepository> linkRepositories = editedRepo.config().isSupportedMirroring() ? editedRepo.config().getMirrors() : Collections.emptyList();
@@ -240,7 +240,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                 NRepository p = workspace.findRepository(parent.get()).get();
                 p.config().removeMirror(repositoryName.get());
             }
-            NWorkspace.get().saveConfig();
+            NWorkspace.of().saveConfig();
         }
     }
 
@@ -316,7 +316,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                 repo = p.config().addMirror(o);
             }
             out.println(NMsg.ofC("repository %s added successfully", repo.getName()));
-            NWorkspace.get().saveConfig();
+            NWorkspace.of().saveConfig();
 
         }
         cmdLine.setCommandName("config add repo").throwUnexpectedArgument();
@@ -352,7 +352,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
         if (cmdLine.isExecMode()) {
             NRepository editedRepo = workspace.findRepository(repositoryName.get()).get();
             editedRepo.config().setEnabled(enableRepo);
-            NWorkspace.get().saveConfig();
+            NWorkspace.of().saveConfig();
         }
     }
 

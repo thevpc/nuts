@@ -189,7 +189,7 @@ public class Test06_UpdateTest {
         final String newRuntimeVersion = foundUpdates.getResult().getRuntime().getAvailable().getId().getVersion().toString();
 //        Path bootFolder=Paths.get(workspacePath).resolve(NutsConstants.Folders.BOOT);
 //        Path bootCompFolder=Paths.get(workspacePath).resolve(NutsConstants.Folders.BOOT);
-        NWorkspace newWorkspace = NWorkspace.get();
+        NWorkspace newWorkspace = NWorkspace.of();
         Path bootCacheFolder = (newWorkspace.getStoreLocation(NStoreType.CACHE)).resolve(NConstants.Folders.ID).toPath().get();
         Path libFolder = (newWorkspace.getStoreLocation(NStoreType.LIB)).resolve(NConstants.Folders.ID).toPath().get();
         Path configFolder = (newWorkspace.getStoreLocation(NStoreType.CONF)).resolve(NConstants.Folders.ID).toPath().get();
@@ -200,7 +200,7 @@ public class Test06_UpdateTest {
         NExecCmd ee = NExecCmd.of().setExecutionType(NExecutionType.SPAWN)
                 .addCommand(
                         "nuts#" + newApiVersion,
-                        "--workspace", NWorkspace.get().getLocation().toString(),
+                        "--workspace", NWorkspace.of().getLocation().toString(),
                         "--boot-version=" + newApiVersion,
                         "--bot",
                         "--color=never",

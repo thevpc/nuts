@@ -95,7 +95,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
     @Override
     public int getSupportLevel(NSupportLevelContext ctx) {
         if (ID == null) {
-            ID = NId.of("net.thevpc.nuts.exec:java").get();
+            ID = NId.get("net.thevpc.nuts.exec:java").get();
         }
         NDefinition def = ctx.getConstraints(NDefinition.class);
         if (def != null) {
@@ -116,7 +116,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
 
     public static NWorkspaceOptionsBuilder createChildOptions(NExecutionContext executionContext) {
         NSession session = executionContext.getSession();
-        NWorkspaceOptionsBuilder options = NWorkspace.get().getBootOptions().toWorkspaceOptions().builder();
+        NWorkspaceOptionsBuilder options = NWorkspace.of().getBootOptions().toWorkspaceOptions().builder();
         options.setDry(executionContext.isDry());
         options.setBot(executionContext.isBot());
 
@@ -227,15 +227,15 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 if (nutsDependencyVersion == null) {
                     //what if nuts is added as raw classpath jar?!
                     for (String s : joptions.getClassPathNidStrings()) {
-                        NId sid = NId.of(s).orNull();
-                        if (sid != null && sid.equalsShortId(NId.ofApi("").orNull())) {
+                        NId sid = NId.get(s).orNull();
+                        if (sid != null && sid.equalsShortId(NId.getApi("").orNull())) {
                             nutsDependencyVersion = sid.getVersion();
                         } else {
                             Pattern pp = Pattern.compile(".*[/\\\\]nuts-(?<v>[0-9.]+)[.]jar");
                             Matcher mm = pp.matcher(s);
                             if (mm.find()) {
                                 String v = mm.group("v");
-                                nutsDependencyVersion = NVersion.of(v).get();
+                                nutsDependencyVersion = NVersion.get(v).get();
                                 break;
                             }
                         }

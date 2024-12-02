@@ -214,7 +214,7 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
                                 implVendorTitle = NStringUtils.trimToNull(attrs.getValue(attrName));
                             }
                             if ("Nuts-Id".equals(attrName.toString())) {
-                                explicitId = NId.of(NStringUtils.trimToNull(attrs.getValue(attrName))).orNull();
+                                explicitId = NId.get(NStringUtils.trimToNull(attrs.getValue(attrName))).orNull();
                             }
                             if ("Nuts-Dependencies".equals(attrName.toString())) {
                                 String nutsDependencies = NStringUtils.trimToNull(attrs.getValue(attrName));
@@ -222,7 +222,7 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
                                         StringTokenizerUtils.splitSemiColon(nutsDependencies).stream()
                                                 .map(String::trim)
                                                 .filter(x -> x.length() > 0)
-                                                .map(x -> NDependency.of(x).orNull())
+                                                .map(x -> NDependency.get(x).orNull())
                                                 .filter(Objects::nonNull)
                                                 .collect(Collectors.toCollection(LinkedHashSet::new));
                             }
@@ -298,7 +298,7 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
                                             .collect(Collectors.toList()))
                                     //.setCondition()
                                     .setExecutor(new DefaultNArtifactCall(
-                                            NId.of("java").get(),
+                                            NId.get("java").get(),
                                             //new String[]{"-jar"}
                                             NBlankable.isBlank(mainClass) ? Collections.emptyList()
                                                     : Arrays.asList(

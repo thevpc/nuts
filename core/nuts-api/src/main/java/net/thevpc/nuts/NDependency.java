@@ -41,14 +41,23 @@ import java.util.Map;
  */
 public interface NDependency extends Serializable, NBlankable {
 
-    static NOptional<NDependency> of(String value) {
-        return NId.of(value).map(NId::toDependency);
+    static NOptional<NDependency> get(String value) {
+        return NId.get(value).map(NId::toDependency);
     }
-    static NOptional<NDependency> of(NId value) {
-        if(value==null){
+
+    static NOptional<NDependency> get(NId value) {
+        if (value == null) {
             return NOptional.ofNamedEmpty("id");
         }
         return NOptional.of(value.toDependency());
+    }
+
+    static NDependency of(String value) {
+        return get(value).get();
+    }
+
+    static NDependency of(NId value) {
+        return get(value).get();
     }
 
     /**

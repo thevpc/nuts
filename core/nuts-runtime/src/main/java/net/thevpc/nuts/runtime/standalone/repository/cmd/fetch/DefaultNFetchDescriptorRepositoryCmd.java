@@ -33,7 +33,6 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
-import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
@@ -84,7 +83,7 @@ public class DefaultNFetchDescriptorRepositoryCmd extends AbstractNFetchDescript
         try {
             String versionString = id.getVersion().getValue();
             NDescriptor d = null;
-            NVersion nutsVersion = NVersion.of(versionString).orElse(NVersion.BLANK);
+            NVersion nutsVersion = NVersion.get(versionString).orElse(NVersion.BLANK);
             if (nutsVersion.isBlank() || nutsVersion.isReleaseVersion() || nutsVersion.isLatestVersion()) {
                 NId a = xrepo.searchLatestVersion(id.builder().setVersion("").build(), null, getFetchMode());
                 if (a == null) {

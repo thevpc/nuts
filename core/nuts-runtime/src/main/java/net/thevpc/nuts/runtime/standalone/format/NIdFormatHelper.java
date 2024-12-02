@@ -77,19 +77,19 @@ public class NIdFormatHelper {
     public static NIdFormatHelper of(Object object) {
         if (object instanceof NId) {
             NId v = (NId) object;
-            return (new NIdFormatHelper(v, NWorkspace.of().get()));
+            return (new NIdFormatHelper(v, NWorkspace.get().get()));
         } else if (object instanceof NDescriptor) {
             NDescriptor v = (NDescriptor) object;
-            return (new NIdFormatHelper(v, NWorkspace.of().get()));
+            return (new NIdFormatHelper(v, NWorkspace.get().get()));
         } else if (object instanceof NDefinition) {
             NDefinition v = (NDefinition) object;
-            return (new NIdFormatHelper(v, NWorkspace.of().get()));
+            return (new NIdFormatHelper(v, NWorkspace.get().get()));
         } else if (object instanceof NDependency) {
             NDependency v = (NDependency) object;
-            return (new NIdFormatHelper(v, NWorkspace.of().get()));
+            return (new NIdFormatHelper(v, NWorkspace.get().get()));
         } else if (object instanceof NDependencyTreeNode) {
             NDependencyTreeNode v = (NDependencyTreeNode) object;
-            return (new NIdFormatHelper(v, NWorkspace.of().get()));
+            return (new NIdFormatHelper(v, NWorkspace.get().get()));
         } else {
             return null;
         }
@@ -157,7 +157,7 @@ public class NIdFormatHelper {
     }
 
     private static FormatHelper getFormatHelper(NWorkspace workspace) {
-        FormatHelper h = (FormatHelper) NWorkspace.get().getProperties().get(FormatHelper.class.getName());
+        FormatHelper h = (FormatHelper) NWorkspace.of().getProperties().get(FormatHelper.class.getName());
         if (h != null) {
             return h;
         }
@@ -170,14 +170,14 @@ public class NIdFormatHelper {
             workspace.addWorkspaceListener(h2);
         }
         h = new FormatHelper(workspace);
-        NWorkspace.get().setProperty(FormatHelper.class.getName(), h);
+        NWorkspace.of().setProperty(FormatHelper.class.getName(), h);
         return h;
     }
 
     public static class FormatHelperResetListener implements NWorkspaceListener, NRepositoryListener {
 
         private void _onReset() {
-            NWorkspace.get().setProperty(FormatHelper.class.getName(), null);
+            NWorkspace.of().setProperty(FormatHelper.class.getName(), null);
         }
 
         @Override
@@ -468,43 +468,43 @@ public class NIdFormatHelper {
             }
             case CACHE_FOLDER: {
                 if (def != null) {
-                    return stringValue(NWorkspace.get().getStoreLocation(def.getId(), NStoreType.CACHE));
+                    return stringValue(NWorkspace.of().getStoreLocation(def.getId(), NStoreType.CACHE));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case CONF_FOLDER: {
                 if (def != null) {
-                    return stringValue(NWorkspace.get().getStoreLocation(def.getId(), NStoreType.CONF));
+                    return stringValue(NWorkspace.of().getStoreLocation(def.getId(), NStoreType.CONF));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case LIB_FOLDER: {
                 if (def != null) {
-                    return stringValue(NWorkspace.get().getStoreLocation(def.getId(), NStoreType.LIB));
+                    return stringValue(NWorkspace.of().getStoreLocation(def.getId(), NStoreType.LIB));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case LOG_FOLDER: {
                 if (def != null) {
-                    return stringValue(NWorkspace.get().getStoreLocation(def.getId(), NStoreType.LOG));
+                    return stringValue(NWorkspace.of().getStoreLocation(def.getId(), NStoreType.LOG));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case TEMP_FOLDER: {
                 if (def != null) {
-                    return stringValue(NWorkspace.get().getStoreLocation(def.getId(), NStoreType.TEMP));
+                    return stringValue(NWorkspace.of().getStoreLocation(def.getId(), NStoreType.TEMP));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case VAR_LOCATION: {
                 if (def != null) {
-                    return stringValue(NWorkspace.get().getStoreLocation(def.getId(), NStoreType.VAR));
+                    return stringValue(NWorkspace.of().getStoreLocation(def.getId(), NStoreType.VAR));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case BIN_FOLDER: {
                 if (def != null) {
-                    return stringValue(NWorkspace.get().getStoreLocation(def.getId(), NStoreType.BIN));
+                    return stringValue(NWorkspace.of().getStoreLocation(def.getId(), NStoreType.BIN));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }

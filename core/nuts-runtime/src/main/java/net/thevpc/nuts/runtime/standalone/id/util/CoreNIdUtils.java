@@ -34,7 +34,7 @@ public class CoreNIdUtils {
         NDigest nDigest = NDigest.of();
         String id0 = CoreNIdUtils.resolveValidIdStringFromFileName(path.getName());
         nDigest.setSource(path);
-        return NId.of("temp.url:" + id0 + "-" + nDigest.computeString() + "#1.0").get();
+        return NId.get("temp.url:" + id0 + "-" + nDigest.computeString() + "#1.0").get();
     }
 
     public static String resolveValidIdStringFromFileName(String fileName) {
@@ -106,38 +106,38 @@ public class CoreNIdUtils {
     }
 
     public static boolean isApiId(NId id) {
-        return NId.ofApi("").get().equalsShortId(id);
+        return NId.getApi("").get().equalsShortId(id);
     }
 
     public static boolean isRuntimeId(NId id) {
-        return NId.ofRuntime("").get().equalsShortId(id);
+        return NId.getRuntime("").get().equalsShortId(id);
     }
 
     public static NId apiId(String apiVersion) {
         NAssert.requireNonBlank(apiVersion, "version");
-        NWorkspace workspace = NWorkspace.of().get();
+        NWorkspace workspace = NWorkspace.get().get();
         if (apiVersion.equals(workspace.getApiVersion().toString())) {
             return workspace.getApiId();
         }
-        return NId.ofApi(apiVersion).get();
+        return NId.getApi(apiVersion).get();
     }
 
     public static NId runtimeId(String runtimeVersion) {
         NAssert.requireNonBlank(runtimeVersion, "runtimeVersion");
-        NWorkspace workspace = NWorkspace.of().get();
+        NWorkspace workspace = NWorkspace.get().get();
         if (runtimeVersion.equals(workspace.getApiVersion().toString())) {
             return workspace.getApiId();
         }
-        return NId.ofRuntime(runtimeVersion).get();
+        return NId.getRuntime(runtimeVersion).get();
     }
 
     public static NId findRuntimeForApi(String apiVersion) {
         NAssert.requireNonBlank(apiVersion, "apiVersion");
-        NWorkspace workspace = NWorkspace.of().get();
+        NWorkspace workspace = NWorkspace.get().get();
         if (apiVersion.equals(workspace.getApiVersion().toString())) {
             return workspace.getRuntimeId();
         }
-        NPath apiBoot = NWorkspace.get().getStoreLocation(apiId(apiVersion), NStoreType.CONF).resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
+        NPath apiBoot = NWorkspace.of().getStoreLocation(apiId(apiVersion), NStoreType.CONF).resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
         if (apiBoot.isRegularFile()) {
             NWorkspaceConfigApi c = NElements.of()
                     .json().parse(apiBoot, NWorkspaceConfigApi.class);
@@ -147,16 +147,16 @@ public class CoreNIdUtils {
         }
         NId foundRT = NSearchCmd.of()
                 .setFetchStrategy(NFetchStrategy.OFFLINE)
-                .addId(NId.ofRuntime("").get())
+                .addId(NId.getRuntime("").get())
                 .setLatest(true)
-                .setTargetApiVersion(NVersion.of(apiVersion).get())
+                .setTargetApiVersion(NVersion.get(apiVersion).get())
                 .getResultIds().
                 findFirst().orNull();
         NSession session = workspace.currentSession();
         if (foundRT == null && session.getFetchStrategy().orDefault() != NFetchStrategy.OFFLINE) {
-            foundRT = NSearchCmd.of().addId(NId.ofRuntime("").get())
+            foundRT = NSearchCmd.of().addId(NId.getRuntime("").get())
                     .setLatest(true)
-                    .setTargetApiVersion(NVersion.of(apiVersion).get())
+                    .setTargetApiVersion(NVersion.get(apiVersion).get())
                     .getResultIds().
                     findFirst().orNull();
         }

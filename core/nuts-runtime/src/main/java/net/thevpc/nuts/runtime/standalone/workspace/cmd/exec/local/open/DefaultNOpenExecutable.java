@@ -51,7 +51,7 @@ public class DefaultNOpenExecutable extends AbstractNExecutableInformationExt {
                 }
             }
         }
-        switch (NWorkspace.get().getOsFamily()) {
+        switch (NWorkspace.of().getOsFamily()) {
             case LINUX: {
                 Path execPath = NSysExecUtils.sysWhich("xdg-open");
                 if (execPath != null) {
@@ -108,7 +108,7 @@ public class DefaultNOpenExecutable extends AbstractNExecutableInformationExt {
 
     @Override
     public NText getHelpText() {
-        switch (NWorkspace.get().getOsFamily()) {
+        switch (NWorkspace.of().getOsFamily()) {
             case WINDOWS: {
                 return NText.ofStyled("No help available. Try " + getName() + " /help", NTextStyle.error());
             }

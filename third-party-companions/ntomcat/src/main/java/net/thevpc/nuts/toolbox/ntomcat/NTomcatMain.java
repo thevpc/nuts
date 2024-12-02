@@ -15,10 +15,10 @@ public class NTomcatMain implements NApplication {
 
     @Override
     public void run() {
-        NRepository apacheRepo = NWorkspace.get().findRepository("apache-tomcat").orNull();
-        NSession session = NSession.of().get();
+        NRepository apacheRepo = NWorkspace.of().findRepository("apache-tomcat").orNull();
+        NSession session = NSession.get().get();
         if (apacheRepo == null) {
-            NWorkspace.get().addRepository(
+            NWorkspace.of().addRepository(
                     new NAddRepositoryOptions()
                             .setRepositoryModel(new ApacheTomcatRepositoryModel(session.getWorkspace()))
                             .setTemporary(true)

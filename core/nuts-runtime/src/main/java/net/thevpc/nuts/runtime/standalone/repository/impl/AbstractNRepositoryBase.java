@@ -75,7 +75,7 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
     protected void init(NAddRepositoryOptions options, NRepository parent, NSpeedQualifier speed, boolean supportedMirroring, String repositoryType) {
         this.parentRepository = parent;
         this.configModel = new DefaultNRepositoryConfigModel(this, options, workspace,speed, supportedMirroring, repositoryType);
-        this.nIndexStore = NWorkspace.get().getIndexStoreClientFactory().createIndexStore(this);
+        this.nIndexStore = NWorkspace.of().getIndexStoreClientFactory().createIndexStore(this);
 //        setEnabled(options.isEnabled(), initSession);
     }
 
@@ -171,16 +171,16 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
     }
 
     protected String getIdComponentExtension(String packaging) {
-        return NWorkspace.get().getDefaultIdContentExtension(packaging);
+        return NWorkspace.of().getDefaultIdContentExtension(packaging);
     }
 
     protected String getIdExtension(NId id) {
-        return NWorkspace.get().getDefaultIdExtension(id);
+        return NWorkspace.of().getDefaultIdExtension(id);
     }
 
     @Override
     public NPath getIdBasedir(NId id) {
-        return NWorkspace.get().getDefaultIdBasedir(id);
+        return NWorkspace.of().getDefaultIdBasedir(id);
     }
 
     public NPath getIdRemotePath(NId id) {

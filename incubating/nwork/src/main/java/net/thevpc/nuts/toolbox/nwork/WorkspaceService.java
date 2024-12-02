@@ -279,7 +279,7 @@ public class WorkspaceService {
             } else if (cmdLine.withNextEntry((v, a) -> remoteUser.set(v), "--remote-user")) {
             } else if (cmdLine.isNextNonOption()) {
                 NArg a = cmdLine.next().get();
-                idsToPush.add(NId.of(a.toString()).get());
+                idsToPush.add(NId.get(a.toString()).get());
             } else {
                 session.configureLast(cmdLine);
             }
@@ -370,7 +370,7 @@ public class WorkspaceService {
             String id = projectService.getConfig().getId();
             NDescriptor pom = projectService.getPom();
             if (pom != null) {
-                dependencies.put(NId.of(id).get().getShortName(), pom);
+                dependencies.put(NId.get(id).get().getShortName(), pom);
             }
         }
 
@@ -386,11 +386,11 @@ public class WorkspaceService {
             ProjectService projectService = all.get(i);
             DataRow d = new DataRow();
             d.id = projectService.getConfig().getId();
-            NDescriptor pom = dependencies.get(NId.of(d.id).get().getShortName());
+            NDescriptor pom = dependencies.get(NId.get(d.id).get().getShortName());
             if (pom != null) {
                 for (NDependency dependency : pom.getDependencies()) {
                     String did = dependency.getGroupId() + ":" + dependency.getArtifactId();
-                    NDescriptor expectedPom = dependencies.get(NId.of(did).get().getShortName());
+                    NDescriptor expectedPom = dependencies.get(NId.get(did).get().getShortName());
                     if (expectedPom != null) {
                         String expectedVersion = expectedPom.getId().getVersion().toString();
                         String currentVersion = dependency.getVersion().toString();
@@ -424,7 +424,7 @@ public class WorkspaceService {
                 d.remote = "";
                 d.status = "new";
             } else {
-                int t = NVersion.of(d.local).get().compareTo(d.remote);
+                int t = NVersion.get(d.local).get().compareTo(d.remote);
                 if (t > 0) {
                     d.status = "commitable";
                 } else if (t < 0) {
@@ -555,8 +555,8 @@ public class WorkspaceService {
                         session.out().print(NMsg.ofC(" ; bad-deps:"));
                         for (DiffVersion dependency : p2.dependencies) {
                             session.out().print(NMsg.ofC(" %s : %s <> expected %s", dependency.id,
-                                    NVersion.of(dependency.current).get(),
-                                    NVersion.of(dependency.expected).get()
+                                    NVersion.get(dependency.current).get(),
+                                    NVersion.get(dependency.expected).get()
                             ));
                         }
                     }
@@ -581,7 +581,7 @@ public class WorkspaceService {
     private boolean matches(String id, List<String> filters) {
         boolean accept = filters.isEmpty();
         if (!accept) {
-            NId nid = NId.of(id).get();
+            NId nid = NId.get(id).get();
             for (String filter : filters) {
                 if (id.equals(filter)
                         || id.matches(wildcardToRegex(filter))

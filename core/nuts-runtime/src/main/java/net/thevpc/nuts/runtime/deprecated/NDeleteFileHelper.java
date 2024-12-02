@@ -101,7 +101,7 @@ public class NDeleteFileHelper {
         long count = 0;
         boolean headerWritten = false;
         if (folders != null) {
-            NSession session = NSession.of().orNull();
+            NSession session = NSession.get().orNull();
             for (Path child : folders) {
                 if (Files.exists(child)) {
                     if (!headerWritten) {
@@ -130,7 +130,7 @@ public class NDeleteFileHelper {
         if (Files.exists(directory)) {
             if (!force && !refForceAll.isForce() && refForceAll.accept(directory)) {
                 String line = null;
-                NSession session = NSession.of().orNull();
+                NSession session = NSession.get().orNull();
                 if (session != null) {
                     line = NAsk.of()
                             .forString(

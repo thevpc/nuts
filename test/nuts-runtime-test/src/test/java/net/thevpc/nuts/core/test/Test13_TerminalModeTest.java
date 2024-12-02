@@ -11,7 +11,6 @@ import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -124,7 +123,7 @@ public class Test13_TerminalModeTest {
     public void testBuilder(){
         NText c = NText.ofCode("java", "public static void main(String[] args){}")
                 .highlight();
-        NSession session = NSession.get();
+        NSession session = NSession.of();
         session.out().println(c);
 
         NText word_static = c.builder().substring(7, 13);

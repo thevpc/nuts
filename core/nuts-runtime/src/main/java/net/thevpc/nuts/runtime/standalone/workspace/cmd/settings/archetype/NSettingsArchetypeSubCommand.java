@@ -25,7 +25,7 @@ public class NSettingsArchetypeSubCommand extends AbstractNSettingsSubCommand {
         if (cmdLine.next("list archetypes","list archetype","archetype list", "la").isPresent()) {
             if (cmdLine.isExecMode()) {
                 NSession session=workspace.currentSession();
-                session.out().println(NWorkspace.get().getAvailableArchetypes());
+                session.out().println(NWorkspace.of().getAvailableArchetypes());
             }
             return true;
         }

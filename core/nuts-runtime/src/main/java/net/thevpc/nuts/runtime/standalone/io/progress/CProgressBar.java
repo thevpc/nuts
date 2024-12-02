@@ -8,8 +8,6 @@ import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
@@ -255,7 +253,7 @@ public class CProgressBar {
     }
 
     public static CProgressBar of() {
-        return NSession.of().get().getOrComputeProperty(CProgressBar.class.getName(), NScopeType.SESSION, CProgressBar::new);
+        return NSession.get().get().getOrComputeProperty(CProgressBar.class.getName(), NScopeType.SESSION, CProgressBar::new);
     }
 
     public CProgressBar() {
@@ -263,7 +261,7 @@ public class CProgressBar {
     }
 
     public CProgressBar(int determinateSize) {
-        this.session = NSession.of().get();
+        this.session = NSession.get().get();
         this.logger = NLog.of(CProgressBar.class);
         this.options = ProgressOptions.of(session);
         this.ws = session.getWorkspace();

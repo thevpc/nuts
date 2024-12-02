@@ -57,15 +57,15 @@ public interface NFetchCmd extends NWorkspaceCmd {
     }
 
     static NFetchCmd ofNutsApi() {
-        return of().setId(NWorkspace.of().get().getApiId());
+        return of().setId(NWorkspace.get().get().getApiId());
     }
 
     static NFetchCmd ofNutsApp() {
-        return of().setId(NWorkspace.of().get().getAppId());
+        return of().setId(NWorkspace.get().get().getAppId());
     }
 
     static NFetchCmd ofNutsRuntime() {
-        return of().setId(NWorkspace.of().get().getRuntimeId());
+        return of().setId(NWorkspace.get().get().getRuntimeId());
     }
 
     ////////////////////////////////////////////////////////

@@ -164,7 +164,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
                 NAssert.requireNonBlank(characterizedFile.getDescriptor(), "descriptor");
                 descriptor = characterizedFile.getDescriptor();
             }
-            String name = NWorkspace.get().getDefaultIdFilename(descriptor.getId().builder().setFaceDescriptor().build());
+            String name = NWorkspace.of().getDefaultIdFilename(descriptor.getId().builder().setFaceDescriptor().build());
             tempFile = NPath.ofTempFile(name).toPath().get();
             NCp.of().from(contentSource.getInputStream()).to(tempFile).addOptions(NPathOption.SAFE).run();
             contentFile2 = tempFile;
@@ -322,7 +322,7 @@ public class DefaultNDeployCmd extends AbstractNDeployCmd {
         if (values != null) {
             for (String s : values) {
                 if (!NBlankable.isBlank(s)) {
-                    ids.add(NId.of(s).get());
+                    ids.add(NId.get(s).get());
                 }
             }
         }

@@ -99,7 +99,7 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCmdFactory {
             if (r == 0) {
                 return new NCommandConfig()
                         .setFactoryId(getFactoryId())
-                        .setOwner(NId.of(ec[0]).get())
+                        .setOwner(NId.get(ec[0]).get())
                         .setName(name)
                         .setCommand(Arrays.copyOfRange(ec, 1, ec.length));
             }

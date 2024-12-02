@@ -117,7 +117,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         if (map.containsKey("nuts.jar")) {
             map.put("nuts.cmd", map.get("nuts.java") + " -jar " + map.get("nuts.jar"));
         }
-        map.put("nuts.workspace", NWorkspace.get().getWorkspaceLocation().toString());
+        map.put("nuts.workspace", NWorkspace.of().getWorkspaceLocation().toString());
         if (installerFile != null) {
             map.put("nuts.installer", installerFile.toString());
         }
@@ -184,7 +184,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         }
         args = args2.toArray(new String[0]);
 
-        Path wsLocation = NWorkspace.get().getWorkspaceLocation().toPath().get();
+        Path wsLocation = NWorkspace.of().getWorkspaceLocation().toPath().get();
         Path path = wsLocation.resolve(args[0]).normalize();
         if (Files.exists(path)) {
             NPath.of(path).addPermissions(NPathPermission.CAN_EXECUTE);

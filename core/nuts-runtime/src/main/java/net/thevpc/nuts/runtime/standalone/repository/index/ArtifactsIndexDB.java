@@ -25,11 +25,11 @@ public class ArtifactsIndexDB {
     }
 
     public static ArtifactsIndexDB of() {
-        synchronized (NWorkspace.get()) {
-            ArtifactsIndexDB o = (ArtifactsIndexDB) NWorkspace.get().getProperties().get(ArtifactsIndexDB.class.getName());
+        synchronized (NWorkspace.of()) {
+            ArtifactsIndexDB o = (ArtifactsIndexDB) NWorkspace.of().getProperties().get(ArtifactsIndexDB.class.getName());
             if (o == null) {
                 o = new ArtifactsIndexDB(DEFAULT_ARTIFACT_TABLE_NAME, CacheDB.of());
-                NWorkspace.get().getProperties().put(ArtifactsIndexDB.class.getName(), o);
+                NWorkspace.of().getProperties().put(ArtifactsIndexDB.class.getName(), o);
             }
             return o;
         }

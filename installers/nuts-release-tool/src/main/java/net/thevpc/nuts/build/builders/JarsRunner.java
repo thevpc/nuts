@@ -79,14 +79,14 @@ public class JarsRunner extends AbstractRunner {
 
     private void runNutsPublishMaven() {
         echo("**** publish $nuts maven...", NMaps.of("nuts", NMsg.ofStyled("nuts", NTextStyle.keyword())));
-        String nutsFolder = Mvn.folder(NId.of("net.thevpc:nuts").get());
+        String nutsFolder = Mvn.folder(NId.get("net.thevpc:nuts").get());
         upload(localMvn().resolve(nutsFolder), removeMvn().resolve(nutsFolder));
         remoteCopyFolder(removeMvn().resolve(nutsFolder), removeThevpcMaven().resolve(nutsFolder));
     }
 
     private void runNutsPublishPreview() {
         echo("**** publish $nuts preview...", NMaps.of("nuts", NMsg.ofStyled("nuts", NTextStyle.keyword())));
-        NId nid = NWorkspace.get().getApiId();
+        NId nid = NWorkspace.of().getApiId();
         remoteCopyFile(localMvn().resolve(Mvn.file(nid, MvnArtifactType.JAR)), remoteTheVpcNuts().resolve("nuts-preview.jar"));
     }
 

@@ -114,7 +114,7 @@ public class WhoamiCommand extends NShellBuiltinDefault {
                     result.remoteId = user.getRemoteIdentity();
                 }
                 List<RepoResult> rr = new ArrayList<>();
-                for (NRepository repository : NWorkspace.get().getRepositories()) {
+                for (NRepository repository : NWorkspace.of().getRepositories()) {
                     NUser ruser = repository.security().getEffectiveUser(login);
                     if (ruser != null && (ruser.getGroups().size() > 0
                             || ruser.getPermissions().size() > 0

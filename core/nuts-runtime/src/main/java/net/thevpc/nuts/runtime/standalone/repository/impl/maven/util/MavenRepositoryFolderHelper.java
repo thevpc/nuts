@@ -70,7 +70,7 @@ public class MavenRepositoryFolderHelper {
 
     public MavenRepositoryFolderHelper(NRepository repo, NPath rootPath) {
         this.repo = repo;
-        this.workspace = NWorkspace.get();
+        this.workspace = NWorkspace.of();
         this.rootPath = rootPath;
     }
 
@@ -84,7 +84,7 @@ public class MavenRepositoryFolderHelper {
 
     public NPath getIdLocalFile(NId id) {
         return getStoreLocation().resolve(NRepositoryExt.of(repo).getIdBasedir(id))
-                .resolve(NWorkspace.get().getDefaultIdFilename(id));
+                .resolve(NWorkspace.of().getDefaultIdFilename(id));
     }
 
     public NPath fetchContentImpl(NId id, Path localPath) {
@@ -101,7 +101,7 @@ public class MavenRepositoryFolderHelper {
 
     protected String getIdFilename(NId id) {
         if (repo == null) {
-            return NWorkspace.get().getDefaultIdFilename(id);
+            return NWorkspace.of().getDefaultIdFilename(id);
         }
         return NRepositoryExt.of(repo).getIdFilename(id);
     }

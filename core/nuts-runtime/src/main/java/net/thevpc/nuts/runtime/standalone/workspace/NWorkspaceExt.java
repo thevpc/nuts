@@ -24,7 +24,7 @@ public interface NWorkspaceExt {
 
 
     static NWorkspaceExt of() {
-        return ((NWorkspaceExt)NWorkspace.get());
+        return ((NWorkspaceExt)NWorkspace.of());
     }
     static NWorkspaceExt of(NWorkspace ws) {
         return ((NWorkspaceExt)ws);

@@ -9,7 +9,6 @@ import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NDependencyUtils;
-import net.thevpc.nuts.runtime.standalone.descriptor.util.NDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -399,8 +398,8 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
         boolean executable = nutsDescriptor.isExecutable();
         boolean nutsApp = nutsDescriptor.isApplication();
         if (jar.getName().toLowerCase().endsWith(".jar") && jar.isRegularFile()) {
-            NPath cachePath = NWorkspace.get().getStoreLocation(nutsDescriptor.getId(), NStoreType.CACHE)
-                    .resolve(NWorkspace.get().getDefaultIdFilename(nutsDescriptor.getId()
+            NPath cachePath = NWorkspace.of().getStoreLocation(nutsDescriptor.getId(), NStoreType.CACHE)
+                    .resolve(NWorkspace.of().getDefaultIdFilename(nutsDescriptor.getId()
                                     .builder()
                                     .setFace("info.cache")
                                     .build()
@@ -461,8 +460,8 @@ public class DefaultNFetchCmd extends AbstractNFetchCmd {
         NWorkspaceUtils wu = NWorkspaceUtils.of(getWorkspace());
         NElements elem = NElements.of();
         if (withCache) {
-            cachePath = NWorkspace.get().getStoreLocation(id, NStoreType.CACHE, repo.getUuid())
-                    .resolve(NWorkspace.get().getDefaultIdFilename(id.builder().setFace("def.cache").build()));
+            cachePath = NWorkspace.of().getStoreLocation(id, NStoreType.CACHE, repo.getUuid())
+                    .resolve(NWorkspace.of().getDefaultIdFilename(id.builder().setFace("def.cache").build()));
             if (cachePath.isRegularFile()) {
                 try {
                     if (CoreIOUtils.isObsoletePath(cachePath)) {

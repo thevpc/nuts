@@ -219,7 +219,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         InputStream foldersFileStream = null;
         String dotFilesUrl = baseUrl + "/" + CoreNConstants.Files.DOT_FILES;
         NSession session = workspace.currentSession();
-        NVersion versionString = NVersion.of("0.5.5").get();
+        NVersion versionString = NVersion.get("0.5.5").get();
         try {
             session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "browse", NPath.of(baseUrl).toCompressedForm()));
             foldersFileStream = NInputStreamMonitor.of().setSource(NPath.of(dotFilesUrl)).create();
@@ -231,7 +231,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
                         if (all.isEmpty()) {
                             s = s.substring(1).trim();
                             if (s.startsWith("version=")) {
-                                versionString = NVersion.of(s.substring("version=".length()).trim()).get();
+                                versionString = NVersion.get(s.substring("version=".length()).trim()).get();
                             }
                         }
                     } else {

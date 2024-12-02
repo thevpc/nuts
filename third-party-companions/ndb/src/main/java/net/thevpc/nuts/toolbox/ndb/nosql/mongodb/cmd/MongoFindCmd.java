@@ -52,7 +52,7 @@ public class MongoFindCmd extends FindCmd<NMongoConfig> {
             r.forEach(x -> {
                 values.add(x);
             });
-            NSession session = NSession.of().get();
+            NSession session = NSession.get().get();
             session.out().println(values);
         });
     }

@@ -17,7 +17,7 @@ public class NAppUtils {
                             break;
                         }
                         default: {
-                            NSession.get().configureLast(cmdLine);
+                            NSession.of().configureLast(cmdLine);
                         }
                     }
                 } else {

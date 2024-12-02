@@ -17,7 +17,7 @@ public class ExamplesOfCp {
     }
 
     public void executeSomeCommand() {
-        NSession session = NSession.get();
+        NSession session = NSession.of();
         session.out().println("Example of ## Cp ##");
         NCp.of()
                 .from(NPath.of("http://www.google.com"))
@@ -27,7 +27,7 @@ public class ExamplesOfCp {
     }
 
     public void executeCustomMonitor() {
-        NSession session = NSession.get();
+        NSession session = NSession.of();
         session.out().println("Example of ## Cp ##");
         NCp.of()
                 .from(NPath.of("http://www.google.com"))

@@ -16,35 +16,35 @@ public class NExecutionContextUtils {
                     return (definition.getId().toString());
                 }
                 case "NUTS_ID_BIN": {
-                    NPath v = NWorkspace.get().getStoreLocation(definition.getId(), NStoreType.BIN);
+                    NPath v = NWorkspace.of().getStoreLocation(definition.getId(), NStoreType.BIN);
                     return (v.toString());
                 }
                 case "NUTS_ID_CONF": {
-                    NPath v = NWorkspace.get().getStoreLocation(definition.getId(), NStoreType.CONF);
+                    NPath v = NWorkspace.of().getStoreLocation(definition.getId(), NStoreType.CONF);
                     return (v.toString());
                 }
                 case "NUTS_ID_LOG": {
-                    NPath v = NWorkspace.get().getStoreLocation(definition.getId(), NStoreType.LOG);
+                    NPath v = NWorkspace.of().getStoreLocation(definition.getId(), NStoreType.LOG);
                     return (v.toString());
                 }
                 case "NUTS_ID_CACHE": {
-                    NPath v = NWorkspace.get().getStoreLocation(definition.getId(), NStoreType.CACHE);
+                    NPath v = NWorkspace.of().getStoreLocation(definition.getId(), NStoreType.CACHE);
                     return (v.toString());
                 }
                 case "NUTS_ID_LIB": {
-                    NPath v = NWorkspace.get().getStoreLocation(definition.getId(), NStoreType.LIB);
+                    NPath v = NWorkspace.of().getStoreLocation(definition.getId(), NStoreType.LIB);
                     return (v.toString());
                 }
                 case "NUTS_ID_RUN": {
-                    NPath v = NWorkspace.get().getStoreLocation(definition.getId(), NStoreType.RUN);
+                    NPath v = NWorkspace.of().getStoreLocation(definition.getId(), NStoreType.RUN);
                     return (v.toString());
                 }
                 case "NUTS_ID_TEMP": {
-                    NPath v = NWorkspace.get().getStoreLocation(definition.getId(), NStoreType.TEMP);
+                    NPath v = NWorkspace.of().getStoreLocation(definition.getId(), NStoreType.TEMP);
                     return (v.toString());
                 }
                 case "NUTS_ID_VAR": {
-                    NPath v = NWorkspace.get().getStoreLocation(definition.getId(), NStoreType.VAR);
+                    NPath v = NWorkspace.of().getStoreLocation(definition.getId(), NStoreType.VAR);
                     return (v.toString());
                 }
             }

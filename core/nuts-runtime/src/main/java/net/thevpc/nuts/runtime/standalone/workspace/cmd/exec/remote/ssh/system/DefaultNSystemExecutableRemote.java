@@ -120,7 +120,7 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableInformati
 
     @Override
     public NText getHelpText() {
-        switch (NWorkspace.get().getOsFamily()) {
+        switch (NWorkspace.of().getOsFamily()) {
             case WINDOWS: {
                 return NText.ofStyled(
                         "No help available. Try " + getName() + " /help",

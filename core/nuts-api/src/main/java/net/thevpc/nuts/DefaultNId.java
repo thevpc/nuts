@@ -355,7 +355,7 @@ public class DefaultNId implements NId {
         }
         List<NId> a = new ArrayList<>();
         for (String s : NReservedLangUtils.splitDefault(exc)) {
-            NId n = NId.of(s).get();
+            NId n = NId.get(s).get();
             if (n != null) {
                 a.add(n);
             }

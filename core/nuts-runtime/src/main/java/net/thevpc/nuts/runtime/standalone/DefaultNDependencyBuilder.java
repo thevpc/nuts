@@ -120,7 +120,7 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
             setVersion(value.getVersion());
             setScope(value.getScope());
             setOptional(value.getOptional());
-            setExclusions(value.getExclusions()==null?null:value.getExclusions().stream().map(x->x==null?null:NId.of(x.toString()).get()).collect(Collectors.toList()));
+            setExclusions(value.getExclusions()==null?null:value.getExclusions().stream().map(x->x==null?null:NId.get(x.toString()).get()).collect(Collectors.toList()));
             setClassifier(value.getClassifier());
             getCondition().setAll(value.getCondition()==null?null:new DefaultNEnvConditionBuilder().setAll(value.getCondition()));
             setType(value.getType());
@@ -314,7 +314,7 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
 
     @Override
     public NDependencyBuilder setVersion(String version) {
-        this.version = NVersion.of(version).get();
+        this.version = NVersion.get(version).get();
         return this;
     }
 
@@ -471,7 +471,7 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
         }
         List<NId> ids = new ArrayList<>();
         for (String s : NReservedLangUtils.splitDefault(exclusions)) {
-            NId ii = NId.of(s).orNull();
+            NId ii = NId.get(s).orNull();
             if (ii != null) {
                 ids.add(ii);
             }

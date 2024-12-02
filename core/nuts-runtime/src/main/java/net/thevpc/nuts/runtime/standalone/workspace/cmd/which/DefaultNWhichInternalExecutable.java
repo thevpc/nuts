@@ -90,7 +90,7 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                                         factory.ofStyled(arg, NTextStyle.primary4()),
                                         factory.ofStyled("nuts alias", NTextStyle.primary6()),
                                         p.getId(),
-                                        NCmdLine.of(NWorkspace.get().findCommand(p.getName()).getCommand())
+                                        NCmdLine.of(NWorkspace.of().findCommand(p.getName()).getCommand())
                                 ));
                             } else {
                                 session.out().println(
@@ -106,7 +106,7 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                         }
                         case ARTIFACT: {
                             if (p.getId() == null) {
-                                NId nid = NId.of(arg).get();
+                                NId nid = NId.get(arg).get();
                                 if (nid != null) {
                                     throw new NNotFoundException(nid);
                                 } else {

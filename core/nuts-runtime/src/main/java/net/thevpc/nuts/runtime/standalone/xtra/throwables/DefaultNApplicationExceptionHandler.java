@@ -35,10 +35,10 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
 
     @Override
     public int processThrowable(String[] args, Throwable throwable) {
-        NSession session = NSession.get();
+        NSession session = NSession.of();
         NWorkspaceOptionsBuilder bo = null;
-        bo = NWorkspace.get().getBootOptions().toWorkspaceOptions().builder();
-        if (!NWorkspace.get().isGraphicalDesktopEnvironment()) {
+        bo = NWorkspace.of().getBootOptions().toWorkspaceOptions().builder();
+        if (!NWorkspace.of().isGraphicalDesktopEnvironment()) {
             bo.setGui(false);
         }
 

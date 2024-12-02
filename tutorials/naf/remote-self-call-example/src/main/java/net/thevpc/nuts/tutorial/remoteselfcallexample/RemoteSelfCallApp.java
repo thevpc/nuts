@@ -41,7 +41,7 @@ public class RemoteSelfCallApp implements NApplication {
 
     @Override
     public void run() {
-        NSession session = NSession.get();
+        NSession session = NSession.of();
         NCmdLine cmdLine = NApp.of().getCmdLine();
         log(NMsg.ofC("%s", cmdLine));
         Options options = new Options();
@@ -97,7 +97,7 @@ public class RemoteSelfCallApp implements NApplication {
                                             NStringUtils.toStringOrEmpty(NApp.of().getId().orNull()),
                                             "--on-call-self"
                                     )
-                                    .addCommand("from=" + NWorkspace.get().getHostName())
+                                    .addCommand("from=" + NWorkspace.of().getHostName())
                                     .addCommand(options.nonOptions)
                                     .failFast()
                                     .getGrabbedAllString()
@@ -118,8 +118,8 @@ public class RemoteSelfCallApp implements NApplication {
     }
 
     private void log(NMsg m) {
-        NSession session = NSession.get();
-        String hostName = NWorkspace.get().getHostName();
+        NSession session = NSession.of();
+        String hostName = NWorkspace.of().getHostName();
         session.out().println(NMsg.ofC("[%s] %s", hostName, m));
     }
 

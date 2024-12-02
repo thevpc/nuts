@@ -10,7 +10,6 @@ import net.thevpc.nuts.runtime.standalone.io.util.AbstractMultiReadNInputSource;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NStream;
@@ -235,7 +234,7 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
 
     public String[] getSmartParts() {
         String n = getName();
-        NLiteral[] vals = NVersion.of(n).get().split();
+        NLiteral[] vals = NVersion.get(n).get().split();
         int lastDot = -1;
         for (int i = vals.length - 1; i >= 0; i--) {
             NLiteral v = vals[i];

@@ -36,8 +36,8 @@ public class NIndexSubscriberListManager {
     }
 
     private NPath getConfigFile() {
-        return NWorkspace.get()
-                .getStoreLocation(NId.ofClass(NIndexSubscriberListManager.class).get(),
+        return NWorkspace.of()
+                .getStoreLocation(NId.getForClass(NIndexSubscriberListManager.class).get(),
                         NStoreType.CONF).resolve(
                         name + "-nuts-subscriber-list.json");
     }
@@ -83,7 +83,7 @@ public class NIndexSubscriberListManager {
     }
 
     private String getRepositoryNameFromUuid(String repositoryUuid) {
-        List<NRepository> repositories = NWorkspace.get().getRepositories();
+        List<NRepository> repositories = NWorkspace.of().getRepositories();
         for (NRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 return repository.getName();

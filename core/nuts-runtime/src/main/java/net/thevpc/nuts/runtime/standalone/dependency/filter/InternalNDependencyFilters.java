@@ -139,7 +139,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
 
     @Override
     public NDependencyFilter byExclude(NDependencyFilter filter, String[] exclusions) {
-        return new NExclusionDependencyFilter(getWorkspace(), filter, Arrays.stream(exclusions).map(x -> NId.of(x).get()).toArray(NId[]::new));
+        return new NExclusionDependencyFilter(getWorkspace(), filter, Arrays.stream(exclusions).map(x -> NId.get(x).get()).toArray(NId[]::new));
     }
 
     @Override
@@ -184,16 +184,16 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
 
     @Override
     public NDependencyFilter byCurrentDesktop() {
-        return byDesktop(NWorkspace.get().getDesktopEnvironmentFamilies());
+        return byDesktop(NWorkspace.of().getDesktopEnvironmentFamilies());
     }
 
     public NDependencyFilter byCurrentArch() {
-        return byArch(NWorkspace.get().getArchFamily());
+        return byArch(NWorkspace.of().getArchFamily());
     }
 
     @Override
     public NDependencyFilter byCurrentOs() {
-        return byOs(NWorkspace.get().getOsFamily());
+        return byOs(NWorkspace.of().getOsFamily());
     }
 
     @Override
@@ -276,7 +276,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         if (osDist == null) {
             return always();
         }
-        return new NDependencyOsDistIdFilter(getWorkspace()).add(Collections.singletonList(NId.of(osDist).get()));
+        return new NDependencyOsDistIdFilter(getWorkspace()).add(Collections.singletonList(NId.get(osDist).get()));
     }
 
     @Override
@@ -285,7 +285,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
             return always();
         }
         return new NDependencyOsDistIdFilter(getWorkspace()).add(
-                Arrays.stream(osDists).map(x-> NId.of(x).get())
+                Arrays.stream(osDists).map(x-> NId.get(x).get())
                         .collect(Collectors.toList())
         );
     }
@@ -296,7 +296,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
             return always();
         }
         return new NDependencyOsDistIdFilter(getWorkspace()).add(
-                osDists.stream().map(x-> NId.of(x).get())
+                osDists.stream().map(x-> NId.get(x).get())
                         .collect(Collectors.toList())
         );
     }
@@ -315,7 +315,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
             return always();
         }
         return new NDependencyPlatformIdFilter(getWorkspace()).add(
-                Arrays.stream(pf).map(x-> NId.of(x).get())
+                Arrays.stream(pf).map(x-> NId.get(x).get())
                         .collect(Collectors.toList())
         );
     }

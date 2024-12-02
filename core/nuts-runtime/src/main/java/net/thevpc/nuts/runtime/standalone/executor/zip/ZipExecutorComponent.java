@@ -50,7 +50,7 @@ public class ZipExecutorComponent implements NExecutorComponent {
 
     public ZipExecutorComponent(NSession session) {
         this.session = session;
-        ID = NId.of("net.thevpc.nuts.exec:zip").get();
+        ID = NId.get("net.thevpc.nuts.exec:zip").get();
     }
 
     @Override

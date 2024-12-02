@@ -31,7 +31,7 @@ public class DefaultNRepositoryDB implements NRepositoryDB {
                                 .setLocation(NRepositoryLocation.of("nuts@"
                                         + NPath.of(
                                                 NPlatformHome.SYSTEM.getWorkspaceLocation(
-                                                        NStoreType.LIB, NWorkspace.get().getStoredConfig().getHomeLocations(),
+                                                        NStoreType.LIB, NWorkspace.of().getStoredConfig().getHomeLocations(),
                                                         NConstants.Names.DEFAULT_WORKSPACE_NAME))
                                         .resolve(NConstants.Folders.ID)
                                         .toString())

@@ -39,7 +39,7 @@ public class NSubscriptionController {
     public ResponseEntity<Void> subscribe(@RequestParam("workspaceLocation") String workspaceLocation,
             @RequestParam("repositoryUuid") String repositoryUuid) {
         NWorkspace workspace = workspacePool.openWorkspace(workspaceLocation);
-        List<NRepository> repositories = NWorkspace.get().getRepositories();
+        List<NRepository> repositories = NWorkspace.of().getRepositories();
         for (NRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 this.subscriberManager.subscribe(repositoryUuid,
@@ -55,7 +55,7 @@ public class NSubscriptionController {
     public ResponseEntity<Void> unsubscribe(@RequestParam("workspaceLocation") String workspaceLocation,
             @RequestParam("repositoryUuid") String repositoryUuid) {
         NWorkspace workspace = workspacePool.openWorkspace(workspaceLocation);
-        List<NRepository> repositories = NWorkspace.get().getRepositories();
+        List<NRepository> repositories = NWorkspace.of().getRepositories();
         for (NRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 this.subscriberManager.unsubscribe(repositoryUuid,
@@ -71,7 +71,7 @@ public class NSubscriptionController {
             @RequestParam("repositoryUuid") String repositoryUuid) {
         System.out.println(workspaceLocation + " " + repositoryUuid);
         NWorkspace workspace = workspacePool.openWorkspace(workspaceLocation);
-        List<NRepository> repositories = NWorkspace.get().getRepositories();
+        List<NRepository> repositories = NWorkspace.of().getRepositories();
         for (NRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 boolean subscribed = this.subscriberManager.isSubscribed(repositoryUuid,

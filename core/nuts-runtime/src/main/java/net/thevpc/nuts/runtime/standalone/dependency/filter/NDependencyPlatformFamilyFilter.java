@@ -28,7 +28,7 @@ public class NDependencyPlatformFamilyFilter extends AbstractDependencyFilter  {
     public NDependencyPlatformFamilyFilter(NWorkspace workspace, String accepted) {
         super(workspace, NFilterOp.CUSTOM);
         this.accepted = EnumSet.noneOf(NPlatformFamily.class);
-        for (NId e : NId.ofList(accepted).get()) {
+        for (NId e : NId.getList(accepted).get()) {
             if (!e.isBlank()) {
                 this.accepted.add(NPlatformFamily.parse(e.getArtifactId()).orNull());
             }

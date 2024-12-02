@@ -103,7 +103,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
                     && nRepository.config().getLocationPath() != null
                     && nRepository.config().getLocationPath().toString()
                     .equals(
-                            Paths.get(NPath.of("~/.m2").toAbsolute(NWorkspace.get().getWorkspaceLocation()).toString()).toString()
+                            Paths.get(NPath.of("~/.m2").toAbsolute(NWorkspace.of().getWorkspaceLocation()).toString()).toString()
                     )) {
                 return nRepository;
             }
@@ -168,7 +168,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
             }
             case NConstants.QueryFaces.CONTENT: {
                 String packaging = q.get(NConstants.IdProperties.PACKAGING);
-                return NWorkspace.get().getDefaultIdContentExtension(packaging);
+                return NWorkspace.of().getDefaultIdContentExtension(packaging);
             }
             default: {
                 throw new NUnsupportedArgumentException(NMsg.ofC("unsupported fact %s", f));

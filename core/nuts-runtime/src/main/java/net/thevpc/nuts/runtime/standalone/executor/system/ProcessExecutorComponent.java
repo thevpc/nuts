@@ -52,7 +52,7 @@ public class ProcessExecutorComponent implements NExecutorComponent {
     @Override
     public int getSupportLevel(NSupportLevelContext nutsDefinition) {
         if(ID==null){
-            ID= NId.of("net.thevpc.nuts.exec:exec-native").get();
+            ID= NId.get("net.thevpc.nuts.exec:exec-native").get();
         }
         return NConstants.Support.DEFAULT_SUPPORT;
     }

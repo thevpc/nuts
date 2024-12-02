@@ -44,70 +44,119 @@ import java.util.regex.Pattern;
  * @since 0.1.0
  */
 public interface NId extends Comparable<NId>, NBlankable {
-    NId API_ID = of(NConstants.Ids.NUTS_GROUP_ID, NConstants.Ids.NUTS_API_ARTIFACT_ID, "").get();
-    NId RUNTIME_ID = of(NConstants.Ids.NUTS_GROUP_ID, NConstants.Ids.NUTS_RUNTIME_ARTIFACT_ID, "").get();
+    NId API_ID = get(NConstants.Ids.NUTS_GROUP_ID, NConstants.Ids.NUTS_API_ARTIFACT_ID, "").get();
+    NId RUNTIME_ID = get(NConstants.Ids.NUTS_GROUP_ID, NConstants.Ids.NUTS_RUNTIME_ARTIFACT_ID, "").get();
     Pattern PATTERN = Pattern.compile("^(?<group>[a-zA-Z0-9_.${}*-]+)(:(?<artifact>[a-zA-Z0-9_.${}*-]+))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");
     NId BLANK = new DefaultNId();
 
-    static NOptional<List<NId>> ofList(String value) {
+    static NOptional<List<NId>> getList(String value) {
         return NReservedUtils.parseIdList(value);
     }
 
-    static NOptional<Set<NId>> ofSet(String value) {
-        return ofList(value).map(LinkedHashSet::new);
+    static NOptional<Set<NId>> getSet(String value) {
+        return getList(value).map(LinkedHashSet::new);
     }
 
-    static NOptional<NId> of(String groupId, String artifactId) {
+    static NOptional<NId> get(String groupId, String artifactId) {
         return NOptional.of(new DefaultNId(groupId, artifactId, null));
     }
 
-    static NOptional<NId> of(String groupId, String artifactId, NVersion version) {
+    static NOptional<NId> get(String groupId, String artifactId, NVersion version) {
         return NOptional.of(new DefaultNId(groupId, artifactId, version));
     }
 
-    static NOptional<NId> of(String groupId, String artifactId, String version) {
-        return NVersion.of(version).map(x -> new DefaultNId(groupId, artifactId, x));
+    static NOptional<NId> get(String groupId, String artifactId, String version) {
+        return NVersion.get(version).map(x -> new DefaultNId(groupId, artifactId, x));
     }
 
-    static NOptional<NId> ofApi(NVersion version) {
+    static NOptional<NId> getApi(NVersion version) {
         if (NBlankable.isBlank(version)) {
             return NOptional.of(API_ID);
         }
-        return of(NConstants.Ids.NUTS_GROUP_ID, NConstants.Ids.NUTS_API_ARTIFACT_ID, version);
+        return get(NConstants.Ids.NUTS_GROUP_ID, NConstants.Ids.NUTS_API_ARTIFACT_ID, version);
     }
 
-    static NOptional<NId> ofRuntime(NVersion version) {
+    static NOptional<NId> getRuntime(NVersion version) {
         if (NBlankable.isBlank(version)) {
             return NOptional.of(RUNTIME_ID);
         }
-        return of(NConstants.Ids.NUTS_GROUP_ID, NConstants.Ids.NUTS_RUNTIME, version);
+        return get(NConstants.Ids.NUTS_GROUP_ID, NConstants.Ids.NUTS_RUNTIME, version);
     }
 
-    static NOptional<NId> ofApi(String version) {
+    static NOptional<NId> getApi(String version) {
         if (NBlankable.isBlank(version)) {
             return NOptional.of(API_ID);
         }
-        return of(NConstants.Ids.NUTS_GROUP_ID, NConstants.Ids.NUTS_API_ARTIFACT_ID, version);
+        return get(NConstants.Ids.NUTS_GROUP_ID, NConstants.Ids.NUTS_API_ARTIFACT_ID, version);
     }
 
-    static NOptional<NId> ofRuntime(String version) {
+    static NOptional<NId> getRuntime(String version) {
         if (NBlankable.isBlank(version)) {
             return NOptional.of(RUNTIME_ID);
         }
-        return of(NConstants.Ids.NUTS_GROUP_ID, NConstants.Ids.NUTS_RUNTIME_ARTIFACT_ID, version);
+        return get(NConstants.Ids.NUTS_GROUP_ID, NConstants.Ids.NUTS_RUNTIME_ARTIFACT_ID, version);
     }
 
-    static NOptional<NId> of(String value) {
+    static NOptional<NId> get(String value) {
         return NReservedUtils.parseId(value);
     }
 
-    static NOptional<NId> ofClass(Class<?> value) {
+    static NOptional<NId> getForClass(Class<?> value) {
         return NLibPaths.of().resolveId(value);
     }
 
-    static NOptional<NId> ofPath(NPath value) {
+    static NOptional<NId> getForPath(NPath value) {
         return NLibPaths.of().resolveId(value);
     }
+
+    static List<NId> ofList(String value) {
+        return getList(value).get();
+    }
+
+    static Set<NId> ofSet(String value) {
+        return getSet(value).get();
+    }
+
+    static NId of(String groupId, String artifactId) {
+        return get(groupId, artifactId).get();
+    }
+
+    static NId of(String groupId, String artifactId, NVersion version) {
+        return get(groupId, artifactId, version).get();
+    }
+
+    static NId of(String groupId, String artifactId, String version) {
+        return get(groupId, artifactId, version).get();
+    }
+
+    static NId ofApi(NVersion version) {
+        return getApi(version).get();
+    }
+
+    static NId ofRuntime(NVersion version) {
+        return getRuntime(version).get();
+    }
+
+    static NId ofApi(String version) {
+        return getApi(version).get();
+    }
+
+    static NId ofRuntime(String version) {
+        return getRuntime(version).get();
+    }
+
+    static NId of(String value) {
+        return get(value).get();
+    }
+
+    static NId ofClass(Class<?> value) {
+        return getForClass(value).get();
+    }
+
+    static NId ofPath(NPath value) {
+        return getForPath(value).get();
+    }
+
 
     static List<NId> findAllByClass(Class<?> value) {
         return NLibPaths.of().resolveIds(value);

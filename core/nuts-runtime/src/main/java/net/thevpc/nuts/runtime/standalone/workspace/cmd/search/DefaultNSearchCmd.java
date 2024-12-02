@@ -544,7 +544,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
         NElements elems = NElements.of();
         if (regularIds.length > 0) {
             for (String id : regularIds) {
-                NId nutsId = NId.of(id).get();
+                NId nutsId = NId.get(id).get();
                 if (nutsId != null) {
                     List<NId> nutsId2 = new ArrayList<>();
                     if (NBlankable.isBlank(nutsId.getGroupId())) {
@@ -564,7 +564,7 @@ public class DefaultNSearchCmd extends AbstractNSearchCmd {
                             if (!installedIds.isEmpty()) {
                                 nutsId2.addAll(installedIds);
                             } else {
-                                for (String aImport : NWorkspace.get().getAllImports()) {
+                                for (String aImport : NWorkspace.of().getAllImports()) {
                                     //example import(net.thevpc),search(pnote) ==>net.thevpc:pnote
                                     nutsId2.add(nutsId.builder().setGroupId(aImport).build());
                                     //example import(net.thevpc),search(pnote) ==>net.thevpc.pnote:pnote

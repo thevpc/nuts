@@ -279,7 +279,7 @@ public class NComponentController {
                 String[] array = NElements.of().json().parse(new StringReader(row.get("dependencies")), String[].class);
                 List<Map<String, String>> dependencies = new ArrayList<>();
                 for (String s : array) {
-                    dependencies.add(NIndexerUtils.nutsIdToMap(NId.of(s).get()));
+                    dependencies.add(NIndexerUtils.nutsIdToMap(NId.get(s).get()));
                 }
                 d.put("dependencies", dependencies);
             }
@@ -287,7 +287,7 @@ public class NComponentController {
                 String[] array = NElements.of().json().parse(new StringReader(row.get("allDependencies")), String[].class);
                 List<Map<String, String>> allDependencies = new ArrayList<>();
                 for (String s : array) {
-                    allDependencies.add(NIndexerUtils.nutsIdToMap(NId.of(s).get()));
+                    allDependencies.add(NIndexerUtils.nutsIdToMap(NId.get(s).get()));
                 }
                 d.put("allDependencies", allDependencies);
             }

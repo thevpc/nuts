@@ -144,7 +144,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
             bootVersion = this.getApiVersion();
         }
         if (this.isApi() || !(this.getApiVersion() == null || this.getApiVersion().isBlank())) {
-            apiUpdate = checkCoreUpdate(NId.of(NConstants.Ids.NUTS_API).get(), this.getApiVersion(), Type.API, now);
+            apiUpdate = checkCoreUpdate(NId.get(NConstants.Ids.NUTS_API).get(), this.getApiVersion(), Type.API, now);
             if (apiUpdate.isUpdatable()) {
                 bootVersion = apiUpdate.getAvailable().getId().getVersion();
                 allUpdates.put(NConstants.Ids.NUTS_API, apiUpdate);
@@ -156,7 +156,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         NUpdateResult runtimeUpdate = null;
         if (this.isRuntime()) {
             if (dws.requiresRuntimeExtension()) {
-                runtimeUpdate = checkCoreUpdate(NId.of(workspace.getRuntimeId().getShortName()).get(),
+                runtimeUpdate = checkCoreUpdate(NId.get(workspace.getRuntimeId().getShortName()).get(),
                         apiUpdate != null && apiUpdate.getAvailable() != null && apiUpdate.getAvailable().getId() != null ? apiUpdate.getAvailable().getId().getVersion()
                                 : bootVersion, Type.RUNTIME, now);
                 if (runtimeUpdate.isUpdatable()) {
@@ -193,7 +193,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
         List<NId> lockedIds = this.getLockedIds();
         if (lockedIds.size() > 0) {
             for (NId d : new HashSet<>(lockedIds)) {
-                NDependency dd = NDependency.of(d.toString()).get();
+                NDependency dd = NDependency.get(d.toString()).get();
                 if (regularUpdates.containsKey(dd.getSimpleName())) {
                     NUpdateResult updated = regularUpdates.get(dd.getSimpleName());
                     //FIX ME
@@ -634,7 +634,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
             applyRegularUpdate((DefaultNUpdateResult) component);
         }
 
-        if (NWorkspace.get().saveConfig(requireSave)) {
+        if (NWorkspace.of().saveConfig(requireSave)) {
             if (_LOG().isLoggable(Level.INFO)) {
                 _LOGOP().level(Level.INFO).verb(NLogVerb.WARNING)
                         .log(NMsg.ofPlain("workspace is updated. Nuts should be restarted for changes to take effect."));
@@ -704,14 +704,14 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
 //        NutsSession sessionOffline = session.copy().setFetchMode(NutsFetchMode.OFFLINE);
         switch (type) {
             case API: {
-                oldId = NWorkspace.get().getStoredConfig().getApiId();
-                NId confId = NWorkspace.get().getStoredConfig().getApiId();
+                oldId = NWorkspace.of().getStoredConfig().getApiId();
+                NId confId = NWorkspace.of().getStoredConfig().getApiId();
                 if (confId != null) {
                     oldId = confId;
                 }
                 NVersion v = bootApiVersion;
                 if (v == null || v.isBlank()) {
-                    v = NVersion.of(NConstants.Versions.LATEST).get();
+                    v = NVersion.get(NConstants.Versions.LATEST).get();
                 }
                 try {
                     NId finalOldId = oldId;
@@ -741,7 +741,7 @@ public class DefaultNUpdateCmd extends AbstractNUpdateCmd {
             }
             case RUNTIME: {
                 oldId = ws.getRuntimeId();
-                NId confId = NWorkspace.get().getStoredConfig().getRuntimeId();
+                NId confId = NWorkspace.of().getStoredConfig().getRuntimeId();
                 if (confId != null) {
                     oldId = confId;
                 }

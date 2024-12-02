@@ -154,7 +154,7 @@ public class DefaultNRepositoryModel {
         NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.REMOVE_REPOSITORY, "remove-repository");
         final NRepository repository = repositoryRegistryHelper.removeRepository(repositoryId);
         if (repository != null) {
-            NWorkspace.get().saveConfig();
+            NWorkspace.of().saveConfig();
             NWorkspaceExt.of(workspace).getConfigModel().fireConfigurationChanged("config-main", ConfigEventType.MAIN);
             NWorkspaceUtils.of(workspace).events().fireOnRemoveRepository(new DefaultNWorkspaceEvent(session, repository, "repository", repository, null));
         }
@@ -259,9 +259,9 @@ public class DefaultNRepositoryModel {
                 options.setConfig(conf);
                 if (options.isEnabled()) {
                     options.setEnabled(
-                            NWorkspace.get().getBootOptions().getRepositories() == null
+                            NWorkspace.of().getBootOptions().getRepositories() == null
                                     || NRepositorySelectorList.of(
-                                    NWorkspace.get().getBootOptions().getRepositories().orNull(),
+                                    NWorkspace.of().getBootOptions().getRepositories().orNull(),
                                     NRepositoryDB.of()
                             ).get().acceptExisting(
                                     conf.getLocation().setName(options.getName())
@@ -271,9 +271,9 @@ public class DefaultNRepositoryModel {
                 options.setConfig(conf);
                 if (options.isEnabled()) {
                     options.setEnabled(
-                            NWorkspace.get().getBootOptions().getRepositories() == null
+                            NWorkspace.of().getBootOptions().getRepositories() == null
                                     || NRepositorySelectorList.of(
-                                    NWorkspace.get().getBootOptions().getRepositories().orNull(),
+                                    NWorkspace.of().getBootOptions().getRepositories().orNull(),
                                     NRepositoryDB.of()
                             ).get().acceptExisting(
                                     conf.getLocation().setName(options.getName())
@@ -334,7 +334,7 @@ public class DefaultNRepositoryModel {
             try {
                 NElements elem = NElements.of();
                 Map<String, Object> a_config0 = elem.json().parse(bytes, Map.class);
-                NVersion version = NVersion.of((String) a_config0.get("configVersion")).orNull();
+                NVersion version = NVersion.get((String) a_config0.get("configVersion")).orNull();
                 if (version == null || version.isBlank()) {
                     version = workspace.getApiVersion();
                 }
@@ -344,7 +344,7 @@ public class DefaultNRepositoryModel {
                 }
                 conf = elem.json().parse(file, NRepositoryConfig.class);
             } catch (RuntimeException ex) {
-                if (NWorkspace.get().getBootOptions().getRecover().orElse(false)) {
+                if (NWorkspace.of().getBootOptions().getRecover().orElse(false)) {
                     onLoadRepositoryError(file, name, null, ex);
                 } else {
                     throw ex;
@@ -365,7 +365,7 @@ public class DefaultNRepositoryModel {
         String fileName = "nuts-repository" + (name == null ? "" : ("-") + name) + (uuid == null ? "" : ("-") + uuid) + "-" + Instant.now().toString();
         _LOG().with().level(Level.SEVERE).verb(NLogVerb.FAIL).log(
                 NMsg.ofJ("erroneous repository config file. Unable to load file {0} : {1}", file, ex));
-        NPath logError = NWorkspace.get().getStoreLocation(getWorkspace().getApiId(), NStoreType.LOG)
+        NPath logError = NWorkspace.of().getStoreLocation(getWorkspace().getApiId(), NStoreType.LOG)
                 .resolve("invalid-config");
         try {
             logError.mkParentDirs();
@@ -382,11 +382,11 @@ public class DefaultNRepositoryModel {
         }
 
         try (PrintStream o = new PrintStream(logError.resolve(fileName + ".error").getOutputStream())) {
-            o.printf("workspace.path:%s%n", NWorkspace.get().getWorkspaceLocation());
+            o.printf("workspace.path:%s%n", NWorkspace.of().getWorkspaceLocation());
             o.printf("repository.path:%s%n", file);
             o.printf("workspace.options:%s%n", workspace.getBootOptions().toCmdLine(new NWorkspaceOptionsConfig().setCompact(false)));
             for (NStoreType location : NStoreType.values()) {
-                o.printf("location." + location.id() + ":%s%n", NWorkspace.get().getStoreLocation(location));
+                o.printf("location." + location.id() + ":%s%n", NWorkspace.of().getStoreLocation(location));
             }
             o.printf("java.class.path:%s%n", System.getProperty("java.class.path"));
             o.println();

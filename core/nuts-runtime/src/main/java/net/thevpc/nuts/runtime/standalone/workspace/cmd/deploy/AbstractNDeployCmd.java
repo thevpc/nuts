@@ -248,7 +248,7 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
         if (values != null) {
             for (String s : values) {
                 if (!NBlankable.isBlank(s)) {
-                    ids.add(NId.of(s).get());
+                    ids.add(NId.get(s).get());
                 }
             }
         }
@@ -291,14 +291,14 @@ public abstract class AbstractNDeployCmd extends NWorkspaceCmdBase<NDeployCmd> i
 
     @Override
     public NDeployCmd removeId(String id) {
-        ids.remove(NId.of(id).get());
+        ids.remove(NId.get(id).get());
         return this;
     }
 
     @Override
     public NDeployCmd addId(String id) {
         if (!NBlankable.isBlank(id)) {
-            ids.add(NId.of(id).get());
+            ids.add(NId.get(id).get());
         }
         return this;
     }

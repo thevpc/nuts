@@ -22,7 +22,7 @@ public class CustomCliB implements NApplication {
 
     @Override
     public void run() {
-        NSession session = NSession.get();
+        NSession session = NSession.of();
         NCmdLine cmdLine = NApp.of().getCmdLine();
         boolean boolOption = false;
         String stringOption = null;

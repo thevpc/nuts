@@ -117,7 +117,7 @@ public class DefaultNWorkspaceExtensionModel {
         if (excluded != null) {
             for (String ex : excluded) {
                 for (String e : StringTokenizerUtils.splitDefault(ex)) {
-                    NId ee = NId.of(e).orNull();
+                    NId ee = NId.get(e).orNull();
                     if (ee != null) {
                         this.exclusions.add(ee.getShortName());
                     }
@@ -142,7 +142,7 @@ public class DefaultNWorkspaceExtensionModel {
 
     //@Override
     public List<NExtensionInformation> findExtensions(String id, String extensionType) {
-        return findExtensions(NId.of(id).get(), extensionType);
+        return findExtensions(NId.get(id).get(), extensionType);
     }
 
     // @Override
@@ -582,7 +582,7 @@ public class DefaultNWorkspaceExtensionModel {
 
     private boolean isLoadedClassPath(NDefinition file) {
         //session = CoreNutsUtils.validateSession(session,ws);
-        if (file.getId().equalsShortId(NId.of(NConstants.Ids.NUTS_API).get())) {
+        if (file.getId().equalsShortId(NId.get(NConstants.Ids.NUTS_API).get())) {
             return true;
         }
         try {
@@ -697,7 +697,7 @@ public class DefaultNWorkspaceExtensionModel {
 
     protected URL expandURL(String url) {
         return NPath.of(url)
-                .toAbsolute(NWorkspace.get().getWorkspaceLocation())
+                .toAbsolute(NWorkspace.of().getWorkspaceLocation())
                 .toURL().get();
     }
 

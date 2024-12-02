@@ -125,7 +125,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
 
     @Override
     public NIterator<NInstallInformation> searchInstallInformation() {
-        NPath rootFolder = NWorkspace.get().getStoreLocation(NStoreType.CONF).resolve(NConstants.Folders.ID);
+        NPath rootFolder = NWorkspace.of().getStoreLocation(NStoreType.CONF).resolve(NConstants.Folders.ID);
         return new FolderObjectIterator<NInstallInformation>("NutsInstallInformation",
                 rootFolder,
                 null, -1, new FolderObjectIterator.FolderIteratorModel<NInstallInformation>() {
@@ -160,7 +160,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                 return p;
             }
         }
-        NPath pp = NWorkspace.get().getStoreLocation(id
+        NPath pp = NWorkspace.of().getStoreLocation(id
                         //.setAlternative("")
                         .builder().setVersion("ANY").build(), NStoreType.CONF)
                 .resolveSibling("default-version");
@@ -182,7 +182,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     public void setDefaultVersion(NId id) {
         NId baseVersion = id.getShortId();
         String version = id.getVersion().getValue();
-        NPath pp = NWorkspace.get().getStoreLocation(id
+        NPath pp = NWorkspace.of().getStoreLocation(id
                         //                .setAlternative("")
                         .builder().setVersion("ANY").build(), NStoreType.CONF)
                 .resolveSibling("default-version");
@@ -393,7 +393,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     public NId pathToId(NPath path) {
-        NPath rootFolder = NWorkspace.get().getStoreLocation(NStoreType.CONF).resolve(NConstants.Folders.ID);
+        NPath rootFolder = NWorkspace.of().getStoreLocation(NStoreType.CONF).resolve(NConstants.Folders.ID);
         String p = path.toString().substring(rootFolder.toString().length());
         List<String> split = StringTokenizerUtils.split(p, "/\\");
         if (split.size() >= 4) {
@@ -451,7 +451,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                 NVersion v = c.getConfigVersion();
                 if (NBlankable.isBlank(v)) {
                     c.setInstalled(true);
-                    c.setConfigVersion(NVersion.of("0.5.8").get()); //last version before 0.6
+                    c.setConfigVersion(NVersion.get("0.5.8").get()); //last version before 0.6
                     changeStatus = true;
                 }
                 NId idOk = c.getId();
@@ -469,7 +469,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                         }
                     }
                 }
-                if (changeStatus && !NWorkspace.get().isReadOnly()) {
+                if (changeStatus && !NWorkspace.of().isReadOnly()) {
                     NLocks.of().setSource(path).call(() -> {
                                 _LOGOP().level(Level.CONFIG)
                                         .log(NMsg.ofJ("install-info upgraded {0}", finalPath));
@@ -489,7 +489,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     public NIterator<InstallInfoConfig> searchInstallConfig() {
-        NPath rootFolder = NWorkspace.get().getStoreLocation(NStoreType.CONF).resolve(NConstants.Folders.ID);
+        NPath rootFolder = NWorkspace.of().getStoreLocation(NStoreType.CONF).resolve(NConstants.Folders.ID);
         return new FolderObjectIterator<InstallInfoConfig>("InstallInfoConfig",
                 rootFolder,
                 null, -1, new FolderObjectIterator.FolderIteratorModel<InstallInfoConfig>() {
@@ -536,7 +536,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         NInstallStatus s = NInstallStatus.of(ii.isInstalled(), ii.isRequired(), obsolete, defaultVersion);
         return new DefaultNInstallInfo(ii.getId(),
                 s,
-                NWorkspace.get().getStoreLocation(ii.getId(), NStoreType.BIN),
+                NWorkspace.of().getStoreLocation(ii.getId(), NStoreType.BIN),
                 ii.getCreationDate(),
                 ii.getLastModificationDate(),
                 ii.getCreationUser(),
@@ -684,7 +684,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     public NPath getPath(NId id, String name) {
-        return NWorkspace.get().getStoreLocation(id, NStoreType.CONF).resolve(name);
+        return NWorkspace.of().getStoreLocation(id, NStoreType.CONF).resolve(name);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////
@@ -802,7 +802,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
             public NSearchVersionsRepositoryCmd run() {
                 if (getFilter() instanceof NInstallStatusIdFilter) {
                     NPath installFolder
-                            = NWorkspace.get().getStoreLocation(getId()
+                            = NWorkspace.of().getStoreLocation(getId()
                             .builder().setVersion("ANY").build(), NStoreType.CONF).getParent();
                     if (installFolder.isDirectory()) {
                         final NVersionFilter filter0 = getId().getVersion().filter();
@@ -813,7 +813,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                                             public NId apply(NPath folder) {
                                                 if (folder.isDirectory()
                                                         && folder.resolve(NUTS_INSTALL_FILE).isRegularFile()) {
-                                                    NVersion vv = NVersion.of(folder.getName()).get();
+                                                    NVersion vv = NVersion.get(folder.getName()).get();
                                                     NIdFilter filter = getFilter();
                                                     if (filter0.acceptVersion(vv) && (filter == null || filter.acceptId(
                                                             getId().builder().setVersion(vv).build()

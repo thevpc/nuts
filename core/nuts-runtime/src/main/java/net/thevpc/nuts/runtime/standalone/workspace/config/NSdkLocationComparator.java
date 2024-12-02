@@ -11,8 +11,8 @@ public class NSdkLocationComparator implements Comparator<NPlatformLocation> {
 
     @Override
     public int compare(NPlatformLocation o1, NPlatformLocation o2) {
-        NVersion v1 = NVersion.of(o1.getVersion()).get();
-        NVersion v2 = NVersion.of(o2.getVersion()).get();
+        NVersion v1 = NVersion.get(o1.getVersion()).get();
+        NVersion v2 = NVersion.get(o2.getVersion()).get();
         int x = (v1 == null || v2 == null) ? 0 : (v1 != null && v2 != null) ? v1.compareTo(v2) : v2 == null ? 1 : -1;
         if (x != 0) {
             return x;

@@ -82,7 +82,7 @@ public class NHttpSrvRepository extends NCachedRepository {
     public NId getRemoteId() {
         if (remoteId == null) {
             try {
-                remoteId = NId.of(httpGetString(getUrl("/version"))).get();
+                remoteId = NId.get(httpGetString(getUrl("/version"))).get();
             } catch (Exception ex) {
                 LOG().with().level(Level.WARNING).verb(NLogVerb.FAIL)
                         .log(NMsg.ofJ("unable to resolve Repository NutsId for remote repository {0}", config().getLocation()));
@@ -348,7 +348,7 @@ public class NHttpSrvRepository extends NCachedRepository {
 
         @Override
         public NId next() {
-            NId nutsId = NId.of(line).get();
+            NId nutsId = NId.get(line).get();
             return nutsId.builder().setRepository(getName()).build();
         }
     }

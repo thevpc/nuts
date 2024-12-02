@@ -34,7 +34,6 @@ import net.thevpc.nuts.io.NMemoryPrintStream;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nsh.autocomplete.NCommandAutoCompleteComponent;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.bundles._IOUtils;
@@ -129,7 +128,7 @@ public abstract class NShellBuiltinBase implements NShellBuiltin {
             if (autoComplete == null) {
                 throw new NIllegalArgumentException(NMsg.ofPlain("missing auto-complete"));
             }
-            NCommandAutoCompleteComponent best = NWorkspace.of().get().extensions().createServiceLoader(NCommandAutoCompleteComponent.class, NShellBuiltin.class, NCommandAutoCompleteComponent.class.getClassLoader())
+            NCommandAutoCompleteComponent best = NWorkspace.get().get().extensions().createServiceLoader(NCommandAutoCompleteComponent.class, NShellBuiltin.class, NCommandAutoCompleteComponent.class.getClassLoader())
                     .loadBest(NShellBuiltinBase.this);
             if (best != null) {
                 best.autoComplete(this, context);
@@ -275,7 +274,7 @@ public abstract class NShellBuiltinBase implements NShellBuiltin {
                     return;
                 }
                 if (context.isAskVersion()) {
-                    session.out().println(NId.ofClass(getClass()).get().getVersion());
+                    session.out().println(NId.getForClass(getClass()).get().getVersion());
                     return;
                 }
                 main(cmdLine, context);

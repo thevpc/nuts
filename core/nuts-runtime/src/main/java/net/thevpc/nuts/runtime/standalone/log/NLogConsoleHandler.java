@@ -48,7 +48,7 @@ public class NLogConsoleHandler extends StreamHandler {
         if (session.isBot()) {
             return false;
         }
-        NLogConfig logConfig = NWorkspace.get().getBootOptions().getLogConfig().orElseGet(NLogConfig::new);
+        NLogConfig logConfig = NWorkspace.of().getBootOptions().getLogConfig().orElseGet(NLogConfig::new);
         Level sessionLogLevel = session.getLogTermLevel();
         if (sessionLogLevel == null) {
             if (logConfig != null) {

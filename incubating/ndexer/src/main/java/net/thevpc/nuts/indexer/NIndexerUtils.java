@@ -23,12 +23,12 @@ public class NIndexerUtils {
 
     public static Path getCacheDir(String entity) {
         String k = "NutsIndexerUtils.CACHE." + entity;
-        String m = NWorkspace.get().getProperty(k).flatMap(NLiteral::asString).orNull();
+        String m = NWorkspace.of().getProperty(k).flatMap(NLiteral::asString).orNull();
         if (m == null) {
-            m = NWorkspace.get()
-                    .getStoreLocation(NId.ofClass(NIndexerUtils.class).get(),
+            m = NWorkspace.of()
+                    .getStoreLocation(NId.getForClass(NIndexerUtils.class).get(),
                             NStoreType.CACHE) + File.separator + entity;
-            NWorkspace.get().setProperty(k, m);
+            NWorkspace.of().setProperty(k, m);
         }
         return new File(m).toPath();
     }

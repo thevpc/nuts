@@ -46,12 +46,12 @@ public class NWorkspaceException extends NException {
     public NWorkspaceException(NMsg message, Throwable ex) {
         super(
                 message == null
-                        ? NMsg.ofC("workspace %s has encountered problem", NWorkspace.of().map(x->x.getName()).orNull()) : message, ex);
+                        ? NMsg.ofC("workspace %s has encountered problem", NWorkspace.get().map(x->x.getName()).orNull()) : message, ex);
     }
     public NWorkspaceException(NMsg message) {
         super(
                 message == null
-                        ? NMsg.ofC("workspace %s has encountered problem", NWorkspace.of().map(x->x.getName()).orNull()) : message);
+                        ? NMsg.ofC("workspace %s has encountered problem", NWorkspace.get().map(x->x.getName()).orNull()) : message);
     }
 
 }

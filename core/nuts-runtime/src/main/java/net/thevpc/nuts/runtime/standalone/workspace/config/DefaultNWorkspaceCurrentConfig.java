@@ -119,17 +119,17 @@ public final class DefaultNWorkspaceCurrentConfig {
             effStoreLocationPath[i] = Paths.get(effStoreLocationsMap.get(NStoreType.values()[i]));
         }
         if (apiId == null) {
-            apiId = NId.ofApi(Nuts.getVersion()).get();
+            apiId = NId.getApi(Nuts.getVersion()).get();
         }
         if (storeLayout == null) {
-            storeLayout = NWorkspace.get().getOsFamily();
+            storeLayout = NWorkspace.of().getOsFamily();
         }
         return this;
     }
 
     public DefaultNWorkspaceCurrentConfig merge(NWorkspaceConfigApi c) {
         if (c.getApiVersion() != null && !c.getApiVersion().isBlank()) {
-            this.apiId = NId.ofApi(c.getApiVersion()).get();
+            this.apiId = NId.getApi(c.getApiVersion()).get();
         }
         if (c.getRuntimeId() != null) {
             this.bootRuntime = c.getRuntimeId();
@@ -152,10 +152,10 @@ public final class DefaultNWorkspaceCurrentConfig {
         }
         if (c.getDependencies() != null) {
             this.runtimeBootDescriptor = new DefaultNDescriptorBuilder()
-                    .setId(NId.of(this.bootRuntime.toString()).get())
+                    .setId(NId.get(this.bootRuntime.toString()).get())
                     .setDependencies(
                             StringTokenizerUtils.splitSemiColon(c.getDependencies()).stream()
-                                    .map(x -> NDependency.of(x).get()).collect(Collectors.toList())
+                                    .map(x -> NDependency.get(x).get()).collect(Collectors.toList())
                     ).build()
             ;
         }
@@ -197,7 +197,7 @@ public final class DefaultNWorkspaceCurrentConfig {
     public DefaultNWorkspaceCurrentConfig merge(NBootConfig c) {
         this.name = c.getName();
         if (c.getApiVersion() != null) {
-            this.apiId = NId.of(NConstants.Ids.NUTS_API + "#" + c.getApiVersion()).get();
+            this.apiId = NId.get(NConstants.Ids.NUTS_API + "#" + c.getApiVersion()).get();
         }
         if (c.getRuntimeId() != null) {
             this.bootRuntime = c.getRuntimeId();
@@ -404,7 +404,7 @@ public final class DefaultNWorkspaceCurrentConfig {
 
 
     public NPath getStoreLocation(String id, NStoreType storeType) {
-        return getStoreLocation(NId.of(id).get(), storeType);
+        return getStoreLocation(NId.get(id).get(), storeType);
     }
 
     public NPath getStoreLocation(NId id, NStoreType storeType) {
@@ -414,11 +414,11 @@ public final class DefaultNWorkspaceCurrentConfig {
         }
         switch (storeType) {
             case CACHE:
-                return storeLocation.resolve(NConstants.Folders.ID).resolve(NWorkspace.get().getDefaultIdBasedir(id));
+                return storeLocation.resolve(NConstants.Folders.ID).resolve(NWorkspace.of().getDefaultIdBasedir(id));
             case CONF:
-                return storeLocation.resolve(NConstants.Folders.ID).resolve(NWorkspace.get().getDefaultIdBasedir(id));
+                return storeLocation.resolve(NConstants.Folders.ID).resolve(NWorkspace.of().getDefaultIdBasedir(id));
         }
-        return storeLocation.resolve(NWorkspace.get().getDefaultIdBasedir(id));
+        return storeLocation.resolve(NWorkspace.of().getDefaultIdBasedir(id));
     }
 
 }

@@ -20,7 +20,7 @@ public class NProgressUtils {
 
 
     public static NProgressFactory createLogProgressMonitorFactory(MonitorType mt) {
-        NWorkspace workspace = NWorkspace.of().get();
+        NWorkspace workspace = NWorkspace.get().get();
         switch (mt) {
             case STREAM:
                 return new DefaultNInputStreamProgressFactory(workspace);

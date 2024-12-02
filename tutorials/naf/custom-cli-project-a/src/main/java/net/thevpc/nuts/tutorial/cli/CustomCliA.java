@@ -55,7 +55,7 @@ public class CustomCliA implements NApplication {
             @Override
             public void run(NCmdLine cmdLine, NCmdLineContext context) {
                 if (clean) {
-                    NSession session = NSession.of().get();
+                    NSession session = NSession.get().get();
                     session.out().println("cleaned!");
                 }
             }

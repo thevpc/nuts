@@ -116,7 +116,7 @@ public class PostgresShowTableSizeCmd extends NdbCmd<NPostgresConfig> {
                 totalRows,
                 totalColumns
         ));
-        NSession session = NSession.of().get();
+        NSession session = NSession.get().get();
         session.out().println(rr);
         //SqlHelper.callSqlAndWaitGet("")
     }

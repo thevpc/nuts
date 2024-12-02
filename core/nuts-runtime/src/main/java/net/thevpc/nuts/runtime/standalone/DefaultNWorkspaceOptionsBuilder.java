@@ -1519,10 +1519,10 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     public NWorkspaceOptionsBuilder setAll(NBootOptionsInfo other) {
-        this.setApiVersion(other.getApiVersion()==null?null:NVersion.of(other.getApiVersion()).orNull());
+        this.setApiVersion(other.getApiVersion()==null?null:NVersion.get(other.getApiVersion()).orNull());
         this.setRuntimeId(other.getRuntimeId()==null?null:
-                        other.getRuntimeId().contains("#")?NId.of(other.getRuntimeId()).orNull():
-                NId.ofRuntime(other.getRuntimeId()).orNull()
+                        other.getRuntimeId().contains("#")?NId.get(other.getRuntimeId()).orNull():
+                NId.getRuntime(other.getRuntimeId()).orNull()
         );
         this.setJavaCommand(other.getJavaCommand());
         this.setJavaOptions(other.getJavaOptions());

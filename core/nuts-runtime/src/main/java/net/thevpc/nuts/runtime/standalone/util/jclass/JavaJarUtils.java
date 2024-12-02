@@ -42,11 +42,11 @@ public class JavaJarUtils {
                     }
 
                 };
-                JavaClassByteCode classReader = new JavaClassByteCode(new BufferedInputStream(inputStream), cl, NWorkspace.of().get());
+                JavaClassByteCode classReader = new JavaClassByteCode(new BufferedInputStream(inputStream), cl, NWorkspace.get().get());
             }
             return NVisitResult.CONTINUE;
         });
-        return classes.stream().map(x -> NVersion.of(x).get()).toArray(NVersion[]::new);
+        return classes.stream().map(x -> NVersion.get(x).get()).toArray(NVersion[]::new);
     }
 
     public static NVersion parseJarClassVersion(InputStream jarStream) {

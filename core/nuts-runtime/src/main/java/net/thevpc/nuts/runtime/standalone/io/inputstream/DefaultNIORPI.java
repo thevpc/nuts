@@ -64,7 +64,7 @@ public class DefaultNIORPI implements NIORPI {
         if (out == null) {
             return null;
         }
-        NBootOptions woptions = NWorkspace.get().getBootOptions();
+        NBootOptions woptions = NWorkspace.of().getBootOptions();
         NTerminalMode expectedMode0 = woptions.getTerminalMode().orElse(NTerminalMode.DEFAULT);
         if (expectedMode0 == NTerminalMode.DEFAULT) {
             if (woptions.getBot().orElse(false)) {

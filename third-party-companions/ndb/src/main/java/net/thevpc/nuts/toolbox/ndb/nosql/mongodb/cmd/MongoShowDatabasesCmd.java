@@ -34,7 +34,7 @@ public class MongoShowDatabasesCmd extends ShowDatabasesCmd<NMongoConfig> {
                         return x.asObject().get().get("name").get();
                     })
                     .collect(Collectors.toList());
-            NSession session = NSession.of().get();
+            NSession session = NSession.get().get();
             session.out().println(databases);
         });
     }

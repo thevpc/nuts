@@ -54,11 +54,11 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
             }
             if (cmdLine.isExecMode()) {
                 List<String> all = new ArrayList<>();
-                all.add(NWorkspace.get().getWorkspaceLocation().toPath().get()
+                all.add(NWorkspace.of().getWorkspaceLocation().toPath().get()
                         .resolve("nuts-workspace.json").toString()
                 );
                 for (NStoreType value : NStoreType.values()) {
-                    NPath r = NWorkspace.get().getStoreLocation(value);
+                    NPath r = NWorkspace.of().getStoreLocation(value);
                     if (r.isDirectory()) {
                         all.add(r.toString());
                     }
@@ -140,7 +140,7 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                 if (ws == null || ws.isEmpty()) {
                     cmdLine.throwMissingArgument(NMsg.ofC("not a valid file : %s", file));
                 }
-                String platformHomeFolder = NPlatformHome.of(null, NWorkspace.get().getStoredConfig().isSystem()).getWorkspaceLocation(ws);
+                String platformHomeFolder = NPlatformHome.of(null, NWorkspace.of().getStoredConfig().isSystem()).getWorkspaceLocation(ws);
                 NUncompress.of()
                         .from(NPath.of(file))
                         .to(NPath.of(platformHomeFolder))

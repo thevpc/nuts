@@ -62,7 +62,7 @@ public class DefaultNUpdateStatsCmd extends AbstractNUpdateStatsCmd {
             if (mavenRepoRootFiles != null && mavenRepoRootFiles.length > 3) {
                 new MavenRepositoryFolderHelper(null, NPath.of(repositoryPath)).reindexFolder();
                 if (session.isPlainTrace()) {
-                    session.getTerminal().out().resetLine().println(NMsg.ofC("[%s] updated maven index %s", NWorkspace.get().getWorkspaceLocation(), repositoryPath));
+                    session.getTerminal().out().resetLine().println(NMsg.ofC("[%s] updated maven index %s", NWorkspace.of().getWorkspaceLocation(), repositoryPath));
                 }
             } else {
                 File[] nutsRepoRootFiles = repositoryPath.toFile().listFiles(x
@@ -74,17 +74,17 @@ public class DefaultNUpdateStatsCmd extends AbstractNUpdateStatsCmd {
                     throw new NIllegalArgumentException(NMsg.ofPlain("unsupported repository folder"));
                 }
                 if (session.isPlainTrace()) {
-                    session.out().resetLine().println(NMsg.ofC("[%s] updated stats %s", NWorkspace.get().getWorkspaceLocation(), repositoryPath));
+                    session.out().resetLine().println(NMsg.ofC("[%s] updated stats %s", NWorkspace.of().getWorkspaceLocation(), repositoryPath));
                 }
             }
         }
         if (!processed) {
             if (session.isPlainTrace()) {
-                session.out().resetLine().println(NMsg.ofC("%s updating workspace stats", NWorkspace.get().getWorkspaceLocation()));
+                session.out().resetLine().println(NMsg.ofC("%s updating workspace stats", NWorkspace.of().getWorkspaceLocation()));
             }
             for (NRepository repo : workspace.getRepositories()) {
                 if (session.isPlainTrace()) {
-                    session.out().resetLine().println(NMsg.ofC("%s updating stats %s", NWorkspace.get().getWorkspaceLocation(), repo));
+                    session.out().resetLine().println(NMsg.ofC("%s updating stats %s", NWorkspace.of().getWorkspaceLocation(), repo));
                 }
                 NWorkspaceUtils.of(workspace).repoSPI(repo).updateStatistics()
                         //                        .setFetchMode(NutsFetchMode.LOCAL)

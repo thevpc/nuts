@@ -66,7 +66,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 }
             }
             if (cmdLine.isExecMode()) {
-                NWorkspace.get().saveConfig();
+                NWorkspace.of().saveConfig();
             }
             return true;
         } else {
@@ -150,7 +150,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                     } else {
                         repository.security().updateUser(user).setCredentials(password).setOldCredentials(oldPassword).run();
                     }
-                    NWorkspace.get().saveConfig();
+                    NWorkspace.of().saveConfig();
                 }
                 return true;
 
@@ -280,7 +280,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                     }
                 }
                 if (cmdLine.isExecMode()) {
-                    NWorkspace.get().saveConfig();
+                    NWorkspace.of().saveConfig();
                 }
                 return true;
 
@@ -310,7 +310,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                         Arrays.fill(credentials, '\0');
                     }
                 }
-                NWorkspace.get().saveConfig();
+                NWorkspace.of().saveConfig();
                 return true;
             } else if (cmdLine.next("secure").isPresent()) {
                 char[] credentials = null;
@@ -338,7 +338,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 if (credentials != null) {
                     Arrays.fill(credentials, '\0');
                 }
-                NWorkspace.get().saveConfig();
+                NWorkspace.of().saveConfig();
                 return true;
             }
         }

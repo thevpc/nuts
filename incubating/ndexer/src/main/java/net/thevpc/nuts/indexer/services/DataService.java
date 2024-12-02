@@ -156,7 +156,7 @@ public class DataService {
         }
         String[] array = NElements.of().json().parse(new StringReader(row.get("allDependencies")), String[].class);
         List<Map<String, String>> allDependencies = Arrays.stream(array)
-                .map(s -> NIndexerUtils.nutsIdToMap(NId.of(s).get()))
+                .map(s -> NIndexerUtils.nutsIdToMap(NId.get(s).get()))
                 .collect(Collectors.toList());
         return allDependencies;
     }
@@ -169,7 +169,7 @@ public class DataService {
         Map<String, String> row = rows.get(0);
         String[] array = NElements.of().json().parse(new StringReader(row.get("dependencies")), String[].class);
         List<Map<String, String>> dependencies = Arrays.stream(array)
-                .map(s -> NIndexerUtils.nutsIdToMap(NId.of(s).get()))
+                .map(s -> NIndexerUtils.nutsIdToMap(NId.get(s).get()))
                 .collect(Collectors.toList());
         return dependencies;
     }

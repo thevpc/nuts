@@ -159,7 +159,7 @@ public class ApacheTomcatRepositoryModel implements NRepositoryModel {
                                                             //will ignore all alpha versions
                                                             return NStream.ofEmpty();
                                                         }
-                                                        NVersion version = NVersion.of(s2n.substring(1, s2n.length() - 1)).get();
+                                                        NVersion version = NVersion.get(s2n.substring(1, s2n.length() - 1)).get();
                                                         if (version.compareTo("4.1.32") < 0) {
                                                             prefix = "jakarta-tomcat-";
                                                         }
@@ -180,7 +180,7 @@ public class ApacheTomcatRepositoryModel implements NRepositoryModel {
                                                                             (NPath x5) -> {
                                                                                 String s3 = x5.getName();
                                                                                 String v0 = s3.substring(finalPrefix.length(), s3.length() - 4);
-                                                                                NVersion v = NVersion.of(v0).get();
+                                                                                NVersion v = NVersion.get(v0).get();
                                                                                 NId id2 = idBuilder.setVersion(v).build();
                                                                                 if (filter == null || filter.acceptId(id2)) {
                                                                                     return id2;
@@ -215,8 +215,8 @@ public class ApacheTomcatRepositoryModel implements NRepositoryModel {
 
     public String getIdLocalFile(NId id, NFetchMode fetchMode, NRepository repository) {
         return repository.config().getStoreLocation()
-                .resolve(NWorkspace.get().getDefaultIdBasedir(id))
-                .resolve(NWorkspace.get().getDefaultIdFilename(id))
+                .resolve(NWorkspace.of().getDefaultIdBasedir(id))
+                .resolve(NWorkspace.of().getDefaultIdFilename(id))
                 .toString();
     }
 

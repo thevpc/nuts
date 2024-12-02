@@ -122,7 +122,7 @@ public class JavaClassUtils {
     public static NExecutionEntry parseClassExecutionEntry(InputStream classStream, String sourceName) {
         MainClassType mainClass = null;
         try {
-            mainClass = getMainClassType(classStream, NWorkspace.of().get());
+            mainClass = getMainClassType(classStream, NWorkspace.get().get());
         } catch (Exception ex) {
             NLogOp.of(CorePlatformUtils.class).level(Level.FINE).error(ex)
                     .log(NMsg.ofJ("invalid file format {0}", sourceName));
@@ -180,7 +180,7 @@ public class JavaClassUtils {
     }
 
     public static String sourceVersionToClassVersion(String sourceVersion) {
-        NVersion v = NVersion.of(sourceVersion).get();
+        NVersion v = NVersion.get(sourceVersion).get();
         int major = v.getNumber(0).flatMap(NLiteral::asInt).orElse(0);
         int minor = v.getNumber(1).flatMap(NLiteral::asInt).orElse(-1);
         if (major < 1) {

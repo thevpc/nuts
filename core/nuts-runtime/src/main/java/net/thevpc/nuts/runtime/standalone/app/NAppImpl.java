@@ -157,7 +157,7 @@ public class NAppImpl implements NApp, Cloneable {
                     case "update": {
                         this.mode = NApplicationMode.UPDATE;
                         if (execModeCommand.hasNext()) {
-                            this.previousVersion = NVersion.of(execModeCommand.next().flatMap(NLiteral::asString).get()).get();
+                            this.previousVersion = NVersion.get(execModeCommand.next().flatMap(NLiteral::asString).get()).get();
                         }
                         this.modeArgs = execModeCommand.toStringList();
                         execModeCommand.skipAll();
@@ -174,7 +174,7 @@ public class NAppImpl implements NApp, Cloneable {
         if (_appId != null) {
             //("=== Inherited "+_appId);
         } else {
-            _appId = NId.ofClass(appClass).orNull();
+            _appId = NId.getForClass(appClass).orNull();
         }
         if (_appId == null) {
             throw new NExecutionException(NMsg.ofC("invalid Nuts Application (%s). Id cannot be resolved", appClass.getName()), NExecutionException.ERROR_255);
@@ -182,7 +182,7 @@ public class NAppImpl implements NApp, Cloneable {
         this.args = (args);
         this.id = (_appId);
         this.appClass = appClass == null ? null : JavaClassUtils.unwrapCGLib(appClass);
-        NWorkspace workspace = NWorkspace.get();
+        NWorkspace workspace = NWorkspace.of();
         for (NStoreType folder : NStoreType.values()) {
             this.setFolder(folder, workspace.getStoreLocation(this.id, folder));
             this.setSharedFolder(folder, workspace.getStoreLocation(this.id.builder().setVersion("SHARED").build(), folder));
@@ -247,7 +247,7 @@ public class NAppImpl implements NApp, Cloneable {
                 .setNormalize(true)
                 .setFlatten(true)
         );
-        NPrintStream out = NSession.get().out();
+        NPrintStream out = NSession.of().out();
         if (h == null) {
             out.println(NMsg.ofC("Help is %s.", NMsg.ofStyled("missing", NTextStyle.error())));
         } else {
@@ -317,7 +317,7 @@ public class NAppImpl implements NApp, Cloneable {
                 return r;
             }
         }
-        return NWorkspace.get().getStoreLocation(newId, location);
+        return NWorkspace.of().getStoreLocation(newId, location);
     }
 
     @Override
@@ -501,7 +501,7 @@ public class NAppImpl implements NApp, Cloneable {
                 throw new NExecutionException(NMsg.ofPlain("candidate cannot be null"), NExecutionException.ERROR_2);
             }
             String d = value.getDisplay();
-            NPrintStream out = NSession.get().out();
+            NPrintStream out = NSession.of().out();
             if (Objects.equals(v, d) || d == null) {
                 out.println(NMsg.ofC("%s", NConstants.Apps.AUTO_COMPLETE_CANDIDATE_PREFIX + NCmdLineUtils.escapeArgument(v)));
             } else {

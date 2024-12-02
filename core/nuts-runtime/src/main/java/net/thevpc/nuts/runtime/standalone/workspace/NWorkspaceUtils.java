@@ -46,7 +46,7 @@ public class NWorkspaceUtils {
     }
 
     public static NWorkspaceUtils of() {
-        return of(NWorkspace.get());
+        return of(NWorkspace.of());
     }
 
     public static NWorkspaceUtils of(NWorkspace workspace) {
@@ -62,7 +62,7 @@ public class NWorkspaceUtils {
 
     public static boolean isUserDefaultWorkspace() {
         String defaultWorkspaceLocation = NPlatformHome.USER.getWorkspaceLocation(null);
-        return defaultWorkspaceLocation.equals(NWorkspace.get().getLocation().toString());
+        return defaultWorkspaceLocation.equals(NWorkspace.of().getLocation().toString());
     }
 
     protected NLogOp _LOGOP() {
@@ -103,8 +103,8 @@ public class NWorkspaceUtils {
     }
 
     public void checkReadOnly() {
-        if (NWorkspace.get().isReadOnly()) {
-            throw new NReadOnlyException(NWorkspace.get().getWorkspaceLocation().toString());
+        if (NWorkspace.of().isReadOnly()) {
+            throw new NReadOnlyException(NWorkspace.of().getWorkspaceLocation().toString());
         }
     }
 
@@ -214,7 +214,7 @@ public class NWorkspaceUtils {
     }
 
     public <T> NIterator<T> decoratePrint(NIterator<T> it, NFetchDisplayOptions displayOptions) {
-        final NPrintStream out = NSession.get().out();
+        final NPrintStream out = NSession.of().out();
         return new NPrintIterator<>(it, workspace, out, displayOptions);
     }
 
@@ -301,7 +301,7 @@ public class NWorkspaceUtils {
                             .setId(session.getWorkspace().getApiId())
                             .setCreateScript(true)
                             .setSwitchWorkspace(
-                                    NWorkspace.get().getBootOptions().getSwitchWorkspace().orNull()
+                                    NWorkspace.of().getBootOptions().getSwitchWorkspace().orNull()
                             )
                             .setCreateDesktopLauncher(includeGraphicalLaunchers ? NSupportMode.PREFERRED : NSupportMode.NEVER)
                             .setCreateMenuLauncher(includeGraphicalLaunchers ? NSupportMode.SUPPORTED : NSupportMode.NEVER)

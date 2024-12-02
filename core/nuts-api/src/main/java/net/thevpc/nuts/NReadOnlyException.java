@@ -51,6 +51,6 @@ public class NReadOnlyException extends NException {
      * Constructs a new NutsReadOnlyException exception
      */
     public NReadOnlyException() {
-        this(NSession.of().isNotPresent()? null : String.valueOf(NWorkspace.get().getWorkspaceLocation()));
+        this(NSession.get().isNotPresent()? null : String.valueOf(NWorkspace.of().getWorkspaceLocation()));
     }
 }

@@ -338,7 +338,7 @@ public class NIOUtils {
             }
         }
         final int[] deleted = new int[]{0, 0, 0};
-        NSession session = NSession.of().orNull();
+        NSession session = NSession.get().orNull();
         NLog LOG = session == null ? null : NLog.of(NIOUtils.class);
         try {
             Files.walkFileTree(file, new FileVisitor<Path>() {

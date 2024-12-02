@@ -173,7 +173,7 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
         if (!isOmitGroupId()) {
             if (!NBlankable.isBlank(id.getGroupId())) {
                 boolean importedGroup2 = NConstants.Ids.NUTS_GROUP_ID.equals(id.getGroupId());
-                boolean importedGroup = NWorkspace.get().getAllImports().contains(id.getGroupId());
+                boolean importedGroup = NWorkspace.of().getAllImports().contains(id.getGroupId());
                 if (!(importedGroup && isOmitImportedGroupId())) {
                     if (importedGroup || importedGroup2) {
                         sb.append(id.getGroupId(), NTextStyle.pale());

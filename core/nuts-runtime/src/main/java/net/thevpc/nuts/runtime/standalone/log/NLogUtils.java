@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NPositionType;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogRecord;
 import net.thevpc.nuts.log.NLogVerb;
@@ -204,7 +203,7 @@ public class NLogUtils {
             session= ws.currentSession();
         }
         if(session==null){
-            session= NWorkspace.get().currentSession();
+            session= NWorkspace.of().currentSession();
         }
         return session;
     }

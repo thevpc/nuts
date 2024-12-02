@@ -150,9 +150,9 @@ public final class NReservedUtils {
             NOsFamily eos = NOsFamily.getCurrent();
             boolean osOk = false;
             for (String e : oss) {
-                NId ee = NId.of(e).get();
+                NId ee = NId.get(e).get();
                 if (ee.getShortName().equalsIgnoreCase(eos.id())) {
-                    if (acceptVersion(ee.getVersion(), NVersion.of(System.getProperty("os.version")).get())) {
+                    if (acceptVersion(ee.getVersion(), NVersion.of(System.getProperty("os.version")))) {
                         osOk = true;
                     }
                     break;
@@ -194,7 +194,7 @@ public final class NReservedUtils {
     }
 
     public static boolean acceptVersion(NVersionInterval one, NVersion other) {
-        NVersion a = NVersion.of(one.getLowerBound()).get();
+        NVersion a = NVersion.of(one.getLowerBound());
         if (a.isBlank()) {
             //ok
         } else {
@@ -209,7 +209,7 @@ public final class NReservedUtils {
                 }
             }
         }
-        a = NVersion.of(one.getUpperBound()).get();
+        a = NVersion.of(one.getUpperBound());
         if (a.isBlank()) {
             //ok
         } else {
@@ -314,7 +314,7 @@ public final class NReservedUtils {
                 }
             }
             return NOptional.of(new DefaultNId(
-                    group, artifact, NVersion.of(version).get(),
+                    group, artifact, NVersion.of(version),
                     classifier, idProperties, new DefaultNEnvCondition(
                     new ArrayList<>(condArch), new ArrayList<>(condOs), new ArrayList<>(condDist), new ArrayList<>(condPlatform), new ArrayList<>(condDE),
                     new ArrayList<>(condProfiles), condProperties
@@ -489,7 +489,7 @@ public final class NReservedUtils {
         NOptional<List<String>> o = parseStringIdList(s);
         if (o.isPresent()) {
             for (String x : o.get()) {
-                NOptional<NId> y = NId.of(x).ifBlankEmpty();
+                NOptional<NId> y = NId.get(x).ifBlankEmpty();
                 if (y.isError()) {
                     return NOptional.ofError(y.getMessage());
                 }

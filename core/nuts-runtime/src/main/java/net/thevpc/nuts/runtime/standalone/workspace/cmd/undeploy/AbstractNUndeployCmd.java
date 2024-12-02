@@ -45,7 +45,7 @@ public abstract class AbstractNUndeployCmd extends NWorkspaceCmdBase<NUndeployCm
 
     @Override
     public NUndeployCmd addId(String id) {
-        return addId(NBlankable.isBlank(id) ? null : NId.of(id).get());
+        return addId(NBlankable.isBlank(id) ? null : NId.get(id).get());
     }
 
     @Override
@@ -53,7 +53,7 @@ public abstract class AbstractNUndeployCmd extends NWorkspaceCmdBase<NUndeployCm
         if (values != null) {
             for (String s : values) {
                 if (!NBlankable.isBlank(s)) {
-                    ids.add(NId.of(s).get());
+                    ids.add(NId.get(s).get());
                 }
             }
         }

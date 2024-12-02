@@ -91,7 +91,7 @@ public abstract class NdbCmd<C extends NdbConfig> {
         } else if (support.getSession().configureFirst(commandLine)) {
             return true;
         } else {
-            NSession session = NSession.of().get();
+            NSession session = NSession.get().get();
             session.configureLast(commandLine);
             return true;
         }

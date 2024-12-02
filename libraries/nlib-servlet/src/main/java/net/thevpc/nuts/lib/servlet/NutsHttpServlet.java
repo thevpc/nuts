@@ -103,7 +103,7 @@ public class NutsHttpServlet extends HttpServlet {
         }
         adminServerPort = parseInt(config.getInitParameter("nuts-admin-server-port"), -1);
         workspaceLocation = config.getInitParameter("nuts-workspace-location");
-        runtimeId = NId.of(config.getInitParameter("nuts-runtime-id")).orNull();
+        runtimeId = NId.get(config.getInitParameter("nuts-runtime-id")).orNull();
         adminServer = Boolean.valueOf(config.getInitParameter("nuts-admin"));
         try {
             String s = config.getInitParameter("nuts-workspaces-map");

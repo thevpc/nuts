@@ -75,7 +75,7 @@ public class CoreIOUtils {
                 return (PrintWriter) writer;
             }
         }
-        ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer, term, NWorkspace.of().get());
+        ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer, term, NWorkspace.get().get());
         return s;
     }
 
@@ -121,7 +121,7 @@ public class CoreIOUtils {
         if (writer == null) {
             return null;
         }
-        ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer, term, NWorkspace.of().get());
+        ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer, term, NWorkspace.get().get());
         return s;
     }
 
@@ -140,7 +140,7 @@ public class CoreIOUtils {
         if (out instanceof ExtendedFormatAware) {
             aw = (ExtendedFormatAware) out;
         } else {
-            aw = new RawOutputStream(out, term, NWorkspace.of().get());
+            aw = new RawOutputStream(out, term, NWorkspace.get().get());
         }
         switch (expected) {
             case INHERITED: {
@@ -216,7 +216,7 @@ public class CoreIOUtils {
 //    }
 
     public static NPrintStream resolveOut() {
-        NSession session = NSession.of().get();
+        NSession session = NSession.get().get();
         return (session.getTerminal() == null) ? NPrintStream.NULL
                 : session.getTerminal().out();
     }
@@ -335,8 +335,8 @@ public class CoreIOUtils {
     }
 
     public static InputStream getCachedUrlWithSHA1(String path, String sourceTypeName, boolean ignoreSha1NotFound) {
-        NWorkspace workspace=NWorkspace.of().get();
-        final NPath cacheBasePath = NWorkspace.get().getStoreLocation(workspace.getRuntimeId(), NStoreType.CACHE);
+        NWorkspace workspace=NWorkspace.get().get();
+        final NPath cacheBasePath = NWorkspace.of().getStoreLocation(workspace.getRuntimeId(), NStoreType.CACHE);
         final NPath urlContent = cacheBasePath.resolve("urls-content");
         String sha1 = null;
         try {
@@ -598,7 +598,7 @@ public class CoreIOUtils {
     }
 
     public static boolean isObsoleteInstant(Instant instant) {
-        NSession session=NSession.of().get();
+        NSession session=NSession.get().get();
         if (session.getExpireTime().isPresent()) {
             return instant == null || instant.isBefore(session.getExpireTime().orNull());
         }
@@ -723,7 +723,7 @@ public class CoreIOUtils {
                 //ignore
             }
         }
-        NSession session=NSession.of().get();
+        NSession session=NSession.get().get();
         if (old == null) {
             switch (doWhenNotExist) {
                 case IGNORE: {
@@ -876,7 +876,7 @@ public class CoreIOUtils {
     }
 
     public static NExecOutput validateErr(NExecOutput err) {
-        NSession session=NSession.of().get();
+        NSession session=NSession.get().get();
         if (err == null) {
             err = NExecOutput.ofStream(session.err());
         }
@@ -930,11 +930,11 @@ public class CoreIOUtils {
 
     public static NExecInput validateIn(NExecInput in) {
         if (in == null) {
-            NSession session=NSession.of().get();
+            NSession session=NSession.get().get();
             in = NExecInput.ofStream(session.in());
         }
         if (in.getType() == NRedirectType.INHERIT) {
-            NSession session=NSession.of().get();
+            NSession session=NSession.get().get();
             if (NIO.of().isStdin(session.in())) {
                 in = NExecInput.ofInherit();
             } else {
@@ -949,7 +949,7 @@ public class CoreIOUtils {
     }
 
     public static NExecOutput validateOut(NExecOutput out) {
-        NSession session=NSession.of().get();
+        NSession session=NSession.get().get();
         if (out == null) {
             out = NExecOutput.ofStream(session.out());
         }

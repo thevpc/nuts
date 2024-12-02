@@ -169,7 +169,7 @@ public final class NApplications {
      */
     public static void runApplication(NApplication applicationInstance, String[] nutsArgs, String[] args) {
         NClock now = NClock.now();
-        NWorkspace ws = NWorkspace.of().orNull();
+        NWorkspace ws = NWorkspace.get().orNull();
         if (ws == null) {
             ws = Nuts.openInheritedWorkspace(nutsArgs, args);
             NWorkspace finalWs = ws;
@@ -186,7 +186,7 @@ public final class NApplications {
     }
 
     public static void runApplication(NApplication applicationInstance) {
-        NWorkspace ws = NWorkspace.of().orNull();
+        NWorkspace ws = NWorkspace.get().orNull();
         if (ws == null) {
             ws = Nuts.openInheritedWorkspace(new String[0], new String[0]);
             ws.runWith(() -> {
@@ -195,7 +195,7 @@ public final class NApplications {
             return;
         }
         ws.runWith(() -> {
-            boolean inherited = NWorkspace.get().getBootOptions().getInherited().orElse(false);
+            boolean inherited = NWorkspace.of().getBootOptions().getInherited().orElse(false);
             NLog.of(NApplications.class).with().level(Level.FINE).verb(NLogVerb.START)
                     .log(
                             NMsg.ofC(

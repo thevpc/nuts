@@ -32,7 +32,7 @@ public class NElementMapperNVersion implements NElementMapper<NVersion> {
     @Override
     public NVersion createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
         NSession session = context.getSession();
-        return NVersion.of(o.asString().get()).get();
+        return NVersion.get(o.asString().get()).get();
     }
 
 }

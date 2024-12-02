@@ -53,7 +53,7 @@ public class WarExecutorComponent implements NExecutorComponent {
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
         if(ID==null){
-            ID = NId.of("net.thevpc.nuts.exec:war").get();
+            ID = NId.get("net.thevpc.nuts.exec:war").get();
         }
         NDefinition def = context.getConstraints(NDefinition.class);
         if (def != null) {

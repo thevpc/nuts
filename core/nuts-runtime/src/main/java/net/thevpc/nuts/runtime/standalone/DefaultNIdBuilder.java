@@ -142,7 +142,7 @@ public class DefaultNIdBuilder implements NIdBuilder {
 
     @Override
     public NIdBuilder setVersion(String value) {
-        this.version = NVersion.of(value).get();
+        this.version = NVersion.get(value).get();
         return this;
     }
 

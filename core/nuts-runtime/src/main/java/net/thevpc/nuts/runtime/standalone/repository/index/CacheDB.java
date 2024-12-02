@@ -8,19 +8,19 @@ import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDB;
 
 public class CacheDB {
     public static NanoDB of() {
-        NWorkspace workspace = NWorkspace.of().get();
+        NWorkspace workspace = NWorkspace.get().get();
         synchronized (workspace) {
-            NanoDB o = (NanoDB) NWorkspace.get().getProperties().get(CacheDB.class.getName());
+            NanoDB o = (NanoDB) NWorkspace.of().getProperties().get(CacheDB.class.getName());
             if (o == null) {
                 o = new NanoDB(
-                        NWorkspace.get().getStoreLocation(
+                        NWorkspace.of().getStoreLocation(
                                         workspace.getApiId().builder().setVersion("SHARED").build()
                                 ,
                                 NStoreType.CACHE
                         ).resolve("cachedb").toFile().get()
                 );
                 o.getSerializers().setSerializer(NId.class,()->new NanoDBNIdSerializer(workspace));
-                NWorkspace.get().getProperties().put(CacheDB.class.getName(), o);
+                NWorkspace.of().getProperties().put(CacheDB.class.getName(), o);
             }
             return o;
         }

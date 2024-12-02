@@ -51,11 +51,11 @@ import java.util.function.Predicate;
  * @since 0.5.4
  */
 public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
-    static NWorkspace get() {
-        return of().get();
+    static NWorkspace of() {
+        return get().get();
     }
 
-    static NOptional<NWorkspace> of() {
+    static NOptional<NWorkspace> get() {
         return NScopedWorkspace.currentWorkspace();
     }
 
@@ -67,7 +67,7 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
         return NScopedWorkspace.callWith(callable);
     }
 
-    void setSharedInstance();
+    NWorkspace setSharedInstance();
 
     boolean isSharedInstance();
 

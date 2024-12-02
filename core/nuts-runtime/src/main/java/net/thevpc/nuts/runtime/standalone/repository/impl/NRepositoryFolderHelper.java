@@ -15,7 +15,6 @@ import net.thevpc.nuts.elem.NObjectElement;
 
 import net.thevpc.nuts.format.NDescriptorFormat;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.runtime.standalone.descriptor.util.NDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNContentEvent;
 import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultWriteTypeProcessor;
@@ -104,14 +103,14 @@ public class NRepositoryFolderHelper {
     public NPath getLongIdLocalFolder(NId id) {
         CoreNIdUtils.checkLongId(id);
         if (repo == null) {
-            return getStoreLocation().resolve(NWorkspace.get().getDefaultIdBasedir(id));
+            return getStoreLocation().resolve(NWorkspace.of().getDefaultIdBasedir(id));
         }
         return getStoreLocation().resolve(NRepositoryExt0.of(repo).getIdBasedir(id));
     }
 
     public NPath getLongIdLocalFile(NId id) {
         if (repo == null) {
-            return getLongIdLocalFolder(id).resolve(NWorkspace.get().getDefaultIdFilename(id));
+            return getLongIdLocalFolder(id).resolve(NWorkspace.of().getDefaultIdFilename(id));
         }
         return getLongIdLocalFolder(id).resolve(NRepositoryExt0.of(repo).getIdFilename(id));
     }
@@ -119,7 +118,7 @@ public class NRepositoryFolderHelper {
     public NPath getShortIdLocalFolder(NId id) {
         CoreNIdUtils.checkShortId(id);
         if (repo == null) {
-            return getStoreLocation().resolve(NWorkspace.get().getDefaultIdBasedir(id.builder().setVersion("").build()));
+            return getStoreLocation().resolve(NWorkspace.of().getDefaultIdBasedir(id.builder().setVersion("").build()));
         }
         return getStoreLocation().resolve(NRepositoryExt0.of(repo).getIdBasedir(id.builder().setVersion("").build()));
     }
@@ -139,7 +138,7 @@ public class NRepositoryFolderHelper {
 
     protected String getIdFilename(NId id) {
         if (repo == null) {
-            return NWorkspace.get().getDefaultIdFilename(id);
+            return NWorkspace.of().getDefaultIdFilename(id);
         }
         return NRepositoryExt0.of(repo).getIdFilename(id);
     }

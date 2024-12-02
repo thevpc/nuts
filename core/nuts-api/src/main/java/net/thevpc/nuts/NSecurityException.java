@@ -50,7 +50,7 @@ public class NSecurityException extends SecurityException implements NSessionAwa
      */
     public NSecurityException(NMsg message) {
         super(NException.messageToString(message));
-        this.session = NSession.of().orNull();
+        this.session = NSession.get().orNull();
         this.formattedMessage = NException.validateFormattedMessage(message);
     }
 
@@ -63,7 +63,7 @@ public class NSecurityException extends SecurityException implements NSessionAwa
      */
     public NSecurityException(NMsg message, Throwable cause) {
         super(NException.messageToString(message), cause);
-        this.session = NSession.of().orNull();
+        this.session = NSession.get().orNull();
         this.formattedMessage = NException.validateFormattedMessage(message);
     }
 

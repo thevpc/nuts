@@ -70,14 +70,14 @@ public class DefaultNWorkspaceEnvManagerModel {
     public DefaultNWorkspaceEnvManagerModel(NWorkspace ws) {
         this.workspace = ws;
         userProperties = new NDefaultObservableMap<>();
-        os = NId.of(CorePlatformUtils.getPlatformOs()).get();
+        os = NId.get(CorePlatformUtils.getPlatformOs()).get();
         String platformOsDist = CorePlatformUtils.getPlatformOsDist();
         if (platformOsDist == null) {
             platformOsDist = "default";
         }
-        osDist = NId.of(platformOsDist).get();
+        osDist = NId.get(platformOsDist).get();
         platform = NJavaSdkUtils.of(ws).createJdkId(System.getProperty("java.version"));
-        arch = NId.of(System.getProperty("os.arch")).get();
+        arch = NId.get(System.getProperty("os.arch")).get();
 
     }
 
@@ -284,7 +284,7 @@ public class DefaultNWorkspaceEnvManagerModel {
             return Collections.singleton(
                     NIdBuilder.of().setArtifactId(NDesktopEnvironmentFamily.HEADLESS.id()).build());
         }
-        switch (NWorkspace.get().getOsFamily()) {
+        switch (NWorkspace.of().getOsFamily()) {
             case WINDOWS: {
                 return Collections.singleton(NIdBuilder.of().setArtifactId(NDesktopEnvironmentFamily.WINDOWS_SHELL.id()).build());
             }

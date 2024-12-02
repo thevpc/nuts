@@ -77,7 +77,7 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
     public List<NAddRepositoryOptions> getDefaultRepositories() {
         List<NAddRepositoryOptions> all=new ArrayList<>();
         NSession session=workspace.currentSession();
-        if (!NWorkspace.get().isSystemWorkspace()) {
+        if (!NWorkspace.of().isSystemWorkspace()) {
             all.add(NRepositorySelectorHelper.createRepositoryOptions(
                     NRepositoryLocation.of("system", NRepositoryDB.of()).get(),
                     true));

@@ -142,7 +142,7 @@ public class DefaultNLocks extends AbstractNLocks {
             if (NBlankable.isBlank(face)) {
                 face = "content";
             }
-            return NWorkspace.get().getStoreLocation((NId) lockedObject, NStoreType.RUN)
+            return NWorkspace.of().getStoreLocation((NId) lockedObject, NStoreType.RUN)
                     .resolve("nuts-" + face)
                     .toPath().get()
                     ;

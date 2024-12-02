@@ -72,7 +72,7 @@ public class NVersionMain implements NApplication {
         boolean sort = false;
         boolean table = false;
         boolean error = false;
-        NSession session = NSession.of().get();
+        NSession session = NSession.get().get();
         NCmdLine cmdLine = NApp.of().getCmdLine();
         NArg a;
         int processed = 0;

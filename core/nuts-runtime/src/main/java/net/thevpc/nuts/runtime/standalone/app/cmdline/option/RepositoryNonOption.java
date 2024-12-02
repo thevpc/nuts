@@ -57,7 +57,7 @@ public class RepositoryNonOption extends DefaultNonOption {
                 }
             }
         }else{
-            for (NRepository repo : NWorkspace.get().getRepositories()) {
+            for (NRepository repo : NWorkspace.of().getRepositories()) {
                 all.add(new DefaultNArgCandidate(repo.getName()));
             }
 

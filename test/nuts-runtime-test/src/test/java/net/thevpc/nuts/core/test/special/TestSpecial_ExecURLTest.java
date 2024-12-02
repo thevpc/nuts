@@ -40,7 +40,7 @@ public class TestSpecial_ExecURLTest {
                 .failFast()
                 //.system()
                 .getGrabbedAllString();
-        NSession.get().out().println(result);
+        NSession.of().out().println(result);
         Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
     }
 

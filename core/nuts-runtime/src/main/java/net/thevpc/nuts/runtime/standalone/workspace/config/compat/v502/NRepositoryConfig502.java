@@ -44,7 +44,7 @@ import net.thevpc.nuts.util.NBlankable;
 public class NRepositoryConfig502 implements Serializable {
 
     private static final long serialVersionUID = 1;
-    public static final NVersion CONFIG_VERSION_502 = NVersion.of("0.5.2").get();
+    public static final NVersion CONFIG_VERSION_502 = NVersion.get("0.5.2").get();
     /**
      * Api version having created the config
      */

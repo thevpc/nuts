@@ -80,7 +80,7 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
         if (!POSSIBLE_EXT.contains(parserContext.getFileExtension())) {
             return null;
         }
-        final NId JAVA = NId.of("java").get();
+        final NId JAVA = NId.get("java").get();
         final NRef<NDescriptor> nutsjson = new NRef<>();
         final NRef<NDescriptor> metainf = new NRef<>();
         final NRef<NDescriptor> maven = new NRef<>();

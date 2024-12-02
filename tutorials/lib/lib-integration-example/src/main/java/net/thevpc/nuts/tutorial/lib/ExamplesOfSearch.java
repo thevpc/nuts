@@ -9,7 +9,7 @@ public class ExamplesOfSearch {
     }
 
     public void executeSearch() {
-        NSession session = NSession.get();
+        NSession session = NSession.of();
         session.out().println("Example of ## Search ##");
         for (NDefinition def : NSearchCmd.of()
                 .addId(NConstants.Ids.NUTS_API)

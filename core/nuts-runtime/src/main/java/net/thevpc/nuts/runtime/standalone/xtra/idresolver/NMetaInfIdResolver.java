@@ -74,7 +74,7 @@ public class NMetaInfIdResolver {
                     }
                     String version = prop.getProperty("id");
                     if (!NBlankable.isBlank(version)) {
-                        NId id = NId.of(version).orNull();
+                        NId id = NId.get(version).orNull();
                         if (id != null && id.getVersion() != null && !id.getVersion().isBlank()) {
                             all.add(id);
                         }

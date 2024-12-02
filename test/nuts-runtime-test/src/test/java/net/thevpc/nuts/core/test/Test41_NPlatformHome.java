@@ -21,7 +21,7 @@ public class Test41_NPlatformHome {
 
     @Test
     public void test02() {
-        NPlatformLocation z = NWorkspace.get().findPlatformByVersion(NPlatformFamily.JAVA, "[1.8,6]").orNull();
+        NPlatformLocation z = NWorkspace.of().findPlatformByVersion(NPlatformFamily.JAVA, "[1.8,6]").orNull();
         System.out.println(z);
     }
 

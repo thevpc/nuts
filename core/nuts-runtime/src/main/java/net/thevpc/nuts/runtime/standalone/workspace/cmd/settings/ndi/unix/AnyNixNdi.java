@@ -31,7 +31,7 @@ public class AnyNixNdi extends BaseSystemNdi {
     }
 
     protected NShellFamily[] getShellGroups() {
-        Set<NShellFamily> all=new LinkedHashSet<>(NWorkspace.get().getShellFamilies());
+        Set<NShellFamily> all=new LinkedHashSet<>(NWorkspace.of().getShellFamilies());
         all.retainAll(Arrays.asList(NShellFamily.SH, NShellFamily.FISH));
         return all.toArray(new NShellFamily[0]);
     }
@@ -68,10 +68,10 @@ public class AnyNixNdi extends BaseSystemNdi {
                         factory.ofBuilder().appendJoined(", ",
                                 Arrays.stream(updatedPaths).map(x ->
                                         factory.ofStyled(x.getPath().getName(), NTextStyle.path())).collect(Collectors.toList())),
-                        NWorkspace.get().getWorkspaceLocation()
+                        NWorkspace.of().getWorkspaceLocation()
                 ));
             }
-            final String sysRcName = NShellHelper.of(NWorkspace.get().getShellFamily()).getSysRcName();
+            final String sysRcName = NShellHelper.of(NWorkspace.of().getShellFamily()).getSysRcName();
             NAsk.of()
                     .forBoolean(NMsg.ofC(
                             "```error ATTENTION``` You may need to re-run terminal or issue \"%s\" in your current terminal for new environment to take effect.%n"
@@ -128,7 +128,7 @@ public class AnyNixNdi extends BaseSystemNdi {
     @Override
     protected FreeDesktopEntryWriter createFreeDesktopEntryWriter() {
         return new UnixFreeDesktopEntryWriter(workspace,
-                NWorkspace.get().getDesktopPath()==null?null: NPath.of(NWorkspace.get().getDesktopPath())
+                NWorkspace.of().getDesktopPath()==null?null: NPath.of(NWorkspace.of().getDesktopPath())
         );
     }
 

@@ -144,7 +144,7 @@ public class MongoAggregateCmd extends NdbCmd<NMongoConfig> {
                     }
                 }
             }
-            NSession session = NSession.of().get();
+            NSession session = NSession.get().get();
             session.out().println(values);
         });
     }

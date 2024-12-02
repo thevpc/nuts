@@ -79,7 +79,7 @@ public class NFolderRepository extends NFolderRepositoryBase {
             }
             case NConstants.QueryFaces.CONTENT: {
                 String packaging = q.get(NConstants.IdProperties.PACKAGING);
-                return NWorkspace.get().getDefaultIdContentExtension(packaging);
+                return NWorkspace.of().getDefaultIdContentExtension(packaging);
             }
             default: {
                 throw new NUnsupportedArgumentException(NMsg.ofC("unsupported fact %s", f));

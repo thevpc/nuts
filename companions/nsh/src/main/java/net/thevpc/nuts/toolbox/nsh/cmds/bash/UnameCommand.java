@@ -81,9 +81,9 @@ public class UnameCommand extends NShellBuiltinDefault {
         NSession session = context.getSession();
 
         Result rr = new Result();
-        rr.osDist = NWorkspace.get().getOsDist();
-        rr.os = NWorkspace.get().getOs();
-        rr.arch = NWorkspace.get().getArchFamily();
+        rr.osDist = NWorkspace.of().getOsDist();
+        rr.os = NWorkspace.of().getOs();
+        rr.arch = NWorkspace.of().getArchFamily();
         if (!config.farch && !config.fos && !config.fdist) {
             config.farch = true;
             config.fos = true;

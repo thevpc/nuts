@@ -88,7 +88,7 @@ public class DocusaurusCtrl {
                 .orElse(false);
         Path basePath = base;
         Path preProcessor = getPreProcessorBaseDir();
-        NSession session = NSession.get();
+        NSession session = NSession.of();
         if (preProcessor != null && Files.isDirectory(preProcessor)) {
 //            Files.walk(base).filter(x->Files.isDirectory(base))
             Path docs = basePath.resolve("docs");
@@ -204,7 +204,7 @@ public class DocusaurusCtrl {
     }
 
     private void runCommand(Path workFolder, boolean yes, String... cmd) {
-        NSession.get().copy().setConfirm(yes ? NConfirmationMode.YES : NConfirmationMode.ERROR)
+        NSession.of().copy().setConfirm(yes ? NConfirmationMode.YES : NConfirmationMode.ERROR)
                 .runWith(() -> {
                     NExecCmd.of().addCommand(cmd).setDirectory(NPath.of(workFolder))
                             .setExecutionType(NExecutionType.EMBEDDED)
@@ -309,7 +309,7 @@ public class DocusaurusCtrl {
 
         @Override
         public Object eval(String content, FileTemplater context) {
-            return NSession.get().copy()
+            return NSession.of().copy()
                     .setTerminal(NTerminal.ofMem())
                     .callWith(
                             () -> {
@@ -318,7 +318,7 @@ public class DocusaurusCtrl {
                                         context.getSourcePath().orElseGet(() -> "nsh"), new String[0]
                                 );
                                 shell.executeScript(content, ctx);
-                                return NSession.get().out().toString();
+                                return NSession.of().out().toString();
                             }
                     );
 

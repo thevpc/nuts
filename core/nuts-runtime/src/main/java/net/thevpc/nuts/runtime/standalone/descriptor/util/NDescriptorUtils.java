@@ -51,7 +51,7 @@ public class NDescriptorUtils {
         String artifactId = id == null ? null : id.getArtifactId();
         NVersion version = id == null ? null : id.getVersion();
         if (groupId == null || artifactId == null || NBlankable.isBlank(version)) {
-            NSession session = NSession.get();
+            NSession session = NSession.of();
             switch (session.getConfirm().orDefault()) {
                 case ASK:
                 case ERROR: {
@@ -76,7 +76,7 @@ public class NDescriptorUtils {
                                 .setDefaultValue(ov)
                                 .setHintMessage(NBlankable.isBlank(ov) ? null : NMsg.ofPlain(ov))
                                 .getValue();
-                        version = NVersion.of(v).get();
+                        version = NVersion.get(v).get();
                     }
                     break;
                 }

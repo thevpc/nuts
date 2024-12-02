@@ -29,7 +29,7 @@ public class RemoveConfigCmd<C extends NdbConfig> extends NdbCmd<C> {
                         break;
                     }
                     default: {
-                        NSession session = NSession.of().get();
+                        NSession session = NSession.get().get();
                         session.configureLast(cmdLine);
                     }
                 }

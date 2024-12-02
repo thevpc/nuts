@@ -93,7 +93,7 @@ public class CopyDBCmd<C extends NdbConfig> extends NdbCmd<C> {
                         if (support.getSession().configureFirst(cmdLine)) {
 
                         } else {
-                            NSession session = NSession.of().get();
+                            NSession session = NSession.get().get();
                             session.configureLast(cmdLine);
                         }
                     }

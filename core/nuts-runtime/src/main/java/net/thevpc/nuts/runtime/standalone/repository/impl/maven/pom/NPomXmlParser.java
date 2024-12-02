@@ -1061,7 +1061,7 @@ public class NPomXmlParser {
                         if (a.startsWith("#")) {
                             //ignore!
                         } else {
-                            NId id = NId.of(a).orNull();
+                            NId id = NId.get(a).orNull();
                             if (id != null) {
                                 if (!NBlankable.isBlank(os)) {
                                     osMap.put(id.getShortName(), os);

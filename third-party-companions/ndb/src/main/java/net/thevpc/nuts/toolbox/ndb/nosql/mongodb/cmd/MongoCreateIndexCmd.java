@@ -26,7 +26,7 @@ public class MongoCreateIndexCmd extends CreateIndexCmd<NMongoConfig> {
                     docSet.putAll(Document.parse(s));
                 }
             }
-            NSession session = NSession.of().get();
+            NSession session = NSession.get().get();
             session.out().println(mongoCollection.createIndex(docSet));
         });
     }

@@ -246,8 +246,8 @@ public class DefaultNBootModel implements NBootModel {
         if (st.isAutoCompleteSupported()) {
             //that's ok
         } else {
-            NId extId = NId.of("net.thevpc.nuts.ext:next-term#" + workspace.getApiVersion()).get();
-            if (!NExtensions.of().isExcludedExtension(extId.toString(), NWorkspace.get().getBootOptions().toWorkspaceOptions())) {
+            NId extId = NId.get("net.thevpc.nuts.ext:next-term#" + workspace.getApiVersion()).get();
+            if (!NExtensions.of().isExcludedExtension(extId.toString(), NWorkspace.of().getBootOptions().toWorkspaceOptions())) {
                 NExtensions extensions = NExtensions.of();
                 extensions.loadExtension(extId);
                 NSystemTerminal systemTerminal = createSystemTerminal(

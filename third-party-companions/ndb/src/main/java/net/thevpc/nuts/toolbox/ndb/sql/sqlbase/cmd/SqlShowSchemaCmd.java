@@ -62,7 +62,7 @@ public class SqlShowSchemaCmd<C extends NdbConfig> extends NdbCmd<C> {
 
     protected void runShowSchema(ExtendedQuery eq, C options, NPath path) {
         SqlDB sqlDB = SqlHelper.computeSchema(eq, (SqlSupport<C>) getSupport(), options);
-        NSession session = NSession.of().get();
+        NSession session = NSession.get().get();
         if (path == null) {
             session.out().println(sqlDB);
         } else {

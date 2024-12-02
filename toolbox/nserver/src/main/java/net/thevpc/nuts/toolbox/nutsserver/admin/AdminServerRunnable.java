@@ -134,7 +134,7 @@ public class AdminServerRunnable implements NServer, Runnable {
                                     cli = new NShell(
                                             new NShellConfiguration()
                                                     .setSession(session)
-                                                    .setAppId(NId.ofClass(AdminServerRunnable.class).get())
+                                                    .setAppId(NId.getForClass(AdminServerRunnable.class).get())
                                                     .setServiceName(serverId)
                                                     .setArgs(new String[0])
                                     );

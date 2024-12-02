@@ -309,7 +309,7 @@ public class JobServiceCmd {
                         NCmdLineHistory.of()
                                 .setPath(NApp.of().getVarFolder().resolve("njob-history.hist"))
                 );
-        NWorkspace.get().setProperty(JobServiceCmd.class.getName(), this);
+        NWorkspace.of().setProperty(JobServiceCmd.class.getName(), this);
 
 //        session.setTerminal(
 //                session.io().term().createTerminal(

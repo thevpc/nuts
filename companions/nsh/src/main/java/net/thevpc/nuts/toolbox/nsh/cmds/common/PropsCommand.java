@@ -316,7 +316,7 @@ public class PropsCommand extends NShellBuiltinDefault {
             switch (format) {
                 case AUTO: {
                     NObjectFormat f = NObjectFormat.of().setValue(p);
-                    f.configure(true, NWorkspace.get().getBootOptions().getOutputFormatOptions().orElseGet(Collections::emptyList).toArray(new String[0]));
+                    f.configure(true, NWorkspace.of().getBootOptions().getOutputFormatOptions().orElseGet(Collections::emptyList).toArray(new String[0]));
                     f.configure(true, session.getOutputFormatOptions().toArray(new String[0]));
                     f.println(session.out());
                     break;

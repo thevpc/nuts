@@ -120,7 +120,7 @@ class InstalledRepositoryConfigModel extends AbstractNRepositoryConfigModel {
 
     @Override
     public NStoreStrategy getStoreStrategy() {
-        return NWorkspace.get().getRepositoryStoreStrategy();
+        return NWorkspace.of().getRepositoryStoreStrategy();
     }
 
     @Override
@@ -250,7 +250,7 @@ class InstalledRepositoryConfigModel extends AbstractNRepositoryConfigModel {
     @Override
     public Map<String, String> toMap(boolean inherit) {
         if (inherit) {
-            return NWorkspace.get().getConfigMap();
+            return NWorkspace.of().getConfigMap();
         }
         return new HashMap<>();
     }
@@ -264,7 +264,7 @@ class InstalledRepositoryConfigModel extends AbstractNRepositoryConfigModel {
     public NOptional<NLiteral> get(String key, boolean inherit) {
         NOptional<NLiteral> o = NOptional.ofEmpty(() -> NMsg.ofC("repo config property not found : %s", key));
         if (inherit) {
-            return o.orElseUse(()->NWorkspace.get().getConfigProperty(key));
+            return o.orElseUse(()->NWorkspace.of().getConfigProperty(key));
         }
         return o;
     }

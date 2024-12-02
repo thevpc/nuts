@@ -132,7 +132,7 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
         if (ID == null) {
-            ID = NId.of("net.thevpc.nuts.exec:exec-java-src").get();
+            ID = NId.get("net.thevpc.nuts.exec:exec-java-src").get();
         }
         NDefinition def = context.getConstraints(NDefinition.class);
         if (def != null) {

@@ -264,7 +264,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
                         .printlnEcho("systemctl start " + serviceName)
                         .printlnEcho("systemctl status " + serviceName);
             }
-            if (NSession.of().get().isDry()) {
+            if (NSession.get().get().isDry()) {
                 new File(serviceFilePath).getParentFile().mkdirs();
                 Files.copy(tempFile.toPath(), new File(serviceFilePath).toPath(), StandardCopyOption.REPLACE_EXISTING);
                 logInfo("[DRY] run script: ");
@@ -326,7 +326,7 @@ public class DefaultInstallSvcCommand implements NInstallSvcCmd {
             }
             // added to always return 0 code
             script.printlnEcho("echo 'end of script'");
-            if (NSession.of().get().isDry()) {
+            if (NSession.get().get().isDry()) {
                 serviceFilePath.getParent().mkdirs();
                 Files.copy(tempFile.toPath(), serviceFilePath.toPath().get(), StandardCopyOption.REPLACE_EXISTING);
                 logInfo("[DRY] run script: ");

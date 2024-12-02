@@ -23,7 +23,7 @@ public class NDocMain implements NApplication, NCmdLineRunner {
 
     @Override
     public void run() {
-        NSession session = NSession.of().get();
+        NSession session = NSession.get().get();
         NApp.of().processCmdLine(this);
     }
 

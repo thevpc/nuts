@@ -57,7 +57,7 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
      * @param version string value
      * @return parsed value
      */
-    static NOptional<NVersion> of(String version) {
+    static NOptional<NVersion> get(String version) {
         if (NBlankable.isBlank(version)) {
             return NOptional.of(new DefaultNVersion(""));
         }
@@ -66,6 +66,10 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
             return NOptional.of(new DefaultNVersion(version2));
         }
         return NOptional.ofError(() -> NMsg.ofC("invalid version format : %s", version));
+    }
+
+    static NVersion of(String version) {
+        return get(version).get();
     }
 
     /**
@@ -168,8 +172,8 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
     /**
      * increment the last number in the version with the given {@code amount}
      *
-     * @param index number index
-     * @param amount   amount of the increment
+     * @param index  number index
+     * @param amount amount of the increment
      * @return new version incrementing the last number
      */
     NVersion inc(int index, long amount);
@@ -177,8 +181,8 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
     /**
      * increment the last number in the version with the given {@code amount}
      *
-     * @param index number index
-     * @param amount   amount of the increment
+     * @param index  number index
+     * @param amount amount of the increment
      * @return new version incrementing the last number
      */
     NVersion inc(int index, BigInteger amount);
@@ -250,5 +254,6 @@ public interface NVersion extends Serializable, Comparable<NVersion>, NBlankable
     boolean isLatestVersion();
 
     boolean isReleaseVersion();
+
     boolean isSnapshotVersion();
 }

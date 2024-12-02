@@ -158,7 +158,7 @@ public class RestoreCmd<C extends NdbConfig> extends NdbCmd<C> {
                         if (/*file.get().isFile() && */file.get().getName().toLowerCase().endsWith(".zip")) {
                             NPath zipPath = file.get();
                             NPath unzippedFolder = file.get().resolveSibling(file.get().getLongBaseName());
-                            NSession session = NSession.of().get();
+                            NSession session = NSession.get().get();
                             NExecCmd zipExec = sysCmd()
                                     .addCommand("unzip")
                                     .addCommand(session.isTrace()?null:"-q")

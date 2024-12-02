@@ -403,12 +403,12 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
         String goodKw = null;
         boolean forceInstalled = false;
         if (cmdName.endsWith("!")) {
-            goodId = NId.of(cmdName.substring(0, cmdName.length() - 1)).orNull();
+            goodId = NId.get(cmdName.substring(0, cmdName.length() - 1)).orNull();
             if (goodId != null) {
                 forceInstalled = true;
             }
         } else {
-            goodId = NId.of(cmdName).orNull();
+            goodId = NId.get(cmdName).orNull();
         }
 
         if (cmdName.equalsIgnoreCase(".") || cmdName.equals("..")) {
@@ -718,7 +718,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                     );
                 }
                 NCustomCmd command = null;
-                command = NWorkspace.get().findCommand(goodKw);
+                command = NWorkspace.of().findCommand(goodKw);
                 if (command != null) {
                     NCmdExecOptions o = new NCmdExecOptions().setExecutorOptions(executorOptions).setDirectory(directory).setFailFast(failFast)
                             .setExecutionType(executionType).setEnv(env);
@@ -809,7 +809,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
             char r = File.pathSeparatorChar;
             for (String z : p.split("" + r)) {
                 Path t = Paths.get(z);
-                switch (NWorkspace.get().getOsFamily()) {
+                switch (NWorkspace.of().getOsFamily()) {
                     case WINDOWS: {
                         if (Files.isRegularFile(t.resolve(s))) {
                             return true;
@@ -1014,7 +1014,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
 
     public static CharacterizedExecFile characterizeForExec(NInputSource contentFile, List<String> execOptions) {
         String classifier = null;//TODO how to get classifier?
-        CharacterizedExecFile c = new CharacterizedExecFile(NSession.get());
+        CharacterizedExecFile c = new CharacterizedExecFile(NSession.of());
         try {
             c.setStreamOrPath(contentFile);
             c.setContentFile(CoreIOUtils.toPathInputSource(contentFile, c.getTemps(), true));
@@ -1050,7 +1050,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                         URLBuilder ub = new URLBuilder(((NPath) c.getStreamOrPath()).toURL().toString());
                         try {
                             c.setContentFile(CoreIOUtils.toPathInputSource(
-                                    NPath.of(ub.resolveSibling(NWorkspace.get().getDefaultIdFilename(c.getDescriptor().getId())).toURL()),
+                                    NPath.of(ub.resolveSibling(NWorkspace.of().getDefaultIdFilename(c.getDescriptor().getId())).toURL()),
                                     c.getTemps(), true));
                         } catch (Exception ex) {
                             //TODO FIX ME
@@ -1073,7 +1073,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                                     URLBuilder ub = new URLBuilder(((NPath) c.getStreamOrPath()).toURL().toString());
                                     try {
                                         c.setContentFile(CoreIOUtils.toPathInputSource(
-                                                NPath.of(ub.resolveSibling(NWorkspace.get().getDefaultIdFilename(c.getDescriptor().getId())).toURL()),
+                                                NPath.of(ub.resolveSibling(NWorkspace.of().getDefaultIdFilename(c.getDescriptor().getId())).toURL()),
                                                 c.getTemps(), true));
                                     } catch (Exception ex) {
                                         //TODO add log here
@@ -1116,11 +1116,11 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
             NConnexionString connexionString = NConnexionString.of(target).get();
             if ("ssh".equals(connexionString.getProtocol())) {
                 NExtensions.of()
-                        .loadExtension(NId.of("net.thevpc.nuts.ext:next-ssh").get());
+                        .loadExtension(NId.get("net.thevpc.nuts.ext:next-ssh").get());
             }
             if ("nagent".equals(connexionString.getProtocol())) {
                 NExtensions.of()
-                        .loadExtension(NId.of("com.cts.nuts.enterprise:next-agent").get());
+                        .loadExtension(NId.get("com.cts.nuts.enterprise:next-agent").get());
             }
             RemoteInfo0 ii = new RemoteInfo0();
             ii.commExec = NExtensions.of().createComponent(NExecCmdExtension.class, connexionString)

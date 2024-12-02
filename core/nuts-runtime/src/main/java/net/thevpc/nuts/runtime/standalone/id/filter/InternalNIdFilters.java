@@ -58,9 +58,9 @@ public class InternalNIdFilters extends InternalNTypedFilters<NIdFilter> impleme
         NIdFilter f = null;
         for (String wildcardId : names) {
             if (f == null) {
-                f = new NPatternIdFilter(getWorkspace(), NId.of(wildcardId).get());
+                f = new NPatternIdFilter(getWorkspace(), NId.get(wildcardId).get());
             } else {
-                f = (NIdFilter) f.or(new NPatternIdFilter(getWorkspace(), NId.of(wildcardId).get()));
+                f = (NIdFilter) f.or(new NPatternIdFilter(getWorkspace(), NId.get(wildcardId).get()));
             }
         }
         return f;

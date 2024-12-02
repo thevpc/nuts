@@ -37,7 +37,7 @@ import java.util.List;
  */
 public interface NTextBuilder extends NText, Iterable<NText> {
     static NTextBuilder of() {
-        NSession s = NSession.of().orNull();
+        NSession s = NSession.get().orNull();
         if(s==null){
             return new NTextBuilderPlain();
         }

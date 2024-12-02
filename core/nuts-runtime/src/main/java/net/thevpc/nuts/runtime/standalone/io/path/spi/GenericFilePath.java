@@ -310,7 +310,7 @@ public class GenericFilePath implements NPathSPI {
             if (f.getSeparator().length() > 0) {
                 return true;
             }
-            if (NWorkspace.get().getOsFamily() == NOsFamily.WINDOWS) {
+            if (NWorkspace.of().getOsFamily() == NOsFamily.WINDOWS) {
                 String n = f.getName();
                 //test if the name is a drive name
                 if (n.length() == 2 && n.charAt(1) == ':') {

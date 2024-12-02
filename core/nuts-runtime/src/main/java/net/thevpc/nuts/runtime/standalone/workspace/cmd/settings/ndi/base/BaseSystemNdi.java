@@ -36,7 +36,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public NdiScriptInfo[] getSysRC(NdiScriptOptions options) {
         List<NdiScriptInfo> scriptInfos = new ArrayList<>();
         Set<String> visited = new LinkedHashSet<>();
-        for (NShellFamily sf : NWorkspace.get().getShellFamilies()) {
+        for (NShellFamily sf : NWorkspace.of().getShellFamilies()) {
             String z = NShellHelper.of(sf).getSysRcName();
             if (!visited.contains(z)) {
                 visited.add(z);
@@ -167,7 +167,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     @Override
     public PathInfo[] createArtifactScript(NdiScriptOptions options) {
-        NId nid = NId.of(options.getId()).get();
+        NId nid = NId.get(options.getId()).get();
         List<PathInfo> r = new ArrayList<>();
         if (isNutsBootId(nid)) {
             r.addAll(Arrays.asList(
@@ -224,7 +224,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public void removeNutsScript(String id, String switchWorkspaceLocation) {
         NdiScriptOptions options = new NdiScriptOptions();
         options.getLauncher().setSwitchWorkspaceLocation(switchWorkspaceLocation);
-        NId nid = NId.of(id).get();
+        NId nid = NId.get(id).get();
         NPath f = getBinScriptFile(nid.getArtifactId(), options);
         NTexts factory = NTexts.of();
         if (f.isRegularFile()) {
@@ -275,7 +275,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public PathInfo[] addScript(NdiScriptOptions options, String[] all) {
         List<String> idsToInstall = Arrays.asList(all);
         NSession session = workspace.currentSession();
-        Path workspaceLocation = NWorkspace.get().getWorkspaceLocation().toPath().get();
+        Path workspaceLocation = NWorkspace.of().getWorkspaceLocation().toPath().get();
         List<PathInfo> result = new ArrayList<>();
         Boolean systemWideConfig = options.getLauncher().getSwitchWorkspace();
         if (!idsToInstall.isEmpty()) {
@@ -284,7 +284,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
             boolean includeEnv = options.isIncludeEnv();
             for (String id : idsToInstall) {
-                NId nid = NId.of(id).get();
+                NId nid = NId.get(id).get();
                 if (nid == null) {
                     throw new NExecutionException(NMsg.ofC("unable to create script for %s : invalid id", id), NExecutionException.ERROR_1);
                 }
@@ -296,12 +296,12 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 //            if (includeEnv) {
 //                linkNameCurrent = prepareLinkName(linkNameCurrent);
 //            }
-            List<String> nutsIds = idsToInstall.stream().filter(x -> isNutsBootId(NId.of(x).get())).collect(Collectors.toList());
-            List<String> nonNutsIds = idsToInstall.stream().filter(x -> !isNutsBootId(NId.of(x).get())).collect(Collectors.toList());
+            List<String> nutsIds = idsToInstall.stream().filter(x -> isNutsBootId(NId.get(x).get())).collect(Collectors.toList());
+            List<String> nonNutsIds = idsToInstall.stream().filter(x -> !isNutsBootId(NId.get(x).get())).collect(Collectors.toList());
             boolean bootAlreadyProcessed = false;
             for (String id : nutsIds) {
                 try {
-                    NId nid = NId.of(id).get();
+                    NId nid = NId.get(id).get();
                     bootAlreadyProcessed = true;
                     if (!nid.getVersion().isBlank()) {
                         String verString = nid.getVersion().toString();
@@ -330,7 +330,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
             for (String id : nonNutsIds) {
                 try {
-                    NId nid = NId.of(id).get();
+                    NId nid = NId.get(id).get();
                     if (nid == null) {
                         throw new NExecutionException(NMsg.ofC("unable to create script for %s : invalid id", id), NExecutionException.ERROR_1);
                     }
@@ -421,7 +421,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     public NSupportMode getDesktopIntegrationSupport(NDesktopIntegrationItem target) {
-        return NWorkspace.get().getDesktopIntegrationSupport(target);
+        return NWorkspace.of().getDesktopIntegrationSupport(target);
     }
 
     protected boolean matchCondition(NSupportMode createDesktop, NSupportMode desktopIntegrationSupport) {
@@ -436,7 +436,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     public NWorkspaceBootConfig loadSwitchWorkspaceLocationConfig(String switchWorkspaceLocation) {
-        NWorkspaceBootConfig bootConfig = NWorkspace.get().loadBootConfig(switchWorkspaceLocation, false, true);
+        NWorkspaceBootConfig bootConfig = NWorkspace.of().loadBootConfig(switchWorkspaceLocation, false, true);
         if (bootConfig == null) {
             throw new NIllegalArgumentException(NMsg.ofC("invalid workspace: %s", switchWorkspaceLocation));
         }
@@ -759,7 +759,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             NPath p0 = NPath.of(descAppIcon);
             descAppIcon=toAbsoluteIconPath(appId, descAppIcon);
             String bestName = descAppIconDigest + "." + p0.getLastExtension();
-            NPath localIconPath = NWorkspace.get().getStoreLocation(appDef.getId(), NStoreType.CACHE)
+            NPath localIconPath = NWorkspace.of().getStoreLocation(appDef.getId(), NStoreType.CACHE)
                     .resolve("icons")
                     .resolve(bestName);
             if (localIconPath.isRegularFile()) {
@@ -805,7 +805,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 .getResultDefinitions()
                 .findSingleton().get();
 
-        NId appId = NId.of(options.getId()).get();
+        NId appId = NId.get(options.getId()).get();
         NDefinition appDef = loadIdDefinition(appId);
         List<String> cmd = new ArrayList<>();
 

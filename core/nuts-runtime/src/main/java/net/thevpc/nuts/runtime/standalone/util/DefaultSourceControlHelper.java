@@ -57,7 +57,7 @@ public class DefaultSourceControlHelper {
         String oldVersion = NStringUtils.trim(d.getId().getVersion().getValue());
         if (oldVersion.endsWith(CoreNConstants.Versions.CHECKED_OUT_EXTENSION)) {
             oldVersion = oldVersion.substring(0, oldVersion.length() - CoreNConstants.Versions.CHECKED_OUT_EXTENSION.length());
-            String newVersion = NVersion.of(oldVersion).get().inc().getValue();
+            String newVersion = NVersion.get(oldVersion).get().inc().getValue();
             NDefinition newVersionFound = null;
             try {
                 newVersionFound = NFetchCmd.of(d.getId().builder().setVersion(newVersion).build()).getResultDefinition();
@@ -82,12 +82,12 @@ public class DefaultSourceControlHelper {
 
     //    @Override
     public NDefinition checkout(String id, Path folder) {
-        return checkout(NId.of(id).get(), folder);
+        return checkout(NId.get(id).get(), folder);
     }
 
     //    @Override
     public NDefinition checkout(NId id, Path folder) {
-        NWorkspace workspace = NWorkspace.of().get();
+        NWorkspace workspace = NWorkspace.get().get();
         NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.INSTALL, "checkout");
         NDefinition nutToInstall = NFetchCmd.of(id).setOptional(false).setDependencies(true).getResultDefinition();
         if ("zip".equals(nutToInstall.getDescriptor().getPackaging())) {

@@ -171,7 +171,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                             .setInlineDependencies(true)
                             .getResultIds().toList();
                     if (found.isEmpty()) {
-                        throw new NNotFoundException(NId.of(id).get());
+                        throw new NNotFoundException(NId.get(id).get());
                     }
                     for (NId resultId : found) {
                         if (resultId.getShortName().equals(session.getWorkspace().getApiId().getShortName())) {
@@ -191,7 +191,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         if (sId.isEmpty()) {
             sId.add("nuts");
         }
-        String defaultName = sId.stream().map(x -> NId.of(x).get().getArtifactId()).distinct().sorted()
+        String defaultName = sId.stream().map(x -> NId.get(x).get().getArtifactId()).distinct().sorted()
                 .collect(Collectors.joining("-")) + "-bundle";
         String appName = NStringUtils.firstNonBlank(withAppName.get(), withAppTitle.get(), defaultName);
 

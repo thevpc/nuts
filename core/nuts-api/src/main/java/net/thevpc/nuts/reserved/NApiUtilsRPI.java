@@ -180,7 +180,7 @@ public class NApiUtilsRPI {
         NSession session = NSessionAwareExceptionBase.resolveSession(ex).orNull();
         NWorkspaceOptionsBuilder bo = null;
         if (session != null) {
-            bo = NWorkspace.get().getBootOptions().builder().toWorkspaceOptions().builder();
+            bo = NWorkspace.of().getBootOptions().builder().toWorkspaceOptions().builder();
             return processThrowable(ex, out, true, resolveShowStackTrace(bo), resolveGui(bo));
         } else {
             //load inherited
@@ -387,7 +387,7 @@ public class NApiUtilsRPI {
             name = "default";
         }
         String key = type.getName() + "(" + name + ")";
-        return NSession.of().get().getOrComputeProperty(key, NScopeType.SESSION, () -> sup.get());
+        return NSession.get().get().getOrComputeProperty(key, NScopeType.SESSION, () -> sup.get());
     }
 
     public static <T> T getOrCreateRefProperty(Class<T> type, Supplier<T> sup) {

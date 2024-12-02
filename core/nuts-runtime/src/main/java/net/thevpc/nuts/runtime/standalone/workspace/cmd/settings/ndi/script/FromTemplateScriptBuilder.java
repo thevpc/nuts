@@ -162,27 +162,27 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                     case "NUTS_VERSION":
                                         return getWorkspace().getApiVersion().toString();
                                     case "NUTS_WORKSPACE":
-                                        return NWorkspace.get().getWorkspaceLocation().toString();
+                                        return NWorkspace.of().getWorkspaceLocation().toString();
                                     case "NUTS_WORKSPACE_BIN":
-                                        return str(NWorkspace.get().getStoreLocation(NStoreType.BIN));
+                                        return str(NWorkspace.of().getStoreLocation(NStoreType.BIN));
                                     case "NUTS_WORKSPACE_CONF":
-                                        return str(NWorkspace.get().getStoreLocation(NStoreType.CONF));
+                                        return str(NWorkspace.of().getStoreLocation(NStoreType.CONF));
                                     case "NUTS_WORKSPACE_CACHE":
-                                        return str(NWorkspace.get().getStoreLocation(NStoreType.CACHE));
+                                        return str(NWorkspace.of().getStoreLocation(NStoreType.CACHE));
                                     case "NUTS_WORKSPACE_LIB":
-                                        return str(NWorkspace.get().getStoreLocation(NStoreType.LIB));
+                                        return str(NWorkspace.of().getStoreLocation(NStoreType.LIB));
                                     case "NUTS_WORKSPACE_LOG":
-                                        return str(NWorkspace.get().getStoreLocation(NStoreType.LOG));
+                                        return str(NWorkspace.of().getStoreLocation(NStoreType.LOG));
                                     case "NUTS_WORKSPACE_RUN":
-                                        return str(NWorkspace.get().getStoreLocation(NStoreType.RUN));
+                                        return str(NWorkspace.of().getStoreLocation(NStoreType.RUN));
                                     case "NUTS_WORKSPACE_TEMP":
-                                        return str(NWorkspace.get().getStoreLocation(NStoreType.TEMP));
+                                        return str(NWorkspace.of().getStoreLocation(NStoreType.TEMP));
                                     case "NUTS_WORKSPACE_VAR":
-                                        return str(NWorkspace.get().getStoreLocation(NStoreType.VAR));
+                                        return str(NWorkspace.of().getStoreLocation(NStoreType.VAR));
                                     case "NUTS_JAR_EXPR": {
                                         String NUTS_JAR_PATH = options.resolveNutsAppJarPath().toString();
-                                        if (NUTS_JAR_PATH.startsWith(NWorkspace.get().getStoreLocation(NStoreType.LIB).toString())) {
-                                            String pp = NUTS_JAR_PATH.substring(NWorkspace.get().getStoreLocation(NStoreType.LIB).toString().length());
+                                        if (NUTS_JAR_PATH.startsWith(NWorkspace.of().getStoreLocation(NStoreType.LIB).toString())) {
+                                            String pp = NUTS_JAR_PATH.substring(NWorkspace.of().getStoreLocation(NStoreType.LIB).toString().length());
                                             return NShellHelper.of(getShellFamily()).varRef("NUTS_WORKSPACE_LIB") + pp;
                                         } else {
                                             return NUTS_JAR_PATH;
@@ -191,7 +191,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                     case "NUTS_WORKSPACE_BINDIR_EXPR": {
                                         //="${NUTS_WORKSPACE_BIN}/id/net/thevpc/nuts/nuts/0.8.2/bin"
                                         return NShellHelper.of(getShellFamily()).varRef("NUTS_WORKSPACE_BIN") + options.resolveBinFolder().toString().substring(
-                                                NWorkspace.get().getStoreLocation(NStoreType.BIN).toString().length()
+                                                NWorkspace.of().getStoreLocation(NStoreType.BIN).toString().length()
                                         );
                                     }
                                     default: {

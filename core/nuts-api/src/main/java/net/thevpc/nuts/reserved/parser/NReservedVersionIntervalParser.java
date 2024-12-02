@@ -42,7 +42,7 @@ public class NReservedVersionIntervalParser {
             if (min.equals("")) {
                 dd.add(new DefaultNVersionInterval(false, false, min, null));
             } else {
-                String max = NVersion.of(min).get().inc(-1).getValue();
+                String max = NVersion.of(min).inc(-1).getValue();
                 dd.add(new DefaultNVersionInterval(true, false, min, max));
             }
         } else {

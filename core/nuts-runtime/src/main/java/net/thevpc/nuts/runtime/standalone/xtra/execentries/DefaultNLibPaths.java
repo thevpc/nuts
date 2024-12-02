@@ -128,7 +128,7 @@ public class DefaultNLibPaths implements NLibPaths {
                 Arrays.asList(new NMetaInfIdResolver().resolvePomIds(path))
         );
         for (NPomId uu : u) {
-            all.add(NId.of(uu.getGroupId() + ":" + uu.getArtifactId() + "#" + uu.getVersion()).get());
+            all.add(NId.get(uu.getGroupId() + ":" + uu.getArtifactId() + "#" + uu.getVersion()).get());
         }
         return new ArrayList<>(all);
     }
@@ -139,7 +139,7 @@ public class DefaultNLibPaths implements NLibPaths {
         NApplicationInfo annotation = (NApplicationInfo) clazz.getAnnotation(NApplicationInfo.class);
         if (annotation != null) {
             if (!NBlankable.isBlank(annotation.id())) {
-                all.add(NId.of(annotation.id()).get());
+                all.add(NId.get(annotation.id()).get());
             }
         }
         NPomId[] u = MavenUtils.createPomIdResolver(workspace).resolvePomIds(clazz);
@@ -147,7 +147,7 @@ public class DefaultNLibPaths implements NLibPaths {
                 Arrays.asList(new NMetaInfIdResolver().resolvePomIds(clazz))
         );
         for (NPomId uu : u) {
-            all.add(NId.of(uu.getGroupId() + ":" + uu.getArtifactId() + "#" + uu.getVersion()).get());
+            all.add(NId.get(uu.getGroupId() + ":" + uu.getArtifactId() + "#" + uu.getVersion()).get());
         }
         return new ArrayList<>(all);
     }

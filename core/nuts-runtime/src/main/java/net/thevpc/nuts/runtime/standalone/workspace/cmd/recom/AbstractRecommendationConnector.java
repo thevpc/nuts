@@ -37,7 +37,7 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
     @Override
     public Map getRecommendations(RequestQueryInfo ri, NRecommendationPhase phase, boolean failure) {
         validateRequest(ri);
-        NId id = NId.of(ri.q.getId()).ifBlankEmpty().get();
+        NId id = NId.get(ri.q.getId()).ifBlankEmpty().get();
         String name = phase.name().toLowerCase() + (failure ? "-failure" : "") + "-recommendations.json";
         String url = "/repo/" + ExtraApiUtils.resolveIdPath(id) + '/' + name;
         return post(url, ri, Map.class);

@@ -2398,10 +2398,10 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
     }
 
     public NBootOptionsBuilder setAll(NBootOptionsInfo other) {
-        this.setApiVersion(other.getApiVersion() == null ? null : NVersion.of(other.getApiVersion()).orNull());
+        this.setApiVersion(other.getApiVersion() == null ? null : NVersion.get(other.getApiVersion()).orNull());
         this.setRuntimeId(other.getRuntimeId() == null ? null :
-                other.getRuntimeId().contains("#") ? NId.of(other.getRuntimeId()).orNull() :
-                        NId.ofRuntime(other.getRuntimeId()).orNull()
+                other.getRuntimeId().contains("#") ? NId.get(other.getRuntimeId()).orNull() :
+                        NId.getRuntime(other.getRuntimeId()).orNull()
         );
         this.setJavaCommand(other.getJavaCommand());
         this.setJavaOptions(other.getJavaOptions());
@@ -2543,7 +2543,7 @@ public final class DefaultNBootOptionsBuilder implements NBootOptionsBuilder, Se
         List<NBootClassLoaderNode> dependencies = n.getDependencies();
         List<NClassLoaderNode> children = convertNodes(dependencies);
         return new NDefaultClassLoaderNode(
-                NBlankable.isBlank(n.getId()) ? null : NId.of(n.getId()).get(),
+                NBlankable.isBlank(n.getId()) ? null : NId.get(n.getId()).get(),
                 n.getURL(),
                 n.isEnabled(),
                 n.isIncludedInClasspath(),

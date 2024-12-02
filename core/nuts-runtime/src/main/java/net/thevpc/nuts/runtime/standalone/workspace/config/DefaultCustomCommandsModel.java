@@ -334,7 +334,7 @@ public class DefaultCustomCommandsModel {
     public NCustomCmd find(String name, NId forId, NId forOwner) {
         NCustomCmd a = find(name);
         if (a != null && a.getCommand() != null && a.getCommand().size() > 0) {
-            NId i = NId.of(a.getCommand().get(0)).orNull();
+            NId i = NId.get(a.getCommand().get(0)).orNull();
             if (i != null
                     && (forId == null
                     || i.getShortName().equals(forId.getArtifactId())

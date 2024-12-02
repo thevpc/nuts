@@ -37,7 +37,7 @@ public class MongoUpdateCmd extends UpdateCmd<NMongoConfig> {
             UpdateResult r = eq.getOne() ?
                     mongoCollection.updateOne(docWhere, docSet)
                     : mongoCollection.updateMany(docWhere, docSet);
-            NSession session = NSession.of().get();
+            NSession session = NSession.get().get();
             session.out().println(r);
         });
     }

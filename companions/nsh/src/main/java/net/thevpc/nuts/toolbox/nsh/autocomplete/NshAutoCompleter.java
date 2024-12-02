@@ -25,7 +25,7 @@ public class NshAutoCompleter implements NCmdLineAutoCompleteResolver {
     public List<NArgCandidate> resolveCandidates(NCmdLine cmdLine, int wordIndex) {
         List<NArgCandidate> candidates = new ArrayList<>();
         NSession session=workspace.currentSession();
-        NShellContext fileContext = (NShellContext) NWorkspace.get().getProperties().get(NShellContext.class.getName());
+        NShellContext fileContext = (NShellContext) NWorkspace.of().getProperties().get(NShellContext.class.getName());
 
         if (wordIndex == 0) {
             for (NShellBuiltin command : fileContext.builtins().getAll()) {

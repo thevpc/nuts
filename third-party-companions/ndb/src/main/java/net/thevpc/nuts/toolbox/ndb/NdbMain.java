@@ -21,7 +21,7 @@ public class NdbMain implements NApplication {
     }
 
     public void run(NCmdLine cmdLine) {
-        NSession session = NSession.of().get();
+        NSession session = NSession.get().get();
         while (cmdLine.hasNext()) {
             if (cmdLine.next("mysql", "mariadb").isPresent()) {
                 new NMysqlMain(session).run(cmdLine);

@@ -87,7 +87,7 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
 //        boolean initializeJava = boot.getBootOptions().getInitJava().ifEmpty(initializePlatforms).get(session);
         boolean initializeScripts = workspace.getBootOptions().getInitScripts().ifEmpty(true).get();
         boolean initializeLaunchers = workspace.getBootOptions().getInitLaunchers().ifEmpty(true).get();
-        Boolean installCompanions = NWorkspace.get().getBootOptions().getInstallCompanions().orElse(false);
+        Boolean installCompanions = NWorkspace.of().getBootOptions().getInstallCompanions().orElse(false);
 
 //        if (initializeJava) {
 //            NWorkspaceUtils.of(session).installAllJVM();

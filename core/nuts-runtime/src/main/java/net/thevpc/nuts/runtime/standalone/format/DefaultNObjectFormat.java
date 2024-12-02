@@ -155,7 +155,7 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
     public NContentTypeFormat getBase() {
         NSession session=workspace.currentSession();
         NContentTypeFormat base = createObjectFormat();
-        base.configure(true, NWorkspace.get().getBootOptions().getOutputFormatOptions().orElseGet(Collections::emptyList).toArray(new String[0]));
+        base.configure(true, NWorkspace.of().getBootOptions().getOutputFormatOptions().orElseGet(Collections::emptyList).toArray(new String[0]));
         base.configure(true, session.getOutputFormatOptions().toArray(new String[0]));
         return base;
     }

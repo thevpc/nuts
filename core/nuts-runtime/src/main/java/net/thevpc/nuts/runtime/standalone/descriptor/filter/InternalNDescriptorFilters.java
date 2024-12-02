@@ -136,14 +136,14 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
     @Override
     public NDescriptorFilter byExtension(NVersion targetApiVersion) {
         return new NExecExtensionFilter(getWorkspace(),
-                targetApiVersion == null ? null : NId.of(NConstants.Ids.NUTS_API).get().builder().setVersion(targetApiVersion).build()
+                targetApiVersion == null ? null : NId.get(NConstants.Ids.NUTS_API).get().builder().setVersion(targetApiVersion).build()
         );
     }
 
     @Override
     public NDescriptorFilter byRuntime(NVersion targetApiVersion) {
         return new NExecRuntimeFilter(getWorkspace(),
-                targetApiVersion == null ? null : NId.of(NConstants.Ids.NUTS_API).get().builder().setVersion(targetApiVersion).build(),
+                targetApiVersion == null ? null : NId.get(NConstants.Ids.NUTS_API).get().builder().setVersion(targetApiVersion).build(),
                 false
         );
     }
@@ -151,7 +151,7 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
     @Override
     public NDescriptorFilter byCompanion(NVersion targetApiVersion) {
         return new NExecCompanionFilter(getWorkspace(),
-                targetApiVersion == null ? null : NId.of(NConstants.Ids.NUTS_API).get().builder().setVersion(targetApiVersion).build(),
+                targetApiVersion == null ? null : NId.get(NConstants.Ids.NUTS_API).get().builder().setVersion(targetApiVersion).build(),
                 NExtensions.of().getCompanionIds().stream().map(NId::getShortName).toArray(String[]::new)
         );
     }
@@ -163,14 +163,14 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
         }
         return new BootAPINDescriptorFilter(
                 getWorkspace(),
-                NId.of(NConstants.Ids.NUTS_API).get().builder().setVersion(apiVersion).build().getVersion()
+                NId.get(NConstants.Ids.NUTS_API).get().builder().setVersion(apiVersion).build().getVersion()
         );
     }
 
     @Override
     public NDescriptorFilter byLockedIds(String... ids) {
         return new NLockedIdExtensionFilter(getWorkspace(),
-                Arrays.stream(ids).map(x -> NId.of(x).get()).toArray(NId[]::new)
+                Arrays.stream(ids).map(x -> NId.get(x).get()).toArray(NId[]::new)
         );
     }
 

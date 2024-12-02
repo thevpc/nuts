@@ -37,7 +37,7 @@ public class GetBootFacadeCommand extends AbstractFacadeCommand {
                 context.sendError(404, "File Note Found");
             }
         } else {
-            NDefinition def = NFetchCmd.of(NId.of(NConstants.Ids.NUTS_API).get().builder().setVersion(version).build())
+            NDefinition def = NFetchCmd.of(NId.get(NConstants.Ids.NUTS_API).get().builder().setVersion(version).build())
                     .setContent(true).getResultDefinition();
             if (def != null && def.getContent().isPresent()) {
                 context.addResponseHeader("content-disposition", "attachment; filename=\"nuts-" + def.getId().getVersion().toString() + ".jar\"");

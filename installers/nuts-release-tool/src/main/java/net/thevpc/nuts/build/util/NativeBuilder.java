@@ -118,7 +118,7 @@ public class NativeBuilder {
     }
 
     public void echo(String message, Map<String, ?> vars) {
-        NSession.get().out().println(NMsg.ofV(message, vars));
+        NSession.of().out().println(NMsg.ofV(message, vars));
     }
 
 
@@ -211,7 +211,7 @@ public class NativeBuilder {
     }
 
     private BinPlatform currentPlatform() {
-        NWorkspace e = NWorkspace.get();
+        NWorkspace e = NWorkspace.of();
         switch (e.getOsFamily()) {
             case UNIX:
             case LINUX: {
@@ -244,7 +244,7 @@ public class NativeBuilder {
     }
 
     private BinPlatform evalCurrentBinPlatform() {
-        NWorkspace z = NWorkspace.get();
+        NWorkspace z = NWorkspace.of();
         switch (z.getOsFamily()) {
             case LINUX: {
                 switch (z.getArchFamily()) {

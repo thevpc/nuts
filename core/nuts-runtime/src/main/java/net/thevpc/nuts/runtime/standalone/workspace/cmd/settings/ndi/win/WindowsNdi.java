@@ -23,7 +23,7 @@ public class WindowsNdi extends BaseSystemNdi {
     }
 
     protected NShellFamily[] getShellGroups() {
-        Set<NShellFamily> all=new LinkedHashSet<>(NWorkspace.get().getShellFamilies());
+        Set<NShellFamily> all=new LinkedHashSet<>(NWorkspace.of().getShellFamilies());
         all.retainAll(Arrays.asList(NShellFamily.WIN_CMD, NShellFamily.WIN_POWER_SHELL));
         return all.toArray(new NShellFamily[0]);
     }
@@ -79,7 +79,7 @@ public class WindowsNdi extends BaseSystemNdi {
     @Override
     protected FreeDesktopEntryWriter createFreeDesktopEntryWriter() {
         return new WindowFreeDesktopEntryWriter(
-                NWorkspace.get().getDesktopPath()==null?null: NPath.of(NWorkspace.get().getDesktopPath())
+                NWorkspace.of().getDesktopPath()==null?null: NPath.of(NWorkspace.of().getDesktopPath())
                 , workspace);
     }
 

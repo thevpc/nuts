@@ -326,7 +326,7 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
                 definition, arguments, executorOptions, workspaceOptions, env, cwd,
                 workspace, failFast, temporary, executionType,
                 commandName, sleepMillis, in, out, err,dry,bot
-        ).setSession(NSession.get());
+        ).setSession(NSession.of());
     }
 
     public NExecutionContextBuilder setAll(NExecutionContext other) {

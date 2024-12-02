@@ -60,7 +60,7 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
 
     @Override
     public NUpdateCmd addId(String id) {
-        return addId(id == null ? null : NId.of(id).get());
+        return addId(id == null ? null : NId.get(id).get());
     }
 
     @Override
@@ -99,7 +99,7 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
 
     @Override
     public NUpdateCmd removeId(String id) {
-        return removeId(NId.of(id).get());
+        return removeId(NId.get(id).get());
     }
 
     @Override
@@ -375,7 +375,7 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
     @Override
     public NUpdateCmd addLockedId(String id) {
         if (!NBlankable.isBlank(id)) {
-            lockedIds.add(NId.of(id).get());
+            lockedIds.add(NId.get(id).get());
         }
         return this;
     }
@@ -466,7 +466,7 @@ public abstract class AbstractNUpdateCmd extends NWorkspaceCmdBase<NUpdateCmd> i
             case "-v":
             case "--api-version":
             case "--to-version": {
-                cmdLine.withNextEntry((v, r) -> this.setApiVersion(NVersion.of(v).get()));
+                cmdLine.withNextEntry((v, r) -> this.setApiVersion(NVersion.get(v).get()));
                 return true;
             }
             case "-g":

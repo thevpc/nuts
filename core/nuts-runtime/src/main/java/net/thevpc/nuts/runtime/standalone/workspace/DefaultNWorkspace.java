@@ -112,12 +112,12 @@ import java.util.stream.Collectors;
 public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceExt {
     public static final Pattern UNIX_USER_DIRS_PATTERN = Pattern.compile("^\\s*(?<k>[A-Z_]+)\\s*=\\s*(?<v>.*)$");
 
-    public static final NVersion VERSION_INSTALL_INFO_CONFIG = NVersion.of("0.8.0").get();
-    public static final NVersion VERSION_SDK_LOCATION = NVersion.of("0.8.0").get();
-    public static final NVersion VERSION_REPOSITORY_CONFIG = NVersion.of("0.8.0").get();
+    public static final NVersion VERSION_INSTALL_INFO_CONFIG = NVersion.get("0.8.0").get();
+    public static final NVersion VERSION_SDK_LOCATION = NVersion.get("0.8.0").get();
+    public static final NVersion VERSION_REPOSITORY_CONFIG = NVersion.get("0.8.0").get();
     public static final String VERSION_REPOSITORY_REF = "0.8.0";
     public static final String VERSION_WS_CONFIG_API = "0.8.0";
-    public static final NVersion VERSION_WS_CONFIG_BOOT = NVersion.of("0.8.0").get();
+    public static final NVersion VERSION_WS_CONFIG_BOOT = NVersion.get("0.8.0").get();
     public static final String VERSION_WS_CONFIG_MAIN = "0.8.0";
     public static final String VERSION_WS_CONFIG_RUNTIME = "0.8.0";
     public static final String VERSION_WS_CONFIG_SECURITY = "0.8.0";
@@ -125,7 +125,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     public static final String VERSION_COMMAND_ALIAS_CONFIG_FACTORY = "0.8.0";
     public static final String VERSION_USER_CONFIG = "0.8.0";
     public static final String RUNTIME_VERSION = "0.8.5.0";
-    public static final NId RUNTIME_ID = NId.of(NConstants.Ids.NUTS_RUNTIME + "#" + RUNTIME_VERSION).get();
+    public static final NId RUNTIME_ID = NId.get(NConstants.Ids.NUTS_RUNTIME + "#" + RUNTIME_VERSION).get();
     public NLog LOG;
     private NWorkspaceModel wsModel;
 
@@ -229,7 +229,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             if (wsModel != null && wsModel.recomm != null) {
                 try {
                     NId runtimeId = getRuntimeId();
-                    String sRuntimeId = runtimeId == null ? NId.ofRuntime("").get().toString() : runtimeId.toString();
+                    String sRuntimeId = runtimeId == null ? NId.getRuntime("").get().toString() : runtimeId.toString();
                     this.runWith(() -> {
                         displayRecommendations(wsModel.recomm.getRecommendations(new RequestQueryInfo(sRuntimeId, ex), NRecommendationPhase.BOOTSTRAP, true));
                     });
@@ -627,7 +627,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 LOGCRF.log(NMsg.ofJ("   nuts-runtime-dependencies      : {0}",
                         text.ofBuilder().appendJoined(text.ofStyled(";", NTextStyle.separator()),
                                 effectiveBootOptions.getRuntimeBootDescriptor().get().getDependencies().stream()
-                                        .map(x -> NId.of(x.toString()).get())
+                                        .map(x -> NId.get(x.toString()).get())
                                         .collect(Collectors.toList())
                         )
                 ));
@@ -645,7 +645,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                                     NBootHelper.toDescriptorList(effectiveBootOptions.getExtensionBootDescriptors().orElseGet(Collections::emptyList))
                             ).stream()
                                     .map(x
-                                            -> NId.of(x.toString()).get()
+                                            -> NId.get(x.toString()).get()
                                     )
                                     .collect(Collectors.toList())
                     )
@@ -729,11 +729,11 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     private void displayRecommendations(Object r) {
         Map<String, Object> a = new HashMap<>();
         a.put("recommendations", r);
-        NSession.get().out().println(a);
+        NSession.of().out().println(a);
     }
 
     private URL getApiURL() {
-        NId nid = NId.ofApi(Nuts.getVersion()).get();
+        NId nid = NId.getApi(Nuts.getVersion()).get();
         return ExtraApiUtils.findClassLoaderJar(nid, NClassLoaderUtils.resolveClasspathURLs(Thread.currentThread().getContextClassLoader()));
     }
 
@@ -930,7 +930,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             return null;
         }
         visited.add(id.getLongId());
-        if (NId.ofApi("").get().equalsShortId(id)) {
+        if (NId.getApi("").get().equalsShortId(id)) {
             return id;
         }
         for (NDependency dependency : NFetchCmd.of(id).getResultDescriptor().getDependencies()) {
@@ -1051,7 +1051,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 switch (def.getDescriptor().getIdType()) {
                     case API: {
                         oldDef = NFetchCmd.of(
-                                        NId.ofApi(Nuts.getVersion()).get())
+                                        NId.getApi(Nuts.getVersion()).get())
                                 .setFetchStrategy(NFetchStrategy.ONLINE)
                                 .setFailFast(false).getResultDefinition();
                         break;
@@ -1503,7 +1503,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     @Override
     public NText resolveDefaultHelp(Class<?> clazz) {
         return callWith(() -> {
-            NId nutsId = NId.ofClass(clazz).orNull();
+            NId nutsId = NId.getForClass(clazz).orNull();
             if (nutsId != null) {
                 NPath urlPath = NPath.of("classpath:/" + ExtraApiUtils.resolveIdPath(nutsId.getShortId()) + ".ntf", clazz == null ? null : clazz.getClassLoader());
                 NTexts txt = NTexts.of();
@@ -1722,12 +1722,12 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             this.getConfigModel().getStoredConfigBoot().setExtensions(h.getConfs());
             this.getConfigModel().fireConfigurationChanged("extensions", ConfigEventType.BOOT);
         }
-        if (traceBeforeEvent && NSession.get().isPlainTrace()) {
+        if (traceBeforeEvent && NSession.of().isPlainTrace()) {
             out.println(NMsg.ofC("%s uninstalled %s", id, NText.ofStyled(
                     "successfully", NTextStyle.success()
             )));
         }
-        NWorkspaceUtils.of(wsModel.workspace).events().fireOnUninstall(new DefaultNInstallEvent(def, NSession.get(), new NId[0], eraseFiles));
+        NWorkspaceUtils.of(wsModel.workspace).events().fireOnUninstall(new DefaultNInstallEvent(def, NSession.of(), new NId[0], eraseFiles));
     }
 
     /**
@@ -1823,7 +1823,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
     @Override
     public NExecutionContextBuilder createExecutionContext() {
-        NSession session = NSession.get();
+        NSession session = NSession.of();
         return new DefaultNExecutionContextBuilder()
                 .setWorkspace(this)
                 .setDry(session.isDry())
@@ -1940,7 +1940,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
 
     @Override
     public NId getAppId() {
-        return NId.of(wsModel.apiId.getGroupId(), "nuts", wsModel.apiId.getVersion()).get();
+        return NId.get(wsModel.apiId.getGroupId(), "nuts", wsModel.apiId.getVersion()).get();
     }
 
     @Override

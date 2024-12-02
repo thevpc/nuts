@@ -89,7 +89,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
     }
 
     private void deleteWorkspaceFolder(NStoreType folder, boolean force) {
-        NPath sstoreLocation = NWorkspace.get().getStoreLocation(folder);
+        NPath sstoreLocation = NWorkspace.of().getStoreLocation(folder);
         NSession session = workspace.currentSession();
         if (sstoreLocation != null) {
             NTexts factory = NTexts.of();
@@ -112,7 +112,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
     }
 
     private void deleteRepoFolder(NRepository repository, NStoreType folder, boolean force) {
-        NPath sstoreLocation = NWorkspace.get().getStoreLocation(folder);
+        NPath sstoreLocation = NWorkspace.of().getStoreLocation(folder);
         if (sstoreLocation != null) {
             NTexts factory = NTexts.of();
             NSession session = workspace.currentSession();
@@ -137,7 +137,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
     }
 
     private void deleteCache(NSession session, boolean force) {
-        NPath sstoreLocation = NWorkspace.get().getStoreLocation(NStoreType.CACHE);
+        NPath sstoreLocation = NWorkspace.of().getStoreLocation(NStoreType.CACHE);
         if (sstoreLocation != null) {
             //            File cache = new File(storeLocation);
             if (sstoreLocation.exists()) {

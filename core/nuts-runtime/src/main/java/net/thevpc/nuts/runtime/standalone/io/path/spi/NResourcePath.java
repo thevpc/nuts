@@ -66,7 +66,7 @@ public class NResourcePath implements NPathSPI {
         this.ids = StringTokenizerUtils.splitSemiColon(idsStr).stream().map(x -> {
             x = x.trim();
             if (x.length() > 0) {
-                return NId.of(x).get();
+                return NId.get(x).get();
             }
             return null;
         }).filter(Objects::nonNull).collect(Collectors.toList());
@@ -542,7 +542,7 @@ public class NResourcePath implements NPathSPI {
                             StringTokenizerUtils.splitSemiColon(idsStr).stream().map(xi -> {
                                 xi = xi.trim();
                                 if (!xi.isEmpty()) {
-                                    NId pp = NId.of(xi).get();
+                                    NId pp = NId.get(xi).get();
                                     if (pp == null) {
                                         return xi;
                                     }
@@ -559,7 +559,7 @@ public class NResourcePath implements NPathSPI {
                 int x = path.indexOf('/', "resource://".length());
                 if (x > 0) {
                     String sid = path.substring("resource://".length(), x);
-                    NId ii = NId.of(sid).get();
+                    NId ii = NId.get(sid).get();
                     if (ii == null) {
                         tb.append(sid);
                     } else {
@@ -619,7 +619,7 @@ public class NResourcePath implements NPathSPI {
         @Override
         public NText toCompressedString(NPath base) {
             return rebuildURL2(NPathParts.compressPath(location),
-                    ids.stream().map(x -> NId.of(x.getArtifactId()).get()).toArray(NId[]::new)
+                    ids.stream().map(x -> NId.get(x.getArtifactId()).get()).toArray(NId[]::new)
             );
         }
     }

@@ -79,7 +79,7 @@ public class DefaultNAsk<T> implements NAsk<T> {
                             + "You need to provide default response (-y|-n) for question : %s", os
             ), NExecutionException.ERROR_255);
         }
-        boolean gui = session.isGui() && NWorkspace.get().isGraphicalDesktopEnvironment();
+        boolean gui = session.isGui() && NWorkspace.of().isGraphicalDesktopEnvironment();
 
         NMsg message = this.getMessage();
 //        if (message.endsWith("\n")) {

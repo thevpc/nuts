@@ -74,7 +74,7 @@ public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt 
                 execCommand.getErr(),
                 execCommand.getRunAs(),
                 executorOptions.toArray(new String[0]),
-                ExtraApiUtils.asBooleanOr(execCommand.getDry(),NSession.get().isDry()), workspace
+                ExtraApiUtils.asBooleanOr(execCommand.getDry(),NSession.of().isDry()), workspace
         );
     }
 
@@ -87,7 +87,7 @@ public class DefaultNSystemExecutable extends AbstractNExecutableInformationExt 
 
     @Override
     public NText getHelpText() {
-        switch (NWorkspace.get().getOsFamily()) {
+        switch (NWorkspace.of().getOsFamily()) {
             case WINDOWS: {
                 return NText.ofStyled(
                         "No help available. Try " + getName() + " /help",

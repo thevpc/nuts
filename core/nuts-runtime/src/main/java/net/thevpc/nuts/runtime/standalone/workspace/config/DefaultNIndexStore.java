@@ -73,7 +73,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
                     try {
                         Map[] array = NElements.of().json().parse(new InputStreamReader(NPath.of(uu).getInputStream()), Map[].class);
                         return Arrays.stream(array)
-                                .map(s -> NId.of(s.get("stringId").toString()).get())
+                                .map(s -> NId.get(s.get("stringId").toString()).get())
                                 .collect(Collectors.toList()).iterator();
                     } catch (UncheckedIOException | NIOException e) {
                         setInaccessible();
@@ -101,7 +101,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
                     try {
                         Map[] array = elems.json().parse(new InputStreamReader(NPath.of(uu).getInputStream()), Map[].class);
                         return Arrays.stream(array)
-                                .map(s -> NId.of(s.get("stringId").toString()).get())
+                                .map(s -> NId.get(s.get("stringId").toString()).get())
                                 .filter(filter != null ? new NIdFilterToNIdPredicate(filter) : NPredicates.always())
                                 .iterator();
                     } catch (UncheckedIOException | NIOException e) {
@@ -173,7 +173,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
     @Override
     public NIndexStore subscribe() {
         String uu = "http://localhost:7070/indexer/subscription/subscribe?workspaceLocation="
-                + CoreIOUtils.urlEncodeString(NWorkspace.get().getWorkspaceLocation().toString())
+                + CoreIOUtils.urlEncodeString(NWorkspace.of().getWorkspaceLocation().toString())
                 + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid());
         try {
             NPath.of(uu).getInputStream();
@@ -186,7 +186,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
     @Override
     public NIndexStore unsubscribe() {
         String uu = "http://localhost:7070/indexer/subscription/unsubscribe?workspaceLocation="
-                + CoreIOUtils.urlEncodeString(NWorkspace.get().getWorkspaceLocation().toString())
+                + CoreIOUtils.urlEncodeString(NWorkspace.of().getWorkspaceLocation().toString())
                 + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid());
         try {
             NPath.of(uu).getInputStream();
@@ -199,7 +199,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
     @Override
     public boolean isSubscribed() {
         String uu = "http://localhost:7070/indexer/subscription/isSubscribed?workspaceLocation="
-                + CoreIOUtils.urlEncodeString(NWorkspace.get().getWorkspaceLocation().toString())
+                + CoreIOUtils.urlEncodeString(NWorkspace.of().getWorkspaceLocation().toString())
                 + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid());
         try {
             return new Scanner(NPath.of(uu).getInputStream()).nextBoolean();

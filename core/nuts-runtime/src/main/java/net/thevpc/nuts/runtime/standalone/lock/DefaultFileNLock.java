@@ -34,7 +34,7 @@ public class DefaultFileNLock implements NLock {
 
     public TimePeriod getDefaultTimePeriod() {
         return TimePeriod.parse(
-                NWorkspace.get().getConfigProperty("nuts.file-lock.timeout").flatMap(NLiteral::asString).get(),
+                NWorkspace.of().getConfigProperty("nuts.file-lock.timeout").flatMap(NLiteral::asString).get(),
                 TimeUnit.SECONDS
         ).orElse(FIVE_MINUTES);
     }

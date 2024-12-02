@@ -66,7 +66,7 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
                     ));
         }
         NSession session = workspace.currentSession();
-        if (showCommand || NWorkspace.get().getCustomBootOption("---show-command")
+        if (showCommand || NWorkspace.of().getCustomBootOption("---show-command")
                 .flatMap(NLiteral::asBoolean)
                 .orElse(false)) {
 
@@ -87,7 +87,7 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
                                            NRunAs runAs,
                                            NWorkspace workspace
     ) throws NExecutionException {
-        Path wsLocation = NWorkspace.get().getWorkspaceLocation().toPath().get();
+        Path wsLocation = NWorkspace.of().getWorkspaceLocation().toPath().get();
         Path pdirectory = null;
         if (NBlankable.isBlank(directory)) {
             pdirectory = wsLocation;

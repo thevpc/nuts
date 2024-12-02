@@ -121,7 +121,7 @@ public class DefaultNTextManagerModel {
         if ("default".equals(y)) {
             //default always refers to this implementation
             if (defaultTheme == null) {
-                if (NWorkspace.get().getOsFamily() == NOsFamily.WINDOWS) {
+                if (NWorkspace.of().getOsFamily() == NOsFamily.WINDOWS) {
                     //dark blue and red are very ugly under windows, replace them with green tones !
                     defaultTheme = new NTextFormatThemeWrapper(new NTextFormatPropertiesTheme("grass", null, workspace));
                 } else {
@@ -192,7 +192,7 @@ public class DefaultNTextManagerModel {
             }
         }
         if ("system".equals(lc)) {
-            NShellFamily shellFamily = NWorkspace.get().getShellFamily();
+            NShellFamily shellFamily = NWorkspace.of().getShellFamily();
             h = getCodeHighlighter(shellFamily.id());
             _cachedHighlighters.put(lc, h);
             return h;

@@ -91,7 +91,7 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.pop();
             if (file.path.isDirectory()) {
-                NSession.get().getTerminal().printProgress(NMsg.ofC("%-8s %s", "browse", file.path.toCompressedForm()));
+                NSession.of().getTerminal().printProgress(NMsg.ofC("%-8s %s", "browse", file.path.toCompressedForm()));
                 visitedFoldersCount++;
                 boolean deep = maxDepth < 0 || file.depth < maxDepth;
                 if (file.path.isDirectory()) {

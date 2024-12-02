@@ -108,7 +108,7 @@ public class NHttpServerComponent implements NServerComponent {
 
     @Override
     public NServer start(ServerConfig config) {
-        NWorkspace ws = NWorkspace.of().get();
+        NWorkspace ws = NWorkspace.get().get();
         NSession invokerSession = ws.currentSession();
         NHttpServerConfig httpConfig = (NHttpServerConfig) config;
         Map<String, NWorkspace> workspaces = httpConfig.getWorkspaces();
@@ -250,9 +250,9 @@ public class NHttpServerComponent implements NServerComponent {
                 NWorkspace ws2 = entry.getValue();
                 ws2.runWith(() -> {
                     if ("".equals(k)) {
-                        out.println(NWorkspace.get().getWorkspaceLocation());
+                        out.println(NWorkspace.of().getWorkspaceLocation());
                     } else {
-                        out.println((NMsg.ofC("%s : %s", k, NWorkspace.get().getWorkspaceLocation())));
+                        out.println((NMsg.ofC("%s : %s", k, NWorkspace.of().getWorkspaceLocation())));
                     }
                 });
             }
@@ -262,7 +262,7 @@ public class NHttpServerComponent implements NServerComponent {
                 String k = NStringUtils.firstNonBlank(entry.getKey(), "<default>");
                 NWorkspace ws2 = entry.getValue();
                 ws2.runWith(() -> {
-                    out.println(NMsg.ofC("\t%s : %s", k, NWorkspace.get().getWorkspaceLocation()));
+                    out.println(NMsg.ofC("\t%s : %s", k, NWorkspace.of().getWorkspaceLocation()));
                 });
             }
         }

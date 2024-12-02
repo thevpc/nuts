@@ -66,7 +66,7 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
             }
             defaults.add(NRepositoryLocation.of(d.getName(), (String)null));
         }
-        NWorkspaceExt.of().getModel().configModel.getStoredConfigMain().setEnablePreviewRepositories(NSession.get().isPreviewRepo());
+        NWorkspaceExt.of().getModel().configModel.getStoredConfigMain().setEnablePreviewRepositories(NSession.of().isPreviewRepo());
         NWorkspaceExt.of().getModel().configModel.invalidateStoreModelMain();
         defaults.add(NRepositoryLocation.ofName(NConstants.Names.DEFAULT_REPOSITORY_NAME));
         NRepositoryLocation[] br = NWorkspaceExt.of(workspace).getConfigModel().resolveBootRepositoriesList().resolve(defaults.toArray(new NRepositoryLocation[0]), NRepositoryDB.of());
@@ -100,7 +100,7 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 //        for (NutsAddRepositoryOptions d : def.values()) {
 //            ws.repos().addRepository(d);
 //        }
-        NWorkspace.get().addImports(
+        NWorkspace.of().addImports(
                 "net.thevpc.nuts.toolbox",
                 "net.thevpc"
         );

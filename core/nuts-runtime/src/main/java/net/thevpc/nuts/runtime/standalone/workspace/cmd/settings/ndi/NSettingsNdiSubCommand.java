@@ -248,7 +248,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 if (d.ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NExecutionException(NMsg.ofC("platform not supported : %s", NWorkspace.get().getOs()), NExecutionException.ERROR_2);
+                throw new NExecutionException(NMsg.ofC("platform not supported : %s", NWorkspace.of().getOs()), NExecutionException.ERROR_2);
             }
             if (!d.idsToInstall.isEmpty()) {
                 printResults(ndi.addScript(d.options, d.idsToInstall.toArray(new String[0])));
@@ -313,7 +313,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 if (ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NExecutionException(NMsg.ofC("platform not supported : %s", NWorkspace.get().getOs()), NExecutionException.ERROR_2);
+                throw new NExecutionException(NMsg.ofC("platform not supported : %s", NWorkspace.of().getOs()), NExecutionException.ERROR_2);
             }
             boolean subTrace = session.isTrace();
             if (!session.isPlainTrace()) {
@@ -426,7 +426,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 if (d.ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NExecutionException(NMsg.ofC("platform not supported : %s ", NWorkspace.get().getOs()), NExecutionException.ERROR_2);
+                throw new NExecutionException(NMsg.ofC("platform not supported : %s ", NWorkspace.of().getOs()), NExecutionException.ERROR_2);
             }
             if (d.switchWorkspaceLocation != null || d.switchWorkspaceApi != null) {
                 NdiScriptOptions oo = new NdiScriptOptions();

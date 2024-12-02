@@ -50,8 +50,8 @@ public class Test01_CreateTest {
         );
         Assertions.assertEquals(
                 NPath.of(new File(wsPath, "cache")),
-                NWorkspace.get().getStoreLocation(NStoreType.CACHE));
-        Assertions.assertEquals(0, NWorkspace.get().getRepositories().size());
+                NWorkspace.of().getStoreLocation(NStoreType.CACHE));
+        Assertions.assertEquals(0, NWorkspace.of().getRepositories().size());
 //        Assertions.assertEquals(new File(wsPath,  "cache/" + NutsConstants.Folders.REPOSITORIES + "/" +
 //                        NRepositories.of(session).getRepositories()[0].getName() +
 //                        "/" + NRepositories.of(session).getRepositories()[0].getUuid()).getPath(),
@@ -130,14 +130,14 @@ public class Test01_CreateTest {
         }
         Assertions.assertEquals(
                 NPath.of(new File(base, new File(wsPath).getName())),
-                NWorkspace.get().getStoreLocation(NStoreType.CACHE));
+                NWorkspace.of().getStoreLocation(NStoreType.CACHE));
         Assertions.assertEquals(
                 NPath.of(new File(base, new File(wsPath).getName() + "/"
                         + NConstants.Folders.REPOSITORIES + "/"
-                        + NWorkspace.get().getRepositories().get(0).getName()
-                        + "/" + NWorkspace.get().getRepositories().get(0).getUuid()
+                        + NWorkspace.of().getRepositories().get(0).getName()
+                        + "/" + NWorkspace.of().getRepositories().get(0).getUuid()
                 )),
-                NWorkspace.get().getRepositories().get(0).config().getStoreLocation(NStoreType.CACHE));
+                NWorkspace.of().getRepositories().get(0).config().getStoreLocation(NStoreType.CACHE));
     }
 
     @Test

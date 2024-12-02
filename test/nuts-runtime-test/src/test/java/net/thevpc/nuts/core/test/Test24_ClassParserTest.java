@@ -130,7 +130,7 @@ public class Test24_ClassParserTest {
                 return NVisitResult.CONTINUE;
             }
 
-        }, NWorkspace.get()
+        }, NWorkspace.of()
         );
     }
 }

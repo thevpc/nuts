@@ -42,7 +42,7 @@ public class DefaultNExtensions implements NExtensions {
 
     @Override
     public Set<NId> getCompanionIds() {
-        return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(NId.of("net.thevpc.nuts.toolbox:nsh").get())));
+        return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(NId.get("net.thevpc.nuts.toolbox:nsh").get())));
     }
 
 

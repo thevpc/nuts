@@ -44,7 +44,7 @@ public class ExtraApiUtils {
 
     public static String resolveNutsIdDigest() {
         //TODO COMMIT TO 0.8.4
-        return resolveNutsIdDigest(NId.ofApi(Nuts.getVersion()).get(), resolveClasspathURLs(Nuts.class.getClassLoader(), true));
+        return resolveNutsIdDigest(NId.getApi(Nuts.getVersion()).get(), resolveClasspathURLs(Nuts.class.getClassLoader(), true));
     }
 
     public static String resolveNutsIdDigest(NId id, URL[] urls) {
