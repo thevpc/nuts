@@ -425,7 +425,7 @@ public class ProcessBuilder2 {
         switch (in.base.getType()) {
             case NULL: {
                 String pname = "pipe-in-proc-" + procString;
-                in.termIn = createNonBlockingInput(NIO.ofNullRawInputStream(), pname);
+                in.termIn = createNonBlockingInput(NullInputStream.INSTANCE, pname);
                 PipeRunnable t = NSysExecUtils.pipe(pname, cmdStr, "in", in.termIn, proc.getOutputStream());
                 if (pipes == null) {
                     pipes = Executors.newCachedThreadPool();
