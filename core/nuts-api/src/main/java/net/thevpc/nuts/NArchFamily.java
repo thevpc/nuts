@@ -11,14 +11,13 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
- * you may  not use this file except in compliance with the License. You may obtain
- * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the GNU LESSER GENERAL PUBLIC
+ * LICENSE Version 3 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * https://www.gnu.org/licenses/lgpl-3.0.en.html Unless required by applicable
+ * law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
@@ -70,7 +69,7 @@ public enum NArchFamily implements NEnum {
     }
 
     public static NOptional<NArchFamily> parse(String value) {
-        return NEnumUtils.parseEnum(value, NArchFamily.class, s->{
+        return NEnumUtils.parseEnum(value, NArchFamily.class, s -> {
             String arch = s.getNormalizedValue();
             switch (arch) {
                 case "X8632":
@@ -179,6 +178,93 @@ public enum NArchFamily implements NEnum {
         });
     }
 
+    public boolean is64Bit() {
+        return getBits() == 64;
+    }
+
+    public boolean isArm() {
+        switch (this) {
+            case ARM_64:
+            case ARM_32:
+                return true;
+            case AARCH_64:
+            case ITANIUM_64:
+            case MIPSEL_64:
+            case MIPS_64:
+            case PPCLE_64:
+            case S390_64:
+            case SPARC_64:
+            case X86_64:
+            case PPC_64:
+            case ITANIUM_32:
+            case MIPSEL_32:
+            case MIPS_32:
+            case PPCLE_32:
+            case S390_32:
+            case SPARC_32:
+            case X86_32:
+            case PPC_32:
+                return false;
+        }
+        return false;
+    }
+
+    public boolean isX86() {
+        switch (this) {
+            case X86_64:
+            case X86_32:
+                return true;
+            case ARM_64:
+            case ARM_32:
+            case AARCH_64:
+            case ITANIUM_64:
+            case MIPSEL_64:
+            case MIPS_64:
+            case PPCLE_64:
+            case S390_64:
+            case SPARC_64:
+            case PPC_64:
+            case ITANIUM_32:
+            case MIPSEL_32:
+            case MIPS_32:
+            case PPCLE_32:
+            case S390_32:
+            case SPARC_32:
+            case PPC_32:
+                return false;
+        }
+        return false;
+    }
+
+    public int getBits() {
+        switch (this) {
+            case AARCH_64:
+            case ARM_64:
+            case ITANIUM_64:
+            case MIPSEL_64:
+            case MIPS_64:
+            case PPCLE_64:
+            case S390_64:
+            case SPARC_64:
+            case X86_64:
+            case PPC_64:
+                return 64;
+            case ARM_32:
+            case ITANIUM_32:
+            case MIPSEL_32:
+            case MIPS_32:
+            case PPCLE_32:
+            case S390_32:
+            case SPARC_32:
+            case X86_32:
+            case PPC_32:
+                return 32;
+            case UNKNOWN: {
+                return -1;
+            }
+        }
+        return -1;
+    }
 
     public static NArchFamily getCurrent() {
         return _curr;
@@ -189,6 +275,7 @@ public enum NArchFamily implements NEnum {
      *
      * @return lower cased identifier
      */
+    @Override
     public String id() {
         return id;
     }
