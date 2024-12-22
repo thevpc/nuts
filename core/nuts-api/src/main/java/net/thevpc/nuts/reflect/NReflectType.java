@@ -69,6 +69,8 @@ public interface NReflectType {
 
     NOptional<NReflectProperty> getDeclaredProperty(String name);
 
+    boolean isAssignableFrom(NReflectType type);
+
     boolean hasNoArgsConstructor();
 
     boolean hasSessionConstructor();
@@ -83,4 +85,13 @@ public interface NReflectType {
     boolean isArrayType();
 
     NReflectType toArray();
+
+    boolean isPrimitive();
+
+    NOptional<NReflectType> getBoxedType() ;
+
+    NOptional<NReflectType> getPrimitiveType() ;
+
+    Object getDefaultValue();
+    boolean isDefaultValue(Object value);
 }

@@ -35,8 +35,8 @@ public interface NReflectProperty {
     String getName();
     
     NReflectPropertyDefaultValueStrategy getDefaultValueStrategy();
-    
-    Type getPropertyType();
+
+    NReflectType getPropertyType();
     
     boolean isRead();
 
@@ -69,6 +69,6 @@ public interface NReflectProperty {
 
     void write(Object instance, Object value);
 
-    NReflectType getType();
+    NReflectType getDeclaringType();
 
 }
