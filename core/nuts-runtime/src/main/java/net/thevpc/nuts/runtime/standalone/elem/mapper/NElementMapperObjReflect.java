@@ -153,7 +153,7 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
             if (property.isWrite()) {
                 NElement v = eobj.get(property.getName()).orNull();
                 if (v != null) {
-                    property.write(instance, context.elementToObject(v, property.getPropertyType()));
+                    property.write(instance, context.elementToObject(v, property.getPropertyType().getJavaType()));
                 }
             }
         }

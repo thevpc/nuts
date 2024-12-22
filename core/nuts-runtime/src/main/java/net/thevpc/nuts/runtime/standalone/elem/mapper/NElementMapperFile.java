@@ -21,7 +21,6 @@ public class NElementMapperFile implements NElementMapper<File> {
     @Override
     public NElement createElement(File o, Type typeOfSrc, NElementFactoryContext context) {
         if (context.isNtf()) {
-            NSession session = context.getSession();
 //                NutsText n = ws.text().forStyled(o.toString(), NutsTextStyle.path());
 //                return ws.elem().forPrimitive().buildNutsString(n);
             NText n = NText.ofStyled(o.toString(), NTextStyle.path());
@@ -33,7 +32,6 @@ public class NElementMapperFile implements NElementMapper<File> {
 
     @Override
     public File createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        NSession session = context.getSession();
         return new File(o.asString().get());
     }
 }

@@ -11,14 +11,14 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]  
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License"); 
+ * Copyright [2020] [thevpc]
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3 (the "License");
  * you may  not use this file except in compliance with the License. You may obtain
  * a copy of the License at https://www.gnu.org/licenses/lgpl-3.0.en.html
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
@@ -59,11 +59,14 @@ public class DefaultNReflectType implements NReflectType {
     private Constructor workspaceConstr;
     private NWorkspace workspace;
     private ConstrType constrType;
-    private enum ConstrType{
-        WORKSPACE,SESSION,DEFAULT,ERROR
-    };
 
-    public DefaultNReflectType(NWorkspace workspace,Type javaType, NReflectRepository repo) {
+    private enum ConstrType {
+        WORKSPACE, SESSION, DEFAULT, ERROR
+    }
+
+    ;
+
+    public DefaultNReflectType(NWorkspace workspace, Type javaType, NReflectRepository repo) {
         this.javaType = javaType;
         this.repo = repo;
         this.workspace = workspace;
@@ -115,19 +118,32 @@ public class DefaultNReflectType implements NReflectType {
     }
 
     private ConstrType getConstrType() {
-        if(constrType==null){
-            if(hasSessionConstructor()){
-                return constrType=ConstrType.SESSION;
+        if (constrType == null) {
+            if (hasSessionConstructor()) {
+                return constrType = ConstrType.SESSION;
             }
-            if(hasWorkspaceConstructor()){
-                return constrType=ConstrType.WORKSPACE;
+            if (hasWorkspaceConstructor()) {
+                return constrType = ConstrType.WORKSPACE;
             }
-            if(hasNoArgsConstructor()){
-                return constrType=ConstrType.DEFAULT;
+            if (hasNoArgsConstructor()) {
+                return constrType = ConstrType.DEFAULT;
             }
-            return constrType=ConstrType.ERROR;
+            return constrType = ConstrType.ERROR;
         }
         return constrType;
+    }
+
+    @Override
+    public boolean isAssignableFrom(NReflectType type) {
+        if (javaType instanceof Class<?>) {
+            if (type instanceof DefaultNReflectType) {
+                DefaultNReflectType d = (DefaultNReflectType) type;
+                if (d.javaType instanceof Class<?>) {
+                    return ((Class<?>) javaType).isAssignableFrom((Class<?>) d.javaType);
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -217,19 +233,19 @@ public class DefaultNReflectType implements NReflectType {
     public Object newInstance() {
         if (javaType instanceof Class<?>) {
             try {
-                switch (getConstrType()){
-                    case ERROR:{
+                switch (getConstrType()) {
+                    case ERROR: {
                         //resolveSessionConstr(true);
                         resolveNoArgsConstr(true);
-                        throw new NIllegalArgumentException(NMsg.ofC("missing constructor for %s",javaType));
+                        throw new NIllegalArgumentException(NMsg.ofC("missing constructor for %s", javaType));
                     }
-                    case WORKSPACE:{
+                    case WORKSPACE: {
                         return workspaceConstr.newInstance(workspace);
                     }
-                    case SESSION:{
+                    case SESSION: {
                         return sessionConstr.newInstance(workspace.currentSession());
                     }
-                    case DEFAULT:{
+                    case DEFAULT: {
                         return noArgConstr.newInstance();
                     }
                 }
@@ -243,7 +259,7 @@ public class DefaultNReflectType implements NReflectType {
                 throw new IllegalArgumentException(ex);
             }
             throw new IllegalArgumentException("not instantiable");
-        }else{
+        } else {
             NReflectType r = getRawType();
             if (r == null) {
                 throw new IllegalArgumentException("not instantiable");
@@ -293,6 +309,7 @@ public class DefaultNReflectType implements NReflectType {
         }
         return sessionConstr != null;
     }
+
     private boolean resolveWorkspaceConstr(boolean required) {
         if (workspaceConstr == null) {
             if (javaType instanceof Class<?>) {
@@ -841,6 +858,57 @@ public class DefaultNReflectType implements NReflectType {
         }
         if (javaType instanceof Class) {
             return ((Class) javaType).isArray();
+        }
+        return false;
+    }
+
+    @Override
+    public NOptional<NReflectType> getBoxedType() {
+        if (javaType instanceof Class) {
+            Class c = (Class) javaType;
+            if (!c.isPrimitive()) {
+                return NOptional.of(this);
+            }
+            NOptional<Class<?>> b = NReflectUtils.toBoxedType(c);
+            return b.map(x -> repo.getType(x));
+        }
+        return NOptional.ofNamedEmpty("primitive for " + this);
+    }
+
+    @Override
+    public boolean isDefaultValue(Object value) {
+        return ReflectUtils.isDefaultValue(javaType,value);
+    }
+
+    @Override
+    public Object getDefaultValue() {
+        if (javaType instanceof Class) {
+            Class c = (Class) javaType;
+            if (c.isPrimitive()) {
+                return NReflectUtils.getDefaultValue(c);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public NOptional<NReflectType> getPrimitiveType() {
+        if (javaType instanceof Class) {
+            Class c = (Class) javaType;
+            if (c.isPrimitive()) {
+                return NOptional.of(this);
+            }
+            NOptional<Class<?>> b = NReflectUtils.toPrimitiveType(c);
+            return b.map(x -> repo.getType(x));
+        }
+        return NOptional.ofNamedEmpty("primitive for " + this);
+    }
+
+    @Override
+    public boolean isPrimitive() {
+        if (javaType instanceof Class) {
+            Class c = (Class) javaType;
+            return c.isPrimitive();
         }
         return false;
     }

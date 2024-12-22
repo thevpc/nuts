@@ -41,18 +41,18 @@ public abstract class AbstractReflectProperty implements NReflectProperty {
 
     private String name;
     private Object cleanInstanceValue;
-    private Type propertyType;
-    private NReflectType type;
+    private NReflectType propertyType;
+    private NReflectType declaringType;
     private NReflectPropertyDefaultValueStrategy defaultValueStrategy;
 
-    protected final void init(String name, NReflectType type, Object cleanInstance, Type propertyType, NReflectPropertyDefaultValueStrategy defaultValueStrategy) {
+    protected final void init(String name, NReflectType declaringType, Object cleanInstance, Type propertyType, NReflectPropertyDefaultValueStrategy defaultValueStrategy) {
         this.name = name;
         this.cleanInstanceValue = cleanInstance == null ? ReflectUtils.getDefaultValue(propertyType) : read(cleanInstance);
-        this.type = type;
-        NReflectType nReflectType = type.getRepository().getType(propertyType)
-                .replaceVars(t -> type.getActualTypeArgument(t).orElse(t));
+        this.declaringType = declaringType;
+        NReflectType nReflectType = declaringType.getRepository().getType(propertyType)
+                .replaceVars(t -> declaringType.getActualTypeArgument(t).orElse(t));
         this.defaultValueStrategy = defaultValueStrategy;
-        this.propertyType = nReflectType.getJavaType();
+        this.propertyType = nReflectType;
     }
 
     @Override
@@ -61,12 +61,12 @@ public abstract class AbstractReflectProperty implements NReflectProperty {
     }
 
     @Override
-    public NReflectType getType() {
-        return type;
+    public NReflectType getDeclaringType() {
+        return declaringType;
     }
 
     @Override
-    public Type getPropertyType() {
+    public NReflectType getPropertyType() {
         return propertyType;
     }
 
@@ -128,7 +128,7 @@ public abstract class AbstractReflectProperty implements NReflectProperty {
                 }
             }
             case TYPE_DEFAULT: {
-                return ReflectUtils.isDefaultValue(getPropertyType(), value);
+                return getPropertyType().isDefaultValue(value);
             }
         }
         return Objects.equals(cleanInstanceValue, value);
@@ -142,7 +142,7 @@ public abstract class AbstractReflectProperty implements NReflectProperty {
 
     @Override
     public String toString() {
-        return String.valueOf(type)+"."+name;
+        return String.valueOf(declaringType)+"."+name;
     }
 
     @Override
@@ -150,11 +150,11 @@ public abstract class AbstractReflectProperty implements NReflectProperty {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AbstractReflectProperty that = (AbstractReflectProperty) o;
-        return Objects.equals(name, that.name) && Objects.equals(cleanInstanceValue, that.cleanInstanceValue) && Objects.equals(propertyType, that.propertyType) && Objects.equals(type, that.type) && defaultValueStrategy == that.defaultValueStrategy;
+        return Objects.equals(name, that.name) && Objects.equals(cleanInstanceValue, that.cleanInstanceValue) && Objects.equals(propertyType, that.propertyType) && Objects.equals(declaringType, that.declaringType) && defaultValueStrategy == that.defaultValueStrategy;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, cleanInstanceValue, propertyType, type, defaultValueStrategy);
+        return Objects.hash(name, cleanInstanceValue, propertyType, declaringType, defaultValueStrategy);
     }
 }

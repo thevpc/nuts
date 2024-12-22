@@ -13,7 +13,6 @@ public class NElementMapperNVersion implements NElementMapper<NVersion> {
     @Override
     public Object destruct(NVersion src, Type typeOfSrc, NElementFactoryContext context) {
         if (context.isNtf()) {
-            NSession session = context.getSession();
             return NFormats.of().ofFormat(src).get().setNtf(true).format();
         } else {
             return src.toString();
@@ -31,7 +30,6 @@ public class NElementMapperNVersion implements NElementMapper<NVersion> {
 
     @Override
     public NVersion createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
-        NSession session = context.getSession();
         return NVersion.get(o.asString().get()).get();
     }
 

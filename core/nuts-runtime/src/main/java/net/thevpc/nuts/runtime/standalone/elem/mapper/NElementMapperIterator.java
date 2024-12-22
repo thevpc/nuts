@@ -36,7 +36,6 @@ public class NElementMapperIterator implements NElementMapper<Iterator> {
 
     @Override
     public Iterator createObject(NElement o, Type to, NElementFactoryContext context) {
-        NSession session = context.getSession();
         return o.asArray().get().items().stream().map(x -> context.elementToObject(x, Object.class)).collect(
                 Collectors.toList()).iterator();
     }

@@ -38,10 +38,10 @@ public class FieldReflectProperty extends AbstractReflectProperty {
 
     private Field field;
 
-    public FieldReflectProperty(Field field, Object cleanInstance, NReflectType type, NReflectPropertyDefaultValueStrategy defaultValueStrategy) {
+    public FieldReflectProperty(Field field, Object cleanInstance, NReflectType declaringType, NReflectPropertyDefaultValueStrategy defaultValueStrategy) {
         this.field = field;
         field.setAccessible(true);
-        init(field.getName(),type, cleanInstance, field.getGenericType(),defaultValueStrategy);
+        init(field.getName(),declaringType, cleanInstance, field.getGenericType(),defaultValueStrategy);
     }
 
 
