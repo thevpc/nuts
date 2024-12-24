@@ -34,6 +34,7 @@ import net.thevpc.nuts.format.NVersionFormat;
 import net.thevpc.nuts.reserved.rpi.NCollectionsRPI;
 import net.thevpc.nuts.reserved.rpi.NIORPI;
 import net.thevpc.nuts.runtime.standalone.*;
+import net.thevpc.nuts.runtime.standalone.app.NAppImpl;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNElements;
 import net.thevpc.nuts.runtime.standalone.format.DefaultNObjectFormat;
 import net.thevpc.nuts.runtime.standalone.format.NFormatsImpl;
@@ -41,6 +42,7 @@ import net.thevpc.nuts.runtime.standalone.id.format.DefaultNIdFormat;
 import net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIO;
 import net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIORPI;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNLogs;
+import net.thevpc.nuts.runtime.standalone.session.DefaultNSession;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.util.NClassClassMap;
@@ -111,6 +113,14 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     public <T extends NComponent> NOptional<T> createComponent(Class<T> type, Object supportCriteria) {
         NSession session = workspace.currentSession();
         NSupportLevelContext context = new NDefaultSupportLevelContext(supportCriteria);
+        // should handle NApp specifically because it is the root for resolving scoped properties
+        // TODO should it, or should it not??
+
+        switch (type.getName()) {
+            case "net.thevpc.nuts.NApp": {
+                return NOptional.of((T)((DefaultNSession)session).getRefProperties().getOrComputeProperty(type.getName(),()->new NAppImpl()));
+            }
+        }
         List<T> all = createAll(type);
         NCallableSupport<T> s = NCallableSupport.resolve(all.stream().map(x -> NCallableSupport.of(x.getSupportLevel(context), x)),
                 () -> NMsg.ofMissingValue(NMsg.ofC("extensions component %s", type).toString())
@@ -119,55 +129,55 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             //fallback needed in bootstrap or if the extensions are broken!
             switch (type.getName()) {
                 case "net.thevpc.nuts.log.NLogs": {
-                    DefaultNLogs p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNLogs(session));
+                    DefaultNLogs p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNLogs(session));
                     return NOptional.of((T) p);
                 }
                 case "net.thevpc.nuts.text.NTexts": {
-                    DefaultNTexts p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNTexts(workspace));
+                    DefaultNTexts p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNTexts(workspace));
                     return NOptional.of((T) p);
                 }
                 case "net.thevpc.nuts.format.NObjectFormat": {
-                    DefaultNObjectFormat p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNObjectFormat(workspace));
+                    DefaultNObjectFormat p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNObjectFormat(workspace));
                     return NOptional.of((T) p);
                 }
                 case "net.thevpc.nuts.io.NIO": {
-                    DefaultNIO p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.WORKSPACE, () -> new DefaultNIO(workspace));
+                    DefaultNIO p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.WORKSPACE, () -> new DefaultNIO(workspace));
                     return NOptional.of((T) p);
                 }
                 case "net.thevpc.nuts.elem.NElements": {
-                    DefaultNElements p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNElements(workspace));
+                    DefaultNElements p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNElements(workspace));
                     return NOptional.of((T) p);
                 }
                 case "net.thevpc.nuts.NLibPaths": {
-                    DefaultNLibPaths p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNLibPaths(workspace));
+                    DefaultNLibPaths p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNLibPaths(workspace));
                     return NOptional.of((T) p);
                 }
                 case "net.thevpc.nuts.io.NDigest": {
-                    NDigest p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNDigest(workspace));
+                    NDigest p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNDigest(workspace));
                     return NOptional.of((T) p);
                 }
                 case "net.thevpc.nuts.reserved.rpi.NIORPI": {
-                    NIORPI p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNIORPI(workspace));
+                    NIORPI p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNIORPI(workspace));
                     return NOptional.of((T) p);
                 }
                 case "net.thevpc.nuts.reserved.rpi.NCollectionsRPI": {
-                    NCollectionsRPI p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNCollectionsRPI(session));
+                    NCollectionsRPI p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNCollectionsRPI(session));
                     return NOptional.of((T) p);
                 }
                 case "net.thevpc.nuts.NIdFormat": {
-                    NIdFormat p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNIdFormat(workspace));
+                    NIdFormat p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNIdFormat(workspace));
                     return NOptional.of((T) p);
                 }
                 case "net.thevpc.nuts.format.NVersionFormat": {
-                    NVersionFormat p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNVersionFormat(workspace));
+                    NVersionFormat p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNVersionFormat(workspace));
                     return NOptional.of((T) p);
                 }
                 case "net.thevpc.nuts.NExecCmd": {
-                    NExecCmd p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNExecCmd(workspace));
+                    NExecCmd p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNExecCmd(workspace));
                     return NOptional.of((T) p);
                 }
                 case "net.thevpc.nuts.web.NWebCli": {
-                    NWebCli p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNWebCli(session));
+                    NWebCli p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.SESSION, () -> new DefaultNWebCli(session));
                     return NOptional.of((T) p);
                 }
                 case "net.thevpc.nuts.NIdBuilder": {
@@ -189,8 +199,11 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                     return NOptional.of((T) new DefaultNWorkspaceOptionsBuilder());
                 }
                 case "net.thevpc.nuts.format.NFormats": {
-                    NFormats p = session.getOrComputeProperty("fallback::" + type.getName(), NScopeType.WORKSPACE, () -> new NFormatsImpl(workspace));
+                    NFormats p = NApp.of().getOrComputeProperty("fallback::" + type.getName(), NScopeType.WORKSPACE, () -> new NFormatsImpl(workspace));
                     return NOptional.of((T) p);
+                }
+                case "net.thevpc.nuts.NApp": {
+                    return NOptional.of((T) new NAppImpl());
                 }
                 default: {
                     //wont use NLog because not yet initialized!
@@ -531,15 +544,14 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         if (scope == NScopeType.PROTOTYPE) {
             return newInstanceAndLog(implementation, argTypes, args, apiType, finalScope);
         }
-        NSession session=workspace.currentSession();
-        NPropertiesHolder beans = resolveBeansHolder(session, scope);
+        NPropertiesHolder beans = resolveBeansHolder(scope);
         return (T) beans.getOrComputeProperty(implementation.getName(), () -> {
             return newInstanceAndLog(implementation, argTypes, args, apiType, finalScope);
         });
     }
 
-    private static NPropertiesHolder resolveBeansHolder(NSession session, NScopeType scope) {
-        return session.getOrComputeProperty(NWorkspaceFactory.class.getName() + "::beans", scope, () -> new NPropertiesHolder());
+    private static NPropertiesHolder resolveBeansHolder(NScopeType scope) {
+        return NApp.of().getOrComputeProperty(NWorkspaceFactory.class.getName() + "::beans", scope, () -> new NPropertiesHolder());
     }
 
     //    @Override

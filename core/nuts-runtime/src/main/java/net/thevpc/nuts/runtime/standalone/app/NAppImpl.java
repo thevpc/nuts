@@ -8,8 +8,10 @@ import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineUtils;
+import net.thevpc.nuts.runtime.standalone.session.DefaultNSession;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -18,6 +20,7 @@ import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextTransformConfig;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.time.NClock;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NLiteral;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
@@ -26,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 @NComponentScope(NScopeType.SESSION)
 public class NAppImpl implements NApp, Cloneable {
@@ -466,6 +470,80 @@ public class NAppImpl implements NApp, Cloneable {
     public NApp setPreviousVersion(NVersion previousVersion) {
         this.previousVersion = previousVersion;
         return this;
+    }
+
+    public <T> T getOrComputeProperty(String name, NScopeType scope, Supplier<T> supplier) {
+        NAssert.requireNonNull(supplier);
+        if (scope == null) {
+            scope = NScopeType.SHARED_SESSION;
+        }
+        switch (scope) {
+            case SESSION: {
+                return ((DefaultNSession) NSession.of()).getRefProperties().getOrComputeProperty(name, supplier);
+            }
+            case SHARED_SESSION: {
+                return ((DefaultNSession) NSession.of()).getSharedProperties().getOrComputeProperty(name, supplier);
+            }
+            case WORKSPACE: {
+                return ((NWorkspaceExt.of())).getModel().properties.getOrComputeProperty(name, supplier);
+            }
+            case PROTOTYPE: {
+                return supplier.get();
+            }
+            default: {
+                throw new NUnsupportedEnumException(scope);
+            }
+        }
+    }
+
+    public <T> T setProperty(String name, NScopeType scope, T value) {
+        if (scope == null) {
+            scope = NScopeType.SHARED_SESSION;
+        }
+        switch (scope) {
+            case SESSION: {
+                return (T) ((DefaultNSession) NSession.of()).getRefProperties().setProperty(name, value);
+            }
+            case SHARED_SESSION: {
+                return (T) ((DefaultNSession) NSession.of()).getSharedProperties().setProperty(name, value);
+            }
+            case WORKSPACE: {
+                NWorkspaceModel m = ((NWorkspaceExt.of())).getModel();
+                return (T) m.properties.setProperty(name, value);
+            }
+            case PROTOTYPE:
+            default: {
+                throw new NUnsupportedEnumException(scope);
+            }
+        }
+    }
+
+    public <T> NOptional<T> getProperty(String name, NScopeType scope) {
+        if (scope == null) {
+            scope = NScopeType.SHARED_SESSION;
+        }
+        switch (scope) {
+            case SESSION: {
+                return ((DefaultNSession) NSession.of()).getRefProperties().<T>getOptional(name)
+                        .withDefault(() -> this.<T>getProperty(name, NScopeType.SHARED_SESSION).orDefault())
+                        ;
+            }
+            case SHARED_SESSION: {
+                return ((DefaultNSession) NSession.of()).getSharedProperties().<T>getOptional(name)
+                        .withDefault(() -> this.<T>getProperty(name, NScopeType.WORKSPACE).orDefault())
+                        ;
+            }
+            case WORKSPACE: {
+                return (NWorkspaceExt.of()).getModel().properties.getOptional(name);
+            }
+            case PROTOTYPE: {
+                return NOptional.<T>ofNamedEmpty(name)
+                        .withDefault(() -> this.<T>getProperty(name, NScopeType.SESSION).orDefault());
+            }
+            default: {
+                return NOptional.<T>ofNamedEmpty(name);
+            }
+        }
     }
 
     private static class AppCmdLineAutoComplete extends NCmdLineAutoCompleteBase {

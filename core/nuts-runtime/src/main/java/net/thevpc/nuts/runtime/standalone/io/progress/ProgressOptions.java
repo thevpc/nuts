@@ -15,11 +15,11 @@ import java.util.logging.Level;
 public class ProgressOptions {
     public static NStringMapFormat COMMAS_FORMAT = NStringMapFormat.of("=", ",;", "", true);
 
-    public static ProgressOptions of(NSession session) {
-        return session.getOrComputeProperty(ProgressOptions.class.getName(), NScopeType.SESSION, () -> {
+    public static ProgressOptions of() {
+        return NApp.of().getOrComputeProperty(ProgressOptions.class.getName(), NScopeType.SESSION, () -> {
             ProgressOptions o = new ProgressOptions();
             boolean enabledVisited = false;
-            Map<String, String> m = COMMAS_FORMAT.parse(session.getProgressOptions()).get();
+            Map<String, String> m = COMMAS_FORMAT.parse(NSession.of().getProgressOptions()).get();
             for (Map.Entry<String, String> e : m.entrySet()) {
                 String k = e.getKey();
                 String v = e.getValue();

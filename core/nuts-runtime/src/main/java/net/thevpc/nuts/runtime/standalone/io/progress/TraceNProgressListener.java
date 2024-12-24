@@ -68,7 +68,7 @@ public class TraceNProgressListener implements NProgressListener/*, NutsOutputSt
     public boolean onProgress0(NProgressEvent event, boolean end) {
         if (!optionsProcessed) {
             optionsProcessed = true;
-            options = ProgressOptions.of(event.getSession());
+            options = event.getSession().callWith(()->ProgressOptions.of());
         }
         double partialSeconds = event.getPartialDuration().getTimeAsDoubleSeconds();
         if (event.getCurrentCount() == 0 || partialSeconds > 0.5 || event.getCurrentCount() == event.getMaxValue()) {

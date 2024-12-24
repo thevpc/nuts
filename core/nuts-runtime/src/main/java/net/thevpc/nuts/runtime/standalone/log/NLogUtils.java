@@ -208,27 +208,9 @@ public class NLogUtils {
         return session;
     }
 
-    public static final NSession resolveSession(LogRecord record, NSession defSession) {
-        NSession session = null;
-        if (record instanceof NLogRecord){
-            session=((NLogRecord) record).getSession();
-        }
-        if(session==null){
-            session=defSession;
-        }
-        return session;
-    }
-
     public static void traceMessage(NLog log, Level lvl, String name, NFetchMode fetchMode, NId id, NLogVerb tracePhase, String title, long startTime, NMsg extraMsg) {
         if (!log.isLoggable(lvl)) {
             return;
-        }
-        String sep;
-        if (extraMsg == null) {
-            sep = "";
-            extraMsg = NMsg.ofNtf("");
-        } else {
-            sep = " : ";
         }
         long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
         String modeString = NStringUtils.formatAlign(fetchMode.id(), 7, NPositionType.FIRST);

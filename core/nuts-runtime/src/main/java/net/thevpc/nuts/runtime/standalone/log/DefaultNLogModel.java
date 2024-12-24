@@ -53,7 +53,6 @@ public class DefaultNLogModel {
     private NLogConfig logConfig = new NLogConfig();
     private List<Handler> extraHandlers = new ArrayList<>();
     private Path logFolder;
-    private NSession defaultSession;
 
     public DefaultNLogModel(NWorkspace ws, NBootOptions effOptions, NBootOptions userOptions) {
         this.workspace = ws;
@@ -73,15 +72,6 @@ public class DefaultNLogModel {
         }
         out = ((NWorkspaceExt) ws).getModel().bootModel.getSystemTerminal().err();
     }
-
-    public NSession getDefaultSession() {
-        return defaultSession;
-    }
-
-    public void setDefaultSession(NSession defaultSession) {
-        this.defaultSession = defaultSession;
-    }
-
 
     public List<Handler> getHandlers() {
         if (extraHandlers.isEmpty()) {
@@ -112,13 +102,12 @@ public class DefaultNLogModel {
         return fileHandler;
     }
 
-    private Map<String, NLog> loaded(NSession session) {
-        return session.getOrComputeProperty(NLog.class.getName() + "#Map", NScopeType.SESSION, () -> new HashMap<String, NLog>());
+    private Map<String, NLog> loaded() {
+        return NApp.of().getOrComputeProperty(NLog.class.getName() + "#Map", NScopeType.WORKSPACE, () -> new HashMap<String, NLog>());
     }
 
     public NLog createLogger(String name) {
-        NSession session = workspace.currentSession();
-        Map<String, NLog> loaded = loaded(session);
+        Map<String, NLog> loaded = loaded();
         NLog y = loaded.get(name);
         if (y == null) {
             y = new DefaultNLog(workspace, name);
@@ -129,7 +118,7 @@ public class DefaultNLogModel {
 
 
     public NLog createLogger(Class clazz, NSession session) {
-        Map<String, NLog> loaded = loaded(session);
+        Map<String, NLog> loaded = loaded();
         NLog y = loaded.get(clazz.getName());
         if (y == null) {
             y = new DefaultNLog(workspace, clazz);

@@ -113,6 +113,13 @@ public class DefaultNSession implements Cloneable, NSession {
         }
     }
 
+    public NPropertiesHolder getSharedProperties() {
+        return sharedProperties;
+    }
+
+    public NPropertiesHolder getRefProperties() {
+        return refProperties;
+    }
 
     @Override
     public void runWith(NRunnable runnable) {
@@ -1297,7 +1304,7 @@ public class DefaultNSession implements Cloneable, NSession {
             return false;
         }
         //TODO, should we cache this?
-        return ProgressOptions.of(this).isEnabled();
+        return callWith(()->ProgressOptions.of().isEnabled());
     }
 
     @Override
@@ -1741,79 +1748,6 @@ public class DefaultNSession implements Cloneable, NSession {
         }
     }
 
-    public <T> T getOrComputeProperty(String name, NScopeType scope, Supplier<T> supplier) {
-        NAssert.requireNonNull(supplier);
-        if (scope == null) {
-            scope = NScopeType.SHARED_SESSION;
-        }
-        switch (scope) {
-            case SESSION: {
-                return refProperties.getOrComputeProperty(name, supplier);
-            }
-            case SHARED_SESSION: {
-                return sharedProperties.getOrComputeProperty(name, supplier);
-            }
-            case WORKSPACE: {
-                return ((NWorkspaceExt) workspace).getModel().properties.getOrComputeProperty(name, supplier);
-            }
-            case PROTOTYPE: {
-                return supplier.get();
-            }
-            default: {
-                throw new NUnsupportedEnumException(scope);
-            }
-        }
-    }
-
-    public <T> T setProperty(String name, NScopeType scope, T value) {
-        if (scope == null) {
-            scope = NScopeType.SHARED_SESSION;
-        }
-        switch (scope) {
-            case SESSION: {
-                return (T) refProperties.setProperty(name, value);
-            }
-            case SHARED_SESSION: {
-                return (T) sharedProperties.setProperty(name, value);
-            }
-            case WORKSPACE: {
-                NWorkspaceModel m = ((NWorkspaceExt) workspace).getModel();
-                return (T) m.properties.setProperty(name, value);
-            }
-            case PROTOTYPE:
-            default: {
-                throw new NUnsupportedEnumException(scope);
-            }
-        }
-    }
-
-    public <T> NOptional<T> getProperty(String name, NScopeType scope) {
-        if (scope == null) {
-            scope = NScopeType.SHARED_SESSION;
-        }
-        switch (scope) {
-            case SESSION: {
-                return refProperties.<T>getOptional(name)
-                        .withDefault(() -> this.<T>getProperty(name, NScopeType.SHARED_SESSION).orDefault())
-                        ;
-            }
-            case SHARED_SESSION: {
-                return sharedProperties.<T>getOptional(name)
-                        .withDefault(() -> this.<T>getProperty(name, NScopeType.WORKSPACE).orDefault())
-                        ;
-            }
-            case WORKSPACE: {
-                return ((NWorkspaceExt) workspace).getModel().properties.getOptional(name);
-            }
-            case PROTOTYPE: {
-                return NOptional.<T>ofNamedEmpty(name)
-                        .withDefault(() -> this.<T>getProperty(name, NScopeType.SESSION).orDefault());
-            }
-            default: {
-                return NOptional.<T>ofNamedEmpty(name);
-            }
-        }
-    }
 
     //    public <T> T getOrComputeRefProperty(String name, Function<NSession, T> supplier) {
 //        Object v = getRefProperty(name);

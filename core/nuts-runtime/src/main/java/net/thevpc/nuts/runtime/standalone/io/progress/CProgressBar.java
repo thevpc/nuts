@@ -253,7 +253,7 @@ public class CProgressBar {
     }
 
     public static CProgressBar of() {
-        return NSession.get().get().getOrComputeProperty(CProgressBar.class.getName(), NScopeType.SESSION, CProgressBar::new);
+        return NApp.of().getOrComputeProperty(CProgressBar.class.getName(), NScopeType.SESSION, CProgressBar::new);
     }
 
     public CProgressBar() {
@@ -263,7 +263,7 @@ public class CProgressBar {
     public CProgressBar(int determinateSize) {
         this.session = NSession.get().get();
         this.logger = NLog.of(CProgressBar.class);
-        this.options = ProgressOptions.of(session);
+        this.options = ProgressOptions.of();
         this.ws = session.getWorkspace();
         this.formatter = createFormatter(options.get("type").flatMap(NLiteral::asString).orElse(""));
         if (determinateSize <= 0) {

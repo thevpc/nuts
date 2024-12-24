@@ -17,7 +17,7 @@ public class NWorkspaceVarExpansionFunction implements Function<String, String> 
 
     public static NWorkspaceVarExpansionFunction of() {
         NWorkspace ws = NWorkspace.get().get();
-        return ws.currentSession().getOrComputeProperty(NWorkspaceVarExpansionFunction.class.getName(), NScopeType.SESSION, ()->new NWorkspaceVarExpansionFunction(ws));
+        return NApp.of().getOrComputeProperty(NWorkspaceVarExpansionFunction.class.getName(), NScopeType.SESSION, ()->new NWorkspaceVarExpansionFunction(ws));
     }
 
     public NWorkspaceVarExpansionFunction(NWorkspace workspace) {

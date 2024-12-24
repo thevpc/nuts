@@ -148,7 +148,7 @@ public class DefaultNLog implements NLog {
     private void log0(LogRecord record) {
         DefaultNLogs logManager = (DefaultNLogs) NLogs.of();
         logManager.getModel().updateHandlers(record);
-        Handler ch = logManager.getModel().getTermHandler();
+        Handler ch = logManager.getTermHandler();
         if (ch != null) {
             if (ch.isLoggable(record)) {
                 if (suspendTerminalMode) {

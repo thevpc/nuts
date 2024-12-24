@@ -50,12 +50,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-@NComponentScope(NScopeType.SESSION)
+@NComponentScope(NScopeType.WORKSPACE)
 public class DefaultNContentTypeResolver implements NContentTypeResolver {
 
-    private NSession session;
-    public DefaultNContentTypeResolver(NSession session) {
-        this.session=session;
+    private NWorkspace workspace;
+    public DefaultNContentTypeResolver(NWorkspace workspace) {
+        this.workspace=workspace;
     }
 
     public NCallableSupport<String> probeContentType(NPath path) {
@@ -195,8 +195,8 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
     }
 
     public DefaultNContentTypeResolverModel model(){
-        synchronized (session) {
-            return session.getOrComputeProperty(
+        synchronized (workspace) {
+            return NApp.of().getOrComputeProperty(
                     DefaultNContentTypeResolverModel.class.getName(), NScopeType.WORKSPACE,
                     () -> new DefaultNContentTypeResolverModel()
             );

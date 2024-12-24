@@ -100,7 +100,7 @@ public class DefaultNWorkspaceConfigModel {
     private final NWorkspaceStoredConfig storedConfig = new NWorkspaceStoredConfigImpl();
     private final ClassLoader bootClassLoader;
     private final List<URL> bootClassWorldURLs;
-    private final Function<String, String> pathExpansionConverter;
+//    private final Function<String, String> pathExpansionConverter;
     private final WorkspaceSystemTerminalAdapter workspaceSystemTerminalAdapter;
     private final List<NPathFactorySPI> pathFactories = new ArrayList<>();
     private final NPathFactorySPI invalidPathFactory;
@@ -140,7 +140,7 @@ public class DefaultNWorkspaceConfigModel {
         this.bootClassWorldURLs = NCoreCollectionUtils.nonNullList(bOptions.getClassWorldURLs().orNull());
         workspaceSystemTerminalAdapter = new WorkspaceSystemTerminalAdapter(workspace);
 
-        this.pathExpansionConverter = NWorkspaceVarExpansionFunction.of();
+//        this.pathExpansionConverter = NWorkspaceVarExpansionFunction.of();
         this.bootModel = workspace.getModel().bootModel;
         addPathFactory(new FilePath.FilePathFactory(workspace));
         addPathFactory(new ClassLoaderPath.ClasspathFactory(workspace));
