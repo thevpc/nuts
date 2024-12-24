@@ -47,9 +47,9 @@ public class RemoteConnexionStringInfo {
     private long loadedSudo;
 
 
-    public static RemoteConnexionStringInfo of(String target, NSession session) {
+    public static RemoteConnexionStringInfo of(String target) {
         NAssert.requireNonBlank(target, "target");
-        Map<String, RemoteConnexionStringInfo> m = session.getOrComputeProperty(RemoteConnexionStringInfo.class.getName() + "Map",
+        Map<String, RemoteConnexionStringInfo> m = NApp.of().getOrComputeProperty(RemoteConnexionStringInfo.class.getName() + "Map",
                 NScopeType.WORKSPACE,
                 () -> new HashMap<>()
         );
@@ -62,7 +62,7 @@ public class RemoteConnexionStringInfo {
         this.target = target;
     }
 
-    public boolean copyId(NId id, NPath remoteRepo, NSession session, NRef<NPath> remoteJar) {
+    public boolean copyId(NId id, NPath remoteRepo, NRef<NPath> remoteJar) {
         NDefinition def = NFetchCmd.of()
                 .setId(id)
                 .setContent(true)
@@ -72,7 +72,7 @@ public class RemoteConnexionStringInfo {
         if (remoteJar != null) {
             remoteJar.set(remoteJarPath);
         }
-        if (copy(apiLocalPath, remoteJarPath, session)) {
+        if (copy(apiLocalPath, remoteJarPath)) {
             NDescriptorFormat.of(def.getDescriptor()).setNtf(false).print(
                     remoteRepo.resolve(id.getMavenPath("nuts")).mkParentDirs()
             );
@@ -81,8 +81,8 @@ public class RemoteConnexionStringInfo {
         return false;
     }
 
-    public boolean copy(NPath local, NPath remote, NSession session) {
-        NLog log = LOG(session);
+    public boolean copy(NPath local, NPath remote) {
+        NLog log = LOG();
         log.with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("try copy %s %s", local, remote));
         long localContentLength = local.getContentLength();
         long remoteContentLength = remote.getContentLength();
@@ -110,11 +110,12 @@ public class RemoteConnexionStringInfo {
     }
 
 
-    public static String runOnceSystemGrab(NExecCmdExtension commExec, String target, NSession session, String... cmd) {
+    public static String runOnceSystemGrab(NExecCmdExtension commExec, String target, String... cmd) {
 
         OutputStream out = new ByteArrayOutputStream();
         OutputStream err = new ByteArrayOutputStream();
         int e;
+        NSession session = NSession.of();
         try (MyNExecCmdExtensionContext d = new MyNExecCmdExtensionContext(
                 NExecCmd.of().setTarget(target).system(),
                 commExec, target, session, cmd, out, err)) {
@@ -130,46 +131,47 @@ public class RemoteConnexionStringInfo {
         return out.toString();
     }
 
-    public String getJavaCommand(NExecCmdExtension commExec, NSession session) {
+    public String getJavaCommand(NExecCmdExtension commExec) {
         return javaCommand;
     }
 
-    public String getNutsJar(NExecCmdExtension commExec, NSession session) {
+    public String getNutsJar(NExecCmdExtension commExec) {
         if (isUpdatable(loadedNutsJar)) {
             loadedNutsJar = System.currentTimeMillis();
-            LOG(session).with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("[%s] resolve remote jar", target));
+            LOG().with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("[%s] resolve remote jar", target));
             NRef<NPath> remoteApiJar = NRef.ofNull();
-            copyId(session.getWorkspace().getApiId(), getStoreLocationLibRepo(commExec, session), session, remoteApiJar);
-            copyId(session.getWorkspace().getRuntimeId(), getStoreLocationLibRepo(commExec, session), session, null);
+            NWorkspace workspace = NWorkspace.of();
+            copyId(workspace.getApiId(), getStoreLocationLibRepo(commExec), remoteApiJar);
+            copyId(workspace.getRuntimeId(), getStoreLocationLibRepo(commExec), null);
             nutsJar = remoteApiJar.get().getLocation();
         }
         return nutsJar;
     }
 
-    public long getLastChecked(NExecCmdExtension commExec, NSession session) {
+    public long getLastChecked(NExecCmdExtension commExec) {
         return lastChecked;
     }
 
-    public long getTimoutMS(NExecCmdExtension commExec, NSession session) {
+    public long getTimoutMS(NExecCmdExtension commExec) {
         return timoutMS;
     }
 
-    public String getRootName(NExecCmdExtension commExec, NSession session) {
+    public String getRootName(NExecCmdExtension commExec) {
         return rootName;
     }
 
-    public String getUserName(NExecCmdExtension commExec, NSession session) {
-        getUserHome(commExec, session);
+    public String getUserName(NExecCmdExtension commExec) {
+        getUserHome(commExec);
         return userName;
     }
 
-    public String getUserHome(NExecCmdExtension commExec, NSession session) {
+    public String getUserHome(NExecCmdExtension commExec) {
         if (isUpdatable(loadedUserHome)) {
             loadedUserHome = System.currentTimeMillis();
             // echo -e "$USER\\n$HOME\n$OSTYPE\n$PATH"
-            LOG(session).with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("[%s] resolve remote env", target));
+            LOG().with().level(Level.FINER).verb(NLogVerb.START).log(NMsg.ofC("[%s] resolve remote env", target));
             String[] echoes = NStringUtils.trim(runOnceSystemGrab(
-                    commExec, target, session,
+                    commExec, target,
                     "echo", "-e", "$USER\\\\n$HOME\\\\n$OSTYPE\\\\n$PATH")).split("\n");
             userName = echoes[0];
             userHome = echoes[1];
@@ -179,49 +181,49 @@ public class RemoteConnexionStringInfo {
         return userHome;
     }
 
-    public String getOsType(NExecCmdExtension commExec, NSession session) {
-        getUserHome(commExec, session);
+    public String getOsType(NExecCmdExtension commExec) {
+        getUserHome(commExec);
         return osType;
     }
 
-    public String getWorkspaceName(NExecCmdExtension commExec, NSession session) {
+    public String getWorkspaceName(NExecCmdExtension commExec) {
         return workspaceName;
     }
 
-    public String getStoreLocationLib(NExecCmdExtension commExec, NSession session) {
-        getWorkspaceJson(commExec, session);
+    public String getStoreLocationLib(NExecCmdExtension commExec) {
+        getWorkspaceJson(commExec);
         return storeLocationLib;
     }
 
-    public NPath getStoreLocationLibRepo(NExecCmdExtension commExec, NSession session) {
-        getWorkspaceJson(commExec, session);
+    public NPath getStoreLocationLibRepo(NExecCmdExtension commExec) {
+        getWorkspaceJson(commExec);
         return storeLocationLibRepo;
     }
 
-    public String getStoreLocationCache(NExecCmdExtension commExec, NSession session) {
-        getWorkspaceJson(commExec, session);
+    public String getStoreLocationCache(NExecCmdExtension commExec) {
+        getWorkspaceJson(commExec);
         return storeLocationCache;
     }
 
-    public NPath getStoreLocationCacheRepo(NExecCmdExtension commExec, NSession session) {
-        getWorkspaceJson(commExec, session);
+    public NPath getStoreLocationCacheRepo(NExecCmdExtension commExec) {
+        getWorkspaceJson(commExec);
         return storeLocationCacheRepo;
     }
 
-    public NPath getStoreLocationCacheRepoSSH(NExecCmdExtension commExec, NSession session) {
-        getWorkspaceJson(commExec, session);
+    public NPath getStoreLocationCacheRepoSSH(NExecCmdExtension commExec) {
+        getWorkspaceJson(commExec);
         return storeLocationCacheRepoSSH;
     }
 
-    public String getTarget(NExecCmdExtension commExec, NSession session) {
+    public String getTarget(NExecCmdExtension commExec) {
         return target;
     }
 
-    private NLog LOG(NSession session) {
+    private NLog LOG() {
         return NLog.of(RemoteConnexionStringInfo.class);
     }
 
-    public NElement getWorkspaceJson(NExecCmdExtension commExec, NSession session) {
+    public NElement getWorkspaceJson(NExecCmdExtension commExec) {
         if (isUpdatable(loadedWorkspaceJson)) {
             loadedWorkspaceJson = System.currentTimeMillis();
             NConnexionString targetConnexion = NConnexionString.of(target).get().copy()
@@ -230,10 +232,10 @@ public class RemoteConnexionStringInfo {
             NPlatformHome pHome = NPlatformHome.ofPortable(NOsFamily.LINUX, false, null, p -> {
                 switch (p) {
                     case "user.name": {
-                        return getUserName(commExec, session);
+                        return getUserName(commExec);
                     }
                     case "user.home": {
-                        return getUserHome(commExec, session);
+                        return getUserHome(commExec);
                     }
                 }
                 return null;
@@ -280,28 +282,28 @@ public class RemoteConnexionStringInfo {
         return workspaceJson;
     }
 
-    public String getEnvPath(NExecCmdExtension commExec, NSession session) {
-        getUserHome(commExec, session);
+    public String getEnvPath(NExecCmdExtension commExec) {
+        getUserHome(commExec);
         return envPath;
     }
 
-    public String getSuPath(NExecCmdExtension commExec, NSession session) {
+    public String getSuPath(NExecCmdExtension commExec) {
         if (isUpdatable(loadedSu)) {
             loadedSu = System.currentTimeMillis();
-            suPath = NStringUtils.trimToNull(NStringUtils.trim(runOnceSystemGrab(commExec, target, session, "which", "su")).trim());
+            suPath = NStringUtils.trimToNull(NStringUtils.trim(runOnceSystemGrab(commExec, target, "which", "su")).trim());
         }
         return suPath;
     }
 
-    public String getSudoPath(NExecCmdExtension commExec, NSession session) {
+    public String getSudoPath(NExecCmdExtension commExec) {
         if (isUpdatable(loadedSudo)) {
             loadedSudo = System.currentTimeMillis();
-            sudoPath = NStringUtils.trimToNull(NStringUtils.trim(runOnceSystemGrab(commExec, target, session, "which", "sudo")).trim());
+            sudoPath = NStringUtils.trimToNull(NStringUtils.trim(runOnceSystemGrab(commExec, target, "which", "sudo")).trim());
         }
         return sudoPath;
     }
 
-    public String[] buildEffectiveCommand(String[] cmd, NRunAs runAs, String[] executionOptions, NExecCmdExtension commExec, NSession session) {
+    public String[] buildEffectiveCommand(String[] cmd, NRunAs runAs, String[] executionOptions, NExecCmdExtension commExec) {
         return NWorkspace.of().buildEffectiveCommand(cmd, runAs,
                 new HashSet<NDesktopEnvironmentFamily>(),
                 s -> {
@@ -310,15 +312,15 @@ public class RemoteConnexionStringInfo {
                     }
                     switch (s) {
                         case "su":
-                            return getSuPath(commExec, session);
+                            return getSuPath(commExec);
                         case "sudo":
-                            return getSudoPath(commExec, session);
+                            return getSudoPath(commExec);
                     }
                     return null;
                 },
                 false,
-                getRootName(commExec, session),
-                getUserName(commExec, session),
+                getRootName(commExec),
+                getUserName(commExec),
                 executionOptions
         ).toArray(new String[0]);
     }

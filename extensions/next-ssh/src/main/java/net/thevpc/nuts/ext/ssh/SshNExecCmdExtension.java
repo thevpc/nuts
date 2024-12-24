@@ -58,11 +58,11 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
                 wOptions.setOutputFormatOptions(session.getOutputFormatOptions());
 
                 String[] executorOptions = execCommand.getExecutorOptions().toArray(new String[0]);
-                RemoteConnexionStringInfo k = RemoteConnexionStringInfo.of(execCommand.getTarget(), session);
-                wOptions.setWorkspace(k.getWorkspaceName(this, session));
-                cmd.add(k.getJavaCommand(this, session));
+                RemoteConnexionStringInfo k = RemoteConnexionStringInfo.of(execCommand.getTarget());
+                wOptions.setWorkspace(k.getWorkspaceName(this));
+                cmd.add(k.getJavaCommand(this));
                 cmd.add("-jar");
-                cmd.add(k.getNutsJar(this, session));
+                cmd.add(k.getNutsJar(this));
                 NCmdLine ncmdLine = wOptions.toCmdLine(new NWorkspaceOptionsConfig().setCompact(true));
                 cmd.addAll(ncmdLine.toStringList());
                 int dependenciesCount = 0;
@@ -75,18 +75,18 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
                                 !id.equalsLongId(session.getWorkspace().getApiId())
                                         && !id.equalsLongId(session.getWorkspace().getRuntimeId())
                         ) {
-                            k.copyId(id, k.getStoreLocationCacheRepoSSH(this, session), session, null);
+                            k.copyId(id, k.getStoreLocationCacheRepoSSH(this), null);
                             dependenciesCount++;
                         }
                     }
                     if (true) {
-                        k.copyId(def.getId(), k.getStoreLocationCacheRepoSSH(this, session), session, null);
+                        k.copyId(def.getId(), k.getStoreLocationCacheRepoSSH(this), null);
                         dependenciesCount++;
                     }
                 }
                 //if (dependenciesCount > 0) {
                 //    if (requireTempRepo) {
-                cmd.add("-r=" + k.getStoreLocationCacheRepoSSH(this, session).getLocation());
+                cmd.add("-r=" + k.getStoreLocationCacheRepoSSH(this).getLocation());
                 //    }
                 //}
                 cmd.add("---caller-app=remote-nuts");
@@ -124,7 +124,7 @@ public class SshNExecCmdExtension implements NExecCmdExtension {
                 //wil not call context.getCommand() because we already added def!
                 cmd.addAll(execCommand.getCommand());
 
-                return k.buildEffectiveCommand(cmd.toArray(new String[0]), execCommand.getRunAs(), executorOptions, this, session);
+                return k.buildEffectiveCommand(cmd.toArray(new String[0]), execCommand.getRunAs(), executorOptions, this);
             }
             case SYSTEM: {
                 //effective command including def which should be null!

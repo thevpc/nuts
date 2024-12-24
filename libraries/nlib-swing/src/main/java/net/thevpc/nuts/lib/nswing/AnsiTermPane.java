@@ -19,15 +19,23 @@ public class AnsiTermPane extends JTextPane {
     //    public static Color colorCurrent = Color.WHITE;//cReset;
     String remaining = "";
     PrintStream ps;
-    AnsiColors ansiColors=new AnsiColors();
+    AnsiColors ansiColors = new AnsiColors();
     TextStyle currentStyle = new TextStyle()
             .setForeColor(Color.BLACK);
+    private int maxRows = -1;
 
     public AnsiTermPane(boolean darkMode) {
         setDarkMode(darkMode);
     }
 
+    public int getMaxRows() {
+        return maxRows;
+    }
 
+    public AnsiTermPane setMaxRows(int maxRows) {
+        this.maxRows = maxRows;
+        return this;
+    }
 
     public void resetCurr() {
         currentStyle = ansiColors.restStyle();
@@ -35,7 +43,8 @@ public class AnsiTermPane extends JTextPane {
 
     public void setDarkMode(boolean darkMode) {
         ansiColors.cResetBackground = getBackground();
-        ansiColors.setDarkMode(darkMode);;
+        ansiColors.setDarkMode(darkMode);
+        ;
         setFont(new Font("Courier New", Font.PLAIN, 14));
         setForeground(ansiColors.cResetForeground);
         setBackground(ansiColors.preferredBackground);
@@ -53,8 +62,6 @@ public class AnsiTermPane extends JTextPane {
             }
         }
     }
-
-
 
 
     public void append(int color256, String s) {
@@ -80,7 +87,25 @@ public class AnsiTermPane extends JTextPane {
         setCharacterAttributes(aset, false);
         replaceSelection(s);
         // there is no selection, so inserts at caret
+        ensureMaxRows();
         setEditable(editable);
+    }
+
+    private void ensureMaxRows() {
+        int currentMaxRows = getMaxRows();
+        if (currentMaxRows > 0) {
+            int rowsCount = getText().split("\n").length;
+            while (rowsCount > currentMaxRows) {
+                Element root = this.getDocument().getDefaultRootElement();
+                Element first = root.getElement(0);
+                try {
+                    this.getDocument().remove(first.getStartOffset(), first.getEndOffset());
+                } catch (BadLocationException e) {
+                    break;
+                }
+                rowsCount--;
+            }
+        }
     }
 
     public PrintStream asPrintStream() {
@@ -180,7 +205,7 @@ public class AnsiTermPane extends JTextPane {
     }
 
     public void applyANSIColor(String ANSIColor) {
-        currentStyle=ansiColors.applyANSIColor(ANSIColor, currentStyle);
+        currentStyle = ansiColors.applyANSIColor(ANSIColor, currentStyle);
     }
 
     public void clearScreen() {
