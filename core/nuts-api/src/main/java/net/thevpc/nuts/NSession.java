@@ -666,11 +666,5 @@ public interface NSession extends NCmdLineConfigurable, Closeable {
      */
     NSession setDependencySolver(String dependencySolver);
 
-    <T> T getOrComputeProperty(String name, NScopeType scope, Supplier<T> supplier);
-
-    <T> T setProperty(String name, NScopeType scope, T value);
-
-    <T> NOptional<T> getProperty(String name, NScopeType scope);
-
     void close();
 }

@@ -46,10 +46,10 @@ public abstract class AbstractRunner implements NCmdLineConfigurable {
 
     public NutsBuildRunnerContext context() {
         NSession session = NSession.of();
-        NutsBuildRunnerContext s = (NutsBuildRunnerContext) session.getProperty(NutsBuildRunnerContext.class.getName(), NScopeType.SESSION).orNull();
+        NutsBuildRunnerContext s = (NutsBuildRunnerContext) NApp.of().getProperty(NutsBuildRunnerContext.class.getName(), NScopeType.SESSION).orNull();
         if (s == null) {
             s = new NutsBuildRunnerContext();
-            session.setProperty(NutsBuildRunnerContext.class.getName(), NScopeType.SESSION, s);
+            NApp.of().setProperty(NutsBuildRunnerContext.class.getName(), NScopeType.SESSION, s);
         }
         return s;
     }

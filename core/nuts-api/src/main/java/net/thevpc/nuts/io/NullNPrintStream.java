@@ -14,36 +14,14 @@ import java.util.Date;
 
 public class NullNPrintStream implements NPrintStream {
 
-    public static final Writer NULL_WRITER = new Writer() {
-        @Override
-        public void write(char[] cbuf, int off, int len) {
-        }
-
-        @Override
-        public void flush() {
-
-        }
-
-        @Override
-        public void close() {
-
-        }
-    };
-    public static OutputStream NULL_OUTPUTSTREAM = new OutputStream() {
-        @Override
-        public void write(int b) throws IOException {
-            //
-        }
-    };
-    public static PrintStream NULL_PRINTSTREAM=new PrintStream(NULL_OUTPUTSTREAM);
     public static NPrintStream NULL_NPRINTSTREAM=new NullNPrintStream();
 
-    public NullNPrintStream() {
+    private NullNPrintStream() {
     }
 
     @Override
     public OutputStream getOutputStream() {
-        return NULL_OUTPUTSTREAM;
+        return NullOutputStream.INSTANCE;
     }
 
     ////////////
@@ -249,7 +227,7 @@ public class NullNPrintStream implements NPrintStream {
 
     @Override
     public OutputStream asOutputStream() {
-        return NULL_OUTPUTSTREAM;
+        return NullOutputStream.INSTANCE;
     }
 
     @Override
@@ -259,7 +237,7 @@ public class NullNPrintStream implements NPrintStream {
 
     @Override
     public Writer asWriter() {
-        return NULL_WRITER;
+        return NullWriter.INSTANCE;
     }
 
     @Override

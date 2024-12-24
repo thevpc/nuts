@@ -6,11 +6,13 @@ import net.thevpc.nuts.cmdline.NCmdLineRunner;
 import net.thevpc.nuts.ext.NExtensions;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.time.NClock;
 import net.thevpc.nuts.util.NOptional;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public interface NApp extends NComponent {
     static NApp of() {
@@ -100,5 +102,11 @@ public interface NApp extends NComponent {
     NApp setArguments(String[] args);
 
     NApp setStartTime(NClock startTime);
+
+    <T> T getOrComputeProperty(String name, NScopeType scope, Supplier<T> supplier);
+
+    <T> T setProperty(String name, NScopeType scope, T value);
+
+    <T> NOptional<T> getProperty(String name, NScopeType scope);
 
 }

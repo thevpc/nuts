@@ -387,7 +387,7 @@ public class NApiUtilsRPI {
             name = "default";
         }
         String key = type.getName() + "(" + name + ")";
-        return NSession.get().get().getOrComputeProperty(key, NScopeType.SESSION, () -> sup.get());
+        return NApp.of().getOrComputeProperty(key, NScopeType.SESSION, () -> sup.get());
     }
 
     public static <T> T getOrCreateRefProperty(Class<T> type, Supplier<T> sup) {
