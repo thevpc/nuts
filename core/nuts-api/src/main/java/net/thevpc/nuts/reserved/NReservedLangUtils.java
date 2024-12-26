@@ -6,7 +6,6 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.util.*;
 
-import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.Predicate;
@@ -51,38 +50,6 @@ public final class NReservedLangUtils {
             }
         }
         return NOptional.ofEmpty(() -> NMsg.ofC("error with type %s not found", type.getSimpleName()));
-    }
-
-    public static String[] stacktraceToArray(Throwable th) {
-        try {
-            StringWriter sw = new StringWriter();
-            try ( PrintWriter pw = new PrintWriter(sw)) {
-                th.printStackTrace(pw);
-            }
-            BufferedReader br = new BufferedReader(new StringReader(sw.toString()));
-            List<String> s = new ArrayList<>();
-            String line;
-            while ((line = br.readLine()) != null) {
-                s.add(line);
-            }
-            return s.toArray(new String[0]);
-        } catch (Exception ex) {
-            // ignore
-        }
-        return new String[0];
-    }
-
-    public static String stacktrace(Throwable th) {
-        try {
-            StringWriter sw = new StringWriter();
-            try ( PrintWriter pw = new PrintWriter(sw)) {
-                th.printStackTrace(pw);
-            }
-            return sw.toString();
-        } catch (Exception ex) {
-            // ignore
-        }
-        return "";
     }
 
     public static List<String> splitDefault(String str) {
@@ -138,18 +105,6 @@ public final class NReservedLangUtils {
         }
         String finalValue = value;
         return NOptional.ofError(() -> NMsg.ofC("invalid size :%s", finalValue));
-    }
-
-    public static int firstIndexOf(String string, char[] chars) {
-        char[] value = string.toCharArray();
-        for (int i = 0; i < value.length; i++) {
-            for (char aChar : chars) {
-                if (value[i] == aChar) {
-                    return i;
-                }
-            }
-        }
-        return -1;
     }
 
     public static <T, V> Map<T, V> nonNullMap(Map<T, V> other) {

@@ -63,8 +63,8 @@ public class NLogUtils {
 //        h.setThrown(record.getThrown());
 //        return h;
 //    }
-    public static NLogRecord toNutsLogRecord(LogRecord record, NSession session){
-        if(record instanceof NLogRecord){
+    public static NLogRecord toNutsLogRecord(LogRecord record, NSession session) {
+        if (record instanceof NLogRecord) {
             return (NLogRecord) record;
         }
         Level lvl = record.getLevel();
@@ -102,8 +102,8 @@ public class NLogUtils {
     }
 
     public static String logVerb(String l) {
-        if(l==null){
-            l="";
+        if (l == null) {
+            l = "";
         }
         String v = logVerbCache.get(l);
         if (v == null) {
@@ -181,7 +181,7 @@ public class NLogUtils {
         return new String[0];
     }
 
-    public static String stacktrace(Throwable th){
+    public static String stacktrace(Throwable th) {
         try {
             StringWriter sw = new StringWriter();
             try (PrintWriter pw = new PrintWriter(sw)) {
@@ -196,14 +196,14 @@ public class NLogUtils {
 
     public static final NSession resolveSession(LogRecord record, NWorkspace ws) {
         NSession session = null;
-        if (record instanceof NLogRecord){
-            session=((NLogRecord) record).getSession();
+        if (record instanceof NLogRecord) {
+            session = ((NLogRecord) record).getSession();
         }
-        if(session==null && ws!=null){
-            session= ws.currentSession();
+        if (session == null && ws != null) {
+            session = ws.currentSession();
         }
-        if(session==null){
-            session= NWorkspace.of().currentSession();
+        if (session == null) {
+            session = NSession.of();
         }
         return session;
     }
@@ -222,6 +222,7 @@ public class NLogUtils {
                         (id == null ? "" : id),
                         extraMsg));
     }
+
     public static void traceMessage(NLog log, NFetchStrategy fetchMode, NId id, NLogVerb tracePhase, String message, long startTime) {
         if (log.isLoggable(Level.FINEST)) {
 

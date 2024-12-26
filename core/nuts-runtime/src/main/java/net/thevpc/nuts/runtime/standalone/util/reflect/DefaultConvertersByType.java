@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.util.reflect;
 
-import net.thevpc.nuts.reflect.NReflectCopy;
+import net.thevpc.nuts.reflect.NReflectMapper;
+import net.thevpc.nuts.reflect.NReflectMapperContext;
 import net.thevpc.nuts.reflect.NReflectType;
 import net.thevpc.nuts.util.NEnum;
 
@@ -8,9 +9,9 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.Collection;
 
-class DefaultConvertersByType implements NReflectCopy.Converter {
+public class DefaultConvertersByType implements NReflectMapper.Converter {
     @Override
-    public Object convert(Object value, NReflectType fromType, NReflectType toType, NReflectCopy.Context context) {
+    public Object convert(Object value, String path, NReflectType fromType, NReflectType toType, NReflectMapperContext context) {
         if (value == null) {
             return toType.getDefaultValue();
         }

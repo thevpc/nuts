@@ -35,6 +35,7 @@ import net.thevpc.nuts.reflect.*;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,7 +47,6 @@ public class DefaultNReflectType implements NReflectType {
     private static final Pattern GETTER_SETTER = Pattern.compile("(?<prefix>(get|set|is))(?<suffix>([A-Z].*))");
 
     private Type javaType;
-    //private Class clazz;
     private Map<String, NReflectProperty> direct;
     private List<NReflectProperty> directList;
     private Map<String, NReflectProperty> all;
@@ -54,25 +54,34 @@ public class DefaultNReflectType implements NReflectType {
     private NReflectRepository repo;
     private NReflectPropertyAccessStrategy propertyAccessStrategy;
     private NReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy;
-    private Constructor noArgConstr;
-    private Constructor sessionConstr;
-    private Constructor workspaceConstr;
     private NWorkspace workspace;
-    private ConstrType constrType;
+    private ConstrHolder constrType;
+    private ConstrHolder sessionConstr;
+    private ConstrHolder workspaceConstr;
+    private ConstrHolder noArgConstr;
+    private ConstrHolder specialConstr;
 
-    private enum ConstrType {
-        WORKSPACE, SESSION, DEFAULT, ERROR
+    private class ConstrHolder {
+        ConstrType type;
+        Supplier<Object> supplier;
+
+        public ConstrHolder(ConstrType type, Supplier<Object> supplier) {
+            this.type = type;
+            this.supplier = supplier;
+        }
     }
 
-    ;
+    private enum ConstrType {
+        WORKSPACE, SESSION, DEFAULT, SPECIAL, ERROR
+    }
 
     public DefaultNReflectType(NWorkspace workspace, Type javaType, NReflectRepository repo) {
         this.javaType = javaType;
         this.repo = repo;
         this.workspace = workspace;
-        Class c2 = ReflectUtils.getRawClass(javaType);
-        this.propertyAccessStrategy = this.repo.getConfiguration().getAccessStrategy(c2);
-        this.propertyDefaultValueStrategy = this.repo.getConfiguration().getDefaultValueStrategy(c2);
+        Class<?> c2 = asJavaClass().orNull();
+        this.propertyAccessStrategy = c2 == null ? NReflectPropertyAccessStrategy.FIELD : this.repo.getConfiguration().getAccessStrategy(c2);
+        this.propertyDefaultValueStrategy = c2 == null ? NReflectPropertyDefaultValueStrategy.TYPE_DEFAULT : this.repo.getConfiguration().getDefaultValueStrategy(c2);
     }
 
     public NReflectPropertyAccessStrategy getAccessStrategy() {
@@ -117,20 +126,150 @@ public class DefaultNReflectType implements NReflectType {
         return NOptional.ofNamed(direct.get(name), "property " + name);
     }
 
+    private Supplier<Object> resolveSessionConstr() {
+        if (sessionConstr == null) {
+            Supplier<Object> instanceSupplier = null;
+            Class<?> jc = asJavaClass().orNull();
+            if (jc != null) {
+                try {
+                    Constructor<?> sessionConstr0 = jc.getDeclaredConstructor(NSession.class);
+                    sessionConstr0.setAccessible(true);
+                    instanceSupplier = () -> {
+                        try {
+                            return sessionConstr0.newInstance(workspace.currentSession());
+                        } catch (Exception ex) {
+                            throw asRuntimeException(ex);
+                        }
+                    };
+                } catch (Exception ex) {
+                    //
+                }
+            }
+            sessionConstr = new ConstrHolder(ConstrType.SESSION, instanceSupplier);
+        }
+        return sessionConstr.supplier;
+    }
+
+    private Supplier<Object> resolveWorkspaceConstr() {
+        if (workspaceConstr == null) {
+            Supplier<Object> instanceSupplier = null;
+            Class jc = asJavaClass().orNull();
+            if (jc != null) {
+                try {
+                    Constructor sessionConstr0 = jc.getDeclaredConstructor(NWorkspace.class);
+                    sessionConstr0.setAccessible(true);
+                    instanceSupplier = () -> {
+                        try {
+                            return sessionConstr0.newInstance(workspace);
+                        } catch (Exception ex) {
+                            throw asRuntimeException(ex);
+                        }
+                    };
+                } catch (Exception ex) {
+                    //
+                }
+            }
+            workspaceConstr = new ConstrHolder(ConstrType.WORKSPACE, instanceSupplier);
+        }
+        return workspaceConstr.supplier;
+    }
+
+    private Supplier<Object> resolveNoArgsConstr() {
+        if (noArgConstr == null) {
+            Supplier<Object> instanceSupplier = null;
+            Class<?> jc = asJavaClass().orNull();
+            if (jc != null) {
+                if (!jc.isInterface()) {
+                    int m = jc.getModifiers();
+                    if (!Modifier.isAbstract(m)) {
+                        try {
+                            Constructor<?> sessionConstr0 = jc.getDeclaredConstructor();
+                            sessionConstr0.setAccessible(true);
+                            instanceSupplier = () -> {
+                                try {
+                                    return sessionConstr0.newInstance();
+                                } catch (Exception ex) {
+                                    throw asRuntimeException(ex);
+                                }
+                            };
+                        } catch (Exception ex) {
+                            //
+                        }
+                    }
+                }
+            }
+            noArgConstr = new ConstrHolder(ConstrType.DEFAULT, instanceSupplier);
+        }
+        return noArgConstr.supplier;
+    }
+
+    public NOptional<Class<?>> asJavaClass() {
+        Class c2;
+        if (javaType instanceof Class<?>) {
+            c2 = (Class) javaType;
+        } else {
+            c2 = ReflectUtils.getRawClass(javaType);
+        }
+        return NOptional.of(c2);
+    }
+
+    private Supplier<Object> resolveSpecialConstr() {
+        if (specialConstr == null) {
+            Supplier<Object> sessionConstr1 = null;
+            Class c2 = null;
+            if (javaType instanceof Class<?>) {
+                c2 = (Class) javaType;
+            } else {
+                c2 = ReflectUtils.getRawClass(javaType);
+            }
+            if (c2 != null) {
+                if (c2.isInterface()) {
+                    if (List.class.equals(c2)) {
+                        sessionConstr1 = () -> new ArrayList();
+                    } else if (Set.class.equals(c2)) {
+                        sessionConstr1 = () -> new HashSet();
+                    } else if (Collection.class.equals(c2)) {
+                        sessionConstr1 = () -> new ArrayList();
+                    } else if (Map.class.equals(c2)) {
+                        sessionConstr1 = () -> new LinkedHashMap<>();
+                    } else {
+                        //
+                    }
+                }
+            }
+            specialConstr = new ConstrHolder(
+                    ConstrType.SPECIAL,
+                    sessionConstr1
+            );
+        }
+        return specialConstr.supplier;
+    }
+
     private ConstrType getConstrType() {
         if (constrType == null) {
-            if (hasSessionConstructor()) {
-                return constrType = ConstrType.SESSION;
+            Supplier<Object> s = resolveSessionConstr();
+            if (s != null) {
+                constrType = sessionConstr;
+                return constrType.type;
             }
-            if (hasWorkspaceConstructor()) {
-                return constrType = ConstrType.WORKSPACE;
+            s = resolveWorkspaceConstr();
+            if (s != null) {
+                constrType = workspaceConstr;
+                return constrType.type;
             }
-            if (hasNoArgsConstructor()) {
-                return constrType = ConstrType.DEFAULT;
+            s = resolveNoArgsConstr();
+            if (s != null) {
+                constrType = noArgConstr;
+                return constrType.type;
             }
-            return constrType = ConstrType.ERROR;
+            s = resolveSpecialConstr();
+            if (s != null) {
+                constrType = specialConstr;
+                return constrType.type;
+            }
+            constrType = new ConstrHolder(ConstrType.ERROR, null);
         }
-        return constrType;
+        return constrType.type;
     }
 
     @Override
@@ -148,77 +287,36 @@ public class DefaultNReflectType implements NReflectType {
 
     @Override
     public boolean hasNoArgsConstructor() {
-        if (noArgConstr == null) {
-            if (javaType instanceof Class<?>) {
-                try {
-                    noArgConstr = ((Class) javaType).getDeclaredConstructor();
-                    noArgConstr.setAccessible(true);
-                } catch (Exception ex) {
-                    return false;
-                }
-            } else {
-                Class c2 = ReflectUtils.getRawClass(javaType);
-                if (c2 != null) {
-                    try {
-                        noArgConstr = c2.getDeclaredConstructor();
-                        noArgConstr.setAccessible(true);
-                    } catch (Exception ex) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
+        return resolveNoArgsConstr() != null;
+    }
+
+    @Override
+    public boolean hasSpecialConstructor() {
+        return resolveSpecialConstr() != null;
     }
 
     @Override
     public boolean hasSessionConstructor() {
-        if (sessionConstr == null) {
-            if (javaType instanceof Class<?>) {
-                try {
-                    sessionConstr = ((Class) javaType).getDeclaredConstructor(NSession.class);
-                    sessionConstr.setAccessible(true);
-                } catch (Exception ex) {
-                    return false;
-                }
-            } else {
-                Class c2 = ReflectUtils.getRawClass(javaType);
-                if (c2 != null) {
-                    try {
-                        sessionConstr = c2.getDeclaredConstructor(NSession.class);
-                        sessionConstr.setAccessible(true);
-                    } catch (Exception ex) {
-                        return false;
-                    }
-                }
-            }
+        return resolveSessionConstr() != null;
+    }
+
+    private RuntimeException asRuntimeException(Throwable e) {
+        if (e instanceof RuntimeException) {
+            return (RuntimeException) e;
         }
-        return false;
+        if (e instanceof InstantiationException || e instanceof InvocationTargetException) {
+            Throwable c = e.getCause();
+            if (c instanceof RuntimeException) {
+                return (RuntimeException) c;
+            }
+            return new IllegalArgumentException(c);
+        }
+        return new IllegalArgumentException(e);
     }
 
     @Override
     public boolean hasWorkspaceConstructor() {
-        if (workspaceConstr == null) {
-            if (javaType instanceof Class<?>) {
-                try {
-                    workspaceConstr = ((Class) javaType).getDeclaredConstructor(NWorkspace.class);
-                    workspaceConstr.setAccessible(true);
-                } catch (Exception ex) {
-                    return false;
-                }
-            } else {
-                Class c2 = ReflectUtils.getRawClass(javaType);
-                if (c2 != null) {
-                    try {
-                        workspaceConstr = c2.getDeclaredConstructor(NWorkspace.class);
-                        workspaceConstr.setAccessible(true);
-                    } catch (Exception ex) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return false;
+        return resolveWorkspaceConstr() != null;
     }
 
     @Override
@@ -231,105 +329,10 @@ public class DefaultNReflectType implements NReflectType {
 
     @Override
     public Object newInstance() {
-        if (javaType instanceof Class<?>) {
-            try {
-                switch (getConstrType()) {
-                    case ERROR: {
-                        //resolveSessionConstr(true);
-                        resolveNoArgsConstr(true);
-                        throw new NIllegalArgumentException(NMsg.ofC("missing constructor for %s", javaType));
-                    }
-                    case WORKSPACE: {
-                        return workspaceConstr.newInstance(workspace);
-                    }
-                    case SESSION: {
-                        return sessionConstr.newInstance(workspace.currentSession());
-                    }
-                    case DEFAULT: {
-                        return noArgConstr.newInstance();
-                    }
-                }
-            } catch (InstantiationException | InvocationTargetException ex) {
-                Throwable c = ex.getCause();
-                if (c instanceof RuntimeException) {
-                    throw (RuntimeException) c;
-                }
-                throw new IllegalArgumentException(c);
-            } catch (IllegalAccessException ex) {
-                throw new IllegalArgumentException(ex);
-            }
-            throw new IllegalArgumentException("not instantiable");
-        } else {
-            NReflectType r = getRawType();
-            if (r == null) {
-                throw new IllegalArgumentException("not instantiable");
-            }
-            return r.newInstance();
+        if (getConstrType() == ConstrType.ERROR) {
+            throw new NIllegalArgumentException(NMsg.ofC("not instantiable %s", javaType));
         }
-    }
-
-    private boolean resolveNoArgsConstr(boolean required) {
-        if (noArgConstr == null) {
-            if (javaType instanceof Class<?>) {
-                try {
-                    noArgConstr = ((Class) javaType).getDeclaredConstructor();
-                    noArgConstr.setAccessible(true);
-                } catch (NoSuchMethodException ex) {
-                    if (required) {
-                        throw new IllegalArgumentException("unable to resolve default constructor fo " + javaType, ex);
-                    }
-                } catch (SecurityException ex) {
-                    if (required) {
-                        throw new IllegalArgumentException("not allowed to access default constructor for " + javaType, ex);
-                    }
-                }
-            }
-        }
-        return noArgConstr != null;
-    }
-
-    private boolean resolveSessionConstr(boolean required) {
-        if (sessionConstr == null) {
-            if (javaType instanceof Class<?>) {
-                try {
-                    sessionConstr = ((Class) javaType).getConstructor(NSession.class);
-                    sessionConstr.setAccessible(true);
-                } catch (NoSuchMethodException ex) {
-                    if (required) {
-                        throw new IllegalArgumentException("Unable to resolve default constructor fo " + javaType, ex);
-                    }
-                    return false;
-                } catch (SecurityException ex) {
-                    if (required) {
-                        throw new IllegalArgumentException("Not allowed to access default constructor for " + javaType, ex);
-                    }
-                    return false;
-                }
-            }
-        }
-        return sessionConstr != null;
-    }
-
-    private boolean resolveWorkspaceConstr(boolean required) {
-        if (workspaceConstr == null) {
-            if (javaType instanceof Class<?>) {
-                try {
-                    workspaceConstr = ((Class) javaType).getConstructor(NWorkspace.class);
-                    workspaceConstr.setAccessible(true);
-                } catch (NoSuchMethodException ex) {
-                    if (required) {
-                        throw new IllegalArgumentException("Unable to resolve default constructor fo " + javaType, ex);
-                    }
-                    return false;
-                } catch (SecurityException ex) {
-                    if (required) {
-                        throw new IllegalArgumentException("Not allowed to access default constructor for " + javaType, ex);
-                    }
-                    return false;
-                }
-            }
-        }
-        return workspaceConstr != null;
+        return constrType.supplier.get();
     }
 
     @Override
@@ -877,7 +880,7 @@ public class DefaultNReflectType implements NReflectType {
 
     @Override
     public boolean isDefaultValue(Object value) {
-        return ReflectUtils.isDefaultValue(javaType,value);
+        return ReflectUtils.isDefaultValue(javaType, value);
     }
 
     @Override

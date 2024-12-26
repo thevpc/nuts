@@ -120,7 +120,7 @@ net.thevpc.nuts.runtime.standalone.descriptor.filter.InternalNDescriptorFilters
 net.thevpc.nuts.runtime.standalone.definition.installstatus.filter.InternalNInstallStatusFilters
 net.thevpc.nuts.runtime.standalone.repository.filter.InternalNRepositoryFilters
 net.thevpc.nuts.runtime.standalone.util.filters.DefaultNFilters
-net.thevpc.nuts.runtime.standalone.util.reflect.NReflectCopyImpl
+net.thevpc.nuts.runtime.standalone.util.reflect.NReflectMapperImpl
 
 net.thevpc.nuts.runtime.standalone.dependency.solver.DefaultNDependencySolvers
 

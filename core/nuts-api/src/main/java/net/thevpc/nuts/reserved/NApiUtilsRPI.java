@@ -293,7 +293,7 @@ public class NApiUtilsRPI {
                         );
                         if (showStackTrace) {
                             session.eout().add(NElements.of().ofObject().set("errorTrace",
-                                    NElements.of().ofArray().addAll(NReservedLangUtils.stacktraceToArray(ex)).build()
+                                    NElements.of().ofArray().addAll(NStringUtils.stacktraceArray(ex)).build()
                             ).build());
                         }
                         NArrayElementBuilder e = session.eout();
@@ -309,7 +309,7 @@ public class NApiUtilsRPI {
                                 .build());
                         if (showStackTrace) {
                             session.eout().add(NElements.of().ofObject().set("errorTrace",
-                                    NElements.of().ofArray().addAll(NReservedLangUtils.stacktraceToArray(ex)).build()
+                                    NElements.of().ofArray().addAll(NStringUtils.stacktraceArray(ex)).build()
                             ).build());
                         }
                         NArrayElementBuilder e = session.eout();
@@ -335,7 +335,7 @@ public class NApiUtilsRPI {
                     out.with().level(Level.OFF).verb(NLogVerb.FAIL).log(NMsg.ofPlain(">  STACKTRACE :"));
                     out.with().level(Level.OFF).verb(NLogVerb.FAIL).log(NMsg.ofPlain("---------------"));
                     out.with().level(Level.OFF).verb(NLogVerb.FAIL).log(NMsg.ofPlain(
-                            NReservedLangUtils.stacktrace(ex)
+                            NStringUtils.stacktrace(ex)
                     ));
                 }
             }
@@ -354,7 +354,7 @@ public class NApiUtilsRPI {
             if (showStackTrace) {
                 if (sb.length() > 0) {
                     sb.append("\n");
-                    sb.append(NReservedLangUtils.stacktrace(ex));
+                    sb.append(NStringUtils.stacktrace(ex));
                 }
             }
             if (session != null) {

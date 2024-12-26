@@ -72,6 +72,7 @@ public interface NReflectType {
     boolean isAssignableFrom(NReflectType type);
 
     boolean hasNoArgsConstructor();
+    boolean hasSpecialConstructor();
 
     boolean hasSessionConstructor();
 
@@ -80,7 +81,6 @@ public interface NReflectType {
     NReflectType getRawType();
 
     Object newInstance();
-
 
     boolean isArrayType();
 
@@ -93,5 +93,8 @@ public interface NReflectType {
     NOptional<NReflectType> getPrimitiveType() ;
 
     Object getDefaultValue();
+
     boolean isDefaultValue(Object value);
+
+    NOptional<Class<?>> asJavaClass();
 }

@@ -1,11 +1,9 @@
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.format.NFormat;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NMsg;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.Writer;
@@ -14,7 +12,7 @@ import java.util.Date;
 
 public class NullNPrintStream implements NPrintStream {
 
-    public static NPrintStream NULL_NPRINTSTREAM=new NullNPrintStream();
+    public static NPrintStream INSTANCE =new NullNPrintStream();
 
     private NullNPrintStream() {
     }

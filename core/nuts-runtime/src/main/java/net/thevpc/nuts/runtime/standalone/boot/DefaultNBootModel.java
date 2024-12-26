@@ -96,7 +96,7 @@ public class DefaultNBootModel implements NBootModel {
         DefaultSystemTerminal sys = new DefaultSystemTerminal(workspace, new DefaultNSystemTerminalBaseBoot(this));
         this.systemTerminal = new NSystemTerminalRef(getWorkspace(), NutsSystemTerminal_of_NutsSystemTerminalBase(sys));
         this.bootSession.setTerminal(new DefaultNTerminalFromSystem(workspace, this.systemTerminal));
-        this.nullOut = NullNPrintStream.NULL_NPRINTSTREAM;
+        this.nullOut = NullNPrintStream.INSTANCE;
         this.nullOutputStream = NullOutputStream.INSTANCE;
     }
 

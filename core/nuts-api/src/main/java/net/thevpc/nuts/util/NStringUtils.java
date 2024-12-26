@@ -31,6 +31,10 @@ import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.reserved.NReservedUtils;
 
+import java.io.BufferedReader;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.text.Normalizer;
 import java.util.*;
 import java.util.function.Function;
@@ -585,7 +589,7 @@ public class NStringUtils {
      *     // result is abbad
      * </pre>
      *
-     * @param text text to replace the placeholders in
+     * @param text   text to replace the placeholders in
      * @param regexp regular expression of the placeholder. The regexp MUST define the 'var' group
      * @param mapper mapper function that replaces each placeholder. When it returns null, no changes are made
      * @return text with all placeholders replaces with values from <code>mapper</code>
@@ -602,10 +606,10 @@ public class NStringUtils {
      *     // result is abbad
      * </pre>
      *
-     * @param text text to replace the placeholders in
-     * @param regexp regular expression of the placeholder. The regexp MUST define the varName
+     * @param text    text to replace the placeholders in
+     * @param regexp  regular expression of the placeholder. The regexp MUST define the varName
      * @param varName the varName in the regex, defaults to <code>NMsgVarTextParser.DEFAULT_VAR_NAME</code> aka <code>"var"</code>
-     * @param mapper mapper function that replaces each placeholder. When it returns null, no changes are made
+     * @param mapper  mapper function that replaces each placeholder. When it returns null, no changes are made
      * @return text with all placeholders replaces with values from <code>mapper</code>
      */
     public static String replacePlaceholder(String text, String regexp, String varName, Function<String, String> mapper) {
@@ -620,10 +624,10 @@ public class NStringUtils {
      *     // result is abbad
      * </pre>
      *
-     * @param text text to replace the placeholders in
-     * @param regexp regular expression of the placeholder. The regexp MUST define the varName
+     * @param text    text to replace the placeholders in
+     * @param regexp  regular expression of the placeholder. The regexp MUST define the varName
      * @param varName the varName in the regex, defaults to <code>NMsgVarTextParser.DEFAULT_VAR_NAME</code> aka <code>"var"</code>
-     * @param mapper mapper function that replaces each placeholder. When it returns null, no changes are made
+     * @param mapper  mapper function that replaces each placeholder. When it returns null, no changes are made
      * @return text with all placeholders replaces with values from <code>mapper</code>
      */
     public static String replacePlaceholder(String text, Pattern regexp, String varName, Function<String, String> mapper) {
@@ -651,7 +655,7 @@ public class NStringUtils {
 //        matcher.appendTail(sb);
 //        return sb.toString();
 
-        return parsePlaceHolder(text,regexp,varName)
+        return parsePlaceHolder(text, regexp, varName)
                 .map(t -> {
                     switch (t.ttype) {
                         case NToken.TT_VAR: {
@@ -852,9 +856,71 @@ public class NStringUtils {
     }
 
     public static String toStringOrEmpty(Object any) {
-        if(any==null) {
+        if (any == null) {
             return "";
         }
         return any.toString();
+    }
+
+    public static String[] stacktraceArray(Throwable th) {
+        try {
+            StringWriter sw = new StringWriter();
+            try (PrintWriter pw = new PrintWriter(sw)) {
+                th.printStackTrace(pw);
+            }
+            BufferedReader br = new BufferedReader(new StringReader(sw.toString()));
+            List<String> s = new ArrayList<>();
+            String line;
+            while ((line = br.readLine()) != null) {
+                s.add(line);
+            }
+            return s.toArray(new String[0]);
+        } catch (Exception ex) {
+            // ignore
+        }
+        return new String[0];
+    }
+
+    public static String stacktrace(Throwable th) {
+        try {
+            StringWriter sw = new StringWriter();
+            try (PrintWriter pw = new PrintWriter(sw)) {
+                th.printStackTrace(pw);
+            }
+            return sw.toString();
+        } catch (Exception ex) {
+            // ignore
+        }
+        return "";
+    }
+
+    public static int lastIndexOf(String string, char[] chars) {
+        if (string == null || chars == null || chars.length == 0) {
+            return -1;
+        }
+        char[] value = string.toCharArray();
+        for (int i = value.length - 1; i >= 0; i--) {
+            for (char aChar : chars) {
+                if (value[i] == aChar) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    public static int indexOf(String string, char[] chars) {
+        if (string == null || chars == null || chars.length == 0) {
+            return -1;
+        }
+        char[] value = string.toCharArray();
+        for (int i = 0; i < value.length; i++) {
+            for (char aChar : chars) {
+                if (value[i] == aChar) {
+                    return i;
+                }
+            }
+        }
+        return -1;
     }
 }

@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Simple reference implementation of Null (do nothing) Inputstream
+ * Simple reference implementation of Null (do nothing) InputStream
  *
  * @author thevpc
  */

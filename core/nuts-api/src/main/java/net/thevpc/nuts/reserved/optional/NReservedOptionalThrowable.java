@@ -1,10 +1,10 @@
 package net.thevpc.nuts.reserved.optional;
 
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
-import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.util.NMsg;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.util.NOptionalErrorException;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.function.Supplier;
 
@@ -48,8 +48,8 @@ public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImp
     protected NMsg prepareMessage(NMsg m) {
         if (DEBUG) {
             return NMsg.ofC("%s.\n    call stack:\n%s\n    root stack:\n%s", m,
-                    NReservedLangUtils.stacktrace(new Throwable()),
-                    NReservedLangUtils.stacktrace(rootStack)
+                    NStringUtils.stacktrace(new Throwable()),
+                    NStringUtils.stacktrace(rootStack)
             );
         }
         if (m == null) {

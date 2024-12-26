@@ -31,7 +31,6 @@ import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.log.NLogConfig;
 import net.thevpc.nuts.log.NLogUtils;
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
-import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.reserved.NReservedUtils;
 import net.thevpc.nuts.util.*;
 
@@ -673,7 +672,7 @@ public final class NWorkspaceCmdLineParser {
                         if (active) {
                             if (options != null) {
                                 String t = a.getStringValue().orElse("");
-                                int i = NReservedLangUtils.firstIndexOf(t, new char[]{' ', ';', ':', '='});
+                                int i = NStringUtils.indexOf(t, new char[]{' ', ';', ':', '='});
                                 if (i > 0) {
                                     options.setOutputFormat(NContentType.valueOf(t.substring(0, i).toUpperCase()));
                                     options.addOutputFormatOptions(t.substring(i + 1).toUpperCase());
