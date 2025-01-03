@@ -6,7 +6,6 @@
 package net.thevpc.nuts.runtime.standalone.id.filter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.runtime.standalone.descriptor.filter.AbstractDescriptorFilter;
 import net.thevpc.nuts.util.NFilterOp;
 
@@ -27,7 +26,7 @@ public class NExecExtensionFilter extends AbstractDescriptorFilter {
             return false;
         }
         for (NDependency dependency : other.getDependencies()) {
-            if(dependency.toId().getShortName().equals(NConstants.Ids.NUTS_API)){
+            if(dependency.toId().getShortName().equals(this.apiId.getShortName())){
                 if(apiId==null){
                     return true;
                 }

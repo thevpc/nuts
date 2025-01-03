@@ -87,11 +87,11 @@ public class URLBuilder {
     public URL toURL() {
         try {
             if (prefix != null) {
-                return new URL(prefix + base + (query == null ? "" : ("?" + query)));
+                return CoreIOUtils.urlOf(prefix + base + (query == null ? "" : ("?" + query)));
             } else {
                 return new File(base).toURI().toURL();
             }
-        } catch (MalformedURLException ex) {
+        } catch (Exception ex) {
             throw new IllegalArgumentException(ex);
         }
     }

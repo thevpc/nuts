@@ -29,6 +29,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.contenttype;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.format.NVisitResult;
+import net.thevpc.nuts.io.NPathExtensionType;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.spi.NComponentScope;
@@ -86,13 +87,13 @@ public class DefaultNContentTypeResolver implements NContentTypeResolver {
                     //ignore
                 }
                 if (contentType == null || "text/plain".equals(contentType)) {
-                    String e = NPath.of(Paths.get(name)).getLastExtension();
+                    String e = NPath.of(Paths.get(name)).getNameParts(NPathExtensionType.SHORT).getExtension();
                     if (e != null && e.equalsIgnoreCase("ntf")) {
                         return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT + 10, "text/x-nuts-text-format");
                     }
                 }
                 if (contentType == null || "text/plain".equals(contentType)) {
-                    String e = NPath.of(Paths.get(name)).getLastExtension();
+                    String e = NPath.of(Paths.get(name)).getNameParts(NPathExtensionType.SHORT).getExtension();
                     if (e != null && e.equalsIgnoreCase("nuts")) {
                         return NCallableSupport.of(NConstants.Support.DEFAULT_SUPPORT + 10, "application/json");
                     }

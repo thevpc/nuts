@@ -1,6 +1,5 @@
 package net.thevpc.nuts.installer;
 
-import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import net.thevpc.nuts.installer.panels.*;
 import net.thevpc.nuts.installer.util.UIHelper;
@@ -9,7 +8,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;

@@ -1,5 +1,7 @@
 package net.thevpc.nuts.toolbox.noapi.util;
 
+import net.thevpc.nuts.io.NPathExtensionType;
+import net.thevpc.nuts.io.NPathNameParts;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.util.NMsg;
@@ -12,7 +14,6 @@ import net.thevpc.nuts.lib.md.MdFactory;
 import net.thevpc.nuts.lib.md.MdWriter;
 import net.thevpc.nuts.lib.md.asciidoctor.AsciiDoctorWriter;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.noapi.model.FieldInfo;
 import net.thevpc.nuts.toolbox.noapi.model.SupportedTargetType;
 import net.thevpc.nuts.toolbox.noapi.model.TypeInfo;
@@ -230,9 +231,10 @@ public class NoApiUtils {
             parent = sourcePath.getParent();
         }
         if (NBlankable.isBlank(target) || target.getName().equals(".pdf") || target.getName().equals(".adoc") || target.getName().equals(".json")) {
-            target = parent.resolve(sourcePath.getSmartBaseName()
+            NPathNameParts smartParts = sourcePath.getNameParts(NPathExtensionType.SMART);
+            target = parent.resolve(smartParts.getBaseName()
                     + (NBlankable.isBlank(version)?"":("-" + version))
-                    + "." + sourcePath.getSmartExtension());
+                    + "." + smartParts.getExtension());
         }
         return NoApiUtils.addExtension(target, e, session);
     }
@@ -240,7 +242,7 @@ public class NoApiUtils {
     public static NPath addExtension(NPath source, String ext, NSession session) {
         NPath path = source.normalize().toAbsolute();
         String n = path.getName();
-        n = NPath.of(n).getSmartBaseName() + "." + ext;
+        n = NPath.of(n).getNameParts(NPathExtensionType.SMART).getBaseName() + "." + ext;
         return path.getParent().resolve(n);
     }
 

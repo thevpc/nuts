@@ -75,7 +75,7 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
         String finalNutsAppVersion = nutsAppVersion;
         Object finalNutsApp = nutsApp;
         return sessionCopy.callWith(() -> {
-            NApp.of().prepare(new NAppInitInfo(joptions.getAppArgs().toArray(new String[0]), cls, null, now));
+            NApp.of().prepare(new NAppInitInfo(joptions.getAppArgs().toArray(new String[0]), cls, now));
             try {
                 if (finalNutsAppVersion != null && finalNutsApp != null) {
                     //NutsWorkspace

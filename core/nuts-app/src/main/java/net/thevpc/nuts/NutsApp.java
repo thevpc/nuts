@@ -27,6 +27,7 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.NBootArguments;
 import net.thevpc.nuts.boot.NBootException;
 import net.thevpc.nuts.boot.NBootWorkspace;
+import net.thevpc.nuts.boot.NBootWorkspaceImpl;
 import net.thevpc.nuts.reserved.NApiUtilsRPI;
 
 import java.time.Instant;
@@ -56,7 +57,7 @@ public final class NutsApp {
             NBootArguments options = new NBootArguments();
             options.setArgs(args);
             options.setStartTime(startTime);
-            new NBootWorkspace(options).runWorkspace();
+            NBootWorkspace.of(options).runWorkspace();
             System.exit(0);
         } catch (NBootException ex) {
             throw ex;

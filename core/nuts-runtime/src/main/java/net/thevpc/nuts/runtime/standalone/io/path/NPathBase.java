@@ -20,6 +20,7 @@ import java.nio.charset.CharsetDecoder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
 import net.thevpc.nuts.util.NAssert;
 
 public abstract class NPathBase extends AbstractMultiReadNInputSource implements NPath {
@@ -220,20 +221,45 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
     }
 
     @Override
-    public String getBaseName() {
-        String n = getName();
-        int i = n.indexOf('.');
-        if (i < 0) {
-            return n;
-        }
-        if (i == n.length() - 1) {
-            return n;
-        }
-        return n.substring(0, i);
+    public NPathNameParts getNameParts() {
+        return getNameParts(NPathExtensionType.LONG);
     }
 
-    public String[] getSmartParts() {
+    @Override
+    public NPathNameParts getNameParts(NPathExtensionType type) {
+        if (type == null) {
+            type = NPathExtensionType.SHORT;
+        }
+        switch (type) {
+            case SMART: {
+                return getSmartFileNameParts();
+            }
+            case LONG: {
+                String n = getName();
+                int i = n.indexOf('.');
+                if (i < 0) {
+                    return new NPathNameParts(n, "", "", NPathExtensionType.LONG);
+                }
+                return new NPathNameParts(n.substring(0, i), n.substring(i + 1), n.substring(i), NPathExtensionType.LONG);
+            }
+            case SHORT: {
+                String n = getName();
+                int i = n.lastIndexOf('.');
+                if (i < 0) {
+                    return new NPathNameParts(n, "", "", NPathExtensionType.SHORT);
+                }
+                return new NPathNameParts(n.substring(0, i), n.substring(i + 1), n.substring(i), NPathExtensionType.SHORT);
+            }
+        }
+        throw new NUnexpectedException(NMsg.ofC("%s not supported", type));
+    }
+
+    public NPathNameParts getSmartFileNameParts() {
         String n = getName();
+        int li = n.indexOf('.');
+        if (li < 0) {
+            return new NPathNameParts(n, "", "", NPathExtensionType.SMART);
+        }
         NLiteral[] vals = NVersion.get(n).get().split();
         int lastDot = -1;
         for (int i = vals.length - 1; i >= 0; i--) {
@@ -264,15 +290,21 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
             }
         }
         if (lastDot < 0) {
-            return new String[]{n, ""};
+            return new NPathNameParts(n, "", ".", NPathExtensionType.SMART);
         }
         return rebuildSmartParts(vals, lastDot);
     }
 
-    private String[] rebuildSmartParts(NLiteral[] vals, int split) {
-        return new String[]{
-            concatSmartParts(vals, 0, split),
-            concatSmartParts(vals, split + 1, vals.length),};
+    private NPathNameParts rebuildSmartParts(NLiteral[] vals, int split) {
+        String fe = concatSmartParts(vals, split + 1, vals.length);
+        String e = fe.startsWith(".")?fe.substring(1):fe;
+
+        return new NPathNameParts(
+                concatSmartParts(vals, 0, split),
+                e,
+                fe,
+                NPathExtensionType.SMART
+        );
     }
 
     private String concatSmartParts(NLiteral[] vals, int from, int to) {
@@ -281,49 +313,6 @@ public abstract class NPathBase extends AbstractMultiReadNInputSource implements
             sb.append(vals[i].asString().get());
         }
         return sb.toString();
-    }
-
-    @Override
-    public String getSmartBaseName() {
-        return getSmartParts()[0];
-    }
-
-    @Override
-    public String getSmartExtension() {
-        return getSmartParts()[1];
-    }
-
-    @Override
-    public String getLongBaseName() {
-        String n = getName();
-        int i = n.lastIndexOf('.');
-        if (i < 0) {
-            return n;
-        }
-        if (i == n.length() - 1) {
-            return n;
-        }
-        return n.substring(0, i);
-    }
-
-    @Override
-    public String getLastExtension() {
-        String n = getName();
-        int i = n.lastIndexOf('.');
-        if (i < 0) {
-            return "";
-        }
-        return n.substring(i + 1);
-    }
-
-    @Override
-    public String getLongExtension() {
-        String n = getName();
-        int i = n.indexOf('.');
-        if (i < 0) {
-            return "";
-        }
-        return n.substring(i + 1);
     }
 
     @Override

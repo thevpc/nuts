@@ -523,7 +523,7 @@ public class URLPath implements NPathSPI {
             if (ppath == null) {
                 return null;
             }
-            URL url = new URL(
+            URL url = CoreIOUtils.urlOf(
                     new NPathParts(NPathParts.Type.URL,
                             this.url.getProtocol(),
                             this.url.getAuthority(),
@@ -533,7 +533,7 @@ public class URLPath implements NPathSPI {
                     ).toString()
             );
             return NPath.of(url);
-        } catch (IOException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -859,7 +859,7 @@ public class URLPath implements NPathSPI {
                 if (path != null && path.length() > 0) {
                     char s = path.charAt(0);
                     if (Character.isAlphabetic(s)) {
-                        URL url = new URL(path);
+                        URL url = CoreIOUtils.urlOf(path);
                         return NCallableSupport.of(5, () -> new URLPath(url, workspace));
                     }
                 }
@@ -878,9 +878,9 @@ public class URLPath implements NPathSPI {
                     char s = path.charAt(0);
                     if (Character.isAlphabetic(s)) {
                         try {
-                            URL url = new URL(path);
+                            URL url = CoreIOUtils.urlOf(path);
                             return 5;
-                        } catch (MalformedURLException e) {
+                        } catch (Exception e) {
                             //
                         }
                     }

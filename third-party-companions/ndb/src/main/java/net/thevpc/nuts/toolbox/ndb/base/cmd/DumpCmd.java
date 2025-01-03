@@ -160,7 +160,7 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
                         .setValue(NPath.ofUserDirectory().resolve(options.getDatabaseName() + "#.zip"))
                         .setNtf(false)
                         .format().filteredText());
-                simpleName = zipPath.getBaseName();
+                simpleName = zipPath.getNameParts().getBaseName();
                 plainFolderPath = zipPath.resolve(simpleName + dumpExt);
             } else {
                 simpleName = options.getDatabaseName() + "-" + new SimpleDateFormat("yyyyMMddHHmmssSSSSSS").format(new Date());
@@ -178,7 +178,7 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
                         .setNtf(false)
                         .format().filteredText());
 
-                simpleName = zipPath.getBaseName();
+                simpleName = zipPath.getNameParts().getBaseName();
                 plainFolderPath = zipPath.resolve(simpleName + dumpExt);
 
             } else {
@@ -190,7 +190,7 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
             zip = true;
         } else {
             NPath nFile = file.get();
-            simpleName = nFile.getBaseName();
+            simpleName = nFile.getNameParts().getBaseName();
             if (nFile.getName().toLowerCase().endsWith(".zip")) {
                 if (roll.get() > 0) {
                     zipPath=NPath.of(NObjectFormat.of()
@@ -212,7 +212,7 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
                             .setValue(nFile)
                             .setNtf(false)
                             .format().filteredText());
-                    zipPath = plainFolderPath.resolveSibling(plainFolderPath.getBaseName() + ".zip");
+                    zipPath = plainFolderPath.resolveSibling(plainFolderPath.getNameParts().getBaseName() + ".zip");
                 } else {
                     plainFolderPath = nFile;
                     zipPath = plainFolderPath.resolveSibling(simpleName + ".zip");
@@ -237,7 +237,7 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
             }
         }
         if (isRemoteCommand(options)) {
-            String simpleName0 = zipPath.getBaseName();
+            String simpleName0 = zipPath.getNameParts().getBaseName();
             NPath remoteTempFolder = getSupport().getRemoteTempFolder(options);
             NPath remotePlainFolder = remoteTempFolder.resolve(simpleName0 + dumpExt);
             NPath remoteZip = remoteTempFolder.resolve(simpleName0 + ".zip");

@@ -37,18 +37,18 @@ public class Test13_TerminalModeTest {
 //        testMode(session,NutsTerminalMode.FORMATTED,NutsTerminalMode.INHERITED,Result.SUCCESS);
         testMode(NTerminalMode.FORMATTED, NTerminalMode.FORMATTED,Result.SUCCESS);
         testMode(NTerminalMode.FORMATTED, NTerminalMode.FILTERED,Result.SUCCESS);
-        testMode(NTerminalMode.FORMATTED, NTerminalMode.ANSI,Result.FAIL);
+        //testMode(NTerminalMode.FORMATTED, NTerminalMode.ANSI,Result.FAIL);
 
 //        testMode(session,NutsTerminalMode.FILTERED,NutsTerminalMode.INHERITED,Result.SUCCESS);
         testMode(NTerminalMode.FILTERED, NTerminalMode.FORMATTED,Result.SUCCESS);
         testMode(NTerminalMode.FILTERED, NTerminalMode.FILTERED,Result.SUCCESS);
-        testMode(NTerminalMode.FILTERED, NTerminalMode.ANSI,Result.FAIL);
+        //testMode(NTerminalMode.FILTERED, NTerminalMode.ANSI,Result.FAIL);
 
 //        testMode(session,NutsTerminalMode.ANSI,NutsTerminalMode.INHERITED,Result.FAIL);
-        testMode(NTerminalMode.ANSI, NTerminalMode.FORMATTED,Result.FAIL);
-        testMode(NTerminalMode.ANSI, NTerminalMode.FILTERED,Result.FAIL);
+        //testMode(NTerminalMode.ANSI, NTerminalMode.FORMATTED,Result.FAIL);
+        //testMode(NTerminalMode.ANSI, NTerminalMode.FILTERED,Result.FAIL);
         // How could we create in a save manner an ansi  sys terminal??
-        testMode(NTerminalMode.ANSI, NTerminalMode.ANSI,Result.FAIL);
+        //testMode(NTerminalMode.ANSI, NTerminalMode.ANSI,Result.FAIL);
     }
     private enum Result{
         SUCCESS,

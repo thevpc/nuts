@@ -24,10 +24,8 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.boot.reserved.util.NBootAssert;
 import net.thevpc.nuts.boot.reserved.util.NBootMsg;
 import net.thevpc.nuts.boot.reserved.util.NBootRepositoryDB;
-import net.thevpc.nuts.boot.reserved.util.NBootStringUtils;
 import net.thevpc.nuts.boot.reserved.util.NBootUtils;
 
 /**
@@ -43,7 +41,7 @@ public class NBootRepositorySelector {
     }
 
     public static NBootRepositorySelector of(String op, String location, NBootRepositoryDB db) {
-        location = NBootStringUtils.trim(location);
+        location = NBootUtils.trim(location);
         op = parseSelectorOp(op);
         if (location.length() > 0) {
             if (location.startsWith("+")) {
@@ -91,8 +89,8 @@ public class NBootRepositorySelector {
     }
 
     public NBootRepositorySelector(String op, NBootRepositoryLocation location) {
-        NBootAssert.requireNonNull(op, "operator");
-        NBootAssert.requireNonNull(location, "location");
+        NBootUtils.requireNonNull(op, "operator");
+        NBootUtils.requireNonNull(location, "location");
         this.op = parseSelectorOp(op);
         this.location = location;
     }
@@ -128,6 +126,10 @@ public class NBootRepositorySelector {
 
     public String getUrl() {
         return location.getFullLocation();
+    }
+
+    public NBootRepositoryLocation getLocation() {
+        return location;
     }
 
     public boolean matches(NBootRepositoryLocation other) {

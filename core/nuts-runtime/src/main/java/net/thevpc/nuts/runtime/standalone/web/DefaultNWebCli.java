@@ -5,6 +5,7 @@ import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NInputSourceBuilder;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NScopeType;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -179,7 +180,7 @@ public class DefaultNWebCli implements NWebCli {
         String spec = null;
         try {
             spec = formatURL(r, false);
-            URL h = new URL(spec);
+            URL h = CoreIOUtils.urlOf(spec);
             HttpURLConnection uc = null;
             try {
                 uc = (HttpURLConnection) h.openConnection();
@@ -278,10 +279,10 @@ public class DefaultNWebCli implements NWebCli {
             }
         } catch (SocketTimeoutException ex) {
             throw new UncheckedIOException("timed out loading " + spec + " (" + ex.getMessage() + ")", ex);
-        } catch (InterruptedByTimeoutException ex) {
+        } catch (InterruptedByTimeoutException | InterruptedIOException ex) {
             throw new UncheckedIOException("interrupt loading " + spec + " (" + ex.getMessage() + ")", ex);
-        } catch (InterruptedIOException ex) {
-            throw new UncheckedIOException("interrupt loading " + spec + " (" + ex.getMessage() + ")", ex);
+        } catch (UncheckedIOException ex) {
+            throw new UncheckedIOException(new IOException("error loading " + spec + " (" + ex.getMessage() + ")"));
         } catch (IOException ex) {
             throw new UncheckedIOException("error loading " + spec + " (" + ex.getMessage() + ")", ex);
         }

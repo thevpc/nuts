@@ -31,7 +31,7 @@ public class NExecRuntimeFilter extends AbstractDescriptorFilter {
                 return true;
             }
             for (NDependency dependency : other.getDependencies()) {
-                if (dependency.toId().getShortName().equals(NConstants.Ids.NUTS_API)) {
+                if (dependency.toId().getShortName().equals(this.apiId.getShortName())) {
                     if (apiId.getVersion().equals(dependency.toId().getVersion())) {
                         return true;
                     }
@@ -44,7 +44,7 @@ public class NExecRuntimeFilter extends AbstractDescriptorFilter {
                 return false;
             }
             for (NDependency dependency : other.getDependencies()) {
-                if (dependency.toId().getShortName().equals(NConstants.Ids.NUTS_API)) {
+                if (dependency.toId().getShortName().equals(this.apiId.getShortName())) {
                     if (apiId == null) {
                         return true;
                     }

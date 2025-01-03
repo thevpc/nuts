@@ -27,7 +27,6 @@ package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.boot.reserved.util.NBootPlatformHome;
 import net.thevpc.nuts.boot.reserved.util.NBootUtils;
-import net.thevpc.nuts.boot.reserved.util.NBootStringUtils;
 
 import java.io.Serializable;
 import java.util.*;
@@ -302,7 +301,7 @@ public class NBootEnvCondition implements Serializable {
 
     
     public NBootEnvCondition addProperty(String key, String value) {
-        key= NBootStringUtils.trimToNull(key);
+        key= NBootUtils.trimToNull(key);
         if(key!=null) {
             if (this.properties == null) {
                 this.properties = new HashMap<>();

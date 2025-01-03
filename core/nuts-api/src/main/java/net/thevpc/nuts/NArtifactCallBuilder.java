@@ -32,7 +32,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * NutsArtifactCallBuilder is responsible of building instances of {@code NutsArtifactCall} to be used
+ * NutsArtifactCallBuilder is responsible for building instances of {@code NutsArtifactCall} to be used
  * as NutsDescriptor executor or installer.
  * To get an instance of NutsArtifactCallBuilder you can use {@code workspace.descriptor().callBuilder()}
  *
@@ -40,6 +40,12 @@ import java.util.List;
  * @since 0.5.4
  */
 public interface NArtifactCallBuilder extends Serializable, NComponent {
+
+    /**
+     * Creates a new instance of {@code NArtifactCallBuilder}.
+     *
+     * @return a new instance of {@code NArtifactCallBuilder}.
+     */
     static NArtifactCallBuilder of() {
        return NExtensions.of(NArtifactCallBuilder.class);
     }
@@ -74,6 +80,12 @@ public interface NArtifactCallBuilder extends Serializable, NComponent {
      */
     NArtifactCallBuilder setArguments(String... value);
 
+    /**
+     * Updates the call arguments with the provided list of values.
+     *
+     * @param value the list of arguments to set
+     * @return {@code this} instance
+     */
     NArtifactCallBuilder setArguments(List<String> value);
 
     /**

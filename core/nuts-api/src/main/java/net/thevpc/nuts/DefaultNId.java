@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.reserved.util.NBootStringUtils;
+import net.thevpc.nuts.boot.reserved.util.NBootUtils;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.reserved.NReservedUtils;
 import net.thevpc.nuts.util.NBlankable;
@@ -101,7 +101,7 @@ public class DefaultNId implements NId {
     public String getMavenFolder() {
         StringBuilder sb = new StringBuilder();
         sb.append(String.join("/", NStringUtils.split(groupId, "./\\", true, true)));
-        if (!NBootStringUtils.isBlank(artifactId)) {
+        if (!NBootUtils.isBlank(artifactId)) {
             if (sb.length() > 0) {
                 sb.append("/");
             }

@@ -163,7 +163,7 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
         }
         return new BootAPINDescriptorFilter(
                 getWorkspace(),
-                NId.get(NConstants.Ids.NUTS_API).get().builder().setVersion(apiVersion).build().getVersion()
+                apiVersion
         );
     }
 

@@ -51,8 +51,8 @@ public class Test23_PerfTest {
             TestUtils.openNewTestWorkspace("-Zy","--verbose","-P=%n","version");
         }
         long end = System.currentTimeMillis();
-        TestUtils.println("time: " + (end - start) + "ms");
-        TestUtils.println(" avg: " + ((end - start)/nbr) + "ms");
+        TestUtils.println("testPerf time: " + (end - start) + "ms");
+        TestUtils.println("testPerf  avg: " + ((end - start)/nbr) + "ms");
         Assertions.assertTrue(true);
     }
 
@@ -67,8 +67,8 @@ public class Test23_PerfTest {
             TestUtils.openNewTestWorkspace("-Zy","--verbose","-P=%n","-r=-maven-central","version");
         }
         long end = System.currentTimeMillis();
-        TestUtils.println("time: " + (end - start) + "ms");
-        TestUtils.println(" avg: " + ((end - start)/nbr) + "ms");
+        TestUtils.println("testPerfLocal time: " + (end - start) + "ms");
+        TestUtils.println("testPerfLocal  avg: " + ((end - start)/nbr) + "ms");
         Assertions.assertTrue(true);
     }
 
@@ -82,8 +82,8 @@ public class Test23_PerfTest {
             TestUtils.openNewTestWorkspace("-Zy","--verbose","-P=%n","-r=-maven-central,-system","version");
         }
         long end = System.currentTimeMillis();
-        TestUtils.println("time: " + (end - start) + "ms");
-        TestUtils.println(" avg: " + ((end - start)/nbr) + "ms");
+        TestUtils.println("testPerfLocalNoSystem time: " + (end - start) + "ms");
+        TestUtils.println("testPerfLocalNoSystem  avg: " + ((end - start)/nbr) + "ms");
         Assertions.assertTrue(true);
     }
 

@@ -27,7 +27,6 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.boot.reserved.util.NBootUtils;
-import net.thevpc.nuts.boot.reserved.util.NBootStringUtils;
 
 import java.util.*;
 import java.util.function.Function;
@@ -98,7 +97,7 @@ public class NBootDescriptor {
 
 
     public NBootDescriptor setPackaging(String packaging) {
-        this.packaging = NBootStringUtils.trim(packaging);
+        this.packaging = NBootUtils.trim(packaging);
         return this;
     }
 
@@ -109,7 +108,7 @@ public class NBootDescriptor {
 
 
     public NBootDescriptor setName(String name) {
-        this.name = NBootStringUtils.trim(name);
+        this.name = NBootUtils.trim(name);
         return this;
     }
 
@@ -131,7 +130,7 @@ public class NBootDescriptor {
 
 
     public NBootDescriptor setDescription(String description) {
-        this.description = NBootStringUtils.trim(description);
+        this.description = NBootUtils.trim(description);
         return this;
     }
 
@@ -408,7 +407,7 @@ public class NBootDescriptor {
         if (id!=null && !id.isBlank()) {
             return false;
         }
-        if (!NBootStringUtils.isBlank(packaging)) {
+        if (!NBootUtils.isBlank(packaging)) {
             return false;
         }
         if (parents != null) {
@@ -419,11 +418,11 @@ public class NBootDescriptor {
             }
         }
 
-        if (!NBootStringUtils.isBlank(description)) {
+        if (!NBootUtils.isBlank(description)) {
             return false;
         }
 
-        if (!NBootStringUtils.isBlank(name)) {
+        if (!NBootUtils.isBlank(name)) {
             return false;
         }
 

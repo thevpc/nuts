@@ -3,6 +3,7 @@ package net.thevpc.nuts.toolbox.ndb.base.cmd;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NExecInput;
+import net.thevpc.nuts.io.NPathExtensionType;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;
@@ -100,7 +101,7 @@ public class RestoreCmd<C extends NdbConfig> extends NdbCmd<C> {
                     }
                     case FOLDER: {
                         if (/*file.get().isFile() && */file.get().getName().toLowerCase().endsWith(".zip")) {
-                            NPath unzippedFolder = file.get().resolveSibling(file.get().getLongBaseName());
+                            NPath unzippedFolder = file.get().resolveSibling(file.get().getNameParts(NPathExtensionType.SHORT).getBaseName());
                             NExecCmd zipExec = sysSsh(options)
                                     .addCommand("unzip")
                                     .addCommand("-q")
@@ -157,7 +158,7 @@ public class RestoreCmd<C extends NdbConfig> extends NdbCmd<C> {
                     case FOLDER: {
                         if (/*file.get().isFile() && */file.get().getName().toLowerCase().endsWith(".zip")) {
                             NPath zipPath = file.get();
-                            NPath unzippedFolder = file.get().resolveSibling(file.get().getLongBaseName());
+                            NPath unzippedFolder = file.get().resolveSibling(file.get().getNameParts(NPathExtensionType.SHORT).getBaseName());
                             NSession session = NSession.get().get();
                             NExecCmd zipExec = sysCmd()
                                     .addCommand("unzip")

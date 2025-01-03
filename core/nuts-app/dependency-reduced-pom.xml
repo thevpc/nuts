@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.thevpc.nuts</groupId>
-  <artifactId>nuts</artifactId>
+  <artifactId>nuts-app</artifactId>
   <name>Nuts Community Core API</name>
   <version>0.8.5</version>
   <description>Nuts Package Manager Bootstrap</description>
@@ -310,12 +310,12 @@
     </snapshotRepository>
   </distributionManagement>
   <properties>
+    <nuts.categories>/Settings/PackageManager/Nuts</nuts.categories>
+    <github.global.server>github</github.global.server>
     <nuts.api>true</nuts.api>
     <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <nuts.categories>/Settings/PackageManager/Nuts</nuts.categories>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.target>1.8</maven.compiler.target>
     <nuts.genericName>Package Manager</nuts.genericName>
-    <github.global.server>github</github.global.server>
   </properties>
 </project>

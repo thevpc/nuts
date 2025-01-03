@@ -7,6 +7,7 @@ import net.thevpc.nuts.runtime.standalone.util.CoreTimeUtils;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.log.NLogRecord;
 import net.thevpc.nuts.util.NMsg;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.time.Instant;
 import java.util.logging.Formatter;
@@ -156,7 +157,7 @@ public class NLogRichFormatter extends Formatter {
         if (wRecord.getThrown() != null) {
             sb.append(
                     NText.ofPlain(
-                            NLogUtils.stacktrace(wRecord.getThrown())
+                            NStringUtils.stacktrace(wRecord.getThrown())
                     ).toString()
             );
         }

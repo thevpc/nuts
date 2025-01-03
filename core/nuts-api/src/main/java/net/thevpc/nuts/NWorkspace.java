@@ -99,6 +99,7 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
 
     NId getRuntimeId();
 
+
     NPath getLocation();
 
     /// ////////////////// create new session
@@ -197,7 +198,6 @@ public interface NWorkspace extends NWorkspaceBase, NComponent, Closeable {
     NWorkspace removeAllRepositories();
 
     /// /////////
-
 
 
     /**

@@ -310,7 +310,7 @@ public class NBootStringMapFormat {
      */
     public Map<String, List<String>> parseDuplicates(String text) {
         Map<String, List<String>> m = new LinkedHashMap<>();
-        if (NBootStringUtils.isBlank(text)) {
+        if (NBootUtils.isBlank(text)) {
             return m;
         }
         PushbackReader reader = new PushbackReader(new StringReader(text));
@@ -444,13 +444,13 @@ public class NBootStringMapFormat {
                         }
                         if (v.isEmpty()) {
                             sb.append(
-                                    NBootStringUtils.formatStringLiteral(k, NBootQuoteTypeBoot.SIMPLE, NBootSupportMode.PREFERRED, escapedChars)
+                                    NBootUtils.formatStringLiteral(k, NBootQuoteTypeBoot.SIMPLE, NBootSupportMode.PREFERRED, escapedChars)
                             );
                         } else {
                             sb.append(
-                                            NBootStringUtils.formatStringLiteral(k, NBootQuoteTypeBoot.SIMPLE, NBootSupportMode.PREFERRED, escapedChars))
+                                            NBootUtils.formatStringLiteral(k, NBootQuoteTypeBoot.SIMPLE, NBootSupportMode.PREFERRED, escapedChars))
                                     .append(equalsChars)
-                                    .append(NBootStringUtils.formatStringLiteral(v, NBootQuoteTypeBoot.SIMPLE, NBootSupportMode.PREFERRED, escapedChars)
+                                    .append(NBootUtils.formatStringLiteral(v, NBootQuoteTypeBoot.SIMPLE, NBootSupportMode.PREFERRED, escapedChars)
                                     );
                         }
                     } else {
@@ -458,13 +458,13 @@ public class NBootStringMapFormat {
                             sb.append(separatorChars);
                         }
                         sb.append(
-                                NBootStringUtils.formatStringLiteral(k, NBootQuoteTypeBoot.SIMPLE, NBootSupportMode.PREFERRED, escapedChars)
+                                NBootUtils.formatStringLiteral(k, NBootQuoteTypeBoot.SIMPLE, NBootSupportMode.PREFERRED, escapedChars)
                         );
                     }
                 }
             }
         }
-        return NBootStringUtils.trimToNull(sb.toString());
+        return NBootUtils.trimToNull(sb.toString());
     }
 
     @Override

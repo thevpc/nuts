@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.boot.reserved.util.NBootStringUtils;
+import net.thevpc.nuts.boot.reserved.util.NBootUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,9 +58,9 @@ public class NBootRepositoryLocationList {
     }
 
     public int indexOfName(String name, int offset) {
-        String trimmedName = NBootStringUtils.trim(name);
+        String trimmedName = NBootUtils.trim(name);
         for (int i = offset; i < all.size(); i++) {
-            if (trimmedName.equals(NBootStringUtils.trim(all.get(i).getName()))) {
+            if (trimmedName.equals(NBootUtils.trim(all.get(i).getName()))) {
                 return i;
             }
         }
@@ -69,9 +69,9 @@ public class NBootRepositoryLocationList {
     public int indexOfNames(String[] names, int offset) {
         for (int i = offset; i < all.size(); i++) {
             NBootRepositoryLocation loc = all.get(i);
-            String trimmedLocName = NBootStringUtils.trim(loc.getName());
+            String trimmedLocName = NBootUtils.trim(loc.getName());
             for (String name : names) {
-                String trimmedName = NBootStringUtils.trim(name);
+                String trimmedName = NBootUtils.trim(name);
                 if (trimmedName.equals(trimmedLocName)) {
                     return i;
                 }
@@ -81,9 +81,9 @@ public class NBootRepositoryLocationList {
     }
 
     public int indexOfURL(String url, int offset) {
-        String trimmedName = NBootStringUtils.trim(url);
+        String trimmedName = NBootUtils.trim(url);
         for (int i = offset; i < all.size(); i++) {
-            if (trimmedName.equals(NBootStringUtils.trim(all.get(i).getPath()))) {
+            if (trimmedName.equals(NBootUtils.trim(all.get(i).getPath()))) {
                 return i;
             }
         }
@@ -96,8 +96,8 @@ public class NBootRepositoryLocationList {
         }
         for (int i = offset; i < all.size(); i++) {
             NBootRepositoryLocation o = all.get(i);
-            if (NBootStringUtils.trim(other.getName()).equals(NBootStringUtils.trim(o.getName()))) {
-                if (NBootStringUtils.trim(other.getPath()).equals(NBootStringUtils.trim(o.getPath()))) {
+            if (NBootUtils.trim(other.getName()).equals(NBootUtils.trim(o.getName()))) {
+                if (NBootUtils.trim(other.getPath()).equals(NBootUtils.trim(o.getPath()))) {
                     return i;
                 }
             }
@@ -116,7 +116,7 @@ public class NBootRepositoryLocationList {
 
     public NBootRepositoryLocationList add(NBootRepositoryLocation a) {
         if (a != null) {
-            String n = NBootStringUtils.trim(a.getName());
+            String n = NBootUtils.trim(a.getName());
             if (n.isEmpty()) {
                 if (indexOf(a, 0) < 0) {
                     all.add(a);

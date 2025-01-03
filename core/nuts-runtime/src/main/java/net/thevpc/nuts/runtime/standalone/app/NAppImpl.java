@@ -117,7 +117,6 @@ public class NAppImpl implements NApp, Cloneable {
     public void prepare(NAppInitInfo appInitInfo) {
         String[] args0=appInitInfo.getArgs();
         Class<?> appClass=appInitInfo.getAppClass();
-        String storeId=appInitInfo.getStoreId();
         NClock startTime=appInitInfo.getStartTime();
         this.storeLocationResolver =appInitInfo.getStoreLocationSupplier();
         List<String> args = new ArrayList<>();
@@ -307,21 +306,21 @@ public class NAppImpl implements NApp, Cloneable {
     }
 
     @Override
-    public NPath getVersionFolder(NStoreType location, String version) {
+    public NPath getVersionFolder(NStoreType storeType, String version) {
         if (version == null
                 || version.isEmpty()
                 || version.equalsIgnoreCase("current")
                 || version.equals(getId().get().getVersion().getValue())) {
-            return getFolder(location);
+            return getFolder(storeType);
         }
         NId newId = getId().get().builder().setVersion(version).build();
         if (this.storeLocationResolver != null) {
-            NPath r = this.storeLocationResolver.getStoreLocation(newId, location);
+            NPath r = this.storeLocationResolver.getStoreLocation(newId, storeType);
             if (r != null) {
                 return r;
             }
         }
-        return NWorkspace.of().getStoreLocation(newId, location);
+        return NWorkspace.of().getStoreLocation(newId, storeType);
     }
 
     @Override

@@ -1,10 +1,7 @@
 package net.thevpc.nuts.boot.reserved.maven;
 
 import net.thevpc.nuts.boot.NBootRepositoryLocation;
-import net.thevpc.nuts.boot.reserved.util.NBootLog;
-import net.thevpc.nuts.boot.reserved.util.NBootMsg;
-import net.thevpc.nuts.boot.reserved.util.NBootIOUtilsBoot;
-import net.thevpc.nuts.boot.reserved.util.NBootStringUtils;
+import net.thevpc.nuts.boot.reserved.util.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -106,8 +103,8 @@ public class NMavenSettingsLoaderBoot {
         String settingsFilePath = this.settingsFilePath;
         ArrayList<NBootRepositoryLocation> list = new ArrayList<>();
         NMavenSettingsBoot settings = new NMavenSettingsBoot();
-        if (NBootStringUtils.isBlank(settingsFilePath)) {
-            settingsFilePath = System.getProperty("user.home") + NBootIOUtilsBoot.getNativePath("/.m2/settings.xml");
+        if (NBootUtils.isBlank(settingsFilePath)) {
+            settingsFilePath = System.getProperty("user.home") + NBootUtils.getNativePath("/.m2/settings.xml");
         }
         Path path = Paths.get(settingsFilePath);
         if (Files.isRegularFile(path) && Files.isReadable(path)) {
@@ -121,7 +118,7 @@ public class NMavenSettingsLoaderBoot {
                     switch (e.getNodeName()) {
                         case "localRepository": {
                             String url0 = elementText(e);
-                            if (!NBootStringUtils.isBlank(url0)) {
+                            if (!NBootUtils.isBlank(url0)) {
                                 settings.setLocalRepository(url0.trim());
                             }
                         }
@@ -129,8 +126,8 @@ public class NMavenSettingsLoaderBoot {
                             for (Element mirror : elements(e, x -> x.getNodeName().equals("mirror"))) {
                                 String id = elementText((element(mirror, x -> x.getNodeName().equals("id"))));
                                 String url0 = elementText((element(mirror, x -> x.getNodeName().equals("url"))));
-                                if (!NBootStringUtils.isBlank(id) && !NBootStringUtils.isBlank(url0)) {
-                                    list.add(new NBootRepositoryLocation(id.trim(), "maven", url0.trim()));
+                                if (!NBootUtils.isBlank(id) && !NBootUtils.isBlank(url0)) {
+                                    list.add(NBootRepositoryLocation.of(id.trim(), "maven", url0.trim()));
                                 }
                             }
                             break;
@@ -154,8 +151,8 @@ public class NMavenSettingsLoaderBoot {
                                                     enabled0 = elementBoolean(enabled, enabled0);
                                                 }
                                             }
-                                            if (enabled0 && !NBootStringUtils.isBlank(id) && !NBootStringUtils.isBlank(url0)) {
-                                                list.add(new NBootRepositoryLocation(id.trim(), "maven", url0.trim()));
+                                            if (enabled0 && !NBootUtils.isBlank(id) && !NBootUtils.isBlank(url0)) {
+                                                list.add(NBootRepositoryLocation.of(id.trim(), "maven", url0.trim()));
                                             }
                                         }
                                     }
@@ -169,10 +166,10 @@ public class NMavenSettingsLoaderBoot {
                 log.with().level(Level.FINE).verbFail().error(ex).log(NBootMsg.ofC("unable to load maven settings.xml %s", settingsFilePath));
             }
         }
-        if (NBootStringUtils.isBlank(settings.getLocalRepository())) {
-            settings.setLocalRepository(System.getProperty("user.home") + NBootIOUtilsBoot.getNativePath("/.m2/repository"));
+        if (NBootUtils.isBlank(settings.getLocalRepository())) {
+            settings.setLocalRepository(System.getProperty("user.home") + NBootUtils.getNativePath("/.m2/repository"));
         }
-        if (NBootStringUtils.isBlank(settings.getRemoteRepository())) {
+        if (NBootUtils.isBlank(settings.getRemoteRepository())) {
             //always!
             settings.setRemoteRepository("https://repo.maven.apache.org/maven2");
         }

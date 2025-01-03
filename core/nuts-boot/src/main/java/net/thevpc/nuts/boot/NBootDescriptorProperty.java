@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.boot.reserved.util.NBootStringUtils;
+import net.thevpc.nuts.boot.reserved.util.NBootUtils;
 
 /**
  * Descriptor Property Builder
@@ -97,10 +97,10 @@ public class NBootDescriptorProperty {
     }
 
     public boolean isBlank() {
-        if (!NBootStringUtils.isBlank(name)) {
+        if (!NBootUtils.isBlank(name)) {
             return false;
         }
-        if (!NBootStringUtils.isBlank(value)) {
+        if (!NBootUtils.isBlank(value)) {
             return false;
         }
         return condition == null || condition.isBlank();

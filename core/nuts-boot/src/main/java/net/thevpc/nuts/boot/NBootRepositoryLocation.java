@@ -24,10 +24,11 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.boot.reserved.util.NBootMsg;
-import net.thevpc.nuts.boot.reserved.util.NBootRepositoryDB;
-import net.thevpc.nuts.boot.reserved.util.NBootStringUtils;
+import net.thevpc.nuts.boot.reserved.util.*;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,6 +45,7 @@ public class NBootRepositoryLocation implements Comparable<NBootRepositoryLocati
     private final String name;
     private final String locationType;
     private final String path;
+    private final Map<String, String> properties;
 
     /**
      * Create a new NutsRepositoryLocation
@@ -53,10 +55,27 @@ public class NBootRepositoryLocation implements Comparable<NBootRepositoryLocati
      * @param path         repository location (file, URL or any NPath valid
      *                     location)
      */
-    public NBootRepositoryLocation(String name, String locationType, String path) {
-        this.name = NBootStringUtils.trimToNull(name);
-        this.locationType = NBootStringUtils.trimToNull(locationType);
-        this.path = NBootStringUtils.trimToNull(path);
+    private NBootRepositoryLocation(String name, String locationType, String path, Map<String, String> properties) {
+        this.name = name;
+        this.locationType = locationType;
+        this.path = path;
+        this.properties = properties;
+    }
+
+    public static NBootRepositoryLocation of(String name, String locationType, String path) {
+        return of(name, locationType, path, null);
+    }
+
+    public static NBootRepositoryLocation of(String name, String locationType, String path, Map<String, String> properties) {
+        PathAndProps u = createPathAndProps(path);
+        if (properties != null) {
+            for (Map.Entry<String, String> e : properties.entrySet()) {
+                if (e.getKey() != null) {
+                    u.props.put(e.getKey(), e.getValue());
+                }
+            }
+        }
+        return new NBootRepositoryLocation(NBootUtils.trimToNull(name), NBootUtils.trimToNull(locationType), u.path, u.props);
     }
 
     /**
@@ -70,15 +89,19 @@ public class NBootRepositoryLocation implements Comparable<NBootRepositoryLocati
             locationString = "";
         }
         Matcher nm = FULL_PATTERN.matcher(locationString);
+        String path0;
         if (nm.find()) {
-            name = NBootStringUtils.trimToNull(nm.group("n"));
-            locationType = NBootStringUtils.trimToNull(nm.group("t"));
-            path = NBootStringUtils.trimToNull(nm.group("r"));
+            name = NBootUtils.trimToNull(nm.group("n"));
+            locationType = NBootUtils.trimToNull(nm.group("t"));
+            path0 = NBootUtils.trimToNull(nm.group("r"));
         } else {
             name = null;
             locationType = null;
-            path = NBootStringUtils.trimToNull(locationString);
+            path0 = NBootUtils.trimToNull(locationString);
         }
+        PathAndProps p = createPathAndProps(path0);
+        path = p.path;
+        properties = p.props;
     }
 
     /**
@@ -146,7 +169,7 @@ public class NBootRepositoryLocation implements Comparable<NBootRepositoryLocati
             if (locationString.matches("[a-zA-Z][a-zA-Z0-9-_]+")) {
                 name = locationString;
                 NBootAddRepositoryOptions ro = db.getRepositoryOptionsByName(name);
-                String u = ro==null?null:ro.getConfig().getLocation().getFullLocation();
+                String u = ro == null ? null : ro.getConfig().getLocation().getFullLocation();
                 if (u == null) {
                     url = name;
                 } else {
@@ -155,7 +178,7 @@ public class NBootRepositoryLocation implements Comparable<NBootRepositoryLocati
             } else {
                 url = locationString;
                 NBootAddRepositoryOptions ro = db.getRepositoryOptionsByLocation(name);
-                String n = ro==null?null:ro.getName();
+                String n = ro == null ? null : ro.getName();
                 if (n == null) {
                     name = null;
                 } else {
@@ -178,7 +201,7 @@ public class NBootRepositoryLocation implements Comparable<NBootRepositoryLocati
      */
     public static NBootRepositoryLocation[] of(String repositorySelectionExpression, NBootRepositoryLocation[] available, NBootRepositoryDB db) {
         NBootRepositorySelectorList li = NBootRepositorySelectorList.of(repositorySelectionExpression, db);
-        if(li==null){
+        if (li == null) {
             return new NBootRepositoryLocation[0];
         }
         return li.resolve(available, db);
@@ -200,7 +223,7 @@ public class NBootRepositoryLocation implements Comparable<NBootRepositoryLocati
      * @return a new instance with the updated name
      */
     public NBootRepositoryLocation setName(String name) {
-        return new NBootRepositoryLocation(name, locationType, path);
+        return new NBootRepositoryLocation(NBootUtils.trimToNull(name), locationType, path, new LinkedHashMap<>(properties));
     }
 
     /**
@@ -219,7 +242,52 @@ public class NBootRepositoryLocation implements Comparable<NBootRepositoryLocati
      * @return a new instance with the updated location
      */
     public NBootRepositoryLocation setPath(String path) {
-        return new NBootRepositoryLocation(name, locationType, path);
+        PathAndProps p = createPathAndProps(path);
+        p.props.putAll(properties);
+        return new NBootRepositoryLocation(name, locationType, p.path, p.props);
+    }
+
+    private static PathAndProps createPathAndProps(String path) {
+        String validPath;
+        Map<String, String> properties;
+        if (path == null) {
+            validPath = null;
+            properties = new LinkedHashMap<>();
+        } else {
+            int i = path.indexOf('?');
+            if (i >= 0) {
+                String ms = path.substring(i + 1);
+                Map<String, String> m = NBootStringMapFormat.URL_FORMAT.parse(ms);
+                properties = m == null ? new LinkedHashMap<>() : m;
+                validPath = path.substring(0, i);
+            } else {
+                validPath = path;
+                properties = new LinkedHashMap<>();
+            }
+        }
+        return new PathAndProps(validPath, properties);
+    }
+
+    public String getTypeAndPath() {
+        StringBuilder sb = new StringBuilder();
+        if (!NBootUtils.isBlank(locationType)) {
+            sb.append(locationType);
+            sb.append("@");
+        }
+        if (!NBootUtils.isBlank(path)) {
+            sb.append(path);
+        }
+        return sb.toString();
+    }
+
+    private static class PathAndProps {
+        String path;
+        Map<String, String> props;
+
+        public PathAndProps(String path, Map<String, String> props) {
+            this.path = path;
+            this.props = props;
+        }
     }
 
     /**
@@ -238,7 +306,7 @@ public class NBootRepositoryLocation implements Comparable<NBootRepositoryLocati
      * @return a new instance with the updated location type
      */
     public NBootRepositoryLocation setLocationType(String locationType) {
-        return new NBootRepositoryLocation(name, locationType, path);
+        return new NBootRepositoryLocation(name, NBootUtils.trimToNull(locationType), path, new LinkedHashMap<>(properties));
     }
 
     /**
@@ -276,14 +344,22 @@ public class NBootRepositoryLocation implements Comparable<NBootRepositoryLocati
      */
     public String getFullLocation() {
         StringBuilder sb = new StringBuilder();
-        if (!NBootStringUtils.isBlank(locationType)) {
+        if (!NBootUtils.isBlank(locationType)) {
             sb.append(locationType);
             sb.append("@");
         }
-        if (!NBootStringUtils.isBlank(path)) {
+        if (!NBootUtils.isBlank(path)) {
             sb.append(path);
         }
+        if (properties != null && !properties.isEmpty()) {
+            sb.append("?");
+            sb.append(NBootStringMapFormat.URL_FORMAT.format(properties));
+        }
         return sb.toString();
+    }
+
+    public Map<String, String> getProperties() {
+        return Collections.unmodifiableMap(properties);
     }
 
     /**
@@ -294,17 +370,11 @@ public class NBootRepositoryLocation implements Comparable<NBootRepositoryLocati
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (!NBootStringUtils.isBlank(name)) {
+        if (!NBootUtils.isBlank(name)) {
             sb.append(name);
             sb.append("=");
         }
-        if (!NBootStringUtils.isBlank(locationType)) {
-            sb.append(locationType);
-            sb.append("@");
-        }
-        if (!NBootStringUtils.isBlank(path)) {
-            sb.append(path);
-        }
+        sb.append(getFullLocation());
         return sb.toString();
     }
 
@@ -314,13 +384,16 @@ public class NBootRepositoryLocation implements Comparable<NBootRepositoryLocati
      * @return true when all of name, locationType and location are blank
      */
     public boolean isBlank() {
-        if (!NBootStringUtils.isBlank(name)) {
+        if (!NBootUtils.isBlank(name)) {
             return false;
         }
-        if (!NBootStringUtils.isBlank(locationType)) {
+        if (!NBootUtils.isBlank(locationType)) {
             return false;
         }
-        if (!NBootStringUtils.isBlank(path)) {
+        if (!NBootUtils.isBlank(path)) {
+            return false;
+        }
+        if (!properties.isEmpty()) {
             return false;
         }
         return true;

@@ -191,8 +191,19 @@ public interface NAddUserCmd extends NWorkspaceCmd {
      */
     char[] getRemoteCredentials();
 
+    /**
+     * Returns the current {@code NRepository} associated with this command.
+     *
+     * @return the associated {@code NRepository} instance
+     */
     NRepository getRepository();
 
+    /**
+     * Sets the {@code NRepository} instance to be associated with this command.
+     *
+     * @param repository the {@code NRepository} instance to associate with this command
+     * @return {@code this} instance
+     */
     NAddUserCmd setRepository(NRepository repository);
 
     /**

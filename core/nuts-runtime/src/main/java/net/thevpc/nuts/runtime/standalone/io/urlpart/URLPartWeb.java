@@ -1,9 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.io.urlpart;
 
 import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.function.Predicate;
 
@@ -17,9 +19,9 @@ class URLPartWeb extends URLPart {
             if (obj instanceof URL) {
                 return ((URL) obj).openStream();
             } else {
-                return new URL(path).openStream();
+                return CoreIOUtils.urlOf(path).openStream();
             }
-        } catch (IOException e) {
+        } catch (IOException | UncheckedIOException e) {
             throw new NIOException(e);
         }
     }

@@ -66,6 +66,7 @@ import net.thevpc.nuts.util.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -127,7 +128,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
 
     @Override
     public NExecutableInformation which() {
-        NSession session=getWorkspace().currentSession();
+        NSession session = getWorkspace().currentSession();
         refactorCommand();
 
         NExecutableInformationExt exec = null;
@@ -384,7 +385,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
     }
 
     private NExecutableInformationExt execEmbeddedOrExternal(String[] cmd, List<String> executorOptions, List<String> workspaceOptions, NSession prepareSession) {
-        NSession session=getWorkspace().currentSession();
+        NSession session = getWorkspace().currentSession();
         NAssert.requireNonBlank(cmd, "command");
         String[] args = new String[cmd.length - 1];
         System.arraycopy(cmd, 1, args, 0, args.length);
@@ -465,11 +466,11 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                         NDescriptor descriptor = c.getDescriptor();
                         if (descriptor != null) {
                             try {
-                                descriptor=NWorkspaceExt.of(workspace).resolveEffectiveDescriptor(descriptor);
+                                descriptor = NWorkspaceExt.of(workspace).resolveEffectiveDescriptor(descriptor);
                             } catch (NNotFoundException ex) {
                                 //ignore
                                 _LOGOP().level(Level.WARNING).verb(NLogVerb.WARNING)
-                                        .log(NMsg.ofC("artifact descriptor found, but one of its parents or dependencies is not: %s : missing %s", descriptor.getId(),
+                                        .log(NMsg.ofC("executable artifact descriptor found, but one of its parents or dependencies is not: %s : missing %s", descriptor.getId(),
                                                 ex.getId()));
                                 throw ex;
                             }
@@ -749,7 +750,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
     }
 
     private NExecutableInformationExt _runRemoteInternalCommand(String goodKw, RemoteInfo0 remoteInfo0) {
-        NSession session=getWorkspace().currentSession();
+        NSession session = getWorkspace().currentSession();
         NDefinition def2 = NSearchCmd.of()
                 .addId(session.getWorkspace().getApiId())
                 .content()
@@ -766,6 +767,26 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
     protected NId findExecId(NId nid, NSession traceSession, boolean forceInstalled, boolean ignoreIfUserCommand) {
         if (nid == null) {
             return null;
+        }
+        switch (NStringUtils.firstNonNull(nid.getShortName(),"")){
+            case NConstants.Ids.NUTS_APP_ARTIFACT_ID:{
+                nid = nid.builder().setGroupId(NConstants.Ids.NUTS_GROUP_ID).build();
+                break;
+            }
+            case NConstants.Ids.NUTS_API:
+            case NConstants.Ids.NUTS_RUNTIME:
+            case NConstants.Ids.NUTS_API_ARTIFACT_ID:
+            case NConstants.Ids.NUTS_RUNTIME_ARTIFACT_ID:
+            case "net.thevpc.nuts:nuts-boot":
+            case "nuts-boot":
+            case "net.thevpc.nuts:nuts-lib":
+            case "nuts-lib":
+            {
+                throw new NNotFoundException(nid,NMsg.ofC("%s is not executable",nid));
+            }
+        }
+        if (NConstants.Ids.NUTS_APP_ARTIFACT_ID.equals(nid.getShortName())) {
+            nid = nid.builder().setGroupId(NConstants.Ids.NUTS_GROUP_ID).build();
         }
         NId ff = NSearchCmd.of().addId(nid).setOptional(false).setLatest(true).setFailFast(false)
                 .setInstallStatus(NInstallStatusFilters.of().byDeployed(true))
@@ -923,7 +944,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                                                    NRunAs runAs
     ) {
         //TODO ! one of the sessions needs to be removed!
-        NSession session=getWorkspace().currentSession();
+        NSession session = getWorkspace().currentSession();
         NWorkspaceSecurityManager.of().checkAllowed(NConstants.Permissions.EXEC, commandName);
         if (def != null && def.getContent().isPresent()) {
             NDescriptor descriptor = def.getDescriptor();
@@ -1064,7 +1085,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
                                 if (NPath.of(location).isHttp()) {
                                     try {
                                         c.setContentFile(CoreIOUtils.toPathInputSource(
-                                                NPath.of(new URL(location)),
+                                                NPath.of(CoreIOUtils.urlOf(location)),
                                                 c.getTemps(), true));
                                     } catch (Exception ex) {
                                         ex.printStackTrace();
@@ -1104,7 +1125,7 @@ public class DefaultNExecCmd extends AbstractNExecCmd {
             } else {
                 throw new NIllegalArgumentException(NMsg.ofC("path does not denote a valid file or folder %s", c.getStreamOrPath()));
             }
-        } catch (IOException ex) {
+        } catch (IOException | UncheckedIOException ex) {
             throw new NIOException(ex);
         }
         return c;

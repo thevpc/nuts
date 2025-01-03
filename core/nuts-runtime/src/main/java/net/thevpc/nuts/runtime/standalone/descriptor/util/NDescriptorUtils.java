@@ -104,18 +104,16 @@ public class NDescriptorUtils {
             CoreNIdUtils.checkValidEffectiveId(effectiveDescriptor.getId());
             for (NDependency dependency : effectiveDescriptor.getDependencies()) {
                 if (!CoreNIdUtils.isValidEffectiveId(dependency.toId())) {
+                    NMsg errMsg = NMsg.ofJ("{0} is using dependency {1} which defines an unresolved variable. This is a potential bug.",
+                            effectiveDescriptor.getId(),
+                            dependency
+                    );
                     NLogOp.of(NDescriptorUtils.class)
                             .verb(NLogVerb.WARNING).level(Level.FINE)
-                            .log(NMsg.ofJ("{0} is using dependency {1} which defines an unresolved variable. This is a potential bug.",
-                                    effectiveDescriptor.getId(),
-                                    dependency
-                            ));
+                            .log(errMsg);
                     if (!dependency.isOptional()) {
                         topException = true;
-                        throw new NNotFoundException(effectiveDescriptor.getId(), NMsg.ofJ("{0} is using dependency {1} which defines an unresolved variable. This is a potential bug.",
-                                effectiveDescriptor.getId(),
-                                dependency
-                        ));
+                        throw new NNotFoundException(effectiveDescriptor.getId(), errMsg);
                     }
                 }
             }

@@ -43,7 +43,7 @@ import java.util.logging.Logger;
  *      Process process = Runtime.getRuntime().exec(new String[]{"/bin/java","-version"}, null, new File("."));
  *      ProcessWatcher w = new ProcessWatcher(process, new ProcessWatcherHandler() {
  *          public void started(Process process) {
- *              System.out.println("Prcess started");
+ *              System.out.println("Process started");
  *          }
  *
  *          public void stdout(Process process, String line) {

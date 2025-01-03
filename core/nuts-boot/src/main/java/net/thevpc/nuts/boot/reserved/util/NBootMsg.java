@@ -26,7 +26,6 @@
  */
 package net.thevpc.nuts.boot.reserved.util;
 
-import java.text.MessageFormat;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -46,9 +45,9 @@ public class NBootMsg {
     }
 
     private NBootMsg(String format, Object message, Object[] params, String codeLang, Level level) {
-        NBootAssert.requireNonNull(message, "message");
-        NBootAssert.requireNonNull(format, "format");
-        NBootAssert.requireNonNull(params, "params");
+        NBootUtils.requireNonNull(message, "message");
+        NBootUtils.requireNonNull(format, "format");
+        NBootUtils.requireNonNull(params, "params");
         this.level = level;
         this.format = format;
         switch (format){
@@ -60,7 +59,7 @@ public class NBootMsg {
             }
         }
 
-        this.codeLang = NBootStringUtils.trimToNull(codeLang);
+        this.codeLang = NBootUtils.trimToNull(codeLang);
         this.message = message;
         this.params = params;
     }
@@ -181,7 +180,7 @@ public class NBootMsg {
     }
 
     private String formatAsV() {
-        return NBootStringUtils.replaceDollarPlaceHolder((String) message,
+        return NBootUtils.replaceDollarPlaceHolder((String) message,
                 s -> {
                     Object param = params[0];
                     Function<String, ?> m = null;

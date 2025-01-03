@@ -210,7 +210,7 @@ public class NBootLog {
                     level = Level.INFO;
                 }
                 int MEGA = 1024 * 1024;
-                if (name == null || NBootStringUtils.isBlank(name)) {
+                if (name == null || NBootUtils.isBlank(name)) {
                     name = Instant.now().toString().replace(":", "") + "-nuts-%g.log";
                 }
                 StringBuilder realName = new StringBuilder();
@@ -257,9 +257,9 @@ public class NBootLog {
                         }
                     }
                 }
-                if (folder == null || NBootStringUtils.isBlank(folder)) {
+                if (folder == null || NBootUtils.isBlank(folder)) {
                     String logFolder = Paths.get(NBootPlatformHome.of(options.getStoreLayout()).getWorkspaceStore("LOG", options.getWorkspace())).toString();
-                    folder = logFolder + "/" + NBootConstants.Folders.ID + "/net/thevpc/nuts/nuts/" + NBootWorkspace.getVersion();
+                    folder = logFolder + "/" + NBootConstants.Folders.ID + "/net/thevpc/nuts/nuts/" + NBootWorkspace.NUTS_BOOT_VERSION;
                 }
                 String pattern = (folder + "/" + realName).replace('/', File.separatorChar);
                 if (maxSize <= 0) {
@@ -286,11 +286,6 @@ public class NBootLog {
     }
 
 
-    void errln(String msg, Object... p) {
-        this.err.printf(msg, p);
-        this.err.printf("%n");
-        this.err.flush();
-    }
 
     public PrintStream err() {
         return this.err;
@@ -298,6 +293,11 @@ public class NBootLog {
 
     public void err(String msg, Object... p) {
         this.err.printf(msg, p);
+        this.err.flush();
+    }
+
+    public void errln(String msg, Object... p) {
+        this.err.println(NBootMsg.ofC(msg, p));
         this.err.flush();
     }
 

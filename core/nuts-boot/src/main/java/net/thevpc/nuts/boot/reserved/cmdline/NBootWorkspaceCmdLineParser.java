@@ -30,7 +30,6 @@ import net.thevpc.nuts.boot.NBootHomeLocation;
 import net.thevpc.nuts.boot.NBootId;
 import net.thevpc.nuts.boot.NBootLogConfig;
 import net.thevpc.nuts.boot.reserved.util.NBootMsg;
-import net.thevpc.nuts.boot.reserved.util.NBootStringUtils;
 import net.thevpc.nuts.boot.reserved.util.NBootUtils;
 
 import java.time.Instant;
@@ -331,7 +330,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.nextEntry();
                         String v = a.getStringValue();
                         String layout = parseOsFamily(k.substring(2, k.indexOf('-', 2)).toUpperCase());
-                        String folder = parseStoreType(k.substring(3 + layout.toString().length(), k.indexOf('-', 3 + layout.toString().length())).toUpperCase());
+                        String folder = parseStoreType(k.substring(3 + layout.length(), k.indexOf('-', 3 + layout.length())).toUpperCase());
                         if (active && options != null) {
                             options.setHomeLocation(NBootHomeLocation.of(layout, folder), v);
                         }
@@ -486,7 +485,7 @@ public final class NBootWorkspaceCmdLineParser {
                             if (options != null) {
                                 String s = a.getStringValue();
                                 if (a.isNegated()) {
-                                    if (NBootStringUtils.isBlank(s)) {
+                                    if (NBootUtils.isBlank(s)) {
                                         s = "false";
                                     } else {
                                         s = "false," + s;
@@ -534,7 +533,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.next();
                         if (active) {
                             if (options != null) {
-                                if (NBootStringUtils.isBlank(a.getStringValue())) {
+                                if (NBootUtils.isBlank(a.getStringValue())) {
                                     options.setDebug(String.valueOf(a.isEnabled()));
                                 } else {
                                     if (a.isNegated()) {
@@ -596,7 +595,6 @@ public final class NBootWorkspaceCmdLineParser {
                             }
                             NBootArg r = parseLogLevel(logConfig, cmdLine, active);
                             options.setLogConfig(logConfig);
-                            NBootArg finalA = a;
                             return r == null
                                     ? null
                                     : Collections.singletonList(r);
@@ -1080,12 +1078,7 @@ public final class NBootWorkspaceCmdLineParser {
                             cmdLine.skipAll();
                             if (options != null) {
                                 if (a.getValue() != null) {
-                                    List<String> showError = options.getErrors();
-                                    if (showError == null) {
-                                        showError = new ArrayList<>();
-                                    }
-                                    showError.add(NBootMsg.ofC("invalid argument for workspace: %s", a.getImage()).toString());
-                                    options.setErrors(showError);
+                                    addError(NBootMsg.ofC("invalid argument for workspace: %s", a.getImage()), options);
                                 }
                                 List<String> applicationArguments = NBootUtils.nonNullStrList(options.getApplicationArguments());
                                 applicationArguments.addAll(newArgs);
@@ -1150,7 +1143,7 @@ public final class NBootWorkspaceCmdLineParser {
                         a = cmdLine.next();
                         if (active) {
                             if (options != null) {
-                                if (!NBootStringUtils.isBlank(a.getStringValue())) {
+                                if (!NBootUtils.isBlank(a.getStringValue())) {
                                     options.setExpireTime(NBootUtils.parseInstant(a.getValue()));
                                 } else {
                                     options.setExpireTime(Instant.now());
@@ -1421,15 +1414,9 @@ public final class NBootWorkspaceCmdLineParser {
                             return (Collections.singletonList(a));
                         } else {
                             if (options != null) {
-                                List<String> showError = options.getErrors();
-                                if (showError == null) {
-                                    showError = new ArrayList<>();
-                                    options.setErrors(showError);
-                                }
-                                showError.add(NBootMsg.ofC("nuts: invalid option %s", a.getImage()).toString());
+                                addError(NBootMsg.ofC("nuts: invalid option %s", a.getImage()), options);
                             }
-                            NBootArg finalA1 = a;
-                            throw new NBootException(NBootMsg.ofC("unsupported option %s", finalA1));
+                            throw new NBootException(NBootMsg.ofC("unsupported option %s", a));
                         }
                     }
                 }
@@ -1482,7 +1469,7 @@ public final class NBootWorkspaceCmdLineParser {
             options.setCustomOptions(new ArrayList<>());
         }
         //error only if not asking for help
-        if (!(options.getApplicationArguments().size() > 0
+        if (!(!options.getApplicationArguments().isEmpty()
                 && (options.getApplicationArguments().get(0).equals("help")
                 || NBootUtils.firstNonNull(options.getCommandHelp(), false)
                 || options.getApplicationArguments().get(0).equals("version")
@@ -1500,7 +1487,7 @@ public final class NBootWorkspaceCmdLineParser {
         }
     }
 
-    private static NBootArg parseLogLevel(NBootLogConfig logConfig, NBootCmdLine cmdLine, boolean enabled) {
+    public static NBootArg parseLogLevel(NBootLogConfig logConfig, NBootCmdLine cmdLine, boolean enabled) {
         NBootArg a = cmdLine.peek();
         switch (a.key()) {
             case "--log-file-size": {
@@ -1509,7 +1496,7 @@ public final class NBootWorkspaceCmdLineParser {
                 if (enabled) {
                     Integer fileSize = NBootUtils.parseFileSizeInBytes(v, 1024 * 1024);
                     if (fileSize == null) {
-                        if (NBootStringUtils.isBlank(v)) {
+                        if (NBootUtils.isBlank(v)) {
                             throw new NBootException(NBootMsg.ofC("invalid file size : %s", v));
                         }
                     } else {
@@ -1631,7 +1618,7 @@ public final class NBootWorkspaceCmdLineParser {
     }
 
     private static String parseStoreStrategy(String s) {
-        switch (NBootUtils.enumName(NBootUtils.firstNonNull(NBootStringUtils.trim(s), ""))) {
+        switch (NBootUtils.enumName(NBootUtils.firstNonNull(NBootUtils.trim(s), ""))) {
             case "EXPLODED":
             case "E":
                 return "EXPLODED";
@@ -1645,7 +1632,7 @@ public final class NBootWorkspaceCmdLineParser {
     }
 
     private static String parseIsolationLevel(String s) {
-        switch (NBootUtils.enumName(NBootUtils.firstNonNull(NBootStringUtils.trim(s), ""))) {
+        switch (NBootUtils.enumName(NBootUtils.firstNonNull(NBootUtils.trim(s), ""))) {
             case "SYSTEM":
                 return "SYSTEM";
             case "USER":
@@ -1661,7 +1648,7 @@ public final class NBootWorkspaceCmdLineParser {
     }
 
     private static String parseFetchStrategy(String s) {
-        switch (NBootUtils.enumName(NBootUtils.firstNonNull(NBootStringUtils.trim(s), ""))) {
+        switch (NBootUtils.enumName(NBootUtils.firstNonNull(NBootUtils.trim(s), ""))) {
             case "OFFLINE":
                 return "OFFLINE";
             case "ONLINE":
@@ -1677,7 +1664,7 @@ public final class NBootWorkspaceCmdLineParser {
     }
 
     private static String parseSupportMode(String s) {
-        switch (NBootUtils.enumName(NBootUtils.firstNonNull(NBootStringUtils.trim(s), ""))) {
+        switch (NBootUtils.enumName(NBootUtils.firstNonNull(NBootUtils.trim(s), ""))) {
             case "SUPPORTED":
                 return "SUPPORTED";
             case "PREFERRED":
@@ -1698,7 +1685,7 @@ public final class NBootWorkspaceCmdLineParser {
     }
 
     private static String parseStoreType(String s) {
-        switch (NBootUtils.enumName(NBootUtils.firstNonNull(NBootStringUtils.trim(s), ""))) {
+        switch (NBootUtils.enumName(NBootUtils.firstNonNull(NBootUtils.trim(s), ""))) {
             case "CACHE":
                 return "CACHE";
             case "BIN":
@@ -1723,7 +1710,7 @@ public final class NBootWorkspaceCmdLineParser {
     }
 
     private static String parseTerminalMode(String s) {
-        switch (NBootUtils.enumName(NBootUtils.firstNonNull(NBootStringUtils.trim(s), ""))) {
+        switch (NBootUtils.enumName(NBootUtils.firstNonNull(NBootUtils.trim(s), ""))) {
             case "DEFAULT":
             case "SYSTEM":
             case "S":
@@ -1748,7 +1735,7 @@ public final class NBootWorkspaceCmdLineParser {
 
 
     private static String parseOsFamily(String s) {
-        String e = NBootUtils.enumName(NBootUtils.firstNonNull(NBootStringUtils.trim(s), ""));
+        String e = NBootUtils.enumName(NBootUtils.firstNonNull(NBootUtils.trim(s), ""));
         switch (e) {
             case "WINDOWS":
             case "W":
@@ -1812,7 +1799,7 @@ public final class NBootWorkspaceCmdLineParser {
     }
 
     private static String parseNutsOpenMode(String s) {
-        String e = NBootUtils.enumName(NBootUtils.firstNonNull(NBootStringUtils.trim(s), ""));
+        String e = NBootUtils.enumName(NBootUtils.firstNonNull(NBootUtils.trim(s), ""));
         switch (e) {
             case "OPEN_OR_CREATE":
             case "RW":
@@ -1919,6 +1906,17 @@ public final class NBootWorkspaceCmdLineParser {
             return (new CustomLogLevel("LEVEL" + i, i));
         }
         return null;
+    }
+
+    private static void addError(NBootMsg errorMessage, NBootOptionsInfo options) {
+        if (errorMessage != null && options != null) {
+            List<String> showError = options.getErrors();
+            if (showError == null) {
+                showError = new ArrayList<>();
+            }
+            showError.add(errorMessage.toString());
+            options.setErrors(showError);
+        }
     }
 
     private static class CustomLogLevel extends Level {

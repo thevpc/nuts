@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.runtime.standalone.descriptor.filter.AbstractDescriptorFilter;
 import net.thevpc.nuts.util.NFilterOp;
 
@@ -32,7 +31,7 @@ public class NExecCompanionFilter extends AbstractDescriptorFilter {
     public boolean acceptDescriptor(NDescriptor other) {
         if(companions.contains(other.getId().getShortName())){
             for (NDependency dependency : other.getDependencies()) {
-                if(dependency.toId().getShortName().equals(NConstants.Ids.NUTS_API)){
+                if(dependency.toId().getShortName().equals(this.apiId.getShortName())){
                     if(apiId==null){
                         return true;
                     }

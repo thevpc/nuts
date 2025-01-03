@@ -104,7 +104,7 @@ public class NBootToken {
         return "NBootToken{" +
                 "ttype=" + typeString(ttype) +
                 ", lineno=" + lineno +
-                ", sval=" + (sval == null ? "null" : NBootStringUtils.formatStringLiteral(sval, NBootQuoteTypeBoot.SIMPLE)) +
+                ", sval=" + (sval == null ? "null" : NBootUtils.formatStringLiteral(sval, NBootQuoteTypeBoot.SIMPLE)) +
                 ", nval=" + nval +
                 '}';
     }

@@ -49,7 +49,7 @@ public final class NBootBootConfigLoader {
         try {
             if (bootFile.isFile()) {
                 bLog.with().level(Level.CONFIG).verbRead().log(NBootMsg.ofC("load boot file : %s", bootFile.getPath()));
-                String json = NBootIOUtilsBoot.readStringFromFile(bootFile).trim();
+                String json = NBootUtils.readStringFromFile(bootFile).trim();
                 if (json.length() > 0) {
                     return loadBootConfigJSON(json, bLog);
                 }
@@ -68,15 +68,15 @@ public final class NBootBootConfigLoader {
         Map<String, Object> jsonObject = parser.parseObject();
         NBootOptionsInfo c = new NBootOptionsInfo();
         String configVersion = ((String) jsonObject.get("configVersion"));
-        if (NBootStringUtils.isBlank(configVersion)) {
+        if (NBootUtils.isBlank(configVersion)) {
             configVersion = ((String) jsonObject.get("createApiVersion"));
         }
-        if (NBootStringUtils.isBlank(configVersion)) {
+        if (NBootUtils.isBlank(configVersion)) {
             configVersion = "";
         }
 
-        if (NBootStringUtils.isBlank(configVersion)) {
-            configVersion = NBootWorkspace.getVersion();
+        if (NBootUtils.isBlank(configVersion)) {
+            configVersion = NBootWorkspace.NUTS_BOOT_VERSION;
             bLog.with().level(Level.FINEST).verbFail().log(NBootMsg.ofC("unable to detect config version. Fallback to %s", configVersion));
         }
         int buildNumber = getApiVersionOrdinalNumber(configVersion);

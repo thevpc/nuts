@@ -66,7 +66,7 @@ public class NReservedErrorInfo {
     @Override
     public String toString() {
         StringBuilder sb=new StringBuilder();
-        if(!NBootStringUtils.isBlank(getMessage())){
+        if(!NBootUtils.isBlank(getMessage())){
             sb.append(getMessage());
         }else{
             sb.append("unexpected error");

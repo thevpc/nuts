@@ -11,8 +11,8 @@ public class NBootMsgParam {
     }
 
     public NBootMsgParam(String name, Supplier<?> value) {
-        this.name = NBootAssert.requireNonBlank(name, "name");
-        this.value = NBootAssert.requireNonNull(value, "value");
+        this.name = NBootUtils.requireNonBlank(name, "name");
+        this.value = NBootUtils.requireNonNull(value, "value");
     }
 
     public String getName() {

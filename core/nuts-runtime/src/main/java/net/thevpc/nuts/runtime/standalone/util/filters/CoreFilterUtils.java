@@ -418,6 +418,9 @@ public class CoreFilterUtils {
     }
 
     public static boolean matchesPlatform(Collection<NPlatformLocation> platforms, Collection<String> allCond) {
+        if (allCond == null || allCond.isEmpty()) {
+            return true;
+        }
         for (NPlatformLocation platform : platforms) {
             NId id = platform.getId();
             if (id != null) {

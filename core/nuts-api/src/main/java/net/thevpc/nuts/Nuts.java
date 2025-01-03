@@ -116,7 +116,7 @@ public final class Nuts {
             options.setOut(term.getOut());
             options.setErr(term.getErr());
         }
-        return (NWorkspace) new NBootWorkspace(options).openWorkspace();
+        return (NWorkspace) NBootWorkspace.of(options).openWorkspace();
     }
 
     /**
@@ -130,7 +130,7 @@ public final class Nuts {
         NBootArguments options = new NBootArguments();
         options.setArgs(args);
         options.setStartTime(startTime);
-        return (NWorkspace) new NBootWorkspace(options).openWorkspace();
+        return (NWorkspace) NBootWorkspace.of(options).openWorkspace();
     }
 
     /**
@@ -150,7 +150,7 @@ public final class Nuts {
             options.setOut(term.getOut());
             options.setErr(term.getErr());
         }
-        return (NWorkspace) new NBootWorkspace(options).openWorkspace();
+        return (NWorkspace) NBootWorkspace.of(options).openWorkspace();
     }
 
     /**
@@ -169,7 +169,7 @@ public final class Nuts {
      * @return new NutsSession instance
      */
     public static NWorkspace openWorkspace(NWorkspaceOptions options) {
-        return (NWorkspace) new NBootWorkspace(options==null?null:options.toBootOptionsInfo()).openWorkspace();
+        return (NWorkspace) new NBootWorkspaceImpl(options==null?null:options.toBootOptionsInfo()).openWorkspace();
     }
 
     /**
@@ -194,7 +194,7 @@ public final class Nuts {
             options.setOut(term.getOut());
             options.setErr(term.getErr());
         }
-        return (NWorkspace) new NBootWorkspace(options).runWorkspace();
+        return (NWorkspace) NBootWorkspace.of(options).runWorkspace();
     }
 
     /**
@@ -213,6 +213,6 @@ public final class Nuts {
         NBootArguments options = new NBootArguments();
         options.setArgs(args);
         options.setStartTime(startTime);
-        return (NWorkspace) new NBootWorkspace(options).runWorkspace();
+        return (NWorkspace) NBootWorkspace.of(options).runWorkspace();
     }
 }

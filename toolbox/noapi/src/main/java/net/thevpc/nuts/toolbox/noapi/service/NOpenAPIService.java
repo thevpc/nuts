@@ -2,6 +2,8 @@ package net.thevpc.nuts.toolbox.noapi.service;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.io.NPathExtensionType;
+import net.thevpc.nuts.io.NPathNameParts;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.lib.md.*;
 import net.thevpc.nuts.toolbox.noapi.service.docs.ConfigMarkdownGenerator;
@@ -70,7 +72,7 @@ public class NOpenAPIService {
         if (session.isPlainTrace()) {
             session.out().println(NMsg.ofC("read open-api file %s", sourcePath));
         }
-        String sourceBaseName = sourcePath.getSmartBaseName();
+        String sourceBaseName = sourcePath.getNameParts(NPathExtensionType.SMART).getBaseName();
         NElement apiElement = NoApiUtils.loadElement(sourcePath, session);
         NObjectElement infoObj = apiElement.asObject().get().getObject("info").orElse(NElements.of().ofEmptyObject());
         String documentVersion = infoObj.getString("version").orNull();
@@ -82,7 +84,7 @@ public class NOpenAPIService {
         NPath targetPathObj = NoApiUtils.addExtension(sourcePath, parentPath, NPath.of(target), targetType, documentVersion, session);
 
         //start copying json file
-        NPath openApiFileCopy = targetPathObj.resolveSibling(targetPathObj.getSmartBaseName() + "." + sourcePath.getLastExtension());
+        NPath openApiFileCopy = targetPathObj.resolveSibling(targetPathObj.getNameParts(NPathExtensionType.SMART).getBaseName() + "." + sourcePath.getNameParts(NPathExtensionType.SHORT).getExtension());
         sourcePath.copyTo(openApiFileCopy);
         if (session.isPlainTrace()) {
             session.out().println(NMsg.ofC("copy open-api file %s", openApiFileCopy));
@@ -104,13 +106,14 @@ public class NOpenAPIService {
         for (NPath cf : allConfigFiles) {
             NElement z = NElements.of().parse(cf);
             //remove version, will be added later
-            NPath configFileCopy = targetPathObj.resolveSibling(cf.getSmartBaseName() + "-" + documentVersion + "." + cf.getSmartExtension());
+            NPathNameParts smartParts = cf.getNameParts(NPathExtensionType.SMART);
+            NPath configFileCopy = targetPathObj.resolveSibling(smartParts.getBaseName() + "-" + documentVersion + "." + smartParts.getExtension());
             cf.copyTo(configFileCopy);
             if (session.isPlainTrace()) {
                 session.out().println(NMsg.ofC("copy  config  file %s", configFileCopy));
             }
             NPath targetPathObj2 = NoApiUtils.addExtension(sourcePath, parentPath, NPath.of(target), targetType, "", session);
-            generateConfigDocument(z, apiElement, parentPath, sourceFolder, targetPathObj2.getSmartBaseName(), targetPathObj.getName(), targetType, keep, vars);
+            generateConfigDocument(z, apiElement, parentPath, sourceFolder, targetPathObj2.getNameParts(NPathExtensionType.SMART).getBaseName(), targetPathObj.getName(), targetType, keep, vars);
         }
 
         MainMarkdownGenerator mg = new MainMarkdownGenerator(session, msg);

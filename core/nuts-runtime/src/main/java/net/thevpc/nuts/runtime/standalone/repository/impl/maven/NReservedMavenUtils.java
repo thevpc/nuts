@@ -30,6 +30,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.reserved.util.NBootJsonParser;
 import net.thevpc.nuts.NBootOptionsBuilder;
 import net.thevpc.nuts.runtime.standalone.io.NCoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.util.NBlankable;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
@@ -444,7 +445,7 @@ public final class NReservedMavenUtils {
     static List<NVersion> detectVersionsFromMetaData(String mavenMetadata, NLog bLog) {
         List<NVersion> all = new ArrayList<>();
         try {
-            URL runtimeMetadata = new URL(mavenMetadata);
+            URL runtimeMetadata = CoreIOUtils.urlOf(mavenMetadata);
             DocumentBuilderFactory factory
                     = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -648,7 +649,7 @@ public final class NReservedMavenUtils {
 
     private static List<NVersion> detectVersionsFromHtmlfsTomcatDirectoryListing(String basePath, NLog bLog) {
         List<NVersion> all = new ArrayList<>();
-        try (InputStream in = NCoreIOUtils.openStream(new URL(basePath), bLog)) {
+        try (InputStream in = NCoreIOUtils.openStream(CoreIOUtils.urlOf(basePath), bLog)) {
             List<String> p = new HtmlfsTomcatDirectoryListParser().parse(in);
             if (p != null) {
                 for (String s : p) {

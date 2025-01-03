@@ -4,6 +4,7 @@ import net.thevpc.nuts.NBootOptions;
 import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.time.NChronometer;
 import net.thevpc.nuts.time.NDuration;
 import net.thevpc.nuts.util.NBlankable;
@@ -170,7 +171,7 @@ public class NCoreIOUtils {
         InputStream in = null;
         try {
             if (url.startsWith("http://") || url.startsWith("https://")) {
-                URL url1 = new URL(url);
+                URL url1 = CoreIOUtils.urlOf(url);
                 try {
                     in = openStream(url1, bLog);
                 } catch (Exception ex) {
@@ -178,7 +179,7 @@ public class NCoreIOUtils {
                     return null;
                 }
             } else if (url.startsWith("file:")) {
-                URL url1 = new URL(url);
+                URL url1 = CoreIOUtils.urlOf(url);
                 File file = toFile(url1);
                 if (file == null) {
                     // was not able to resolve to File
@@ -369,9 +370,9 @@ public class NCoreIOUtils {
     public static boolean isURL(String url) {
         if (url != null) {
             try {
-                new URL(url);
+                CoreIOUtils.urlOf(url);
                 return true;
-            } catch (MalformedURLException e) {
+            } catch (Exception e) {
                 //
             }
         }
@@ -384,9 +385,9 @@ public class NCoreIOUtils {
         }
         URL u = null;
         try {
-            u = new URL(url);
+            u = CoreIOUtils.urlOf(url);
             return toFile(u);
-        } catch (MalformedURLException e) {
+        } catch (Exception e) {
             //
             return new File(url);
         }

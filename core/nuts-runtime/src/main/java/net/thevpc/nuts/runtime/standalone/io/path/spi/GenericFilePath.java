@@ -6,6 +6,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathFactorySPI;
 import net.thevpc.nuts.spi.NPathSPI;
@@ -116,10 +117,10 @@ public class GenericFilePath implements NPathSPI {
     public NOptional<URL> toURL(NPath basePath) {
         try {
             if (URLPath.MOSTLY_URL_PATTERN.matcher(value).matches()) {
-                return NOptional.of(new URL(value));
+                return NOptional.of(CoreIOUtils.urlOf(value));
             }
-            return NOptional.of(new URL("file:" + value));
-        } catch (MalformedURLException e) {
+            return NOptional.of(CoreIOUtils.urlOf("file:" + value));
+        } catch (Exception e) {
             return NOptional.ofNamedError(NMsg.ofC("not an url %s", value));
         }
     }

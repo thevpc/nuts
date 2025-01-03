@@ -27,7 +27,7 @@ package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.boot.reserved.util.NBootConstants;
 import net.thevpc.nuts.boot.reserved.util.NBootMsg;
-import net.thevpc.nuts.boot.reserved.util.NBootStringUtils;
+import net.thevpc.nuts.boot.reserved.util.NBootUtils;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -50,7 +50,7 @@ public class NBootVersion {
     private VersionParts parts;
 
     public NBootVersion(String expression) {
-        this.expression = (NBootStringUtils.trim(expression));
+        this.expression = (NBootUtils.trim(expression));
     }
 
     public static String incVersion(String oldVersion, int level, long count) {
@@ -88,8 +88,8 @@ public class NBootVersion {
 
 
     public static int compareVersions(String v1, String v2) {
-        v1 = NBootStringUtils.trim(v1);
-        v2 = NBootStringUtils.trim(v2);
+        v1 = NBootUtils.trim(v1);
+        v2 = NBootUtils.trim(v2);
         if (v1.equals(v2)) {
             return 0;
         }
@@ -112,7 +112,7 @@ public class NBootVersion {
 
 
     private static VersionParts splitVersionParts2(String v1) {
-        v1 = NBootStringUtils.trim(v1);
+        v1 = NBootUtils.trim(v1);
         List<VersionPart> parts = new ArrayList<>();
         StringBuilder last = null;
         VersionPartType partType = null;
@@ -308,7 +308,7 @@ public class NBootVersion {
                     return (expression.trim());
                 }
             } else {
-                Set<String> all = new HashSet<>(NBootStringUtils.split(s, ",", true, true));
+                Set<String> all = new HashSet<>(NBootUtils.split(s, ",", true, true));
                 if (all.size() == 1) {
                     String one = all.stream().findAny().get();
                     if (VERSION_PART_PATTERN.matcher(one).matches()) {
@@ -334,7 +334,7 @@ public class NBootVersion {
                     }
                 } else {
                     //commas==1
-                    Set<String> two = new HashSet<>(NBootStringUtils.split(s, ",", true, false));
+                    Set<String> two = new HashSet<>(NBootUtils.split(s, ",", true, false));
                     if (two.size() == 1) {
                         String one = two.stream().findAny().get();
                         if (VERSION_PART_PATTERN.matcher(one).matches()) {
@@ -727,18 +727,18 @@ public class NBootVersion {
         public NVersionIntervalBoot(boolean inclusiveLowerBoundary, boolean inclusiveUpperBoundary, String min, String max) {
             this.includeLowerBound = inclusiveLowerBoundary;
             this.includeUpperBound = inclusiveUpperBoundary;
-            this.lowerBound = NBootStringUtils.trimToNull(min);
-            this.upperBound = NBootStringUtils.trimToNull(max);
+            this.lowerBound = NBootUtils.trimToNull(min);
+            this.upperBound = NBootUtils.trimToNull(max);
         }
 
         public boolean acceptVersion(NBootVersion version) {
-            if (!NBootStringUtils.isBlank(lowerBound) && !lowerBound.equals(NBootConstants.Versions.LATEST) && !lowerBound.equals(NBootConstants.Versions.RELEASE)) {
+            if (!NBootUtils.isBlank(lowerBound) && !lowerBound.equals(NBootConstants.Versions.LATEST) && !lowerBound.equals(NBootConstants.Versions.RELEASE)) {
                 int t = version.compareTo(lowerBound);
                 if ((includeLowerBound && t < 0) || (!includeLowerBound && t <= 0)) {
                     return false;
                 }
             }
-            if (!NBootStringUtils.isBlank(upperBound) && !upperBound.equals(NBootConstants.Versions.LATEST) && !upperBound.equals(NBootConstants.Versions.RELEASE)) {
+            if (!NBootUtils.isBlank(upperBound) && !upperBound.equals(NBootConstants.Versions.LATEST) && !upperBound.equals(NBootConstants.Versions.RELEASE)) {
                 int t = version.compareTo(upperBound);
                 return (!includeUpperBound || t <= 0) && (includeUpperBound || t < 0);
             }
@@ -746,7 +746,7 @@ public class NBootVersion {
         }
 
         public boolean isFixedValue() {
-            return includeLowerBound && includeUpperBound && NBootStringUtils.trim(lowerBound).equals(NBootStringUtils.trim(upperBound))
+            return includeLowerBound && includeUpperBound && NBootUtils.trim(lowerBound).equals(NBootUtils.trim(upperBound))
                     && !NBootConstants.Versions.LATEST.equals(lowerBound) && !NBootConstants.Versions.RELEASE.equals(lowerBound);
         }
 

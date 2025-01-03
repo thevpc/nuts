@@ -51,7 +51,7 @@ public class NBootPlatformHome {
     }
 
     public static NBootPlatformHome ofPortable(String platformOsFamily, boolean system, String userName) {
-        NBootAssert.requireNonBlank(userName, "userName");
+        NBootUtils.requireNonBlank(userName, "userName");
         return new NBootPlatformHome(platformOsFamily, system, p -> null, p -> portableProp(p, platformOsFamily, null, x -> {
             switch (x) {
                 case "user.name":
@@ -67,24 +67,24 @@ public class NBootPlatformHome {
 
 
     private static String portableProp(String p, String platformOsFamily, Function<String, String> env, Function<String, String> props) {
-        String osFamily = NBootUtils.enumName(NBootStringUtils.firstNonBlank(platformOsFamily,"UNIX"));
+        String osFamily = NBootUtils.enumName(NBootUtils.firstNonBlank(platformOsFamily,"UNIX"));
         switch (p) {
             case "user.name": {
-                String userName = NBootAssert.requireNonBlank(props == null ? null : props.apply("user.name"), "user.name");
+                String userName = NBootUtils.requireNonBlank(props == null ? null : props.apply("user.name"), "user.name");
                 return userName;
             }
             case "user.home": {
                 String home=props == null ? null : props.apply("user.home");
-                if(!NBootStringUtils.isBlank(home)){
+                if(!NBootUtils.isBlank(home)){
                     return home;
                 }
                 switch (osFamily) {
                     case "WINDOWS": {
-                        String userName = NBootAssert.requireNonBlank(props == null ? null : props.apply("user.name"), "user.name");
+                        String userName = NBootUtils.requireNonBlank(props == null ? null : props.apply("user.name"), "user.name");
                         return "C:\\Users\\" + userName;
                     }
                     default: {
-                        String userName = NBootAssert.requireNonBlank(props == null ? null : props.apply("user.name"), "user.name");
+                        String userName = NBootUtils.requireNonBlank(props == null ? null : props.apply("user.name"), "user.name");
                         switch (userName) {
                             case "root":
                                 return "/root";
@@ -97,12 +97,12 @@ public class NBootPlatformHome {
             }
             case "java.io.tmpdir": {
                 String temp=props == null ? null : props.apply("java.io.tmpdir");
-                if(!NBootStringUtils.isBlank(temp)){
+                if(!NBootUtils.isBlank(temp)){
                     return temp;
                 }
                 switch (osFamily) {
                     case "WINDOWS": {
-                        String userName = NBootAssert.requireNonBlank(props == null ? null : props.apply("user.name"), "user.name");
+                        String userName = NBootUtils.requireNonBlank(props == null ? null : props.apply("user.name"), "user.name");
                         return "C:\\Users\\" + userName + "\\AppData\\Local\\Temp";
                     }
                     default: {
@@ -138,22 +138,22 @@ public class NBootPlatformHome {
         }
         String s;
         String locationName = NBootUtils.enumId(storeType);
-        s = NBootStringUtils.trim(props.apply("nuts.home." + locationName + "." + NBootUtils.enumId(platformOsFamily)));
+        s = NBootUtils.trim(props.apply("nuts.home." + locationName + "." + NBootUtils.enumId(platformOsFamily)));
         if (!s.isEmpty()) {
             return s/* + "/" + workspaceName*/;
         }
-        s = NBootStringUtils.trim(props.apply("nuts.export.home." + locationName + "." + NBootUtils.enumId(platformOsFamily)));
+        s = NBootUtils.trim(props.apply("nuts.export.home." + locationName + "." + NBootUtils.enumId(platformOsFamily)));
         if (!s.isEmpty()) {
             return s/* + "/" + workspaceName*/;
         }
         if (homeLocations != null && homeLocations.size() > 0) {
             NBootHomeLocation key = NBootHomeLocation.of(platformOsFamily, storeType);
-            s = NBootStringUtils.trim(homeLocations.get(key));
+            s = NBootUtils.trim(homeLocations.get(key));
             if (!s.isEmpty()) {
                 return s/* + "/" + workspaceName*/;
             }
             key = NBootHomeLocation.of(null, storeType);
-            s = NBootStringUtils.trim(homeLocations.get(key));
+            s = NBootUtils.trim(homeLocations.get(key));
             if (!s.isEmpty()) {
                 return s /* + "/" + workspaceName*/;
             }
@@ -186,7 +186,7 @@ public class NBootPlatformHome {
     }
 
     public String getWorkspaceLocation(String workspaceName) {
-        if (NBootStringUtils.isBlank(workspaceName)) {
+        if (NBootUtils.isBlank(workspaceName)) {
             workspaceName = NBootConstants.Names.DEFAULT_WORKSPACE_NAME;
         } else if (workspaceName.equals(".") || workspaceName.equals("..") || workspaceName.indexOf('/') >= 0 || workspaceName.indexOf('\\') >= 0) {
             //this is a path!
@@ -227,7 +227,7 @@ public class NBootPlatformHome {
         if (storeType == null) {
             return getWorkspaceLocation(workspaceName);
         }
-        if (NBootStringUtils.isBlank(workspaceName)) {
+        if (NBootUtils.isBlank(workspaceName)) {
             workspaceName = NBootConstants.Names.DEFAULT_WORKSPACE_NAME;
         } else {
             Path fileName = Paths.get(workspaceName).normalize().toAbsolutePath().getFileName();
@@ -242,7 +242,7 @@ public class NBootPlatformHome {
     }
 
     public static String currentOsFamily() {
-        return NBootUtils.enumName(NBootStringUtils.firstNonBlank(parseOsFamily(System.getProperty("os.name")),"UNKNOWN"));
+        return NBootUtils.enumName(NBootUtils.firstNonBlank(parseOsFamily(System.getProperty("os.name")),"UNKNOWN"));
     }
 
     public static String parseOsFamily(java.lang.String value) {
@@ -314,11 +314,11 @@ public class NBootPlatformHome {
         String locationId = NBootUtils.enumId(location);
         if (system) {
             String s = null;
-            s = NBootStringUtils.trim(props.apply("nuts.store.system." + locationId + "." + platformOsFamilyId));
+            s = NBootUtils.trim(props.apply("nuts.store.system." + locationId + "." + platformOsFamilyId));
             if (!s.isEmpty()) {
                 return s;
             }
-            s = NBootStringUtils.trim(props.apply("nuts.export.store.system." + locationId + "." + platformOsFamilyId));
+            s = NBootUtils.trim(props.apply("nuts.export.store.system." + locationId + "." + platformOsFamilyId));
             if (!s.isEmpty()) {
                 return s.trim();
             }
@@ -387,7 +387,7 @@ public class NBootPlatformHome {
                     switch (platformOsFamilyId) {
                         case "windows": {
                             String pf = env.apply("TMP");
-                            if (NBootStringUtils.isBlank(pf)) {
+                            if (NBootUtils.isBlank(pf)) {
                                 pf = getWindowsSystemRoot() + "\\Temp";
                             }
                             return pf + "\\nuts";
@@ -401,7 +401,7 @@ public class NBootPlatformHome {
                     switch (platformOsFamilyId) {
                         case "windows": {
                             String pf = env.apply("TMP");
-                            if (NBootStringUtils.isBlank(pf)) {
+                            if (NBootUtils.isBlank(pf)) {
                                 pf = getWindowsSystemRoot() + "\\Temp";
                             }
                             return pf + "\\nuts\\run";
@@ -424,7 +424,7 @@ public class NBootPlatformHome {
                             return userHome + getNativePath("/AppData/Roaming/nuts/" + locationId);
                         }
                         default: {
-                            String val = NBootStringUtils.trim(env.apply("XDG_DATA_HOME"));
+                            String val = NBootUtils.trim(env.apply("XDG_DATA_HOME"));
                             if (!val.isEmpty()) {
                                 return val + "/nuts/" + locationId;
                             }
@@ -438,7 +438,7 @@ public class NBootPlatformHome {
                             return userHome + getNativePath("/AppData/LocalLow/nuts/" + locationId);
                         }
                         default: {
-                            String val = NBootStringUtils.trim(env.apply("XDG_LOG_HOME"));
+                            String val = NBootUtils.trim(env.apply("XDG_LOG_HOME"));
                             if (!val.isEmpty()) {
                                 return val + "/nuts";
                             }
@@ -452,7 +452,7 @@ public class NBootPlatformHome {
                             return userHome + getNativePath("/AppData/Local/nuts/" + locationId);
                         }
                         default: {
-                            String val = NBootStringUtils.trim(env.apply("XDG_RUNTIME_DIR"));
+                            String val = NBootUtils.trim(env.apply("XDG_RUNTIME_DIR"));
                             if (!val.isEmpty()) {
                                 return val + "/nuts";
                             }
@@ -466,7 +466,7 @@ public class NBootPlatformHome {
                             return userHome + getNativePath("/AppData/Roaming/nuts/" + locationId);
                         }
                         default: {
-                            String val = NBootStringUtils.trim(env.apply("XDG_CONFIG_HOME"));
+                            String val = NBootUtils.trim(env.apply("XDG_CONFIG_HOME"));
                             if (!val.isEmpty()) {
                                 return val + "/nuts";
                             }
@@ -480,7 +480,7 @@ public class NBootPlatformHome {
                             return userHome + getNativePath("/AppData/Local/nuts/cache");
                         }
                         default: {
-                            String val = NBootStringUtils.trim(env.apply("XDG_CACHE_HOME"));
+                            String val = NBootUtils.trim(env.apply("XDG_CACHE_HOME"));
                             if (!val.isEmpty()) {
                                 return val + "/nuts";
                             }
@@ -504,11 +504,11 @@ public class NBootPlatformHome {
 
     public String getWindowsProgramFiles() {
         String s = env.apply("ProgramFiles");
-        if (!NBootStringUtils.isBlank(s)) {
+        if (!NBootUtils.isBlank(s)) {
             return s;
         }
         String c = getWindowsSystemDrive();
-        if (!NBootStringUtils.isBlank(c)) {
+        if (!NBootUtils.isBlank(c)) {
             return c + "\\Program Files";
         }
         return "C:\\Program Files";
@@ -516,11 +516,11 @@ public class NBootPlatformHome {
 
     public String getWindowsProgramFilesX86() {
         String s = env.apply("ProgramFiles(x86)");
-        if (!NBootStringUtils.isBlank(s)) {
+        if (!NBootUtils.isBlank(s)) {
             return s;
         }
         String c = getWindowsSystemDrive();
-        if (!NBootStringUtils.isBlank(c)) {
+        if (!NBootUtils.isBlank(c)) {
             return c + "\\Program Files (x86)";
         }
         return "C:\\Program Files (x86)";
@@ -530,15 +530,15 @@ public class NBootPlatformHome {
     public String getWindowsSystemRoot() {
         String e;
         e = env.apply("SystemRoot");
-        if (!NBootStringUtils.isBlank(e)) {
+        if (!NBootUtils.isBlank(e)) {
             return e;
         }
         e = env.apply("windir");
-        if (!NBootStringUtils.isBlank(e)) {
+        if (!NBootUtils.isBlank(e)) {
             return e;
         }
         e = env.apply("SystemDrive");
-        if (!NBootStringUtils.isBlank(e)) {
+        if (!NBootUtils.isBlank(e)) {
             return e + "\\Windows";
         }
         return "C:\\Windows";
@@ -546,15 +546,15 @@ public class NBootPlatformHome {
 
     public String getWindowsSystemDrive() {
         String e = env.apply("SystemDrive");
-        if (!NBootStringUtils.isBlank(e)) {
+        if (!NBootUtils.isBlank(e)) {
             return e;
         }
         e = env.apply("SystemRoot");
-        if (!NBootStringUtils.isBlank(e)) {
+        if (!NBootUtils.isBlank(e)) {
             return e.substring(0, 2);
         }
         e = env.apply("windir");
-        if (!NBootStringUtils.isBlank(e)) {
+        if (!NBootUtils.isBlank(e)) {
             return e.substring(0, 2);
         }
         return null;
@@ -607,7 +607,7 @@ public class NBootPlatformHome {
         for (int i = 0; i < storeTypes.length; i++) {
             String location = storeTypes[i];
             String platformHomeFolder = getWorkspaceLocation(location, homeLocations, workspaceLocation);
-            if (NBootStringUtils.isBlank(platformHomeFolder)) {
+            if (NBootUtils.isBlank(platformHomeFolder)) {
                 throw new NBootException(NBootMsg.ofC("missing Home for %s", location));
             }
             homes[i] = platformHomeFolder;
@@ -629,7 +629,7 @@ public class NBootPlatformHome {
             String location = storeTypes[i];
             String locationId = NBootUtils.enumId(location);
             String _storeLocation = storeLocations.get(locationId);
-            if (NBootStringUtils.isBlank(_storeLocation)) {
+            if (NBootUtils.isBlank(_storeLocation)) {
                 switch (NBootUtils.enumName(storeStrategy)) {
                     case "STANDALONE": {
                         String c = getCustomPlatformHomeFolder(location, homeLocations);
@@ -646,13 +646,13 @@ public class NBootPlatformHome {
                     case "STANDALONE": {
                         String c = getCustomPlatformHomeFolder(location, homeLocations);
                         storeLocations.put(locationId, c == null ?
-                                (workspaceLocation + File.separator + locationId + NBootIOUtilsBoot.getNativePath("/" + _storeLocation))
+                                (workspaceLocation + File.separator + locationId + NBootUtils.getNativePath("/" + _storeLocation))
                                 :
-                                (c + NBootIOUtilsBoot.getNativePath("/" + _storeLocation)));
+                                (c + NBootUtils.getNativePath("/" + _storeLocation)));
                         break;
                     }
                     case "EXPLODED": {
-                        storeLocations.put(locationId, homes[i] + NBootIOUtilsBoot.getNativePath("/" + _storeLocation));
+                        storeLocations.put(locationId, homes[i] + NBootUtils.getNativePath("/" + _storeLocation));
                         break;
                     }
                 }

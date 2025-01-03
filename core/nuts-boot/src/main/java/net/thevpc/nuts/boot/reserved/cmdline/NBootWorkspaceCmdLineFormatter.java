@@ -5,7 +5,6 @@ import net.thevpc.nuts.boot.NBootHomeLocation;
 import net.thevpc.nuts.boot.NBootLogConfig;
 import net.thevpc.nuts.boot.NBootVersion;
 import net.thevpc.nuts.boot.reserved.util.NBootPlatformHome;
-import net.thevpc.nuts.boot.reserved.util.NBootStringUtils;
 import net.thevpc.nuts.boot.reserved.util.NBootUtils;
 
 import java.io.File;
@@ -67,7 +66,7 @@ public class NBootWorkspaceCmdLineFormatter {
     }
 
     private void fillOption(String longName, String shortName, String value, List<String> arguments, boolean forceSingle) {
-        if (!NBootStringUtils.isBlank(value)) {
+        if (!NBootUtils.isBlank(value)) {
             fillOption0(selectOptionName(longName, shortName), value, arguments, forceSingle);
         }
     }
@@ -343,7 +342,7 @@ public class NBootWorkspaceCmdLineFormatter {
         fillOption("--java", "-j", options.getJavaCommand(), arguments, false);
         fillOption("--java-options", "-O", options.getJavaOptions(), arguments, false);
         String wsString = options.getWorkspace();
-        if (NBootStringUtils.isBlank(wsString)) {
+        if (NBootUtils.isBlank(wsString)) {
             //default workspace name
             wsString = "";
         } else if (wsString.contains("/") || wsString.contains("\\")) {
@@ -474,7 +473,7 @@ public class NBootWorkspaceCmdLineFormatter {
             fillOptionEnum("---system-custom-launcher", null, options.getDesktopLauncher(), "NSupportMode", arguments, false);
         }
 
-        fillOption("--name", null, NBootStringUtils.trim(options.getName()), arguments, false);
+        fillOption("--name", null, NBootUtils.trim(options.getName()), arguments, false);
         fillOption("--archetype", "-A", options.getArchetype(), arguments, false);
         fillOptionEnum("--store-layout", null, options.getStoreLayout(), "NOsFamily", arguments, false);
         fillOptionEnum("--store-strategy", null, options.getStoreStrategy(), "NStoreStrategy", arguments, false);
@@ -485,7 +484,7 @@ public class NBootWorkspaceCmdLineFormatter {
         }
         for (String location : NBootPlatformHome.storeTypes()) {
             String s = storeLocations.get(location);
-            if (!NBootStringUtils.isBlank(s)) {
+            if (!NBootUtils.isBlank(s)) {
                 fillOption("--" + NBootUtils.enumId(location) + "-location", null, s, arguments, false);
             }
         }
@@ -494,14 +493,14 @@ public class NBootWorkspaceCmdLineFormatter {
         if (homeLocations != null) {
             for (String location : NBootPlatformHome.storeTypes()) {
                 String s = homeLocations.get(NBootHomeLocation.of(null, location));
-                if (!NBootStringUtils.isBlank(s)) {
+                if (!NBootUtils.isBlank(s)) {
                     fillOption("--system-" + NBootUtils.enumId(location) + "-home", null, s, arguments, false);
                 }
             }
             for (String osFamily : NBootPlatformHome.osFamilies()) {
                 for (String location : NBootPlatformHome.storeTypes()) {
                     String s = homeLocations.get(NBootHomeLocation.of(osFamily, location));
-                    if (!NBootStringUtils.isBlank(s)) {
+                    if (!NBootUtils.isBlank(s)) {
                         fillOption("--" + NBootUtils.enumId(osFamily) + "-" + NBootUtils.enumId(location) + "-home", null, s, arguments, false);
                     }
                 }

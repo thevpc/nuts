@@ -27,7 +27,6 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.NRepository;
 import net.thevpc.nuts.NWorkspaceProvider;
-import net.thevpc.nuts.format.NFormattable;
 import net.thevpc.nuts.util.NOptional;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.spi.NPathSPI;
@@ -196,17 +195,11 @@ public interface NPath extends NInputSource, NOutputTarget, NWorkspaceProvider {
 
     NPath setUserTemporary(boolean temporary);
 
-    String getBaseName();
+    NPathNameParts getNameParts();
 
-    String getSmartBaseName();
+    NPathNameParts getNameParts(NPathExtensionType type);
 
-    String getSmartExtension();
-
-    String getLongBaseName();
-
-    String getLastExtension();
-
-    String getLongExtension();
+    NPathNameParts getSmartFileNameParts();
 
     String getName();
 
@@ -410,7 +403,7 @@ public interface NPath extends NInputSource, NOutputTarget, NWorkspaceProvider {
      * depth-first, the elements in the stream are Path objects that are
      * obtained as if by resolving the relative path against start.
      *
-     * @param options options
+     * @param options  options
      * @param maxDepth max depth
      * @return a Stream that is lazily populated with Path by walking the file
      * tree rooted at a given starting file
@@ -467,8 +460,8 @@ public interface NPath extends NInputSource, NOutputTarget, NWorkspaceProvider {
     void copyFromInputStream(InputStream other);
 
     void copyFromReader(Reader other);
-    
-    void copyFromReader(Reader other,Charset charset, NPathOption... options);
+
+    void copyFromReader(Reader other, Charset charset, NPathOption... options);
 
     void copyToOutputStream(OutputStream other);
 

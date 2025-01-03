@@ -85,8 +85,8 @@ public class NBootId {
     }
 
     public NBootId(String groupId, String artifactId) {
-        this.groupId = NBootStringUtils.trimToNull(groupId);
-        this.artifactId = NBootStringUtils.trimToNull(artifactId);
+        this.groupId = NBootUtils.trimToNull(groupId);
+        this.artifactId = NBootUtils.trimToNull(artifactId);
     }
 
     public static NBootId of(String groupId, String artifactId, String version) {
@@ -94,18 +94,18 @@ public class NBootId {
     }
 
     public NBootId(String groupId, String artifactId, String version) {
-        this.groupId = NBootStringUtils.trimToNull(groupId);
-        this.artifactId = NBootStringUtils.trimToNull(artifactId);
+        this.groupId = NBootUtils.trimToNull(groupId);
+        this.artifactId = NBootUtils.trimToNull(artifactId);
         this.version = version == null ? "" : version;
     }
 
     public NBootId(String groupId, String artifactId, String version, String classifier, String propertiesQuery, NBootEnvCondition condition) {
-        this.groupId = NBootStringUtils.trimToNull(groupId);
-        this.artifactId = NBootStringUtils.trimToNull(artifactId);
+        this.groupId = NBootUtils.trimToNull(groupId);
+        this.artifactId = NBootUtils.trimToNull(artifactId);
         this.version = version == null ? "" : version;
 
         setCondition(condition);
-        String c0 = NBootStringUtils.trimToNull(classifier);
+        String c0 = NBootUtils.trimToNull(classifier);
         String c1 = null;
         Map<String, String> properties = propertiesQuery == null ? new LinkedHashMap<>() : NBootStringMapFormat.DEFAULT.parse(propertiesQuery);
         if (!properties.isEmpty()) {
@@ -113,7 +113,7 @@ public class NBootId {
         }
         if (c0 == null) {
             if (c1 != null) {
-                c0 = NBootStringUtils.trimToNull(c1);
+                c0 = NBootUtils.trimToNull(c1);
             }
         }
         this.classifier = c0;
@@ -150,13 +150,13 @@ public class NBootId {
     }
 
     public NBootId setGroupId(String value) {
-        this.groupId = NBootStringUtils.trimToNull(value);
+        this.groupId = NBootUtils.trimToNull(value);
         return this;
     }
 
 
     public NBootId setRepository(String value) {
-        return setProperty(NBootConstants.IdProperties.REPO, NBootStringUtils.trimToNull(value));
+        return setProperty(NBootConstants.IdProperties.REPO, NBootUtils.trimToNull(value));
     }
 
 
@@ -167,14 +167,14 @@ public class NBootId {
 
 
     public NBootId setArtifactId(String value) {
-        this.artifactId = NBootStringUtils.trimToNull(value);
+        this.artifactId = NBootUtils.trimToNull(value);
         return this;
     }
 
 
     public String getFace() {
         String s = getProperties().get(NBootConstants.IdProperties.FACE);
-        return NBootStringUtils.trimToNull(s);
+        return NBootUtils.trimToNull(s);
     }
 
 //    
@@ -186,12 +186,12 @@ public class NBootId {
 
     public String getPackaging() {
         String s = getProperties().get(NBootConstants.IdProperties.PACKAGING);
-        return NBootStringUtils.trimToNull(s);
+        return NBootUtils.trimToNull(s);
     }
 
 
     public NBootId setFace(String value) {
-        return setProperty(NBootConstants.IdProperties.FACE, NBootStringUtils.trimToNull(value));
+        return setProperty(NBootConstants.IdProperties.FACE, NBootUtils.trimToNull(value));
 //                .setQuery(NutsConstants.QUERY_EMPTY_ENV, true);
     }
 
@@ -217,13 +217,13 @@ public class NBootId {
 
 
     public NBootId setClassifier(String value) {
-        this.classifier = NBootStringUtils.trimToNull(value);
+        this.classifier = NBootUtils.trimToNull(value);
         return this;
     }
 
 
     public NBootId setPackaging(String value) {
-        return setProperty(NBootConstants.IdProperties.PACKAGING, NBootStringUtils.trimToNull(value));
+        return setProperty(NBootConstants.IdProperties.PACKAGING, NBootUtils.trimToNull(value));
     }
 
 
@@ -257,27 +257,27 @@ public class NBootId {
     public NBootId setProperty(String property, String value) {
         switch (property) {
             case NBootConstants.IdProperties.OS: {
-                condition.setOs(NBootStringUtils.parsePropertyIdList(value));
+                condition.setOs(NBootUtils.parsePropertyIdList(value));
                 break;
             }
             case NBootConstants.IdProperties.OS_DIST: {
-                condition.setOsDist(NBootStringUtils.parsePropertyIdList(value));
+                condition.setOsDist(NBootUtils.parsePropertyIdList(value));
                 break;
             }
             case NBootConstants.IdProperties.ARCH: {
-                condition.setArch(NBootStringUtils.parsePropertyIdList(value));
+                condition.setArch(NBootUtils.parsePropertyIdList(value));
                 break;
             }
             case NBootConstants.IdProperties.PLATFORM: {
-                condition.setPlatform(NBootStringUtils.parsePropertyIdList(value));
+                condition.setPlatform(NBootUtils.parsePropertyIdList(value));
                 break;
             }
             case NBootConstants.IdProperties.DESKTOP: {
-                condition.setDesktopEnvironment(NBootStringUtils.parsePropertyIdList(value));
+                condition.setDesktopEnvironment(NBootUtils.parsePropertyIdList(value));
                 break;
             }
             case NBootConstants.IdProperties.PROFILE: {
-                condition.setProfile(NBootStringUtils.parsePropertyIdList(value));
+                condition.setProfile(NBootUtils.parsePropertyIdList(value));
                 break;
             }
             case NBootConstants.IdProperties.CONDITIONAL_PROPERTIES: {
@@ -335,7 +335,7 @@ public class NBootId {
 
 
     public String getRepository() {
-        return NBootStringUtils.trimToNull(getProperties().get(NBootConstants.IdProperties.REPO));
+        return NBootUtils.trimToNull(getProperties().get(NBootConstants.IdProperties.REPO));
     }
 
 
@@ -371,17 +371,17 @@ public class NBootId {
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (!NBootStringUtils.isBlank(groupId)) {
+        if (!NBootUtils.isBlank(groupId)) {
             sb.append(groupId).append(":");
         }
-        sb.append(NBootStringUtils.trim(artifactId));
+        sb.append(NBootUtils.trim(artifactId));
         String v = getVersion();
-        if (!NBootStringUtils.isBlank(v)) {
+        if (!NBootUtils.isBlank(v)) {
             sb.append("#");
             sb.append(v);
         }
         LinkedHashMap<String, String> m = new LinkedHashMap<>();
-        if (!NBootStringUtils.isBlank(classifier)) {
+        if (!NBootUtils.isBlank(classifier)) {
             m.put(NBootConstants.IdProperties.CLASSIFIER, classifier);
         }
         m.putAll(NBootUtils.toMap(condition));
@@ -438,8 +438,8 @@ public class NBootId {
         if (other == null) {
             return false;
         }
-        return NBootStringUtils.trim(groupId).equals(NBootStringUtils.trim(other.getArtifactId()))
-                && NBootStringUtils.trim(artifactId).equals(NBootStringUtils.trim(other.getGroupId()));
+        return NBootUtils.trim(groupId).equals(NBootUtils.trim(other.getArtifactId()))
+                && NBootUtils.trim(artifactId).equals(NBootUtils.trim(other.getGroupId()));
     }
 
 
@@ -447,10 +447,10 @@ public class NBootId {
         if (other == null) {
             return false;
         }
-        return NBootStringUtils.trim(artifactId).equals(NBootStringUtils.trim(other.getArtifactId()))
-                && NBootStringUtils.trim(groupId).equals(NBootStringUtils.trim(other.getGroupId()))
-                && Objects.equals((version == null || NBootStringUtils.isBlank(version)) ? null : version,
-                (other.getVersion() == null || NBootStringUtils.isBlank(other.getVersion())) ? null : other.getVersion())
+        return NBootUtils.trim(artifactId).equals(NBootUtils.trim(other.getArtifactId()))
+                && NBootUtils.trim(groupId).equals(NBootUtils.trim(other.getGroupId()))
+                && Objects.equals((version == null || NBootUtils.isBlank(version)) ? null : version,
+                (other.getVersion() == null || NBootUtils.isBlank(other.getVersion())) ? null : other.getVersion())
                 && Objects.equals(getClassifier(), other.getClassifier())
                 ;
     }
@@ -468,8 +468,8 @@ public class NBootId {
 
     public boolean isShortId() {
         return (properties == null || properties.isEmpty())
-                && NBootStringUtils.isBlank(version)
-                && NBootStringUtils.isBlank(classifier)
+                && NBootUtils.isBlank(version)
+                && NBootUtils.isBlank(classifier)
                 ;
     }
 
@@ -544,15 +544,15 @@ public class NBootId {
 
     public int compareTo(NBootId o2) {
         int x;
-        x = NBootStringUtils.trim(this.getGroupId()).compareTo(NBootStringUtils.trim(o2.getGroupId()));
+        x = NBootUtils.trim(this.getGroupId()).compareTo(NBootUtils.trim(o2.getGroupId()));
         if (x != 0) {
             return x;
         }
-        x = NBootStringUtils.trim(this.getArtifactId()).compareTo(NBootStringUtils.trim(o2.getArtifactId()));
+        x = NBootUtils.trim(this.getArtifactId()).compareTo(NBootUtils.trim(o2.getArtifactId()));
         if (x != 0) {
             return x;
         }
-        x = NBootStringUtils.trim(this.getClassifier()).compareTo(NBootStringUtils.trim(o2.getClassifier()));
+        x = NBootUtils.trim(this.getClassifier()).compareTo(NBootUtils.trim(o2.getClassifier()));
         if (x != 0) {
             return x;
         }

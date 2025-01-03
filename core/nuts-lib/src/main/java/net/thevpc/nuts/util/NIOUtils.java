@@ -1,12 +1,16 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NUnexpectedException;
 import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NPathExtensionType;
+import net.thevpc.nuts.io.NPathNameParts;
 import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
 
 import java.io.*;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -128,8 +132,8 @@ public class NIOUtils {
      * @return size copied
      */
     public static long copy(InputStream in, OutputStream out, int bufferSize) {
-        if(bufferSize<=0){
-            bufferSize=DEFAULT_BUFFER_SIZE;
+        if (bufferSize <= 0) {
+            bufferSize = DEFAULT_BUFFER_SIZE;
         }
         byte[] buffer = new byte[bufferSize];
         int len;
@@ -153,8 +157,8 @@ public class NIOUtils {
      * @param bufferSize bufferSize
      */
     public static long copy(Reader in, Writer out, int bufferSize) {
-        if(bufferSize<=0){
-            bufferSize=DEFAULT_BUFFER_SIZE;
+        if (bufferSize <= 0) {
+            bufferSize = DEFAULT_BUFFER_SIZE;
         }
         char[] buffer = new char[bufferSize];
         int len;
@@ -397,6 +401,31 @@ public class NIOUtils {
         }
     }
 
+    public static NPathNameParts getPathNameParts(String name, NPathExtensionType type) {
+        if (type == null || type == NPathExtensionType.SMART) {
+            type = NPathExtensionType.LONG;
+        }
+        switch (type) {
+            case LONG: {
+                String n = name == null ? "" : name;
+                int i = n.indexOf('.');
+                if (i < 0) {
+                    return new NPathNameParts(n, "", "", NPathExtensionType.LONG);
+                }
+                return new NPathNameParts(n.substring(0, i), n.substring(i + 1), n.substring(i), NPathExtensionType.LONG);
+            }
+            case SHORT: {
+                String n = name == null ? "" : name;
+                int i = n.lastIndexOf('.');
+                if (i < 0) {
+                    return new NPathNameParts(n, "", "",NPathExtensionType.SHORT);
+                }
+                return new NPathNameParts(n.substring(0, i), n.substring(i + 1), n.substring(i), NPathExtensionType.SHORT);
+            }
+        }
+        throw new NUnexpectedException(NMsg.ofC("%s not supported", type));
+    }
+
     public static String getFileExtension(String s) {
         int i = s.lastIndexOf('.');
         if (i == 0) {
@@ -429,9 +458,9 @@ public class NIOUtils {
 
     public static boolean isURL(String url) {
         try {
-            new URL(url);
+            URI.create(url).toURL();
             return true;
-        } catch (MalformedURLException ex) {
+        } catch (Exception ex) {
             return false;
         }
     }
@@ -575,6 +604,22 @@ public class NIOUtils {
         return n;
     }
 
+    public static byte[] readBytes(File file) {
+        try (InputStream in = new FileInputStream(file)) {
+            return readBytes(in);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    public static byte[] readBytes(Path file) {
+        try (InputStream in = Files.newInputStream(file)) {
+            return readBytes(in);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
     public static byte[] readBytes(URL url) {
         try (InputStream in = url.openStream()) {
             return readBytes(in);
@@ -594,7 +639,7 @@ public class NIOUtils {
     }
 
     public static char[] readChars(Reader from) {
-        return readChars(from,-1);
+        return readChars(from, -1);
     }
 
     public static char[] readChars(Reader from, int bufferSize) {
@@ -603,7 +648,7 @@ public class NIOUtils {
         return out.toCharArray();
     }
 
-    public static String readString(File file)  {
+    public static String readString(File file) {
         try {
             return new String(Files.readAllBytes(file.toPath()));
         } catch (IOException ex) {
@@ -611,7 +656,7 @@ public class NIOUtils {
         }
     }
 
-    public static String readString(Path file)  {
+    public static String readString(Path file) {
         try {
             return new String(Files.readAllBytes(file));
         } catch (IOException ex) {

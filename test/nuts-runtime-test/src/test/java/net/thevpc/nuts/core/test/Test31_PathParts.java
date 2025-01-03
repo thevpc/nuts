@@ -5,10 +5,12 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NPathExtensionType;
+import net.thevpc.nuts.io.NPathNameParts;
 import net.thevpc.nuts.runtime.standalone.io.util.NPathParts;
+import net.thevpc.nuts.util.NIOUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -112,12 +114,31 @@ public class Test31_PathParts {
         Assertions.assertArrayEquals(new String[]{"a.config", "json"}, s);
     }
 
+    @Test
+    public void test07() {
+        Assertions.assertEquals(NPathNameParts.ofLong("a", "b.c"), NIOUtils.getPathNameParts("a.b.c", NPathExtensionType.LONG));
+        Assertions.assertEquals(NPathNameParts.ofLong("", null), NIOUtils.getPathNameParts("", NPathExtensionType.LONG));
+        Assertions.assertEquals(NPathNameParts.ofLong("", ""), NIOUtils.getPathNameParts(".", NPathExtensionType.LONG));
+        Assertions.assertEquals(NPathNameParts.ofLong("", "a"), NIOUtils.getPathNameParts(".a", NPathExtensionType.LONG));
+        Assertions.assertEquals(NPathNameParts.ofLong("a", ""), NIOUtils.getPathNameParts("a.", NPathExtensionType.LONG));
+
+        Assertions.assertEquals(NPathNameParts.ofShort("a.b", "c"), NIOUtils.getPathNameParts("a.b.c", NPathExtensionType.SHORT));
+        Assertions.assertEquals(NPathNameParts.ofShort("", null), NIOUtils.getPathNameParts("", NPathExtensionType.SHORT));
+        Assertions.assertEquals(NPathNameParts.ofShort("", ""), NIOUtils.getPathNameParts(".", NPathExtensionType.SHORT));
+        Assertions.assertEquals(NPathNameParts.ofShort("", "a"), NIOUtils.getPathNameParts(".a", NPathExtensionType.SHORT));
+        Assertions.assertEquals(NPathNameParts.ofShort("a", ""), NIOUtils.getPathNameParts("a.", NPathExtensionType.SHORT));
+
+
+
+    }
+
     private String[] d(String n) {
         NPath p = NPath.of(n);
-        if(p==null){
-            return new String[]{"",""};
+        if (p == null) {
+            return new String[]{"", ""};
         }
-        return new String[]{p.getSmartBaseName(), p.getSmartExtension()};
+        NPathNameParts nameParts = p.getNameParts(NPathExtensionType.SMART);
+        return new String[]{nameParts.getBaseName(), nameParts.getExtension()};
     }
 
 

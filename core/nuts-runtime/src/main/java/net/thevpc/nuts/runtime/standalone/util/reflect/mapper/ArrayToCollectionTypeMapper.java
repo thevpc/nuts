@@ -37,7 +37,7 @@ class ArrayToCollectionTypeMapper implements NReflectTypeMapper {
         int len = fromObj.size();
         boolean changed=false;
         for (int i = 0; i < len; i++) {
-            Object nv = context.mapToType(fromObj.get(i), componentType);
+            Object nv = context.mapToType(fromObj.get(i), context.repository().getType(componentType));
             boolean checkEq=true;
             while(i>=toList.size()){
                 toList.add(null);

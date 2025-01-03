@@ -769,7 +769,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         //now apply conditions!
         List<NDescriptorProperty> properties = descrWithParents.getProperties().stream().filter(x -> CoreFilterUtils.acceptCondition(
                 x.getCondition(), false)).collect(Collectors.toList());
-        if (properties.size() > 0) {
+        if (!properties.isEmpty()) {
             DefaultNProperties pp = new DefaultNProperties();
             List<NDescriptorProperty> n = new ArrayList<>();
             pp.addAll(properties);
@@ -1891,7 +1891,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 try (Writer writer = bootstrapFolder.resolve(this.getDefaultIdBasedir(def.getId().getLongId()))
                         .resolve("nuts.properties").getWriter()
                 ) {
-                    CoreIOUtils.storeProperties(pr, writer, false);
+                    NPropsTransformer.storeProperties(pr, writer, false);
                 } catch (IOException ex) {
                     throw new NIOException(ex);
                 }

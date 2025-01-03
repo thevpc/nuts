@@ -86,7 +86,7 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
                     );
                     if (showTrace) {
                         session.eout().add(NElements.of().ofObject().set("errorTrace",
-                                NElements.of().ofArray().addAll(NLogUtils.stacktraceToArray(throwable)).build()
+                                NElements.of().ofArray().addAll(NStringUtils.stacktraceArray(throwable)).build()
                         ).build());
                     }
                     NArrayElementBuilder e = session.eout();
@@ -102,7 +102,7 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
                             .build());
                     if (showTrace) {
                         session.eout().add(NElements.of().ofObject().set("errorTrace",
-                                NElements.of().ofArray().addAll(NLogUtils.stacktraceToArray(throwable)).build()
+                                NElements.of().ofArray().addAll(NStringUtils.stacktraceArray(throwable)).build()
                         ).build());
                     }
                     NArrayElementBuilder e = session.eout();
@@ -136,7 +136,7 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
             if (showTrace) {
                 if (sb.length() > 0) {
                     sb.append("\n");
-                    sb.append(NLogUtils.stacktrace(throwable));
+                    sb.append(NStringUtils.stacktrace(throwable));
                 }
             }
             String title = "Nuts Package Manager - Error";

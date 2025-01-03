@@ -156,7 +156,7 @@ class DataObjectTypeMapper implements NReflectTypeMapper {
                     }
                 }
                 Object v = srcVal == null ? from.get(a) : srcVal.get();
-                Object v2 = context.mapToType(v, toType);
+                Object v2 = context.mapToType(v, context.repository().getType(toType));
                 Object nv2 = targetVal == null ? to.getField().get(b) : targetVal.get();
                 if (!context.getEq().equals(nv2, v2)) {
                     if(v2==null){

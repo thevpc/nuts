@@ -15,13 +15,13 @@ public class NBootRepositoryDB {
     public static NBootRepositoryDB of(){return instance;};
 
     public NBootRepositoryDB() {
-        reg(false, "system", NBootAddRepositoryOptions.ORDER_SYSTEM_LOCAL, "nuts@" + NBootIOUtilsBoot.getNativePath(
+        reg(false, "system", NBootAddRepositoryOptions.ORDER_SYSTEM_LOCAL, "nuts@" + NBootUtils.getNativePath(
                         NBootPlatformHome.SYSTEM.getWorkspaceStore(
                                 "LIB",
                                 NBootConstants.Names.DEFAULT_WORKSPACE_NAME) + "/" + NBootConstants.Folders.ID
                 )
         );
-        reg(false, "maven", NBootAddRepositoryOptions.ORDER_USER_LOCAL, "maven");
+        reg(false, "maven", NBootAddRepositoryOptions.ORDER_USER_LOCAL, "maven@");
         reg(false, "maven-central", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://repo.maven.apache.org/maven2");
         reg(false, "jcenter", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://jcenter.bintray.com");
         reg(false, "jboss", NBootAddRepositoryOptions.ORDER_USER_REMOTE, "maven@https://repository.jboss.org/nexus/content/repositories/releases");
@@ -40,6 +40,9 @@ public class NBootRepositoryDB {
 
 
     public Set<String> findAllNamesByName(String name) {
+        if(name==null || name.isEmpty()){
+            return Collections.emptySet();
+        }
         Set<String> a = baseToAliases.get(name);
         if (a != null) {
             return Collections.unmodifiableSet(a);
@@ -67,8 +70,8 @@ public class NBootRepositoryDB {
     }
 
 
-    public NBootAddRepositoryOptions getRepositoryOptionsByLocation(String name) {
-        NBootAddRepositoryOptions o = defaultRepositoriesByLocation.get(name);
+    public NBootAddRepositoryOptions getRepositoryOptionsByLocation(String location) {
+        NBootAddRepositoryOptions o = defaultRepositoriesByLocation.get(location);
         if (o != null) {
             return o.copy();
         }
@@ -76,6 +79,8 @@ public class NBootRepositoryDB {
     }
 
     private void reg(boolean preview, String name, int order, String url, String... names) {
+        NBootRepositoryLocation location = NBootRepositoryLocation.of(url);
+        NBootUtils.requireNonBlank(location.getLocationType(), "locationType");
         NBootAddRepositoryOptions options = new NBootAddRepositoryOptions()
                 .setName(name)
                 .setEnabled(true)
@@ -85,7 +90,7 @@ public class NBootRepositoryDB {
                 .setConfig(
                         new NBootRepositoryConfig()
                                 .setLocation(
-                                        NBootRepositoryLocation.of(url)
+                                        location
                                 )
                                 .setTags(preview ? new String[]{NBootConstants.RepoTags.PREVIEW} : new String[0])
                 );

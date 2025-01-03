@@ -65,6 +65,14 @@ public class CoreIOUtils {
     public static final String MIME_TYPE_SHA1 = "text/sha-1";
     public static String newLineString = null;
 
+    public static final URL urlOf(String any){
+        try {
+            return URI.create(any).toURL();
+        } catch (MalformedURLException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
     @Deprecated
     public static PrintWriter toPrintWriter(Writer writer, NSystemTerminalBase term) {
         if (writer == null) {
@@ -277,16 +285,16 @@ public class CoreIOUtils {
         if (separatorIndex != -1) {
             String jarFile = urlFile.substring(0, separatorIndex);
             try {
-                return new URL(jarFile);
-            } catch (MalformedURLException ex) {
+                return CoreIOUtils.urlOf(jarFile);
+            } catch (Exception ex) {
                 // Probably no protocol in original jar URL, like "jar:C:/mypath/myjar.jar".
                 // This usually indicates that the jar file resides in the file system.
                 if (!jarFile.startsWith("/")) {
                     jarFile = "/" + jarFile;
                 }
                 try {
-                    return new URL("file:" + jarFile);
-                } catch (IOException ex2) {
+                    return CoreIOUtils.urlOf("file:" + jarFile);
+                } catch (Exception ex2) {
                     throw new NIOException(ex2);
                 }
             }
@@ -295,8 +303,8 @@ public class CoreIOUtils {
             String url_tostring = url.toString();
             if (url_tostring.endsWith(encoded)) {
                 try {
-                    return new URL(url_tostring.substring(0, url_tostring.length() - encoded.length()));
-                } catch (IOException ex) {
+                    return CoreIOUtils.urlOf(url_tostring.substring(0, url_tostring.length() - encoded.length()));
+                } catch (Exception ex) {
                     throw new NIOException(ex);
                 }
             }
@@ -431,100 +439,6 @@ public class CoreIOUtils {
 
     }
 
-    public static void storeProperties(Map<String, String> props, OutputStream out, boolean sort) {
-        storeProperties(props, new OutputStreamWriter(out), sort);
-    }
-
-    public static void storeProperties(Map<String, String> props, Writer w, boolean sort) {
-        try {
-            Set<String> keys = props.keySet();
-            if (sort) {
-                keys = new TreeSet<>(keys);
-            }
-            for (String key : keys) {
-                String value = props.get(key);
-                w.write(escapePropsString(key, true));
-                w.write("=");
-                w.write(escapePropsString(value, false));
-                w.write("\n");
-                w.flush();
-            }
-            w.flush();
-        } catch (IOException ex) {
-            throw new NIOException(ex);
-        }
-    }
-
-    /*
-     * Converts unicodes to encoded &#92;uxxxx and escapes
-     * special characters with a preceding slash.
-     * This is a modified method from java.util.Properties because the method
-     * is private but we need call it handle special properties files
-     */
-    public static String escapePropsString(String theString,
-                                           boolean escapeSpace) {
-        if (theString == null) {
-            theString = "";
-        }
-        char[] chars = theString.toCharArray();
-        StringBuilder buffer = new StringBuilder(chars.length);
-        for (int i = 0; i < chars.length; i++) {
-            char c = chars[i];
-            switch (c) {
-                case '\\': {
-                    buffer.append("\\\\");
-                    break;
-                }
-                case ' ': {
-                    if (i == 0 || escapeSpace) {
-                        buffer.append('\\');
-                    }
-                    buffer.append(' ');
-                    break;
-                }
-                case '\t': {
-                    buffer.append("\\t");
-                    break;
-                }
-                case '\n': {
-                    buffer.append("\\n");
-                    break;
-                }
-                case '\r': {
-                    buffer.append("\\r");
-                    break;
-                }
-                case '\f': {
-                    buffer.append("\\f");
-                    break;
-                }
-                case ':':
-                case '#':
-                case '!':
-                case '=': {
-                    buffer.append('\\');
-                    buffer.append(c);
-                    break;
-                }
-                default: {
-                    if ((c > 61) && (c < 127)) {
-                        buffer.append(c);
-                    } else if (((c < 0x0020) || (c > 0x007e))) {
-                        buffer.append('\\');
-                        buffer.append('u');
-                        buffer.append(NHex.toHexChar((c >> 12) & 0xF));
-                        buffer.append(NHex.toHexChar((c >> 8) & 0xF));
-                        buffer.append(NHex.toHexChar((c >> 4) & 0xF));
-                        buffer.append(NHex.toHexChar(c & 0xF));
-                    } else {
-                        buffer.append(c);
-                    }
-                }
-            }
-        }
-        return buffer.toString();
-    }
-
     public static Path toPathInputSource(NInputSource is, List<Path> tempPaths, boolean enforceExtension) {
         boolean isPath = is instanceof NPath;
         if (isPath) {
@@ -545,7 +459,7 @@ public class CoreIOUtils {
 
         if (enforceExtension) {
             NPath pp = NPath.of(temp);
-            String ext = pp.getLastExtension();
+            String ext = pp.getNameParts(NPathExtensionType.SHORT).getExtension();
             if (ext.isEmpty()) {
                 String ct = NIO.of().probeContentType(temp);
                 if (ct != null) {
@@ -678,7 +592,7 @@ public class CoreIOUtils {
             return replacement;
         }
         if (path.startsWith(prefix)) {
-            if (replacement == null || replacement.equals("")) {
+            if (replacement == null || replacement.isEmpty()) {
                 return path1.substring(prefix.length());
             }
             return replacement + fs + path1.substring(prefix.length());

@@ -26,8 +26,7 @@
 package net.thevpc.nuts;
 
 /**
- * Nuts Application is the Top Level interface to be handled by nuts as rich console
- * application. By default, NApplication classes :
+ * Nuts Application is the Top Level interface to be managed by nuts. By default, NApplication classes :
  * <ul>
  * <li>have a nutsApplication=true in their descriptor file (in maven descriptor you should add a property nuts.application=true)</li>
  * <li>support inheritance of all workspace options (from caller nuts process)</li>

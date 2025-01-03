@@ -187,35 +187,35 @@ public class Test03_CreateLayoutTest {
                 "info");
         TestUtils.println(workspace.getStoreLocation(NStoreType.BIN));
         Assertions.assertEquals(
-                NPath.of(new File(base, "system.bin")),
+                NPath.of(new File(base, "bin")),
                 workspace.getStoreLocation(NStoreType.BIN)
         );
         Assertions.assertEquals(
-                NPath.of(new File(base, "system.conf")),
+                NPath.of(new File(base, "conf")),
                 workspace.getStoreLocation(NStoreType.CONF)
         );
         Assertions.assertEquals(
-                NPath.of(new File(base, "system.var")),
+                NPath.of(new File(base, "var")),
                 workspace.getStoreLocation(NStoreType.VAR)
         );
         Assertions.assertEquals(
-                NPath.of(new File(base, "system.log")),
+                NPath.of(new File(base, "log")),
                 workspace.getStoreLocation(NStoreType.LOG)
         );
         Assertions.assertEquals(
-                NPath.of(new File(base, "system.temp")),
+                NPath.of(new File(base, "temp")),
                 workspace.getStoreLocation(NStoreType.TEMP)
         );
         Assertions.assertEquals(
-                NPath.of(new File(base, "system.cache")),
+                NPath.of(new File(base, "cache")),
                 workspace.getStoreLocation(NStoreType.CACHE)
         );
         Assertions.assertEquals(
-                NPath.of(new File(base, "system.lib")),
+                NPath.of(new File(base, "lib")),
                 workspace.getStoreLocation(NStoreType.LIB)
         );
         Assertions.assertEquals(
-                NPath.of(new File(base, "system.run")),
+                NPath.of(new File(base, "run")),
                 workspace.getStoreLocation(NStoreType.RUN)
         );
     }

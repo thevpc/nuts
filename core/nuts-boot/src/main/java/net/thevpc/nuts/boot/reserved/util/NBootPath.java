@@ -18,7 +18,7 @@ public class NBootPath {
     private NRef<Boolean> remote;
 
     public NBootPath(String path) {
-        if (NBootStringUtils.isBlank(path)) {
+        if (NBootUtils.isBlank(path)) {
             this.path = null;
             this.url = NRef.of(null);
             this.file = NRef.of(null);
@@ -35,7 +35,7 @@ public class NBootPath {
         } else {
             this.path = path.toString();
             this.url = NRef.of(path);
-            this.file = NRef.of(NBootIOUtilsBoot.toFile(path).toPath());
+            this.file = NRef.of(NBootUtils.toFile(path).toPath());
         }
     }
 
@@ -68,7 +68,7 @@ public class NBootPath {
                     return null;
                 }
             }
-            return NBootIOUtilsBoot.loadStream(getInputSteam(log), log);
+            return NBootUtils.loadStream(getInputSteam(log), log);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -78,7 +78,7 @@ public class NBootPath {
         if (path == null) {
             return null;
         }
-        return NBootIOUtilsBoot.openStream(getUrl(), log);
+        return NBootUtils.openStream(getUrl(), log);
     }
 
     public Path getFile() {
@@ -86,7 +86,7 @@ public class NBootPath {
             file = new NRef<>();
             if (path != null) {
                 try {
-                    file.set(NBootIOUtilsBoot.toFile(path).toPath());
+                    file.set(NBootUtils.toFile(path).toPath());
                 } catch (Exception e) {
                     //
                 }
@@ -100,7 +100,7 @@ public class NBootPath {
             url = new NRef<>();
             if (path != null) {
                 try {
-                    url.set(new URL(path));
+                    url.set(NBootUtils.urlOf(path));
                 } catch (Exception e) {
                     //
                 }
@@ -112,7 +112,7 @@ public class NBootPath {
     public boolean isRemote() {
         if (remote == null) {
             remote = new NRef<>();
-            if (NBootStringUtils.isBlank(path)) {
+            if (NBootUtils.isBlank(path)) {
                 remote.set(false);
                 return false;
             }

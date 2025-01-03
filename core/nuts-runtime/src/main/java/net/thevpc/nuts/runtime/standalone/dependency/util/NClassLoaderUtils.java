@@ -25,12 +25,14 @@
 package net.thevpc.nuts.runtime.standalone.dependency.util;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.NDefaultClassLoaderNode;
 
 /**
@@ -155,13 +157,13 @@ public final class NClassLoaderUtils {
                         } else if ("jar".equals(u.getProtocol())) {
                             if (u.getFile().endsWith("!/META-INF/MANIFEST.MF")) {
                                 String jar = u.getFile().substring(0, u.getFile().length() - "!/META-INF/MANIFEST.MF".length());
-                                all.add(new URL(jar));
+                                all.add(CoreIOUtils.urlOf(jar));
                             }
                         } else {
                             //ignore any other loading url format!
                         }
                     }
-                } catch (IOException ex) {
+                } catch (IOException | UncheckedIOException ex) {
                     //ignore...
                 }
             }

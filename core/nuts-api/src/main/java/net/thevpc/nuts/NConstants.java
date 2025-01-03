@@ -559,8 +559,8 @@ public final class NConstants {
     public static final class Ids {
 
         public static final String NUTS_GROUP_ID = "net.thevpc.nuts";
-        public static final String NUTS_API_ARTIFACT_ID = "nuts-api";
-        public static final String NUTS_APP_ARTIFACT_ID = "nuts";
+        public static final String NUTS_API_ARTIFACT_ID = "nuts";
+        public static final String NUTS_APP_ARTIFACT_ID = "nuts-app";
         public static final String NUTS_RUNTIME_ARTIFACT_ID = "nuts-runtime";
         /**
          * nuts api id

@@ -162,38 +162,6 @@ public class NLogUtils {
         return v;
     }
 
-    public static String[] stacktraceToArray(Throwable th) {
-        try {
-            StringWriter sw = new StringWriter();
-            try (PrintWriter pw = new PrintWriter(sw)) {
-                th.printStackTrace(pw);
-            }
-            BufferedReader br = new BufferedReader(new StringReader(sw.toString()));
-            List<String> s = new ArrayList<>();
-            String line = null;
-            while ((line = br.readLine()) != null) {
-                s.add(line);
-            }
-            return s.toArray(new String[0]);
-        } catch (Exception ex) {
-            // ignore
-        }
-        return new String[0];
-    }
-
-    public static String stacktrace(Throwable th) {
-        try {
-            StringWriter sw = new StringWriter();
-            try (PrintWriter pw = new PrintWriter(sw)) {
-                th.printStackTrace(pw);
-            }
-            return sw.toString();
-        } catch (Exception ex) {
-            // ignore
-        }
-        return "";
-    }
-
     public static final NSession resolveSession(LogRecord record, NWorkspace ws) {
         NSession session = null;
         if (record instanceof NLogRecord) {

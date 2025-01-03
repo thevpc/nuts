@@ -27,6 +27,7 @@
 package net.thevpc.nuts.runtime.standalone.io.urlpart;
 
 import net.thevpc.nuts.runtime.standalone.io.path.spi.URLPath;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.util.NOptional;
 
 import java.io.*;
@@ -148,11 +149,11 @@ public abstract class URLPart {
             } else if (getType() == Type.URL_FILE) {
                 try {
                     if (path.startsWith("file:")) {
-                        return NOptional.of(URLPath._toFile(new URL(path)));
+                        return NOptional.of(URLPath._toFile(CoreIOUtils.urlOf(path)));
                     } else {
                         return NOptional.of(new File(path));
                     }
-                } catch (MalformedURLException e) {
+                } catch (Exception e) {
                     return NOptional.ofNamedEmpty("Not a file " + this);
                 }
             }

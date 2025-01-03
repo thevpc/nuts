@@ -25,7 +25,6 @@
 package net.thevpc.nuts.boot.reserved.cmdline;
 
 import net.thevpc.nuts.boot.NBootException;
-import net.thevpc.nuts.boot.reserved.util.NBootAssert;
 import net.thevpc.nuts.boot.reserved.util.NBootMsg;
 import net.thevpc.nuts.boot.reserved.util.*;
 
@@ -189,7 +188,7 @@ public class NBootCmdLine {
 
 
     public NBootCmdLine throwMissingArgument(String argumentName) {
-        if (NBootStringUtils.isBlank(argumentName)) {
+        if (NBootUtils.isBlank(argumentName)) {
             throwMissingArgument();
         } else {
             if (isEmpty()) {
@@ -222,7 +221,7 @@ public class NBootCmdLine {
 
 
     public NBootCmdLine pushBack(NBootArg arg) {
-        NBootAssert.requireNonNull(arg, "argument");
+        NBootUtils.requireNonNull(arg, "argument");
         lookahead.add(0, arg);
         return this;
     }
@@ -323,7 +322,7 @@ public class NBootCmdLine {
         }
 
         for (String nameSeq : names) {
-            String[] nameSeqArray = NBootStringUtils.split(nameSeq, " ").toArray(new String[0]);
+            String[] nameSeqArray = NBootUtils.split(nameSeq, " ").toArray(new String[0]);
             if (nameSeqArray.length == 0) {
                 continue;
             }
@@ -390,7 +389,7 @@ public class NBootCmdLine {
 
     private <T> T emptyOptionalCformat(String str, Object... args) {
         List<Object> a = new ArrayList<>();
-        if (!NBootStringUtils.isBlank(getCommandName())) {
+        if (!NBootUtils.isBlank(getCommandName())) {
             a.add(getCommandName());
             a.addAll(Arrays.asList(args));
             throw new IllegalArgumentException(NBootMsg.ofC("%s : " + str, a.toArray()).toString());
@@ -401,7 +400,7 @@ public class NBootCmdLine {
     }
 
     private <T> T errorOptionalCformat(String str, Object... args) {
-        if (!NBootStringUtils.isBlank(getCommandName())) {
+        if (!NBootUtils.isBlank(getCommandName())) {
             throw new NBootException(NBootMsg.ofC("%s : %s ", getCommandName(), NBootMsg.ofC(str, args)));
         }
         throw new NBootException(NBootMsg.ofC(str, args));
@@ -587,7 +586,7 @@ public class NBootCmdLine {
 
 
     public void throwError(NBootMsg message) {
-        if (NBootStringUtils.isBlank(commandName)) {
+        if (NBootUtils.isBlank(commandName)) {
             throw new NBootException(message);
         }
         throw new NBootException(NBootMsg.ofC("%s : %s", commandName, message));
@@ -634,7 +633,7 @@ public class NBootCmdLine {
 
 
     public String toString() {
-        return toStringList().stream().map(x -> NBootStringUtils.formatStringLiteral(x, NBootQuoteTypeBoot.DOUBLE, NBootSupportMode.PREFERRED)).collect(Collectors.joining(" "));
+        return toStringList().stream().map(x -> NBootUtils.formatStringLiteral(x, NBootQuoteTypeBoot.DOUBLE, NBootSupportMode.PREFERRED)).collect(Collectors.joining(" "));
     }
 
     private String createExpandedSimpleOption(char start, boolean negate, char val) {

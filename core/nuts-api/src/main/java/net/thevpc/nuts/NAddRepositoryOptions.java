@@ -39,18 +39,27 @@ import java.util.Objects;
 public class NAddRepositoryOptions implements Serializable, Cloneable {
 
     /**
+     * Unique identifier for the serialization of the NAddRepositoryOptions class.
+     * This value is used to ensure that a deserialized object matches the version
+     * of the class definition in the code. If there is a mismatch,
+     * an InvalidClassException will be thrown during deserialization.
+     */
+    private static final long serialVersionUID = 1;
+
+    /**
      * Repository Order for local repositories, used for prioritising local access
      */
     public static final int ORDER_USER_LOCAL = 1000;
+
     /**
      * Repository Order for local system repositories, used for prioritising local access
      */
     public static final int ORDER_SYSTEM_LOCAL = 2000;
+
     /**
      * Repository Order for remote repositories, used for prioritising local access
      */
     public static final int ORDER_USER_REMOTE = 10000;
-    private static final long serialVersionUID = 1;
 
     /**
      * repository name (should no include special space or characters)
@@ -68,7 +77,7 @@ public class NAddRepositoryOptions implements Serializable, Cloneable {
     private boolean enabled = true;
 
     /**
-     * fail safe repository. when fail safe, repository will be ignored if the
+     * fail-safe repository. when fail-safe, repository will be ignored if the
      * location is not accessible
      */
     private boolean failSafe;
@@ -87,7 +96,6 @@ public class NAddRepositoryOptions implements Serializable, Cloneable {
      * repository deploy order
      */
     private int deployWeight;
-
 
     /**
      * repository config information
@@ -128,10 +136,21 @@ public class NAddRepositoryOptions implements Serializable, Cloneable {
         this.repositoryModel = other.repositoryModel == null ? null : other.repositoryModel/*.copy()*/;
     }
 
+    /**
+     * Creates and returns a copy of this object.
+     *
+     * @return a new instance of {@code NAddRepositoryOptions} that is a copy of this object
+     */
     public NAddRepositoryOptions copy() {
         return clone();
     }
 
+    /**
+     * Creates and returns a copy of this {@code NAddRepositoryOptions} object.
+     *
+     * @return a new instance of {@code NAddRepositoryOptions} that is a copy of this object
+     * @throws RuntimeException if cloning is not supported
+     */
     @Override
     protected NAddRepositoryOptions clone() {
         try {
@@ -347,12 +366,28 @@ public class NAddRepositoryOptions implements Serializable, Cloneable {
         return this;
     }
 
+    /**
+     * Computes the hash code for the object based on its fields.
+     * This method uses the {@link Objects#hash} utility to generate
+     * a hash code considering the fields: name, location, enabled,
+     * failSafe, create, temporary, order, deployWeight, and config.
+     *
+     * @return an integer representing the hash code of this object
+     */
     @Override
     public int hashCode() {
         return Objects.hash(name, location, enabled, failSafe, create,
                 temporary, order, deployWeight, config);
     }
 
+    /**
+     * Compares this object to the specified object for equality. The comparison
+     * is based on each field of the class including name, location, enabled state,
+     * fail safe, creation flag, temporary status, order, deploy weight, and configuration.
+     *
+     * @param o the object to be compared for equality with this object
+     * @return {@code true} if the specified object is equal to this instance, otherwise {@code false}
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -374,6 +409,14 @@ public class NAddRepositoryOptions implements Serializable, Cloneable {
                 ;
     }
 
+    /**
+     * Returns a string representation of the object. The string includes
+     * the values of the primary fields such as name, location, enabled, failSafe,
+     * create, temporary, deployOrder, order, and config. This representation
+     * is mainly for debugging purposes and provides an overview of the object's state.
+     *
+     * @return a string representation of the {@code NAddRepositoryOptions} object
+     */
     @Override
     public String toString() {
         return "NutsAddRepositoryOptions{"

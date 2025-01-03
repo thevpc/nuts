@@ -25,7 +25,6 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.boot.reserved.util.NBootUtils;
-import net.thevpc.nuts.boot.reserved.util.NBootStringUtils;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -1856,7 +1855,7 @@ public final class NBootOptionsInfo {
      */
 
     public NBootOptionsInfo setStoreLocation(String location, String value) {
-        if (NBootStringUtils.isBlank(value)) {
+        if (NBootUtils.isBlank(value)) {
             if (storeLocations != null) {
                 storeLocations.remove(location);
             }
@@ -1878,7 +1877,7 @@ public final class NBootOptionsInfo {
      */
 
     public NBootOptionsInfo setHomeLocation(NBootHomeLocation location, String value) {
-        if (NBootStringUtils.isBlank(value)) {
+        if (NBootUtils.isBlank(value)) {
             if (homeLocations != null) {
                 homeLocations.remove(location);
             }
@@ -1902,7 +1901,7 @@ public final class NBootOptionsInfo {
         if (options != null) {
             for (String option : options) {
                 if (option != null) {
-                    option = NBootStringUtils.trim(option);
+                    option = NBootUtils.trim(option);
                     if (!option.isEmpty()) {
                         if (outputFormatOptions == null) {
                             outputFormatOptions = new ArrayList<>();
@@ -2040,7 +2039,7 @@ public final class NBootOptionsInfo {
 
 
     public NBootOptionsInfo setBootRepositories(String bootRepositories) {
-        this.bootRepositories = NBootStringUtils.trimToNull(bootRepositories);
+        this.bootRepositories = NBootUtils.trimToNull(bootRepositories);
         return this;
     }
 
@@ -2110,7 +2109,7 @@ public final class NBootOptionsInfo {
 
 
     public NBootOptionsInfo setUuid(String uuid) {
-        this.uuid = NBootStringUtils.trimToNull(uuid);
+        this.uuid = NBootUtils.trimToNull(uuid);
         return this;
     }
 

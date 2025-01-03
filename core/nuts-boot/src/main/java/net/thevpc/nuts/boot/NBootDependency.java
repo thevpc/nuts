@@ -27,7 +27,6 @@ package net.thevpc.nuts.boot;
 import net.thevpc.nuts.boot.reserved.util.NBootConstants;
 import net.thevpc.nuts.boot.reserved.util.NBootStringMapFormat;
 import net.thevpc.nuts.boot.reserved.util.NBootUtils;
-import net.thevpc.nuts.boot.reserved.util.NBootStringUtils;
 
 import java.util.*;
 
@@ -55,20 +54,20 @@ public class NBootDependency {
     }
 
     public NBootDependency(String groupId, String artifactId) {
-        this.groupId = NBootStringUtils.trimToNull(groupId);
-        this.artifactId = NBootStringUtils.trimToNull(artifactId);
+        this.groupId = NBootUtils.trimToNull(groupId);
+        this.artifactId = NBootUtils.trimToNull(artifactId);
     }
     public NBootDependency(String repository, String groupId, String artifactId, String classifier, String version, String scope, String optional, List<NBootId> exclusions,
                            NBootEnvCondition condition, String type,
                            String properties) {
-        this.repository = NBootStringUtils.trimToNull(repository);
-        this.groupId = NBootStringUtils.trimToNull(groupId);
-        this.artifactId = NBootStringUtils.trimToNull(artifactId);
+        this.repository = NBootUtils.trimToNull(repository);
+        this.groupId = NBootUtils.trimToNull(groupId);
+        this.artifactId = NBootUtils.trimToNull(artifactId);
         this.version = version == null ? "" : version;
-        this.classifier = NBootStringUtils.trimToNull(classifier);
+        this.classifier = NBootUtils.trimToNull(classifier);
         this.scope = NBootUtils.firstNonNull(scope,"API");
 
-        String o = NBootStringUtils.trimToNull(optional);
+        String o = NBootUtils.trimToNull(optional);
         if ("false".equalsIgnoreCase(o)) {
             o = null;
         } else if ("true".equalsIgnoreCase(o)) {
@@ -82,7 +81,7 @@ public class NBootDependency {
             }
         }
         this.condition = condition == null ? NBootEnvCondition.BLANK : condition;
-        this.type = NBootStringUtils.trimToNull(type);
+        this.type = NBootUtils.trimToNull(type);
         this.properties = NBootStringMapFormat.DEFAULT.parse(properties);
     }
 
@@ -154,7 +153,7 @@ public class NBootDependency {
 
     
     public NBootDependency setType(String type) {
-        this.type = NBootStringUtils.trimToNull(type);
+        this.type = NBootUtils.trimToNull(type);
         return this;
     }
 
@@ -165,7 +164,7 @@ public class NBootDependency {
 
     
     public NBootDependency setOptional(String optional) {
-        String o = NBootStringUtils.trimToNull(optional);
+        String o = NBootUtils.trimToNull(optional);
         if ("false".equals(o)) {
             o = null;
         } else if ("true".equalsIgnoreCase(o)) {
@@ -192,13 +191,13 @@ public class NBootDependency {
         if (!NBootUtils.isDependencyDefaultScope(scope)) {
             m.put(NBootConstants.IdProperties.SCOPE, scope);
         }
-        if (!NBootStringUtils.isBlank(optional) && !"false".equals(optional)) {
+        if (!NBootUtils.isBlank(optional) && !"false".equals(optional)) {
             m.put(NBootConstants.IdProperties.OPTIONAL, optional);
         }
-        if (!NBootStringUtils.isBlank(classifier)) {
+        if (!NBootUtils.isBlank(classifier)) {
             m.put(NBootConstants.IdProperties.CLASSIFIER, classifier);
         }
-        if (!NBootStringUtils.isBlank(type)) {
+        if (!NBootUtils.isBlank(type)) {
             m.put(NBootConstants.IdProperties.TYPE, type);
         }
         if (exclusions.size() > 0) {
@@ -221,7 +220,7 @@ public class NBootDependency {
 
     
     public NBootDependency setRepository(String repository) {
-        this.repository = NBootStringUtils.trimToNull(repository);
+        this.repository = NBootUtils.trimToNull(repository);
         return this;
     }
 
@@ -232,7 +231,7 @@ public class NBootDependency {
 
     
     public NBootDependency setGroupId(String groupId) {
-        this.groupId = NBootStringUtils.trimToNull(groupId);
+        this.groupId = NBootUtils.trimToNull(groupId);
         return this;
     }
 
@@ -243,7 +242,7 @@ public class NBootDependency {
 
     
     public NBootDependency setArtifactId(String artifactId) {
-        this.artifactId = NBootStringUtils.trimToNull(artifactId);
+        this.artifactId = NBootUtils.trimToNull(artifactId);
         return this;
     }
 
@@ -254,16 +253,16 @@ public class NBootDependency {
 
     
     public NBootDependency setClassifier(String classifier) {
-        this.classifier = NBootStringUtils.trimToNull(classifier);
+        this.classifier = NBootUtils.trimToNull(classifier);
         return this;
     }
 
     
     public String getFullName() {
-        if (NBootStringUtils.isBlank(groupId)) {
-            return NBootStringUtils.trim(artifactId);
+        if (NBootUtils.isBlank(groupId)) {
+            return NBootUtils.trim(artifactId);
         }
-        return NBootStringUtils.trim(groupId) + ":" + NBootStringUtils.trim(artifactId);
+        return NBootUtils.trim(groupId) + ":" + NBootUtils.trim(artifactId);
     }
 
     
@@ -331,23 +330,23 @@ public class NBootDependency {
                     break;
                 }
                 case NBootConstants.IdProperties.OS: {
-                    condition.setOs(NBootStringUtils.parsePropertyIdList(value));
+                    condition.setOs(NBootUtils.parsePropertyIdList(value));
                     break;
                 }
                 case NBootConstants.IdProperties.ARCH: {
-                    condition.setArch(NBootStringUtils.parsePropertyIdList(value));
+                    condition.setArch(NBootUtils.parsePropertyIdList(value));
                     break;
                 }
                 case NBootConstants.IdProperties.PLATFORM: {
-                    condition.setPlatform(NBootStringUtils.parsePropertyIdList(value));
+                    condition.setPlatform(NBootUtils.parsePropertyIdList(value));
                     break;
                 }
                 case NBootConstants.IdProperties.OS_DIST: {
-                    condition.setOsDist(NBootStringUtils.parsePropertyIdList(value));
+                    condition.setOsDist(NBootUtils.parsePropertyIdList(value));
                     break;
                 }
                 case NBootConstants.IdProperties.DESKTOP: {
-                    condition.setDesktopEnvironment(NBootStringUtils.parsePropertyIdList(value));
+                    condition.setDesktopEnvironment(NBootUtils.parsePropertyIdList(value));
                     break;
                 }
                 case NBootConstants.IdProperties.TYPE: {
@@ -438,31 +437,31 @@ public class NBootDependency {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (!NBootStringUtils.isBlank(groupId)) {
+        if (!NBootUtils.isBlank(groupId)) {
             sb.append(groupId).append(":");
         }
         sb.append(artifactId);
-        if (!NBootStringUtils.isBlank(version)) {
+        if (!NBootUtils.isBlank(version)) {
             sb.append("#").append(version);
         }
         Map<String, String> p = new HashMap<>();
-        if (!NBootStringUtils.isBlank(classifier)) {
+        if (!NBootUtils.isBlank(classifier)) {
             p.put(NBootConstants.IdProperties.CLASSIFIER, classifier);
         }
-        if (!NBootStringUtils.isBlank(repository)) {
+        if (!NBootUtils.isBlank(repository)) {
             p.put(NBootConstants.IdProperties.REPO, repository);
         }
-        if (!NBootStringUtils.isBlank(scope)) {
+        if (!NBootUtils.isBlank(scope)) {
             if (!scope.equals("api")) {
                 p.put(NBootConstants.IdProperties.SCOPE, scope);
             }
         }
-        if (!NBootStringUtils.isBlank(optional)) {
+        if (!NBootUtils.isBlank(optional)) {
             if (!optional.equals("false")) {
                 p.put(NBootConstants.IdProperties.OPTIONAL, optional);
             }
         }
-        if (!NBootStringUtils.isBlank(type)) {
+        if (!NBootUtils.isBlank(type)) {
             p.put(NBootConstants.IdProperties.TYPE, type);
         }
         if (condition != null && !condition.isBlank()) {

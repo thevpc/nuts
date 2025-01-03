@@ -3,9 +3,11 @@ package net.thevpc.nuts.runtime.standalone.io;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -54,9 +56,9 @@ public class SimpleHttpClient {
 
     public SimpleHttpClient(String url, NSession session) {
         try {
-            this.url = new URL(url);
+            this.url = CoreIOUtils.urlOf(url);
             this.session=session;
-        } catch (MalformedURLException e) {
+        } catch (UncheckedIOException e) {
             throw new NIOException(e);
         }
     }

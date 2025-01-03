@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NVersion;
+import net.thevpc.nuts.util.NArrays;
 import net.thevpc.nuts.util.NIOUtils;
 
 /**
@@ -165,10 +166,7 @@ public class TestUtils {
     }
 
     public static NWorkspace openNewMinTestWorkspace(String... args) {
-        List<String> a=new ArrayList<>();
-        a.addAll(Arrays.asList("-byZSKk"));
-        a.addAll(Arrays.asList(args));
-        return openOrReOpenTestWorkspace(true,false,a.toArray(new String[0]));
+        return openOrReOpenTestWorkspace(true,false, NArrays.concat(new String[]{"-byZSK","-!k"},args));
     }
 
     public static NWorkspace openNewTestWorkspace(String... args) {
@@ -228,9 +226,9 @@ public class TestUtils {
             argsList.add("--!init-launchers");
             //disable progress indicator
             argsList.add("--!progress");
-            //disable interactive mode and 'always confirm'²
+            //disable interactive mode and 'always confirm'
             argsList.add("--yes");
-            //disable installing nsh
+            //enable installing nsh
             argsList.add("--install-companions=true");
             argsList.add("--skip-welcome");
             argsList.add("--shared-instance");

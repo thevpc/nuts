@@ -174,12 +174,14 @@ public final class NApplications {
             ws = Nuts.openInheritedWorkspace(nutsArgs, args);
             NWorkspace finalWs = ws;
             ws.runWith(() -> {
-                NApp.of().prepare(new NAppInitInfo(args, applicationInstance.getClass(), null, now));
+                NApp a = NApp.of();
+                a.setArguments(args);
+                a.prepare(new NAppInitInfo(args, applicationInstance.getClass(), now));
                 runApplication(applicationInstance);
             });
         } else {
             ws.runWith(() -> {
-                NApp.of().prepare(new NAppInitInfo(args, applicationInstance.getClass(), null, now));
+                NApp.of().prepare(new NAppInitInfo(args, applicationInstance.getClass(), now));
                 runApplication(applicationInstance);
             });
         }

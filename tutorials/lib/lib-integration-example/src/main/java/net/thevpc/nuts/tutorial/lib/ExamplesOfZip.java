@@ -1,11 +1,8 @@
 package net.thevpc.nuts.tutorial.lib;
 
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.util.NMsg;
-import net.thevpc.nuts.io.NCompress;
-import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NUncompress;
-import net.thevpc.nuts.io.NUncompressVisitor;
 
 import java.io.InputStream;
 
@@ -22,7 +19,7 @@ public class ExamplesOfZip {
         if (example.isDirectory()) {
             NCompress.of()
                     .addSource(example)
-                    .setTarget(example.resolveSibling(example.getBaseName() + ".zip"))
+                    .setTarget(example.resolveSibling(example.getNameParts(NPathExtensionType.SHORT).getBaseName() + ".zip"))
                     .setPackaging("zip")
                     .run();
         }

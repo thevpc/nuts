@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts</groupId>
-    <artifactId>nuts</artifactId>
+    <artifactId>nuts-app</artifactId>
     <version>0.8.5</version>
     <packaging>jar</packaging><!-- small changes, do not require version change, didn't updated the version-->
     <name>Nuts Community Core API</name>
@@ -60,7 +60,7 @@
     <dependencies>
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
-            <artifactId>nuts-api</artifactId>
+            <artifactId>nuts</artifactId>
             <version>0.8.5</version>
         </dependency>
     </dependencies>

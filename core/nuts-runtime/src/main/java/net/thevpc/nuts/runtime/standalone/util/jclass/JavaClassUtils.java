@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.util.jclass;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NVisitResult;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNExecutionEntry;
 import net.thevpc.nuts.log.NLogOp;
@@ -12,6 +13,7 @@ import net.thevpc.nuts.util.NRef;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.*;
@@ -42,10 +44,10 @@ public class JavaClassUtils {
                     if(substring.startsWith("jar:") && substring.endsWith("!/")){
                         substring=substring.substring("jar:".length(),substring.length()-"!/".length());
                     }
-                    all.add(new URL(substring));
+                    all.add(CoreIOUtils.urlOf(substring));
                 }
             }
-        } catch (IOException ex) {
+        } catch (IOException | UncheckedIOException ex) {
             //
         }
         return all;

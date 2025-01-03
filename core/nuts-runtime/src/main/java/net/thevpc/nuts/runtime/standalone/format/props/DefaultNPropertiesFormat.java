@@ -16,8 +16,8 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.ObjectOutputFormatWriterHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
+import net.thevpc.nuts.util.NPropsTransformer;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
@@ -163,7 +163,7 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
             mm = model;
         }
         if (javaProps) {
-            CoreIOUtils.storeProperties(ObjectOutputFormatWriterHelper.explodeMap(mm), w.asPrintStream(), sorted);
+            NPropsTransformer.storeProperties(ObjectOutputFormatWriterHelper.explodeMap(mm), w.asPrintStream(), sorted);
         } else {
             printMap(out, NText.ofBlank(), mm);
         }

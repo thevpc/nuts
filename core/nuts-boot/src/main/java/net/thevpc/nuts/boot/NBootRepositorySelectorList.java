@@ -27,12 +27,9 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.boot.reserved.util.NBootRepositoryDB;
-import net.thevpc.nuts.boot.reserved.util.NBootStringUtils;
+import net.thevpc.nuts.boot.reserved.util.NBootUtils;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class NBootRepositorySelectorList {
@@ -64,7 +61,7 @@ public class NBootRepositorySelectorList {
                 t = t.trim();
                 if (!t.isEmpty()) {
                     NBootRepositorySelectorList r = of(t, db);
-                    if (r==null) {
+                    if (r == null) {
                         return null;
                     }
                     result = result.merge(r);
@@ -75,16 +72,16 @@ public class NBootRepositorySelectorList {
     }
 
     public static NBootRepositorySelectorList of(String expression, NBootRepositoryDB db) {
-        if (NBootStringUtils.isBlank(expression)) {
+        if (NBootUtils.isBlank(expression)) {
             return new NBootRepositorySelectorList();
         }
         String op = "INCLUDE";
         List<NBootRepositorySelector> all = new ArrayList<>();
-        for (String s : NBootStringUtils.split(expression, ",;", true, true)) {
+        for (String s : NBootUtils.split(expression, ",;", true, true)) {
             s = s.trim();
             if (s.length() > 0) {
                 NBootRepositorySelector oe = NBootRepositorySelector.of(op, s, db);
-                if (oe==null) {
+                if (oe == null) {
                     return null;
 //                    return NOptional.ofError(() -> NMsgBoot.ofC("invalid selector list : %s", expression));
                 }
@@ -110,20 +107,20 @@ public class NBootRepositorySelectorList {
         NBootRepositoryLocationList current = new NBootRepositoryLocationList();
         if (available != null) {
             for (NBootRepositoryLocation entry : available) {
-                if(entry!=null) {
+                if (entry != null) {
                     String k = entry.getName();
                     String v = entry.getFullLocation();
-                    if (NBootStringUtils.isBlank(v) && !NBootStringUtils.isBlank(k)) {
+                    if (NBootUtils.isBlank(v) && !NBootUtils.isBlank(k)) {
                         NBootAddRepositoryOptions ro = db.getRepositoryOptionsByName(k);
-                        String u = ro==null?null:ro.getConfig().getLocation().getFullLocation();
+                        String u = ro == null ? null : ro.getConfig().getLocation().getFullLocation();
                         if (u != null) {
                             v = u;
                         } else {
                             v = k;
                         }
-                    } else if (!NBootStringUtils.isBlank(v) && NBootStringUtils.isBlank(k)) {
+                    } else if (!NBootUtils.isBlank(v) && NBootUtils.isBlank(k)) {
                         NBootAddRepositoryOptions ro = db.getRepositoryOptionsByLocation(k);
-                        String n = ro==null?null:ro.getName();
+                        String n = ro == null ? null : ro.getName();
                         if (n != null) {
                             k = n;
                         }
@@ -161,7 +158,7 @@ public class NBootRepositorySelectorList {
 
         //now remove all excluded
         for (NBootRepositorySelector r : selectorsExclude) {
-            Set<String> allNames = getAllNames(r,db);
+            Set<String> allNames = getAllNames(r, db);
             int i = current.indexOfNames(allNames.toArray(new String[0]), 0);
             if (i >= 0) {
                 current.removeAt(i);
@@ -171,10 +168,31 @@ public class NBootRepositorySelectorList {
 
 
         for (NBootRepositorySelector r : selectorsInclude) {
-            Set<String> allNames = getAllNames(r,db);
+            Set<String> allNames = getAllNames(r, db);
             if (!isVisitedFlag(allNames, visited)) {
                 visited.addAll(allNames);
-                result.add(NBootRepositoryLocation.of(r.getName(), r.getUrl()));
+                NBootAddRepositoryOptions fo = null;
+                for (String n : allNames) {
+                    fo = db.getRepositoryOptionsByName(n);
+                    break;
+                }
+                String newName = r.getName() == null ? (fo == null ? null : fo.getName()) : r.getName();
+                NBootRepositoryLocation newLocation = r.getLocation();
+                if (fo != null && fo.getConfig() != null && fo.getConfig().getLocation() != null) {
+                    if (fo.getConfig().getLocation().getLocationType() != null) {
+                        newLocation = newLocation.setLocationType(fo.getConfig().getLocation().getLocationType());
+                    }
+                    if (fo.getConfig().getLocation().getLocationType() != null) {
+                        //name is the same as path, so move it to the path...
+                        if (NBootUtils.isBlank(newLocation.getPath())
+                                || Objects.equals(newLocation.getPath(), fo.getConfig().getLocation().getName())
+                                || Objects.equals(newLocation.getPath(), fo.getConfig().getLocation().getLocationType())
+                        ) {
+                            newLocation = newLocation.setPath(fo.getConfig().getLocation().getPath());
+                        }
+                    }
+                }
+                result.add(NBootRepositoryLocation.of(newName,newLocation.getFullLocation()));
             }
         }
         for (NBootRepositoryLocation e : current.toArray()) {
@@ -188,15 +206,32 @@ public class NBootRepositorySelectorList {
         }
         return result.toArray(new NBootRepositoryLocation[0]);
     }
-    private Set<String> getAllNames(NBootRepositorySelector r, NBootRepositoryDB db){
-        if (!NBootStringUtils.isBlank(r.getName())) {
-            return db.findAllNamesByName(r.getName());
-        }else{
-            NBootAddRepositoryOptions lo = db.getRepositoryOptionsByLocation(r.getUrl());
-            String name = lo==null?null:lo.getName();
+
+    private Set<String> getAllNames(NBootRepositorySelector r, NBootRepositoryDB db) {
+        if (!NBootUtils.isBlank(r.getName())) {
+            NBootAddRepositoryOptions lo = db.getRepositoryOptionsByName(r.getName());
+            if (lo == null && !NBootUtils.isBlank(r.getLocation().getTypeAndPath())) {
+                lo = db.getRepositoryOptionsByName(r.getLocation().getTypeAndPath());
+            }
+            if (lo != null) {
+                return db.findAllNamesByName(lo.getName());
+            }
+            return Collections.singleton(r.getName());
+        } else if (!NBootUtils.isBlank(r.getLocation().getTypeAndPath())) {
+            NBootAddRepositoryOptions lo = db.getRepositoryOptionsByLocation(r.getLocation().getTypeAndPath());
+            if (lo == null && !NBootUtils.isBlank(r.getName())) {
+                lo = db.getRepositoryOptionsByLocation(r.getName());
+            }
+            if (lo == null) {
+                lo = db.getRepositoryOptionsByName(r.getLocation().getTypeAndPath());
+            }
+            String name = lo == null ? null : lo.getName();
             return db.findAllNamesByName(name);
         }
+
+        return Collections.emptySet();
     }
+
     private boolean isVisitedFlag(Set<String> allNames, Set<String> visited) {
         boolean visitedFlag = false;
         for (String allName : allNames) {

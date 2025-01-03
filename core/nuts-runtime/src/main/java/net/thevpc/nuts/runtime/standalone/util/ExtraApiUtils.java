@@ -8,6 +8,7 @@ import net.thevpc.nuts.log.NLog;
 import net.thevpc.nuts.log.NLogVerb;
 import net.thevpc.nuts.reserved.NReservedLangUtils;
 import net.thevpc.nuts.runtime.standalone.io.NCoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.NReservedMavenUtils;
 import net.thevpc.nuts.reserved.NReservedUtils;
 import net.thevpc.nuts.util.NBlankable;
@@ -15,6 +16,7 @@ import net.thevpc.nuts.util.NMsg;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -117,13 +119,13 @@ public class ExtraApiUtils {
                         } else if ("jar".equals(u.getProtocol())) {
                             if (u.getFile().endsWith("!/META-INF/MANIFEST.MF")) {
                                 String jar = u.getFile().substring(0, u.getFile().length() - "!/META-INF/MANIFEST.MF".length());
-                                all.add(new URL(jar));
+                                all.add(CoreIOUtils.urlOf(jar));
                             }
                         } else {
                             //ignore any other loading url format!
                         }
                     }
-                } catch (IOException ex) {
+                } catch (IOException | UncheckedIOException ex) {
                     //ignore...
                 }
             }
@@ -158,11 +160,11 @@ public class ExtraApiUtils {
                             URL incp = contextClassLoader.getResource(zname);
                             String clz = zname.substring(0, zname.length() - 6).replace('/', '.');
                             if (incp != null) {
-                                bLog.with().level(Level.FINEST).verb(NLogVerb.SUCCESS).log( NMsg.ofC("url %s is already in classpath. checked class %s successfully",
+                                bLog.with().level(Level.FINEST).verb(NLogVerb.SUCCESS).log(NMsg.ofC("url %s is already in classpath. checked class %s successfully",
                                         url, clz));
                                 return true;
                             } else {
-                                bLog.with().level(Level.FINEST).verb(NLogVerb.INFO).log( NMsg.ofC("url %s is not in classpath. failed to check class %s",
+                                bLog.with().level(Level.FINEST).verb(NLogVerb.INFO).log(NMsg.ofC("url %s is not in classpath. failed to check class %s",
                                         url, clz));
                                 return false;
                             }
@@ -182,23 +184,23 @@ public class ExtraApiUtils {
         } catch (IOException e) {
             //
         }
-        bLog.with().level(Level.FINEST).verb(NLogVerb.FAIL).log( NMsg.ofC("url %s is not in classpath. no class found to check", url));
+        bLog.with().level(Level.FINEST).verb(NLogVerb.FAIL).log(NMsg.ofC("url %s is not in classpath. no class found to check", url));
         return false;
     }
 
     private static void fillBootDependencyNodes(NClassLoaderNode node, Set<URL> urls, Set<String> visitedIds,
                                                 NLog bLog) {
-        if(node.getId()==null){
+        if (node.getId() == null) {
             if (!node.isIncludedInClasspath()) {
                 urls.add(node.getURL());
             } else {
-                bLog.with().level(Level.WARNING).verb(NLogVerb.CACHE).log( NMsg.ofC("url will not be loaded (already in classloader) : %s", node.getURL()));
+                bLog.with().level(Level.WARNING).verb(NLogVerb.CACHE).log(NMsg.ofC("url will not be loaded (already in classloader) : %s", node.getURL()));
             }
             for (NClassLoaderNode dependency : node.getDependencies()) {
                 fillBootDependencyNodes(dependency, urls, visitedIds, bLog);
             }
             return;
-        }else {
+        } else {
             String shortName = node.getId().getShortName();
             if (!visitedIds.contains(shortName)) {
                 visitedIds.add(shortName);
@@ -219,7 +221,7 @@ public class ExtraApiUtils {
         LinkedHashSet<URL> urls = new LinkedHashSet<>();
         Set<String> visitedIds = new HashSet<>();
         for (NClassLoaderNode info : nodes) {
-            if(info!=null) {
+            if (info != null) {
                 fillBootDependencyNodes(info, urls, visitedIds, bLog);
             }
         }
